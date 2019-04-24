@@ -71,6 +71,7 @@ export const baseColors = {
   tumbleweed: '#db9a84',
   pattensBlue: '#F0F5FA',
   shark: '#292c33',
+  caribbeanGreen: '#02cb72',
 };
 
 export const brandColors = [

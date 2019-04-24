@@ -722,7 +722,10 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <Container inset={{ bottom: 0 }}>
         <SearchBlock
-          headerProps={{ title: 'assets' }}
+          headerProps={{
+            title: 'assets',
+            showChannelStatus: true,
+          }}
           searchInputPlaceholder={activeTab === TOKENS ? 'Search or add new asset' : 'Search'}
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={activeTab === TOKENS ? !!assetsSearchState : !!isInCollectiblesSearchMode}

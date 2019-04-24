@@ -19,12 +19,13 @@
 */
 import * as React from 'react';
 import { Left, Body, Right } from 'native-base';
-import { TextLink, BaseText } from 'components/Typography';
+import styled from 'styled-components/native';
+import { TextLink, BaseText, LightText } from 'components/Typography';
+import Title from 'components/Title';
+import IconButton from 'components/IconButton';
+import Tank from 'components/Tank';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import { noop } from 'utils/common';
-import Title from 'components/Title';
-import styled from 'styled-components/native';
-import IconButton from 'components/IconButton';
 
 type Props = {
   onBack?: Function,
@@ -51,6 +52,7 @@ type Props = {
   backIcon?: string,
   nextIconSize?: number,
   titleStyles?: ?Object,
+  showChannelStatus?: boolean,
 }
 
 const Wrapper = styled.View`
@@ -109,6 +111,20 @@ const HeaderRight = styled(Right)`
   align-items: flex-end;
 `;
 
+const TankButton = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
+const TankLabel = styled(LightText)`
+  font-size: ${fontSizes.extraExtraSmall}px;
+  line-height: ${fontSizes.extraExtraSmall}px;
+  color: ${baseColors.darkGray};
+  margin-right: 6px;
+  margin-bottom: -2px;
+`;
+
 const Header = (props: Props) => {
   const {
     onBack,
@@ -135,8 +151,9 @@ const Header = (props: Props) => {
     flexStart,
     backIcon,
     titleStyles,
+    showChannelStatus,
   } = props;
-  const showRight = nextText || nextIcon || onBack || onClose || centerTitle;
+  const showRight = nextText || nextIcon || onBack || onClose || centerTitle || showChannelStatus;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
@@ -210,6 +227,12 @@ const Header = (props: Props) => {
                 horizontalAlign="flex-end"
               />
             </IconWrapper>
+          }
+          {showChannelStatus &&
+            <TankButton>
+              <TankLabel>7.3K</TankLabel>
+              <Tank value={80} tiny />
+            </TankButton>
           }
           {onClose &&
             <IconWrapper>
