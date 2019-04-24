@@ -28,6 +28,7 @@ import { Picker } from 'native-base';
 import countries from 'utils/countries.json';
 import Header from 'components/Header';
 import { createOneTimePasswordAction, verifyPhoneAction } from 'actions/userActions';
+import type { VerificationPhoneAction } from 'actions/userActions';
 import SMSConfirmationInput from './SMSConfirmationInput';
 
 type Props = {
@@ -70,7 +71,7 @@ class OTP extends React.Component<Props> {
 
   render() {
     const { navigation } = this.props;
-    const phone = this.props.navigation.getParam('phone');
+    const phone = navigation.getParam('phone');
     return (
       <Container>
         <Header gray title="confirm" onBack={() => navigation.goBack(null)} />
@@ -89,7 +90,7 @@ class OTP extends React.Component<Props> {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  confirmOTP: (props: Object, callback: Function) => dispatch(verifyPhoneAction(props, callback)),
+  confirmOTP: (props: VerificationPhoneAction, callback: Function) => dispatch(verifyPhoneAction(props, callback)),
   createOneTimePassword: (walletId: string, field: Object, callback: Function) =>
     dispatch(createOneTimePasswordAction(walletId, field, callback)),
 });

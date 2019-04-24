@@ -17,22 +17,22 @@ const Value = styled(BoldText)`
   padding: 14px
 `;
 
-const shareOnSocialMedia = (sharerUrl: string, closeModal) => () => {
+const shareOnSocialMedia = (sharerUrl: string, onModalClose) => () => {
   const options = {
     message: 'Get your 25 PLR',
     url: sharerUrl,
   };
   Share.open(options)
-    .then(closeModal)
-    .catch((() => {}));
+    .then(onModalClose)
+    .catch(() => {});
 };
 
-const ReferralCodeModal = ({ username, closeModal }: Object) => {
+const ReferralCodeModal = ({ username, onModalClose }: Object) => {
   return (
     <View>
       <Label>Share your code with friends!</Label>
       <LabeledRow>
-        <TouchableOpacity onPress={shareOnSocialMedia(username, closeModal)}>
+        <TouchableOpacity onPress={shareOnSocialMedia(username, onModalClose)}>
           <Value>{username}</Value>
         </TouchableOpacity>
       </LabeledRow>

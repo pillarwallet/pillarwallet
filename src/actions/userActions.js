@@ -63,22 +63,28 @@ export const createOneTimePasswordAction = (walletId: string, field: Object, cal
   };
 };
 
-export const verifyPhoneAction = ({ walletId, phone, oneTimePassword }: Object, callback?: Function) => {
+export type VerificationPhoneAction = {
+  wallet: string,
+  phone: string,
+  oneTimePassword: string,
+}
+
+export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Function) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const response = await api.verifyPhone({ walletId, phone, oneTimePassword });
+    const response = await api.verifyPhone(props);
     const { responseStatus } = response;
     if (responseStatus === 200) {
       dispatch({
         type: USER_PHONE_VERIFIED,
       });
-      dispatch(({
+      dispatch({
         type: ADD_NOTIFICATION,
         payload: {
           message: 'Phone verification was successful',
           title: 'Validation successful',
           messageType: 'success',
         },
-      }));
+      });
       if (callback) callback();
     } else {
       dispatch(({

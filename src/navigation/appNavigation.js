@@ -64,7 +64,7 @@ import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import BadgeScreen from 'screens/Badge';
-import OTPScreen from 'screens/OTP/OTP';
+import OTPScreen from 'screens/OTP';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';

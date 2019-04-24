@@ -47,6 +47,8 @@ import {
 } from 'actions/appSettingsActions';
 import { updateUserAction, createOneTimePasswordAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
+import { repairStorageAction } from 'actions/appActions';
+import { isProdEnv } from 'utils/environment';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import { baseColors, spacing } from 'utils/variables';
@@ -58,7 +60,6 @@ import ReferralCodeModal from './ReferralCodeModal';
 
 // sections
 import AppearanceSettingsSection from './AppearanceSettingsSection';
-import { isProdEnv } from '../../utils/shim';
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
@@ -209,9 +210,20 @@ class Profile extends React.Component<Props, State> {
     const {
       updateUser,
       user,
+    } = this.props;
+
+    updateUser(user.walletId, field, () => this.toggleSlideModalOpen(null));
+  };
+
+  handleUserPhoneFieldUpdate = (field: Object) => {
+    Keyboard.dismiss();
+    const {
+      updateUser,
+      user,
       navigation,
       createOneTimePassword,
     } = this.props;
+
     const createOTP = () => {
       createOneTimePassword(user.walletId, field, () => {
         this.toggleSlideModalOpen(null);
@@ -353,7 +365,7 @@ class Profile extends React.Component<Props, State> {
           title="Referral code"
           onModalHide={this.toggleSlideModalOpen}
         >
-          <ReferralCodeModal username={user.username} closeModal={this.toggleSlideModalOpen} />
+          <ReferralCodeModal username={user.username} onModalClose={this.toggleSlideModalOpen} />
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'phone'}
@@ -371,7 +383,7 @@ class Profile extends React.Component<Props, State> {
               </SettingsModalTitle>
               <EditProfile
                 fields={phoneFormFields}
-                onSubmit={this.handleUserFieldUpdate}
+                onSubmit={this.handleUserPhoneFieldUpdate}
                 value={{ phone: user.phone }}
               />
             </View>
@@ -644,6 +656,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   changeUseBiometrics: (value) => {
     dispatch(changeUseBiometricsAction(value));
   },
+  repairStorage: () => dispatch(repairStorageAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
