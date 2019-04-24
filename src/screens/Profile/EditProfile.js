@@ -31,6 +31,7 @@ import {
   LastNameStruct,
   EmailStruct,
   CityStruct,
+  PhoneStruct,
 } from 'components/ProfileForm/profileFormDefs';
 
 const window = Dimensions.get('window');
@@ -68,7 +69,7 @@ type State = {
 
 const defaultTypes = {
   string: t.String,
-  number: t.Number,
+  phone: PhoneStruct,
   email: EmailStruct,
   firstName: FirstNameStruct,
   lastName: LastNameStruct,

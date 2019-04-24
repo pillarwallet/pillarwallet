@@ -168,6 +168,50 @@ SDKWrapper.prototype.updateUser = function (user: Object) {
     });
 };
 
+SDKWrapper.prototype.createOneTimePassword = function (user: Object) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.createOneTimePassword(user))
+    .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
+    .catch((error) => {
+      const {
+        response: {
+          status,
+          data: { message } = {},
+        },
+      } = error;
+      Sentry.captureException({
+        error: 'Failed to send text',
+        walletId: user.walletId,
+        user,
+        status,
+        message,
+      });
+      return { responseStatus: status, message };
+    });
+};
+
+SDKWrapper.prototype.verifyPhone = function (user: Object) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.validatePhone(user))
+    .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
+    .catch((error) => {
+      const {
+        response: {
+          status,
+          data: { message } = {},
+        },
+      } = error;
+      Sentry.captureException({
+        error: 'Can\'t verify code',
+        walletId: user.walletId,
+        user,
+        status,
+        message,
+      });
+      return { responseStatus: status, message };
+    });
+};
+
 SDKWrapper.prototype.updateUserAvatar = function (walletId: string, formData: Object) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.uploadProfileImageFormData(walletId, formData))
