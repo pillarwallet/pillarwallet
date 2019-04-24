@@ -22,6 +22,7 @@ import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstan
 import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE } from 'constants/walletConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
+import { fetchOldInviteNotificationsAction } from 'actions/oldInvitationsActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { saveDbAction } from './dbActions';
 
@@ -143,7 +144,7 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
       }
     }
 
-    await dispatch(mapIdentityKeysAction(successUpdateCount));
+    await dispatch(mapIdentityKeysAction(successUpdateCount, walletId));
   };
 };
 
@@ -196,6 +197,7 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
 
 
     if (oldConnectionsCount > 0) {
+      await fetchOldInviteNotificationsAction();
       await dispatch(updateOldConnections(oldConnectionsCount, walletId));
     }
     if (lastConnectionKeyIndex === -1 && currentConnectionsCount > 0) {
