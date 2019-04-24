@@ -13,7 +13,7 @@ export const InputTemplate = (locals: Object) => {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
     value: locals.value,
-    keyboardType: locals.keyboardType || 'default',
+    keyboardType: config.keyboardType || 'default',
     style: {
       fontSize: 24,
       lineHeight: 0,
