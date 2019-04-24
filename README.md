@@ -46,8 +46,8 @@ _note_: after any compilation (i.e. after linking a native library) please resta
 
 ## Debugging
 
-Debug implies checking logs and be able to stop on specific breakpoints, for the first requirement (watch logs) there's two options. If you want to stop on breakpoints then only the first option is for you.
-However if what you want is just to track or set logs, then Reactotron is probably most effective.
+Debug implies checking logs and be able to stop on specific breakpoints. For the first requirement (watch logs) there're two options. If you want to stop on breakpoints then only the first option is for you.
+However if what you want is just to track or set the logs, then Reactotron will be, probably, more effective.
 
 ### React Native Debugger
 First, you need to install the [React Native Debugger](https://github.com/jhen0409/react-native-debugger)
