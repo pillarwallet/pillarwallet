@@ -5242,8 +5242,8 @@ ethereumjs-util@5.2.0:
     secp256k1 "^3.0.1"
 
 "ethers@https://github.com/jsidorenko/ethers.js#master":
-  version "4.0.27"
-  resolved "https://github.com/jsidorenko/ethers.js#f383025f81bdc19ae76182cb58c1cb6bd7df64cc"
+  version "4.0.28"
+  resolved "https://github.com/jsidorenko/ethers.js#3cba34f00d0522e57961a4ca095ddffde5389e92"
   dependencies:
     "@types/node" "^10.3.2"
     aes-js "3.0.0"
