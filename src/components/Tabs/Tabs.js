@@ -153,7 +153,7 @@ const UnreadBadge = styled.View`
   border-radius: 12px;
   background-color: ${baseColors.electricBlue};
   position: absolute;
-  top 4px;
+  top: 4px;
   right: 2px;
   align-items: center;
   justify-content: center;
