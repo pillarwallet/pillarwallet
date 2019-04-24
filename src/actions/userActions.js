@@ -35,10 +35,10 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
       });
       if (callback) callback();
     } else {
-      dispatch(({
+      dispatch({
         type: ADD_NOTIFICATION,
         payload: { message: 'Please try again later', title: 'Changes have not been saved', messageType: 'warning' },
-      }));
+      });
     }
   };
 };
@@ -51,14 +51,14 @@ export const createOneTimePasswordAction = (walletId: string, field: Object, cal
     if (responseStatus === 200 && callback) {
       callback();
     } else {
-      dispatch(({
+      dispatch({
         type: ADD_NOTIFICATION,
         payload: {
           message: 'Please try again later',
           title: 'We can\'t verify your phone at this time',
           messageType: 'warning',
         },
-      }));
+      });
     }
   };
 };
@@ -87,14 +87,14 @@ export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Fun
       });
       if (callback) callback();
     } else {
-      dispatch(({
+      dispatch({
         type: ADD_NOTIFICATION,
         payload: {
           message: 'Please try again later',
           title: 'We can\'t verify your phone at this time',
           messageType: 'warning',
         },
-      }));
+      });
     }
   };
 };
