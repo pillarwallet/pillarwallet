@@ -73,7 +73,8 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
         callback = async () => {
           const trx = payload.params[0];
           const result = await signTransaction(trx, wallet);
-          approveCallRequest(peerId, payload.id, result);
+          await approveCallRequest(peerId, payload.id, result);
+          this.handleNavigationToTransactionState();
         };
         break;
       case 'eth_sign':
@@ -81,7 +82,8 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
         callback = async () => {
           const message = payload.params[1];
           const result = await signMessage(message, wallet);
-          approveCallRequest(peerId, payload.id, result);
+          await approveCallRequest(peerId, payload.id, result);
+          this.handleNavigationToTransactionState();
         };
         break;
       default:
@@ -106,8 +108,8 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
         isChecking: true,
       },
       () =>
-        sendAsset(transactionPayload, wallet, (txStatus: Object) => {
-          approveCallRequest(peerId, payload.id, txStatus.txHash);
+        sendAsset(transactionPayload, wallet, async (txStatus: Object) => {
+          await approveCallRequest(peerId, payload.id, txStatus.txHash);
           this.handleNavigationToTransactionState();
         }),
     );
