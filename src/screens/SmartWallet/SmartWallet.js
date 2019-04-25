@@ -30,10 +30,18 @@ const TextRow = styled(BaseText)`
   color: ${baseColors.darkGray};
 `;
 
+type SmartAccount = {
+  address: string,
+  deployMode: string,
+  id: number,
+  state: string,
+  updatedAt: string,
+};
 
 export default class SmartWallet extends React.Component<Props, *> {
   sdk: Object;
-  account: Object;
+  account: SmartAccount;
+
   state = {
     sdkInitialized: false,
     accountCreated: false,
@@ -73,6 +81,14 @@ export default class SmartWallet extends React.Component<Props, *> {
               Account created: <BoldText>{accountCreated.toString()}</BoldText>
             </TextRow>
             {sdkInitialized && !accountCreated && <ButtonMini title="Create" onPress={this.createAccount} />}
+            {accountCreated && (
+              <React.Fragment>
+                <TextRow>Account address: {this.account.address}</TextRow>
+                <TextRow>Account id: {this.account.id}</TextRow>
+                <TextRow>Account state: {this.account.state}</TextRow>
+                <TextRow>Account deploy mode: {this.account.deployMode}</TextRow>
+              </React.Fragment>
+            )}
           </Wrapper>
         </ScrollWrapper>
       </Container>
