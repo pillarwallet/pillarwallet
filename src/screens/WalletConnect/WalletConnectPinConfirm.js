@@ -23,19 +23,19 @@ import { connect } from 'react-redux';
 import { Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import type { JsonRpcRequest } from 'models/JsonRpc';
-// import { sendAssetAction } from 'actions/assetsActions';
+import type { TransactionPayload } from 'models/Transaction';
+import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  // sendAsset: (payload: JsonRpcRequest, wallet: Object, navigate: Function) => Function,
+  sendAsset: (payload: TransactionPayload, wallet: Object, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
 };
 
 type State = {
-  payload: JsonRpcRequest,
+  payload: TransactionPayload,
   isChecking: boolean,
 };
 
@@ -55,15 +55,53 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     navigation.dismiss();
   };
 
-  handleTransaction = (pin: string, wallet: Object) => {
-    // const { sendAsset } = this.props;
-    // const { payload } = this.state;
-    console.log('wallet', wallet);
+  handleCallRequest = (pin: string, wallet: Object) => {
+    const payload = this.props.navigation.getParam('payload', {});
+
+    let callback = () => {
+      // empty
+    };
+
+    function fakeSign() {
+      // empty
+    }
+    switch (payload.method) {
+      case 'eth_sendTransaction':
+        callback = () => this.handleTransaction(pin, wallet);
+        break;
+      case 'eth_signTransaction':
+        callback = () => fakeSign();
+        break;
+      case 'eth_sign':
+      case 'personal_sign':
+        callback = () => fakeSign();
+
+        break;
+      default:
+        break;
+    }
+
     this.setState(
       {
         isChecking: true,
       },
-      // () => sendAsset(payload, wallet, this.handleNavigationToTransactionState),
+      callback,
+    );
+  };
+
+  handleTransaction = (pin: string, wallet: Object) => {
+    const { sendAsset } = this.props;
+    const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
+    this.setState(
+      {
+        isChecking: true,
+      },
+      () =>
+        sendAsset(transactionPayload, wallet, () => {
+          // approve request through walletconnect
+          // then
+          this.handleNavigationToTransactionState();
+        }),
     );
   };
 
@@ -91,9 +129,9 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 }
 
 const mapDispatchToProps = dispatch => ({
-  // sendAsset: (transaction: JsonRpcRequest, wallet: Object, navigate) => {
-  //   dispatch(() => {});
-  // },
+  sendAsset: (transaction: TransactionPayload, wallet: Object, navigate) => {
+    dispatch(sendAssetAction(transaction, wallet, navigate));
+  },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
