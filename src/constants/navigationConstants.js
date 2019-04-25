@@ -96,3 +96,7 @@ export const CONNECTION_REQUESTS = 'CONNECTION_REQUESTS';
 // HOME FLOW
 export const HOME = 'HOME';
 export const HOME_TAB = 'HOME_TAB';
+
+// SMART WALLET FLOW
+export const SMART_WALLET_TAB = 'SMART_WALLET_TAB';
+export const SMART_WALLET = 'SMART_WALLET';

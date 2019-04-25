@@ -64,6 +64,7 @@ import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import BadgeScreen from 'screens/Badge';
+import SmartWalletScreen from 'screens/SmartWallet';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -131,6 +132,8 @@ import {
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
   BADGE,
+  SMART_WALLET,
+  SMART_WALLET_TAB,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -241,6 +244,13 @@ const homeFlow = createStackNavigator({
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// SMART_WALLET FLOW
+const smartWalletFlow = createStackNavigator({
+  [SMART_WALLET]: SmartWalletScreen,
+}, StackNavigatorConfig);
+
+smartWalletFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // ICO FLOW
 const icoFlow = createStackNavigator({
   [MARKET]: MarketScreen,
@@ -341,6 +351,13 @@ const tabNavigation = createBottomTabNavigator(
     //     tabBarLabel: tabBarLabel('Market'),
     //   }),
     // },
+    [SMART_WALLET_TAB]: {
+      screen: smartWalletFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
+        tabBarLabel: tabBarLabel('SmartW'),
+      }),
+    },
     [CHAT_LIST]: {
       screen: chatFlow,
       navigationOptions: ({ navigation, screenProps }) => ({

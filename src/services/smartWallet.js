@@ -37,16 +37,19 @@ export default class SmartWallet {
     }
   }
 
-  async init() {
+  init() {
     return this.sdk
       .initialize()
       .catch(this.handleError);
   }
 
-  async createAccount() {
+  createAccount() {
     return this.sdk
       .createAccount(null)
-      .then(account => console.log('SmartWallet account: ', account))
+      .then(account => {
+        console.log('SmartWallet account: ', account);
+        return account;
+      })
       .catch(this.handleError);
   }
 
