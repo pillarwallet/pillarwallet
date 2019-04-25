@@ -34,6 +34,7 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { Answers } from 'react-native-fabric';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -190,6 +191,8 @@ class AssetsScreen extends React.Component<Props, State> {
       assets,
       wallet,
     } = this.props;
+
+    Answers.logContentView('Assets screen');
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);

@@ -6,9 +6,11 @@ import com.BV.LinearGradient.LinearGradientPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.bitgo.randombytes.RandomBytesPackage;
+import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.Crashlytics;
 import com.crypho.scrypt.RNScryptPackage;
 import com.facebook.react.ReactApplication;
+import com.smixx.fabric.FabricPackage;
 import ca.jaysoo.extradimensions.ExtraDimensionsPackage;
 import dk.madslee.imageCapInsets.RCTImageCapInsetPackage;
 import com.rnfingerprint.FingerprintAuthPackage;
@@ -25,7 +27,6 @@ import com.peel.react.TcpSocketsModule;
 import com.peel.react.rnos.RNOSModule;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.robinpowered.react.Intercom.IntercomPackage;
-import com.tradle.react.UdpSocketsModule;
 
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import org.reactnative.camera.RNCameraPackage;
@@ -71,6 +72,7 @@ public class MainApplication extends Application implements ShareApplication, Re
         new RNScryptPackage(),
         new LottiePackage(),
         new RNSharePackage(),
+        new FabricPackage(),
         new BackgroundTimerPackage(),
         new SplashScreenReactPackage(),
         new RNFetchBlobPackage(),
@@ -113,7 +115,7 @@ public class MainApplication extends Application implements ShareApplication, Re
   public void onCreate() {
     super.onCreate();
     final Fabric fabric = new Fabric.Builder(this)
-            .kits(new Crashlytics())
+            .kits(new Crashlytics(), new Answers())
             .build();
     Fabric.with(fabric);
     if (BuildConfig.DEBUG) {
