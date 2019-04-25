@@ -52,6 +52,7 @@ import { getUserName } from 'utils/contacts';
 import { isIphoneX, handleUrlPress } from 'utils/common';
 import { CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
+import { Answers } from 'react-native-fabric';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -309,6 +310,7 @@ class ChatScreen extends React.Component<Props, State> {
     const { contact } = this.state;
     const { getChatByContact, getChatDraftByContact } = this.props;
 
+    Answers.logContentView('Chat screen');
     AppState.addEventListener('change', this.shouldPersistDraft);
 
     getChatByContact(contact.username, contact.id, contact.profileImage);

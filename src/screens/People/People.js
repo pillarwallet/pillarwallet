@@ -54,6 +54,7 @@ import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
+import { Answers } from 'react-native-fabric';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -134,6 +135,8 @@ class PeopleScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    Answers.logContentView('People screen');
+
     this.willFocus = this.props.navigation.addListener(
       'willFocus',
       () => { this.setState({ forceHideRemoval: false }); },
