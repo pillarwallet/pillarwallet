@@ -104,6 +104,17 @@ const phoneFormFields = [{
   },
 }];
 
+const codeFormFields = [{
+  label: 'Code',
+  name: 'code',
+  type: 'code',
+  config: {
+    placeholder: 'username',
+    autoCapitalize: 'none',
+    error: 'Please enter valid code',
+  },
+}];
+
 const fullNameFormFields = [{
   label: 'First name',
   name: 'firstName',
@@ -232,6 +243,11 @@ class Profile extends React.Component<Props, State> {
     };
 
     updateUser(user.walletId, field, createOTP);
+  };
+
+  handleCodeClaim = () => {
+    Keyboard.dismiss();
+    this.toggleSlideModalOpen(null);
   };
 
   handleCurrencyUpdate = ({ currency }: Object) => {
@@ -390,6 +406,28 @@ class Profile extends React.Component<Props, State> {
           </Wrapper>
         </SlideModal>
         <SlideModal
+          isVisible={this.state.visibleModal === 'claimTokens'}
+          fullScreen
+          title="Claim tokens"
+          showHeader
+          onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.snowWhite}
+          avoidKeyboard
+        >
+          <Wrapper regularPadding flex={1}>
+            <View style={{ marginTop: 15, flex: 1 }}>
+              <SettingsModalTitle>
+                Enter your code
+              </SettingsModalTitle>
+              <EditProfile
+                fields={codeFormFields}
+                onSubmit={this.handleCodeClaim}
+                buttonTitle="Claim"
+              />
+            </View>
+          </Wrapper>
+        </SlideModal>
+        <SlideModal
           isVisible={this.state.visibleModal === 'fullName'}
           fullScreen
           showHeader
@@ -470,12 +508,6 @@ class Profile extends React.Component<Props, State> {
                 onPress={() => this.toggleSlideModalOpen('phone')}
               />)
             }
-            {!isProdEnv && (
-            <ProfileSettingsItem
-              key="referralCode"
-              label="Referral code"
-              onPress={() => this.toggleSlideModalOpen('referralCode')}
-            />)}
             <ListSeparator>
               <SubHeading>GENERAL SETTINGS</SubHeading>
             </ListSeparator>
@@ -528,6 +560,25 @@ class Profile extends React.Component<Props, State> {
               <SubHeading>APPEARANCE SETTINGS</SubHeading>
             </ListSeparator>
             <AppearanceSettingsSection settings={appearanceSettings} onUpdate={updateAppSettings} />
+
+            {!isProdEnv && (
+              <View>
+                <ListSeparator>
+                  <SubHeading>REFERRAL</SubHeading>
+                </ListSeparator>
+                <ProfileSettingsItem
+                  key="referralCode"
+                  label="Referral code"
+                  onPress={() => this.toggleSlideModalOpen('referralCode')}
+                />
+                <ProfileSettingsItem
+                  key="claimTokens"
+                  label="Claim tokens"
+                  onPress={() => this.toggleSlideModalOpen('claimTokens')}
+                />
+              </View>
+            )}
+
             <ListSeparator>
               <SubHeading>ABOUT</SubHeading>
             </ListSeparator>
