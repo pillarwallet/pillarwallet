@@ -142,9 +142,8 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
     });
 
     await dispatch(updateConnectionsAction());
-    await dispatch(getExistingChatsAction());
 
-    return Promise.resolve(true);
+    return dispatch(getExistingChatsAction());
   };
 };
 
