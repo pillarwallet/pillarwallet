@@ -22,6 +22,7 @@ import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstan
 import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE } from 'constants/walletConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
+import { fetchOldInviteNotificationsAction } from 'actions/oldInvitationsActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { saveDbAction } from './dbActions';
 
@@ -55,10 +56,10 @@ export const updateConnectionIdentityKeys = (successfullConnIdentityKeys: Object
   };
 };
 
-export const mapIdentityKeysAction = (connectionPreKeyCount: number) => {
+export const mapIdentityKeysAction = (connectionPreKeyCount: number, theWalletId?: ?string = null) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      user: { data: { walletId } },
+      user: { data: { walletId = theWalletId } },
       connectionKeyPairs: { data: connectionKeyPairs },
     } = getState();
 
@@ -90,10 +91,10 @@ export const mapIdentityKeysAction = (connectionPreKeyCount: number) => {
   };
 };
 
-export const updateOldConnections = (oldConnectionCount: number) => {
+export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?string = null) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      user: { data: { walletId } },
+      user: { data: { walletId = theWalletId } },
       contacts: { data: contacts },
       accessTokens: { data: accessTokens },
       connectionKeyPairs: { data: connectionKeyPairs },
@@ -143,7 +144,7 @@ export const updateOldConnections = (oldConnectionCount: number) => {
       }
     }
 
-    await dispatch(mapIdentityKeysAction(successUpdateCount));
+    await dispatch(mapIdentityKeysAction(successUpdateCount, walletId));
   };
 };
 
@@ -196,14 +197,15 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
 
 
     if (oldConnectionsCount > 0) {
-      await dispatch(updateOldConnections(oldConnectionsCount));
+      await dispatch(fetchOldInviteNotificationsAction(walletId));
+      await dispatch(updateOldConnections(oldConnectionsCount, walletId));
     }
     if (lastConnectionKeyIndex === -1 && currentConnectionsCount > 0) {
       await dispatch(restoreAccessTokensAction(walletId));
-      await dispatch(mapIdentityKeysAction(currentConnectionsCount));
+      await dispatch(mapIdentityKeysAction(currentConnectionsCount, walletId));
     }
 
-    await dispatch(updateConnectionsAction());
+    await dispatch(updateConnectionsAction(walletId));
 
     return Promise.resolve(true);
   };

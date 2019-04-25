@@ -30,6 +30,8 @@ import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE } from 'constants/walletCon
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { updateConnectionKeyPairs, useConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import * as keyPairUtils from 'utils/keyPairGenerator';
+import * as oldInvitationsActions from 'actions/oldInvitationsActions';
+
 
 const walletId = 'walletId';
 const mnemonic = 'one two three four five six seven eight nine ten eleven twelve';
@@ -308,6 +310,8 @@ describe('ConnectionKeyPair actions', () => {
 
       // $FlowFixMe
       keyPairUtils.generateKeyPairThreadPool = jest.fn(() => { return Promise.resolve([]); });
+      // $FlowFixMe
+      oldInvitationsActions.fetchOldInviteNotificationsAction = () => async () => Promise.resolve(true);
 
       return store.dispatch(updateConnectionKeyPairs(mnemonic, privateKey, walletId))
         .then(() => {
