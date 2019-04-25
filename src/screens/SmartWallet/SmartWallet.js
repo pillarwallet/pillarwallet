@@ -5,6 +5,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { baseColors, fontSizes } from 'utils/variables';
 import SmartWalletService from 'services/smartWallet';
+import InMemoryStorage from 'services/inMemoryStorage';
 
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -40,6 +41,7 @@ type SmartAccount = {
 
 export default class SmartWallet extends React.Component<Props, *> {
   sdk: Object;
+  storage: Object;
   account: SmartAccount;
 
   state = {
@@ -48,7 +50,8 @@ export default class SmartWallet extends React.Component<Props, *> {
   };
 
   componentDidMount() {
-    this.sdk = new SmartWalletService();
+    this.storage = new InMemoryStorage({}, true);
+    this.sdk = new SmartWalletService(this.storage);
     this.sdk.init()
       .then(() => this.setState({ sdkInitialized: true }))
       .catch(console.log);

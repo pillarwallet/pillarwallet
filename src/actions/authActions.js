@@ -156,7 +156,8 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       const currentFlow = pathAndParams.path.split('/')[0];
 
       const navigateToLastActiveScreen = NavigationActions.navigate({
-        routeName: lastActiveScreen || SMART_WALLET, // current active screen will be always AUTH_FLOW due to login/logout
+        // current active screen will be always AUTH_FLOW due to login/logout
+        routeName: lastActiveScreen || SMART_WALLET,
         params: lastActiveScreenParams,
       });
 
