@@ -27,7 +27,7 @@
       [Intercom setApiKey:@"ios_sdk-f210e1d785d4c0e64ab3ba0f529d64c47da59186" forAppId:@"s70dqvb2"];
       jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
     #endif
-RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                         moduleName:@"pillarwallet"
                                                 initialProperties:nil
                                                     launchOptions:launchOptions];
