@@ -217,6 +217,10 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - ReactNativeFabric (0.5.2):
+    - Crashlytics
+    - Fabric
+    - React
   - ReactNativePermissions (1.1.1):
     - React
   - RNColorMatrixImageFilters (5.1.4):
@@ -276,6 +280,7 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - ReactNativeFabric (from `../node_modules/react-native-fabric`)
   - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - RNColorMatrixImageFilters (from `../node_modules/react-native-color-matrix-image-filters`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
@@ -342,6 +347,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-randombytes"
   react-native-udp:
     :path: "../node_modules/react-native-udp"
+  ReactNativeFabric:
+    :path: "../node_modules/react-native-fabric"
   ReactNativePermissions:
     :path: "../node_modules/react-native-permissions"
   RNColorMatrixImageFilters:
@@ -400,6 +407,7 @@ SPEC CHECKSUMS:
   react-native-intercom: 85ebcd1eb3887c3cab7b32fe57e7a641b801d8bb
   react-native-randombytes: d3184d351604f78e019535178766590188bbc133
   react-native-udp: 1dc04d3429ff13a251126092feeb35e175a1b0d8
+  ReactNativeFabric: 01c1333f76fd4708a5833d71f0a4832a9266bf0f
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   RNColorMatrixImageFilters: cf425050c778106f5f9844b69fc169758212b74d
   RNDeviceInfo: 08dd79c5adef48b6dc103bf3ddf208039aa78664
@@ -411,6 +419,6 @@ SPEC CHECKSUMS:
   TouchID: b0640fedb86fa2db2fe1df15b61594ad49e76288
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: 3bb9b7faeb7d4caf144e70112baaeb78f7270007
+PODFILE CHECKSUM: d17a4f3608e46bb13cf6d39062200763b1a1a634
 
 COCOAPODS: 1.5.3
