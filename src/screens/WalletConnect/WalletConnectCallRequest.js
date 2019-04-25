@@ -30,6 +30,8 @@ import type { Asset } from 'models/Asset';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
+import type { JsonRpcRequest } from 'models/JsonRpc';
+import type { TokenTransactionPayload } from 'models/Transaction';
 import { spacing, fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
@@ -71,13 +73,71 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     };
   }
 
+  getTokenTransactionPayload = (payload: JsonRpcRequest): TokenTransactionPayload => {
+    const { supportedAssets } = this.props;
+
+    const {
+      to, gasPrice, gasLimit, value, data,
+    } = payload.params[0];
+
+    let symbol = 'ETH';
+    let asset = null;
+    let amount = utils.formatEther(value).toString();
+
+    const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith('0xa9059cbb');
+
+    if (isTokenTransfer) {
+      const matchingAssets = supportedAssets.filter(a => a.address === to);
+      if (matchingAssets && matchingAssets.length) {
+        asset = matchingAssets[0]; // eslint-disable-line
+        symbol = asset.symbol; // eslint-disable-line
+        amount = utils.bigNumberify(data.substring(73)).times(utils.bigNumberify('10').pow(asset.decimals));
+      }
+    }
+
+    const txFeeInWei = utils.bigNumberify(gasLimit).mul(utils.bigNumberify(gasPrice));
+
+    const transactionPayload = {
+      gasLimit: utils.bigNumberify(gasLimit).toNumber(),
+      amount: utils.bigNumberify(amount).toNumber(),
+      to,
+      gasPrice: utils.bigNumberify(gasPrice).toNumber(),
+      txFeeInWei: utils.bigNumberify(txFeeInWei).toNumber(),
+      symbol,
+      contractAddress: asset ? asset.address : '',
+      decimals: asset ? asset.decimals : 18,
+      node: this.state.note,
+    };
+
+    return transactionPayload;
+  };
+
   handleFormSubmit = () => {
     Keyboard.dismiss();
     const { navigation } = this.props;
-    const payload = { ...navigation.getParam('payload', {}), note: this.state.note };
-    navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
-      payload,
-    });
+    const payload = navigation.getParam('payload', {});
+
+    switch (payload.method) {
+      case 'eth_sendTransaction':
+      case 'eth_signTransaction':
+        const transactionPayload = this.getTokenTransactionPayload(payload);
+
+        navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
+          payload,
+          transactionPayload,
+        });
+
+        break;
+      case 'eth_sign':
+      case 'personal_sign':
+        navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
+          payload,
+        });
+
+        break;
+      default:
+        break;
+    }
   };
 
   handleNoteChange(text) {
@@ -85,9 +145,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const {
-      contacts, session, supportedAssets, navigation,
-    } = this.props;
+    const { contacts, session, navigation } = this.props;
 
     const payload = navigation.getParam('payload', {});
 
@@ -99,28 +157,14 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     switch (payload.method) {
       case 'eth_sendTransaction':
       case 'eth_signTransaction':
-        const {
-          to, gasPrice, gasLimit, value, data,
-        } = payload.params[0];
+        const { to, data } = payload.params[0];
 
         type = 'Transaction';
 
-        let symbol = 'ETH';
-        let amount = utils.formatEther(value).toString();
+        const {
+          amount, symbol, txFeeInWei, contractAddress,
+        } = this.getTokenTransactionPayload(payload);
 
-        const isEthTransfer = data.toLowerCase() === '0x';
-        const isTokenTransfer = !isEthTransfer && data.toLowerCase().startsWith('0xa9059cbb');
-
-        if (isTokenTransfer) {
-          const matchingAssets = supportedAssets.filter(asset => asset.address === to);
-          if (matchingAssets && matchingAssets.length) {
-            const asset = matchingAssets[0];
-            symbol = asset.symbol; // eslint-disable-line
-            amount = utils.bigNumberify(data.substring(73)).times(utils.bigNumberify('10').pow(asset.decimals));
-          }
-        }
-
-        const txFeeInWei = utils.bigNumberify(gasLimit).mul(utils.bigNumberify(gasPrice));
         const txFee = utils.formatEther(txFeeInWei.toString());
 
         const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
@@ -165,7 +209,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
               <Label>Est. Network Fee</Label>
               <Value>{txFee} ETH</Value>
             </LabeledRow>
-            {!isEthTransfer && (
+            {data.toLowerCase() !== '0x' && !contractAddress && (
               <LabeledRow>
                 <Label>Data</Label>
                 <Value>{data}</Value>

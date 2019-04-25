@@ -19,6 +19,7 @@
 */
 import WalletConnect from '@walletconnect/react-native';
 import { NavigationActions } from 'react-navigation';
+// import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import {
   WALLETCONNECT_SESSION_REQUEST,
   WALLETCONNECT_SESSION_APPROVED,
@@ -34,6 +35,7 @@ import {
   DISCONNECT_ERROR,
 } from 'constants/walletConnectConstants';
 import { WALLETCONNECT_SESSION_REQUEST_SCREEN, WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
+// import type { JsonRpcRequest } from 'models/JsonRpc';
 import { navigate } from 'services/navigation';
 // import { saveDbAction } from './dbActions';
 
@@ -325,6 +327,99 @@ export const onWalletConnectSessionRejection = (peerId: string) => {
         payload: {
           code: SESSION_REQUEST_ERROR,
           message: e.toString(),
+        },
+      });
+    }
+  };
+};
+
+export const onWalletConnectRejectCallRequest = (peerId: string, callId: string, error?: string) => {
+  return async (dispatch: Function, getState: () => Object) => {
+    const { connectors } = getState().walletConnect;
+
+    const matchingConnectors = connectors.filter(c => c.peerId === peerId);
+
+    if (matchingConnectors && matchingConnectors.length) {
+      const connector = matchingConnectors[0];
+
+      connector.rejectRequest({ id: callId, error: error || null });
+    } else {
+      dispatch({
+        type: WALLETCONNECT_ERROR,
+        payload: {
+          code: CALL_REQUEST_ERROR,
+          message: 'No Matching WalletConnect Connectors Found',
+        },
+      });
+    }
+  };
+};
+
+// export const onWalletConnectHandleTransactionRequest = (
+//   peerId: String,
+//   callId: string,
+//   wallet: Object,
+//   payload: JsonRpcRequest,
+// ) => {
+//   return async (dispatch: Function, getState: () => Object) => {
+//     let nonce;
+
+//     console.log('payload', payload)
+
+//     const { to, note } = transaction;
+
+//     const {
+//       txCount: {
+//         data: { lastNonce },
+//       },
+//     } = getState();
+
+//     wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+//     const transactionCount = await wallet.provider.getTransactionCount(wallet.address, 'pending');
+
+//     if (lastNonce === transactionCount && lastNonce > 0) {
+//       nonce = lastNonce + 1;
+//     }
+
+//     const {
+//       to, wallet, gasPrice, gasLimit, amount, nonce,
+//     } = options;
+//     const trx = {
+//       gasLimit,
+//       gasPrice: utils.bigNumberify(gasPrice),
+//       value: utils.parseEther(amount.toString()),
+//       to,
+//       nonce,
+//     };
+//     wallet.provider = providers.getDefaultProvider(PROVIDER);
+//     return wallet.sendTransaction(trx);
+
+//     const result = null;
+
+//     dispatch(onWalletConnectApproveCallRequest(peerId, callId, result));
+//   };
+// };
+
+export const onWalletConnectApproveCallRequest = (peerId: string, callId: string, result: any) => {
+  return async (dispatch: Function, getState: () => Object) => {
+    if (!result) {
+      dispatch(onWalletConnectRejectCallRequest(peerId, callId));
+    }
+
+    const { connectors } = getState().walletConnect;
+
+    const matchingConnectors = connectors.filter(c => c.peerId === peerId);
+
+    if (matchingConnectors && matchingConnectors.length) {
+      const connector = matchingConnectors[0];
+
+      connector.approveRequest({ id: callId, result });
+    } else {
+      dispatch({
+        type: WALLETCONNECT_ERROR,
+        payload: {
+          code: CALL_REQUEST_ERROR,
+          message: 'No Matching WalletConnect Connectors Found',
         },
       });
     }
