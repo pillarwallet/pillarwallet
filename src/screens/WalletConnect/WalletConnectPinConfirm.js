@@ -24,12 +24,15 @@ import { Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
 import type { TransactionPayload } from 'models/Transaction';
+import { onWalletConnectApproveCallRequest } from 'actions/walletConnectActions';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
+import { signMessage, signTransaction } from 'utils/wallet';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  approveCallRequest: (peerId: string, callId: string, result: any) => Function,
   sendAsset: (payload: TransactionPayload, wallet: Object, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
 };
@@ -56,26 +59,30 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   };
 
   handleCallRequest = (pin: string, wallet: Object) => {
-    const payload = this.props.navigation.getParam('payload', {});
+    const { approveCallRequest, navigation } = this.props;
+    const peerId = navigation.getParam('peerId', {});
+    const payload = navigation.getParam('payload', {});
 
-    let callback = () => {
-      // empty
-    };
+    let callback = () => {};
 
-    function fakeSign() {
-      // empty
-    }
     switch (payload.method) {
       case 'eth_sendTransaction':
-        callback = () => this.handleTransaction(pin, wallet);
+        callback = () => this.handleTransaction(wallet);
         break;
       case 'eth_signTransaction':
-        callback = () => fakeSign();
+        callback = async () => {
+          const trx = payload.params[0];
+          const result = await signTransaction(trx, wallet);
+          approveCallRequest(peerId, payload.id, result);
+        };
         break;
       case 'eth_sign':
       case 'personal_sign':
-        callback = () => fakeSign();
-
+        callback = async () => {
+          const message = payload.params[1];
+          const result = await signMessage(message, wallet);
+          approveCallRequest(peerId, payload.id, result);
+        };
         break;
       default:
         break;
@@ -89,17 +96,18 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     );
   };
 
-  handleTransaction = (pin: string, wallet: Object) => {
-    const { sendAsset } = this.props;
-    const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
+  handleTransaction = (wallet: Object) => {
+    const { sendAsset, approveCallRequest, navigation } = this.props;
+    const peerId = navigation.getParam('peerId', {});
+    const payload = navigation.getParam('payload', {});
+    const transactionPayload = navigation.getParam('transactionPayload', {});
     this.setState(
       {
         isChecking: true,
       },
       () =>
-        sendAsset(transactionPayload, wallet, () => {
-          // approve request through walletconnect
-          // then
+        sendAsset(transactionPayload, wallet, (txStatus: Object) => {
+          approveCallRequest(peerId, payload.id, txStatus.txHash);
           this.handleNavigationToTransactionState();
         }),
     );
@@ -129,6 +137,9 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 }
 
 const mapDispatchToProps = dispatch => ({
+  approveCallRequest: (peerId: string, callId: string, result: any) => {
+    dispatch(onWalletConnectApproveCallRequest(peerId, callId, result));
+  },
   sendAsset: (transaction: TransactionPayload, wallet: Object, navigate) => {
     dispatch(sendAssetAction(transaction, wallet, navigate));
   },

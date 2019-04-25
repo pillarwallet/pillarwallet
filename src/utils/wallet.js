@@ -18,8 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { getRandomInt } from 'utils/common';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import DeviceInfo from 'react-native-device-info';
-import ethers from 'ethers';
+import ethers, { providers } from 'ethers';
 
 export function generateMnemonicPhrase(mnemonicPhrase?: string) {
   return mnemonicPhrase || ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
@@ -36,8 +37,17 @@ export function generateWordsToValidate(numWordsToGenerate: number, maxWords: nu
   return chosenWords;
 }
 
-
 export function getSaltedPin(pin: string): string {
   const uniqueId = DeviceInfo.getUniqueID();
   return uniqueId + pin + uniqueId.slice(0, 5);
+}
+
+export function signTransaction(trx: Object, wallet: Object): string {
+  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  return wallet.sign(trx);
+}
+
+export function signMessage(message: string, wallet: Object): string {
+  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  return wallet.signMessage(message);
 }

@@ -116,6 +116,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     Keyboard.dismiss();
     const { navigation } = this.props;
     const payload = navigation.getParam('payload', {});
+    const peerId = navigation.getParam('peerId', {});
 
     switch (payload.method) {
       case 'eth_sendTransaction':
@@ -123,6 +124,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         const transactionPayload = this.getTokenTransactionPayload(payload);
 
         navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
+          peerId,
           payload,
           transactionPayload,
         });
@@ -131,7 +133,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       case 'eth_sign':
       case 'personal_sign':
         navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
+          peerId,
           payload,
+          transactionPayload: null,
         });
 
         break;
