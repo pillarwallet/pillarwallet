@@ -99,8 +99,7 @@ export const mapIdentityKeysAction = (connectionPreKeyCount: number, theWalletId
         } else {
           const { sourceIdentityKey, targetIdentityKey } = conn;
           const errorConnKey = currentConnectionKeyPairs.find((connKeyPair) => {
-            return connKeyPair.sourceIdentityKey === sourceIdentityKey &&
-              connKeyPair.targetIdentityKey === targetIdentityKey;
+            return connKeyPair.A === sourceIdentityKey && connKeyPair.Ad === targetIdentityKey;
           });
           errorConnectionKeyMaps.push(errorConnKey);
         }
@@ -251,6 +250,7 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
 
     if (oldConnectionsCount > 0) {
       await dispatch(fetchOldInviteNotificationsAction(walletId));
+      await dispatch(restoreAccessTokensAction(walletId));
       await dispatch(updateOldConnections(oldConnectionsCount, walletId));
     }
     if (lastConnectionKeyIndex === -1 && currentConnectionsCount > 0) {
