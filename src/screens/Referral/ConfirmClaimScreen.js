@@ -30,12 +30,8 @@ import AssetPattern from 'components/AssetPattern';
 import { baseColors, fontSizes } from 'utils/variables';
 import { claimTokensAction } from 'actions/referralsActions';
 import type { ClaimTokenAction } from 'actions/referralsActions';
-
-type Props = {
-  claimTokens: Function,
-  user: Object,
-  navigation: NavigationScreenProp<*>,
-}
+import ProcessingClaim from './ProcessingClaim';
+import ErrorClaim from './ErrorClaim';
 
 const Center = styled.View`
   alignItems: stretch;
@@ -67,35 +63,65 @@ const TextCode = styled(LightText)`
   margin-bottom: 30px
 `;
 
+type Props = {
+  claimTokens: Function,
+  user: Object,
+  navigation: NavigationScreenProp<*>,
+}
 
-class ConfirmClaimScreen extends React.Component<Props> {
+type State = {
+  isFetching: boolean,
+  isError: boolean,
+}
+
+
+class ConfirmClaimScreen extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isFetching: false,
+      isError: false,
+    };
+  }
+
   handleClaim = () => {
     const { navigation, claimTokens, user } = this.props;
     const code = navigation.getParam('code') ? navigation.getParam('code') : 'No code';
-    claimTokens({ walletId: user.walletId, code }, navigation.goBack);
+    this.setState({ isError: false, isFetching: true });
+    claimTokens({ walletId: user.walletId, code }, ({ error }) => {
+      if (error) {
+        this.setState({ isError: true, isFetching: false });
+      } else {
+        navigation.goBack();
+      }
+    });
   };
 
   render() {
     const { navigation } = this.props;
     const code = navigation.getParam('code') ? navigation.getParam('code') : 'No code';
+    const { isFetching, isError } = this.state;
     return (
       <Container>
         <Header gray title="claim tokens" onBack={() => navigation.goBack(null)} />
         <MainWrapper>
           <TextCode>From {code}</TextCode>
-          <View style={{ flex: 2 }}>
-            <AssetPattern
-              token={assetData.token}
-              icon={assetData.iconColor}
-              isListed
-            />
-            <TokenValue>
-              25 PLR
-            </TokenValue>
-          </View>
-
+          { isError ? <ErrorClaim /> : null }
+          { isFetching ? <ProcessingClaim /> : null }
+          { !(isError || isFetching) ?
+            <View style={{ flex: 2 }}>
+              <AssetPattern
+                token={assetData.token}
+                icon={assetData.iconColor}
+                isListed
+              />
+              <TokenValue>
+                25 PLR
+              </TokenValue>
+            </View> : null
+          }
           <Center>
-            <Button onPress={this.handleClaim} title="Claim" />
+            <Button disabled={isFetching || isError} onPress={this.handleClaim} title="Claim" />
           </Center>
         </MainWrapper>
       </Container>

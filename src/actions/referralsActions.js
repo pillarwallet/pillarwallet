@@ -30,8 +30,9 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
     const { responseStatus } = response;
 
     if (responseStatus === 200 && callback) {
-      callback();
+      callback({ error: false });
     } else {
+      if (callback) callback({ error: true });
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
