@@ -38,8 +38,9 @@ import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import configureStore from './src/configureStore';
+import TankPopup from './src/components/TankPopup';
 
-const store = configureStore();
+export const store = configureStore();
 
 type Props = {
   dispatch: Function,
@@ -154,7 +155,10 @@ const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App)
 const AppRoot = () => (
   <Root>
     <Provider store={store}>
-      <AppWithNavigationState />
+      <React.Fragment>
+        <TankPopup />
+        <AppWithNavigationState />
+      </React.Fragment>
     </Provider>
   </Root>
 );

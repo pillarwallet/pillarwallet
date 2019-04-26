@@ -25,6 +25,7 @@ import styled from 'styled-components/native';
 type Props = {
   value: number, // 0 - 100
   tiny?: boolean,
+  wrapperStyle?: Object,
 }
 type State = {
   tankValueAnimated: Animated.Value,
@@ -81,9 +82,9 @@ export default class Tank extends React.Component<Props, State> {
 
   render() {
     const { tankValueAnimated } = this.state;
-    const { tiny } = this.props;
+    const { tiny, wrapperStyle } = this.props;
     return (
-      <TankWrapper tiny={tiny}>
+      <TankWrapper tiny={tiny} style={wrapperStyle}>
         <TankLevelAnimated
           tiny={tiny}
           style={{

@@ -25,7 +25,9 @@ import Title from 'components/Title';
 import IconButton from 'components/IconButton';
 import Tank from 'components/Tank';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
+import { TOGGLE_TANK_MODAL } from 'constants/tankConstants';
 import { noop } from 'utils/common';
+import { store } from '../../../App';
 
 type Props = {
   onBack?: Function,
@@ -229,7 +231,7 @@ const Header = (props: Props) => {
             </IconWrapper>
           }
           {showChannelStatus &&
-            <TankButton>
+            <TankButton onPress={() => { store.dispatch({ type: TOGGLE_TANK_MODAL }); }}>
               <TankLabel>7.3K</TankLabel>
               <Tank value={80} tiny />
             </TankButton>

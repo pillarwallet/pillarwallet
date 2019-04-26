@@ -72,6 +72,10 @@ export const baseColors = {
   pattensBlue: '#F0F5FA',
   shark: '#292c33',
   caribbeanGreen: '#02cb72',
+  royalBlue: '#4588de',
+  blumine: '#275692',
+  emerald: '#3dd276',
+  greyser: '#d1d9e4',
 };
 
 export const brandColors = [
