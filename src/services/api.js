@@ -47,6 +47,7 @@ import { getLimitedData } from 'utils/opensea';
 
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
+import type { ClaimTokenAction } from 'actions/referralsActions';
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
 
@@ -205,6 +206,30 @@ SDKWrapper.prototype.verifyPhone = function (user: Object) {
         error: 'Can\'t verify code',
         walletId: user.walletId,
         user,
+        status,
+        message,
+      });
+      return { responseStatus: status, message };
+    });
+};
+
+SDKWrapper.prototype.claimTokens = function ({ walletId, code }: ClaimTokenAction) {
+  return Promise.resolve()
+    // TODO update pillarWalletSdk
+    // .then(() => this.pillarWalletSdk.referral.claimTokens({ walletId, code }))
+    // TODO return just 200
+    .then(() => ({ responseStatus: 200, walletId, code }))
+    .catch((error) => {
+      const {
+        response: {
+          status,
+          data: { message } = {},
+        },
+      } = error;
+      Sentry.captureException({
+        error: 'Can\'t claim referral code',
+        walletId,
+        code,
         status,
         message,
       });

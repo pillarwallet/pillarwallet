@@ -65,6 +65,7 @@ import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
+import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -133,6 +134,7 @@ import {
   SEND_COLLECTIBLE_CONFIRM,
   BADGE,
   OTP,
+  CONFIRM_CLAIM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -236,6 +238,7 @@ const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
+  [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [CONTACT]: ContactScreen,
   [CHAT]: ChatScreen,
   [COLLECTIBLE]: CollectibleScreen,
