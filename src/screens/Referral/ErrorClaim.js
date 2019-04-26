@@ -10,15 +10,14 @@ const animationFailure = require('assets/animations/transactionFailureAnimation.
 const Status = styled(BoldText)`
   font-size: ${fontSizes.giant}px;
   text-align: center;
-  margin-top: 35px
-  margin-bottom: 25px
+  margin-top: 35px;
+  margin-bottom: 25px;
 `;
 
 const Text = styled(LightText)`
   font-size: ${fontSizes.small}px;
   color: ${baseColors.coolGrey};
   text-align: center;
-  
 `;
 
 const Center = styled.View`

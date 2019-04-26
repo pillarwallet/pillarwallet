@@ -29,8 +29,8 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
     const response = await api.claimTokens(props);
     const { responseStatus } = response;
 
-    if (responseStatus === 200 && callback) {
-      callback({ error: false });
+    if (responseStatus === 200) {
+      if (callback) callback({ error: false });
     } else {
       if (callback) callback({ error: true });
       dispatch({

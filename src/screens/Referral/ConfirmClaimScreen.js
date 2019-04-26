@@ -35,8 +35,8 @@ import ErrorClaim from './ErrorClaim';
 
 const Center = styled.View`
   alignItems: stretch;
-  margin-top: 30px
-  margin-bottom: 50px
+  margin-top: 30px;
+  margin-bottom: 50px;
   margin-horizontal: 20px;
 `;
 
@@ -60,7 +60,7 @@ const TextCode = styled(LightText)`
   font-size: ${fontSizes.medium}px;
   color: ${baseColors.coolGrey};
   text-align: center;
-  margin-bottom: 30px
+  margin-bottom: 30px;
 `;
 
 type Props = {
@@ -86,7 +86,7 @@ class ConfirmClaimScreen extends React.Component<Props, State> {
 
   handleClaim = () => {
     const { navigation, claimTokens, user } = this.props;
-    const code = navigation.getParam('code') ? navigation.getParam('code') : 'No code';
+    const code = navigation.getParam('code', 'No code');
     this.setState({ isError: false, isFetching: true });
     claimTokens({ walletId: user.walletId, code }, ({ error }) => {
       if (error) {
@@ -99,16 +99,16 @@ class ConfirmClaimScreen extends React.Component<Props, State> {
 
   render() {
     const { navigation } = this.props;
-    const code = navigation.getParam('code') ? navigation.getParam('code') : 'No code';
+    const code = navigation.getParam('code', 'No code');
     const { isFetching, isError } = this.state;
     return (
       <Container>
         <Header gray title="claim tokens" onBack={() => navigation.goBack(null)} />
         <MainWrapper>
           <TextCode>From {code}</TextCode>
-          { isError ? <ErrorClaim /> : null }
-          { isFetching ? <ProcessingClaim /> : null }
-          { !(isError || isFetching) ?
+          { isError && <ErrorClaim /> }
+          { isFetching && <ProcessingClaim /> }
+          { !(isError || isFetching) &&
             <View style={{ flex: 2 }}>
               <AssetPattern
                 token={assetData.token}
@@ -118,7 +118,7 @@ class ConfirmClaimScreen extends React.Component<Props, State> {
               <TokenValue>
                 25 PLR
               </TokenValue>
-            </View> : null
+            </View>
           }
           <Center>
             <Button disabled={isFetching || isError} onPress={this.handleClaim} title="Claim" />

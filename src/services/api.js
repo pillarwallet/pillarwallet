@@ -227,7 +227,7 @@ SDKWrapper.prototype.claimTokens = function ({ walletId, code }: ClaimTokenActio
         },
       } = error;
       Sentry.captureException({
-        error: 'Can\'t claim code',
+        error: 'Can\'t claim referral code',
         walletId,
         code,
         status,
