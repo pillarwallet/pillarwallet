@@ -40,7 +40,7 @@ aliases:
   - &install_pods
     run:
       name: Install CocoaPods
-      command: cd ios && bundle exec pod check || ((curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf) && bundle exec pod install)
+      command: cd ios && bundle exec pod check || ((curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf) && bundle exec pod repo update && bundle exec pod install)
   - &save_pod_cache
     save_cache:
       key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
@@ -348,7 +348,10 @@ jobs:
             pod --version
       - run:
           name: Install CocoaPods
-          command: cd ios && pod install --verbose
+          command: |
+            cd ios
+            pod repo update
+            pod install --verbose
       - save_cache:
           key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
           paths:
@@ -595,7 +598,10 @@ jobs:
             pod --version
       - run:
           name: Install CocoaPods
-          command: cd ios && pod install --verbose
+          command: |
+            cd ios
+            pod repo update
+            pod install --verbose
       - save_cache:
           key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
           paths:
@@ -812,14 +818,14 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
+                  - fix/165454813_updateRNLibsDependencies
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - develop
+                  - fix/165454813_updateRNLibsDependencies
       - stage_ios:
           requires:
             - build-and-test
