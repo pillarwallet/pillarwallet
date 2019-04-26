@@ -11762,6 +11762,11 @@ react-native-extra-dimensions-android@^1.2.5:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-1.2.5.tgz#8ade91029aaac7519bf305116d39019e618a60f0"
   integrity sha1-it6RApqqx1Gb8wURbTkBnmGKYPA=
 
+react-native-fabric@0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/react-native-fabric/-/react-native-fabric-0.5.2.tgz#6eb728cb4f55652c60eab4fbfe1ab6bc3841805f"
+  integrity sha512-uarBq3XtADCJIGwzeHMzG7LCTfElGuqUj4UqMxsWbPsXaYForfNw+EMkEQ+6eBq/a2k4PKfuVQXQAC7rfgo/Vg==
+
 react-native-fetch-blob@0.10.8:
   version "0.10.8"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-fetch-blob/-/react-native-fetch-blob-0.10.8.tgz#4fc256abae0cb5f10e7c41f28c11b3ff330d72a9"
