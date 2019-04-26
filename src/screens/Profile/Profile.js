@@ -29,6 +29,7 @@ import {
   REVEAL_BACKUP_PHRASE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   OTP,
+  CONFIRM_CLAIM,
 } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
@@ -245,9 +246,11 @@ class Profile extends React.Component<Props, State> {
     updateUser(user.walletId, field, createOTP);
   };
 
-  handleCodeClaim = () => {
+  handleCodeClaim = (field: Object) => {
+    const { navigation } = this.props;
     Keyboard.dismiss();
     this.toggleSlideModalOpen(null);
+    navigation.navigate(CONFIRM_CLAIM, { code: field.code });
   };
 
   handleCurrencyUpdate = ({ currency }: Object) => {
@@ -568,12 +571,12 @@ class Profile extends React.Component<Props, State> {
                 </ListSeparator>
                 <ProfileSettingsItem
                   key="referralCode"
-                  label="Referral code"
+                  label="Invite friends"
                   onPress={() => this.toggleSlideModalOpen('referralCode')}
                 />
                 <ProfileSettingsItem
                   key="claimTokens"
-                  label="Claim tokens"
+                  label="Get PLR's tokens"
                   onPress={() => this.toggleSlideModalOpen('claimTokens')}
                 />
               </View>
