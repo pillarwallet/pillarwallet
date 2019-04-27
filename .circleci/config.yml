@@ -818,14 +818,14 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/165454813_updateRNLibsDependencies
+                  - develop
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - fix/165454813_updateRNLibsDependencies
+                  - develop
       - stage_ios:
           requires:
             - build-and-test
