@@ -51,7 +51,7 @@ export default function configureStore(initialState: ?Object): Object {
     createStore(
       rootReducer,
       initialState,
-      compose(enhancer, Reactotron.createEnhancer())
+      compose(enhancer, Reactotron.createEnhancer()), // eslint-disable-line no-undef
     ) :
     createStore(
       rootReducer,
