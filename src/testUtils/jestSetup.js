@@ -25,7 +25,7 @@ import { utils, HDNode } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 
-process.env['IS_TEST'] = 'TEST'; // eslint-disable-line dot-notation
+process.env.IS_TEST = 'TEST';
 
 jest.mock('NativeAnimatedHelper');
 

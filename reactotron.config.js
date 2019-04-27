@@ -1,10 +1,10 @@
 // @flow
-//
+import { isTest } from './src/utils/environment';
+
 global.Reactotron = null;
 
 /* eslint no-undef: 0, global-require: 0 */
 export const ReactotronConfig = function ReactotronConfig() {
-  const isTest = !!process.env['IS_TEST']; // eslint-disable-line dot-notation
   if (__DEV__ && !isTest) {
     const Reactotron = require('reactotron-react-native').default;
 

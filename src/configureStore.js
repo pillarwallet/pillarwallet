@@ -20,13 +20,14 @@
 /**
  * Create the Redux store
  */
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers';
 import ReduxAsyncQueue from 'redux-async-queue';
 import offlineMiddleware from 'utils/offlineMiddleware';
 import PillarSdk from 'services/api';
+import { isTest } from 'utils/environment';
 import rootReducer from './reducers/rootReducer';
 import { ReactotronConfig } from '../reactotron.config';
 
@@ -44,15 +45,13 @@ const enhancer = composeWithDevTools({
 })(applyMiddleware(...middlewares));
 
 export default function configureStore(initialState: ?Object): Object {
-  const isTest = !!process.env['IS_TEST']; // eslint-disable-line dot-notation
   const useReactotron = __DEV__ && !isTest;
 
   const store = useReactotron ?
     createStore(
       rootReducer,
       initialState,
-      enhancer,
-      Reactotron.createEnhancer(), // eslint-disable-line no-undef
+      compose(enhancer, Reactotron.createEnhancer())
     ) :
     createStore(
       rootReducer,

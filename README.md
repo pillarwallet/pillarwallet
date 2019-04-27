@@ -65,6 +65,9 @@ There's one change, instead of adding `console.log('something to log')` you shou
 #### Android
 For android you'd probably need to execute following command `adb reverse tcp:9090 tcp:9090`
 
+#### Redux State
+If you open the `state` window, in order to add the view of any `states` just type `cmd+n` and don't include any specific, just hit `enter`.
+
 **Network Requests**
 
 If you head to the `Network` and find your XHR requests are not being logged, you will notice that you are unable to see any.
