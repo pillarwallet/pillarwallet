@@ -42,12 +42,12 @@ import { updateConnectionsAction } from 'actions/connectionsActions';
 import { mapIdentityKeysAction } from 'actions/connectionKeyPairActions';
 import { saveDbAction } from './dbActions';
 
-export const fetchOldInviteNotificationsAction = () => {
+export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       invitations: { data: invitations },
       contacts: { data: contacts },
-      user: { data: user },
+      user: { data: { walletId = theWalletId } },
     } = getState();
 
     let {
@@ -56,7 +56,7 @@ export const fetchOldInviteNotificationsAction = () => {
 
     if (accessTokens === undefined || !accessTokens.length) {
       Sentry.captureMessage('Empty connection access tokens, dispatching restoreAccessTokensAction', { level: 'info' });
-      await dispatch(restoreAccessTokensAction(user.walletId));
+      await dispatch(restoreAccessTokensAction(walletId));
       const {
         accessTokens: { data: updatedAccessTokens },
       } = getState();
@@ -71,7 +71,7 @@ export const fetchOldInviteNotificationsAction = () => {
       TYPE_REJECTED,
       TYPE_DISCONNECTED,
     ];
-    const inviteNotifications = await api.fetchNotifications(user.walletId, types.join(' '));
+    const inviteNotifications = await api.fetchNotifications(walletId, types.join(' '));
     const mappedInviteNotifications = inviteNotifications
       .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
       .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
@@ -124,9 +124,9 @@ export const fetchOldInviteNotificationsAction = () => {
       });
     });
 
-    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
-    dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
-    dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
+    await dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
+    await dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
+    await dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
 
     await dispatch({
       type: UPDATE_INVITATIONS,
@@ -142,7 +142,8 @@ export const fetchOldInviteNotificationsAction = () => {
     });
 
     await dispatch(updateConnectionsAction());
-    dispatch(getExistingChatsAction());
+
+    return dispatch(getExistingChatsAction());
   };
 };
 

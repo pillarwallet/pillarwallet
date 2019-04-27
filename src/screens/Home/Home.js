@@ -60,6 +60,7 @@ import {
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import type { Badges } from 'models/Badge';
+import { Answers } from 'react-native-fabric';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -309,6 +310,8 @@ class HomeScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const { fetchTransactionsHistory, wallet } = this.props;
+
+    Answers.logContentView('Home screen');
 
     if (Platform.OS === 'ios') {
       firebase.notifications().setBadge(0);

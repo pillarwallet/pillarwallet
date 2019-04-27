@@ -55,6 +55,10 @@ const PhoneStructDef = t.refinement(t.String, (phone: string = ''): boolean => {
   return !!phone && !!phone.length && isValidUKPhone(phone);
 });
 
+const CodeStructDef = t.refinement(t.String, (code: string = ''): boolean => {
+  return !!code && !!code.length && isValidName(code);
+});
+
 FirstNameStructDef.getValidationErrorMessage = (firstName): string => {
   if (firstName) {
     if (!isValidName(firstName)) {
@@ -108,9 +112,19 @@ PhoneStructDef.getValidationErrorMessage = (phone): string => {
   return 'Please enter your phone number';
 };
 
+CodeStructDef.getValidationErrorMessage = (code): string => {
+  if (code) {
+    if (!isValidName(code)) {
+      return 'Please enter a valid code';
+    }
+  }
+  return 'Please enter your code';
+};
+
 export const Username = UsernameDef;
 export const FirstNameStruct = FirstNameStructDef;
 export const LastNameStruct = LastNameStructDef;
 export const EmailStruct = EmailStructDef;
 export const CityStruct = CityStructDef;
 export const PhoneStruct = PhoneStructDef;
+export const CodeStruct = CodeStructDef;

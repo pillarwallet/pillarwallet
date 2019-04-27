@@ -171,3 +171,15 @@ jest.setMock('react-native-threads', {
     postMessage: () => Promise.resolve(),
   }),
 });
+
+jest.mock('react-native-fabric', () => {
+  return {
+    Crashlytics: {
+      crash: () => {},
+    },
+    Answers: {
+      logCustom: () => {},
+      logContentView: () => {},
+    },
+  };
+});

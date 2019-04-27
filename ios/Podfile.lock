@@ -213,6 +213,10 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - ReactNativeFabric (0.5.2):
+    - Crashlytics
+    - Fabric
+    - React
   - ReactNativePermissions (1.1.1):
     - React
   - RNColorMatrixImageFilters (4.0.0):
@@ -268,6 +272,7 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - ReactNativeFabric (from `../node_modules/react-native-fabric`)
   - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - RNColorMatrixImageFilters (from `../node_modules/react-native-color-matrix-image-filters`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
@@ -329,6 +334,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fetch-blob"
   react-native-intercom:
     :path: "../node_modules/react-native-intercom"
+  ReactNativeFabric:
+    :path: "../node_modules/react-native-fabric"
   ReactNativePermissions:
     :path: "../node_modules/react-native-permissions"
   RNColorMatrixImageFilters:
@@ -383,6 +390,7 @@ SPEC CHECKSUMS:
   react-native-camera: a8d04ef12749def72cae86b0b8d28c2de891a392
   react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
   react-native-intercom: a8a5902058c14d7359bd1044d57fe409b0ed0df7
+  ReactNativeFabric: 01c1333f76fd4708a5833d71f0a4832a9266bf0f
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   RNColorMatrixImageFilters: cf425050c778106f5f9844b69fc169758212b74d
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
@@ -393,6 +401,6 @@ SPEC CHECKSUMS:
   TouchID: b0640fedb86fa2db2fe1df15b61594ad49e76288
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: 48b27f0ad4524eb371f3e14574bc4e1af525aa4c
+PODFILE CHECKSUM: 2f11b4192373c8a7eea32f5d236c5d7c6b665612
 
 COCOAPODS: 1.5.3

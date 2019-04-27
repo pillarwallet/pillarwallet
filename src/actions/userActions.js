@@ -48,8 +48,8 @@ export const createOneTimePasswordAction = (walletId: string, field: Object, cal
     const response = await api.createOneTimePassword({ walletId, ...field });
     const { responseStatus } = response;
 
-    if (responseStatus === 200 && callback) {
-      callback();
+    if (responseStatus === 200) {
+      if (callback) callback();
     } else {
       dispatch({
         type: ADD_NOTIFICATION,
