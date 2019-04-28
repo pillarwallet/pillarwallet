@@ -2,18 +2,24 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
+import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
 import { baseColors, fontSizes } from 'utils/variables';
-import SmartWalletService from 'services/smartWallet';
 import InMemoryStorage from 'services/inMemoryStorage';
-
+import { getSmartWalletAccountsAction } from 'actions/walletActions';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import { BaseText, BoldText } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
+import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  sdkInitialized: boolean,
+  getSmartWalletAccounts: Function,
+  sdkInitialized: boolean,
+  smartWalletAccounts: SmartWalletAccount[],
 };
 
 const Wrapper = styled.View`
@@ -31,44 +37,33 @@ const TextRow = styled(BaseText)`
   color: ${baseColors.darkGray};
 `;
 
-type SmartAccount = {
-  address: string,
-  deployMode: string,
-  id: number,
-  state: string,
-  updatedAt: string,
-};
-
-export default class SmartWallet extends React.Component<Props, *> {
+class SmartWallet extends React.Component<Props, *> {
   sdk: Object;
   storage: Object;
-  account: SmartAccount;
-
-  state = {
-    sdkInitialized: false,
-    accountCreated: false,
-  };
 
   componentDidMount() {
     this.storage = new InMemoryStorage({}, true);
-    this.sdk = new SmartWalletService(this.storage);
-    this.sdk.init()
-      .then(() => this.setState({ sdkInitialized: true }))
-      .catch(console.log);
   }
 
-  createAccount = () => {
-    this.sdk.createAccount()
-      .then((account) => {
-        this.account = account;
-        this.setState({ accountCreated: true });
-      })
-      .catch(console.log);
+  onInitSdk = () => {
+    const { navigation } = this.props;
+    navigation.navigate(SMART_WALLET_UNLOCK);
+  };
+
+  onGetAccounts = async () => {
+    const { getSmartWalletAccounts } = this.props;
+    await getSmartWalletAccounts();
+  };
+
+  onDeploy = () => {
   };
 
   render() {
-    const { navigation } = this.props;
-    const { sdkInitialized, accountCreated } = this.state;
+    const {
+      navigation,
+      sdkInitialized,
+      smartWalletAccounts,
+    } = this.props;
     return (
       <Container inset={{ bottom: 0 }}>
         <Header
@@ -77,20 +72,23 @@ export default class SmartWallet extends React.Component<Props, *> {
         />
         <ScrollWrapper>
           <Wrapper>
-            <TextRow>
-              SDK Initialized: <BoldText>{sdkInitialized.toString()}</BoldText>
-            </TextRow>
-            <TextRow>
-              Account created: <BoldText>{accountCreated.toString()}</BoldText>
-            </TextRow>
-            {sdkInitialized && !accountCreated && <ButtonMini title="Create" onPress={this.createAccount} />}
-            {accountCreated && (
+            {!sdkInitialized && <ButtonMini title="Init SDK" onPress={this.onInitSdk} />}
+            {sdkInitialized && (
+              <TextRow>
+                SDK Initialized: <BoldText>{sdkInitialized.toString()}</BoldText>
+              </TextRow>
+            )}
+            {sdkInitialized && !smartWalletAccounts.length && (
+              <ButtonMini title="Get Accounts" onPress={this.onGetAccounts} />
+            )}
+            {!!smartWalletAccounts.length && (
               <React.Fragment>
-                <TextRow>Account address: {this.account.address}</TextRow>
-                <TextRow>Account id: {this.account.id}</TextRow>
-                <TextRow>Account state: {this.account.state}</TextRow>
-                <TextRow>Account deploy mode: {this.account.deployMode}</TextRow>
+                <TextRow>Smart Wallet accounts:</TextRow>
+                <TextRow><BoldText>{JSON.stringify(smartWalletAccounts)}</BoldText></TextRow>
               </React.Fragment>
+            )}
+            {sdkInitialized && !!smartWalletAccounts.length && (
+              <ButtonMini title="Deploy" onPress={this.onDeploy} />
             )}
           </Wrapper>
         </ScrollWrapper>
@@ -98,3 +96,16 @@ export default class SmartWallet extends React.Component<Props, *> {
     );
   }
 }
+
+const mapStateToProps = ({
+  wallet: { smartWallet: { sdkInitialized, accounts: smartWalletAccounts } },
+}) => ({
+  sdkInitialized,
+  smartWalletAccounts,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  getSmartWalletAccounts: () => dispatch(getSmartWalletAccountsAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SmartWallet);

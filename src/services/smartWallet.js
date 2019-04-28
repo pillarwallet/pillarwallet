@@ -21,19 +21,24 @@ import {
   availableEnvironments,
   IEnvironment,
   ISdk,
+  DeviceService,
   createSdk,
 } from '@archanova/wallet-sdk';
+import InMemoryStorage from 'services/inMemoryStorage';
 
+const storageNamespace = '@smartwallet';
 
 export default class SmartWallet {
   sdk: ISdk;
+  sdkStorage: Object;
 
-  constructor(storage: Object) {
+  constructor() {
+    this.sdkStorage = new InMemoryStorage({}, true);
     const config: IEnvironment = availableEnvironments
       .staging
       .extendOptions('storage', {
-        namespace: '@smartwallet',
-        adapter: storage,
+        namespace: storageNamespace,
+        adapter: this.sdkStorage,
       });
 
     try {
@@ -43,20 +48,29 @@ export default class SmartWallet {
     }
   }
 
-  init() {
-    return this.sdk
+  async init(privateKey: string) {
+    const privateKeyStoragePath = `${storageNamespace}/${DeviceService.STORAGE_KEYS.privateKey}`;
+    this.sdkStorage.setItem(privateKeyStoragePath, JSON.stringify({
+      type: 'Buffer',
+      data: privateKey.slice(2),
+    }));
+    await this.sdk
       .initialize()
       .catch(this.handleError);
+    this.sdkStorage.removeItem(privateKeyStoragePath);
+    // TODO: remove private from smart wallet sdk
   }
 
-  createAccount() {
-    return this.sdk
-      .createAccount(null)
-      .then(account => {
-        console.log('SmartWallet account: ', account);
-        return account;
-      })
+  async getAccounts() {
+    let accounts = await this.sdk
+      .getAccounts()
       .catch(this.handleError);
+    if (!accounts || accounts.length === 0) {
+      accounts = await this.sdk
+        .createAccount()
+        .catch(this.handleError);
+    }
+    return accounts;
   }
 
   handleError(error: any) {

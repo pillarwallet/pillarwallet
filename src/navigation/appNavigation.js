@@ -65,6 +65,7 @@ import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import BadgeScreen from 'screens/Badge';
 import SmartWalletScreen from 'screens/SmartWallet';
+import SmartWalletUnlockScreen from 'screens/SmartWallet/SmartWalletUnlock';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -132,8 +133,9 @@ import {
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
   BADGE,
-  SMART_WALLET,
   SMART_WALLET_TAB,
+  SMART_WALLET,
+  SMART_WALLET_UNLOCK,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -247,6 +249,7 @@ homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 // SMART_WALLET FLOW
 const smartWalletFlow = createStackNavigator({
   [SMART_WALLET]: SmartWalletScreen,
+  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
 smartWalletFlow.navigationOptions = hideTabNavigatorOnChildView;

@@ -38,7 +38,10 @@ import {
   UPDATE_WALLET_IMPORT_STATE,
   BACKUP_WALLET,
   REMOVE_PRIVATE_KEY,
+  SET_SMART_WALLET_SDK_INIT,
+  SET_SMART_WALLET_ACCOUNTS,
 } from 'constants/walletConstants';
+import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 
 export type Wallet = {
   address: string,
@@ -54,6 +57,10 @@ export type WalletReducerState = {
     message: string,
   },
   backupStatus: Object,
+  smartWallet: {
+    sdkInitialized: boolean,
+    accounts: SmartWalletAccount[],
+  },
 }
 
 export type WalletReducerAction = {
@@ -83,6 +90,10 @@ const initialState = {
     isBackedUp: false,
   },
   error: null,
+  smartWallet: {
+    sdkInitialized: false,
+    accounts: [],
+  },
 };
 
 export default function newWalletReducer(
@@ -145,6 +156,16 @@ export default function newWalletReducer(
       return {
         ...state,
         data: { ...state.data, privateKey: '' },
+      };
+    case SET_SMART_WALLET_SDK_INIT:
+      return {
+        ...state,
+        smartWallet: { ...state.smartWallet, sdkInitialized: action.payload },
+      };
+    case SET_SMART_WALLET_ACCOUNTS:
+      return {
+        ...state,
+        smartWallet: { ...state.smartWallet, accounts: action.payload },
       };
     default:
       return state;
