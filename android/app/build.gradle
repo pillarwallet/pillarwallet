@@ -74,6 +74,7 @@ android {
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     // Deprecated. Used by net.openid:appauth
     vectorDrawables.useSupportLibrary = true
+    missingDimensionStrategy 'react-native-camera', 'general'
   }
   dexOptions {
     javaMaxHeapSize "1G"

@@ -8,9 +8,9 @@
 #import "Crashlytics/Answers.h"
 #import "Crashlytics/Crashlytics.h"
 #import "RNSplashScreen.h"
-#import "RNSentry.h"
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
+#import "RNSentry.h"
 
 @implementation AppDelegate
 
