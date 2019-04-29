@@ -8792,6 +8792,11 @@ lodash.throttle@^4.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
   integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
+lodash.toarray@^4.4.0:
+  version "4.4.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.toarray/-/lodash.toarray-4.4.0.tgz#24c4bfcd6b2fba38bfd0594db1179d8e9b656561"
+  integrity sha1-JMS/zWsvuji/0FlNsRedjptlZWE=
+
 lodash.unionby@^4.8.0:
   version "4.8.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.unionby/-/lodash.unionby-4.8.0.tgz#883f098ff78f564a727b7508e09cdd539734bb83"
@@ -9771,6 +9776,13 @@ nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha1-ozeKdpbOfSI+iPybdkvX7xCJ42Y=
+
+node-emoji@1.10.0:
+  version "1.10.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/node-emoji/-/node-emoji-1.10.0.tgz#8886abd25d9c7bb61802a658523d1f8d2a89b2da"
+  integrity sha1-iIar0l2ce7YYAqZYUj0fjSqJsto=
+  dependencies:
+    lodash.toarray "^4.4.0"
 
 node-fetch@1.6.3:
   version "1.6.3"
@@ -11756,6 +11768,13 @@ react-native-easy-grid@0.2.0:
   integrity sha1-RxgDGqG6qiYTuCn8gH2iiOsNJ5c=
   dependencies:
     lodash "^4.11.1"
+
+react-native-emoji@^1.6.0:
+  version "1.6.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-emoji/-/react-native-emoji-1.6.0.tgz#edbee35a51a1506182876adf62fd71ce18913d39"
+  integrity sha1-7b7jWlGhUGGCh2rfYv1xzhiRPTk=
+  dependencies:
+    node-emoji "1.10.0"
 
 react-native-extra-dimensions-android@^1.2.5:
   version "1.2.5"

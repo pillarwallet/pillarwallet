@@ -25,9 +25,7 @@ import Title from 'components/Title';
 import IconButton from 'components/IconButton';
 import Tank from 'components/Tank';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
-import { TOGGLE_TANK_MODAL } from 'constants/tankConstants';
 import { noop } from 'utils/common';
-import { store } from '../../../App';
 
 type Props = {
   onBack?: Function,
@@ -55,6 +53,9 @@ type Props = {
   nextIconSize?: number,
   titleStyles?: ?Object,
   showChannelStatus?: boolean,
+  handleTankButtonTouch?: Function,
+  isSmartWallet?: boolean,
+  tankValue?: number,
 }
 
 const Wrapper = styled.View`
@@ -154,12 +155,16 @@ const Header = (props: Props) => {
     backIcon,
     titleStyles,
     showChannelStatus,
+    handleTankButtonTouch = noop,
+    isSmartWallet,
+    tankValue = 0,
   } = props;
   const showRight = nextText || nextIcon || onBack || onClose || centerTitle || showChannelStatus;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
   const onlyCloseIcon = onClose && !nextText && !onCloseText;
+  const tankButtonLabel = isSmartWallet ? tankValue : 'Upgrade';
 
   const getHeaderRightFlex = () => {
     if (headerRightFlex) {
@@ -231,9 +236,9 @@ const Header = (props: Props) => {
             </IconWrapper>
           }
           {showChannelStatus &&
-            <TankButton onPress={() => { store.dispatch({ type: TOGGLE_TANK_MODAL }); }}>
-              <TankLabel>7.3K</TankLabel>
-              <Tank value={80} tiny />
+            <TankButton onPress={handleTankButtonTouch}>
+              <TankLabel>{tankButtonLabel}</TankLabel>
+              {!!isSmartWallet && <Tank value={80} tiny />}
             </TankButton>
           }
           {onClose &&

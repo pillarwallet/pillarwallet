@@ -54,6 +54,7 @@ export type WalletReducerState = {
     message: string,
   },
   backupStatus: Object,
+  isSmartWallet: boolean,
 }
 
 export type WalletReducerAction = {
@@ -83,6 +84,7 @@ const initialState = {
     isBackedUp: false,
   },
   error: null,
+  isSmartWallet: false,
 };
 
 export default function newWalletReducer(

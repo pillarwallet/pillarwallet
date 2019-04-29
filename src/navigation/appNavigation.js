@@ -64,6 +64,8 @@ import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import BadgeScreen from 'screens/Badge';
+import UpgradeIntroScreen from 'screens/UpgradeToSmartWallet/UpgradeIntroScreen';
+import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -131,6 +133,9 @@ import {
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
   BADGE,
+  UPGRADE_TO_SMART_WALLET_FLOW,
+  UPGRADE_INTRO,
+  UPGRADE_INFO,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -429,6 +434,14 @@ const backupWalletFlow = createStackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
 }, StackNavigatorModalConfig);
 
+// UPGRADE TO SMART WALLET FLOW
+const smartWalletFlow = createStackNavigator({
+  [UPGRADE_INTRO]: UpgradeIntroScreen,
+  [UPGRADE_INFO]: UpgradeInfoScreen,
+}, StackNavigatorConfig);
+
+smartWalletFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -442,6 +455,7 @@ const AppFlowNavigation = createStackNavigator(
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
+    [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletFlow,
   }, modalTransition,
 );
 

@@ -40,7 +40,7 @@ import Toast from 'components/Toast';
 import configureStore from './src/configureStore';
 import TankPopup from './src/components/TankPopup';
 
-export const store = configureStore();
+const store = configureStore();
 
 type Props = {
   dispatch: Function,

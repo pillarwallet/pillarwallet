@@ -76,6 +76,7 @@ export const baseColors = {
   blumine: '#275692',
   emerald: '#3dd276',
   greyser: '#d1d9e4',
+  midnight: '#222e44',
 };
 
 export const brandColors = [
