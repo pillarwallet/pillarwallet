@@ -39,16 +39,13 @@ type Props = {
 };
 
 type State = {
-  payload: TransactionPayload,
   isChecking: boolean,
 };
 
 class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const payload = this.props.navigation.getParam('payload', {});
     this.state = {
-      payload,
       isChecking: false,
     };
   }
@@ -133,8 +130,17 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 
   handleNavigationToTransactionState = (params: ?Object) => {
     const { navigation } = this.props;
-    const { payload } = this.state;
-    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, payload });
+    const payload = navigation.getParam('payload', {});
+    const transactionPayload = navigation.getParam('transactionPayload', {});
+
+    switch (payload.method) {
+      case 'eth_sendTransaction':
+        navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, payload: transactionPayload });
+        break;
+      default:
+        navigation.goBack(null);
+        break;
+    }
   };
 
   handleBack = () => {
