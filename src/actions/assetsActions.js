@@ -265,14 +265,18 @@ export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = 
   };
 };
 
-export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string) => {
+export const fetchAssetsBalancesAction = (assets: Assets) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      wallet: { data: wallet },
+    } = getState();
+
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
     });
 
-    const balances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
+    const balances = await api.fetchBalances({ address: wallet.address, assets: Object.values(assets) });
     if (balances && balances.length) {
       const transformedBalances = transformAssetsToObject(balances);
       dispatch(saveDbAction('balances', { balances: transformedBalances }, true));
@@ -288,7 +292,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
   };
 };
 
-export const fetchInitialAssetsAction = (walletAddress: string) => {
+export const fetchInitialAssetsAction = () => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const { user: { data: { walletId } } } = getState();
     dispatch({
@@ -311,7 +315,7 @@ export const fetchInitialAssetsAction = (walletAddress: string) => {
       payload: initialAssets,
     });
 
-    dispatch(fetchAssetsBalancesAction(initialAssets, walletAddress));
+    dispatch(fetchAssetsBalancesAction(initialAssets));
   };
 };
 
@@ -319,7 +323,6 @@ export const addAssetAction = (asset: Asset) => {
   return async (dispatch: Function, getState: () => Object) => {
     const {
       assets: { data: assets },
-      wallet: { data: wallet },
     } = getState();
     const updatedAssets = { ...assets, [asset.symbol]: { ...asset } };
     dispatch(saveDbAction('assets', { assets: updatedAssets }));
@@ -327,7 +330,7 @@ export const addAssetAction = (asset: Asset) => {
       type: UPDATE_ASSETS,
       payload: updatedAssets,
     });
-    dispatch(fetchAssetsBalancesAction(assets, wallet.address));
+    dispatch(fetchAssetsBalancesAction(assets));
   };
 };
 
@@ -408,7 +411,7 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     if (Object.keys(missedAssets).length) {
       const newAssets = { ...currentAssets, ...missedAssets };
       dispatch(updateAssetsAction(newAssets));
-      dispatch(fetchAssetsBalancesAction(newAssets, wallet.address));
+      dispatch(fetchAssetsBalancesAction(newAssets));
     }
   };
 };
