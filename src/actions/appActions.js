@@ -19,8 +19,12 @@
 */
 import { NavigationActions } from 'react-navigation';
 import { Sentry } from 'react-native-sentry';
+
+// services
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
+
+// constants
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -38,7 +42,11 @@ import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKey
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
+import { UPDATE_ACCOUNTS } from 'constants/accountConstants';
+
+// actions
 import { saveDbAction } from './dbActions';
+import { initDefaultAccount } from './accountsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -103,9 +111,17 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       }
       dispatch({ type: SET_HISTORY, payload: filteredHistory });
 
+      const { accounts = [] } = await storage.get('accounts');
+      dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
+
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
+
+      // TODO: if no accounts found - send user to account migration page
+      if (!accounts.length) {
+        dispatch(initDefaultAccount(wallet.address));
+      }
 
       navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       return;
