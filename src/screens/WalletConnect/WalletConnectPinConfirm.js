@@ -100,7 +100,12 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
       } else {
         await rejectCallRequest(peerId, payload.id);
       }
-      this.handleNavigationToTransactionState();
+      this.setState(
+        {
+          isChecking: false,
+        },
+        () => this.handleNavigationToTransactionState(txStatus),
+      );
     });
   };
 
@@ -113,7 +118,12 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     } catch (error) {
       await rejectCallRequest(peerId, payload.id);
     }
-    this.handleNavigationToTransactionState();
+    this.setState(
+      {
+        isChecking: false,
+      },
+      () => this.handleBack(),
+    );
   };
 
   handleSignMessage = async (peerId: string, payload: Object, wallet: Object) => {
@@ -125,22 +135,19 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     } catch (error) {
       await rejectCallRequest(peerId, payload.id);
     }
-    this.handleNavigationToTransactionState();
+    this.setState(
+      {
+        isChecking: false,
+      },
+      () => this.handleBack(),
+    );
   };
 
   handleNavigationToTransactionState = (params: ?Object) => {
     const { navigation } = this.props;
-    const payload = navigation.getParam('payload', {});
     const transactionPayload = navigation.getParam('transactionPayload', {});
 
-    switch (payload.method) {
-      case 'eth_sendTransaction':
-        navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, payload: transactionPayload });
-        break;
-      default:
-        navigation.goBack(null);
-        break;
-    }
+    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, transactionPayload });
   };
 
   handleBack = () => {

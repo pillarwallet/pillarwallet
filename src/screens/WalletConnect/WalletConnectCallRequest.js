@@ -82,7 +82,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
     let symbol = 'ETH';
     let asset = null;
-    let amount = utils.formatEther(value).toString();
+    let amount = utils.bigNumberify(value).mul(utils.bigNumberify('10').pow(18));
 
     const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith('0xa9059cbb');
 
@@ -91,11 +91,14 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       if (matchingAssets && matchingAssets.length) {
         asset = matchingAssets[0]; // eslint-disable-line
         symbol = asset.symbol; // eslint-disable-line
-        amount = utils.bigNumberify(data.substring(73)).times(utils.bigNumberify('10').pow(asset.decimals));
+        amount = utils.bigNumberify(data.substring(73)).mul(utils.bigNumberify('10').pow(asset.decimals));
       }
     }
 
-    const txFeeInWei = utils.bigNumberify(gasLimit).mul(utils.bigNumberify(gasPrice));
+    const txFeeInWei = utils
+      .bigNumberify(gasLimit)
+      .mul(utils.bigNumberify(gasPrice))
+      .toNumber();
 
     const transactionPayload = {
       gasLimit: utils.bigNumberify(gasLimit).toNumber(),
