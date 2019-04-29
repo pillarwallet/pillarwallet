@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import isEqualWith from 'lodash.isequalwith';
@@ -63,6 +63,7 @@ type Props = {
   imageAddonUrl?: string,
   imageAddonName?: string,
   imageUpdateTimeStamp?: number,
+  rightColumnInnerStyle?: Object,
 }
 
 const ItemWrapper = styled.TouchableOpacity`
@@ -456,6 +457,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
       imageAddonUrl,
       imageAddonIconName,
       imageAddonName,
+      rightColumnInnerStyle,
     } = this.props;
 
     const type = getType(this.props);
@@ -502,9 +504,11 @@ class ListItemWithImage extends React.Component<Props, {}> {
             }
           </Column>
           <Column rightColumn type={type}>
-            <Addon {...this.props} type={type} />
-            {customAddon}
-            {children}
+            <View style={rightColumnInnerStyle}>
+              <Addon {...this.props} type={type} />
+              {customAddon}
+              {children}
+            </View>
           </Column>
         </InfoWrapper>
       </ItemWrapper>

@@ -29,7 +29,7 @@ import Checkbox from 'components/Checkbox';
 import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { baseColors, spacing } from 'utils/variables';
-import { CONTACT } from 'constants/navigationConstants';
+import { CONTACT, CHOOSE_ASSETS_TO_TRANSFER } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
 import orderBy from 'lodash.orderby';
 
@@ -150,7 +150,7 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
             <Button
               small
               title="Next"
-              onPress={() => navigation.navigate('RECOVERY_AGENTS')}
+              onPress={() => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)}
               disabled={!agentsUserNames.length}
             />
           </FooterInner>
