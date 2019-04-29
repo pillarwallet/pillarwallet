@@ -38,10 +38,11 @@ type Props = {
   headerProps: Object,
   itemSearchState?: boolean,
   searchInputPlaceholder?: string,
+  backgroundColor?: string,
 }
 
 const HeaderWrapper = styled(Wrapper)`
-  background-color: ${baseColors.snowWhite};
+  background-color: ${props => props.color ? props.color : baseColors.snowWhite};
   z-index: 100;
 `;
 
@@ -143,6 +144,7 @@ class SearchBlock extends React.Component<Props, State> {
       headerProps,
       itemSearchState,
       searchInputPlaceholder,
+      backgroundColor,
     } = this.props;
     const {
       query,
@@ -154,7 +156,7 @@ class SearchBlock extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <HeaderWrapper>
+        <HeaderWrapper color={backgroundColor}>
           <Header {...headerProps} />
           <Wrapper regularPadding>
             <SearchBar

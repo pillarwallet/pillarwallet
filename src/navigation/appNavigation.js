@@ -66,6 +66,7 @@ import CollectibleScreen from 'screens/Collectible';
 import BadgeScreen from 'screens/Badge';
 import UpgradeIntroScreen from 'screens/UpgradeToSmartWallet/UpgradeIntroScreen';
 import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
+import RecoveryAgentsScreen from 'screens/UpgradeToSmartWallet/RecoveryAgentsScreen';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -136,6 +137,7 @@ import {
   UPGRADE_TO_SMART_WALLET_FLOW,
   UPGRADE_INTRO,
   UPGRADE_INFO,
+  RECOVERY_AGENTS,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -438,6 +440,7 @@ const backupWalletFlow = createStackNavigator({
 const smartWalletFlow = createStackNavigator({
   [UPGRADE_INTRO]: UpgradeIntroScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
+  [RECOVERY_AGENTS]: RecoveryAgentsScreen,
 }, StackNavigatorConfig);
 
 smartWalletFlow.navigationOptions = hideTabNavigatorOnChildView;

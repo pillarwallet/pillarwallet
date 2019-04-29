@@ -77,6 +77,7 @@ export const baseColors = {
   emerald: '#3dd276',
   greyser: '#d1d9e4',
   midnight: '#222e44',
+  eucalypus: '#2aa057',
 };
 
 export const brandColors = [
