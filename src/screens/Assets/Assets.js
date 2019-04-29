@@ -572,7 +572,6 @@ class AssetsScreen extends React.Component<Props, State> {
   renderAssetList = () => {
     const {
       assets,
-      wallet,
       assetsLayout,
       baseFiatCurrency,
       rates,
