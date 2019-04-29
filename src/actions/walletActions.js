@@ -34,6 +34,7 @@ import {
   REMOVE_PRIVATE_KEY,
   SET_SMART_WALLET_SDK_INIT,
   SET_SMART_WALLET_ACCOUNTS,
+  SET_SMART_WALLET_CONNECTED_ACCOUNT,
 } from 'constants/walletConstants';
 import {
   LEGAL_TERMS,
@@ -44,6 +45,7 @@ import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
 import SmartWalletService from 'services/smartWallet';
+import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
 
@@ -226,5 +228,22 @@ export const getSmartWalletAccountsAction = () => {
       type: SET_SMART_WALLET_ACCOUNTS,
       payload: accounts,
     });
+  };
+};
+
+export const connectSmartWalletAccountAction = (account: SmartWalletAccount) => {
+  return async (dispatch: Function) => {
+    const connectedAccount = await smartWalletService.connectAccount(account.address);
+    dispatch({
+      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+      payload: connectedAccount,
+    });
+  };
+};
+
+export const deploySmartWalletAction = () => {
+  return async () => {
+    const result = await smartWalletService.deploy();
+    console.log('deploySmartWalletAction', result);
   };
 };

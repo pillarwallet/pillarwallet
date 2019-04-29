@@ -60,6 +60,7 @@ describe('Wallet reducer', () => {
       smartWallet: {
         accounts: [],
         sdkInitialized: false,
+        connectedAccount: {},
       },
     };
     expect(reducer(undefined, updateAction)).toEqual(expected);
@@ -81,6 +82,7 @@ describe('Wallet reducer', () => {
       smartWallet: {
         accounts: [],
         sdkInitialized: false,
+        connectedAccount: {},
       },
     };
     expect(reducer(undefined, updateAction)).toEqual(expected);

@@ -7,7 +7,11 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
 import { baseColors, fontSizes } from 'utils/variables';
 import InMemoryStorage from 'services/inMemoryStorage';
-import { getSmartWalletAccountsAction } from 'actions/walletActions';
+import {
+  getSmartWalletAccountsAction,
+  deploySmartWalletAction,
+  connectSmartWalletAccountAction,
+} from 'actions/walletActions';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import { BaseText, BoldText } from 'components/Typography';
@@ -18,8 +22,11 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   sdkInitialized: boolean,
   getSmartWalletAccounts: Function,
+  deploySmartWallet: Function,
+  connectSmartWalletAccount: Function,
   sdkInitialized: boolean,
   smartWalletAccounts: SmartWalletAccount[],
+  connectedAccount: Object,
 };
 
 const Wrapper = styled.View`
@@ -55,13 +62,24 @@ class SmartWallet extends React.Component<Props, *> {
     await getSmartWalletAccounts();
   };
 
+  onConnectAccount = () => {
+    const {
+      connectSmartWalletAccount,
+      smartWalletAccounts,
+    } = this.props;
+    connectSmartWalletAccount(smartWalletAccounts[0]);
+  };
+
   onDeploy = () => {
+    const { deploySmartWallet } = this.props;
+    deploySmartWallet();
   };
 
   render() {
     const {
       navigation,
       sdkInitialized,
+      connectedAccount,
       smartWalletAccounts,
     } = this.props;
     return (
@@ -87,7 +105,12 @@ class SmartWallet extends React.Component<Props, *> {
                 <TextRow><BoldText>{JSON.stringify(smartWalletAccounts)}</BoldText></TextRow>
               </React.Fragment>
             )}
-            {sdkInitialized && !!smartWalletAccounts.length && (
+            {sdkInitialized && !!smartWalletAccounts.length
+              && (!connectedAccount || !Object.keys(connectedAccount).length) && (
+              <ButtonMini title="Connect Account" onPress={this.onConnectAccount} />
+            )}
+            {sdkInitialized && !!smartWalletAccounts.length && !!connectedAccount
+              && !!Object.keys(connectedAccount).length && (
               <ButtonMini title="Deploy" onPress={this.onDeploy} />
             )}
           </Wrapper>
@@ -98,14 +121,23 @@ class SmartWallet extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  wallet: { smartWallet: { sdkInitialized, accounts: smartWalletAccounts } },
+  wallet: {
+    smartWallet: {
+      sdkInitialized,
+      connectedAccount,
+      accounts: smartWalletAccounts,
+    },
+  },
 }) => ({
   sdkInitialized,
+  connectedAccount,
   smartWalletAccounts,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getSmartWalletAccounts: () => dispatch(getSmartWalletAccountsAction()),
+  connectSmartWalletAccount: accountAddress => dispatch(connectSmartWalletAccountAction(accountAddress)),
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SmartWallet);

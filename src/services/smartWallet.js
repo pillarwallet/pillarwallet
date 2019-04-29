@@ -19,10 +19,12 @@
 */
 import {
   availableEnvironments,
-  IEnvironment,
-  ISdk,
   DeviceService,
   createSdk,
+} from '@archanova/wallet-sdk';
+import type {
+  IEnvironment,
+  ISdk,
 } from '@archanova/wallet-sdk';
 import InMemoryStorage from 'services/inMemoryStorage';
 
@@ -71,6 +73,28 @@ export default class SmartWallet {
         .catch(this.handleError);
     }
     return accounts;
+  }
+
+  async connectAccount(address: string) {
+    const account = await this.sdk
+      .connectAccount(address)
+      .catch(this.handleError);
+    const devices = await this.sdk
+      .getAccountDevices()
+      .catch(this.handleError);
+    console.log('getAccountDevices', devices);
+    return {
+      ...account,
+      devices,
+    };
+  }
+
+  async deploy() {
+    const gasPrice = await this.sdk.getGasPrice().catch(this.handleError);
+    const deployEstimate = await this.sdk.estimateAccountDeployment(gasPrice).catch(this.handleError);
+    console.log('deploy gasPrice: ', gasPrice);
+    console.log('deploy deployEstimate: ', deployEstimate);
+    return {};
   }
 
   handleError(error: any) {
