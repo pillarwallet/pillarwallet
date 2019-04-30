@@ -69,6 +69,7 @@ import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
 import RecoveryAgentsScreen from 'screens/UpgradeToSmartWallet/RecoveryAgentsScreen';
 import ChooseAssetsScreen from 'screens/UpgradeToSmartWallet/ChooseAssetsScreen';
 import EditAssetAmountScreen from 'screens/UpgradeToSmartWallet/EditAssetAmountScreen';
+import UpgradeConfirmScreen from 'screens/UpgradeToSmartWallet/UpgradeConfirmScreen';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -142,6 +143,7 @@ import {
   RECOVERY_AGENTS,
   CHOOSE_ASSETS_TO_TRANSFER,
   EDIT_ASSET_AMOUNT_TO_TRANSFER,
+  UPGRADE_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -447,6 +449,7 @@ const smartWalletFlow = createStackNavigator({
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
+  [UPGRADE_CONFIRM]: UpgradeConfirmScreen,
 }, StackNavigatorConfig);
 
 smartWalletFlow.navigationOptions = hideTabNavigatorOnChildView;

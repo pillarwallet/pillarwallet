@@ -32,7 +32,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import { baseColors } from 'utils/variables';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
-import { EDIT_ASSET_AMOUNT_TO_TRANSFER } from 'constants/navigationConstants';
+import { EDIT_ASSET_AMOUNT_TO_TRANSFER, UPGRADE_CONFIRM } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -298,7 +298,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
             <Button
               small
               title="Next"
-              onPress={() => navigation.navigate('RECOVERY_AGENTS')}
+              onPress={() => navigation.navigate(UPGRADE_CONFIRM)}
               disabled={false}
             />
           </FooterInner>
