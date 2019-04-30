@@ -825,7 +825,7 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/artifactory-401-error
+                  - develop
       - stage_ios:
           requires:
             - build-and-test
