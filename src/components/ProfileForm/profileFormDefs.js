@@ -1,7 +1,7 @@
 // @flow
 
 import t from 'tcomb-form-native';
-import { isValidEmail, isValidName, isValidCityName } from 'utils/validators';
+import { isValidEmail, isValidName, isValidCityName, isValidUKPhone } from 'utils/validators';
 
 export const MIN_USERNAME_LENGTH = 4;
 export const MAX_USERNAME_LENGTH = 30;
@@ -51,6 +51,14 @@ const CityStructDef = t.refinement(t.String, (city: string = ''): boolean => {
   return !!city && !!city.length && isValidCityName(city) && city.length <= maxLength;
 });
 
+const PhoneStructDef = t.refinement(t.String, (phone: string = ''): boolean => {
+  return !!phone && !!phone.length && isValidUKPhone(phone);
+});
+
+const CodeStructDef = t.refinement(t.String, (code: string = ''): boolean => {
+  return !!code && !!code.length && isValidName(code);
+});
+
 FirstNameStructDef.getValidationErrorMessage = (firstName): string => {
   if (firstName) {
     if (!isValidName(firstName)) {
@@ -95,8 +103,28 @@ CityStructDef.getValidationErrorMessage = (city): string => {
   return 'Please specify your city';
 };
 
+PhoneStructDef.getValidationErrorMessage = (phone): string => {
+  if (phone) {
+    if (!isValidUKPhone(phone)) {
+      return 'Please enter a valid UK phone number with +44';
+    }
+  }
+  return 'Please enter your phone number';
+};
+
+CodeStructDef.getValidationErrorMessage = (code): string => {
+  if (code) {
+    if (!isValidName(code)) {
+      return 'Please enter a valid code';
+    }
+  }
+  return 'Please enter your code';
+};
+
 export const Username = UsernameDef;
 export const FirstNameStruct = FirstNameStructDef;
 export const LastNameStruct = LastNameStructDef;
 export const EmailStruct = EmailStructDef;
 export const CityStruct = CityStructDef;
+export const PhoneStruct = PhoneStructDef;
+export const CodeStruct = CodeStructDef;

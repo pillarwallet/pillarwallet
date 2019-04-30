@@ -19,9 +19,10 @@
 */
 import { generateKeyPairThreadPool } from 'utils/keyPairGenerator';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
-import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE } from 'constants/walletConstants';
+import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE, DECRYPTING } from 'constants/walletConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
+import { fetchOldInviteNotificationsAction } from 'actions/oldInvitationsActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { saveDbAction } from './dbActions';
 
@@ -35,6 +36,21 @@ export const useConnectionKeyPairs = (count: number = 1) => {
     });
     await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs }, true));
     return resultConnectionKeys;
+  };
+};
+
+export const prependConnectionKeyPairs = (connKeyPairs: Object[] = []) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      connectionKeyPairs: { data: connectionKeyPairs },
+    } = getState();
+    connKeyPairs.sort((a, b) => a.connIndex - b.connIndex);
+    const resultConnectionKeys = connKeyPairs.concat(connectionKeyPairs);
+    await dispatch({
+      type: UPDATE_CONNECTION_KEY_PAIRS,
+      payload: resultConnectionKeys,
+    });
+    await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
   };
 };
 
@@ -55,14 +71,13 @@ export const updateConnectionIdentityKeys = (successfullConnIdentityKeys: Object
   };
 };
 
-export const mapIdentityKeysAction = (connectionPreKeyCount: number) => {
+export const mapIdentityKeysAction = (connectionPreKeyCount: number, theWalletId?: ?string = null) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      user: { data: { walletId } },
-      connectionKeyPairs: { data: connectionKeyPairs },
+      user: { data: { walletId = theWalletId } },
     } = getState();
 
-    const currentConnectionKeyPairs = connectionKeyPairs.slice(0, connectionPreKeyCount);
+    const currentConnectionKeyPairs = await dispatch(useConnectionKeyPairs(connectionPreKeyCount));
     const currentConnectionKeyPairList = currentConnectionKeyPairs.map((keyPair) => {
       return {
         sourceIdentityKey: keyPair.A,
@@ -74,29 +89,37 @@ export const mapIdentityKeysAction = (connectionPreKeyCount: number) => {
       identityKeys: currentConnectionKeyPairList,
     };
 
-    let mappedKeysCount = 0;
     const successfullConnectionMaps = [];
+    const errorConnectionKeyMaps = [];
     const resultCurrentConnections = await api.mapIdentityKeys(connectionIdentityKeyMap);
     if (resultCurrentConnections) {
       resultCurrentConnections.forEach((conn) => {
         if (conn.userId) {
           successfullConnectionMaps.push(conn);
-          mappedKeysCount++;
+        } else {
+          const { sourceIdentityKey, targetIdentityKey } = conn;
+          const errorConnKey = currentConnectionKeyPairs.find((connKeyPair) => {
+            return connKeyPair.A === sourceIdentityKey && connKeyPair.Ad === targetIdentityKey;
+          });
+          errorConnectionKeyMaps.push(errorConnKey);
         }
       });
     }
-    await dispatch(updateConnectionIdentityKeys(successfullConnectionMaps));
-    await dispatch(useConnectionKeyPairs(mappedKeysCount));
+    if (successfullConnectionMaps.length > 0) {
+      await dispatch(updateConnectionIdentityKeys(successfullConnectionMaps));
+    }
+    if (errorConnectionKeyMaps.length > 0) {
+      await dispatch(prependConnectionKeyPairs(errorConnectionKeyMaps));
+    }
   };
 };
 
-export const updateOldConnections = (oldConnectionCount: number) => {
+export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?string = null) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      user: { data: { walletId } },
+      user: { data: { walletId = theWalletId } },
       contacts: { data: contacts },
       accessTokens: { data: accessTokens },
-      connectionKeyPairs: { data: connectionKeyPairs },
     } = getState();
 
     const mappedOldContactsAccessTokens = contacts.map((contact) => {
@@ -109,7 +132,6 @@ export const updateOldConnections = (oldConnectionCount: number) => {
       };
     });
 
-    let successUpdateCount = 0;
     if (oldConnectionCount > 0) {
       const mappedOldContacts = mappedOldContactsAccessTokens
         .filter((res) => { return res.myAccessToken && res.userAccessToken; });
@@ -118,7 +140,7 @@ export const updateOldConnections = (oldConnectionCount: number) => {
         .filter((res) => { return res.userAccessToken === '' || res.myAccessToken === ''; });
 
       const mappedOldConnections = mappedOldContacts.concat(mappedOldInvitations);
-      const identityKeysOldConnections = connectionKeyPairs.slice(0, mappedOldConnections.length);
+      const identityKeysOldConnections = await dispatch(useConnectionKeyPairs(mappedOldConnections.length));
       const oldConnectionsUpdateList = identityKeysOldConnections.map((keyPair, index) => {
         return {
           sourceUserAccessKey: mappedOldConnections[index].myAccessToken,
@@ -133,32 +155,54 @@ export const updateOldConnections = (oldConnectionCount: number) => {
         connections: oldConnectionsUpdateList,
       };
 
+      const successfullConnectionUpdates = [];
+      const errorConnectionUpdates = [];
       const resultOldConnections = await api.updateIdentityKeys(oldConnectionsUpdateData);
       if (resultOldConnections) {
         resultOldConnections.forEach((conn) => {
+          const { sourceIdentityKey, targetIdentityKey } = conn;
           if (conn.updated) {
-            successUpdateCount++;
+            const successConKeyPair = identityKeysOldConnections.find((connKeyPair) => {
+              return connKeyPair.A === sourceIdentityKey && connKeyPair.Ad === targetIdentityKey;
+            });
+            successfullConnectionUpdates.push(successConKeyPair);
+          } else {
+            const errorConnKeyPair = identityKeysOldConnections.find((connKeyPair) => {
+              return connKeyPair.A === sourceIdentityKey && connKeyPair.Ad === targetIdentityKey;
+            });
+            errorConnectionUpdates.push(errorConnKeyPair);
           }
         });
       }
+      if (errorConnectionUpdates.length > 0) {
+        await dispatch(prependConnectionKeyPairs(errorConnectionUpdates));
+      }
+      if (successfullConnectionUpdates.length > 0) {
+        const currentConnectionKeyPairList = successfullConnectionUpdates.map((keyPair) => {
+          return {
+            sourceIdentityKey: keyPair.A,
+            targetIdentityKey: keyPair.Ad,
+          };
+        });
+        const connectionIdentityKeyMap = {
+          walletId,
+          identityKeys: currentConnectionKeyPairList,
+        };
+
+        const successfullConnectionMaps = [];
+        const resultCurrentConnections = await api.mapIdentityKeys(connectionIdentityKeyMap);
+        if (resultCurrentConnections) {
+          resultCurrentConnections.forEach((conn) => {
+            if (conn.userId) {
+              successfullConnectionMaps.push(conn);
+            }
+          });
+        }
+        if (successfullConnectionMaps.length > 0) {
+          await dispatch(updateConnectionIdentityKeys(successfullConnectionMaps));
+        }
+      }
     }
-
-    await dispatch(mapIdentityKeysAction(successUpdateCount));
-  };
-};
-
-export const prependConnectionKeyPairs = (connKeyPairs: Object[] = []) => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      connectionKeyPairs: { data: connectionKeyPairs },
-    } = getState();
-
-    const resultConnectionKeys = connKeyPairs.concat(connectionKeyPairs);
-    await dispatch({
-      type: UPDATE_CONNECTION_KEY_PAIRS,
-      payload: resultConnectionKeys,
-    });
-    await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
   };
 };
 
@@ -173,37 +217,48 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
       return Promise.resolve(false);
     }
 
-    dispatch({
+    const { currentConnectionsCount, oldConnectionsCount } = numberOfConnections;
+    const totalConnections = currentConnectionsCount + oldConnectionsCount;
+    await dispatch({
       type: UPDATE_WALLET_STATE,
       payload: GENERATING_CONNECTIONS,
     });
-
-    const { currentConnectionsCount, oldConnectionsCount } = numberOfConnections;
-    const totalConnections = currentConnectionsCount + oldConnectionsCount;
-    const newKeyPairs =
-      await generateKeyPairThreadPool(
-        mnemonic,
-        privateKey,
-        totalConnections,
-        connectionKeyPairs.length,
-        lastConnectionKeyIndex);
-    const resultConnectionKeys = connectionKeyPairs.concat(newKeyPairs);
+    try {
+      const newKeyPairs =
+        await generateKeyPairThreadPool(
+          mnemonic,
+          privateKey,
+          totalConnections,
+          connectionKeyPairs.length,
+          lastConnectionKeyIndex);
+      const resultConnectionKeys = connectionKeyPairs.concat(newKeyPairs);
+      await dispatch({
+        type: UPDATE_CONNECTION_KEY_PAIRS,
+        payload: resultConnectionKeys,
+      });
+      await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
+    } catch (e) {
+      await dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: DECRYPTING,
+      });
+    }
     await dispatch({
-      type: UPDATE_CONNECTION_KEY_PAIRS,
-      payload: resultConnectionKeys,
+      type: UPDATE_WALLET_STATE,
+      payload: DECRYPTING,
     });
-    await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
-
 
     if (oldConnectionsCount > 0) {
-      await dispatch(updateOldConnections(oldConnectionsCount));
+      await dispatch(fetchOldInviteNotificationsAction(walletId));
+      await dispatch(restoreAccessTokensAction(walletId));
+      await dispatch(updateOldConnections(oldConnectionsCount, walletId));
     }
     if (lastConnectionKeyIndex === -1 && currentConnectionsCount > 0) {
       await dispatch(restoreAccessTokensAction(walletId));
-      await dispatch(mapIdentityKeysAction(currentConnectionsCount));
+      await dispatch(mapIdentityKeysAction(currentConnectionsCount, walletId));
     }
 
-    await dispatch(updateConnectionsAction());
+    await dispatch(updateConnectionsAction(walletId));
 
     return Promise.resolve(true);
   };
