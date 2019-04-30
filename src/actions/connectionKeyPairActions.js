@@ -217,8 +217,8 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
       return Promise.resolve(false);
     }
 
-    const { currentConnectionsCount, oldConnectionsCount } = numberOfConnections;
-    const totalConnections = currentConnectionsCount + oldConnectionsCount;
+    const { currentConnectionsCount, oldConnectionsCount, newReceivedConnectonsCount } = numberOfConnections;
+    const totalConnections = currentConnectionsCount + oldConnectionsCount + newReceivedConnectonsCount;
     await dispatch({
       type: UPDATE_WALLET_STATE,
       payload: GENERATING_CONNECTIONS,
@@ -248,14 +248,11 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
       payload: DECRYPTING,
     });
 
-    if (oldConnectionsCount > 0) {
+    if (oldConnectionsCount > 0 || currentConnectionsCount > 0) {
       await dispatch(fetchOldInviteNotificationsAction(walletId));
       await dispatch(restoreAccessTokensAction(walletId));
+      await dispatch(mapIdentityKeysAction(totalConnections, walletId));
       await dispatch(updateOldConnections(oldConnectionsCount, walletId));
-    }
-    if (lastConnectionKeyIndex === -1 && currentConnectionsCount > 0) {
-      await dispatch(restoreAccessTokensAction(walletId));
-      await dispatch(mapIdentityKeysAction(currentConnectionsCount, walletId));
     }
 
     await dispatch(updateConnectionsAction(walletId));
