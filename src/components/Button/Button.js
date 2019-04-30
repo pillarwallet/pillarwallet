@@ -84,6 +84,12 @@ const themes = {
     borderColor: baseColors.electricBlue,
     borderWidth: '1px',
   },
+  secondaryTransparent: {
+    background: 'transparent',
+    color: baseColors.white,
+    borderColor: baseColors.electricBlue,
+    borderWidth: '1px',
+  },
   secondaryDanger: {
     background: baseColors.white,
     color: baseColors.fireEngineRed,
@@ -127,8 +133,6 @@ const themes = {
 const getButtonHeight = (props) => {
   if (props.height) {
     return `${props.height}px`;
-  } else if (props.noPadding) {
-    return '0';
   } else if (props.small) {
     return '34px';
   }

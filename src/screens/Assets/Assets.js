@@ -68,6 +68,7 @@ import {
   removeAssetAction,
 } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import { toggleTankModalAction } from 'actions/tankActions';
 
 // constants
 import {
@@ -80,7 +81,7 @@ import {
   COLLECTIBLES,
 } from 'constants/assetsConstants';
 import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
-import { ASSET, COLLECTIBLE } from 'constants/navigationConstants';
+import { ASSET, COLLECTIBLE, UPGRADE_TO_SMART_WALLET_FLOW } from 'constants/navigationConstants';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -112,6 +113,9 @@ type Props = {
   addAsset: Function,
   removeAsset: Function,
   fetchAllCollectiblesData: Function,
+  toggleTankModal: Function,
+  isSmartWallet: boolean,
+  tankData: Object,
 }
 
 type State = {
@@ -680,6 +684,9 @@ class AssetsScreen extends React.Component<Props, State> {
       assetsSearchState,
       navigation,
       collectibles,
+      toggleTankModal,
+      isSmartWallet,
+      tankData,
     } = this.props;
     const { query, activeTab } = this.state;
 
@@ -722,7 +729,15 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <Container inset={{ bottom: 0 }}>
         <SearchBlock
-          headerProps={{ title: 'assets' }}
+          headerProps={{
+            title: 'assets',
+            showChannelStatus: true,
+            handleTankButtonTouch: isSmartWallet
+              ? toggleTankModal
+              : () => navigation.navigate(UPGRADE_TO_SMART_WALLET_FLOW),
+            isSmartWallet,
+            tankValue: tankData.availableStake,
+          }}
           searchInputPlaceholder={activeTab === TOKENS ? 'Search or add new asset' : 'Search'}
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={activeTab === TOKENS ? !!assetsSearchState : !!isInCollectiblesSearchMode}
@@ -752,7 +767,7 @@ class AssetsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  wallet: { data: wallet },
+  wallet: { data: wallet, smartWallet: { isSmartWallet } },
   assets: {
     data: assets,
     assetsState,
@@ -763,8 +778,10 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
   collectibles: { assets: collectibles },
+  tank: { data: tankData },
 }) => ({
   wallet,
+  isSmartWallet,
   assets,
   assetsState,
   balances,
@@ -774,6 +791,7 @@ const mapStateToProps = ({
   baseFiatCurrency,
   assetsLayout,
   collectibles,
+  tankData,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -790,6 +808,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
+  toggleTankModal: () => dispatch(toggleTankModalAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

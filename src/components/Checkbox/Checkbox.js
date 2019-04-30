@@ -24,16 +24,35 @@ import styled from 'styled-components/native';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import Icon from 'components/Icon';
 
+const getBorderColor = (props) => {
+  if (props.rounded) {
+    return baseColors.mediumGray;
+  } else if (props.active) {
+    return UIColors.primary;
+  }
+  return baseColors.mediumGray;
+};
+
 const CheckboxBox = styled.View`
   width: 24;
   height: 24;
   margin-right: ${spacing.mediumLarge}px;
-  border-radius: 2px;
+  border-radius: ${props => props.rounded ? 12 : 2}px;
   flex: 0 0 24px;
   border-width: 1px;
-  border-color: ${props => (props.active ? UIColors.primary : baseColors.mediumGray)}
+  border-color: ${props => getBorderColor(props)}
   justify-content: center;
   align-items: center;
+  shadow-color: ${baseColors.pigeonPost};
+  ${props => props.rounded ? `background-color: ${baseColors.white}` : ''};
+  ${props => props.rounded && props.active
+    ? `
+      shadow-color: ${baseColors.black};
+      shadow-radius: 3px;
+      shadow-opacity: 0.15;
+      shadow-offset: 0px 2px;
+      elevation: 4;`
+    : ''}
 `;
 
 const CheckboxText = styled(BaseText)`
@@ -58,6 +77,8 @@ type Props = {
   disabled?: boolean,
   checked?: boolean,
   children?: React.Node,
+  wrapperStyle?: Object,
+  rounded?: boolean,
 };
 
 type State = {
@@ -111,21 +132,27 @@ export default class Checkbox extends React.Component<Props, State> {
 
   render() {
     const { checked } = this.state;
-    const { disabled, text, children } = this.props;
+    const {
+      disabled,
+      text,
+      children,
+      rounded,
+      wrapperStyle,
+    } = this.props;
     return (
       <TouchableHighlight
         onPress={() => this.toggleCheckBox()}
         underlayColor="transparent"
-        style={{ marginBottom: 20 }}
+        style={wrapperStyle}
       >
         <CheckboxWrapper disabled={disabled}>
-          <CheckboxBox active={disabled ? false : checked}>
+          <CheckboxBox active={disabled ? false : checked} rounded={rounded}>
             {!!checked &&
             <Icon
               name="check"
               style={{
-                color: baseColors.brightBlue,
-                fontSize: fontSizes.extraExtraSmall,
+                color: rounded ? baseColors.eucalypus : baseColors.brightBlue,
+                fontSize: rounded ? fontSizes.tiny : fontSizes.extraExtraSmall,
               }}
             />
             }

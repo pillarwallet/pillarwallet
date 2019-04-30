@@ -45,6 +45,7 @@ import collectiblesReducer from './collectiblesReducer';
 import deepLinkReducer from './deepLinkReducer';
 import connectionIdentityKeysReducer from './connectionIdentityKeysReducer';
 import badgesReducer from './badgesReducer';
+import tankReducer from './tankReducer';
 
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
@@ -69,6 +70,7 @@ const appReducer = combineReducers({
   connectionKeyPairs: connectionKeyPairsReducer,
   connectionIdentityKeys: connectionIdentityKeysReducer,
   badges: badgesReducer,
+  tank: tankReducer,
 });
 
 const initialState = appReducer(undefined, {});
