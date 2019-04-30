@@ -18,11 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { saveDbAction } from 'actions/dbActions';
+// import { saveDbAction } from 'actions/dbActions';
 import { ADD_ACCOUNT, ACCOUNT_TYPES } from 'constants/accountConstants';
 
 export const initDefaultAccount = (walletAddress: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function, getState: Function) => { // eslint-disable-line
     const keyBasedAccount = {
       id: walletAddress,
       type: ACCOUNT_TYPES.KEY_BASED,

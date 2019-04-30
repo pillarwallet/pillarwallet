@@ -35,7 +35,7 @@ import orderBy from 'lodash.orderby';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  localContacts: Object[],
+  contacts: Object[],
 };
 
 type State = {
@@ -102,9 +102,9 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { navigation, localContacts } = this.props;
+    const { navigation, contacts } = this.props;
     const { query, agentsUserNames } = this.state;
-    const sortedLocalContacts = orderBy(localContacts, [user => user.username.toLowerCase()], 'asc');
+    const sortedLocalContacts = orderBy(contacts, [user => user.username.toLowerCase()], 'asc');
     const filteredContacts = (!query || query.trim() === '' || query.length < 2)
       ? sortedLocalContacts
       : sortedLocalContacts.filter(({ username }) => username.toUpperCase().includes(query.toUpperCase()));
@@ -161,9 +161,9 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: localContacts },
+  contacts: { data: contacts },
 }) => ({
-  localContacts,
+  contacts,
 });
 
 export default connect(mapStateToProps)(RecoveryAgentsScreen);

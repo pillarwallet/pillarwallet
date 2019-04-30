@@ -19,23 +19,30 @@
 */
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Keyboard, SectionList } from 'react-native';
+import { SectionList } from 'react-native';
 import styled from 'styled-components/native';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, Wrapper, Footer } from 'components/Layout';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import { Paragraph } from 'components/Typography';
+import { Paragraph, SubHeading, TextLink, BaseText } from 'components/Typography';
 import { baseColors, spacing } from 'utils/variables';
-import { RECOVERY_AGENTS, CHOOSE_ASSETS_TO_TRANSFER } from 'constants/navigationConstants';
+import assetsConfig from 'configs/assetsConfig';
+import { RECOVERY_AGENTS, CHOOSE_ASSETS_TO_TRANSFER, CONTACT } from 'constants/navigationConstants';
+import type { Assets, Balances } from 'models/Asset';
+import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { formatAmount } from 'utils/common';
+import { getBalance } from 'utils/assets';
+import { fontSizes } from '../../../utils/variables';
 
 type Props = {
-  changePin: (newPin: string, currentPin: string) => Function,
-  walletState: ?string,
   navigation: NavigationScreenProp<*>,
-  resetIncorrectPassword: () => Function,
+  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  assets: Assets,
+  balances: Balances,
+  contacts: Object[],
 };
 
 type State = {
@@ -44,72 +51,111 @@ type State = {
 
 const WhiteWrapper = styled.View`
   background-color: ${baseColors.white};
-  padding-bottom: 50px;
+  padding-bottom: 20px;
 `;
 
-const Footer = styled.View`
+const FooterInner = styled.View`
   background-color: ${baseColors.snowWhite};
-  border-top-width: 1px;
-  border-top-color: #ededed;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: flex-start;
-  padding: ${spacing.large}px ${spacing.mediumLarge}px;
-  flex: 1;
+  flex-direction: column;
+  align-items: flex-end;
 `;
 
-// temp
-const recoveryAgents = [];
-const tokens = [];
+const ListSeparator = styled.View`
+  padding: 20px ${spacing.rhythm}px;
+  background-color: ${baseColors.lighterGray};
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Label = styled(BaseText)`
+  font-size: ${fontSizes.extraExtraSmall}px;
+  color: #999999;
+`;
+
+const LabelWrapper = styled.View`
+  width: 100%;
+  padding: 0 ${spacing.large}px 10px;
+  justify-content: center;
+`;
+
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
-  renderItem = ({ item: asset }: Object) => {
-    const {
-      symbol,
-      name,
-      iconUrl,
-    } = asset;
+  navigateToContactScreen = (contact: Object) => () => {
+    this.props.navigation.navigate(CONTACT, { contact });
+  };
 
-    const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+  renderItem = ({ item }) => {
+    if (item.username) {
+      return (
+        <ListItemWithImage
+          label={item.username}
+          avatarUrl={item.profileImage}
+          navigateToProfile={() => this.navigateToContactScreen(item)}
+          imageUpdateTimeStamp={item.lastUpdateTime}
+        />
+      );
+    }
+
+    const { balances } = this.props;
+    const assetBalance = formatAmount(getBalance(balances, item.symbol));
+    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
+    const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
+    if (assetShouldRender) {
+      return null;
+    }
 
     return (
       <ListItemWithImage
-        label={name}
-        subtext={symbol}
-        itemImageUrl={fullIconUrl}
+        label={item.name}
+        itemImageUrl={fullIconUrl || genericToken}
+        itemValue={`${assetBalance} ${item.symbol}`}
         fallbackSource={genericToken}
-        small
+        rightColumnInnerStyle={{ flex: 1, justifyContent: 'flex-end' }}
+        customAddon={
+          <Label style={{ textAlign: 'right' }}>Fee 0,004</Label>
+        }
       />
     );
   };
 
   render() {
-    const { navigation } = this.props;
-
+    const {
+      navigation,
+      contacts,
+      assets,
+      balances,
+    } = this.props;
+    const assetsArray = Object.values(assets);
+    const nonEmptyAssets = assetsArray.filter((asset: any) => {
+      return getBalance(balances, asset.symbol) !== 0;
+    });
     const sections = [];
-    if (recoveryAgents.length) {
+    if (contacts.length) {
       sections.push({
         title: 'RECOVERY AGENTS',
-        routeToUpdate: RECOVERY_AGENTS,
-        data: recoveryAgents,
-        extraData: [],
+        data: contacts,
+        extraData: assets,
+        toEdit: RECOVERY_AGENTS,
       });
     }
-    if (tokens.length) {
+    if (nonEmptyAssets.length) {
       sections.push({
         title: 'TOKENS',
-        routeToUpdate: CHOOSE_ASSETS_TO_TRANSFER,
-        data: tokens,
-        extraData: [],
+        data: nonEmptyAssets,
+        extraData: assets,
+        toEdit: CHOOSE_ASSETS_TO_TRANSFER,
       });
     }
+
+    console.log('nonEmptyAssets --->', nonEmptyAssets);
 
     return (
       <Container>
         <WhiteWrapper>
           <Header
-            title="what's next"
+            title="confirm"
             centerTitle
             onBack={() => navigation.goBack(null)}
           />
@@ -120,23 +166,37 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           </Wrapper>
         </WhiteWrapper>
         <SectionList
-          renderItem={this.renderItem}
           sections={sections}
-          keyExtractor={(item) => item.symbol}
-          style={{ width: '100%' }}
-          contentContainerStyle={{
-            width: '100%',
-          }}
-          stickySectionHeadersEnabled={false}
+          renderSectionHeader={({ section }) => (
+            <ListSeparator>
+              <SubHeading>{section.title}</SubHeading>
+              <TextLink onPress={() => navigation.navigate(section.toEdit)}>Edit</TextLink>
+            </ListSeparator>
+          )}
+          renderItem={this.renderItem}
+          keyExtractor={(item) => item.id}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-          onScroll={() => Keyboard.dismiss()}
         />
-        <Footer>
-          <Button title="Enable Smart Wallet" onPress={() => {}} />
+        <Footer style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+          <FooterInner>
+            <LabelWrapper>
+              <Label style={{ textAlign: 'center' }}>Total fee 0,004</Label>
+            </LabelWrapper>
+            <Button block title="Enable Smart Wallet" onPress={() => {}} />
+          </FooterInner>
         </Footer>
       </Container>
     );
   }
 }
 
-export default UpgradeConfirmScreen;
+const mapStateToProps = ({
+  contacts: { data: contacts },
+  assets: { data: assets, balances },
+}) => ({
+  contacts,
+  assets,
+  balances,
+});
+
+export default connect(mapStateToProps)(UpgradeConfirmScreen);

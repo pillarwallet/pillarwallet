@@ -48,7 +48,6 @@ type Props = {
   assets: Assets,
   balances: Balances,
   wallet: Object,
-  navigation: NavigationScreenProp<*>,
   fetchAllCollectiblesData: Function,
   collectibles: Array<Collectible>,
 };
