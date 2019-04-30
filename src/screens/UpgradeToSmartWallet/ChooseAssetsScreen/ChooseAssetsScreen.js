@@ -32,6 +32,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import { baseColors } from 'utils/variables';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+import { EDIT_ASSET_AMOUNT_TO_TRANSFER } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -167,14 +168,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     this.setState({ activeTab });
   };
 
-  renderAssets = () => {
+  renderAssets = (nonEmptyAssets) => {
     const { query } = this.state;
-    const { assets, balances } = this.props;
-    const assetsArray = Object.values(assets);
-    const nonEmptyAssets = assetsArray.filter((asset: any) => {
-      return getBalance(balances, asset.symbol) !== 0;
-    });
-
     const filteredNonEmptyAssets = (!query || query.trim() === '' || query.length < 2)
       ? nonEmptyAssets
       : nonEmptyAssets.filter((asset: any) => asset.name.toUpperCase().includes(query.toUpperCase()));
@@ -255,8 +250,13 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, assets, balances } = this.props;
     const { query, activeTab } = this.state;
+    const assetsArray = Object.values(assets);
+    const nonEmptyAssets = assetsArray.filter((asset: any) => {
+      return getBalance(balances, asset.symbol) !== 0;
+    });
+
     const assetsTabs = [
       {
         id: TOKENS,
@@ -277,8 +277,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
             headerProps={{
               title: 'choose assets',
               onBack: () => navigation.goBack(null),
-              nextText: 'Edit',
-              onNextPress: () => {},
+              nextText: nonEmptyAssets.length ? 'Edit' : null,
+              onNextPress: () => { navigation.navigate(EDIT_ASSET_AMOUNT_TO_TRANSFER); },
             }}
             searchInputPlaceholder="Search asset"
             onSearchChange={(q) => this.handleSearchChange(q)}
@@ -288,7 +288,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
           />
           <Tabs initialActiveTab={activeTab} tabs={assetsTabs} bgColor={baseColors.white} />
         </TopWrapper>
-        {activeTab === TOKENS && this.renderAssets()}
+        {activeTab === TOKENS && this.renderAssets(nonEmptyAssets)}
         {activeTab === COLLECTIBLES && this.renderCollectibles()}
         <Footer style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           <FooterInner>

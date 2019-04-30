@@ -64,9 +64,14 @@ type Props = {
   imageAddonName?: string,
   imageUpdateTimeStamp?: number,
   rightColumnInnerStyle?: Object,
+  customAddonFullWidth?: React.Node,
 }
 
 const ItemWrapper = styled.TouchableOpacity`
+  flex-direction: column;
+`;
+
+const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -458,59 +463,62 @@ class ListItemWithImage extends React.Component<Props, {}> {
       imageAddonIconName,
       imageAddonName,
       rightColumnInnerStyle,
+      customAddonFullWidth,
     } = this.props;
 
     const type = getType(this.props);
     return (
       <ItemWrapper
-        type={type}
         onPress={onPress}
         disabled={!onPress}
       >
-        <ImageWrapper>
-          <ItemImage {...this.props} type={type} />
-          {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
-        </ImageWrapper>
-        <InfoWrapper type={type}>
-          <Column type={type}>
-            {!!label &&
-              <Row>
-                <ItemTitle type={type}>{label}</ItemTitle>
-                {(type === CHAT_ITEM && !!timeSent) &&
-                  <TimeWrapper>
-                    <TimeSent>{timeSent}</TimeSent>
-                  </TimeWrapper>
-                }
-              </Row>
-            }
-            {!!paragraph &&
-              <Row>
-                <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
-                {type === CHAT_ITEM &&
-                  <BadgePlacer>
-                    {!!unreadCount &&
-                      <ItemBadge>
-                        <UnreadNumber>
-                          {unreadCount}
-                        </UnreadNumber>
-                      </ItemBadge>
-                    }
-                  </BadgePlacer>
-                }
-              </Row>
-            }
-            {!!subtext &&
-              <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
-            }
-          </Column>
-          <Column rightColumn type={type}>
-            <View style={rightColumnInnerStyle}>
-              <Addon {...this.props} type={type} />
-              {customAddon}
-              {children}
-            </View>
-          </Column>
-        </InfoWrapper>
+        <InnerWrapper type={type}>
+          <ImageWrapper>
+            <ItemImage {...this.props} type={type} />
+            {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
+          </ImageWrapper>
+          <InfoWrapper type={type}>
+            <Column type={type}>
+              {!!label &&
+                <Row>
+                  <ItemTitle type={type}>{label}</ItemTitle>
+                  {(type === CHAT_ITEM && !!timeSent) &&
+                    <TimeWrapper>
+                      <TimeSent>{timeSent}</TimeSent>
+                    </TimeWrapper>
+                  }
+                </Row>
+              }
+              {!!paragraph &&
+                <Row>
+                  <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
+                  {type === CHAT_ITEM &&
+                    <BadgePlacer>
+                      {!!unreadCount &&
+                        <ItemBadge>
+                          <UnreadNumber>
+                            {unreadCount}
+                          </UnreadNumber>
+                        </ItemBadge>
+                      }
+                    </BadgePlacer>
+                  }
+                </Row>
+              }
+              {!!subtext &&
+                <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
+              }
+            </Column>
+            <Column rightColumn type={type}>
+              <View style={rightColumnInnerStyle}>
+                <Addon {...this.props} type={type} />
+                {customAddon}
+                {children}
+              </View>
+            </Column>
+          </InfoWrapper>
+        </InnerWrapper>
+        {customAddonFullWidth}
       </ItemWrapper>
     );
   }
