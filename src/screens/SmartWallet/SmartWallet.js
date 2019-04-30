@@ -111,7 +111,13 @@ class SmartWallet extends React.Component<Props, *> {
             )}
             {sdkInitialized && !!smartWalletAccounts.length && !!connectedAccount
               && !!Object.keys(connectedAccount).length && (
-              <ButtonMini title="Deploy" onPress={this.onDeploy} />
+                (connectedAccount.state.toLowerCase() !== 'deployed'
+                  && <ButtonMini title="Deploy" onPress={this.onDeploy} />)
+                || (
+                  <TextRow>
+                    Account state: <BoldText>{connectedAccount.state}</BoldText>
+                  </TextRow>
+                )
             )}
           </Wrapper>
         </ScrollWrapper>

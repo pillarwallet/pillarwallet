@@ -82,7 +82,13 @@ export default class SmartWallet {
     const devices = await this.sdk
       .getAccountDevices()
       .catch(this.handleError);
-    console.log('getAccountDevices', devices);
+    if (!account.ensName) {
+      account.ensName = account.address;
+      await this.sdk
+        .setAccountEnsLabel(account.ensName)
+        .catch(this.handleError);
+    }
+    console.log('connectAccount ens: ', account.ensName);
     return {
       ...account,
       devices,
@@ -92,9 +98,32 @@ export default class SmartWallet {
   async deploy() {
     const gasPrice = await this.sdk.getGasPrice().catch(this.handleError);
     const deployEstimate = await this.sdk.estimateAccountDeployment(gasPrice).catch(this.handleError);
-    console.log('deploy gasPrice: ', gasPrice);
-    console.log('deploy deployEstimate: ', deployEstimate);
+    let accountBalance = this.getAccountBalance();
+    if (accountBalance.eq(0)) {
+      await this.sdk.topUpAccount().catch(this.handleError);
+      accountBalance = this.getAccountBalance();
+    }
+    if (accountBalance.gte(deployEstimate)) {
+      return this.sdk.deployAccount(gasPrice);
+    }
+    console.log('insufficient balance, lack: ', deployEstimate.sub(accountBalance).toString());
     return {};
+  }
+
+  getAccountBalance() {
+    const { state: { accountBalance } } = this.sdk;
+    return accountBalance;
+  }
+
+  async fetchConnectedAccount() {
+    const { state: { account } } = this.sdk;
+    const devices = await this.sdk
+      .getAccountDevices()
+      .catch(this.handleError);
+    return {
+      ...account,
+      devices,
+    };
   }
 
   handleError(error: any) {

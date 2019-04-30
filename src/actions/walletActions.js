@@ -242,8 +242,28 @@ export const connectSmartWalletAccountAction = (account: SmartWalletAccount) => 
 };
 
 export const deploySmartWalletAction = () => {
-  return async () => {
-    const result = await smartWalletService.deploy();
-    console.log('deploySmartWalletAction', result);
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      wallet: {
+        smartWallet: {
+          connectedAccount: {
+            state: accountState,
+          },
+        },
+      },
+    } = getState();
+    if (accountState.toLowerCase() === 'deployed') {
+      console.log('deploySmartWalletAction account is already deployed!');
+      return;
+    }
+    const deployTxHash = await smartWalletService.deploy();
+    console.log('deploySmartWalletAction deployTxHash: ', deployTxHash);
+    // update accounts info
+    dispatch(getSmartWalletAccountsAction());
+    const account = await smartWalletService.fetchConnectedAccount();
+    dispatch({
+      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+      account,
+    });
   };
 };
