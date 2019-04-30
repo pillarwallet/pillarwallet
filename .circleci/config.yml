@@ -229,7 +229,7 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      - *android_latest_yarn
+#      - *android_latest_yarn
       - *yarn_install
       - *node_save_cache
 
@@ -414,7 +414,7 @@ jobs:
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
 
-      - *android_latest_yarn
+#      - *android_latest_yarn
 
       - run:
           name: Install Python
