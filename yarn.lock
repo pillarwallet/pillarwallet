@@ -11862,9 +11862,9 @@ react-native-firebase@^4.2.0:
     postinstall-build "^5.0.1"
     prop-types "^15.6.1"
 
-"react-native-gifted-chat@https://github.com/FaridSafi/react-native-gifted-chat":
-  version "0.8.0"
-  resolved "https://github.com/FaridSafi/react-native-gifted-chat#218a038df8c997e4b6ddfb3f094d8bbce6001ec0"
+"react-native-gifted-chat@https://github.com/FaridSafi/react-native-gifted-chat#v0.7.3":
+  version "0.7.2"
+  resolved "https://github.com/FaridSafi/react-native-gifted-chat#c90f86ab452f5f128ec43721953aa5006d0d5469"
   dependencies:
     "@expo/react-native-action-sheet" "^2.0.1"
     moment "^2.19.0"
