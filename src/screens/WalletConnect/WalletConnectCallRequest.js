@@ -35,6 +35,7 @@ import type { TokenTransactionPayload } from 'models/Transaction';
 import { onWalletConnectRejectCallRequest } from 'actions/walletConnectActions';
 import { spacing, fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
+import { TOKEN_TRANSFER } from 'constants/callRequestConstants';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 
 type Props = {
@@ -86,7 +87,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     let asset = null;
     let amount = utils.bigNumberify(value).mul(utils.bigNumberify('10').pow(18));
 
-    const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith('0xa9059cbb');
+    const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
 
     if (isTokenTransfer) {
       const matchingAssets = supportedAssets.filter(a => a.address === to);
