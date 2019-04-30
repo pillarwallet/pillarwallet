@@ -157,7 +157,7 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      - *ios_latest_yarn
+#      - *ios_latest_yarn
       - *yarn_install
       - *node_save_cache
       - run:
