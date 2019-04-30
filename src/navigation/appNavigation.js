@@ -145,6 +145,7 @@ import type { Assets } from 'models/Asset';
 
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { modalTransition } from 'utils/common';
+import { initWalletConnectSessions } from '../actions/walletConnectActions';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
@@ -512,6 +513,7 @@ type Props = {
   stopListeningIntercomNotifications: Function,
   startListeningChatWebSocket: Function,
   stopListeningChatWebSocket: Function,
+  initWalletConnect: Function,
   fetchICOs: Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchTransactionsHistoryNotifications: Function,
@@ -546,6 +548,7 @@ class AppFlow extends React.Component<Props, {}> {
       assets,
       wallet,
       fetchAllCollectiblesData,
+      initWalletConnect,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
@@ -556,6 +559,7 @@ class AppFlow extends React.Component<Props, {}> {
     getExistingChats();
     fetchAllCollectiblesData();
     startListeningChatWebSocket();
+    initWalletConnect();
     addAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -681,6 +685,7 @@ const mapDispatchToProps = dispatch => ({
   startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
   stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
   startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
+  initWalletConnect: () => dispatch(initWalletConnectSessions()),
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },

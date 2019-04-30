@@ -104,7 +104,10 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
         {
           isChecking: false,
         },
-        () => this.handleNavigationToTransactionState(txStatus),
+        () => {
+          this.handleDismissal();
+          this.handleNavigationToTransactionState(txStatus);
+        },
       );
     });
   };

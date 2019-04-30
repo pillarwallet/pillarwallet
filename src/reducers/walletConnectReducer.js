@@ -20,6 +20,7 @@
 import merge from 'lodash.merge';
 import WalletConnect from '@walletconnect/react-native';
 import {
+  WALLETCONNECT_INIT_SESSIONS,
   WALLETCONNECT_SESSION_REQUEST,
   WALLETCONNECT_SESSION_APPROVED,
   WALLETCONNECT_SESSION_REJECTED,
@@ -57,6 +58,8 @@ export default function walletConnectReducer(
   action: WalletConnectReducerAction,
 ) {
   switch (action.type) {
+    case WALLETCONNECT_INIT_SESSIONS:
+      return merge({}, state, { connectors: action.payload });
     case WALLETCONNECT_SESSION_REQUEST:
       return merge({}, state, { pending: action.payload });
     case WALLETCONNECT_SESSION_APPROVED:
