@@ -56,7 +56,7 @@ const activeModalResetState = {
 };
 
 type Props = {
-  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchAssetsBalances: (assets: Assets) => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string, indexFrom?: number) => Function,
   history: Transaction[],
   assets: Assets,
@@ -225,7 +225,7 @@ class AssetScreen extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                fetchAssetsBalances(assets, wallet.address);
+                fetchAssetsBalances(assets);
                 fetchTransactionsHistory(wallet.address, assetData.token);
               }}
             />
@@ -318,8 +318,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets, walletAddress) => {
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
+  fetchAssetsBalances: (assets) => {
+    dispatch(fetchAssetsBalancesAction(assets));
   },
   fetchTransactionsHistory: (walletAddress, asset, indexFrom) => {
     dispatch(fetchTransactionsHistoryAction(walletAddress, asset, indexFrom));

@@ -166,7 +166,7 @@ export const startListeningNotificationsAction = () => {
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
         dispatch(fetchTransactionsHistoryAction(wallet.address, notification.asset));
-        dispatch(fetchAssetsBalancesAction(assets, wallet.address));
+        dispatch(fetchAssetsBalancesAction(assets));
       }
       if (notification.type === COLLECTIBLE) {
         dispatch(fetchAllCollectiblesDataAction());
@@ -249,7 +249,7 @@ export const startListeningOnOpenNotificationAction = () => {
           } = getState();
           dispatch(fetchTransactionsHistoryNotificationsAction());
           dispatch(fetchTransactionsHistoryAction(wallet.address, asset));
-          dispatch(fetchAssetsBalancesAction(assets, wallet.address));
+          dispatch(fetchAssetsBalancesAction(assets));
         }
         if (type === COLLECTIBLE) {
           dispatch(fetchAllCollectiblesDataAction());
