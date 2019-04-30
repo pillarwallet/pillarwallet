@@ -27,7 +27,7 @@ import {
   Keyboard,
 } from 'react-native';
 import styled from 'styled-components/native';
-import isEqual from 'lodash.isequal';
+import isEqualWith from 'lodash.isequalwith';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // components
@@ -76,7 +76,10 @@ class CollectiblesList extends React.Component<Props> {
     if (!isFocused) {
       return false;
     }
-    const isEq = isEqual(this.props, nextProps);
+    const isEq = isEqualWith(this.props, nextProps, (val1, val2) => {
+      if (typeof val1 === 'function' && typeof val2 === 'function') return true;
+      return undefined;
+    });
     return !isEq;
   }
 

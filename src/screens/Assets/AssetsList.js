@@ -25,7 +25,7 @@ import {
   Platform,
   View,
 } from 'react-native';
-import isEqual from 'lodash.isequal';
+import isEqualWith from 'lodash.isequalwith';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import Swipeout from 'react-native-swipeout';
@@ -79,7 +79,10 @@ class AssetsList extends React.Component<Props> {
     if (!isFocused) {
       return false;
     }
-    const isEq = isEqual(this.props, nextProps);
+    const isEq = isEqualWith(this.props, nextProps, (val1, val2) => {
+      if (typeof val1 === 'function' && typeof val2 === 'function') return true;
+      return undefined;
+    });
     return !isEq;
   }
 
