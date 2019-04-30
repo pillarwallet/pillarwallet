@@ -20,14 +20,18 @@
 /**
  * Create the Redux store
  */
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers';
 import ReduxAsyncQueue from 'redux-async-queue';
 import offlineMiddleware from 'utils/offlineMiddleware';
 import PillarSdk from 'services/api';
+import { isTest } from 'utils/environment';
 import rootReducer from './reducers/rootReducer';
+import { ReactotronConfig } from '../reactotron.config';
+
+ReactotronConfig();
 
 const pillarSdk = new PillarSdk();
 const navigationMiddleware = createReactNavigationReduxMiddleware(
@@ -41,11 +45,19 @@ const enhancer = composeWithDevTools({
 })(applyMiddleware(...middlewares));
 
 export default function configureStore(initialState: ?Object): Object {
-  const store = createStore(
-    rootReducer,
-    initialState,
-    enhancer,
-  );
+  const useReactotron = __DEV__ && !isTest;
+
+  const store = useReactotron ?
+    createStore(
+      rootReducer,
+      initialState,
+      compose(enhancer, Reactotron.createEnhancer()), // eslint-disable-line no-undef
+    ) :
+    createStore(
+      rootReducer,
+      initialState,
+      enhancer,
+    );
 
   return store;
 }
