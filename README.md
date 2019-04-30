@@ -66,7 +66,8 @@ There's one change, instead of adding `console.log('something to log')` you shou
 For android you'd probably need to execute following command `adb reverse tcp:9090 tcp:9090`
 
 #### Redux State
-If you open the `state` window, in order to add the view of any `states` just type `cmd+n` and don't include any specific, just hit `enter`.
+In order to view the state go to the `state` window, here you need to add the view (subscription) first.
+Press `Cmd+n`, no need to enter anything specific, just click on `Subscribe`.
 
 **Network Requests**
 
