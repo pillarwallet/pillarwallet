@@ -37,7 +37,7 @@ import {
 import { WALLETCONNECT_SESSION_REQUEST_SCREEN, WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
 // import type { JsonRpcRequest } from 'models/JsonRpc';
 import { navigate } from 'services/navigation';
-// import { saveDbAction } from './dbActions';
+import { saveDbAction } from './dbActions';
 
 const getNativeOptions = async () => {
   // const language = DEVICE_LANGUAGE.replace(/[-_](\w?)+/gi, "").toLowerCase();
@@ -122,6 +122,8 @@ export const onWalletConnectDisconnect = (peerId: string) => {
       const { connectors } = getState().walletConnect;
 
       const newConnectors = connectors.filter(c => c !== peerId);
+
+      dispatch(saveDbAction('walletconnect', { connectors: newConnectors }, true));
 
       dispatch({
         type: WALLETCONNECT_SESSION_DISCONNECTED,
@@ -263,6 +265,8 @@ export const onWalletConnectSessionApproval = (peerId: string) => {
 
         const newPending = pending.filter(c => c.peerId !== peerId);
         const newConnectors = [...connectors, connector];
+
+        dispatch(saveDbAction('walletconnect', { connectors: newConnectors }, true));
 
         dispatch({
           type: WALLETCONNECT_SESSION_APPROVED,
