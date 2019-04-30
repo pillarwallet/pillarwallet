@@ -354,49 +354,6 @@ export const onWalletConnectRejectCallRequest = (peerId: string, callId: string,
   };
 };
 
-// export const onWalletConnectHandleTransactionRequest = (
-//   peerId: String,
-//   callId: string,
-//   wallet: Object,
-//   payload: JsonRpcRequest,
-// ) => {
-//   return async (dispatch: Function, getState: () => Object) => {
-//     let nonce;
-
-//     const { to, note } = transaction;
-
-//     const {
-//       txCount: {
-//         data: { lastNonce },
-//       },
-//     } = getState();
-
-//     wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
-//     const transactionCount = await wallet.provider.getTransactionCount(wallet.address, 'pending');
-
-//     if (lastNonce === transactionCount && lastNonce > 0) {
-//       nonce = lastNonce + 1;
-//     }
-
-//     const {
-//       to, wallet, gasPrice, gasLimit, amount, nonce,
-//     } = options;
-//     const trx = {
-//       gasLimit,
-//       gasPrice: utils.bigNumberify(gasPrice),
-//       value: utils.parseEther(amount.toString()),
-//       to,
-//       nonce,
-//     };
-//     wallet.provider = providers.getDefaultProvider(PROVIDER);
-//     return wallet.sendTransaction(trx);
-
-//     const result = null;
-
-//     dispatch(onWalletConnectApproveCallRequest(peerId, callId, result));
-//   };
-// };
-
 export const onWalletConnectApproveCallRequest = (peerId: string, callId: string, result: any) => {
   return async (dispatch: Function, getState: () => Object) => {
     if (!result) {
