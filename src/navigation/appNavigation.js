@@ -61,6 +61,8 @@ import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import BadgeScreen from 'screens/Badge';
+import OTPScreen from 'screens/OTP';
+import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -125,6 +127,8 @@ import {
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
   BADGE,
+  OTP,
+  CONFIRM_CLAIM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -214,6 +218,8 @@ peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
+  [OTP]: OTPScreen,
+  [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [CONTACT]: ContactScreen,
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
@@ -426,7 +432,7 @@ type Props = {
   startListeningChatWebSocket: Function,
   stopListeningChatWebSocket: Function,
   fetchICOs: Function,
-  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchAssetsBalances: (assets: Assets) => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
@@ -458,12 +464,11 @@ class AppFlow extends React.Component<Props, {}> {
       fetchICOs,
       getExistingChats,
       assets,
-      wallet,
       fetchAllCollectiblesData,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
-    fetchAssetsBalances(assets, wallet.address);
+    fetchAssetsBalances(assets);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     fetchICOs();
@@ -606,9 +611,7 @@ const mapDispatchToProps = (dispatch) => ({
   startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
   stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
   startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
-  fetchAssetsBalances: (assets, walletAddress) => {
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
+  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },

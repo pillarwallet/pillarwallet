@@ -1,4 +1,6 @@
 include ':app'
+include ':react-native-fabric'
+project(':react-native-fabric').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fabric/android')
 include ':react-native-extra-dimensions-android'
 project(':react-native-extra-dimensions-android').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-extra-dimensions-android/android')
 include ':react-native-touch-id'
@@ -22,7 +24,7 @@ project(':react-native-scrypt').projectDir = new File(rootProject.projectDir, '.
 include ':react-native-fetch-blob'
 project(':react-native-fetch-blob').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fetch-blob/android')
 include ':react-native-camera'
-project(':react-native-camera').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-camera/android')
+project(':react-native-camera').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-camera/android')
 include ':rn-signal-protocol-messaging'
 project(':rn-signal-protocol-messaging').projectDir = new File(rootProject.projectDir, '../node_modules/rn-signal-protocol-messaging/android')
 include ':react-native-vector-icons'

@@ -48,6 +48,7 @@ import {
 import Spinner from 'components/Spinner';
 import { isIphoneX, handleUrlPress } from 'utils/common';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
+import { Answers } from 'react-native-fabric';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -340,6 +341,7 @@ class ChatTab extends React.Component<Props, State> {
       getChatByContact(contact.username, contact.id, contact.profileImage);
       navigation.setParams({ chatTabOpen: true });
     }
+    Answers.logContentView('Chat screen');
     AppState.addEventListener('change', this.shouldPersistDraft);
 
     getChatDraftByContact(contact.id);

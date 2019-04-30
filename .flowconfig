@@ -39,6 +39,9 @@
 ; Ignore polyfills
 <PROJECT_ROOT>/node_modules/react-native/Libraries/polyfills/.*
 
+; Ignore duplicated react-native-linear-gradient
+<PROJECT_ROOT>/node_modules/react-native-linear-gradient/index.windows.js
+
 ; Ignore various node_modules
 <PROJECT_ROOT>/node_modules/react-native-gesture-handler/.*
 <PROJECT_ROOT>/node_modules/xdl/.*

@@ -34,6 +34,7 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { Answers } from 'react-native-fabric';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -92,8 +93,8 @@ import { getBalance, getRate } from 'utils/assets';
 import debounce from 'lodash.debounce';
 
 type Props = {
-  fetchInitialAssets: (walletAddress: string) => Function,
-  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchInitialAssets: () => Function,
+  fetchAssetsBalances: (assets: Assets) => Function,
   assets: Assets,
   collectibles: Array<Collectible>,
   balances: Balances,
@@ -188,11 +189,12 @@ class AssetsScreen extends React.Component<Props, State> {
     const {
       fetchInitialAssets,
       assets,
-      wallet,
     } = this.props;
 
+    Answers.logContentView('Assets screen');
+
     if (!Object.keys(assets).length) {
-      fetchInitialAssets(wallet.address);
+      fetchInitialAssets();
     }
 
     this.willFocus = this.props.navigation.addListener(
@@ -570,7 +572,6 @@ class AssetsScreen extends React.Component<Props, State> {
   renderAssetList = () => {
     const {
       assets,
-      wallet,
       assetsLayout,
       baseFiatCurrency,
       rates,
@@ -620,7 +621,7 @@ class AssetsScreen extends React.Component<Props, State> {
             refreshing={false}
             onRefresh={() => {
               const { fetchAssetsBalances } = this.props;
-              fetchAssetsBalances(assets, wallet.address);
+              fetchAssetsBalances(assets);
             }}
           />
         }
@@ -674,7 +675,6 @@ class AssetsScreen extends React.Component<Props, State> {
   render() {
     const {
       assets,
-      wallet,
       assetsState,
       fetchInitialAssets,
       assetsSearchState,
@@ -691,7 +691,7 @@ class AssetsScreen extends React.Component<Props, State> {
             <Spinner />
           )}
           {assetsState === FETCH_INITIAL_FAILED && (
-            <Button title="Try again" onPress={() => fetchInitialAssets(wallet.address)} />
+            <Button title="Try again" onPress={() => fetchInitialAssets()} />
           )}
         </Container>
       );
@@ -777,12 +777,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchInitialAssets: (walletAddress) => {
-    dispatch(fetchInitialAssetsAction(walletAddress));
-  },
-  fetchAssetsBalances: (assets, walletAddress) => {
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
+  fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
+  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
   updateAssets: (assets: Assets, assetsToExclude: string[]) => dispatch(updateAssetsAction(assets, assetsToExclude)),
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),

@@ -25,6 +25,7 @@ import {
   isValidEmail,
   isValidName,
   isValidCityName,
+  isValidUKPhone,
 } from '../validators';
 
 describe('Validators', () => {
@@ -121,6 +122,28 @@ describe('Validators', () => {
     it('should return true if city name is valid', () => {
       const cityName = 'San Fransisco';
       expect(isValidCityName(cityName)).toBeTruthy();
+    });
+  });
+
+  describe('isValidUKPhone', () => {
+    it('should return true as valid number', () => {
+      const phone = '+447473222885';
+      expect(isValidUKPhone(phone)).toBeTruthy();
+    });
+
+    it('should return false for too long number', () => {
+      const phone = '+4474732228852';
+      expect(isValidUKPhone(phone)).toBeFalsy();
+    });
+
+    it('should return false for other prefix than +44', () => {
+      const phone = '+407473222885';
+      expect(isValidUKPhone(phone)).toBeFalsy();
+    });
+
+    it('should return false for missing +', () => {
+      const phone = '447473222885';
+      expect(isValidUKPhone(phone)).toBeFalsy();
     });
   });
 });

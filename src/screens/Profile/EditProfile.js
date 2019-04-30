@@ -31,6 +31,8 @@ import {
   LastNameStruct,
   EmailStruct,
   CityStruct,
+  PhoneStruct,
+  CodeStruct,
 } from 'components/ProfileForm/profileFormDefs';
 
 const window = Dimensions.get('window');
@@ -59,7 +61,8 @@ type Field = {
 type Props = {
   fields: Field[],
   onSubmit: Function,
-  value: Object,
+  value?: Object,
+  buttonTitle?: string,
 }
 
 type State = {
@@ -68,7 +71,8 @@ type State = {
 
 const defaultTypes = {
   string: t.String,
-  number: t.Number,
+  code: CodeStruct,
+  phone: PhoneStruct,
   email: EmailStruct,
   firstName: FirstNameStruct,
   lastName: LastNameStruct,
@@ -122,7 +126,7 @@ export default class ProfileForm extends React.Component<Props, State> {
 
   render() {
     const { value } = this.state;
-    const { fields } = this.props;
+    const { fields, buttonTitle = 'Save' } = this.props;
     const formOptions = generateFormOptions(fields);
     const formStructure = getFormStructure(fields);
 
@@ -136,7 +140,7 @@ export default class ProfileForm extends React.Component<Props, State> {
           onChange={this.handleChange}
         />
         <FormFooter>
-          <Button onPress={this.handleSubmit} title="Save" />
+          <Button onPress={this.handleSubmit} title={buttonTitle} />
         </FormFooter>
       </StyledWrapper>
     );
