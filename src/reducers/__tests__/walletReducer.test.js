@@ -57,7 +57,12 @@ describe('Wallet reducer', () => {
       onboarding: mockOnboarding,
       walletState: CREATED,
       backupStatus: mockBackupStatus,
-      isSmartWallet: false,
+      smartWallet: {
+        accounts: [],
+        sdkInitialized: false,
+        connectedAccount: {},
+        isSmartWallet: false,
+      },
     };
     expect(reducer(undefined, updateAction)).toEqual(expected);
   });
@@ -75,7 +80,12 @@ describe('Wallet reducer', () => {
       onboarding: mockOnboarding,
       walletState: DECRYPTED,
       backupStatus: mockBackupStatus,
-      isSmartWallet: false,
+      smartWallet: {
+        accounts: [],
+        sdkInitialized: false,
+        connectedAccount: {},
+        isSmartWallet: false,
+      },
     };
     expect(reducer(undefined, updateAction)).toEqual(expected);
   });

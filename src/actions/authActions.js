@@ -34,10 +34,11 @@ import {
   APP_FLOW,
   AUTH_FLOW,
   ONBOARDING_FLOW,
-  ASSETS,
+  // ASSETS,
   CHAT,
   CHAT_LIST,
   PIN_CODE_UNLOCK,
+  SMART_WALLET,
 } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
@@ -155,7 +156,8 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       const currentFlow = pathAndParams.path.split('/')[0];
 
       const navigateToLastActiveScreen = NavigationActions.navigate({
-        routeName: lastActiveScreen || ASSETS, // current active screen will be always AUTH_FLOW due to login/logout
+        // current active screen will be always AUTH_FLOW due to login/logout
+        routeName: lastActiveScreen || SMART_WALLET,
         params: lastActiveScreenParams,
       });
 

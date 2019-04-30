@@ -767,7 +767,7 @@ class AssetsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  wallet: { data: wallet, isSmartWallet },
+  wallet: { data: wallet, smartWallet: { isSmartWallet } },
   assets: {
     data: assets,
     assetsState,

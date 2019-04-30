@@ -32,6 +32,9 @@ import {
   RESET_WALLET_IMPORT,
   BACKUP_WALLET,
   REMOVE_PRIVATE_KEY,
+  SET_SMART_WALLET_SDK_INIT,
+  SET_SMART_WALLET_ACCOUNTS,
+  SET_SMART_WALLET_CONNECTED_ACCOUNT,
 } from 'constants/walletConstants';
 import {
   LEGAL_TERMS,
@@ -41,8 +44,12 @@ import {
 import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
+import SmartWalletService from 'services/smartWallet';
+import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
+
+let smartWalletService: SmartWalletService;
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
@@ -200,5 +207,63 @@ export const backupWalletAction = () => {
 export const removePrivateKeyFromMemoryAction = () => {
   return async (dispatch: Function) => {
     dispatch({ type: REMOVE_PRIVATE_KEY });
+  };
+};
+
+export const initSmartWalletSdkAction = (wallet: Object) => {
+  return async (dispatch: Function) => {
+    smartWalletService = new SmartWalletService();
+    await smartWalletService.init(wallet.privateKey);
+    dispatch({
+      type: SET_SMART_WALLET_SDK_INIT,
+      payload: true,
+    });
+  };
+};
+
+export const getSmartWalletAccountsAction = () => {
+  return async (dispatch: Function) => {
+    const accounts = await smartWalletService.getAccounts();
+    dispatch({
+      type: SET_SMART_WALLET_ACCOUNTS,
+      payload: accounts,
+    });
+  };
+};
+
+export const connectSmartWalletAccountAction = (account: SmartWalletAccount) => {
+  return async (dispatch: Function) => {
+    const connectedAccount = await smartWalletService.connectAccount(account.address);
+    dispatch({
+      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+      payload: connectedAccount,
+    });
+  };
+};
+
+export const deploySmartWalletAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      wallet: {
+        smartWallet: {
+          connectedAccount: {
+            state: accountState,
+          },
+        },
+      },
+    } = getState();
+    if (accountState.toLowerCase() === 'deployed') {
+      console.log('deploySmartWalletAction account is already deployed!');
+      return;
+    }
+    const deployTxHash = await smartWalletService.deploy();
+    console.log('deploySmartWalletAction deployTxHash: ', deployTxHash);
+    // update accounts info
+    dispatch(getSmartWalletAccountsAction());
+    const account = await smartWalletService.fetchConnectedAccount();
+    dispatch({
+      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+      account,
+    });
   };
 };

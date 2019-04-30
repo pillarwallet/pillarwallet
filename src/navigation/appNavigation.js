@@ -70,6 +70,8 @@ import RecoveryAgentsScreen from 'screens/UpgradeToSmartWallet/RecoveryAgentsScr
 import ChooseAssetsScreen from 'screens/UpgradeToSmartWallet/ChooseAssetsScreen';
 import EditAssetAmountScreen from 'screens/UpgradeToSmartWallet/EditAssetAmountScreen';
 import UpgradeConfirmScreen from 'screens/UpgradeToSmartWallet/UpgradeConfirmScreen';
+import SmartWalletScreen from 'screens/SmartWallet';
+import SmartWalletUnlockScreen from 'screens/SmartWallet/SmartWalletUnlock';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -144,6 +146,9 @@ import {
   CHOOSE_ASSETS_TO_TRANSFER,
   EDIT_ASSET_AMOUNT_TO_TRANSFER,
   UPGRADE_CONFIRM,
+  SMART_WALLET_TAB,
+  SMART_WALLET,
+  SMART_WALLET_UNLOCK,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -254,6 +259,14 @@ const homeFlow = createStackNavigator({
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// SMART_WALLET FLOW
+const smartWalletFlow = createStackNavigator({
+  [SMART_WALLET]: SmartWalletScreen,
+  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
+}, StackNavigatorConfig);
+
+smartWalletFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // ICO FLOW
 const icoFlow = createStackNavigator({
   [MARKET]: MarketScreen,
@@ -354,6 +367,13 @@ const tabNavigation = createBottomTabNavigator(
     //     tabBarLabel: tabBarLabel('Market'),
     //   }),
     // },
+    [SMART_WALLET_TAB]: {
+      screen: smartWalletFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
+        tabBarLabel: tabBarLabel('SmartW'),
+      }),
+    },
     [CHAT_LIST]: {
       screen: chatFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
@@ -443,7 +463,7 @@ const backupWalletFlow = createStackNavigator({
 }, StackNavigatorModalConfig);
 
 // UPGRADE TO SMART WALLET FLOW
-const smartWalletFlow = createStackNavigator({
+const smartWalletFlowUI = createStackNavigator({
   [UPGRADE_INTRO]: UpgradeIntroScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
@@ -467,7 +487,7 @@ const AppFlowNavigation = createStackNavigator(
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
-    [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletFlow,
+    [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletFlowUI,
   }, modalTransition,
 );
 
