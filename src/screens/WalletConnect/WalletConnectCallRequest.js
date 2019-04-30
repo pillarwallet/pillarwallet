@@ -32,12 +32,14 @@ import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import type { JsonRpcRequest } from 'models/JsonRpc';
 import type { TokenTransactionPayload } from 'models/Transaction';
+import { onWalletConnectRejectCallRequest } from 'actions/walletConnectActions';
 import { spacing, fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  rejectCallRequest: (peerId: string, callId: string) => Function,
   session: Object,
   contacts: Object[],
   supportedAssets: Asset[],
@@ -150,6 +152,14 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   handleNoteChange(text) {
     this.setState({ note: text });
   }
+
+  handleDismissal = () => {
+    const { navigation, rejectCallRequest } = this.props;
+    navigation.dismiss();
+    const peerId = navigation.getParam('peerId', {});
+    const payload = navigation.getParam('payload', {});
+    rejectCallRequest(peerId, payload.id);
+  };
 
   render() {
     const { contacts, session, navigation } = this.props;
@@ -267,7 +277,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Container>
-          <Header onBack={() => this.props.navigation.goBack(null)} title={`${type} Request`} />
+          <Header onBack={this.handleDismissal} title={`${type} Request`} />
           {body}
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
@@ -290,4 +300,13 @@ const mapStateToProps = ({
   supportedAssets,
 });
 
-export default connect(mapStateToProps)(WalletConnectCallRequestScreen);
+const mapDispatchToProps = dispatch => ({
+  rejectCallRequest: (peerId: string, callId: string) => {
+    dispatch(onWalletConnectRejectCallRequest(peerId, callId));
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(WalletConnectCallRequestScreen);

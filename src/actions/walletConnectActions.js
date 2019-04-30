@@ -333,7 +333,7 @@ export const onWalletConnectSessionRejection = (peerId: string) => {
   };
 };
 
-export const onWalletConnectRejectCallRequest = (peerId: string, callId: string, error?: string) => {
+export const onWalletConnectRejectCallRequest = (peerId: string, callId: string, errorMsg?: string) => {
   return async (dispatch: Function, getState: () => Object) => {
     const { connectors } = getState().walletConnect;
 
@@ -341,8 +341,7 @@ export const onWalletConnectRejectCallRequest = (peerId: string, callId: string,
 
     if (matchingConnectors && matchingConnectors.length) {
       const connector = matchingConnectors[0];
-
-      connector.rejectRequest({ id: callId, error: error || null });
+      connector.rejectRequest({ id: callId, error: { message: errorMsg || 'Call Request Rejected' } });
     } else {
       dispatch({
         type: WALLETCONNECT_ERROR,
@@ -363,8 +362,6 @@ export const onWalletConnectRejectCallRequest = (peerId: string, callId: string,
 // ) => {
 //   return async (dispatch: Function, getState: () => Object) => {
 //     let nonce;
-
-//     console.log('payload', payload)
 
 //     const { to, note } = transaction;
 

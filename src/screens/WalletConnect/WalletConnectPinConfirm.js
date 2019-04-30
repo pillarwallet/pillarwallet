@@ -122,7 +122,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
       {
         isChecking: false,
       },
-      () => this.handleBack(),
+      () => this.handleDismissal(),
     );
   };
 
@@ -139,7 +139,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
       {
         isChecking: false,
       },
-      () => this.handleBack(),
+      () => this.handleDismissal(),
     );
   };
 
@@ -153,6 +153,12 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   handleBack = () => {
     const { navigation, resetIncorrectPassword } = this.props;
     navigation.goBack(null);
+    resetIncorrectPassword();
+  };
+
+  handleDismissal = () => {
+    const { navigation, resetIncorrectPassword } = this.props;
+    navigation.dismiss();
     resetIncorrectPassword();
   };
 
