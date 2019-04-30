@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import {
@@ -280,7 +279,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
       dispatch({ type: UPDATE_BALANCES, payload: transformedBalances });
     }
 
-    // @TODO: Extra "rates fetching" to it's own action ones required.
+    // @TODO: Extract "rates fetching" to it's own action ones required.
     const rates = await getExchangeRates(Object.keys(assets));
     if (rates && Object.keys(rates).length) {
       dispatch(saveDbAction('rates', { rates }, true));
@@ -312,19 +311,7 @@ export const fetchInitialAssetsAction = (walletAddress: string) => {
       payload: initialAssets,
     });
 
-    const rates = await getExchangeRates(Object.keys(initialAssets));
-    dispatch({
-      type: UPDATE_RATES,
-      payload: rates,
-    });
-
-    const balances = await api.fetchBalances({ address: walletAddress, assets: Object.values(initialAssets) });
-    const updatedAssets = merge({}, initialAssets, transformAssetsToObject(balances));
-    dispatch(saveDbAction('assets', { assets: updatedAssets }));
-    dispatch({
-      type: UPDATE_ASSETS,
-      payload: updatedAssets,
-    });
+    dispatch(fetchAssetsBalancesAction(initialAssets, walletAddress));
   };
 };
 
