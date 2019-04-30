@@ -62,6 +62,7 @@ export type WalletReducerState = {
     sdkInitialized: boolean,
     connectedAccount: Object,
     accounts: SmartWalletAccount[],
+    isSmartWallet: boolean,
   },
 }
 
@@ -96,6 +97,7 @@ const initialState = {
     sdkInitialized: false,
     connectedAccount: {},
     accounts: [],
+    isSmartWallet: false,
   },
 };
 
