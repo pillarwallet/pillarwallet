@@ -27,11 +27,16 @@ import Button from 'components/Button';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Spinner from 'components/Spinner';
-import { Paragraph, SubHeading, TextLink, BaseText } from 'components/Typography';
+import {
+  Paragraph,
+  SubHeading,
+  TextLink,
+  // BaseText,
+} from 'components/Typography';
 import { baseColors, spacing } from 'utils/variables';
 import assetsConfig from 'configs/assetsConfig';
 import {
-  RECOVERY_AGENTS,
+  // RECOVERY_AGENTS,
   CHOOSE_ASSETS_TO_TRANSFER,
   CONTACT,
   SMART_WALLET_UNLOCK,
@@ -42,7 +47,7 @@ import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
-import { fontSizes } from '../../../utils/variables';
+// import { fontSizes } from '../../../utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -51,7 +56,6 @@ type Props = {
   balances: Balances,
   contacts: Object[],
   upgradeToSmartWallet: Function,
-  sdkInitialized: boolean,
 };
 
 type State = {
@@ -64,9 +68,11 @@ const WhiteWrapper = styled.View`
 `;
 
 const FooterInner = styled.View`
-  background-color: ${baseColors.snowWhite};
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: flex-end;
+  width: 100%;
+  background-color: ${baseColors.snowWhite};
 `;
 
 const ListSeparator = styled.View`
@@ -77,6 +83,7 @@ const ListSeparator = styled.View`
   align-items: center;
 `;
 
+/*
 const Label = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall}px;
   color: #999999;
@@ -87,6 +94,7 @@ const LabelWrapper = styled.View`
   padding: 0 ${spacing.large}px 10px;
   justify-content: center;
 `;
+*/
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
@@ -125,10 +133,10 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
         itemImageUrl={fullIconUrl || genericToken}
         itemValue={`${assetBalance} ${item.symbol}`}
         fallbackSource={genericToken}
-        rightColumnInnerStyle={{ flex: 1, justifyContent: 'flex-end' }}
+        /* rightColumnInnerStyle={{ flex: 1, justifyContent: 'flex-end' }}
         customAddon={
           <Label style={{ textAlign: 'right' }}>Fee 0,004</Label>
-        }
+        } */
       />
     );
   };
@@ -144,7 +152,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
   render() {
     const {
       navigation,
-      contacts,
+      // contacts,
       assets,
       balances,
     } = this.props;
@@ -156,14 +164,14 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       return getBalance(balances, asset.symbol) !== 0;
     });
     const sections = [];
-    if (contacts.length) {
+    /* if (contacts.length) {
       sections.push({
         title: 'RECOVERY AGENTS',
         data: contacts,
         extraData: assets,
         toEdit: RECOVERY_AGENTS,
       });
-    }
+    } */
     if (nonEmptyAssets.length) {
       sections.push({
         title: 'TOKENS',
@@ -201,11 +209,11 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           keyExtractor={(item) => item.id}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
         />
-        <Footer style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+        <Footer>{/* style={{ flexDirection: 'column', alignItems: 'flex-end' }} */}
           <FooterInner>
-            <LabelWrapper>
+            {/* <LabelWrapper>
               <Label style={{ textAlign: 'center' }}>Total fee 0,004</Label>
-            </LabelWrapper>
+            </LabelWrapper> */}
             {!upgradeStarted && <Button block title="Enable Smart Wallet" onPress={this.onEnableClick} />}
             {upgradeStarted && <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>}
           </FooterInner>
@@ -218,16 +226,10 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   assets: { data: assets, balances },
-  wallet: {
-    smartWallet: {
-      sdkInitialized,
-    },
-  },
 }) => ({
   contacts,
   assets,
   balances,
-  sdkInitialized,
 });
 
 const mapDispatchToProps = (dispatch) => ({
