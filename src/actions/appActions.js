@@ -42,7 +42,7 @@ import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKey
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
-import { UPDATE_ACCOUNTS } from 'constants/accountConstants';
+import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 
 // actions
 import { saveDbAction } from './dbActions';

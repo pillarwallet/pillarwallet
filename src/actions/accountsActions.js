@@ -19,7 +19,7 @@
 */
 
 // import { saveDbAction } from 'actions/dbActions';
-import { ADD_ACCOUNT, ACCOUNT_TYPES } from 'constants/accountConstants';
+import { ADD_ACCOUNT, ACCOUNT_TYPES } from 'constants/accountsConstants';
 import Storage from 'services/storage';
 import { saveDbAction } from './dbActions';
 
