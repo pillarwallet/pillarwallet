@@ -112,8 +112,8 @@ async function threadPoolCreation() {
 }
 
 export async function generateKeyPairThreadPool(
-  mnemonic: string,
-  privateKey: string,
+  mnemonic: ?string,
+  privateKey: ?string,
   connectionsCount: number = 0,
   connectionsKeyPairCount: number = 0,
   lastConnectionKeyIndex: number = -1): Promise<Array<any>> {

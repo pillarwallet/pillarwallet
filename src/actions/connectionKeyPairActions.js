@@ -207,8 +207,8 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
 };
 
 export const updateConnectionKeyPairs = (
-  mnemonic: string,
-  privateKey: string,
+  mnemonic: ?string,
+  privateKey: ?string,
   walletId: string,
   generateKeys: boolean = true,
 ) => {
