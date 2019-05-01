@@ -26,7 +26,7 @@ import Header from 'components/Header';
 import Button from 'components/Button';
 import { Paragraph, BoldText, BaseText } from 'components/Typography';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { RECOVERY_AGENTS } from 'constants/navigationConstants';
+import { CHOOSE_ASSETS_TO_TRANSFER } from 'constants/navigationConstants';
 
 type Props = {
   changePin: (newPin: string, currentPin: string) => Function,
@@ -134,7 +134,7 @@ class UpgradeInfoScreen extends React.PureComponent<Props> {
           </Wrapper>
         </WhiteWrapper>
         <Footer>
-          <Button small title="Next" onPress={() => navigation.navigate(RECOVERY_AGENTS)} />
+          <Button small title="Next" onPress={() => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)} />
         </Footer>
       </Container>
     );
