@@ -35,10 +35,6 @@ type Props = {
   resetIncorrectPassword: () => Function,
 };
 
-type State = {
-  pinError: string,
-};
-
 const WhiteWrapper = styled.View`
   background-color: ${baseColors.white};
   padding-bottom: 50px;
@@ -91,7 +87,7 @@ const Footer = styled.View`
   flex: 1;
 `;
 
-class UpgradeInfoScreen extends React.PureComponent<Props, State> {
+class UpgradeInfoScreen extends React.PureComponent<Props> {
   render() {
     const { navigation } = this.props;
     return (

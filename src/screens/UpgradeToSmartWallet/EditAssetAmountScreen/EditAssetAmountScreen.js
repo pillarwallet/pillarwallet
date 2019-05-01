@@ -150,7 +150,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
               onNextPress: () => { navigation.goBack(); },
             }}
             searchInputPlaceholder="Search asset"
-            onSearchChange={(q) => this.handleSearchChange(q)}
+            onSearchChange={this.handleSearchChange}
             itemSearchState={query.length >= 2}
             navigation={navigation}
             backgroundColor={baseColors.white}

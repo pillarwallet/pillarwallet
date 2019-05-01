@@ -34,10 +34,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
 };
 
-type State = {
-  pinError: string,
-};
-
 const Title = styled(BoldText)`
   font-size: 24px;
   text-align: center;
@@ -89,7 +85,7 @@ const UpgradeEmoji = styled(Emoji)`
 const headSculptureSource = require('assets/images/headSculpture.png');
 const backgroundImageSource = require('assets/images/smartWalletBgGradient.png');
 
-class UpgradeIntroScreen extends React.PureComponent<Props, State> {
+class UpgradeIntroScreen extends React.PureComponent<Props> {
   render() {
     const { navigation } = this.props;
     return (

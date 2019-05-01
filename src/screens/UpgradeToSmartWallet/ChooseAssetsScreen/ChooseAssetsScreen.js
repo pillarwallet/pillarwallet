@@ -125,9 +125,10 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
         itemImageUrl={fullIconUrl || genericToken}
         itemValue={`${assetBalance} ${item.symbol}`}
         fallbackSource={genericToken}
+        onPress={() => this.updateAssetsToTransferList(item.name)}
         customAddon={
           <Checkbox
-            onPress={() => { this.updateAssetsToTransferList(item.name); }}
+            onPress={() => this.updateAssetsToTransferList(item.name)}
             checked={assetsToTransfer.includes(item.name)}
             rounded
             wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
@@ -145,9 +146,10 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
         label={item.name}
         itemImageUrl={item.icon || genericToken}
         fallbackSource={genericToken}
+        onPress={() => this.updateCollectiblesToTransferList(item.name)}
         customAddon={
           <Checkbox
-            onPress={() => { this.updateCollectiblesToTransferList(item.name); }}
+            onPress={() => this.updateCollectiblesToTransferList(item.name)}
             checked={collectiblesToTransfer.includes(item.name)}
             rounded
             wrapperStyle={{ width: 24, marginRight: 4 }}
@@ -279,7 +281,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
               onNextPress: () => { navigation.navigate(EDIT_ASSET_AMOUNT_TO_TRANSFER); },
             }}
             searchInputPlaceholder="Search asset"
-            onSearchChange={(q) => this.handleSearchChange(q)}
+            onSearchChange={this.handleSearchChange}
             itemSearchState={query.length >= 2}
             navigation={navigation}
             backgroundColor={baseColors.white}

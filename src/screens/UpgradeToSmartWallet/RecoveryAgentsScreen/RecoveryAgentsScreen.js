@@ -88,10 +88,11 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
         label={item.username}
         avatarUrl={item.profileImage}
         navigateToProfile={() => this.navigateToContactScreen(item)}
+        onPress={() => this.updateAgentsUsernames(item.username)}
         imageUpdateTimeStamp={item.lastUpdateTime}
         customAddon={
           <Checkbox
-            onPress={() => { this.updateAgentsUsernames(item.username); }}
+            onPress={() => this.updateAgentsUsernames(item.username)}
             checked={agentsUserNames.includes(item.username)}
             rounded
             wrapperStyle={{ width: 24, marginRight: 4 }}
@@ -118,7 +119,7 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
             onBack: () => navigation.goBack(null),
           }}
           searchInputPlaceholder="Search user"
-          onSearchChange={(q) => this.handleSearchChange(q)}
+          onSearchChange={this.handleSearchChange}
           itemSearchState={query.length >= 2}
           navigation={navigation}
           backgroundColor={baseColors.white}
