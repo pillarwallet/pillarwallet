@@ -46,10 +46,28 @@ _note_: after any compilation (i.e. after linking a native library) please resta
 
 ## Debugging
 
+Debug implies checking logs and be able to stop on specific breakpoints. For the first requirement (watch logs) there're two options. If you want to stop on breakpoints then only the first option is for you.
+However if what you want is just to track or set the logs, then Reactotron will be, probably, more effective.
+
+### React Native Debugger
 First, you need to install the [React Native Debugger](https://github.com/jhen0409/react-native-debugger)
 `brew update && brew cask install react-native-debugger`
 
 Press *⌘+D* on iOS simulator, *⌘+M* on Android emulator, or shake real devices, you will see the in-app developer menu. Tap “Debug JS Remotely”. The React Native Debugger will be opened automatically. Open source files in the Sources tab, you can set breakpoints here.
+
+### Reactotron
+Install [Reactotron](https://github.com/infinitered/reactotron) for your specific platform ([here's the download page](https://github.com/infinitered/reactotron/releases))
+
+Start your application an open Reactotron, that's it!
+
+There's one change, instead of adding `console.log('something to log')` you should use `Reactotron.log('something to log')`
+
+#### Android
+For android you'd probably need to execute following command `adb reverse tcp:9090 tcp:9090`
+
+#### Redux State
+In order to view the state go to the `state` window, here you need to add the view (subscription) first.
+Press `Cmd+n`, no need to enter anything specific, just click on `Subscribe`.
 
 **Network Requests**
 

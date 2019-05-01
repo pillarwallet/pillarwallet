@@ -124,7 +124,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         if (generateNewConnKeys) {
           await dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId));
         } else {
-          dispatch(updateConnectionsAction());
+          dispatch(updateConnectionsAction(user.walletId));
         }
         dispatch(saveDbAction('user', { user }, true));
       } else {

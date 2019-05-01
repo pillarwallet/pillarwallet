@@ -19,5 +19,6 @@
 */
 
 export const UPDATE_USER = 'UPDATE_USER';
+export const USER_PHONE_VERIFIED = 'USER_PHONE_VERIFIED';
 export const REGISTERED = 'REGISTERED';
 export const PENDING = 'PENDING';

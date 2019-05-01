@@ -40,7 +40,7 @@ aliases:
   - &install_pods
     run:
       name: Install CocoaPods
-      command: cd ios && bundle exec pod check || ((curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf) && bundle exec pod install)
+      command: cd ios && bundle exec pod check || ((curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf) && bundle exec pod repo update && bundle exec pod install)
   - &save_pod_cache
     save_cache:
       key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
@@ -157,7 +157,7 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      - *ios_latest_yarn
+#      - *ios_latest_yarn
       - *yarn_install
       - *node_save_cache
       - run:
@@ -178,7 +178,7 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      - *ios_latest_yarn
+#      - *ios_latest_yarn
       - *yarn_install
       - *node_save_cache
 
@@ -229,7 +229,7 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      - *android_latest_yarn
+#      - *android_latest_yarn
       - *yarn_install
       - *node_save_cache
 
@@ -329,7 +329,7 @@ jobs:
             name: set Registry to use Artifactory
             command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
 
-      - *ios_latest_yarn
+#      - *ios_latest_yarn
 
       - run:
           name: Install node dependencies
@@ -348,7 +348,10 @@ jobs:
             pod --version
       - run:
           name: Install CocoaPods
-          command: cd ios && pod install --verbose
+          command: |
+            cd ios
+            pod repo update
+            pod install --verbose
       - save_cache:
           key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
           paths:
@@ -411,7 +414,7 @@ jobs:
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
 
-      - *android_latest_yarn
+#      - *android_latest_yarn
 
       - run:
           name: Install Python
@@ -595,7 +598,10 @@ jobs:
             pod --version
       - run:
           name: Install CocoaPods
-          command: cd ios && pod install --verbose
+          command: |
+            cd ios
+            pod repo update
+            pod install --verbose
       - save_cache:
           key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
           paths:

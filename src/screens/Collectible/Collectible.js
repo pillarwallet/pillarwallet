@@ -21,44 +21,31 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import isEqual from 'lodash.isequal';
-import { baseColors, spacing, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
-import ActivityFeed from 'components/ActivityFeed';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { TRANSACTIONS } from 'constants/activityConstants';
-import type { Transaction } from 'models/Transaction';
-import type { Assets, Balances } from 'models/Asset';
 
+import { TRANSACTIONS } from 'constants/activityConstants';
+import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+
+import ActivityFeed from 'components/ActivityFeed';
 import Header from 'components/Header';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
-import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
-import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+
+import { baseColors, spacing, fontSizes } from 'utils/variables';
 
 type Props = {
-  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
-  fetchTransactionsHistory: (walletAddress: string, asset: string, indexFrom?: number) => Function,
-  history: Transaction[],
-  assets: Assets,
-  balances: Balances,
-  wallet: Object,
-  rates: Object,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: ?string,
-  contacts: Object,
-  resetHideRemoval: Function,
   collectibles: Object[],
 };
 
 const ActionButtonsWrapper = styled.View`
   flex: 1;
   justify-content: flex-start;
-  padding-top: 5px;
   padding-bottom: 30px;
   padding-top: ${Platform.select({
     ios: '10px',
@@ -171,31 +158,9 @@ class CollectibleScreen extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  wallet: { data: wallet },
-  contacts: { data: contacts },
-  assets: { data: assets, balances },
-  rates: { data: rates },
-  history: { data: history },
-  appSettings: { data: { baseFiatCurrency } },
   collectibles: { assets: collectibles },
 }) => ({
-  wallet,
-  contacts,
-  assets,
-  balances,
-  rates,
-  history,
-  baseFiatCurrency,
   collectibles,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets, walletAddress) => {
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
-  fetchTransactionsHistory: (walletAddress, asset, indexFrom) => {
-    dispatch(fetchTransactionsHistoryAction(walletAddress, asset, indexFrom));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(CollectibleScreen);
+export default connect(mapStateToProps)(CollectibleScreen);

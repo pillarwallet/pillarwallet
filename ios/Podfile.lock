@@ -1,12 +1,12 @@
 PODS:
   - boost-for-react-native (1.63.0)
-  - BoringSSL-GRPC (0.0.2):
-    - BoringSSL-GRPC/Implementation (= 0.0.2)
-    - BoringSSL-GRPC/Interface (= 0.0.2)
-  - BoringSSL-GRPC/Implementation (0.0.2):
-    - BoringSSL-GRPC/Interface (= 0.0.2)
-  - BoringSSL-GRPC/Interface (0.0.2)
-  - BVLinearGradient (2.4.0):
+  - BoringSSL-GRPC (0.0.3):
+    - BoringSSL-GRPC/Implementation (= 0.0.3)
+    - BoringSSL-GRPC/Interface (= 0.0.3)
+  - BoringSSL-GRPC/Implementation (0.0.3):
+    - BoringSSL-GRPC/Interface (= 0.0.3)
+  - BoringSSL-GRPC/Interface (0.0.3)
+  - BVLinearGradient (2.5.4):
     - React
   - Crashlytics (3.10.9):
     - Fabric (~> 1.7.13)
@@ -111,54 +111,58 @@ PODS:
     - GoogleToolboxForMac/Defines (= 2.2.0)
   - "GoogleToolboxForMac/NSData+zlib (2.2.0)":
     - GoogleToolboxForMac/Defines (= 2.2.0)
-  - gRPC (1.17.0):
-    - gRPC-RxLibrary (= 1.17.0)
-    - gRPC/Main (= 1.17.0)
-  - gRPC-Core (1.17.0):
-    - gRPC-Core/Implementation (= 1.17.0)
-    - gRPC-Core/Interface (= 1.17.0)
-  - gRPC-Core/Implementation (1.17.0):
-    - BoringSSL-GRPC (= 0.0.2)
-    - gRPC-Core/Interface (= 1.17.0)
+  - gRPC (1.20.0):
+    - gRPC-RxLibrary (= 1.20.0)
+    - gRPC/Main (= 1.20.0)
+  - gRPC-Core (1.20.0):
+    - gRPC-Core/Implementation (= 1.20.0)
+    - gRPC-Core/Interface (= 1.20.0)
+  - gRPC-Core/Implementation (1.20.0):
+    - BoringSSL-GRPC (= 0.0.3)
+    - gRPC-Core/Interface (= 1.20.0)
     - nanopb (~> 0.3)
-  - gRPC-Core/Interface (1.17.0)
-  - gRPC-ProtoRPC (1.17.0):
-    - gRPC-ProtoRPC/Main (= 1.17.0)
-  - gRPC-ProtoRPC/Main (1.17.0):
-    - gRPC (= 1.17.0)
-    - gRPC-RxLibrary (= 1.17.0)
+  - gRPC-Core/Interface (1.20.0)
+  - gRPC-ProtoRPC (1.20.0):
+    - gRPC-ProtoRPC/Main (= 1.20.0)
+  - gRPC-ProtoRPC/Main (1.20.0):
+    - gRPC (= 1.20.0)
+    - gRPC-RxLibrary (= 1.20.0)
     - Protobuf (~> 3.0)
-  - gRPC-RxLibrary (1.17.0)
-  - gRPC/Main (1.17.0):
-    - gRPC-Core (= 1.17.0)
-    - gRPC-RxLibrary (= 1.17.0)
+  - gRPC-RxLibrary (1.20.0)
+  - gRPC/Main (1.20.0):
+    - gRPC-Core (= 1.20.0)
+    - gRPC-RxLibrary (= 1.20.0)
   - GTMSessionFetcher/Core (1.2.1)
-  - Intercom (5.2)
+  - Intercom (5.2.1)
   - leveldb-library (1.20)
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
-  - Protobuf (3.6.1)
+  - Protobuf (3.7.0)
   - QBImagePickerController (3.4.0)
   - React (0.59.4):
     - React/Core (= 0.59.4)
-  - react-native-background-timer (2.1.0-alpha.6):
+  - react-native-background-timer (2.1.1):
     - React
-  - react-native-camera (1.13.1):
+  - react-native-camera (2.6.0):
     - React
-    - react-native-camera/RCT (= 1.13.1)
-    - react-native-camera/RN (= 1.13.1)
-  - react-native-camera/RCT (1.13.1):
+    - react-native-camera/RCT (= 2.6.0)
+    - react-native-camera/RN (= 2.6.0)
+  - react-native-camera/RCT (2.6.0):
     - React
-  - react-native-camera/RN (1.13.1):
+  - react-native-camera/RN (2.6.0):
     - React
   - react-native-fetch-blob (0.10.6):
     - React/Core
-  - react-native-intercom (12.3.0):
+  - react-native-intercom (13.1.0):
     - Intercom (~> 5.0)
-    - React/Core
+    - React
+  - react-native-randombytes (3.5.2):
+    - React
+  - react-native-udp (2.6.0):
+    - React
   - React/ART (0.59.4):
     - React/Core
   - React/Core (0.59.4):
@@ -213,23 +217,29 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - ReactNativeFabric (0.5.2):
+    - Crashlytics
+    - Fabric
+    - React
   - ReactNativePermissions (1.1.1):
     - React
-  - RNColorMatrixImageFilters (4.0.0):
+  - RNColorMatrixImageFilters (5.1.4):
     - React
-  - RNDeviceInfo (0.21.5):
+  - RNDeviceInfo (1.5.0):
     - React
-  - RNImageCropPicker (0.22.0):
+  - RNImageCropPicker (0.23.1):
     - QBImagePickerController
     - React/Core
     - RSKImageCropper
-  - RSKImageCropper (2.2.1)
-  - Sentry (4.0.1):
-    - Sentry/Core (= 4.0.1)
-  - Sentry/Core (4.0.1)
-  - SentryReactNative (0.39.1):
+  - RNVectorIcons (6.4.2):
     - React
-    - Sentry (~> 4.0.1)
+  - RSKImageCropper (2.2.1)
+  - Sentry (4.1.3):
+    - Sentry/Core (= 4.1.3)
+  - Sentry/Core (4.1.3)
+  - SentryReactNative (0.42.0):
+    - React
+    - Sentry (~> 4.1.3)
   - TouchID (4.3.0):
     - React
   - yoga (0.59.4.React)
@@ -255,6 +265,8 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
   - react-native-intercom (from `../node_modules/react-native-intercom`)
+  - react-native-randombytes (from `../node_modules/react-native-randombytes`)
+  - react-native-udp (from `../node_modules/react-native-udp`)
   - React/ART (from `../node_modules/react-native`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
@@ -268,10 +280,12 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - ReactNativeFabric (from `../node_modules/react-native-fabric`)
   - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - RNColorMatrixImageFilters (from `../node_modules/react-native-color-matrix-image-filters`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - SentryReactNative (from `../node_modules/react-native-sentry`)
   - TouchID (from `../node_modules/react-native-touch-id`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -329,6 +343,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fetch-blob"
   react-native-intercom:
     :path: "../node_modules/react-native-intercom"
+  react-native-randombytes:
+    :path: "../node_modules/react-native-randombytes"
+  react-native-udp:
+    :path: "../node_modules/react-native-udp"
+  ReactNativeFabric:
+    :path: "../node_modules/react-native-fabric"
   ReactNativePermissions:
     :path: "../node_modules/react-native-permissions"
   RNColorMatrixImageFilters:
@@ -337,6 +357,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-device-info"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
   SentryReactNative:
     :path: "../node_modules/react-native-sentry"
   TouchID:
@@ -346,8 +368,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  BoringSSL-GRPC: 2a230d9cd93e7ce39916044f645cebb31f37dde6
-  BVLinearGradient: 4b3f3bdf1ac1a52a5ef5e65c9585d793a7c3f825
+  BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
+  BVLinearGradient: b0b70acf63ee888829b7c2ebbf6b50e227396e55
   Crashlytics: 55e24fc23989680285a21cb1146578d9d18e432c
   DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
   Fabric: 25d0963b691fc97be566392243ff0ecef5a68338
@@ -368,31 +390,35 @@ SPEC CHECKSUMS:
   Folly: de497beb10f102453a1afa9edbf8cf8a251890de
   glog: aefd1eb5dda2ab95ba0938556f34b98e2da3a60d
   GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
-  gRPC: 72b71666056dcb12235b5238f0ff5948fd60321a
-  gRPC-Core: 4028031ed2c5267cca0d846c876d8046b1ecb9b6
-  gRPC-ProtoRPC: 94e90774dd0dc089dece93ec22384d8383988f3f
-  gRPC-RxLibrary: f2873a17e8133f66d8ce972f8805aa7a518ae974
+  gRPC: d175f32a1f0ff0eafc768e38e8c0b8a9fcbacc65
+  gRPC-Core: b247504496d2bdf47e6a87690c0d48f8424b324a
+  gRPC-ProtoRPC: d49c7074c6a5e5a9f18f9b5a1c6d94787334bcbe
+  gRPC-RxLibrary: 3b5272bfdd136c3bc1383ffdfc210404b5d8400a
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
-  Intercom: fd0c7377d49cc2f1a94e7fc0bcc9ccfcdab0a7dc
+  Intercom: 53f07c24f0ca18c1e910750e79b75f9c9867338f
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
-  Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
+  Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: 1d605e098d69bdf08960787f3446f0a9dc2e2ccf
   react-native-background-timer: bb7a98c8e97fc7c290de2d423dd09ddb73dcbcbb
-  react-native-camera: a8d04ef12749def72cae86b0b8d28c2de891a392
+  react-native-camera: 9c50d7def800895e7991ccda6203929553ceec9c
   react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
-  react-native-intercom: a8a5902058c14d7359bd1044d57fe409b0ed0df7
+  react-native-intercom: 85ebcd1eb3887c3cab7b32fe57e7a641b801d8bb
+  react-native-randombytes: d3184d351604f78e019535178766590188bbc133
+  react-native-udp: 1dc04d3429ff13a251126092feeb35e175a1b0d8
+  ReactNativeFabric: 01c1333f76fd4708a5833d71f0a4832a9266bf0f
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   RNColorMatrixImageFilters: cf425050c778106f5f9844b69fc169758212b74d
-  RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
+  RNDeviceInfo: 08dd79c5adef48b6dc103bf3ddf208039aa78664
   RNImageCropPicker: 32ca4b9fef4e1b7b85ba69494242122948117e06
+  RNVectorIcons: 8c52e1e8da1153613fdef44748e865c25556cb9c
   RSKImageCropper: 98296ad26b41753f796b6898d015509598f13d97
-  Sentry: a38f7879924c02239e121b19d993d23bdd1684db
-  SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
+  Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
+  SentryReactNative: fc630be25b30c1a494b478ba1fa38f761cc6da20
   TouchID: b0640fedb86fa2db2fe1df15b61594ad49e76288
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: 48b27f0ad4524eb371f3e14574bc4e1af525aa4c
+PODFILE CHECKSUM: d17a4f3608e46bb13cf6d39062200763b1a1a634
 
 COCOAPODS: 1.5.3

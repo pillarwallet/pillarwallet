@@ -26,10 +26,12 @@ import type { ConnectionIdentityKeyMap, ConnectionUpdateIdentityKeys } from 'mod
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
-import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE } from 'constants/walletConstants';
+import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE, DECRYPTING } from 'constants/walletConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { updateConnectionKeyPairs, useConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import * as keyPairUtils from 'utils/keyPairGenerator';
+import * as oldInvitationsActions from 'actions/oldInvitationsActions';
+
 
 const walletId = 'walletId';
 const mnemonic = 'one two three four five six seven eight nine ten eleven twelve';
@@ -110,7 +112,22 @@ const invitationsMock = [
 ];
 
 const connectionCountResponseMock = { currentConnectionsCount: 4, oldConnectionsCount: 2 };
-const updateIdentityKeysResponseMock = [{ updated: true }, { updated: true }];
+const updateIdentityKeysResponseMock = [
+  {
+    sourceUserAccessKey: '111',
+    targetUserAccessKey: '222',
+    sourceIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890111',
+    targetIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890112',
+    updated: true,
+  },
+  {
+    sourceUserAccessKey: '333',
+    targetUserAccessKey: '444',
+    sourceIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890222',
+    targetIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890223',
+    updated: true,
+  },
+];
 
 const connectionIdentityKeysMock = [];
 const mapIdentityKeysResponseMock = [
@@ -297,10 +314,10 @@ describe('ConnectionKeyPair actions', () => {
       const expectedActions = [
         { type: UPDATE_WALLET_STATE, payload: GENERATING_CONNECTIONS },
         { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock] },
+        { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(2, 7)] },
+        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(2, 7)] },
         { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: mapIdentityKeysResponseMock.slice(0, 2) },
-        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [connectionKeyPairsMock[6]] },
-        { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: mapIdentityKeysResponseMock.slice(2, 6) },
-        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [connectionKeyPairsMock[6]] },
         { type: UPDATE_INVITATIONS, payload: [...invitationsMock] },
         { type: UPDATE_CONTACTS, payload: [...contactsMock] },
         { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
@@ -308,6 +325,8 @@ describe('ConnectionKeyPair actions', () => {
 
       // $FlowFixMe
       keyPairUtils.generateKeyPairThreadPool = jest.fn(() => { return Promise.resolve([]); });
+      // $FlowFixMe
+      oldInvitationsActions.fetchOldInviteNotificationsAction = () => async () => Promise.resolve(true);
 
       return store.dispatch(updateConnectionKeyPairs(mnemonic, privateKey, walletId))
         .then(() => {

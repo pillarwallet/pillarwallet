@@ -78,7 +78,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow Pillar Wallet to use your location</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Pillar Wallet to access your device&apos;s accelerometer</string>
+	<string>Allow Pillar Wallet to access your device's accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Give Pillar Wallet permission to save photos to temporarily store your profile pictures</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -87,32 +87,33 @@
 	<string>Allow Pillar Wallet to access your reminders</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Allow Pillar Wallet recognize speech</string>
-  <key>NSLocationAlwaysUsageDescription</key>
-  <string>Allow Pillar Wallet to always access the location of your device</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Allow Pillar Wallet to always access the location of your device</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>PillarIcons.ttf</string>
+		<string>Roboto_medium.ttf</string>
+		<string>Roboto.ttf</string>
+		<string>rubicon-icon-font.ttf</string>
+		<string>Aktiv Grotesk App_bold.ttf</string>
+		<string>Aktiv Grotesk App_light.ttf</string>
+		<string>Aktiv Grotesk App_medium.ttf</string>
+		<string>Aktiv Grotesk App.ttf</string>
+		<string>AntDesign.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
+		<string>Feather.ttf</string>
 		<string>FontAwesome.ttf</string>
+		<string>FontAwesome5_Brands.ttf</string>
+		<string>FontAwesome5_Regular.ttf</string>
+		<string>FontAwesome5_Solid.ttf</string>
 		<string>Foundation.ttf</string>
 		<string>Ionicons.ttf</string>
 		<string>MaterialCommunityIcons.ttf</string>
 		<string>MaterialIcons.ttf</string>
 		<string>Octicons.ttf</string>
-		<string>Roboto_medium.ttf</string>
-		<string>Roboto.ttf</string>
-		<string>rubicon-icon-font.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
-		<string>Feather.ttf</string>
-		<string>FontAwesome5_Brands.ttf</string>
-		<string>FontAwesome5_Regular.ttf</string>
-		<string>FontAwesome5_Solid.ttf</string>
-		<string>Aktiv Grotesk App_bold.ttf</string>
-		<string>Aktiv Grotesk App_light.ttf</string>
-		<string>Aktiv Grotesk App_medium.ttf</string>
-		<string>Aktiv Grotesk App.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

@@ -17,44 +17,30 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_USER, USER_PHONE_VERIFIED } from 'constants/userConstants';
-import merge from 'lodash.merge';
+import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 
-export type UserReducerState = {
-  data: Object,
-  userState: ?string,
+export type ClaimTokenAction = {
+  walletId: string,
+  code: string,
 }
 
-export type UserReducerAction = {
-  type: string,
-  payload: any
-}
+export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const response = await api.claimTokens(props);
+    const { responseStatus } = response;
 
-const initialState = {
-  data: {
-    icoService: {},
-  },
-  userState: null,
+    if (responseStatus === 200) {
+      if (callback) callback({ error: false });
+    } else {
+      if (callback) callback({ error: true });
+      dispatch({
+        type: ADD_NOTIFICATION,
+        payload: {
+          message: 'Please try again later',
+          title: 'We can\'t verify your code at this time',
+          messageType: 'warning',
+        },
+      });
+    }
+  };
 };
-
-export default function userReducer(
-  state: UserReducerState = initialState,
-  action: UserReducerAction,
-) {
-  switch (action.type) {
-    case UPDATE_USER:
-      const { state: userState, user } = action.payload;
-      return {
-        ...state,
-        data: merge({}, { ...state.data }, user),
-        userState,
-      };
-    case USER_PHONE_VERIFIED:
-      return {
-        ...state,
-        data: merge({}, { ...state.data }, { isPhoneVerified: true }),
-      };
-    default:
-      return state;
-  }
-}

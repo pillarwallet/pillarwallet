@@ -60,6 +60,7 @@ import {
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import type { Badges } from 'models/Badge';
+import { Answers } from 'react-native-fabric';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -67,9 +68,8 @@ type Props = {
   invitations: Object[],
   history: Object[],
   user: Object,
-  wallet: Object,
   fetchTransactionsHistoryNotifications: Function,
-  fetchTransactionsHistory: (walletAddress: string) => Function,
+  fetchTransactionsHistory: () => Function,
   fetchInviteNotifications: Function,
   acceptInvitation: Function,
   cancelInvitation: Function,
@@ -308,14 +308,16 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, wallet } = this.props;
+    const { fetchTransactionsHistory } = this.props;
+
+    Answers.logContentView('Home screen');
 
     if (Platform.OS === 'ios') {
       firebase.notifications().setBadge(0);
     }
 
     // TODO: remove this when notifications service becomes reliable
-    fetchTransactionsHistory(wallet.address);
+    fetchTransactionsHistory();
 
     this._willFocus = this.props.navigation.addListener(
       'willFocus',
@@ -770,7 +772,7 @@ const mapStateToProps = ({
   user: { data: user },
   history: { data: history },
   invitations: { data: invitations },
-  wallet: { data: wallet, backupStatus },
+  wallet: { backupStatus },
   notifications: { intercomNotificationsCount },
   deepLink: { data: deepLinkData },
   badges: { data: badges },
@@ -779,7 +781,6 @@ const mapStateToProps = ({
   user,
   history,
   invitations,
-  wallet,
   intercomNotificationsCount,
   backupStatus,
   deepLinkData,
@@ -791,7 +792,7 @@ const mapDispatchToProps = (dispatch) => ({
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
-  fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),

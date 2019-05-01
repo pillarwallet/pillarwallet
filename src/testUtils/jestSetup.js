@@ -25,6 +25,8 @@ import { utils, HDNode } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 
+process.env.IS_TEST = 'TEST';
+
 jest.mock('NativeAnimatedHelper');
 
 Enzyme.configure({ adapter: new Adapter() });
@@ -168,4 +170,16 @@ jest.setMock('react-native-threads', {
     onmessage: () => Promise.resolve(),
     postMessage: () => Promise.resolve(),
   }),
+});
+
+jest.mock('react-native-fabric', () => {
+  return {
+    Crashlytics: {
+      crash: () => {},
+    },
+    Answers: {
+      logCustom: () => {},
+      logContentView: () => {},
+    },
+  };
 });

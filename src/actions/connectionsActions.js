@@ -25,10 +25,10 @@ import type { ConnectionIdentityKey } from 'models/Connections';
 import { uniqBy } from 'utils/common';
 import { saveDbAction } from './dbActions';
 
-export const updateConnectionsAction = () => {
+export const updateConnectionsAction = (theWalletId?: ?string = null) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      user: { data: { walletId } },
+      user: { data: { walletId = theWalletId } },
       connectionIdentityKeys: { data: connectionIdentityKeys },
       contacts: { data: allContacts },
       invitations: { data: allInvitations },
