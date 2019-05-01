@@ -44,10 +44,9 @@ import type { Collectible } from 'models/Collectible';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchAssetsBalances: (assets: Assets) => Function,
   assets: Assets,
   balances: Balances,
-  wallet: Object,
   fetchAllCollectiblesData: Function,
   collectibles: Array<Collectible>,
 };
@@ -159,8 +158,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
   };
 
   refreshAssetsList = () => {
-    const { assets, fetchAssetsBalances, wallet } = this.props;
-    fetchAssetsBalances(assets, wallet.address);
+    const { assets, fetchAssetsBalances } = this.props;
+    fetchAssetsBalances(assets);
   };
 
   setActiveTab = (activeTab) => {
@@ -308,20 +307,16 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  wallet: { data: wallet },
   assets: { data: assets, balances },
   collectibles: { assets: collectibles },
 }) => ({
-  wallet,
   assets,
   balances,
   collectibles,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets, walletAddress) => {
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
+  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 

@@ -38,10 +38,9 @@ import type { Assets, Balances } from 'models/Asset';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchAssetsBalances: (assets: Assets) => Function,
   assets: Assets,
   balances: Balances,
-  wallet: Object,
   navigation: NavigationScreenProp<*>,
 };
 
@@ -124,8 +123,8 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
   };
 
   refreshAssetsList = () => {
-    const { assets, fetchAssetsBalances, wallet } = this.props;
-    fetchAssetsBalances(assets, wallet.address);
+    const { assets, fetchAssetsBalances } = this.props;
+    fetchAssetsBalances(assets);
   };
 
   render() {
@@ -190,18 +189,14 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  wallet: { data: wallet },
   assets: { data: assets, balances },
 }) => ({
-  wallet,
   assets,
   balances,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets, walletAddress) => {
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
+  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
 });
 
 
