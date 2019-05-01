@@ -20,7 +20,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { UPGRADE_CONFIRM } from 'constants/navigationConstants';
+import { UPGRADE_CONFIRM, ASSETS } from 'constants/navigationConstants';
 import { Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
@@ -53,12 +53,15 @@ class SmartWalletUnlock extends React.Component<Props, State> {
     const {
       initSmartWalletSdk,
       upgradeToSmartWallet,
+      navigation,
     } = this.props;
     this.setState({
       isChecking: true,
     }, async () => {
       await initSmartWalletSdk(wallet);
       await upgradeToSmartWallet();
+      // TODO: show any error or show success screen/modal?
+      navigation.navigate(ASSETS, {});
     });
   };
 
@@ -88,6 +91,5 @@ const mapDispatchToProps = (dispatch) => ({
   upgradeToSmartWallet: () => dispatch(upgradeToSmartWalletAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
-
 
 export default connect(null, mapDispatchToProps)(SmartWalletUnlock);

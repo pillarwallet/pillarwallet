@@ -45,7 +45,10 @@ import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
 import SmartWalletService from 'services/smartWallet';
-import { addNewAccountAction } from 'actions/accountsActions';
+import {
+  addNewAccountAction,
+  setActiveAccountAction,
+} from 'actions/accountsActions';
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
@@ -253,11 +256,13 @@ export const deploySmartWalletAction = () => {
       wallet: {
         smartWallet: {
           connectedAccount: {
+            address: accountAddress,
             state: accountState,
           },
         },
       },
     } = getState();
+    dispatch(setActiveAccountAction(accountAddress));
     if (accountState.toLowerCase() === 'deployed') {
       console.log('deploySmartWalletAction account is already deployed!');
       return;
@@ -288,7 +293,23 @@ export const upgradeToSmartWalletAction = () => {
       console.log('sdk not initialized');
       return;
     }
-    dispatch(getSmartWalletAccountsAction());
+    await dispatch(getSmartWalletAccountsAction());
+    const {
+      wallet: {
+        smartWallet: {
+          accounts,
+        },
+      },
+    } = getState();
+    if (!accounts.length) {
+      // TODO: sdk accounts failed error
+      console.log('no sdk accounts');
+      return;
+    }
+    await dispatch(connectSmartWalletAccountAction(accounts[0]));
+    // TODO: make transactions to smart wallet account address before deploy
+    //  as balance check will fail during deploy if balance is 0
+    dispatch(deploySmartWalletAction());
   };
 };
 

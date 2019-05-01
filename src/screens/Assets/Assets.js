@@ -72,6 +72,7 @@ import {
 } from 'constants/assetsConstants';
 import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import { UPGRADE_TO_SMART_WALLET_FLOW } from 'constants/navigationConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
 import { baseColors, spacing } from 'utils/variables';
@@ -101,7 +102,7 @@ type Props = {
   addAsset: Function,
   removeAsset: Function,
   toggleTankModal: Function,
-  isSmartWallet: boolean,
+  accounts: [],
   tankData: Object,
 }
 
@@ -382,7 +383,7 @@ class AssetsScreen extends React.Component<Props, State> {
       navigation,
       collectibles,
       toggleTankModal,
-      isSmartWallet,
+      accounts,
       tankData,
     } = this.props;
     const { query, activeTab, forceHideRemoval } = this.state;
@@ -422,6 +423,8 @@ class AssetsScreen extends React.Component<Props, State> {
     const filteredCollectibles = isInCollectiblesSearchMode
       ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
       : collectibles;
+
+    const isSmartWallet = !!accounts.find(account => account.type === ACCOUNT_TYPES.SMART_WALLET && account.isActive);
 
     return (
       <Container inset={{ bottom: 0 }}>
@@ -480,7 +483,8 @@ class AssetsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  wallet: { data: wallet, smartWallet: { isSmartWallet } },
+  accounts: { data: accounts },
+  wallet: { data: wallet },
   assets: {
     data: assets,
     assetsState,
@@ -494,7 +498,7 @@ const mapStateToProps = ({
   tank: { data: tankData },
 }) => ({
   wallet,
-  isSmartWallet,
+  accounts,
   assets,
   assetsState,
   balances,

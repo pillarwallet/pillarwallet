@@ -19,13 +19,17 @@
 */
 
 // import { saveDbAction } from 'actions/dbActions';
-import { ADD_ACCOUNT, ACCOUNT_TYPES } from 'constants/accountsConstants';
+import {
+  ADD_ACCOUNT,
+  UPDATE_ACCOUNTS,
+  ACCOUNT_TYPES,
+} from 'constants/accountsConstants';
 import Storage from 'services/storage';
 import { saveDbAction } from './dbActions';
 
 const storage = Storage.getInstance('db');
 
-export const initDefaultAccount = (walletAddress: string) => {
+export const initDefaultAccountAction = (walletAddress: string) => {
   return async (dispatch: Function, getState: Function) => { // eslint-disable-line
     const keyBasedAccount = {
       id: walletAddress,
@@ -59,10 +63,29 @@ export const addNewAccountAction = (walletAddress: string, accountExtra?: Object
     const accounts = existingAccounts.filter(account => account.id !== walletAddress);
     accounts.push(smartWalletAccount);
     dispatch({
-      type: ADD_ACCOUNT,
-      payload: smartWalletAccount,
+      type: UPDATE_ACCOUNTS,
+      payload: accounts,
     });
     console.log('addNewAccountAction accounts: ', accounts);
+    await dispatch(saveDbAction('accounts', { accounts }, true));
+  };
+};
+
+export const setActiveAccountAction = (walletAddress: string) => {
+  return async (dispatch: Function) => { // eslint-disable-line
+    const { accounts: existingAccounts = [] } = await storage.get('accounts');
+    const account = existingAccounts.find(acc => acc.id === walletAddress);
+    if (!account) {
+      // TODO: account not found in storage
+      console.log('setActiveAccountAction account not found by address: ', walletAddress);
+      return;
+    }
+    const accounts = existingAccounts.map(acc => ({ ...acc, isActive: acc.id === walletAddress }));
+    console.log('setActiveAccountAction accounts: ', accounts);
+    dispatch({
+      type: UPDATE_ACCOUNTS,
+      payload: accounts,
+    });
     await dispatch(saveDbAction('accounts', { accounts }, true));
   };
 };
