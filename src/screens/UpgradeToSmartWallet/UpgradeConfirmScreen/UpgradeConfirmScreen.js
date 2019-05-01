@@ -26,11 +26,18 @@ import Header from 'components/Header';
 import Button from 'components/Button';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import Spinner from 'components/Spinner';
 import { Paragraph, SubHeading, TextLink, BaseText } from 'components/Typography';
 import { baseColors, spacing } from 'utils/variables';
 import assetsConfig from 'configs/assetsConfig';
-import { RECOVERY_AGENTS, CHOOSE_ASSETS_TO_TRANSFER, CONTACT } from 'constants/navigationConstants';
+import {
+  RECOVERY_AGENTS,
+  CHOOSE_ASSETS_TO_TRANSFER,
+  CONTACT,
+  SMART_WALLET_UNLOCK,
+} from 'constants/navigationConstants';
 import type { Assets, Balances } from 'models/Asset';
+import { upgradeToSmartWalletAction } from 'actions/walletActions';
 import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { formatAmount } from 'utils/common';
@@ -43,10 +50,12 @@ type Props = {
   assets: Assets,
   balances: Balances,
   contacts: Object[],
+  upgradeToSmartWallet: Function,
+  sdkInitialized: boolean,
 };
 
 type State = {
-  pinError: string,
+  upgradeStarted: boolean,
 };
 
 const WhiteWrapper = styled.View`
@@ -82,6 +91,10 @@ const LabelWrapper = styled.View`
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
+  state = {
+    upgradeStarted: false,
+  };
+
   navigateToContactScreen = (contact: Object) => () => {
     this.props.navigation.navigate(CONTACT, { contact });
   };
@@ -120,6 +133,14 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     );
   };
 
+  onEnableClick = () => {
+    const { navigation } = this.props;
+    this.setState({
+      upgradeStarted: true,
+    });
+    navigation.navigate(SMART_WALLET_UNLOCK);
+  };
+
   render() {
     const {
       navigation,
@@ -127,6 +148,9 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       assets,
       balances,
     } = this.props;
+    const {
+      upgradeStarted,
+    } = this.state;
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = assetsArray.filter((asset: any) => {
       return getBalance(balances, asset.symbol) !== 0;
@@ -182,7 +206,8 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
             <LabelWrapper>
               <Label style={{ textAlign: 'center' }}>Total fee 0,004</Label>
             </LabelWrapper>
-            <Button block title="Enable Smart Wallet" onPress={() => {}} />
+            {!upgradeStarted && <Button block title="Enable Smart Wallet" onPress={this.onEnableClick} />}
+            {upgradeStarted && <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>}
           </FooterInner>
         </Footer>
       </Container>
@@ -193,10 +218,20 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   assets: { data: assets, balances },
+  wallet: {
+    smartWallet: {
+      sdkInitialized,
+    },
+  },
 }) => ({
   contacts,
   assets,
   balances,
+  sdkInitialized,
 });
 
-export default connect(mapStateToProps)(UpgradeConfirmScreen);
+const mapDispatchToProps = (dispatch) => ({
+  upgradeToSmartWallet: () => dispatch(upgradeToSmartWalletAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpgradeConfirmScreen);

@@ -38,7 +38,7 @@ import {
   CHAT,
   CHAT_LIST,
   PIN_CODE_UNLOCK,
-  SMART_WALLET,
+  UPGRADE_CONFIRM,
 } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
@@ -157,7 +157,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
 
       const navigateToLastActiveScreen = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
-        routeName: lastActiveScreen || SMART_WALLET,
+        routeName: lastActiveScreen || UPGRADE_CONFIRM,
         params: lastActiveScreenParams,
       });
 

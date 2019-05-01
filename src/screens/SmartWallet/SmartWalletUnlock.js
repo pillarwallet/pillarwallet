@@ -20,17 +20,21 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { SMART_WALLET } from 'constants/navigationConstants';
+import { UPGRADE_CONFIRM } from 'constants/navigationConstants';
 import { Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import { initSmartWalletSdkAction } from 'actions/walletActions';
+import {
+  initSmartWalletSdkAction,
+  upgradeToSmartWalletAction,
+} from 'actions/walletActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   resetIncorrectPassword: () => Function,
   initSmartWalletSdk: Function,
+  upgradeToSmartWallet: Function,
 }
 
 type State = {
@@ -45,19 +49,23 @@ class SmartWalletUnlock extends React.Component<Props, State> {
     };
   }
 
-  handleSdkInit = (pin: string, wallet: Object) => {
-    const { initSmartWalletSdk, navigation } = this.props;
+  handleUpgradeStep = (pin: string, wallet: Object) => {
+    const {
+      initSmartWalletSdk,
+      upgradeToSmartWallet,
+    } = this.props;
     this.setState({
       isChecking: true,
     }, async () => {
       await initSmartWalletSdk(wallet);
-      navigation.navigate(SMART_WALLET, {});
+      await upgradeToSmartWallet();
     });
   };
 
   handleBack = () => {
     const { navigation, resetIncorrectPassword } = this.props;
-    navigation.goBack(null);
+    // navigation.goBack(null);
+    navigation.navigate(UPGRADE_CONFIRM, {});
     resetIncorrectPassword();
   };
 
@@ -69,7 +77,7 @@ class SmartWalletUnlock extends React.Component<Props, State> {
           onBack={this.handleBack}
           title="enter pincode"
         />
-        <CheckPin onPinValid={this.handleSdkInit} isChecking={isChecking} />
+        <CheckPin onPinValid={this.handleUpgradeStep} isChecking={isChecking} />
       </Container>
     );
   }
@@ -77,6 +85,7 @@ class SmartWalletUnlock extends React.Component<Props, State> {
 
 const mapDispatchToProps = (dispatch) => ({
   initSmartWalletSdk: (wallet: Object) => dispatch(initSmartWalletSdkAction(wallet)),
+  upgradeToSmartWallet: () => dispatch(upgradeToSmartWalletAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 

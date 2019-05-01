@@ -45,6 +45,7 @@ import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
 import SmartWalletService from 'services/smartWallet';
+import { addNewAccountAction } from 'actions/accountsActions';
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
@@ -223,11 +224,16 @@ export const initSmartWalletSdkAction = (wallet: Object) => {
 
 export const getSmartWalletAccountsAction = () => {
   return async (dispatch: Function) => {
+    console.log('getSmartWalletAccountsAction');
     const accounts = await smartWalletService.getAccounts();
     dispatch({
       type: SET_SMART_WALLET_ACCOUNTS,
       payload: accounts,
     });
+    const newAccountsPromises = accounts.map(
+      async account => dispatch(addNewAccountAction(account.address, account)),
+    );
+    return Promise.all(newAccountsPromises);
   };
 };
 
@@ -267,3 +273,22 @@ export const deploySmartWalletAction = () => {
     });
   };
 };
+
+export const upgradeToSmartWalletAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      wallet: {
+        smartWallet: {
+          sdkInitialized,
+        },
+      },
+    } = getState();
+    if (!sdkInitialized) {
+      // TODO: sdk not initialized error
+      console.log('sdk not initialized');
+      return;
+    }
+    dispatch(getSmartWalletAccountsAction());
+  };
+};
+

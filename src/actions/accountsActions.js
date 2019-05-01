@@ -20,6 +20,10 @@
 
 // import { saveDbAction } from 'actions/dbActions';
 import { ADD_ACCOUNT, ACCOUNT_TYPES } from 'constants/accountConstants';
+import Storage from 'services/storage';
+import { saveDbAction } from './dbActions';
+
+const storage = Storage.getInstance('db');
 
 export const initDefaultAccount = (walletAddress: string) => {
   return async (dispatch: Function, getState: Function) => { // eslint-disable-line
@@ -40,5 +44,25 @@ export const initDefaultAccount = (walletAddress: string) => {
     // balances
 
     // dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
+  };
+};
+
+export const addNewAccountAction = (walletAddress: string, accountExtra?: Object = {}) => {
+  return async (dispatch: Function) => { // eslint-disable-line
+    const { accounts: existingAccounts = [] } = await storage.get('accounts');
+    const smartWalletAccount = {
+      id: walletAddress,
+      type: ACCOUNT_TYPES.SMART_WALLET,
+      extra: accountExtra,
+      isActive: false,
+    };
+    const accounts = existingAccounts.filter(account => account.id !== walletAddress);
+    accounts.push(smartWalletAccount);
+    dispatch({
+      type: ADD_ACCOUNT,
+      payload: smartWalletAccount,
+    });
+    console.log('addNewAccountAction accounts: ', accounts);
+    await dispatch(saveDbAction('accounts', { accounts }, true));
   };
 };

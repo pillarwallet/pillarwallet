@@ -108,6 +108,7 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
     const filteredContacts = (!query || query.trim() === '' || query.length < 2)
       ? sortedLocalContacts
       : sortedLocalContacts.filter(({ username }) => username.toUpperCase().includes(query.toUpperCase()));
+    const proceedStepEnabled = true || !!agentsUserNames.length; // TODO: remove `true ||`
 
     return (
       <Container>
@@ -151,7 +152,7 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
               small
               title="Next"
               onPress={() => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)}
-              disabled={!agentsUserNames.length}
+              disabled={!proceedStepEnabled}
             />
           </FooterInner>
         </Footer>
