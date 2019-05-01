@@ -103,6 +103,7 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
 
     const updatedContacts = uniqBy(contacts.concat(allContacts), 'id');
     const updatedInvitations = uniqBy(invitations.concat(allInvitations), 'id');
+    const updatedConnectionIdentityKeys = uniqBy(resultConnections.concat(connectionIdentityKeys), 'sourceIdentityKey');
 
     dispatch({
       type: UPDATE_INVITATIONS,
@@ -118,12 +119,12 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
 
     dispatch({
       type: UPDATE_CONNECTION_IDENTITY_KEYS,
-      payload: resultConnections,
+      payload: updatedConnectionIdentityKeys,
     });
     dispatch(
       saveDbAction(
         'connectionIdentityKeys',
-        { connectionIdentityKeys: resultConnections },
+        { connectionIdentityKeys: updatedConnectionIdentityKeys },
         true),
     );
   };
