@@ -34,10 +34,14 @@ import { getExistingTxNotesAction } from './txNoteActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
-export const fetchTransactionsHistoryAction = (walletAddress: string, asset: string = 'ALL', fromIndex: number = 0) => {
+export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      wallet: { data: wallet },
+    } = getState();
+
     const history = await api.fetchHistory({
-      address1: walletAddress,
+      address1: wallet.address,
       asset,
       nbTx: TRANSACTIONS_HISTORY_STEP,
       fromIndex,

@@ -461,7 +461,7 @@ type Props = {
   startListeningChatWebSocket: Function,
   stopListeningChatWebSocket: Function,
   fetchICOs: Function,
-  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchAssetsBalances: (assets: Assets) => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
@@ -493,12 +493,11 @@ class AppFlow extends React.Component<Props, {}> {
       fetchICOs,
       getExistingChats,
       assets,
-      wallet,
       fetchAllCollectiblesData,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
-    fetchAssetsBalances(assets, wallet.address);
+    fetchAssetsBalances(assets);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     fetchICOs();
@@ -641,9 +640,7 @@ const mapDispatchToProps = (dispatch) => ({
   startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
   stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
   startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
-  fetchAssetsBalances: (assets, walletAddress) => {
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
+  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },

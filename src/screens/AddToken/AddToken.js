@@ -154,7 +154,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   supportedAssets: Asset[],
   assets: Assets,
-  wallet: Object,
   fetchAssetsBalances: Function,
   updateAssets: Function,
   addAsset: Function,
@@ -334,14 +333,13 @@ class AddToken extends React.Component<Props, State> {
       assets,
       fetchAssetsBalances,
       updateAssets,
-      wallet,
     } = this.props;
 
     const updatedAssetList = { ...assets };
     updatedAssetList[asset.symbol] = asset;
 
     updateAssets(updatedAssetList);
-    fetchAssetsBalances(updatedAssetList, wallet.address);
+    fetchAssetsBalances(updatedAssetList);
 
     Toast.show({
       title: 'Added asset',
@@ -366,11 +364,10 @@ class AddToken extends React.Component<Props, State> {
       fetchAssetsBalances,
       updateAssets,
       assets,
-      wallet,
     } = this.props;
     if (this.formChanged) {
       updateAssets(assets);
-      fetchAssetsBalances(assets, wallet.address);
+      fetchAssetsBalances(assets);
     }
     navigation.goBack(null);
   };
@@ -466,22 +463,18 @@ const mapStateToProps = ({
     assetsSearchState,
     assetsSearchResults,
   },
-  wallet: { data: wallet },
 }) => ({
   supportedAssets,
   assets,
   assetsSearchState,
   assetsSearchResults,
-  wallet,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
   updateAssets: (assets: Assets) => dispatch(updateAssetsAction(assets)),
-  fetchAssetsBalances: (assets: Assets, walletAddress) => {
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
+  fetchAssetsBalances: (assets: Assets) => dispatch(fetchAssetsBalancesAction(assets)),
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),

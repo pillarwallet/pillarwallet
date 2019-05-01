@@ -19,34 +19,26 @@
 */
 import * as React from 'react';
 import {
-  RefreshControl,
-  FlatList,
   SectionList,
-  Platform,
-  View,
-  Alert,
   Keyboard,
   Switch,
+  Alert,
+  Platform,
 } from 'react-native';
 import styled from 'styled-components/native';
 import isEqual from 'lodash.isequal';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { Answers } from 'react-native-fabric';
+import debounce from 'lodash.debounce';
 
 // components
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
-
-// import AssetCard from 'components/AssetCard';
-import AssetCardSimplified from 'components/AssetCard/AssetCardSimplified';
-import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
 import { Container, Wrapper } from 'components/Layout';
-import HideAssetButton from 'screens/Assets/HideAssetButton';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -61,40 +53,34 @@ import type { Collectible } from 'models/Collectible';
 import {
   updateAssetsAction,
   fetchInitialAssetsAction,
-  fetchAssetsBalancesAction,
   startAssetsSearchAction,
   searchAssetsAction,
   resetSearchAssetsResultAction,
   addAssetAction,
   removeAssetAction,
 } from 'actions/assetsActions';
-import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // constants
 import {
   FETCH_INITIAL_FAILED,
-  defaultFiatCurrency,
   FETCHED,
   FETCHING,
   ETH,
   TOKENS,
   COLLECTIBLES,
 } from 'constants/assetsConstants';
-import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
-import { ASSET, COLLECTIBLE } from 'constants/navigationConstants';
-
-// configs
-import assetsConfig from 'configs/assetsConfig';
+import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
 
 // utils
-import { formatMoney, smallScreen } from 'utils/common';
-import { spacing, baseColors } from 'utils/variables';
-import { getBalance, getRate } from 'utils/assets';
-import debounce from 'lodash.debounce';
+import { baseColors, spacing } from 'utils/variables';
+
+// local components
+import AssetsList from './AssetsList';
+import CollectiblesList from './CollectiblesList';
+
 
 type Props = {
-  fetchInitialAssets: (walletAddress: string) => Function,
-  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchInitialAssets: () => Function,
   assets: Assets,
   collectibles: Array<Collectible>,
   balances: Balances,
@@ -112,7 +98,6 @@ type Props = {
   assetsSearchState: string,
   addAsset: Function,
   removeAsset: Function,
-  fetchAllCollectiblesData: Function,
 }
 
 type State = {
@@ -123,13 +108,7 @@ type State = {
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-const IS_IOS = Platform.OS === 'ios';
 const MIN_QUERY_LENGTH = 2;
-const viewConfig = {
-  minimumViewTime: 300,
-  viewAreaCoveragePercentThreshold: 100,
-  waitForInteraction: true,
-};
 
 const horizontalPadding = (layout, side) => {
   switch (layout) {
@@ -189,13 +168,12 @@ class AssetsScreen extends React.Component<Props, State> {
     const {
       fetchInitialAssets,
       assets,
-      wallet,
     } = this.props;
 
     Answers.logContentView('Assets screen');
 
     if (!Object.keys(assets).length) {
-      fetchInitialAssets(wallet.address);
+      fetchInitialAssets();
     }
 
     this.willFocus = this.props.navigation.addListener(
@@ -223,22 +201,8 @@ class AssetsScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
-  handleCardTap = (assetData: Object, isCollectible?: boolean) => {
-    const { navigation } = this.props;
-    this.setState({ forceHideRemoval: true });
-    if (isCollectible) {
-      navigation.navigate(COLLECTIBLE, { assetData });
-    } else {
-      navigation.navigate(ASSET,
-        {
-          assetData: {
-            ...assetData,
-            tokenType: TOKENS,
-          },
-          resetHideRemoval: this.resetHideRemoval,
-        },
-      );
-    }
+  updateHideRemoval = (value: boolean) => {
+    this.setState({ forceHideRemoval: value });
   };
 
   handleSearchChange = (query: string) => {
@@ -271,12 +235,15 @@ class AssetsScreen extends React.Component<Props, State> {
     }
   };
 
-  resetHideRemoval = () => {
-    this.setState({ forceHideRemoval: false });
-  };
-
   handleAssetRemoval = (asset: Asset) => () => {
     const { assets, updateAssets } = this.props;
+    const isETH = asset.symbol === ETH;
+
+    if (isETH) {
+      this.showETHRemovalNotification();
+      return;
+    }
+
     Alert.alert(
       'Are you sure?',
       `This will hide ${asset.name} from your wallet`,
@@ -287,181 +254,12 @@ class AssetsScreen extends React.Component<Props, State> {
     );
   };
 
-  renderSwipeoutBtns = (asset) => {
-    // const { assetsLayout } = this.props;
-    // const isExpanded = assetsLayout === EXPANDED;
-    const isETH = asset.symbol === ETH;
-    return [{
-      component: (
-        <HideAssetButton
-          // expanded={isExpanded}
-          onPress={isETH ? this.showETHRemovalNotification : this.handleAssetRemoval(asset)}
-          disabled={isETH}
-        />),
-      backgroundColor: 'transparent',
-      disabled: true,
-    }];
-  };
-
   showETHRemovalNotification = () => {
     Toast.show({
       message: 'Ethereum is essential for Pillar',
       type: 'info',
       title: 'This asset cannot be switched off',
     });
-  };
-
-  renderToken = ({ item: asset }) => {
-    const {
-      wallet,
-      baseFiatCurrency,
-      assetsLayout,
-    } = this.props;
-
-    const { forceHideRemoval } = this.state;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-
-    const {
-      name,
-      symbol,
-      balanceInFiat,
-      balance,
-      iconMonoUrl,
-      wallpaperUrl,
-      decimals,
-      iconUrl,
-    } = asset;
-
-    const fullIconMonoUrl = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
-    const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}${IS_IOS ? '?size=3' : ''}`;
-    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-    const formattedBalanceInFiat = formatMoney(balanceInFiat);
-    const displayAmount = formatMoney(balance, 4);
-
-    const assetData = {
-      name: name || symbol,
-      token: symbol,
-      amount: displayAmount,
-      contractAddress: asset.address,
-      description: asset.description,
-      balance,
-      balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
-      address: wallet.address,
-      icon: fullIconMonoUrl,
-      iconColor: fullIconUrl,
-      wallpaper: fullIconWallpaperUrl,
-      decimals,
-    };
-    const {
-      listed: isListed = true,
-      disclaimer,
-    } = assetsConfig[assetData.token] || {};
-
-    const props = {
-      id: assetData.token,
-      name: assetData.name,
-      token: assetData.token,
-      amount: assetData.amount,
-      balanceInFiat: assetData.balanceInFiat,
-      onPress: this.handleCardTap,
-      address: assetData.address,
-      icon: assetData.iconColor,
-      wallpaper: assetData.wallpaper,
-      isListed,
-      disclaimer,
-      assetData,
-    };
-    const isETH = asset.symbol === ETH;
-
-    switch (assetsLayout) {
-      // case SIMPLIFIED: {
-      //   return (
-      //     <Swipeout
-      //       right={this.renderSwipeoutBtns(asset)}
-      //       sensitivity={10}
-      //       backgroundColor="transparent"
-      //       buttonWidth={80}
-      //       close={forceHideRemoval}
-      //     >
-      //       <AssetCardSimplified {...props} />
-      //     </Swipeout>
-      //   );
-      // }
-      case MINIMIZED: {
-        return (
-          <AssetCardMinimized
-            {...props}
-            smallScreen={smallScreen()}
-            disabledRemove={isETH}
-            onRemove={this.handleAssetRemoval(asset)}
-            forceHideRemoval={forceHideRemoval}
-            columnCount={3}
-          />
-        );
-      }
-      case EXTRASMALL: {
-        return (
-          <AssetCardMinimized
-            {...props}
-            smallScreen={smallScreen()}
-            disabledRemove={isETH}
-            onRemove={this.handleAssetRemoval(asset)}
-            forceHideRemoval={forceHideRemoval}
-            extraSmall
-            columnCount={3}
-          />
-        );
-      }
-      default: {
-        return (
-          <Swipeout
-            right={this.renderSwipeoutBtns(asset)}
-            sensitivity={10}
-            backgroundColor="transparent"
-            buttonWidth={80}
-            close={forceHideRemoval}
-          >
-            <AssetCardSimplified {...props} />
-          </Swipeout>
-        );
-        // return (
-        //   <Swipeout
-        //     right={this.renderSwipeoutBtns(asset)}
-        //     sensitivity={10}
-        //     backgroundColor="transparent"
-        //     buttonWidth={80}
-        //     close={forceHideRemoval}
-        //   >
-        //     <AssetCard {...props} icon={assetData.icon} horizontalPadding />
-        //   </Swipeout>
-        // );
-      }
-    }
-  };
-
-  renderCollectible = ({ item }) => {
-    return (
-      <AssetCardMinimized
-        {...item}
-        smallScreen={smallScreen()}
-        onPress={() => { this.handleCardTap(item, true); }}
-        isCollectible
-        columnCount={2}
-      />
-    );
-  };
-
-  renderSeparator = () => {
-    return (
-      <View
-        style={{
-          marginTop: IS_IOS ? -8 : -4,
-          height: 0,
-          width: '100%',
-          backgroundColor: 'transparent',
-        }}
-      />
-    );
   };
 
   renderFoundTokensList() {
@@ -570,121 +368,16 @@ class AssetsScreen extends React.Component<Props, State> {
     this.setState({ activeTab });
   };
 
-  renderAssetList = () => {
-    const {
-      assets,
-      wallet,
-      assetsLayout,
-      baseFiatCurrency,
-      rates,
-      balances,
-    } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-
-    const sortedAssets = Object.keys(assets)
-      .map(id => assets[id])
-      .map(({ symbol, balance, ...rest }) => ({
-        symbol,
-        balance: getBalance(balances, symbol),
-        ...rest,
-      }))
-      .map(({ balance, symbol, ...rest }) => ({
-        balance,
-        symbol,
-        balanceInFiat: balance * getRate(rates, symbol, fiatCurrency),
-        ...rest,
-      }))
-      .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
-
-    const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
-
-    return (
-      <FlatList
-        key={assetsLayout}
-        data={sortedAssets}
-        keyExtractor={(item) => item.id}
-        renderItem={this.renderToken}
-        initialNumToRender={5}
-        maxToRenderPerBatch={5}
-        onEndReachedThreshold={0.5}
-        style={{ width: '100%' }}
-        contentContainerStyle={{
-          paddingVertical: 6,
-          paddingLeft: horizontalPadding(assetsLayout, 'left'),
-          paddingRight: horizontalPadding(assetsLayout, 'right'),
-          width: '100%',
-        }}
-        numColumns={columnAmount}
-        ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
-          ? this.renderSeparator
-          : null}
-        refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={() => {
-              const { fetchAssetsBalances } = this.props;
-              fetchAssetsBalances(assets, wallet.address);
-            }}
-          />
-        }
-      />
-    );
-  };
-
-  renderCollectiblesList = (collectibles) => {
-    const { fetchAllCollectiblesData } = this.props;
-    const emptyStateInfo = {
-      title: 'No collectibles',
-      bodyText: 'There are no collectibles in this wallet',
-    };
-
-    if (this.state.query) {
-      emptyStateInfo.title = 'Collectible not found';
-      emptyStateInfo.bodyText = 'Check if the name was entered correctly';
-    }
-    return (
-      <FlatList
-        data={collectibles}
-        keyExtractor={item => `${item.assetContract}${item.id}`}
-        renderItem={this.renderCollectible}
-        style={{ width: '100%' }}
-        contentContainerStyle={{
-          paddingVertical: 6,
-          paddingLeft: horizontalPadding(EXTRASMALL, 'left'),
-          paddingRight: horizontalPadding(EXTRASMALL, 'right'),
-          width: '100%',
-        }}
-        numColumns={2}
-        refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={() => fetchAllCollectiblesData()}
-          />
-        }
-        onScroll={() => Keyboard.dismiss()}
-        ListEmptyComponent={
-          <EmptyStateWrapper fullScreen>
-            <EmptyStateParagraph {...emptyStateInfo} />
-          </EmptyStateWrapper>
-        }
-        initialNumToRender={10}
-        removeClippedSubviews
-        viewabilityConfig={viewConfig}
-      />
-    );
-  };
-
   render() {
     const {
       assets,
-      wallet,
       assetsState,
       fetchInitialAssets,
       assetsSearchState,
       navigation,
       collectibles,
     } = this.props;
-    const { query, activeTab } = this.state;
+    const { query, activeTab, forceHideRemoval } = this.state;
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
@@ -694,7 +387,7 @@ class AssetsScreen extends React.Component<Props, State> {
             <Spinner />
           )}
           {assetsState === FETCH_INITIAL_FAILED && (
-            <Button title="Try again" onPress={() => fetchInitialAssets(wallet.address)} />
+            <Button title="Try again" onPress={() => fetchInitialAssets()} />
           )}
         </Container>
       );
@@ -745,8 +438,24 @@ class AssetsScreen extends React.Component<Props, State> {
           {!inSearchMode &&
           <React.Fragment>
             {!isInCollectiblesSearchMode && <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />}
-            {activeTab === TOKENS && this.renderAssetList()}
-            {activeTab === COLLECTIBLES && this.renderCollectiblesList(filteredCollectibles)}
+            {activeTab === TOKENS && (
+              <AssetsList
+                navigation={navigation}
+                onHideTokenFromWallet={this.handleAssetRemoval}
+                horizontalPadding={horizontalPadding}
+                forceHideRemoval={forceHideRemoval}
+                updateHideRemoval={this.updateHideRemoval}
+              />
+            )}
+            {activeTab === COLLECTIBLES && (
+              <CollectiblesList
+                collectibles={filteredCollectibles}
+                searchQuery={query}
+                navigation={navigation}
+                horizontalPadding={horizontalPadding}
+                updateHideRemoval={this.updateHideRemoval}
+              />
+            )}
           </React.Fragment>}
         </TokensWrapper>
       </Container>
@@ -780,19 +489,13 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchInitialAssets: (walletAddress) => {
-    dispatch(fetchInitialAssetsAction(walletAddress));
-  },
-  fetchAssetsBalances: (assets, walletAddress) => {
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
+  fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
   updateAssets: (assets: Assets, assetsToExclude: string[]) => dispatch(updateAssetsAction(assets, assetsToExclude)),
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
-  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);
