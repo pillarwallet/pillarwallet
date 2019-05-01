@@ -53,7 +53,6 @@ import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
-import { updateConnectionsAction } from 'actions/connectionsActions';
 import { saveDbAction } from './dbActions';
 
 const Crashlytics = firebase.crashlytics();
@@ -120,12 +119,9 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         const { oAuthTokens: { data: OAuthTokensObject } } = getState();
         await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
         user = merge({}, user, userInfo);
-        if (generateNewConnKeys) {
-          await dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId));
-        } else {
-          dispatch(updateConnectionsAction(user.walletId));
-        }
         dispatch(saveDbAction('user', { user }, true));
+        await
+        dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys));
       } else {
         api.init();
       }
