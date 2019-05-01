@@ -26,7 +26,7 @@ import type { ConnectionIdentityKeyMap, ConnectionUpdateIdentityKeys } from 'mod
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
-import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE, DECRYPTING } from 'constants/walletConstants';
+import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE, DECRYPTED } from 'constants/walletConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { updateConnectionKeyPairs, useConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import * as keyPairUtils from 'utils/keyPairGenerator';
@@ -314,7 +314,7 @@ describe('ConnectionKeyPair actions', () => {
       const expectedActions = [
         { type: UPDATE_WALLET_STATE, payload: GENERATING_CONNECTIONS },
         { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock] },
-        { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+        { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
         { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(2, 7)] },
         { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(2, 7)] },
         { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: mapIdentityKeysResponseMock.slice(0, 2) },
