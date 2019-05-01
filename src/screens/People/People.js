@@ -291,15 +291,33 @@ class PeopleScreen extends React.Component<Props, State> {
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
     const localContactsWithUnreads = localContacts.map((contact) => {
       const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
-      if (Object.keys(chatWithUserInfo).length && !!chatWithUserInfo.unread) {
+      if (Object.keys(chatWithUserInfo).length) {
+        if (chatWithUserInfo.unread) {
+          return {
+            ...contact,
+            unread: chatWithUserInfo.unread,
+            serverTimestamp: chatWithUserInfo.lastMessage ? chatWithUserInfo.lastMessage.serverTimestamp : null,
+          };
+        }
         return {
           ...contact,
-          unread: chatWithUserInfo.unread,
+          serverTimestamp: chatWithUserInfo.lastMessage ? chatWithUserInfo.lastMessage.serverTimestamp : null,
         };
       }
-      return contact;
+      return {
+        ...contact,
+        serverTimestamp: null,
+      };
     });
-    const sortedLocalContacts = orderBy(localContactsWithUnreads, [user => user.username.toLowerCase()], 'asc');
+    const sortedLocalContacts = orderBy(
+      localContactsWithUnreads,
+      [(user) => {
+        if (user.serverTimestamp) {
+          return user.serverTimestamp;
+        }
+        return user.createdAt * 1000;
+      }],
+      'desc');
     const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
 
     return (

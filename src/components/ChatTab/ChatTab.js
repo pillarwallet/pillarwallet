@@ -529,7 +529,7 @@ class ChatTab extends React.Component<Props, State> {
           _id: 1,
           text: unread > 1
             ? 'You have received new messages. Tap here to decrypt and read them'
-            : 'You have received a new message. Tap here to encrypt and read it',
+            : 'You have received a new message. Tap here to decrypt and read it',
           createdAt: lastMessage.serverTimestamp,
           user: {
             _id: user.username,
