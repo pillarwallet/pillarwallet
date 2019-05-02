@@ -42,7 +42,7 @@ import {
   SMART_WALLET_UNLOCK,
 } from 'constants/navigationConstants';
 import type { Assets, Balances } from 'models/Asset';
-import { upgradeToSmartWalletAction } from 'actions/walletActions';
+import { upgradeToSmartWalletAction } from 'actions/smartWalletActions';
 import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { formatAmount } from 'utils/common';
