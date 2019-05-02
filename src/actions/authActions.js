@@ -19,7 +19,6 @@
 */
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
-import { getSaltedPin } from 'utils/wallet';
 import merge from 'lodash.merge';
 import {
   DECRYPT_WALLET,
@@ -50,6 +49,7 @@ import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
+import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
@@ -88,10 +88,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
           decryptionOptions,
         );
       } else {
-        let walletAddress = encryptedWallet.address;
-        if (walletAddress.indexOf('0x') !== 0) {
-          walletAddress = `0x${walletAddress}`;
-        }
+        const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, address: walletAddress };
       }
 

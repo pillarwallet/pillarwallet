@@ -48,6 +48,9 @@ import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { saveDbAction } from './dbActions';
 import { initDefaultAccountAction } from './accountsActions';
 
+// utils
+import { normalizeWalletAddress } from 'utils/wallet';
+
 const storage = Storage.getInstance('db');
 
 const BACKGROUND = 'background';
@@ -120,7 +123,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       // TODO: if no accounts found - send user to account migration page
       if (!accounts.length) {
-        dispatch(initDefaultAccountAction(wallet.address));
+        dispatch(initDefaultAccountAction(normalizeWalletAddress(wallet.address)));
       }
 
       navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
