@@ -35,6 +35,7 @@ type Props = {
   onNextPress?: ?Function,
   onTitlePress?: Function,
   nextText?: string,
+  nextTextStyle?: Object,
   nextIcon?: string,
   title?: string,
   fullWidthTitle?: boolean,
@@ -132,6 +133,7 @@ const Header = (props: Props) => {
   const {
     onBack,
     nextText,
+    nextTextStyle,
     nextIcon,
     nextIconSize,
     onNextPress,
@@ -222,7 +224,7 @@ const Header = (props: Props) => {
       {showRight && !noClose &&
         <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
           {nextText &&
-            <TextLink onPress={onNextPress}>{nextText}</TextLink>
+            <TextLink style={nextTextStyle} onPress={onNextPress}>{nextText}</TextLink>
           }
           {nextIcon &&
             <IconWrapper>

@@ -94,6 +94,9 @@ class UpgradeIntroScreen extends React.PureComponent<Props> {
           <Header
             onBack={() => navigation.goBack(null)}
             nextText="Get help"
+            nextTextStyle={{
+              color: baseColors.white,
+            }}
             onNextPress={() => {}}
           />
           <ScrollWrapper
