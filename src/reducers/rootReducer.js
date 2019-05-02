@@ -25,6 +25,7 @@ import { LOG_OUT } from 'constants/authConstants';
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
 import walletReducer from './walletReducer';
+import smartWalletReducer from './smartWalletReducer';
 import assetsReducer from './assetsReducer';
 import appSettingsReducer from './appSettingsReducer';
 import ratesReducer from './ratesReducer';
@@ -51,6 +52,7 @@ import accountsReducer from './accountsReducer';
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
   wallet: walletReducer,
+  smartWallet: smartWalletReducer,
   assets: assetsReducer,
   appSettings: appSettingsReducer,
   rates: ratesReducer,

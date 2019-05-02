@@ -253,12 +253,10 @@ export const connectSmartWalletAccountAction = (account: SmartWalletAccount) => 
 export const deploySmartWalletAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
-      wallet: {
-        smartWallet: {
-          connectedAccount: {
-            address: accountAddress,
-            state: accountState,
-          },
+      smartWallet: {
+        connectedAccount: {
+          address: accountAddress,
+          state: accountState,
         },
       },
     } = getState();
@@ -282,10 +280,8 @@ export const deploySmartWalletAction = () => {
 export const upgradeToSmartWalletAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
-      wallet: {
-        smartWallet: {
-          sdkInitialized,
-        },
+      smartWallet: {
+        sdkInitialized,
       },
     } = getState();
     if (!sdkInitialized) {
@@ -295,10 +291,8 @@ export const upgradeToSmartWalletAction = () => {
     }
     await dispatch(getSmartWalletAccountsAction());
     const {
-      wallet: {
-        smartWallet: {
-          accounts,
-        },
+      smartWallet: {
+        accounts,
       },
     } = getState();
     if (!accounts.length) {

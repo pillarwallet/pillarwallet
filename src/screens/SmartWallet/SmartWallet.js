@@ -127,12 +127,10 @@ class SmartWallet extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  wallet: {
-    smartWallet: {
-      sdkInitialized,
-      connectedAccount,
-      accounts: smartWalletAccounts,
-    },
+  smartWallet: {
+    sdkInitialized,
+    connectedAccount,
+    accounts: smartWalletAccounts,
   },
 }) => ({
   sdkInitialized,
