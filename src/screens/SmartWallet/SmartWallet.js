@@ -11,7 +11,7 @@ import {
   getSmartWalletAccountsAction,
   deploySmartWalletAction,
   connectSmartWalletAccountAction,
-} from 'actions/walletActions';
+} from 'actions/smartWalletActions';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import { BaseText, BoldText } from 'components/Typography';

@@ -32,9 +32,6 @@ import {
   RESET_WALLET_IMPORT,
   BACKUP_WALLET,
   REMOVE_PRIVATE_KEY,
-  SET_SMART_WALLET_SDK_INIT,
-  SET_SMART_WALLET_ACCOUNTS,
-  SET_SMART_WALLET_CONNECTED_ACCOUNT,
 } from 'constants/walletConstants';
 import {
   LEGAL_TERMS,
@@ -44,16 +41,8 @@ import {
 import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
-import SmartWalletService from 'services/smartWallet';
-import {
-  addNewAccountAction,
-  setActiveAccountAction,
-} from 'actions/accountsActions';
-import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
-
-let smartWalletService: SmartWalletService;
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
@@ -213,97 +202,3 @@ export const removePrivateKeyFromMemoryAction = () => {
     dispatch({ type: REMOVE_PRIVATE_KEY });
   };
 };
-
-export const initSmartWalletSdkAction = (wallet: Object) => {
-  return async (dispatch: Function) => {
-    smartWalletService = new SmartWalletService();
-    await smartWalletService.init(wallet.privateKey);
-    dispatch({
-      type: SET_SMART_WALLET_SDK_INIT,
-      payload: true,
-    });
-  };
-};
-
-export const getSmartWalletAccountsAction = () => {
-  return async (dispatch: Function) => {
-    console.log('getSmartWalletAccountsAction');
-    const accounts = await smartWalletService.getAccounts();
-    dispatch({
-      type: SET_SMART_WALLET_ACCOUNTS,
-      payload: accounts,
-    });
-    const newAccountsPromises = accounts.map(
-      async account => dispatch(addNewAccountAction(account.address, account)),
-    );
-    return Promise.all(newAccountsPromises);
-  };
-};
-
-export const connectSmartWalletAccountAction = (account: SmartWalletAccount) => {
-  return async (dispatch: Function) => {
-    const connectedAccount = await smartWalletService.connectAccount(account.address);
-    dispatch({
-      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      payload: connectedAccount,
-    });
-  };
-};
-
-export const deploySmartWalletAction = () => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      smartWallet: {
-        connectedAccount: {
-          address: accountAddress,
-          state: accountState,
-        },
-      },
-    } = getState();
-    dispatch(setActiveAccountAction(accountAddress));
-    if (accountState.toLowerCase() === 'deployed') {
-      console.log('deploySmartWalletAction account is already deployed!');
-      return;
-    }
-    const deployTxHash = await smartWalletService.deploy();
-    console.log('deploySmartWalletAction deployTxHash: ', deployTxHash);
-    // update accounts info
-    dispatch(getSmartWalletAccountsAction());
-    const account = await smartWalletService.fetchConnectedAccount();
-    dispatch({
-      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      account,
-    });
-  };
-};
-
-export const upgradeToSmartWalletAction = () => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      smartWallet: {
-        sdkInitialized,
-      },
-    } = getState();
-    if (!sdkInitialized) {
-      // TODO: sdk not initialized error
-      console.log('sdk not initialized');
-      return;
-    }
-    await dispatch(getSmartWalletAccountsAction());
-    const {
-      smartWallet: {
-        accounts,
-      },
-    } = getState();
-    if (!accounts.length) {
-      // TODO: sdk accounts failed error
-      console.log('no sdk accounts');
-      return;
-    }
-    await dispatch(connectSmartWalletAccountAction(accounts[0]));
-    // TODO: make transactions to smart wallet account address before deploy
-    //  as balance check will fail during deploy if balance is 0
-    // dispatch(deploySmartWalletAction());
-  };
-};
-

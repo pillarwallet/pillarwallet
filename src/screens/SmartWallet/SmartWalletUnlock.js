@@ -27,7 +27,7 @@ import Header from 'components/Header';
 import {
   initSmartWalletSdkAction,
   upgradeToSmartWalletAction,
-} from 'actions/walletActions';
+} from 'actions/smartWalletActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 type Props = {
