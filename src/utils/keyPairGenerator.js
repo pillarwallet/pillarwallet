@@ -68,10 +68,10 @@ const threadJobWorkerSeed = (
 ) => {
   return () => {
     return new Promise((resolve, reject) => {
-      let count = 20;
-      let lastCount = connectionsCount + (threadIndex * 20);
+      let count = 10;
+      let lastCount = lastConnectionKeyIndex + (threadIndex * count);
       if (lastConnectionKeyIndex < 0) {
-        count = Math.ceil((100 + connectionsCount) / 5);
+        count = Math.ceil((50 + connectionsCount) / 5);
         lastCount = threadIndex * count;
       }
       try {
