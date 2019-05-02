@@ -251,10 +251,6 @@ export const updateConnectionKeyPairs = (
           payload: DECRYPTED,
         });
       }
-      await dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: DECRYPTED,
-      });
     }
 
     if (oldConnectionsCount > 0 || (currentConnectionsCount - connectionIdentityKeys.length) > 0) {
@@ -265,6 +261,11 @@ export const updateConnectionKeyPairs = (
     }
 
     await dispatch(updateConnectionsAction(walletId));
+
+    await dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: DECRYPTED,
+    });
 
     return Promise.resolve(true);
   };

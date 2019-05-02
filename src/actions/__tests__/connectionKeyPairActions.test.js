@@ -314,13 +314,13 @@ describe('ConnectionKeyPair actions', () => {
       const expectedActions = [
         { type: UPDATE_WALLET_STATE, payload: GENERATING_CONNECTIONS },
         { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock] },
-        { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
         { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(2, 7)] },
         { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(2, 7)] },
         { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: mapIdentityKeysResponseMock.slice(0, 2) },
         { type: UPDATE_INVITATIONS, payload: [...invitationsMock] },
         { type: UPDATE_CONTACTS, payload: [...contactsMock] },
         { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
+        { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
       ];
 
       // $FlowFixMe
