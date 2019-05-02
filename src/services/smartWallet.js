@@ -56,22 +56,16 @@ export default class SmartWallet {
       type: 'Buffer',
       data: privateKey.slice(2),
     }));
-    await this.sdk
-      .initialize()
-      .catch(this.handleError);
+    await this.sdk.initialize().catch(this.handleError);
     this.sdkStorage.removeItem(privateKeyStoragePath);
     // TODO: remove private from smart wallet sdk
   }
 
   async getAccounts() {
-    const accounts = await this.sdk
-      .getAccounts()
-      .catch(this.handleError);
+    const accounts = await this.sdk.getAccounts().catch(this.handleError);
 
     if (!accounts || accounts.length === 0) {
-      const newAccount = await this.sdk
-        .createAccount()
-        .catch(this.handleError);
+      const newAccount = await this.sdk.createAccount().catch(this.handleError);
       return [newAccount];
     }
 
@@ -79,17 +73,11 @@ export default class SmartWallet {
   }
 
   async connectAccount(address: string) {
-    const account = await this.sdk
-      .connectAccount(address)
-      .catch(this.handleError);
-    const devices = await this.sdk
-      .getAccountDevices()
-      .catch(this.handleError);
+    const account = await this.sdk.connectAccount(address).catch(this.handleError);
+    const devices = await this.sdk.getAccountDevices().catch(this.handleError);
     if (!account.ensName) {
       account.ensName = account.address;
-      await this.sdk
-        .setAccountEnsLabel(account.ensName)
-        .catch(this.handleError);
+      await this.sdk.setAccountEnsLabel(account.ensName).catch(this.handleError);
     }
     console.log('connectAccount ens: ', account.ensName);
     return {
@@ -120,9 +108,7 @@ export default class SmartWallet {
 
   async fetchConnectedAccount() {
     const { state: { account } } = this.sdk;
-    const devices = await this.sdk
-      .getAccountDevices()
-      .catch(this.handleError);
+    const devices = await this.sdk.getAccountDevices().catch(this.handleError);
     return {
       ...account,
       devices,
