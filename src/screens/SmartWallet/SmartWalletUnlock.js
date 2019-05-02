@@ -58,7 +58,7 @@ class SmartWalletUnlock extends React.Component<Props, State> {
     this.setState({
       isChecking: true,
     }, async () => {
-      await initSmartWalletSdk(wallet);
+      await initSmartWalletSdk(wallet.privateKey);
       await upgradeToSmartWallet();
       // TODO: show any error or show success screen/modal?
       navigation.navigate(ASSETS, {});
@@ -87,7 +87,7 @@ class SmartWalletUnlock extends React.Component<Props, State> {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  initSmartWalletSdk: (wallet: Object) => dispatch(initSmartWalletSdkAction(wallet)),
+  initSmartWalletSdk: (walletPrivateKey: string) => dispatch(initSmartWalletSdkAction(walletPrivateKey)),
   upgradeToSmartWallet: () => dispatch(upgradeToSmartWalletAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });

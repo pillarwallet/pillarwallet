@@ -30,10 +30,10 @@ import {
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 
 let smartWalletService: SmartWalletService;
-export const initSmartWalletSdkAction = (wallet: Object) => {
+export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
   return async (dispatch: Function) => {
     smartWalletService = new SmartWalletService();
-    await smartWalletService.init(wallet.privateKey);
+    await smartWalletService.init(walletPrivateKey);
     dispatch({
       type: SET_SMART_WALLET_SDK_INIT,
       payload: true,
