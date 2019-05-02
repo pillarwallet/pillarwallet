@@ -8,7 +8,7 @@ import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
 import { baseColors, fontSizes } from 'utils/variables';
 import InMemoryStorage from 'services/inMemoryStorage';
 import {
-  getSmartWalletAccountsAction,
+  loadSmartWalletAccountsAction,
   deploySmartWalletAction,
   connectSmartWalletAccountAction,
 } from 'actions/smartWalletActions';
@@ -21,7 +21,7 @@ import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 type Props = {
   navigation: NavigationScreenProp<*>,
   sdkInitialized: boolean,
-  getSmartWalletAccounts: Function,
+  loadSmartWalletAccounts: Function,
   deploySmartWallet: Function,
   connectSmartWalletAccount: Function,
   sdkInitialized: boolean,
@@ -44,7 +44,7 @@ const TextRow = styled(BaseText)`
   color: ${baseColors.darkGray};
 `;
 
-class SmartWallet extends React.Component<Props, *> {
+class SmartWallet extends React.Component<Props> {
   sdk: Object;
   storage: Object;
 
@@ -58,8 +58,8 @@ class SmartWallet extends React.Component<Props, *> {
   };
 
   onGetAccounts = async () => {
-    const { getSmartWalletAccounts } = this.props;
-    await getSmartWalletAccounts();
+    const { loadSmartWalletAccounts } = this.props;
+    await loadSmartWalletAccounts();
   };
 
   onConnectAccount = () => {
@@ -139,7 +139,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getSmartWalletAccounts: () => dispatch(getSmartWalletAccountsAction()),
+  loadSmartWalletAccounts: () => dispatch(loadSmartWalletAccountsAction()),
   connectSmartWalletAccount: accountAddress => dispatch(connectSmartWalletAccountAction(accountAddress)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });

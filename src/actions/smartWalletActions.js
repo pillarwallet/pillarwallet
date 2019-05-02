@@ -41,10 +41,14 @@ export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
   };
 };
 
-export const getSmartWalletAccountsAction = () => {
+export const loadSmartWalletAccountsAction = () => {
   return async (dispatch: Function) => {
-    // TODO: Ensure the smartWalletService is initialized
+    if (!smartWalletService) return Promise.reject();
     const accounts = await smartWalletService.getAccounts();
+    if (!accounts.length) {
+      const newAccount = await smartWalletService.createAccount();
+      if (newAccount) accounts.push(newAccount);
+    }
     dispatch({
       type: SET_SMART_WALLET_ACCOUNTS,
       payload: accounts,
@@ -58,7 +62,7 @@ export const getSmartWalletAccountsAction = () => {
 
 export const connectSmartWalletAccountAction = (account: SmartWalletAccount) => {
   return async (dispatch: Function) => {
-    // TODO: Ensure the smartWalletService is initialized
+    if (!smartWalletService) return;
     const connectedAccount = await smartWalletService.connectAccount(account.address);
     dispatch({
       type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
@@ -85,7 +89,7 @@ export const deploySmartWalletAction = () => {
     const deployTxHash = await smartWalletService.deploy();
     console.log('deploySmartWalletAction deployTxHash: ', deployTxHash);
     // update accounts info
-    dispatch(getSmartWalletAccountsAction());
+    dispatch(loadSmartWalletAccountsAction());
     const account = await smartWalletService.fetchConnectedAccount();
     dispatch({
       type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
@@ -106,7 +110,7 @@ export const upgradeToSmartWalletAction = () => {
       console.log('sdk not initialized');
       return;
     }
-    await dispatch(getSmartWalletAccountsAction());
+    await dispatch(loadSmartWalletAccountsAction());
     const {
       smartWallet: {
         accounts,

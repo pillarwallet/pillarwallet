@@ -18,14 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// import { saveDbAction } from 'actions/dbActions';
 import {
   ADD_ACCOUNT,
   UPDATE_ACCOUNTS,
   ACCOUNT_TYPES,
 } from 'constants/accountsConstants';
 import Storage from 'services/storage';
-import { saveDbAction } from './dbActions';
+import { saveDbAction } from 'actions/dbActions';
 
 const storage = Storage.getInstance('db');
 
@@ -47,32 +46,31 @@ export const initDefaultAccountAction = (walletAddress: string) => {
 
     // balances
 
-    // dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
+    dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
   };
 };
 
-export const addNewAccountAction = (walletAddress: string, accountExtra?: Object = {}) => {
-  return async (dispatch: Function) => { // eslint-disable-line
-    const { accounts: existingAccounts = [] } = await storage.get('accounts');
+export const addNewAccountAction = (accountAddress: string, accountExtra?: Object = {}) => {
+  return async (dispatch: Function, getState: Function) => {
+    const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = {
-      id: walletAddress,
+      id: accountAddress,
       type: ACCOUNT_TYPES.SMART_WALLET,
       extra: accountExtra,
       isActive: false,
     };
-    const accounts = existingAccounts.filter(account => account.id !== walletAddress);
-    accounts.push(smartWalletAccount);
+    const updatedAccounts = accounts.filter(account => account.id !== accountAddress);
+    updatedAccounts.push(smartWalletAccount);
     dispatch({
       type: UPDATE_ACCOUNTS,
-      payload: accounts,
+      payload: updatedAccounts,
     });
-    console.log('addNewAccountAction accounts: ', accounts);
-    await dispatch(saveDbAction('accounts', { accounts }, true));
+    await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
   };
 };
 
 export const setActiveAccountAction = (walletAddress: string) => {
-  return async (dispatch: Function) => { // eslint-disable-line
+  return async (dispatch: Function) => {
     const { accounts: existingAccounts = [] } = await storage.get('accounts');
     const account = existingAccounts.find(acc => acc.id === walletAddress);
     if (!account) {

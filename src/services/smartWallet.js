@@ -62,14 +62,17 @@ export default class SmartWallet {
   }
 
   async getAccounts() {
-    const accounts = await this.sdk.getAccounts().catch(this.handleError);
+    const accounts = await this.sdk.getAccounts().catch(() => []);
 
-    if (!accounts || accounts.length === 0) {
-      const newAccount = await this.sdk.createAccount().catch(this.handleError);
-      return [newAccount];
+    if (!accounts) {
+      return [];
     }
 
     return accounts;
+  }
+
+  createAccount() {
+    return this.sdk.createAccount().catch(() => null);
   }
 
   async connectAccount(address: string) {
