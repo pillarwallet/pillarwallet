@@ -36,7 +36,7 @@ const TankWrapper = styled.View`
   width: ${props => props.tiny ? 6 : 30}px;
   background-color: white;
   border-width: ${props => props.tiny ? 1 : 3}px;
-  border-color: ${props => props.tiny ? baseColors.black : baseColors.white};
+  border-color: ${props => props.tiny ? baseColors.electricBlueIntense : baseColors.white};
   border-radius: ${props => props.tiny ? 3 : 15}px;
   overflow: hidden;
 `;
@@ -47,6 +47,17 @@ const TankLevel = styled.View`
   position: absolute;
   bottom: -2px;
   left: ${props => props.tiny ? -3 : -35}px;
+`;
+
+
+const TankEmptyEmptyDot = styled.View`
+  width: 2px;
+  height: 2px;
+  background-color: ${baseColors.burningFire};
+  border-radius: 2px;
+  position: absolute;
+  left: 1px;
+  bottom: 1.5px;
 `;
 
 const TankLevelAnimated = Animated.createAnimatedComponent(TankLevel);
@@ -82,10 +93,10 @@ export default class Tank extends React.Component<Props, State> {
 
   render() {
     const { tankValueAnimated } = this.state;
-    const { tiny, wrapperStyle } = this.props;
+    const { value: tankValue, tiny, wrapperStyle } = this.props;
     return (
       <TankWrapper tiny={tiny} style={wrapperStyle}>
-        <TankLevelAnimated
+        {(tankValue > 0 && <TankLevelAnimated
           tiny={tiny}
           style={{
             transform: [{ rotate: '-15deg' }],
@@ -94,7 +105,7 @@ export default class Tank extends React.Component<Props, State> {
               outputRange: ['0%', '100%'],
             }),
           }}
-        />
+        />) || <TankEmptyEmptyDot />}
       </TankWrapper>
     );
   }

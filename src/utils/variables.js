@@ -24,6 +24,7 @@ export const baseColors = {
   fireEngineRed: '#ff0005',
   warmPurple: '#b2329c',
   electricBlue: '#007AFF',
+  electricBlueIntense: '#2329d6',
   duckEggBlue: '#e6eefa',
   selago: '#f6fafe',
   hawkesBlue: '#f0f7fe',

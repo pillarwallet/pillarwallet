@@ -238,7 +238,7 @@ const Header = (props: Props) => {
           {showChannelStatus &&
             <TankButton onPress={handleTankButtonTouch}>
               <TankLabel>{tankButtonLabel}</TankLabel>
-              {!!isSmartWallet && <Tank value={80} tiny />}
+              {!!isSmartWallet && <Tank value={0} tiny />}
             </TankButton>
           }
           {onClose &&
