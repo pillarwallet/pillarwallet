@@ -309,7 +309,7 @@ export const upgradeToSmartWalletAction = () => {
     await dispatch(connectSmartWalletAccountAction(accounts[0]));
     // TODO: make transactions to smart wallet account address before deploy
     //  as balance check will fail during deploy if balance is 0
-    dispatch(deploySmartWalletAction());
+    // dispatch(deploySmartWalletAction());
   };
 };
 
