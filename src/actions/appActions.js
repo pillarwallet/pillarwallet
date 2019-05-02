@@ -44,12 +44,13 @@ import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 
+// utils
+import { normalizeWalletAddress } from 'utils/wallet';
+
 // actions
 import { saveDbAction } from './dbActions';
 import { initDefaultAccountAction } from './accountsActions';
 
-// utils
-import { normalizeWalletAddress } from 'utils/wallet';
 
 const storage = Storage.getInstance('db');
 
