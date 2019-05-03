@@ -7,6 +7,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
 import {
   loadSmartWalletAccountsAction,
   deploySmartWalletAction,
@@ -15,12 +16,15 @@ import {
 
 // constants
 import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // components
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import { BaseText, BoldText } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
+import SlideModal from 'components/Modals/SlideModal';
+import CheckPin from 'components/CheckPin';
 
 // models
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
@@ -31,9 +35,6 @@ import InMemoryStorage from 'services/inMemoryStorage';
 
 // utils
 import { baseColors, fontSizes } from 'utils/variables';
-import { ACCOUNT_TYPES } from '../../constants/accountsConstants';
-import SlideModal from '../../components/Modals/SlideModal';
-import CheckPin from '../../components/CheckPin';
 
 
 type Props = {
@@ -47,6 +48,7 @@ type Props = {
   smartWalletAccounts: SmartWalletAccount[],
   connectedAccount: Object,
   accounts: Accounts,
+  resetIncorrectPassword: () => Function,
 };
 
 type State = {
@@ -110,8 +112,8 @@ class SmartWallet extends React.Component<Props, State> {
   };
 
   handleCheckPinModalClose = () => {
-    // const { resetIncorrectPassword } = this.props;
-    // resetIncorrectPassword();
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
     this.setState({ showCheckPinModal: false });
   };
 
@@ -234,6 +236,7 @@ const mapDispatchToProps = (dispatch) => ({
   connectSmartWalletAccount: (accountId) => dispatch(connectSmartWalletAccountAction(accountId)),
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SmartWallet);
