@@ -615,9 +615,7 @@ SDKWrapper.prototype.disconnectUser = function (
       walletId,
     }))
     .then(({ data }) => data)
-    .catch(() => {
-      return null;
-    });
+    .catch(() => null);
 };
 
 SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
