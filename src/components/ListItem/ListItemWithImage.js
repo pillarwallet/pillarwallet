@@ -468,11 +468,8 @@ class ListItemWithImage extends React.Component<Props, {}> {
 
     const type = getType(this.props);
     return (
-      <ItemWrapper
-        onPress={onPress}
-        disabled={!onPress}
-      >
-        <InnerWrapper type={type}>
+      <ItemWrapper>
+        <InnerWrapper type={type} onPress={onPress} disabled={!onPress}>
           <ImageWrapper>
             <ItemImage {...this.props} type={type} />
             {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
