@@ -72,7 +72,7 @@ import {
 import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
 
 // utils
-import { baseColors, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 
 // local components
 import AssetsList from './AssetsList';
@@ -301,7 +301,6 @@ class AssetsScreen extends React.Component<Props, State> {
           small
         >
           <Switch
-            thumbColor={baseColors.electricBlue}
             onValueChange={() => this.handleAssetToggle(asset, isAdded)}
             value={!!isAdded}
           />
