@@ -57,8 +57,13 @@ export const addNewAccountAction = (accountAddress: string, accountExtra?: Objec
       extra: accountExtra,
       isActive: false,
     };
+    const existingAccount = accounts.find(account => account.id === accountAddress);
     const updatedAccounts = accounts.filter(account => account.id !== accountAddress);
-    updatedAccounts.push(smartWalletAccount);
+    if (existingAccount) {
+      updatedAccounts.push({ ...existingAccount, extra: accountExtra });
+    } else {
+      updatedAccounts.push(smartWalletAccount);
+    }
     dispatch({
       type: UPDATE_ACCOUNTS,
       payload: updatedAccounts,

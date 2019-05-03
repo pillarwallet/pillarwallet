@@ -9,13 +9,13 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { switchAccountAction } from 'actions/accountsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import {
-  loadSmartWalletAccountsAction,
-  deploySmartWalletAction,
   connectSmartWalletAccountAction,
+  deploySmartWalletAction,
+  initSmartWalletSdkAction,
+  loadSmartWalletAccountsAction,
 } from 'actions/smartWalletActions';
 
 // constants
-import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // components
@@ -48,11 +48,13 @@ type Props = {
   smartWalletAccounts: SmartWalletAccount[],
   connectedAccount: Object,
   accounts: Accounts,
-  resetIncorrectPassword: () => Function,
+  resetIncorrectPassword: Function,
+  initSmartWalletSdk: Function,
 };
 
 type State = {
-  showCheckPinModal: boolean,
+  showCheckPinModal1: boolean,
+  showCheckPinModal2: boolean,
 };
 
 const Wrapper = styled.View`
@@ -80,7 +82,8 @@ class SmartWallet extends React.Component<Props, State> {
   switchToAccount: ?Account = null;
 
   state = {
-    showCheckPinModal: false,
+    showCheckPinModal1: false,
+    showCheckPinModal2: false,
   };
 
   componentDidMount() {
@@ -89,13 +92,17 @@ class SmartWallet extends React.Component<Props, State> {
   }
 
   onInitSdk = () => {
-    const { navigation } = this.props;
-    navigation.navigate(SMART_WALLET_UNLOCK);
+    this.setState({ showCheckPinModal2: true });
   };
 
-  onGetAccounts = async () => {
+  initSdk = (_: string, wallet: Object) => {
+    this.props.initSmartWalletSdk(wallet.privateKey);
+    this.setState({ showCheckPinModal2: false });
+  };
+
+  onGetAccounts = () => {
     const { loadSmartWalletAccounts } = this.props;
-    await loadSmartWalletAccounts();
+    loadSmartWalletAccounts();
   };
 
   onConnectAccount = () => {
@@ -111,20 +118,26 @@ class SmartWallet extends React.Component<Props, State> {
     deploySmartWallet();
   };
 
-  handleCheckPinModalClose = () => {
+  handleCheckPinModalClose1 = () => {
     const { resetIncorrectPassword } = this.props;
     resetIncorrectPassword();
-    this.setState({ showCheckPinModal: false });
+    this.setState({ showCheckPinModal1: false });
   };
 
-  switchAccount = () => {
+  handleCheckPinModalClose2 = () => {
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
+    this.setState({ showCheckPinModal2: false });
+  };
+
+  onSwitchAccount = () => {
     const { accounts, switchAccount } = this.props;
     const inactiveAccount = accounts.find(({ isActive }) => !isActive);
     if (!inactiveAccount) return;
 
     if (inactiveAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
       this.switchToAccount = inactiveAccount;
-      this.setState({ showCheckPinModal: true });
+      this.setState({ showCheckPinModal1: true });
     } else if (inactiveAccount.type === ACCOUNT_TYPES.KEY_BASED) {
       switchAccount(inactiveAccount.id);
     }
@@ -134,7 +147,7 @@ class SmartWallet extends React.Component<Props, State> {
     if (!this.switchToAccount) return;
     this.props.switchAccount(this.switchToAccount.id, wallet.privateKey);
     this.switchToAccount = null;
-    this.setState({ showCheckPinModal: false });
+    this.setState({ showCheckPinModal1: false });
   };
 
   render() {
@@ -145,7 +158,7 @@ class SmartWallet extends React.Component<Props, State> {
       smartWalletAccounts,
       accounts,
     } = this.props;
-    const { showCheckPinModal } = this.state;
+    const { showCheckPinModal1, showCheckPinModal2 } = this.state;
     const activeAccount = accounts.find(({ isActive }) => isActive);
     return (
       <Container inset={{ bottom: 0 }}>
@@ -162,12 +175,16 @@ class SmartWallet extends React.Component<Props, State> {
                 </TextRow>
                 {accounts.length > 1 && (
                   <Row>
-                    <ButtonMini title="Switch" onPress={this.switchAccount} />
+                    <ButtonMini title="Switch" onPress={this.onSwitchAccount} />
                   </Row>
                 )}
               </React.Fragment>
             )}
-            {!sdkInitialized && <Row><ButtonMini title="Init SDK" onPress={this.onInitSdk} /></Row>}
+            {!sdkInitialized && (
+              <Row>
+                <ButtonMini title="Init SDK" onPress={this.onInitSdk} />
+              </Row>
+            )}
             {sdkInitialized && (
               <TextRow>
                 SDK Initialized: <BoldText>{sdkInitialized.toString()}</BoldText>
@@ -188,11 +205,14 @@ class SmartWallet extends React.Component<Props, State> {
             && (
               <ButtonMini title="Connect Account" onPress={this.onConnectAccount} />
             )}
-            {sdkInitialized && !!smartWalletAccounts.length && !!connectedAccount
-              && !!Object.keys(connectedAccount).length && (
+            {sdkInitialized
+            && !!smartWalletAccounts.length
+            && !!connectedAccount
+            && !!Object.keys(connectedAccount).length
+            && (
                 (connectedAccount.state.toLowerCase() !== 'deployed'
-                  && <ButtonMini title="Deploy" onPress={this.onDeploy} />)
-                || (
+                  && <ButtonMini title="Deploy" onPress={this.onDeploy} />
+                ) || (
                   <TextRow>
                     Account state: <BoldText>{connectedAccount.state}</BoldText>
                   </TextRow>
@@ -201,8 +221,8 @@ class SmartWallet extends React.Component<Props, State> {
           </Wrapper>
         </ScrollWrapper>
         <SlideModal
-          isVisible={showCheckPinModal}
-          onModalHide={this.handleCheckPinModalClose}
+          isVisible={showCheckPinModal1}
+          onModalHide={this.handleCheckPinModalClose1}
           title="enter pincode"
           centerTitle
           fullScreen
@@ -210,6 +230,18 @@ class SmartWallet extends React.Component<Props, State> {
         >
           <Wrapper flex={1}>
             <CheckPin onPinValid={this.switchToSmartWalletAccount} />
+          </Wrapper>
+        </SlideModal>
+        <SlideModal
+          isVisible={showCheckPinModal2}
+          onModalHide={this.handleCheckPinModalClose2}
+          title="enter pincode"
+          centerTitle
+          fullScreen
+          showHeader
+        >
+          <Wrapper flex={1}>
+            <CheckPin onPinValid={this.initSdk} />
           </Wrapper>
         </SlideModal>
       </Container>
@@ -237,6 +269,7 @@ const mapDispatchToProps = (dispatch) => ({
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+  initSmartWalletSdk: (privateKey: string) => dispatch(initSmartWalletSdkAction(privateKey)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SmartWallet);
