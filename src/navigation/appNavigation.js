@@ -268,7 +268,6 @@ homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 // SMART_WALLET FLOW
 const smartWalletFlow = createStackNavigator({
   [SMART_WALLET]: SmartWalletScreen,
-  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
 smartWalletFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -476,6 +475,7 @@ const smartWalletFlowUI = createStackNavigator({
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
   [UPGRADE_CONFIRM]: UpgradeConfirmScreen,
+  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
 smartWalletFlow.navigationOptions = hideTabNavigatorOnChildView;
