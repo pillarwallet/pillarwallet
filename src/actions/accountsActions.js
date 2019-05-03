@@ -23,10 +23,8 @@ import {
   UPDATE_ACCOUNTS,
   ACCOUNT_TYPES,
 } from 'constants/accountsConstants';
-import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
-
-const storage = Storage.getInstance('db');
+import { connectSmartWalletAccountAction, initSmartWalletSdkAction } from './smartWalletActions';
 
 export const initDefaultAccountAction = (walletAddress: string) => {
   return async (dispatch: Function, getState: Function) => { // eslint-disable-line
@@ -69,21 +67,35 @@ export const addNewAccountAction = (accountAddress: string, accountExtra?: Objec
   };
 };
 
-export const setActiveAccountAction = (walletAddress: string) => {
-  return async (dispatch: Function) => {
-    const { accounts: existingAccounts = [] } = await storage.get('accounts');
-    const account = existingAccounts.find(acc => acc.id === walletAddress);
+export const setActiveAccountAction = (accountId: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    const { accounts: { data: accounts } } = getState();
+    const account = accounts.find(acc => acc.id === accountId);
     if (!account) {
       // TODO: account not found in storage
-      console.log('setActiveAccountAction account not found by address: ', walletAddress);
+      console.log('setActiveAccountAction account not found by id: ', accountId);
       return;
     }
-    const accounts = existingAccounts.map(acc => ({ ...acc, isActive: acc.id === walletAddress }));
-    console.log('setActiveAccountAction accounts: ', accounts);
+    const updatedAccounts = accounts.map(acc => ({ ...acc, isActive: acc.id === accountId }));
     dispatch({
       type: UPDATE_ACCOUNTS,
-      payload: accounts,
+      payload: updatedAccounts,
     });
-    await dispatch(saveDbAction('accounts', { accounts }, true));
+    await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
+  };
+};
+
+export const switchAccountAction = (accountId: string, privateKey?: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    const { accounts: { data: accounts } } = getState();
+    const account = accounts.find(_acc => _acc.id === accountId) || {};
+
+    if (account.type === ACCOUNT_TYPES.KEY_BASED) {
+      dispatch(setActiveAccountAction(accountId));
+    } else if (account.type === ACCOUNT_TYPES.SMART_WALLET && privateKey) {
+      await dispatch(initSmartWalletSdkAction(privateKey));
+      await dispatch(connectSmartWalletAccountAction(accountId));
+      await dispatch(setActiveAccountAction(accountId));
+    }
   };
 };
