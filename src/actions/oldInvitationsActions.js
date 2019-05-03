@@ -110,10 +110,15 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
     // clean up local contacts
     const acceptedConnectionsIds = groupedNotifications.connectionAcceptedEvent.map(({ id: acceptedConnectionId }) =>
       acceptedConnectionId);
+    const disconnectedConnectionsIds =
+      groupedNotifications.connectionDisconnectedEvent.map(({ id: disconnectedConnectionId }) =>
+        disconnectedConnectionId);
     const consistentLocalContacts = contacts.filter(({ id: contactId }) =>
       acceptedConnectionsIds.includes(contactId));
     const updatedContacts = uniqBy(newConnections.concat(consistentLocalContacts), 'id')
-      .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
+      .map(({ type, connectionKey, ...rest }) => ({ ...rest })).filter((updatedContact) => {
+        return disconnectedConnectionsIds.includes(updatedContact.id);
+      });
 
     // save new connections keys
     let updatedAccessTokens = [...accessTokens];

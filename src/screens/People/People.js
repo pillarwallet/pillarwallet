@@ -231,7 +231,6 @@ class PeopleScreen extends React.Component<Props, State> {
     // please refer to https://www.pivotaltracker.com/story/show/163147492
     // to understand the reason for the temporary disabling of swipeout feature
     <Swipeout
-      disabled
       right={this.renderSwipeoutBtns(item)}
       backgroundColor="transparent"
       sensitivity={10}
