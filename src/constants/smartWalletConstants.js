@@ -17,36 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type Asset = {
-  symbol: string,
-  name: string,
-  address: string,
-  description: string,
-  iconUrl: string,
-  iconMonoUrl: string,
-  wallpaperUrl: string,
-  decimals: number,
-  amount?: number,
-};
-
-export type Assets = {
-  [string]: Asset,
-};
-
-export type Balances = {
-  [string]: {
-    balance: string,
-    symbol: string,
-  },
-};
-
-export type Rates = {
-  [string]: {
-    [string]: number,
-  },
-};
-
-export type AssetTransfer = {
-  name: string,
-  amount: number,
-};
+export const SET_SMART_WALLET_SDK_INIT = 'SET_SMART_WALLET_SDK_INIT';
+export const SET_SMART_WALLET_ACCOUNTS = 'SET_SMART_WALLET_ACCOUNTS';
+export const SET_SMART_WALLET_CONNECTED_ACCOUNT = 'SET_SMART_WALLET_CONNECTED_ACCOUNT';
+export const ADD_SMART_WALLET_UPGRADE_ASSETS = 'ADD_SMART_WALLET_UPGRADE_ASSETS';
+export const ADD_SMART_WALLET_UPGRADE_COLLECTIBLES = 'ADD_SMART_WALLET_UPGRADE_COLLECTIBLES';

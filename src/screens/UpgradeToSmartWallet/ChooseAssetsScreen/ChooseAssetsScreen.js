@@ -36,11 +36,15 @@ import { EDIT_ASSET_AMOUNT_TO_TRANSFER, UPGRADE_CONFIRM } from 'constants/naviga
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import {
+  addAssetsToSmartWalletUpgradeAction,
+  addCollectiblesToSmartWalletUpgradeAction,
+} from 'actions/smartWalletActions';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
-import type { Assets, Balances } from 'models/Asset';
-import type { Collectible } from 'models/Collectible';
+import type { AssetTransfer, Assets, Balances } from 'models/Asset';
+import type { Collectible, CollectibleTransfer } from 'models/Collectible';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -48,13 +52,16 @@ type Props = {
   assets: Assets,
   balances: Balances,
   fetchAllCollectiblesData: Function,
-  collectibles: Array<Collectible>,
+  collectibles: Collectible[],
+  addAssetsToSmartWallet: Function,
+  addCollectiblesToSmartWallet: Function,
+  addedAssets: AssetTransfer[],
 };
 
 type State = {
   query: string,
-  assetsToTransfer: Array<string>,
-  collectiblesToTransfer: Array<string>,
+  assetsToTransfer: AssetTransfer[],
+  collectiblesToTransfer: CollectibleTransfer[],
   activeTab: string,
 };
 
@@ -86,50 +93,41 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     this.setState({ query });
   };
 
-  updateAssetsToTransferList = (username: string) => {
+  addAssetToTransferList = (name: string, amount: number) => {
     const { assetsToTransfer } = this.state;
-    let updatedAssetsToTransfer;
-    if (assetsToTransfer.includes(username)) {
-      updatedAssetsToTransfer = assetsToTransfer.filter((thisUsername) => { return thisUsername !== username; });
-    } else {
-      updatedAssetsToTransfer = [...assetsToTransfer, username];
-    }
+    const updatedAssetsToTransfer = assetsToTransfer
+      .filter(addedAsset => addedAsset.name !== name);
+    updatedAssetsToTransfer.push({ name, amount });
     this.setState({ assetsToTransfer: updatedAssetsToTransfer });
   };
 
-  updateCollectiblesToTransferList = (username: string) => {
+  addCollectibleToTransferList = (name: string) => {
     const { collectiblesToTransfer } = this.state;
-    let updatedCollectiblesToTransfer;
-    if (collectiblesToTransfer.includes(username)) {
-      updatedCollectiblesToTransfer = collectiblesToTransfer
-        .filter((thisUsername) => { return thisUsername !== username; });
-    } else {
-      updatedCollectiblesToTransfer = [...collectiblesToTransfer, username];
-    }
+    const updatedCollectiblesToTransfer = collectiblesToTransfer
+      .filter(addedCollectible => addedCollectible.name !== name);
+    updatedCollectiblesToTransfer.push({ name });
     this.setState({ collectiblesToTransfer: updatedCollectiblesToTransfer });
   };
 
   renderAsset = ({ item }) => {
     const { assetsToTransfer } = this.state;
-    const { balances } = this.props;
-    const assetBalance = formatAmount(getBalance(balances, item.symbol));
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
     if (assetShouldRender) {
       return null;
     }
-
+    const formattedAmount = formatAmount(item.amount);
     return (
       <ListItemWithImage
         label={item.name}
         itemImageUrl={fullIconUrl || genericToken}
-        itemValue={`${assetBalance} ${item.symbol}`}
+        itemValue={`${formattedAmount} ${item.symbol}`}
         fallbackSource={genericToken}
-        onPress={() => this.updateAssetsToTransferList(item.name)}
+        onPress={() => this.addAssetToTransferList(item.name, item.amount)}
         customAddon={
           <Checkbox
-            onPress={() => this.updateAssetsToTransferList(item.name)}
-            checked={assetsToTransfer.includes(item.name)}
+            onPress={() => this.addAssetToTransferList(item.name, item.amount)}
+            checked={!!assetsToTransfer.find(asset => asset.name === item.name)}
             rounded
             wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
           />
@@ -146,10 +144,10 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
         label={item.name}
         itemImageUrl={item.icon || genericToken}
         fallbackSource={genericToken}
-        onPress={() => this.updateCollectiblesToTransferList(item.name)}
+        onPress={() => this.addCollectibleToTransferList(item.name)}
         customAddon={
           <Checkbox
-            onPress={() => this.updateCollectiblesToTransferList(item.name)}
+            onPress={() => this.addCollectibleToTransferList(item.name)}
             checked={collectiblesToTransfer.includes(item.name)}
             rounded
             wrapperStyle={{ width: 24, marginRight: 4 }}
@@ -249,13 +247,61 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     );
   };
 
-  render() {
-    const { navigation, assets, balances } = this.props;
-    const { query, activeTab } = this.state;
-    const assetsArray = Object.values(assets);
-    const nonEmptyAssets = assetsArray.filter((asset: any) => {
-      return getBalance(balances, asset.symbol) !== 0;
+  updateAssetsAndCollectiblesToTransfer = async () => {
+    const {
+      addAssetsToSmartWallet,
+      addCollectiblesToSmartWallet,
+      addedAssets,
+    } = this.props;
+    const { assetsToTransfer, collectiblesToTransfer } = this.state;
+    const updatedAssetsToTransfer = assetsToTransfer.map(asset => {
+      const addedAsset = addedAssets
+        .find(addedAssetCheck => addedAssetCheck.name === asset.name);
+      const amount = addedAsset ? addedAsset.amount : asset.amount;
+      return { ...asset, amount };
     });
+    await addAssetsToSmartWallet(updatedAssetsToTransfer);
+    await addCollectiblesToSmartWallet(collectiblesToTransfer);
+  };
+
+  onEditPress = async () => {
+    const { navigation } = this.props;
+    await this.updateAssetsAndCollectiblesToTransfer();
+    navigation.navigate(EDIT_ASSET_AMOUNT_TO_TRANSFER);
+  };
+
+  onNextPress = async () => {
+    const { navigation } = this.props;
+    await this.updateAssetsAndCollectiblesToTransfer();
+    navigation.navigate(UPGRADE_CONFIRM);
+  };
+
+  render() {
+    const {
+      navigation,
+      assets,
+      balances,
+      addedAssets,
+    } = this.props;
+    const {
+      query,
+      activeTab,
+      assetsToTransfer,
+    } = this.state;
+    const assetsArray = Object.values(assets);
+    const nonEmptyAssets = assetsArray
+      .map((asset: any) => {
+        const assetsTransferAmount = addedAssets
+          .find(addedAsset => addedAsset.name === asset.name);
+
+        // added/edited amount or default – all balance
+        const amount = assetsTransferAmount
+          ? assetsTransferAmount.amount
+          : getBalance(balances, asset.symbol);
+
+        return { ...asset, amount };
+      })
+      .filter(asset => asset.amount !== 0);
 
     const assetsTabs = [
       {
@@ -277,8 +323,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
             headerProps={{
               title: 'choose assets',
               onBack: () => navigation.goBack(null),
-              nextText: nonEmptyAssets.length ? 'Edit' : null,
-              onNextPress: () => { navigation.navigate(EDIT_ASSET_AMOUNT_TO_TRANSFER); },
+              nextText: assetsToTransfer.length ? 'Edit' : null,
+              onNextPress: this.onEditPress,
             }}
             searchInputPlaceholder="Search asset"
             onSearchChange={this.handleSearchChange}
@@ -298,7 +344,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
             <Button
               small
               title="Next"
-              onPress={() => navigation.navigate(UPGRADE_CONFIRM)}
+              onPress={this.onNextPress}
               disabled={false}
             />
           </FooterInner>
@@ -311,8 +357,10 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   assets: { data: assets, balances },
   collectibles: { assets: collectibles },
+  smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
 }) => ({
   assets,
+  addedAssets,
   balances,
   collectibles,
 });
@@ -320,6 +368,12 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
+  addAssetsToSmartWallet: assets => dispatch(
+    addAssetsToSmartWalletUpgradeAction(assets),
+  ),
+  addCollectiblesToSmartWallet: collectibles => dispatch(
+    addCollectiblesToSmartWalletUpgradeAction(collectibles),
+  ),
 });
 
 

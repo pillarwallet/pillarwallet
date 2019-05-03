@@ -21,13 +21,17 @@ import {
   SET_SMART_WALLET_SDK_INIT,
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
-} from 'constants/walletConstants';
+  ADD_SMART_WALLET_UPGRADE_ASSETS,
+  ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
+} from 'constants/smartWalletConstants';
 import SmartWalletService from 'services/smartWallet';
 import {
   addNewAccountAction,
   setActiveAccountAction,
 } from 'actions/accountsActions';
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
+import type { AssetTransfer } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
 
 let smartWalletService: SmartWalletService;
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
@@ -128,3 +132,12 @@ export const upgradeToSmartWalletAction = () => {
   };
 };
 
+export const addAssetsToSmartWalletUpgradeAction = (assets: AssetTransfer[]) => ({
+  type: ADD_SMART_WALLET_UPGRADE_ASSETS,
+  payload: assets,
+});
+
+export const addCollectiblesToSmartWalletUpgradeAction = (collectibles: Collectible[]) => ({
+  type: ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
+  payload: collectibles,
+});

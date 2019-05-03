@@ -35,3 +35,7 @@ export type Collectible = {
   permalink: string,
   traits: Object[],
 };
+
+export type CollectibleTransfer = {
+  name: string,
+};

@@ -31,17 +31,20 @@ import { BaseText } from 'components/Typography';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { addAssetsToSmartWalletUpgradeAction } from 'actions/smartWalletActions';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
-import type { Assets, Balances } from 'models/Asset';
+import type { AssetTransfer, Assets, Balances } from 'models/Asset';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   fetchAssetsBalances: (assets: Assets) => Function,
-  assets: Assets,
+  addedAssets: AssetTransfer[],
+  allAssets: Assets,
   balances: Balances,
   navigation: NavigationScreenProp<*>,
+  addAssetsToSmartWallet: Function,
 };
 
 type State = {
@@ -78,6 +81,14 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
     amounts: {},
   };
 
+  constructor(props) {
+    super(props);
+    const { addedAssets } = this.props;
+    const amounts = {};
+    addedAssets.forEach(asset => { amounts[asset.name] = asset.amount; });
+    this.state = { ...this.state, amounts };
+  }
+
   handleSearchChange = (query: any) => {
     this.setState({ query });
   };
@@ -90,7 +101,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
     if (assetShouldRender) {
       return null;
     }
-
+    const amountValue = this.state.amounts[item.name] || item.amount;
     return (
       <ListItemWithImage
         label={item.name}
@@ -103,11 +114,11 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
               style={{ fontSize: fontSizes.medium, textAlign: 'right', maxWidth: 200 }}
               onChangeText={(text) => this.setState({
                 amounts: {
-                ...this.state.amounts,
+                  ...this.state.amounts,
                   [item.name]: text,
                 },
               })}
-              value={this.state.amounts[item.name]}
+              value={amountValue ? formatAmount(amountValue) : ''}
               placeholder={assetBalance}
               keyboardType="decimal-pad"
             />
@@ -123,21 +134,30 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
   };
 
   refreshAssetsList = () => {
-    const { assets, fetchAssetsBalances } = this.props;
-    fetchAssetsBalances(assets);
+    const { allAssets, fetchAssetsBalances } = this.props;
+    fetchAssetsBalances(allAssets);
+  };
+
+  onNextPress = async () => {
+    const { navigation, addedAssets, addAssetsToSmartWallet } = this.props;
+    const { amounts } = this.state;
+    const updatedAssets = addedAssets.map(asset => {
+      const amount = amounts[asset.name] || asset.amount;
+      return { ...asset, amount };
+    });
+    await addAssetsToSmartWallet(updatedAssets);
+    navigation.goBack();
   };
 
   render() {
-    const { navigation, assets, balances } = this.props;
+    const { navigation, allAssets, addedAssets } = this.props;
     const { query } = this.state;
-    const assetsArray = Object.values(assets);
-    const nonEmptyAssets = assetsArray.filter((asset: any) => {
-      return getBalance(balances, asset.symbol) !== 0;
-    });
-
-    const filteredNonEmptyAssets = (!query || query.trim() === '' || query.length < 2)
-      ? nonEmptyAssets
-      : nonEmptyAssets.filter((asset: any) => asset.name.toUpperCase().includes(query.toUpperCase()));
+    const assetsArray = Object.values(allAssets);
+    const assets = assetsArray
+      .filter((asset: any) => addedAssets.find((addedAsset: any) => asset.name === addedAsset.name));
+    const filteredAssets = (!query || query.trim() === '' || query.length < 2)
+      ? assets
+      : assets.filter((asset: any) => asset.name.toUpperCase().includes(query.toUpperCase()));
 
     return (
       <Container>
@@ -147,7 +167,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
               title: 'edit amount',
               onBack: () => navigation.goBack(null),
               nextText: 'Save',
-              onNextPress: () => { navigation.goBack(); },
+              onNextPress: this.onNextPress,
             }}
             searchInputPlaceholder="Search asset"
             onSearchChange={this.handleSearchChange}
@@ -158,7 +178,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
         </TopWrapper>
         <FlatList
           keyExtractor={item => item.symbol}
-          data={filteredNonEmptyAssets}
+          data={filteredAssets}
           renderItem={this.renderAsset}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
           contentContainerStyle={{
@@ -189,16 +209,20 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets, balances },
+  assets: { data: allAssets, balances },
+  smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
 }) => ({
-  assets,
+  allAssets,
+  addedAssets,
   balances,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
+  fetchAssetsBalances: assets => dispatch(fetchAssetsBalancesAction(assets)),
+  addAssetsToSmartWallet: assets => dispatch(
+    addAssetsToSmartWalletUpgradeAction(assets),
+  ),
 });
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditAssetAmountScreen);
 

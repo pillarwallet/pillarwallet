@@ -225,10 +225,12 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  assets: { data: assets, balances },
+  assets: { balances },
+  smartWallet: { upgrade: { transfer: { assets, collectibles } } },
 }) => ({
   contacts,
   assets,
+  collectibles,
   balances,
 });
 
