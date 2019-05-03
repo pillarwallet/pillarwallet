@@ -86,25 +86,24 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     this.setState({ query });
   };
 
-  updateAssetsToTransferList = (username: string) => {
+  updateAssetsToTransferList = (asset: string) => {
     const { assetsToTransfer } = this.state;
     let updatedAssetsToTransfer;
-    if (assetsToTransfer.includes(username)) {
-      updatedAssetsToTransfer = assetsToTransfer.filter((thisUsername) => { return thisUsername !== username; });
+    if (assetsToTransfer.includes(asset)) {
+      updatedAssetsToTransfer = assetsToTransfer.filter(_asset => _asset !== asset);
     } else {
-      updatedAssetsToTransfer = [...assetsToTransfer, username];
+      updatedAssetsToTransfer = [...assetsToTransfer, asset];
     }
     this.setState({ assetsToTransfer: updatedAssetsToTransfer });
   };
 
-  updateCollectiblesToTransferList = (username: string) => {
+  updateCollectiblesToTransferList = (collectible: string) => {
     const { collectiblesToTransfer } = this.state;
     let updatedCollectiblesToTransfer;
-    if (collectiblesToTransfer.includes(username)) {
-      updatedCollectiblesToTransfer = collectiblesToTransfer
-        .filter((thisUsername) => { return thisUsername !== username; });
+    if (collectiblesToTransfer.includes(collectible)) {
+      updatedCollectiblesToTransfer = collectiblesToTransfer.filter(_collectible => _collectible !== collectible);
     } else {
-      updatedCollectiblesToTransfer = [...collectiblesToTransfer, username];
+      updatedCollectiblesToTransfer = [...collectiblesToTransfer, collectible];
     }
     this.setState({ collectiblesToTransfer: updatedCollectiblesToTransfer });
   };
