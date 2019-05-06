@@ -29,7 +29,6 @@ import {
   addNewAccountAction,
   setActiveAccountAction,
 } from 'actions/accountsActions';
-import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 
@@ -64,14 +63,15 @@ export const loadSmartWalletAccountsAction = () => {
   };
 };
 
-export const connectSmartWalletAccountAction = (account: SmartWalletAccount) => {
+export const connectSmartWalletAccountAction = (accountId: string) => {
   return async (dispatch: Function) => {
     if (!smartWalletService) return;
-    const connectedAccount = await smartWalletService.connectAccount(account.address);
+    const connectedAccount = await smartWalletService.connectAccount(accountId);
     dispatch({
       type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
       payload: connectedAccount,
     });
+    await dispatch(setActiveAccountAction(accountId));
   };
 };
 
@@ -125,7 +125,8 @@ export const upgradeToSmartWalletAction = () => {
       console.log('no sdk accounts');
       return;
     }
-    await dispatch(connectSmartWalletAccountAction(accounts[0]));
+    await dispatch(connectSmartWalletAccountAction(accounts[0].address));
+    await dispatch(setActiveAccountAction(accounts[0].address));
     // TODO: make transactions to smart wallet account address before deploy
     //  as balance check will fail during deploy if balance is 0
     // dispatch(deploySmartWalletAction());
