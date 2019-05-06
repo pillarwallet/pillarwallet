@@ -32,7 +32,7 @@ import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { addAssetsToSmartWalletUpgradeAction } from 'actions/smartWalletActions';
-import { formatAmount } from 'utils/common';
+import { formatAmount, parseNumber, isValidNumber } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
 import type { AssetTransfer, Assets, Balances } from 'models/Asset';
@@ -50,6 +50,7 @@ type Props = {
 type State = {
   query: string,
   amounts: Object,
+  errors: Object,
 };
 
 const TopWrapper = styled.View`
@@ -79,6 +80,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
   state = {
     query: '',
     amounts: {},
+    errors: {},
   };
 
   constructor(props) {
@@ -93,6 +95,33 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
     this.setState({ query });
   };
 
+  handleAmountChange = (text: string, assetName: string, balance: number, decimals: number) => {
+    const amountFormatted = text.toString().replace(/,/g, '.');
+    const amount = parseNumber(text);
+    let errorMessage;
+
+    if (!isValidNumber(amount.toString()) || amount.toString().split('.').length > 2) {
+      errorMessage = 'Incorrect number entered.';
+    } else if (amount > balance) {
+      errorMessage = 'Amount should not exceed the sum of total balance';
+    } else if (amount < 0) {
+      errorMessage = 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
+    } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+      errorMessage = 'Amount should not contain decimal places';
+    }
+
+    this.setState({
+      errors: {
+        ...this.state.errors,
+        [assetName]: errorMessage,
+      },
+      amounts: {
+        ...this.state.amounts,
+        [assetName]: amountFormatted,
+      },
+    });
+  }
+
   renderAsset = ({ item }) => {
     const { balances } = this.props;
     const assetBalance = formatAmount(getBalance(balances, item.symbol));
@@ -101,7 +130,8 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
     if (assetShouldRender) {
       return null;
     }
-    const amountValue = this.state.amounts[item.name] || item.amount;
+    const amount = this.state.amounts[item.name] || item.amount || '';
+    const errorMessage = this.state.errors[item.name];
     return (
       <ListItemWithImage
         label={item.name}
@@ -112,22 +142,15 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
           <View style={{ height: 70, justifyContent: 'center', minWidth: 180 }}>
             <TextInput
               style={{ fontSize: fontSizes.medium, textAlign: 'right', maxWidth: 200 }}
-              onChangeText={(text) => this.setState({
-                amounts: {
-                  ...this.state.amounts,
-                  [item.name]: text,
-                },
-              })}
-              value={amountValue ? formatAmount(amountValue) : ''}
+              onChangeText={text => this.handleAmountChange(text, item.name, parseNumber(assetBalance), item.decimals)}
+              value={amount ? amount.toString() : ''}
               placeholder={assetBalance}
               keyboardType="decimal-pad"
             />
           </View>
         }
         customAddonFullWidth={
-          this.state.amounts[item.name] > assetBalance
-            ? (<ErrorHolder><ErrorText>Amount should not exceed balance</ErrorText></ErrorHolder>)
-            : null
+          errorMessage && <ErrorHolder><ErrorText>{errorMessage}</ErrorText></ErrorHolder>
         }
       />
     );
@@ -151,14 +174,14 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
 
   render() {
     const { navigation, allAssets, addedAssets } = this.props;
-    const { query } = this.state;
+    const { query, errors } = this.state;
     const assetsArray = Object.values(allAssets);
     const assets = assetsArray
       .filter((asset: any) => addedAssets.find((addedAsset: any) => asset.name === addedAsset.name));
     const filteredAssets = (!query || query.trim() === '' || query.length < 2)
       ? assets
       : assets.filter((asset: any) => asset.name.toUpperCase().includes(query.toUpperCase()));
-
+    const saveAvailable = Object.values(errors).filter(error => !!error).length === 0;
     return (
       <Container>
         <TopWrapper>
@@ -166,8 +189,8 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
             headerProps={{
               title: 'edit amount',
               onBack: () => navigation.goBack(null),
-              nextText: 'Save',
-              onNextPress: this.onNextPress,
+              nextText: saveAvailable && 'Save',
+              onNextPress: saveAvailable ? this.onNextPress : () => {},
             }}
             searchInputPlaceholder="Search asset"
             onSearchChange={this.handleSearchChange}
