@@ -24,10 +24,12 @@ import {
   UPDATE_CONTACTS_STATE,
   UPDATE_CONTACTS,
 } from 'constants/contactsConstants';
-import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
+import type { ConnectionIdentityKey } from 'models/Connections';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
+import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import Toast from 'components/Toast';
 import { excludeLocalContacts } from 'utils/contacts';
+import { updateConnectionsAction } from 'actions/connectionsActions';
 import { saveDbAction } from './dbActions';
 import { deleteChatAction, deleteContactAction } from './chatActions';
 
@@ -107,74 +109,57 @@ export const disconnectContactAction = (contactId: string) => {
       user: { data: { walletId } },
       invitations: { data: invitations },
       contacts: { data: contacts },
-      accessTokens: { data: accessTokens },
+      connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
 
-    try {
-      if (accessTokens.length < 1 || !accessTokens[0].myAccessToken) {
-        throw new Error('It\'s currently impossible to delete contact on imported wallet');
-      }
 
-      const userRelatedAccessTokens = accessTokens.find(token => token.userId === contactId);
+    const { sourceIdentityKey, targetIdentityKey } = connectionIdentityKeys.find((cik: ConnectionIdentityKey) => {
+      return cik.targetUserId === contactId;
+    }) || { sourceIdentityKey: null, targetIdentityKey: null };
 
-      if (!userRelatedAccessTokens) {
-        throw new Error('Contact doesn\'t exist on this wallet');
-      }
+    const disconnectResult = await api.disconnectUser(
+      contactId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+    );
 
-      const { myAccessToken, userAccessToken } = userRelatedAccessTokens;
-
-      await api.disconnectUser(
-        contactId,
-        myAccessToken,
-        userAccessToken,
-        walletId,
-      );
-
-      const [contactToDisconnect, updatedContacts] = partition(contacts, (contact) =>
-        contact.id === contactId);
-
-      await dispatch(deleteChatAction(contactToDisconnect[0].username));
-      await dispatch(deleteContactAction(contactToDisconnect[0].username));
-
-      await dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
-
-      const updatedAccessTokens = accessTokens
-        .filter(({ userId }) => userId !== contactId);
-
-      await dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
-
-      const updatedInvitations = invitations.filter(({ id }) => id !== contactId);
-
-      await dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
-
-      dispatch({
-        type: UPDATE_CONTACTS,
-        payload: updatedContacts,
-      });
-
-      dispatch({
-        type: UPDATE_ACCESS_TOKENS,
-        payload: updatedAccessTokens,
-      });
-      dispatch({
-        type: UPDATE_INVITATIONS,
-        payload: updatedInvitations,
-      });
-
-      Toast.show({
-        message: 'Successfully Disconnected',
-        type: 'info',
-      });
-    } catch (e) {
-      const message = e.message === 'Request failed with status code 404' ?
-        'Please try again' : e.message;
-
-      Toast.show({
-        message,
-        type: 'warning',
-        title: 'Cannot delete contact',
-        autoClose: false,
-      });
+    if (!disconnectResult) {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: 'Connection cannot be disconnected' },
+      }));
+      dispatch(updateConnectionsAction(walletId));
+      return;
     }
+
+    const [contactToDisconnect, updatedContacts] = partition(contacts, (contact) =>
+      contact.id === contactId);
+
+    await dispatch(deleteChatAction(contactToDisconnect[0].username));
+    await dispatch(deleteContactAction(contactToDisconnect[0].username));
+
+    await dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
+
+    const updatedInvitations = invitations.filter(({ id }) => id !== contactId);
+
+    await dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
+
+    dispatch({
+      type: UPDATE_CONTACTS,
+      payload: updatedContacts,
+    });
+
+    dispatch({
+      type: UPDATE_INVITATIONS,
+      payload: updatedInvitations,
+    });
+
+    dispatch(updateConnectionsAction(walletId));
+
+    Toast.show({
+      message: 'Successfully Disconnected',
+      type: 'info',
+    });
   };
 };
