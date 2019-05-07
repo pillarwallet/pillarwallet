@@ -427,7 +427,7 @@ class SendTokenAmount extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { balances },
+  balances: { data: balances },
   session: { data: session },
   rates: { data: rates },
   history: { gasInfo },

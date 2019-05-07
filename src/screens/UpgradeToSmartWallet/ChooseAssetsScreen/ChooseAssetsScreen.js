@@ -355,7 +355,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets, balances },
+  assets: { data: assets },
+  balances: { data: balances },
   collectibles: { assets: collectibles },
   smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
 }) => ({

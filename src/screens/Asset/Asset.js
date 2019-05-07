@@ -300,7 +300,8 @@ class AssetScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  assets: { data: assets, balances },
+  assets: { data: assets },
+  balances: { data: balances },
   rates: { data: rates },
   history: { data: history },
   appSettings: { data: { baseFiatCurrency } },
