@@ -20,6 +20,8 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SectionList } from 'react-native';
+import { connect } from 'react-redux';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import Header from 'components/Header';
@@ -43,8 +45,6 @@ import {
 } from 'constants/navigationConstants';
 import type { Assets, Balances } from 'models/Asset';
 import { upgradeToSmartWalletAction } from 'actions/smartWalletActions';
-import { connect } from 'react-redux';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
 // import { fontSizes } from '../../../utils/variables';

@@ -18,12 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { ImageBackground } from 'react-native';
+import { BackHandler, ImageBackground, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import Emoji from 'react-native-emoji';
 import { UPGRADE_INFO } from 'constants/navigationConstants';
+import { dismissSmartWalletUpgradeAction } from 'actions/smartWalletActions';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { BoldText, BaseText } from 'components/Typography';
 import Button from 'components/Button';
@@ -32,6 +34,8 @@ import { baseColors, fontSizes } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  smartWalletUpgradeDismissed: boolean,
+  dismissSmartWalletUpgrade: Function,
 };
 
 const Title = styled(BoldText)`
@@ -86,13 +90,34 @@ const headSculptureSource = require('assets/images/headSculpture.png');
 const backgroundImageSource = require('assets/images/smartWalletBgGradient.png');
 
 class UpgradeIntroScreen extends React.PureComponent<Props> {
+  onBack = async () => {
+    const {
+      navigation,
+      dismissSmartWalletUpgrade,
+      smartWalletUpgradeDismissed,
+    } = this.props;
+    if (!smartWalletUpgradeDismissed) await dismissSmartWalletUpgrade();
+    navigation.goBack(null);
+  };
+
+  componentDidMount() {
+    if (Platform.OS === 'android') {
+      BackHandler.addEventListener('hardwareBackPress', this.onBack);
+    }
+  }
+
+  componentWillUnmount() {
+    if (Platform.OS === 'android') {
+      BackHandler.removeEventListener('hardwareBackPress', this.onBack);
+    }
+  }
+
   render() {
-    const { navigation } = this.props;
     return (
       <ImageBackground source={backgroundImageSource} style={{ width: '100%', height: '100%' }}>
         <Container color="transparent">
           <Header
-            onBack={() => navigation.goBack(null)}
+            onBack={this.onBack}
             nextText="Get help"
             nextTextStyle={{
               color: baseColors.white,
@@ -153,4 +178,14 @@ class UpgradeIntroScreen extends React.PureComponent<Props> {
   }
 }
 
-export default UpgradeIntroScreen;
+const mapStateToProps = ({
+  smartWallet: { upgradeDismissed: smartWalletUpgradeDismissed },
+}) => ({
+  smartWalletUpgradeDismissed,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  dismissSmartWalletUpgrade: () => dispatch(dismissSmartWalletUpgradeAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpgradeIntroScreen);

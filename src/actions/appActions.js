@@ -43,6 +43,7 @@ import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'const
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { DISMISS_SMART_WALLET_UPGRADE } from 'constants/smartWalletConstants';
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
@@ -125,6 +126,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       // TODO: if no accounts found - send user to account migration page
       if (!accounts.length) {
         dispatch(initDefaultAccountAction(normalizeWalletAddress(wallet.address)));
+      }
+
+      if (appSettings.smartWalletUpgradeDismissed) {
+        dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
       }
 
       navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));

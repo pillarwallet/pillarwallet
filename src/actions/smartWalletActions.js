@@ -23,12 +23,14 @@ import {
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
   ADD_SMART_WALLET_UPGRADE_ASSETS,
   ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
+  DISMISS_SMART_WALLET_UPGRADE,
 } from 'constants/smartWalletConstants';
 import SmartWalletService from 'services/smartWallet';
 import {
   addNewAccountAction,
   setActiveAccountAction,
 } from 'actions/accountsActions';
+import { saveDbAction } from 'actions/dbActions';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 
@@ -142,3 +144,10 @@ export const addCollectiblesToSmartWalletUpgradeAction = (collectibles: Collecti
   type: ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
   payload: collectibles,
 });
+
+export const dismissSmartWalletUpgradeAction = () => {
+  return async (dispatch: Function) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { smartWalletUpgradeDismissed: true } }));
+    dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
+  };
+};

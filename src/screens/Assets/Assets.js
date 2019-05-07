@@ -424,7 +424,8 @@ class AssetsScreen extends React.Component<Props, State> {
       ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
       : collectibles;
 
-    const isSmartWallet = !!accounts.find(account => account.type === ACCOUNT_TYPES.SMART_WALLET && account.isActive);
+    // TODO: account.isActive?
+    const isSmartWallet = accounts.find(account => account.type === ACCOUNT_TYPES.SMART_WALLET);
 
     return (
       <Container inset={{ bottom: 0 }}>
