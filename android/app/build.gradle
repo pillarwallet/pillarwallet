@@ -161,7 +161,6 @@ android {
 
 dependencies {
   implementation project(':react-native-extra-dimensions-android')
-  implementation project(':react-native-image-capinsets')
   implementation project(':react-native-touch-id')
   implementation project(':react-native-color-matrix-image-filters')
   implementation project(':react-native-image-crop-picker')
