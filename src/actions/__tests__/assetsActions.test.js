@@ -47,6 +47,11 @@ const mockWallet: Object = {
   provider: { getTransactionCount: getTransactionCountMock },
 };
 
+const mockAccounts: Object[] = [{
+  id: '0x9c',
+  isActive: true,
+}];
+
 const mockTransaction: Object = {
   gasLimit: 2000000,
   amount: 0.5,
@@ -86,6 +91,7 @@ const initialState = {
   txCount: { data: { lastCount: 0, lastNonce: 0 } },
   history: { data: [] },
   wallet: { data: { address: mockWallet.address } },
+  accounts: { data: mockAccounts },
 };
 
 describe('Wallet actions', () => {
