@@ -178,6 +178,12 @@ class Contact extends React.Component<Props, State> {
     return unread;
   };
 
+  showManageContactModalTrigger = () => {
+    this.setState({
+      showManageContactModal: true,
+    });
+  };
+
   manageContact = (manageContactType: string) => {
     this.setState({
       showManageContactModal: false,
@@ -250,6 +256,9 @@ class Contact extends React.Component<Props, State> {
         <Header
           title={displayContact.username}
           onBack={() => navigation.goBack(null)}
+          showRight
+          onNextPress={this.showManageContactModalTrigger}
+          nextIcon="more"
         />
         <ScrollWrapper
           refreshControl={
