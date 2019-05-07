@@ -23,14 +23,16 @@ import {
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
+import { getActiveAccountAddress } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 
 export const fetchCollectiblesAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const { wallet: { data: wallet } } = getState();
+    const { accounts: { data: accounts } } = getState();
+    const walletAddress = getActiveAccountAddress(accounts);
     const collectibles = [];
-    const collectiblesResponse = await api.fetchCollectibles(wallet.address);
+    const collectiblesResponse = await api.fetchCollectibles(walletAddress);
 
     if (collectiblesResponse.error || collectiblesResponse.assets === undefined) return;
 
