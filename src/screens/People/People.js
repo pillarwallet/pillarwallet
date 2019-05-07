@@ -281,10 +281,12 @@ class PeopleScreen extends React.Component<Props, State> {
       this.props.blockContact(manageContactId, block);
     }
 
-    this.setState({
-      showConfirmationModal: false,
-      forceHideRemoval: true,
-    });
+    setTimeout(() => {
+      this.setState({
+        showConfirmationModal: false,
+        forceHideRemoval: true,
+      });
+    }, 1000);
   };
 
   render() {

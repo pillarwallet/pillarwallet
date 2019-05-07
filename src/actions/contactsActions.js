@@ -27,7 +27,6 @@ import {
 import type { ConnectionIdentityKey } from 'models/Connections';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
-import Toast from 'components/Toast';
 import { excludeLocalContacts } from 'utils/contacts';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { saveDbAction } from './dbActions';
@@ -157,10 +156,10 @@ export const disconnectContactAction = (contactId: string) => {
 
     dispatch(updateConnectionsAction(walletId));
 
-    Toast.show({
-      message: 'Successfully Disconnected',
-      type: 'info',
-    });
+    dispatch(({
+      type: ADD_NOTIFICATION,
+      payload: { message: 'Successfully Disconnected' },
+    }));
   };
 };
 
@@ -205,10 +204,10 @@ export const muteContactAction = (contactId: string, mute: boolean) => {
 
     dispatch(updateConnectionsAction(walletId));
 
-    Toast.show({
-      message: `${mute ? 'Mute' : 'Unmute'} Successful`,
-      type: 'info',
-    });
+    dispatch(({
+      type: ADD_NOTIFICATION,
+      payload: { message: `${mute ? 'Mute' : 'Unmute'} Successful` },
+    }));
   };
 };
 
@@ -267,9 +266,9 @@ export const blockContactAction = (contactId: string, block: boolean) => {
 
     dispatch(updateConnectionsAction(walletId));
 
-    Toast.show({
-      message: `${block ? 'Block' : 'Unblock'} Successful`,
-      type: 'info',
-    });
+    dispatch(({
+      type: ADD_NOTIFICATION,
+      payload: { message: `${block ? 'Block' : 'Unblock'} Successful` },
+    }));
   };
 };
