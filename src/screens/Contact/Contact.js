@@ -210,9 +210,11 @@ class Contact extends React.Component<Props, State> {
       this.props.blockContact(theContact.id, block);
     }
 
-    this.setState({
-      showConfirmationModal: false,
-    });
+    setTimeout(() => {
+      this.setState({
+        showConfirmationModal: false,
+      });
+    }, 1000);
   };
 
   setActiveTab = (activeTab) => {
@@ -382,7 +384,7 @@ class Contact extends React.Component<Props, State> {
         <ConnectionConfirmationModal
           showConfirmationModal={showConfirmationModal}
           manageContactType={manageContactType}
-          contact={contact}
+          contact={displayContact}
           onConfirm={() => { this.confirmManageAction(displayContact.status); }}
           onModalHide={() => {
             this.setState({ showConfirmationModal: false });

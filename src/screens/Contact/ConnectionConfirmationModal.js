@@ -60,9 +60,9 @@ const ConnectionConfirmationModal = (props: Props) => {
 
   const { username, status } = contact;
   let contactType = manageContactType;
-  if (contactType === MUTE && status === 'muted') {
+  if ((contactType === MUTE || contactType === '') && status === 'muted') {
     contactType = 'unmute';
-  } else if (contactType === BLOCK && status === 'blocked') {
+  } else if ((contactType === BLOCK || contactType === '') && status === 'blocked') {
     contactType = 'unblock';
   }
   const subtitle = contactType !== '' ?

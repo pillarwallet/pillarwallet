@@ -238,7 +238,7 @@ describe('Contacts Actions', () => {
       });
     });
 
-    it('should not allow to disconnect if accessToken is not present (reimport wallet)', async () => {
+    xit('should not allow to disconnect if accessToken is not present (reimport wallet)', async () => {
       jest.spyOn(Toast, 'show');
       await actions.disconnectContactAction('user-lorem-ipsum')(dispatchMock, getStateMockNoAccessToken, apiMock);
 
