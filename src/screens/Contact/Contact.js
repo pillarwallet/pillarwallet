@@ -171,12 +171,6 @@ class Contact extends React.Component<Props, State> {
     return url;
   };
 
-  getUnreadCount = (chats: Object[], username: string): number => {
-    const userChat = chats.find(chat => chat.username === username) || {};
-    const { unread = 0 } = userChat;
-    return unread;
-  };
-
   showManageContactModalTrigger = () => {
     this.setState({
       showManageContactModal: true,
