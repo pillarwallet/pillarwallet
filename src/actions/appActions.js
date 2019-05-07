@@ -43,7 +43,10 @@ import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'const
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { DISMISS_SMART_WALLET_UPGRADE } from 'constants/smartWalletConstants';
+import {
+  DISMISS_SMART_WALLET_UPGRADE,
+  SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
+} from 'constants/smartWalletConstants';
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
@@ -131,6 +134,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
       }
+
+      const { upgradeTransferTransactions = [] } = await storage.get('smartWallet') || {};
+      dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
 
       navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       return;

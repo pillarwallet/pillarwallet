@@ -24,10 +24,12 @@ import {
   ADD_SMART_WALLET_UPGRADE_ASSETS,
   ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
   DISMISS_SMART_WALLET_UPGRADE,
+  SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
 } from 'constants/smartWalletConstants';
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type { AssetTransfer } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
+import type { SmartWalletTransferTransaction } from 'models/Transaction';
 
 export type WalletReducerState = {
   upgradeDismissed: boolean,
@@ -36,6 +38,7 @@ export type WalletReducerState = {
   accounts: SmartWalletAccount[],
   upgrade: {
     transfer: {
+      transactions: SmartWalletTransferTransaction[],
       assets: AssetTransfer[],
       collectibles: CollectibleTransfer[],
     },
@@ -54,6 +57,7 @@ const initialState = {
   accounts: [],
   upgrade: {
     transfer: {
+      transactions: [],
       assets: [],
       collectibles: [],
     },
@@ -106,6 +110,17 @@ export default function smartWalletReducer(
       return {
         ...state,
         upgradeDismissed: true,
+      };
+    case SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          transfer: {
+            ...state.upgrade.transfer,
+            transactions: action.payload,
+          },
+        },
       };
     default:
       return state;

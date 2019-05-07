@@ -72,3 +72,9 @@ export type TransactionEthers = {
   asset: string,
   note?: ?string,
 }
+
+export type SmartWalletTransferTransaction = {
+  hash: string,
+  value: Object,
+  asset: string,
+}
