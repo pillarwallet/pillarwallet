@@ -23,8 +23,9 @@ import {
   UPDATE_ACCOUNTS,
   ACCOUNT_TYPES,
 } from 'constants/accountsConstants';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { saveDbAction } from 'actions/dbActions';
-import { connectSmartWalletAccountAction, initSmartWalletSdkAction } from './smartWalletActions';
+import { connectSmartWalletAccountAction, initSmartWalletSdkAction } from 'actions/smartWalletActions';
 
 export const initDefaultAccountAction = (walletAddress: string) => {
   return async (dispatch: Function, getState: Function) => { // eslint-disable-line
@@ -92,15 +93,20 @@ export const setActiveAccountAction = (accountId: string) => {
 
 export const switchAccountAction = (accountId: string, privateKey?: string) => {
   return async (dispatch: Function, getState: Function) => {
-    const { accounts: { data: accounts } } = getState();
+    const {
+      accounts: { data: accounts },
+      assets: { data: assets },
+    } = getState();
     const account = accounts.find(_acc => _acc.id === accountId) || {};
 
     if (account.type === ACCOUNT_TYPES.KEY_BASED) {
-      dispatch(setActiveAccountAction(accountId));
+      await dispatch(setActiveAccountAction(accountId));
     } else if (account.type === ACCOUNT_TYPES.SMART_WALLET && privateKey) {
       await dispatch(initSmartWalletSdkAction(privateKey));
       await dispatch(connectSmartWalletAccountAction(accountId));
       await dispatch(setActiveAccountAction(accountId));
     }
+
+    dispatch(fetchAssetsBalancesAction(assets));
   };
 };
