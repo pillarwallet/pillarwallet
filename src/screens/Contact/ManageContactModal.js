@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { DISCONNECT } from 'constants/connectionsConstants';
+import { DISCONNECT, BLOCK, MUTE } from 'constants/connectionsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 
@@ -28,6 +28,7 @@ type Props = {
   onModalHide: Function,
   onManageContact: Function,
   showManageContactModal: boolean,
+  contactStatus?: ?string
 };
 
 const buttonStyle = {
@@ -35,7 +36,6 @@ const buttonStyle = {
 };
 
 const manageModalButtons = [
-  /*
   {
     manageType: MUTE,
     primaryInverted: true,
@@ -43,7 +43,6 @@ const manageModalButtons = [
     icon: 'mute',
     style: { ...buttonStyle, marginTop: 23 },
   },
-  */
   {
     manageType: DISCONNECT,
     primaryInverted: true,
@@ -51,7 +50,6 @@ const manageModalButtons = [
     icon: 'remove',
     style: { ...buttonStyle, marginTop: 23, marginBottom: 58 },
   },
-  /*
   {
     manageType: BLOCK,
     dangerInverted: true,
@@ -59,7 +57,6 @@ const manageModalButtons = [
     icon: 'warning',
     style: { ...buttonStyle, marginBottom: 58 },
   },
-  */
 ];
 
 const ManageConnectionModal = (props: Props) => {
@@ -67,18 +64,26 @@ const ManageConnectionModal = (props: Props) => {
     onModalHide,
     onManageContact,
     showManageContactModal,
+    contactStatus,
   } = props;
 
   const iconSize = 'small';
 
   const manageContactButtons = manageModalButtons.map((manageButton) => {
     const { manageType, ...manageButtonProps } = manageButton;
+    let title = manageButtonProps.title; // eslint-disable-line prefer-destructuring
+    if (manageType === MUTE) {
+      title = contactStatus === 'muted' ? 'Unmute' : 'Mute';
+    } else if (manageType === BLOCK) {
+      title = contactStatus === 'blocked' ? 'Unblock' : 'Block';
+    }
     return (
       <Button
         key={`modalButton-${manageType}`}
         iconSize={iconSize}
         onPress={() => onManageContact(manageType)}
         {...manageButtonProps}
+        title={title}
       />
     );
   });

@@ -163,3 +163,113 @@ export const disconnectContactAction = (contactId: string) => {
     });
   };
 };
+
+export const muteContactAction = (contactId: string, mute: boolean) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      invitations: { data: invitations },
+      connectionIdentityKeys: { data: connectionIdentityKeys },
+    } = getState();
+
+
+    const { sourceIdentityKey, targetIdentityKey } = connectionIdentityKeys.find((cik: ConnectionIdentityKey) => {
+      return cik.targetUserId === contactId;
+    }) || { sourceIdentityKey: null, targetIdentityKey: null };
+
+    const muteResult = await api.muteUser(
+      contactId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+      mute,
+    );
+
+    if (!muteResult) {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: `${mute ? 'Mute' : 'Unmute'} action cannot be performed.` },
+      }));
+      dispatch(updateConnectionsAction(walletId));
+      return;
+    }
+
+    const updatedInvitations = invitations.filter(({ id }) => id !== contactId);
+
+    await dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
+
+    dispatch({
+      type: UPDATE_INVITATIONS,
+      payload: updatedInvitations,
+    });
+
+    dispatch(updateConnectionsAction(walletId));
+
+    Toast.show({
+      message: `${mute ? 'Mute' : 'Unmute'} Successful`,
+      type: 'info',
+    });
+  };
+};
+
+export const blockContactAction = (contactId: string, block: boolean) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      invitations: { data: invitations },
+      contacts: { data: contacts },
+      connectionIdentityKeys: { data: connectionIdentityKeys },
+    } = getState();
+
+
+    const { sourceIdentityKey, targetIdentityKey } = connectionIdentityKeys.find((cik: ConnectionIdentityKey) => {
+      return cik.targetUserId === contactId;
+    }) || { sourceIdentityKey: null, targetIdentityKey: null };
+
+    const blockResult = await api.blockUser(
+      contactId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+      block,
+    );
+
+    if (!blockResult) {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: `${block ? 'Block' : 'Unblock'} action cannot be performed.` },
+      }));
+      dispatch(updateConnectionsAction(walletId));
+      return;
+    }
+
+    const [contactToBlock, updatedContacts] = partition(contacts, (contact) =>
+      contact.id === contactId);
+
+    await dispatch(deleteChatAction(contactToBlock[0].username));
+    await dispatch(deleteContactAction(contactToBlock[0].username));
+
+    await dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
+
+    const updatedInvitations = invitations.filter(({ id }) => id !== contactId);
+
+    await dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
+
+    dispatch({
+      type: UPDATE_CONTACTS,
+      payload: updatedContacts,
+    });
+
+    dispatch({
+      type: UPDATE_INVITATIONS,
+      payload: updatedInvitations,
+    });
+
+    dispatch(updateConnectionsAction(walletId));
+
+    Toast.show({
+      message: `${block ? 'Block' : 'Unblock'} Successful`,
+      type: 'info',
+    });
+  };
+};

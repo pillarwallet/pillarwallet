@@ -35,12 +35,18 @@ import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
-import { searchContactsAction, resetSearchContactsStateAction, disconnectContactAction } from 'actions/contactsActions';
+import {
+  searchContactsAction,
+  resetSearchContactsStateAction,
+  disconnectContactAction,
+  muteContactAction,
+  blockContactAction,
+} from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { DISCONNECT } from 'constants/connectionsConstants';
+import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
@@ -104,6 +110,8 @@ type Props = {
   user: Object,
   fetchInviteNotifications: Function,
   disconnectContact: Function,
+  muteContact: Function,
+  blockContact: Function,
   resetSearchContactsState: Function,
   invitations: Object[],
   localContacts: Object[],
@@ -196,13 +204,19 @@ class PeopleScreen extends React.Component<Props, State> {
 
   renderSwipeoutBtns = (data) => {
     const swipeButtons = [
-      // { actionType: MUTE, icon: 'mute'},
+      { actionType: MUTE, icon: 'mute' },
       { actionType: DISCONNECT, icon: 'remove' },
-      // { actionType: BLOCK, icon: 'warning'},
+      { actionType: BLOCK, icon: 'warning' },
     ];
 
     return swipeButtons.map((buttonDefinition) => {
       const { actionType, icon, ...btnProps } = buttonDefinition;
+      let title = actionType;
+      if (actionType === MUTE && data.status === 'muted') {
+        title = 'unmute';
+      } else if (actionType === BLOCK && data.status === 'blocked') {
+        title = 'unblock';
+      }
 
       return {
         component: (
@@ -211,7 +225,7 @@ class PeopleScreen extends React.Component<Props, State> {
             extraSmall
             height={80}
             onPress={() => this.manageConnection(actionType, data)}
-            title={capitalize(actionType)}
+            title={capitalize(title)}
             icon={icon}
             iconSize="small"
             {...btnProps}
@@ -253,7 +267,7 @@ class PeopleScreen extends React.Component<Props, State> {
     );
   };
 
-  confirmManageAction = () => {
+  confirmManageAction = (status: ?string = '') => {
     // here will be called the action to manageContactType (block, disconnect, mute)
     const {
       manageContactType,
@@ -262,6 +276,12 @@ class PeopleScreen extends React.Component<Props, State> {
 
     if (manageContactType === DISCONNECT) {
       this.props.disconnectContact(manageContactId);
+    } else if (manageContactType === MUTE) {
+      const mute = !(status === 'muted');
+      this.props.muteContact(manageContactId, mute);
+    } else if (manageContactType === BLOCK) {
+      const block = !(status === 'blocked');
+      this.props.blockContact(manageContactId, block);
     }
 
     this.setState({
@@ -441,6 +461,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   resetSearchContactsState: () => dispatch(resetSearchContactsStateAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
+  muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
+  blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);
