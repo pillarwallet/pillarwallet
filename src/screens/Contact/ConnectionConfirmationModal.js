@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { baseColors, fontSizes } from 'utils/variables';
-import { DISCONNECT } from 'constants/connectionsConstants';
+import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 
@@ -29,7 +29,10 @@ const subtitleDescription = {
   block: `You will no longer be able to find this user, chat, and make any transactions.
   Your chat history will be erased on your device. No notifications on this user's actions will be received.
   This user will not  be able to see any of your activity. You can unblock the user from your blocked list.`,
-  disconnect: 'After disconnecting you no longer be able to chat and send assets. You can re-establish connection later.',
+  disconnect: 'After disconnecting you will no longer be able to chat and send assets. You can re-establish connection later.',
+  mute: 'If you mute the user, you will not longer be able to receive notifications for chat or transactions. You can unmute later.',
+  unmute: 'If you unmute the user, you will be able to receive notifications for chat and transactions.',
+  unblock: 'If you unblock the user, your connection will return all functionality to normal.',
 };
 
 const titleConfirmation = (manageContactType: string, username: string) => {
@@ -55,8 +58,13 @@ const ConnectionConfirmationModal = (props: Props) => {
     contact,
   } = props;
 
-  const contactType = manageContactType;
-  const { username } = contact;
+  const { username, status } = contact;
+  let contactType = manageContactType;
+  if (contactType === MUTE && status === 'muted') {
+    contactType = 'unmute';
+  } else if (contactType === BLOCK && status === 'blocked') {
+    contactType = 'unblock';
+  }
   const subtitle = contactType !== '' ?
     subtitleDescription[contactType] : '';
 
@@ -81,7 +89,7 @@ const ConnectionConfirmationModal = (props: Props) => {
       <Button
         dangerInverted
         title={`Confirm ${contactType}`}
-        onPress={onConfirm}
+        onPress={() => { onConfirm(status); }}
         style={{
           marginBottom: 13,
         }}
