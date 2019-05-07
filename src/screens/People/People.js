@@ -235,7 +235,6 @@ class PeopleScreen extends React.Component<Props, State> {
     const unreadCount = unread > 9 ? '9+' : unread;
     return (
       <Swipeout
-        disabled
         right={this.renderSwipeoutBtns(item)}
         backgroundColor="transparent"
         sensitivity={10}
