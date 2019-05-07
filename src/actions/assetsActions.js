@@ -55,6 +55,7 @@ import type { Asset, Assets } from 'models/Asset';
 import { transformAssetsToObject } from 'utils/assets';
 import { delay, getEthereumProvider, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction } from 'utils/history';
+import { getActiveAccountAddress } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 
@@ -268,15 +269,15 @@ export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = 
 export const fetchAssetsBalancesAction = (assets: Assets) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      wallet: { data: wallet },
+      accounts: { data: accounts },
     } = getState();
-
+    const walletAddress = getActiveAccountAddress(accounts);
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
     });
 
-    const balances = await api.fetchBalances({ address: wallet.address, assets: Object.values(assets) });
+    const balances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
     if (balances && balances.length) {
       const transformedBalances = transformAssetsToObject(balances);
       dispatch(saveDbAction('balances', { balances: transformedBalances }, true));

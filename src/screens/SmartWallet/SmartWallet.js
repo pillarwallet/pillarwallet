@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
@@ -38,7 +37,6 @@ import { baseColors, fontSizes } from 'utils/variables';
 
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   sdkInitialized: boolean,
   loadSmartWalletAccounts: Function,
   deploySmartWallet: Function,
@@ -152,7 +150,6 @@ class SmartWallet extends React.Component<Props, State> {
 
   render() {
     const {
-      navigation,
       sdkInitialized,
       connectedAccount,
       smartWalletAccounts,
@@ -162,10 +159,7 @@ class SmartWallet extends React.Component<Props, State> {
     const activeAccount = accounts.find(({ isActive }) => isActive);
     return (
       <Container inset={{ bottom: 0 }}>
-        <Header
-          title="Smart Wallet"
-          onBack={() => navigation.goBack(null)}
-        />
+        <Header title="smart wallet" />
         <ScrollWrapper>
           <Wrapper>
             {activeAccount && (
