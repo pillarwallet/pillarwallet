@@ -24,10 +24,16 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
-import { syncContactAction } from 'actions/contactsActions';
+import {
+  syncContactAction,
+  disconnectContactAction,
+  muteContactAction,
+  blockContactAction,
+} from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { CHAT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
+import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
@@ -96,6 +102,9 @@ type Props = {
   wallet: Object,
   chats: Object[],
   session: Object,
+  disconnectContact: Function,
+  muteContact: Function,
+  blockContact: Function,
 };
 
 type State = {
@@ -169,6 +178,12 @@ class Contact extends React.Component<Props, State> {
     return unread;
   };
 
+  showManageContactModalTrigger = () => {
+    this.setState({
+      showManageContactModal: true,
+    });
+  };
+
   manageContact = (manageContactType: string) => {
     this.setState({
       showManageContactModal: false,
@@ -180,7 +195,28 @@ class Contact extends React.Component<Props, State> {
     }, 1000);
   };
 
-  confirmManageAction = () => {
+  confirmManageAction = (status: ?string = '') => {
+    // here will be called the action to manageContactType (block, disconnect, mute)
+    const { navigation, contacts } = this.props;
+    const {
+      manageContactType,
+    } = this.state;
+
+    const contact = navigation.getParam('contact', {});
+    const theContact = contacts.find(({ username }) => username === contact.username);
+    if (!theContact) {
+      return;
+    }
+    if (manageContactType === DISCONNECT) {
+      this.props.disconnectContact(theContact.id);
+    } else if (manageContactType === MUTE) {
+      const mute = !(status === 'muted');
+      this.props.muteContact(theContact.id, mute);
+    } else if (manageContactType === BLOCK) {
+      const block = !(status === 'blocked');
+      this.props.blockContact(theContact.id, block);
+    }
+
     this.setState({
       showConfirmationModal: false,
     });
@@ -220,6 +256,9 @@ class Contact extends React.Component<Props, State> {
         <Header
           title={displayContact.username}
           onBack={() => navigation.goBack(null)}
+          showRight
+          onNextPress={this.showManageContactModalTrigger}
+          nextIcon="more"
         />
         <ScrollWrapper
           refreshControl={
@@ -282,12 +321,13 @@ class Contact extends React.Component<Props, State> {
           onModalHide={() => {
             this.setState({ showManageContactModal: false });
           }}
+          contactStatus={displayContact.status}
         />
         <ConnectionConfirmationModal
           showConfirmationModal={showConfirmationModal}
           manageContactType={manageContactType}
           contact={contact}
-          onConfirm={this.confirmManageAction}
+          onConfirm={() => { this.confirmManageAction(displayContact.status); }}
           onModalHide={() => {
             this.setState({ showConfirmationModal: false });
           }}
@@ -314,6 +354,9 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchContactTransactions: (walletAddress, contactAddress) => {
     dispatch(fetchContactTransactionsAction(walletAddress, contactAddress));
   },
+  disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
+  muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
+  blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Contact);

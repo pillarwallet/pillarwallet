@@ -25,6 +25,7 @@ export type ApiUser = {
   profileLargeImage?: string,
   ethAddress: string,
   lastUpdateTime?: number,
+  status?: ?string,
 };
 
 export type SearchResults = {
