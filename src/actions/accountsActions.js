@@ -24,6 +24,7 @@ import {
   ACCOUNT_TYPES,
 } from 'constants/accountsConstants';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { connectSmartWalletAccountAction, initSmartWalletSdkAction } from 'actions/smartWalletActions';
 
@@ -108,5 +109,6 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
     }
 
     dispatch(fetchAssetsBalancesAction(assets));
+    dispatch(fetchCollectiblesAction());
   };
 };
