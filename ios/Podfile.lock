@@ -225,7 +225,7 @@ PODS:
     - React
   - RNColorMatrixImageFilters (5.1.4):
     - React
-  - RNDeviceInfo (1.5.0):
+  - RNDeviceInfo (1.6.0):
     - React
   - RNImageCropPicker (0.23.1):
     - QBImagePickerController
@@ -240,7 +240,7 @@ PODS:
   - SentryReactNative (0.42.0):
     - React
     - Sentry (~> 4.1.3)
-  - TouchID (4.3.0):
+  - TouchID (4.4.1):
     - React
   - yoga (0.59.4.React)
 

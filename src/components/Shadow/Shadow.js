@@ -40,7 +40,9 @@ type Props = {
   widthAndroid?: number | string,
   heightAndroid?: number | string,
   shadowBorder?: number,
-  marginVertical?: number
+  marginVertical?: number,
+  useSVGShadow?: boolean,
+  shadowOpacity?: number,
 };
 
 const ShadowInnerWrapper = styled.View`
@@ -51,7 +53,7 @@ export const Shadow = (props: Props) => {
   const {
     children,
     shadowOffsetX = 1,
-    shadowOffsetY = 2,
+    shadowOffsetY = 1,
     shadowDistance = 4,
     shadowRadius = 6,
     shadowSpread = 18,
@@ -63,6 +65,8 @@ export const Shadow = (props: Props) => {
     heightIOS = 70,
     shadowColorAndroid = '#14105baa',
     shadowColorOS = UIColors.cardShadowColor,
+    useSVGShadow,
+    shadowOpacity,
   } = props;
 
   const pixelRatio = PixelRatio.get();
@@ -75,7 +79,6 @@ export const Shadow = (props: Props) => {
     sSpread = (shadowSpread * pixelRatio) / 2;
   }
 
-
   const widthWithPaddings = widthAndroid
     ? widthAndroid + (((sDistance + sSpread) * 2) / pixelRatio)
     : '100%';
@@ -83,27 +86,30 @@ export const Shadow = (props: Props) => {
     ? `${heightAndroid + (((sDistance + sSpread) * 2) / pixelRatio)}px`
     : '100%';
 
-  if (Platform.OS === 'ios') {
+  if (Platform.OS === 'ios' || useSVGShadow) {
     return (
-      <BoxShadow
-        setting={{
-          color: shadowColorOS,
-          x: shadowOffsetX,
-          y: shadowOffsetY,
-          opacity: 1,
-          radius: shadowRadius,
-          width: widthIOS,
-          height: heightIOS,
-          border: shadowBorder,
-          style: {
-            marginVertical,
-          },
-        }}
-      >
-        {children}
-      </BoxShadow >
+      <View style={{ position: 'relative' }}>
+        <BoxShadow
+          setting={{
+            color: shadowColorOS,
+            x: shadowOffsetX,
+            y: shadowOffsetY,
+            opacity: shadowOpacity || 1,
+            radius: shadowRadius,
+            width: widthIOS,
+            height: heightIOS,
+            border: shadowBorder,
+            style: {
+              marginVertical,
+            },
+          }}
+        >
+          {children}
+        </BoxShadow>
+      </View>
     );
   }
+
   return (
     <View style={{ width: widthWithPaddings }}>
       <NativeAndroidShadow

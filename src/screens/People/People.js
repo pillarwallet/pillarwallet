@@ -115,6 +115,7 @@ type Props = {
   resetSearchContactsState: Function,
   invitations: Object[],
   localContacts: Object[],
+  chats: Object[],
 }
 
 type State = {
@@ -241,28 +242,30 @@ class PeopleScreen extends React.Component<Props, State> {
     });
   };
 
-  renderContact = ({ item }) => (
+  renderContact = ({ item }) => {
     // please refer to https://www.pivotaltracker.com/story/show/163147492
     // to understand the reason for the temporary disabling of swipeout feature
-    <Swipeout
-      right={this.renderSwipeoutBtns(item)}
-      backgroundColor="transparent"
-      sensitivity={10}
-      close={this.state.forceHideRemoval}
-      style={{
-        paddingRight: 14,
-      }}
-      buttonWidth={80}
-    >
-      <ListItemWithImage
-        label={item.username}
-        onPress={this.handleContactCardPress(item)}
-        avatarUrl={item.profileImage}
-        navigateToProfile={this.handleContactCardPress(item)}
-        imageUpdateTimeStamp={item.lastUpdateTime}
-      />
-    </Swipeout>
-  );
+    const { unread = 0 } = item;
+    const unreadCount = unread > 9 ? '9+' : unread;
+    return (
+      <Swipeout
+        right={this.renderSwipeoutBtns(item)}
+        backgroundColor="transparent"
+        sensitivity={10}
+        close={this.state.forceHideRemoval}
+        buttonWidth={80}
+      >
+        <ListItemWithImage
+          label={item.username}
+          onPress={this.handleContactCardPress(item)}
+          avatarUrl={item.profileImage}
+          navigateToProfile={this.handleContactCardPress(item)}
+          imageUpdateTimeStamp={item.lastUpdateTime}
+          unreadCount={unreadCount}
+        />
+      </Swipeout>
+    );
+  };
 
   confirmManageAction = (status: ?string = '') => {
     // here will be called the action to manageContactType (block, disconnect, mute)
@@ -300,11 +303,40 @@ class PeopleScreen extends React.Component<Props, State> {
       navigation,
       invitations,
       localContacts,
+      chats,
     } = this.props;
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
-    const sortedLocalContacts = orderBy(localContacts, [user => user.username.toLowerCase()], 'asc');
+    const localContactsWithUnreads = localContacts.map((contact) => {
+      const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
+      if (Object.keys(chatWithUserInfo).length) {
+        if (chatWithUserInfo.unread) {
+          return {
+            ...contact,
+            unread: chatWithUserInfo.unread,
+            serverTimestamp: chatWithUserInfo.lastMessage ? chatWithUserInfo.lastMessage.serverTimestamp : null,
+          };
+        }
+        return {
+          ...contact,
+          serverTimestamp: chatWithUserInfo.lastMessage ? chatWithUserInfo.lastMessage.serverTimestamp : null,
+        };
+      }
+      return {
+        ...contact,
+        serverTimestamp: null,
+      };
+    });
+    const sortedLocalContacts = orderBy(
+      localContactsWithUnreads,
+      [(user) => {
+        if (user.serverTimestamp) {
+          return user.serverTimestamp;
+        }
+        return user.createdAt * 1000;
+      }],
+      'desc');
     const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
 
     return (
@@ -415,11 +447,13 @@ const mapStateToProps = ({
     data: localContacts,
   },
   invitations: { data: invitations },
+  chat: { data: { chats } },
 }) => ({
   searchResults,
   contactState,
   localContacts,
   invitations,
+  chats,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
