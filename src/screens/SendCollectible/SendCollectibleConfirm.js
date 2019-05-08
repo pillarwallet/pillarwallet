@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { Keyboard, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
@@ -9,6 +9,7 @@ import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
+import MultilineTextInput from 'components/TextInput/MultilineTextInput';
 import TextInput from 'components/TextInput';
 import type { CollectibleTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
@@ -145,10 +146,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
           />
           <ScrollWrapper
             regularPadding
-            disableAutomaticScroll
+            disableAutomaticScroll={Platform.OS === 'android'}
             innerRef={ref => { this.scroll = ref; }}
             onKeyboardWillShow={() => {
-              this.scroll.scrollToPosition(0, scrollPos);
+              if (Platform.OS === 'android') {
+                this.scroll.scrollToPosition(0, scrollPos);
+              }
             }}
           >
             <LabeledRow>
@@ -174,7 +177,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
               <Label>Balance in Rinkeby ETH (visible in dev and staging)</Label>
               <Value>{rinkebyETH} ETH</Value>
             </LabeledRow>}
-            {!!recipientUsername &&
+            {(!!recipientUsername && Platform.OS === 'android') &&
             <TextInput
               inputProps={{
                 onChange: (text) => this.handleNoteChange(text),
@@ -191,7 +194,24 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
               onLayout={(e) => {
                 const scrollPosition = e.nativeEvent.layout.y + 180;
                 this.setState({ scrollPos: scrollPosition });
+              }
+              }
+            />
+            }
+            {(!!recipientUsername && Platform.OS === 'ios') &&
+            <MultilineTextInput
+              inputProps={{
+                onChange: (text) => this.handleNoteChange(text),
+                value: this.state.note,
+                autoCapitalize: 'none',
+                multiline: true,
+                numberOfLines: 3,
+                placeholder: 'Add a note to this transaction',
               }}
+              inputType="secondary"
+              labelBigger
+              noBorder
+              keyboardAvoidance
             />
             }
           </ScrollWrapper>
