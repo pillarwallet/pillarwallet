@@ -211,7 +211,7 @@ class TextInput extends React.Component<Props, State> {
   handleRNFocus = () => {
     setTimeout(async () => {
       this.multilineInputField._root.focus();
-      await this.setState({
+      this.setState({
         isFocused: true,
       });
     }, 500);
@@ -265,7 +265,7 @@ class TextInput extends React.Component<Props, State> {
             innerRef={(input) => { this.multilineInputField = input; }}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
-            onEndEditing={() => this.handleBlur}
+            onEndEditing={this.handleBlur}
             onFocus={variableFocus}
             value={value}
             inputType={inputType}
