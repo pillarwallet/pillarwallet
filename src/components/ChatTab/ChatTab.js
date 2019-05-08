@@ -18,11 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
-import { Alert, View, Platform, Linking, BackHandler, AppState } from 'react-native';
+import { Alert, Platform, Linking, AppState, Keyboard } from 'react-native';
 import { connect } from 'react-redux';
-import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
+import styled from 'styled-components/native';
 import {
   GiftedChat,
   Bubble,
@@ -36,21 +35,18 @@ import {
   Message,
 } from 'react-native-gifted-chat';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import {
   sendMessageByContactAction,
   clearChatDraftStateAction,
   getChatByContactAction,
-  resetUnreadAction,
   getChatDraftByContactAction,
   saveDraftAction,
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
-import { getUserName } from 'utils/contacts';
 import { isIphoneX, handleUrlPress } from 'utils/common';
-import { CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 import { Answers } from 'react-native-fabric';
 
@@ -64,12 +60,13 @@ type Props = {
   saveDraft: Function,
   messages: Object,
   isFetching: boolean,
-  resetUnread: Function,
   contact: Object,
   chats: any,
   contacts: Object,
   currentMessage: Object,
   draft: ?string,
+  isOpen: boolean,
+  hasUnreads?: boolean,
 }
 
 type State = {
@@ -86,7 +83,60 @@ const isWarningMessage = (type) => {
   return type === 'warning';
 };
 
+const SystemMessageWrapper = styled.View`
+  flex: 1;
+  padding: 30px;
+  align-items: center;
+`;
+
+const TimeWrapper = styled.View`
+  flex: 1;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-bottom: 2px;
+`;
+
 // chat elements
+const renderDay = (props: Props) => (
+  <Day
+    {...props}
+    containerStyle={{
+      marginTop: 30,
+      marginBottom: 36,
+    }}
+    textStyle={{
+      color: baseColors.darkGray,
+      fontWeight: '400',
+      fontSize: fontSizes.extraSmall,
+      fontFamily: 'Aktiv Grotesk App',
+    }}
+    dateFormat="LL"
+  />
+);
+
+const renderTime = (props: Props) => {
+  return (
+    <Time
+      {...props}
+      textStyle={{
+        right: {
+          color: baseColors.darkGray,
+          fontFamily: 'Aktiv Grotesk App',
+          fontWeight: '400',
+          fontSize: fontSizes.extraExtraSmall,
+        },
+        left: {
+          color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
+          fontFamily: 'Aktiv Grotesk App',
+          fontWeight: '400',
+          fontSize: fontSizes.extraExtraSmall,
+        },
+      }}
+      timeFormat="HH:mm"
+    />
+  );
+};
+
 const renderBubble = (props: Props) => {
   const isWarning = isWarningMessage(props.currentMessage.type);
   return (<Bubble
@@ -107,26 +157,34 @@ const renderBubble = (props: Props) => {
     }}
     wrapperStyle={{
       left: {
-        backgroundColor: isWarning ? baseColors.brightBlue : baseColors.white,
+        backgroundColor: isWarning ? baseColors.brightBlue : baseColors.zumthor,
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: isWarning ? baseColors.brightBlue : baseColors.whiterSmoke,
+        borderColor: isWarning ? baseColors.brightBlue : baseColors.tropicalBlue,
         maxWidth: 262,
         marginTop: 4,
-        marginLeft: Platform.select({
-          ios: 10,
-          android: 16,
-        }),
+        paddingHorizontal: 2,
+        paddingTop: 2,
+        minWidth: 120,
       },
       right: {
-        backgroundColor: baseColors.lightYellow,
+        backgroundColor: baseColors.white,
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: baseColors.whiterSmoke,
+        borderColor: baseColors.tropicalBlue,
         maxWidth: 262,
         marginTop: 4,
+        paddingHorizontal: 2,
+        paddingTop: 2,
+        minWidth: 120,
+        marginLeft: 20,
       },
     }}
+    renderTime={() => (
+      <TimeWrapper>
+        {renderTime(props)}
+      </TimeWrapper>
+    )}
     touchableProps={{
       onPress: () => {
         const { status } = props.currentMessage;
@@ -141,25 +199,6 @@ const renderBubble = (props: Props) => {
       },
     }}
   />);
-};
-
-const renderComposer = (props: Props) => {
-  return (
-    <Composer
-      {...props}
-      textInputStyle={{
-        width: '100%',
-        marginTop: Platform.select({
-          ios: 12,
-          android: 8,
-        }),
-        marginBottom: 5,
-        fontSize: fontSizes.extraSmall,
-        lineHeight: fontSizes.small,
-      }}
-      placeholder="Type your message here"
-    />
-  );
 };
 
 const renderSend = (props: Props) => (
@@ -207,46 +246,6 @@ const renderInputToolbar = (props: Props) => {
   );
 };
 
-const renderDay = (props: Props) => (
-  <Day
-    {...props}
-    containerStyle={{
-      marginTop: 30,
-      marginBottom: 36,
-    }}
-    textStyle={{
-      color: baseColors.darkGray,
-      fontWeight: '400',
-      fontSize: fontSizes.extraSmall,
-      fontFamily: 'Aktiv Grotesk App',
-    }}
-    dateFormat="LL"
-  />
-);
-
-const renderTime = (props: Props) => {
-  return (
-    <Time
-      {...props}
-      textStyle={{
-        right: {
-          color: baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
-        },
-        left: {
-          color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
-        },
-      }}
-      timeFormat="HH:mm"
-    />
-  );
-};
-
 const renderLoadEarlier = (props: Props) => (
   <LoadEarlier
     {...props}
@@ -261,14 +260,35 @@ const renderMessage = (props: Props) => (
     {...props}
     containerStyle={{
       left: {
-        paddingLeft: 10,
+        paddingLeft: 8,
       },
       right: {
-        paddingRight: 10,
+        paddingRight: 8,
       },
     }}
   />
 );
+
+const customSystemMessage = (props) => {
+  if (props.currentMessage.empty) {
+    return (
+      <SystemMessageWrapper>
+        <EmptyStateParagraph
+          title="Break the ice"
+          bodyText="Start chatting - recent chats will appear here"
+        />
+      </SystemMessageWrapper>
+    );
+  }
+  if (props.currentMessage.loading) {
+    return (
+      <SystemMessageWrapper>
+        <Spinner />
+      </SystemMessageWrapper>
+    );
+  }
+  return null;
+};
 
 const parsePatterns = () => [
   {
@@ -288,15 +308,14 @@ const parsePatterns = () => [
   },
 ];
 
-const ChatContainer = styled(Container)`
-  backgroundColor: ${baseColors.snowWhite};
-`;
+class ChatTab extends React.Component<Props, State> {
+  static defaultProps = {
+    isOpen: false,
+  };
 
-class ChatScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
-    const username = props.navigation.getParam('username', '');
-    const contact = props.contacts.find(c => c.username === username) || {};
+    const contact = props.contacts.find(c => c.username === this.props.contact.username) || {};
     this.state = {
       contact,
       showLoadEarlierButton: false, // make dynamic depending on number of messages in memory?
@@ -308,37 +327,36 @@ class ChatScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const { contact } = this.state;
-    const { getChatByContact, getChatDraftByContact } = this.props;
+    const {
+      getChatByContact,
+      getChatDraftByContact,
+      isOpen,
+      chats,
+      navigation,
+    } = this.props;
+    const chatInfo = chats.find(({ username }) => username === contact.username) || {};
 
+    if (!chatInfo.unread) getChatByContact(contact.username, contact.id, contact.profileImage);
+    if (isOpen) {
+      getChatByContact(contact.username, contact.id, contact.profileImage);
+      navigation.setParams({ chatTabOpen: true });
+    }
     Answers.logContentView('Chat screen');
     AppState.addEventListener('change', this.shouldPersistDraft);
 
-    getChatByContact(contact.username, contact.id, contact.profileImage);
     getChatDraftByContact(contact.id);
-    if (Platform.OS === 'android') {
-      BackHandler.addEventListener('hardwareBackPress', this.physicalBackAction);
-    }
-  }
-
-  componentWillUnmount() {
-    const { saveDraft, clearChatDraftState } = this.props;
-    const { chatText, contact } = this.state;
-
-    AppState.removeEventListener('change', this.shouldPersistDraft);
-
-    if (Platform.OS === 'android') {
-      BackHandler.removeEventListener('hardwareBackPress', this.physicalBackAction);
-    }
-
-    if (chatText && chatText !== '') {
-      saveDraft(contact.id, chatText);
-    }
-
-    clearChatDraftState();
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isFetching, draft } = this.props;
+    const {
+      isFetching,
+      draft,
+      isOpen,
+      getChatByContact,
+      navigation,
+      hasUnreads,
+    } = this.props;
+    const { contact } = this.state;
     const { draft: prevDraft } = prevProps;
 
     if (this.state.isFetching && !isFetching) {
@@ -348,6 +366,29 @@ class ChatScreen extends React.Component<Props, State> {
     if (!prevDraft && draft) {
       this.setState({ chatText: draft }); // eslint-disable-line
     }
+
+    if (prevProps.isOpen !== isOpen && isOpen && hasUnreads) {
+      navigation.setParams({ chatTabOpen: true });
+      getChatByContact(contact.username, contact.id, contact.profileImage);
+    }
+
+    if (prevProps.isOpen !== isOpen && !isOpen) {
+      navigation.setParams({ chatTabOpen: false });
+      Keyboard.dismiss();
+    }
+  }
+
+  componentWillUnmount() {
+    const { saveDraft, clearChatDraftState, navigation } = this.props;
+    const { chatText, contact } = this.state;
+    navigation.setParams({ chatTabOpen: false });
+
+    AppState.removeEventListener('change', this.shouldPersistDraft);
+
+    if (chatText && chatText !== '') {
+      saveDraft(contact.id, chatText);
+    }
+    clearChatDraftState();
   }
 
   shouldPersistDraft = (nextAppState) => {
@@ -356,20 +397,6 @@ class ChatScreen extends React.Component<Props, State> {
 
     if (nextAppState === 'inactive' || nextAppState === 'background') {
       saveDraft(contact.id, chatText);
-    }
-  };
-
-  handleChatDismissal = () => {
-    const {
-      navigation,
-      resetUnread,
-    } = this.props;
-    resetUnread(this.state.contact.username);
-    const { backTo } = navigation.state.params;
-    if (backTo) {
-      navigation.navigate(backTo);
-    } else {
-      navigation.goBack(null);
     }
   };
 
@@ -391,29 +418,21 @@ class ChatScreen extends React.Component<Props, State> {
     this.setState({ chatText: '' });
   };
 
-  handleNavigationToContact = () => {
-    const { navigation, resetUnread } = this.props;
-    const { contact } = this.state;
-    resetUnread(this.state.contact.username);
-    navigation.navigate(CONTACT, { contact });
-  };
-
-  physicalBackAction = () => {
-    this.handleChatDismissal();
-    return true;
-  };
-
   renderCustomAvatar = () => {
     const { contact } = this.state;
+    const { profileImage, username } = contact;
+
     return (
       <ProfileImage
-        uri={contact.profileImage}
-        userName={contact.username}
-        diameter={34}
-        onPress={this.handleNavigationToContact}
+        uri={profileImage}
+        userName={username}
+        diameter={32}
+        onPress={null}
         textStyle={{
           fontSize: 16,
         }}
+        noShadow
+        borderWidth={0}
       />
     );
   };
@@ -426,11 +445,31 @@ class ChatScreen extends React.Component<Props, State> {
         renderAvatar={this.renderCustomAvatar}
         containerStyle={{
           left: {
-            marginRight: Platform.select({
-              ios: -2,
-              android: -14,
-            }),
+            marginRight: 4,
           },
+        }}
+      />
+    );
+  };
+
+  renderComposer = (props: Props) => {
+    const { isOpen } = this.props;
+    return (
+      <Composer
+        {...props}
+        textInputStyle={{
+          width: '100%',
+          marginTop: Platform.select({
+            ios: 12,
+            android: 8,
+          }),
+          marginBottom: 5,
+          fontSize: fontSizes.extraSmall,
+          lineHeight: fontSizes.small,
+        }}
+        placeholder="Type your message here"
+        textInputProps={{
+          editable: isOpen,
         }}
       />
     );
@@ -444,52 +483,87 @@ class ChatScreen extends React.Component<Props, State> {
     } else {
       this.setState({ chatText: text });
     }
-  }
+  };
 
   render() {
-    const { messages } = this.props;
+    const {
+      messages,
+      isOpen,
+      chats,
+      user,
+    } = this.props;
     const {
       contact,
       showLoadEarlierButton,
       chatText,
+      isFetching,
     } = this.state;
-    const title = getUserName(contact).toLowerCase();
+
+    const chatInfo = chats.find(({ username }) => username === contact.username) || {};
+    const { unread = 0, lastMessage = { serverTimestamp: '' } } = chatInfo;
+
+    let messagesToShow = [];
+
+    if (!Object.keys(chatInfo).length
+      && (!messages[contact.username] || !messages[contact.username].length) && !isOpen) {
+      messagesToShow = [
+        {
+          _id: 1,
+          system: true,
+          empty: true,
+          contactName: contact.username,
+        },
+      ];
+    } else if (isFetching) {
+      messagesToShow = [
+        {
+          _id: 1,
+          system: true,
+          loading: true,
+          contactName: contact.username,
+        },
+      ];
+    } else if (unread && !isOpen) {
+      messagesToShow = [
+        {
+          _id: 1,
+          text: unread > 1
+            ? 'You have received new messages. Tap here to decrypt and read them'
+            : 'You have received a new message. Tap here to decrypt and read it',
+          createdAt: lastMessage.serverTimestamp,
+          user: {
+            _id: user.username,
+            name: user.username,
+          },
+        },
+      ];
+    } else if (messages[contact.username] && messages[contact.username].length) {
+      messagesToShow = messages[contact.username];
+    }
+
     return (
-      <ChatContainer inset={{ bottom: 0 }}>
-        <Header
-          title={title}
-          onBack={this.handleChatDismissal}
-          onTitlePress={this.handleNavigationToContact}
-        />
-        <Wrapper fullScreen flex={1}>
-          {!!this.state.isFetching &&
-            <View style={{ flex: 1, alignItems: 'center' }}>
-              <Spinner />
-            </View>}
-          {!this.state.isFetching &&
-            <GiftedChat
-              text={chatText}
-              onInputTextChanged={this.updateChatInput}
-              messages={messages[contact.username]}
-              onSend={msgs => this.onSend(msgs)}
-              user={{
-                _id: this.props.user.username,
-              }}
-              renderBubble={renderBubble}
-              renderAvatar={this.renderAvatar}
-              renderComposer={renderComposer}
-              renderInputToolbar={renderInputToolbar}
-              renderDay={renderDay}
-              loadEarlier={showLoadEarlierButton}
-              onLoadEarlier={this.handleLoadEarlier}
-              renderLoadEarlier={renderLoadEarlier}
-              renderMessage={renderMessage}
-              renderTime={renderTime}
-              minInputToolbarHeight={INPUT_HEIGHT}
-              parsePatterns={parsePatterns}
-            />}
-        </Wrapper>
-      </ChatContainer>
+      <GiftedChat
+        text={chatText}
+        onInputTextChanged={this.updateChatInput}
+        messages={messagesToShow}
+        onSend={msgs => this.onSend(msgs)}
+        user={{
+          _id: this.props.user.username,
+        }}
+        renderBubble={renderBubble}
+        renderAvatar={this.renderAvatar}
+        renderComposer={this.renderComposer}
+        renderInputToolbar={renderInputToolbar}
+        renderDay={renderDay}
+        loadEarlier={showLoadEarlierButton}
+        onLoadEarlier={this.handleLoadEarlier}
+        renderLoadEarlier={renderLoadEarlier}
+        renderMessage={renderMessage}
+        renderTime={renderTime}
+        minInputToolbarHeight={INPUT_HEIGHT}
+        parsePatterns={parsePatterns}
+        renderSystemMessage={customSystemMessage}
+      />
     );
   }
 }
@@ -518,9 +592,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(sendMessageByContactAction(username, message));
   },
   clearChatDraftState: () => dispatch(clearChatDraftStateAction()),
-  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
   getChatDraftByContact: (contactId: string) => dispatch(getChatDraftByContactAction(contactId)),
   saveDraft: (contactId: string, draftText: string) => dispatch(saveDraftAction(contactId, draftText)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChatScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(ChatTab);

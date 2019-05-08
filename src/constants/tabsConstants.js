@@ -17,18 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type ApiUser = {
-  id: string,
-  username: string,
-  connectionKey: string,
-  profileImage?: string,
-  profileLargeImage?: string,
-  ethAddress: string,
-  lastUpdateTime?: number,
-  status?: ?string,
-};
 
-export type SearchResults = {
-  apiUsers: ApiUser[],
-  localContacts: Object[],
-};
+export const CHAT = 'CHAT';
+export const ACTIVITY = 'ACTIVITY';

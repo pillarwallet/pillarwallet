@@ -35,12 +35,18 @@ import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
-import { searchContactsAction, resetSearchContactsStateAction, disconnectContactAction } from 'actions/contactsActions';
+import {
+  searchContactsAction,
+  resetSearchContactsStateAction,
+  disconnectContactAction,
+  muteContactAction,
+  blockContactAction,
+} from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { DISCONNECT } from 'constants/connectionsConstants';
+import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
@@ -104,9 +110,12 @@ type Props = {
   user: Object,
   fetchInviteNotifications: Function,
   disconnectContact: Function,
+  muteContact: Function,
+  blockContact: Function,
   resetSearchContactsState: Function,
   invitations: Object[],
   localContacts: Object[],
+  chats: Object[],
 }
 
 type State = {
@@ -195,13 +204,19 @@ class PeopleScreen extends React.Component<Props, State> {
 
   renderSwipeoutBtns = (data) => {
     const swipeButtons = [
-      // { actionType: MUTE, icon: 'mute'},
+      { actionType: MUTE, icon: 'mute' },
       { actionType: DISCONNECT, icon: 'remove' },
-      // { actionType: BLOCK, icon: 'warning'},
+      { actionType: BLOCK, icon: 'warning' },
     ];
 
     return swipeButtons.map((buttonDefinition) => {
       const { actionType, icon, ...btnProps } = buttonDefinition;
+      let title = actionType;
+      if (actionType === MUTE && data.status === 'muted') {
+        title = 'unmute';
+      } else if (actionType === BLOCK && data.status === 'blocked') {
+        title = 'unblock';
+      }
 
       return {
         component: (
@@ -210,7 +225,7 @@ class PeopleScreen extends React.Component<Props, State> {
             extraSmall
             height={80}
             onPress={() => this.manageConnection(actionType, data)}
-            title={capitalize(actionType)}
+            title={capitalize(title)}
             icon={icon}
             iconSize="small"
             {...btnProps}
@@ -227,31 +242,32 @@ class PeopleScreen extends React.Component<Props, State> {
     });
   };
 
-  renderContact = ({ item }) => (
+  renderContact = ({ item }) => {
     // please refer to https://www.pivotaltracker.com/story/show/163147492
     // to understand the reason for the temporary disabling of swipeout feature
-    <Swipeout
-      disabled
-      right={this.renderSwipeoutBtns(item)}
-      backgroundColor="transparent"
-      sensitivity={10}
-      close={this.state.forceHideRemoval}
-      style={{
-        paddingRight: 14,
-      }}
-      buttonWidth={80}
-    >
-      <ListItemWithImage
-        label={item.username}
-        onPress={this.handleContactCardPress(item)}
-        avatarUrl={item.profileImage}
-        navigateToProfile={this.handleContactCardPress(item)}
-        imageUpdateTimeStamp={item.lastUpdateTime}
-      />
-    </Swipeout>
-  );
+    const { unread = 0 } = item;
+    const unreadCount = unread > 9 ? '9+' : unread;
+    return (
+      <Swipeout
+        right={this.renderSwipeoutBtns(item)}
+        backgroundColor="transparent"
+        sensitivity={10}
+        close={this.state.forceHideRemoval}
+        buttonWidth={80}
+      >
+        <ListItemWithImage
+          label={item.username}
+          onPress={this.handleContactCardPress(item)}
+          avatarUrl={item.profileImage}
+          navigateToProfile={this.handleContactCardPress(item)}
+          imageUpdateTimeStamp={item.lastUpdateTime}
+          unreadCount={unreadCount}
+        />
+      </Swipeout>
+    );
+  };
 
-  confirmManageAction = () => {
+  confirmManageAction = (status: ?string = '') => {
     // here will be called the action to manageContactType (block, disconnect, mute)
     const {
       manageContactType,
@@ -260,12 +276,20 @@ class PeopleScreen extends React.Component<Props, State> {
 
     if (manageContactType === DISCONNECT) {
       this.props.disconnectContact(manageContactId);
+    } else if (manageContactType === MUTE) {
+      const mute = !(status === 'muted');
+      this.props.muteContact(manageContactId, mute);
+    } else if (manageContactType === BLOCK) {
+      const block = !(status === 'blocked');
+      this.props.blockContact(manageContactId, block);
     }
 
-    this.setState({
-      showConfirmationModal: false,
-      forceHideRemoval: true,
-    });
+    setTimeout(() => {
+      this.setState({
+        showConfirmationModal: false,
+        forceHideRemoval: true,
+      });
+    }, 1000);
   };
 
   render() {
@@ -281,11 +305,40 @@ class PeopleScreen extends React.Component<Props, State> {
       navigation,
       invitations,
       localContacts,
+      chats,
     } = this.props;
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
-    const sortedLocalContacts = orderBy(localContacts, [user => user.username.toLowerCase()], 'asc');
+    const localContactsWithUnreads = localContacts.map((contact) => {
+      const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
+      if (Object.keys(chatWithUserInfo).length) {
+        if (chatWithUserInfo.unread) {
+          return {
+            ...contact,
+            unread: chatWithUserInfo.unread,
+            serverTimestamp: chatWithUserInfo.lastMessage ? chatWithUserInfo.lastMessage.serverTimestamp : null,
+          };
+        }
+        return {
+          ...contact,
+          serverTimestamp: chatWithUserInfo.lastMessage ? chatWithUserInfo.lastMessage.serverTimestamp : null,
+        };
+      }
+      return {
+        ...contact,
+        serverTimestamp: null,
+      };
+    });
+    const sortedLocalContacts = orderBy(
+      localContactsWithUnreads,
+      [(user) => {
+        if (user.serverTimestamp) {
+          return user.serverTimestamp;
+        }
+        return user.createdAt * 1000;
+      }],
+      'desc');
     const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
 
     return (
@@ -396,11 +449,13 @@ const mapStateToProps = ({
     data: localContacts,
   },
   invitations: { data: invitations },
+  chat: { data: { chats } },
 }) => ({
   searchResults,
   contactState,
   localContacts,
   invitations,
+  chats,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -408,6 +463,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   resetSearchContactsState: () => dispatch(resetSearchContactsStateAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
+  muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
+  blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);

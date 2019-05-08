@@ -32,6 +32,7 @@ type ContainerProps = {
   style?: Object,
   inset?: Object,
   onLayout?: Function,
+  innerStyle?: Object,
 };
 
 type FooterProps = {
@@ -55,23 +56,36 @@ export const Center = styled.View`
   align-items: center;
 `;
 
-const ContainerOuter = styled(SafeAreaView)`
+export const ContainerOuter = styled(SafeAreaView)`
   background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
 `;
 
-const ContainerInner = styled.View`
+export const ContainerInner = styled.View`
   height: 100%;
   align-items: ${props => (props.center ? 'center' : 'stretch')};
   justify-content: ${props => (props.center ? 'center' : 'flex-start')};
 `;
 
 export const Container = (props: ContainerProps) => {
-  const { inset = {} } = props;
-
+  const {
+    inset = {},
+    color,
+    style,
+    innerStyle,
+    center,
+    onLayout,
+    children,
+  } = props;
 
   return (
-    <ContainerOuter color={props.color} style={props.style} forceInset={{ top: 'always', ...inset }}>
-      <ContainerInner center={props.center} onLayout={props.onLayout}>{props.children}</ContainerInner>
+    <ContainerOuter color={color} style={style} forceInset={{ top: 'always', ...inset }}>
+      <ContainerInner
+        center={center}
+        onLayout={onLayout}
+        style={innerStyle}
+      >
+        {children}
+      </ContainerInner>
     </ContainerOuter>
   );
 };

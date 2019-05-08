@@ -171,6 +171,7 @@ const contactsResultMock = [
     profileImage: 'profileImgUrl',
     createdAt: 1555491474.547,
     updatedAt: 1555491474.547,
+    status: 'accepted',
   },
   {
     id: 3,
@@ -179,6 +180,7 @@ const contactsResultMock = [
     profileImage: 'profileImgUrl3',
     createdAt: 1555491474.547,
     updatedAt: 1555491474.547,
+    status: 'accepted',
   },
   {
     id: 5,
@@ -187,6 +189,7 @@ const contactsResultMock = [
     profileImage: 'profileImgUrl5',
     createdAt: 1555491474.547,
     updatedAt: 1555491474.547,
+    status: 'accepted',
   },
   {
     id: 6,
@@ -195,6 +198,7 @@ const contactsResultMock = [
     profileImage: 'profileImgUrl6',
     createdAt: 1555491474.547,
     updatedAt: 1555491474.547,
+    status: 'accepted',
   },
   {
     id: 7,
@@ -203,6 +207,7 @@ const contactsResultMock = [
     profileImage: 'profileImgUrl7',
     createdAt: 1555491474.547,
     updatedAt: 1555491474.547,
+    status: 'accepted',
   },
 ];
 
