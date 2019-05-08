@@ -22,6 +22,7 @@ import { FlatList, Keyboard, TextInput, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { createStructuredSelector } from 'reselect';
 import { Container, Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import Separator from 'components/Separator';
@@ -36,6 +37,7 @@ import { formatAmount, parseNumber, isValidNumber } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
 import type { AssetTransfer, Assets, Balances } from 'models/Asset';
+import { accountBalancesSelector } from 'selectors/balances';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -233,12 +235,19 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { data: allAssets },
-  balances: { data: balances },
   smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
 }) => ({
   allAssets,
   addedAssets,
-  balances,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -248,5 +257,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   ),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditAssetAmountScreen);
-
+export default connect(combinedMapStateToProps, mapDispatchToProps)(EditAssetAmountScreen);

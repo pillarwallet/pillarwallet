@@ -32,6 +32,7 @@ import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { Answers } from 'react-native-fabric';
 import debounce from 'lodash.debounce';
+import { createStructuredSelector } from 'reselect';
 
 // components
 import { BaseText, BoldText } from 'components/Typography';
@@ -78,6 +79,9 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { getSmartWalletUpgradeMessageByStatus } from 'utils/smartWallet';
+
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
 
 // local components
 import AssetsList from './AssetsList';
@@ -520,7 +524,6 @@ const mapStateToProps = ({
     assetsSearchState,
     assetsSearchResults,
   },
-  balances: { data: balances },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
   collectibles: { assets: collectibles },
@@ -531,7 +534,6 @@ const mapStateToProps = ({
   accounts,
   assets,
   assetsState,
-  balances,
   assetsSearchState,
   assetsSearchResults,
   rates,
@@ -540,6 +542,15 @@ const mapStateToProps = ({
   collectibles,
   tankData,
   smartWalletUpgradeStatus,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -553,4 +564,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   toggleTankModal: () => dispatch(toggleTankModalAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);

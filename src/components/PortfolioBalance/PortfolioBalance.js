@@ -18,14 +18,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { View } from 'react-native';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { createStructuredSelector } from 'reselect';
 import type { Assets, Balances, Rates } from 'models/Asset';
 import { BaseText } from 'components/Typography';
-import { connect } from 'react-redux';
-import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance } from 'utils/assets';
+import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { accountBalancesSelector } from 'selectors/balances';
 
 type Props = {
   assets: Assets,
@@ -102,13 +104,21 @@ class PortfolioBalance extends React.Component<Props, {}> {
 
 const mapStateToProps = ({
   assets: { data: assets },
-  balances: { data: balances },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   rates,
   assets,
-  balances,
   baseFiatCurrency,
 });
-export default connect(mapStateToProps)(PortfolioBalance);
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default connect(combinedMapStateToProps)(PortfolioBalance);

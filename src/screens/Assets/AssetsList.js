@@ -29,6 +29,7 @@ import isEqualWith from 'lodash.isequalwith';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import Swipeout from 'react-native-swipeout';
+import { createStructuredSelector } from 'reselect';
 
 // components
 import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
@@ -51,6 +52,9 @@ import assetsConfig from 'configs/assetsConfig';
 
 // types
 import type { Assets, Balances } from 'models/Asset';
+
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
 
 // local components
 import HideAssetButton from './HideAssetButton';
@@ -328,20 +332,27 @@ class AssetsList extends React.Component<Props> {
 const mapStateToProps = ({
   wallet: { data: wallet },
   assets: { data: assets },
-  balances: { data: balances },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
 }) => ({
   wallet,
   assets,
-  balances,
   rates,
   baseFiatCurrency,
   assetsLayout,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AssetsList);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsList);

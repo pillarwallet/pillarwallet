@@ -18,31 +18,49 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Share, RefreshControl } from 'react-native';
 import isEqual from 'lodash.isequal';
-import { baseColors, spacing, fontSizes } from 'utils/variables';
-import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import type { Transaction } from 'models/Transaction';
-import type { Assets, Balances } from 'models/Asset';
+import styled from 'styled-components/native';
+import { createStructuredSelector } from 'reselect';
+
+// components
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 import SlideModal from 'components/Modals/SlideModal';
-
 import Header from 'components/Header';
 import { Container, ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BoldText, BaseText, Paragraph } from 'components/Typography';
+
+// actions
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+
+// models
+import type { Transaction } from 'models/Transaction';
+import type { Assets, Balances } from 'models/Asset';
+
+// constants
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
+
+// utils
+import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
+
+// configs
 import assetsConfig from 'configs/assetsConfig';
+
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
+
+// local components
 import ReceiveModal from './ReceiveModal';
+
 
 const RECEIVE = 'RECEIVE';
 
@@ -301,17 +319,24 @@ class AssetScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   assets: { data: assets },
-  balances: { data: balances },
   rates: { data: rates },
   history: { data: history },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   contacts,
   assets,
-  balances,
   rates,
   history,
   baseFiatCurrency,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -323,4 +348,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AssetScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);

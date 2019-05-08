@@ -92,6 +92,7 @@ const initialState = {
   history: { data: [] },
   wallet: { data: { address: mockWallet.address } },
   accounts: { data: mockAccounts },
+  balances: { data: {} },
 };
 
 describe('Wallet actions', () => {
@@ -115,7 +116,7 @@ describe('Wallet actions', () => {
   });
 
   it('should expect series of actions with payload to be dispatch on fetchAssetsBalancesAction execution', () => {
-    const updateBalancesPayload = { ETH: { balance: 1, symbol: 'ETH' } };
+    const updateBalancesPayload = { [mockAccounts[0].id]: { ETH: { balance: 1, symbol: 'ETH' } } };
     const expectedActions = [
       { payload: FETCHING, type: UPDATE_ASSETS_STATE },
       { payload: updateBalancesPayload, type: UPDATE_BALANCES },

@@ -93,7 +93,7 @@ class SmartWallet extends React.Component<Props, State> {
   componentDidMount() {
     this.storage = new InMemoryStorage({}, true);
     console.log('all accounts', this.props.accounts);
-    console.log('all balances', this.props.balances);
+    console.log('balances', this.props.balances);
   }
 
   onInitSdk = () => {

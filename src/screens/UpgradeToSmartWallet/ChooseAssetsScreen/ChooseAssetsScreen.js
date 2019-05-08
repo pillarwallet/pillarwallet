@@ -22,6 +22,8 @@ import { FlatList, Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { createStructuredSelector } from 'reselect';
+
 import { Container, Footer, Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import Separator from 'components/Separator';
@@ -45,6 +47,7 @@ import { getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
 import type { AssetTransfer, Assets, Balances } from 'models/Asset';
 import type { Collectible, CollectibleTransfer } from 'models/Collectible';
+import { accountBalancesSelector } from 'selectors/balances';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -356,14 +359,21 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { data: assets },
-  balances: { data: balances },
   collectibles: { assets: collectibles },
   smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
 }) => ({
   assets,
   addedAssets,
-  balances,
   collectibles,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -377,6 +387,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   ),
 });
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(ChooseAssetsScreen);
-
+export default connect(combinedMapStateToProps, mapDispatchToProps)(ChooseAssetsScreen);

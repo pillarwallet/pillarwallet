@@ -21,6 +21,7 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import type { Assets, Balances } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 
@@ -41,6 +42,7 @@ import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigatio
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import assetsConfig from 'configs/assetsConfig';
+import { accountBalancesSelector } from 'selectors/balances';
 
 type Props = {
   fetchAssetsBalances: (assets: Assets) => Function,
@@ -257,12 +259,19 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { data: assets },
-  balances: { data: balances },
   collectibles: { assets: collectibles },
 }) => ({
   assets,
-  balances,
   collectibles,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -270,4 +279,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SendTokenAssetsScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenAssetsScreen);

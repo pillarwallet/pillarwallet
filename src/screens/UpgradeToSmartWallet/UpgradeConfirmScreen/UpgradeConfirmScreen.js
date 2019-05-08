@@ -23,6 +23,7 @@ import { SectionList } from 'react-native';
 import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
+import { createStructuredSelector } from 'reselect';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import Header from 'components/Header';
 import Button from 'components/Button';
@@ -47,6 +48,7 @@ import type { Assets, Balances } from 'models/Asset';
 import { upgradeToSmartWalletAction } from 'actions/smartWalletActions';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
+import { accountBalancesSelector } from 'selectors/balances';
 // import { fontSizes } from '../../../utils/variables';
 
 type Props = {
@@ -225,17 +227,24 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  balances: { data: balances },
   smartWallet: { upgrade: { transfer: { assets, collectibles } } },
 }) => ({
   contacts,
   assets,
   collectibles,
-  balances,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   upgradeToSmartWallet: () => dispatch(upgradeToSmartWalletAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UpgradeConfirmScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(UpgradeConfirmScreen);

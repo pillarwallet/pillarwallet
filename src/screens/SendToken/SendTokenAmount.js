@@ -24,6 +24,7 @@ import t from 'tcomb-form-native';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
+import { createStructuredSelector } from 'reselect';
 
 // components
 import { Container, Footer, Wrapper } from 'components/Layout';
@@ -50,6 +51,9 @@ import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
+
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
 
 
 const { Form } = t.form;
@@ -427,21 +431,28 @@ class SendTokenAmount extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  balances: { data: balances },
   session: { data: session },
   rates: { data: rates },
   history: { gasInfo },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   rates,
-  balances,
   session,
   gasInfo,
   baseFiatCurrency,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SendTokenAmount);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenAmount);
