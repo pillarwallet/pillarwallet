@@ -48,11 +48,14 @@ const EmptyTransactions = (props: Props) => {
     bodyText,
   } = props;
 
+  if (!title && bodyText) return null;
+
   return (
     <Wrapper
       fullScreen
       style={{
-        paddingTop: 90,
+        marginTop: 20,
+        paddingTop: 45,
         paddingBottom: 90,
         alignItems: 'center',
       }}

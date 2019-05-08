@@ -79,6 +79,8 @@ export const baseColors = {
   greyser: '#d1d9e4',
   midnight: '#222e44',
   eucalypus: '#2aa057',
+  tropicalBlue: '#CAE1F8',
+  zumthor: '#EBF5FF',
 };
 
 export const brandColors = [

@@ -52,9 +52,6 @@ import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import HomeScreen from 'screens/Home';
-import ChatListScreen from 'screens/Chat/ChatList';
-import NewChatListScreen from 'screens/Chat/NewChatList';
-import ChatScreen from 'screens/Chat/Chat';
 import ICOScreen from 'screens/ICO';
 import ParticipateScreen from 'screens/Participate';
 import InstructionsScreen from 'screens/Participate/Instructions';
@@ -124,9 +121,6 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
-  CHAT_LIST,
-  NEW_CHAT,
-  CHAT,
   AUTH_FLOW,
   MARKET,
   PARTICIPATE_IN_ICO_FLOW,
@@ -178,12 +172,10 @@ const iconWallet = require('assets/icons/icon_wallet_new.png');
 const iconPeople = require('assets/icons/icon_people_new.png');
 const iconHome = require('assets/icons/icon_home_new.png');
 // const iconMarket = require('assets/icons/icon_marketplace_new.png');
-const iconChat = require('assets/icons/icon_chat_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
 // const iconMarketActive = require('assets/icons/icon_marketplace_active.png');
-const iconChatActive = require('assets/icons/icon_chat_active.png');
 
 const connectionMessagesToExclude = [
   TYPE_CANCELLED,
@@ -220,16 +212,6 @@ const hideTabNavigatorOnChildView = ({ navigation }) => {
   };
 };
 
-// CHAT FLOW
-const chatFlow = createStackNavigator({
-  [CHAT_LIST]: ChatListScreen,
-  [NEW_CHAT]: NewChatListScreen,
-  [CONTACT]: ContactScreen,
-  [CHAT]: ChatScreen,
-}, StackNavigatorConfig);
-
-chatFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 // ASSETS FLOW
 const assetsFlow = createStackNavigator({
   [ASSETS]: AssetsScreen,
@@ -245,7 +227,6 @@ const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
-  [CHAT]: ChatScreen,
   [COLLECTIBLE]: CollectibleScreen,
 }, StackNavigatorConfig);
 
@@ -258,7 +239,6 @@ const homeFlow = createStackNavigator({
   [OTP]: OTPScreen,
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [CONTACT]: ContactScreen,
-  [CHAT]: ChatScreen,
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
 }, StackNavigatorConfig);
@@ -347,8 +327,11 @@ const tabNavigation = createBottomTabNavigator(
     },
     [PEOPLE]: {
       screen: peopleFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconPeopleActive, iconPeople),
+      navigationOptions: ({ navigation, screenProps }) => ({
+        tabBarIcon: tabBarIcon(
+          iconPeopleActive,
+          iconPeople,
+          !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
         tabBarLabel: tabBarLabel('People'),
       }),
     },
@@ -377,18 +360,6 @@ const tabNavigation = createBottomTabNavigator(
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
         tabBarLabel: tabBarLabel('SmartW'),
-      }),
-    },
-    [CHAT_LIST]: {
-      screen: chatFlow,
-      navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon:
-          tabBarIcon(
-            iconChatActive,
-            iconChat,
-            !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
-
-        tabBarLabel: tabBarLabel('Chat'),
       }),
     },
   }, {

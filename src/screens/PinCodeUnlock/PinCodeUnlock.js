@@ -55,8 +55,8 @@ class PinCodeUnlock extends React.Component<Props> {
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { useBiometrics, connectionKeyPairs: { data, lastConnectionKeyIndex } } = this.props;
-    if (useBiometrics && !this.errorMessage && data.length > 20 && lastConnectionKeyIndex > -1) {
+    const { useBiometrics } = this.props;
+    if (useBiometrics && !this.errorMessage) {
       this.showBiometricLogin();
     }
   }
@@ -73,13 +73,15 @@ class PinCodeUnlock extends React.Component<Props> {
   };
 
   showBiometricLogin() {
-    const { login } = this.props;
-    TouchID.authenticate('Biometric login')
-      .then(() => {
-        removeAppStateChangeListener(this.handleAppStateChange);
-        login('', true);
-      })
-      .catch(() => null);
+    const { login, connectionKeyPairs: { data, lastConnectionKeyIndex } } = this.props;
+    if (data.length > 20 && lastConnectionKeyIndex > -1) {
+      TouchID.authenticate('Biometric login')
+        .then(() => {
+          removeAppStateChangeListener(this.handleAppStateChange);
+          login('', true);
+        })
+        .catch(() => null);
+    }
   }
 
   handlePinSubmit = (pin: string) => {
