@@ -25,6 +25,7 @@ import {
   ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
   DISMISS_SMART_WALLET_UPGRADE,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
+  SET_SMART_WALLET_UPGRADE_STATUS,
 } from 'constants/smartWalletConstants';
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type { AssetTransfer } from 'models/Asset';
@@ -37,6 +38,7 @@ export type WalletReducerState = {
   connectedAccount: Object,
   accounts: SmartWalletAccount[],
   upgrade: {
+    status?: string,
     transfer: {
       transactions: SmartWalletTransferTransaction[],
       assets: AssetTransfer[],
@@ -120,6 +122,14 @@ export default function smartWalletReducer(
             ...state.upgrade.transfer,
             transactions: action.payload,
           },
+        },
+      };
+    case SET_SMART_WALLET_UPGRADE_STATUS:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          status: action.payload,
         },
       };
     default:

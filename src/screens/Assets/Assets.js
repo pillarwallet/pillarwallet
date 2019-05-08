@@ -34,7 +34,7 @@ import { Answers } from 'react-native-fabric';
 import debounce from 'lodash.debounce';
 
 // components
-import { BaseText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
@@ -48,6 +48,7 @@ import Tabs from 'components/Tabs';
 // types
 import type { Assets, Balances, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
+import type { SmartWalletUpgradeMessage } from 'models/SmartWalletUpgradeMessage';
 
 // actions
 import {
@@ -75,7 +76,8 @@ import { UPGRADE_TO_SMART_WALLET_FLOW } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { getSmartWalletUpgradeMessageByStatus } from 'utils/smartWallet';
 
 // local components
 import AssetsList from './AssetsList';
@@ -104,6 +106,7 @@ type Props = {
   toggleTankModal: Function,
   accounts: [],
   tankData: Object,
+  smartWalletUpgradeStatus: string,
 }
 
 type State = {
@@ -150,6 +153,18 @@ const EmptyStateWrapper = styled(Wrapper)`
   padding-top: 90px;
   padding-bottom: 90px;
   align-items: center;
+`;
+
+const MessageTitle = styled(BoldText)`
+  font-size: ${fontSizes.large}px;
+  text-align: center;
+`;
+
+const Message = styled(BaseText)`
+  padding-top: 20px;
+  font-size: ${fontSizes.extraSmall}px;
+  color: ${baseColors.darkGray};
+  text-align: center;
 `;
 
 class AssetsScreen extends React.Component<Props, State> {
@@ -385,6 +400,7 @@ class AssetsScreen extends React.Component<Props, State> {
       toggleTankModal,
       accounts,
       tankData,
+      smartWalletUpgradeStatus,
     } = this.props;
     const { query, activeTab, forceHideRemoval } = this.state;
 
@@ -427,6 +443,10 @@ class AssetsScreen extends React.Component<Props, State> {
     // TODO: account.isActive?
     const isSmartWallet = accounts.find(account => account.type === ACCOUNT_TYPES.SMART_WALLET);
 
+    const smartWalletUpgradeMessage: SmartWalletUpgradeMessage =
+      getSmartWalletUpgradeMessageByStatus(smartWalletUpgradeStatus);
+    const blockAssetsView = !!smartWalletUpgradeMessage.message;
+
     return (
       <Container inset={{ bottom: 0 }}>
         <SearchBlock
@@ -439,45 +459,53 @@ class AssetsScreen extends React.Component<Props, State> {
             isSmartWallet,
             tankValue: tankData.availableStake,
           }}
+          hideSearch={blockAssetsView}
           searchInputPlaceholder={activeTab === TOKENS ? 'Search or add new asset' : 'Search'}
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={activeTab === TOKENS ? !!assetsSearchState : !!isInCollectiblesSearchMode}
           navigation={navigation}
         />
-        <TokensWrapper>
-          {inSearchMode && isSearchOver &&
-          <Wrapper>
-            {this.renderFoundTokensList()}
+        {(blockAssetsView &&
+          <Wrapper flex={1} regularPadding center>
+            <MessageTitle>{ smartWalletUpgradeMessage.title }</MessageTitle>
+            <Message>{ smartWalletUpgradeMessage.message }</Message>
           </Wrapper>
-          }
-          {isSearching &&
-          <SearchSpinner center>
-            <Spinner />
-          </SearchSpinner>
-          }
-          {!inSearchMode &&
-          <React.Fragment>
-            {!isInCollectiblesSearchMode && <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />}
-            {activeTab === TOKENS && (
-              <AssetsList
-                navigation={navigation}
-                onHideTokenFromWallet={this.handleAssetRemoval}
-                horizontalPadding={horizontalPadding}
-                forceHideRemoval={forceHideRemoval}
-                updateHideRemoval={this.updateHideRemoval}
-              />
-            )}
-            {activeTab === COLLECTIBLES && (
-              <CollectiblesList
-                collectibles={filteredCollectibles}
-                searchQuery={query}
-                navigation={navigation}
-                horizontalPadding={horizontalPadding}
-                updateHideRemoval={this.updateHideRemoval}
-              />
-            )}
-          </React.Fragment>}
-        </TokensWrapper>
+        ) ||
+          <TokensWrapper>
+            {inSearchMode && isSearchOver &&
+            <Wrapper>
+              {this.renderFoundTokensList()}
+            </Wrapper>
+            }
+            {isSearching &&
+            <SearchSpinner center>
+              <Spinner />
+            </SearchSpinner>
+            }
+            {!inSearchMode &&
+            <React.Fragment>
+              {!isInCollectiblesSearchMode && <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />}
+              {activeTab === TOKENS && (
+                <AssetsList
+                  navigation={navigation}
+                  onHideTokenFromWallet={this.handleAssetRemoval}
+                  horizontalPadding={horizontalPadding}
+                  forceHideRemoval={forceHideRemoval}
+                  updateHideRemoval={this.updateHideRemoval}
+                />
+              )}
+              {activeTab === COLLECTIBLES && (
+                <CollectiblesList
+                  collectibles={filteredCollectibles}
+                  searchQuery={query}
+                  navigation={navigation}
+                  horizontalPadding={horizontalPadding}
+                  updateHideRemoval={this.updateHideRemoval}
+                />
+              )}
+            </React.Fragment>}
+          </TokensWrapper>
+        }
       </Container>
     );
   }
@@ -497,6 +525,7 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
   collectibles: { assets: collectibles },
   tank: { data: tankData },
+  smartWallet: { upgrade: { status: smartWalletUpgradeStatus } },
 }) => ({
   wallet,
   accounts,
@@ -510,6 +539,7 @@ const mapStateToProps = ({
   assetsLayout,
   collectibles,
   tankData,
+  smartWalletUpgradeStatus,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

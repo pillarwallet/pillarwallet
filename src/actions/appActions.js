@@ -46,6 +46,7 @@ import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   DISMISS_SMART_WALLET_UPGRADE,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
+  SET_SMART_WALLET_UPGRADE_STATUS,
 } from 'constants/smartWalletConstants';
 
 // utils
@@ -135,8 +136,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
       }
 
-      const { upgradeTransferTransactions = [] } = await storage.get('smartWallet') || {};
+      const { upgradeTransferTransactions = [], upgradeStatus = null } = await storage.get('smartWallet') || {};
       dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
+      dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
 
       navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       return;

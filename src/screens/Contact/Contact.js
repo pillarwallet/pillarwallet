@@ -31,7 +31,7 @@ import {
   blockContactAction,
 } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
-import { ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
 import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
@@ -43,7 +43,10 @@ import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import ChatTab from 'components/ChatTab';
 import Tabs from 'components/Tabs';
+import { BaseText, BoldText } from 'components/Typography';
+import { getSmartWalletUpgradeMessageByStatus } from 'utils/smartWallet';
 import type { ApiUser } from 'models/Contacts';
+import type { SmartWalletUpgradeMessage } from 'models/SmartWalletUpgradeMessage';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
@@ -81,6 +84,18 @@ const SheetContentWrapper = styled.View`
   padding-top: 30px;
 `;
 
+const MessageTitle = styled(BoldText)`
+  font-size: ${fontSizes.small}px;
+  text-align: center;
+`;
+
+const Message = styled(BaseText)`
+  padding-top: 10px;
+  font-size: ${fontSizes.tiny}px;
+  color: ${baseColors.darkGray};
+  text-align: center;
+`;
+
 type Props = {
   name: string,
   navigation: NavigationScreenProp<*>,
@@ -93,6 +108,7 @@ type Props = {
   disconnectContact: Function,
   muteContact: Function,
   blockContact: Function,
+  smartWalletUpgradeStatus: string,
 };
 
 type State = {
@@ -261,6 +277,7 @@ class Contact extends React.Component<Props, State> {
       fetchContactTransactions,
       wallet,
       chats,
+      smartWalletUpgradeStatus,
     } = this.props;
     const {
       showManageContactModal,
@@ -300,6 +317,10 @@ class Contact extends React.Component<Props, State> {
         onPress: () => this.setActiveTab(ACTIVITY),
       },
     ];
+
+    const smartWalletUpgradeMessage: SmartWalletUpgradeMessage =
+      getSmartWalletUpgradeMessageByStatus(smartWalletUpgradeStatus);
+    const disableSend = !!smartWalletUpgradeMessage.message;
 
     return (
       <ContainerWithBottomSheet
@@ -366,10 +387,17 @@ class Contact extends React.Component<Props, State> {
           {isAccepted &&
           <CircleButtonsWrapper>
             <CircleButton
+              disabled={disableSend}
               label="Send"
               icon={iconSend}
               onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
             />
+            {disableSend &&
+            <Wrapper style={{ marginTop: 30 }}>
+              <MessageTitle>{ smartWalletUpgradeMessage.title }</MessageTitle>
+              <Message>{ smartWalletUpgradeMessage.message }</Message>
+            </Wrapper>
+            }
           </CircleButtonsWrapper>
          }
         </ScrollWrapper>
@@ -400,11 +428,13 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   chat: { data: { chats } },
   session: { data: session },
+  smartWallet: { upgrade: { status: smartWalletUpgradeStatus } },
 }) => ({
   contacts,
   wallet,
   chats,
   session,
+  smartWalletUpgradeStatus,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

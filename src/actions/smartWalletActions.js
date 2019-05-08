@@ -25,6 +25,7 @@ import {
   ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
   DISMISS_SMART_WALLET_UPGRADE,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
+  SET_SMART_WALLET_UPGRADE_STATUS,
 } from 'constants/smartWalletConstants';
 import SmartWalletService from 'services/smartWallet';
 import {
@@ -160,6 +161,16 @@ export const setAssetsTransferTransactions = (transactions: SmartWalletTransferT
     dispatch({
       type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
       payload: transactions,
+    });
+  };
+};
+
+export const setSmartWalletUpgradeStatus = (upgradeStatus: string) => {
+  return async (dispatch: Function) => {
+    dispatch(saveDbAction('smartWallet', { upgradeStatus }));
+    dispatch({
+      type: SET_SMART_WALLET_UPGRADE_STATUS,
+      payload: upgradeStatus,
     });
   };
 };
