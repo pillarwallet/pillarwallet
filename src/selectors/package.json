@@ -1,0 +1,6 @@
+{
+  "name": "selectors",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./selectors.js"
+}

@@ -27,7 +27,7 @@ import { navigate } from 'services/navigation';
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
+import { UPDATE_ASSETS, UPDATE_BALANCES, ETH } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
@@ -50,6 +50,7 @@ import {
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
+import { migrateBalancesToAccountsFormat } from 'utils/dataMigration';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -69,11 +70,24 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     const { wallet } = await storage.get('wallet');
 
     if (appSettings.wallet) {
+      const { accounts = [] } = await storage.get('accounts');
+      dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
+
       const { assets = {} } = await storage.get('assets');
       dispatch({ type: UPDATE_ASSETS, payload: assets });
 
       const { balances = {} } = await storage.get('balances');
-      dispatch({ type: UPDATE_BALANCES, payload: balances });
+      console.log({ balances });
+      if (!balances[ETH]) {
+        dispatch({ type: UPDATE_BALANCES, payload: balances });
+      } else if (accounts.length) {
+        const migratedBalances = migrateBalancesToAccountsFormat(balances, accounts);
+        console.log({ migratedBalances });
+        if (migratedBalances) {
+          dispatch({ type: UPDATE_BALANCES, payload: migratedBalances });
+          dispatch(saveDbAction('balances', { balances: migratedBalances }, true));
+        }
+      }
 
       const { contacts = [] } = await storage.get('contacts');
       dispatch({ type: UPDATE_CONTACTS, payload: contacts });
@@ -118,9 +132,6 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
         dispatch(saveDbAction('history', { history: filteredHistory }, true));
       }
       dispatch({ type: SET_HISTORY, payload: filteredHistory });
-
-      const { accounts = [] } = await storage.get('accounts');
-      dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 

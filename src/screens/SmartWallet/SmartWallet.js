@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
@@ -28,6 +29,10 @@ import CheckPin from 'components/CheckPin';
 // models
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type { Account, Accounts } from 'models/Account';
+import type { Balances } from 'models/Asset';
+
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
 
 // services
 import InMemoryStorage from 'services/inMemoryStorage';
@@ -46,6 +51,7 @@ type Props = {
   smartWalletAccounts: SmartWalletAccount[],
   connectedAccount: Object,
   accounts: Accounts,
+  balances: Balances,
   resetIncorrectPassword: Function,
   initSmartWalletSdk: Function,
 };
@@ -87,6 +93,7 @@ class SmartWallet extends React.Component<Props, State> {
   componentDidMount() {
     this.storage = new InMemoryStorage({}, true);
     console.log('all accounts', this.props.accounts);
+    console.log('all balances', this.props.balances);
   }
 
   onInitSdk = () => {
@@ -257,6 +264,15 @@ const mapStateToProps = ({
   accounts,
 });
 
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch) => ({
   loadSmartWalletAccounts: () => dispatch(loadSmartWalletAccountsAction()),
   connectSmartWalletAccount: (accountId) => dispatch(connectSmartWalletAccountAction(accountId)),
@@ -266,4 +282,4 @@ const mapDispatchToProps = (dispatch) => ({
   initSmartWalletSdk: (privateKey: string) => dispatch(initSmartWalletSdkAction(privateKey)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SmartWallet);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SmartWallet);

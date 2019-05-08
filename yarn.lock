@@ -13132,6 +13132,11 @@ reselect@^3.0.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/reselect/-/reselect-3.0.1.tgz#efdaa98ea7451324d092b2b2163a6a1d7a9a2147"
   integrity sha1-79qpjqdFEyTQkrKyFjpqHXqaIUc=
 
+reselect@^4.0.0:
+  version "4.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/reselect/-/reselect-4.0.0.tgz#f2529830e5d3d0e021408b246a206ef4ea4437f7"
+  integrity sha1-8lKYMOXT0OAhQIskaiBu9OpEN/c=
+
 resolve-cwd@^2.0.0:
   version "2.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/resolve-cwd/-/resolve-cwd-2.0.0.tgz#00a9f7387556e27038eae232caa372a6a59b665a"
