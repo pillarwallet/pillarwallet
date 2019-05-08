@@ -28,7 +28,6 @@ import { Label, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Header from 'components/Header';
-import MultilineTextInput from 'components/TextInput/MultilineTextInput';
 import TextInput from 'components/TextInput';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
@@ -134,7 +133,7 @@ class SendTokenContacts extends React.Component<Props, State> {
               <Label>Est. Network Fee</Label>
               <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
             </LabeledRow>
-            {(!!recipientUsername && Platform.OS === 'android') &&
+            {!!recipientUsername &&
             <TextInput
               inputProps={{
                 onChange: (text) => this.handleNoteChange(text),
@@ -153,22 +152,6 @@ class SendTokenContacts extends React.Component<Props, State> {
                 this.setState({ scrollPos: scrollPosition });
                 }
               }
-            />
-            }
-            {(!!recipientUsername && Platform.OS === 'ios') &&
-            <MultilineTextInput
-              inputProps={{
-                onChange: (text) => this.handleNoteChange(text),
-                value: this.state.note,
-                autoCapitalize: 'none',
-                multiline: true,
-                numberOfLines: 3,
-                placeholder: 'Add a note to this transaction',
-              }}
-              inputType="secondary"
-              labelBigger
-              noBorder
-              keyboardAvoidance
             />
             }
           </ScrollWrapper>

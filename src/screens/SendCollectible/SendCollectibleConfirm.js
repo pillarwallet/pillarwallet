@@ -9,7 +9,6 @@ import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
-import MultilineTextInput from 'components/TextInput/MultilineTextInput';
 import TextInput from 'components/TextInput';
 import type { CollectibleTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
@@ -177,7 +176,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
               <Label>Balance in Rinkeby ETH (visible in dev and staging)</Label>
               <Value>{rinkebyETH} ETH</Value>
             </LabeledRow>}
-            {(!!recipientUsername && Platform.OS === 'android') &&
+            {!!recipientUsername &&
             <TextInput
               inputProps={{
                 onChange: (text) => this.handleNoteChange(text),
@@ -196,22 +195,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
                 this.setState({ scrollPos: scrollPosition });
               }
               }
-            />
-            }
-            {(!!recipientUsername && Platform.OS === 'ios') &&
-            <MultilineTextInput
-              inputProps={{
-                onChange: (text) => this.handleNoteChange(text),
-                value: this.state.note,
-                autoCapitalize: 'none',
-                multiline: true,
-                numberOfLines: 3,
-                placeholder: 'Add a note to this transaction',
-              }}
-              inputType="secondary"
-              labelBigger
-              noBorder
-              keyboardAvoidance
             />
             }
           </ScrollWrapper>
