@@ -208,17 +208,18 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
+  handleRNFocus = () => {
+    setTimeout(async () => {
+      this.multilineInputField._root.focus();
+      await this.setState({
+        isFocused: true,
+      });
+    }, 500);
+  };
+
   handleMultilineFocus = () => {
     if (!this.state.isFocused) {
       this.rnInput.current.focus();
-      this.setState({
-        isFocused: false,
-      }, () => {
-        setTimeout(() => {
-          this.multilineInputField._root.focus();
-          this.handleFocus();
-        }, 500);
-      });
     }
   };
 
@@ -282,6 +283,7 @@ class TextInput extends React.Component<Props, State> {
             caretHidden
             autoCorrect={false}
             ref={this.rnInput}
+            onFocus={this.handleRNFocus}
           />
           {!!loading && <AbsoluteSpinner width={30} height={30} />}
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
