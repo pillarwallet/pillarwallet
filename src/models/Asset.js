@@ -40,6 +40,10 @@ export type Balances = {
   },
 };
 
+export type BalancesStore = {
+  [string]: Balances,
+};
+
 export type Rates = {
   [string]: {
     [string]: number,

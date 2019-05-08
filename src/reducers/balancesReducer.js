@@ -18,10 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
-import type { Balances } from 'models/Asset';
+import type { BalancesStore } from 'models/Asset';
 
 export type BalancesReducerState = {
-  data: Balances,
+  data: BalancesStore,
 };
 
 export type BalancesReducerAction = {

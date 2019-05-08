@@ -270,18 +270,27 @@ export const fetchAssetsBalancesAction = (assets: Assets) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
+      balances: { data: balances },
     } = getState();
+
     const walletAddress = getActiveAccountAddress(accounts);
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
     });
 
-    const balances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
-    if (balances && balances.length) {
-      const transformedBalances = transformAssetsToObject(balances);
-      dispatch(saveDbAction('balances', { balances: transformedBalances }, true));
-      dispatch({ type: UPDATE_BALANCES, payload: transformedBalances });
+    const newBalances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
+    if (newBalances && newBalances.length) {
+      const transformedBalances = transformAssetsToObject(newBalances);
+      const updatedBalances = {
+        ...balances,
+        [walletAddress]: transformedBalances,
+      };
+      dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
+      dispatch({
+        type: UPDATE_BALANCES,
+        payload: updatedBalances,
+      });
     }
 
     // @TODO: Extract "rates fetching" to it's own action ones required.

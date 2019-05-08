@@ -27,9 +27,15 @@ import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { connectSmartWalletAccountAction, initSmartWalletSdkAction } from 'actions/smartWalletActions';
+import { UPDATE_BALANCES } from 'constants/assetsConstants';
+import Storage from 'services/storage';
+import { migrateBalancesToAccountsFormat } from 'utils/dataMigration';
+
+const storage = Storage.getInstance('db');
 
 export const initDefaultAccountAction = (walletAddress: string) => {
-  return async (dispatch: Function, getState: Function) => { // eslint-disable-line
+  return async (dispatch: Function) => {
+    const { balances = {} } = await storage.get('balances');
     const keyBasedAccount = {
       id: walletAddress,
       type: ACCOUNT_TYPES.KEY_BASED,
@@ -45,6 +51,13 @@ export const initDefaultAccountAction = (walletAddress: string) => {
      */
 
     // balances
+    if (!balances[walletAddress]) {
+      const migratedBalances = migrateBalancesToAccountsFormat(balances, [keyBasedAccount]);
+      if (migratedBalances) {
+        dispatch({ type: UPDATE_BALANCES, payload: migratedBalances });
+        dispatch(saveDbAction('balances', { balances: migratedBalances }, true));
+      }
+    }
 
     dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
   };
