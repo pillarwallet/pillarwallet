@@ -20,11 +20,11 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Item as NBItem, Input, Label } from 'native-base';
-import { fontSizes, fontWeights, baseColors, UIColors, spacing } from 'utils/variables';
+import { View, TouchableOpacity, Platform, TextInput as RNInput } from 'react-native';
 import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
-import { View, TouchableOpacity, Platform, TextInput as RNInput } from 'react-native';
 import Spinner from 'components/Spinner';
+import { fontSizes, fontWeights, baseColors, UIColors, spacing } from 'utils/variables';
 
 type inputPropsType = {
   placeholder?: string,
