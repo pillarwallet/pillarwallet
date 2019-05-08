@@ -489,10 +489,10 @@ const mapStateToProps = ({
   assets: {
     data: assets,
     assetsState,
-    balances,
     assetsSearchState,
     assetsSearchResults,
   },
+  balances: { data: balances },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
   collectibles: { assets: collectibles },

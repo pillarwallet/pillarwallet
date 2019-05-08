@@ -232,7 +232,8 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: allAssets, balances },
+  assets: { data: allAssets },
+  balances: { data: balances },
   smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
 }) => ({
   allAssets,

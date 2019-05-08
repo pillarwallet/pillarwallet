@@ -327,10 +327,8 @@ class AssetsList extends React.Component<Props> {
 
 const mapStateToProps = ({
   wallet: { data: wallet },
-  assets: {
-    data: assets,
-    balances,
-  },
+  assets: { data: assets },
+  balances: { data: balances },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
 }) => ({
