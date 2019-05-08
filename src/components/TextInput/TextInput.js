@@ -276,15 +276,17 @@ class TextInput extends React.Component<Props, State> {
               paddingRight: (inputProps.multiline ? 58 : 14) + additionalRightPadding,
               paddingTop: inputProps.multiline ? 10 : 0,
               textAlignVertical: inputProps.multiline ? 'top' : 'center',
+              marginBottom: 10,
             }}
             onLayout={onLayout}
           />
-          <RNInput
+          {Platform.OS === 'ios' && <RNInput
             caretHidden
             autoCorrect={false}
             ref={this.rnInput}
             onFocus={this.handleRNFocus}
-          />
+            style={{ marginTop: -10 }}
+          />}
           {!!loading && <AbsoluteSpinner width={30} height={30} />}
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
