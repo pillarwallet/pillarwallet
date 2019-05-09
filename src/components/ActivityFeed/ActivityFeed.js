@@ -25,6 +25,7 @@ import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
+import { createStructuredSelector } from 'reselect';
 
 import { baseColors, spacing } from 'utils/variables';
 import type { Notification } from 'models/Notification';
@@ -53,6 +54,7 @@ import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants'
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import { accountHistorySelector } from 'selectors/history';
 
 const SOCIAL_TYPES = [
   TYPE_RECEIVED,
@@ -446,7 +448,6 @@ class ActivityFeed extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   notifications: { data: notifications },
-  history: { data: history },
   invitations: { data: invitations },
   assets: { data: assets },
   wallet: { data: wallet },
@@ -454,15 +455,23 @@ const mapStateToProps = ({
 }) => ({
   contacts,
   notifications,
-  history,
   invitations,
   assets: Object.values(assets),
   wallet,
   openSeaTxHistory,
 });
 
+const structuredSelector = createStructuredSelector({
+  history: accountHistorySelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch) => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActivityFeed);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(ActivityFeed);

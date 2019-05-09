@@ -23,11 +23,14 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { Animated, RefreshControl, Platform, View } from 'react-native';
+import { Answers } from 'react-native-fabric';
+import { createStructuredSelector } from 'reselect';
+import Intercom from 'react-native-intercom';
+
 import { PROFILE, CONTACT, BADGE } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
-import Intercom from 'react-native-intercom';
 import { BaseText, Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
@@ -60,7 +63,7 @@ import {
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import type { Badges } from 'models/Badge';
-import { Answers } from 'react-native-fabric';
+import { accountHistorySelector } from 'selectors/history';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -774,7 +777,6 @@ class HomeScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   user: { data: user },
-  history: { data: history },
   invitations: { data: invitations },
   wallet: { backupStatus },
   notifications: { intercomNotificationsCount },
@@ -783,12 +785,20 @@ const mapStateToProps = ({
 }) => ({
   contacts,
   user,
-  history,
   invitations,
   intercomNotificationsCount,
   backupStatus,
   deepLinkData,
   badges,
+});
+
+const structuredSelector = createStructuredSelector({
+  history: accountHistorySelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -805,4 +815,4 @@ const mapDispatchToProps = (dispatch) => ({
   fetchBadges: () => dispatch(fetchBadgesAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);

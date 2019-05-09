@@ -57,6 +57,7 @@ import assetsConfig from 'configs/assetsConfig';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountHistorySelector } from 'selectors/history';
 
 // local components
 import ReceiveModal from './ReceiveModal';
@@ -322,18 +323,17 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   assets: { data: assets },
   rates: { data: rates },
-  history: { data: history },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   contacts,
   assets,
   rates,
-  history,
   baseFiatCurrency,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  history: accountHistorySelector,
 });
 
 const combinedMapStateToProps = (state) => ({

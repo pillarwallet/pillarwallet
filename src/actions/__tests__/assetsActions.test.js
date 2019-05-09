@@ -89,7 +89,7 @@ Object.defineProperty(mockWallet, 'sendTransaction', {
 const initialState = {
   assets: { data: { [ETH]: { balance: 10 } } },
   txCount: { data: { lastCount: 0, lastNonce: 0 } },
-  history: { data: [] },
+  history: { data: {} },
   wallet: { data: { address: mockWallet.address } },
   accounts: { data: mockAccounts },
   balances: { data: {} },
