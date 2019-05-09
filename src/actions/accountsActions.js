@@ -23,10 +23,15 @@ import {
   UPDATE_ACCOUNTS,
   ACCOUNT_TYPES,
 } from 'constants/accountsConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
-import { connectSmartWalletAccountAction, initSmartWalletSdkAction } from 'actions/smartWalletActions';
+import {
+  connectSmartWalletAccountAction,
+  initSmartWalletSdkAction,
+  setSmartWalletUpgradeStatusAction,
+} from 'actions/smartWalletActions';
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
 import Storage from 'services/storage';
 import { migrateBalancesToAccountsFormat } from 'utils/dataMigration';
@@ -102,6 +107,18 @@ export const setActiveAccountAction = (accountId: string) => {
       payload: updatedAccounts,
     });
     await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
+    if (account.type !== ACCOUNT_TYPES.SMART_WALLET || !account.extra) return;
+    const { extra: { state = '' } } = account;
+    switch (state.toString().toLowerCase()) {
+      case 'deployed':
+        dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+        break;
+      case 'created':
+        dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED));
+        break;
+      default:
+        break;
+    }
   };
 };
 

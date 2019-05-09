@@ -37,6 +37,7 @@ import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { CHAT, ACTIVITY } from 'constants/tabsConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
@@ -44,9 +45,10 @@ import ActivityFeed from 'components/ActivityFeed';
 import ChatTab from 'components/ChatTab';
 import Tabs from 'components/Tabs';
 import { BaseText, BoldText } from 'components/Typography';
-import { getSmartWalletUpgradeMessageByStatus } from 'utils/smartWallet';
+import Button from 'components/Button';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 import type { ApiUser } from 'models/Contacts';
-import type { SmartWalletUpgradeMessage } from 'models/SmartWalletUpgradeMessage';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
@@ -108,7 +110,8 @@ type Props = {
   disconnectContact: Function,
   muteContact: Function,
   blockContact: Function,
-  smartWalletUpgradeStatus: string,
+  smartWalletState: Object,
+  accounts: [],
 };
 
 type State = {
@@ -277,7 +280,8 @@ class Contact extends React.Component<Props, State> {
       fetchContactTransactions,
       wallet,
       chats,
-      smartWalletUpgradeStatus,
+      smartWalletState,
+      accounts,
     } = this.props;
     const {
       showManageContactModal,
@@ -318,9 +322,10 @@ class Contact extends React.Component<Props, State> {
       },
     ];
 
-    const smartWalletUpgradeMessage: SmartWalletUpgradeMessage =
-      getSmartWalletUpgradeMessageByStatus(smartWalletUpgradeStatus);
-    const disableSend = !!smartWalletUpgradeMessage.message;
+    const smartWalletStatus: SmartWalletStatus =
+      getSmartWalletStatus(accounts, smartWalletState);
+    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const disableSend = !!Object.keys(sendingBlockedMessage).length;
 
     return (
       <ContainerWithBottomSheet
@@ -393,9 +398,19 @@ class Contact extends React.Component<Props, State> {
               onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
             />
             {disableSend &&
-            <Wrapper style={{ marginTop: 30 }}>
-              <MessageTitle>{ smartWalletUpgradeMessage.title }</MessageTitle>
-              <Message>{ smartWalletUpgradeMessage.message }</Message>
+            <Wrapper regularPadding style={{ marginTop: 30, alignItems: 'center' }}>
+              <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
+              <Message>{ sendingBlockedMessage.message }</Message>
+              {smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED &&
+              <Button
+                marginTop="20px"
+                height={52}
+                title="Deploy Smart Wallet"
+                onPress={() => {
+                  // TODO: navigate to last upgrade step?
+                }}
+              />
+              }
             </Wrapper>
             }
           </CircleButtonsWrapper>
@@ -428,13 +443,15 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   chat: { data: { chats } },
   session: { data: session },
-  smartWallet: { upgrade: { status: smartWalletUpgradeStatus } },
+  smartWallet: smartWalletState,
+  accounts: { data: accounts },
 }) => ({
   contacts,
   wallet,
   chats,
   session,
-  smartWalletUpgradeStatus,
+  smartWalletState,
+  accounts,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

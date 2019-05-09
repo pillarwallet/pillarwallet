@@ -49,7 +49,7 @@ import Tabs from 'components/Tabs';
 // types
 import type { Assets, Balances, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
-import type { SmartWalletUpgradeMessage } from 'models/SmartWalletUpgradeMessage';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 
 // actions
 import {
@@ -74,11 +74,11 @@ import {
 } from 'constants/assetsConstants';
 import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import { UPGRADE_TO_SMART_WALLET_FLOW } from 'constants/navigationConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
-import { getSmartWalletUpgradeMessageByStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -110,7 +110,7 @@ type Props = {
   toggleTankModal: Function,
   accounts: [],
   tankData: Object,
-  smartWalletUpgradeStatus: string,
+  smartWalletState: Object,
 }
 
 type State = {
@@ -404,7 +404,7 @@ class AssetsScreen extends React.Component<Props, State> {
       toggleTankModal,
       accounts,
       tankData,
-      smartWalletUpgradeStatus,
+      smartWalletState,
     } = this.props;
     const { query, activeTab, forceHideRemoval } = this.state;
 
@@ -444,12 +444,13 @@ class AssetsScreen extends React.Component<Props, State> {
       ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
       : collectibles;
 
-    // TODO: account.isActive?
-    const isSmartWallet = accounts.find(account => account.type === ACCOUNT_TYPES.SMART_WALLET);
+    const smartWalletStatus: SmartWalletStatus =
+      getSmartWalletStatus(accounts, smartWalletState);
+    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
+      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
 
-    const smartWalletUpgradeMessage: SmartWalletUpgradeMessage =
-      getSmartWalletUpgradeMessageByStatus(smartWalletUpgradeStatus);
-    const blockAssetsView = !!smartWalletUpgradeMessage.message;
+    const isSmartWallet = smartWalletStatus.hasAccount;
 
     return (
       <Container inset={{ bottom: 0 }}>
@@ -471,8 +472,8 @@ class AssetsScreen extends React.Component<Props, State> {
         />
         {(blockAssetsView &&
           <Wrapper flex={1} regularPadding center>
-            <MessageTitle>{ smartWalletUpgradeMessage.title }</MessageTitle>
-            <Message>{ smartWalletUpgradeMessage.message }</Message>
+            <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
+            <Message>{ sendingBlockedMessage.message }</Message>
           </Wrapper>
         ) ||
           <TokensWrapper>
@@ -528,7 +529,7 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
   collectibles: { assets: collectibles },
   tank: { data: tankData },
-  smartWallet: { upgrade: { status: smartWalletUpgradeStatus } },
+  smartWallet: smartWalletState,
 }) => ({
   wallet,
   accounts,
@@ -541,7 +542,7 @@ const mapStateToProps = ({
   assetsLayout,
   collectibles,
   tankData,
-  smartWalletUpgradeStatus,
+  smartWalletState,
 });
 
 const structuredSelector = createStructuredSelector({

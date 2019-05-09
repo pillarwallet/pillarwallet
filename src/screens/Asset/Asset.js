@@ -226,6 +226,8 @@ class AssetScreen extends React.Component<Props, State> {
       disclaimer,
     } = assetsConfig[assetData.token] || {};
 
+    // TODO: add send block for smart wallet statuses
+
     return (
       <Container color={baseColors.white} inset={{ bottom: 0 }}>
         <Header

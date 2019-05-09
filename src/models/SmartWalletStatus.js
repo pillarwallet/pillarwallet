@@ -17,7 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type SmartWalletUpgradeMessage = {
-  title?: string,
-  message?: string,
+export type SmartWalletStatus = {
+  status: ?string,
+  hasAccount: boolean,
+  sendingBlockedMessage?: {
+    title?: string,
+    message?: string,
+  }
 };

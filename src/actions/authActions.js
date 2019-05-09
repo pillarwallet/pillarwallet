@@ -37,12 +37,10 @@ import {
   CHAT,
   CHAT_LIST,
   PIN_CODE_UNLOCK,
-  UPGRADE_INTRO,
 } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
@@ -66,7 +64,6 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const {
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
-      accounts: { data: walletAccounts = [] },
     } = getState();
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -150,12 +147,9 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
 
-      const smartWalletAccounts = walletAccounts.filter(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
-      const smartWalletUpgrade = !smartWalletAccounts.length && UPGRADE_INTRO;
-
       const navigateToLastActiveScreen = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
-        routeName: smartWalletUpgrade || lastActiveScreen || ASSETS,
+        routeName: lastActiveScreen || ASSETS,
         params: lastActiveScreenParams,
       });
 

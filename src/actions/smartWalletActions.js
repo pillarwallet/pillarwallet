@@ -165,8 +165,9 @@ export const setAssetsTransferTransactions = (transactions: SmartWalletTransferT
   };
 };
 
-export const setSmartWalletUpgradeStatus = (upgradeStatus: string) => {
+export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
   return async (dispatch: Function) => {
+    // TODO: subscribe for smart wallet account deployment complete check and fire this action
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
