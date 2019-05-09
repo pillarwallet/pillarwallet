@@ -29,7 +29,7 @@ import {
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { updateAccountHistory } from 'utils/history';
-import { getActiveAccountId } from 'utils/accounts';
+import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { checkForMissedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
@@ -40,13 +40,13 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
-      wallet: { data: wallet },
       history: { data: currentHistory },
     } = getState();
     const accountId = getActiveAccountId(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
 
     const history = await api.fetchHistory({
-      address1: wallet.address,
+      address1: accountAddress,
       asset,
       nbTx: TRANSACTIONS_HISTORY_STEP,
       fromIndex,
@@ -67,16 +67,17 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
   };
 };
 
-export const fetchContactTransactionsAction = (myAddress: string, contactAddress: string, asset?: string = 'ALL') => {
+export const fetchContactTransactionsAction = (contactAddress: string, asset?: string = 'ALL') => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
       history: { data: currentHistory },
     } = getState();
     const accountId = getActiveAccountId(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
 
     const history = await api.fetchHistory({
-      address1: myAddress,
+      address1: accountAddress,
       address2: contactAddress,
       asset,
       nbTx: TRANSACTIONS_HISTORY_STEP,
@@ -143,7 +144,9 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
 
     const lastCreatedAt = Math.max(...updatedAccountHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-
+    console.log(lastCreatedAt, updatedHistory);
+    /* TODO: FIX ME
+    // TODO: we need to check account that should store the received notifications
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch(saveDbAction('app_settings', { appSettings: { lastTxSyncDatetime: lastCreatedAt } }));
     dispatch({
@@ -154,6 +157,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       type: SET_HISTORY,
       payload: updatedHistory,
     });
+    */
   };
 };
 

@@ -103,8 +103,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: ApiUser[],
   syncContact: Function,
-  fetchContactTransactions: (walletAddress: string, contactAddress: string, asset?: string) => Function,
-  wallet: Object,
+  fetchContactTransactions: (contactAddress: string, asset?: string) => Function,
   chats: Object[],
   session: Object,
   disconnectContact: Function,
@@ -149,7 +148,6 @@ class Contact extends React.Component<Props, State> {
   componentDidMount() {
     const {
       fetchContactTransactions,
-      wallet,
       syncContact,
       session,
       navigation,
@@ -175,7 +173,7 @@ class Contact extends React.Component<Props, State> {
     const localContact = this.localContact; // eslint-disable-line
     if (localContact && session.isOnline) {
       syncContact(localContact.id);
-      fetchContactTransactions(wallet.address, localContact.ethAddress);
+      fetchContactTransactions(localContact.ethAddress);
     }
   }
 
@@ -278,7 +276,6 @@ class Contact extends React.Component<Props, State> {
       navigation,
       contacts,
       fetchContactTransactions,
-      wallet,
       chats,
       smartWalletState,
       accounts,
@@ -322,8 +319,7 @@ class Contact extends React.Component<Props, State> {
       },
     ];
 
-    const smartWalletStatus: SmartWalletStatus =
-      getSmartWalletStatus(accounts, smartWalletState);
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const disableSend = !!Object.keys(sendingBlockedMessage).length;
 
@@ -373,7 +369,7 @@ class Contact extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                fetchContactTransactions(wallet.address, displayContact.ethAddress);
+                fetchContactTransactions(displayContact.ethAddress);
               }}
             />
           }
@@ -440,14 +436,12 @@ class Contact extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  wallet: { data: wallet },
   chat: { data: { chats } },
   session: { data: session },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
 }) => ({
   contacts,
-  wallet,
   chats,
   session,
   smartWalletState,
@@ -456,9 +450,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   syncContact: userId => dispatch(syncContactAction(userId)),
-  fetchContactTransactions: (walletAddress, contactAddress) => {
-    dispatch(fetchContactTransactionsAction(walletAddress, contactAddress));
-  },
+  fetchContactTransactions: (contactAddress) => dispatch(fetchContactTransactionsAction(contactAddress)),
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
