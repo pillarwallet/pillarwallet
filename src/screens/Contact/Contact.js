@@ -18,28 +18,36 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { RefreshControl, Platform, View } from 'react-native';
+import { RefreshControl, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
-import { syncContactAction } from 'actions/contactsActions';
+import {
+  syncContactAction,
+  disconnectContactAction,
+  muteContactAction,
+  blockContactAction,
+} from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
-import { CHAT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
+import { ScrollWrapper } from 'components/Layout';
+import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
+import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
+import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
+import { CHAT, ACTIVITY } from 'constants/tabsConstants';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
+import ChatTab from 'components/ChatTab';
+import Tabs from 'components/Tabs';
 import type { ApiUser } from 'models/Contacts';
-import { BaseText } from 'components/Typography';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
 const iconSend = require('assets/icons/icon_send.png');
-const iconChat = require('assets/icons/icon_chat_contact.png');
 
 const ContactWrapper = styled.View`
   position: relative;
@@ -47,44 +55,30 @@ const ContactWrapper = styled.View`
   align-items: center;
   margin: 5px 20px 20px;
   padding-top: ${Platform.select({
-    ios: '20px',
-    android: '14px',
+    ios: '15px',
+    android: '9px',
   })};
 `;
 
-const CircleButtonsWrapper = styled(Wrapper)`
-  margin-bottom: 35px;
+const CircleButtonsWrapper = styled.View`
   margin-top: ${Platform.select({
-    ios: 0,
-    android: '-20px',
-  })}
+    ios: '30px',
+    android: '15px',
+  })};
+  margin-bottom: 25px;
+  padding-top: 20px;
+  padding-bottom: 30px;
+  background-color: ${baseColors.snowWhite};
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-color: ${baseColors.mediumLightGray};
+  justify-content: center;
+  align-items: center;
 `;
 
-const BadgePlacer = styled.View`
-  position: absolute;
-  top: 21px;
-  right: 14px;
-  width: 22px;
-  height: 22px;
-  flex-direction: row;
-`;
-
-const ItemBadge = styled.View`
-  height: 22px;
-  width: 22px;
-  border-width: 2px;
-  border-color: ${baseColors.white}
-  border-radius: 11px;
-  background-color: ${baseColors.sunYellow}
-  align-self: center;
-`;
-
-const UnreadCount = styled(BaseText)`
-  color: ${baseColors.black};
-  font-size: ${fontSizes.tiny};
-  align-self: center;
-  text-align: center;
-  margin-top: 2px;
+const SheetContentWrapper = styled.View`
+  flex: 1;
+  padding-top: 30px;
 `;
 
 type Props = {
@@ -96,27 +90,40 @@ type Props = {
   wallet: Object,
   chats: Object[],
   session: Object,
+  disconnectContact: Function,
+  muteContact: Function,
+  blockContact: Function,
 };
 
 type State = {
   showManageContactModal: boolean,
   showConfirmationModal: boolean,
   manageContactType: string,
+  activeTab: string,
+  isSheetOpen: boolean,
+  forceOpen: boolean,
 };
 
 class Contact extends React.Component<Props, State> {
   isComponentMounted: boolean = false;
   localContact: ?ApiUser;
+  activityFeedRef: ?Object;
 
   constructor(props: Props) {
     super(props);
     const { navigation, contacts } = this.props;
-    const contact = navigation.getParam('contact', {});
+    this.activityFeedRef = React.createRef();
+    const contactName = navigation.getParam('username', '');
+    const shouldOpenSheet = navigation.getParam('chatTabOpen', false);
+    const contact = navigation.getParam('contact', { username: contactName });
     this.localContact = contacts.find(({ username }) => username === contact.username);
     this.state = {
       showManageContactModal: false,
       showConfirmationModal: false,
       manageContactType: '',
+      activeTab: 'CHAT',
+      isSheetOpen: shouldOpenSheet,
+      forceOpen: shouldOpenSheet,
     };
   }
 
@@ -129,7 +136,8 @@ class Contact extends React.Component<Props, State> {
       navigation,
     } = this.props;
     this.isComponentMounted = true;
-    const contact = navigation.getParam('contact', {});
+    const contactName = navigation.getParam('username', '');
+    const contact = navigation.getParam('contact', { username: contactName });
     const defaultImageCacheManager = ImageCacheManager();
 
     if (contact.profileImage && session.isOnline) {
@@ -163,10 +171,10 @@ class Contact extends React.Component<Props, State> {
     return url;
   };
 
-  getUnreadCount = (chats: Object[], username: string): number => {
-    const userChat = chats.find(chat => chat.username === username) || {};
-    const { unread = 0 } = userChat;
-    return unread;
+  showManageContactModalTrigger = () => {
+    this.setState({
+      showManageContactModal: true,
+    });
   };
 
   manageContact = (manageContactType: string) => {
@@ -180,10 +188,70 @@ class Contact extends React.Component<Props, State> {
     }, 1000);
   };
 
-  confirmManageAction = () => {
-    this.setState({
-      showConfirmationModal: false,
-    });
+  confirmManageAction = (status: ?string = '') => {
+    // here will be called the action to manageContactType (block, disconnect, mute)
+    const { navigation, contacts } = this.props;
+    const {
+      manageContactType,
+    } = this.state;
+
+    const contact = navigation.getParam('contact', {});
+    const theContact = contacts.find(({ username }) => username === contact.username);
+    if (!theContact) {
+      return;
+    }
+    if (manageContactType === DISCONNECT) {
+      this.props.disconnectContact(theContact.id);
+    } else if (manageContactType === MUTE) {
+      const mute = !(status === 'muted');
+      this.props.muteContact(theContact.id, mute);
+    } else if (manageContactType === BLOCK) {
+      const block = !(status === 'blocked');
+      this.props.blockContact(theContact.id, block);
+    }
+
+    setTimeout(() => {
+      this.setState({
+        showConfirmationModal: false,
+      });
+    }, 1000);
+  };
+
+  setActiveTab = (activeTab) => {
+    this.setState({ activeTab });
+  };
+
+  handleSheetOpen = () => {
+    this.setState({ isSheetOpen: true });
+  };
+
+  renderSheetContent = (displayContact, unreadCount) => {
+    const { activeTab, isSheetOpen } = this.state;
+    const { navigation } = this.props;
+    if (activeTab === ACTIVITY) {
+      return (
+        <ActivityFeed
+          ref={(ref) => { this.activityFeedRef = ref; }}
+          navigation={navigation}
+          activeTab={TRANSACTIONS}
+          additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
+          showArrowsOnly
+          contentContainerStyle={{ paddingTop: 10 }}
+          esData={{
+            title: 'Make your first step',
+            body: 'Your activity will appear here.',
+          }}
+        />
+      );
+    }
+    return (
+      <ChatTab
+        contact={displayContact}
+        isOpen={activeTab === CHAT && isSheetOpen}
+        navigation={navigation}
+        hasUnreads={!!unreadCount}
+      />
+    );
   };
 
   render() {
@@ -198,23 +266,81 @@ class Contact extends React.Component<Props, State> {
       showManageContactModal,
       showConfirmationModal,
       manageContactType,
+      activeTab,
+      forceOpen,
     } = this.state;
 
-    const contact = navigation.getParam('contact', {});
+    const contactName = navigation.getParam('username', '');
+    const contact = navigation.getParam('contact', { username: contactName });
     // NOTE: we need a fresh copy of the contact here as the avatar might be changed
     const localContact = contacts.find(({ username }) => username === contact.username);
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
-    const userAvatar = displayContact.profileLargeImage
-      ? this.getUserAvatar(isAccepted, displayContact.profileLargeImage, displayContact.lastUpdateTime)
+
+    // due to the fact that profileLargeImage is not being passed in connections notifications payload for now
+    // profileImage is set here as a fallback so requester's avatar (if exists) would be visible
+    const existingProfileImage = displayContact.profileLargeImage || displayContact.profileImage;
+    const userAvatar = existingProfileImage
+      ? this.getUserAvatar(isAccepted, existingProfileImage, displayContact.lastUpdateTime)
       : undefined;
-    const unreadCount = this.getUnreadCount(chats, displayContact.username);
+
+    const chatInfo = chats.find(chat => chat.username === displayContact.username) || { unread: 0 };
+    const unreadCount = chatInfo.unread;
+
+    const contactTabs = [
+      {
+        id: CHAT,
+        name: 'Chat',
+        onPress: () => this.setActiveTab(CHAT),
+        unread: unreadCount,
+      },
+      {
+        id: ACTIVITY,
+        name: 'Activity',
+        onPress: () => this.setActiveTab(ACTIVITY),
+      },
+    ];
 
     return (
-      <Container inset={{ bottom: 0 }}>
+      <ContainerWithBottomSheet
+        inset={{ bottom: 0 }}
+        color={baseColors.white}
+        hideSheet={!isAccepted}
+        bottomSheetProps={{
+          forceOpen,
+          initialSheetHeight: 240,
+          swipeToCloseHeight: 62,
+          onSheetOpen: this.handleSheetOpen,
+          onSheetClose: () => { this.setState({ isSheetOpen: false }); },
+          animateHeight: activeTab === CHAT,
+          floatingHeaderContent: (
+            <Tabs
+              initialActiveTab={activeTab}
+              tabs={contactTabs}
+              wrapperStyle={{
+                position: 'absolute',
+                top: 8,
+                left: 0,
+                zIndex: 2,
+                width: '100%',
+              }}
+            />
+          ),
+        }}
+        bottomSheetChildren={
+          (
+            <SheetContentWrapper>
+              {this.renderSheetContent(displayContact, unreadCount)}
+            </SheetContentWrapper>
+          )
+        }
+      >
         <Header
           title={displayContact.username}
           onBack={() => navigation.goBack(null)}
+          showRight
+          onNextPress={this.showManageContactModalTrigger}
+          nextIcon="more"
         />
         <ScrollWrapper
           refreshControl={
@@ -237,39 +363,15 @@ class Contact extends React.Component<Props, State> {
               imageUpdateTimeStamp={displayContact.lastUpdateTime}
             />
           </ContactWrapper>
-          <CircleButtonsWrapper center horizontal>
-            {isAccepted && (
-              <React.Fragment>
-                <View>
-                  <CircleButton
-                    label="Chat"
-                    icon={iconChat}
-                    onPress={() => navigation.navigate(CHAT, { username: displayContact.username })}
-                  />
-                  {!!unreadCount &&
-                    <BadgePlacer>
-                      <ItemBadge>
-                        <UnreadCount>{unreadCount > 9 ? '9+' : unreadCount}</UnreadCount>
-                      </ItemBadge>
-                    </BadgePlacer>
-                  }
-                </View>
-                <CircleButton
-                  label="Send"
-                  icon={iconSend}
-                  onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
-                />
-              </React.Fragment>
-            )}
-          </CircleButtonsWrapper>
           {isAccepted &&
-          <ActivityFeed
-            feedTitle="activity."
-            navigation={navigation}
-            activeTab={TRANSACTIONS}
-            additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
-            showArrowsOnly
-          />}
+          <CircleButtonsWrapper>
+            <CircleButton
+              label="Send"
+              icon={iconSend}
+              onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
+            />
+          </CircleButtonsWrapper>
+         }
         </ScrollWrapper>
         <ManageContactModal
           showManageContactModal={showManageContactModal}
@@ -277,17 +379,18 @@ class Contact extends React.Component<Props, State> {
           onModalHide={() => {
             this.setState({ showManageContactModal: false });
           }}
+          contactStatus={displayContact.status}
         />
         <ConnectionConfirmationModal
           showConfirmationModal={showConfirmationModal}
           manageContactType={manageContactType}
-          contact={contact}
-          onConfirm={this.confirmManageAction}
+          contact={displayContact}
+          onConfirm={() => { this.confirmManageAction(displayContact.status); }}
           onModalHide={() => {
             this.setState({ showConfirmationModal: false });
           }}
         />
-      </Container>
+      </ContainerWithBottomSheet>
     );
   }
 }
@@ -309,6 +412,9 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchContactTransactions: (walletAddress, contactAddress) => {
     dispatch(fetchContactTransactionsAction(walletAddress, contactAddress));
   },
+  disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
+  muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
+  blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Contact);

@@ -21,9 +21,11 @@
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { View as mockView } from 'react-native';
-import { utils } from 'ethers';
+import { utils, HDNode } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
+
+process.env.IS_TEST = 'TEST';
 
 jest.mock('NativeAnimatedHelper');
 
@@ -59,6 +61,10 @@ Object.defineProperty(mockWallet, 'RNencrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
+const mockInjectedProvider = {
+  getBalance: () => Promise.resolve(1), // dummy balance
+};
+
 jest.setMock('ethers', {
   Wallet: {
     fromMnemonic: () => mockWallet,
@@ -71,10 +77,12 @@ jest.setMock('ethers', {
     getAddress: utils.getAddress,
   },
   providers: {
-    getDefaultProvider: () => ({
-      getBalance: () => Promise.resolve(1), // ropsten dummy balance
-    }),
+    getDefaultProvider: () => mockInjectedProvider,
+    JsonRpcProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
+    EtherscanProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
+    FallbackProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
   },
+  HDNode,
 });
 
 jest.setMock('react-native-background-timer', {
@@ -155,4 +163,23 @@ jest.setMock('react-native-cached-image', {
     clearCache: () => Promise.resolve(),
   }),
   CachedImage: jest.fn(),
+});
+
+jest.setMock('react-native-threads', {
+  Thread: () => ({
+    onmessage: () => Promise.resolve(),
+    postMessage: () => Promise.resolve(),
+  }),
+});
+
+jest.mock('react-native-fabric', () => {
+  return {
+    Crashlytics: {
+      crash: () => {},
+    },
+    Answers: {
+      logCustom: () => {},
+      logContentView: () => {},
+    },
+  };
 });

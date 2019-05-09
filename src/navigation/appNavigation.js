@@ -22,7 +22,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, View, Platform, Image, DeviceEventEmitter } from 'react-native';
+import { Animated, Easing, View, Platform, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
 
 // services
@@ -49,9 +49,6 @@ import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import HomeScreen from 'screens/Home';
-import ChatListScreen from 'screens/Chat/ChatList';
-import NewChatListScreen from 'screens/Chat/NewChatList';
-import ChatScreen from 'screens/Chat/Chat';
 import ICOScreen from 'screens/ICO';
 import ParticipateScreen from 'screens/Participate';
 import InstructionsScreen from 'screens/Participate/Instructions';
@@ -60,10 +57,12 @@ import ICOLinks from 'screens/ICOLinks';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
-import SendCollectibleAssetsScreen from 'screens/SendCollectible/SendCollectibleAssets';
 import WalletConnectSessionRequest from 'screens/WalletConnect/WalletConnectSessionRequest';
 import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
+import BadgeScreen from 'screens/Badge';
+import OTPScreen from 'screens/OTP';
+import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -86,6 +85,7 @@ import { getExistingChatsAction } from 'actions/chatActions';
 import { fetchICOsAction } from 'actions/icosActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 
 // constants
 import {
@@ -113,9 +113,6 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
-  CHAT_LIST,
-  NEW_CHAT,
-  CHAT,
   AUTH_FLOW,
   MARKET,
   PARTICIPATE_IN_ICO_FLOW,
@@ -129,51 +126,38 @@ import {
   COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
-  SEND_COLLECTIBLE_FROM_CONTACT_FLOW,
-  SEND_COLLECTIBLE_ASSETS,
   WALLETCONNECT_FLOW,
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
+  BADGE,
+  OTP,
+  CONFIRM_CLAIM,
 } from 'constants/navigationConstants';
-import { PENDING } from 'constants/userConstants';
+import { PENDING, REGISTERED } from 'constants/userConstants';
 
 import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
 
 // models
 import type { Assets } from 'models/Asset';
 
+// utils
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
-import { modalTransition } from 'utils/common';
-import { initWalletConnectSessions } from '../actions/walletConnectActions';
+import { initWalletConnectSessions } from 'actions/walletConnectActions';
+import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
-const addAppStateChangeListener = callback => {
-  return Platform.OS === 'ios'
-    ? AppState.addEventListener('change', callback)
-    : DeviceEventEmitter.addListener('ActivityStateChange', callback);
-};
-
-const removeAppStateChangeListener = callback => {
-  return Platform.OS === 'ios'
-    ? AppState.removeEventListener('change', callback)
-    : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
-};
-
 const iconWallet = require('assets/icons/icon_wallet_new.png');
 const iconPeople = require('assets/icons/icon_people_new.png');
 const iconHome = require('assets/icons/icon_home_new.png');
 // const iconMarket = require('assets/icons/icon_marketplace_new.png');
-const iconChat = require('assets/icons/icon_chat_new.png');
-
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
 // const iconMarketActive = require('assets/icons/icon_marketplace_active.png');
-const iconChatActive = require('assets/icons/icon_chat_active.png');
 
 const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
 
@@ -205,19 +189,6 @@ const hideTabNavigatorOnChildView = ({ navigation }) => {
   };
 };
 
-// CHAT FLOW
-const chatFlow = createStackNavigator(
-  {
-    [CHAT_LIST]: ChatListScreen,
-    [NEW_CHAT]: NewChatListScreen,
-    [CONTACT]: ContactScreen,
-    [CHAT]: ChatScreen,
-  },
-  StackNavigatorConfig,
-);
-
-chatFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 // ASSETS FLOW
 const assetsFlow = createStackNavigator(
   {
@@ -232,16 +203,12 @@ const assetsFlow = createStackNavigator(
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // PEOPLE FLOW
-const peopleFlow = createStackNavigator(
-  {
-    [PEOPLE]: PeopleScreen,
-    [CONTACT]: ContactScreen,
-    [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
-    [CHAT]: ChatScreen,
-    [COLLECTIBLE]: CollectibleScreen,
-  },
-  StackNavigatorConfig,
-);
+const peopleFlow = createStackNavigator({
+  [PEOPLE]: PeopleScreen,
+  [CONTACT]: ContactScreen,
+  [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
+  [COLLECTIBLE]: CollectibleScreen,
+}, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
@@ -256,16 +223,15 @@ const walletConnectFlow = createStackNavigator(
 );
 
 // HOME FLOW
-const homeFlow = createStackNavigator(
-  {
-    [HOME]: HomeScreen,
-    [PROFILE]: ProfileScreen,
-    [CONTACT]: ContactScreen,
-    [CHAT]: ChatScreen,
-    [COLLECTIBLE]: CollectibleScreen,
-  },
-  StackNavigatorConfig,
-);
+const homeFlow = createStackNavigator({
+  [HOME]: HomeScreen,
+  [PROFILE]: ProfileScreen,
+  [OTP]: OTPScreen,
+  [CONFIRM_CLAIM]: ConfirmClaimScreen,
+  [CONTACT]: ContactScreen,
+  [COLLECTIBLE]: CollectibleScreen,
+  [BADGE]: BadgeScreen,
+}, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
@@ -347,8 +313,11 @@ const tabNavigation = createBottomTabNavigator(
     },
     [PEOPLE]: {
       screen: peopleFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconPeopleActive, iconPeople),
+      navigationOptions: ({ navigation, screenProps }) => ({
+        tabBarIcon: tabBarIcon(
+          iconPeopleActive,
+          iconPeople,
+          !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
         tabBarLabel: tabBarLabel('People'),
       }),
     },
@@ -373,20 +342,7 @@ const tabNavigation = createBottomTabNavigator(
     //     tabBarLabel: tabBarLabel('Market'),
     //   }),
     // },
-    [CHAT_LIST]: {
-      screen: chatFlow,
-      navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon(
-          iconChatActive,
-          iconChat,
-          !navigation.isFocused() && screenProps.hasUnreadChatNotifications,
-        ),
-
-        tabBarLabel: tabBarLabel('Chat'),
-      }),
-    },
-  },
-  {
+  }, {
     tabBarOptions: {
       activeTintColor: UIColors.primary,
       inactiveTintColor: 'gray',
@@ -424,48 +380,33 @@ const sendTokenFromAssetFlow = createStackNavigator(
   StackNavigatorModalConfig,
 );
 
-// SEND TOKEN FROM CONTACT FLOW
-const sendTokenFromContactFlow = createStackNavigator(
-  {
-    [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
-    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorModalConfig,
-);
+// SEND ASSETS FROM CONTACT FLOW
+const sendTokenFromContactFlow = createStackNavigator({
+  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
+  // tokens
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  // collectibles
+  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorModalConfig);
 
 // SEND COLLECTIBLE FROM ASSET FLOW
-const sendCollectibleFromAssetFlow = createStackNavigator(
-  {
-    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
-    [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorModalConfig,
-);
+const sendCollectibleFromAssetFlow = createStackNavigator({
+  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorModalConfig);
 
-// SEND COLLECTIBLE FROM CONTACT / CONNECTION EVENT FLOW
-const sendCollectibleFromContactFlow = createStackNavigator(
-  {
-    [SEND_COLLECTIBLE_ASSETS]: SendCollectibleAssetsScreen,
-    [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorModalConfig,
-);
-
-const changePinFlow = createStackNavigator(
-  {
-    [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
-    [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
-    [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
-  },
-  StackNavigatorModalConfig,
-);
+const changePinFlow = createStackNavigator({
+  [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
+  [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
+  [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
+}, StackNavigatorModalConfig);
 
 // PARTICIPATE IN ICO FLOW
 const participateInICOFlow = createStackNavigator(
@@ -494,7 +435,6 @@ const AppFlowNavigation = createStackNavigator(
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
     [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
-    [SEND_COLLECTIBLE_FROM_CONTACT_FLOW]: sendCollectibleFromContactFlow,
     [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
@@ -515,7 +455,7 @@ type Props = {
   stopListeningChatWebSocket: Function,
   initWalletConnect: Function,
   fetchICOs: Function,
-  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchAssetsBalances: (assets: Assets) => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
@@ -530,7 +470,8 @@ type Props = {
   isPickingImage: boolean,
   updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
-};
+  removePrivateKeyFromMemory: Function,
+}
 
 let lockTimer;
 
@@ -546,13 +487,12 @@ class AppFlow extends React.Component<Props, {}> {
       fetchICOs,
       getExistingChats,
       assets,
-      wallet,
       fetchAllCollectiblesData,
       initWalletConnect,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
-    fetchAssetsBalances(assets, wallet.address);
+    fetchAssetsBalances(assets);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     fetchICOs();
@@ -564,8 +504,17 @@ class AppFlow extends React.Component<Props, {}> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { notifications } = this.props;
+    const {
+      notifications,
+      userState,
+      wallet,
+      removePrivateKeyFromMemory,
+    } = this.props;
     const { notifications: prevNotifications } = prevProps;
+
+    if (userState === REGISTERED && wallet.privateKey) {
+      removePrivateKeyFromMemory();
+    }
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
@@ -686,9 +635,7 @@ const mapDispatchToProps = dispatch => ({
   stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
   startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
-  fetchAssetsBalances: (assets, walletAddress) => {
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
+  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },
@@ -699,6 +646,7 @@ const mapDispatchToProps = dispatch => ({
   fetchICOs: () => dispatch(fetchICOsAction()),
   updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
+  removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
 });
 
 const ConnectedAppFlow = connect(

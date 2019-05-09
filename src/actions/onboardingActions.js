@@ -58,15 +58,16 @@ import { getExchangeRates } from 'services/assets';
 import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from './dbActions';
 import { generateWalletMnemonicAction } from './walletActions';
+import { updateConnectionKeyPairs } from './connectionKeyPairActions';
 
 const storage = Storage.getInstance('db');
 
-const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Function) => {
+const getTokenWalletAndRegister = async (privateKey: string, api: Object, user: Object, dispatch: Function) => {
   await firebase.messaging().requestPermission().catch(() => { });
   const fcmToken = await firebase.messaging().getToken().catch(() => { });
 
   await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
-  const sdkWallet = await api.registerOnAuthServer(fcmToken, user.username);
+  const sdkWallet = await api.registerOnAuthServer(privateKey, fcmToken, user.username);
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
   const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
@@ -111,7 +112,8 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
   };
 };
 
-const finishRegistration = async (api: Object, userInfo: Object, dispatch: Function) => {
+const finishRegistration = async (
+  api: Object, userInfo: Object, dispatch: Function, mnemonic: string, privateKey: string) => {
   // get & store initial assets
   const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
   const rates = await getExchangeRates(Object.keys(initialAssets));
@@ -127,6 +129,8 @@ const finishRegistration = async (api: Object, userInfo: Object, dispatch: Funct
   });
 
   dispatch(saveDbAction('assets', { assets: initialAssets }));
+
+  await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
   // restore access tokens
   await dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
@@ -186,7 +190,7 @@ export const registerWalletAction = () => {
       payload: ENCRYPTING,
     });
     await delay(50);
-    const saltedPin = getSaltedPin(pin);
+    const saltedPin = await getSaltedPin(pin, dispatch);
     const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => ({}));
@@ -207,20 +211,20 @@ export const registerWalletAction = () => {
       },
     });
 
-    // STEP 4: Initialize SDK annd register user
+    // STEP 4: Initialize SDK and register user
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
     });
 
-    api.init(wallet.privateKey);
+    api.init();
     const {
       sdkWallet,
       userInfo,
       fcmToken,
       registrationSucceed,
       oAuthTokens,
-    } = await getTokenWalletAndRegister(api, user, dispatch);
+    } = await getTokenWalletAndRegister(wallet.privateKey, api, user, dispatch);
 
     await dispatch(signalInitAction({
       userId: sdkWallet.userId,
@@ -234,7 +238,15 @@ export const registerWalletAction = () => {
     if (!registrationSucceed) { return; }
 
     // STEP 5: finish registration
-    await finishRegistration(api, userInfo, dispatch);
+    let finalMnemonic = mnemonicPhrase;
+    if (importedWallet) {
+      if (importedWallet.mnemonic) {
+        finalMnemonic = importedWallet.mnemonic;
+      } else {
+        finalMnemonic = '';
+      }
+    }
+    await finishRegistration(api, userInfo, dispatch, finalMnemonic, wallet.privateKey);
 
     // STEP 6: all done, navigate to the assets screen
     const isWalletBackedUp = isImported || isBackedUp;
@@ -246,7 +258,8 @@ export const registerOnBackendAction = () => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const {
       wallet: {
-        onboarding: { apiUser },
+        data: walletData,
+        onboarding: { apiUser, mnemonic, privateKey },
         backupStatus: { isBackedUp, isImported },
       },
     } = getState();
@@ -260,10 +273,15 @@ export const registerOnBackendAction = () => {
     }
     await delay(1000);
 
-    const { registrationSucceed, userInfo } = await getTokenWalletAndRegister(api, user, dispatch);
+    const { registrationSucceed, userInfo } = await getTokenWalletAndRegister(
+      walletData.privateKey,
+      api,
+      user,
+      dispatch,
+    );
     if (!registrationSucceed) { return; }
 
-    await finishRegistration(api, userInfo, dispatch);
+    await finishRegistration(api, userInfo, dispatch, mnemonic, privateKey);
     const isWalletBackedUp = isImported || isBackedUp;
     navigateToAppFlow(isWalletBackedUp);
   };
@@ -276,19 +294,12 @@ export const validateUserDetailsAction = ({ username }: Object) => {
       type: UPDATE_WALLET_STATE,
       payload: CHECKING_USERNAME,
     });
-    const { mnemonic, importedWallet } = currentState.wallet.onboarding;
+    const { mnemonic } = currentState.wallet.onboarding;
     const mnemonicPhrase = generateMnemonicPhrase(mnemonic.original);
     dispatch(generateWalletMnemonicAction(mnemonicPhrase));
     await delay(200);
 
-    let wallet = importedWallet;
-    if (!wallet) {
-      wallet = currentState.wallet.data.privateKey
-        ? currentState.wallet.data
-        : ethers.Wallet.fromMnemonic(mnemonicPhrase);
-    }
-
-    api.init(wallet.privateKey);
+    api.init();
     const apiUser = await api.usernameSearch(username);
     const usernameExists = apiUser.username === username;
     const inappropriateUsername = apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME;

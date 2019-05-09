@@ -19,14 +19,17 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FlatList, Alert, ScrollView, Keyboard } from 'react-native';
+import { FlatList, Alert, ScrollView, Keyboard, View } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
+import TouchID from 'react-native-touch-id';
 import {
   CHANGE_PIN_FLOW,
   REVEAL_BACKUP_PHRASE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
+  OTP,
+  CONFIRM_CLAIM,
 } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
@@ -37,19 +40,24 @@ import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
 import CountrySelect from 'components/CountrySelect';
+import CheckPin from 'components/CheckPin';
 import {
   saveBaseFiatCurrencyAction,
+  changeUseBiometricsAction,
   updateAppSettingsAction,
 } from 'actions/appSettingsActions';
-import { updateUserAction } from 'actions/userActions';
-import { repairStorageAction } from 'actions/appActions';
+import { updateUserAction, createOneTimePasswordAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
+import { repairStorageAction } from 'actions/appActions';
+import { isProdEnv } from 'utils/environment';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import { baseColors, spacing } from 'utils/variables';
+import { delay } from 'utils/common';
 import ProfileSettingsItem from './ProfileSettingsItem';
-import ProfileForm from './ProfileForm';
+import EditProfile from './EditProfile';
 import SettingsModalTitle from './SettingsModalTitle';
+import ReferralCodeModal from './ReferralCodeModal';
 
 // sections
 import AppearanceSettingsSection from './AppearanceSettingsSection';
@@ -85,6 +93,29 @@ const emailFormFields = [{
   config: { placeholder: 'user@example.com', autoCapitalize: 'none', error: 'Please specify valid email' },
 }];
 
+const phoneFormFields = [{
+  label: 'Phone',
+  name: 'phone',
+  type: 'phone',
+  config: {
+    keyboardType: 'phone-pad',
+    placeholder: '+447472883222',
+    autoCapitalize: 'none',
+    error: 'Please specify valid phone number',
+  },
+}];
+
+const codeFormFields = [{
+  label: 'Code',
+  name: 'code',
+  type: 'code',
+  config: {
+    placeholder: 'username',
+    autoCapitalize: 'none',
+    error: 'Please enter valid code',
+  },
+}];
+
 const fullNameFormFields = [{
   label: 'First name',
   name: 'firstName',
@@ -108,10 +139,13 @@ type Props = {
   repairStorage: Function,
   updateAppSettings: (path: string, value: any) => Function,
   updateUser: (walletId: string, field: Object, callback?: Function) => Function,
+  createOneTimePassword: (walletId: string, field: Object, callback?: Function) => Function,
   resetIncorrectPassword: () => Function,
   lockScreen: () => Function,
   logoutUser: () => Function,
   backupStatus: Object,
+  useBiometrics: ?boolean,
+  changeUseBiometrics: (value: boolean) => Function,
 }
 
 type State = {
@@ -119,9 +153,15 @@ type State = {
   showTermsConditionsModal: boolean,
   showPrivacyPolicyModal: boolean,
   showSystemInfoModal: boolean,
+  showCheckPinModal: boolean,
+  showBiometricsSelector: boolean,
 }
 
 class Profile extends React.Component<Props, State> {
+  static defaultProps = {
+    useBiometrics: false,
+  };
+
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -131,7 +171,15 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
       showSystemInfoModal: false,
+      showCheckPinModal: false,
+      showBiometricsSelector: false,
     };
+  }
+
+  componentDidMount() {
+    TouchID.isSupported({})
+      .then(() => this.setState({ showBiometricsSelector: true }))
+      .catch(() => null);
   }
 
   clearLocalStorage() {
@@ -152,10 +200,57 @@ class Profile extends React.Component<Props, State> {
     this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
   };
 
+  handleChangeUseBiometrics = (value) => {
+    const { changeUseBiometrics } = this.props;
+    changeUseBiometrics(value);
+    this.setState({ showCheckPinModal: false }, () => {
+      const message = value ? 'Biometric login enabled' : 'Biometric login disabled';
+      delay(500)
+        .then(() => Toast.show({ title: 'Success', type: 'success', message }))
+        .catch(() => null);
+    });
+  };
+
+  handleCheckPinModalClose = () => {
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
+    this.setState({ showCheckPinModal: false });
+  };
+
   handleUserFieldUpdate = (field: Object) => {
     Keyboard.dismiss();
-    const { updateUser, user } = this.props;
+    const {
+      updateUser,
+      user,
+    } = this.props;
+
     updateUser(user.walletId, field, () => this.toggleSlideModalOpen(null));
+  };
+
+  handleUserPhoneFieldUpdate = (field: Object) => {
+    Keyboard.dismiss();
+    const {
+      updateUser,
+      user,
+      navigation,
+      createOneTimePassword,
+    } = this.props;
+
+    const createOTP = () => {
+      createOneTimePassword(user.walletId, field, () => {
+        this.toggleSlideModalOpen(null);
+        navigation.navigate(OTP, { phone: field.phone });
+      });
+    };
+
+    updateUser(user.walletId, field, createOTP);
+  };
+
+  handleCodeClaim = (field: Object) => {
+    const { navigation } = this.props;
+    Keyboard.dismiss();
+    this.toggleSlideModalOpen(null);
+    navigation.navigate(CONFIRM_CLAIM, { code: field.code });
   };
 
   handleCurrencyUpdate = ({ currency }: Object) => {
@@ -209,6 +304,7 @@ class Profile extends React.Component<Props, State> {
       hasDBConflicts,
       repairStorage,
       backupStatus,
+      useBiometrics,
     } = this.props;
 
     const {
@@ -220,10 +316,11 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal,
       showPrivacyPolicyModal,
       showSystemInfoModal,
+      showCheckPinModal,
+      showBiometricsSelector,
     } = this.state;
 
     const isWalletBackedUp = isImported || isBackedUp;
-
     return (
       <Container inset={{ bottom: 0 }}>
         <Header gray title="settings" onBack={() => navigation.goBack(null)} />
@@ -256,7 +353,7 @@ class Profile extends React.Component<Props, State> {
             <SettingsModalTitle>
               Enter your city name
             </SettingsModalTitle>
-            <ProfileForm
+            <EditProfile
               fields={cityFormFields}
               onSubmit={this.handleUserFieldUpdate}
               value={{ city: user.city }}
@@ -275,11 +372,62 @@ class Profile extends React.Component<Props, State> {
             <SettingsModalTitle>
               Enter your email
             </SettingsModalTitle>
-            <ProfileForm
+            <EditProfile
               fields={emailFormFields}
               onSubmit={this.handleUserFieldUpdate}
               value={{ email: user.email }}
             />
+          </Wrapper>
+        </SlideModal>
+        <SlideModal
+          isVisible={this.state.visibleModal === 'referralCode'}
+          title="Referral code"
+          onModalHide={this.toggleSlideModalOpen}
+        >
+          <ReferralCodeModal username={user.username} onModalClose={this.toggleSlideModalOpen} />
+        </SlideModal>
+        <SlideModal
+          isVisible={this.state.visibleModal === 'phone'}
+          fullScreen
+          title="Phone verification"
+          showHeader
+          onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.snowWhite}
+          avoidKeyboard
+        >
+          <Wrapper regularPadding flex={1}>
+            <View style={{ marginTop: 15, flex: 1 }}>
+              <SettingsModalTitle>
+                Enter your phone
+              </SettingsModalTitle>
+              <EditProfile
+                fields={phoneFormFields}
+                onSubmit={this.handleUserPhoneFieldUpdate}
+                value={{ phone: user.phone }}
+              />
+            </View>
+          </Wrapper>
+        </SlideModal>
+        <SlideModal
+          isVisible={this.state.visibleModal === 'claimTokens'}
+          fullScreen
+          title="Claim tokens"
+          showHeader
+          onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.snowWhite}
+          avoidKeyboard
+        >
+          <Wrapper regularPadding flex={1}>
+            <View style={{ marginTop: 15, flex: 1 }}>
+              <SettingsModalTitle>
+                Enter your code
+              </SettingsModalTitle>
+              <EditProfile
+                fields={codeFormFields}
+                onSubmit={this.handleCodeClaim}
+                buttonTitle="Claim"
+              />
+            </View>
           </Wrapper>
         </SlideModal>
         <SlideModal
@@ -298,7 +446,7 @@ class Profile extends React.Component<Props, State> {
               <SettingsModalTitle>
                 Enter your full name
               </SettingsModalTitle>
-              <ProfileForm
+              <EditProfile
                 fields={fullNameFormFields}
                 onSubmit={this.handleUserFieldUpdate}
                 value={{ firstName: user.firstName, lastName: user.lastName }}
@@ -355,7 +503,14 @@ class Profile extends React.Component<Props, State> {
               value={user.firstName ? `${user.firstName} ${user.lastName}` : null}
               onPress={() => this.toggleSlideModalOpen('fullName')}
             />
-
+            {!isProdEnv && (
+              <ProfileSettingsItem
+                key="phone"
+                label="Phone"
+                warningNotification={!user.isPhoneVerified}
+                onPress={() => this.toggleSlideModalOpen('phone')}
+              />)
+            }
             <ListSeparator>
               <SubHeading>GENERAL SETTINGS</SubHeading>
             </ListSeparator>
@@ -381,10 +536,52 @@ class Profile extends React.Component<Props, State> {
               onPress={() => this.props.navigation.navigate(CHANGE_PIN_FLOW)}
             />
 
+            {showBiometricsSelector &&
+            <ProfileSettingsItem
+              key="useBiometrics"
+              label="Biometric Login"
+              value={useBiometrics}
+              toggle
+              onPress={() => this.setState({ showCheckPinModal: true })}
+            />
+            }
+
+            <SlideModal
+              isVisible={showCheckPinModal}
+              onModalHide={this.handleCheckPinModalClose}
+              title="enter pincode"
+              centerTitle
+              fullScreen
+              showHeader
+            >
+              <Wrapper flex={1}>
+                <CheckPin onPinValid={() => this.handleChangeUseBiometrics(!useBiometrics)} />
+              </Wrapper>
+            </SlideModal>
+
             <ListSeparator>
               <SubHeading>APPEARANCE SETTINGS</SubHeading>
             </ListSeparator>
             <AppearanceSettingsSection settings={appearanceSettings} onUpdate={updateAppSettings} />
+
+            {!isProdEnv && (
+              <View>
+                <ListSeparator>
+                  <SubHeading>REFERRAL</SubHeading>
+                </ListSeparator>
+                <ProfileSettingsItem
+                  key="referralCode"
+                  label="Invite friends"
+                  onPress={() => this.toggleSlideModalOpen('referralCode')}
+                />
+                <ProfileSettingsItem
+                  key="claimTokens"
+                  label="Get PLR's tokens"
+                  onPress={() => this.toggleSlideModalOpen('claimTokens')}
+                />
+              </View>
+            )}
+
             <ListSeparator>
               <SubHeading>ABOUT</SubHeading>
             </ListSeparator>
@@ -486,7 +683,7 @@ class Profile extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-  appSettings: { data: { baseFiatCurrency }, data: appSettings },
+  appSettings: { data: { useBiometrics = false, baseFiatCurrency }, data: appSettings },
   notifications: { intercomNotificationsCount },
   session: { data: { hasDBConflicts } },
   wallet: { backupStatus },
@@ -497,17 +694,23 @@ const mapStateToProps = ({
   appSettings,
   hasDBConflicts,
   backupStatus,
+  useBiometrics,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
-  repairStorage: () => dispatch(repairStorageAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   updateUser: (walletId: string, field: Object, callback: Function) =>
     dispatch(updateUserAction(walletId, field, callback)),
+  createOneTimePassword: (walletId: string, field: Object, callback: Function) =>
+    dispatch(createOneTimePasswordAction(walletId, field, callback)),
   updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
+  changeUseBiometrics: (value) => {
+    dispatch(changeUseBiometricsAction(value));
+  },
+  repairStorage: () => dispatch(repairStorageAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

@@ -20,16 +20,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
-import merge from 'lodash.merge';
-import keyBy from 'lodash.keyby';
-import values from 'lodash.values';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
 
-import { resetUnreadAction } from 'actions/chatActions';
 import { baseColors, spacing } from 'utils/variables';
 import type { Notification } from 'models/Notification';
 import type { Transaction } from 'models/Transaction';
@@ -95,14 +91,15 @@ type Props = {
   invitations: Object,
   additionalFiltering?: Function,
   feedTitle?: string,
-  showEmptyState?: boolean,
   backgroundColor?: string,
   wrapperStyle?: Object,
   showArrowsOnly?: boolean,
   noBorder?: boolean,
-  collectiblesHistory: Object[],
+  openSeaTxHistory: Object[],
   invertAddon?: boolean,
   fetchAllCollectiblesData: Function,
+  contentContainerStyle?: Object,
+  initialNumToRender: number,
 };
 
 type State = {
@@ -120,6 +117,10 @@ class ActivityFeed extends React.Component<Props, State> {
     eventStatus: '',
   };
 
+  static defaultProps = {
+    initialNumToRender: 7,
+  };
+
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
@@ -135,9 +136,8 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   navigateToChat = (contact) => {
-    const { navigation, resetUnread } = this.props;
+    const { navigation } = this.props;
     navigation.navigate(CHAT, { username: contact.username });
-    resetUnread(contact.username);
   };
 
   mapTransactionsHistory(history, contacts, eventType) {
@@ -157,6 +157,22 @@ class ActivityFeed extends React.Component<Props, State> {
         };
       });
     return uniqBy(concatedHistory, 'hash');
+  }
+
+  mapOpenSeaAndBCXTransactionsHistory(openSeaHistory, BCXHistory) {
+    const concatedCollectiblesHistory = openSeaHistory
+      .map(({ hash, ...rest }) => {
+        const historyEntry = BCXHistory.find(({ hash: bcxHash }) => {
+          return hash.toUpperCase() === bcxHash.toUpperCase();
+        });
+
+        return {
+          hash,
+          ...rest,
+          ...historyEntry,
+        };
+      });
+    return uniqBy(concatedCollectiblesHistory, 'hash');
   }
 
   getRightLabel = (type: string) => {
@@ -316,7 +332,9 @@ class ActivityFeed extends React.Component<Props, State> {
       backgroundColor,
       wrapperStyle,
       noBorder,
-      collectiblesHistory,
+      openSeaTxHistory,
+      contentContainerStyle,
+      initialNumToRender,
     } = this.props;
 
     const {
@@ -327,15 +345,16 @@ class ActivityFeed extends React.Component<Props, State> {
     } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-    const collectibleTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
-    // merging BCX and OpenSea transaction data by hash
-    const mergedCollectibleTxHistory = values(
-      merge({}, keyBy(collectibleTxHistory, 'hash'), keyBy(collectiblesHistory, 'hash')));
+    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+
+    // extending OpenSea transaction data with BCX data
+    const collectiblesHistory =
+      this.mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(tokenTxHistory, mappedContacts, TRANSACTION_EVENT);
     const mappedCollectiblesHistory =
-      this.mapTransactionsHistory(mergedCollectibleTxHistory, mappedContacts, COLLECTIBLE_TRANSACTION);
+      this.mapTransactionsHistory(collectiblesHistory, mappedContacts, COLLECTIBLE_TRANSACTION);
     const chatNotifications = [];
     /* chats.chats
       .map((
@@ -361,7 +380,7 @@ class ActivityFeed extends React.Component<Props, State> {
       .sort((a, b) => b.createdAt - a.createdAt);
 
     const feedData = customFeedData || allFeedData;
-    const { activeTab, esData, showEmptyState } = this.props;
+    const { activeTab, esData } = this.props;
 
     const filteredHistory = feedData.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
@@ -375,19 +394,19 @@ class ActivityFeed extends React.Component<Props, State> {
 
     const processedHistory = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
 
-    if (processedHistory.length < 1) {
+    if (processedHistory.length < 1 && !esData) {
       return null;
     }
 
     return (
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
-        {!!feedTitle && (!!processedHistory.length || !!showEmptyState) &&
+        {!!feedTitle &&
         <ActivityFeedHeader noBorder={noBorder}>
           <Title subtitle title={feedTitle} />
         </ActivityFeedHeader>}
         <ActivityFeedList
           data={processedHistory}
-          initialNumToRender={5}
+          initialNumToRender={initialNumToRender}
           extraData={notifications}
           renderItem={this.renderActivityFeedItem}
           getItemLayout={(data, index) => ({
@@ -395,13 +414,12 @@ class ActivityFeed extends React.Component<Props, State> {
             offset: 70 * index,
             index,
           })}
-          maxToRenderPerBatch={5}
+          maxToRenderPerBatch={initialNumToRender}
           onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
           keyExtractor={this.getActivityFeedListKeyExtractor}
-          ListEmptyComponent={
-            !!showEmptyState && <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />
-          }
+          ListEmptyComponent={<EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />}
+          contentContainerStyle={contentContainerStyle}
         />
         <SlideModal
           isVisible={showModal}
@@ -432,7 +450,7 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   assets: { data: assets },
   wallet: { data: wallet },
-  collectibles: { transactionHistory: collectiblesHistory },
+  collectibles: { transactionHistory: openSeaTxHistory },
 }) => ({
   contacts,
   notifications,
@@ -440,11 +458,10 @@ const mapStateToProps = ({
   invitations,
   assets: Object.values(assets),
   wallet,
-  collectiblesHistory,
+  openSeaTxHistory,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 

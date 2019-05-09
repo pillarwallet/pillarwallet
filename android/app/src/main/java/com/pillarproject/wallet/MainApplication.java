@@ -6,24 +6,24 @@ import com.BV.LinearGradient.LinearGradientPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.bitgo.randombytes.RandomBytesPackage;
+import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.Crashlytics;
 import com.crypho.scrypt.RNScryptPackage;
 import com.facebook.react.ReactApplication;
-import dk.madslee.imageCapInsets.RCTImageCapInsetPackage;
+import com.smixx.fabric.FabricPackage;
+import ca.jaysoo.extradimensions.ExtraDimensionsPackage;
+import com.rnfingerprint.FingerprintAuthPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.horcrux.svg.SvgPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import com.oblador.vectoricons.VectorIconsPackage;
 import com.ocetnik.timer.BackgroundTimerPackage;
-import com.tradle.react.UdpSocketsModule;
 import com.peel.react.TcpSocketsModule;
 import com.peel.react.rnos.RNOSModule;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.robinpowered.react.Intercom.IntercomPackage;
-import com.tradle.react.UdpSocketsModule;
 
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import org.reactnative.camera.RNCameraPackage;
@@ -34,17 +34,23 @@ import java.util.List;
 import cl.json.RNSharePackage;
 import cl.json.ShareApplication;
 import io.fabric.sdk.android.Fabric;
+import com.robinpowered.react.Intercom.IntercomPackage;
 import io.intercom.android.sdk.Intercom;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.instanceid.RNFirebaseInstanceIdPackage;
-import io.sentry.RNSentryPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import nativeShadow.NativeShadowPackage;
-import iyegoroff.RNColorMatrixImageFilters.RNColorMatrixImageFiltersPackage;
+import iyegoroff.RNColorMatrixImageFilters.ColorMatrixImageFiltersPackage;
+import io.sentry.RNSentryPackage;
+import com.tradle.react.UdpSocketsModule;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.bitgo.randombytes.RandomBytesPackage;
+
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
+import com.reactlibrary.RNThreadPackage;
 
 // react-native-splash-screen >= 0.3.1
 
@@ -56,9 +62,10 @@ public class MainApplication extends Application implements ShareApplication, Re
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-        new RNColorMatrixImageFiltersPackage(),
+        new ColorMatrixImageFiltersPackage(),
         new MainReactPackage(),
-        new RCTImageCapInsetPackage(),
+        new ExtraDimensionsPackage(),
+        new FingerprintAuthPackage(),
         new RNSentryPackage(),
         new SvgPackage(),
         new UdpSocketsModule(),
@@ -66,6 +73,7 @@ public class MainApplication extends Application implements ShareApplication, Re
         new RNScryptPackage(),
         new LottiePackage(),
         new RNSharePackage(),
+        new FabricPackage(),
         new BackgroundTimerPackage(),
         new SplashScreenReactPackage(),
         new RNFetchBlobPackage(),
@@ -83,7 +91,8 @@ public class MainApplication extends Application implements ShareApplication, Re
         new RNFirebaseNotificationsPackage(),
         new RandomBytesPackage(),
         new PickerPackage(),
-        new NativeShadowPackage()
+        new NativeShadowPackage(),
+        new RNThreadPackage(mReactNativeHost)
       );
     }
 
@@ -107,7 +116,7 @@ public class MainApplication extends Application implements ShareApplication, Re
   public void onCreate() {
     super.onCreate();
     final Fabric fabric = new Fabric.Builder(this)
-            .kits(new Crashlytics())
+            .kits(new Crashlytics(), new Answers())
             .build();
     Fabric.with(fabric);
     if (BuildConfig.DEBUG) {

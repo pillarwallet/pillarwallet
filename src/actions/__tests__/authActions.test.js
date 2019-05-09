@@ -25,9 +25,10 @@ import {
   DECRYPT_WALLET,
   DECRYPTING,
 } from 'constants/walletConstants';
-import { UPDATE_USER, PENDING } from 'constants/userConstants';
+import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
+import * as connectionKeyActions from 'actions/connectionKeyPairActions';
 import { loginAction } from '../authActions';
 
 const pillarSdk = new PillarSdk();
@@ -39,6 +40,11 @@ const mockWallet: Object = {
 
 const mockUser: Object = {
   username: 'Jon',
+};
+
+const registeredMockUser: Object = {
+  username: 'JonR',
+  walletId: 'walletIdUnique',
 };
 
 Object.defineProperty(mockWallet, 'RNencrypt', {
@@ -62,6 +68,7 @@ describe('Wallet actions', () => {
       wallet: {
         backupStatus: { isBackedUp: false, isImported: false },
       },
+      connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
     });
   });
 
@@ -69,10 +76,37 @@ describe('Wallet actions', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
+      {
+        type: DECRYPT_WALLET,
+        payload: {
+          ...mockWallet,
+          privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
+        },
+      },
+    ];
+
+    const pin = '123456';
+
+    return store.dispatch(loginAction(pin))
+      .then(() => {
+        const actualActions = store.getActions();
+        expect(actualActions).toEqual(expectedActions);
+      });
+  });
+
+  it('Should expect a different set of actions for registered users.', () => {
+    const storage = Storage.getInstance('db');
+    storage.save('user', { user: registeredMockUser });
+    const expectedActions = [
+      { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: DECRYPT_WALLET, payload: mockWallet },
     ];
 
     const pin = '123456';
+
+    // $FlowFixMe
+    connectionKeyActions.updateConnectionKeyPairs = () => async () => Promise.resolve(true);
 
     return store.dispatch(loginAction(pin))
       .then(() => {

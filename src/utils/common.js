@@ -18,7 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import { Dimensions, Platform, Animated, Easing, Linking, PixelRatio } from 'react-native';
+import {
+  Dimensions,
+  Platform,
+  Animated,
+  Easing,
+  Linking,
+  PixelRatio,
+  AppState,
+  DeviceEventEmitter,
+} from 'react-native';
+import { providers } from 'ethers';
+import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 
 export function delay(ms: number): Promise<void> {
   return new Promise(resolve => {
@@ -140,6 +151,26 @@ export const isIphoneX = () => {
   );
 };
 
+export const getiOSNavbarHeight = () => {
+  const { height, width } = Dimensions.get('window');
+
+  // for iPhone X and iPhone XS
+  const X_WIDTH = 375;
+  const X_HEIGHT = 812;
+
+  // for iPhone XS Max and iPhone XR
+  const XSMAX_WIDTH = 414;
+  const XSMAX_HEIGHT = 896;
+
+  if (Platform.OS === 'ios') {
+    if ((width === X_WIDTH && height === X_HEIGHT) || (width === XSMAX_WIDTH && height === XSMAX_HEIGHT)) {
+      return 44;
+    }
+    return 20;
+  }
+  return 0;
+};
+
 export const modalTransition = {
   mode: 'modal',
   navigationOptions: {
@@ -185,9 +216,38 @@ export const handleUrlPress = (url: string) => {
   }
 };
 
+export const addAppStateChangeListener = (callback: Function) => {
+  return Platform.OS === 'ios'
+    ? AppState.addEventListener('change', callback)
+    : DeviceEventEmitter.addListener('ActivityStateChange', callback);
+};
+
+export const removeAppStateChangeListener = (callback: Function) => {
+  return Platform.OS === 'ios'
+    ? AppState.removeEventListener('change', callback)
+    : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
+};
+
 export const smallScreen = () => {
   if (Platform.OS === 'ios') {
     return Dimensions.get('window').width * PixelRatio.get() < 650;
   }
   return Dimensions.get('window').width < 410;
 };
+
+export function getEthereumProvider(network: string) {
+  // Connect to INFURA
+  const infuraNetwork = (network === 'homestead') ? 'mainnet' : network;
+  const infuraUrl = `https://${infuraNetwork}.infura.io/v3/${INFURA_PROJECT_ID}`;
+  const infuraProvider = new providers.JsonRpcProvider(infuraUrl, network);
+
+  // Connect to Etherscan
+  const etherscanProvider = new providers.EtherscanProvider(network);
+
+  // Creating a provider to automatically fallback onto Etherscan
+  // if INFURA is down
+  return new providers.FallbackProvider([
+    infuraProvider,
+    etherscanProvider,
+  ]);
+}

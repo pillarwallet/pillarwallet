@@ -51,9 +51,7 @@ import {
 import {
   CONTACT,
   SEND_TOKEN_FROM_CONTACT_FLOW,
-  CHAT,
   COLLECTIBLE,
-  SEND_COLLECTIBLE_FROM_CONTACT_FLOW,
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
 
@@ -214,22 +212,13 @@ class EventDetails extends React.Component<Props, {}> {
     navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
   };
 
-  sendCollectiblesToUser = (contact) => {
-    const {
-      navigation,
-      onClose,
-    } = this.props;
-    onClose();
-    navigation.navigate(SEND_COLLECTIBLE_FROM_CONTACT_FLOW, { contact });
-  };
-
   goToChatWithUser = (contact) => {
     const {
       navigation,
       onClose,
     } = this.props;
     onClose();
-    navigation.navigate(CHAT, { username: contact.username });
+    navigation.navigate(CONTACT, { contact, chatTabOpen: true });
   };
 
   renderEventBody = (eventType, eventStatus) => {
@@ -491,13 +480,7 @@ class EventDetails extends React.Component<Props, {}> {
           }
           {eventStatus === TYPE_ACCEPTED &&
           <ButtonsWrapper>
-            <EventButton block title="Send tokens" primaryInverted onPress={() => this.sendTokensToUser(userData)} />
-            <EventButton
-              block
-              title="Send collectibles"
-              primaryInverted
-              onPress={() => this.sendCollectiblesToUser(userData)}
-            />
+            <EventButton block title="Send assets" primaryInverted onPress={() => this.sendTokensToUser(userData)} />
             <EventButton block title="Send message" primaryInverted onPress={() => this.goToChatWithUser(userData)} />
           </ButtonsWrapper>
           }

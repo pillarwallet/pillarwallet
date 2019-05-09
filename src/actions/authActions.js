@@ -30,7 +30,15 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { APP_FLOW, AUTH_FLOW, ONBOARDING_FLOW, ASSETS, CHAT, CHAT_LIST } from 'constants/navigationConstants';
+import {
+  APP_FLOW,
+  AUTH_FLOW,
+  ONBOARDING_FLOW,
+  ASSETS,
+  CHAT,
+  CHAT_LIST,
+  PIN_CODE_UNLOCK,
+} from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
@@ -39,10 +47,12 @@ import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
+import Intercom from 'react-native-intercom';
 import { toastWalletBackup } from 'utils/toasts';
-import { updateOAuthTokensCB } from 'utils/oAuth';
+import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
+import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { saveDbAction } from './dbActions';
 
 const Crashlytics = firebase.crashlytics();
@@ -50,23 +60,45 @@ const Crashlytics = firebase.crashlytics();
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
-export const loginAction = (pin: string) => {
+export const loginAction = (pin: string, touchID?: boolean = false, onLoginSuccess?: Function) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
+    const {
+      connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
+    } = getState();
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
     const { oAuthTokens } = await storage.get('oAuthTokens');
+
+    const generateNewConnKeys = !(connectionKeyPairs.length > 20 && lastConnectionKeyIndex > -1);
+
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
     });
     await delay(100);
-    const saltedPin = getSaltedPin(pin);
+    const saltedPin = await getSaltedPin(pin, dispatch);
     try {
-      const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
+      let wallet;
+      if (!touchID) {
+        const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
+        wallet = await ethers.Wallet.RNfromEncryptedWallet(
+          JSON.stringify(encryptedWallet),
+          saltedPin,
+          decryptionOptions,
+        );
+      } else {
+        let walletAddress = encryptedWallet.address;
+        if (walletAddress.indexOf('0x') !== 0) {
+          walletAddress = `0x${walletAddress}`;
+        }
+        wallet = { ...encryptedWallet, address: walletAddress };
+      }
+
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
         const fcmToken = await firebase.messaging().getToken().catch(() => null);
+        await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
         const signalCredentials = {
           userId: user.id,
           username: user.username,
@@ -75,15 +107,23 @@ export const loginAction = (pin: string) => {
           fcmToken,
         };
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
-        api.init(wallet.privateKey, updateOAuth, oAuthTokens);
+        const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
+        api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
+        if (onLoginSuccess && wallet.privateKey) {
+          let { privateKey: privateKeyParam } = wallet;
+          privateKeyParam = privateKeyParam.indexOf('0x') === 0 ? privateKeyParam.slice(2) : privateKeyParam;
+          await onLoginSuccess(privateKeyParam);
+        }
         api.setUsername(user.username);
         const userInfo = await api.userInfo(user.walletId);
         const { oAuthTokens: { data: OAuthTokensObject } } = getState();
         await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
+        await
+        dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys));
       } else {
-        api.init(wallet.privateKey);
+        api.init();
       }
       Crashlytics.setUserIdentifier(user.username);
       dispatch({
@@ -93,12 +133,15 @@ export const loginAction = (pin: string) => {
 
       await storage.viewCleanup().catch(() => null);
 
+      const { address } = wallet;
       dispatch({
         type: DECRYPT_WALLET,
         payload: {
-          address: wallet.address,
+          address,
+          privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
         },
       });
+
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
       }
@@ -163,7 +206,7 @@ export const checkPinAction = (
       payload: DECRYPTING,
     });
     await delay(100);
-    const saltedPin = getSaltedPin(pin);
+    const saltedPin = await getSaltedPin(pin, dispatch);
     try {
       const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
       dispatch({
@@ -193,7 +236,7 @@ export const changePinAction = (newPin: string, currentPin: string) => {
       payload: ENCRYPTING,
     });
     await delay(50);
-    const currentSaltedPin = getSaltedPin(currentPin);
+    const currentSaltedPin = await getSaltedPin(currentPin, dispatch);
     const wallet = await ethers.Wallet.RNfromEncryptedWallet(
       JSON.stringify(encryptedWallet),
       currentSaltedPin,
@@ -201,7 +244,7 @@ export const changePinAction = (newPin: string, currentPin: string) => {
         mnemonic: true,
       });
 
-    const newSaltedPin = getSaltedPin(newPin);
+    const newSaltedPin = await getSaltedPin(newPin, dispatch);
     const newEncryptedWallet = await wallet.RNencrypt(newSaltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => ({}));
@@ -226,14 +269,25 @@ export const resetIncorrectPasswordAction = () => {
   };
 };
 
-export const lockScreenAction = () => {
+export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: string) => {
   return async () => {
-    navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
+    navigate(NavigationActions.navigate({
+      routeName: AUTH_FLOW,
+      params: {},
+      action: NavigationActions.navigate({
+        routeName: PIN_CODE_UNLOCK,
+        params: {
+          onLoginSuccess,
+          errorMessage,
+        },
+      }),
+    }));
   };
 };
 
 export const logoutAction = () => {
   return async (dispatch: Function) => {
+    Intercom.logout();
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
     dispatch({ type: LOG_OUT });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });

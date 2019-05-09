@@ -23,7 +23,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { Animated, RefreshControl, Platform, View } from 'react-native';
-import { PROFILE, CONTACT } from 'constants/navigationConstants';
+import { PROFILE, CONTACT, BADGE } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
@@ -41,6 +41,7 @@ import IconButton from 'components/IconButton';
 import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
+import BadgeImage from 'components/BadgeImage';
 import Camera from 'components/Camera';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
@@ -52,7 +53,10 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
+import { fetchBadgesAction } from 'actions/badgesActions';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
+import type { Badges } from 'models/Badge';
+import { Answers } from 'react-native-fabric';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -60,9 +64,8 @@ type Props = {
   invitations: Object[],
   history: Object[],
   user: Object,
-  wallet: Object,
   fetchTransactionsHistoryNotifications: Function,
-  fetchTransactionsHistory: (walletAddress: string) => Function,
+  fetchTransactionsHistory: () => Function,
   fetchInviteNotifications: Function,
   acceptInvitation: Function,
   onWalletConnectSessionRequest: Function,
@@ -76,6 +79,8 @@ type Props = {
   deepLinkData: Object,
   resetDeepLinkData: Function,
   approveLoginAttempt: Function,
+  fetchBadges: Function,
+  badges: Badges,
 };
 
 type esDataType = {
@@ -235,6 +240,48 @@ const DescriptionWarning = styled(Description)`
   color: ${baseColors.burningFire};
 `;
 
+const BadgesWrapper = styled.View`
+  padding-top: 0;
+`;
+
+const BadgesBlock = styled.View`
+  height: 170px;
+  border-bottom-width: 1px;
+  border-style: solid;
+  border-color: ${UIColors.defaultBorderColor};
+`;
+
+const BadgesSubtitle = styled(Title)`
+  margin-left: ${spacing.mediumLarge}px;
+`;
+
+const BadgesScrollView = styled.ScrollView`
+  background-color: ${baseColors.snowWhite};
+  padding-left: 6px;
+  margin-top: -4px;
+  padding-top: ${Platform.select({
+    ios: '4px',
+    android: 0,
+  })};
+`;
+
+const BadgesItem = styled.TouchableOpacity`
+  align-items: center;
+  width: 96px;
+  margin: ${Platform.select({
+    ios: '4px 4px 0',
+    android: '0',
+  })};
+`;
+
+const BadgesItemImage = styled(BadgeImage)`
+  margin-bottom: ${spacing.rhythm / 2};
+`;
+
+const BadgesSpacer = styled.View`
+  min-height: 0;
+`;
+
 const allIconNormal = require('assets/icons/all_normal.png');
 const allIconActive = require('assets/icons/all_active.png');
 const socialIconNormal = require('assets/icons/social_normal.png');
@@ -260,14 +307,16 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, wallet } = this.props;
+    const { fetchTransactionsHistory } = this.props;
+
+    Answers.logContentView('Home screen');
 
     if (Platform.OS === 'ios') {
       firebase.notifications().setBadge(0);
     }
 
     // TODO: remove this when notifications service becomes reliable
-    fetchTransactionsHistory(wallet.address);
+    fetchTransactionsHistory();
 
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
@@ -343,11 +392,28 @@ class HomeScreen extends React.Component<Props, State> {
       });
   };
 
+  renderBadges = () => {
+    const { badges, navigation } = this.props;
+    return badges
+      .sort((a, b) => (b.receivedAt || 0) - (a.receivedAt || 0))
+      .map(badge => (
+        <BadgesItem key={badge.id} onPress={() => navigation.navigate(BADGE, { id: badge.id })}>
+          <BadgesItemImage data={badge} />
+        </BadgesItem>
+      ));
+  };
+
   refreshScreenData = () => {
-    const { fetchTransactionsHistoryNotifications, fetchInviteNotifications, fetchAllCollectiblesData } = this.props;
+    const {
+      fetchTransactionsHistoryNotifications,
+      fetchInviteNotifications,
+      fetchAllCollectiblesData,
+      fetchBadges,
+    } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
     fetchAllCollectiblesData();
+    fetchBadges();
   };
 
   setActiveTab = (activeTab, esData?) => {
@@ -384,6 +450,7 @@ class HomeScreen extends React.Component<Props, State> {
       deepLinkData,
       resetDeepLinkData,
       approveLoginAttempt,
+      badges,
     } = this.props;
     const {
       showCamera, permissionsGranted, scrollY, esData, usernameWidth, forceCloseLoginApprovalModal,
@@ -451,7 +518,12 @@ class HomeScreen extends React.Component<Props, State> {
         name: 'All',
         tabImageNormal: allIconNormal,
         tabImageActive: allIconActive,
-        onPress: () => this.setActiveTab(ALL),
+        onPress: () => this.setActiveTab(
+          ALL,
+          {
+            title: 'Make your first step',
+            body: 'Your activity will appear here.',
+          }),
       },
       {
         id: TRANSACTIONS,
@@ -598,7 +670,7 @@ class HomeScreen extends React.Component<Props, State> {
           </HomeHeaderRow>
         </AnimatedHomeHeader>
         <Animated.ScrollView
-          stickyHeaderIndices={[2]}
+          stickyHeaderIndices={[3]}
           style={{
             marginTop: this.props.contacts.length ? -100 : -76,
           }}
@@ -629,6 +701,20 @@ class HomeScreen extends React.Component<Props, State> {
           ) : (
             <RecentConnectionsSpacer />
           )}
+          {badges && badges.length ?
+            <BadgesWrapper>
+              <BadgesBlock>
+                <View style={{ backgroundColor: baseColors.snowWhite }}>
+                  <BadgesSubtitle subtitle title="game of badges." />
+                </View>
+                <BadgesScrollView horizontal nestedScrollEnabled overScrollMode="always">
+                  {this.renderBadges()}
+                </BadgesScrollView>
+              </BadgesBlock>
+            </BadgesWrapper> :
+
+            <BadgesSpacer />
+          }
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
           </TabsHeader>
@@ -642,7 +728,6 @@ class HomeScreen extends React.Component<Props, State> {
             activeTab={this.state.activeTab}
             esData={esData}
             sortable
-            showEmptyState
           />
         </Animated.ScrollView>
         <Camera
@@ -697,18 +782,19 @@ const mapStateToProps = ({
   user: { data: user },
   history: { data: history },
   invitations: { data: invitations },
-  wallet: { data: wallet, backupStatus },
+  wallet: { backupStatus },
   notifications: { intercomNotificationsCount },
   deepLink: { data: deepLinkData },
+  badges: { data: badges },
 }) => ({
   contacts,
   user,
   history,
   invitations,
-  wallet,
   intercomNotificationsCount,
   backupStatus,
   deepLinkData,
+  badges,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -717,12 +803,13 @@ const mapDispatchToProps = dispatch => ({
   acceptInvitation: invitation => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: invitation => dispatch(rejectInvitationAction(invitation)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
-  fetchTransactionsHistory: walletAddress => dispatch(fetchTransactionsHistoryAction(walletAddress)),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   resetDeepLinkData: () => dispatch(resetDeepLinkDataAction()),
   approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
+  fetchBadges: () => dispatch(fetchBadgesAction()),
 });
 
 export default connect(

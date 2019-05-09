@@ -31,18 +31,23 @@ import {
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
+import type { UserBadgesResponse, BadgesInfoResponse, SelfAwardBadgeResponse } from 'models/Badge';
 import {
   fetchAssetBalances,
   fetchLastBlockNumber,
   fetchTransactionInfo,
   fetchTransactionReceipt,
 } from 'services/assets';
+import { fetchBadges } from 'services/badges';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
+import type { ConnectionIdentityKeyMap, ConnectionUpdateIdentityKeys } from 'models/Connections';
+import { getLimitedData } from 'utils/opensea';
 
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
+import type { ClaimTokenAction } from 'actions/referralsActions';
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
 
@@ -71,14 +76,18 @@ export default function SDKWrapper() {
   this.pillarWalletSdk = null;
 }
 
-SDKWrapper.prototype.init = function (privateKey: string, updateOAuth?: ?Function, oAuthTokensStored?: ?OAuthTokens) {
+SDKWrapper.prototype.init = function (
+  updateOAuth?: ?Function,
+  oAuthTokensStored?: ?OAuthTokens,
+  onOAuthTokensFailed?: ?Function,
+) {
   this.pillarWalletSdk = new PillarSdk({
-    privateKey: privateKey.slice(2),
     apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
     notificationsUrl: NOTIFICATIONS_URL,
     investmentsUrl: INVESTMENTS_URL,
     updateOAuthFn: updateOAuth,
     oAuthTokens: oAuthTokensStored,
+    tokensFailedCallbackFn: onOAuthTokensFailed,
   });
 };
 
@@ -100,13 +109,14 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string
     });
 };
 
-SDKWrapper.prototype.registerOnAuthServer = function (fcm: string, username: string) {
+SDKWrapper.prototype.registerOnAuthServer = function (walletPrivateKey: string, fcm: string, username: string) {
+  const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
   return Promise.resolve()
     .then(() => {
       return this.pillarWalletSdk.wallet.registerAuthServer({
+        privateKey,
         fcmToken: fcm,
         username,
-        privateKey: PillarSdk.accessKeys.privateKey,
       });
     })
     .then(({ data }) => data)
@@ -152,6 +162,74 @@ SDKWrapper.prototype.updateUser = function (user: Object) {
         error: 'Failed to update user',
         walletId: user.walletId,
         user,
+        status,
+        message,
+      });
+      return { responseStatus: status, message };
+    });
+};
+
+SDKWrapper.prototype.createOneTimePassword = function (user: Object) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.createOneTimePassword(user))
+    .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
+    .catch((error) => {
+      const {
+        response: {
+          status,
+          data: { message } = {},
+        },
+      } = error;
+      Sentry.captureException({
+        error: 'Failed to send text',
+        walletId: user.walletId,
+        user,
+        status,
+        message,
+      });
+      return { responseStatus: status, message };
+    });
+};
+
+SDKWrapper.prototype.verifyPhone = function (user: Object) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.validatePhone(user))
+    .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
+    .catch((error) => {
+      const {
+        response: {
+          status,
+          data: { message } = {},
+        },
+      } = error;
+      Sentry.captureException({
+        error: 'Can\'t verify code',
+        walletId: user.walletId,
+        user,
+        status,
+        message,
+      });
+      return { responseStatus: status, message };
+    });
+};
+
+SDKWrapper.prototype.claimTokens = function ({ walletId, code }: ClaimTokenAction) {
+  return Promise.resolve()
+    // TODO update pillarWalletSdk
+    // .then(() => this.pillarWalletSdk.referral.claimTokens({ walletId, code }))
+    // TODO return just 200
+    .then(() => ({ responseStatus: 200, walletId, code }))
+    .catch((error) => {
+      const {
+        response: {
+          status,
+          data: { message } = {},
+        },
+      } = error;
+      Sentry.captureException({
+        error: 'Can\'t claim referral code',
+        walletId,
+        code,
         status,
         message,
       });
@@ -238,16 +316,11 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
 };
 
 SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
-  return Promise.resolve()
-    .then(() => fetch(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=listing_date&order_direction=asc`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'X-API-KEY': OPEN_SEA_API_KEY,
-      },
-    }))
-    .then(data => data.json())
+  return new Promise((resolve, reject) => {
+    getLimitedData(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=listing_date&order_direction=asc`,
+      [], 300, 0, 'assets', resolve, reject);
+  })
+    .then(response => ({ assets: response }))
     .catch(() => ({ error: true }));
 };
 
@@ -379,7 +452,26 @@ SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePaylo
   // return Promise.all(promises).catch(() => []);
 };
 
-SDKWrapper.prototype.sendInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
+SDKWrapper.prototype.fetchBadges = function (address: string): Promise<UserBadgesResponse> {
+  return fetchBadges(address).catch(() => ({}));
+};
+
+SDKWrapper.prototype.fetchBadgesInfo = function (walletId: string): Promise<BadgesInfoResponse> {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.badge.my({ walletId }))
+    .then(({ data }) => data)
+    .then(data => data.reduce((memo, badge) => ({ ...memo, [badge.id]: badge }), {}))
+    .catch(() => ({}));
+};
+
+SDKWrapper.prototype.selfAwardBadge = function (walletId: string, event: string): Promise<SelfAwardBadgeResponse | {}> {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.badge.selfAward({ walletId, event }))
+    .then(({ data }) => data)
+    .catch(() => ({}));
+};
+
+SDKWrapper.prototype.sendOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.invite({
       accessKey,
@@ -390,7 +482,7 @@ SDKWrapper.prototype.sendInvitation = function (targetUserId: string, accessKey:
     .catch(() => null);
 };
 
-SDKWrapper.prototype.cancelInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
+SDKWrapper.prototype.cancelOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.cancel({
       accessKey,
@@ -401,10 +493,12 @@ SDKWrapper.prototype.cancelInvitation = function (targetUserId: string, accessKe
     .catch(() => null);
 };
 
-SDKWrapper.prototype.acceptInvitation = function (
+SDKWrapper.prototype.acceptOldInvitation = function (
   targetUserId: string,
   targetUserAccessKey: string,
   accessKey: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
@@ -412,13 +506,17 @@ SDKWrapper.prototype.acceptInvitation = function (
       sourceUserAccessKey: accessKey,
       targetUserId,
       targetUserAccessKey,
+      sourceUserIdentityKeys: {
+        sourceIdentityKey,
+        targetIdentityKey,
+      },
       walletId,
     }))
     .then(({ data }) => data)
     .catch(() => null);
 };
 
-SDKWrapper.prototype.rejectInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
+SDKWrapper.prototype.rejectOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.reject({
       accessKey,
@@ -429,18 +527,134 @@ SDKWrapper.prototype.rejectInvitation = function (targetUserId: string, accessKe
     .catch(() => null);
 };
 
-SDKWrapper.prototype.disconnectUser =
-  function (targetUserId: string, sourceUserAccessKey: string, targetUserAccessKey: string, walletId: string) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connection.disconnect({
-        targetUserId,
-        sourceUserAccessKey,
-        targetUserAccessKey,
-        walletId,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  };
+SDKWrapper.prototype.sendInvitation = function (
+  targetUserId: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
+  walletId: string,
+) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connectionV2.invite({
+      targetUserId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+    }))
+    .then(({ data }) => data)
+    .catch(() => null);
+};
+
+SDKWrapper.prototype.cancelInvitation = function (
+  targetUserId: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
+  walletId: string,
+) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connectionV2.cancel({
+      targetUserId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+    }))
+    .then(({ data }) => data)
+    .catch(() => null);
+};
+
+SDKWrapper.prototype.acceptInvitation = function (
+  targetUserId: string,
+  sourceUserIdentityKeys: {
+    sourceIdentityKey: string;
+    targetIdentityKey: string;
+  },
+  targetUserIdentityKeys: {
+    sourceIdentityKey: string;
+    targetIdentityKey: string;
+  },
+  walletId: string,
+) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connectionV2.accept({
+      targetUserId,
+      sourceUserIdentityKeys,
+      targetUserIdentityKeys,
+      walletId,
+    }))
+    .then(({ data }) => data)
+    .catch(() => null);
+};
+
+SDKWrapper.prototype.rejectInvitation = function (
+  targetUserId: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
+  walletId: string,
+) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connectionV2.reject({
+      targetUserId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+    }))
+    .then(({ data }) => data)
+    .catch(() => null);
+};
+
+SDKWrapper.prototype.disconnectUser = function (
+  targetUserId: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
+  walletId: string,
+) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connectionV2.disconnect({
+      targetUserId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+    }))
+    .then(({ data }) => data)
+    .catch(() => null);
+};
+
+SDKWrapper.prototype.muteUser = function (
+  targetUserId: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
+  walletId: string,
+  mute: boolean,
+) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connectionV2.mute({
+      targetUserId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+      mute,
+    }))
+    .then(({ data }) => data)
+    .catch(() => null);
+};
+
+SDKWrapper.prototype.blockUser = function (
+  targetUserId: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
+  walletId: string,
+  block: boolean,
+) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connectionV2.block({
+      targetUserId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+      block,
+    }))
+    .then(({ data }) => data)
+    .catch(() => null);
+};
 
 SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
   return Promise.resolve()
@@ -466,3 +680,27 @@ SDKWrapper.prototype.approveLoginToExternalResource = function (loginToken: stri
       return { error };
     });
 };
+
+SDKWrapper.prototype.connectionsCount = function (walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connection.count({ walletId }))
+    .then(({ data }) => data)
+    .catch(() => null);
+};
+
+SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: ConnectionIdentityKeyMap) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connection.mapIdentityKeys(connectionKeyIdentityMap))
+    .then(({ data }) => data)
+    .catch(() => []);
+};
+
+SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: ConnectionUpdateIdentityKeys) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connection.updateIdentityKeys(updatedIdentityKeys))
+    .then(({ data }) => data)
+    .catch(() => {
+      return false;
+    });
+};
+

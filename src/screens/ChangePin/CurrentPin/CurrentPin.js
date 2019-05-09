@@ -26,7 +26,7 @@ import CheckPin from 'components/CheckPin';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { DECRYPTING } from 'constants/walletConstants';
+import { DECRYPTING, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { CHANGE_PIN_NEW_PIN } from 'constants/navigationConstants';
 
 type Props = {
@@ -44,7 +44,7 @@ class CurrentPin extends React.Component<Props> {
   render() {
     const { navigation, walletState } = this.props;
 
-    if (walletState === DECRYPTING) {
+    if (walletState === DECRYPTING || walletState === GENERATING_CONNECTIONS) {
       return (
         <Container center>
           <BaseText style={{ marginBottom: 20 }}>Checking</BaseText>

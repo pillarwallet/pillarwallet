@@ -19,16 +19,28 @@
 */
 
 import { NavigationActions } from 'react-navigation';
+import { Alert } from 'react-native';
 import url from 'url';
 import Toast from 'components/Toast';
 import { updateNavigationLastScreenState, navigate, getNavigationPathAndParamsState } from 'services/navigation';
-import { HOME, APP_FLOW, AUTH_FLOW } from 'constants/navigationConstants';
+import { HOME, APP_FLOW, AUTH_FLOW, CONFIRM_CLAIM } from 'constants/navigationConstants';
 import { ADD_DEEP_LINK_DATA, RESET_DEEP_LINK_DATA } from 'constants/deepLinkConstants';
 
 export const executeDeepLinkAction = (deepLink: string) => {
   return async (dispatch: Function) => {
     const params: Object = url.parse(deepLink, true);
     if (params.protocol !== 'pillarwallet:') return;
+    if (params.host === 'referral') {
+      if (params.query && params.query.code) {
+        updateNavigationLastScreenState({
+          lastActiveScreen: CONFIRM_CLAIM,
+          lastActiveScreenParams: { code: params.query.code },
+        });
+      } else {
+        Alert.alert('Invalid link', 'Referral code is missing');
+      }
+      return;
+    }
     if (params.host === 'approve') {
       const { query: { loginToken: loginAttemptToken } } = params;
       dispatch({

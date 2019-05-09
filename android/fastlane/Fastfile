@@ -24,7 +24,7 @@ platform :android do
     )
     upload_to_play_store(
       track: 'internal',
-      apk: 'app/build/outputs/apk/app-prod-staging.apk',
+      apk: 'app/build/outputs/apk/prod/staging/app-prod-staging.apk',
       json_key_data: ENV['GOOGLE_JSON_DATA'],
       package_name: 'com.pillarproject.wallet.staging',
       skip_upload_aab: true,
@@ -40,7 +40,7 @@ platform :android do
     )
     upload_to_play_store(
       track: 'internal',
-      apk: 'app/build/outputs/apk/app-prod-release.apk',
+      apk: 'app/build/outputs/apk/prod/release/app-prod-release.apk',
       json_key_data: ENV['GOOGLE_JSON_DATA'],
       package_name: 'com.pillarproject.wallet',
       skip_upload_aab: true,
@@ -56,7 +56,7 @@ platform :android do
   )
 	upload_to_play_store(
 		track: "alpha",
-    apk: 'app/build/outputs/apk/app-prod-release.apk',
+    apk: 'app/build/outputs/apk/prod/release/app-prod-release.apk',
     json_key_data: ENV['GOOGLE_JSON_DATA'],
     package_name: 'com.pillarproject.wallet',
     skip_upload_aab: true,
@@ -72,7 +72,7 @@ platform :android do
   )
   upload_to_play_store(
     track: "beta",
-    apk: 'app/build/outputs/apk/app-prod-release.apk',
+    apk: 'app/build/outputs/apk/prod/release/app-prod-release.apk',
     json_key_data: ENV['GOOGLE_JSON_DATA'],
     package_name: 'com.pillarproject.wallet',
     skip_upload_aab: true,
@@ -82,7 +82,7 @@ platform :android do
   end
 
   desc "Deploy staging development build to hockeyapp"
-  lane :deploy_staging_build do
+  lane :deploy_android_hockeyapp do
     buildApp(
       flavorName: 'prod',
       hockeyAppToken: ENV["HOCKEYAPP_UPLOAD_TOKEN"],
@@ -158,7 +158,7 @@ platform :android do
       notes: changelog,
       commit_sha: lastCommit[:commit_hash],
       notify: "1",
-      apk: "app/build/outputs/apk/#{options[:apkName]}"
+      apk: "app/build/outputs/apk/prod/staging/#{options[:apkName]}"
     )
 
   end

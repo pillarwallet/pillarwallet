@@ -177,6 +177,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     const handleQRRead = Platform.OS === 'ios' ? this.handleIosQRRead : this.handleAndroidQRRead;
     return (
       <RNCamera
+        captureAudio={false}
         ref={ref => {
           this.camera = ref;
         }}

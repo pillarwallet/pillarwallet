@@ -61,6 +61,21 @@ describe('Contacts Actions', () => {
     ],
   };
 
+  const connectionIdentityKeys = {
+    data: [
+      {
+        targetUserId: 'user-foo-bar',
+        sourceIdentityKey: 'my-personal-access-token',
+        targetIdentityKey: 'user-foo-bar-access-token',
+      },
+      {
+        targetUserId: 'user-lorem-ipsum',
+        sourceIdentityKey: 'my-personal-access-token-2',
+        targetIdentityKey: 'user-foo-bar-access-token-2',
+      },
+    ],
+  };
+
   const getStateMock = () => {
     return {
       user: {
@@ -71,6 +86,7 @@ describe('Contacts Actions', () => {
       invitations: { data: [] },
       contacts: { data: mockLocalContacts },
       accessTokens,
+      connectionIdentityKeys,
     };
   };
 
@@ -86,6 +102,7 @@ describe('Contacts Actions', () => {
       invitations: { data: [] },
       contacts: { data: mockLocalContacts },
       accessTokens: { data: [] },
+      connectionIdentityKeys: { data: [] },
     };
   };
 
@@ -221,15 +238,13 @@ describe('Contacts Actions', () => {
       });
     });
 
-    it('should not allow to disconnect if accessToken is not present (reimport wallet)', async () => {
+    xit('should not allow to disconnect if accessToken is not present (reimport wallet)', async () => {
       jest.spyOn(Toast, 'show');
       await actions.disconnectContactAction('user-lorem-ipsum')(dispatchMock, getStateMockNoAccessToken, apiMock);
 
       expect(Toast.show).toBeCalledWith({
-        message: 'It\'s currently impossible to delete contact on imported wallet',
-        type: 'warning',
-        title: 'Cannot delete contact',
-        autoClose: false,
+        message: 'Successfully Disconnected',
+        type: 'info',
       });
 
       Toast.show.mockRestore();

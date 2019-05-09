@@ -20,11 +20,11 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Item as NBItem, Input, Label } from 'native-base';
-import { fontSizes, fontWeights, baseColors, UIColors, spacing } from 'utils/variables';
+import { View, TouchableOpacity, Platform, TextInput as RNInput } from 'react-native';
 import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
-import { View, TouchableOpacity, Platform, TextInput as RNInput } from 'react-native';
 import Spinner from 'components/Spinner';
+import { fontSizes, fontWeights, baseColors, UIColors, spacing } from 'utils/variables';
 
 type inputPropsType = {
   placeholder?: string,
@@ -56,6 +56,7 @@ type Props = {
   labelBigger?: boolean,
   keyboardAvoidance?: boolean,
   loading?: boolean,
+  onLayout?: Function,
 }
 
 type State = {
@@ -158,8 +159,8 @@ const AbsoluteSpinner = styled(Spinner)`
 `;
 
 class TextInput extends React.Component<Props, State> {
-  rnInput: Object;
   multilineInputField: Object;
+  rnInput: Object;
 
   state = {
     isFocused: false,
@@ -173,7 +174,6 @@ class TextInput extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-
     this.rnInput = React.createRef();
     this.multilineInputField = React.createRef();
   }
@@ -199,7 +199,7 @@ class TextInput extends React.Component<Props, State> {
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
     const value = e.nativeEvent.text;
-    onChange(value);
+    if (onChange) onChange(value);
   };
 
   handleFocus = () => {
@@ -208,17 +208,18 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
+  handleRNFocus = () => {
+    setTimeout(() => {
+      this.multilineInputField._root.focus();
+      this.setState({
+        isFocused: true,
+      });
+    }, 500);
+  };
+
   handleMultilineFocus = () => {
     if (!this.state.isFocused) {
       this.rnInput.current.focus();
-      this.setState({
-        isFocused: false,
-      }, () => {
-        setTimeout(() => {
-          this.multilineInputField._root.focus();
-          this.handleFocus();
-        }, 50);
-      });
     }
   };
 
@@ -240,6 +241,7 @@ class TextInput extends React.Component<Props, State> {
       lowerCase,
       labelBigger,
       loading,
+      onLayout,
     } = this.props;
     const { value = '' } = inputProps;
     const { isFocused } = this.state;
@@ -263,7 +265,7 @@ class TextInput extends React.Component<Props, State> {
             innerRef={(input) => { this.multilineInputField = input; }}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
-            onEndEditing={() => this.handleBlur}
+            onEndEditing={this.handleBlur}
             onFocus={variableFocus}
             value={value}
             inputType={inputType}
@@ -276,12 +278,13 @@ class TextInput extends React.Component<Props, State> {
               textAlignVertical: inputProps.multiline ? 'top' : 'center',
               marginBottom: 10,
             }}
+            onLayout={onLayout}
           />
-          {Platform.OS === 'ios' &&
-          <RNInput
+          {Platform.OS === 'ios' && <RNInput
             caretHidden
             autoCorrect={false}
             ref={this.rnInput}
+            onFocus={this.handleRNFocus}
             style={{ marginTop: -10 }}
           />}
           {!!loading && <AbsoluteSpinner width={30} height={30} />}

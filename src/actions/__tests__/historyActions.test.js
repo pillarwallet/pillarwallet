@@ -45,10 +45,10 @@ describe('History Actions', () => {
       const transactions = [{}];
 
       beforeEach(async () => {
-        getState.mockImplementation(() => ({ history: { data: [] } }));
+        getState.mockImplementation(() => ({ history: { data: [] }, wallet: { data: { address: walletAddress } } }));
         api.fetchHistory.mockImplementation(() => Promise.resolve(transactions));
 
-        await fetchTransactionsHistoryAction(walletAddress, asset)(dispatchMock, getState, api);
+        await fetchTransactionsHistoryAction(asset)(dispatchMock, getState, api);
       });
 
       it('should call the api.fetchHistory function', () => {
@@ -70,10 +70,10 @@ describe('History Actions', () => {
 
     describe('when transactions are NOT found', () => {
       beforeEach(async () => {
-        getState.mockImplementation(() => ({ history: { data: [] } }));
+        getState.mockImplementation(() => ({ history: { data: [] }, wallet: { data: { address: walletAddress } } }));
         api.fetchHistory.mockImplementation(() => Promise.resolve([]));
 
-        await fetchTransactionsHistoryAction(walletAddress)(dispatchMock, getState, api);
+        await fetchTransactionsHistoryAction()(dispatchMock, getState, api);
       });
 
       it('should NOT call the dispatch function', () => {
