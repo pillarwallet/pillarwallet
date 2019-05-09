@@ -601,18 +601,60 @@ SDKWrapper.prototype.rejectInvitation = function (
     .catch(() => null);
 };
 
-SDKWrapper.prototype.disconnectUser =
-  function (targetUserId: string, sourceUserAccessKey: string, targetUserAccessKey: string, walletId: string) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connection.disconnect({
-        targetUserId,
-        sourceUserAccessKey,
-        targetUserAccessKey,
-        walletId,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  };
+SDKWrapper.prototype.disconnectUser = function (
+  targetUserId: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
+  walletId: string,
+) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connectionV2.disconnect({
+      targetUserId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+    }))
+    .then(({ data }) => data)
+    .catch(() => null);
+};
+
+SDKWrapper.prototype.muteUser = function (
+  targetUserId: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
+  walletId: string,
+  mute: boolean,
+) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connectionV2.mute({
+      targetUserId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+      mute,
+    }))
+    .then(({ data }) => data)
+    .catch(() => null);
+};
+
+SDKWrapper.prototype.blockUser = function (
+  targetUserId: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
+  walletId: string,
+  block: boolean,
+) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connectionV2.block({
+      targetUserId,
+      sourceIdentityKey,
+      targetIdentityKey,
+      walletId,
+      block,
+    }))
+    .then(({ data }) => data)
+    .catch(() => null);
+};
 
 SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
   return Promise.resolve()
@@ -661,3 +703,4 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
       return false;
     });
 };
+

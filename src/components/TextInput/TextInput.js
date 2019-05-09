@@ -20,11 +20,11 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Item as NBItem, Input, Label } from 'native-base';
-import { fontSizes, fontWeights, baseColors, UIColors, spacing } from 'utils/variables';
+import { View, TouchableOpacity, Platform, TextInput as RNInput } from 'react-native';
 import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
-import { View, TouchableOpacity, Platform } from 'react-native';
 import Spinner from 'components/Spinner';
+import { fontSizes, fontWeights, baseColors, UIColors, spacing } from 'utils/variables';
 
 type inputPropsType = {
   placeholder?: string,
@@ -160,6 +160,7 @@ const AbsoluteSpinner = styled(Spinner)`
 
 class TextInput extends React.Component<Props, State> {
   multilineInputField: Object;
+  rnInput: Object;
 
   state = {
     isFocused: false,
@@ -173,6 +174,7 @@ class TextInput extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+    this.rnInput = React.createRef();
     this.multilineInputField = React.createRef();
   }
 
@@ -206,6 +208,21 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
+  handleRNFocus = () => {
+    setTimeout(() => {
+      this.multilineInputField._root.focus();
+      this.setState({
+        isFocused: true,
+      });
+    }, 500);
+  };
+
+  handleMultilineFocus = () => {
+    if (!this.state.isFocused) {
+      this.rnInput.current.focus();
+    }
+  };
+
   render() {
     const {
       icon,
@@ -230,7 +247,8 @@ class TextInput extends React.Component<Props, State> {
     const { isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
     const additionalRightPadding = loading ? 36 : 0;
-
+    const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
+      this.handleMultilineFocus : this.handleFocus;
     return (
       <View style={{ paddingBottom: 10 }}>
         <Item
@@ -247,8 +265,8 @@ class TextInput extends React.Component<Props, State> {
             innerRef={(input) => { this.multilineInputField = input; }}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
-            onEndEditing={() => this.handleBlur}
-            onFocus={this.handleFocus}
+            onEndEditing={this.handleBlur}
+            onFocus={variableFocus}
             value={value}
             inputType={inputType}
             autoCorrect={autoCorrect}
@@ -262,6 +280,13 @@ class TextInput extends React.Component<Props, State> {
             }}
             onLayout={onLayout}
           />
+          {Platform.OS === 'ios' && <RNInput
+            caretHidden
+            autoCorrect={false}
+            ref={this.rnInput}
+            onFocus={this.handleRNFocus}
+            style={{ marginTop: -10 }}
+          />}
           {!!loading && <AbsoluteSpinner width={30} height={30} />}
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}

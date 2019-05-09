@@ -24,7 +24,6 @@ import {
   UPDATE_CHATS,
   ADD_MESSAGE,
   UPDATE_MESSAGES,
-  RESET_UNREAD_MESSAGE,
   FETCHING_CHATS,
   DELETE_CHAT,
   ADD_WEBSOCKET_SENT_MESSAGE,
@@ -99,11 +98,6 @@ export const getExistingChatsAction = () => {
     });
   };
 };
-
-export const resetUnreadAction = (username: string) => ({
-  type: RESET_UNREAD_MESSAGE,
-  payload: { username },
-});
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
   return async (dispatch: Function, getState: Function) => {

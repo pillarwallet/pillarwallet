@@ -143,12 +143,7 @@ android {
       }
   }
 }
-  // hotfix for lottie lib and Java 8 issue
-  configurations.all {
-    resolutionStrategy {
-      force 'com.airbnb.android:lottie:2.5.5'
-    }
-  }
+
 // Don't use modern jsc-android since it still has some critical bugs that
 // crash applications when the string for the JS bundle is loaded and when
 // locale-specific date functions are called.
@@ -161,7 +156,6 @@ android {
 
 dependencies {
   implementation project(':react-native-extra-dimensions-android')
-  implementation project(':react-native-image-capinsets')
   implementation project(':react-native-touch-id')
   implementation project(':react-native-color-matrix-image-filters')
   implementation project(':react-native-image-crop-picker')
@@ -219,7 +213,7 @@ dependencies {
   implementation 'com.segment.analytics.android:analytics:4.3.0'
   implementation 'com.google.zxing:core:3.2.1'
   implementation 'net.openid:appauth:0.4.1'
-  implementation 'com.airbnb.android:lottie:2.2.0'
+  implementation 'com.airbnb.android:lottie:2.6.1'
   implementation 'io.branch.sdk.android:library:2.6.1'
   implementation('io.nlopez.smartlocation:library:3.2.11') {
     transitive = false
