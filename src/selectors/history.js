@@ -6,7 +6,7 @@ export const accountHistorySelector = createSelector(
   historySelector,
   activeAccountIdSelector,
   (history, activeAccountId) => {
-    if (!activeAccountId) return {};
+    if (!activeAccountId) return [];
     return history[activeAccountId] || [];
   },
 );
