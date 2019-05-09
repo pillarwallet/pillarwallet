@@ -827,6 +827,8 @@ workflows:
               only:
                   - develop
       - stage_ios:
+          requires:
+            - build-and-test
           filters:
             branches:
               only:
