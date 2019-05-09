@@ -343,14 +343,14 @@ jobs:
       - run:
           name: Fetch CocoaPods Specs
           command: |
-            Y | sudo gem uninstall cocoapods
-            sudo gem install cocoapods -v 1.5.3
-            pod --version
+            #Y | sudo gem uninstall cocoapods
+            #sudo gem install cocoapods -v 1.5.3
+            https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh
       - run:
           name: Install CocoaPods
           command: |
             cd ios
-            pod repo update
+            #pod repo update
             pod install --verbose
       - save_cache:
           key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
@@ -832,7 +832,7 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                  - feature/build-time-reduction
       - stage_android:
           requires:
             - build-and-test
