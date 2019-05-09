@@ -133,7 +133,7 @@ PODS:
     - gRPC-Core (= 1.20.0)
     - gRPC-RxLibrary (= 1.20.0)
   - GTMSessionFetcher/Core (1.2.1)
-  - Intercom (5.2)
+  - Intercom (5.2.1)
   - leveldb-library (1.20)
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
@@ -395,7 +395,7 @@ SPEC CHECKSUMS:
   gRPC-ProtoRPC: d49c7074c6a5e5a9f18f9b5a1c6d94787334bcbe
   gRPC-RxLibrary: 3b5272bfdd136c3bc1383ffdfc210404b5d8400a
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
-  Intercom: fd0c7377d49cc2f1a94e7fc0bcc9ccfcdab0a7dc
+  Intercom: 53f07c24f0ca18c1e910750e79b75f9c9867338f
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a

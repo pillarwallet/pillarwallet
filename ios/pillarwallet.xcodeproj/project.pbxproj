@@ -1845,7 +1845,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pillarproject.wallet";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet;
 				PRODUCT_NAME = pillarwallet;
 				PROVISIONING_PROFILE = "56f20096-3a84-4e04-a83a-ad8a485d962a";
 				PROVISIONING_PROFILE_SPECIFIER = "match Development com.pillarproject.wallet 1530870110";
@@ -1894,7 +1894,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pillarproject.wallet";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet;
 				PRODUCT_NAME = pillarwallet;
 				PROVISIONING_PROFILE = "c9895f88-22c3-4b0e-b12d-dd463187c3c8";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.pillarproject.wallet 1526587087";
@@ -2088,7 +2088,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pillarproject.wallet.staging";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet.staging;
 				PRODUCT_NAME = "pillarwallet-staging";
 				PROVISIONING_PROFILE = "1736ad49-49b1-456f-8bb5-977f029a2cbe";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.pillarproject.wallet.staging";
