@@ -51,7 +51,7 @@ import {
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
-import { migrateBalancesToAccountsFormat } from 'utils/dataMigration';
+import { migrateBalancesToAccountsFormat, migrateTxHistoryToAccountsFormat } from 'utils/dataMigration';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -78,12 +78,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: UPDATE_ASSETS, payload: assets });
 
       const { balances = {} } = await storage.get('balances');
-      console.log({ balances });
       if (!balances[ETH]) {
         dispatch({ type: UPDATE_BALANCES, payload: balances });
       } else if (accounts.length) {
         const migratedBalances = migrateBalancesToAccountsFormat(balances, accounts);
-        console.log({ migratedBalances });
         if (migratedBalances) {
           dispatch({ type: UPDATE_BALANCES, payload: migratedBalances });
           dispatch(saveDbAction('balances', { balances: migratedBalances }, true));
@@ -124,15 +122,18 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const { history = [] } = await storage.get('history');
-      // TEMP FIX, REMOVE LATER
-      const filteredHistory = history
-        .filter(({ hash }) => !!hash)
-        .filter(({ value }) => typeof value !== 'object');
-      if (filteredHistory.length !== history.length) {
-        dispatch(saveDbAction('history', { history: filteredHistory }, true));
+      const { history = {} } = await storage.get('history');
+      if (Array.isArray(history)) {
+        if (accounts.length) {
+          const migratedHistory = migrateTxHistoryToAccountsFormat(history, accounts);
+          if (migratedHistory) {
+            dispatch({ type: SET_HISTORY, payload: migratedHistory });
+            dispatch(saveDbAction('history', { history: migratedHistory }, true));
+          }
+        }
+      } else {
+        dispatch({ type: SET_HISTORY, payload: history });
       }
-      dispatch({ type: SET_HISTORY, payload: filteredHistory });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 

@@ -36,6 +36,10 @@ export type Transaction = {
   note?: ?string,
 }
 
+export type TransactionsStore = {
+  [accountId: string]: Transaction[],
+};
+
 export type TokenTransactionPayload = {
   gasLimit: number,
   amount: number,

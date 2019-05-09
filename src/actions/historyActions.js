@@ -28,6 +28,8 @@ import {
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { updateAccountHistory } from 'utils/history';
+import { getActiveAccountId } from 'utils/accounts';
 import { checkForMissedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
@@ -37,8 +39,11 @@ const TRANSACTIONS_HISTORY_STEP = 10;
 export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
+      accounts: { data: accounts },
       wallet: { data: wallet },
+      history: { data: currentHistory },
     } = getState();
+    const accountId = getActiveAccountId(accounts);
 
     const history = await api.fetchHistory({
       address1: wallet.address,
@@ -48,8 +53,9 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
     });
     if (!history.length) return;
 
-    const { history: { data: currentHistory } } = getState();
-    const updatedHistory = uniqBy([...history, ...currentHistory], 'hash');
+    const accountHistory = currentHistory[accountId] || [];
+    const updatedAccountHistory = uniqBy([...history, ...accountHistory], 'hash');
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
     dispatch(getExistingTxNotesAction());
@@ -63,6 +69,12 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
 
 export const fetchContactTransactionsAction = (myAddress: string, contactAddress: string, asset?: string = 'ALL') => {
   return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      accounts: { data: accounts },
+      history: { data: currentHistory },
+    } = getState();
+    const accountId = getActiveAccountId(accounts);
+
     const history = await api.fetchHistory({
       address1: myAddress,
       address2: contactAddress,
@@ -72,8 +84,9 @@ export const fetchContactTransactionsAction = (myAddress: string, contactAddress
     });
     if (!history.length) return;
 
-    const { history: { data: currentHistory } } = getState();
-    const updatedHistory = uniqBy([...history, ...currentHistory], 'hash');
+    const accountHistory = currentHistory[accountId] || [];
+    const updatedAccountHistory = uniqBy([...history, ...accountHistory], 'hash');
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
     dispatch({
@@ -86,10 +99,12 @@ export const fetchContactTransactionsAction = (myAddress: string, contactAddress
 export const fetchTransactionsHistoryNotificationsAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
+      accounts: { data: accounts },
       user: { data: { walletId } },
       history: { data: currentHistory },
       appSettings: { data: { lastTxSyncDatetime = 0 } },
     } = getState();
+    const accountId = getActiveAccountId(accounts);
 
     const d = new Date(lastTxSyncDatetime * 1000);
     const types = [
@@ -113,8 +128,8 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       .filter(tx => tx.status === TX_PENDING_STATUS);
 
     // add new records & update data for mined transactions
-    const fixedCurrentHistory = currentHistory.filter(tx => !!tx.createdAt);
-    const updatedHistory = uniqBy([...fixedCurrentHistory, ...pendingTransactions], 'hash')
+    const accountHistory = (currentHistory[accountId] || []).filter(tx => !!tx.createdAt);
+    const updatedAccountHistory = uniqBy([...accountHistory, ...pendingTransactions], 'hash')
       .map(tx => {
         if (!minedTransactions[tx.hash]) return tx;
         const { status, gasUsed, blockNumber } = minedTransactions[tx.hash];
@@ -126,7 +141,9 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         };
       });
 
-    const lastCreatedAt = Math.max(...updatedHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
+    const lastCreatedAt = Math.max(...updatedAccountHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch(saveDbAction('app_settings', { appSettings: { lastTxSyncDatetime: lastCreatedAt } }));
     dispatch({
@@ -153,9 +170,11 @@ export const fetchGasInfoAction = () => {
 export const updateTransactionStatusAction = (hash: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
+      accounts: { data: accounts },
       session: { data: { isOnline } },
-      history: { data: history },
+      history: { data: currentHistory },
     } = getState();
+    const accountId = getActiveAccountId(accounts);
 
     if (!isOnline) return;
 
@@ -167,7 +186,8 @@ export const updateTransactionStatusAction = (hash: string) => {
     const nbConfirmations = lastBlockNumber - txReceipt.blockNumber;
     const status = txReceipt.status ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS;
 
-    const updatedHistory = history.map(tx => {
+    const accountHistory = currentHistory[accountId] || [];
+    const updatedAccountHistory = accountHistory.map(tx => {
       if (tx.hash !== hash) return tx;
       return {
         ...tx,
@@ -175,6 +195,8 @@ export const updateTransactionStatusAction = (hash: string) => {
         status,
       };
     });
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+
     dispatch({
       type: SET_HISTORY,
       payload: updatedHistory,

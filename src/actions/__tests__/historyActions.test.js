@@ -20,9 +20,19 @@
 import { fetchTransactionsHistoryAction } from '../historyActions';
 import { SET_HISTORY } from '../../constants/historyConstants';
 
+const walletAddress = 'wallet-address';
+
+const mockWallet: Object = {
+  address: walletAddress,
+};
+
+const mockAccounts: Object[] = [{
+  id: walletAddress,
+  isActive: true,
+}];
+
 describe('History Actions', () => {
   const transactionsHistoryStep = 10;
-  const walletAddress = 'wallet-address';
 
   const api = {
     fetchHistory: jest.fn(),
@@ -43,9 +53,16 @@ describe('History Actions', () => {
     describe('when transactions are found', () => {
       const asset = 'ASSET';
       const transactions = [{}];
+      const accountTransactions = {
+        [mockAccounts[0].id]: transactions,
+      };
 
       beforeEach(async () => {
-        getState.mockImplementation(() => ({ history: { data: [] }, wallet: { data: { address: walletAddress } } }));
+        getState.mockImplementation(() => ({
+          accounts: { data: mockAccounts },
+          history: { data: {} },
+          wallet: { data: mockWallet },
+        }));
         api.fetchHistory.mockImplementation(() => Promise.resolve(transactions));
 
         await fetchTransactionsHistoryAction(asset)(dispatchMock, getState, api);
@@ -63,14 +80,18 @@ describe('History Actions', () => {
       it('should call the dispatch function', () => {
         expect(dispatchMock).toBeCalledWith({
           type: SET_HISTORY,
-          payload: transactions,
+          payload: accountTransactions,
         });
       });
     });
 
     describe('when transactions are NOT found', () => {
       beforeEach(async () => {
-        getState.mockImplementation(() => ({ history: { data: [] }, wallet: { data: { address: walletAddress } } }));
+        getState.mockImplementation(() => ({
+          accounts: { data: mockAccounts },
+          history: { data: {} },
+          wallet: { data: mockWallet },
+        }));
         api.fetchHistory.mockImplementation(() => Promise.resolve([]));
 
         await fetchTransactionsHistoryAction()(dispatchMock, getState, api);

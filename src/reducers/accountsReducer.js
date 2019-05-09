@@ -18,7 +18,7 @@ const initialState = {
 export default function accountsReducer(
   state: AccountsState = initialState,
   action: AccountsAction,
-) {
+): AccountsState {
   switch (action.type) {
     case UPDATE_ACCOUNTS:
       return { ...state, data: action.payload };

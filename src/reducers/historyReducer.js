@@ -18,22 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { SET_HISTORY, ADD_TRANSACTION, SET_GAS_INFO } from 'constants/historyConstants';
-import type { Transaction } from 'models/Transaction';
+import type { TransactionsStore } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
 
-export type HistoryReducerState = {
-  data: Transaction[],
+export type HistoryState = {
+  data: TransactionsStore,
   gasInfo: GasInfo,
   isFetched: boolean,
 }
 
-export type HistoryReducerAction = {
+export type HistoryAction = {
   type: string,
   payload: any,
 }
 
 const initialState = {
-  data: [],
+  data: {},
   gasInfo: {
     gasPrice: {},
     isFetched: false,
@@ -42,12 +42,17 @@ const initialState = {
 };
 
 export default function historyReducer(
-  state: HistoryReducerState = initialState,
-  action: HistoryReducerAction,
-): HistoryReducerState {
+  state: HistoryState = initialState,
+  action: HistoryAction,
+): HistoryState {
   switch (action.type) {
     case ADD_TRANSACTION:
-      const trxs = state.data.concat(action.payload);
+      const accountTrxs = state.data[action.payload.accountId] || [];
+      const trxs = {
+        ...state.data,
+        [action.payload.accountId]: [...accountTrxs, action.payload.historyTx],
+      };
+
       return Object.assign(
         {},
         state,

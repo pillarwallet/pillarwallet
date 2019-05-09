@@ -167,7 +167,7 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_ASSETS, payload: {} });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
     dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
-    dispatch({ type: SET_HISTORY, payload: [] });
+    dispatch({ type: SET_HISTORY, payload: {} });
 
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));

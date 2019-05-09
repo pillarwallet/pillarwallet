@@ -34,14 +34,14 @@ export type Assets = {
 };
 
 export type Balances = {
-  [string]: {
+  [ticker: string]: {
     balance: string,
     symbol: string,
   },
 };
 
 export type BalancesStore = {
-  [string]: Balances,
+  [accountId: string]: Balances,
 };
 
 export type Rates = {

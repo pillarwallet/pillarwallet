@@ -54,8 +54,8 @@ import type {
 import type { Asset, Assets } from 'models/Asset';
 import { transformAssetsToObject } from 'utils/assets';
 import { delay, getEthereumProvider, noop, uniqBy } from 'utils/common';
-import { buildHistoryTransaction } from 'utils/history';
-import { getActiveAccountAddress } from 'utils/accounts';
+import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
+import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 
@@ -82,8 +82,10 @@ export const sendAssetAction = (
     const {
       history: { data: currentHistory },
       txCount: { data: { lastNonce } },
+      accounts: { data: accounts },
       collectibles: { assets, transactionHistory: collectiblesHistory },
     } = getState();
+    const accountId = getActiveAccountId(accounts);
     wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
     const transactionCount = await wallet.provider.getTransactionCount(wallet.address, 'pending');
 
@@ -220,9 +222,14 @@ export const sendAssetAction = (
       } else {
         dispatch({
           type: ADD_TRANSACTION,
-          payload: historyTx,
+          payload: {
+            accountId,
+            historyTx,
+          },
         });
-        const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
+        const accountHistory = currentHistory[accountId] || [];
+        const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
+        const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
       }
     }
@@ -274,6 +281,7 @@ export const fetchAssetsBalancesAction = (assets: Assets) => {
     } = getState();
 
     const walletAddress = getActiveAccountAddress(accounts);
+    const accountId = getActiveAccountId(accounts);
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
@@ -284,7 +292,7 @@ export const fetchAssetsBalancesAction = (assets: Assets) => {
       const transformedBalances = transformAssetsToObject(newBalances);
       const updatedBalances = {
         ...balances,
-        [walletAddress]: transformedBalances,
+        [accountId]: transformedBalances,
       };
       dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
       dispatch({

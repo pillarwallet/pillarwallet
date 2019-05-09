@@ -33,14 +33,17 @@ import {
   setSmartWalletUpgradeStatusAction,
 } from 'actions/smartWalletActions';
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
+import { SET_HISTORY } from 'constants/historyConstants';
 import Storage from 'services/storage';
-import { migrateBalancesToAccountsFormat } from 'utils/dataMigration';
+import { migrateBalancesToAccountsFormat, migrateTxHistoryToAccountsFormat } from 'utils/dataMigration';
 
 const storage = Storage.getInstance('db');
 
 export const initDefaultAccountAction = (walletAddress: string) => {
   return async (dispatch: Function) => {
     const { balances = {} } = await storage.get('balances');
+    const { history = {} } = await storage.get('history');
+
     const keyBasedAccount = {
       id: walletAddress,
       type: ACCOUNT_TYPES.KEY_BASED,
@@ -61,6 +64,15 @@ export const initDefaultAccountAction = (walletAddress: string) => {
       if (migratedBalances) {
         dispatch({ type: UPDATE_BALANCES, payload: migratedBalances });
         dispatch(saveDbAction('balances', { balances: migratedBalances }, true));
+      }
+    }
+
+    // history
+    if (Array.isArray(history)) {
+      const migratedHistory = migrateTxHistoryToAccountsFormat(history, [keyBasedAccount]);
+      if (migratedHistory) {
+        dispatch({ type: SET_HISTORY, payload: migratedHistory });
+        dispatch(saveDbAction('history', { history: migratedHistory }, true));
       }
     }
 

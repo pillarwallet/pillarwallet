@@ -36,7 +36,7 @@ const initialState = {
 export default function balancesReducer(
   state: BalancesState = initialState,
   action: BalancesAction,
-) {
+): BalancesState {
   switch (action.type) {
     case UPDATE_BALANCES:
       return { ...state, data: action.payload };

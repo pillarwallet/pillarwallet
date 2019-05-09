@@ -20,7 +20,11 @@
 
 import type { Accounts } from 'models/Account';
 
-export function getActiveAccountAddress(accounts: Accounts = []) {
+export function getActiveAccountId(accounts: Accounts = []): string {
   const activeAccount = accounts.find(({ isActive }) => isActive) || {};
   return activeAccount.id || '';
+}
+
+export function getActiveAccountAddress(accounts: Accounts = []): string {
+  return getActiveAccountId(accounts);
 }
