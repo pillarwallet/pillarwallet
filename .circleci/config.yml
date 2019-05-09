@@ -343,8 +343,8 @@ jobs:
       - run:
           name: Fetch CocoaPods Specs
           command: |
-            #Y | sudo gem uninstall cocoapods
-            #sudo gem install cocoapods -v 1.5.3
+            Y | sudo gem uninstall cocoapods
+            sudo gem install cocoapods -v 1.5.3
             curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
       - run:
           name: Install CocoaPods
