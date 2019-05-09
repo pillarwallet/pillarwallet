@@ -27,7 +27,7 @@ import {
   TX_FAILED_STATUS,
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+// import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { updateAccountHistory } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { checkForMissedAssetsAction } from './assetsActions';
