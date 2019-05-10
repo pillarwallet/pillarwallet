@@ -54,7 +54,7 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
     const contacts = [];
     const invitations = [];
     resultConnections.forEach((resConn: ConnectionIdentityKey) => {
-      if (resConn.status !== 'pending' && resConn.status !== 'disconnected') {
+      if (resConn.status === 'accepted' || resConn.status === 'muted' || resConn.status === 'blocked') {
         const contact = {
           id: resConn.targetUserId,
           ethAddress: resConn.targetUserInfo.ethAddress,
