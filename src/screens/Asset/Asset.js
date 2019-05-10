@@ -247,8 +247,6 @@ class AssetScreen extends React.Component<Props, State> {
       disclaimer,
     } = assetsConfig[assetData.token] || {};
 
-
-
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
@@ -300,7 +298,6 @@ class AssetScreen extends React.Component<Props, State> {
               <TruncatedText lines={1} text={assetData.description} />
            </View
            > */}
-
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
@@ -309,9 +306,9 @@ class AssetScreen extends React.Component<Props, State> {
               isReceiveDisabled={!isReceiveActive}
             />
             {!isSendActive &&
-            <Wrapper regularPadding style={{marginTop: 30, alignItems: 'center'}}>
-              <MessageTitle>{sendingBlockedMessage.title}</MessageTitle>
-              <Message>{sendingBlockedMessage.message}</Message>
+            <Wrapper regularPadding style={{ marginTop: 30, alignItems: 'center' }}>
+              <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
+              <Message>{ sendingBlockedMessage.message }</Message>
               {smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED &&
               <Button
                 marginTop="20px"
@@ -324,8 +321,7 @@ class AssetScreen extends React.Component<Props, State> {
               }
             </Wrapper>
             }
-            </AssetCardWrapper>
-
+          </AssetCardWrapper>
           <ActivityFeed
             feedTitle="transactions."
             navigation={navigation}
