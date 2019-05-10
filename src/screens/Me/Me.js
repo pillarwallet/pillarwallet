@@ -24,26 +24,28 @@ import { Container, ScrollWrapper } from 'components/Layout';
 import { baseColors } from 'utils/variables';
 import { Shadow } from 'components/Shadow';
 import ProfileImage from 'components/ProfileImage/ProfileImage';
+import QRCodeScanner from 'components/QRCodeScanner';
 import CircleButton from 'components/CircleButton';
 import SettingsListItem from 'components/ListItem/SettingsItem';
+import { onWalletConnectSessionRequest } from 'actions/walletConnectActions';
 import * as styled from './styles';
 
 const iconReceive = require('assets/icons/icon_receive.png');
 
+type State = {
+  isScanning: boolean,
+};
+
 type Props = {
   user: Object,
-  onNewSession: Function,
+  onWalletConnectSessionRequest: Function,
   onManageDetails: Function,
   onSetupRecovery: Function,
   onPermissions: Function,
 };
 
-const meSettingsItems = (props) => {
-  const {
-    onManageDetails,
-    onSetupRecovery,
-    onPermissions,
-  } = props;
+const meSettingsItems = props => {
+  const { onManageDetails, onSetupRecovery, onPermissions } = props;
 
   return [
     {
@@ -63,79 +65,98 @@ const meSettingsItems = (props) => {
     },
   ];
 };
+class MeScreen extends React.Component<Props, State> {
+  state = {
+    isScanning: false,
+  };
 
-const MeScreen = (props: Props) => {
-  const {
-    onNewSession,
-    user,
-  } = props;
+  validateWalletConnectQRCode = (uri: string) => {
+    if (uri.startsWith('wc:')) {
+      return true;
+    }
+    return false;
+  };
 
-  const height = 330;
-  const { width } = Dimensions.get('window');
+  toggleQRScanner = () => this.setState({ isScanning: !this.state.isScanning });
 
-  return (
-    <Container>
-      <ScrollWrapper>
-        <styled.CardContainer>
-          <styled.Card>
-            <Shadow
-              heightAndroid={height}
-              heightIOS={height}
-              widthIOS={width - 40}
-              widthAndroid={width - 40}
-              shadowRadius={6}
-              shadowDistance={0}
-              shadowSpread={10}
-              shadowOffsetX={0}
-              shadowOffsetY={1}
-              shadowColorOS={baseColors.mediumLightGray}
-              shadowBorder={8}
-            >
-              <styled.CardBoard height={height}>
-                <styled.Username>{user.username}</styled.Username>
+  handleQRScannerClose = () => this.setState({ isScanning: false });
 
-                <ProfileImage
-                  noShadow
-                  uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
-                  userName={user.username}
-                  initialsSize={60}
-                  diameter={128}
-                />
+  handleQRRead = (uri: string) => {
+    this.props.onWalletConnectSessionRequest(uri);
+    this.handleQRScannerClose();
+  };
 
-                <styled.NewSession>
-                  <CircleButton
-                    label="New Session"
-                    icon={iconReceive}
-                    onPress={onNewSession}
+  render() {
+    const { user } = this.props;
+
+    const height = 330;
+    const { width } = Dimensions.get('window');
+
+    return (
+      <Container>
+        <ScrollWrapper>
+          <styled.CardContainer>
+            <styled.Card>
+              <Shadow
+                heightAndroid={height}
+                heightIOS={height}
+                widthIOS={width - 40}
+                widthAndroid={width - 40}
+                shadowRadius={6}
+                shadowDistance={0}
+                shadowSpread={10}
+                shadowOffsetX={0}
+                shadowOffsetY={1}
+                shadowColorOS={baseColors.mediumLightGray}
+                shadowBorder={8}
+              >
+                <styled.CardBoard height={height}>
+                  <styled.Username>{user.username}</styled.Username>
+
+                  <ProfileImage
+                    noShadow
+                    uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
+                    userName={user.username}
+                    initialsSize={60}
+                    diameter={128}
                   />
-                </styled.NewSession>
-              </styled.CardBoard>
-            </Shadow>
-          </styled.Card>
-        </styled.CardContainer>
 
-        <FlatList
-          data={meSettingsItems(props)}
-          renderItem={({ item: { key, title, onPress } }) => (
-            <SettingsListItem
-              key={key}
-              label={title}
-              onPress={onPress}
-            />
-          )}
-          keyboardShouldPersistTaps="handled"
+                  <styled.NewSession>
+                    <CircleButton label="New Session" icon={iconReceive} onPress={this.toggleQRScanner} />
+                  </styled.NewSession>
+                </styled.CardBoard>
+              </Shadow>
+            </styled.Card>
+          </styled.CardContainer>
+
+          <FlatList
+            data={meSettingsItems(this.props)}
+            renderItem={({ item: { key, title, onPress } }) => (
+              <SettingsListItem key={key} label={title} onPress={onPress} />
+            )}
+            keyboardShouldPersistTaps="handled"
+          />
+        </ScrollWrapper>
+        <QRCodeScanner
+          validator={this.validateWalletConnectQRCode}
+          isActive={this.state.isScanning}
+          onDismiss={this.handleQRScannerClose}
+          onRead={this.handleQRRead}
         />
-      </ScrollWrapper>
-    </Container>
-  );
-};
+      </Container>
+    );
+  }
+}
 
-const mapStateToProps = ({
-  user: { data: user },
-}) => ({
+const mapStateToProps = ({ user: { data: user } }) => ({
   user,
 });
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = dispatch => ({
+  onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(MeScreen);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(MeScreen);
