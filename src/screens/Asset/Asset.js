@@ -30,9 +30,10 @@ import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BoldText, BaseText, Paragraph } from 'components/Typography';
+import Button from 'components/Button';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -41,16 +42,19 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances } from 'models/Asset';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 
 // constants
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -85,6 +89,8 @@ type Props = {
   baseFiatCurrency: ?string,
   contacts: Object,
   resetHideRemoval: Function,
+  smartWalletState: Object,
+  accounts: [],
 };
 
 type State = {
@@ -139,6 +145,18 @@ const Disclaimer = styled(BaseText)`
 const Description = styled(Paragraph)`
   padding-bottom: 80px;
   line-height: ${fontSizes.mediumLarge};
+`;
+
+const MessageTitle = styled(BoldText)`
+  font-size: ${fontSizes.small}px;
+  text-align: center;
+`;
+
+const Message = styled(BaseText)`
+  padding-top: 10px;
+  font-size: ${fontSizes.tiny}px;
+  color: ${baseColors.darkGray};
+  text-align: center;
 `;
 
 class AssetScreen extends React.Component<Props, State> {
@@ -208,6 +226,8 @@ class AssetScreen extends React.Component<Props, State> {
       fetchTransactionsHistory,
       baseFiatCurrency,
       navigation,
+      smartWalletState,
+      accounts,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -222,12 +242,16 @@ class AssetScreen extends React.Component<Props, State> {
 
     const {
       listed: isListed = true,
-      send: isSendActive = true,
+      send: isAssetConfigSendActive = true,
       receive: isReceiveActive = true,
       disclaimer,
     } = assetsConfig[assetData.token] || {};
 
-    // TODO: add send block for smart wallet statuses
+
+
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
 
     return (
       <Container color={baseColors.white} inset={{ bottom: 0 }}>
@@ -284,7 +308,23 @@ class AssetScreen extends React.Component<Props, State> {
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
             />
-          </AssetCardWrapper>
+            {!isSendActive &&
+            <Wrapper regularPadding style={{marginTop: 30, alignItems: 'center'}}>
+              <MessageTitle>{sendingBlockedMessage.title}</MessageTitle>
+              <Message>{sendingBlockedMessage.message}</Message>
+              {smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED &&
+              <Button
+                marginTop="20px"
+                height={52}
+                title="Deploy Smart Wallet"
+                onPress={() => {
+                  // TODO: navigate to last upgrade step?
+                }}
+              />
+              }
+            </Wrapper>
+            }
+            </AssetCardWrapper>
 
           <ActivityFeed
             feedTitle="transactions."
@@ -324,11 +364,15 @@ const mapStateToProps = ({
   assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
+  smartWallet: smartWalletState,
+  accounts: { data: accounts },
 }) => ({
   contacts,
   assets,
   rates,
   baseFiatCurrency,
+  smartWalletState,
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({
