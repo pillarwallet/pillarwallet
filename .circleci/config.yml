@@ -350,7 +350,6 @@ jobs:
           name: Install CocoaPods
           command: |
             cd ios
-            #pod repo update
             pod install --verbose
       - save_cache:
           key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
@@ -832,7 +831,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/build-time-reduction
+                  - master
       - stage_android:
           requires:
             - build-and-test
