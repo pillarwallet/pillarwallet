@@ -24,6 +24,7 @@ import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
 import { Animated, Easing, View, Platform, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
+import ProfileImage from 'components/ProfileImage/ProfileImage';
 
 // services
 import { updateNavigationLastScreenState } from 'services/navigation';
@@ -35,7 +36,7 @@ import AssetScreen from 'screens/Asset';
 import MarketScreen from 'screens/Market';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
-import ContactScreen from 'screens/Contact';
+import ContactScreen from 'screens/Contact/ContactDetails';
 import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
@@ -49,6 +50,7 @@ import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import HomeScreen from 'screens/Home';
+import MeScreen from 'screens/Me';
 import ICOScreen from 'screens/ICO';
 import ParticipateScreen from 'screens/Participate';
 import InstructionsScreen from 'screens/Participate/Instructions';
@@ -90,6 +92,7 @@ import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 // constants
 import {
   ADD_TOKEN,
+  SELF,
   ASSETS,
   ASSET,
   ICO,
@@ -154,6 +157,7 @@ const iconWallet = require('assets/icons/icon_wallet_new.png');
 const iconPeople = require('assets/icons/icon_people_new.png');
 const iconHome = require('assets/icons/icon_home_new.png');
 // const iconMarket = require('assets/icons/icon_marketplace_new.png');
+
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
@@ -201,6 +205,13 @@ const assetsFlow = createStackNavigator(
 );
 
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+// SELF FLOW
+const selfFlow = createStackNavigator({
+  [SELF]: MeScreen,
+}, StackNavigatorConfig);
+
+selfFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
@@ -342,6 +353,25 @@ const tabNavigation = createBottomTabNavigator(
     //     tabBarLabel: tabBarLabel('Market'),
     //   }),
     // },
+    [SELF]: {
+      screen: selfFlow,
+      navigationOptions: ({ screenProps }) => ({
+        tabBarIcon: ({ focused }) => (
+          <View style={{ padding: 4 }}>
+            <ProfileImage
+              noShadow
+              borderWidth={2}
+              borderColor={focused ? baseColors.electricBlue : baseColors.white}
+              borderSpacing={1}
+              initialsSize={24}
+              diameter={24}
+              uri={screenProps.profileImage}
+            />
+          </View>
+        ),
+        tabBarLabel: tabBarLabel('Me'),
+      }),
+    },
   }, {
     tabBarOptions: {
       activeTintColor: UIColors.primary,
@@ -446,6 +476,7 @@ const AppFlowNavigation = createStackNavigator(
 
 type Props = {
   userState: ?string,
+  profileImage: ?string,
   fetchAppSettingsAndRedirect: Function,
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
@@ -574,6 +605,7 @@ class AppFlow extends React.Component<Props, {}> {
   render() {
     const {
       userState,
+      profileImage,
       hasUnreadNotifications,
       intercomNotificationsCount,
       hasUnreadChatNotifications,
@@ -591,6 +623,7 @@ class AppFlow extends React.Component<Props, {}> {
     return (
       <AppFlowNavigation
         screenProps={{
+          profileImage,
           hasUnreadNotifications,
           hasUnreadChatNotifications,
           intercomNotificationsCount,
@@ -603,7 +636,7 @@ class AppFlow extends React.Component<Props, {}> {
 }
 
 const mapStateToProps = ({
-  user: { userState },
+  user: { data: { profileImage }, userState },
   notifications: {
     data: notifications,
     intercomNotificationsCount,
@@ -616,6 +649,7 @@ const mapStateToProps = ({
     data: { isPickingImage },
   },
 }) => ({
+  profileImage,
   userState,
   notifications,
   hasUnreadNotifications,
