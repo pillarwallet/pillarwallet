@@ -183,3 +183,31 @@ jest.mock('react-native-fabric', () => {
     },
   };
 });
+
+const mockSmartWalletAccount = {
+  id: 123,
+  address: 'publicAddress',
+  deployMode: 'Unsecured',
+  ensName: null,
+  state: 'Created',
+  nextState: null,
+  updatedAt: '2019-05-10T07:15:09.000Z',
+};
+
+jest.setMock('@archanova/wallet-sdk', {
+  DeviceService: {
+    STORAGE_KEYS: {
+      privateKey: 'privateKey',
+    },
+  },
+  createSdk: () => ({
+    initialize: () => Promise.resolve(),
+    getAccounts: () => Promise.resolve([mockSmartWalletAccount]),
+    createAccount: () => Promise.resolve(mockSmartWalletAccount),
+  }),
+  availableEnvironments: {
+    staging: {
+      extendOptions: () => {},
+    },
+  },
+});

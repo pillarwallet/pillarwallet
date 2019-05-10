@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { isTest } from 'utils/environment';
 
 export default class InMemoryStorage {
   isDebug: boolean;
@@ -52,7 +53,7 @@ export default class InMemoryStorage {
   }
 
   debug(...params: any) {
-    if (this.isDebug) {
+    if (this.isDebug && !isTest) {
       console.log.apply(this, params);
     }
   }

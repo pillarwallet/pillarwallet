@@ -50,12 +50,18 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
 import { signalInitAction } from 'actions/signalClientActions';
+import { setActiveAccountAction } from 'actions/accountsActions';
+import {
+  initSmartWalletSdkAction,
+  loadSmartWalletAccountsAction,
+} from 'actions/smartWalletActions';
 import { saveDbAction } from './dbActions';
 import { generateWalletMnemonicAction } from './walletActions';
 import { updateConnectionKeyPairs } from './connectionKeyPairActions';
@@ -234,6 +240,18 @@ export const registerWalletAction = () => {
       fcmToken,
       ...oAuthTokens,
     }));
+
+    // create smart wallet account only for new wallets
+    if (!importedWallet) {
+      await dispatch(initSmartWalletSdkAction(wallet.privateKey));
+      await dispatch(loadSmartWalletAccountsAction());
+      const { accounts: { data: accounts } } = getState();
+      const account = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+      if (account) {
+        // TODO: what if account failed?
+        await dispatch(setActiveAccountAction(account.id));
+      }
+    }
 
     if (!registrationSucceed) { return; }
 

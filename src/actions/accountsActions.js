@@ -80,12 +80,12 @@ export const initDefaultAccountAction = (walletAddress: string) => {
   };
 };
 
-export const addNewAccountAction = (accountAddress: string, accountExtra?: Object = {}) => {
+export const addNewAccountAction = (accountAddress: string, type: string, accountExtra?: Object = {}) => {
   return async (dispatch: Function, getState: Function) => {
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = {
       id: accountAddress,
-      type: ACCOUNT_TYPES.SMART_WALLET,
+      type,
       extra: accountExtra,
       isActive: false,
     };

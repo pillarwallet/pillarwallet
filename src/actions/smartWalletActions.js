@@ -27,6 +27,7 @@ import {
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
 } from 'constants/smartWalletConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import SmartWalletService from 'services/smartWallet';
 import {
   addNewAccountAction,
@@ -62,7 +63,7 @@ export const loadSmartWalletAccountsAction = () => {
       payload: accounts,
     });
     const newAccountsPromises = accounts.map(
-      async account => dispatch(addNewAccountAction(account.address, account)),
+      async account => dispatch(addNewAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account)),
     );
     return Promise.all(newAccountsPromises);
   };
@@ -71,7 +72,11 @@ export const loadSmartWalletAccountsAction = () => {
 export const connectSmartWalletAccountAction = (accountId: string) => {
   return async (dispatch: Function) => {
     if (!smartWalletService) return;
-    const connectedAccount = await smartWalletService.connectAccount(accountId);
+    const connectedAccount = await smartWalletService.connectAccount(accountId).catch(() => null);
+    if (!connectedAccount) {
+      // TODO: what if failed to connect account? also might be already connected error
+      return;
+    }
     dispatch({
       type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
       payload: connectedAccount,
