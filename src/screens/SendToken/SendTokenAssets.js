@@ -259,7 +259,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { data: assets },
-  collectibles: { assets: collectibles },
+  collectibles: { data: collectibles },
 }) => ({
   assets,
   collectibles,

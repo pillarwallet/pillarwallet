@@ -158,7 +158,7 @@ class CollectibleScreen extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  collectibles: { assets: collectibles },
+  collectibles: { data: collectibles },
 }) => ({
   collectibles,
 });

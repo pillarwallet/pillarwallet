@@ -527,7 +527,7 @@ const mapStateToProps = ({
   },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
-  collectibles: { assets: collectibles },
+  collectibles: { data: collectibles },
   tank: { data: tankData },
   smartWallet: smartWalletState,
 }) => ({

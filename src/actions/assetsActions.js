@@ -83,7 +83,7 @@ export const sendAssetAction = (
       history: { data: currentHistory },
       txCount: { data: { lastNonce } },
       accounts: { data: accounts },
-      collectibles: { assets, transactionHistory: collectiblesHistory },
+      collectibles: { data: currentCollectibles, transactionHistory: collectiblesHistory },
     } = getState();
     const accountId = getActiveAccountId(accounts);
     wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
@@ -92,7 +92,7 @@ export const sendAssetAction = (
     let nonce;
     let tokenTx = {};
     let historyTx;
-    let collectibles = assets;
+    let collectibles = currentCollectibles;
     const { to, note } = transaction;
 
     if (lastNonce === transactionCount && lastNonce > 0) {
@@ -104,15 +104,13 @@ export const sendAssetAction = (
       const { contractAddress, tokenId } = (transaction: CollectibleTransactionPayload);
       await dispatch(fetchCollectiblesAction());
       const {
-        collectibles: { assets: newlyFetchedCollectibles },
+        collectibles: { data: newlyFetchedCollectibles },
       } = getState();
 
       collectibles = newlyFetchedCollectibles;
-      const thisCollectible = collectibles.find(collectible => {
-        return collectible.id === tokenId;
-      });
+      const collectibleInfo = collectibles.find(item => item.id === tokenId);
 
-      if (!thisCollectible) {
+      if (!collectibleInfo) {
         tokenTx = {
           error: 'is not owned',
           hash: null,
@@ -144,9 +142,9 @@ export const sendAssetAction = (
             ...historyTxPart,
             to,
             from: wallet.address,
-            assetData: { ...thisCollectible },
+            assetData: { ...collectibleInfo },
             type: COLLECTIBLE_TRANSACTION,
-            icon: thisCollectible.icon,
+            icon: collectibleInfo.icon,
           };
         }
       }
@@ -217,7 +215,7 @@ export const sendAssetAction = (
         });
         const updatedCollectiblesHistory = [...collectiblesHistory, historyTx];
         await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
-        const updatedCollectibles = collectibles.filter(thisAsset => thisAsset.id !== transaction.tokenId);
+        const updatedCollectibles = collectibles.filter(item => item.id !== transaction.tokenId);
         dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
       } else {
         dispatch({

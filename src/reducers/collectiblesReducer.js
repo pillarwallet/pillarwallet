@@ -24,7 +24,7 @@ import {
   ADD_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
 
-type Asset = {
+type Collectible = {
   id: number,
   category: string,
   name: string,
@@ -35,31 +35,31 @@ type Asset = {
   tokenType: string,
 }
 
-export type CollectiblesReducerState = {
-  assets: Asset[],
+export type CollectiblesState = {
+  data: Collectible[],
   transactionHistory: Object[],
 };
 
-export type CollectiblesReducerAction = {
+export type CollectiblesAction = {
   type: string,
   payload: any,
 };
 
 const initialState = {
-  assets: [],
+  data: [],
   transactionHistory: [],
 };
 
 
-export default function assetsReducer(
-  state: CollectiblesReducerState = initialState,
-  action: CollectiblesReducerAction,
-): CollectiblesReducerState {
+export default function collectiblesReducer(
+  state: CollectiblesState = initialState,
+  action: CollectiblesAction,
+): CollectiblesState {
   switch (action.type) {
     case UPDATE_COLLECTIBLES:
       return {
         ...state,
-        assets: action.payload || [],
+        data: action.payload || [],
       };
     case SET_COLLECTIBLES_TRANSACTION_HISTORY:
       return {
@@ -69,7 +69,7 @@ export default function assetsReducer(
     case ADD_COLLECTIBLE_TRANSACTION:
       return {
         ...state,
-        assets: [...state.assets].filter(({ id }) => id !== action.payload.tokenId),
+        data: [...state.data].filter(({ id }) => id !== action.payload.tokenId),
         transactionHistory: [...state.transactionHistory, action.payload.transactionData],
       };
     default:
