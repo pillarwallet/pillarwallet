@@ -23,19 +23,23 @@ import {
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
-import { getActiveAccountAddress } from 'utils/accounts';
+import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 
 export const fetchCollectiblesAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const { accounts: { data: accounts } } = getState();
+    const {
+      accounts: { data: accounts },
+      collectibles: { data: collectibles },
+    } = getState();
     const walletAddress = getActiveAccountAddress(accounts);
+    const accountId = getActiveAccountId(accounts);
     const response = await api.fetchCollectibles(walletAddress);
 
     if (response.error || !response.assets) return;
 
-    const collectibles = response.assets.map(collectible => {
+    const accountCollectibles = response.assets.map(collectible => {
       const {
         token_id: id,
         asset_contract: assetContract,
@@ -58,20 +62,29 @@ export const fetchCollectiblesAction = () => {
       };
     });
 
-    dispatch(saveDbAction('collectibles', { collectibles }, true));
-    dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
+    const updatedCollectibles = {
+      ...collectibles,
+      [accountId]: accountCollectibles,
+    };
+
+    dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
+    dispatch({ type: UPDATE_COLLECTIBLES, payload: updatedCollectibles });
   };
 };
 
 export const fetchCollectiblesHistoryAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const { accounts: { data: accounts } } = getState();
+    const {
+      accounts: { data: accounts },
+      collectibles: { transactionHistory: collectiblesHistory },
+    } = getState();
     const walletAddress = getActiveAccountAddress(accounts);
+    const accountId = getActiveAccountId(accounts);
     const response = await api.fetchCollectiblesTransactionHistory(walletAddress);
 
     if (response.error || !response.asset_events) return;
 
-    const collectiblesHistory = response.asset_events.map(event => {
+    const accountCollectiblesHistory = response.asset_events.map(event => {
       const {
         asset,
         transaction,
@@ -118,9 +131,15 @@ export const fetchCollectiblesHistoryAction = () => {
         assetData,
       };
     });
+
+    const updatedCollectiblesHistory = {
+      ...collectiblesHistory,
+      [accountId]: accountCollectiblesHistory,
+    };
+
     dispatch(getExistingTxNotesAction());
-    dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory }, true));
-    dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
+    dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
+    dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: updatedCollectiblesHistory });
   };
 };
 

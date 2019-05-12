@@ -23,12 +23,12 @@ import {
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   ADD_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
-import type { Collectible } from 'models/Collectible';
+import type { CollectiblesStore, CollectiblesTransactionsStore } from 'models/Collectible';
 
 
 export type CollectiblesState = {
-  data: Collectible[],
-  transactionHistory: Object[],
+  data: CollectiblesStore,
+  transactionHistory: CollectiblesTransactionsStore,
 };
 
 export type CollectiblesAction = {
@@ -37,8 +37,8 @@ export type CollectiblesAction = {
 };
 
 const initialState = {
-  data: [],
-  transactionHistory: [],
+  data: {},
+  transactionHistory: {},
 };
 
 
@@ -50,18 +50,27 @@ export default function collectiblesReducer(
     case UPDATE_COLLECTIBLES:
       return {
         ...state,
-        data: action.payload || [],
+        data: action.payload || {},
       };
     case SET_COLLECTIBLES_TRANSACTION_HISTORY:
       return {
         ...state,
-        transactionHistory: action.payload || [],
+        transactionHistory: action.payload || {},
       };
     case ADD_COLLECTIBLE_TRANSACTION:
+      const { accountId, tokenId, transactionData } = action.payload;
+      const accountCollectibles = state.data[accountId] || [];
+      const accountTransactionHistory = state.transactionHistory[accountId] || [];
       return {
         ...state,
-        data: [...state.data].filter(({ id }) => id !== action.payload.tokenId),
-        transactionHistory: [...state.transactionHistory, action.payload.transactionData],
+        data: {
+          ...state.data,
+          [accountId]: [...accountCollectibles].filter(({ id }) => id !== tokenId),
+        },
+        transactionHistory: {
+          ...state.transactionHistory,
+          [accountId]: [...accountTransactionHistory, transactionData],
+        },
       };
     default:
       return state;

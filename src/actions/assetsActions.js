@@ -83,7 +83,7 @@ export const sendAssetAction = (
       history: { data: currentHistory },
       txCount: { data: { lastNonce } },
       accounts: { data: accounts },
-      collectibles: { data: currentCollectibles, transactionHistory: collectiblesHistory },
+      collectibles: { transactionHistory: collectiblesHistory },
     } = getState();
     const accountId = getActiveAccountId(accounts);
     wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
@@ -92,7 +92,9 @@ export const sendAssetAction = (
     let nonce;
     let tokenTx = {};
     let historyTx;
-    let collectibles = currentCollectibles;
+    let collectibles;
+    let accountCollectibles = [];
+    const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
     const { to, note } = transaction;
 
     if (lastNonce === transactionCount && lastNonce > 0) {
@@ -108,7 +110,8 @@ export const sendAssetAction = (
       } = getState();
 
       collectibles = newlyFetchedCollectibles;
-      const collectibleInfo = collectibles.find(item => item.id === tokenId);
+      accountCollectibles = collectibles[accountId] || [];
+      const collectibleInfo = accountCollectibles.find(item => item.id === tokenId);
 
       if (!collectibleInfo) {
         tokenTx = {
@@ -211,11 +214,22 @@ export const sendAssetAction = (
       if (transaction.tokenType && transaction.tokenType === COLLECTIBLES) {
         dispatch({
           type: ADD_COLLECTIBLE_TRANSACTION,
-          payload: { transactionData: { ...historyTx }, tokenId: transaction.tokenId },
+          payload: {
+            transactionData: { ...historyTx },
+            tokenId: transaction.tokenId,
+            accountId,
+          },
         });
-        const updatedCollectiblesHistory = [...collectiblesHistory, historyTx];
+        const updatedCollectiblesHistory = {
+          ...collectiblesHistory,
+          [accountId]: [...accountCollectiblesHistory, historyTx],
+        };
         await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
-        const updatedCollectibles = collectibles.filter(item => item.id !== transaction.tokenId);
+        const updatedAccountCollectibles = accountCollectibles.filter(item => item.id !== transaction.tokenId);
+        const updatedCollectibles = {
+          ...collectibles,
+          [accountId]: updatedAccountCollectibles,
+        };
         dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
       } else {
         dispatch({
