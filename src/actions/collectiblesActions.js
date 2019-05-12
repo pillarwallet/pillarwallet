@@ -65,8 +65,9 @@ export const fetchCollectiblesAction = () => {
 
 export const fetchCollectiblesHistoryAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const { wallet: { data: wallet } } = getState();
-    const response = await api.fetchCollectiblesTransactionHistory(wallet.address);
+    const { accounts: { data: accounts } } = getState();
+    const walletAddress = getActiveAccountAddress(accounts);
+    const response = await api.fetchCollectiblesTransactionHistory(walletAddress);
 
     if (response.error || !response.asset_events) return;
 
