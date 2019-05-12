@@ -34,14 +34,12 @@ import {
 } from 'actions/smartWalletActions';
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
+import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
 import Storage from 'services/storage';
-import {
-  migrateBalancesToAccountsFormat,
-  migrateTxHistoryToAccountsFormat,
-  migrateCollectiblesToAccountsFormat,
-  migrateCollectiblesHistoryToAccountsFormat,
-} from 'utils/dataMigration';
-import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from '../constants/collectiblesConstants';
+import { migrateBalancesToAccountsFormat } from 'services/dataMigration/balances';
+import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history';
+import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
+import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
 
 const storage = Storage.getInstance('db');
 

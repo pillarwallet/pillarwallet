@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import type { Accounts } from 'models/Account';
+import type { Account, Accounts } from 'models/Account';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 export function getActiveAccountId(accounts: Accounts = []): string {
   const activeAccount = accounts.find(({ isActive }) => isActive) || {};
@@ -27,4 +28,8 @@ export function getActiveAccountId(accounts: Accounts = []): string {
 
 export function getActiveAccountAddress(accounts: Accounts = []): string {
   return getActiveAccountId(accounts);
+}
+
+export function findKeyBasedAccount(accounts: Accounts): ?Account {
+  return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
 }
