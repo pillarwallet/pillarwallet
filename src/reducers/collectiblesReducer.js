@@ -23,12 +23,12 @@ import {
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   ADD_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
-import type { CollectiblesStore, CollectiblesTransactionsStore } from 'models/Collectible';
+import type { CollectiblesStore, CollectiblesHistoryStore } from 'models/Collectible';
 
 
 export type CollectiblesState = {
   data: CollectiblesStore,
-  transactionHistory: CollectiblesTransactionsStore,
+  transactionHistory: CollectiblesHistoryStore,
 };
 
 export type CollectiblesAction = {

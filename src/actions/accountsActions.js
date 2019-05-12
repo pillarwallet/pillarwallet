@@ -35,7 +35,13 @@ import {
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import Storage from 'services/storage';
-import { migrateBalancesToAccountsFormat, migrateTxHistoryToAccountsFormat } from 'utils/dataMigration';
+import {
+  migrateBalancesToAccountsFormat,
+  migrateTxHistoryToAccountsFormat,
+  migrateCollectiblesToAccountsFormat,
+  migrateCollectiblesHistoryToAccountsFormat,
+} from 'utils/dataMigration';
+import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from '../constants/collectiblesConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -43,6 +49,8 @@ export const initDefaultAccountAction = (walletAddress: string) => {
   return async (dispatch: Function) => {
     const { balances = {} } = await storage.get('balances');
     const { history = {} } = await storage.get('history');
+    const { collectibles = {} } = await storage.get('collectibles');
+    const { collectiblesHistory = {} } = await storage.get('collectiblesHistory');
 
     const keyBasedAccount = {
       id: walletAddress,
@@ -73,6 +81,27 @@ export const initDefaultAccountAction = (walletAddress: string) => {
       if (migratedHistory) {
         dispatch({ type: SET_HISTORY, payload: migratedHistory });
         dispatch(saveDbAction('history', { history: migratedHistory }, true));
+      }
+    }
+
+    // collectibles
+    if (Array.isArray(collectibles)) {
+      const migratedCollectibles = migrateCollectiblesToAccountsFormat(collectibles, [keyBasedAccount]);
+      if (migratedCollectibles) {
+        dispatch({ type: UPDATE_COLLECTIBLES, payload: migratedCollectibles });
+        dispatch(saveDbAction('collectibles', { collectibles: migratedCollectibles }, true));
+      }
+    }
+
+    // collectibles history
+    if (Array.isArray(collectiblesHistory)) {
+      const migratedCollectiblesHistory = migrateCollectiblesHistoryToAccountsFormat(
+        collectiblesHistory,
+        [keyBasedAccount],
+      );
+      if (migratedCollectiblesHistory) {
+        dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: migratedCollectiblesHistory });
+        dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: migratedCollectiblesHistory }, true));
       }
     }
 

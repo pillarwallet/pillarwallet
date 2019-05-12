@@ -51,7 +51,12 @@ import {
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
-import { migrateBalancesToAccountsFormat, migrateTxHistoryToAccountsFormat } from 'utils/dataMigration';
+import {
+  migrateBalancesToAccountsFormat,
+  migrateTxHistoryToAccountsFormat,
+  migrateCollectiblesToAccountsFormat,
+  migrateCollectiblesHistoryToAccountsFormat,
+} from 'utils/dataMigration';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -109,11 +114,31 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { connectionIdentityKeys = [] } = await storage.get('connectionIdentityKeys');
       dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: connectionIdentityKeys });
 
-      const { collectibles = [] } = await storage.get('collectibles');
-      dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
+      const { collectibles = {} } = await storage.get('collectibles');
+      if (Array.isArray(collectibles)) {
+        if (accounts.length) {
+          const migratedCollectibles = migrateCollectiblesToAccountsFormat(collectibles, accounts);
+          if (migratedCollectibles) {
+            dispatch({ type: UPDATE_COLLECTIBLES, payload: migratedCollectibles });
+            dispatch(saveDbAction('collectibles', { collectibles: migratedCollectibles }, true));
+          }
+        }
+      } else {
+        dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
+      }
 
-      const { collectiblesHistory = [] } = await storage.get('collectiblesHistory');
-      dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
+      const { collectiblesHistory = {} } = await storage.get('collectiblesHistory');
+      if (Array.isArray(collectiblesHistory)) {
+        if (accounts.length) {
+          const migratedCollectiblesHistory = migrateCollectiblesHistoryToAccountsFormat(collectiblesHistory, accounts);
+          if (migratedCollectiblesHistory) {
+            dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: migratedCollectiblesHistory });
+            dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: migratedCollectiblesHistory }, true));
+          }
+        }
+      } else {
+        dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
+      }
 
       const { badges = [] } = await storage.get('badges');
       dispatch({ type: UPDATE_BADGES, payload: badges });

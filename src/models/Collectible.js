@@ -29,6 +29,8 @@ export type Collectible = {
   tokenType: string,
 };
 
+export type Collectibles = Collectible[];
+
 export type CollectibleTransfer = {
   name: string,
 };
@@ -37,6 +39,6 @@ export type CollectiblesStore = {
   [accountId: string]: Collectible[],
 };
 
-export type CollectiblesTransactionsStore = {
+export type CollectiblesHistoryStore = {
   [accountId: string]: Object[],
 };
