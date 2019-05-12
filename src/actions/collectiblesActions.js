@@ -31,12 +31,11 @@ export const fetchCollectiblesAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { accounts: { data: accounts } } = getState();
     const walletAddress = getActiveAccountAddress(accounts);
-    const collectibles = [];
-    const collectiblesResponse = await api.fetchCollectibles(walletAddress);
+    const response = await api.fetchCollectibles(walletAddress);
 
-    if (collectiblesResponse.error || collectiblesResponse.assets === undefined) return;
+    if (response.error || !response.assets) return;
 
-    collectiblesResponse.assets.forEach((collectible) => {
+    const collectibles = response.assets.map(collectible => {
       const {
         token_id: id,
         asset_contract: assetContract,
@@ -46,7 +45,8 @@ export const fetchCollectiblesAction = () => {
       } = collectible;
       const { name: category, address: contractAddress } = assetContract;
       const collectibleName = name || `${category} ${id}`;
-      const assetData = {
+
+      return {
         id,
         category,
         name: collectibleName,
@@ -56,7 +56,6 @@ export const fetchCollectiblesAction = () => {
         assetContract: category,
         tokenType: COLLECTIBLES,
       };
-      collectibles.push(assetData);
     });
 
     dispatch(saveDbAction('collectibles', { collectibles }, true));
@@ -67,12 +66,11 @@ export const fetchCollectiblesAction = () => {
 export const fetchCollectiblesHistoryAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { wallet: { data: wallet } } = getState();
-    const collectiblesHistory = [];
-    const transactionEventsResponse = await api.fetchCollectiblesTransactionHistory(wallet.address);
+    const response = await api.fetchCollectiblesTransactionHistory(wallet.address);
 
-    if (transactionEventsResponse.error || transactionEventsResponse.asset_events === undefined) return;
+    if (response.error || !response.asset_events) return;
 
-    transactionEventsResponse.asset_events.forEach((event) => {
+    const collectiblesHistory = response.asset_events.map(event => {
       const {
         asset,
         transaction,
@@ -102,7 +100,7 @@ export const fetchCollectiblesHistoryAction = () => {
         tokenType: COLLECTIBLES,
       };
 
-      const transactionEvent = {
+      return {
         to: toAcc.address,
         from: fromAcc.address,
         hash: trxHash,
@@ -115,11 +113,9 @@ export const fetchCollectiblesHistoryAction = () => {
         blockNumber,
         status: 'confirmed',
         type: COLLECTIBLE_TRANSACTION,
-        icon: asset.image_preview_url,
+        icon: (/\.(png)$/i).test(image) ? image : '',
         assetData,
       };
-
-      collectiblesHistory.push(transactionEvent);
     });
     dispatch(getExistingTxNotesAction());
     dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory }, true));

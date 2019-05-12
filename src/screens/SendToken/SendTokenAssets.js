@@ -50,7 +50,7 @@ type Props = {
   balances: Balances,
   navigation: NavigationScreenProp<*>,
   fetchAllCollectiblesData: Function,
-  collectibles: Array<Collectible>,
+  collectibles: Collectible[],
 };
 
 type State = {

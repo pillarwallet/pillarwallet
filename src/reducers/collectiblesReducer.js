@@ -23,17 +23,8 @@ import {
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   ADD_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
+import type { Collectible } from 'models/Collectible';
 
-type Collectible = {
-  id: number,
-  category: string,
-  name: string,
-  description: string,
-  icon?: string,
-  contractAddress: string,
-  assetContract: string,
-  tokenType: string,
-}
 
 export type CollectiblesState = {
   data: Collectible[],

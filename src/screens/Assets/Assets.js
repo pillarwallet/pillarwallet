@@ -91,7 +91,7 @@ import CollectiblesList from './CollectiblesList';
 type Props = {
   fetchInitialAssets: () => Function,
   assets: Assets,
-  collectibles: Array<Collectible>,
+  collectibles: Collectible[],
   balances: Balances,
   wallet: Object,
   rates: Object,
