@@ -43,6 +43,7 @@ import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import assetsConfig from 'configs/assetsConfig';
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 type Props = {
   fetchAssetsBalances: (assets: Assets) => Function,
@@ -259,14 +260,13 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { data: assets },
-  collectibles: { data: collectibles },
 }) => ({
   assets,
-  collectibles,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  collectibles: accountCollectiblesSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

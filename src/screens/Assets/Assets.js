@@ -82,6 +82,7 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 // local components
 import AssetsList from './AssetsList';
@@ -527,7 +528,6 @@ const mapStateToProps = ({
   },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
-  collectibles: { data: collectibles },
   tank: { data: tankData },
   smartWallet: smartWalletState,
 }) => ({
@@ -540,13 +540,13 @@ const mapStateToProps = ({
   rates,
   baseFiatCurrency,
   assetsLayout,
-  collectibles,
   tankData,
   smartWalletState,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  collectibles: accountCollectiblesSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

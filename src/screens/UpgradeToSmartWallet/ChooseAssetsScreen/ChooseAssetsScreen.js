@@ -48,6 +48,7 @@ import assetsConfig from 'configs/assetsConfig';
 import type { AssetTransfer, Assets, Balances } from 'models/Asset';
 import type { Collectible, CollectibleTransfer } from 'models/Collectible';
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -359,16 +360,15 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { data: assets },
-  collectibles: { data: collectibles },
   smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
 }) => ({
   assets,
   addedAssets,
-  collectibles,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  collectibles: accountCollectiblesSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

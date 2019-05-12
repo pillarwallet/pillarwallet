@@ -25,6 +25,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
+import { createStructuredSelector } from 'reselect';
 
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
@@ -37,10 +38,12 @@ import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 
 import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { accountCollectiblesSelector } from 'selectors/collectibles';
+import type { Collectible } from 'models/Collectible';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  collectibles: Object[],
+  collectibles: Collectible[],
 };
 
 const ActionButtonsWrapper = styled.View`
@@ -157,10 +160,12 @@ class CollectibleScreen extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  collectibles: { data: collectibles },
-}) => ({
-  collectibles,
+const structuredSelector = createStructuredSelector({
+  collectibles: accountCollectiblesSelector,
 });
 
-export default connect(mapStateToProps)(CollectibleScreen);
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+});
+
+export default connect(combinedMapStateToProps)(CollectibleScreen);

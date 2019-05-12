@@ -55,6 +55,7 @@ import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { accountHistorySelector } from 'selectors/history';
+import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 const SOCIAL_TYPES = [
   TYPE_RECEIVED,
@@ -451,18 +452,17 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   assets: { data: assets },
   wallet: { data: wallet },
-  collectibles: { transactionHistory: openSeaTxHistory },
 }) => ({
   contacts,
   notifications,
   invitations,
   assets: Object.values(assets),
   wallet,
-  openSeaTxHistory,
 });
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
+  openSeaTxHistory: accountCollectiblesHistorySelector,
 });
 
 const combinedMapStateToProps = (state) => ({
