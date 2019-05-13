@@ -69,6 +69,7 @@ import RecoveryAgentsScreen from 'screens/UpgradeToSmartWallet/RecoveryAgentsScr
 import ChooseAssetsScreen from 'screens/UpgradeToSmartWallet/ChooseAssetsScreen';
 import EditAssetAmountScreen from 'screens/UpgradeToSmartWallet/EditAssetAmountScreen';
 import UpgradeReviewScreen from 'screens/UpgradeToSmartWallet/UpgradeReviewScreen';
+import UpgradeConfirmScreen from 'screens/UpgradeToSmartWallet/UpgradeConfirmScreen';
 import SmartWalletScreen from 'screens/SmartWallet';
 import SmartWalletUnlockScreen from 'screens/SmartWallet/SmartWalletUnlock';
 
@@ -144,6 +145,7 @@ import {
   CHOOSE_ASSETS_TO_TRANSFER,
   EDIT_ASSET_AMOUNT_TO_TRANSFER,
   UPGRADE_REVIEW,
+  UPGRADE_CONFIRM,
   SMART_WALLET_TAB,
   SMART_WALLET,
   SMART_WALLET_UNLOCK,
@@ -446,6 +448,7 @@ const smartWalletFlowUI = createStackNavigator({
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
   [UPGRADE_REVIEW]: UpgradeReviewScreen,
+  [UPGRADE_CONFIRM]: UpgradeConfirmScreen,
   [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
