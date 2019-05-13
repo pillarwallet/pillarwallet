@@ -53,6 +53,7 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
 
     const contacts = [];
     const invitations = [];
+    const disconnectedContacts = [];
     resultConnections.forEach((resConn: ConnectionIdentityKey) => {
       if (resConn.status === 'accepted' || resConn.status === 'muted' || resConn.status === 'blocked') {
         const contact = {
@@ -99,10 +100,13 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
           };
         }
         invitations.push(invi);
+      } else if (resConn.status === 'disconnected') {
+        disconnectedContacts.push(resConn.targetUserId);
       }
     });
 
-    const updatedContacts = uniqBy(contacts.concat(allContacts), 'id');
+    const updatedContacts = uniqBy(contacts.concat(allContacts), 'id')
+      .filter(conn => !disconnectedContacts.includes(conn.id));
     const updatedInvitations = uniqBy(invitations.concat(allInvitations), 'id');
     const updatedConnectionIdentityKeys = uniqBy(resultConnections.concat(connectionIdentityKeys), 'sourceIdentityKey');
 
