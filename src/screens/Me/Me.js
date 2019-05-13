@@ -39,32 +39,13 @@ type State = {
 type Props = {
   user: Object,
   onWalletConnectSessionRequest: Function,
-  onManageDetails: Function,
-  onSetupRecovery: Function,
-  onPermissions: Function,
 };
 
-const meSettingsItems = props => {
-  const { onManageDetails, onSetupRecovery, onPermissions } = props;
-
+const meSettingsItems = () => {
   return [
-    {
-      key: 'manageDetailsSessions',
-      title: 'Manage details / Sessions',
-      onPress: onManageDetails,
-    },
-    {
-      key: 'setupRecovery',
-      title: 'Setup Recovery',
-      onPress: onSetupRecovery,
-    },
-    {
-      key: 'permissions',
-      title: 'Permissions',
-      onPress: onPermissions,
-    },
   ];
 };
+
 class MeScreen extends React.Component<Props, State> {
   state = {
     isScanning: false,
@@ -130,7 +111,7 @@ class MeScreen extends React.Component<Props, State> {
           </styled.CardContainer>
 
           <FlatList
-            data={meSettingsItems(this.props)}
+            data={meSettingsItems()}
             renderItem={({ item: { key, title, onPress } }) => (
               <SettingsListItem key={key} label={title} onPress={onPress} />
             )}
