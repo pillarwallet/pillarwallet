@@ -20,7 +20,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { UPGRADE_CONFIRM, ASSETS } from 'constants/navigationConstants';
+import { UPGRADE_REVIEW, ASSETS } from 'constants/navigationConstants';
 import { Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
@@ -68,7 +68,7 @@ class SmartWalletUnlock extends React.Component<Props, State> {
   handleBack = () => {
     const { navigation, resetIncorrectPassword } = this.props;
     // navigation.goBack(null);
-    navigation.navigate(UPGRADE_CONFIRM, {});
+    navigation.navigate(UPGRADE_REVIEW, {});
     resetIncorrectPassword();
   };
 

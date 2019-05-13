@@ -36,7 +36,7 @@ import Tabs from 'components/Tabs';
 import { BaseText } from 'components/Typography';
 import { baseColors, fontSizes } from 'utils/variables';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
-import { EDIT_ASSET_AMOUNT_TO_TRANSFER, UPGRADE_CONFIRM } from 'constants/navigationConstants';
+import { EDIT_ASSET_AMOUNT_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -304,7 +304,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
   onNextPress = async () => {
     const { navigation } = this.props;
     await this.updateAssetsAndCollectiblesToTransfer();
-    navigation.navigate(UPGRADE_CONFIRM);
+    navigation.navigate(UPGRADE_REVIEW);
   };
 
   render() {
@@ -319,6 +319,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       query,
       activeTab,
       assetsToTransfer,
+      collectiblesToTransfer,
     } = this.state;
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = assetsArray
@@ -351,7 +352,9 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     const hasAssetsSelected = !!assetsToTransfer.length;
     const gasPrice = gasInfo.gasPrice.avg || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei').mul(GAS_LIMIT);
-    const assetsTransferFee = formatAmount(utils.formatEther(gasPriceWei));
+    const assetsTransferFee = formatAmount(utils.formatEther(
+      gasPriceWei * (assetsToTransfer.length + collectiblesToTransfer.length)),
+    );
 
     return (
       <Container>

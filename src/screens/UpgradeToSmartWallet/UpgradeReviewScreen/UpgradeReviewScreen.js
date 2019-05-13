@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import { utils } from 'ethers';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import Header from 'components/Header';
 import Button from 'components/Button';
@@ -34,9 +35,9 @@ import {
   Paragraph,
   SubHeading,
   TextLink,
-  // BaseText,
+  BaseText,
 } from 'components/Typography';
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors, spacing, fontSizes } from 'utils/variables';
 import assetsConfig from 'configs/assetsConfig';
 import {
   // RECOVERY_AGENTS,
@@ -44,12 +45,13 @@ import {
   CONTACT,
   SMART_WALLET_UNLOCK,
 } from 'constants/navigationConstants';
-import type { Assets, Balances } from 'models/Asset';
 import { upgradeToSmartWalletAction } from 'actions/smartWalletActions';
+import { fetchGasInfoAction } from 'actions/historyActions';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
-// import { fontSizes } from '../../../utils/variables';
+import type { Assets, Balances, AssetTransfer } from 'models/Asset';
+import type { GasInfo } from 'models/GasInfo';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -58,6 +60,11 @@ type Props = {
   balances: Balances,
   contacts: Object[],
   upgradeToSmartWallet: Function,
+  transferAssets: AssetTransfer[],
+  transferCollectibles: AssetTransfer[],
+  fetchGasInfo: Function,
+  gasInfo: GasInfo,
+  session: Object,
 };
 
 type State = {
@@ -85,7 +92,6 @@ const ListSeparator = styled.View`
   align-items: center;
 `;
 
-/*
 const Label = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall}px;
   color: #999999;
@@ -96,14 +102,24 @@ const LabelWrapper = styled.View`
   padding: 0 ${spacing.large}px 10px;
   justify-content: center;
 `;
-*/
 
+const GAS_LIMIT = 500000;
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
+class UpgradeReviewScreen extends React.PureComponent<Props, State> {
   state = {
     upgradeStarted: false,
   };
+
+  componentDidMount() {
+    this.props.fetchGasInfo();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
+      this.props.fetchGasInfo();
+    }
+  }
 
   navigateToContactScreen = (contact: Object) => () => {
     this.props.navigation.navigate(CONTACT, { contact });
@@ -125,6 +141,8 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const assetBalance = formatAmount(getBalance(balances, item.symbol));
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
+    const gasPriceWei = this.getGasPriceWei();
+    const transferFee = formatAmount(utils.formatEther(gasPriceWei));
     if (assetShouldRender) {
       return null;
     }
@@ -135,15 +153,20 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
         itemImageUrl={fullIconUrl || genericToken}
         itemValue={`${assetBalance} ${item.symbol}`}
         fallbackSource={genericToken}
-        /* rightColumnInnerStyle={{ flex: 1, justifyContent: 'flex-end' }}
+        rightColumnInnerStyle={{
+          flex: 1,
+          alignItems: 'flex-end',
+          justifyContent: 'flex-end',
+        }}
         customAddon={
-          <Label style={{ textAlign: 'right' }}>Fee 0,004</Label>
-        } */
+          <Label style={{ textAlign: 'right' }}>{`Fee ${transferFee} ETH`}</Label>
+        }
       />
     );
   };
 
-  onEnableClick = () => {
+  onNextClick = () => {
+    // TODO: navigate to final confirm screen
     const { navigation } = this.props;
     this.setState({
       upgradeStarted: true,
@@ -151,20 +174,35 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     navigation.navigate(SMART_WALLET_UNLOCK);
   };
 
+  getGasPriceWei = () => {
+    const { gasInfo } = this.props;
+    const gasPrice = gasInfo.gasPrice.avg || 0;
+    return utils.parseUnits(gasPrice.toString(), 'gwei').mul(GAS_LIMIT);
+  };
+
   render() {
     const {
       navigation,
       // contacts,
+      transferAssets,
+      transferCollectibles,
       assets,
       balances,
     } = this.props;
     const {
       upgradeStarted,
     } = this.state;
+
+    const gasPriceWei = this.getGasPriceWei();
+    const assetsTransferFee = formatAmount(utils.formatEther(
+      gasPriceWei * (transferAssets.length + transferCollectibles.length)),
+    );
+
     const assetsArray = Object.values(assets);
-    const nonEmptyAssets = assetsArray.filter((asset: any) => {
-      return getBalance(balances, asset.symbol) !== 0;
-    });
+    const nonEmptyAssets = assetsArray.filter((asset: any) =>
+      getBalance(balances, asset.symbol) !== 0
+      && transferAssets.find((transferAsset: any) => asset.name === transferAsset.name),
+    );
     const sections = [];
     /* if (contacts.length) {
       sections.push({
@@ -189,7 +227,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       <Container>
         <WhiteWrapper>
           <Header
-            title="confirm"
+            title="review"
             centerTitle
             onBack={() => navigation.goBack(null)}
           />
@@ -211,12 +249,12 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           keyExtractor={(item) => item.id}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
         />
-        <Footer>{/* style={{ flexDirection: 'column', alignItems: 'flex-end' }} */}
-          <FooterInner>
-            {/* <LabelWrapper>
-              <Label style={{ textAlign: 'center' }}>Total fee 0,004</Label>
-            </LabelWrapper> */}
-            {!upgradeStarted && <Button block title="Enable Smart Wallet" onPress={this.onEnableClick} />}
+        <Footer>
+          <FooterInner style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+            <LabelWrapper>
+              <Label style={{ textAlign: 'center' }}>{`Total fee ${assetsTransferFee} ETH`}</Label>
+            </LabelWrapper>
+            {!upgradeStarted && <Button block title="Continue" onPress={this.onNextClick} />}
             {upgradeStarted && <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>}
           </FooterInner>
         </Footer>
@@ -227,11 +265,17 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  smartWallet: { upgrade: { transfer: { assets, collectibles } } },
+  smartWallet: { upgrade: { transfer: { assets: transferAssets, collectibles: transferCollectibles } } },
+  assets: { data: assets },
+  session: { data: session },
+  history: { gasInfo },
 }) => ({
   contacts,
+  transferAssets,
+  transferCollectibles,
   assets,
-  collectibles,
+  session,
+  gasInfo,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -245,6 +289,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   upgradeToSmartWallet: () => dispatch(upgradeToSmartWalletAction()),
+  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(UpgradeConfirmScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(UpgradeReviewScreen);
