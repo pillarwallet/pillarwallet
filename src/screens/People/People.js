@@ -34,7 +34,8 @@ import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
 import styled from 'styled-components/native';
-import { Icon } from 'native-base';
+import { Icon as NIcon } from 'native-base';
+import Icon from 'components/Icon';
 import {
   searchContactsAction,
   resetSearchContactsStateAction,
@@ -77,7 +78,7 @@ const ConnectionRequestBannerText = styled(BaseText)`
   font-size: ${fontSizes.medium};
 `;
 
-const ConnectionRequestBannerIcon = styled(Icon)`
+const ConnectionRequestBannerIcon = styled(NIcon)`
   font-size: ${fontSizes.medium};
   color: ${baseColors.darkGray};
   margin-left: auto;
@@ -96,6 +97,24 @@ const EmptyStateBGWrapper = styled.View`
   left: 0;
   width: 100%;
   padding: 0 20px 20px;
+`;
+
+const ItemBadge = styled.View`
+  height: 20px;
+  width: 20px;
+  border-radius: 10px;
+  background-color: ${baseColors.electricBlue}
+  padding: 3px 0;
+  margin-top: 2px;
+  margin-right: 1px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const BadgeIcon = styled(Icon)`
+  font-size: ${fontSizes.extraExtraSmall};
+  line-height: ${fontSizes.extraExtraSmall};
+  color: ${baseColors.white};
 `;
 
 const MIN_QUERY_LENGTH = 2;
@@ -118,6 +137,10 @@ type Props = {
   chats: Object[],
 }
 
+type ConnectionStatusProps = {
+  status: string,
+}
+
 type State = {
   query: string,
   showConfirmationModal: boolean,
@@ -125,6 +148,25 @@ type State = {
   manageContactId: string,
   forceHideRemoval: boolean,
 }
+
+const ConnectionStatus = (props: ConnectionStatusProps) => {
+  let iconName = '';
+  switch (props.status) {
+    case 'blocked':
+      iconName = 'warning';
+      break;
+    case 'muted':
+      iconName = 'mute';
+      break;
+    default:
+      break;
+  }
+  return (
+    <ItemBadge>
+      <BadgeIcon name={iconName} />
+    </ItemBadge>
+  );
+};
 
 class PeopleScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
@@ -243,9 +285,7 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   renderContact = ({ item }) => {
-    // please refer to https://www.pivotaltracker.com/story/show/163147492
-    // to understand the reason for the temporary disabling of swipeout feature
-    const { unread = 0 } = item;
+    const { unread = 0, status = '' } = item;
     const unreadCount = unread > 9 ? '9+' : unread;
     return (
       <Swipeout
@@ -262,6 +302,8 @@ class PeopleScreen extends React.Component<Props, State> {
           navigateToProfile={this.handleContactCardPress(item)}
           imageUpdateTimeStamp={item.lastUpdateTime}
           unreadCount={unreadCount}
+          customAddon={(status === 'muted' || status === 'blocked') ? <ConnectionStatus status={status} /> : null}
+          rightColumnInnerStyle={{ flexDirection: 'row' }}
         />
       </Swipeout>
     );
