@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { utils } from 'ethers';
+import { BigNumber } from 'bignumber.js';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
 import Button from 'components/Button';
@@ -63,6 +64,7 @@ type State = {
 
 const WhiteWrapper = styled.View`
   background-color: ${baseColors.white};
+  padding-bottom: ${spacing.rhythm}px;
 `;
 
 const DetailsTitle = styled(BaseText)`
@@ -78,7 +80,7 @@ const DetailsValue = styled(BaseText)`
 `;
 
 const DetailsLine = styled.View`
-  padding-bottom: ${spacing.rhythm};
+  padding-bottom: ${spacing.rhythm}px;
 `;
 
 const DetailsWrapper = styled.View`
@@ -104,9 +106,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
   onNextClick = () => {
     const { navigation } = this.props;
-    this.setState({
-      upgradeStarted: true,
-    });
+    // this.setState({ upgradeStarted: true });
     navigation.navigate(SMART_WALLET_UNLOCK);
   };
 
@@ -134,8 +134,8 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const fiatSymbol = getCurrencySymbol(fiatCurrency);
 
     const feeTokensTransferEth = formatAmount(utils.formatEther(
-      gasPriceWei * (transferAssets.length + transferCollectibles.length)),
-    );
+      BigNumber(gasPriceWei * (transferAssets.length + transferCollectibles.length)).toFixed(),
+    ));
     const feeTokensTransferFiat = parseFloat(feeTokensTransferEth) * getRate(rates, ETH, fiatCurrency);
     const assetsTransferFee =
       `${feeTokensTransferEth} ETH (${fiatSymbol}${feeTokensTransferFiat.toFixed(2)})`;

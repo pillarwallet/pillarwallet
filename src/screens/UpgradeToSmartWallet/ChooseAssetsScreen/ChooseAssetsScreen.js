@@ -23,6 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { utils } from 'ethers';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 
 import { Container, Footer, Wrapper } from 'components/Layout';
@@ -124,7 +125,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     const { assetsToTransfer } = this.state;
     // toggle asset in array
     const updated = assetsToTransfer.filter(asset => asset.name !== name);
-    if (!assetsToTransfer.find((asset => asset.name === name))) {
+    if (!assetsToTransfer.find(asset => asset.name === name)) {
       updated.push({ name, amount });
     }
     this.setState({ assetsToTransfer: updated });
@@ -134,19 +135,19 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     const { collectiblesToTransfer } = this.state;
     // toggle asset in array
     const updated = collectiblesToTransfer.filter(asset => asset.name !== name);
-    if (!collectiblesToTransfer.find((asset => asset.name === name))) {
+    if (!collectiblesToTransfer.find(asset => asset.name === name)) {
       updated.push({ name });
     }
     this.setState({ collectiblesToTransfer: updated });
   };
 
   renderAsset = ({ item }) => {
-    const { assetsToTransfer } = this.state;
-    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
     if (assetShouldRender) {
       return null;
     }
+    const { assetsToTransfer } = this.state;
+    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const formattedAmount = formatAmount(item.amount);
     return (
       <ListItemWithImage
@@ -318,8 +319,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     const {
       query,
       activeTab,
-      assetsToTransfer,
-      collectiblesToTransfer,
+      assetsToTransfer = [],
+      collectiblesToTransfer = [],
     } = this.state;
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = assetsArray
@@ -353,8 +354,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     const gasPrice = gasInfo.gasPrice.avg || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei').mul(GAS_LIMIT);
     const assetsTransferFee = formatAmount(utils.formatEther(
-      gasPriceWei * (assetsToTransfer.length + collectiblesToTransfer.length)),
-    );
+      BigNumber(gasPriceWei * (assetsToTransfer.length + collectiblesToTransfer.length)).toFixed(),
+    ));
 
     return (
       <Container>

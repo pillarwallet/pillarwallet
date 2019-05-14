@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import Toast from 'components/Toast';
 import {
   SET_SMART_WALLET_SDK_INIT,
   SET_SMART_WALLET_ACCOUNTS,
@@ -71,17 +72,22 @@ export const loadSmartWalletAccountsAction = () => {
 
 export const connectSmartWalletAccountAction = (accountId: string) => {
   return async (dispatch: Function) => {
-    if (!smartWalletService) return;
+    if (!smartWalletService) return Promise.reject();
     const connectedAccount = await smartWalletService.connectAccount(accountId).catch(() => null);
     if (!connectedAccount) {
-      // TODO: what if failed to connect account? also might be already connected error
-      return;
+      Toast.show({
+        message: 'Failed to connect to Smart Wallet account',
+        type: 'warning',
+        title: 'Unable to upgrade',
+        autoClose: false,
+      });
+      return Promise.reject();
     }
     dispatch({
       type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
       payload: connectedAccount,
     });
-    await dispatch(setActiveAccountAction(accountId));
+    return dispatch(setActiveAccountAction(accountId));
   };
 };
 
@@ -120,9 +126,13 @@ export const upgradeToSmartWalletAction = () => {
       },
     } = getState();
     if (!sdkInitialized) {
-      // TODO: sdk not initialized error
-      console.log('sdk not initialized');
-      return;
+      Toast.show({
+        message: 'Failed to load Smart Wallet SDK',
+        type: 'warning',
+        title: 'Unable to upgrade',
+        autoClose: false,
+      });
+      return Promise.reject();
     }
     await dispatch(loadSmartWalletAccountsAction());
     const {
@@ -131,15 +141,19 @@ export const upgradeToSmartWalletAction = () => {
       },
     } = getState();
     if (!accounts.length) {
-      // TODO: sdk accounts failed error
-      console.log('no sdk accounts');
-      return;
+      Toast.show({
+        message: 'Failed to load Smart Wallet account',
+        type: 'warning',
+        title: 'Unable to upgrade',
+        autoClose: false,
+      });
+      return Promise.reject();
     }
     await dispatch(connectSmartWalletAccountAction(accounts[0].address));
-    await dispatch(setActiveAccountAction(accounts[0].address));
     // TODO: make transactions to smart wallet account address before deploy
     //  as balance check will fail during deploy if balance is 0
-    // dispatch(deploySmartWalletAction());
+    // await dispatch(deploySmartWalletAction());
+    return Promise.resolve(true);
   };
 };
 

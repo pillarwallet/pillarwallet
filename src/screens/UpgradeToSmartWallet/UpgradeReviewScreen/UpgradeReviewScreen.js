@@ -25,6 +25,7 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { utils } from 'ethers';
+import { BigNumber } from 'bignumber.js';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import Header from 'components/Header';
 import Button from 'components/Button';
@@ -68,7 +69,7 @@ type Props = {
 
 const WhiteWrapper = styled.View`
   background-color: ${baseColors.white};
-  padding-bottom: 20px;
+  padding-bottom: ${spacing.rhythm}px;
 `;
 
 const FooterInner = styled.View`
@@ -127,16 +128,16 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
         />
       );
     }
+    const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
+    if (assetShouldRender) {
+      return null;
+    }
 
     const { balances } = this.props;
     const assetBalance = formatAmount(getBalance(balances, item.symbol));
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
-    const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
     const gasPriceWei = this.getGasPriceWei();
     const transferFee = formatAmount(utils.formatEther(gasPriceWei));
-    if (assetShouldRender) {
-      return null;
-    }
 
     return (
       <ListItemWithImage
@@ -178,8 +179,8 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 
     const gasPriceWei = this.getGasPriceWei();
     const assetsTransferFee = formatAmount(utils.formatEther(
-      gasPriceWei * (transferAssets.length + transferCollectibles.length)),
-    );
+      BigNumber(gasPriceWei * (transferAssets.length + transferCollectibles.length)).toFixed(),
+    ));
 
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = transferAssets.map(

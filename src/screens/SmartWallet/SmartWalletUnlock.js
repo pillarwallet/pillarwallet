@@ -59,9 +59,12 @@ class SmartWalletUnlock extends React.Component<Props, State> {
       isChecking: true,
     }, async () => {
       await initSmartWalletSdk(wallet.privateKey);
-      await upgradeToSmartWallet();
-      // TODO: show any error or show success screen/modal?
-      navigation.navigate(ASSETS, {});
+      const upgradeComplete = await upgradeToSmartWallet().catch(() => null);
+      if (upgradeComplete) {
+        navigation.navigate(ASSETS, {});
+      } else {
+        navigation.goBack();
+      }
     });
   };
 
