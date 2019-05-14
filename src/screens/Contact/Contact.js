@@ -340,7 +340,7 @@ class Contact extends React.Component<Props, State> {
           onBack={() => navigation.goBack(null)}
           showRight
           onNextPress={this.showManageContactModalTrigger}
-          nextIcon="more"
+          nextIcon={displayContact.status ? 'more' : null}
         />
         <ScrollWrapper
           refreshControl={
