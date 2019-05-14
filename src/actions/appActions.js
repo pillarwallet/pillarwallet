@@ -76,7 +76,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { assets = {} } = await storage.get('assets');
       dispatch({ type: UPDATE_ASSETS, payload: assets });
 
-      const balances = loadAndMigrate('balances', dispatch);
+      const balances = await loadAndMigrate('balances', dispatch);
       dispatch({ type: UPDATE_BALANCES, payload: balances });
 
       const { contacts = [] } = await storage.get('contacts');
@@ -100,10 +100,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { connectionIdentityKeys = [] } = await storage.get('connectionIdentityKeys');
       dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: connectionIdentityKeys });
 
-      const collectibles = loadAndMigrate('collectibles', dispatch);
+      const collectibles = await loadAndMigrate('collectibles', dispatch);
       dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
 
-      const collectiblesHistory = loadAndMigrate('collectiblesHistory', dispatch);
+      const collectiblesHistory = await loadAndMigrate('collectiblesHistory', dispatch);
       dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
 
       const { badges = [] } = await storage.get('badges');
@@ -113,7 +113,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const history = loadAndMigrate('history', dispatch);
+      const history = await loadAndMigrate('history', dispatch);
       dispatch({ type: SET_HISTORY, payload: history });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
