@@ -314,7 +314,7 @@ class Contact extends React.Component<Props, State> {
           showRight
           onNextPress={this.showManageContactModalTrigger}
           onTitlePress={this.handleUsernameTap}
-          nextIcon="more"
+          nextIcon={displayContact.status ? 'more' : null}
         />
         {!tabActiveTap &&
         <ScrollWrapper
