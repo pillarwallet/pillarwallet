@@ -135,7 +135,7 @@ const TankGrade = styled.View`
 `;
 
 const Dash = styled.View`
-  height: ${props => props.total ? 0.8 : 0.5}px;
+  height: 1px;
   width: 2px;
   background-color: ${props => props.total ? baseColors.caribbeanGreen : '#c3e0ff'};
   margin-right: 2px;
@@ -195,7 +195,12 @@ class TankDetails extends React.Component<Props, State> {
 
   render() {
     const { tankValueAnimated, rightColumnHeightHalf, leftColumnHeightHalf } = this.state;
-    const { tankData, baseFiatCurrency, rates } = this.props;
+    const {
+      tankData,
+      baseFiatCurrency,
+      rates,
+      navigation,
+    } = this.props;
     const { totalStake, availableStake } = tankData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const totalInFiat = totalStake * getRate(rates, 'PLR', fiatCurrency);
@@ -214,7 +219,7 @@ class TankDetails extends React.Component<Props, State> {
         <CloseButton
           icon="close"
           color={baseColors.coolGrey}
-          onPress={() => this.props.navigation.dismiss()}
+          onPress={() => navigation.goBack(null)}
           fontSize={fontSizes.small}
           horizontalAlign="flex-end"
         />

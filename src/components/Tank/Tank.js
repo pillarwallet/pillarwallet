@@ -42,11 +42,20 @@ const TankWrapper = styled.View`
   overflow: hidden;
 `;
 
+const TankInner = styled.View`
+  ${props => props.tiny ? 'border: 1px solid white; border-radius: 10px' : ''};
+  height: ${props => props.tiny ? 18 : 216}px;
+  width: ${props => props.tiny ? 4 : 22}px;
+  overflow: hidden;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
 const TankLevel = styled.View`
   width: ${props => props.tiny ? 10 : 22}px;
-  background-color: ${props => props.tiny ? baseColors.caribbeanGreen : baseColors.lavenderBlue};
+  background-color: ${props => props.tiny ? baseColors.electricBlueIntense : baseColors.lavenderBlue};
   position: absolute;
-  bottom: ${props => props.tiny ? -2 : 0}px;
+  bottom: ${props => props.tiny ? 0 : 0}px;
   left: ${props => props.tiny ? -3 : 0}px;
 `;
 
@@ -55,9 +64,6 @@ const TankEmptyEmptyDot = styled.View`
   height: 2px;
   background-color: ${baseColors.burningFire};
   border-radius: 2px;
-  position: absolute;
-  left: 1px;
-  bottom: 1.5px;
 `;
 
 const TankLevelAnimated = Animated.createAnimatedComponent(TankLevel);
@@ -102,18 +108,21 @@ export default class Tank extends React.Component<Props, State> {
     const additionalStyle = tiny ? { transform: [{ rotate: '-15deg' }] } : {};
     return (
       <TankWrapper tiny={tiny} style={wrapperStyle}>
-        {(tankValue > 0 && <TankLevelAnimated
-          tiny={tiny}
-          style={
-            [{
-              height: tankValueAnimated.interpolate({
-                inputRange: [0, totalValue],
-                outputRange: ['0%', '100%'],
-              }),
-            },
-              additionalStyle,
-            ]}
-        />) || <TankEmptyEmptyDot />}
+        <TankInner tiny={tiny}>
+          {(tankValue <= 0 && !!tiny && <TankEmptyEmptyDot />)
+          || <TankLevelAnimated
+            tiny={tiny}
+            style={
+              [{
+                height: tankValueAnimated.interpolate({
+                  inputRange: [0, totalValue],
+                  outputRange: ['0%', '100%'],
+                }),
+              },
+                additionalStyle,
+              ]}
+          />}
+        </TankInner>
       </TankWrapper>
     );
   }
