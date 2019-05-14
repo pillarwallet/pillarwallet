@@ -13,6 +13,7 @@ import {
   deploySmartWalletAction,
   initSmartWalletSdkAction,
   loadSmartWalletAccountsAction,
+  cleanSmartWalletAccountsAction,
 } from 'actions/smartWalletActions';
 
 // constants
@@ -34,9 +35,6 @@ import type { Balances } from 'models/Asset';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 
-// services
-import InMemoryStorage from 'services/inMemoryStorage';
-
 // utils
 import { baseColors, fontSizes } from 'utils/variables';
 
@@ -54,6 +52,7 @@ type Props = {
   balances: Balances,
   resetIncorrectPassword: Function,
   initSmartWalletSdk: Function,
+  cleanSmartWalletAccounts: Function,
 };
 
 type State = {
@@ -82,7 +81,6 @@ const Row = styled.View`
 
 class SmartWallet extends React.Component<Props, State> {
   sdk: Object;
-  storage: Object;
   switchToAccount: ?Account = null;
 
   state = {
@@ -91,7 +89,6 @@ class SmartWallet extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.storage = new InMemoryStorage({}, true);
     console.log('all accounts', this.props.accounts);
     console.log('balances', this.props.balances);
   }
@@ -108,6 +105,11 @@ class SmartWallet extends React.Component<Props, State> {
   onGetAccounts = () => {
     const { loadSmartWalletAccounts } = this.props;
     loadSmartWalletAccounts();
+  };
+
+  onCleanAccounts = () => {
+    const { cleanSmartWalletAccounts } = this.props;
+    cleanSmartWalletAccounts();
   };
 
   onConnectAccount = () => {
@@ -175,9 +177,14 @@ class SmartWallet extends React.Component<Props, State> {
                   Active Account: <BoldText>{activeAccount.type}</BoldText>
                 </TextRow>
                 {accounts.length > 1 && (
-                  <Row>
-                    <ButtonMini title="Switch" onPress={this.onSwitchAccount} />
-                  </Row>
+                  <React.Fragment>
+                    <Row>
+                      <ButtonMini title="Switch" onPress={this.onSwitchAccount} />
+                    </Row>
+                    <Row>
+                      <ButtonMini title="Clean smart accounts" onPress={this.onCleanAccounts} />
+                    </Row>
+                  </React.Fragment>
                 )}
               </React.Fragment>
             )}
@@ -280,6 +287,7 @@ const mapDispatchToProps = (dispatch) => ({
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   initSmartWalletSdk: (privateKey: string) => dispatch(initSmartWalletSdkAction(privateKey)),
+  cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SmartWallet);
