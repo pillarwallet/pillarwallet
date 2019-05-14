@@ -174,7 +174,6 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       transferAssets,
       transferCollectibles,
       assets,
-      balances,
     } = this.props;
 
     const gasPriceWei = this.getGasPriceWei();
@@ -183,10 +182,10 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     );
 
     const assetsArray = Object.values(assets);
-    const nonEmptyAssets = assetsArray.filter((asset: any) =>
-      getBalance(balances, asset.symbol) !== 0
-      && transferAssets.find((transferAsset: any) => asset.name === transferAsset.name),
+    const nonEmptyAssets = transferAssets.map(
+      (transferAsset: any) => assetsArray.find((_asset: any) => _asset.name === transferAsset.name),
     );
+
     const sections = [];
     /* if (contacts.length) {
       sections.push({
@@ -204,8 +203,6 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
         toEdit: CHOOSE_ASSETS_TO_TRANSFER,
       });
     }
-
-    console.log('nonEmptyAssets --->', nonEmptyAssets);
 
     return (
       <Container>

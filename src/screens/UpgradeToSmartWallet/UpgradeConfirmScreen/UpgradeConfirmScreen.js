@@ -23,7 +23,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { utils } from 'ethers';
-import { Container, Wrapper, Footer } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
@@ -31,13 +31,15 @@ import {
   Paragraph,
   BaseText,
 } from 'components/Typography';
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
+import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 import { upgradeToSmartWalletAction } from 'actions/smartWalletActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { formatAmount } from 'utils/common';
+import { formatAmount, getCurrencySymbol } from 'utils/common';
+import { getRate } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
-import type { Assets, Balances, AssetTransfer } from 'models/Asset';
+import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 
 type Props = {
@@ -51,6 +53,8 @@ type Props = {
   fetchGasInfo: Function,
   gasInfo: GasInfo,
   session: Object,
+  baseFiatCurrency: string,
+  rates: Rates,
 };
 
 type State = {
@@ -59,26 +63,26 @@ type State = {
 
 const WhiteWrapper = styled.View`
   background-color: ${baseColors.white};
-  padding-bottom: 20px;
 `;
 
-const FooterInner = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  width: 100%;
-  background-color: ${baseColors.snowWhite};
-`;
-
-const Label = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
+const DetailsTitle = styled(BaseText)`
+  font-size: ${fontSizes.extraSmall}px;
+  padding-bottom: 5px;
   color: #999999;
 `;
 
-const LabelWrapper = styled.View`
-  width: 100%;
-  padding: 0 ${spacing.large}px 10px;
-  justify-content: center;
+const DetailsValue = styled(BaseText)`
+  font-size: ${fontSizes.medium};
+  color: ${baseColors.slateBlack};
+  font-weight: ${fontWeights.medium};
+`;
+
+const DetailsLine = styled.View`
+  padding-bottom: ${spacing.rhythm};
+`;
+
+const DetailsWrapper = styled.View`
+  padding: 30px 20px 0px 20px;
 `;
 
 const GAS_LIMIT = 500000;
@@ -117,15 +121,41 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       navigation,
       transferAssets,
       transferCollectibles,
+      assets,
+      baseFiatCurrency,
+      rates,
     } = this.props;
     const {
       upgradeStarted,
     } = this.state;
 
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const gasPriceWei = this.getGasPriceWei();
-    const assetsTransferFee = formatAmount(utils.formatEther(
+    const fiatSymbol = getCurrencySymbol(fiatCurrency);
+
+    const feeTokensTransferEth = formatAmount(utils.formatEther(
       gasPriceWei * (transferAssets.length + transferCollectibles.length)),
     );
+    const feeTokensTransferFiat = parseFloat(feeTokensTransferEth) * getRate(rates, ETH, fiatCurrency);
+    const assetsTransferFee =
+      `${feeTokensTransferEth} ETH (${fiatSymbol}${feeTokensTransferFiat.toFixed(2)})`;
+
+    const feeSmartContractDeployEth = formatAmount(utils.formatEther(gasPriceWei));
+    const feeSmartContractDeployFiat = parseFloat(feeSmartContractDeployEth) * getRate(rates, ETH, fiatCurrency);
+    const smartContractDeployFee =
+      `${feeSmartContractDeployEth} ETH (${fiatSymbol}${feeSmartContractDeployFiat.toFixed(2)})`;
+
+    const assetsArray = Object.values(assets);
+    const nonEmptyAssets = transferAssets.map((transferAsset: any) => {
+      const asset: any = assetsArray.find((_asset: any) => _asset.name === transferAsset.name);
+      const { amount } = transferAsset;
+      const { symbol } = asset;
+      return {
+        amount,
+        symbol,
+      };
+    });
+
     return (
       <Container>
         <WhiteWrapper>
@@ -140,15 +170,24 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
             </Paragraph>
           </Wrapper>
         </WhiteWrapper>
-        <Footer>
-          <FooterInner style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-            <LabelWrapper>
-              <Label style={{ textAlign: 'center' }}>{`Total fee ${assetsTransferFee} ETH`}</Label>
-            </LabelWrapper>
-            {!upgradeStarted && <Button block title="Deploy Smart Wallet" onPress={this.onNextClick} />}
-            {upgradeStarted && <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>}
-          </FooterInner>
-        </Footer>
+        <DetailsWrapper>
+          <DetailsLine>
+            <DetailsTitle>Assets to transfer</DetailsTitle>
+            {nonEmptyAssets.map((asset: any, index: number) =>
+              <DetailsValue key={index}>{`${asset.amount} ${asset.symbol}`}</DetailsValue>)
+            }
+          </DetailsLine>
+          <DetailsLine>
+            <DetailsTitle>Fee for transfer</DetailsTitle>
+            <DetailsValue>{assetsTransferFee}</DetailsValue>
+          </DetailsLine>
+          <DetailsLine>
+            <DetailsTitle>Fee for smart contract deployment</DetailsTitle>
+            <DetailsValue>{smartContractDeployFee}</DetailsValue>
+          </DetailsLine>
+          {!upgradeStarted && <Button block title="Deploy Smart Wallet" onPress={this.onNextClick} />}
+          {upgradeStarted && <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>}
+        </DetailsWrapper>
       </Container>
     );
   }
@@ -159,12 +198,16 @@ const mapStateToProps = ({
   assets: { data: assets },
   session: { data: session },
   history: { gasInfo },
+  appSettings: { data: { baseFiatCurrency } },
+  rates: { data: rates },
 }) => ({
   transferAssets,
   transferCollectibles,
   assets,
   session,
   gasInfo,
+  baseFiatCurrency,
+  rates,
 });
 
 const structuredSelector = createStructuredSelector({
