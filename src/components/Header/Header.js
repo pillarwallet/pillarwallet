@@ -34,7 +34,7 @@ type Props = {
   onNextPress?: ?Function,
   onTitlePress?: Function,
   nextText?: string,
-  nextIcon?: string,
+  nextIcon?: ?string,
   title?: string,
   fullWidthTitle?: boolean,
   noBlueDotOnTitle?: boolean,

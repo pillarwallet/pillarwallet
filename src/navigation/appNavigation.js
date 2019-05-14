@@ -38,7 +38,7 @@ import AssetScreen from 'screens/Asset';
 import MarketScreen from 'screens/Market';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
-import ContactScreen from 'screens/Contact/ContactDetails';
+import ContactScreen from 'screens/Contact';
 import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';

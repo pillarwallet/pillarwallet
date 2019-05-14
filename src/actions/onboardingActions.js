@@ -36,6 +36,7 @@ import {
   SET_API_USER,
   INAPPROPRIATE_USERNAME,
   INVALID_USERNAME,
+  DECRYPTED,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
@@ -134,6 +135,11 @@ const finishRegistration = async (
 
   // restore access tokens
   await dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
+
+  await dispatch({
+    type: UPDATE_WALLET_STATE,
+    payload: DECRYPTED,
+  });
 };
 
 const navigateToAppFlow = (isWalletBackedUp: boolean) => {
