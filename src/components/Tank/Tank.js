@@ -23,7 +23,8 @@ import { baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 
 type Props = {
-  value: number, // 0 - 100
+  value: number,
+  totalValue: number,
   tiny?: boolean,
   wrapperStyle?: Object,
 }
@@ -32,23 +33,22 @@ type State = {
 }
 
 const TankWrapper = styled.View`
-  height: ${props => props.tiny ? 20 : 170}px;
-  width: ${props => props.tiny ? 6 : 30}px;
-  background-color: white;
-  border-width: ${props => props.tiny ? 1 : 3}px;
+  height: ${props => props.tiny ? 20 : 216}px;
+  width: ${props => props.tiny ? 6 : 22}px;
+  background-color: ${props => props.tiny ? 'white' : '#3e5d87'};
+  border-width: ${props => props.tiny ? 1 : 0}px;
   border-color: ${props => props.tiny ? baseColors.electricBlueIntense : baseColors.white};
-  border-radius: ${props => props.tiny ? 3 : 15}px;
+  border-radius: ${props => props.tiny ? 3 : 4}px;
   overflow: hidden;
 `;
 
 const TankLevel = styled.View`
-  width: ${props => props.tiny ? 10 : 80}px;
-  background-color: ${baseColors.caribbeanGreen};
+  width: ${props => props.tiny ? 10 : 22}px;
+  background-color: ${props => props.tiny ? baseColors.caribbeanGreen : baseColors.lavenderBlue};
   position: absolute;
-  bottom: -2px;
-  left: ${props => props.tiny ? -3 : -35}px;
+  bottom: ${props => props.tiny ? -2 : 0}px;
+  left: ${props => props.tiny ? -3 : 0}px;
 `;
-
 
 const TankEmptyEmptyDot = styled.View`
   width: 2px;
@@ -93,18 +93,26 @@ export default class Tank extends React.Component<Props, State> {
 
   render() {
     const { tankValueAnimated } = this.state;
-    const { value: tankValue, tiny, wrapperStyle } = this.props;
+    const {
+      value: tankValue,
+      totalValue,
+      tiny,
+      wrapperStyle,
+    } = this.props;
+    const additionalStyle = tiny ? { transform: [{ rotate: '-15deg' }] } : {};
     return (
       <TankWrapper tiny={tiny} style={wrapperStyle}>
         {(tankValue > 0 && <TankLevelAnimated
           tiny={tiny}
-          style={{
-            transform: [{ rotate: '-15deg' }],
-            height: tankValueAnimated.interpolate({
-              inputRange: [0, 100],
-              outputRange: ['0%', '100%'],
-            }),
-          }}
+          style={
+            [{
+              height: tankValueAnimated.interpolate({
+                inputRange: [0, totalValue],
+                outputRange: ['0%', '100%'],
+              }),
+            },
+              additionalStyle,
+            ]}
         />) || <TankEmptyEmptyDot />}
       </TankWrapper>
     );

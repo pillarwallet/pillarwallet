@@ -145,6 +145,8 @@ const getButtonWidth = (props) => {
     return getButtonHeight(props);
   } else if (props.block) {
     return '100%';
+  } else if (props.width) {
+    return props.width;
   }
 
   return 'auto';

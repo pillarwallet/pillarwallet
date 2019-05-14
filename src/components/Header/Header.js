@@ -57,6 +57,7 @@ type Props = {
   handleTankButtonTouch?: Function,
   isSmartWallet?: boolean,
   tankValue?: number,
+  tankTotalValue?: number,
 }
 
 const Wrapper = styled.View`
@@ -160,6 +161,7 @@ const Header = (props: Props) => {
     handleTankButtonTouch = noop,
     isSmartWallet,
     tankValue = 0,
+    tankTotalValue = 0,
   } = props;
   const showRight = nextText || nextIcon || onBack || onClose || centerTitle || showChannelStatus;
   const titleOnBack = title && onBack;
@@ -240,7 +242,7 @@ const Header = (props: Props) => {
           {showChannelStatus &&
             <TankButton onPress={handleTankButtonTouch}>
               <TankLabel>{tankButtonLabel}</TankLabel>
-              {!!isSmartWallet && <Tank value={0} tiny />}
+              {!!isSmartWallet && <Tank value={tankValue} totalValue={tankTotalValue} tiny />}
             </TankButton>
           }
           {onClose &&

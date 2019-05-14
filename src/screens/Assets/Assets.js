@@ -61,7 +61,6 @@ import {
   addAssetAction,
   removeAssetAction,
 } from 'actions/assetsActions';
-import { toggleTankModalAction } from 'actions/tankActions';
 
 // constants
 import {
@@ -73,7 +72,7 @@ import {
   COLLECTIBLES,
 } from 'constants/assetsConstants';
 import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
-import { UPGRADE_TO_SMART_WALLET_FLOW } from 'constants/navigationConstants';
+import { UPGRADE_TO_SMART_WALLET_FLOW, TANK_DETAILS } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils
@@ -108,7 +107,6 @@ type Props = {
   assetsSearchState: string,
   addAsset: Function,
   removeAsset: Function,
-  toggleTankModal: Function,
   accounts: [],
   tankData: Object,
   smartWalletState: Object,
@@ -402,7 +400,6 @@ class AssetsScreen extends React.Component<Props, State> {
       assetsSearchState,
       navigation,
       collectibles,
-      toggleTankModal,
       accounts,
       tankData,
       smartWalletState,
@@ -460,10 +457,11 @@ class AssetsScreen extends React.Component<Props, State> {
             title: 'assets',
             showChannelStatus: true,
             handleTankButtonTouch: isSmartWallet
-              ? toggleTankModal
+              ? () => navigation.navigate(TANK_DETAILS)
               : () => navigation.navigate(UPGRADE_TO_SMART_WALLET_FLOW),
             isSmartWallet,
             tankValue: tankData.availableStake,
+            tankTotalValue: tankData.totalStake,
           }}
           hideSearch={blockAssetsView}
           searchInputPlaceholder={activeTab === TOKENS ? 'Search or add new asset' : 'Search'}
@@ -562,7 +560,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
-  toggleTankModal: () => dispatch(toggleTankModalAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);
