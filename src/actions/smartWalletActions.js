@@ -41,7 +41,6 @@ import { saveDbAction } from 'actions/dbActions';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletTransferTransaction } from 'models/Transaction';
-import { getActiveAccountId } from 'utils/accounts';
 
 let smartWalletService: SmartWalletService;
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {

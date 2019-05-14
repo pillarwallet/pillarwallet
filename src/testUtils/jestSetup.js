@@ -194,20 +194,25 @@ const mockSmartWalletAccount = {
   updatedAt: '2019-05-10T07:15:09.000Z',
 };
 
-jest.setMock('@archanova/wallet-sdk', {
-  DeviceService: {
-    STORAGE_KEYS: {
-      privateKey: 'privateKey',
+const mockArchanovaSdkInstance = {
+  setConfig: () => mockArchanovaSdkInstance,
+};
+
+jest.setMock('@archanova/sdk', {
+  sdkModules: {
+    Device: {
+      StorageKeys: {
+        PrivateKey: 'PrivateKey',
+      },
     },
   },
+  SdkEnvironmentNames: {
+    Ropsten: 'Ropsten',
+  },
+  getSdkEnvironment: () => mockArchanovaSdkInstance,
   createSdk: () => ({
     initialize: () => Promise.resolve(),
-    getAccounts: () => Promise.resolve([mockSmartWalletAccount]),
+    getConnectedAccounts: () => Promise.resolve({ items: [mockSmartWalletAccount] }),
     createAccount: () => Promise.resolve(mockSmartWalletAccount),
   }),
-  availableEnvironments: {
-    staging: {
-      extendOptions: () => {},
-    },
-  },
 });
