@@ -208,7 +208,6 @@ export const cleanSmartWalletAccountsAction = () => {
     } = getState();
 
     const activeAccount = accounts.find(({ isActive }) => isActive);
-    const accountId = getActiveAccountId(accounts);
     const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
     const smartAccounts = accounts.filter(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
 
@@ -217,30 +216,28 @@ export const cleanSmartWalletAccountsAction = () => {
       return;
     }
 
-    if (activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
-      dispatch(switchAccountAction(keyBasedAccount.id));
-    }
-
     dispatch({
       type: UPDATE_ACCOUNTS,
       payload: [keyBasedAccount],
     });
     dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
 
-    const updatedBalances = { ...balances };
-    if (updatedBalances[accountId]) delete updatedBalances[accountId];
+    const updatedBalances = { [keyBasedAccount.id]: balances[keyBasedAccount.id] };
     dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
     dispatch({
       type: UPDATE_BALANCES,
       payload: updatedBalances,
     });
 
-    const updatedHistory = { ...history };
-    if (updatedHistory[accountId]) delete updatedHistory[accountId];
+    const updatedHistory = { [keyBasedAccount.id]: history[keyBasedAccount.id] };
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch({
       type: SET_HISTORY,
       payload: updatedHistory,
     });
+
+    if (activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
+      dispatch(switchAccountAction(keyBasedAccount.id));
+    }
   };
 };
