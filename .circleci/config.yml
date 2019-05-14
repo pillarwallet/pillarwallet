@@ -817,14 +817,14 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
+                  - feature/smart-wallet-sdk
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - develop
+                  - feature/smart-wallet-sdk
       - stage_ios:
           requires:
             - build-and-test
