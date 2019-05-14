@@ -28,16 +28,20 @@ import {
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
 } from 'constants/smartWalletConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { UPDATE_BALANCES } from 'constants/assetsConstants';
+import { SET_HISTORY } from 'constants/historyConstants';
 import SmartWalletService from 'services/smartWallet';
 import {
   addNewAccountAction,
   setActiveAccountAction,
+  switchAccountAction,
 } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletTransferTransaction } from 'models/Transaction';
+import { getActiveAccountId } from 'utils/accounts';
 
 let smartWalletService: SmartWalletService;
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
@@ -191,6 +195,52 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
       payload: upgradeStatus,
+    });
+  };
+};
+
+export const cleanSmartWalletAccountsAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accounts: { data: accounts },
+      balances: { data: balances },
+      history: { data: history },
+    } = getState();
+
+    const activeAccount = accounts.find(({ isActive }) => isActive);
+    const accountId = getActiveAccountId(accounts);
+    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+    const smartAccounts = accounts.filter(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
+
+    if (!smartAccounts.length) {
+      console.log('smartAccounts are empty');
+      return;
+    }
+
+    if (activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
+      dispatch(switchAccountAction(keyBasedAccount.id));
+    }
+
+    dispatch({
+      type: UPDATE_ACCOUNTS,
+      payload: [keyBasedAccount],
+    });
+    dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
+
+    const updatedBalances = { ...balances };
+    if (updatedBalances[accountId]) delete updatedBalances[accountId];
+    dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
+    dispatch({
+      type: UPDATE_BALANCES,
+      payload: updatedBalances,
+    });
+
+    const updatedHistory = { ...history };
+    if (updatedHistory[accountId]) delete updatedHistory[accountId];
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch({
+      type: SET_HISTORY,
+      payload: updatedHistory,
     });
   };
 };

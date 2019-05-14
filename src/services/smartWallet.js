@@ -18,29 +18,27 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  availableEnvironments,
-  DeviceService,
+  sdkModules,
+  SdkEnvironmentNames,
+  getSdkEnvironment,
   createSdk,
-} from '@archanova/wallet-sdk';
-import type {
-  IEnvironment,
-  ISdk,
-} from '@archanova/wallet-sdk';
+} from '@archanova/sdk';
+
 import InMemoryStorage from 'services/inMemoryStorage';
 
+const { Device } = sdkModules;
 const storageNamespace = '@smartwallet';
 
 export default class SmartWallet {
-  sdk: ISdk;
+  sdk: Object;
   sdkStorage: Object;
 
   constructor() {
     this.sdkStorage = new InMemoryStorage({}, true);
-    const config: IEnvironment = availableEnvironments
-      .staging
-      .extendOptions('storage', {
+    const config = getSdkEnvironment(SdkEnvironmentNames.Ropsten)
+      .setConfig('storageAdapter', this.sdkStorage)
+      .setConfig('storageOptions', {
         namespace: storageNamespace,
-        adapter: this.sdkStorage,
       });
 
     try {
@@ -51,7 +49,7 @@ export default class SmartWallet {
   }
 
   async init(privateKey: string) {
-    const privateKeyStoragePath = `${storageNamespace}/${DeviceService.STORAGE_KEYS.privateKey}`;
+    const privateKeyStoragePath = `${storageNamespace}/${Device.StorageKeys.PrivateKey}`;
     this.sdkStorage.setItem(privateKeyStoragePath, JSON.stringify({
       type: 'Buffer',
       data: privateKey.slice(2),
@@ -62,7 +60,9 @@ export default class SmartWallet {
   }
 
   async getAccounts() {
-    const accounts = await this.sdk.getAccounts().catch(() => []);
+    const accounts = await this.sdk.getConnectedAccounts()
+      .then(({ items = [] }) => items)
+      .catch(() => []);
 
     if (!accounts) {
       return [];
@@ -77,11 +77,13 @@ export default class SmartWallet {
 
   async connectAccount(address: string) {
     const account = await this.sdk.connectAccount(address).catch(this.handleError);
-    const devices = await this.sdk.getAccountDevices().catch(this.handleError);
+    const devices = await this.sdk.getConnectedAccountDevices().catch(this.handleError);
+    /* there is no setAccountEnsLabel() method anymore
     if (!account.ensName) {
       account.ensName = account.address;
       await this.sdk.setAccountEnsLabel(account.ensName).catch(this.handleError);
     }
+    */
     console.log('connectAccount ens: ', account.ensName);
     return {
       ...account,
@@ -90,15 +92,15 @@ export default class SmartWallet {
   }
 
   async deploy() {
-    const gasPrice = await this.sdk.getGasPrice().catch(this.handleError);
-    const deployEstimate = await this.sdk.estimateAccountDeployment(gasPrice).catch(this.handleError);
+    const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
     let accountBalance = this.getAccountBalance();
     if (accountBalance.eq(0)) {
-      await this.sdk.topUpAccount().catch(this.handleError);
+      // can't find a topUpAccount() method
+      // await this.sdk.topUpAccount().catch(this.handleError);
       accountBalance = this.getAccountBalance();
     }
     if (accountBalance.gte(deployEstimate)) {
-      return this.sdk.deployAccount(gasPrice);
+      return this.sdk.deployAccount();
     }
     console.log('insufficient balance, lack: ', deployEstimate.sub(accountBalance).toString());
     return {};
@@ -111,7 +113,7 @@ export default class SmartWallet {
 
   async fetchConnectedAccount() {
     const { state: { account } } = this.sdk;
-    const devices = await this.sdk.getAccountDevices().catch(this.handleError);
+    const devices = await this.sdk.getConnectedAccountDevices().catch(this.handleError);
     return {
       ...account,
       devices,
