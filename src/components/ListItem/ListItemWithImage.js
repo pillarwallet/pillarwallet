@@ -67,7 +67,7 @@ type Props = {
   customAddonFullWidth?: React.Node,
 }
 
-const ItemWrapper = styled.TouchableOpacity`
+const ItemWrapper = styled.View`
   flex-direction: column;
 `;
 

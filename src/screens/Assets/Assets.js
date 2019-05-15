@@ -50,7 +50,6 @@ import Tabs from 'components/Tabs';
 import type { Assets, Balances, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-
 // actions
 import {
   updateAssetsAction,
@@ -86,6 +85,7 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 // local components
 import AssetsList from './AssetsList';
 import CollectiblesList from './CollectiblesList';
+import ManageWalletsButton from './ManageWalletsButton';
 
 
 type Props = {
@@ -462,6 +462,10 @@ class AssetsScreen extends React.Component<Props, State> {
             isSmartWallet,
             tankValue: tankData.availableStake,
             tankTotalValue: tankData.totalStake,
+            headerRightAddon:
+              isSmartWallet
+                ? <ManageWalletsButton navigation={navigation} />
+                : null,
           }}
           hideSearch={blockAssetsView}
           searchInputPlaceholder={activeTab === TOKENS ? 'Search or add new asset' : 'Search'}

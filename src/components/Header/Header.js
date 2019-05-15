@@ -58,6 +58,7 @@ type Props = {
   isSmartWallet?: boolean,
   tankValue?: number,
   tankTotalValue?: number,
+  headerRightAddon?: React.Node,
 }
 
 const Wrapper = styled.View`
@@ -114,12 +115,14 @@ const HeaderRight = styled(Right)`
   flex: ${props => props.flex};
   justify-content: flex-end;
   align-items: flex-end;
+  flex-direction: row;
 `;
 
 const TankButton = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+  min-height: 20px;
 `;
 
 const TankLabel = styled(LightText)`
@@ -162,8 +165,9 @@ const Header = (props: Props) => {
     isSmartWallet,
     tankValue = 0,
     tankTotalValue = 0,
+    headerRightAddon,
   } = props;
-  const showRight = nextText || nextIcon || onBack || onClose || centerTitle || showChannelStatus;
+  const showRight = nextText || nextIcon || onBack || onClose || centerTitle || showChannelStatus || headerRightAddon;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
@@ -225,6 +229,7 @@ const Header = (props: Props) => {
       }
       {showRight && !noClose &&
         <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
+          {headerRightAddon}
           {nextText &&
             <TextLink style={nextTextStyle} onPress={onNextPress}>{nextText}</TextLink>
           }

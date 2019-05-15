@@ -73,6 +73,8 @@ import UpgradeConfirmScreen from 'screens/UpgradeToSmartWallet/UpgradeConfirmScr
 import SmartWalletScreen from 'screens/SmartWallet';
 import SmartWalletUnlockScreen from 'screens/SmartWallet/SmartWalletUnlock';
 import TankDetailsScreen from 'screens/TankDetails';
+import WalletsListScreen from 'screens/ManageWallets/WalletsList';
+import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -151,6 +153,9 @@ import {
   SMART_WALLET,
   SMART_WALLET_UNLOCK,
   TANK_DETAILS,
+  MANAGE_WALLETS_FLOW,
+  WALLETS_LIST,
+  WALLET_SETTINGS,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -456,6 +461,14 @@ const smartWalletFlowUI = createStackNavigator({
 
 smartWalletFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// MANAGE WALLETS FLOW
+const manageWalletsFlow = createStackNavigator({
+  [WALLETS_LIST]: WalletsListScreen,
+  [WALLET_SETTINGS]: WalletSettingsScreen,
+}, StackNavigatorConfig);
+
+manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -470,6 +483,7 @@ const AppFlowNavigation = createStackNavigator(
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
     [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletFlowUI,
+    [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
     [TANK_DETAILS]: TankDetailsScreen,
   }, modalTransition,
 );
