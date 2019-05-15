@@ -18,30 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  sdkModules,
   SdkEnvironmentNames,
   getSdkEnvironment,
   createSdk,
   Sdk,
 } from '@archanova/sdk';
 
-import InMemoryStorage from 'services/inMemoryStorage';
-
-const { StorageNamespaces } = Sdk;
-const { Device: { StorageKeys: DeviceStorageKeys } } = sdkModules;
-const storageNamespace = '@smartwallet';
-
 export default class SmartWallet {
   sdk: Sdk;
-  sdkStorage: Object;
 
   constructor() {
-    this.sdkStorage = new InMemoryStorage({}, true);
-    const config = getSdkEnvironment(SdkEnvironmentNames.Ropsten)
-      .setConfig('storageAdapter', this.sdkStorage)
-      .setConfig('storageOptions', {
-        namespace: storageNamespace,
-      });
+    const config = getSdkEnvironment(SdkEnvironmentNames.Ropsten);
 
     try {
       this.sdk = createSdk(config);
@@ -51,13 +38,7 @@ export default class SmartWallet {
   }
 
   async init(privateKey: string) {
-    const privateKeyStoragePath = `${storageNamespace}:${StorageNamespaces.Device}:${DeviceStorageKeys.PrivateKey}`;
-    this.sdkStorage.setItem(privateKeyStoragePath, JSON.stringify({
-      type: 'Buffer',
-      data: privateKey.slice(2),
-    }));
-    await this.sdk.initialize().catch(this.handleError);
-    this.sdkStorage.removeItem(privateKeyStoragePath);
+    await this.sdk.initialize({ device: { privateKey } }).catch(this.handleError);
     // TODO: remove private from smart wallet sdk
   }
 
@@ -78,8 +59,7 @@ export default class SmartWallet {
   }
 
   async connectAccount(address: string) {
-    const account = this.sdk.state.account
-      || await this.sdk.connectAccount(address).catch(this.handleError);
+    const account = this.sdk.state.account || await this.sdk.connectAccount(address).catch(this.handleError);
     const devices = await this.sdk.getConnectedAccountDevices()
       .then(({ items = [] }) => items)
       .catch(this.handleError);
