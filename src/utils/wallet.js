@@ -22,6 +22,7 @@ import ethers from 'ethers';
 import { getRandomInt } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
+import { Sentry } from 'react-native-sentry';
 
 const storage = Storage.getInstance('db');
 
@@ -54,4 +55,13 @@ export function normalizeWalletAddress(walletAddress: string): string {
     walletAddress = `0x${walletAddress}`;
   }
   return walletAddress;
+}
+
+export function catchTransactionError(e: Object, type: string, tx: Object) {
+  Sentry.captureException({
+    tx,
+    type,
+    error: e.message,
+  });
+  return { error: e.message };
 }
