@@ -23,6 +23,7 @@ import {
   getSdkEnvironment,
   createSdk,
 } from '@archanova/sdk';
+import type { Sdk } from '@archanova/sdk';
 
 import InMemoryStorage from 'services/inMemoryStorage';
 
@@ -30,7 +31,7 @@ const { Device } = sdkModules;
 const storageNamespace = '@smartwallet';
 
 export default class SmartWallet {
-  sdk: Object;
+  sdk: Sdk;
   sdkStorage: Object;
 
   constructor() {
@@ -76,7 +77,8 @@ export default class SmartWallet {
   }
 
   async connectAccount(address: string) {
-    const account = await this.sdk.connectAccount(address).catch(this.handleError);
+    const account = this.sdk.state.account
+      || await this.sdk.connectAccount(address).catch(this.handleError);
     const devices = await this.sdk.getConnectedAccountDevices().catch(this.handleError);
     /* there is no setAccountEnsLabel() method anymore
     // UPDATE: found updateAccount(ensLabel: string) function
@@ -85,7 +87,6 @@ export default class SmartWallet {
       await this.sdk.setAccountEnsLabel(account.ensName).catch(this.handleError);
     }
     */
-    console.log('connectAccount ens: ', account.ensName);
     return {
       ...account,
       devices,
