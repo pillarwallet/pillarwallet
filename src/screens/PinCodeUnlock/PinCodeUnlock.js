@@ -31,6 +31,7 @@ import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
+import { DEFAULT_PIN } from 'react-native-dotenv';
 
 const ACTIVE_APP_STATE = 'active';
 
@@ -56,6 +57,11 @@ class PinCodeUnlock extends React.Component<Props> {
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
     const { useBiometrics } = this.props;
+
+    if (!this.errorMessage && DEFAULT_PIN) {
+      this.handlePinSubmit(DEFAULT_PIN);
+    }
+
     if (useBiometrics && !this.errorMessage) {
       this.showBiometricLogin();
     }
