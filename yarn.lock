@@ -10,10 +10,10 @@
     "@ensdomains/ens" "0.3.5"
     openzeppelin-solidity "2.1.2"
 
-"@archanova/sdk@^1.0.0-alpha.4":
-  version "1.0.0-alpha.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.0.0-alpha.4.tgz#122b126cccded4e7840182246e6614a08bc5feb8"
-  integrity sha1-EisSbMze1OeEAYIkbmYUoIvF/rg=
+"@archanova/sdk@^1.0.0-alpha.5":
+  version "1.0.0-alpha.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.0.0-alpha.5.tgz#4a04918a6b57576d89b21c41666c21d5fa7a3656"
+  integrity sha1-SgSRimtXV22JshxBZmwh1fp6NlY=
   dependencies:
     "@archanova/contracts" "^1.0.0-beta.3"
     "@babel/runtime" "^7.4.4"
