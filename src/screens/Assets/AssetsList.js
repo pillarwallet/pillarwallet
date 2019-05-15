@@ -44,6 +44,7 @@ import { EXPANDED, EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLay
 import { ASSET } from 'constants/navigationConstants';
 
 // utils
+import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
 import { formatMoney, smallScreen } from 'utils/common';
 
@@ -52,9 +53,11 @@ import assetsConfig from 'configs/assetsConfig';
 
 // types
 import type { Assets, Balances } from 'models/Asset';
+import type { Account } from 'models/Account';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
+import { activeAccountSelector } from 'selectors';
 
 // local components
 import HideAssetButton from './HideAssetButton';
@@ -68,13 +71,13 @@ type Props = {
   horizontalPadding: Function,
   assets: Assets,
   balances: Balances,
-  wallet: Object,
   rates: Object,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetsLayout: string,
   forceHideRemoval: boolean,
   updateHideRemoval: Function,
+  activeAccount: Account,
 }
 
 class AssetsList extends React.Component<Props> {
@@ -127,7 +130,7 @@ class AssetsList extends React.Component<Props> {
 
   renderToken = ({ item: asset }) => {
     const {
-      wallet,
+      activeAccount,
       baseFiatCurrency,
       assetsLayout,
       onHideTokenFromWallet,
@@ -161,7 +164,7 @@ class AssetsList extends React.Component<Props> {
       description: asset.description,
       balance,
       balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
-      address: wallet.address,
+      address: getAccountAddress(activeAccount),
       icon: fullIconMonoUrl,
       iconColor: fullIconUrl,
       wallpaper: fullIconWallpaperUrl,
@@ -330,12 +333,10 @@ class AssetsList extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  wallet: { data: wallet },
   assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
 }) => ({
-  wallet,
   assets,
   rates,
   baseFiatCurrency,
@@ -344,6 +345,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
