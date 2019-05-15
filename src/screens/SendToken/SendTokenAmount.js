@@ -105,7 +105,7 @@ const getFormStructure = (
 };
 
 function AmountInputTemplate(locals) {
-  const { config: { icon, valueInFiatOutput } } = locals;
+  const { config: { icon, valueInFiatOutput, customProps } } = locals;
   const errorMessage = locals.error;
   const inputProps = {
     autoFocus: true,
@@ -130,6 +130,7 @@ function AmountInputTemplate(locals) {
       fontSize={fontSizes.giant}
       innerImageText={valueInFiatOutput}
       marginTop={30}
+      {...customProps}
     />
   );
 }
@@ -263,6 +264,9 @@ class SendTokenAmount extends React.Component<Props, State> {
     const value = this._form.getValue();
     const { navigation } = this.props;
     const gasPrice = txFeeInWei.div(GAS_LIMIT).toNumber();
+    const customConfirmScreenKey = this.props.navigation.getParam('customConfirmScreenKey', '');
+    const confirmScreenKey = customConfirmScreenKey || SEND_TOKEN_CONFIRM;
+
     if (!value) return;
     const transactionPayload: TokenTransactionPayload = {
       to: this.receiver,
@@ -276,7 +280,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     };
 
     Keyboard.dismiss();
-    navigation.navigate(SEND_TOKEN_CONFIRM, {
+    navigation.navigate(confirmScreenKey, {
       transactionPayload,
     });
   };
@@ -369,12 +373,20 @@ class SendTokenAmount extends React.Component<Props, State> {
     const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);
     const formattedValueInFiat = formatMoney(valueInFiat);
     const valueInFiatOutput = `${currencySymbol}${formattedValueInFiat}`;
-    const formOptions = generateFormOptions({ icon, currency: token, valueInFiatOutput });
+    const customProps = this.props.navigation.getParam('customSingleInputProps', {});
+    const formOptions = generateFormOptions({
+      icon,
+      currency: token,
+      valueInFiatOutput,
+      customProps,
+    });
+    const customTitle = this.props.navigation.getParam('customTitle', '');
+
     return (
       <Container>
         <Header
           onBack={() => this.props.navigation.goBack(null)}
-          title={`send ${this.assetData.token}`}
+          title={customTitle || `send ${this.assetData.token}`}
         />
         <Wrapper regularPadding>
           <Form

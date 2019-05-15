@@ -67,6 +67,8 @@ type Props = {
   fontSize?: number,
   white?: boolean,
   marginTop?: number,
+  noTint?: boolean,
+  floatingImageStyle?: Object,
 }
 
 type EventLike = {
@@ -129,8 +131,8 @@ const InputHolder = styled.View`
 const FloatImage = styled(CachedImage)`
   height: 30px;
   width: 30px;
-  tint-color: black;
   resize-mode: contain;
+  ${props => !props.noTint ? 'tint-color: black;' : ''}
 `;
 
 const FloatImageView = styled.View`
@@ -314,6 +316,8 @@ class SingleInput extends React.Component<Props, *> {
       options,
       fontSize,
       marginTop,
+      noTint,
+      floatingImageStyle,
     } = this.props;
     const { value = '' } = inputProps;
     const theme = getTheme(this.props);
@@ -343,6 +347,8 @@ class SingleInput extends React.Component<Props, *> {
               <FloatImage
                 source={this.resolveAssetSource(innerImageURI)}
                 fallbackSource={fallbackSource}
+                noTint={noTint}
+                style={floatingImageStyle}
               />
               {!!innerImageText &&
                 <TextHolder>

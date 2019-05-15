@@ -27,7 +27,8 @@ import Tank from 'components/Tank';
 import Button from 'components/Button';
 import IconButton from 'components/IconButton';
 import { baseColors, fontSizes } from 'utils/variables';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { defaultFiatCurrency, PLR } from 'constants/assetsConstants';
+import { SEND_TOKEN_AMOUNT, FUND_CONFIRM } from 'constants/navigationConstants';
 import { getRate } from 'utils/assets';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { connect } from 'react-redux';
@@ -214,6 +215,13 @@ class TankDetails extends React.Component<Props, State> {
 
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
+    const PLRData = {
+      token: PLR,
+      contractAddress: '0x9366605f6758727ad0fbce0d1a2a6c1cd197f2a3',
+      decimals: 18,
+      icon: 'https://api-qa-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3',
+    };
+
     return (
       <Container color="#203756">
         <CloseButton
@@ -301,7 +309,23 @@ class TankDetails extends React.Component<Props, State> {
             <ValueLabel style={{ color: baseColors.hoki, fontSize: fontSizes.extraExtraSmall }}>Used</ValueLabel>
           </Column>
           <FooterWrapper>
-            <Button title="Fund" noPadding width="197px" style={{ marginBottom: 18 }} />
+            <Button
+              title="Fund"
+              noPadding
+              width="197px"
+              style={{ marginBottom: 18 }}
+              onPress={() => navigation.navigate(SEND_TOKEN_AMOUNT,
+                {
+                  assetData: PLRData,
+                  receiver: '', // TODO: add PLR tank address
+                  customTitle: 'fund plr tank',
+                  customSingleInputProps: {
+                    noTint: true,
+                    floatingImageStyle: { marginRight: 3 },
+                  },
+                  customConfirmScreenKey: FUND_CONFIRM,
+                })}
+            />
             <Button secondaryTransparent title="Settle" noPadding width="197px" />
           </FooterWrapper>
         </ScrollWrapper>
