@@ -37,10 +37,19 @@ aliases:
     restore_cache:
       keys:
         - ios-pods-{{ checksum "./ios/Podfile.lock" }}
+  - &fetch_pods
+    run:
+      name: Fetch CocoaPods
+      command: |
+        Y | sudo gem uninstall cocoapods
+        sudo gem install cocoapods -v 1.5.3
+        curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
   - &install_pods
     run:
       name: Install CocoaPods
-      command: cd ios && bundle exec pod check || ((curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf) && bundle exec pod repo update && bundle exec pod install)
+      command: |
+        cd ios 
+        pod install --verbose
   - &save_pod_cache
     save_cache:
       key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
@@ -187,6 +196,7 @@ jobs:
       - *save_gems_cache_ios
 
       - *restore_pod_cache
+      - *fetch_pods
       - *install_pods
       - *save_pod_cache
 
