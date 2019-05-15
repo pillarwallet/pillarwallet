@@ -206,6 +206,11 @@ jest.setMock('@archanova/sdk', {
       },
     },
   },
+  Sdk: {
+    StorageNamespaces: {
+      Device: 'Device',
+    },
+  },
   SdkEnvironmentNames: {
     Ropsten: 'Ropsten',
   },

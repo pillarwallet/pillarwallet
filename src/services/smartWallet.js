@@ -22,12 +22,13 @@ import {
   SdkEnvironmentNames,
   getSdkEnvironment,
   createSdk,
+  Sdk,
 } from '@archanova/sdk';
-import type { Sdk } from '@archanova/sdk';
 
 import InMemoryStorage from 'services/inMemoryStorage';
 
-const { Device } = sdkModules;
+const { StorageNamespaces } = Sdk;
+const { Device: { StorageKeys: DeviceStorageKeys } } = sdkModules;
 const storageNamespace = '@smartwallet';
 
 export default class SmartWallet {
@@ -50,7 +51,7 @@ export default class SmartWallet {
   }
 
   async init(privateKey: string) {
-    const privateKeyStoragePath = `${storageNamespace}/${Device.StorageKeys.PrivateKey}`;
+    const privateKeyStoragePath = `${storageNamespace}:${StorageNamespaces.Device}:${DeviceStorageKeys.PrivateKey}`;
     this.sdkStorage.setItem(privateKeyStoragePath, JSON.stringify({
       type: 'Buffer',
       data: privateKey.slice(2),
