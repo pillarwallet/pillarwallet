@@ -20,17 +20,21 @@
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
+import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import { getActiveAccount } from './accounts';
 
-function getMessage(status: string) {
+function getMessage(status: string, activeAccountType) {
   switch (status) {
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
+      if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return {};
       // TODO: get fee
       return {
         title: 'To send assets, deploy Smart Wallet first',
-        message: 'You will have to pay small fee ~0.0004 ETH',
+        message: 'You will have to pay a small fee ~0.0004 ETH',
       };
     case SMART_WALLET_UPGRADE_STATUSES.DEPLOYING:
+      if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return {};
       // TODO: get average time
       return {
         title: 'Smart Wallet is being deployed now',
@@ -38,6 +42,7 @@ function getMessage(status: string) {
           '\nCurrent average waiting time is 4 mins',
       };
     case SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS:
+      if (activeAccountType === ACCOUNT_TYPES.SMART_WALLET) return {};
       // TODO: get average time
       return {
         title: 'Assets are being transferred to Smart Wallet',
@@ -49,10 +54,11 @@ function getMessage(status: string) {
   }
 }
 
-export function getSmartWalletStatus(accounts: [], smartWalletState: Object): SmartWalletStatus {
+export function getSmartWalletStatus(accounts: Accounts, smartWalletState: Object): SmartWalletStatus {
   const account = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+  const activeAccount = getActiveAccount(accounts) || {};
   const { upgrade: { status } } = smartWalletState;
-  const sendingBlockedMessage = getMessage(status);
+  const sendingBlockedMessage = getMessage(status, activeAccount.type);
   return {
     hasAccount: !!account,
     status,
