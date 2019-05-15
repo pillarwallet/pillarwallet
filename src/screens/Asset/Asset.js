@@ -43,6 +43,7 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
 
 // constants
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
@@ -90,7 +91,7 @@ type Props = {
   contacts: Object,
   resetHideRemoval: Function,
   smartWalletState: Object,
-  accounts: [],
+  accounts: Accounts,
 };
 
 type State = {

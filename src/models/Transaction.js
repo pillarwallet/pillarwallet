@@ -34,6 +34,7 @@ export type Transaction = {
   __v: number,
   receipt: Object,
   note?: ?string,
+  signOnly?: ?boolean,
 }
 
 export type TransactionsStore = {
@@ -52,6 +53,7 @@ export type TokenTransactionPayload = {
   note?: ?string,
   name?: string,
   tokenId?: string,
+  signOnly?: ?boolean,
 }
 
 export type CollectibleTransactionPayload = {
@@ -62,6 +64,7 @@ export type CollectibleTransactionPayload = {
   tokenId: string,
   note?: ?string,
   tokenId: string,
+  signOnly?: ?boolean,
 }
 
 export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;

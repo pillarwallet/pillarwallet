@@ -38,6 +38,7 @@ type ERC20TransferOptions = {
   wallet: Object,
   decimals: number,
   nonce?: number,
+  signOnly?: ?boolean,
 };
 
 type ERC721TransferOptions = {
@@ -47,6 +48,7 @@ type ERC721TransferOptions = {
   tokenId: string,
   wallet: Object,
   nonce?: number,
+  signOnly?: ?boolean,
 };
 
 type ETHTransferOptions = {
@@ -56,6 +58,7 @@ type ETHTransferOptions = {
   to: Address,
   wallet: Object,
   nonce?: number,
+  signOnly?: ?boolean,
 };
 
 function contractHasMethod(contractCode, encodedMethodName) {
@@ -68,15 +71,18 @@ export function transferERC20(options: ERC20TransferOptions) {
     to,
     amount,
     wallet,
-    decimals = 18,
+    decimals: defaultDecimals = 18,
     nonce,
+    signOnly = false,
   } = options;
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
-  if (decimals > 0) {
-    return contract.transfer(to, utils.parseUnits(amount.toString(), decimals), { nonce });
-  }
-  return contract.transfer(to, utils.bigNumberify(amount.toString()), { nonce });
+  const decimals = defaultDecimals > 0
+    ? utils.parseUnits(amount.toString(), defaultDecimals)
+    : utils.bigNumberify(amount.toString());
+  return signOnly
+    ? Promise.resolve(contract.signer.sign({ to, value: decimals, nonce }))
+    : contract.transfer(to, decimals, { nonce });
 }
 
 export async function transferERC721(options: ERC721TransferOptions) {
@@ -129,6 +135,7 @@ export function transferETH(options: ETHTransferOptions) {
     gasLimit,
     amount,
     nonce,
+    signOnly = false,
   } = options;
   const trx = {
     gasLimit,
@@ -138,7 +145,7 @@ export function transferETH(options: ETHTransferOptions) {
     nonce,
   };
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
-  return wallet.sendTransaction(trx);
+  return signOnly ? Promise.resolve(wallet.sign(trx)) : wallet.sendTransaction(trx);
 }
 
 // Fetch methods are temporary until the BCX API provided
@@ -193,4 +200,9 @@ export function fetchTransactionReceipt(hash: string): Promise<?Object> {
 export function fetchLastBlockNumber(): Promise<number> {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.getBlockNumber().then(parseInt).catch(() => 0);
+}
+
+export function sendSignedTransaction(signed: string) {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  return provider.sendTransaction(signed);
 }

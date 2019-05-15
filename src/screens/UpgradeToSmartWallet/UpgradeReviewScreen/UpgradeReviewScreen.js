@@ -45,7 +45,6 @@ import {
   CONTACT,
   UPGRADE_CONFIRM,
 } from 'constants/navigationConstants';
-import { upgradeToSmartWalletAction } from 'actions/smartWalletActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
@@ -59,7 +58,6 @@ type Props = {
   assets: Assets,
   balances: Balances,
   contacts: Object[],
-  upgradeToSmartWallet: Function,
   transferAssets: AssetTransfer[],
   transferCollectibles: AssetTransfer[],
   fetchGasInfo: Function,
@@ -269,7 +267,6 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  upgradeToSmartWallet: () => dispatch(upgradeToSmartWalletAction()),
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 

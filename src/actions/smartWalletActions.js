@@ -38,9 +38,9 @@ import {
   switchAccountAction,
 } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
+import { signAssetTransactionAction } from 'actions/assetsActions';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
-import type { SmartWalletTransferTransaction } from 'models/Transaction';
 
 let smartWalletService: SmartWalletService;
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
@@ -121,7 +121,43 @@ export const deploySmartWalletAction = () => {
   };
 };
 
-export const upgradeToSmartWalletAction = () => {
+export const addAssetsToSmartWalletUpgradeAction = (assets: AssetTransfer[]) => ({
+  type: ADD_SMART_WALLET_UPGRADE_ASSETS,
+  payload: assets,
+});
+
+export const addCollectiblesToSmartWalletUpgradeAction = (collectibles: Collectible[]) => ({
+  type: ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
+  payload: collectibles,
+});
+
+export const dismissSmartWalletUpgradeAction = () => {
+  return async (dispatch: Function) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { smartWalletUpgradeDismissed: true } }));
+    dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
+  };
+};
+
+export const setAssetsTransferTransactionsAction = (wallet: Object, transactions: Object[]) => {
+  return async (dispatch: Function) => {
+    const signedTransactions = await Promise.all(transactions.map(async transaction => {
+      const signedTransaction = await dispatch(signAssetTransactionAction(transaction, wallet));
+      return {
+        transaction,
+        signedTransaction,
+      };
+    }));
+    // filter out if any of the signed transactions got empty object or error
+    const signedTransactionsFixed = signedTransactions.filter(tx => !!tx && Object.keys(tx));
+    dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: signedTransactionsFixed }));
+    dispatch({
+      type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
+      payload: signedTransactionsFixed,
+    });
+  };
+};
+
+export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions: Object[]) => {
   return async (dispatch: Function, getState: Function) => {
     const {
       smartWallet: {
@@ -152,38 +188,16 @@ export const upgradeToSmartWalletAction = () => {
       });
       return Promise.reject();
     }
-    await dispatch(connectSmartWalletAccountAction(accounts[0].address));
+    const { address } = accounts[0];
+    const preparedTransferTransactions = transferTransactions.map(transaction => {
+      return { ...transaction, to: address };
+    });
+    await dispatch(setAssetsTransferTransactionsAction(wallet, preparedTransferTransactions));
+    // await dispatch(connectSmartWalletAccountAction(address));
     // TODO: make transactions to smart wallet account address before deploy
     //  as balance check will fail during deploy if balance is 0
     // await dispatch(deploySmartWalletAction());
     return Promise.resolve(true);
-  };
-};
-
-export const addAssetsToSmartWalletUpgradeAction = (assets: AssetTransfer[]) => ({
-  type: ADD_SMART_WALLET_UPGRADE_ASSETS,
-  payload: assets,
-});
-
-export const addCollectiblesToSmartWalletUpgradeAction = (collectibles: Collectible[]) => ({
-  type: ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
-  payload: collectibles,
-});
-
-export const dismissSmartWalletUpgradeAction = () => {
-  return async (dispatch: Function) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { smartWalletUpgradeDismissed: true } }));
-    dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
-  };
-};
-
-export const setAssetsTransferTransactions = (transactions: SmartWalletTransferTransaction[]) => {
-  return async (dispatch: Function) => {
-    dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: transactions }));
-    dispatch({
-      type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
-      payload: transactions,
-    });
   };
 };
 

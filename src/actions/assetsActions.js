@@ -60,6 +60,75 @@ type TransactionStatus = {
   error: ?string,
 };
 
+export const signAssetTransactionAction = (
+  assetTransaction: TransactionPayload,
+  wallet: Object,
+) => {
+  return async (dispatch: Function, getState: Function) => {
+    const tokenType = get(assetTransaction, 'tokenType', '');
+    const symbol = get(assetTransaction, 'symbol', '');
+
+    // if (tokenType === COLLECTIBLES) {
+    //   await dispatch(fetchCollectiblesAction());
+    // }
+
+    const {
+      accounts: { data: accounts },
+      // collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
+    } = getState();
+
+    // const accountId = getActiveAccountId(accounts);
+    const activeAccount = getActiveAccount(accounts);
+    // const accountAddress = getActiveAccountAddress(accounts);
+    if (!activeAccount) return {};
+
+    let signedTransaction;
+    // const accountCollectibles = collectibles[accountId] || [];
+    // const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
+    // const { to } = assetTransaction;
+
+    // get wallet provider
+    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
+    const walletProvider = cryptoWallet.getProvider();
+
+    // TODO: calculate local nonce
+
+    if (tokenType === COLLECTIBLES) {
+      // TODO: sign collectible transfer
+    } else {
+      const transaction = { ...assetTransaction, signOnly: true };
+      if (symbol === ETH) {
+        signedTransaction = await walletProvider.transferETH(
+          activeAccount,
+          // $FlowFixMe
+          transaction,
+          getState(),
+        );
+      } else {
+        signedTransaction = await walletProvider.transferERC20(
+          activeAccount,
+          // $FlowFixMe
+          transaction,
+          getState(),
+        );
+      }
+    }
+
+    // update transaction count
+    // if (signedTransaction) {
+    //   const { nonce: lastNonce, transactionCount: lastCount } = signedTransaction;
+    //   const txCountNew = { lastCount, lastNonce };
+    //   await dispatch({
+    //     type: UPDATE_TX_COUNT,
+    //     payload: txCountNew,
+    //   });
+    //   await dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
+    // }
+
+    return signedTransaction;
+  };
+};
+
 export const sendAssetAction = (
   transaction: TransactionPayload,
   wallet: Object,
@@ -130,6 +199,7 @@ export const sendAssetAction = (
       }
     // send Ether
     } else if (symbol === ETH) {
+      // $FlowFixMe
       tokenTx = await walletProvider.transferETH(
         activeAccount,
         // $FlowFixMe
@@ -137,6 +207,7 @@ export const sendAssetAction = (
         getState(),
       );
 
+      // $FlowFixMe
       if (tokenTx.hash) {
         historyTx = buildHistoryTransaction({
           ...tokenTx,
@@ -159,6 +230,7 @@ export const sendAssetAction = (
         getState(),
       );
 
+      // $FlowFixMe
       if (tokenTx.hash) {
         historyTx = buildHistoryTransaction({
           ...tokenTx,

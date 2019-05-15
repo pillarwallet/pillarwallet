@@ -35,7 +35,6 @@ import {
 import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
-import { upgradeToSmartWalletAction } from 'actions/smartWalletActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
 import { getRate } from 'utils/assets';
@@ -48,7 +47,6 @@ type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   assets: Assets,
   balances: Balances,
-  upgradeToSmartWallet: Function,
   transferAssets: AssetTransfer[],
   transferCollectibles: AssetTransfer[],
   fetchGasInfo: Function,
@@ -104,10 +102,56 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     }
   }
 
-  onNextClick = () => {
-    const { navigation } = this.props;
-    // this.setState({ upgradeStarted: true });
-    navigation.navigate(SMART_WALLET_UNLOCK);
+  onNextClick = (gasPrice) => {
+    const {
+      assets,
+      transferAssets,
+      transferCollectibles,
+      navigation,
+    } = this.props;
+    this.setState({ upgradeStarted: true });
+    const assetsArray = Object.values(assets);
+    const transferTransactions = [
+      ...transferCollectibles,
+      ...transferAssets,
+    ].map(({ name: assetName, amount }) => {
+      // receiver address is added on last upgrade step, account address is yet to be received
+      if (!amount) {
+        // TODO: collectible transfer
+        // const asset: any = assetsArray.find((_asset: any) => _asset.name === assetName);
+        // const {
+        //   tokenType,
+        //   id: tokenId,
+        //   contractAddress,
+        // } = asset;
+        // return {
+        //   name,
+        //   contractAddress,
+        //   tokenType,
+        //   tokenId,
+        // }
+        return {}; // temporary return before collectibles is sorted out
+      }
+      const asset: any = assetsArray.find((_asset: any) => _asset.name === assetName);
+      const txFeeInWei = gasPrice.div(GAS_LIMIT).toNumber();
+      const {
+        symbol,
+        address: contractAddress,
+        decimals,
+      } = asset;
+      return {
+        amount,
+        gasLimit: GAS_LIMIT,
+        gasPrice,
+        txFeeInWei,
+        symbol,
+        contractAddress,
+        decimals,
+      };
+    }).filter(tx => Object.keys(tx).length); // temporary filter before collectibles is sorted out
+    this.setState({ upgradeStarted: false }, () => {
+      navigation.navigate(SMART_WALLET_UNLOCK, { transferTransactions });
+    });
   };
 
   getGasPriceWei = () => {
@@ -185,7 +229,12 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
             <DetailsTitle>Fee for smart contract deployment</DetailsTitle>
             <DetailsValue>{smartContractDeployFee}</DetailsValue>
           </DetailsLine>
-          {!upgradeStarted && <Button block title="Deploy Smart Wallet" onPress={this.onNextClick} />}
+          {!upgradeStarted &&
+          <Button
+            block
+            title="Deploy Smart Wallet"
+            onPress={() => this.onNextClick(gasPriceWei)}
+          />}
           {upgradeStarted && <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>}
         </DetailsWrapper>
       </Container>
@@ -194,7 +243,14 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 }
 
 const mapStateToProps = ({
-  smartWallet: { upgrade: { transfer: { assets: transferAssets, collectibles: transferCollectibles } } },
+  smartWallet: {
+    upgrade: {
+      transfer: {
+        assets: transferAssets,
+        collectibles: transferCollectibles,
+      },
+    },
+  },
   assets: { data: assets },
   session: { data: session },
   history: { gasInfo },
@@ -220,7 +276,6 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  upgradeToSmartWallet: () => dispatch(upgradeToSmartWalletAction()),
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 

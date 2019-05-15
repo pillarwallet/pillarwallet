@@ -49,6 +49,7 @@ import Button from 'components/Button';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import type { ApiUser } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
@@ -110,7 +111,7 @@ type Props = {
   muteContact: Function,
   blockContact: Function,
   smartWalletState: Object,
-  accounts: [],
+  accounts: Accounts,
 };
 
 type State = {

@@ -50,6 +50,8 @@ import Tabs from 'components/Tabs';
 import type { Assets, Balances, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
+
 // actions
 import {
   updateAssetsAction,
@@ -107,7 +109,7 @@ type Props = {
   assetsSearchState: string,
   addAsset: Function,
   removeAsset: Function,
-  accounts: [],
+  accounts: Accounts,
   tankData: Object,
   smartWalletState: Object,
 }

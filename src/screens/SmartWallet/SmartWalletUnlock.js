@@ -38,13 +38,16 @@ type Props = {
 }
 
 type State = {
+  transferTransactions: Object[],
   isChecking: boolean,
 };
 
 class SmartWalletUnlock extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const transferTransactions = this.props.navigation.getParam('transferTransactions', []);
     this.state = {
+      transferTransactions,
       isChecking: false,
     };
   }
@@ -55,11 +58,14 @@ class SmartWalletUnlock extends React.Component<Props, State> {
       upgradeToSmartWallet,
       navigation,
     } = this.props;
+    const {
+      transferTransactions = [],
+    } = this.state;
     this.setState({
       isChecking: true,
     }, async () => {
       await initSmartWalletSdk(wallet.privateKey);
-      const upgradeComplete = await upgradeToSmartWallet().catch(() => null);
+      const upgradeComplete = await upgradeToSmartWallet(wallet, transferTransactions).catch(() => null);
       if (upgradeComplete) {
         navigation.navigate(ASSETS, {});
       } else {
@@ -91,7 +97,9 @@ class SmartWalletUnlock extends React.Component<Props, State> {
 
 const mapDispatchToProps = (dispatch) => ({
   initSmartWalletSdk: (walletPrivateKey: string) => dispatch(initSmartWalletSdkAction(walletPrivateKey)),
-  upgradeToSmartWallet: () => dispatch(upgradeToSmartWalletAction()),
+  upgradeToSmartWallet: (wallet: Object, transferTransactions: Object[]) => dispatch(
+    upgradeToSmartWalletAction(wallet, transferTransactions),
+  ),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 

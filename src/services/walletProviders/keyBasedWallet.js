@@ -58,10 +58,10 @@ export default class KeyBasedWalletProvider {
       amount,
       gasLimit,
       gasPrice,
+      signOnly = false,
     } = transaction;
     const from = getAccountAddress(account);
     const { nonce, transactionCount } = await this.calculateNonce(from, state);
-
     return transferETH({
       gasLimit,
       gasPrice,
@@ -69,8 +69,9 @@ export default class KeyBasedWalletProvider {
       amount,
       wallet: this.wallet,
       nonce,
+      signOnly,
     })
-      .then(result => ({ ...result, transactionCount }))
+      .then(result => signOnly ? result : { ...result, transactionCount })
       .catch((e) => catchTransactionError(e, ETH, {
         gasLimit,
         gasPrice,
@@ -85,6 +86,7 @@ export default class KeyBasedWalletProvider {
       amount,
       contractAddress,
       decimals,
+      signOnly,
     } = transaction;
     const from = getAccountAddress(account);
     const { nonce, transactionCount } = await this.calculateNonce(from, state);
@@ -96,8 +98,9 @@ export default class KeyBasedWalletProvider {
       decimals,
       wallet: this.wallet,
       nonce,
+      signOnly,
     })
-      .then(result => ({ ...result, transactionCount }))
+      .then(result => signOnly ? result : { ...result, transactionCount })
       .catch((e) => catchTransactionError(e, 'ERC20', {
         decimals,
         contractAddress,
