@@ -2,14 +2,6 @@
 # yarn lockfile v1
 
 
-"@archanova/contracts@^1.0.0-beta.2":
-  version "1.0.0-beta.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/contracts/-/contracts-1.0.0-beta.2.tgz#2d9f270d5ce38d4eaee88664333a08c97fb88c1f"
-  integrity sha1-LZ8nDVzjjU6u6IZkMzoIyX+4jB8=
-  dependencies:
-    "@ensdomains/ens" "0.3.5"
-    openzeppelin-solidity "2.1.2"
-
 "@archanova/contracts@^1.0.0-beta.3":
   version "1.0.0-beta.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/contracts/-/contracts-1.0.0-beta.3.tgz#e0242ea26246971c591f6101413f80a194e12482"
@@ -18,34 +10,14 @@
     "@ensdomains/ens" "0.3.5"
     openzeppelin-solidity "2.1.2"
 
-"@archanova/sdk@1.0.0-alpha.1":
-  version "1.0.0-alpha.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.0.0-alpha.1.tgz#07e5fb039469d3e9391d4f2229f1fc812afd39be"
-  integrity sha1-B+X7A5Rp0+k5HU8iKfH8gSr9Ob4=
-  dependencies:
-    "@archanova/contracts" "^1.0.0-beta.2"
-    "@babel/runtime" "^7.4.4"
-    "@netgum/types" "^0.1.3"
-    "@netgum/utils" "^0.1.3"
-    "@types/node" "^12.0.0"
-    "@types/webpack-env" "^1.13.9"
-    bn.js "^4.11.8"
-    cross-fetch "^3.0.2"
-    deep-equal-extended "^0.0.2"
-    ethjs "^0.4.0"
-    ethjs-abi "^0.2.1"
-    redux "^4.0.1"
-    rxjs "6.4.0"
-    rxjs-addons "^0.0.4"
-
-"@archanova/sdk@^1.0.0-alpha.3":
-  version "1.0.0-alpha.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.0.0-alpha.3.tgz#5cc4e9691ca0911d440517925d644370626b6773"
-  integrity sha1-XMTpaRygkR1EBReSXWRDcGJrZ3M=
+"@archanova/sdk@^1.0.0-alpha.4":
+  version "1.0.0-alpha.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.0.0-alpha.4.tgz#122b126cccded4e7840182246e6614a08bc5feb8"
+  integrity sha1-EisSbMze1OeEAYIkbmYUoIvF/rg=
   dependencies:
     "@archanova/contracts" "^1.0.0-beta.3"
     "@babel/runtime" "^7.4.4"
-    "@netgum/types" "^0.1.3"
+    "@netgum/types" "^0.1.7"
     "@netgum/utils" "^0.1.3"
     "@types/node" "^12.0.0"
     "@types/webpack-env" "^1.13.9"
@@ -817,10 +789,10 @@
     hoist-non-react-statics "^2.2.2"
     prop-types "^15.5.10"
 
-"@netgum/types@^0.1.3":
-  version "0.1.6"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@netgum/types/-/types-0.1.6.tgz#fe6c2a59cd4ea9f9bc1c6ca3edc7d68e053f8a18"
-  integrity sha1-/mwqWc1Oqfm8HGyj7cfWjgU/ihg=
+"@netgum/types@^0.1.7":
+  version "0.1.7"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@netgum/types/-/types-0.1.7.tgz#7a058d7cabb07a303fc65aef291b57fd9bde534a"
+  integrity sha1-egWNfKuwejA/xlrvKRtX/ZveU0o=
 
 "@netgum/utils@^0.1.3":
   version "0.1.3"
