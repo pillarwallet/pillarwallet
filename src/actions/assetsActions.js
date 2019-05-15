@@ -17,8 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Sentry } from 'react-native-sentry';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import get from 'lodash.get';
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
@@ -40,12 +39,9 @@ import { ADD_TRANSACTION } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
-import {
-  transferETH,
-  transferERC20,
-  transferERC721,
-  getExchangeRates,
-} from 'services/assets';
+import { getExchangeRates } from 'services/assets';
+import CryptoWallet from 'services/cryptoWallet';
+
 import type {
   TokenTransactionPayload,
   CollectibleTransactionPayload,
@@ -53,9 +49,9 @@ import type {
 } from 'models/Transaction';
 import type { Asset, Assets } from 'models/Asset';
 import { transformAssetsToObject } from 'utils/assets';
-import { delay, getEthereumProvider, noop, uniqBy } from 'utils/common';
+import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
-import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+import { getActiveAccountAddress, getActiveAccount, getActiveAccountId } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 
@@ -64,55 +60,45 @@ type TransactionStatus = {
   error: ?string,
 };
 
-const catchTransactionError = (e, type, tx) => {
-  Sentry.captureException({
-    tx,
-    type,
-    error: e.message,
-  });
-  return { error: e.message };
-};
-
 export const sendAssetAction = (
   transaction: TransactionPayload,
   wallet: Object,
   navigateToNextScreen: Function = noop,
 ) => {
   return async (dispatch: Function, getState: Function) => {
+    const tokenType = get(transaction, 'tokenType', '');
+    const symbol = get(transaction, 'symbol', '');
+
+    if (tokenType === COLLECTIBLES) {
+      await dispatch(fetchCollectiblesAction());
+    }
+
     const {
       history: { data: currentHistory },
-      txCount: { data: { lastNonce } },
       accounts: { data: accounts },
-      collectibles: { transactionHistory: collectiblesHistory },
+      collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
     } = getState();
-    const accountId = getActiveAccountId(accounts);
-    wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
-    const transactionCount = await wallet.provider.getTransactionCount(wallet.address, 'pending');
 
-    let nonce;
+    const accountId = getActiveAccountId(accounts);
+    const activeAccount = getActiveAccount(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
+    if (!activeAccount) return;
+
     let tokenTx = {};
     let historyTx;
-    let collectibles;
-    let accountCollectibles = [];
+    const accountCollectibles = collectibles[accountId] || [];
     const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
     const { to, note } = transaction;
 
-    if (lastNonce === transactionCount && lastNonce > 0) {
-      nonce = lastNonce + 1;
-    }
+    // get wallet provider
+    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
+    const walletProvider = cryptoWallet.getProvider();
 
-    if (transaction.tokenType && transaction.tokenType === COLLECTIBLES) {
+    // send collectible
+    if (tokenType === COLLECTIBLES) {
       // $FlowFixMe
-      const { contractAddress, tokenId } = (transaction: CollectibleTransactionPayload);
-      await dispatch(fetchCollectiblesAction());
-      const {
-        collectibles: { data: newlyFetchedCollectibles },
-      } = getState();
-
-      collectibles = newlyFetchedCollectibles;
-      accountCollectibles = collectibles[accountId] || [];
+      const { tokenId } = (transaction: CollectibleTransactionPayload);
       const collectibleInfo = accountCollectibles.find(item => item.id === tokenId);
-
       if (!collectibleInfo) {
         tokenTx = {
           error: 'is not owned',
@@ -120,92 +106,67 @@ export const sendAssetAction = (
           noRetry: true,
         };
       } else {
-        tokenTx = await transferERC721({
-          from: wallet.address,
-          to,
-          contractAddress,
-          tokenId,
-          wallet,
-          nonce,
-        }).catch((e) => {
-          catchTransactionError(e, 'ERC721', {
-            contractAddress,
-            from: wallet.address,
-            to,
-            tokenId,
-          });
-        });
+        tokenTx = await walletProvider.transferERC721(
+          activeAccount,
+          // $FlowFixMe
+          transaction,
+          getState(),
+        );
+
         if (tokenTx.hash) {
-          const historyTxPart = buildHistoryTransaction({
-            ...tokenTx,
-            asset: transaction.name,
-            note,
-          });
           historyTx = {
-            ...historyTxPart,
+            ...buildHistoryTransaction({
+              ...tokenTx,
+              asset: transaction.name,
+              note,
+            }),
             to,
-            from: wallet.address,
+            from: accountAddress,
             assetData: { ...collectibleInfo },
             type: COLLECTIBLE_TRANSACTION,
             icon: collectibleInfo.icon,
           };
         }
       }
+    // send Ether
+    } else if (symbol === ETH) {
+      tokenTx = await walletProvider.transferETH(
+        activeAccount,
+        // $FlowFixMe
+        transaction,
+        getState(),
+      );
+
+      if (tokenTx.hash) {
+        historyTx = buildHistoryTransaction({
+          ...tokenTx,
+          asset: symbol,
+          note,
+        });
+      }
+    // send ERC20 token
     } else {
       const {
-        gasLimit,
         amount,
-        gasPrice,
-        symbol,
-        contractAddress,
         decimals,
         // $FlowFixMe
       } = (transaction: TokenTransactionPayload);
 
-      if (symbol === ETH) {
-        tokenTx = await transferETH({
-          gasLimit,
-          gasPrice,
-          to,
-          amount,
-          wallet,
-          nonce,
-        }).catch((e) => catchTransactionError(e, ETH, {
-          gasLimit,
-          gasPrice,
-          to,
-          amount,
-        }));
-        if (tokenTx.hash) {
-          historyTx = buildHistoryTransaction({
-            ...tokenTx,
-            asset: symbol,
-            note,
-          });
-        }
-      } else {
-        tokenTx = await transferERC20({
-          to,
-          amount,
-          contractAddress,
-          wallet,
-          decimals,
-          nonce,
-        }).catch((e) => catchTransactionError(e, 'ERC20', {
-          decimals,
-          contractAddress,
-          to,
-          amount,
-        }));
-        if (tokenTx.hash) {
-          historyTx = buildHistoryTransaction({
-            ...tokenTx,
-            asset: symbol,
-            value: amount * (10 ** decimals),
-            to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
-            note,
-          });
-        }
+      tokenTx = await walletProvider.transferERC20(
+        activeAccount,
+        // $FlowFixMe
+        transaction,
+        getState(),
+      );
+
+      if (tokenTx.hash) {
+        historyTx = buildHistoryTransaction({
+          ...tokenTx,
+          asset: symbol,
+          value: amount * (10 ** decimals),
+          to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
+          note,
+        });
       }
     }
 
@@ -247,8 +208,8 @@ export const sendAssetAction = (
     }
 
     // update transaction count
-    if (tokenTx.hash) {
-      const txCountNew = { lastCount: transactionCount, lastNonce: tokenTx.nonce };
+    if (tokenTx.hash && tokenTx.transactionCount) {
+      const txCountNew = { lastCount: tokenTx.transactionCount, lastNonce: tokenTx.nonce };
       dispatch({
         type: UPDATE_TX_COUNT,
         payload: txCountNew,

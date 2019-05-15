@@ -21,13 +21,23 @@
 import type { Account, Accounts } from 'models/Account';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
+export function getActiveAccount(accounts: Accounts = []): ?Account {
+  return accounts.find(({ isActive }) => isActive);
+}
+
 export function getActiveAccountId(accounts: Accounts = []): string {
-  const activeAccount = accounts.find(({ isActive }) => isActive) || {};
+  const activeAccount = getActiveAccount(accounts) || {};
   return activeAccount.id || '';
 }
 
+export function getAccountAddress(account: Account): string {
+  return account.id || '';
+}
+
 export function getActiveAccountAddress(accounts: Accounts = []): string {
-  return getActiveAccountId(accounts);
+  const activeAccount = getActiveAccount(accounts);
+  if (!activeAccount) return '';
+  return getAccountAddress(activeAccount);
 }
 
 export function findKeyBasedAccount(accounts: Accounts): ?Account {
