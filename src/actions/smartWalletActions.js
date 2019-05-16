@@ -221,11 +221,19 @@ export const checkAssetTransferTransactionsAction = () => {
     // grab first in queue
     const unsentTransaction = unsentTransactions[0];
     const { signedTransaction: { signed: unsentTransactionSigned } } = unsentTransaction;
-    dispatch(sendSignedAssetTransactionAction(unsentTransactionSigned));
+    const signedTransactionHash = await dispatch(sendSignedAssetTransactionAction(unsentTransactionSigned));
+    if (!signedTransactionHash || signedTransactionHash.error) {
+      // TODO: transaction failed
+      return;
+    }
     const updatedTransactions = transactions.filter(
       transaction => transaction.signedTransaction.signed !== unsentTransactionSigned,
     );
-    updatedTransactions.push({ ...unsentTransaction, status: 'sent' });
+    updatedTransactions.push({
+      ...unsentTransaction,
+      status: 'sent',
+      transactionHash: signedTransactionHash,
+    });
     dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
   };
 };
