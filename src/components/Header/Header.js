@@ -123,6 +123,7 @@ const TankButton = styled.TouchableOpacity`
   justify-content: flex-end;
   align-items: center;
   min-height: 20px;
+  margin-left: 14px;
 `;
 
 const TankLabel = styled(LightText)`

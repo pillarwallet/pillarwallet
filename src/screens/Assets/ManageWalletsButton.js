@@ -61,6 +61,7 @@ const SWButtonWrapper = styled.TouchableOpacity`
   padding: 0 14px;
   align-items: center;
   min-height: 20px;
+  margin-right: -14px;
 `;
 
 const ButtonIcon = styled(Icon)`

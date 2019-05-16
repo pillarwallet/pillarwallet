@@ -75,6 +75,7 @@ import {
 import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import { UPGRADE_TO_SMART_WALLET_FLOW, TANK_DETAILS } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
@@ -451,13 +452,14 @@ class AssetsScreen extends React.Component<Props, State> {
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
 
     const isSmartWallet = smartWalletStatus.hasAccount;
+    const activeAccount = accounts.find(({ isActive }) => isActive) || { type: '' };
 
     return (
       <Container inset={{ bottom: 0 }}>
         <SearchBlock
           headerProps={{
             title: 'assets',
-            showChannelStatus: true,
+            showChannelStatus: activeAccount.type === ACCOUNT_TYPES.SMART_WALLET,
             handleTankButtonTouch: isSmartWallet
               ? () => navigation.navigate(TANK_DETAILS)
               : () => navigation.navigate(UPGRADE_TO_SMART_WALLET_FLOW),
