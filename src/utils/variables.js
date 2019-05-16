@@ -87,6 +87,8 @@ export const UIColors = {
   primary: baseColors.electricBlue,
   danger: baseColors.burningFire,
   disabled: baseColors.mediumGray,
+  defaultHeaderColor: baseColors.white,
+  defaultInputBackgroundColor: baseColors.white,
   defaultTextColor: baseColors.slateBlack,
   defaultNavigationColor: baseColors.slateBlack,
   defaultBackgroundColor: baseColors.snowWhite,

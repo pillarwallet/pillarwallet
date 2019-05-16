@@ -17,32 +17,4 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type Asset = {
-  symbol: string,
-  name: string,
-  address: string,
-  description: string,
-  iconUrl: string,
-  iconMonoUrl: string,
-  wallpaperUrl: string,
-  decimals: number,
-};
-
-export type Assets = {
-  [string]: Asset,
-};
-
-export type AssetsList = Array<Asset>;
-
-export type Balances = {
-  [string]: {
-    balance: string,
-    symbol: string,
-  },
-};
-
-export type Rates = {
-  [string]: {
-    [string]: number,
-  },
-};
+export const APPEND_OFFER = 'APPEND_OFFER';

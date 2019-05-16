@@ -38,6 +38,7 @@ import AssetScreen from 'screens/Asset';
 import MarketScreen from 'screens/Market';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
+import ExchangeScreen from 'screens/Exchange';
 import ContactScreen from 'screens/Contact';
 import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
@@ -93,6 +94,7 @@ import {
   ASSETS,
   ASSET,
   ICO,
+  EXCHANGE,
   PROFILE,
   PEOPLE,
   CONTACT,
@@ -151,10 +153,12 @@ const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_new.png');
+const iconExchange = require('assets/icons/icon_wallet_new.png'); // TODO
 const iconPeople = require('assets/icons/icon_people_new.png');
 const iconHome = require('assets/icons/icon_home_new.png');
 // const iconMarket = require('assets/icons/icon_marketplace_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
+const iconExchangeActive = require('assets/icons/icon_wallet_active.png'); // TODO
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
 // const iconMarketActive = require('assets/icons/icon_marketplace_active.png');
@@ -203,6 +207,11 @@ const assetsFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+// EXCHANGE FLOW
+const exchangeFlow = createStackNavigator({
+  [EXCHANGE]: ExchangeScreen,
+}, StackNavigatorConfig);
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
@@ -298,6 +307,13 @@ const tabNavigation = createBottomTabNavigator(
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
         tabBarLabel: tabBarLabel('Assets'),
+      }),
+    },
+    [EXCHANGE]: {
+      screen: exchangeFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconExchangeActive, iconExchange),
+        tabBarLabel: tabBarLabel('Exchange'),
       }),
     },
     [PEOPLE]: {

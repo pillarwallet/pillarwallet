@@ -17,32 +17,16 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type Asset = {
-  symbol: string,
-  name: string,
-  address: string,
+export type Offer = {
+  provider: string,
   description: string,
-  iconUrl: string,
-  iconMonoUrl: string,
-  wallpaperUrl: string,
-  decimals: number,
-};
+  fromAssetCode: string,
+  toAssetCode: string,
+  askRate: number,
+  minQuantity: number,
+  maxQuantity: number,
+}
 
-export type Assets = {
-  [string]: Asset,
-};
-
-export type AssetsList = Array<Asset>;
-
-export type Balances = {
-  [string]: {
-    balance: string,
-    symbol: string,
-  },
-};
-
-export type Rates = {
-  [string]: {
-    [string]: number,
-  },
-};
+export type SearchResults = {
+  offers: Offer[],
+}

@@ -146,7 +146,6 @@ SDKWrapper.prototype.fetchInitialAssets = function (walletId: string) {
     .then(transformAssetsToObject);
 };
 
-
 SDKWrapper.prototype.updateUser = function (user: Object) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.update(user))
@@ -703,4 +702,3 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
       return false;
     });
 };
-

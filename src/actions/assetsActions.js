@@ -283,7 +283,7 @@ export const fetchAssetsBalancesAction = (assets: Assets) => {
       dispatch({ type: UPDATE_BALANCES, payload: transformedBalances });
     }
 
-    // @TODO: Extract "rates fetching" to it's own action ones required.
+    // @TODO: Extract "rates fetching" to its own action ones required.
     const rates = await getExchangeRates(Object.keys(assets));
     if (rates && Object.keys(rates).length) {
       dispatch(saveDbAction('rates', { rates }, true));
