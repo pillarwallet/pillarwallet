@@ -97,7 +97,7 @@ export const signAssetTransactionAction = (
 
     // get wallet provider
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
-    const walletProvider = cryptoWallet.getProvider();
+    const walletProvider = await cryptoWallet.getProvider();
 
     // get only signed transaction
     const transaction = { ...assetTransaction, signOnly: true };
@@ -168,7 +168,7 @@ export const sendAssetAction = (
 
     // get wallet provider
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
-    const walletProvider = cryptoWallet.getProvider();
+    const walletProvider = await cryptoWallet.getProvider();
 
     // send collectible
     if (tokenType === COLLECTIBLES) {

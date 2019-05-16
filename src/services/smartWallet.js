@@ -26,6 +26,23 @@ import {
 } from '@archanova/sdk';
 import { BigNumber } from 'bignumber.js';
 
+const SLOW = 'slow';
+const REGULAR = 'regular';
+const FAST = 'fast';
+
+const TransactionSpeeds = {
+  [SLOW]: SLOW,
+  [REGULAR]: REGULAR,
+  [FAST]: FAST,
+};
+
+type AccountTransaction = {
+  recipient: string,
+  value: number | string | BigNumber,
+  data: string | Buffer,
+  transactionSpeed?: $Keys<typeof TransactionSpeeds>,
+};
+
 export default class SmartWallet {
   sdk: Sdk;
 
@@ -102,6 +119,32 @@ export default class SmartWallet {
       ...account,
       devices,
     };
+  }
+
+  async transferAsset(transaction: AccountTransaction) {
+    let estimateError;
+    const {
+      recipient,
+      value,
+      data,
+      transactionSpeed = null,
+    } = transaction;
+
+    const estimatedTransaction = await this.sdk.estimateAccountTransaction(recipient,
+      value,
+      data,
+      transactionSpeed,
+    ).catch((e) => { estimateError = e; });
+
+    if (!estimatedTransaction) {
+      return Promise.reject(new Error(estimateError));
+    }
+
+    return this.sdk.submitAccountTransaction(estimatedTransaction);
+  }
+
+  getConnectedAccountTransaction(txHash: string) {
+    return this.sdk.getConnectedAccountTransaction(txHash);
   }
 
   handleError(error: any) {
