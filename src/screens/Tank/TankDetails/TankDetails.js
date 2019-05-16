@@ -302,12 +302,21 @@ class TankDetails extends React.Component<Props, State> {
               </ValueLabel>
             </ColumnAnimated>
           </Body>
-          <Column style={{ alignItems: 'center', marginBottom: 80, marginTop: 13 }}>
+          <ColumnAnimated
+            style={{
+              alignItems: 'center',
+              marginBottom: 80,
+              marginTop: tankValueAnimated.interpolate({
+                inputRange: [0, totalStake * 0.2, totalStake],
+                outputRange: [30, 15, 15],
+              }),
+            }}
+          >
             <ValueText style={{ color: baseColors.hoki }}>
               {`${usedFormatedAmount} PLR`}
             </ValueText>
             <ValueLabel style={{ color: baseColors.hoki, fontSize: fontSizes.extraExtraSmall }}>Used</ValueLabel>
-          </Column>
+          </ColumnAnimated>
           <FooterWrapper>
             <Button
               title="Fund"

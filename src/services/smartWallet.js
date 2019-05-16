@@ -17,12 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import get from 'lodash.get';
 import {
   SdkEnvironmentNames,
   getSdkEnvironment,
   createSdk,
   Sdk,
 } from '@archanova/sdk';
+import { BigNumber } from 'bignumber.js';
 
 export default class SmartWallet {
   sdk: Sdk;
@@ -59,17 +61,15 @@ export default class SmartWallet {
   }
 
   async connectAccount(address: string) {
-    const account = this.sdk.state.account || await this.sdk.connectAccount(address).catch(this.handleError);
+    let account = this.sdk.state.account || await this.sdk.connectAccount(address).catch(this.handleError);
     const devices = await this.sdk.getConnectedAccountDevices()
       .then(({ items = [] }) => items)
       .catch(this.handleError);
-    /* there is no setAccountEnsLabel() method anymore
-    // UPDATE: found updateAccount(ensLabel: string) function
+
     if (!account.ensName) {
-      account.ensName = account.address;
-      await this.sdk.setAccountEnsLabel(account.ensName).catch(this.handleError);
+      account = await this.sdk.updateAccount(account.address).catch(this.handleError);
     }
-    */
+
     return {
       ...account,
       devices,
@@ -77,22 +77,21 @@ export default class SmartWallet {
   }
 
   async deploy() {
-    const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
-    let accountBalance = this.getAccountBalance();
-    if (accountBalance.eq(0)) {
-      // can't find a topUpAccount() method
-      // await this.sdk.topUpAccount().catch(this.handleError);
-      accountBalance = this.getAccountBalance();
-    }
-    if (accountBalance.gte(deployEstimate)) {
+    const deployEstimate = await this.sdk.estimateAccountDeployment()
+      .then(({ totalCost }) => totalCost)
+      .catch(this.handleError);
+
+    const accountBalance = this.getAccountBalance();
+    if (deployEstimate && accountBalance.gte(deployEstimate)) {
       return this.sdk.deployAccount();
     }
+
     console.log('insufficient balance, lack: ', deployEstimate.sub(accountBalance).toString());
     return {};
   }
 
   getAccountBalance() {
-    const { state: { accountBalance } } = this.sdk;
+    const accountBalance = get(this.sdk, 'state.account.balance.real', new BigNumber(0));
     return accountBalance;
   }
 
