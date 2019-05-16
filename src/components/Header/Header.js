@@ -131,7 +131,7 @@ const TankLabel = styled(LightText)`
   line-height: ${fontSizes.extraExtraSmall}px;
   color: ${baseColors.darkGray};
   margin-right: 6px;
-  margin-bottom: -2px;
+  margin-bottom: -4px;
 `;
 
 const Header = (props: Props) => {
@@ -173,7 +173,8 @@ const Header = (props: Props) => {
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
   const onlyCloseIcon = onClose && !nextText && !onCloseText;
-  const tankButtonLabel = isSmartWallet ? tankValue : 'Upgrade';
+  const tankLabel = tankValue > 0 ? tankValue : 'PLT Tank';
+  const tankButtonLabel = isSmartWallet ? tankLabel : 'Upgrade';
 
   const getHeaderRightFlex = () => {
     if (headerRightFlex) {
