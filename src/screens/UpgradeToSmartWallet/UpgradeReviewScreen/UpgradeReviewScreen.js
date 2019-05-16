@@ -47,7 +47,6 @@ import {
 } from 'constants/navigationConstants';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { formatAmount } from 'utils/common';
-import { getBalance } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 import type { Assets, Balances, AssetTransfer } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
@@ -131,9 +130,8 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       return null;
     }
 
-    const { balances } = this.props;
-    const assetBalance = formatAmount(getBalance(balances, item.symbol));
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
+    const formattedAmount = formatAmount(item.amount);
     const gasPriceWei = this.getGasPriceWei();
     const transferFee = formatAmount(utils.formatEther(gasPriceWei));
 
@@ -141,7 +139,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       <ListItemWithImage
         label={item.name}
         itemImageUrl={fullIconUrl || genericToken}
-        itemValue={`${assetBalance} ${item.symbol}`}
+        itemValue={`${formattedAmount} ${item.symbol}`}
         fallbackSource={genericToken}
         rightColumnInnerStyle={{
           flex: 1,
@@ -181,9 +179,13 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     ));
 
     const assetsArray = Object.values(assets);
-    const nonEmptyAssets = transferAssets.map(
-      (transferAsset: any) => assetsArray.find((_asset: any) => _asset.name === transferAsset.name),
-    );
+    const nonEmptyAssets = transferAssets.map((transferAsset: any) => {
+      const asset = assetsArray.find((_asset: any) => _asset.name === transferAsset.name);
+      return {
+        ...asset,
+        amount: transferAsset.amount,
+      };
+    });
 
     const sections = [];
     /* if (contacts.length) {

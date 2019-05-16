@@ -133,7 +133,6 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
         return {}; // temporary return before collectibles is sorted out
       }
       const asset: any = assetsArray.find((_asset: any) => _asset.name === assetName);
-      const txFeeInWei = gasPrice.div(GAS_LIMIT).toNumber();
       const {
         symbol,
         address: contractAddress,
@@ -143,7 +142,6 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
         amount,
         gasLimit: GAS_LIMIT,
         gasPrice,
-        txFeeInWei,
         symbol,
         contractAddress,
         decimals,
@@ -156,8 +154,9 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
   getGasPriceWei = () => {
     const { gasInfo } = this.props;
-    const gasPrice = gasInfo.gasPrice.avg || 0;
-    return utils.parseUnits(gasPrice.toString(), 'gwei').mul(GAS_LIMIT);
+    const gasPrice = gasInfo.gasPrice.max || 0;
+    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+    return gasPriceWei.mul(GAS_LIMIT);
   };
 
   render() {
@@ -176,6 +175,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const gasPriceWei = this.getGasPriceWei();
     const fiatSymbol = getCurrencySymbol(fiatCurrency);
+    const gasPrice = gasPriceWei.div(GAS_LIMIT).toNumber();
 
     const feeTokensTransferEth = formatAmount(utils.formatEther(
       BigNumber(gasPriceWei * (transferAssets.length + transferCollectibles.length)).toFixed(),
@@ -233,7 +233,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           <Button
             block
             title="Deploy Smart Wallet"
-            onPress={() => this.onNextClick(gasPriceWei)}
+            onPress={() => this.onNextClick(gasPrice)}
           />}
           {upgradeStarted && <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>}
         </DetailsWrapper>

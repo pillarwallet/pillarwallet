@@ -39,7 +39,10 @@ import {
   switchAccountAction,
 } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
-import { signAssetTransactionAction } from 'actions/assetsActions';
+import {
+  signAssetTransactionAction,
+  sendSignedAssetTransactionAction,
+} from 'actions/assetsActions';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 
@@ -188,13 +191,31 @@ export const checkAssetTransferTransactionsAction = () => {
       smartWallet: {
         upgrade: {
           transfer: {
-            transactions,
+            transactions = [],
           },
         },
       },
     } = getState();
-    console.log('checkAssetTransferTransactionsAction: ', transactions);
-    // dispatch(setAssetsTransferTransactionsAction(signedTransactionsFixed));
+    if (!transactions.length) {
+      // TODO: no transactions at all?
+      return;
+    }
+    const pendingTransactions = transactions.filter(transaction => transaction.status === 'sent');
+    if (pendingTransactions.length) return;
+    const unsentTransactions = transactions.filter(transaction => transaction.status !== 'complete');
+    if (!unsentTransactions.length) {
+      // TODO: all complete?
+      return;
+    }
+    // grab first in queue
+    const unsentTransaction = unsentTransactions[0];
+    const { signedTransaction: { signed: unsentTransactionSigned } } = unsentTransaction;
+    dispatch(sendSignedAssetTransactionAction(unsentTransactionSigned));
+    const updatedTransactions = transactions.filter(
+      transaction => transaction.signedTransaction.signed !== unsentTransactionSigned,
+    );
+    updatedTransactions.push({ ...unsentTransaction, status: 'sent' });
+    dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
   };
 };
 

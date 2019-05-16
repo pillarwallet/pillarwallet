@@ -6,7 +6,11 @@ import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { ETH } from 'constants/assetsConstants';
 import type { Account } from 'models/Account';
 import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
-import { transferERC20, transferERC721, transferETH } from 'services/assets';
+import {
+  transferERC20,
+  transferERC721,
+  transferETH,
+} from 'services/assets';
 import { getEthereumProvider } from 'utils/common';
 import { catchTransactionError } from 'utils/wallet';
 import { getAccountAddress } from 'utils/accounts';
@@ -123,7 +127,6 @@ export default class KeyBasedWalletProvider {
     let nonce;
     const transactionCount = await this.wallet.provider.getTransactionCount(walletAddress, 'pending');
     const { txCount: { data: { lastNonce } } } = state;
-
     if (signedTransaction) {
       const _transactionCount = (transactionCount > 0 ? transactionCount + 1 : 0);
       // set nonce either to 0 or transaction count or increase

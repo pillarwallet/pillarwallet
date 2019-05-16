@@ -39,7 +39,7 @@ import { ADD_TRANSACTION } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
-import { getExchangeRates } from 'services/assets';
+import { getExchangeRates, transferSigned } from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
 
 import type {
@@ -60,13 +60,13 @@ type TransactionStatus = {
   error: ?string,
 };
 
-// export const sendSignAssetTransactionAction = (
-//   signedTransaction: string,
-// ) => {
-//   return async (dispatch: Function, getState: Function) => {
-//
-//   }
-// };
+export const sendSignedAssetTransactionAction = (
+  signedTransaction: string,
+) => {
+  return async () => {
+    return transferSigned(signedTransaction).catch(e => ({ error: e }));
+  };
+};
 
 export const signAssetTransactionAction = (
   assetTransaction: TransactionPayload,
