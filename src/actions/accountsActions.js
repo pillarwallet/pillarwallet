@@ -146,7 +146,9 @@ export const setActiveAccountAction = (accountId: string) => {
       payload: updatedAccounts,
     });
     await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
+
     if (account.type !== ACCOUNT_TYPES.SMART_WALLET || !account.extra) return;
+
     const { extra: { state = '' } } = account;
     switch (state.toString().toLowerCase()) {
       case 'deployed':

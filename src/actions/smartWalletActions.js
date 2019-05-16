@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import get from 'lodash.get';
 import Toast from 'components/Toast';
 import {
   SET_SMART_WALLET_SDK_INIT,
@@ -57,7 +58,7 @@ export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
 
 export const loadSmartWalletAccountsAction = () => {
   return async (dispatch: Function) => {
-    if (!smartWalletService) return Promise.reject();
+    if (!smartWalletService) return;
     const accounts = await smartWalletService.getAccounts();
     if (!accounts.length) {
       const newAccount = await smartWalletService.createAccount();
@@ -70,28 +71,7 @@ export const loadSmartWalletAccountsAction = () => {
     const newAccountsPromises = accounts.map(
       async account => dispatch(addNewAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account)),
     );
-    return Promise.all(newAccountsPromises);
-  };
-};
-
-export const connectSmartWalletAccountAction = (accountId: string) => {
-  return async (dispatch: Function) => {
-    if (!smartWalletService) return Promise.reject();
-    const connectedAccount = await smartWalletService.connectAccount(accountId).catch(() => null);
-    if (!connectedAccount) {
-      Toast.show({
-        message: 'Failed to connect to Smart Wallet account',
-        type: 'warning',
-        title: 'Unable to upgrade',
-        autoClose: false,
-      });
-      return Promise.reject();
-    }
-    dispatch({
-      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      payload: connectedAccount,
-    });
-    return dispatch(setActiveAccountAction(accountId));
+    await Promise.all(newAccountsPromises);
   };
 };
 
@@ -103,6 +83,34 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
       type: SET_SMART_WALLET_UPGRADE_STATUS,
       payload: upgradeStatus,
     });
+  };
+};
+
+export const connectSmartWalletAccountAction = (accountId: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    if (!smartWalletService) return;
+    const connectedAccount = await smartWalletService.connectAccount(accountId).catch(() => null);
+    if (!connectedAccount) {
+      Toast.show({
+        message: 'Failed to connect to Smart Wallet account',
+        type: 'warning',
+        title: 'Unable to upgrade',
+        autoClose: false,
+      });
+      return;
+    }
+    dispatch({
+      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+      payload: connectedAccount,
+    });
+    dispatch(setActiveAccountAction(accountId));
+
+    // update account state
+    const newState = get(connectedAccount, 'state', '');
+    const currentUpgradeStatus = get(getState(), 'smartWallet.upgrade.status', '');
+    if (newState === 'Deployed' && currentUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED) {
+      dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+    }
   };
 };
 
@@ -124,6 +132,9 @@ export const deploySmartWalletAction = () => {
     const deployTxHash = await smartWalletService.deploy();
     console.log('deploySmartWalletAction deployTxHash: ', deployTxHash);
     // update accounts info
+    dispatch(setSmartWalletUpgradeStatusAction(
+      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+    ));
     dispatch(loadSmartWalletAccountsAction());
     const account = await smartWalletService.fetchConnectedAccount();
     dispatch({
