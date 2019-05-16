@@ -53,7 +53,8 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
 
     const contacts = [];
     const invitations = [];
-    const disconnectedContacts = [];
+    const removeContacts = [];
+    const removeInvitations = [];
     resultConnections.forEach((resConn: ConnectionIdentityKey) => {
       if (resConn.status === 'accepted' || resConn.status === 'muted' || resConn.status === 'blocked') {
         const contact = {
@@ -66,6 +67,7 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
           status: resConn.status,
         };
         contacts.push(contact);
+        removeInvitations.push(resConn.targetUserId);
       } else if (resConn.status === 'pending') {
         const invitation = allInvitations.find((inv) => {
           return inv.id === resConn.targetUserId;
@@ -100,14 +102,17 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
           };
         }
         invitations.push(invi);
-      } else if (resConn.status === 'disconnected') {
-        disconnectedContacts.push(resConn.targetUserId);
+        removeContacts.push(resConn.targetUserId);
+      } else if (resConn.status === 'rejected' || resConn.status === 'cancelled' || resConn.status === 'disconnected') {
+        removeInvitations.push(resConn.targetUserId);
+        removeContacts.push(resConn.targetUserId);
       }
     });
 
     const updatedContacts = uniqBy(contacts.concat(allContacts), 'id')
-      .filter(conn => !disconnectedContacts.includes(conn.id));
-    const updatedInvitations = uniqBy(invitations.concat(allInvitations), 'id');
+      .filter(conn => !removeContacts.includes(conn.id));
+    const updatedInvitations = uniqBy(invitations.concat(allInvitations), 'id')
+      .filter(invi => !removeInvitations.includes(invi.id));
     const updatedConnectionIdentityKeys = uniqBy(resultConnections.concat(connectionIdentityKeys), 'sourceIdentityKey');
 
     dispatch({
