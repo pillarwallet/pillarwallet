@@ -28,7 +28,7 @@ import Button from 'components/Button';
 import IconButton from 'components/IconButton';
 import { baseColors, fontSizes } from 'utils/variables';
 import { defaultFiatCurrency, PLR } from 'constants/assetsConstants';
-import { SEND_TOKEN_AMOUNT, FUND_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_AMOUNT, FUND_CONFIRM, SETTLE_BALANCE } from 'constants/navigationConstants';
 import { getRate } from 'utils/assets';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { connect } from 'react-redux';
@@ -326,7 +326,13 @@ class TankDetails extends React.Component<Props, State> {
                   customConfirmScreenKey: FUND_CONFIRM,
                 })}
             />
-            <Button secondaryTransparent title="Settle" noPadding width="197px" />
+            <Button
+              secondaryTransparent
+              title="Settle"
+              noPadding
+              width="197px"
+              onPress={() => navigation.navigate(SETTLE_BALANCE)}
+            />
           </FooterWrapper>
         </ScrollWrapper>
       </Container>
