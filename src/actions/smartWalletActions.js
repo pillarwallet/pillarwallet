@@ -27,6 +27,7 @@ import {
   DISMISS_SMART_WALLET_UPGRADE,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
+  SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -94,6 +95,17 @@ export const connectSmartWalletAccountAction = (accountId: string) => {
   };
 };
 
+export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
+  return async (dispatch: Function) => {
+    // TODO: subscribe for smart wallet account deployment complete check and fire this action
+    dispatch(saveDbAction('smartWallet', { upgradeStatus }));
+    dispatch({
+      type: SET_SMART_WALLET_UPGRADE_STATUS,
+      payload: upgradeStatus,
+    });
+  };
+};
+
 export const deploySmartWalletAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
@@ -118,6 +130,9 @@ export const deploySmartWalletAction = () => {
       type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
       account,
     });
+    dispatch(setSmartWalletUpgradeStatusAction(
+      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+    ));
   };
 };
 
@@ -138,22 +153,48 @@ export const dismissSmartWalletUpgradeAction = () => {
   };
 };
 
-export const setAssetsTransferTransactionsAction = (wallet: Object, transactions: Object[]) => {
+export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {
   return async (dispatch: Function) => {
-    const signedTransactions = await Promise.all(transactions.map(async transaction => {
-      const signedTransaction = await dispatch(signAssetTransactionAction(transaction, wallet));
-      return {
-        transaction,
-        signedTransaction,
-      };
-    }));
-    // filter out if any of the signed transactions got empty object or error
-    const signedTransactionsFixed = signedTransactions.filter(tx => !!tx && Object.keys(tx));
-    dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: signedTransactionsFixed }));
+    dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: transactions }));
     dispatch({
       type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
-      payload: signedTransactionsFixed,
+      payload: transactions,
     });
+  };
+};
+
+export const createAssetsTransferTransactionsAction = (wallet: Object, transactions: Object[]) => {
+  return async (dispatch: Function) => {
+    const signedTransactions = [];
+    // we need this to wait for each to complete because of local nonce increment
+    for (const transaction of transactions) { // eslint-disable-line
+      const signedTransaction = await dispatch(signAssetTransactionAction(transaction, wallet)); // eslint-disable-line
+      signedTransactions.push({
+        transaction,
+        signedTransaction,
+      });
+    }
+    // filter out if any of the signed transactions got empty object or error
+    const signedTransactionsFixed = signedTransactions.filter(tx =>
+      !!tx && !!tx.signedTransaction && Object.keys(tx.signedTransaction),
+    );
+    dispatch(setAssetsTransferTransactionsAction(signedTransactionsFixed));
+  };
+};
+
+export const checkAssetTransferTransactionsAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      smartWallet: {
+        upgrade: {
+          transfer: {
+            transactions,
+          },
+        },
+      },
+    } = getState();
+    console.log('checkAssetTransferTransactionsAction: ', transactions);
+    // dispatch(setAssetsTransferTransactionsAction(signedTransactionsFixed));
   };
 };
 
@@ -189,26 +230,23 @@ export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions:
       return Promise.reject();
     }
     const { address } = accounts[0];
-    const preparedTransferTransactions = transferTransactions.map(transaction => {
+    const addressedTransferTransactions = transferTransactions.map(transaction => {
       return { ...transaction, to: address };
     });
-    await dispatch(setAssetsTransferTransactionsAction(wallet, preparedTransferTransactions));
-    // await dispatch(connectSmartWalletAccountAction(address));
-    // TODO: make transactions to smart wallet account address before deploy
-    //  as balance check will fail during deploy if balance is 0
-    // await dispatch(deploySmartWalletAction());
-    return Promise.resolve(true);
-  };
-};
+    await dispatch(createAssetsTransferTransactionsAction(
+      wallet,
+      addressedTransferTransactions,
+    ));
+    dispatch(setSmartWalletUpgradeStatusAction(
+      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+    ));
+    await dispatch(connectSmartWalletAccountAction(address));
+    dispatch(checkAssetTransferTransactionsAction());
 
-export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
-  return async (dispatch: Function) => {
-    // TODO: subscribe for smart wallet account deployment complete check and fire this action
-    dispatch(saveDbAction('smartWallet', { upgradeStatus }));
-    dispatch({
-      type: SET_SMART_WALLET_UPGRADE_STATUS,
-      payload: upgradeStatus,
-    });
+    // TODO: deploy only if assets transfer step is complete
+    // await dispatch(deploySmartWalletAction());
+
+    return Promise.resolve(true);
   };
 };
 

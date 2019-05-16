@@ -61,7 +61,7 @@ export default class KeyBasedWalletProvider {
       signOnly = false,
     } = transaction;
     const from = getAccountAddress(account);
-    const { nonce, transactionCount } = await this.calculateNonce(from, state);
+    const { nonce, transactionCount } = await this.calculateNonce(from, state, signOnly);
     return transferETH({
       gasLimit,
       gasPrice,
@@ -71,7 +71,10 @@ export default class KeyBasedWalletProvider {
       nonce,
       signOnly,
     })
-      .then(result => signOnly ? result : { ...result, transactionCount })
+      .then(result => signOnly
+        ? { nonce, transactionCount, signed: result }
+        : { ...result, transactionCount },
+      )
       .catch((e) => catchTransactionError(e, ETH, {
         gasLimit,
         gasPrice,
@@ -89,7 +92,7 @@ export default class KeyBasedWalletProvider {
       signOnly,
     } = transaction;
     const from = getAccountAddress(account);
-    const { nonce, transactionCount } = await this.calculateNonce(from, state);
+    const { nonce, transactionCount } = await this.calculateNonce(from, state, signOnly);
 
     return transferERC20({
       to,
@@ -100,7 +103,10 @@ export default class KeyBasedWalletProvider {
       nonce,
       signOnly,
     })
-      .then(result => signOnly ? result : { ...result, transactionCount })
+      .then(result => signOnly
+        ? { nonce, transactionCount, signed: result }
+        : { ...result, transactionCount },
+      )
       .catch((e) => catchTransactionError(e, 'ERC20', {
         decimals,
         contractAddress,
@@ -109,12 +115,22 @@ export default class KeyBasedWalletProvider {
       }));
   }
 
-  async calculateNonce(walletAddress: string, state: Object): Promise<CalculateNonceResult> {
+  async calculateNonce(
+    walletAddress: string,
+    state: Object,
+    signedTransaction?: ?boolean = false,
+  ): Promise<CalculateNonceResult> {
     let nonce;
     const transactionCount = await this.wallet.provider.getTransactionCount(walletAddress, 'pending');
     const { txCount: { data: { lastNonce } } } = state;
 
-    if (lastNonce === transactionCount && lastNonce > 0) {
+    if (signedTransaction) {
+      const _transactionCount = (transactionCount > 0 ? transactionCount + 1 : 0);
+      // set nonce either to 0 or transaction count or increase
+      nonce = (!lastNonce || lastNonce < transactionCount) && lastNonce !== 0
+        ? _transactionCount
+        : lastNonce + 1;
+    } else if (lastNonce === transactionCount && lastNonce > 0) {
       nonce = lastNonce + 1;
     }
 

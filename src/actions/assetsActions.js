@@ -60,6 +60,14 @@ type TransactionStatus = {
   error: ?string,
 };
 
+// export const sendSignAssetTransactionAction = (
+//   signedTransaction: string,
+// ) => {
+//   return async (dispatch: Function, getState: Function) => {
+//
+//   }
+// };
+
 export const signAssetTransactionAction = (
   assetTransaction: TransactionPayload,
   wallet: Object,
@@ -91,39 +99,38 @@ export const signAssetTransactionAction = (
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
     const walletProvider = cryptoWallet.getProvider();
 
-    // TODO: calculate local nonce
+    // get only signed transaction
+    const transaction = { ...assetTransaction, signOnly: true };
 
     if (tokenType === COLLECTIBLES) {
       // TODO: sign collectible transfer
+    } else if (symbol === ETH) {
+      // $FlowFixMe
+      signedTransaction = await walletProvider.transferETH(
+        activeAccount,
+        // $FlowFixMe
+        transaction,
+        getState(),
+      );
     } else {
-      const transaction = { ...assetTransaction, signOnly: true };
-      if (symbol === ETH) {
-        signedTransaction = await walletProvider.transferETH(
-          activeAccount,
-          // $FlowFixMe
-          transaction,
-          getState(),
-        );
-      } else {
-        signedTransaction = await walletProvider.transferERC20(
-          activeAccount,
-          // $FlowFixMe
-          transaction,
-          getState(),
-        );
-      }
+      signedTransaction = await walletProvider.transferERC20(
+        activeAccount,
+        // $FlowFixMe
+        transaction,
+        getState(),
+      );
     }
 
     // update transaction count
-    // if (signedTransaction) {
-    //   const { nonce: lastNonce, transactionCount: lastCount } = signedTransaction;
-    //   const txCountNew = { lastCount, lastNonce };
-    //   await dispatch({
-    //     type: UPDATE_TX_COUNT,
-    //     payload: txCountNew,
-    //   });
-    //   await dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
-    // }
+    if (signedTransaction) {
+      const { nonce: lastNonce, transactionCount: lastCount } = signedTransaction;
+      const txCountNew = { lastCount, lastNonce };
+      dispatch({
+        type: UPDATE_TX_COUNT,
+        payload: txCountNew,
+      });
+      dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
+    }
 
     return signedTransaction;
   };
