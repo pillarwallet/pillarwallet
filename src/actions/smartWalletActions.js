@@ -226,6 +226,7 @@ export const checkAssetTransferTransactionsAction = () => {
       // TODO: transaction failed
       return;
     }
+    console.log('sent new asset transfer transaction: ', signedTransactionHash);
     const updatedTransactions = transactions.filter(
       transaction => transaction.signedTransaction.signed !== unsentTransactionSigned,
     );

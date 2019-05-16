@@ -128,10 +128,9 @@ export default class KeyBasedWalletProvider {
     const transactionCount = await this.wallet.provider.getTransactionCount(walletAddress, 'pending');
     const { txCount: { data: { lastNonce } } } = state;
     if (signedTransaction) {
-      const _transactionCount = (transactionCount > 0 ? transactionCount + 1 : 0);
       // set nonce either to 0 or transaction count or increase
       nonce = (!lastNonce || lastNonce < transactionCount) && lastNonce !== 0
-        ? _transactionCount
+        ? transactionCount
         : lastNonce + 1;
     } else if (lastNonce === transactionCount && lastNonce > 0) {
       nonce = lastNonce + 1;
