@@ -59,17 +59,15 @@ export default class SmartWallet {
   }
 
   async connectAccount(address: string) {
-    const account = this.sdk.state.account || await this.sdk.connectAccount(address).catch(this.handleError);
+    let account = this.sdk.state.account || await this.sdk.connectAccount(address).catch(this.handleError);
     const devices = await this.sdk.getConnectedAccountDevices()
       .then(({ items = [] }) => items)
       .catch(this.handleError);
-    /* there is no setAccountEnsLabel() method anymore
-    // UPDATE: found updateAccount(ensLabel: string) function
+
     if (!account.ensName) {
-      account.ensName = account.address;
-      await this.sdk.setAccountEnsLabel(account.ensName).catch(this.handleError);
+      account = await this.sdk.updateAccount(account.address).catch(this.handleError);
     }
-    */
+
     return {
       ...account,
       devices,
