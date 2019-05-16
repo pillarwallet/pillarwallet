@@ -92,7 +92,7 @@ import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 // constants
 import {
   ADD_TOKEN,
-  SELF,
+  ME,
   ASSETS,
   ASSET,
   ICO,
@@ -206,12 +206,12 @@ const assetsFlow = createStackNavigator(
 
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// SELF FLOW
-const selfFlow = createStackNavigator({
-  [SELF]: MeScreen,
+// ME FLOW
+const meFlow = createStackNavigator({
+  [ME]: MeScreen,
 }, StackNavigatorConfig);
 
-selfFlow.navigationOptions = hideTabNavigatorOnChildView;
+meFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
@@ -353,8 +353,8 @@ const tabNavigation = createBottomTabNavigator(
     //     tabBarLabel: tabBarLabel('Market'),
     //   }),
     // },
-    [SELF]: {
-      screen: selfFlow,
+    [ME]: {
+      screen: meFlow,
       navigationOptions: ({ screenProps }) => ({
         tabBarIcon: ({ focused }) => (
           <View style={{ padding: 4 }}>
