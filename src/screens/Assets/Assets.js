@@ -342,7 +342,6 @@ class AssetsScreen extends React.Component<Props, State> {
           small
         >
           <Switch
-            thumbColor={baseColors.electricBlue}
             onValueChange={() => this.handleAssetToggle(asset, isAdded)}
             value={!!isAdded}
           />

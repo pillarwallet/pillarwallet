@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { Keyboard, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
@@ -144,10 +144,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
           />
           <ScrollWrapper
             regularPadding
-            disableAutomaticScroll
+            disableAutomaticScroll={Platform.OS === 'android'}
             innerRef={ref => { this.scroll = ref; }}
             onKeyboardWillShow={() => {
-              this.scroll.scrollToPosition(0, scrollPos);
+              if (Platform.OS === 'android') {
+                this.scroll.scrollToPosition(0, scrollPos);
+              }
             }}
           >
             <LabeledRow>

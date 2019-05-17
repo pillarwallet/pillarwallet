@@ -48,7 +48,7 @@ aliases:
     run:
       name: Install CocoaPods
       command: |
-        cd ios 
+        cd ios
         pod install --verbose
   - &save_pod_cache
     save_cache:
@@ -145,6 +145,7 @@ aliases:
           sed -i.bak "s/_build_number_/$buildNumber/g" .env
           sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
           sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+          sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
           echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
 jobs:
@@ -173,7 +174,7 @@ jobs:
           name: Run validation
           command: yarn validate
 
-  dev_build_ios:
+  hockeyapp_ios:
     executor: ios-executor
     steps:
       - checkout
@@ -214,6 +215,7 @@ jobs:
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
             sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Upload to Hockeyapp
@@ -230,7 +232,7 @@ jobs:
           path: ./toArchive
           destination: app_build
 
-  dev_build_android:
+  hockeyapp_android:
     executor: android-executor
     steps:
       - checkout
@@ -288,6 +290,7 @@ jobs:
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
             sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Initial build
@@ -329,6 +332,7 @@ jobs:
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
             sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
@@ -355,12 +359,11 @@ jobs:
           command: |
             Y | sudo gem uninstall cocoapods
             sudo gem install cocoapods -v 1.5.3
-            pod --version
+            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
       - run:
           name: Install CocoaPods
           command: |
             cd ios
-            pod repo update
             pod install --verbose
       - save_cache:
           key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
@@ -454,6 +457,9 @@ jobs:
             rm .env
             cp environments/.env.staging ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
+            sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: android-node-{{ checksum "../yarn.lock" }}
@@ -582,6 +588,7 @@ jobs:
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
             sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
@@ -704,6 +711,7 @@ jobs:
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
             sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: android-node-{{ checksum "../yarn.lock" }}
@@ -822,7 +830,7 @@ workflows:
     jobs:
       - build-and-test
       - whitesource
-      - dev_build_ios:
+      - hockeyapp_ios:
           requires:
             - build-and-test
           filters:

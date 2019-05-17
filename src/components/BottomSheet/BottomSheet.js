@@ -87,6 +87,18 @@ const FloatingHeader = styled.View`
   top: 0;
   left: 0;
   z-index: 10;
+  background-color: transparent;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  min-height: 80px;
+`;
+
+const Cover = styled.View`
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
   background-color: white;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
@@ -309,6 +321,7 @@ export default class BottomSheet extends React.Component<Props, State> {
         useNativeDriver
       >
         <FloatingHeader>
+          <Cover />
           {floatingHeaderContent}
         </FloatingHeader>
         <ModalWrapperAnimated style={{ height: animatedHeight }}>

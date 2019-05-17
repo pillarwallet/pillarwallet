@@ -211,6 +211,7 @@ const ItemValueStatus = styled(Icon)`
 
 const IndicatorsRow = styled.View`
   flex-direction: row;
+  padding-left: 8px;
 `;
 
 const ActionLabel = styled.View`
@@ -493,33 +494,33 @@ class ListItemWithImage extends React.Component<Props, {}> {
           <InfoWrapper type={type}>
             <Column type={type}>
               {!!label &&
-                <Row>
-                  <ItemTitle type={type}>{label}</ItemTitle>
-                  {(type === CHAT_ITEM && !!timeSent) &&
-                    <TimeWrapper>
-                      <TimeSent>{timeSent}</TimeSent>
-                    </TimeWrapper>
-                  }
-                </Row>
+              <Row>
+                <ItemTitle type={type}>{label}</ItemTitle>
+                {(type === CHAT_ITEM && !!timeSent) &&
+                <TimeWrapper>
+                  <TimeSent>{timeSent}</TimeSent>
+                </TimeWrapper>
+                }
+              </Row>
               }
               {!!paragraph &&
-                <Row>
-                  <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
-                  {type === CHAT_ITEM &&
-                    <BadgePlacer>
-                      {!!unreadCount &&
-                        <ItemBadge>
-                          <UnreadNumber>
-                            {unreadCount}
-                          </UnreadNumber>
-                        </ItemBadge>
-                      }
-                    </BadgePlacer>
+              <Row>
+                <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
+                {type === CHAT_ITEM &&
+                <BadgePlacer>
+                  {!!unreadCount &&
+                  <ItemBadge>
+                    <UnreadNumber>
+                      {unreadCount}
+                    </UnreadNumber>
+                  </ItemBadge>
                   }
-                </Row>
+                </BadgePlacer>
+                }
+              </Row>
               }
               {!!subtext &&
-                <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
+              <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
               }
             </Column>
             <Column rightColumn type={type}>

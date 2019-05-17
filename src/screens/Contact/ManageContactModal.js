@@ -32,7 +32,7 @@ type Props = {
 };
 
 const buttonStyle = {
-  marginBottom: 13,
+  marginBottom: 12,
 };
 
 const manageModalButtons = [
@@ -41,14 +41,14 @@ const manageModalButtons = [
     primaryInverted: true,
     title: 'Mute',
     icon: 'mute',
-    style: { ...buttonStyle, marginTop: 23 },
+    style: { ...buttonStyle, marginTop: 12 },
   },
   {
     manageType: DISCONNECT,
     primaryInverted: true,
     title: 'Disconnect',
     icon: 'remove',
-    style: { ...buttonStyle, marginTop: 23, marginBottom: 58 },
+    style: { ...buttonStyle },
   },
   {
     manageType: BLOCK,

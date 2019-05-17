@@ -262,11 +262,6 @@ export const updateConnectionKeyPairs = (
 
     await dispatch(updateConnectionsAction(walletId));
 
-    await dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: DECRYPTED,
-    });
-
     return Promise.resolve(true);
   };
 };

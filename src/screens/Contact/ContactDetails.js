@@ -31,25 +31,18 @@ import {
   blockContactAction,
 } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
-import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
+import { ScrollWrapper, Container } from 'components/Layout';
 import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { CHAT, ACTIVITY } from 'constants/tabsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import ChatTab from 'components/ChatTab';
 import Tabs from 'components/Tabs';
-import { BaseText, BoldText } from 'components/Typography';
-import Button from 'components/Button';
-import { getSmartWalletStatus } from 'utils/smartWallet';
 import type { ApiUser } from 'models/Contacts';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts } from 'models/Account';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
@@ -87,31 +80,18 @@ const SheetContentWrapper = styled.View`
   padding-top: 30px;
 `;
 
-const MessageTitle = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  text-align: center;
-`;
-
-const Message = styled(BaseText)`
-  padding-top: 10px;
-  font-size: ${fontSizes.tiny}px;
-  color: ${baseColors.darkGray};
-  text-align: center;
-`;
-
 type Props = {
   name: string,
   navigation: NavigationScreenProp<*>,
   contacts: ApiUser[],
   syncContact: Function,
-  fetchContactTransactions: (contactAddress: string, asset?: string) => Function,
+  fetchContactTransactions: (walletAddress: string, contactAddress: string, asset?: string) => Function,
+  wallet: Object,
   chats: Object[],
   session: Object,
   disconnectContact: Function,
   muteContact: Function,
   blockContact: Function,
-  smartWalletState: Object,
-  accounts: Accounts,
 };
 
 type State = {
@@ -119,8 +99,7 @@ type State = {
   showConfirmationModal: boolean,
   manageContactType: string,
   activeTab: string,
-  isSheetOpen: boolean,
-  forceOpen: boolean,
+  tabActiveTap: boolean,
 };
 
 class Contact extends React.Component<Props, State> {
@@ -133,7 +112,6 @@ class Contact extends React.Component<Props, State> {
     const { navigation, contacts } = this.props;
     this.activityFeedRef = React.createRef();
     const contactName = navigation.getParam('username', '');
-    const shouldOpenSheet = navigation.getParam('chatTabOpen', false);
     const contact = navigation.getParam('contact', { username: contactName });
     this.localContact = contacts.find(({ username }) => username === contact.username);
     this.state = {
@@ -141,14 +119,14 @@ class Contact extends React.Component<Props, State> {
       showConfirmationModal: false,
       manageContactType: '',
       activeTab: 'CHAT',
-      isSheetOpen: shouldOpenSheet,
-      forceOpen: shouldOpenSheet,
+      tabActiveTap: false,
     };
   }
 
   componentDidMount() {
     const {
       fetchContactTransactions,
+      wallet,
       syncContact,
       session,
       navigation,
@@ -174,7 +152,7 @@ class Contact extends React.Component<Props, State> {
     const localContact = this.localContact; // eslint-disable-line
     if (localContact && session.isOnline) {
       syncContact(localContact.id);
-      fetchContactTransactions(localContact.ethAddress);
+      fetchContactTransactions(wallet.address, localContact.ethAddress);
     }
   }
 
@@ -236,15 +214,24 @@ class Contact extends React.Component<Props, State> {
   };
 
   setActiveTab = (activeTab) => {
-    this.setState({ activeTab });
+    this.setState({
+      activeTab,
+      tabActiveTap: true,
+    });
   };
 
-  handleSheetOpen = () => {
-    this.setState({ isSheetOpen: true });
+  handleUsernameTap = () => {
+    this.setState({
+      showManageContactModal: false,
+      showConfirmationModal: false,
+      manageContactType: '',
+      activeTab: 'CHAT',
+      tabActiveTap: false,
+    });
   };
 
   renderSheetContent = (displayContact, unreadCount) => {
-    const { activeTab, isSheetOpen } = this.state;
+    const { activeTab } = this.state;
     const { navigation } = this.props;
     if (activeTab === ACTIVITY) {
       return (
@@ -265,7 +252,7 @@ class Contact extends React.Component<Props, State> {
     return (
       <ChatTab
         contact={displayContact}
-        isOpen={activeTab === CHAT && isSheetOpen}
+        isOpen={activeTab === CHAT}
         navigation={navigation}
         hasUnreads={!!unreadCount}
       />
@@ -277,16 +264,15 @@ class Contact extends React.Component<Props, State> {
       navigation,
       contacts,
       fetchContactTransactions,
+      wallet,
       chats,
-      smartWalletState,
-      accounts,
     } = this.props;
     const {
       showManageContactModal,
       showConfirmationModal,
       manageContactType,
       activeTab,
-      forceOpen,
+      tabActiveTap,
     } = this.state;
 
     const contactName = navigation.getParam('username', '');
@@ -320,61 +306,28 @@ class Contact extends React.Component<Props, State> {
       },
     ];
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
-    const disableSend = !!Object.keys(sendingBlockedMessage).length;
-
     return (
-      <ContainerWithBottomSheet
-        inset={{ bottom: 0 }}
-        color={baseColors.white}
-        hideSheet={!isAccepted}
-        bottomSheetProps={{
-          forceOpen,
-          initialSheetHeight: 240,
-          swipeToCloseHeight: 62,
-          onSheetOpen: this.handleSheetOpen,
-          onSheetClose: () => { this.setState({ isSheetOpen: false }); },
-          animateHeight: activeTab === CHAT,
-          floatingHeaderContent: (
-            <Tabs
-              initialActiveTab={activeTab}
-              tabs={contactTabs}
-              wrapperStyle={{
-                position: 'absolute',
-                top: 8,
-                left: 0,
-                zIndex: 2,
-                width: '100%',
-              }}
-            />
-          ),
-        }}
-        bottomSheetChildren={
-          (
-            <SheetContentWrapper>
-              {this.renderSheetContent(displayContact, unreadCount)}
-            </SheetContentWrapper>
-          )
-        }
-      >
+      <Container>
         <Header
           title={displayContact.username}
           onBack={() => navigation.goBack(null)}
           showRight
           onNextPress={this.showManageContactModalTrigger}
+          onTitlePress={this.handleUsernameTap}
           nextIcon={displayContact.status ? 'more' : null}
         />
+        {!tabActiveTap &&
         <ScrollWrapper
           refreshControl={
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                fetchContactTransactions(displayContact.ethAddress);
+                fetchContactTransactions(wallet.address, displayContact.ethAddress);
               }}
             />
           }
         >
+          {!tabActiveTap &&
           <ContactWrapper>
             <ProfileImage
               uri={userAvatar}
@@ -386,33 +339,35 @@ class Contact extends React.Component<Props, State> {
               imageUpdateTimeStamp={displayContact.lastUpdateTime}
             />
           </ContactWrapper>
-          {isAccepted &&
+          }
+          {!!isAccepted && !tabActiveTap &&
           <CircleButtonsWrapper>
             <CircleButton
-              disabled={disableSend}
               label="Send"
               icon={iconSend}
               onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
             />
-            {disableSend &&
-            <Wrapper regularPadding style={{ marginTop: 30, alignItems: 'center' }}>
-              <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
-              <Message>{ sendingBlockedMessage.message }</Message>
-              {smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED &&
-              <Button
-                marginTop="20px"
-                height={52}
-                title="Deploy Smart Wallet"
-                onPress={() => {
-                  // TODO: navigate to last upgrade step?
-                }}
-              />
-              }
-            </Wrapper>
-            }
           </CircleButtonsWrapper>
-         }
+          }
+          {!!isAccepted &&
+          <Tabs
+            initialActiveTab={activeTab}
+            tabs={contactTabs}
+          />
+          }
         </ScrollWrapper>
+        }
+        {!!isAccepted && !!tabActiveTap &&
+        <Tabs
+          initialActiveTab={activeTab}
+          tabs={contactTabs}
+        />
+        }
+        {!!isAccepted && !!tabActiveTap &&
+        <SheetContentWrapper>
+          {this.renderSheetContent(displayContact, unreadCount)}
+        </SheetContentWrapper>
+        }
         <ManageContactModal
           showManageContactModal={showManageContactModal}
           onManageContact={this.manageContact}
@@ -430,28 +385,27 @@ class Contact extends React.Component<Props, State> {
             this.setState({ showConfirmationModal: false });
           }}
         />
-      </ContainerWithBottomSheet>
-    );
+      </Container>);
   }
 }
 
 const mapStateToProps = ({
   contacts: { data: contacts },
+  wallet: { data: wallet },
   chat: { data: { chats } },
   session: { data: session },
-  smartWallet: smartWalletState,
-  accounts: { data: accounts },
 }) => ({
   contacts,
+  wallet,
   chats,
   session,
-  smartWalletState,
-  accounts,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   syncContact: userId => dispatch(syncContactAction(userId)),
-  fetchContactTransactions: (contactAddress) => dispatch(fetchContactTransactionsAction(contactAddress)),
+  fetchContactTransactions: (walletAddress, contactAddress) => {
+    dispatch(fetchContactTransactionsAction(walletAddress, contactAddress));
+  },
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),

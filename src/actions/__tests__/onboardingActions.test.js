@@ -26,6 +26,7 @@ import {
   GENERATING,
   ENCRYPTING,
   REGISTERING,
+  DECRYPTED,
 } from 'constants/walletConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
@@ -166,6 +167,7 @@ describe('Wallet actions', () => {
       { type: SET_SMART_WALLET_UPGRADE_STATUS, payload: SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED },
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
+      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
     // $FlowFixMe
@@ -206,6 +208,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
+      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
     return store.dispatch(registerWalletAction())
