@@ -185,7 +185,6 @@ const Header = (props: Props) => {
   const showTitleLeft = !onBack && !centerTitle;
   const onlyCloseIcon = onClose && !nextText && !onCloseText;
   const tankLabel = tankValue > 0 ? tankValue : 'PLT Tank';
-  const tankButtonLabel = isSmartWallet ? tankLabel : 'Upgrade';
 
   const getHeaderRightFlex = () => {
     if (headerRightFlex) {
@@ -259,7 +258,7 @@ const Header = (props: Props) => {
           }
           {showChannelStatus &&
           <TankButton onPress={handleTankButtonTouch}>
-            <TankLabel>{tankButtonLabel}</TankLabel>
+            <TankLabel>{tankLabel}</TankLabel>
             {!!isSmartWallet &&
             <Tank value={tankValue} totalValue={tankTotalValue} tiny wrapperStyle={{ marginLeft: 6 }} />}
           </TankButton>
