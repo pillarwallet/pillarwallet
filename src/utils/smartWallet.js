@@ -19,12 +19,13 @@
 */
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import { getActiveAccount } from './accounts';
 
-function getMessage(status: string, activeAccountType) {
+function getMessage(status: string, activeAccountType: string, smartWalletState: Object) {
   switch (status) {
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
       if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return {};
@@ -43,11 +44,13 @@ function getMessage(status: string, activeAccountType) {
       };
     case SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS:
       if (activeAccountType === ACCOUNT_TYPES.SMART_WALLET) return {};
-      // TODO: get average time
+      const { upgrade: { transfer: { transactions } } } = smartWalletState;
+      const total = transactions.length;
+      const complete = transactions.filter(tx => tx.status === TX_CONFIRMED_STATUS).length;
       return {
         title: 'Assets are being transferred to Smart Wallet',
         message: 'You will be able to send assets once submitted transfer is complete.' +
-          '\nCurrently 10 of 11 assets are transferred.',
+          `\nCurrently ${complete} of ${total} assets are transferred.`,
       };
     default:
       return {};
@@ -58,7 +61,7 @@ export function getSmartWalletStatus(accounts: Accounts, smartWalletState: Objec
   const account = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
   const activeAccount = getActiveAccount(accounts) || {};
   const { upgrade: { status } } = smartWalletState;
-  const sendingBlockedMessage = getMessage(status, activeAccount.type);
+  const sendingBlockedMessage = getMessage(status, activeAccount.type, smartWalletState);
   return {
     hasAccount: !!account,
     status,
