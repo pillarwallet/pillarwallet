@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { RefreshControl, FlatList } from 'react-native';
+import { RefreshControl, FlatList, Switch, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native/index';
@@ -28,104 +28,98 @@ import Header from 'components/Header';
 import { Container } from 'components/Layout';
 import { spacing, baseColors } from 'utils/variables';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import { BaseText } from 'components/Typography';
-import Button from 'components/Button';
+// import Button from 'components/Button';
+import SlideModal from 'components/Modals/SlideModal';
+import CheckPin from 'components/CheckPin';
 
 // actions
-import { fetchICOsAction } from 'actions/icosActions';
+import { switchAccountAction } from 'actions/accountsActions';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // constants
 import { WALLET_SETTINGS } from 'constants/navigationConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+
+// models
+import type { Accounts, Account } from 'models/Account';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  accounts: Accounts,
+  switchAccount: Function,
+  resetIncorrectPassword: Function,
 }
 
-const SelectLabel = styled(BaseText)`
-  color: ${baseColors.electricBlue};
+type State = {
+  showCheckPinModal: boolean,
+}
+
+const Wrapper = styled.View`
+  position: relative;
+  margin: 5px 20px 20px;
+  padding-top: ${Platform.select({
+    ios: '20px',
+    android: '14px',
+  })};
+  background-color: transparent;
+  flex: 1;
 `;
 
-const ButtonWrapper = styled.View`
-  flex-grow: 1;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 20px 40px;
-`;
 
-const SelectButton = styled.TouchableOpacity`
-  padding: 10px;
-  margin-right: -10px;
-`;
+class WalletsList extends React.Component<Props, State> {
+  switchToAccount: ?Account = null;
 
-class WalletsList extends React.PureComponent<Props> {
+  state = {
+    showCheckPinModal: false,
+  };
+
+  switchAccount = (account) => {
+    const { switchAccount } = this.props;
+
+    if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
+      this.switchToAccount = account;
+      this.setState({ showCheckPinModal: true });
+    } else if (account.type === ACCOUNT_TYPES.KEY_BASED) {
+      switchAccount(account.id);
+    }
+  };
+
+  handleCheckPinModalClose = () => {
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
+    this.setState({ showCheckPinModal: false });
+  };
+
+  switchToSmartWalletAccount = (_: string, wallet: Object) => {
+    if (!this.switchToAccount) return;
+    this.props.switchAccount(this.switchToAccount.id, wallet.privateKey);
+    this.switchToAccount = null;
+    this.setState({ showCheckPinModal: false });
+  };
+
   renderWalletListItem = ({ item }) => {
     const { navigation } = this.props;
     return (
       <ListItemWithImage
-        label={item.title}
+        label={item.type === ACCOUNT_TYPES.SMART_WALLET ? 'Smart Wallet' : 'Key Based Wallet'}
+        imageColorFill={item.type === ACCOUNT_TYPES.SMART_WALLET ? baseColors.fireEngineRed : baseColors.deepSkyBlue}
+        onPress={() => navigation.navigate(WALLET_SETTINGS, { wallet: item })}
         customAddon={
-          <SelectButton onPress={() => navigation.navigate(WALLET_SETTINGS, { item })}>
-            <SelectLabel>Select</SelectLabel>
-          </SelectButton>
+          <Switch
+            onValueChange={() => this.switchAccount(item)}
+            value={item.isActive}
+            thumbColor={baseColors.white}
+            trackColor={{ false: '#E5E5E5', true: '#4cd964' }}
+            ios_backgroundColor="#f4f4f4"
+          />
         }
       />
     );
   };
 
   render() {
-    const { navigation } = this.props;
-    const mockupWallets = [
-      {
-        id: 0,
-        title: 'Smart wallet',
-      },
-      {
-        id: 1,
-        title: 'Boring Wallet',
-      },
-      {
-        id: 2,
-        title: 'Boring Wallet',
-      },
-      {
-        id: 3,
-        title: 'Boring Wallet',
-      },
-      {
-        id: 4,
-        title: 'Boring Wallet',
-      },
-      {
-        id: 5,
-        title: 'Boring Wallet',
-      },
-      {
-        id: 6,
-        title: 'Boring Wallet',
-      },
-      {
-        id: 7,
-        title: 'Boring Wallet',
-      },
-      {
-        id: 8,
-        title: 'Boring Wallet',
-      },
-      {
-        id: 9,
-        title: 'Boring Wallet',
-      },
-      {
-        id: 10,
-        title: 'Boring Wallet',
-      },
-      {
-        id: 11,
-        title: 'Boring Wallet',
-      },
-    ];
-
+    const { navigation, accounts } = this.props;
+    const { showCheckPinModal } = this.state;
     return (
       <Container inset={{ bottom: 0 }}>
         <Header
@@ -133,7 +127,7 @@ class WalletsList extends React.PureComponent<Props> {
           onBack={() => navigation.goBack(null)}
         />
         <FlatList
-          data={mockupWallets}
+          data={accounts}
           keyExtractor={(item) => item.id.toString()}
           renderItem={this.renderWalletListItem}
           initialNumToRender={8}
@@ -149,21 +143,37 @@ class WalletsList extends React.PureComponent<Props> {
           }
           style={{ flexGrow: 0 }}
         />
+        {/*
         <ButtonWrapper>
           <Button title="Add Smart Wallet" onPress={() => {}} />
         </ButtonWrapper>
+        */}
+        <SlideModal
+          isVisible={showCheckPinModal}
+          onModalHide={this.handleCheckPinModalClose}
+          title="enter pincode"
+          centerTitle
+          fullScreen
+          showHeader
+        >
+          <Wrapper>
+            <CheckPin onPinValid={this.switchToSmartWalletAccount} />
+          </Wrapper>
+        </SlideModal>
       </Container >
     );
   }
 }
 
-const mapStateToProps = ({ icos: { data: icos }, user: { data: user } }) => ({
-  icos,
-  user,
+const mapStateToProps = ({
+  accounts: { data: accounts },
+}) => ({
+  accounts,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  fetchICOs: () => dispatch(fetchICOsAction()),
+const mapDispatchToProps = (dispatch: Function) => ({
+  switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WalletsList);

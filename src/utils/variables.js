@@ -83,6 +83,7 @@ export const baseColors = {
   zumthor: '#EBF5FF',
   lavenderBlue: '#c3e0ff',
   hoki: '#647fa4',
+  deepSkyBlue: '#01BFFF',
 };
 
 export const brandColors = [
