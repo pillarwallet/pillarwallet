@@ -375,7 +375,7 @@ const tabNavigation = createBottomTabNavigator(
       screen: smartWalletFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
-        tabBarLabel: tabBarLabel('SmartW'),
+        tabBarLabel: tabBarLabel('Debug'),
       }),
     },
   }, {
