@@ -35,7 +35,7 @@ import debounce from 'lodash.debounce';
 import { createStructuredSelector } from 'reselect';
 
 // components
-import { BaseText, BoldText } from 'components/Typography';
+import { BaseText, BoldText, LightText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
@@ -171,6 +171,20 @@ const Message = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   text-align: center;
+`;
+
+const UpgradeButton = styled.TouchableOpacity`
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 20px;
+  margin-left: 14px;
+`;
+
+const UpgradeLabel = styled(LightText)`
+  font-size: ${fontSizes.extraExtraSmall}px;
+  line-height: ${fontSizes.extraExtraSmall}px;
+  color: ${baseColors.darkGray};
+  margin-bottom: -2px;
 `;
 
 class AssetsScreen extends React.Component<Props, State> {
@@ -461,24 +475,28 @@ class AssetsScreen extends React.Component<Props, State> {
           headerProps={{
             title: 'assets',
             showChannelStatus: activeAccount.type === ACCOUNT_TYPES.SMART_WALLET,
-            handleTankButtonTouch: isSmartWallet
-              ? () => navigation.navigate(TANK_DETAILS)
-              : () => navigation.navigate(UPGRADE_TO_SMART_WALLET_FLOW),
+            handleTankButtonTouch: () => navigation.navigate(TANK_DETAILS),
             isSmartWallet,
             tankValue: tankData.availableStake,
             tankTotalValue: tankData.totalStake,
             headerRightAddon:
               isSmartWallet
-                ? <ManageWalletsButton
-                  onPress={() => navigation.navigate(MANAGE_WALLETS_FLOW)}
-                  label={walletType === ACCOUNT_TYPES.KEY_BASED ? 'KeyBased.Wallet' : 'Smart.Wallet'}
-                  labelColor={walletType === ACCOUNT_TYPES.KEY_BASED
-                    ? baseColors.deepSkyBlue
-                    : baseColors.fireEngineRed
-                  }
-                />
-                : null,
+                ?
+                  <ManageWalletsButton
+                    onPress={() => navigation.navigate(MANAGE_WALLETS_FLOW)}
+                    label={walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key Based Wallet' : 'Smart.Wallet'}
+                    labelColor={walletType === ACCOUNT_TYPES.KEY_BASED
+                      ? baseColors.deepSkyBlue
+                      : baseColors.fireEngineRed
+                    }
+                  />
+                :
+                  <UpgradeButton onPress={() => navigation.navigate(UPGRADE_TO_SMART_WALLET_FLOW)}>
+                    <UpgradeLabel>Upgrade</UpgradeLabel>
+                  </UpgradeButton>,
+            headerRightFlex: 2,
           }}
+          headerRightFlex={4}
           hideSearch={blockAssetsView}
           searchInputPlaceholder={activeTab === TOKENS ? 'Search or add new asset' : 'Search'}
           onSearchChange={(q) => this.handleSearchChange(q)}
