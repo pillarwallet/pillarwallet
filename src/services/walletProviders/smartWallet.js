@@ -1,9 +1,12 @@
 // @flow
 import { ethToWei } from '@netgum/utils';
+import { utils } from 'ethers';
+import abi from 'ethjs-abi';
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import { ETH } from 'constants/assetsConstants';
 import type { Account } from 'models/Account';
 import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
-import { transferERC20, transferERC721 } from 'services/assets';
+import { transferERC721 } from 'services/assets';
 import SmartWalletService from 'services/smartWallet';
 import { catchTransactionError } from 'utils/wallet';
 import { getAccountAddress } from 'utils/accounts';
@@ -58,26 +61,46 @@ export default class SmartWalletProvider {
   }
 
   async transferERC20(account: Account, transaction: TokenTransactionPayload) {
+    // TODO: connect transactionSpeed selector from the UI
+    if (!this.sdkInitialized) {
+      return Promise.reject(new Error('SDK is not initialized'));
+    }
     const {
       to,
       amount,
       contractAddress,
-      decimals,
+      decimals = 18,
     } = transaction;
+    const accountAddress = getAccountAddress(account);
 
-    // TODO: replace this with the sdk transfer method
-    return transferERC20({
-      to,
-      amount,
-      contractAddress,
-      decimals,
-      wallet: this.wallet,
-    })
+    const value = decimals > 0
+      ? utils.parseUnits(amount.toString(), decimals)
+      : utils.bigNumberify(amount.toString());
+
+    const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
+    const data = abi.encodeMethod(transferMethod, [to, value]);
+
+    return this.smartWalletService
+      .transferAsset({
+        // $FlowFixMe
+        recipient: contractAddress,
+        value,
+        data,
+        // transactionSpeed
+      })
+      .then(hash => ({
+        from: accountAddress,
+        hash,
+        to,
+        value,
+      }))
       .catch((e) => catchTransactionError(e, 'ERC20', {
         decimals,
         contractAddress,
         to,
         amount,
+        value,
+        data,
       }));
   }
 
