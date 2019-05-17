@@ -171,6 +171,7 @@ export async function transferETH(options: ETHTransferOptions) {
   const trx = {
     gasLimit,
     gasPrice: utils.bigNumberify(gasPrice),
+    value,
     to,
     nonce,
   };
