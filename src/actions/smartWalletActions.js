@@ -119,7 +119,7 @@ export const connectSmartWalletAccountAction = (accountId: string) => {
     // update account state
     const newState = get(connectedAccount, 'state', '').toLowerCase();
     const currentUpgradeStatus = get(getState(), 'smartWallet.upgrade.status', '');
-    if (newState === 'deployed' && currentUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING) {
+    if (newState === 'deployed' && currentUpgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
     }
   };
