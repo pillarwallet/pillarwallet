@@ -39,7 +39,11 @@ import { ADD_TRANSACTION } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
-import { getExchangeRates, transferSigned } from 'services/assets';
+import {
+  getExchangeRates,
+  transferSigned,
+  waitForTransaction,
+} from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
 
 import type {
@@ -54,6 +58,7 @@ import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccount, getActiveAccountId, getAccountAddress } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
+import { fetchTransactionsHistoryAction } from './historyActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -63,14 +68,17 @@ type TransactionStatus = {
 export const sendSignedAssetTransactionAction = (
   signedTransaction: TransactionPayload,
 ) => {
-  return async () => {
+  return async (dispatch: Function) => {
     const { signedHash } = signedTransaction;
     if (!signedHash) return null;
-    const transactionHash = transferSigned(signedHash).catch(e => ({ error: e }));
+    const transactionHash = await transferSigned(signedHash).catch(e => ({ error: e }));
     if (transactionHash.error) {
       // TODO: error?
       return null;
     }
+    waitForTransaction(transactionHash)
+      .then(() => dispatch(fetchTransactionsHistoryAction()))
+      .catch(() => null);
     return transactionHash;
   };
 };

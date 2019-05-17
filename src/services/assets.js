@@ -239,3 +239,8 @@ export function transferSigned(signed: string) {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.sendTransaction(signed);
 }
+
+export function waitForTransaction(hash: string) {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  return provider.waitForTransaction(hash);
+}

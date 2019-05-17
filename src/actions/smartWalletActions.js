@@ -136,6 +136,9 @@ export const deploySmartWalletAction = () => {
     } = getState();
     dispatch(setActiveAccountAction(accountAddress));
     if (accountState.toLowerCase() === 'deployed') {
+      dispatch(setSmartWalletUpgradeStatusAction(
+        SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
+      ));
       console.log('deploySmartWalletAction account is already deployed!');
       return;
     }
@@ -151,9 +154,6 @@ export const deploySmartWalletAction = () => {
       type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
       account,
     });
-    dispatch(setSmartWalletUpgradeStatusAction(
-      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-    ));
   };
 };
 
