@@ -507,6 +507,9 @@ class AssetsScreen extends React.Component<Props, State> {
           <Wrapper flex={1} regularPadding center>
             <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
             <Message>{ sendingBlockedMessage.message }</Message>
+            <Wrapper style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
+              <Spinner />
+            </Wrapper>
           </Wrapper>
         ) ||
           <TokensWrapper>
