@@ -236,9 +236,11 @@ export const checkAssetTransferTransactionsAction = () => {
 
     // update with statuses from history
     // TODO: visit current workaround to get history from all wallets
-    // $FlowFixMe
-    const allHistory = Object.values(transactionsHistory).reduce(
-      (existing = [], walletHistory) => [...existing, ...walletHistory],
+    const combinedHistory = Object.values(transactionsHistory);
+    const allHistory = combinedHistory.reduce(
+      // $FlowFixMe
+      (existing = [], walletHistory = []) => [...existing, ...walletHistory],
+      [],
     );
 
     let updatedTransactions = transferTransactions.map(transaction => {
@@ -249,7 +251,6 @@ export const checkAssetTransferTransactionsAction = () => {
       if (!logged) return transaction;
       return { ...transaction, status: logged.status };
     });
-    console.log('transfer transactions: ', updatedTransactions);
 
     // if any is still pending then don't do anything
     const pendingTransactions = updatedTransactions.filter(transaction => transaction.status === TX_PENDING_STATUS);
@@ -257,10 +258,18 @@ export const checkAssetTransferTransactionsAction = () => {
 
     const _unsentTransactions = updatedTransactions.filter(transaction => transaction.status !== TX_CONFIRMED_STATUS);
     if (!_unsentTransactions.length) {
-      // TODO: set proper status
+      const {
+        smartWallet: {
+          accounts,
+        },
+      } = getState();
+      // account should be already created by this step
       dispatch(setSmartWalletUpgradeStatusAction(
         SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
       ));
+      const { address } = accounts[0];
+      await dispatch(connectSmartWalletAccountAction(address));
+      await dispatch(deploySmartWalletAction());
     } else {
       const unsentTransactions = _unsentTransactions.sort(
         (_a, _b) => _a.signedTransaction.nonce - _b.signedTransaction.nonce,
@@ -283,7 +292,6 @@ export const checkAssetTransferTransactionsAction = () => {
         status: TX_PENDING_STATUS,
       });
     }
-    console.log('updatedTransactions: ', updatedTransactions);
     dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
   };
 };
@@ -328,10 +336,6 @@ export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions:
       addressedTransferTransactions,
     ));
     dispatch(checkAssetTransferTransactionsAction());
-
-    // TODO: deploy only if assets transfer step is complete
-    // await dispatch(deploySmartWalletAction());
-
     return Promise.resolve(true);
   };
 };
