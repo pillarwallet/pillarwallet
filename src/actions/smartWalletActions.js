@@ -90,12 +90,19 @@ export const loadSmartWalletAccountsAction = () => {
 
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
   return async (dispatch: Function) => {
-    // TODO: subscribe for smart wallet account deployment complete check and fire this action
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
       payload: upgradeStatus,
     });
+    if (upgradeStatus === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
+      Toast.show({
+        message: 'Your Smart wallet has been deployed',
+        type: 'success',
+        title: 'Success',
+        autoClose: true,
+      });
+    }
   };
 };
 
