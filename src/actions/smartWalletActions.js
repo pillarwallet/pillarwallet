@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { sdkModules } from '@archanova/sdk';
 import get from 'lodash.get';
 import Toast from 'components/Toast';
 import {
@@ -384,7 +385,16 @@ export const cleanSmartWalletAccountsAction = () => {
 };
 
 export const onSmartWalletSdkAction = (event: Object) => {
-  return async (dispatch: Function) => { // eslint-disable-line
+  return async (dispatch: Function, getState: Function) => {
+    if (!event) return;
+
+    const accountState = get(getState(), 'smartWallet.connectedAccount.state', '').toLowerCase();
+    if (event.name === sdkModules.Api.EventNames.AccountUpdated) {
+      const newAccountState = get(event, 'payload.state', '').toLowerCase();
+      if (newAccountState === 'deployed' && accountState === 'created') {
+        dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+      }
+    }
     console.log(event);
   };
 };
