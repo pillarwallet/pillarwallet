@@ -50,7 +50,9 @@ import {
   signAssetTransactionAction,
   sendSignedAssetTransactionAction,
   resetLocalNonceToTransactionCountAction,
+  fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
+import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
@@ -217,6 +219,7 @@ export const createAssetsTransferTransactionsAction = (wallet: Object, transacti
 export const checkAssetTransferTransactionsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
+      assets: { data: assets },
       history: {
         data: transactionsHistory,
       },
@@ -270,6 +273,8 @@ export const checkAssetTransferTransactionsAction = () => {
       ));
       const { address } = accounts[0];
       await dispatch(connectSmartWalletAccountAction(address));
+      dispatch(fetchAssetsBalancesAction(assets));
+      dispatch(fetchCollectiblesAction());
       await dispatch(deploySmartWalletAction());
     } else {
       const unsentTransactions = _unsentTransactions.sort(
