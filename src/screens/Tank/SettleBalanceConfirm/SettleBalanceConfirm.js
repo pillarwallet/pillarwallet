@@ -100,6 +100,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
         <Header
           onBack={() => navigation.goBack(null)}
           title="review"
+          white
         />
         <ScrollWrapper
           regularPadding
@@ -108,6 +109,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
           onKeyboardWillShow={() => {
             this.scroll.scrollToPosition(0, scrollPos);
           }}
+          contentContainerStyle={{ marginTop: 40 }}
         >
           <LabeledRow>
             <Label>Assets to settle</Label>

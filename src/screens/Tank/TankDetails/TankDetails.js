@@ -331,8 +331,10 @@ class TankDetails extends React.Component<Props, State> {
                   customSingleInputProps: {
                     noTint: true,
                     floatingImageStyle: { marginRight: 3 },
+                    white: true,
                   },
                   customConfirmScreenKey: FUND_CONFIRM,
+                  customHeaderProps: { white: true },
                 })}
             />
             <Button

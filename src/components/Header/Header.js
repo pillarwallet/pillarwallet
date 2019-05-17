@@ -59,18 +59,29 @@ type Props = {
   tankValue?: number,
   tankTotalValue?: number,
   headerRightAddon?: React.Node,
+  white?: boolean,
 }
 
 const Wrapper = styled.View`
   border-bottom-width: 0;
   padding: ${props => props.noPadding ? 0 : '0 20px'};
-  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '48px'};
+  z-index: 10;
+  ${props => props.white
+    ? `
+      background-color: ${baseColors.white};
+      border-bottom-width: 1px;
+      border-bottom-color: ${baseColors.mediumLightGray};
+    `
+    : ''}
+`;
+
+const InnerWrapper = styled.View`
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
   margin-top: ${spacing.rhythm};
   margin-bottom: ${props => props.flexStart ? 'auto' : 0};
-  z-index: 10;
+  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '48px'};
 `;
 
 const BackIcon = styled(IconButton)`
@@ -167,6 +178,7 @@ const Header = (props: Props) => {
     tankValue = 0,
     tankTotalValue = 0,
     headerRightAddon,
+    white,
   } = props;
   const showRight = nextText || nextIcon || onBack || onClose || centerTitle || showChannelStatus || headerRightAddon;
   const titleOnBack = title && onBack;
@@ -189,13 +201,13 @@ const Header = (props: Props) => {
     <Wrapper
       overlay={overlay}
       noMargin={noMargin}
-      flexStart={flexStart}
       style={style}
       noPadding={noPadding}
-      noWrapTitle={noWrapTitle}
+      white={white}
     >
-      <HeaderLeft showTitleLeft={showTitleLeft}>
-        {onBack &&
+      <InnerWrapper flexStart={flexStart} noWrapTitle={noWrapTitle}>
+        <HeaderLeft showTitleLeft={showTitleLeft}>
+          {onBack &&
           <BackIcon
             icon={backIcon || 'back'}
             color={light ? baseColors.white : UIColors.defaultNavigationColor}
@@ -203,8 +215,8 @@ const Header = (props: Props) => {
             fontSize={fontSizes.extraLarge}
             horizontalAlign="flex-start"
           />
-        }
-        {showTitleLeft &&
+          }
+          {showTitleLeft &&
           <Title
             noMargin
             title={title}
@@ -213,9 +225,9 @@ const Header = (props: Props) => {
             fullWidth={fullWidthTitle}
             titleStyles={titleStyles}
           />
-        }
-      </HeaderLeft>
-      {showTitleCenter &&
+          }
+        </HeaderLeft>
+        {showTitleCenter &&
         <HeaderBody onCloseText={onCloseText}>
           <Title
             align="center"
@@ -228,46 +240,47 @@ const Header = (props: Props) => {
             titleStyles={titleStyles}
           />
         </HeaderBody>
-      }
-      {showRight && !noClose &&
+        }
+        {showRight && !noClose &&
         <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
           {headerRightAddon}
           {nextText &&
-            <TextLink style={nextTextStyle} onPress={onNextPress}>{nextText}</TextLink>
+          <TextLink style={nextTextStyle} onPress={onNextPress}>{nextText}</TextLink>
           }
           {nextIcon &&
-            <IconWrapper>
-              <NextIcon
-                icon={nextIcon}
-                color={light ? baseColors.white : UIColors.primary}
-                onPress={onNextPress}
-                fontSize={nextIconSize || fontSizes.small}
-                horizontalAlign="flex-end"
-              />
-            </IconWrapper>
+          <IconWrapper>
+            <NextIcon
+              icon={nextIcon}
+              color={light ? baseColors.white : UIColors.primary}
+              onPress={onNextPress}
+              fontSize={nextIconSize || fontSizes.small}
+              horizontalAlign="flex-end"
+            />
+          </IconWrapper>
           }
           {showChannelStatus &&
-            <TankButton onPress={handleTankButtonTouch}>
-              <TankLabel>{tankButtonLabel}</TankLabel>
-              {!!isSmartWallet && <Tank value={tankValue} totalValue={tankTotalValue} tiny />}
-            </TankButton>
+          <TankButton onPress={handleTankButtonTouch}>
+            <TankLabel>{tankButtonLabel}</TankLabel>
+            {!!isSmartWallet && <Tank value={tankValue} totalValue={tankTotalValue} tiny />}
+          </TankButton>
           }
           {onClose &&
-            <IconWrapper>
-              {onCloseText &&
-                <CloseIconText light={light} >{onCloseText}</CloseIconText>
-              }
-              <NextIcon
-                icon="close"
-                color={light ? baseColors.white : UIColors.defaultNavigationColor}
-                onPress={onClose}
-                fontSize={fontSizes.small}
-                horizontalAlign="flex-end"
-              />
-            </IconWrapper>
+          <IconWrapper>
+            {onCloseText &&
+            <CloseIconText light={light} >{onCloseText}</CloseIconText>
+            }
+            <NextIcon
+              icon="close"
+              color={light ? baseColors.white : UIColors.defaultNavigationColor}
+              onPress={onClose}
+              fontSize={fontSizes.small}
+              horizontalAlign="flex-end"
+            />
+          </IconWrapper>
           }
         </HeaderRight>
-      }
+        }
+      </InnerWrapper>
     </Wrapper>
   );
 };
