@@ -219,5 +219,8 @@ jest.setMock('@archanova/sdk', {
     initialize: () => Promise.resolve(),
     getConnectedAccounts: () => Promise.resolve({ items: [mockSmartWalletAccount] }),
     createAccount: () => Promise.resolve(mockSmartWalletAccount),
+    event$: {
+      subscribe: jest.fn(),
+    },
   }),
 });
