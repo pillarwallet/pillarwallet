@@ -210,7 +210,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           />
           <Wrapper regularPadding>
             <Paragraph small>
-              Description here to educate people about deploying the contract.
+              Please confirm that the details below are correct before deploying your Smart Wallet.
             </Paragraph>
           </Wrapper>
         </WhiteWrapper>
