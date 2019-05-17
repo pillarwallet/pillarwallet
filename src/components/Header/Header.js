@@ -141,7 +141,6 @@ const TankLabel = styled(LightText)`
   font-size: ${fontSizes.extraExtraSmall}px;
   line-height: ${fontSizes.extraExtraSmall}px;
   color: ${baseColors.darkGray};
-  margin-right: 6px;
   margin-bottom: -4px;
 `;
 
@@ -261,7 +260,8 @@ const Header = (props: Props) => {
           {showChannelStatus &&
           <TankButton onPress={handleTankButtonTouch}>
             <TankLabel>{tankButtonLabel}</TankLabel>
-            {!!isSmartWallet && <Tank value={tankValue} totalValue={tankTotalValue} tiny />}
+            {!!isSmartWallet &&
+            <Tank value={tankValue} totalValue={tankTotalValue} tiny wrapperStyle={{ marginLeft: 6 }} />}
           </TankButton>
           }
           {onClose &&

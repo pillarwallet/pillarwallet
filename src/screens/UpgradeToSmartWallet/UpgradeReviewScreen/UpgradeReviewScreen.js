@@ -40,7 +40,7 @@ import {
 import { baseColors, spacing, fontSizes } from 'utils/variables';
 import assetsConfig from 'configs/assetsConfig';
 import {
-  // RECOVERY_AGENTS,
+  RECOVERY_AGENTS,
   CHOOSE_ASSETS_TO_TRANSFER,
   CONTACT,
   UPGRADE_CONFIRM,
@@ -50,13 +50,14 @@ import { formatAmount } from 'utils/common';
 import { accountBalancesSelector } from 'selectors/balances';
 import type { Assets, Balances, AssetTransfer } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
+import type { RecoveryAgent } from 'models/RecoveryAgents';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   assets: Assets,
   balances: Balances,
-  contacts: Object[],
+  recoveryAgents: RecoveryAgent[],
   transferAssets: AssetTransfer[],
   transferCollectibles: AssetTransfer[],
   fetchGasInfo: Function,
@@ -115,11 +116,12 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
   };
 
   renderItem = ({ item }) => {
-    if (item.username) {
+    const name = item.username || item.serviceName;
+    if (name) {
       return (
         <ListItemWithImage
-          label={item.username}
-          avatarUrl={item.profileImage}
+          label={name}
+          avatarUrl={item.profileImage || item.icon}
           navigateToProfile={() => this.navigateToContactScreen(item)}
           imageUpdateTimeStamp={item.lastUpdateTime}
         />
@@ -167,10 +169,10 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
   render() {
     const {
       navigation,
-      // contacts,
       transferAssets,
       transferCollectibles,
       assets,
+      recoveryAgents,
     } = this.props;
 
     const gasPriceWei = this.getGasPriceWei();
@@ -188,14 +190,14 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     });
 
     const sections = [];
-    /* if (contacts.length) {
+    if (recoveryAgents.length) {
       sections.push({
         title: 'RECOVERY AGENTS',
-        data: contacts,
+        data: recoveryAgents,
         extraData: assets,
         toEdit: RECOVERY_AGENTS,
       });
-    } */
+    }
     if (nonEmptyAssets.length) {
       sections.push({
         title: 'TOKENS',
@@ -245,13 +247,13 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
-  smartWallet: { upgrade: { transfer: { assets: transferAssets, collectibles: transferCollectibles } } },
+  smartWallet:
+    { upgrade: { recoveryAgents, transfer: { assets: transferAssets, collectibles: transferCollectibles } } },
   assets: { data: assets },
   session: { data: session },
   history: { gasInfo },
 }) => ({
-  contacts,
+  recoveryAgents,
   transferAssets,
   transferCollectibles,
   assets,

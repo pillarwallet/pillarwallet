@@ -29,6 +29,7 @@ import {
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SMART_WALLET_UPGRADE_STATUSES,
+  ADD_SMART_WALLET_RECOVERY_AGENTS,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -46,6 +47,7 @@ import {
 } from 'actions/assetsActions';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
+import type { RecoveryAgent } from 'models/RecoveryAgents';
 
 let smartWalletService: SmartWalletService;
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
@@ -158,6 +160,11 @@ export const addAssetsToSmartWalletUpgradeAction = (assets: AssetTransfer[]) => 
 export const addCollectiblesToSmartWalletUpgradeAction = (collectibles: Collectible[]) => ({
   type: ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
   payload: collectibles,
+});
+
+export const addRecoveryAgentsToSmartWalletUpgradeAction = (recoveryAgents: RecoveryAgent[]) => ({
+  type: ADD_SMART_WALLET_RECOVERY_AGENTS,
+  payload: recoveryAgents,
 });
 
 export const dismissSmartWalletUpgradeAction = () => {

@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import Emoji from 'react-native-emoji';
+import Intercom from 'react-native-intercom';
 import { UPGRADE_INFO } from 'constants/navigationConstants';
 import { dismissSmartWalletUpgradeAction } from 'actions/smartWalletActions';
 import { Container, ScrollWrapper } from 'components/Layout';
@@ -53,7 +54,7 @@ const IntroImage = styled(CachedImage)`
 const FeaturesWrapper = styled.View`
   width: 100%;
   margin-top: 40px;
-  padding: 40px 0;
+  padding: 30px 0 20px 0;
   border-top-width: 1px;
   border-top-color: #829cd6;
 `;
@@ -61,12 +62,13 @@ const FeaturesWrapper = styled.View`
 const FeatureRow = styled.View`
   margin-bottom: 16px;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
 `;
 
 const FeatureTextWrapper = styled.View`
   flex-direction: column;
+  flex: 1;
 `;
 
 const FeatureLabel = styled(BoldText)`
@@ -78,12 +80,22 @@ const FeatureBody = styled(BaseText)`
   font-size: ${fontSizes.small}px;
   color: ${baseColors.midnight};
   opacity: 0.6;
+  flex: 1;
+`;
+
+const BodyWrapper = styled(BaseText)`
+  flex-direction: row;
+  flex-wrap: wrap;
 `;
 
 const UpgradeEmoji = styled(Emoji)`
   font-size: 30px;
   margin-right: 19px;
   color: #000000;
+`;
+
+const StyledButton = styled(Button)`
+  margin-bottom: 40px;
 `;
 
 const headSculptureSource = require('assets/images/headSculpture.png');
@@ -121,8 +133,11 @@ class UpgradeIntroScreen extends React.PureComponent<Props> {
             nextText="Get help"
             nextTextStyle={{
               color: baseColors.white,
+              fontSize: fontSizes.extraSmall,
+              letterSpacing: 0.1,
+              opacity: 0.8,
             }}
-            onNextPress={() => {}}
+            onNextPress={() => Intercom.displayMessenger()}
           />
           <ScrollWrapper
             contentContainerStyle={{
@@ -140,22 +155,27 @@ class UpgradeIntroScreen extends React.PureComponent<Props> {
                 <UpgradeEmoji name="v" />
                 <FeatureTextWrapper>
                   <FeatureLabel>
-                    Multiple accounts & personas
+                    Many keys, one account
                   </FeatureLabel>
-                  <FeatureBody>
-                    A path to sovereign identity
-                  </FeatureBody>
+                  <BodyWrapper>
+                    <FeatureBody>
+                      Store your assets in personal smart contract and control access through an intuitive key
+                      management system.
+                    </FeatureBody>
+                  </BodyWrapper>
                 </FeatureTextWrapper>
               </FeatureRow>
               <FeatureRow>
                 <UpgradeEmoji name="sunglasses" />
                 <FeatureTextWrapper>
                   <FeatureLabel>
-                    Extra security
+                    Improved security
                   </FeatureLabel>
-                  <FeatureBody>
-                    Lost wallet can now be restored
-                  </FeatureBody>
+                  <BodyWrapper>
+                    <FeatureBody>
+                      Recovery agents provide a way to recover your account and assets even in a case of lost device.
+                    </FeatureBody>
+                  </BodyWrapper>
                 </FeatureTextWrapper>
               </FeatureRow>
               <FeatureRow>
@@ -164,13 +184,30 @@ class UpgradeIntroScreen extends React.PureComponent<Props> {
                   <FeatureLabel>
                     Advanced features
                   </FeatureLabel>
-                  <FeatureBody>
-                    Pillar wallet is not a regular wallet
-                  </FeatureBody>
+                  <BodyWrapper>
+                    <FeatureBody>
+                      Ability to enable multi-signature access, set spending limits, restrict access by persona
+                      and/or device and more.
+                    </FeatureBody>
+                  </BodyWrapper>
+                </FeatureTextWrapper>
+              </FeatureRow>
+              <FeatureRow>
+                <UpgradeEmoji name="raising_hand" />
+                <FeatureTextWrapper>
+                  <FeatureLabel>
+                    Multiple personas
+                  </FeatureLabel>
+                  <BodyWrapper>
+                    <FeatureBody>
+                      Create separate, independent personas to manage contacts, chats and personal information providing
+                      for contextualized identity.
+                    </FeatureBody>
+                  </BodyWrapper>
                 </FeatureTextWrapper>
               </FeatureRow>
             </FeaturesWrapper>
-            <Button block title="Continue" onPress={() => this.props.navigation.navigate(UPGRADE_INFO)} />
+            <StyledButton block title="Continue" onPress={() => this.props.navigation.navigate(UPGRADE_INFO)} />
           </ScrollWrapper>
         </Container>
       </ImageBackground>
