@@ -65,6 +65,8 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
       type: SET_HISTORY,
       payload: updatedHistory,
     });
+
+    dispatch(checkAssetTransferTransactionsAction());
   };
 };
 
