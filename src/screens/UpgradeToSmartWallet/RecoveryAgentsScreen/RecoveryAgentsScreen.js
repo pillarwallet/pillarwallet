@@ -29,6 +29,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Checkbox from 'components/Checkbox';
 import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Toast from 'components/Toast';
 import { baseColors, spacing } from 'utils/variables';
 import { CONTACT, CHOOSE_ASSETS_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
@@ -126,6 +127,12 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
   setupRecovery = () => {
     const { navigation } = this.props;
     navigation.goBack(null);
+    Toast.show({
+      message: 'Recovery agents have been selected',
+      type: 'success',
+      title: 'Success',
+      autoClose: true,
+    });
   };
 
   render() {

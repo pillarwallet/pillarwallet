@@ -26,12 +26,10 @@ import Header from 'components/Header';
 import { Container } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { PLR } from 'constants/assetsConstants';
 import {
-  SEND_TOKEN_AMOUNT,
-  FUND_CONFIRM,
   RECOVERY_AGENTS,
   REVEAL_BACKUP_PHRASE,
+  CHOOSE_ASSETS_TO_TRANSFER,
 } from 'constants/navigationConstants';
 import ProfileSettingsItem from 'screens/Profile/ProfileSettingsItem';
 import { spacing } from 'utils/variables';
@@ -48,13 +46,6 @@ export default class WalletSettings extends React.PureComponent<Props> {
   render() {
     const { navigation } = this.props;
     const selectedWallet = navigation.getParam('wallet', {});
-    const PLRData = {
-      token: PLR,
-      contractAddress: '0x9366605f6758727ad0fbce0d1a2a6c1cd197f2a3',
-      decimals: 18,
-      icon: 'https://api-qa-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3',
-    };
-
     const isSmartWallet = selectedWallet.type === ACCOUNT_TYPES.SMART_WALLET;
 
     return (
@@ -71,19 +62,7 @@ export default class WalletSettings extends React.PureComponent<Props> {
           <ProfileSettingsItem
             key="fundSmartWallet"
             label="Fund Smart Wallet"
-            onPress={() => navigation.navigate(SEND_TOKEN_AMOUNT,
-              {
-                assetData: PLRData,
-                receiver: '', // TODO: add PLR tank address
-                customTitle: 'fund plr tank',
-                customSingleInputProps: {
-                  noTint: true,
-                  floatingImageStyle: { marginRight: 3 },
-                  white: true,
-                },
-                customConfirmScreenKey: FUND_CONFIRM,
-                customHeaderProps: { white: true },
-              })}
+            onPress={() => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER, { options: { isSeparateFund: true } })}
           />
           <ParagraphWrapper>
             <Paragraph light small>
