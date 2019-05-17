@@ -22,7 +22,8 @@ import { FlatList, Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { Container, Footer } from 'components/Layout';
-import SearchBlock from 'components/SearchBlock';
+// import SearchBlock from 'components/SearchBlock';
+import Header from 'components/Header';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Checkbox from 'components/Checkbox';
@@ -31,16 +32,19 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { baseColors, spacing } from 'utils/variables';
 import { CONTACT, CHOOSE_ASSETS_TO_TRANSFER } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
-import orderBy from 'lodash.orderby';
+// import orderBy from 'lodash.orderby';
+import { addRecoveryAgentsToSmartWalletUpgradeAction } from 'actions/smartWalletActions';
+import type { RecoveryAgent } from 'models/RecoveryAgents';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
+  addRecoveryAgentsToSmartWalletUpgrade: Function,
 };
 
 type State = {
-  query: string,
-  agentsUserNames: Array<string>,
+  // query: string,
+  selectedAgents: Object[],
 };
 
 const FooterInner = styled.View`
@@ -58,42 +62,44 @@ const EmptyStateWrapper = styled.View`
 
 class RecoveryAgentsScreen extends React.Component<Props, State> {
   state = {
-    query: '',
-    agentsUserNames: [],
+    // query: '',
+    selectedAgents: [],
   };
 
-  handleSearchChange = (query: any) => {
-    this.setState({ query });
-  };
+  // handleSearchChange = (query: any) => {
+  //   this.setState({ query });
+  // };
 
   navigateToContactScreen = (contact: Object) => () => {
     this.props.navigation.navigate(CONTACT, { contact });
   };
 
-  updateAgentsUsernames = (username: string) => {
-    const { agentsUserNames } = this.state;
+  updateAgents = (agent: Object) => {
+    const { selectedAgents } = this.state;
+    const name = agent.username || agent.serviceName;
     let updatedAgentsUserNames;
-    if (agentsUserNames.includes(username)) {
-      updatedAgentsUserNames = agentsUserNames.filter((thisUsername) => { return thisUsername !== username; });
+    if (selectedAgents.find(thisAgent => thisAgent.username === name || thisAgent.serviceName === name)) {
+      updatedAgentsUserNames = selectedAgents.filter((thisUsername) => { return thisUsername !== name; });
     } else {
-      updatedAgentsUserNames = [...agentsUserNames, username];
+      updatedAgentsUserNames = [...selectedAgents, agent];
     }
-    this.setState({ agentsUserNames: updatedAgentsUserNames });
+    this.setState({ selectedAgents: updatedAgentsUserNames });
   };
 
   renderContact = ({ item }) => {
-    const { agentsUserNames } = this.state;
+    const { selectedAgents } = this.state;
+    const name = item.username || item.serviceName;
     return (
       <ListItemWithImage
-        label={item.username}
-        avatarUrl={item.profileImage}
-        navigateToProfile={() => this.navigateToContactScreen(item)}
-        onPress={() => this.updateAgentsUsernames(item.username)}
+        label={name}
+        avatarUrl={item.profileImage || item.icon}
+        navigateToProfile={item.username ? () => this.navigateToContactScreen(item) : null}
+        onPress={() => this.updateAgents(item)}
         imageUpdateTimeStamp={item.lastUpdateTime}
         customAddon={
           <Checkbox
-            onPress={() => this.updateAgentsUsernames(item.username)}
-            checked={agentsUserNames.includes(item.username)}
+            onPress={() => this.updateAgents(item)}
+            checked={!!selectedAgents.find(agent => agent.username === name || agent.serviceName === name)}
             rounded
             wrapperStyle={{ width: 24, marginRight: 4 }}
           />
@@ -102,18 +108,32 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
     );
   };
 
+  onNextPress = async () => {
+    const { navigation, addRecoveryAgentsToSmartWalletUpgrade } = this.props;
+    const { selectedAgents } = this.state;
+    await addRecoveryAgentsToSmartWalletUpgrade(selectedAgents);
+    navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER);
+  };
+
   render() {
-    const { navigation, contacts } = this.props;
-    const { query, agentsUserNames } = this.state;
-    const sortedLocalContacts = orderBy(contacts, [user => user.username.toLowerCase()], 'asc');
-    const filteredContacts = (!query || query.trim() === '' || query.length < 2)
-      ? sortedLocalContacts
-      : sortedLocalContacts.filter(({ username }) => username.toUpperCase().includes(query.toUpperCase()));
-    const proceedStepEnabled = true || !!agentsUserNames.length; // TODO: remove `true ||`
+    const {
+      navigation,
+      // contacts,
+    } = this.props;
+    const {
+      // query,
+      selectedAgents,
+    } = this.state;
+    // const sortedLocalContacts = orderBy(contacts, [user => user.username.toLowerCase()], 'asc');
+    // const filteredContacts = (!query || query.trim() === '' || query.length < 2)
+    //   ? sortedLocalContacts
+    //   : sortedLocalContacts.filter(({ username }) => username.toUpperCase().includes(query.toUpperCase()));
+    // const proceedStepEnabled = true || !!selectedAgents.length; // TODO: remove `true ||`
+    const proceedStepEnabled = !!selectedAgents.length;
 
     return (
       <Container>
-        <SearchBlock
+        { /* <SearchBlock
           headerProps={{
             title: 'recovery agents',
             onBack: () => navigation.goBack(null),
@@ -123,9 +143,22 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
           itemSearchState={query.length >= 2}
           navigation={navigation}
           backgroundColor={baseColors.white}
+        /> */ }
+        <Header
+          title="recovery agents"
+          centerTitle
+          onBack={() => navigation.goBack(null)}
+          white
         />
         <FlatList
-          data={filteredContacts}
+          // data={filteredContacts}
+          data={[
+            {
+              id: 'Pillar',
+              serviceName: 'Pillar Wallet',
+              icon: 'https://api-qa-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3',
+            },
+          ]}
           keyExtractor={(item) => item.id}
           renderItem={this.renderContact}
           initialNumToRender={8}
@@ -152,7 +185,7 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
             <Button
               small
               title="Next"
-              onPress={() => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)}
+              onPress={this.onNextPress}
               disabled={!proceedStepEnabled}
             />
           </FooterInner>
@@ -168,5 +201,10 @@ const mapStateToProps = ({
   contacts,
 });
 
-export default connect(mapStateToProps)(RecoveryAgentsScreen);
+const mapDispatchToProps = (dispatch) => ({
+  addRecoveryAgentsToSmartWalletUpgrade:
+    (recoveryAgents: RecoveryAgent[]) => dispatch(addRecoveryAgentsToSmartWalletUpgradeAction(recoveryAgents)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RecoveryAgentsScreen);
 

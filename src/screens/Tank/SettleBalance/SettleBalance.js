@@ -159,6 +159,7 @@ class SettleBalance extends React.Component<Props, State> {
         <Header
           onBack={() => navigation.goBack(null)}
           title="settle balance"
+          white
         />
         <FlatList
           keyExtractor={item => item.symbol}
@@ -167,6 +168,7 @@ class SettleBalance extends React.Component<Props, State> {
           ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
           contentContainerStyle={{
             flexGrow: 1,
+            paddingTop: 10,
           }}
         />
         <Footer>

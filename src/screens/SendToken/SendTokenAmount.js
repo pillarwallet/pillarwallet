@@ -55,7 +55,6 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 
-
 const { Form } = t.form;
 const GAS_LIMIT = 500000;
 const MIN_TX_AMOUNT = 0.000000000000000001;
@@ -381,12 +380,14 @@ class SendTokenAmount extends React.Component<Props, State> {
       customProps,
     });
     const customTitle = this.props.navigation.getParam('customTitle', '');
+    const customHeaderProps = this.props.navigation.getParam('customHeaderProps', '');
 
     return (
       <Container>
         <Header
           onBack={() => this.props.navigation.goBack(null)}
           title={customTitle || `send ${this.assetData.token}`}
+          {...customHeaderProps}
         />
         <Wrapper regularPadding>
           <Form

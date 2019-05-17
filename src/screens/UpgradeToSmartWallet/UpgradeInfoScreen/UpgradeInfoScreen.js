@@ -26,7 +26,7 @@ import Header from 'components/Header';
 import Button from 'components/Button';
 import { Paragraph, BoldText, BaseText } from 'components/Typography';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { CHOOSE_ASSETS_TO_TRANSFER } from 'constants/navigationConstants';
+import { RECOVERY_AGENTS } from 'constants/navigationConstants';
 
 type Props = {
   changePin: (newPin: string, currentPin: string) => Function,
@@ -37,7 +37,9 @@ type Props = {
 
 const WhiteWrapper = styled.View`
   background-color: ${baseColors.white};
-  padding-bottom: 50px;
+  border-bottom-width: 1px;
+  border-bottom-color: #ededed;
+  padding-bottom: 18px;
 `;
 
 const ExplanationRow = styled.View`
@@ -70,7 +72,7 @@ const ExplanationBody = styled(BaseText)`
 `;
 
 const ExplanationEmoji = styled(Emoji)`
-  font-size: 40px;
+  font-size: 32px;
   margin-right: 24px;
   margin-left: 10px;
   color: #000000;
@@ -78,13 +80,16 @@ const ExplanationEmoji = styled(Emoji)`
 
 const Footer = styled.View`
   background-color: ${baseColors.snowWhite};
-  border-top-width: 1px;
-  border-top-color: #ededed;
   flex-direction: row;
   justify-content: flex-end;
   align-items: flex-start;
   padding: ${spacing.large}px ${spacing.mediumLarge}px;
   flex: 1;
+  margin-top: 24px;
+`;
+
+const StyledParagraph = styled(Paragraph)`
+  margin-top: 6px;
 `;
 
 class UpgradeInfoScreen extends React.PureComponent<Props> {
@@ -99,42 +104,46 @@ class UpgradeInfoScreen extends React.PureComponent<Props> {
             onBack={() => navigation.goBack(null)}
           />
           <Wrapper regularPadding>
-            <Paragraph small>
-              On the following screens you’ll have to choose your recovery agents and funds to transfer to your new
-              Smart Wallet.
-            </Paragraph>
-            <ExplanationRow>
-              <ExplanationEmoji name="raising_hand" />
-              <TextWrapper>
-                <ExplanationTitle>
-                  What’s recovery agents?
-                </ExplanationTitle>
-                <BodyWrapper>
-                  <ExplanationBody>
-                    It’s one or many of your contacts who posess a part of your key for restoring access to your
-                    Smart Wallet, etc.
-                  </ExplanationBody>
-                </BodyWrapper>
-              </TextWrapper>
-            </ExplanationRow>
-            <ExplanationRow>
-              <ExplanationEmoji name="rocket" />
-              <TextWrapper>
-                <ExplanationTitle>
-                  Why transfering funds?
-                </ExplanationTitle>
-                <BodyWrapper>
-                  <ExplanationBody>
-                    It’s more safe and it’s more convenient to store your funds in a contract rather than rely on
-                    a private key only, etc.
-                  </ExplanationBody>
-                </BodyWrapper>
-              </TextWrapper>
-            </ExplanationRow>
+            <StyledParagraph small>
+              On the following screens, you will be asked to choose your recovery agents, as well as transfer assets
+              to your new Smart Wallet.
+            </StyledParagraph>
           </Wrapper>
         </WhiteWrapper>
+        <Wrapper regularPadding>
+          <ExplanationRow>
+            <ExplanationEmoji name="raising_hand" />
+            <TextWrapper>
+              <ExplanationTitle>
+                What are recovery agents?
+              </ExplanationTitle>
+              <BodyWrapper>
+                <ExplanationBody>
+                  Recovery Agents are individuals, services and/or secondary devices (e.g. handware wallets) that you
+                  choose to assist you with recovering access to your Smart Wallet if you happen to lose your device
+                  or master key.
+                </ExplanationBody>
+              </BodyWrapper>
+            </TextWrapper>
+          </ExplanationRow>
+          <ExplanationRow>
+            <ExplanationEmoji name="rocket" />
+            <TextWrapper>
+              <ExplanationTitle>
+                Why do I need to transfer assets?
+              </ExplanationTitle>
+              <BodyWrapper>
+                <ExplanationBody>
+                  In order to take advantage of your new Smart Wallet, you will need to transfer your assets to the
+                  new account. Due to the enhanced functionality and security benefits storing assets in your
+                  Smart Wallet is safer and more convenient than keeping them stored on your private key.
+                </ExplanationBody>
+              </BodyWrapper>
+            </TextWrapper>
+          </ExplanationRow>
+        </Wrapper>
         <Footer>
-          <Button small title="Next" onPress={() => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)} />
+          <Button small title="Next" onPress={() => navigation.navigate(RECOVERY_AGENTS)} />
         </Footer>
       </Container>
     );

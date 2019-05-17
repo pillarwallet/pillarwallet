@@ -94,6 +94,7 @@ class FundConfirm extends React.Component<Props, State> {
         <Header
           onBack={() => this.props.navigation.goBack(null)}
           title="review"
+          white
         />
         <ScrollWrapper
           regularPadding
@@ -102,6 +103,7 @@ class FundConfirm extends React.Component<Props, State> {
           onKeyboardWillShow={() => {
             this.scroll.scrollToPosition(0, scrollPos);
           }}
+          contentContainerStyle={{ marginTop: 40 }}
         >
           <LabeledRow>
             <Label>Amount</Label>

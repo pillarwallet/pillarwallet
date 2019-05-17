@@ -479,6 +479,7 @@ manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
 // TANK FLOW
 const manageTankFlow = createStackNavigator({
   [TANK_DETAILS]: TankDetailsScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
   [SETTLE_BALANCE]: SettleBalanceScreen,
   [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfrimScreen,
