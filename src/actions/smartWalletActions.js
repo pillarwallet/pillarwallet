@@ -391,7 +391,7 @@ export const onSmartWalletSdkAction = (event: Object) => {
     const accountState = get(getState(), 'smartWallet.connectedAccount.state', '').toLowerCase();
     if (event.name === sdkModules.Api.EventNames.AccountUpdated) {
       const newAccountState = get(event, 'payload.state', '').toLowerCase();
-      if (newAccountState === 'deployed' && accountState === 'created') {
+      if (newAccountState === 'deployed' && accountState !== 'deployed') {
         dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
       }
     }
