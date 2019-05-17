@@ -20,6 +20,11 @@ export default function badgesReducer(
   action: TankReducerAction,
 ) {
   switch (action.type) {
+    case 'FUND_TANK':
+      return {
+        ...state,
+        data: action.payload,
+      };
     default:
       return state;
   }

@@ -126,16 +126,11 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
       navigation,
       // contacts,
     } = this.props;
-    const {
-      // query,
-      selectedAgents,
-    } = this.state;
     // const sortedLocalContacts = orderBy(contacts, [user => user.username.toLowerCase()], 'asc');
     // const filteredContacts = (!query || query.trim() === '' || query.length < 2)
     //   ? sortedLocalContacts
     //   : sortedLocalContacts.filter(({ username }) => username.toUpperCase().includes(query.toUpperCase()));
     // const proceedStepEnabled = true || !!selectedAgents.length; // TODO: remove `true ||`
-    const proceedStepEnabled = !!selectedAgents.length;
     const options = navigation.getParam('options', { isSeparateRecovery: false });
     const { isSeparateRecovery } = options;
 
@@ -198,7 +193,7 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
               small
               title="Next"
               onPress={this.onNextPress}
-              disabled={!proceedStepEnabled}
+              // disabled={!proceedStepEnabled}
             />
           </FooterInner>
           }
@@ -206,7 +201,7 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
           <Button
             title="Setup recovery"
             onPress={this.setupRecovery}
-            disabled={!proceedStepEnabled}
+            // disabled={!proceedStepEnabled}
           />
           }
         </Footer>

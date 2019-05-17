@@ -380,7 +380,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
         <Footer>
           {hasAssetsSelected &&
           <FooterInner style={{ alignItems: 'center' }}>
-            <Label>{`Fee ${assetsTransferFee} ETH`}</Label>
+            <Label>{`Est. fee ${assetsTransferFee} ETH`}</Label>
             <Button
               small
               title="Next"
