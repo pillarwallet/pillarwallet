@@ -35,6 +35,7 @@ import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import { BaseText } from 'components/Typography';
+import Toast from 'components/Toast';
 import { baseColors, fontSizes } from 'utils/variables';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { EDIT_ASSET_AMOUNT_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
@@ -302,10 +303,21 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     navigation.navigate(EDIT_ASSET_AMOUNT_TO_TRANSFER);
   };
 
-  onNextPress = async () => {
+  onNextPress = async (isSeparateFund) => {
     const { navigation } = this.props;
     await this.updateAssetsAndCollectiblesToTransfer();
-    navigation.navigate(UPGRADE_REVIEW);
+    if (isSeparateFund) {
+      // mock
+      navigation.goBack(null);
+      Toast.show({
+        message: 'Your Smart wallet has been funded',
+        type: 'success',
+        title: 'Success',
+        autoClose: true,
+      });
+    } else {
+      navigation.navigate(UPGRADE_REVIEW);
+    }
   };
 
   render() {
@@ -356,6 +368,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     const assetsTransferFee = formatAmount(utils.formatEther(
       BigNumber(gasPriceWei * (assetsToTransfer.length + collectiblesToTransfer.length)).toFixed(),
     ));
+    const options = navigation.getParam('options', { isSeparateRecovery: false });
+    const { isSeparateFund } = options;
 
     return (
       <Container>
@@ -378,15 +392,25 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
         {activeTab === TOKENS && this.renderAssets(nonEmptyAssets)}
         {activeTab === COLLECTIBLES && this.renderCollectibles()}
         <Footer>
-          {hasAssetsSelected &&
+          {!isSeparateFund && hasAssetsSelected &&
           <FooterInner style={{ alignItems: 'center' }}>
             <Label>{`Est. fee ${assetsTransferFee} ETH`}</Label>
             <Button
               small
               title="Next"
-              onPress={this.onNextPress}
+              onPress={() => this.onNextPress()}
             />
           </FooterInner>}
+          {!!isSeparateFund && hasAssetsSelected &&
+          <FooterInner style={{ alignItems: 'center', flexDirection: 'column', justifyContent: 'center' }}>
+            <Button
+              title="Fund wallet"
+              onPress={() => this.onNextPress(true)}
+              style={{ marginBottom: 10 }}
+            />
+            <Label>{`Est. fee ${assetsTransferFee} ETH`}</Label>
+          </FooterInner>
+          }
         </Footer>
       </Container>
     );

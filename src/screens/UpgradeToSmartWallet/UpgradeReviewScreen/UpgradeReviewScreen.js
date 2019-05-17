@@ -226,7 +226,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
           renderSectionHeader={({ section }) => (
             <ListSeparator>
               <SubHeading>{section.title}</SubHeading>
-              <TextLink onPress={() => navigation.navigate(section.toEdit)}>Edit</TextLink>
+              <TextLink onPress={() => navigation.navigate(section.toEdit, { isEditing: true })}>Edit</TextLink>
             </ListSeparator>
           )}
           renderItem={this.renderItem}

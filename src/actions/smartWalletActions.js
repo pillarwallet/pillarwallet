@@ -50,7 +50,9 @@ import {
   signAssetTransactionAction,
   sendSignedAssetTransactionAction,
   resetLocalNonceToTransactionCountAction,
+  fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
+import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
@@ -217,6 +219,7 @@ export const createAssetsTransferTransactionsAction = (wallet: Object, transacti
 export const checkAssetTransferTransactionsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
+      assets: { data: assets },
       history: {
         data: transactionsHistory,
       },
@@ -270,6 +273,8 @@ export const checkAssetTransferTransactionsAction = () => {
       ));
       const { address } = accounts[0];
       await dispatch(connectSmartWalletAccountAction(address));
+      dispatch(fetchAssetsBalancesAction(assets));
+      dispatch(fetchCollectiblesAction());
       await dispatch(deploySmartWalletAction());
     } else {
       const unsentTransactions = _unsentTransactions.sort(
@@ -388,8 +393,8 @@ export const onSmartWalletSdkAction = (event: Object) => {
   return async (dispatch: Function, getState: Function) => {
     if (!event) return;
 
-    const accountState = get(getState(), 'smartWallet.connectedAccount.state', '').toLowerCase();
-    if (event.name === sdkModules.Api.EventNames.AccountUpdated) {
+    const accountState = get(getState(), 'smartWallet.upgrade.status', '').toLowerCase();
+    if (event.name === sdkModules.Api.EventNames.AccountDeviceUpdated) {
       const newAccountState = get(event, 'payload.state', '').toLowerCase();
       if (newAccountState === 'deployed' && accountState !== 'deployed') {
         dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
