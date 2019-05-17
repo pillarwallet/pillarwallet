@@ -33,7 +33,11 @@ import {
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
-import { SET_HISTORY } from 'constants/historyConstants';
+import {
+  TX_PENDING_STATUS,
+  TX_CONFIRMED_STATUS,
+  SET_HISTORY,
+} from 'constants/historyConstants';
 import SmartWalletService from 'services/smartWallet';
 import {
   addNewAccountAction,
@@ -44,6 +48,7 @@ import { saveDbAction } from 'actions/dbActions';
 import {
   signAssetTransactionAction,
   sendSignedAssetTransactionAction,
+  resetLocalNonceToTransactionCountAction,
 } from 'actions/assetsActions';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
@@ -186,6 +191,11 @@ export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {
 
 export const createAssetsTransferTransactionsAction = (wallet: Object, transactions: Object[]) => {
   return async (dispatch: Function) => {
+    // reset local nonce to transaction count
+    await dispatch(resetLocalNonceToTransactionCountAction(wallet));
+    dispatch(setSmartWalletUpgradeStatusAction(
+      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+    ));
     const signedTransactions = [];
     // we need this to wait for each to complete because of local nonce increment
     for (const transaction of transactions) { // eslint-disable-line
@@ -206,42 +216,74 @@ export const createAssetsTransferTransactionsAction = (wallet: Object, transacti
 export const checkAssetTransferTransactionsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
+      history: {
+        data: transactionsHistory,
+      },
       smartWallet: {
         upgrade: {
+          status: upgradeStatus,
           transfer: {
-            transactions = [],
+            transactions: transferTransactions = [],
           },
         },
       },
     } = getState();
-    if (!transactions.length) {
+    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS) return;
+    if (!transferTransactions.length) {
       // TODO: no transactions at all?
       return;
     }
-    const pendingTransactions = transactions.filter(transaction => transaction.status === 'sent');
-    if (pendingTransactions.length) return;
-    const unsentTransactions = transactions.filter(transaction => transaction.status !== 'complete');
-    if (!unsentTransactions.length) {
-      // TODO: all complete?
-      return;
-    }
-    // grab first in queue
-    const unsentTransaction = unsentTransactions[0];
-    const { signedTransaction: { signed: unsentTransactionSigned } } = unsentTransaction;
-    const signedTransactionHash = await dispatch(sendSignedAssetTransactionAction(unsentTransactionSigned));
-    if (!signedTransactionHash || signedTransactionHash.error) {
-      // TODO: transaction failed
-      return;
-    }
-    console.log('sent new asset transfer transaction: ', signedTransactionHash);
-    const updatedTransactions = transactions.filter(
-      transaction => transaction.signedTransaction.signed !== unsentTransactionSigned,
+
+    // update with statuses from history
+    // TODO: visit current workaround to get history from all wallets
+    // $FlowFixMe
+    const allHistory = Object.values(transactionsHistory).reduce(
+      (existing = [], walletHistory) => [...existing, ...walletHistory],
     );
-    updatedTransactions.push({
-      ...unsentTransaction,
-      status: 'sent',
-      transactionHash: signedTransactionHash,
+
+    let updatedTransactions = transferTransactions.map(transaction => {
+      const { transactionHash } = transaction;
+      if (!transactionHash) return transaction;
+      const logged = allHistory.find(_transaction => _transaction.hash === transactionHash);
+      console.log('transaction history check: ', !!logged, transactionHash);
+      if (!logged) return transaction;
+      return { ...transaction, status: logged.status };
     });
+    console.log('transfer transactions: ', updatedTransactions);
+
+    // if any is still pending then don't do anything
+    const pendingTransactions = updatedTransactions.filter(transaction => transaction.status === TX_PENDING_STATUS);
+    if (pendingTransactions.length) return;
+
+    const _unsentTransactions = updatedTransactions.filter(transaction => transaction.status !== TX_CONFIRMED_STATUS);
+    if (!_unsentTransactions.length) {
+      // TODO: set proper status
+      dispatch(setSmartWalletUpgradeStatusAction(
+        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+      ));
+    } else {
+      const unsentTransactions = _unsentTransactions.sort(
+        (_a, _b) => _a.signedTransaction.nonce - _b.signedTransaction.nonce,
+      );
+      // grab first in queue
+      const unsentTransaction = unsentTransactions[0];
+      const { signedTransaction } = unsentTransaction;
+      const transactionHash = await dispatch(sendSignedAssetTransactionAction(signedTransaction));
+      if (!transactionHash) {
+        // TODO: failed to send?
+        return;
+      }
+      console.log('sent new asset transfer transaction: ', transactionHash);
+      updatedTransactions = updatedTransactions.filter(
+        transaction => transaction.signedTransaction.signedHash !== signedTransaction.signedHash,
+      );
+      updatedTransactions.push({
+        ...unsentTransaction,
+        transactionHash,
+        status: TX_PENDING_STATUS,
+      });
+    }
+    console.log('updatedTransactions: ', updatedTransactions);
     dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
   };
 };
@@ -285,10 +327,6 @@ export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions:
       wallet,
       addressedTransferTransactions,
     ));
-    dispatch(setSmartWalletUpgradeStatusAction(
-      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-    ));
-    await dispatch(connectSmartWalletAccountAction(address));
     dispatch(checkAssetTransferTransactionsAction());
 
     // TODO: deploy only if assets transfer step is complete

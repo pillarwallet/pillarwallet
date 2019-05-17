@@ -129,4 +129,9 @@ export default class SmartWalletProvider {
         });
       });
   }
+
+  getTransactionCount(walletAddress: string) { //eslint-disable-line
+    // TODO: connect this to sdk
+    return 0;
+  }
 }

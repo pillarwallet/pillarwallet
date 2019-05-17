@@ -154,7 +154,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
   getGasPriceWei = () => {
     const { gasInfo } = this.props;
-    const gasPrice = gasInfo.gasPrice.max || 0;
+    const gasPrice = gasInfo.gasPrice.avg || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
     return gasPriceWei.mul(GAS_LIMIT);
   };

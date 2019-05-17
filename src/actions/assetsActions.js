@@ -51,7 +51,7 @@ import type { Asset, Assets } from 'models/Asset';
 import { transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
-import { getActiveAccountAddress, getActiveAccount, getActiveAccountId } from 'utils/accounts';
+import { getActiveAccountAddress, getActiveAccount, getActiveAccountId, getAccountAddress } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 
@@ -61,10 +61,17 @@ type TransactionStatus = {
 };
 
 export const sendSignedAssetTransactionAction = (
-  signedTransaction: string,
+  signedTransaction: TransactionPayload,
 ) => {
   return async () => {
-    return transferSigned(signedTransaction).catch(e => ({ error: e }));
+    const { signedHash } = signedTransaction;
+    if (!signedHash) return null;
+    const transactionHash = transferSigned(signedHash).catch(e => ({ error: e }));
+    if (transactionHash.error) {
+      // TODO: error?
+      return null;
+    }
+    return transactionHash;
   };
 };
 
@@ -119,6 +126,11 @@ export const signAssetTransactionAction = (
         transaction,
         getState(),
       );
+    }
+
+    // $FlowFixMe
+    if (signedTransaction.error) {
+      return {};
     }
 
     // update transaction count
@@ -483,5 +495,28 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
       dispatch(updateAssetsAction(newAssets));
       dispatch(fetchAssetsBalancesAction(newAssets));
     }
+  };
+};
+
+export const resetLocalNonceToTransactionCountAction = (wallet: Object) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accounts: { data: accounts },
+    } = getState();
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) return;
+    const accountAddress = getAccountAddress(activeAccount);
+    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
+    const walletProvider = await cryptoWallet.getProvider();
+    const transactionCount = await walletProvider.getTransactionCount(accountAddress);
+    const txCountNew = {
+      lastCount: transactionCount,
+      lastNonce: transactionCount - 1,
+    };
+    await dispatch({
+      type: UPDATE_TX_COUNT,
+      payload: txCountNew,
+    });
+    dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
   };
 };

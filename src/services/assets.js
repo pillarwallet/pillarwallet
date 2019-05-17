@@ -96,7 +96,8 @@ export async function transferERC20(options: ERC20TransferOptions) {
     nonce,
     data,
   };
-  return Promise.resolve(wallet.sign(transaction));
+  const signedHash = await wallet.sign(transaction);
+  return { signedHash, value: decimals };
 }
 
 export async function transferERC721(options: ERC721TransferOptions) {
@@ -141,7 +142,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
   return { error: 'can not be transferred', noRetry: true };
 }
 
-export function transferETH(options: ETHTransferOptions) {
+export async function transferETH(options: ETHTransferOptions) {
   const {
     to,
     wallet,
@@ -151,15 +152,17 @@ export function transferETH(options: ETHTransferOptions) {
     nonce,
     signOnly = false,
   } = options;
+  const value = utils.parseEther(amount.toString());
   const trx = {
     gasLimit,
     gasPrice: utils.bigNumberify(gasPrice),
-    value: utils.parseEther(amount.toString()),
     to,
     nonce,
   };
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
-  return signOnly ? Promise.resolve(wallet.sign(trx)) : wallet.sendTransaction(trx);
+  if (!signOnly) return wallet.sendTransaction(trx);
+  const signedHash = await wallet.sign(trx);
+  return { signedHash, value };
 }
 
 // Fetch methods are temporary until the BCX API provided

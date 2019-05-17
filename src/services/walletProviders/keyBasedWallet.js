@@ -75,10 +75,16 @@ export default class KeyBasedWalletProvider {
       nonce,
       signOnly,
     })
-      .then(result => signOnly
-        ? { nonce, transactionCount, signed: result }
-        : { ...result, transactionCount },
-      )
+      .then(result => {
+        if (!signOnly) return { ...result, transactionCount };
+        return {
+          ...result,
+          nonce,
+          transactionCount,
+          from,
+          to,
+        };
+      })
       .catch((e) => catchTransactionError(e, ETH, {
         gasLimit,
         gasPrice,
@@ -111,10 +117,16 @@ export default class KeyBasedWalletProvider {
       nonce,
       signOnly,
     })
-      .then(result => signOnly
-        ? { nonce, transactionCount, signed: result }
-        : { ...result, transactionCount },
-      )
+      .then(result => {
+        if (!signOnly) return { ...result, transactionCount };
+        return {
+          ...result,
+          nonce,
+          transactionCount,
+          from,
+          to,
+        };
+      })
       .catch((e) => catchTransactionError(e, 'ERC20', {
         decimals,
         contractAddress,
@@ -129,8 +141,8 @@ export default class KeyBasedWalletProvider {
     signedTransaction?: ?boolean = false,
   ): Promise<CalculateNonceResult> {
     let nonce;
-    const transactionCount = await this.wallet.provider.getTransactionCount(walletAddress, 'pending');
     const { txCount: { data: { lastNonce } } } = state;
+    const transactionCount = await this.getTransactionCount(walletAddress);
     if (signedTransaction) {
       // set nonce either to 0 or transaction count or increase
       nonce = (!lastNonce || lastNonce < transactionCount) && lastNonce !== 0
@@ -141,5 +153,9 @@ export default class KeyBasedWalletProvider {
     }
 
     return Promise.resolve({ nonce, transactionCount });
+  }
+
+  async getTransactionCount(walletAddress: string) {
+    return this.wallet.provider.getTransactionCount(walletAddress, 'pending');
   }
 }

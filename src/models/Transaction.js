@@ -54,6 +54,7 @@ export type TokenTransactionPayload = {
   name?: string,
   tokenId?: string,
   signOnly?: ?boolean,
+  signedHash?: ?string,
 }
 
 export type CollectibleTransactionPayload = {
@@ -65,6 +66,7 @@ export type CollectibleTransactionPayload = {
   note?: ?string,
   tokenId: string,
   signOnly?: ?boolean,
+  signedHash?: ?string,
 }
 
 export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;

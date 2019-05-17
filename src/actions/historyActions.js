@@ -33,6 +33,7 @@ import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { checkForMissedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
+import { checkAssetTransferTransactionsAction } from './smartWalletActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
@@ -145,6 +146,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     const lastCreatedAt = Math.max(...updatedAccountHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
     console.log(lastCreatedAt, updatedHistory);
+    dispatch(checkAssetTransferTransactionsAction());
     /* TODO: FIX ME
     // TODO: we need to check account that should store the received notifications
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
