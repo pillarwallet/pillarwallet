@@ -30,10 +30,13 @@ import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import Toast from 'components/Toast';
 import { fontSizes } from 'utils/variables';
+import { settleNetwokAssetsBalanceAction } from 'actions/tankActions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
+  settleNetwokAssetsBalance: Function,
+  assetsOnNetwork: Object[],
 };
 
 type State = {
@@ -80,11 +83,12 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     };
   }
 
-  handleFormSubmit = () => {
+  handleFormSubmit = async () => {
     Keyboard.dismiss();
-    const { navigation } = this.props;
+    const { navigation, settleNetwokAssetsBalance } = this.props;
+    const assetsToSettle = navigation.getParam('assetsToSettle', []);
     // const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
-    // TODO: add fund function
+    await settleNetwokAssetsBalance(assetsToSettle);
     navigation.dismiss();
     Toast.show({
       message: 'Settlement was successful',
@@ -101,6 +105,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
   render() {
     const { scrollPos } = this.state;
     const { session, navigation } = this.props;
+    const assetsToSettle = navigation.getParam('assetsToSettle', []);
 
     return (
       <Container>
@@ -121,9 +126,10 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
           <LabeledRow>
             <Label>Assets to settle</Label>
             {/* <Value>{amount} {symbol}</Value> */}
-            <Value>0.35 ETH {/* temp */}</Value>
-            <Value>48.65 DAI {/* temp */}</Value>
-            <Value>360.5 ZRX {/* temp */}</Value>
+            {/* temp */}
+            {assetsToSettle.map((asset: any, index: number) =>
+              <Value key={index}>{`${asset.amount} ${asset.symbol}`}</Value>)
+            }
           </LabeledRow>
           <LabeledRow>
             <Label>PLR used</Label>
@@ -173,4 +179,9 @@ const mapStateToProps = ({
   session,
 });
 
-export default connect(mapStateToProps)(SettleBalanceConfirm);
+const mapDispatchToProps = (dispatch) => ({
+  settleNetwokAssetsBalance: (assets) => dispatch(settleNetwokAssetsBalanceAction(assets)),
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(SettleBalanceConfirm);

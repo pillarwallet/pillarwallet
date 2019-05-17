@@ -41,6 +41,7 @@ type Props = {
   },
   baseFiatCurrency: ?string,
   rates: Object,
+  assetsOnNetwork: Object[],
 }
 
 type DashLineProps = {
@@ -201,6 +202,7 @@ class TankDetails extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       navigation,
+      assetsOnNetwork,
     } = this.props;
     const { totalStake, availableStake } = tankData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -344,6 +346,7 @@ class TankDetails extends React.Component<Props, State> {
               noPadding
               width="197px"
               onPress={() => navigation.navigate(SETTLE_BALANCE)}
+              disabled={!assetsOnNetwork.length}
             />
           </FooterWrapper>
         </ScrollWrapper>
@@ -353,11 +356,12 @@ class TankDetails extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  tank: { data: tankData },
+  tank: { data: tankData, assetsOnNetwork },
   appSettings: { data: { baseFiatCurrency } },
   rates: { data: rates },
 }) => ({
   tankData,
+  assetsOnNetwork,
   baseFiatCurrency,
   rates,
 });
