@@ -353,12 +353,11 @@ class TankDetails extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  tank: { data: tankData, isModalVisible },
+  tank: { data: tankData },
   appSettings: { data: { baseFiatCurrency } },
   rates: { data: rates },
 }) => ({
   tankData,
-  isModalVisible,
   baseFiatCurrency,
   rates,
 });

@@ -28,6 +28,7 @@ import { Label, BoldText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
+import Toast from 'components/Toast';
 import { fontSizes } from 'utils/variables';
 
 type Props = {
@@ -85,6 +86,12 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     // const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
     // TODO: add fund function
     navigation.dismiss();
+    Toast.show({
+      message: 'Settlement was successful',
+      type: 'success',
+      title: 'Success',
+      autoClose: true,
+    });
   };
 
   handleNoteChange(text) {

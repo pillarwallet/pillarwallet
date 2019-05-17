@@ -222,17 +222,17 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
             }
           </DetailsLine>
           <DetailsLine>
-            <DetailsTitle>Fee for transfer</DetailsTitle>
+            <DetailsTitle>Est. fee for transfer</DetailsTitle>
             <DetailsValue>{assetsTransferFee}</DetailsValue>
           </DetailsLine>
           <DetailsLine>
-            <DetailsTitle>Fee for smart contract deployment</DetailsTitle>
+            <DetailsTitle>Est. fee for smart contract deployment</DetailsTitle>
             <DetailsValue>{smartContractDeployFee}</DetailsValue>
           </DetailsLine>
           {!upgradeStarted &&
           <Button
             block
-            title="Deploy Smart Wallet"
+            title="Create Smart Wallet"
             onPress={() => this.onNextClick(gasPrice)}
           />}
           {upgradeStarted && <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>}

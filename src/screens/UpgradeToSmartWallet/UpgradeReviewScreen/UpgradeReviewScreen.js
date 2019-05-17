@@ -149,7 +149,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
           justifyContent: 'flex-end',
         }}
         customAddon={
-          <Label style={{ textAlign: 'right' }}>{`Fee ${transferFee} ETH`}</Label>
+          <Label style={{ textAlign: 'right' }}>{`Est. fee ${transferFee} ETH`}</Label>
         }
       />
     );
@@ -236,7 +236,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
         <Footer>
           <FooterInner style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
             <LabelWrapper>
-              <Label style={{ textAlign: 'center' }}>{`Total fee ${assetsTransferFee} ETH`}</Label>
+              <Label style={{ textAlign: 'center' }}>{`Total estimated fee ${assetsTransferFee} ETH`}</Label>
             </LabelWrapper>
             <Button block title="Continue" onPress={this.onNextClick} />
           </FooterInner>

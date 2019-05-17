@@ -28,11 +28,14 @@ import { Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
+import Toast from 'components/Toast';
 import { fontSizes } from 'utils/variables';
+import { fundTankAction } from 'actions/tankActions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
+  fundTank: Function,
 };
 
 type State = {
@@ -70,10 +73,18 @@ class FundConfirm extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     Keyboard.dismiss();
-    const { navigation } = this.props;
+    const { navigation, fundTank } = this.props;
+    const { amount } = navigation.getParam('transactionPayload', {});
     // const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
-    // TODO: add fun function
+    // TODO: add fund function
     navigation.dismiss();
+    fundTank(parseInt(amount, 10));
+    Toast.show({
+      message: 'Your Pillar Tank has been funded',
+      type: 'success',
+      title: 'Success',
+      autoClose: true,
+    });
   };
 
   handleNoteChange(text) {
@@ -153,4 +164,8 @@ const mapStateToProps = ({
   session,
 });
 
-export default connect(mapStateToProps)(FundConfirm);
+const mapDispatchToProps = (dispatch) => ({
+  fundTank: (value: number) => dispatch(fundTankAction(value)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FundConfirm);
