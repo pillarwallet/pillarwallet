@@ -89,6 +89,8 @@ export default class KeyBasedWalletProvider {
 
   async transferERC20(account: Account, transaction: TokenTransactionPayload, state: Object) {
     const {
+      gasLimit,
+      gasPrice,
       to,
       amount,
       contractAddress,
@@ -99,6 +101,8 @@ export default class KeyBasedWalletProvider {
     const { nonce, transactionCount } = await this.calculateNonce(from, state, signOnly);
 
     return transferERC20({
+      gasLimit,
+      gasPrice,
       to,
       amount,
       contractAddress,
