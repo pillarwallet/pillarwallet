@@ -30,7 +30,7 @@ import Checkbox from 'components/Checkbox';
 import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { baseColors, spacing } from 'utils/variables';
-import { CONTACT, CHOOSE_ASSETS_TO_TRANSFER } from 'constants/navigationConstants';
+import { CONTACT, CHOOSE_ASSETS_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
 // import orderBy from 'lodash.orderby';
 import { addRecoveryAgentsToSmartWalletUpgradeAction } from 'actions/smartWalletActions';
@@ -77,13 +77,15 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
   updateAgents = (agent: Object) => {
     const { selectedAgents } = this.state;
     const name = agent.username || agent.serviceName;
-    let updatedAgentsUserNames;
+    let updatedAgents;
     if (selectedAgents.find(thisAgent => thisAgent.username === name || thisAgent.serviceName === name)) {
-      updatedAgentsUserNames = selectedAgents.filter((thisUsername) => { return thisUsername !== name; });
+      updatedAgents = selectedAgents.filter((thisAgent) => {
+        return thisAgent.username !== name && thisAgent.serviceName !== name;
+      });
     } else {
-      updatedAgentsUserNames = [...selectedAgents, agent];
+      updatedAgents = [...selectedAgents, agent];
     }
-    this.setState({ selectedAgents: updatedAgentsUserNames });
+    this.setState({ selectedAgents: updatedAgents });
   };
 
   renderContact = ({ item }) => {
@@ -110,9 +112,14 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
 
   onNextPress = async () => {
     const { navigation, addRecoveryAgentsToSmartWalletUpgrade } = this.props;
+    const isEditing = navigation.getParam('isEditing', false);
     const { selectedAgents } = this.state;
     await addRecoveryAgentsToSmartWalletUpgrade(selectedAgents);
-    navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER);
+    if (isEditing) {
+      navigation.navigate(UPGRADE_REVIEW);
+    } else {
+      navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER);
+    }
   };
 
   // MOCK
