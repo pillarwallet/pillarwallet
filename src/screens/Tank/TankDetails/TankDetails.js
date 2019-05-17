@@ -335,6 +335,7 @@ class TankDetails extends React.Component<Props, State> {
                   },
                   customConfirmScreenKey: FUND_CONFIRM,
                   customHeaderProps: { white: true },
+                  customFee: true,
                 })}
             />
             <Button

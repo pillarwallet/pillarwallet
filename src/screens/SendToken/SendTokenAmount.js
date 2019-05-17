@@ -381,6 +381,8 @@ class SendTokenAmount extends React.Component<Props, State> {
     });
     const customTitle = this.props.navigation.getParam('customTitle', '');
     const customHeaderProps = this.props.navigation.getParam('customHeaderProps', '');
+    const customFee = this.props.navigation.getParam('customFee', '');
+    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
 
     return (
       <Container>
@@ -412,12 +414,16 @@ class SendTokenAmount extends React.Component<Props, State> {
         </Wrapper>
         <Footer keyboardVerticalOffset={35}>
           <FooterInner>
+            {!customFee &&
             <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
               <SendTokenDetailsValue>
                 <Label small>Fee:</Label>
                 <TextLink> {SPEED_TYPES[transactionSpeed]}</TextLink>
               </SendTokenDetailsValue>
-            </TouchableOpacity>
+            </TouchableOpacity>}
+            {!!customFee &&
+            <Label>{`Estimated fee ${feeInEth} ETH`}</Label>
+            }
             {!!value && !!parseFloat(value.amount) &&
               <Button
                 disabled={!session.isOnline || !gasInfo.isFetched}

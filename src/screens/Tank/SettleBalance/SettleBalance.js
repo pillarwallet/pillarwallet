@@ -173,7 +173,7 @@ class SettleBalance extends React.Component<Props, State> {
         />
         <Footer>
           <FooterInner style={{ alignItems: 'center' }}>
-            <Label>Fee 0.0004 ETH</Label>
+            <Label>Estimated fee 0.0004 ETH</Label>
             <Button
               small
               title="Next"
