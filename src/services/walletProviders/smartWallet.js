@@ -2,14 +2,19 @@
 import { ethToWei } from '@netgum/utils';
 import { utils } from 'ethers';
 import abi from 'ethjs-abi';
+import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom';
+import ERC721_CONTRACT_ABI from 'abi/erc721';
+import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom';
 import { ETH } from 'constants/assetsConstants';
 import type { Account } from 'models/Account';
 import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
-import { transferERC721 } from 'services/assets';
+import { getERC721ContractTransferMethod } from 'services/assets';
 import SmartWalletService from 'services/smartWallet';
-import { catchTransactionError } from 'utils/wallet';
+import { getEthereumProvider } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
+import { catchTransactionError } from 'utils/wallet';
 
 
 export default class SmartWalletProvider {
@@ -36,8 +41,9 @@ export default class SmartWalletProvider {
     if (!this.sdkInitialized) {
       return Promise.reject(new Error('SDK is not initialized'));
     }
+
     const { to, amount } = transaction;
-    const accountAddress = getAccountAddress(account);
+    const from = getAccountAddress(account);
     const value = ethToWei(amount);
 
     return this.smartWalletService
@@ -48,7 +54,7 @@ export default class SmartWalletProvider {
         // transactionSpeed
       })
       .then(hash => ({
-        from: accountAddress,
+        from,
         hash,
         to,
         value,
@@ -65,13 +71,14 @@ export default class SmartWalletProvider {
     if (!this.sdkInitialized) {
       return Promise.reject(new Error('SDK is not initialized'));
     }
+
     const {
       to,
       amount,
       contractAddress,
       decimals = 18,
     } = transaction;
-    const accountAddress = getAccountAddress(account);
+    const from = getAccountAddress(account);
 
     const value = decimals > 0
       ? utils.parseUnits(amount.toString(), decimals)
@@ -89,7 +96,7 @@ export default class SmartWalletProvider {
         // transactionSpeed
       })
       .then(hash => ({
-        from: accountAddress,
+        from,
         hash,
         to,
         value,
@@ -105,28 +112,59 @@ export default class SmartWalletProvider {
   }
 
   async transferERC721(account: Account, transaction: CollectibleTransactionPayload) {
-    const {
-      to,
-      contractAddress,
-      tokenId,
-    } = transaction;
+    if (!this.sdkInitialized) {
+      return Promise.reject(new Error('SDK is not initialized'));
+    }
+
+    const { to, contractAddress, tokenId } = transaction;
     const from = getAccountAddress(account);
 
-    // TODO: replace this with the sdk transfer method
-    return transferERC721({
-      from,
-      to,
-      contractAddress,
-      tokenId,
-      wallet: this.wallet,
-    })
-      .catch((e) => {
-        catchTransactionError(e, 'ERC721', {
-          contractAddress,
-          from,
-          to,
-          tokenId,
-        });
-      });
+    let data = '';
+    let transferMethodSignature;
+    let contractAbi;
+    const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+    const contractCode = await provider.getCode(contractAddress);
+    const contractTransferMethod = getERC721ContractTransferMethod(contractCode);
+
+    switch (contractTransferMethod) {
+      case 'safeTransferFrom':
+        contractAbi = ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM;
+        transferMethodSignature = contractAbi.find(item => item.name === contractTransferMethod);
+        data = abi.encodeMethod(transferMethodSignature, [from, to, tokenId]);
+        break;
+      case 'transfer':
+        contractAbi = ERC721_CONTRACT_ABI;
+        transferMethodSignature = contractAbi.find(item => item.name === contractTransferMethod);
+        data = abi.encodeMethod(transferMethodSignature, [to, tokenId]);
+        break;
+      case 'transferFrom':
+        contractAbi = ERC721_CONTRACT_ABI_TRANSFER_FROM;
+        transferMethodSignature = contractAbi.find(item => item.name === contractTransferMethod);
+        data = abi.encodeMethod(transferMethodSignature, [from, to, tokenId]);
+        break;
+      default:
+    }
+
+    return this.smartWalletService
+      .transferAsset({
+        // $FlowFixMe
+        recipient: contractAddress,
+        value: 0,
+        data,
+        // transactionSpeed
+      })
+      .then(hash => ({
+        from,
+        hash,
+        to,
+        tokenId,
+        value: 0,
+      }))
+      .catch((e) => catchTransactionError(e, 'ERC721', {
+        contractAddress,
+        from,
+        to,
+        tokenId,
+      }));
   }
 }

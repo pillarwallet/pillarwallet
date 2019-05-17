@@ -99,6 +99,23 @@ export async function transferERC20(options: ERC20TransferOptions) {
   return Promise.resolve(wallet.sign(transaction));
 }
 
+export function getERC721ContractTransferMethod(code: any): string {
+  // first 4 bytes of the encoded signature for a lookup in the contract code
+  // encoding: utils.keccak256(utils.toUtf8Bytes(signature)
+  const transferHash = 'a9059cbb'; // transfer(address,uint256)
+  const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
+  const safeTransferFromHash = '42842e0e'; // safeTransferFrom(address,address,uint256)
+
+  if (contractHasMethod(code, safeTransferFromHash)) {
+    return 'safeTransferFrom';
+  } else if (contractHasMethod(code, transferHash)) {
+    return 'transfer';
+  } else if (contractHasMethod(code, transferFromHash)) {
+    return 'transferFrom';
+  }
+  return '';
+}
+
 export async function transferERC721(options: ERC721TransferOptions) {
   const {
     contractAddress,
@@ -110,25 +127,23 @@ export async function transferERC721(options: ERC721TransferOptions) {
   } = options;
   wallet.provider = getEthereumProvider(COLLECTIBLES_NETWORK);
 
-  const code = await wallet.provider.getCode(contractAddress).then((result) => result);
-
-  // first 4 bytes of the encoded signature for a lookup in the contract code
-  // encoding: utils.keccak256(utils.toUtf8Bytes(signature)
-  const transferHash = 'a9059cbb'; // transfer(address,uint256)
-  const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
-  const safeTransferFromHash = '42842e0e'; // safeTransferFrom(address,address,uint256)
-
   let contract;
-  if (contractHasMethod(code, safeTransferFromHash)) {
-    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
-    return contract.safeTransferFrom(from, to, tokenId, { nonce });
-  } else if (contractHasMethod(code, transferHash)) {
-    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
-    return contract.transfer(to, tokenId, { nonce });
-  } else if (contractHasMethod(code, transferFromHash)) {
-    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
-    return contract.transferFrom(from, to, tokenId, { nonce });
+  const code = await wallet.provider.getCode(contractAddress);
+  const contractTransferMethod = getERC721ContractTransferMethod(code);
+
+  switch (contractTransferMethod) {
+    case 'safeTransferFrom':
+      contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
+      return contract.safeTransferFrom(from, to, tokenId, { nonce });
+    case 'transfer':
+      contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
+      return contract.transfer(to, tokenId, { nonce });
+    case 'transferFrom':
+      contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
+      return contract.transferFrom(from, to, tokenId, { nonce });
+    default:
   }
+
   Sentry.captureMessage('Could not transfer collectible',
     {
       level: 'info',
