@@ -65,6 +65,7 @@ type Props = {
   imageUpdateTimeStamp?: number,
   rightColumnInnerStyle?: Object,
   customAddonFullWidth?: React.Node,
+  imageColorFill?: string,
 }
 
 const ItemWrapper = styled.View`
@@ -136,7 +137,7 @@ const IconCircle = styled.View`
   width: ${props => props.diameter || 52}px;
   height: ${props => props.diameter || 52}px;
   border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
-  background-color: ${props => props.warm ? baseColors.fairPink : baseColors.lightGray};
+  background-color: ${props => props.fillColor};
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -261,12 +262,13 @@ const ItemImage = (props: Props) => {
     navigateToProfile,
     type,
     imageUpdateTimeStamp,
+    imageColorFill,
   } = props;
 
   if (iconName) {
     const warm = iconName === 'sent';
     return (
-      <IconCircle warm={warm}>
+      <IconCircle fillColor={warm ? baseColors.fairPink : baseColors.lightGray}>
         <ItemIcon name={iconName} warm={warm} />
       </IconCircle>
     );
@@ -284,6 +286,20 @@ const ItemImage = (props: Props) => {
         <TokenImageWrapper>
           <TokenImage source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
         </TokenImageWrapper>
+      </Shadow>
+    );
+  }
+  if (imageColorFill) {
+    return (
+      <Shadow
+        shadowColorAndroid="#38105baa"
+        heightAndroid={54}
+        widthAndroid={54}
+        heightIOS={48}
+        widthIOS={48}
+        shadowRadius={24}
+      >
+        <IconCircle fillColor={imageColorFill} />
       </Shadow>
     );
   }

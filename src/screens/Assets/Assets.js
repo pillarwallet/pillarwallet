@@ -73,7 +73,7 @@ import {
   COLLECTIBLES,
 } from 'constants/assetsConstants';
 import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
-import { UPGRADE_TO_SMART_WALLET_FLOW, TANK_DETAILS } from 'constants/navigationConstants';
+import { UPGRADE_TO_SMART_WALLET_FLOW, TANK_DETAILS, MANAGE_WALLETS_FLOW } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -88,7 +88,7 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 // local components
 import AssetsList from './AssetsList';
 import CollectiblesList from './CollectiblesList';
-import ManageWalletsButton from './ManageWalletsButton';
+import { ManageWalletsButton } from './ManageWalletsButton';
 
 
 type Props = {
@@ -453,6 +453,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
     const isSmartWallet = smartWalletStatus.hasAccount;
     const activeAccount = accounts.find(({ isActive }) => isActive) || { type: '' };
+    const { type: walletType } = activeAccount;
 
     return (
       <Container inset={{ bottom: 0 }}>
@@ -468,7 +469,14 @@ class AssetsScreen extends React.Component<Props, State> {
             tankTotalValue: tankData.totalStake,
             headerRightAddon:
               isSmartWallet
-                ? <ManageWalletsButton navigation={navigation} />
+                ? <ManageWalletsButton
+                  onPress={() => navigation.navigate(MANAGE_WALLETS_FLOW)}
+                  label={walletType === ACCOUNT_TYPES.KEY_BASED ? 'KeyBased.Wallet' : 'Smart.Wallet'}
+                  labelColor={walletType === ACCOUNT_TYPES.KEY_BASED
+                    ? baseColors.deepSkyBlue
+                    : baseColors.fireEngineRed
+                  }
+                />
                 : null,
           }}
           hideSearch={blockAssetsView}

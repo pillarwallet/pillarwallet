@@ -115,6 +115,12 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
     navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER);
   };
 
+  // MOCK
+  setupRecovery = () => {
+    const { navigation } = this.props;
+    navigation.goBack(null);
+  };
+
   render() {
     const {
       navigation,
@@ -130,6 +136,8 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
     //   : sortedLocalContacts.filter(({ username }) => username.toUpperCase().includes(query.toUpperCase()));
     // const proceedStepEnabled = true || !!selectedAgents.length; // TODO: remove `true ||`
     const proceedStepEnabled = !!selectedAgents.length;
+    const options = navigation.getParam('options', { isSeparateRecovery: false });
+    const { isSeparateRecovery } = options;
 
     return (
       <Container>
@@ -177,7 +185,11 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
             </EmptyStateWrapper>
           }
         />
-        <Footer style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+        <Footer style={isSeparateRecovery
+          ? { flexDirection: 'row', justifyContent: 'center' }
+          : { flexDirection: 'row', justifyContent: 'flex-end' }}
+        >
+          {!isSeparateRecovery &&
           <FooterInner>
             {
               // TODO: add right amount of contacts selected to activate this button
@@ -189,6 +201,14 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
               disabled={!proceedStepEnabled}
             />
           </FooterInner>
+          }
+          {!!isSeparateRecovery &&
+          <Button
+            title="Setup recovery"
+            onPress={this.setupRecovery}
+            disabled={!proceedStepEnabled}
+          />
+          }
         </Footer>
       </Container>
     );
