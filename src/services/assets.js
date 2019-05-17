@@ -84,7 +84,9 @@ export async function transferERC20(options: ERC20TransferOptions) {
   const decimals = defaultDecimals > 0
     ? utils.parseUnits(amount.toString(), defaultDecimals)
     : utils.bigNumberify(amount.toString());
+
   if (!signOnly) return contract.transfer(to, decimals, { nonce });
+
   const tokenTransfer = await contract.interface.functions.transfer.apply(null, [to, decimals]);
   const { data } = tokenTransfer;
   const transaction = {

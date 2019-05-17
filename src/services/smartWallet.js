@@ -130,7 +130,8 @@ export default class SmartWallet {
       transactionSpeed = null,
     } = transaction;
 
-    const estimatedTransaction = await this.sdk.estimateAccountTransaction(recipient,
+    const estimatedTransaction = await this.sdk.estimateAccountTransaction(
+      recipient,
       value,
       data,
       transactionSpeed,

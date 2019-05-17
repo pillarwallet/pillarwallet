@@ -29,7 +29,7 @@ export default class SmartWalletProvider {
   }
 
   async transferETH(account: Account, transaction: TokenTransactionPayload) {
-    // TODO: add transactionSpeed selector to UI
+    // TODO: connect transactionSpeed selector from the UI
     if (!this.sdkInitialized) {
       return Promise.reject(new Error('SDK is not initialized'));
     }
