@@ -837,7 +837,7 @@ workflows:
             branches:
               only:
                   - feature/smart-wallet-sdk
-      - dev_build_android:
+      - hockeyapp_android:
           requires:
             - build-and-test
           filters:
