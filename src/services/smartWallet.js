@@ -25,6 +25,7 @@ import {
   Sdk,
 } from '@archanova/sdk';
 import { BigNumber } from 'bignumber.js';
+import { onSmartWalletSdkAction } from 'actions/smartWalletActions';
 
 const SLOW = 'slow';
 const REGULAR = 'regular';
@@ -43,6 +44,8 @@ type AccountTransaction = {
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
 };
 
+let subscribedToEvents = false;
+
 export default class SmartWallet {
   sdk: Sdk;
 
@@ -56,9 +59,18 @@ export default class SmartWallet {
     }
   }
 
-  async init(privateKey: string) {
+  async init(privateKey: string, dispatch?: Function) {
     await this.sdk.initialize({ device: { privateKey } }).catch(this.handleError);
-    // TODO: remove private from smart wallet sdk
+    this.subscribeToEvents(dispatch);
+    // TODO: remove private key from smart wallet sdk
+  }
+
+  subscribeToEvents(dispatch?: Function) {
+    if (subscribedToEvents || !dispatch) return;
+    this.sdk.event$.subscribe(event => {
+      if (dispatch) dispatch(onSmartWalletSdkAction(event));
+    });
+    subscribedToEvents = true;
   }
 
   async getAccounts() {

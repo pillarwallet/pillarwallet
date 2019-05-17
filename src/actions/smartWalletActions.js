@@ -58,7 +58,7 @@ let smartWalletService: SmartWalletService;
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
   return async (dispatch: Function) => {
     smartWalletService = new SmartWalletService();
-    await smartWalletService.init(walletPrivateKey);
+    await smartWalletService.init(walletPrivateKey, dispatch);
     dispatch({
       type: SET_SMART_WALLET_SDK_INIT,
       payload: true,
@@ -382,3 +382,10 @@ export const cleanSmartWalletAccountsAction = () => {
     }
   };
 };
+
+export const onSmartWalletSdkAction = (event: Object) => {
+  return async (dispatch: Function) => { // eslint-disable-line
+    console.log(event);
+  };
+};
+
