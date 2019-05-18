@@ -21,7 +21,7 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import Emoji from 'react-native-emoji';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import { Paragraph, BoldText, BaseText } from 'components/Typography';
@@ -110,7 +110,7 @@ class UpgradeInfoScreen extends React.PureComponent<Props> {
             </StyledParagraph>
           </Wrapper>
         </WhiteWrapper>
-        <Wrapper regularPadding>
+        <ScrollWrapper regularPadding>
           <ExplanationRow>
             <ExplanationEmoji name="raising_hand" />
             <TextWrapper>
@@ -141,10 +141,10 @@ class UpgradeInfoScreen extends React.PureComponent<Props> {
               </BodyWrapper>
             </TextWrapper>
           </ExplanationRow>
-        </Wrapper>
-        <Footer>
-          <Button small title="Next" onPress={() => navigation.navigate(RECOVERY_AGENTS)} />
-        </Footer>
+          <Footer>
+            <Button small title="Next" onPress={() => navigation.navigate(RECOVERY_AGENTS)} />
+          </Footer>
+        </ScrollWrapper>
       </Container>
     );
   }
