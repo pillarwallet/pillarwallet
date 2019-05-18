@@ -116,6 +116,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         }
         api.setUsername(user.username);
         const userInfo = await api.userInfo(user.walletId);
+        await api.updateFCMToken(user.walletId, fcmToken);
         const { oAuthTokens: { data: OAuthTokensObject } } = getState();
         await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
         user = merge({}, user, userInfo);
