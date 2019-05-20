@@ -12,8 +12,9 @@ import {
   connectSmartWalletAccountAction,
   deploySmartWalletAction,
   initSmartWalletSdkAction,
-  loadSmartWalletAccountsAction,
+  loadSmartWalletAccountsDebugAction,
   cleanSmartWalletAccountsAction,
+  cleanAllAccountsAction,
 } from 'actions/smartWalletActions';
 
 // constants
@@ -53,6 +54,7 @@ type Props = {
   resetIncorrectPassword: Function,
   initSmartWalletSdk: Function,
   cleanSmartWalletAccounts: Function,
+  cleanAllAccounts: Function,
 };
 
 type State = {
@@ -82,6 +84,7 @@ const Row = styled.View`
 class SmartWallet extends React.Component<Props, State> {
   sdk: Object;
   switchToAccount: ?Account = null;
+  privateKey: string;
 
   state = {
     showCheckPinModal1: false,
@@ -98,18 +101,24 @@ class SmartWallet extends React.Component<Props, State> {
   };
 
   initSdk = (_: string, wallet: Object) => {
+    this.privateKey = wallet.privateKey;
     this.props.initSmartWalletSdk(wallet.privateKey);
     this.setState({ showCheckPinModal2: false });
   };
 
   onGetAccounts = () => {
     const { loadSmartWalletAccounts } = this.props;
-    loadSmartWalletAccounts();
+    loadSmartWalletAccounts(this.privateKey);
   };
 
   onCleanAccounts = () => {
     const { cleanSmartWalletAccounts } = this.props;
     cleanSmartWalletAccounts();
+  };
+
+  onCleanAllAccounts = () => {
+    const { cleanAllAccounts } = this.props;
+    cleanAllAccounts();
   };
 
   onConnectAccount = () => {
@@ -176,6 +185,9 @@ class SmartWallet extends React.Component<Props, State> {
                 <TextRow>
                   Active Account: <BoldText>{activeAccount.type}</BoldText>
                 </TextRow>
+                <Row>
+                  <ButtonMini title="Clean all accounts" onPress={this.onCleanAllAccounts} />
+                </Row>
                 {accounts.length > 1 && (
                   <React.Fragment>
                     <Row>
@@ -281,13 +293,14 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loadSmartWalletAccounts: () => dispatch(loadSmartWalletAccountsAction()),
+  loadSmartWalletAccounts: (privateKey) => dispatch(loadSmartWalletAccountsDebugAction(privateKey)),
   connectSmartWalletAccount: (accountId) => dispatch(connectSmartWalletAccountAction(accountId)),
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   initSmartWalletSdk: (privateKey: string) => dispatch(initSmartWalletSdkAction(privateKey)),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
+  cleanAllAccounts: () => dispatch(cleanAllAccountsAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SmartWallet);

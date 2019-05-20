@@ -250,7 +250,7 @@ export const registerWalletAction = () => {
     // create smart wallet account only for new wallets
     if (!importedWallet) {
       await dispatch(initSmartWalletSdkAction(wallet.privateKey));
-      await dispatch(loadSmartWalletAccountsAction());
+      await dispatch(loadSmartWalletAccountsAction(wallet.privateKey));
       const { accounts: { data: accounts } } = getState();
       const account = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
       if (account) {

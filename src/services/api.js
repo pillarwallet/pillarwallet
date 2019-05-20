@@ -70,6 +70,13 @@ type UserInfoByIdPayload = {
   targetUserAccessKey: string,
 };
 
+type RegisterSmartWalletPayload = {
+  walletId: string,
+  privateKey: string,
+  ethAddress: string,
+  fcmToken: string,
+};
+
 const BCXSdk = new BCX({ apiUrl: BCX_URL });
 
 export default function SDKWrapper() {
@@ -91,6 +98,13 @@ SDKWrapper.prototype.init = function (
   });
 };
 
+SDKWrapper.prototype.listAccounts = function (walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.infoSmartWallet({ walletId }))
+    .then(({ data }) => data.wallets || [])
+    .catch(() => []);
+};
+
 SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.wallet.register({ fcmToken: fcm, username }))
@@ -107,6 +121,16 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string
         reason: REGISTRATION_FAILED,
       };
     });
+};
+
+SDKWrapper.prototype.registerSmartWallet = function (payload: RegisterSmartWalletPayload) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.wallet.registerSmartWallet(payload))
+    .then(({ data }) => data)
+    .catch(e => ({
+      error: true,
+      reason: e,
+    }));
 };
 
 SDKWrapper.prototype.registerOnAuthServer = function (walletPrivateKey: string, fcm: string, username: string) {

@@ -1,5 +1,5 @@
 // @flow
-import { ACCOUNT_TYPES } from '../constants/accountsConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 export type AccountExtra = Object;
 
@@ -10,6 +10,7 @@ export type Account = {
   type: AccountTypes,
   extra?: AccountExtra,
   isActive: boolean,
+  walletId: string,
 };
 
 export type Accounts = Account[];

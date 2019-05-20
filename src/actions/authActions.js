@@ -41,6 +41,7 @@ import {
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
@@ -95,6 +96,8 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
         const fcmToken = await firebase.messaging().getToken().catch(() => null);
+        dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
+
         await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
         const signalCredentials = {
           userId: user.id,

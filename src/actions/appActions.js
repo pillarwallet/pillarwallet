@@ -50,12 +50,6 @@ import {
   SET_SMART_WALLET_UPGRADE_STATUS,
 } from 'constants/smartWalletConstants';
 
-// utils
-import { normalizeWalletAddress } from 'utils/wallet';
-
-// actions
-import { initDefaultAccountAction } from './accountsActions';
-
 
 const storage = Storage.getInstance('db');
 
@@ -63,20 +57,20 @@ const BACKGROUND = 'background';
 const ANDROID = 'android';
 
 export const initAppAndRedirectAction = (appState: string, platform: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
     const { appSettings = {} } = await storage.get('app_settings');
     const { wallet } = await storage.get('wallet');
 
     if (appSettings.wallet) {
-      const { accounts = [] } = await storage.get('accounts');
+      const accounts = await loadAndMigrate('accounts', dispatch, getState);
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 
       const { assets = {} } = await storage.get('assets');
       dispatch({ type: UPDATE_ASSETS, payload: assets });
 
-      const balances = await loadAndMigrate('balances', dispatch);
+      const balances = await loadAndMigrate('balances', dispatch, getState);
       dispatch({ type: UPDATE_BALANCES, payload: balances });
 
       const { contacts = [] } = await storage.get('contacts');
@@ -100,10 +94,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { connectionIdentityKeys = [] } = await storage.get('connectionIdentityKeys');
       dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: connectionIdentityKeys });
 
-      const collectibles = await loadAndMigrate('collectibles', dispatch);
+      const collectibles = await loadAndMigrate('collectibles', dispatch, getState);
       dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
 
-      const collectiblesHistory = await loadAndMigrate('collectiblesHistory', dispatch);
+      const collectiblesHistory = await loadAndMigrate('collectiblesHistory', dispatch, getState);
       dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
 
       const { badges = [] } = await storage.get('badges');
@@ -113,23 +107,21 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const history = await loadAndMigrate('history', dispatch);
+      const history = await loadAndMigrate('history', dispatch, getState);
       dispatch({ type: SET_HISTORY, payload: history });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
 
-      // TODO: if no accounts found - send user to account migration page
-      if (!accounts.length) {
-        dispatch(initDefaultAccountAction(normalizeWalletAddress(wallet.address)));
-      }
-
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
       }
 
-      const { upgradeTransferTransactions = [], upgradeStatus = null } = await storage.get('smartWallet') || {};
+      const {
+        upgradeTransferTransactions = [],
+        upgradeStatus = null,
+      } = await storage.get('smartWallet') || {};
       dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
       dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
 

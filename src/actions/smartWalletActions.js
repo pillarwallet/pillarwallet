@@ -56,6 +56,9 @@ import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
+import Storage from 'services/storage';
+
+const storage = Storage.getInstance('db');
 
 let smartWalletService: SmartWalletService;
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
@@ -69,21 +72,71 @@ export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
   };
 };
 
-export const loadSmartWalletAccountsAction = () => {
-  return async (dispatch: Function) => {
+export const loadSmartWalletAccountsAction = (privateKey?: string) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
     if (!smartWalletService) return;
-    const accounts = await smartWalletService.getAccounts();
-    if (!accounts.length) {
-      const newAccount = await smartWalletService.createAccount();
-      if (newAccount) accounts.push(newAccount);
+
+    const { user = {} } = await storage.get('user');
+    const { session: { data: session } } = getState();
+
+    const smartAccounts = await smartWalletService.getAccounts();
+    if (!smartAccounts.length && privateKey) {
+      const newSmartAccount = await smartWalletService.createAccount();
+      await api.registerSmartWallet({
+        walletId: user.walletId,
+        privateKey,
+        ethAddress: newSmartAccount.address,
+        fcmToken: session.fcmToken,
+      });
+      if (newSmartAccount) smartAccounts.push(newSmartAccount);
     }
     dispatch({
       type: SET_SMART_WALLET_ACCOUNTS,
-      payload: accounts,
+      payload: smartAccounts,
     });
-    const newAccountsPromises = accounts.map(
-      async account => dispatch(addNewAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account)),
-    );
+
+    const backendAccounts = await api.listAccounts(user.walletId);
+    const newAccountsPromises = smartAccounts.map(async account => {
+      return dispatch(addNewAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, backendAccounts));
+    });
+    await Promise.all(newAccountsPromises);
+  };
+};
+
+export const loadSmartWalletAccountsDebugAction = (privateKey: string) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    if (!smartWalletService) return;
+
+    const { user = {} } = await storage.get('user');
+    const { session: { data: session } } = getState();
+
+    const smartAccounts = await smartWalletService.getAccounts();
+    if (!smartAccounts.length) {
+      const newSmartAccount = await smartWalletService.createAccount();
+      if (newSmartAccount) smartAccounts.push(newSmartAccount);
+    }
+    dispatch({
+      type: SET_SMART_WALLET_ACCOUNTS,
+      payload: smartAccounts,
+    });
+
+    const backendAccounts = await api.listAccounts(user.walletId);
+    const newAccountsPromises = smartAccounts.map(async account => {
+      let updatedBackendAccounts = [...backendAccounts];
+      if (!backendAccounts.find(({ ethAddress }) => ethAddress.toLowerCase() === account.address.toLowerCase())) {
+        await api.registerSmartWallet({
+          walletId: user.walletId,
+          privateKey,
+          ethAddress: account.address,
+          fcmToken: session.fcmToken,
+        });
+        updatedBackendAccounts = await api.listAccounts(user.walletId);
+        console.log({ updatedBackendAccounts });
+      }
+      return dispatch(
+        addNewAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, updatedBackendAccounts),
+      );
+    });
     await Promise.all(newAccountsPromises);
   };
 };
@@ -325,7 +378,7 @@ export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions:
       });
       return Promise.reject();
     }
-    await dispatch(loadSmartWalletAccountsAction());
+    await dispatch(loadSmartWalletAccountsAction(wallet.privateKey));
     const {
       smartWallet: {
         accounts,
@@ -393,6 +446,16 @@ export const cleanSmartWalletAccountsAction = () => {
     if (activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
       dispatch(switchAccountAction(keyBasedAccount.id));
     }
+  };
+};
+
+export const cleanAllAccountsAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: UPDATE_ACCOUNTS,
+      payload: [],
+    });
+    dispatch(saveDbAction('accounts', { accounts: [] }, true));
   };
 };
 

@@ -43,7 +43,7 @@ import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigrati
 
 const storage = Storage.getInstance('db');
 
-export const initDefaultAccountAction = (walletAddress: string) => {
+export const initDefaultAccountAction = (walletAddress: string, walletId: string) => {
   return async (dispatch: Function) => {
     const { balances = {} } = await storage.get('balances');
     const { history = {} } = await storage.get('history');
@@ -54,6 +54,7 @@ export const initDefaultAccountAction = (walletAddress: string) => {
       id: walletAddress,
       type: ACCOUNT_TYPES.KEY_BASED,
       isActive: true,
+      walletId,
     };
     dispatch({
       type: ADD_ACCOUNT,
@@ -104,10 +105,16 @@ export const initDefaultAccountAction = (walletAddress: string) => {
     }
 
     dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
+    return Promise.resolve();
   };
 };
 
-export const addNewAccountAction = (accountAddress: string, type: string, accountExtra?: Object = {}) => {
+export const addNewAccountAction = (
+  accountAddress: string,
+  type: string,
+  accountExtra?: Object = {},
+  backendAccounts: Object[] = [],
+) => {
   return async (dispatch: Function, getState: Function) => {
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = {
@@ -115,14 +122,28 @@ export const addNewAccountAction = (accountAddress: string, type: string, accoun
       type,
       extra: accountExtra,
       isActive: false,
+      walletId: '',
     };
-    const existingAccount = accounts.find(account => account.id === accountAddress);
-    const updatedAccounts = accounts.filter(account => account.id !== accountAddress);
+
+    const existingAccount = accounts.find(account => account.id.toLowerCase() === accountAddress.toLowerCase());
+    const updatedAccounts = accounts.filter(account => account.id.toLowerCase() !== accountAddress.toLowerCase());
+    const backendAccount = backendAccounts.find(({ ethAddress }) =>
+      ethAddress.toLowerCase() === accountAddress.toLowerCase());
+
+    if (backendAccount) {
+      smartWalletAccount.walletId = backendAccount.id;
+    }
+
+    if (existingAccount && backendAccount && !existingAccount.walletId) {
+      existingAccount.walletId = backendAccount.id;
+    }
+
     if (existingAccount) {
       updatedAccounts.push({ ...existingAccount, extra: accountExtra });
     } else {
       updatedAccounts.push(smartWalletAccount);
     }
+
     dispatch({
       type: UPDATE_ACCOUNTS,
       payload: updatedAccounts,

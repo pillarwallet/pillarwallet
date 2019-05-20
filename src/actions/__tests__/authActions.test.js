@@ -26,6 +26,7 @@ import {
   DECRYPTING,
 } from 'constants/walletConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
+import { UPDATE_SESSION } from 'constants/sessionConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
 import * as connectionKeyActions from 'actions/connectionKeyPairActions';
@@ -100,6 +101,7 @@ describe('Wallet actions', () => {
     storage.save('user', { user: registeredMockUser });
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: DECRYPT_WALLET, payload: mockWallet },
     ];

@@ -58,9 +58,7 @@ class SmartWalletUnlock extends React.Component<Props, State> {
       upgradeToSmartWallet,
       navigation,
     } = this.props;
-    const {
-      transferTransactions = [],
-    } = this.state;
+    const { transferTransactions = [] } = this.state;
     this.setState({
       isChecking: true,
     }, async () => {
