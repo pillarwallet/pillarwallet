@@ -103,10 +103,34 @@ const Cover = styled.View`
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   height: 40px;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 6px;
+`;
+
+const HandlebarsWrapper = styled.View`
+  flex-direction: row;
+  position: relative;
+  height: 10px;
+  width: 40px;
+`;
+
+const Handlebar = styled.View`
+  height: 5px;
+  width: 20px;
+  background-color: ${baseColors.electricBlue};
+  position: absolute;
+  top: 2px;
+  border-radius: 6px;
+  ${props => props.right
+    ? 'right: 2.2px;'
+    : 'left: 2.2px;'}
 `;
 
 const AnimatedSheet = Animated.createAnimatedComponent(Sheet);
 const ModalWrapperAnimated = Animated.createAnimatedComponent(ModalWrapper);
+const AnimatedLeftHandlebar = Animated.createAnimatedComponent(Handlebar);
+const AnimatedRightHandlebar = Animated.createAnimatedComponent(Handlebar);
 
 export default class BottomSheet extends React.Component<Props, State> {
   initialPosition: number;
@@ -283,6 +307,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       screenHeight,
       sheetWrapperStyle,
       animateHeight,
+      initialSheetHeight,
     } = this.props;
 
     const sheetHeight = screenHeight - topOffset;
@@ -295,6 +320,38 @@ export default class BottomSheet extends React.Component<Props, State> {
 
     let wrapperStyle = {
       flex: 1,
+    };
+
+    const topOutputRange = screenHeight - topOffset;
+    let outputRanges = [
+      0,
+      10,
+      20,
+      this.initialPosition - 20,
+      this.initialPosition - 10,
+      this.initialPosition,
+    ];
+
+    let leftHandlebarAnimation = {
+      transform: [
+        {
+          rotate: yTranslate.interpolate({
+            inputRange: outputRanges,
+            outputRange: ['15deg', '15deg', '0deg', '0deg', '-15deg', '-15deg'],
+          }),
+        },
+      ],
+    };
+
+    let rightHandlebarAnimation = {
+      transform: [
+        {
+          rotate: yTranslate.interpolate({
+            inputRange: outputRanges,
+            outputRange: ['-15deg', '-15deg', '0deg', '0deg', '15deg', '15deg'],
+          }),
+        },
+      ],
     };
 
     if (animateHeight) {
@@ -312,6 +369,37 @@ export default class BottomSheet extends React.Component<Props, State> {
         width: '100%',
         overflow: 'hidden',
       };
+
+      outputRanges = [
+        initialSheetHeight,
+        initialSheetHeight + 10,
+        initialSheetHeight + 20,
+        topOutputRange - 20,
+        topOutputRange - 10,
+        topOutputRange,
+      ];
+
+      leftHandlebarAnimation = {
+        transform: [
+          {
+            rotate: animatedHeight.interpolate({
+              inputRange: outputRanges,
+              outputRange: ['-15deg', '-15deg', '0deg', '0deg', '15deg', '15deg'],
+            }),
+          },
+        ],
+      };
+
+      rightHandlebarAnimation = {
+        transform: [
+          {
+            rotate: animatedHeight.interpolate({
+              inputRange: outputRanges,
+              outputRange: ['15deg', '15deg', '0deg', '0deg', '-15deg', '-15deg'],
+            }),
+          },
+        ],
+      };
     }
 
     return (
@@ -321,7 +409,17 @@ export default class BottomSheet extends React.Component<Props, State> {
         useNativeDriver
       >
         <FloatingHeader>
-          <Cover />
+          <Cover>
+            <HandlebarsWrapper>
+              <AnimatedLeftHandlebar
+                style={leftHandlebarAnimation}
+              />
+              <AnimatedRightHandlebar
+                right
+                style={rightHandlebarAnimation}
+              />
+            </HandlebarsWrapper>
+          </Cover>
           {floatingHeaderContent}
         </FloatingHeader>
         <ModalWrapperAnimated style={{ height: animatedHeight }}>
