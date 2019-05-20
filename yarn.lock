@@ -10,10 +10,10 @@
     "@ensdomains/ens" "0.3.5"
     openzeppelin-solidity "2.1.2"
 
-"@archanova/sdk@^1.0.0-alpha.5":
-  version "1.0.0-alpha.5"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.0.0-alpha.5.tgz#4a04918a6b57576d89b21c41666c21d5fa7a3656"
-  integrity sha1-SgSRimtXV22JshxBZmwh1fp6NlY=
+"@archanova/sdk@^1.0.0-alpha.10":
+  version "1.0.0-alpha.10"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.0.0-alpha.10.tgz#4b4b31d2db306212c5b96f0182d3ccca84f1cdf4"
+  integrity sha1-S0sx0tswYhLFuW8BgtPMyoTxzfQ=
   dependencies:
     "@archanova/contracts" "^1.0.0-beta.3"
     "@babel/runtime" "^7.4.4"
@@ -825,10 +825,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.27.1514":
-  version "1.27.1514"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.27.1514.tgz#9e97e5dfbb2e79b4432fad8efc3c6eb5b2a3df56"
-  integrity sha1-npfl37suebRDL62O/DxutbKj31Y=
+"@pillarwallet/pillarwallet-nodejs-sdk@1.29.1547":
+  version "1.29.1547"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.29.1547.tgz#ed2cf7a9a6c6e1490166c07a841bc5b095225b04"
+  integrity sha1-7Sz3qabG4UkBZsB6hBvFsJUiWwQ=
   dependencies:
     "@pillarwallet/common-formatters" "0.2.29"
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
