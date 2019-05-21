@@ -43,12 +43,9 @@ type State = {
 };
 
 class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isChecking: false,
-    };
-  }
+  state = {
+    isChecking: false,
+  };
 
   handleDismissal = async () => {
     const { navigation, rejectCallRequest, resetIncorrectPassword } = this.props;
@@ -81,12 +78,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
         break;
     }
 
-    this.setState(
-      {
-        isChecking: true,
-      },
-      callback,
-    );
+    this.setState({ isChecking: true }, callback);
   };
 
   handleSendTransaction = (peerId: string, payload: Object, wallet: Object) => {

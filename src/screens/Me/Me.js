@@ -42,8 +42,7 @@ type Props = {
 };
 
 const meSettingsItems = () => {
-  return [
-  ];
+  return [];
 };
 
 class MeScreen extends React.Component<Props, State> {

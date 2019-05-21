@@ -17,10 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { getRandomInt } from 'utils/common';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import DeviceInfo from 'react-native-device-info';
 import ethers, { providers } from 'ethers';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { getRandomInt } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
 

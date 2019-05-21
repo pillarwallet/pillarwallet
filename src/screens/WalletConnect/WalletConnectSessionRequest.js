@@ -37,8 +37,6 @@ type Props = {
   onWalletConnectSessionRejection: Function,
 };
 
-type State = {};
-
 const FooterWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
@@ -57,7 +55,7 @@ const Value = styled(BoldText)`
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-class WalletConnectSessionRequestScreen extends React.Component<Props, State> {
+class WalletConnectSessionRequestScreen extends React.Component<Props> {
   handleSessionApproval = () => {
     const { navigation } = this.props;
     const peerId = navigation.getParam('peerId', {});
@@ -77,7 +75,10 @@ class WalletConnectSessionRequestScreen extends React.Component<Props, State> {
   render() {
     const { navigation } = this.props;
     const {
-      description, url, icons, name,
+      description,
+      url,
+      icons,
+      name,
     } = navigation.getParam('peerMeta', {});
 
     const icon = icons && icons.length ? icons[0] : null;

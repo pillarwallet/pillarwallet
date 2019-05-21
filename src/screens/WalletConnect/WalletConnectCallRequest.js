@@ -69,18 +69,19 @@ const Value = styled(BoldText)`
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 class WalletConnectCallRequestScreen extends React.Component<Props, State> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      note: null,
-    };
-  }
+  state = {
+    note: null,
+  };
 
   getTokenTransactionPayload = (payload: JsonRpcRequest): TokenTransactionPayload => {
     const { supportedAssets } = this.props;
 
     const {
-      to, gasPrice, gasLimit, value, data,
+      to,
+      gasPrice,
+      gasLimit,
+      value,
+      data,
     } = payload.params[0];
 
     let symbol = 'ETH';
@@ -94,7 +95,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       if (matchingAssets && matchingAssets.length) {
         asset = matchingAssets[0]; // eslint-disable-line
         symbol = asset.symbol; // eslint-disable-line
-        amount = utils.bigNumberify(data.substring(73)).mul(utils.bigNumberify('10').pow(asset.decimals));
+        amount = utils
+          .bigNumberify(data.substring(73))
+          .mul(utils.bigNumberify('10').pow(asset.decimals));
       }
     }
 
@@ -166,7 +169,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const { contacts, session, navigation } = this.props;
 
     const payload = navigation.getParam('payload', {});
-
     const { icon, name } = navigation.getParam('peerMeta', {});
 
     let type = 'Call';
@@ -180,7 +182,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         type = 'Transaction';
 
         const {
-          amount, symbol, txFeeInWei, contractAddress,
+          amount,
+          symbol,
+          txFeeInWei,
+          contractAddress,
         } = this.getTokenTransactionPayload(payload);
 
         const txFee = utils.formatEther(txFeeInWei.toString());
