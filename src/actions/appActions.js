@@ -37,6 +37,7 @@ import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstan
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
+import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { saveDbAction } from './dbActions';
 
@@ -58,6 +59,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { balances = {} } = await storage.get('balances');
       dispatch({ type: UPDATE_BALANCES, payload: balances });
+
+      const { rates = {} } = await storage.get('rates');
+      dispatch({ type: UPDATE_RATES, payload: rates });
 
       const { contacts = [] } = await storage.get('contacts');
       dispatch({ type: UPDATE_CONTACTS, payload: contacts });
