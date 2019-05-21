@@ -52,7 +52,8 @@ type Props = {
 type State = {
   yTranslate: Animated.Value,
   animatedHeight: Animated.Value,
-  isSheetOpen: boolean
+  isSheetOpen: boolean,
+  isDragging: boolean,
 }
 
 const screenHeightFromDimensions = Dimensions.get('window').height;
@@ -138,15 +139,18 @@ const ClickableBackdrop = styled.TouchableOpacity`
   right: 0;
   bottom: 0;
   z-index: 10;
+  background-color: ${baseColors.black};
 `;
 
 const AnimatedSheet = Animated.createAnimatedComponent(Sheet);
-const ModalWrapperAnimated = Animated.createAnimatedComponent(ModalWrapper);
+const AnimatedModalWrapper = Animated.createAnimatedComponent(ModalWrapper);
 const AnimatedLeftHandlebar = Animated.createAnimatedComponent(Handlebar);
 const AnimatedRightHandlebar = Animated.createAnimatedComponent(Handlebar);
+const AnimatedClickableBackdrop = Animated.createAnimatedComponent(ClickableBackdrop);
 
 const VERTICAL_TAB_BOUNDARIES = [6, 42];
 const HORIZONTAL_TAB_BOUNDARIES = [14, screenWidth - 28];
+const BACKDROP_OPACITY = 0.7;
 
 export default class BottomSheet extends React.Component<Props, State> {
   initialPosition: number;
@@ -182,6 +186,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       animatedHeight: new Animated.Value(initialHeight),
       yTranslate: new Animated.Value(initialTopPosition),
       isSheetOpen: forceOpen,
+      isDragging: false,
     };
   }
 
@@ -223,10 +228,14 @@ export default class BottomSheet extends React.Component<Props, State> {
       },
       onPanResponderMove: (e, gestureState) => {
         if (this.isTransitioning) return;
+        const { isDragging } = this.state;
+        if (!isDragging) this.setState({ isDragging: true });
         this.moveSheet(gestureState);
       },
       onPanResponderRelease: () => {
         if (this.isTransitioning) return;
+        const { isDragging } = this.state;
+        if (isDragging) this.setState({ isDragging: false });
         this.animateSheet();
       },
       onStartShouldSetPanResponderCapture: (e) => {
@@ -342,7 +351,12 @@ export default class BottomSheet extends React.Component<Props, State> {
   };
 
   render = () => {
-    const { animatedHeight, yTranslate, isSheetOpen } = this.state;
+    const {
+      animatedHeight,
+      yTranslate,
+      isSheetOpen,
+      isDragging,
+    } = this.state;
     const {
       topOffset,
       children,
@@ -366,7 +380,7 @@ export default class BottomSheet extends React.Component<Props, State> {
     };
 
     const topOutputRange = screenHeight - topOffset;
-    let outputRanges = [
+    let handlebarsOutputRanges = [
       0,
       10,
       20,
@@ -375,11 +389,16 @@ export default class BottomSheet extends React.Component<Props, State> {
       this.initialPosition,
     ];
 
+    let backdropOutputRanges = [
+      0,
+      this.initialPosition,
+    ];
+
     let leftHandlebarAnimation = {
       transform: [
         {
           rotate: yTranslate.interpolate({
-            inputRange: outputRanges,
+            inputRange: handlebarsOutputRanges,
             outputRange: ['15deg', '15deg', '0deg', '0deg', '-15deg', '-15deg'],
           }),
         },
@@ -390,11 +409,18 @@ export default class BottomSheet extends React.Component<Props, State> {
       transform: [
         {
           rotate: yTranslate.interpolate({
-            inputRange: outputRanges,
+            inputRange: handlebarsOutputRanges,
             outputRange: ['-15deg', '-15deg', '0deg', '0deg', '15deg', '15deg'],
           }),
         },
       ],
+    };
+
+    let backdropAnimation = {
+      opacity: yTranslate.interpolate({
+        inputRange: backdropOutputRanges,
+        outputRange: [BACKDROP_OPACITY, 0],
+      }),
     };
 
     if (animateHeight) {
@@ -413,7 +439,7 @@ export default class BottomSheet extends React.Component<Props, State> {
         overflow: 'hidden',
       };
 
-      outputRanges = [
+      handlebarsOutputRanges = [
         initialSheetHeight,
         initialSheetHeight + 10,
         initialSheetHeight + 20,
@@ -422,11 +448,16 @@ export default class BottomSheet extends React.Component<Props, State> {
         topOutputRange,
       ];
 
+      backdropOutputRanges = [
+        initialSheetHeight,
+        topOutputRange,
+      ];
+
       leftHandlebarAnimation = {
         transform: [
           {
             rotate: animatedHeight.interpolate({
-              inputRange: outputRanges,
+              inputRange: handlebarsOutputRanges,
               outputRange: ['-15deg', '-15deg', '0deg', '0deg', '15deg', '15deg'],
             }),
           },
@@ -437,11 +468,18 @@ export default class BottomSheet extends React.Component<Props, State> {
         transform: [
           {
             rotate: animatedHeight.interpolate({
-              inputRange: outputRanges,
+              inputRange: handlebarsOutputRanges,
               outputRange: ['15deg', '15deg', '0deg', '0deg', '-15deg', '-15deg'],
             }),
           },
         ],
+      };
+
+      backdropAnimation = {
+        opacity: animatedHeight.interpolate({
+          inputRange: backdropOutputRanges,
+          outputRange: [0, BACKDROP_OPACITY],
+        }),
       };
     }
 
@@ -466,13 +504,17 @@ export default class BottomSheet extends React.Component<Props, State> {
             </Cover>
             {floatingHeaderContent}
           </FloatingHeader>
-          <ModalWrapperAnimated style={{ height: animatedHeight }}>
+          <AnimatedModalWrapper style={{ height: animatedHeight }}>
             <View style={[wrapperStyle, { sheetWrapperStyle }]}>
               {children}
             </View>
-          </ModalWrapperAnimated>
+          </AnimatedModalWrapper>
         </AnimatedSheet>
-        {!!isSheetOpen && <ClickableBackdrop onPress={this.animateSheet} />}
+        {(isSheetOpen || isDragging) &&
+        <AnimatedClickableBackdrop
+          onPress={this.animateSheet}
+          style={backdropAnimation}
+        />}
       </React.Fragment>
     );
   };
