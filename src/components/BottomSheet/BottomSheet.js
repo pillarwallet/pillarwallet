@@ -46,6 +46,7 @@ type Props = {
   floatingHeaderContent?: React.Node,
   sheetWrapperStyle?: Object,
   forceOpen: boolean,
+  captureTabs?: boolean,
 }
 
 type State = {
@@ -55,6 +56,7 @@ type State = {
 }
 
 const screenHeightFromDimensions = Dimensions.get('window').height;
+const screenWidth = Dimensions.get('window').width;
 
 const USABLE_SCREEN_HEIGHT = Platform.OS === 'android'
   ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
@@ -143,10 +145,14 @@ const ModalWrapperAnimated = Animated.createAnimatedComponent(ModalWrapper);
 const AnimatedLeftHandlebar = Animated.createAnimatedComponent(Handlebar);
 const AnimatedRightHandlebar = Animated.createAnimatedComponent(Handlebar);
 
+const VERTICAL_TAB_BOUNDARIES = [6, 42];
+const HORIZONTAL_TAB_BOUNDARIES = [14, screenWidth - 28];
+
 export default class BottomSheet extends React.Component<Props, State> {
   initialPosition: number;
   panResponder: Object;
   isTransitioning: boolean;
+  forceAnimateAfterNotCapturedTouch: boolean;
 
   static defaultProps = {
     screenHeight: USABLE_SCREEN_HEIGHT,
@@ -166,8 +172,8 @@ export default class BottomSheet extends React.Component<Props, State> {
     } = this.props;
     this.panResponder = React.createRef();
     this.isTransitioning = false;
-    // this.isSheetOpen = forceOpen;
     this.initialPosition = screenHeightFromDimensions - initialSheetHeight - topOffset;
+    this.forceAnimateAfterNotCapturedTouch = false;
 
     const initialTopPosition = forceOpen ? 0 : this.initialPosition;
     const initialHeight = forceOpen ? screenHeight - topOffset : initialSheetHeight;
@@ -196,6 +202,12 @@ export default class BottomSheet extends React.Component<Props, State> {
         bounciness: 0,
       }).start();
     }
+
+    if (this.forceAnimateAfterNotCapturedTouch
+      && prevProps.floatingHeaderContent !== this.props.floatingHeaderContent) {
+      this.animateSheet();
+      this.forceAnimateAfterNotCapturedTouch = false;
+    }
   }
 
   buildPanResponder = () => {
@@ -217,7 +229,24 @@ export default class BottomSheet extends React.Component<Props, State> {
         if (this.isTransitioning) return;
         this.animateSheet();
       },
-      onStartShouldSetPanResponderCapture: () => !this.state.isSheetOpen,
+      onStartShouldSetPanResponderCapture: (e) => {
+        const { captureTabs } = this.props;
+        const { isSheetOpen } = this.state;
+        const { pageX, locationY } = e.nativeEvent;
+
+        if (!captureTabs) {
+          if (locationY.toFixed(2) > VERTICAL_TAB_BOUNDARIES[0]
+            && locationY.toFixed(2) < VERTICAL_TAB_BOUNDARIES[1]
+            && pageX.toFixed(2) > HORIZONTAL_TAB_BOUNDARIES[0]
+            && pageX.toFixed(2) < HORIZONTAL_TAB_BOUNDARIES[1]) {
+            if (!isSheetOpen) {
+              this.forceAnimateAfterNotCapturedTouch = true;
+            }
+            return false;
+          }
+        }
+        return !isSheetOpen;
+      },
       onPanResponderTerminationRequest: () => false,
     });
   };
@@ -263,6 +292,7 @@ export default class BottomSheet extends React.Component<Props, State> {
   animateSheet = (gestureState?: Object) => {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
+
     const { animatedHeight, yTranslate, isSheetOpen } = this.state;
     const {
       scrollingComponentsRefs,
@@ -301,10 +331,11 @@ export default class BottomSheet extends React.Component<Props, State> {
           ref.scrollToOffset({ x: 0, y: 0, animated: false });
         });
       }
-      Animated.spring(this.state.yTranslate, {
+      Animated.spring(yTranslate, {
         toValue: endPosition,
         bounciness: 0,
       }).start(() => {
+        animatedHeight.setValue(sheetHeight);
         this.onAnimationEnd(isGoingToUp);
       });
     }
