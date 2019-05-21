@@ -43,3 +43,8 @@ export function getActiveAccountAddress(accounts: Accounts = []): string {
 export function findKeyBasedAccount(accounts: Accounts): ?Account {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
 }
+
+export function getActiveAccountWalletId(accounts: Accounts = []): string {
+  const activeAccount = getActiveAccount(accounts) || {};
+  return activeAccount.walletId || '';
+}

@@ -27,9 +27,9 @@ import {
   TX_FAILED_STATUS,
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
-// import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { updateAccountHistory } from 'utils/history';
-import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+import { getActiveAccountAddress, getActiveAccountId, getActiveAccountWalletId } from 'utils/accounts';
 import { checkForMissedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
@@ -104,11 +104,12 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
-      user: { data: { walletId } },
       history: { data: currentHistory },
-      appSettings: { data: { lastTxSyncDatetime = 0 } },
+      appSettings: { data: { lastTxSyncDatetimes = {} } },
     } = getState();
     const accountId = getActiveAccountId(accounts);
+    const walletId = getActiveAccountWalletId(accounts);
+    const lastTxSyncDatetime = lastTxSyncDatetimes[accountId] || 0;
 
     const d = new Date(lastTxSyncDatetime * 1000);
     const types = [
@@ -147,21 +148,21 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
 
     const lastCreatedAt = Math.max(...updatedAccountHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-    console.log(lastCreatedAt, updatedHistory);
     dispatch(checkAssetTransferTransactionsAction());
-    /* TODO: FIX ME
-    // TODO: we need to check account that should store the received notifications
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
-    dispatch(saveDbAction('app_settings', { appSettings: { lastTxSyncDatetime: lastCreatedAt } }));
+    const updatedLastTxSyncDatetimes = {
+      ...lastTxSyncDatetimes,
+      [accountId]: lastCreatedAt,
+    };
+    dispatch(saveDbAction('app_settings', { appSettings: { lastTxSyncDatetimes: updatedLastTxSyncDatetimes } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: { lastTxSyncDatetime: lastCreatedAt },
+      payload: { lastTxSyncDatetimes: updatedLastTxSyncDatetimes },
     });
     dispatch({
       type: SET_HISTORY,
       payload: updatedHistory,
     });
-    */
   };
 };
 
