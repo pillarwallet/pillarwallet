@@ -31,11 +31,9 @@ import Intercom from 'react-native-intercom';
 import { BaseText, Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
-import QRCodeScanner from 'components/QRCodeScanner';
 import { fetchTransactionsHistoryAction, fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { onWalletConnectSessionRequest } from 'actions/walletConnectActions';
 import { resetDeepLinkDataAction, approveLoginAttemptAction } from 'actions/deepLinkActions';
 import IconButton from 'components/IconButton';
 import Tabs from 'components/Tabs';
@@ -68,7 +66,6 @@ type Props = {
   fetchTransactionsHistory: () => Function,
   fetchInviteNotifications: Function,
   acceptInvitation: Function,
-  onWalletConnectSessionRequest: Function,
   cancelInvitation: Function,
   rejectInvitation: Function,
   setUnreadNotificationsStatus: Function,
@@ -88,7 +85,6 @@ type esDataType = {
   body: string,
 };
 type State = {
-  isScanning: boolean,
   showCamera: boolean,
   usernameWidth: number,
   activeTab: string,
@@ -293,7 +289,6 @@ class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   state = {
-    isScanning: false,
     forceCloseLoginApprovalModal: false,
     showCamera: false,
     permissionsGranted: false,
@@ -336,22 +331,6 @@ class HomeScreen extends React.Component<Props, State> {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
-
-  validateWalletConnectQRCode = (uri: string) => {
-    if (uri.startsWith('wc:')) {
-      return true;
-    }
-    return false;
-  };
-
-  toggleQRScanner = () => this.setState({ isScanning: !this.state.isScanning });
-
-  handleQRScannerClose = () => this.setState({ isScanning: false });
-
-  handleQRRead = (uri: string) => {
-    this.props.onWalletConnectSessionRequest(uri);
-    this.handleQRScannerClose();
-  };
 
   goToProfile = () => {
     const { navigation } = this.props;
@@ -518,9 +497,8 @@ class HomeScreen extends React.Component<Props, State> {
         name: 'All',
         tabImageNormal: allIconNormal,
         tabImageActive: allIconActive,
-        onPress: () => this.setActiveTab(
-          ALL,
-          {
+        onPress: () =>
+          this.setActiveTab(ALL, {
             title: 'Make your first step',
             body: 'Your activity will appear here.',
           }),
@@ -600,18 +578,6 @@ class HomeScreen extends React.Component<Props, State> {
                 color={baseColors.darkGray}
                 fontSize={24}
                 onPress={() => this.goToProfile()}
-              />
-              <IconButton
-                icon="scan"
-                color={baseColors.electricBlue}
-                fontSize={fontSizes.extraLarge}
-                onPress={this.toggleQRScanner}
-                iconText="SCAN"
-                style={{
-                  marginTop: 5,
-                  marginRight: -2,
-                  alignItems: 'center',
-                }}
               />
             </HomeHeaderRight>
           </HomeHeaderRow>
@@ -701,7 +667,7 @@ class HomeScreen extends React.Component<Props, State> {
           ) : (
             <RecentConnectionsSpacer />
           )}
-          {badges && badges.length ?
+          {badges && badges.length ? (
             <BadgesWrapper>
               <BadgesBlock>
                 <View style={{ backgroundColor: baseColors.snowWhite }}>
@@ -711,10 +677,10 @@ class HomeScreen extends React.Component<Props, State> {
                   {this.renderBadges()}
                 </BadgesScrollView>
               </BadgesBlock>
-            </BadgesWrapper> :
-
+            </BadgesWrapper>
+          ) : (
             <BadgesSpacer />
-          }
+          )}
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
           </TabsHeader>
@@ -766,12 +732,6 @@ class HomeScreen extends React.Component<Props, State> {
             </View>
           </Wrapper>
         </SlideModal>
-        <QRCodeScanner
-          validator={this.validateWalletConnectQRCode}
-          isActive={this.state.isScanning}
-          onDismiss={this.handleQRScannerClose}
-          onRead={this.handleQRRead}
-        />
       </Container>
     );
   }
@@ -798,7 +758,6 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
   cancelInvitation: invitation => dispatch(cancelInvitationAction(invitation)),
   acceptInvitation: invitation => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: invitation => dispatch(rejectInvitationAction(invitation)),

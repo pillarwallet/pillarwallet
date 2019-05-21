@@ -138,7 +138,7 @@ type Props = {
   value?: ?string | ?boolean,
 }
 
-export default class ProfileSettingsItem extends React.Component<Props> {
+export default class SettingsListItem extends React.Component<Props> {
   renderContent(processedValue: ?string | ?boolean) {
     const {
       label,
