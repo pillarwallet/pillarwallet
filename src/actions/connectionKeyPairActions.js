@@ -278,10 +278,8 @@ export const updateConnectionKeyPairs = (
             payload: resultConnectionKeys,
           });
           await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
-          dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey));
-        } else {
-          dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey));
         }
+        dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey));
       } catch (e) {
         await dispatch({
           type: UPDATE_WALLET_STATE,
