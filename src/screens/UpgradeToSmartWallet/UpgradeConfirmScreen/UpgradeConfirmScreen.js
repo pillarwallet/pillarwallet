@@ -85,6 +85,13 @@ const DetailsWrapper = styled.View`
   padding: 30px 20px 0px 20px;
 `;
 
+const WarningMessage = styled(Paragraph)`
+  text-align: center;
+  font-size: ${fontSizes.extraSmall};
+  color: ${baseColors.fireEngineRed};
+  padding-bottom: ${spacing.rhythm}px;
+`;
+
 const GAS_LIMIT = 500000;
 
 class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
@@ -200,6 +207,15 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       };
     });
 
+    const etherTransfer = nonEmptyAssets.find(asset => asset.symbol === ETH);
+
+    /**
+     * there should be enough ether at least for deployment when tokens are transferred
+     * and there should be enough ether in primary wallet for asset transfer transactions
+    */
+    const notEnoughEther = !etherTransfer
+      || (etherTransfer.amount - parseFloat(feeSmartContractDeployEth) < parseFloat(feeTokensTransferEth));
+
     return (
       <Container>
         <WhiteWrapper>
@@ -229,9 +245,14 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
             <DetailsTitle>Est. fee for smart contract deployment</DetailsTitle>
             <DetailsValue>{smartContractDeployFee}</DetailsValue>
           </DetailsLine>
+          {!!notEnoughEther &&
+          <WarningMessage>
+            There is not enough ether for contract deployment and asset transfer transactions estimated fees.
+          </WarningMessage>}
           {!upgradeStarted &&
           <Button
             block
+            disabled={!!notEnoughEther}
             title="Create Smart Wallet"
             onPress={() => this.onNextClick(gasPrice)}
           />}

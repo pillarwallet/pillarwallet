@@ -45,6 +45,7 @@ import {
   CONTACT,
   UPGRADE_CONFIRM,
 } from 'constants/navigationConstants';
+import { ETH } from 'constants/assetsConstants';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { formatAmount } from 'utils/common';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -99,6 +100,13 @@ const LabelWrapper = styled.View`
 
 const GAS_LIMIT = 500000;
 const genericToken = require('assets/images/tokens/genericToken.png');
+
+const WarningMessage = styled(Paragraph)`
+  text-align: center;
+  font-size: ${fontSizes.extraSmall};
+  color: ${baseColors.fireEngineRed};
+  padding-bottom: ${spacing.rhythm}px;
+`;
 
 class UpgradeReviewScreen extends React.PureComponent<Props> {
   componentDidMount() {
@@ -176,7 +184,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     } = this.props;
 
     const gasPriceWei = this.getGasPriceWei();
-    const assetsTransferFee = formatAmount(utils.formatEther(
+    const assetsTransferFeeEth = formatAmount(utils.formatEther(
       BigNumber(gasPriceWei * (transferAssets.length + transferCollectibles.length)).toFixed(),
     ));
 
@@ -206,6 +214,10 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
         toEdit: CHOOSE_ASSETS_TO_TRANSFER,
       });
     }
+    const etherTransfer = nonEmptyAssets.find((asset: any) => asset.symbol === ETH);
+
+    // there should be enough to transfer selected assets from primary wallet
+    const notEnoughEther = !etherTransfer || etherTransfer.amount < parseFloat(assetsTransferFeeEth);
 
     return (
       <Container>
@@ -234,11 +246,15 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
           ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
         />
         <Footer>
+          {!!notEnoughEther &&
+          <WarningMessage>
+            There is not enough ether for asset transfer transactions estimated fee.
+          </WarningMessage>}
           <FooterInner style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
             <LabelWrapper>
-              <Label style={{ textAlign: 'center' }}>{`Total estimated fee ${assetsTransferFee} ETH`}</Label>
+              <Label style={{ textAlign: 'center' }}>{`Total estimated fee ${assetsTransferFeeEth} ETH`}</Label>
             </LabelWrapper>
-            <Button block title="Continue" onPress={this.onNextClick} />
+            <Button disabled={!!notEnoughEther} block title="Continue" onPress={this.onNextClick} />
           </FooterInner>
         </Footer>
       </Container>
