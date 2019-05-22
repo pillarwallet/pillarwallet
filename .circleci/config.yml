@@ -866,7 +866,7 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                  - fix/staging-prod-android-cache
       - slack-prod-approval:
           requires:
             - stage_ios
