@@ -37,10 +37,19 @@ aliases:
     restore_cache:
       keys:
         - ios-pods-{{ checksum "./ios/Podfile.lock" }}
+  - &fetch_pods
+    run:
+      name: Fetch CocoaPods
+      command: |
+        Y | sudo gem uninstall cocoapods
+        sudo gem install cocoapods -v 1.5.3
+        curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
   - &install_pods
     run:
       name: Install CocoaPods
-      command: cd ios && bundle exec pod check || ((curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf) && bundle exec pod repo update && bundle exec pod install)
+      command: |
+        cd ios
+        pod install --verbose
   - &save_pod_cache
     save_cache:
       key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
@@ -188,6 +197,7 @@ jobs:
       - *save_gems_cache_ios
 
       - *restore_pod_cache
+      - *fetch_pods
       - *install_pods
       - *save_pod_cache
 
@@ -217,7 +227,7 @@ jobs:
           name: prepare to archive ipa file
           command: |
             mkdir -p ./toArchive
-            cp ./ios/pillarwallet-staging.ipa ./toArchive
+            cp ./ios/output/gym/pillarwallet-staging.ipa ./toArchive
       - store_artifacts:
           path: ./toArchive
           destination: app_build
@@ -602,12 +612,11 @@ jobs:
           command: |
             Y | sudo gem uninstall cocoapods
             sudo gem install cocoapods -v 1.5.3
-            pod --version
+            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
       - run:
           name: Install CocoaPods
           command: |
             cd ios
-            pod repo update
             pod install --verbose
       - save_cache:
           key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
@@ -645,10 +654,15 @@ jobs:
             aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$APP_BUILD_NUMBER.ipa --region eu-west-2
             aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$APP_BUILD_NUMBER.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-prod.txt
       - run:
-           name: Announce Deployment
+           name: Announce Prod Builds
            command: |
              chmod +x .circleci/announceProdBuilds.sh
              .circleci/announceProdBuilds.sh "Pillar Wallet" "Production TestFlight" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
+      - run:
+           name: Announce Deployment
+           command: |
+             chmod +x .circleci/announceDeployment.sh
+             .circleci/announceDeployment.sh "Pillar Wallet" "Production TestFlight" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
       - run:
           name: Announce production iOS URL
           command: |
@@ -787,11 +801,16 @@ jobs:
             aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$APP_BUILD_NUMBER.apk --region eu-west-2
             aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$APP_BUILD_NUMBER.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
       - run:
-          name: Announce Deployment
+          name: Announce Prod Builds
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceProdBuilds.sh
             .circleci/announceProdBuilds.sh "Pillar Wallet" "Production Google Play Store" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
+      - run:
+           name: Announce Deployment
+           command: |
+             chmod +x .circleci/announceDeployment.sh
+             .circleci/announceDeployment.sh "Pillar Wallet" "Production Google Play Store" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
       - run:
           name: Announce Prod Android URL
           command: |
@@ -826,14 +845,14 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/smart-wallet-sdk
+                  - develop
       - hockeyapp_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/smart-wallet-sdk
+                  - develop
       - stage_ios:
           requires:
             - build-and-test

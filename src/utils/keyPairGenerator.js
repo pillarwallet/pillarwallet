@@ -65,13 +65,14 @@ const threadJobWorkerSeed = (
   connectionsCount,
   thread,
   lastConnectionKeyIndex,
+  threadCount,
 ) => {
   return () => {
     return new Promise((resolve, reject) => {
-      let count = 10;
+      let count = 5;
       let lastCount = lastConnectionKeyIndex + (threadIndex * count);
       if (lastConnectionKeyIndex < 0) {
-        count = Math.ceil((50 + connectionsCount) / 5);
+        count = Math.ceil(((threadCount * count) + connectionsCount) / threadCount);
         lastCount = threadIndex * count;
       }
       try {
@@ -96,14 +97,11 @@ const threadJobWorkerSeed = (
   };
 };
 
-async function threadPoolCreation() {
-  const threads = [
-    new Thread('index.thread.js'),
-    new Thread('index.thread.js'),
-    new Thread('index.thread.js'),
-    new Thread('index.thread.js'),
-    new Thread('index.thread.js'),
-  ];
+async function threadPoolCreation(threadCount: number = 5) {
+  const threads = [];
+  for (let i = 0; i < threadCount; i++) {
+    threads.push(new Thread('index.thread.js'));
+  }
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(threads);
@@ -120,8 +118,8 @@ export async function generateKeyPairThreadPool(
   const derivePathBase = 'm/44/60\'/0\'/0/0';
   const promiseJobs = [];
   if (connectionsKeyPairCount < 20) {
-    const threads = await threadPoolCreation();
-    for (let i = 0; i < 5; i++) {
+    const threads = await threadPoolCreation(5);
+    for (let i = 0; i < threads.length; i++) {
       const job = threadJobWorkerSeed(
         mnemonic,
         privateKey,
@@ -130,6 +128,7 @@ export async function generateKeyPairThreadPool(
         connectionsCount,
         threads[i],
         lastConnectionKeyIndex,
+        threads.length,
       );
       promiseJobs.push(job);
     }
