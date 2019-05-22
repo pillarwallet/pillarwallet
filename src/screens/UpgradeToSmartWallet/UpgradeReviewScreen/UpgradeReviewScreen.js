@@ -55,7 +55,6 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   assets: Assets,
   balances: Balances,
   recoveryAgents: RecoveryAgent[],

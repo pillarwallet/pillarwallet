@@ -36,15 +36,16 @@ import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 import { fetchGasInfoAction } from 'actions/historyActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
-import { getRate } from 'utils/assets';
+import { getRate, getBalance } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchAssetsBalances: (assets: Assets) => Function,
   assets: Assets,
   balances: Balances,
   transferAssets: AssetTransfer[],
@@ -100,25 +101,39 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
   };
 
   componentDidMount() {
-    this.props.fetchGasInfo();
+    const {
+      assets,
+      fetchGasInfo,
+      fetchAssetsBalances,
+    } = this.props;
+    fetchGasInfo();
+    fetchAssetsBalances(assets);
   }
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
-      this.props.fetchGasInfo();
+      const {
+        assets,
+        fetchGasInfo,
+        fetchAssetsBalances,
+      } = this.props;
+      fetchGasInfo();
+      fetchAssetsBalances(assets);
     }
   }
 
-  onNextClick = (gasPrice) => {
+  onNextClick = (gasPriceWei) => {
     const {
       assets,
       transferAssets,
       transferCollectibles,
       navigation,
+      balances,
     } = this.props;
     this.setState({ upgradeStarted: true });
+    const gasPrice = gasPriceWei.div(GAS_LIMIT).toNumber();
     const assetsArray = Object.values(assets);
-    const transferTransactions = [
+    const transferTransactionsCombined = [
       ...transferCollectibles,
       ...transferAssets,
     ].map(({ name: assetName, amount }) => {
@@ -154,6 +169,20 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
         decimals,
       };
     }).filter(tx => Object.keys(tx).length); // temporary filter before collectibles is sorted out
+    const feeTokensTransferEth = parseFloat(formatAmount(utils.formatEther(
+      BigNumber(gasPriceWei * transferTransactionsCombined.length).toFixed(),
+    )));
+    const etherTransaction: any = transferTransactionsCombined.find(asset => asset.symbol === ETH);
+    const { amount: etherTransactionAmount } = etherTransaction;
+    const etherBalance = getBalance(balances, ETH);
+    const balanceAfterTransfer = etherBalance - etherTransactionAmount - feeTokensTransferEth;
+    const updateEtherTransactionAmount = balanceAfterTransfer < 0
+      // `balanceAfterTransfer` will be negative
+      ? balanceAfterTransfer + etherTransactionAmount
+      : etherTransactionAmount;
+    const transferTransactions = transferTransactionsCombined.filter(asset => asset.symbol !== ETH);
+    // make sure ether transaction is the last one
+    transferTransactions.push({ ...etherTransaction, amount: updateEtherTransactionAmount });
     this.setState({ upgradeStarted: false }, () => {
       navigation.navigate(SMART_WALLET_UNLOCK, { transferTransactions });
     });
@@ -182,7 +211,6 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const gasPriceWei = this.getGasPriceWei();
     const fiatSymbol = getCurrencySymbol(fiatCurrency);
-    const gasPrice = gasPriceWei.div(GAS_LIMIT).toNumber();
 
     const feeTokensTransferEth = formatAmount(utils.formatEther(
       BigNumber(gasPriceWei * (transferAssets.length + transferCollectibles.length)).toFixed(),
@@ -254,7 +282,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
             block
             disabled={!!notEnoughEther}
             title="Create Smart Wallet"
-            onPress={() => this.onNextClick(gasPrice)}
+            onPress={() => this.onNextClick(gasPriceWei)}
           />}
           {upgradeStarted && <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>}
         </DetailsWrapper>
@@ -298,6 +326,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
+  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(UpgradeConfirmScreen);
