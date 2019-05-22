@@ -836,14 +836,14 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/smart-wallet-sdk
+                  - develop
       - hockeyapp_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/smart-wallet-sdk
+                  - develop
       - stage_ios:
           requires:
             - build-and-test
