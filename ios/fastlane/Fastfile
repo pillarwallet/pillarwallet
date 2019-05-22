@@ -233,7 +233,7 @@ platform :ios do
       notes: changelog,
       commit_sha: commit[:commit_hash],
       notify: "1",
-      ipa: "/Users/distiller/pillarwallet/ios/output/gym/pillarwallet-staging.ipa"
+      ipa: "./output/gym/pillarwallet-staging.ipa"
     )
 
   end
