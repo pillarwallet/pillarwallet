@@ -42,7 +42,6 @@ import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import ChatTab from 'components/ChatTab';
-import Tabs from 'components/Tabs';
 import type { ApiUser } from 'models/Contacts';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
@@ -102,6 +101,7 @@ type State = {
   activeTab: string,
   isSheetOpen: boolean,
   forceOpen: boolean,
+  collapseHeight: ?number,
 };
 
 class Contact extends React.Component<Props, State> {
@@ -124,6 +124,7 @@ class Contact extends React.Component<Props, State> {
       activeTab: 'CHAT',
       isSheetOpen: shouldOpenSheet,
       forceOpen: shouldOpenSheet,
+      collapseHeight: null,
     };
   }
 
@@ -250,6 +251,7 @@ class Contact extends React.Component<Props, State> {
         isOpen={activeTab === CHAT && isSheetOpen}
         navigation={navigation}
         hasUnreads={!!unreadCount}
+        getCollapseHeight={(cHeight) => { this.setState({ collapseHeight: cHeight }); }}
       />
     );
   };
@@ -268,6 +270,7 @@ class Contact extends React.Component<Props, State> {
       manageContactType,
       activeTab,
       forceOpen,
+      collapseHeight,
     } = this.state;
 
     const contactName = navigation.getParam('username', '');
@@ -308,24 +311,13 @@ class Contact extends React.Component<Props, State> {
         hideSheet={!isAccepted}
         bottomSheetProps={{
           forceOpen,
-          initialSheetHeight: 240,
+          initialSheetHeight: activeTab === CHAT ? collapseHeight + 130 : 260,
           swipeToCloseHeight: 62,
           onSheetOpen: this.handleSheetOpen,
           onSheetClose: () => { this.setState({ isSheetOpen: false }); },
           animateHeight: activeTab === CHAT,
-          floatingHeaderContent: (
-            <Tabs
-              initialActiveTab={activeTab}
-              tabs={contactTabs}
-              wrapperStyle={{
-                position: 'absolute',
-                top: 8,
-                left: 0,
-                zIndex: 2,
-                width: '100%',
-              }}
-            />
-          ),
+          tabs: contactTabs,
+          activeTab,
         }}
         bottomSheetChildren={
           (

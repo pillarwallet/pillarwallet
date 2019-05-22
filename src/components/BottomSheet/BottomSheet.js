@@ -29,6 +29,7 @@ import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
 import { getiOSNavbarHeight } from 'utils/common';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
+import Tabs from 'components/Tabs';
 
 type Props = {
   screenHeight: number, // IMPORTANT to calculate sheet height,
@@ -43,10 +44,11 @@ type Props = {
   scrollingComponentsRefs?: Array<Object>, // list of refs of scrollable components.
   // Used to scroll all content of those components to the top once sheet is closed
   children: React.Node,
-  floatingHeaderContent?: React.Node,
   sheetWrapperStyle?: Object,
   forceOpen: boolean,
   captureTabs?: boolean,
+  tabs?: Array<Object>,
+  activeTab?: string,
 }
 
 type State = {
@@ -176,7 +178,7 @@ export default class BottomSheet extends React.Component<Props, State> {
     } = this.props;
     this.panResponder = React.createRef();
     this.isTransitioning = false;
-    this.initialPosition = screenHeightFromDimensions - initialSheetHeight - topOffset;
+    this.initialPosition = USABLE_SCREEN_HEIGHT - initialSheetHeight - topOffset;
     this.forceAnimateAfterNotCapturedTouch = false;
 
     const initialTopPosition = forceOpen ? 0 : this.initialPosition;
@@ -195,10 +197,36 @@ export default class BottomSheet extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { forceOpen, screenHeight, topOffset } = this.props;
-    const { animatedHeight, isSheetOpen } = this.state;
+    const {
+      forceOpen,
+      screenHeight,
+      topOffset,
+      initialSheetHeight,
+      animateHeight,
+    } = this.props;
+    const { animatedHeight, yTranslate, isSheetOpen } = this.state;
     if (forceOpen !== prevProps.forceOpen) {
       this.animateSheet();
+    }
+
+    if (prevProps.initialSheetHeight !== initialSheetHeight && !isSheetOpen) {
+      this.initialPosition = USABLE_SCREEN_HEIGHT - initialSheetHeight - topOffset;
+
+      if (animateHeight) {
+        Animated.spring(animatedHeight, {
+          toValue: initialSheetHeight,
+          bounciness: 0,
+        }).start(() => {
+          yTranslate.setValue(this.initialPosition);
+        });
+      } else {
+        Animated.spring(yTranslate, {
+          toValue: this.initialPosition,
+          bounciness: 0,
+        }).start(() => {
+          animatedHeight.setValue(initialSheetHeight);
+        });
+      }
     }
 
     if (prevProps.screenHeight !== screenHeight && isSheetOpen) {
@@ -209,9 +237,9 @@ export default class BottomSheet extends React.Component<Props, State> {
     }
 
     if (this.forceAnimateAfterNotCapturedTouch
-      && prevProps.floatingHeaderContent !== this.props.floatingHeaderContent) {
-      this.animateSheet();
+      && prevProps.activeTab !== this.props.activeTab) {
       this.forceAnimateAfterNotCapturedTouch = false;
+      this.animateSheet();
     }
   }
 
@@ -239,11 +267,11 @@ export default class BottomSheet extends React.Component<Props, State> {
         this.animateSheet();
       },
       onStartShouldSetPanResponderCapture: (e) => {
-        const { captureTabs } = this.props;
+        const { captureTabs, tabs } = this.props;
         const { isSheetOpen } = this.state;
         const { pageX, locationY } = e.nativeEvent;
 
-        if (!captureTabs) {
+        if (!captureTabs && !!tabs) {
           if (locationY.toFixed(2) > VERTICAL_TAB_BOUNDARIES[0]
             && locationY.toFixed(2) < VERTICAL_TAB_BOUNDARIES[1]
             && pageX.toFixed(2) > HORIZONTAL_TAB_BOUNDARIES[0]
@@ -360,11 +388,12 @@ export default class BottomSheet extends React.Component<Props, State> {
     const {
       topOffset,
       children,
-      floatingHeaderContent,
       screenHeight,
       sheetWrapperStyle,
       animateHeight,
       initialSheetHeight,
+      tabs,
+      activeTab,
     } = this.props;
 
     const sheetHeight = screenHeight - topOffset;
@@ -502,7 +531,19 @@ export default class BottomSheet extends React.Component<Props, State> {
                 />
               </HandlebarsWrapper>
             </Cover>
-            {floatingHeaderContent}
+            {!!tabs &&
+              <Tabs
+                initialActiveTab={activeTab}
+                tabs={tabs}
+                wrapperStyle={{
+                  position: 'absolute',
+                  top: 8,
+                  left: 0,
+                  zIndex: 2,
+                  width: '100%',
+                }}
+              />
+            }
           </FloatingHeader>
           <AnimatedModalWrapper style={{ height: animatedHeight }}>
             <View style={[wrapperStyle, { sheetWrapperStyle }]}>
@@ -514,6 +555,7 @@ export default class BottomSheet extends React.Component<Props, State> {
         <AnimatedClickableBackdrop
           onPress={this.animateSheet}
           style={backdropAnimation}
+          activeOpacity={BACKDROP_OPACITY}
         />}
       </React.Fragment>
     );
