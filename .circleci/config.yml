@@ -462,7 +462,7 @@ jobs:
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
-          key: android-node-{{ checksum "../yarn.lock" }}
+          key: android-node-{{ checksum "./yarn.lock" }}
       - run:
             name: Authenticate with Artifactory
             command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
@@ -476,7 +476,7 @@ jobs:
           name: Install node dependencies
           command: yarn install
       - save_cache:
-          key: android-node-{{ checksum "../yarn.lock" }}
+          key: android-node-{{ checksum "./yarn.lock" }}
           paths:
             - ~/pillarwallet/nodes_modules
       - restore_cache:
@@ -491,7 +491,7 @@ jobs:
           paths:
             - vendor/bundle
       - restore_cache:
-          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum "./android/app/build.gradle" }}
       - run:
           name: Chmod permissions
           command: cd android && sudo chmod +x ./gradlew
@@ -509,7 +509,7 @@ jobs:
           name: Download Dependencies
           command: cd android && ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
       - save_cache:
-          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum "./android/app/build.gradle" }}
           paths:
             - ~/.gradle
             - ~/.m2
@@ -718,7 +718,7 @@ jobs:
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
-          key: android-node-{{ checksum "../yarn.lock" }}
+          key: android-node-{{ checksum "./yarn.lock" }}
       - run:
             name: Authenticate with Artifactory
             command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
@@ -732,7 +732,7 @@ jobs:
           name: Install node dependencies
           command: yarn install
       - save_cache:
-          key: android-node-{{ checksum "../yarn.lock" }}
+          key: android-node-{{ checksum "./yarn.lock" }}
           paths:
             - ~/pillarwallet/nodes_modules
       - restore_cache:
@@ -747,7 +747,7 @@ jobs:
           paths:
             - vendor/bundle
       - restore_cache:
-          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum "./android/app/build.gradle" }}
       - run:
           name: Chmod permissions
           command: cd android && sudo chmod +x ./gradlew
@@ -765,7 +765,7 @@ jobs:
           name: Download Dependencies
           command: cd android && ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
       - save_cache:
-          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum "./android/app/build.gradle" }}
           paths:
             - ~/.gradle
             - ~/.m2
