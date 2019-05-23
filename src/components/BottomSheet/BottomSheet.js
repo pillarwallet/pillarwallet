@@ -154,11 +154,15 @@ const AnimatedClickableBackdrop = Animated.createAnimatedComponent(ClickableBack
 const HORIZONTAL_TAB_BOUNDARIES = [14, screenWidth - 28];
 const BACKDROP_OPACITY = 0.7;
 
+const DOWN = 'DOWN';
+const UP = 'UP';
+
 export default class BottomSheet extends React.Component<Props, State> {
   initialPosition: number;
   panResponder: Object;
   isTransitioning: boolean;
   forceAnimateAfterNotCapturedTouch: boolean;
+  currentDirection: string;
 
   static defaultProps = {
     screenHeight: USABLE_SCREEN_HEIGHT,
@@ -180,6 +184,7 @@ export default class BottomSheet extends React.Component<Props, State> {
     this.isTransitioning = false;
     this.initialPosition = screenHeight - initialSheetHeight - topOffset;
     this.forceAnimateAfterNotCapturedTouch = false;
+    this.currentDirection = '';
 
     const initialTopPosition = forceOpen ? 0 : this.initialPosition;
     const initialHeight = forceOpen ? screenHeight - topOffset : initialSheetHeight;
@@ -246,6 +251,10 @@ export default class BottomSheet extends React.Component<Props, State> {
     }
   }
 
+  getDirection = (gestureState: Object) => {
+    return gestureState.vy > 0 ? DOWN : UP;
+  };
+
   buildPanResponder = () => {
     this.panResponder = PanResponder.create({
       onMoveShouldSetPanResponder: (e, gestureState) => {
@@ -262,12 +271,14 @@ export default class BottomSheet extends React.Component<Props, State> {
         const { isDragging } = this.state;
         if (!isDragging) this.setState({ isDragging: true });
         this.moveSheet(gestureState);
+        this.currentDirection = this.getDirection(gestureState);
       },
       onPanResponderRelease: () => {
         if (this.isTransitioning) return;
         const { isDragging } = this.state;
         if (isDragging) this.setState({ isDragging: false });
-        this.animateSheet();
+        this.animateSheet(this.currentDirection);
+        this.currentDirection = '';
       },
       onStartShouldSetPanResponderCapture: (e) => {
         const {
@@ -352,7 +363,7 @@ export default class BottomSheet extends React.Component<Props, State> {
     }
   };
 
-  animateSheet = (gestureState?: Object) => {
+  animateSheet = (direction?: string) => {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
 
@@ -366,8 +377,8 @@ export default class BottomSheet extends React.Component<Props, State> {
     } = this.props;
 
     let isGoingToUp = !isSheetOpen;
-    if (gestureState && gestureState !== 0) {
-      isGoingToUp = gestureState.vy < 0;
+    if (direction) {
+      isGoingToUp = direction === UP;
     }
 
     this.setState({ isSheetOpen: isGoingToUp });
