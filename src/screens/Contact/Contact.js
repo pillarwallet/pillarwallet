@@ -318,6 +318,7 @@ class Contact extends React.Component<Props, State> {
           animateHeight: activeTab === CHAT,
           tabs: contactTabs,
           activeTab,
+          hasChatTab: true,
         }}
         bottomSheetChildren={
           (

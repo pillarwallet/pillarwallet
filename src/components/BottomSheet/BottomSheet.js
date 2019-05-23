@@ -49,6 +49,7 @@ type Props = {
   captureTabs?: boolean,
   tabs?: Array<Object>,
   activeTab?: string,
+  hasChatTab?: boolean,
 }
 
 type State = {
@@ -150,7 +151,6 @@ const AnimatedLeftHandlebar = Animated.createAnimatedComponent(Handlebar);
 const AnimatedRightHandlebar = Animated.createAnimatedComponent(Handlebar);
 const AnimatedClickableBackdrop = Animated.createAnimatedComponent(ClickableBackdrop);
 
-const VERTICAL_TAB_BOUNDARIES = [6, 42];
 const HORIZONTAL_TAB_BOUNDARIES = [14, screenWidth - 28];
 const BACKDROP_OPACITY = 0.7;
 
@@ -178,7 +178,7 @@ export default class BottomSheet extends React.Component<Props, State> {
     } = this.props;
     this.panResponder = React.createRef();
     this.isTransitioning = false;
-    this.initialPosition = USABLE_SCREEN_HEIGHT - initialSheetHeight - topOffset;
+    this.initialPosition = screenHeight - initialSheetHeight - topOffset;
     this.forceAnimateAfterNotCapturedTouch = false;
 
     const initialTopPosition = forceOpen ? 0 : this.initialPosition;
@@ -199,19 +199,22 @@ export default class BottomSheet extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const {
       forceOpen,
-      screenHeight,
       topOffset,
       initialSheetHeight,
       animateHeight,
+      screenHeight,
     } = this.props;
     const { animatedHeight, yTranslate, isSheetOpen } = this.state;
+
     if (forceOpen !== prevProps.forceOpen) {
       this.animateSheet();
     }
 
-    if (prevProps.initialSheetHeight !== initialSheetHeight && !isSheetOpen) {
-      this.initialPosition = USABLE_SCREEN_HEIGHT - initialSheetHeight - topOffset;
+    if (prevProps.initialSheetHeight !== initialSheetHeight) {
+      this.initialPosition = screenHeight - initialSheetHeight - topOffset;
+    }
 
+    if (prevProps.initialSheetHeight !== initialSheetHeight && !isSheetOpen) {
       if (animateHeight) {
         Animated.spring(animatedHeight, {
           toValue: initialSheetHeight,
@@ -237,7 +240,7 @@ export default class BottomSheet extends React.Component<Props, State> {
     }
 
     if (this.forceAnimateAfterNotCapturedTouch
-      && prevProps.activeTab !== this.props.activeTab) {
+      && prevProps.animateHeight !== this.props.animateHeight) {
       this.forceAnimateAfterNotCapturedTouch = false;
       this.animateSheet();
     }
@@ -267,19 +270,42 @@ export default class BottomSheet extends React.Component<Props, State> {
         this.animateSheet();
       },
       onStartShouldSetPanResponderCapture: (e) => {
-        const { captureTabs, tabs } = this.props;
-        const { isSheetOpen } = this.state;
-        const { pageX, locationY } = e.nativeEvent;
+        const {
+          captureTabs,
+          tabs,
+          activeTab,
+          screenHeight,
+          hasChatTab,
+        } = this.props;
+        const { isSheetOpen, animatedHeight } = this.state;
+        const { pageX, pageY } = e.nativeEvent;
+        const topValueSheetPosition = screenHeight - animatedHeight._value;
 
         if (!captureTabs && !!tabs) {
-          if (locationY.toFixed(2) > VERTICAL_TAB_BOUNDARIES[0]
-            && locationY.toFixed(2) < VERTICAL_TAB_BOUNDARIES[1]
+          if (pageY > topValueSheetPosition + 30
+            && pageY < topValueSheetPosition + 60
             && pageX.toFixed(2) > HORIZONTAL_TAB_BOUNDARIES[0]
             && pageX.toFixed(2) < HORIZONTAL_TAB_BOUNDARIES[1]) {
             if (!isSheetOpen) {
-              this.forceAnimateAfterNotCapturedTouch = true;
+              if (hasChatTab) {
+                if ((activeTab === 'CHAT' && pageX.toFixed(2) < screenWidth / 2) ||
+                  (activeTab === 'ACTIVITY' && pageX.toFixed(2) > screenWidth / 2)) {
+                  this.animateSheet();
+                } else {
+                  this.forceAnimateAfterNotCapturedTouch = true;
+                }
+                return false;
+              }
+
+              this.animateSheet();
+              return false;
             }
-            return false;
+          } else if (activeTab === 'CHAT') {
+            if (pageY > screenHeight - 50
+              && pageY < screenHeight) {
+              this.animateSheet();
+              return false;
+            }
           }
         }
         return !isSheetOpen;

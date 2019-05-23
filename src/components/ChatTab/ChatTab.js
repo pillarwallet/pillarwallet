@@ -180,6 +180,7 @@ const renderInputToolbar = (props: Props) => {
         borderColor: baseColors.lightGray,
         margin: 0,
       }}
+
     />
   );
 };
@@ -370,7 +371,6 @@ class ChatTab extends React.Component<Props, State> {
   };
 
   renderComposer = (props: Props) => {
-    const { isOpen } = this.props;
     return (
       <Composer
         {...props}
@@ -385,9 +385,6 @@ class ChatTab extends React.Component<Props, State> {
           lineHeight: fontSizes.small,
         }}
         placeholder="Type your message here"
-        textInputProps={{
-          editable: isOpen,
-        }}
       />
     );
   };
