@@ -99,7 +99,11 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       ...groupedNotifications.connectionRejectedEvent,
     ].map(({ id: userId }) => userId);
 
-    const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
+    const sentInvitations = invitations.filter((invi) => {
+      return invi.type === TYPE_SENT;
+    });
+
+    const updatedInvitations = uniqBy(latestEventPerId.concat(sentInvitations), 'id')
       .filter(({ id }) => !invitationsToExclude.includes(id));
 
     // find new connections
