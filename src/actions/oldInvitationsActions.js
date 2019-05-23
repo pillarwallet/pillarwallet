@@ -99,9 +99,7 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       ...groupedNotifications.connectionRejectedEvent,
     ].map(({ id: userId }) => userId);
 
-    const sentInvitations = invitations.filter((invi) => {
-      return invi.type === TYPE_SENT;
-    });
+    const sentInvitations = invitations.filter(invi => invi.type === TYPE_SENT);
 
     const updatedInvitations = uniqBy(latestEventPerId.concat(sentInvitations), 'id')
       .filter(({ id }) => !invitationsToExclude.includes(id));
@@ -236,6 +234,14 @@ export const acceptOldInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(fetchOldInviteNotificationsAction());
+      Sentry.captureMessage('Ghost invitation on acceptOld', {
+        level: 'info',
+        extra: {
+          invitationId: invitation.id,
+          connectionKey: invitation.connectionKey,
+          walletId,
+        },
+      });
       return;
     }
 
@@ -343,6 +349,14 @@ export const rejectOldInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(fetchOldInviteNotificationsAction());
+      Sentry.captureMessage('Ghost invitation on rejectOld', {
+        level: 'info',
+        extra: {
+          invitationId: invitation.id,
+          connectionKey: invitation.connectionKey,
+          walletId,
+        },
+      });
       return;
     }
 
