@@ -20,7 +20,6 @@
 import * as React from 'react';
 import { Image } from 'react-native';
 import styled from 'styled-components/native';
-import { Wrapper } from 'components/Layout';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { spacing } from 'utils/variables';
 
@@ -32,6 +31,14 @@ const EmptyStateBGWrapper = styled.View`
   left: 0;
   width: 100%;
   padding: 8px ${spacing.rhythm}px;
+`;
+
+const Wrapper = styled.View`
+  margin-top: 20px;
+  padding-top: 45px;
+  padding-bottom: 90px;
+  align-items: center;
+  width: 100%;
 `;
 
 type Props = {
@@ -51,15 +58,7 @@ const EmptyTransactions = (props: Props) => {
   if (!title && bodyText) return null;
 
   return (
-    <Wrapper
-      fullScreen
-      style={{
-        marginTop: 20,
-        paddingTop: 45,
-        paddingBottom: 90,
-        alignItems: 'center',
-      }}
-    >
+    <Wrapper>
       <EmptyStateBGWrapper>
         <Image source={esLeft} resizeMode="contain" />
         <Image source={esRight} resizeMode="contain" />

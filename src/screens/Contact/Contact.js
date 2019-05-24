@@ -226,6 +226,17 @@ class Contact extends React.Component<Props, State> {
     this.setState({ isSheetOpen: true });
   };
 
+  manageFeedCollapseHeight = (length: number) => {
+    const { collapseHeight } = this.state;
+    const TWO_ITEMS_HEIGHT = 215;
+    const EMPTY_STATE_HEIGHT = 260;
+    if (length && collapseHeight !== TWO_ITEMS_HEIGHT) {
+      this.setState({ collapseHeight: TWO_ITEMS_HEIGHT });
+    } else if (!length && collapseHeight !== EMPTY_STATE_HEIGHT) {
+      this.setState({ collapseHeight: EMPTY_STATE_HEIGHT });
+    }
+  };
+
   renderSheetContent = (displayContact, unreadCount) => {
     const { activeTab, isSheetOpen } = this.state;
     const { navigation } = this.props;
@@ -242,6 +253,7 @@ class Contact extends React.Component<Props, State> {
             title: 'Make your first step',
             body: 'Your activity will appear here.',
           }}
+          getFeedLength={(length) => this.manageFeedCollapseHeight(length)}
         />
       );
     }
@@ -311,14 +323,14 @@ class Contact extends React.Component<Props, State> {
         hideSheet={!isAccepted}
         bottomSheetProps={{
           forceOpen,
-          initialSheetHeight: activeTab === CHAT ? collapseHeight + 130 : 260,
+          initialSheetHeight: activeTab === CHAT ? collapseHeight + 130 : collapseHeight,
           swipeToCloseHeight: 62,
           onSheetOpen: this.handleSheetOpen,
           onSheetClose: () => { this.setState({ isSheetOpen: false }); },
-          animateHeight: activeTab === CHAT,
+          animateHeight: true,
           tabs: contactTabs,
           activeTab,
-          hasChatTab: true,
+          inverse: activeTab === CHAT,
         }}
         bottomSheetChildren={
           (

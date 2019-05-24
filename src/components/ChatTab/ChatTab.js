@@ -451,7 +451,7 @@ class ChatTab extends React.Component<Props, State> {
         },
         onLayout: (e) => {
           const { getCollapseHeight } = this.props;
-          if (!Object.keys(props.nextMessage).length) {
+          if (!Object.keys(props.nextMessage).length && getCollapseHeight) {
             getCollapseHeight(e.nativeEvent.layout.height);
           }
           },
@@ -465,7 +465,7 @@ class ChatTab extends React.Component<Props, State> {
         <SystemMessageWrapper
           onLayout={(e) => {
             const { getCollapseHeight } = this.props;
-            if (!Object.keys(props.nextMessage).length) {
+            if (!Object.keys(props.nextMessage).length && getCollapseHeight) {
               getCollapseHeight(e.nativeEvent.layout.height);
             }
           }}
@@ -483,7 +483,7 @@ class ChatTab extends React.Component<Props, State> {
         <SystemMessageWrapper
           onLayout={(e) => {
             const { getCollapseHeight } = this.props;
-            if (!Object.keys(props.nextMessage).length) {
+            if (!Object.keys(props.nextMessage).length && getCollapseHeight) {
               getCollapseHeight(e.nativeEvent.layout.height);
             }
           }}

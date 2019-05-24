@@ -24,6 +24,7 @@ import {
   Dimensions,
   Platform,
   View,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
@@ -50,6 +51,7 @@ type Props = {
   tabs?: Array<Object>,
   activeTab?: string,
   hasChatTab?: boolean,
+  inverse?: boolean,
 }
 
 type State = {
@@ -134,7 +136,7 @@ const Handlebar = styled.View`
     : 'left: 2.2px;'}
 `;
 
-const ClickableBackdrop = styled.TouchableOpacity`
+const ClickableBackdrop = styled.View`
   flex: 1;
   position: absolute;
   top: 0;
@@ -426,11 +428,12 @@ export default class BottomSheet extends React.Component<Props, State> {
       topOffset,
       children,
       screenHeight,
-      sheetWrapperStyle,
       animateHeight,
       initialSheetHeight,
       tabs,
       activeTab,
+      inverse,
+      sheetWrapperStyle,
     } = this.props;
 
     const sheetHeight = screenHeight - topOffset;
@@ -441,9 +444,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       transform: [{ translateY: yTranslate }],
     };
 
-    let wrapperStyle = {
-      flex: 1,
-    };
+    let wrapperStyle = {};
 
     const topOutputRange = screenHeight - topOffset;
     let handlebarsOutputRanges = [
@@ -489,13 +490,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       }),
     };
 
-    if (animateHeight) {
-      style = {
-        height: animatedHeight,
-        bottom: 0,
-        left: 0,
-      };
-
+    if (inverse) {
       wrapperStyle = {
         height: sheetHeight,
         position: 'absolute',
@@ -503,6 +498,14 @@ export default class BottomSheet extends React.Component<Props, State> {
         left: 0,
         width: '100%',
         overflow: 'hidden',
+      };
+    }
+
+    if (animateHeight) {
+      style = {
+        height: animatedHeight,
+        bottom: 0,
+        left: 0,
       };
 
       handlebarsOutputRanges = [
@@ -583,17 +586,21 @@ export default class BottomSheet extends React.Component<Props, State> {
             }
           </FloatingHeader>
           <AnimatedModalWrapper style={{ height: animatedHeight }}>
-            <View style={[wrapperStyle, { sheetWrapperStyle }]}>
+            <View style={[{ flex: 1, width: '100%' }, wrapperStyle, sheetWrapperStyle]}>
               {children}
             </View>
           </AnimatedModalWrapper>
         </AnimatedSheet>
         {(isSheetOpen || isDragging) &&
-        <AnimatedClickableBackdrop
-          onPress={this.animateSheet}
-          style={backdropAnimation}
-          activeOpacity={BACKDROP_OPACITY}
-        />}
+          <TouchableWithoutFeedback
+            onPress={this.animateSheet}
+          >
+            <AnimatedClickableBackdrop
+              style={backdropAnimation}
+              activeOpacity={BACKDROP_OPACITY}
+            />
+          </TouchableWithoutFeedback>
+        }
       </React.Fragment>
     );
   };
