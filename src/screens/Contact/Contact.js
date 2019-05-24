@@ -323,11 +323,10 @@ class Contact extends React.Component<Props, State> {
         hideSheet={!isAccepted}
         bottomSheetProps={{
           forceOpen,
-          initialSheetHeight: activeTab === CHAT ? collapseHeight + 130 : collapseHeight,
+          sheetHeight: activeTab === CHAT ? collapseHeight + 130 : collapseHeight,
           swipeToCloseHeight: 62,
           onSheetOpen: this.handleSheetOpen,
           onSheetClose: () => { this.setState({ isSheetOpen: false }); },
-          animateHeight: true,
           tabs: contactTabs,
           activeTab,
           inverse: activeTab === CHAT,

@@ -27,16 +27,15 @@ const EmptyStateBGWrapper = styled.View`
   flex-direction: row;
   justify-content: space-between;
   position: absolute;
-  top: 0;
+  top: -40px;
   left: 0;
   width: 100%;
   padding: 8px ${spacing.rhythm}px;
 `;
 
 const Wrapper = styled.View`
-  margin-top: 20px;
-  padding-top: 45px;
-  padding-bottom: 90px;
+  padding-top: 20px;
+  justify-content: center;
   align-items: center;
   width: 100%;
 `;
