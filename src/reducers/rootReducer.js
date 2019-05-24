@@ -49,6 +49,7 @@ import badgesReducer from './badgesReducer';
 import tankReducer from './tankReducer';
 import accountsReducer from './accountsReducer';
 import balancesReducer from './balancesReducer';
+import paymentNetworkReducer from './paymentNetworkReducer';
 
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
@@ -77,6 +78,7 @@ const appReducer = combineReducers({
   tank: tankReducer,
   accounts: accountsReducer,
   balances: balancesReducer,
+  paymentNetwork: paymentNetworkReducer,
 });
 
 const initialState = appReducer(undefined, {});
