@@ -50,6 +50,7 @@ import tankReducer from './tankReducer';
 import accountsReducer from './accountsReducer';
 import balancesReducer from './balancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
+import featureFlagsReducer from './featureFlagsReducer';
 
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
@@ -79,6 +80,7 @@ const appReducer = combineReducers({
   accounts: accountsReducer,
   balances: balancesReducer,
   paymentNetwork: paymentNetworkReducer,
+  featureFlags: featureFlagsReducer,
 });
 
 const initialState = appReducer(undefined, {});

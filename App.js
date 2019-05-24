@@ -35,6 +35,7 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
+import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import configureStore from './src/configureStore';
@@ -52,6 +53,7 @@ type Props = {
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
   executeDeepLink: Function,
+  fetchFeatureFlags: Function,
 }
 
 class App extends React.Component<Props, *> {
@@ -76,13 +78,15 @@ class App extends React.Component<Props, *> {
     Linking.removeEventListener('url', this.handleDeepLinkEvent);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
       checkDBConflicts,
       executeDeepLink,
+      fetchFeatureFlags,
     } = this.props;
+    await fetchFeatureFlags(); // feature flags are put into reducer state before any usage
     checkDBConflicts();
     SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
@@ -147,6 +151,7 @@ const mapDispatchToProps = (dispatch) => ({
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
+  fetchFeatureFlags: () => dispatch(fetchFeatureFlagsAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
