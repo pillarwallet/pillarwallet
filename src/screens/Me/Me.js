@@ -28,6 +28,7 @@ import QRCodeScanner from 'components/QRCodeScanner';
 import CircleButton from 'components/CircleButton';
 import SettingsListItem from 'components/ListItem/SettingsItem';
 import { onWalletConnectSessionRequest } from 'actions/walletConnectActions';
+import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import * as styled from './styles';
 
 const iconReceive = require('assets/icons/icon_receive.png');
@@ -38,7 +39,8 @@ type State = {
 
 type Props = {
   user: Object,
-  onWalletConnectSessionRequest: Function,
+  onWalletConnectCodeScan: (uri: string) => void,
+  onWalletLinkScan: (uri: string) => void;
 };
 
 const meSettingsItems = () => {
@@ -50,11 +52,8 @@ class MeScreen extends React.Component<Props, State> {
     isScanning: false,
   };
 
-  validateWalletConnectQRCode = (uri: string) => {
-    if (uri.startsWith('wc:')) {
-      return true;
-    }
-    return false;
+  validateScannedQRCode = (uri: string) => {
+    return uri.startsWith('wc:') || uri.startsWith('pillarwallet:');
   };
 
   toggleQRScanner = () => this.setState({ isScanning: !this.state.isScanning });
@@ -62,8 +61,15 @@ class MeScreen extends React.Component<Props, State> {
   handleQRScannerClose = () => this.setState({ isScanning: false });
 
   handleQRRead = (uri: string) => {
-    this.props.onWalletConnectSessionRequest(uri);
+    const { onWalletConnectCodeScan, onWalletLinkScan } = this.props;
+
     this.handleQRScannerClose();
+
+    if (uri.startsWith('wc:')) {
+      onWalletConnectCodeScan(uri);
+    } else {
+      onWalletLinkScan(uri);
+    }
   };
 
   render() {
@@ -118,7 +124,7 @@ class MeScreen extends React.Component<Props, State> {
           />
         </ScrollWrapper>
         <QRCodeScanner
-          validator={this.validateWalletConnectQRCode}
+          validator={this.validateScannedQRCode}
           isActive={this.state.isScanning}
           onDismiss={this.handleQRScannerClose}
           onRead={this.handleQRRead}
@@ -133,7 +139,8 @@ const mapStateToProps = ({ user: { data: user } }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
+  onWalletConnectCodeScan: uri => dispatch(onWalletConnectSessionRequest(uri)),
+  onWalletLinkScan: uri => dispatch(executeDeepLinkAction(uri)),
 });
 
 export default connect(
