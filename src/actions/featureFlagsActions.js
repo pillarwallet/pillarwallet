@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { getRemoteFeatureFlags } from 'services/featureFlag';
+import { getRemoteFeatureFlags } from 'services/featureFlags';
 import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 export const fetchFeatureFlagsAction = () => {

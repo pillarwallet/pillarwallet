@@ -28,11 +28,11 @@ export async function getRemoteFeatureFlags() {
   const cacheFor = isDev ? 0 : 3600; // 1 hours cache, 0 for non-cached results
   const firebaseConfig = firebase.config();
   await firebaseConfig.fetch(cacheFor).catch(() => null); // retrieve cached or fetch new if cache expired
-  await firebaseConfig.activateFetched();
+  await firebaseConfig.activateFetched().catch(() => null);
   const featureFlagKeys = Object.keys(INITIAL_FEATURE_FLAGS || {});
   const fetchedFlags = await firebaseConfig.getValues(featureFlagKeys).catch(() => {});
-  return Object.keys(fetchedFlags).reduce((flags, flagKey) => {
-    flags[flagKey] = !!fetchedFlags[flagKey].val();
-    return flags;
-  }, {});
+  return Object.keys(fetchedFlags).reduce((flags, flagKey) => ({
+    ...flags,
+    [flagKey]: !!fetchedFlags[flagKey].val(),
+  }), {});
 }
