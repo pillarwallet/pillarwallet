@@ -35,7 +35,7 @@ import debounce from 'lodash.debounce';
 import { createStructuredSelector } from 'reselect';
 
 // components
-import { BaseText, BoldText, LightText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
@@ -73,9 +73,7 @@ import {
   COLLECTIBLES,
 } from 'constants/assetsConstants';
 import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
-import { UPGRADE_TO_SMART_WALLET_FLOW, TANK_DETAILS, MANAGE_WALLETS_FLOW } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
@@ -88,7 +86,7 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 // local components
 import AssetsList from './AssetsList';
 import CollectiblesList from './CollectiblesList';
-import { ManageWalletsButton } from './ManageWalletsButton';
+import HeaderButtonsForSmartWallet from './HeaderButtonsForSmartWallet';
 
 
 type Props = {
@@ -111,7 +109,6 @@ type Props = {
   addAsset: Function,
   removeAsset: Function,
   accounts: Accounts,
-  tankData: Object,
   smartWalletState: Object,
 }
 
@@ -171,20 +168,6 @@ const Message = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   text-align: center;
-`;
-
-const UpgradeButton = styled.TouchableOpacity`
-  justify-content: flex-end;
-  align-items: center;
-  min-height: 20px;
-  margin-left: 14px;
-`;
-
-const UpgradeLabel = styled(LightText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  line-height: ${fontSizes.extraExtraSmall}px;
-  color: ${baseColors.darkGray};
-  margin-bottom: -2px;
 `;
 
 class AssetsScreen extends React.Component<Props, State> {
@@ -417,7 +400,6 @@ class AssetsScreen extends React.Component<Props, State> {
       navigation,
       collectibles,
       accounts,
-      tankData,
       smartWalletState,
     } = this.props;
     const { query, activeTab, forceHideRemoval } = this.state;
@@ -458,41 +440,22 @@ class AssetsScreen extends React.Component<Props, State> {
       ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
       : collectibles;
 
-    const smartWalletStatus: SmartWalletStatus =
-      getSmartWalletStatus(accounts, smartWalletState);
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
 
     const isSmartWallet = smartWalletStatus.hasAccount;
-    const activeAccount = accounts.find(({ isActive }) => isActive) || { type: '' };
-    const { type: walletType } = activeAccount;
 
     return (
       <Container inset={{ bottom: 0 }}>
         <SearchBlock
           headerProps={{
             title: 'assets',
-            showChannelStatus: activeAccount.type === ACCOUNT_TYPES.SMART_WALLET,
-            handleTankButtonTouch: () => navigation.navigate(TANK_DETAILS),
-            isSmartWallet,
-            tankValue: tankData.availableStake,
-            tankTotalValue: tankData.totalStake,
-            headerRightAddon:
-              isSmartWallet
-                ?
-                  <ManageWalletsButton
-                    onPress={() => navigation.navigate(MANAGE_WALLETS_FLOW)}
-                    label={walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key Based Wallet' : 'Smart.Wallet'}
-                    labelColor={walletType === ACCOUNT_TYPES.KEY_BASED
-                      ? baseColors.deepSkyBlue
-                      : baseColors.fireEngineRed
-                    }
-                  />
-                :
-                  <UpgradeButton onPress={() => navigation.navigate(UPGRADE_TO_SMART_WALLET_FLOW)}>
-                    <UpgradeLabel>Upgrade</UpgradeLabel>
-                  </UpgradeButton>,
+            headerRightAddon: <HeaderButtonsForSmartWallet
+              isSmartWallet={isSmartWallet}
+              navigation={navigation}
+            />,
             headerRightFlex: 2,
           }}
           headerRightFlex={4}
@@ -562,7 +525,6 @@ const mapStateToProps = ({
   },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
-  tank: { data: tankData },
   smartWallet: smartWalletState,
 }) => ({
   wallet,
@@ -574,7 +536,6 @@ const mapStateToProps = ({
   rates,
   baseFiatCurrency,
   assetsLayout,
-  tankData,
   smartWalletState,
 });
 

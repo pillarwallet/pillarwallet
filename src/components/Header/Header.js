@@ -20,10 +20,9 @@
 import * as React from 'react';
 import { Left, Body, Right } from 'native-base';
 import styled from 'styled-components/native';
-import { TextLink, BaseText, LightText } from 'components/Typography';
+import { TextLink, BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import IconButton from 'components/IconButton';
-import Tank from 'components/Tank';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import { noop } from 'utils/common';
 
@@ -53,11 +52,6 @@ type Props = {
   backIcon?: string,
   nextIconSize?: number,
   titleStyles?: ?Object,
-  showChannelStatus?: boolean,
-  handleTankButtonTouch?: Function,
-  isSmartWallet?: boolean,
-  tankValue?: number,
-  tankTotalValue?: number,
   headerRightAddon?: React.Node,
   white?: boolean,
 }
@@ -129,21 +123,6 @@ const HeaderRight = styled(Right)`
   flex-direction: row;
 `;
 
-const TankButton = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-  min-height: 20px;
-  margin-left: 14px;
-`;
-
-const TankLabel = styled(LightText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  line-height: ${fontSizes.extraExtraSmall}px;
-  color: ${baseColors.darkGray};
-  margin-bottom: -4px;
-`;
-
 const Header = (props: Props) => {
   const {
     onBack,
@@ -171,20 +150,14 @@ const Header = (props: Props) => {
     flexStart,
     backIcon,
     titleStyles,
-    showChannelStatus,
-    handleTankButtonTouch = noop,
-    isSmartWallet,
-    tankValue = 0,
-    tankTotalValue = 0,
     headerRightAddon,
     white,
   } = props;
-  const showRight = nextText || nextIcon || onBack || onClose || centerTitle || showChannelStatus || headerRightAddon;
+  const showRight = nextText || nextIcon || onBack || onClose || centerTitle || headerRightAddon;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
   const onlyCloseIcon = onClose && !nextText && !onCloseText;
-  const tankLabel = tankValue > 0 ? tankValue : 'PLT Tank';
 
   const getHeaderRightFlex = () => {
     if (headerRightFlex) {
@@ -255,13 +228,6 @@ const Header = (props: Props) => {
               horizontalAlign="flex-end"
             />
           </IconWrapper>
-          }
-          {showChannelStatus &&
-          <TankButton onPress={handleTankButtonTouch}>
-            <TankLabel>{tankLabel}</TankLabel>
-            {!!isSmartWallet &&
-            <Tank value={tankValue} totalValue={tankTotalValue} tiny wrapperStyle={{ marginLeft: 6 }} />}
-          </TankButton>
           }
           {onClose &&
           <IconWrapper>
