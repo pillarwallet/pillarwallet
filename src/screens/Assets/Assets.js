@@ -47,7 +47,7 @@ import Separator from 'components/Separator';
 import Tabs from 'components/Tabs';
 
 // types
-import type { Assets, Balances, Asset } from 'models/Asset';
+import type { Assets, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
@@ -80,7 +80,6 @@ import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 // local components
@@ -93,7 +92,6 @@ type Props = {
   fetchInitialAssets: () => Function,
   assets: Assets,
   collectibles: Collectible[],
-  balances: Balances,
   wallet: Object,
   rates: Object,
   assetsState: ?string,
@@ -540,7 +538,6 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
   collectibles: accountCollectiblesSelector,
 });
 
