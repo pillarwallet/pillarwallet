@@ -23,12 +23,14 @@ import { isTest } from 'utils/environment';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 export async function getRemoteFeatureFlags() {
-  if (isTest) firebase.config().enableDeveloperMode();
-  // 0 for non-cached results
-  await firebase.config().fetch(0);
-  await firebase.config().activateFetched();
+  const isDev = isTest || __DEV__;
+  if (isDev) firebase.config().enableDeveloperMode();
+  const cacheFor = isDev ? 0 : 3600; // 1 hours cache, 0 for non-cached results
+  const firebaseConfig = firebase.config();
+  await firebaseConfig.fetch(cacheFor).catch(() => null); // retrieve cached or fetch new if cache expired
+  await firebaseConfig.activateFetched();
   const featureFlagKeys = Object.keys(INITIAL_FEATURE_FLAGS || {});
-  const fetchedFlags = await firebase.config().getValues(featureFlagKeys);
+  const fetchedFlags = await firebaseConfig.getValues(featureFlagKeys).catch(() => {});
   return Object.keys(fetchedFlags).reduce((flags, flagKey) => {
     flags[flagKey] = !!fetchedFlags[flagKey].val();
     return flags;

@@ -24,7 +24,6 @@ import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 export const fetchFeatureFlagsAction = () => {
   return async (dispatch: Function) => {
     const featureFlags = await getRemoteFeatureFlags();
-    // TODO: store and add initial reducer values from store
     dispatch({
       type: SET_FEATURE_FLAGS,
       payload: featureFlags,

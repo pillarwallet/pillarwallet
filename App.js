@@ -78,7 +78,7 @@ class App extends React.Component<Props, *> {
     Linking.removeEventListener('url', this.handleDeepLinkEvent);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
@@ -86,8 +86,8 @@ class App extends React.Component<Props, *> {
       executeDeepLink,
       fetchFeatureFlags,
     } = this.props;
+    await fetchFeatureFlags(); // feature flags are put into reducer state before any usage
     checkDBConflicts();
-    fetchFeatureFlags();
     SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
