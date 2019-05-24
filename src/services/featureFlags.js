@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import firebase from 'react-native-firebase';
 import { isTest } from 'utils/environment';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
@@ -25,7 +24,7 @@ import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 export async function getRemoteFeatureFlags() {
   const isDev = isTest || __DEV__;
   if (isDev) firebase.config().enableDeveloperMode();
-  const cacheFor = isDev ? 0 : 3600; // 1 hours cache, 0 for non-cached results
+  const cacheFor = isDev ? 0 : 3600; // 1 hour cache, 0 for non-cached results
   const firebaseConfig = firebase.config();
   await firebaseConfig.fetch(cacheFor).catch(() => null); // retrieve cached or fetch new if cache expired
   await firebaseConfig.activateFetched().catch(() => null);
