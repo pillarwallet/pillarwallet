@@ -55,6 +55,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 
+
 const { Form } = t.form;
 const GAS_LIMIT = 500000;
 const MIN_TX_AMOUNT = 0.000000000000000001;
@@ -104,7 +105,7 @@ const getFormStructure = (
 };
 
 function AmountInputTemplate(locals) {
-  const { config: { icon, valueInFiatOutput, customProps } } = locals;
+  const { config: { icon, valueInFiatOutput } } = locals;
   const errorMessage = locals.error;
   const inputProps = {
     autoFocus: true,
@@ -129,7 +130,6 @@ function AmountInputTemplate(locals) {
       fontSize={fontSizes.giant}
       innerImageText={valueInFiatOutput}
       marginTop={30}
-      {...customProps}
     />
   );
 }
@@ -263,8 +263,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     const value = this._form.getValue();
     const { navigation } = this.props;
     const gasPrice = txFeeInWei.div(GAS_LIMIT).toNumber();
-    const customConfirmScreenKey = this.props.navigation.getParam('customConfirmScreenKey', '');
-    const confirmScreenKey = customConfirmScreenKey || SEND_TOKEN_CONFIRM;
 
     if (!value) return;
     const transactionPayload: TokenTransactionPayload = {
@@ -279,7 +277,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     };
 
     Keyboard.dismiss();
-    navigation.navigate(confirmScreenKey, {
+    navigation.navigate(SEND_TOKEN_CONFIRM, {
       transactionPayload,
     });
   };
@@ -358,6 +356,8 @@ class SendTokenAmount extends React.Component<Props, State> {
       baseFiatCurrency,
     } = this.props;
     const { token, icon, decimals } = this.assetData;
+    console.log({ icon });
+
     const balance = getBalance(balances, token);
     const formattedBalance = formatAmount(balance);
     const txFeeInWei = this.getTxFeeInWei();
@@ -372,24 +372,12 @@ class SendTokenAmount extends React.Component<Props, State> {
     const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);
     const formattedValueInFiat = formatMoney(valueInFiat);
     const valueInFiatOutput = `${currencySymbol}${formattedValueInFiat}`;
-    const customProps = this.props.navigation.getParam('customSingleInputProps', {});
-    const formOptions = generateFormOptions({
-      icon,
-      currency: token,
-      valueInFiatOutput,
-      customProps,
-    });
-    const customTitle = this.props.navigation.getParam('customTitle', '');
-    const customHeaderProps = this.props.navigation.getParam('customHeaderProps', '');
-    const customFee = this.props.navigation.getParam('customFee', '');
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
-
+    const formOptions = generateFormOptions({ icon, currency: token, valueInFiatOutput });
     return (
       <Container>
         <Header
           onBack={() => this.props.navigation.goBack(null)}
-          title={customTitle || `send ${this.assetData.token}`}
-          {...customHeaderProps}
+          title={`send ${this.assetData.token}`}
         />
         <Wrapper regularPadding>
           <Form
@@ -414,16 +402,12 @@ class SendTokenAmount extends React.Component<Props, State> {
         </Wrapper>
         <Footer keyboardVerticalOffset={35}>
           <FooterInner>
-            {!customFee &&
             <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
               <SendTokenDetailsValue>
                 <Label small>Fee:</Label>
                 <TextLink> {SPEED_TYPES[transactionSpeed]}</TextLink>
               </SendTokenDetailsValue>
-            </TouchableOpacity>}
-            {!!customFee &&
-            <Label>{`Estimated fee ${feeInEth} ETH`}</Label>
-            }
+            </TouchableOpacity>
             {!!value && !!parseFloat(value.amount) &&
               <Button
                 disabled={!session.isOnline || !gasInfo.isFetched}
