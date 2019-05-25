@@ -34,6 +34,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
+import { availableStakeSelector } from 'selectors/paymentNetwork';
 
 // types
 import type { Account } from 'models/Account';
@@ -50,6 +51,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   tankData: Object,
   activeAccount: Account,
+  availableStake: number,
 };
 
 const TankButton = styled.TouchableOpacity`
@@ -83,10 +85,15 @@ const UpgradeLabel = styled(LightText)`
 
 class HeaderButtonsForSmartWallet extends React.Component<Props> {
   renderSmartWalletButtons() {
-    const { navigation, activeAccount, tankData } = this.props;
+    const {
+      navigation,
+      activeAccount,
+      tankData,
+      availableStake,
+    } = this.props;
     const { type: walletType } = activeAccount;
     const showChannelStatus = activeAccount.type === ACCOUNT_TYPES.SMART_WALLET;
-    const tankValue = tankData.availableStake;
+    const tankValue = availableStake;
     const tankTotalValue = tankData.totalStake;
     const tankLabel = tankValue > 0 ? tankValue : 'PLT Tank';
 
@@ -133,6 +140,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccount: activeAccountSelector,
+  availableStake: availableStakeSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

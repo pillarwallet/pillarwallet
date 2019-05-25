@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { sdkModules } from '@archanova/sdk';
+import { ethToWei } from '@netgum/utils';
 import get from 'lodash.get';
 import Toast from 'components/Toast';
 import {
@@ -39,7 +40,9 @@ import {
   TX_CONFIRMED_STATUS,
   SET_HISTORY,
 } from 'constants/historyConstants';
+import { SET_ESTIMATED_TOPUP_FEE } from 'constants/paymentNetworkConstants';
 import SmartWalletService from 'services/smartWallet';
+import Storage from 'services/storage';
 import {
   addNewAccountAction,
   setActiveAccountAction,
@@ -56,7 +59,6 @@ import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import type { AssetTransfer } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
-import Storage from 'services/storage';
 
 const storage = Storage.getInstance('db');
 
@@ -474,3 +476,46 @@ export const onSmartWalletSdkAction = (event: Object) => {
   };
 };
 
+export const estimateTopUpVirtualAccountAction = () => {
+  return async (dispatch: Function) => {
+    if (!smartWalletService) {
+      Toast.show({
+        message: 'Please init the SDK first',
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
+
+    const value = ethToWei(0.1);
+    const response = await smartWalletService
+      .estimateTopUpAccountVirtualBalance(value)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString(),
+          type: 'warning',
+          autoClose: false,
+        });
+        return {};
+      });
+
+    if (!response || !Object.keys(response).length) return;
+
+    const {
+      fixedGas,
+      totalGas,
+      totalCost,
+      gasPrice,
+    } = response;
+
+    dispatch({
+      type: SET_ESTIMATED_TOPUP_FEE,
+      payload: {
+        fixedGas,
+        totalGas,
+        totalCost,
+        gasPrice,
+      },
+    });
+  };
+};

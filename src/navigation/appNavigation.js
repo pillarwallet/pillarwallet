@@ -73,6 +73,7 @@ import UpgradeConfirmScreen from 'screens/UpgradeToSmartWallet/UpgradeConfirmScr
 import SmartWalletScreen from 'screens/SmartWallet';
 import SmartWalletUnlockScreen from 'screens/SmartWallet/SmartWalletUnlock';
 import TankDetailsScreen from 'screens/Tank/TankDetails';
+import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
 import SettleBalanceConfrimScreen from 'screens/Tank/SettleBalanceConfirm';
@@ -157,6 +158,7 @@ import {
   SMART_WALLET_UNLOCK,
   MANAGE_TANK_FLOW,
   TANK_DETAILS,
+  FUND_TANK,
   FUND_CONFIRM,
   SETTLE_BALANCE,
   SETTLE_BALANCE_CONFIRM,
@@ -482,7 +484,7 @@ manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
 // TANK FLOW
 const manageTankFlow = createStackNavigator({
   [TANK_DETAILS]: TankDetailsScreen,
-  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [FUND_TANK]: FundTankScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
   [SETTLE_BALANCE]: SettleBalanceScreen,
   [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfrimScreen,

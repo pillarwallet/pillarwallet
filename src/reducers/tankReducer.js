@@ -10,8 +10,7 @@ export type TankReducerAction = {
 
 const initialState = {
   data: {
-    totalStake: 13500,
-    availableStake: 7350,
+    totalStake: 10,
   },
   assetsOnNetwork: [
     {

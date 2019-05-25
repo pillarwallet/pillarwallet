@@ -18,11 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import merge from 'lodash.merge';
-import { UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES } from 'constants/paymentNetworkConstants';
-import type { PaymentNetworkStore } from 'models/PaymentNetwork';
+import { SET_ESTIMATED_TOPUP_FEE, UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES } from 'constants/paymentNetworkConstants';
+import type { Accounts, TopUpFee } from 'models/PaymentNetwork';
 
 export type PaymentNetworkState = {
-  data: PaymentNetworkStore,
+  accounts: Accounts,
+  topUpFee: TopUpFee,
 };
 
 export type PaymentNetworkAction = {
@@ -31,8 +32,10 @@ export type PaymentNetworkAction = {
 };
 
 const initialState = {
-  data: {
-    accounts: {},
+  accounts: {},
+  topUpFee: {
+    isFetched: false,
+    feeInfo: null,
   },
 };
 
@@ -42,7 +45,9 @@ export default function paymentNetworkReducer(
 ): PaymentNetworkState {
   switch (action.type) {
     case UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES:
-      return merge({}, state, { data: { accounts: { [action.payload.accountId]: action.payload.balances } } });
+      return merge({}, state, { accounts: { [action.payload.accountId]: action.payload.balances } });
+    case SET_ESTIMATED_TOPUP_FEE:
+      return merge({}, state, { topUpFee: { feeInfo: action.payload, isFetched: true } });
     default:
       return state;
   }

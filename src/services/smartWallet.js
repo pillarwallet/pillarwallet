@@ -160,6 +160,10 @@ export default class SmartWallet {
     return this.sdk.getConnectedAccountTransaction(txHash);
   }
 
+  estimateTopUpAccountVirtualBalance(value: BigNumber) {
+    return this.sdk.estimateTopUpAccountVirtualBalance(value);
+  }
+
   handleError(error: any) {
     console.log('SmartWallet handleError: ', error);
   }

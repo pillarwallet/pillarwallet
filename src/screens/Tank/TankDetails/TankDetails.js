@@ -20,39 +20,54 @@
 import * as React from 'react';
 import { Animated, Easing } from 'react-native';
 import styled from 'styled-components/native';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+
+// components
 import { ScrollWrapper, Container } from 'components/Layout';
 import { BoldText, BaseText, MediumText } from 'components/Typography';
 import Tank from 'components/Tank';
 import Button from 'components/Button';
 import IconButton from 'components/IconButton';
-import { baseColors, fontSizes } from 'utils/variables';
-import { defaultFiatCurrency, PLR } from 'constants/assetsConstants';
-import { SEND_TOKEN_AMOUNT, FUND_CONFIRM, SETTLE_BALANCE } from 'constants/navigationConstants';
+
+// constants
+import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { SETTLE_BALANCE, FUND_TANK } from 'constants/navigationConstants';
+
+// selectors
+import { activeAccountSelector } from 'selectors';
+import { availableStakeSelector, paymentNetworkNonZeroBalancesSelector } from 'selectors/paymentNetwork';
+
+// types
+import type { Balances } from 'models/Asset';
+
+// utils
 import { getRate } from 'utils/assets';
+import { baseColors, fontSizes } from 'utils/variables';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
-import { connect } from 'react-redux';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   tankData: {
     totalStake: number,
-    availableStake: number,
   },
   baseFiatCurrency: ?string,
   rates: Object,
-  assetsOnNetwork: Object[],
-}
+  assetsOnNetwork: Balances,
+  availableStake: number,
+};
 
 type DashLineProps = {
   total?: boolean,
-}
+};
 
 type State = {
   tankValueAnimated: Animated.Value,
   leftColumnHeightHalf: number,
   rightColumnHeightHalf: number,
-}
+};
 
 const HeaderWrapper = styled.View`
   width: 100%;
@@ -132,8 +147,8 @@ const TankGrade = styled.View`
   height: 0.5px;
   width: 28px;
   position: absolute;
-  ${props => props.total ? 'left: 19px; top: 0;' : 'right: 12px;'}
   flex-direction: row;
+  ${props => props.total ? 'left: 19px; top: 0;' : 'right: 12px;'}
 `;
 
 const Dash = styled.View`
@@ -154,12 +169,12 @@ const CloseButton = styled(IconButton)`
 `;
 
 const DashedLine = (props: DashLineProps) => {
-  const dash = [];
+  const dashes = [];
   for (let i = 0; i < 6; i++) {
-    dash.push(<Dash key={i} total={props.total} />);
+    dashes.push(<Dash key={i} total={props.total} />);
   }
 
-  return (dash);
+  return dashes;
 };
 
 const TankGradeAnimated = Animated.createAnimatedComponent(TankGrade);
@@ -169,17 +184,16 @@ class TankDetails extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      tankValueAnimated: new Animated.Value(this.props.tankData.availableStake),
+      tankValueAnimated: new Animated.Value(this.props.availableStake),
       leftColumnHeightHalf: 0,
       rightColumnHeightHalf: 0,
     };
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { tankData } = this.props;
-    const { availableStake } = tankData;
+    const { availableStake } = this.props;
 
-    if (prevProps.tankData.availableStake !== availableStake) {
+    if (prevProps.availableStake !== availableStake) {
       this.animateValue(availableStake);
     }
   }
@@ -203,26 +217,27 @@ class TankDetails extends React.Component<Props, State> {
       rates,
       navigation,
       assetsOnNetwork,
+      availableStake,
     } = this.props;
-    const { totalStake, availableStake } = tankData;
+    const { totalStake } = tankData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const totalInFiat = totalStake * getRate(rates, 'PLR', fiatCurrency);
+
+    // total
+    const totalInFiat = totalStake * getRate(rates, 'ETH', fiatCurrency);
     const formattedTotalInFiat = formatMoney(totalInFiat);
-    const availableInFiat = availableStake * getRate(rates, 'PLR', fiatCurrency);
-    const formattedAvailableInFiat = formatMoney(availableInFiat);
     const totalFormatedAmount = formatMoney(totalStake, 4);
+
+    // available
+    const availableInFiat = availableStake * getRate(rates, 'ETH', fiatCurrency);
+    const formattedAvailableInFiat = formatMoney(availableInFiat);
     const availableFormatedAmount = formatMoney(availableStake, 4);
+
+    // used
     const usedAmount = totalStake - availableStake;
     const usedFormatedAmount = formatMoney(usedAmount, 4);
 
+    const isActive = availableStake > 0;
     const currencySymbol = getCurrencySymbol(fiatCurrency);
-
-    const PLRData = {
-      token: PLR,
-      contractAddress: '0x9366605f6758727ad0fbce0d1a2a6c1cd197f2a3',
-      decimals: 18,
-      icon: 'https://api-qa-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3',
-    };
 
     return (
       <Container color="#203756">
@@ -237,8 +252,8 @@ class TankDetails extends React.Component<Props, State> {
           <HeaderWrapper style={{ marginBottom: leftColumnHeightHalf }}>
             <BoldTitle>Pillar Payment Network</BoldTitle>
             <Status>
-              <StatusIcon active />
-              <StatusText active>ACTIVE</StatusText>
+              <StatusIcon active={isActive} />
+              <StatusText active={isActive}>{isActive ? 'ACTIVE' : 'NOT ACTIVE'}</StatusText>
             </Status>
           </HeaderWrapper>
           <Body style={{ opacity: leftColumnHeightHalf ? 1 : 0 }}>
@@ -257,7 +272,7 @@ class TankDetails extends React.Component<Props, State> {
               <ColumnInner>
                 <ValueLabel total light>Total stake</ValueLabel>
                 <ValueText total>
-                  {`${totalFormatedAmount} PLR`}
+                  {`${totalFormatedAmount} ETH`}
                 </ValueText>
                 <ValueLabel total>
                   {`${currencySymbol}${formattedTotalInFiat}`}
@@ -297,7 +312,7 @@ class TankDetails extends React.Component<Props, State> {
             >
               <ValueLabel light>Available</ValueLabel>
               <ValueText>
-                {`${availableFormatedAmount} PLR`}
+                {`${availableFormatedAmount} ETH`}
               </ValueText>
               <ValueLabel>
                 {`${currencySymbol}${formattedAvailableInFiat}`}
@@ -315,7 +330,7 @@ class TankDetails extends React.Component<Props, State> {
             }}
           >
             <ValueText style={{ color: baseColors.hoki }}>
-              {`${usedFormatedAmount} PLR`}
+              {`${usedFormatedAmount} ETH`}
             </ValueText>
             <ValueLabel style={{ color: baseColors.hoki, fontSize: fontSizes.extraExtraSmall }}>Used</ValueLabel>
           </ColumnAnimated>
@@ -325,20 +340,7 @@ class TankDetails extends React.Component<Props, State> {
               noPadding
               width="197px"
               style={{ marginBottom: 18 }}
-              onPress={() => navigation.navigate(SEND_TOKEN_AMOUNT,
-                {
-                  assetData: PLRData,
-                  receiver: '', // TODO: add PLR tank address
-                  customTitle: 'fund plr tank',
-                  customSingleInputProps: {
-                    noTint: true,
-                    floatingImageStyle: { marginRight: 3 },
-                    white: true,
-                  },
-                  customConfirmScreenKey: FUND_CONFIRM,
-                  customHeaderProps: { white: true },
-                  customFee: true,
-                })}
+              onPress={() => navigation.navigate(FUND_TANK)}
             />
             <Button
               secondaryTransparent
@@ -346,7 +348,7 @@ class TankDetails extends React.Component<Props, State> {
               noPadding
               width="197px"
               onPress={() => navigation.navigate(SETTLE_BALANCE)}
-              disabled={!assetsOnNetwork.length}
+              disabled={!Object.keys(assetsOnNetwork).length}
             />
           </FooterWrapper>
         </ScrollWrapper>
@@ -356,14 +358,24 @@ class TankDetails extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  tank: { data: tankData, assetsOnNetwork },
+  tank: { data: tankData },
   appSettings: { data: { baseFiatCurrency } },
   rates: { data: rates },
 }) => ({
   tankData,
-  assetsOnNetwork,
   baseFiatCurrency,
   rates,
 });
 
-export default connect(mapStateToProps)(TankDetails);
+const structuredSelector = createStructuredSelector({
+  activeAccount: activeAccountSelector,
+  availableStake: availableStakeSelector,
+  assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default connect(combinedMapStateToProps)(TankDetails);
