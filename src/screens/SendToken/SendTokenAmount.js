@@ -28,16 +28,16 @@ import { createStructuredSelector } from 'reselect';
 
 // components
 import { Container, Footer, Wrapper } from 'components/Layout';
-import SingleInput from 'components/TextInput/SingleInput';
 import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
 import Header from 'components/Header';
 import SlideModal from 'components/Modals/SlideModal';
 
 // utils
-import { parseNumber, formatAmount, isValidNumber, getCurrencySymbol, formatMoney } from 'utils/common';
+import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
-import { getBalance, getRate } from 'utils/assets';
+import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
+import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -55,97 +55,6 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 
-
-const { Form } = t.form;
-const GAS_LIMIT = 500000;
-const MIN_TX_AMOUNT = 0.000000000000000001;
-const genericToken = require('assets/images/tokens/genericTokenIcon.png');
-
-const getFormStructure = (
-  maxAmount: number,
-  minAmount: number,
-  enoughForFee: boolean,
-  formSubmitted: boolean,
-  decimals: number) => {
-  const Amount = t.refinement(t.String, (amount): boolean => {
-    if (!isValidNumber(amount.toString())) return false;
-
-    if (decimals === 0 && amount.toString().indexOf('.') > -1) {
-      return false;
-    }
-
-    amount = parseNumber(amount.toString());
-    const isValid = enoughForFee && amount <= maxAmount && amount >= minAmount;
-
-    if (formSubmitted) return isValid && amount > 0;
-    return isValid;
-  });
-
-  Amount.getValidationErrorMessage = (amount): string => {
-    if (!isValidNumber(amount.toString())) {
-      return 'Incorrect number entered.';
-    }
-
-    amount = parseNumber(amount.toString());
-    if (!enoughForFee) {
-      return 'Not enough ETH to process the transaction fee';
-    } else if (amount >= maxAmount) {
-      return 'Amount should not exceed the sum of total balance and est. network fee';
-    } else if (amount < minAmount) {
-      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
-    } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
-      return 'Amount should not contain decimal places';
-    }
-    return 'Amount should be specified.';
-  };
-
-  return t.struct({
-    amount: Amount,
-  });
-};
-
-function AmountInputTemplate(locals) {
-  const { config: { icon, valueInFiatOutput } } = locals;
-  const errorMessage = locals.error;
-  const inputProps = {
-    autoFocus: true,
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    placeholder: '0',
-    value: locals.value,
-    ellipsizeMode: 'middle',
-    keyboardType: 'decimal-pad',
-    textAlign: 'right',
-    autoCapitalize: 'words',
-  };
-
-  return (
-    <SingleInput
-      innerImageURI={icon}
-      fallbackSource={genericToken}
-      errorMessage={errorMessage}
-      id="amount"
-      inputProps={inputProps}
-      inlineLabel
-      fontSize={fontSizes.giant}
-      innerImageText={valueInFiatOutput}
-      marginTop={30}
-    />
-  );
-}
-
-const generateFormOptions = (config: Object): Object => ({
-  fields: {
-    amount: {
-      template: AmountInputTemplate,
-      config,
-      transformer: {
-        parse: (str = '') => str.toString().replace(/,/g, '.'),
-        format: (value = '') => value.toString().replace(/,/g, '.'),
-      },
-    },
-  },
-});
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -198,7 +107,7 @@ type Props = {
   gasInfo: GasInfo,
   rates: Rates,
   baseFiatCurrency: string,
-}
+};
 
 type State = {
   value: ?{
@@ -206,7 +115,11 @@ type State = {
   },
   transactionSpeed: string,
   showModal: boolean,
-}
+};
+
+const { Form } = t.form;
+const GAS_LIMIT = 500000;
+const MIN_TX_AMOUNT = 0.000000000000000001;
 
 const SLOW = 'min';
 const NORMAL = 'avg';
@@ -287,8 +200,8 @@ class SendTokenAmount extends React.Component<Props, State> {
     const { balances } = this.props;
     const { token } = this.assetData;
     const balance = getBalance(balances, token);
-    const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
-    this.enoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
+    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
+    this.enoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
     this.setState({
       value: {
         amount: formatAmount(maxAmount),
@@ -296,26 +209,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     });
   };
 
-  calculateMaxAmount(token: string, balance: number | string, txFeeInWei: ?Object): number {
-    if (typeof balance !== 'string') {
-      balance = balance.toString();
-    }
-    if (token !== ETH) {
-      return +balance;
-    }
-    const maxAmount = utils.parseUnits(balance, 'ether').sub(txFeeInWei);
-    if (maxAmount.lt(0)) return 0;
-    return new BigNumber(utils.formatEther(maxAmount)).toNumber();
-  }
-
-  checkIfEnoughForFee(balances: Balances, txFeeInWei): boolean {
-    if (!balances[ETH]) return false;
-    const ethBalance = getBalance(balances, ETH);
-    const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
-    return balanceInWei.gte(txFeeInWei);
-  }
-
-  getTxFeeInWei = (txSpeed?: string) => {
+  getTxFeeInWei = (txSpeed?: string): BigNumber => {
     txSpeed = txSpeed || this.state.transactionSpeed;
     const { gasInfo } = this.props;
     const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
@@ -355,24 +249,38 @@ class SendTokenAmount extends React.Component<Props, State> {
       rates,
       baseFiatCurrency,
     } = this.props;
-    const { token, icon, decimals } = this.assetData;
-    console.log({ icon });
 
+    const { token, icon, decimals } = this.assetData;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
+
+    // balance
     const balance = getBalance(balances, token);
     const formattedBalance = formatAmount(balance);
-    const txFeeInWei = this.getTxFeeInWei();
-    const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
-    const isEnoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
-    const formStructure = getFormStructure(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+
+    // balance in fiat
     const totalInFiat = balance * getRate(rates, token, fiatCurrency);
     const formattedBalanceInFiat = formatMoney(totalInFiat);
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
+
+    // fee
+    const txFeeInWei = this.getTxFeeInWei();
+    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
+
+    // max amount
+    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
+
+    // value
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
+
+    // value in fiat
     const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);
     const formattedValueInFiat = formatMoney(valueInFiat);
     const valueInFiatOutput = `${currencySymbol}${formattedValueInFiat}`;
-    const formOptions = generateFormOptions({ icon, currency: token, valueInFiatOutput });
+
+    // form
+    const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
+    const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
+
     return (
       <Container>
         <Header
@@ -383,7 +291,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           <Form
             ref={node => { this._form = node; }}
             type={formStructure}
-            options={formOptions}
+            options={formFields}
             value={value}
             onChange={this.handleChange}
           />
