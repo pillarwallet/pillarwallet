@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { InteractionManager } from 'react-native';
 import { generateKeyPairThreadPool } from 'utils/keyPairGenerator';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE, DECRYPTED } from 'constants/walletConstants';
@@ -206,6 +207,37 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
   };
 };
 
+
+export const backgroundPreKeyGeneratorAction = (mnemonic: ?string, privateKey: ?string, insideRun?: ?boolean) => {
+  return async (dispatch: Function, getState: Function) => {
+    if (insideRun) {
+      InteractionManager.runAfterInteractions(async () => {
+        const { connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex } } = getState();
+        if (connectionKeyPairs.length < 100) {
+          const newKeyPairs =
+            await generateKeyPairThreadPool(
+              mnemonic,
+              privateKey,
+              0,
+              0,
+              lastConnectionKeyIndex);
+          const resultConnectionKeys = connectionKeyPairs.concat(newKeyPairs);
+          dispatch({
+            type: UPDATE_CONNECTION_KEY_PAIRS,
+            payload: resultConnectionKeys,
+          });
+          dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
+          dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey, true));
+        }
+      });
+    } else {
+      setTimeout(() => {
+        dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey, true));
+      }, 10000);
+    }
+  };
+};
+
 export const updateConnectionKeyPairs = (
   mnemonic: ?string,
   privateKey: ?string,
@@ -232,19 +264,22 @@ export const updateConnectionKeyPairs = (
       });
 
       try {
-        const newKeyPairs =
-          await generateKeyPairThreadPool(
-            mnemonic,
-            privateKey,
-            totalConnections,
-            connectionKeyPairs.length,
-            lastConnectionKeyIndex);
-        const resultConnectionKeys = connectionKeyPairs.concat(newKeyPairs);
-        await dispatch({
-          type: UPDATE_CONNECTION_KEY_PAIRS,
-          payload: resultConnectionKeys,
-        });
-        await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
+        if (lastConnectionKeyIndex === -1) {
+          const newKeyPairs =
+            await generateKeyPairThreadPool(
+              mnemonic,
+              privateKey,
+              totalConnections,
+              connectionKeyPairs.length,
+              lastConnectionKeyIndex);
+          const resultConnectionKeys = connectionKeyPairs.concat(newKeyPairs);
+          await dispatch({
+            type: UPDATE_CONNECTION_KEY_PAIRS,
+            payload: resultConnectionKeys,
+          });
+          await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
+        }
+        dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey));
       } catch (e) {
         await dispatch({
           type: UPDATE_WALLET_STATE,

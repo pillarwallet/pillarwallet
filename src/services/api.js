@@ -138,6 +138,13 @@ SDKWrapper.prototype.registerOnAuthServer = function (walletPrivateKey: string, 
     });
 };
 
+SDKWrapper.prototype.updateFCMToken = function (walletId: string, fcmToken: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.wallet.update({ walletId, fcmToken }))
+    .then(({ data }) => data)
+    .catch(() => ({}));
+};
+
 SDKWrapper.prototype.fetchInitialAssets = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.asset.defaults({ walletId }))
