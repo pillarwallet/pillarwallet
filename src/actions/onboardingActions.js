@@ -162,6 +162,7 @@ const navigateToAppFlow = (isWalletBackedUp: boolean) => {
 export const registerWalletAction = () => {
   return async (dispatch: Function, getState: () => any, api: Object) => {
     const currentState = getState();
+    const { featureFlags: { data: { SMART_WALLET_ENABLED } } } = currentState;
     const {
       mnemonic,
       pin,
@@ -248,7 +249,7 @@ export const registerWalletAction = () => {
     }));
 
     // create smart wallet account only for new wallets
-    if (!importedWallet) {
+    if (SMART_WALLET_ENABLED && !importedWallet) {
       await dispatch(initSmartWalletSdkAction(wallet.privateKey));
       await dispatch(loadSmartWalletAccountsAction(wallet.privateKey));
       const { accounts: { data: accounts } } = getState();

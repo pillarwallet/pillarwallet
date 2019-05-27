@@ -108,6 +108,7 @@ type Props = {
   removeAsset: Function,
   accounts: Accounts,
   smartWalletState: Object,
+  SMART_WALLET_ENABLED: boolean,
 }
 
 type State = {
@@ -399,6 +400,7 @@ class AssetsScreen extends React.Component<Props, State> {
       collectibles,
       accounts,
       smartWalletState,
+      SMART_WALLET_ENABLED,
     } = this.props;
     const { query, activeTab, forceHideRemoval } = this.state;
 
@@ -450,7 +452,7 @@ class AssetsScreen extends React.Component<Props, State> {
         <SearchBlock
           headerProps={{
             title: 'assets',
-            headerRightAddon: <HeaderButtonsForSmartWallet
+            headerRightAddon: SMART_WALLET_ENABLED && <HeaderButtonsForSmartWallet
               isSmartWallet={isSmartWallet}
               navigation={navigation}
             />,
@@ -524,6 +526,7 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
   smartWallet: smartWalletState,
+  featureFlags: { data: { SMART_WALLET_ENABLED } },
 }) => ({
   wallet,
   accounts,
@@ -535,6 +538,7 @@ const mapStateToProps = ({
   baseFiatCurrency,
   assetsLayout,
   smartWalletState,
+  SMART_WALLET_ENABLED,
 });
 
 const structuredSelector = createStructuredSelector({

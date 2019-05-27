@@ -42,6 +42,7 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
     const {
       accounts: { data: accounts },
       history: { data: currentHistory },
+      featureFlags: { data: { SMART_WALLET_ENABLED } },
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
@@ -66,7 +67,7 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
       payload: updatedHistory,
     });
 
-    dispatch(checkAssetTransferTransactionsAction());
+    if (SMART_WALLET_ENABLED) dispatch(checkAssetTransferTransactionsAction());
   };
 };
 
@@ -106,6 +107,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       accounts: { data: accounts },
       history: { data: currentHistory },
       appSettings: { data: { lastTxSyncDatetimes = {} } },
+      featureFlags: { data: { SMART_WALLET_ENABLED } },
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const walletId = getActiveAccountWalletId(accounts);
@@ -148,7 +150,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
 
     const lastCreatedAt = Math.max(...updatedAccountHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-    dispatch(checkAssetTransferTransactionsAction());
+    if (SMART_WALLET_ENABLED) dispatch(checkAssetTransferTransactionsAction());
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     const updatedLastTxSyncDatetimes = {
       ...lastTxSyncDatetimes,
