@@ -99,7 +99,9 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       ...groupedNotifications.connectionRejectedEvent,
     ].map(({ id: userId }) => userId);
 
-    const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
+    const sentInvitations = invitations.filter(invi => invi.type === TYPE_SENT);
+
+    const updatedInvitations = uniqBy(latestEventPerId.concat(sentInvitations), 'id')
       .filter(({ id }) => !invitationsToExclude.includes(id));
 
     // find new connections
@@ -114,7 +116,7 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       acceptedConnectionsIds.includes(contactId));
     const updatedContacts = uniqBy(newConnections.concat(consistentLocalContacts), 'id')
       .map(({ type, connectionKey, ...rest }) => ({ ...rest }))
-      .filter(updatedContact => disconnectedConnectionsIds.includes(updatedContact.id));
+      .filter(updatedContact => !disconnectedConnectionsIds.includes(updatedContact.id));
 
     // save new connections keys
     let updatedAccessTokens = [...accessTokens];
@@ -232,6 +234,14 @@ export const acceptOldInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(fetchOldInviteNotificationsAction());
+      Sentry.captureMessage('Ghost invitation on acceptOld', {
+        level: 'info',
+        extra: {
+          invitationId: invitation.id,
+          connectionKey: invitation.connectionKey,
+          walletId,
+        },
+      });
       return;
     }
 
@@ -339,6 +349,14 @@ export const rejectOldInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(fetchOldInviteNotificationsAction());
+      Sentry.captureMessage('Ghost invitation on rejectOld', {
+        level: 'info',
+        extra: {
+          invitationId: invitation.id,
+          connectionKey: invitation.connectionKey,
+          walletId,
+        },
+      });
       return;
     }
 

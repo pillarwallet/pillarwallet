@@ -115,7 +115,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       symbol,
       contractAddress: asset ? asset.address : '',
       decimals: asset ? asset.decimals : 18,
-      node: this.state.note,
+      note: this.state.note,
     };
 
     return transactionPayload;
