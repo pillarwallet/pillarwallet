@@ -537,6 +537,7 @@ type Props = {
   updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
+  SMART_WALLET_ENABLED: boolean,
 }
 
 let lockTimer;
@@ -644,6 +645,7 @@ class AppFlow extends React.Component<Props, {}> {
       hasUnreadChatNotifications,
       navigation,
       backupStatus,
+      SMART_WALLET_ENABLED,
     } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
@@ -655,6 +657,16 @@ class AppFlow extends React.Component<Props, {}> {
       isBackedUp,
     } = backupStatus;
     const isWalletBackedUp = isImported || isBackedUp;
+
+    // filter tabs depending on feature flag
+    const { state: { routes: appFlowRoutes = [] } } = navigation; // get app flow routes
+    const { routes = [] } = appFlowRoutes[0] || {}; // get app flow tab routes
+    appFlowRoutes[0].routes = routes.filter(route => {
+      // keep brackets version for future feature flags
+      if (route.key === SMART_WALLET_TAB && !SMART_WALLET_ENABLED) return false;
+      return true;
+    });
+    navigation.state.routes = appFlowRoutes;
 
     return (
       <AppFlowNavigation
@@ -681,6 +693,7 @@ const mapStateToProps = ({
   assets: { data: assets },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage } },
+  featureFlags: { data: { SMART_WALLET_ENABLED } },
 }) => ({
   userState,
   notifications,
@@ -691,6 +704,7 @@ const mapStateToProps = ({
   hasUnreadChatNotifications,
   intercomNotificationsCount,
   isPickingImage,
+  SMART_WALLET_ENABLED,
 });
 
 const mapDispatchToProps = (dispatch) => ({
