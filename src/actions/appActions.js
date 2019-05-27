@@ -116,10 +116,6 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const history = await loadAndMigrate('history', dispatch, getState);
       dispatch({ type: SET_HISTORY, payload: history });
 
-      dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-
-      if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
-
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
       }
@@ -130,6 +126,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       } = await storage.get('smartWallet') || {};
       dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
       dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
+
+      dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
+
+      if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
 
       navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       return;
