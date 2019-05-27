@@ -165,6 +165,7 @@ import {
   MANAGE_WALLETS_FLOW,
   WALLETS_LIST,
   WALLET_SETTINGS,
+  APP_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -659,14 +660,16 @@ class AppFlow extends React.Component<Props, {}> {
     const isWalletBackedUp = isImported || isBackedUp;
 
     // filter tabs depending on feature flag
-    const { state: { routes: appFlowRoutes = [] } } = navigation; // get app flow routes
-    const { routes = [] } = appFlowRoutes[0] || {}; // get app flow tab routes
-    appFlowRoutes[0].routes = routes.filter(route => {
-      // keep brackets version for future feature flags
-      if (route.key === SMART_WALLET_TAB && !smartWalletFeatureEnabled) return false;
-      return true;
-    });
-    navigation.state.routes = appFlowRoutes;
+    const { state: { stateKey, routes: appFlowRoutes = [] } } = navigation; // get current flow
+    if (stateKey === APP_FLOW) {
+      const { routes = [] } = appFlowRoutes[0] || {}; // get app flow tab routes
+      appFlowRoutes[0].routes = routes.filter(route => {
+        // keep brackets version for future feature flags
+        if (route.key === SMART_WALLET_TAB && !smartWalletFeatureEnabled) return false;
+        return true;
+      });
+      navigation.state.routes = appFlowRoutes;
+    }
 
     return (
       <AppFlowNavigation
