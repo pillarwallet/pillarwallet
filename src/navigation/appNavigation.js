@@ -25,7 +25,7 @@ import {
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
-import { Animated, Easing, View, Platform, Image } from 'react-native';
+import { Animated, Easing, View, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
 
 // services
@@ -82,7 +82,7 @@ import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
-import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
+import CustomTabBarComponent from 'components/CustomTabBarComponent';
 import Toast from 'components/Toast';
 
 // actions
@@ -165,7 +165,6 @@ import {
   MANAGE_WALLETS_FLOW,
   WALLETS_LIST,
   WALLET_SETTINGS,
-  APP_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -324,17 +323,6 @@ const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
 );
 
 // TAB NAVIGATION FLOW
-const generateCustomBottomBar = (): Object => {
-  if (Platform.OS !== 'android') {
-    return {};
-  }
-
-  return {
-    tabBarComponent: props => <AndroidTabBarComponent {...props} />,
-    tabBarPosition: 'bottom',
-  };
-};
-
 const tabNavigation = createBottomTabNavigator(
   {
     [ASSETS]: {
@@ -403,7 +391,7 @@ const tabNavigation = createBottomTabNavigator(
     tabBarPosition: 'bottom',
     animationEnabled: false,
     swipeEnabled: false,
-    ...generateCustomBottomBar(),
+    tabBarComponent: props => <CustomTabBarComponent {...props} />,
   },
 );
 
@@ -659,18 +647,6 @@ class AppFlow extends React.Component<Props, {}> {
     } = backupStatus;
     const isWalletBackedUp = isImported || isBackedUp;
 
-    // filter tabs depending on feature flag
-    const { state: { stateKey, routes: appFlowRoutes = [] } } = navigation; // get current flow
-    if (stateKey === APP_FLOW) {
-      const { routes = [] } = appFlowRoutes[0] || {}; // get app flow tab routes
-      appFlowRoutes[0].routes = routes.filter(route => {
-        // keep brackets version for future feature flags
-        if (route.key === SMART_WALLET_TAB && !smartWalletFeatureEnabled) return false;
-        return true;
-      });
-      navigation.state.routes = appFlowRoutes;
-    }
-
     return (
       <AppFlowNavigation
         screenProps={{
@@ -678,6 +654,7 @@ class AppFlow extends React.Component<Props, {}> {
           hasUnreadChatNotifications,
           intercomNotificationsCount,
           isWalletBackedUp,
+          smartWalletFeatureEnabled,
         }}
         navigation={navigation}
       />
