@@ -18,9 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const searchOffersAction = (query: string) => {
+export const searchOffersAction = (buyToken: string, sellToken: string, sellAmount: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const sentInvitation = await api.sendInvitation(
-    );
+    //
   };
 };

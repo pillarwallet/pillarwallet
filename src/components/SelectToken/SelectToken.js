@@ -59,7 +59,7 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 const SelectToken = (props: Props) => {
   const { onTokenChange, assets, selectedToken } = props;
-  const selected = assets.find(asset => asset.symbol) || assets[0];
+  const selected = assets.find(asset => asset.symbol === selectedToken) || assets[0];
   const { iconUrl } = selected;
 
   const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';

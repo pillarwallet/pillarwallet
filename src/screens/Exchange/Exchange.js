@@ -32,25 +32,6 @@ import { searchOffersAction } from 'actions/exchangeActions';
 import type { SearchResults } from 'models/Exchange';
 import type { Assets, Rates } from 'models/Asset';
 
-type Props = {
-  rates: Rates,
-  navigation: NavigationScreenProp<*>,
-  searchResults: SearchResults,
-  baseFiatCurrency: string,
-  user: Object,
-  assets: Assets,
-  searchOffers: (query: string) => Function,
-  offers: {
-    searchResults: SearchResults,
-  },
-};
-
-type State = {
-  selectedSellToken: string,
-  selectedSellAmount: string,
-  selectedBuyToken: string,
-};
-
 const Screen = styled(Container)`
   background-color: ${UIColors.defaultBackgroundColor};
 `;
@@ -72,6 +53,25 @@ const Subtitle = styled(Text)`
   font-weight: bold;
 `;
 
+type Props = {
+  rates: Rates,
+  navigation: NavigationScreenProp<*>,
+  searchResults: SearchResults,
+  baseFiatCurrency: string,
+  user: Object,
+  assets: Assets,
+  searchOffers: (string, string, string) => void,
+  offers: {
+    searchResults: SearchResults,
+  },
+};
+
+type State = {
+  selectedSellToken: string,
+  selectedSellAmount: string,
+  selectedBuyToken: string,
+};
+
 class ExchangeScreen extends React.Component<Props, State> {
   state = {
     selectedSellAmount: '0.0',
@@ -89,15 +89,25 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   onSellTokenChanged = (selectedSellToken: string) => {
-    this.setState({ selectedSellToken });
+    this.setState({ selectedSellToken }, () => this.triggerSearch());
   }
 
   onSellAmountChanged = (selectedSellAmount: string) => {
-    this.setState({ selectedSellAmount });
+    this.setState({ selectedSellAmount }, () => this.triggerSearch());
   }
 
   onBuyTokenChanged = (selectedBuyToken: string) => {
-    this.setState({ selectedBuyToken });
+    this.setState({ selectedBuyToken }, () => this.triggerSearch());
+  }
+
+  triggerSearch = () => {
+    const { selectedSellAmount, selectedSellToken, selectedBuyToken } = this.state;
+    const { searchOffers } = this.props;
+    const sellAmount = parseFloat(selectedSellAmount);
+
+    if ((sellAmount > 0) && (selectedBuyToken !== '') && (selectedSellToken !== '')) {
+      searchOffers(selectedBuyToken, selectedSellToken, selectedSellAmount);
+    }
   }
 
   render() {
@@ -164,7 +174,9 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  searchOffers: (query) => dispatch(searchOffersAction(query)),
+  searchOffers: (buyToken, sellToken, sellAmount) => dispatch(
+    searchOffersAction(buyToken, sellToken, sellAmount),
+  ),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExchangeScreen);
