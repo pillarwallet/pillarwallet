@@ -23,7 +23,6 @@ import {
   Keyboard,
   Switch,
   Alert,
-  Platform,
 } from 'react-native';
 import styled from 'styled-components/native';
 import isEqual from 'lodash.isequal';
@@ -136,8 +135,7 @@ const horizontalPadding = (layout, side) => {
     default: {
       // if (Platform.OS === 'android') return 10;
       // return 0;
-      if (Platform.OS === 'android') return 10;
-      return side === 'left' ? 0 : spacing.rhythm - 9;
+      return side === 'left' ? 0 : 10;
     }
   }
 };

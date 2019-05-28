@@ -20,6 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
+import TankAssetBalance from 'components/TankAssetBalance';
 import { getCurrencySymbol } from 'utils/common';
 import { fontSizes, baseColors } from 'utils/variables';
 
@@ -31,12 +32,12 @@ type Props = {
     amount: string | number,
     currency: string,
   },
+  balanceOnNetwork?: ?string,
 }
 
 const AmountWrapper = styled.View`
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
+  align-items: flex-end;
 `;
 
 const TokenAmountWrapper = styled.View`
@@ -81,6 +82,7 @@ const AssetInfo = (props: Props) => {
     token,
     balanceInFiat,
     disclaimer,
+    balanceOnNetwork,
   } = props;
 
   const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
@@ -91,6 +93,13 @@ const AssetInfo = (props: Props) => {
         <Amount>{amount}</Amount>
         <AmountToken> {token}</AmountToken>
       </TokenAmountWrapper>
+      {!!balanceOnNetwork &&
+      <TankAssetBalance
+        amount={balanceOnNetwork}
+        isSynthetic={token !== 'ETH'}
+        wrapperStyle={{ marginBottom: 5, marginTop: -2 }}
+      />
+      }
       {disclaimer
         ? <Disclaimer>{disclaimer}</Disclaimer>
         : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>

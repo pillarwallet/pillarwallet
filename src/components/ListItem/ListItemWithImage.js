@@ -137,7 +137,7 @@ const IconCircle = styled.View`
   width: ${props => props.diameter || 52}px;
   height: ${props => props.diameter || 52}px;
   border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
-  background-color: ${props => props.fillColor};
+  background-color: ${props => props.fillColor ? props.fillColor : 'transparent'};
   align-items: center;
   justify-content: center;
   text-align: center;

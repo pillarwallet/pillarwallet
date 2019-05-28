@@ -26,6 +26,7 @@ import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 type Props = {
   isSynthetic?: boolean,
   amount: string,
+  wrapperStyle?: Object,
 };
 
 const Wrapper = styled.View`
@@ -41,10 +42,11 @@ const TankAssetBalance = (props: Props) => {
   const {
     isSynthetic,
     amount,
+    wrapperStyle,
   } = props;
 
   return (
-    <Wrapper>
+    <Wrapper style={wrapperStyle}>
       <Svg
         width="20"
         height="24"
