@@ -45,7 +45,12 @@ import {
   TX_CONFIRMED_STATUS,
   SET_HISTORY, ADD_TRANSACTION,
 } from 'constants/historyConstants';
-import { SET_ESTIMATED_TOPUP_FEE, PAYMENT_NETWORK_ACCOUNT_TOPUP } from 'constants/paymentNetworkConstants';
+import {
+  SET_ESTIMATED_TOPUP_FEE,
+  PAYMENT_NETWORK_ACCOUNT_TOPUP,
+  PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
+  PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+} from 'constants/paymentNetworkConstants';
 import { FUND_TANK } from 'constants/navigationConstants';
 
 // services
@@ -490,6 +495,58 @@ export const onSmartWalletSdkAction = (event: Object) => {
         dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
       }
     }
+
+    if (event.name === sdkModules.Api.EventNames.AccountTransactionUpdated) {
+      const {
+        history: { data: currentHistory },
+        assets: { data: assets },
+        paymentNetwork: { txToListen },
+      } = getState();
+      const txHash = get(event, 'payload.hash', '').toLowerCase();
+      const txStatus = get(event, 'payload.state', '');
+      const txGasInfo = get(event, 'payload.gas', {});
+      const txFound = txToListen.find(hash => hash.toLowerCase() === txHash);
+
+      if (txFound && txStatus === 'Completed') {
+        let txUpdated = null;
+        const updatedHistory = Object.keys(currentHistory).reduce((memo, accountId) => {
+          const accountHistory = currentHistory[accountId].map(transaction => {
+            if (transaction.hash.toLowerCase() === txHash) {
+              txUpdated = {
+                ...transaction,
+                gasPrice: txGasInfo.price ? txGasInfo.price.toString() : transaction.gasPrice,
+                gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
+                status: TX_CONFIRMED_STATUS,
+              };
+              return txUpdated;
+            }
+            return transaction;
+          });
+          return { ...memo, [accountId]: accountHistory };
+        }, {});
+
+        if (txUpdated) {
+          if (txUpdated.note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+            Toast.show({
+              message: 'Your Pillar Tank was successfully funded!',
+              type: 'success',
+              title: 'Success',
+              autoClose: true,
+            });
+          }
+          dispatch(fetchAssetsBalancesAction(assets));
+          dispatch(saveDbAction('history', { history: updatedHistory }, true));
+          dispatch({
+            type: SET_HISTORY,
+            payload: updatedHistory,
+          });
+          dispatch({
+            type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+            payload: txHash,
+          });
+        }
+      }
+    }
     console.log(event);
   };
 };
@@ -603,6 +660,11 @@ export const topUpVirtualAccountAction = (amount: string) => {
           accountId,
           historyTx,
         },
+      });
+
+      dispatch({
+        type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
+        payload: txHash,
       });
 
       const { history: { data: currentHistory } } = getState();
