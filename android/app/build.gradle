@@ -68,7 +68,7 @@ android {
     versionCode System.getenv('APP_BUILD_NUMBER') ? System.getenv('APP_BUILD_NUMBER').toInteger() : 9
     versionName System.getenv('buildNumber') ? System.getenv('buildNumber') : '0.0.0'
     ndk {
-      abiFilters 'armeabi-v7a', 'x86'
+      abiFilters 'armeabi-v7a', 'x86', 'arm64-v8a', 'x86_64'
     }
     multiDexEnabled true
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
