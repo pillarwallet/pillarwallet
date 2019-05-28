@@ -49,9 +49,11 @@ import { ETH } from 'constants/assetsConstants';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { formatAmount } from 'utils/common';
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountCollectiblesSelector } from 'selectors/collectibles';
 import type { Assets, Balances, AssetTransfer } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
+import type { Collectible } from 'models/Collectible';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -63,6 +65,7 @@ type Props = {
   fetchGasInfo: Function,
   gasInfo: GasInfo,
   session: Object,
+  collectibles: Collectible[],
 };
 
 const WhiteWrapper = styled.View`
@@ -124,6 +127,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 
   renderItem = ({ item }) => {
     const name = item.username || item.serviceName;
+    // recovery agent item
     if (name) {
       return (
         <ListItemWithImage
@@ -134,6 +138,31 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
         />
       );
     }
+
+    // any asset transaction fee
+    const gasPriceWei = this.getGasPriceWei();
+    const transferFee = formatAmount(utils.formatEther(gasPriceWei));
+
+    // collectible item
+    if (item.collectibleKey) {
+      return (
+        <ListItemWithImage
+          label={item.name}
+          itemImageUrl={item.icon || genericToken}
+          fallbackSource={genericToken}
+          rightColumnInnerStyle={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          customAddon={
+            <Label style={{ textAlign: 'right' }}>{`Est. fee ${transferFee} ETH`}</Label>
+          }
+        />
+      );
+    }
+
+    // token item
     const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
     if (assetShouldRender) {
       return null;
@@ -141,8 +170,6 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const formattedAmount = formatAmount(item.amount);
-    const gasPriceWei = this.getGasPriceWei();
-    const transferFee = formatAmount(utils.formatEther(gasPriceWei));
 
     return (
       <ListItemWithImage
@@ -179,6 +206,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       transferAssets,
       transferCollectibles,
       assets,
+      collectibles,
       recoveryAgents,
     } = this.props;
 
@@ -196,12 +224,22 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       };
     });
 
+    const detailedCollectibles: any[] = transferCollectibles.map((transferCollectible: any) => {
+      const asset: any = collectibles.find(
+        (_asset: any) => `${_asset.assetContract}${_asset.name}` === transferCollectible.key,
+      );
+      const collectibleKey = `${asset.assetContract}${asset.name}`;
+      return {
+        ...asset,
+        collectibleKey,
+      };
+    });
+
     const sections = [];
     if (recoveryAgents.length) {
       sections.push({
         title: 'RECOVERY AGENTS',
         data: recoveryAgents,
-        extraData: assets,
         toEdit: RECOVERY_AGENTS,
       });
     }
@@ -209,7 +247,13 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       sections.push({
         title: 'TOKENS',
         data: nonEmptyAssets,
-        extraData: assets,
+        toEdit: CHOOSE_ASSETS_TO_TRANSFER,
+      });
+    }
+    if (detailedCollectibles.length) {
+      sections.push({
+        title: 'COLLECTIBLES',
+        data: detailedCollectibles,
         toEdit: CHOOSE_ASSETS_TO_TRANSFER,
       });
     }
@@ -278,6 +322,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  collectibles: accountCollectiblesSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

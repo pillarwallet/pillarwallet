@@ -32,7 +32,7 @@ export type Collectible = {
 export type Collectibles = Collectible[];
 
 export type CollectibleTransfer = {
-  name: string,
+  key: string,
 };
 
 export type CollectiblesStore = {

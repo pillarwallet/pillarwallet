@@ -57,7 +57,7 @@ import {
 } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import type { AssetTransfer } from 'models/Asset';
-import type { Collectible } from 'models/Collectible';
+import type { CollectibleTransfer } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 
 const storage = Storage.getInstance('db');
@@ -227,7 +227,7 @@ export const addAssetsToSmartWalletUpgradeAction = (assets: AssetTransfer[]) => 
   payload: assets,
 });
 
-export const addCollectiblesToSmartWalletUpgradeAction = (collectibles: Collectible[]) => ({
+export const addCollectiblesToSmartWalletUpgradeAction = (collectibles: CollectibleTransfer[]) => ({
   type: ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
   payload: collectibles,
 });

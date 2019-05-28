@@ -132,12 +132,12 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     this.setState({ assetsToTransfer: updated });
   };
 
-  toggleCollectiblesInTransferList = (name: string) => {
+  toggleCollectiblesInTransferList = (key: string) => {
     const { collectiblesToTransfer } = this.state;
     // toggle asset in array
-    const updated = collectiblesToTransfer.filter(asset => asset.name !== name);
-    if (!collectiblesToTransfer.find(asset => asset.name === name)) {
-      updated.push({ name });
+    const updated = collectiblesToTransfer.filter(asset => asset.key !== key);
+    if (!collectiblesToTransfer.find(asset => asset.key === key)) {
+      updated.push({ key });
     }
     this.setState({ collectiblesToTransfer: updated });
   };
@@ -172,16 +172,17 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
 
   renderCollectible = ({ item }) => {
     const { collectiblesToTransfer } = this.state;
+    const collectibleKey = `${item.assetContract}${item.name}`;
     return (
       <ListItemWithImage
         label={item.name}
         itemImageUrl={item.icon || genericToken}
         fallbackSource={genericToken}
-        onPress={() => this.toggleCollectiblesInTransferList(item.name)}
+        onPress={() => this.toggleCollectiblesInTransferList(collectibleKey)}
         customAddon={
           <Checkbox
-            onPress={() => this.toggleCollectiblesInTransferList(item.name)}
-            checked={collectiblesToTransfer.includes(item.name)}
+            onPress={() => this.toggleCollectiblesInTransferList(collectibleKey)}
+            checked={!!collectiblesToTransfer.find(asset => asset.key === collectibleKey)}
             rounded
             wrapperStyle={{ width: 24, marginRight: 4 }}
           />
