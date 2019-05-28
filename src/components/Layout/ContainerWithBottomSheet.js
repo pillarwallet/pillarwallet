@@ -68,8 +68,8 @@ export default class ContainerWithBottomSheet extends React.Component<Props, Sta
 
     const { screenHeight } = this.state;
     const bottomPadding = !hideSheet && screenHeight && Object.keys(bottomSheetProps).length
-    && !!bottomSheetProps.initialSheetHeight
-      ? bottomSheetProps.initialSheetHeight - 30
+    && !!bottomSheetProps.sheetHeight
+      ? bottomSheetProps.sheetHeight - 30
       : 0;
 
     return (
