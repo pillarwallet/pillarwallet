@@ -9218,6 +9218,11 @@ lodash.toarray@^4.4.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.toarray/-/lodash.toarray-4.4.0.tgz#24c4bfcd6b2fba38bfd0594db1179d8e9b656561"
   integrity sha1-JMS/zWsvuji/0FlNsRedjptlZWE=
 
+lodash.truncate@^4.4.2:
+  version "4.4.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.truncate/-/lodash.truncate-4.4.2.tgz#5a350da0b1113b837ecfffd5812cbe58d6eae193"
+  integrity sha1-WjUNoLERO4N+z//VgSy+WNbq4ZM=
+
 lodash.unionby@^4.8.0:
   version "4.8.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.unionby/-/lodash.unionby-4.8.0.tgz#883f098ff78f564a727b7508e09cdd539734bb83"
