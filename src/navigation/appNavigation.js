@@ -35,7 +35,6 @@ import { updateNavigationLastScreenState } from 'services/navigation';
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import MarketScreen from 'screens/Market';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
 import ContactScreen from 'screens/Contact';
@@ -52,11 +51,9 @@ import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import HomeScreen from 'screens/Home';
-import ICOScreen from 'screens/ICO';
 import ParticipateScreen from 'screens/Participate';
 import InstructionsScreen from 'screens/Participate/Instructions';
 import ConfirmScreen from 'screens/Participate/Confirm';
-import ICOLinks from 'screens/ICOLinks';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
@@ -92,7 +89,6 @@ import {
   ADD_TOKEN,
   ASSETS,
   ASSET,
-  ICO,
   PROFILE,
   PEOPLE,
   CONTACT,
@@ -114,12 +110,10 @@ import {
   SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
   AUTH_FLOW,
-  MARKET,
   PARTICIPATE_IN_ICO_FLOW,
   ICO_PARTICIPATE,
   ICO_INSTRUCTIONS,
   ICO_CONFIRM,
-  ICO_LINKS,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
@@ -153,11 +147,9 @@ const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 const iconWallet = require('assets/icons/icon_wallet_new.png');
 const iconPeople = require('assets/icons/icon_people_new.png');
 const iconHome = require('assets/icons/icon_home_new.png');
-// const iconMarket = require('assets/icons/icon_marketplace_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
-// const iconMarketActive = require('assets/icons/icon_marketplace_active.png');
 
 const connectionMessagesToExclude = [
   TYPE_CANCELLED,
@@ -226,15 +218,6 @@ const homeFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
-
-// ICO FLOW
-const icoFlow = createStackNavigator({
-  [MARKET]: MarketScreen,
-  [ICO]: ICOScreen,
-  [ICO_LINKS]: ICOLinks,
-}, StackNavigatorConfig);
-
-icoFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => ({ focused }) => {
   const notificationColor = warningNotification ? baseColors.burningFire : baseColors.sunYellow;
@@ -323,13 +306,6 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
-    // [MARKET]: {
-    //   screen: icoFlow,
-    //   navigationOptions: () => ({
-    //     tabBarIcon: tabBarIcon(iconMarketActive, iconMarket),
-    //     tabBarLabel: tabBarLabel('Market'),
-    //   }),
-    // },
   }, {
     tabBarOptions: {
       activeTintColor: UIColors.primary,
