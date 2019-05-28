@@ -76,8 +76,8 @@ export type TransactionEthers = {
   hash: string,
   to: string,
   value: Object,
-  gasPrice: Object,
-  gasLimit: Object,
+  gasPrice?: Object,
+  gasLimit?: Object,
   asset: string,
   note?: ?string,
 }

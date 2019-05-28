@@ -18,11 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Animated, Easing } from 'react-native';
+import { Animated, Easing, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+
+// actions
+import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { initFundTankProcessAction } from 'actions/smartWalletActions';
 
 // components
 import { ScrollWrapper, Container } from 'components/Layout';
@@ -30,10 +34,12 @@ import { BoldText, BaseText, MediumText } from 'components/Typography';
 import Tank from 'components/Tank';
 import Button from 'components/Button';
 import IconButton from 'components/IconButton';
+import SlideModal from 'components/Modals/SlideModal';
+import CheckPin from 'components/CheckPin';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { SETTLE_BALANCE, FUND_TANK } from 'constants/navigationConstants';
+import { SETTLE_BALANCE } from 'constants/navigationConstants';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -57,6 +63,8 @@ type Props = {
   rates: Object,
   assetsOnNetwork: Balances,
   availableStake: number,
+  resetIncorrectPassword: Function,
+  initFundTankProcess: Function,
 };
 
 type DashLineProps = {
@@ -67,6 +75,8 @@ type State = {
   tankValueAnimated: Animated.Value,
   leftColumnHeightHalf: number,
   rightColumnHeightHalf: number,
+  showCheckPinModal: boolean,
+  topUpButtonSubmitted: boolean,
 };
 
 const HeaderWrapper = styled.View`
@@ -168,6 +178,15 @@ const CloseButton = styled(IconButton)`
   z-index: 10;
 `;
 
+const Wrapper = styled.View`
+  position: relative;
+  margin: 5px 20px 20px;
+  padding-top: ${Platform.select({
+    ios: '20px',
+    android: '14px',
+  })};
+`;
+
 const DashedLine = (props: DashLineProps) => {
   const dashes = [];
   for (let i = 0; i < 6; i++) {
@@ -187,6 +206,8 @@ class TankDetails extends React.Component<Props, State> {
       tankValueAnimated: new Animated.Value(this.props.availableStake),
       leftColumnHeightHalf: 0,
       rightColumnHeightHalf: 0,
+      showCheckPinModal: false,
+      topUpButtonSubmitted: false,
     };
   }
 
@@ -209,8 +230,28 @@ class TankDetails extends React.Component<Props, State> {
     ).start();
   };
 
+  handleCheckPinModalClose = () => {
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
+    this.setState({ showCheckPinModal: false, topUpButtonSubmitted: false });
+  };
+
+  navigateToFundTankScreen = async (_: string, wallet: Object) => {
+    const { initFundTankProcess } = this.props;
+    this.setState({ showCheckPinModal: false });
+
+    await initFundTankProcess(wallet.privateKey);
+    this.setState({ topUpButtonSubmitted: false });
+  };
+
   render() {
-    const { tankValueAnimated, rightColumnHeightHalf, leftColumnHeightHalf } = this.state;
+    const {
+      tankValueAnimated,
+      rightColumnHeightHalf,
+      leftColumnHeightHalf,
+      showCheckPinModal,
+      topUpButtonSubmitted,
+    } = this.state;
     const {
       tankData,
       baseFiatCurrency,
@@ -221,6 +262,7 @@ class TankDetails extends React.Component<Props, State> {
     } = this.props;
     const { totalStake } = tankData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const fundButtonTitle = !topUpButtonSubmitted ? 'Fund' : 'Initializing..';
 
     // total
     const totalInFiat = totalStake * getRate(rates, 'ETH', fiatCurrency);
@@ -336,11 +378,12 @@ class TankDetails extends React.Component<Props, State> {
           </ColumnAnimated>
           <FooterWrapper>
             <Button
-              title="Fund"
+              title={fundButtonTitle}
+              disabled={topUpButtonSubmitted}
               noPadding
               width="197px"
               style={{ marginBottom: 18 }}
-              onPress={() => navigation.navigate(FUND_TANK)}
+              onPress={() => this.setState({ showCheckPinModal: true, topUpButtonSubmitted: true })}
             />
             <Button
               secondaryTransparent
@@ -352,6 +395,18 @@ class TankDetails extends React.Component<Props, State> {
             />
           </FooterWrapper>
         </ScrollWrapper>
+        <SlideModal
+          isVisible={showCheckPinModal}
+          onModalHide={this.handleCheckPinModalClose}
+          title="enter pincode"
+          centerTitle
+          fullScreen
+          showHeader
+        >
+          <Wrapper flex={1}>
+            <CheckPin onPinValid={this.navigateToFundTankScreen} />
+          </Wrapper>
+        </SlideModal>
       </Container>
     );
   }
@@ -378,4 +433,9 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-export default connect(combinedMapStateToProps)(TankDetails);
+const mapDispatchToProps = (dispatch) => ({
+  initFundTankProcess: (privateKey: string) => dispatch(initFundTankProcessAction(privateKey)),
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+});
+
+export default connect(combinedMapStateToProps, mapDispatchToProps)(TankDetails);

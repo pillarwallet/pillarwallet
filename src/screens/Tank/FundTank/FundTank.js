@@ -127,12 +127,12 @@ class FundTank extends React.Component<Props, State> {
   handleFormSubmit = () => {
     this.formSubmitted = true;
     const { navigation } = this.props;
-    const value = this._form.getValue();
+    const formValues = this._form.getValue();
 
-    if (!value) return;
+    if (!formValues) return;
 
     Keyboard.dismiss();
-    navigation.navigate(FUND_CONFIRM, { value });
+    navigation.navigate(FUND_CONFIRM, { amount: formValues.amount });
   };
 
   useMaxValue = () => {

@@ -20,7 +20,12 @@
 import { sdkModules } from '@archanova/sdk';
 import { ethToWei } from '@netgum/utils';
 import get from 'lodash.get';
+import { NavigationActions } from 'react-navigation';
+
+// components
 import Toast from 'components/Toast';
+
+// constants
 import {
   SET_SMART_WALLET_SDK_INIT,
   SET_SMART_WALLET_ACCOUNTS,
@@ -34,15 +39,21 @@ import {
   ADD_SMART_WALLET_RECOVERY_AGENTS,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { UPDATE_BALANCES } from 'constants/assetsConstants';
+import { UPDATE_BALANCES, ETH } from 'constants/assetsConstants';
 import {
   TX_PENDING_STATUS,
   TX_CONFIRMED_STATUS,
-  SET_HISTORY,
+  SET_HISTORY, ADD_TRANSACTION,
 } from 'constants/historyConstants';
-import { SET_ESTIMATED_TOPUP_FEE } from 'constants/paymentNetworkConstants';
+import { SET_ESTIMATED_TOPUP_FEE, PAYMENT_NETWORK_ACCOUNT_TOPUP } from 'constants/paymentNetworkConstants';
+import { FUND_TANK } from 'constants/navigationConstants';
+
+// services
 import SmartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
+import { navigate } from 'services/navigation';
+
+// actions
 import {
   addNewAccountAction,
   setActiveAccountAction,
@@ -56,9 +67,16 @@ import {
   fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
+
+// types
 import type { AssetTransfer } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
+
+// utils
+import { buildHistoryTransaction } from 'utils/history';
+import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+
 
 const storage = Storage.getInstance('db');
 
@@ -476,16 +494,30 @@ export const onSmartWalletSdkAction = (event: Object) => {
   };
 };
 
+export const initFundTankProcessAction = (privateKey: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accounts: { data: accounts },
+      smartWallet: { connectedAccount },
+    } = getState();
+
+    const accountId = getActiveAccountId(accounts);
+
+    if (!smartWalletService) {
+      await dispatch(initSmartWalletSdkAction(privateKey));
+    }
+
+    if (!connectedAccount || !Object.keys(connectedAccount).length) {
+      await dispatch(connectSmartWalletAccountAction(accountId));
+    }
+
+    navigate(NavigationActions.navigate({ routeName: FUND_TANK }));
+  };
+};
+
 export const estimateTopUpVirtualAccountAction = () => {
   return async (dispatch: Function) => {
-    if (!smartWalletService) {
-      Toast.show({
-        message: 'Please init the SDK first',
-        type: 'warning',
-        autoClose: false,
-      });
-      return;
-    }
+    if (!smartWalletService) return;
 
     const value = ethToWei(0.1);
     const response = await smartWalletService
@@ -517,5 +549,71 @@ export const estimateTopUpVirtualAccountAction = () => {
         gasPrice,
       },
     });
+  };
+};
+
+export const topUpVirtualAccountAction = (amount: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    if (!smartWalletService) return;
+
+    const { accounts: { data: accounts } } = getState();
+    const accountId = getActiveAccountId(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
+    const value = ethToWei(parseFloat(amount));
+
+    const estimated = await smartWalletService
+      .estimateTopUpAccountVirtualBalance(value)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString(),
+          type: 'warning',
+          autoClose: false,
+        });
+        return {};
+      });
+
+    if (!estimated || !Object.keys(estimated).length) return;
+
+    const txHash = await smartWalletService.topUpAccountVirtualBalance(estimated)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString() || 'Failed to top up the account',
+          type: 'warning',
+          autoClose: false,
+        });
+        return null;
+      });
+
+    if (txHash) {
+      console.log({ txHash });
+      // TODO: subscribe to tx status
+
+      const historyTx = buildHistoryTransaction({
+        from: accountAddress,
+        hash: txHash,
+        to: accountAddress,
+        value,
+        asset: ETH,
+        note: PAYMENT_NETWORK_ACCOUNT_TOPUP,
+      });
+
+      dispatch({
+        type: ADD_TRANSACTION,
+        payload: {
+          accountId,
+          historyTx,
+        },
+      });
+
+      const { history: { data: currentHistory } } = getState();
+      dispatch(saveDbAction('history', { history: currentHistory }, true));
+
+      Toast.show({
+        message: 'Your Pillar Tank will be funded soon',
+        type: 'success',
+        title: 'Success',
+        autoClose: true,
+      });
+    }
   };
 };

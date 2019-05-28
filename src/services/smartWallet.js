@@ -164,6 +164,10 @@ export default class SmartWallet {
     return this.sdk.estimateTopUpAccountVirtualBalance(value);
   }
 
+  topUpAccountVirtualBalance(estimated: Object) {
+    return this.sdk.submitAccountTransaction(estimated);
+  }
+
   handleError(error: any) {
     console.log('SmartWallet handleError: ', error);
   }
