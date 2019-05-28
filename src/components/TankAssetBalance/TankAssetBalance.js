@@ -27,6 +27,7 @@ type Props = {
   isSynthetic?: boolean,
   amount: string,
   wrapperStyle?: Object,
+  monoColor?: boolean,
 };
 
 const Wrapper = styled.View`
@@ -38,19 +39,29 @@ const BalanceInTank = styled(MediumText)`
   font-size: ${fontSizes.medium}px;
 `;
 
+const getIconFill = (props) => {
+  if (props.isSynthetic) {
+    return 'url(#gradSynthetic)';
+  } else if (props.monoColor) {
+    return baseColors.electricBlueIntense;
+  }
+  return 'url(#grad)';
+};
+
 const TankAssetBalance = (props: Props) => {
   const {
-    isSynthetic,
     amount,
     wrapperStyle,
   } = props;
+
+  const iconFill = getIconFill(props);
 
   return (
     <Wrapper style={wrapperStyle}>
       <Svg
         width="20"
         height="24"
-        fill={isSynthetic ? 'url(#gradSynthetic)' : 'url(#grad)'}
+        fill={iconFill}
         color="green"
         viewBox="0 0 400 600"
       >

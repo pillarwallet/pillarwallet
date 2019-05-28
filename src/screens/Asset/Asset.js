@@ -66,6 +66,7 @@ import { accountHistorySelector } from 'selectors/history';
 
 // local components
 import ReceiveModal from './ReceiveModal';
+import TankAssetBalance from '../../components/TankAssetBalance';
 
 
 const RECEIVE = 'RECEIVE';
@@ -110,7 +111,7 @@ type State = {
 const AssetCardWrapper = styled.View`
   flex: 1;
   justify-content: flex-start;
-  padding-top: 5px;
+  padding-top: 10px;
   padding-bottom: 30px;
   background-color: ${baseColors.snowWhite};
   border-top-width: 1px;
@@ -122,6 +123,8 @@ const AssetCardWrapper = styled.View`
 const DataWrapper = styled.View`
   margin: 0 ${spacing.large}px ${spacing.large}px;
   justify-content: center;
+  align-items: center;
+  padding-bottom: 8px;
 `;
 
 const TokenValue = styled(BoldText)`
@@ -151,13 +154,19 @@ const Description = styled(Paragraph)`
 const MessageTitle = styled(BoldText)`
   font-size: ${fontSizes.small}px;
   text-align: center;
+  letter-spacing: 0.03px;
+  color: #3f3d56;
 `;
 
 const Message = styled(BaseText)`
-  padding-top: 10px;
-  font-size: ${fontSizes.tiny}px;
+  padding-top: 6px;
+  font-size: ${fontSizes.extraExtraSmall}px;
   color: ${baseColors.darkGray};
   text-align: center;
+`;
+
+const ValuesWrapper = styled.View`
+  flex-direction: row;
 `;
 
 class AssetScreen extends React.Component<Props, State> {
@@ -230,6 +239,7 @@ class AssetScreen extends React.Component<Props, State> {
       smartWalletState,
       accounts,
     } = this.props;
+
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { token } = assetData;
@@ -237,7 +247,10 @@ class AssetScreen extends React.Component<Props, State> {
     const balance = getBalance(balances, token);
     const isWalletEmpty = balance <= 0;
     const totalInFiat = balance * getRate(rates, token, fiatCurrency);
+    const balanceOnNetwork = 0; // temp
     const formattedBalanceInFiat = formatMoney(totalInFiat);
+    const balanceOnNetworkInFiat = balanceOnNetwork * getRate(rates, token, fiatCurrency);
+    const formattedBalanceOnNetworkInFiat = formatMoney(balanceOnNetworkInFiat);
     const displayAmount = formatMoney(balance, 4);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
@@ -283,10 +296,20 @@ class AssetScreen extends React.Component<Props, State> {
             <TokenValue>
               {`${displayAmount} ${token}`}
             </TokenValue>
+            {!!balanceOnNetwork &&
+            <TankAssetBalance amount={balanceOnNetwork} monoColor wrapperStyle={{ marginBottom: 18 }} />
+            }
             {!!isListed &&
-            <ValueInFiat>
-              {`${currencySymbol}${formattedBalanceInFiat}`}
-            </ValueInFiat>}
+              <ValuesWrapper>
+                {!!balanceOnNetwork &&
+                <ValueInFiat>
+                  {`${currencySymbol}${formattedBalanceOnNetworkInFiat} + `}
+                </ValueInFiat>}
+                <ValueInFiat>
+                  {`${currencySymbol}${formattedBalanceInFiat}`}
+                </ValueInFiat>
+              </ValuesWrapper>
+            }
             {!isListed &&
             <Disclaimer>
               {disclaimer}
