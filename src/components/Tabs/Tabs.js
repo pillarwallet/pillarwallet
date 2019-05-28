@@ -24,7 +24,6 @@ import { CachedImage } from 'react-native-cached-image';
 import Title from 'components/Title';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
-import { ALL } from 'constants/activityConstants';
 import { baseColors, UIColors, spacing, fontSizes } from 'utils/variables';
 import { Shadow } from '../Shadow';
 
@@ -173,7 +172,7 @@ const TabImage = styled(CachedImage)`
 
 export default class Tabs extends React.Component<Props, State> {
   state = {
-    activeTab: this.props.initialActiveTab || ALL,
+    activeTab: this.props.initialActiveTab || this.props.tabs[0].id,
     tabLengths: {},
   };
 
