@@ -40,8 +40,10 @@ import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
 import { getRate, getBalance } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountCollectiblesSelector } from 'selectors/collectibles';
 import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
+import type { Collectible } from 'models/Collectible';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -55,6 +57,7 @@ type Props = {
   session: Object,
   baseFiatCurrency: string,
   rates: Rates,
+  collectibles: Collectible[],
 };
 
 type State = {
@@ -125,6 +128,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
   onNextClick = (gasPriceWei) => {
     const {
       assets,
+      collectibles,
       transferAssets,
       transferCollectibles,
       navigation,
@@ -136,23 +140,25 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const transferTransactionsCombined = [
       ...transferCollectibles,
       ...transferAssets,
-    ].map(({ name: assetName, amount }) => {
+    ].map(({ name: assetName, key: collectibleKey, amount }: any) => {
       // receiver address is added on last upgrade step, account address is yet to be received
+      // no amount means collectible
       if (!amount) {
-        // TODO: collectible transfer
-        // const asset: any = assetsArray.find((_asset: any) => _asset.name === assetName);
-        // const {
-        //   tokenType,
-        //   id: tokenId,
-        //   contractAddress,
-        // } = asset;
-        // return {
-        //   name,
-        //   contractAddress,
-        //   tokenType,
-        //   tokenId,
-        // }
-        return {}; // temporary return before collectibles is sorted out
+        const collectible: any = collectibles.find(
+          (_collectible: any) => `${_collectible.assetContract}${_collectible.name}` === collectibleKey,
+        );
+        const {
+          name,
+          tokenType,
+          id: tokenId,
+          contractAddress,
+        } = collectible;
+        return {
+          name,
+          contractAddress,
+          tokenType,
+          tokenId,
+        };
       }
       const asset: any = assetsArray.find((_asset: any) => _asset.name === assetName);
       const {
@@ -168,11 +174,11 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
         contractAddress,
         decimals,
       };
-    }).filter(tx => Object.keys(tx).length); // temporary filter before collectibles is sorted out
+    });
     const feeTokensTransferEth = parseFloat(formatAmount(utils.formatEther(
       BigNumber(gasPriceWei * transferTransactionsCombined.length).toFixed(),
     )));
-    const etherTransaction: any = transferTransactionsCombined.find(asset => asset.symbol === ETH);
+    const etherTransaction: any = transferTransactionsCombined.find((asset: any) => asset.symbol === ETH);
     const { amount: etherTransactionAmount } = etherTransaction;
     const etherBalance = getBalance(balances, ETH);
     const balanceAfterTransfer = etherBalance - etherTransactionAmount - feeTokensTransferEth;
@@ -180,7 +186,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       // `balanceAfterTransfer` will be negative
       ? balanceAfterTransfer + etherTransactionAmount
       : etherTransactionAmount;
-    const transferTransactions = transferTransactionsCombined.filter(asset => asset.symbol !== ETH);
+    const transferTransactions = transferTransactionsCombined.filter((asset: any) => asset.symbol !== ETH);
     // make sure ether transaction is the last one
     transferTransactions.push({ ...etherTransaction, amount: updateEtherTransactionAmount });
     this.setState({ upgradeStarted: false }, () => {
@@ -213,11 +219,22 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const fiatSymbol = getCurrencySymbol(fiatCurrency);
 
     const feeTokensTransferEth = formatAmount(utils.formatEther(
-      BigNumber(gasPriceWei * (transferAssets.length + transferCollectibles.length)).toFixed(),
+      BigNumber(gasPriceWei * transferAssets.length).toFixed(),
     ));
     const feeTokensTransferFiat = parseFloat(feeTokensTransferEth) * getRate(rates, ETH, fiatCurrency);
     const assetsTransferFee =
       `${feeTokensTransferEth} ETH (${fiatSymbol}${feeTokensTransferFiat.toFixed(2)})`;
+
+    let collectiblesTransferFee;
+    if (transferCollectibles.length) {
+      const feeCollectiblesTransferEth = formatAmount(utils.formatEther(
+        BigNumber(gasPriceWei * transferCollectibles.length)
+          .toFixed(),
+      ));
+      const feeCollectiblesTransferFiat = parseFloat(feeCollectiblesTransferEth) * getRate(rates, ETH, fiatCurrency);
+      collectiblesTransferFee =
+        `${feeCollectiblesTransferEth} ETH (${fiatSymbol}${feeCollectiblesTransferFiat.toFixed(2)})`;
+    }
 
     const feeSmartContractDeployEth = formatAmount(utils.formatEther(gasPriceWei));
     const feeSmartContractDeployFiat = parseFloat(feeSmartContractDeployEth) * getRate(rates, ETH, fiatCurrency);
@@ -266,9 +283,15 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
             }
           </DetailsLine>
           <DetailsLine>
-            <DetailsTitle>Est. fee for transfer</DetailsTitle>
+            <DetailsTitle>Est. fee for assets transfer</DetailsTitle>
             <DetailsValue>{assetsTransferFee}</DetailsValue>
           </DetailsLine>
+          {!!transferCollectibles.length &&
+            <DetailsLine>
+              <DetailsTitle>Est. fee for collectibles transfer</DetailsTitle>
+              <DetailsValue>{collectiblesTransferFee}</DetailsValue>
+            </DetailsLine>
+          }
           <DetailsLine>
             <DetailsTitle>Est. fee for smart contract deployment</DetailsTitle>
             <DetailsValue>{smartContractDeployFee}</DetailsValue>
@@ -317,6 +340,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  collectibles: accountCollectiblesSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
