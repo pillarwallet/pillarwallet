@@ -43,6 +43,10 @@ type Props = {
   topUpVirtualAccount: Function,
 };
 
+type State = {
+  topUpButtonSubmitted: boolean,
+};
+
 const FooterWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
@@ -59,7 +63,11 @@ const Value = styled(BoldText)`
   font-size: ${fontSizes.medium}
 `;
 
-class FundConfirm extends React.Component<Props> {
+class FundConfirm extends React.Component<Props, State> {
+  state = {
+    topUpButtonSubmitted: false,
+  };
+
   componentDidMount() {
     this.props.estimateTopUpVirtualAccount();
   }
@@ -72,9 +80,10 @@ class FundConfirm extends React.Component<Props> {
 
   handleFormSubmit = async () => {
     const { navigation, topUpVirtualAccount } = this.props;
+    this.setState({ topUpButtonSubmitted: true });
     const amount = navigation.getParam('amount', '0');
     await topUpVirtualAccount(amount);
-    navigation.dismiss();
+    this.setState({ topUpButtonSubmitted: false }, () => navigation.dismiss());
   };
 
   getTxFeeInWei = (): BigNumber => {
@@ -83,6 +92,7 @@ class FundConfirm extends React.Component<Props> {
 
   render() {
     const { session, navigation, topUpFee } = this.props;
+    const { topUpButtonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
     const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
 
@@ -113,7 +123,7 @@ class FundConfirm extends React.Component<Props> {
         <Footer keyboardVerticalOffset={40}>
           <FooterWrapper>
             <Button
-              disabled={!session.isOnline || !topUpFee.isFetched}
+              disabled={!session.isOnline || !topUpFee.isFetched || topUpButtonSubmitted}
               onPress={this.handleFormSubmit}
               title="Fund Pillar Tank"
             />
