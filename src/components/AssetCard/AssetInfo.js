@@ -26,13 +26,16 @@ import { fontSizes, baseColors } from 'utils/variables';
 
 type Props = {
   token: string,
-  amount: string,
   disclaimer?: string,
-  balanceInFiat: {
-    amount: string | number,
-    currency: string,
+  balance: {
+    value: string,
+    valueInFiat: string | number,
   },
-  balanceOnNetwork?: ?string,
+  balanceOnNetwork?: {
+    valueOnNetwork?: string,
+    valueOnNetworkInFiat?: string | number,
+  },
+  currency: string,
 }
 
 const AmountWrapper = styled.View`
@@ -76,33 +79,44 @@ const AmountToken = styled(BoldText)`
   color: ${baseColors.slateBlack};
 `;
 
+const AmountRow = styled.View`
+  flex-direction: row;
+`;
+
 const AssetInfo = (props: Props) => {
   const {
-    amount,
+    balance = {},
+    balanceOnNetwork = {},
     token,
-    balanceInFiat,
     disclaimer,
-    balanceOnNetwork,
+    currency,
   } = props;
 
-  const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
+  const { value, valueInFiat } = balance;
+  const { valueOnNetwork, valueOnNetworkInFiat } = balanceOnNetwork;
+
+  const currencySymbol = getCurrencySymbol(currency);
 
   return (
     <AmountWrapper>
       <TokenAmountWrapper>
-        <Amount>{amount}</Amount>
+        <Amount>{value}</Amount>
         <AmountToken> {token}</AmountToken>
       </TokenAmountWrapper>
-      {!!balanceOnNetwork &&
+      {!!valueOnNetwork &&
       <TankAssetBalance
-        amount={balanceOnNetwork}
+        amount={valueOnNetwork}
         isSynthetic={token !== 'ETH'}
         wrapperStyle={{ marginBottom: 5, marginTop: -2 }}
       />
       }
       {disclaimer
         ? <Disclaimer>{disclaimer}</Disclaimer>
-        : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+        :
+        <AmountRow>
+          {!!valueOnNetworkInFiat && <FiatAmount>{currencySymbol}{valueOnNetworkInFiat} + </FiatAmount>}
+          <FiatAmount>{currencySymbol}{valueInFiat}</FiatAmount>
+        </AmountRow>
       }
     </AmountWrapper>
   );

@@ -43,7 +43,8 @@ type Props = {
   },
   icon: string,
   assetData: Object,
-  balanceOnNetwork?: string,
+  amountOnNetwork?: string,
+  amountOnNetworkInFiat?: string,
 }
 
 const defaultCircleColor = '#ACBCCD';
@@ -125,10 +126,20 @@ class AssetCardSimplified extends React.Component<Props, {}> {
       balanceInFiat,
       disclaimer,
       icon,
-      balanceOnNetwork,
+      amountOnNetwork,
+      amountOnNetworkInFiat,
     } = this.props;
 
-    const cardHeight = balanceOnNetwork ? 94 : 74;
+    const cardHeight = amountOnNetwork || amountOnNetworkInFiat ? 94 : 74;
+    const balance = {
+      value: amount,
+      valueInFiat: balanceInFiat.amount,
+    };
+
+    const balanceOnNetwork = {
+      valueOnNetwork: amountOnNetwork,
+      valueOnNetworkInFiat: amountOnNetworkInFiat,
+    };
 
     return (
       <AssetOutter cardWidth={cardWidth}>
@@ -155,10 +166,10 @@ class AssetCardSimplified extends React.Component<Props, {}> {
                 <Name>{name}</Name>
                 <AssetInfo
                   token={token}
-                  amount={amount}
-                  disclaimer={disclaimer}
-                  balanceInFiat={balanceInFiat}
+                  currency={balanceInFiat.currency}
+                  balance={balance}
                   balanceOnNetwork={balanceOnNetwork}
+                  disclaimer={disclaimer}
                 />
               </DetailsWrapper>
             </AssetWrapper>

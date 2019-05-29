@@ -18,12 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import merge from 'lodash.merge';
-import { SET_ESTIMATED_TOPUP_FEE, UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES } from 'constants/paymentNetworkConstants';
+import {
+  SET_ESTIMATED_TOPUP_FEE,
+  UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
+  PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
+  PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+} from 'constants/paymentNetworkConstants';
 import type { Accounts, TopUpFee } from 'models/PaymentNetwork';
 
 export type PaymentNetworkState = {
   accounts: Accounts,
   topUpFee: TopUpFee,
+  txToListen: string[],
 };
 
 export type PaymentNetworkAction = {
@@ -37,6 +43,7 @@ const initialState = {
     isFetched: false,
     feeInfo: null,
   },
+  txToListen: [],
 };
 
 export default function paymentNetworkReducer(
@@ -48,6 +55,16 @@ export default function paymentNetworkReducer(
       return merge({}, state, { accounts: { [action.payload.accountId]: action.payload.balances } });
     case SET_ESTIMATED_TOPUP_FEE:
       return merge({}, state, { topUpFee: { feeInfo: action.payload, isFetched: true } });
+    case PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS:
+      return merge({}, state, { txToListen: [...state.txToListen, action.payload] });
+    case PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS:
+      return merge(
+        {},
+        state,
+        {
+          txToListen: state.txToListen.filter(hash => hash.toLowerCase() !== action.payload.toLowerCase()),
+        },
+      );
     default:
       return state;
   }

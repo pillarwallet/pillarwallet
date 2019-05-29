@@ -42,11 +42,6 @@ export default function badgesReducer(
   action: TankReducerAction,
 ) {
   switch (action.type) {
-    case 'FUND_TANK':
-      return {
-        ...state,
-        data: action.payload,
-      };
     case 'SETTLE_ASSETS':
       return {
         ...state,
