@@ -1,8 +1,8 @@
 // @flow
 
-import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
+import { Center } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 
 export const CardContainer = styled.View`
@@ -29,18 +29,15 @@ export const Username = styled(BoldText)`
   margin-bottom: 10px;
 `;
 
-export const SessionWrapper = styled.View`
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  margin: 5px 20px 20px;
-  padding-top: ${Platform.select({
-    ios: '15px',
-    android: '9px',
-  })};
-`;
-
 export const SheetContentWrapper = styled.View`
   flex: 1;
-  padding-top: 30px;
+  padding-top: 70px;
+`;
+
+export const SheetEmptyContent = styled(Center)`
+  flex: 1;
+`;
+
+export const SheetEmptyText = styled(BoldText)`
+  color: ${baseColors.mediumGray};
 `;

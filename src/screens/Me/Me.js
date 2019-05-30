@@ -18,18 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Text, Dimensions, FlatList } from 'react-native';
+import { Dimensions, FlatList } from 'react-native';
 import { connect } from 'react-redux';
-import { Center, ScrollWrapper } from 'components/Layout';
-import { baseColors, fontSizes } from 'utils/variables';
+import { ScrollWrapper } from 'components/Layout';
+import { baseColors } from 'utils/variables';
 import { Shadow } from 'components/Shadow';
-import Header from 'components/Header';
 import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import ProfileImage from 'components/ProfileImage/ProfileImage';
 import QRCodeScanner from 'components/QRCodeScanner';
 import CircleButton from 'components/CircleButton';
 import SettingsListItem from 'components/ListItem/SettingsItem';
-import { onWalletConnectSessionRequest } from 'actions/walletConnectActions';
+import { killWalletConnectSession, onWalletConnectSessionRequest } from 'actions/walletConnectActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import * as styled from './styles';
 
@@ -45,6 +45,7 @@ type Props = {
   user: Object,
   connectors: any[],
   pending: any[],
+  killWalletConnectSession: (peerId: string) => void,
   onWalletConnectSessionRequest: (uri: string) => void,
   onWalletLinkScan: (uri: string) => void,
 };
@@ -94,18 +95,15 @@ class MeScreen extends React.Component<Props, State> {
     const { activeTab } = this.state;
     const { connectors, pending } = this.props;
 
-    let title = '';
     let data = [];
     let empty = '';
 
     switch (activeTab) {
       case ACTIVE:
-        title = 'sessions';
         data = connectors;
         empty = 'No Active Sessions';
         break;
       case REQUESTS:
-        title = 'requests';
         data = pending;
         empty = 'No Pending Requests';
         break;
@@ -114,32 +112,28 @@ class MeScreen extends React.Component<Props, State> {
     }
 
     return (
-      <React.Fragment>
-        <Header title={title} />
-        <ScrollWrapper>
-          {!!data && data.length ? (
-            data.map(({ session: { peerMeta } }) => {
-              const uri = peerMeta.icons && peerMeta.icons.length ? peerMeta.icons[0] : '';
+      <ScrollWrapper>
+        {!!data && data.length ? (
+          data.map(({ session: { peerId, peerMeta } }) => {
+            if (peerMeta) {
               return (
-                <styled.SessionWrapper>
-                  <ProfileImage
-                    uri={uri}
-                    userName={peerMeta.name}
-                    borderWidth={4}
-                    initialsSize={fontSizes.extraGiant}
-                    diameter={172}
-                    style={{ backgroundColor: baseColors.geyser }}
-                  />
-                </styled.SessionWrapper>
+                <ListItemWithImage
+                  key={`walletconnect-session-${peerId}`}
+                  label={peerMeta.name}
+                  avatarUrl={peerMeta.icons[0]}
+                  buttonAction={() => this.props.killWalletConnectSession(peerId)}
+                  buttonActionLabel="Disconnect"
+                />
               );
-            })
-          ) : (
-            <Center>
-              <Text>{empty || 'Nothing here'}</Text>
-            </Center>
-          )}
-        </ScrollWrapper>
-      </React.Fragment>
+            }
+            return null;
+          })
+        ) : (
+          <styled.SheetEmptyContent>
+            <styled.SheetEmptyText>{empty || 'Nothing here'}</styled.SheetEmptyText>
+          </styled.SheetEmptyContent>
+        )}
+      </ScrollWrapper>
     );
   }
 
@@ -244,6 +238,7 @@ const mapStateToProps = ({ user: { data: user }, walletConnect: { connectors, pe
 });
 
 const mapDispatchToProps = dispatch => ({
+  killWalletConnectSession: peerId => dispatch(killWalletConnectSession(peerId)),
   onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
   onWalletLinkScan: uri => dispatch(executeDeepLinkAction(uri)),
 });
