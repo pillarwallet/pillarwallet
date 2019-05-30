@@ -19,8 +19,10 @@
 */
 import DeviceInfo from 'react-native-device-info';
 import ethers, { providers } from 'ethers';
+
+import { isHexString } from '@walletconnect/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
-import { getRandomInt } from 'utils/common';
+import { getRandomInt, ethSign } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
 
@@ -63,16 +65,14 @@ export async function signTransaction(trx: Object, wallet: Object): Promise<stri
 // handle eth_sign
 export async function signMessage(message: any, wallet: Object): Promise<string> {
   wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
-  const signingKey = new ethers.utils.SigningKey(wallet.privateKey);
-  const sigParams = await signingKey.signDigest(ethers.utils.arrayify(message));
-  const result = await ethers.utils.joinSignature(sigParams);
-
+  // TODO: this method needs to be replaced when ethers.js is migrated to v4.0
+  const result = ethSign(message, wallet.privateKey);
   return result;
 }
 
 // handle personal_sign
 export async function signPersonalMessage(message: string, wallet: Object): Promise<string> {
   wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
-  const result = await wallet.signMessage(ethers.utils.isHexString(message) ? ethers.utils.arrayify(message) : message);
+  const result = await wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
   return result;
 }

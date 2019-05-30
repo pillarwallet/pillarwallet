@@ -144,7 +144,46 @@ export function killWalletConnectSession(peerId: string) {
 
         await connector.killSession();
 
-        const newConnectors = connectors.filter(c => c !== peerId);
+        const newConnectors = connectors.filter(c => c.peerId !== peerId);
+
+        dispatch({
+          type: WALLETCONNECT_SESSION_KILLED,
+          payload: newConnectors,
+        });
+
+        dispatch(updateSavedConnectors(newConnectors));
+      } else {
+        dispatch({
+          type: WALLETCONNECT_ERROR,
+          payload: {
+            code: SESSION_REQUEST_ERROR,
+            message: 'No Matching WalletConnect Requests Found',
+          },
+        });
+      }
+    } catch (e) {
+      dispatch({
+        type: WALLETCONNECT_ERROR,
+        payload: {
+          code: SESSION_KILLED_ERROR,
+          message: e.toString(),
+        },
+      });
+    }
+  };
+}
+
+export function killWalletConnectSessionByUrl(url: string) {
+  return async (dispatch: Function, getState: () => Object) => {
+    try {
+      const { connectors } = getState().walletConnect;
+
+      const matchingConnectors = connectors.filter(c => c.peerMeta.url === url);
+
+      if (matchingConnectors && matchingConnectors.length) {
+        await Promise.all(matchingConnectors.map(c => c.killSession()));
+
+        const newConnectors = connectors.filter(c => c.peerMeta.url !== url);
 
         dispatch({
           type: WALLETCONNECT_SESSION_KILLED,
@@ -178,7 +217,7 @@ export function onWalletConnectDisconnect(peerId: string) {
     try {
       const { connectors } = getState().walletConnect;
 
-      const newConnectors = connectors.filter(c => c !== peerId);
+      const newConnectors = connectors.filter(c => c.peerId !== peerId);
 
       dispatch({
         type: WALLETCONNECT_SESSION_DISCONNECTED,
@@ -259,19 +298,24 @@ export function initWalletConnectSessions() {
     try {
       const { sessions } = await storage.get('walletconnect');
 
-      const connectors = await Promise.all(
+      const connectors = (await Promise.all(
         sessions.map(async session => {
-          const nativeOptions = await getNativeOptions();
+          if (session.connected) {
+            const nativeOptions = await getNativeOptions();
 
-          const connector = new WalletConnect({ session }, nativeOptions);
+            const connector = new WalletConnect({ session }, nativeOptions);
 
-          return connector;
+            return connector;
+          }
+          return null;
         }),
-      );
+      )).filter(c => !!c);
 
       dispatch({ type: WALLETCONNECT_INIT_SESSIONS, payload: connectors });
 
       connectors.forEach(c => dispatch(onWalletConnectSubscribeToEvents(c.peerId)));
+
+      dispatch(updateSavedConnectors(connectors));
     } catch (e) {
       dispatch({
         type: WALLETCONNECT_ERROR,

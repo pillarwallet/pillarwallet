@@ -33,7 +33,7 @@ import { signMessage, signPersonalMessage, signTransaction } from 'utils/wallet'
 type Props = {
   navigation: NavigationScreenProp<*>,
   approveCallRequest: (peerId: string, callId: string, result: any) => Function,
-  rejectCallRequest: (peerId: string, callId: string) => Function,
+  rejectCallRequest: (peerId: string, callId: string, errorMsg?: string) => Function,
   sendAsset: (payload: TransactionPayload, wallet: Object, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
 };
@@ -135,7 +135,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
       }
       await approveCallRequest(peerId, payload.id, result);
     } catch (error) {
-      await rejectCallRequest(peerId, payload.id);
+      await rejectCallRequest(peerId, payload.id, error.toString());
     }
     this.setState(
       {
@@ -179,8 +179,8 @@ const mapDispatchToProps = dispatch => ({
   approveCallRequest: (peerId: string, callId: string, result: any) => {
     dispatch(onWalletConnectApproveCallRequest(peerId, callId, result));
   },
-  rejectCallRequest: (peerId: string, callId: string) => {
-    dispatch(onWalletConnectRejectCallRequest(peerId, callId));
+  rejectCallRequest: (peerId: string, callId: string, errorMsg?: string) => {
+    dispatch(onWalletConnectRejectCallRequest(peerId, callId, errorMsg));
   },
   sendAsset: (transaction: TransactionPayload, wallet: Object, navigate) => {
     dispatch(sendAssetAction(transaction, wallet, navigate));

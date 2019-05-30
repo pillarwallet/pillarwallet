@@ -29,7 +29,7 @@ import ProfileImage from 'components/ProfileImage/ProfileImage';
 import QRCodeScanner from 'components/QRCodeScanner';
 import CircleButton from 'components/CircleButton';
 import SettingsListItem from 'components/ListItem/SettingsItem';
-import { killWalletConnectSession, onWalletConnectSessionRequest } from 'actions/walletConnectActions';
+import { killWalletConnectSessionByUrl, onWalletConnectSessionRequest } from 'actions/walletConnectActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import * as styled from './styles';
 
@@ -45,7 +45,7 @@ type Props = {
   user: Object,
   connectors: any[],
   pending: any[],
-  killWalletConnectSession: (peerId: string) => void,
+  killWalletConnectSessionByUrl: (peerId: string) => void,
   onWalletConnectSessionRequest: (uri: string) => void,
   onWalletLinkScan: (uri: string) => void,
 };
@@ -91,6 +91,20 @@ class MeScreen extends React.Component<Props, State> {
     ];
   };
 
+  filterSessionsByUrl = (connectors: any[]) => {
+    const urls = [];
+    const sessions = [];
+    connectors.forEach(({ session }) => {
+      if (session.peerMeta) {
+        if (!urls.includes(session.peerMeta.url)) {
+          urls.push(session.peerMeta.url);
+          sessions.push(session);
+        }
+      }
+    });
+    return sessions;
+  };
+
   renderSheetContent() {
     const { activeTab } = this.state;
     const { connectors, pending } = this.props;
@@ -100,11 +114,11 @@ class MeScreen extends React.Component<Props, State> {
 
     switch (activeTab) {
       case ACTIVE:
-        data = connectors;
+        data = this.filterSessionsByUrl(connectors);
         empty = 'No Active Sessions';
         break;
       case REQUESTS:
-        data = pending;
+        data = this.filterSessionsByUrl(pending);
         empty = 'No Pending Requests';
         break;
       default:
@@ -114,14 +128,14 @@ class MeScreen extends React.Component<Props, State> {
     return (
       <ScrollWrapper>
         {!!data && data.length ? (
-          data.map(({ session: { peerId, peerMeta } }) => {
+          data.map(({ peerMeta }) => {
             if (peerMeta) {
               return (
                 <ListItemWithImage
-                  key={`walletconnect-session-${peerId}`}
+                  key={`walletconnect-session-${peerMeta.url}`}
                   label={peerMeta.name}
                   avatarUrl={peerMeta.icons[0]}
-                  buttonAction={() => this.props.killWalletConnectSession(peerId)}
+                  buttonAction={() => this.props.killWalletConnectSessionByUrl(peerMeta.url)}
                   buttonActionLabel="Disconnect"
                 />
               );
@@ -238,7 +252,7 @@ const mapStateToProps = ({ user: { data: user }, walletConnect: { connectors, pe
 });
 
 const mapDispatchToProps = dispatch => ({
-  killWalletConnectSession: peerId => dispatch(killWalletConnectSession(peerId)),
+  killWalletConnectSessionByUrl: url => dispatch(killWalletConnectSessionByUrl(url)),
   onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
   onWalletLinkScan: uri => dispatch(executeDeepLinkAction(uri)),
 });

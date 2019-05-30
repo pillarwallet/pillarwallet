@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
+import * as ethUtil from 'ethereumjs-util';
 import {
   Dimensions,
   Platform,
@@ -237,7 +238,7 @@ export const smallScreen = () => {
 
 export function getEthereumProvider(network: string) {
   // Connect to INFURA
-  const infuraNetwork = (network === 'homestead') ? 'mainnet' : network;
+  const infuraNetwork = network === 'homestead' ? 'mainnet' : network;
   const infuraUrl = `https://${infuraNetwork}.infura.io/v3/${INFURA_PROJECT_ID}`;
   const infuraProvider = new providers.JsonRpcProvider(infuraUrl, network);
 
@@ -246,8 +247,31 @@ export function getEthereumProvider(network: string) {
 
   // Creating a provider to automatically fallback onto Etherscan
   // if INFURA is down
-  return new providers.FallbackProvider([
-    infuraProvider,
-    etherscanProvider,
-  ]);
+  return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
+}
+
+export function padWithZeroes(value: string, length: number): string {
+  let myString = `${value}`;
+  while (myString.length < length) {
+    myString = `0${myString}`;
+  }
+  return myString;
+}
+
+export function concatSig({ v, r, s }): string {
+  const rSig = ethUtil.fromSigned(r);
+  const sSig = ethUtil.fromSigned(s);
+  const vSig = ethUtil.bufferToInt(v);
+  const rStr = padWithZeroes(ethUtil.toUnsigned(rSig).toString('hex'), 64);
+  const sStr = padWithZeroes(ethUtil.toUnsigned(sSig).toString('hex'), 64);
+  const vStr = ethUtil.stripHexPrefix(ethUtil.intToHex(vSig));
+  return ethUtil.addHexPrefix(rStr.concat(sStr, vStr)).toString('hex');
+}
+
+export function ethSign(msgHex: String, privateKeyHex: string): string {
+  const message = ethUtil.toBuffer(msgHex);
+  const privateKey = ethUtil.toBuffer(privateKeyHex);
+  const sigParams = ethUtil.ecsign(message, privateKey);
+  const result = concatSig(sigParams);
+  return result;
 }
