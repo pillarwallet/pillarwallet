@@ -35,7 +35,7 @@ import type { TokenTransactionPayload } from 'models/Transaction';
 import { onWalletConnectRejectCallRequest } from 'actions/walletConnectActions';
 import { spacing, fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
-import { TOKEN_TRANSFER } from 'constants/callRequestConstants';
+import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 
 type Props = {
