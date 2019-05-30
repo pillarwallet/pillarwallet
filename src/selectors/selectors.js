@@ -16,8 +16,8 @@ export const collectiblesHistorySelector =
   ({ collectibles }: {collectibles: CollectiblesState}) => collectibles.transactionHistory;
 export const historySelector = ({ history }: {history: HistoryState}) => history.data;
 
-export const paymentNetworkAccountsSelector =
-  ({ paymentNetwork }: {paymentNetwork: PaymentNetworkState}) => paymentNetwork.accounts;
+export const paymentNetworkBalancesSelector =
+  ({ paymentNetwork }: {paymentNetwork: PaymentNetworkState}) => paymentNetwork.balances;
 
 export const activeAccountSelector =
   ({ accounts }: {accounts: AccountsState}) => accounts.data.find(({ isActive }) => isActive);

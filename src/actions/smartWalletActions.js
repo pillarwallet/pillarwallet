@@ -705,16 +705,19 @@ export const fetchVirtualAccountBalanceAction = () => {
     const accountId = getActiveAccountId(accounts);
     const virtualBalance = smartWalletService.getAccountVirtualBalance();
     const balanceInEth = !virtualBalance.eq(0) ? weiToEth(virtualBalance).toString() : '0';
+
+    const accountBalances = {
+      [ETH]: {
+        balance: balanceInEth,
+        symbol: ETH,
+      },
+    };
+
     dispatch({
       type: UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
       payload: {
         accountId,
-        balances: {
-          [ETH]: {
-            balance: balanceInEth,
-            symbol: ETH,
-          },
-        },
+        balances: accountBalances,
       },
     });
   };
