@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
@@ -55,10 +56,17 @@ import type { Asset, Assets } from 'models/Asset';
 import { transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
-import { getActiveAccountAddress, getActiveAccount, getActiveAccountId, getAccountAddress } from 'utils/accounts';
+import {
+  getActiveAccountAddress,
+  getActiveAccount,
+  getActiveAccountId,
+  getActiveAccountType,
+  getAccountAddress,
+} from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
+import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -350,10 +358,12 @@ export const fetchAssetsBalancesAction = (assets: Assets) => {
     const {
       accounts: { data: accounts },
       balances: { data: balances },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
 
     const walletAddress = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
+    const activeAccountType = getActiveAccountType(accounts);
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
@@ -378,6 +388,10 @@ export const fetchAssetsBalancesAction = (assets: Assets) => {
     if (rates && Object.keys(rates).length) {
       dispatch(saveDbAction('rates', { rates }, true));
       dispatch({ type: UPDATE_RATES, payload: rates });
+    }
+
+    if (smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
+      dispatch(fetchVirtualAccountBalanceAction());
     }
   };
 };

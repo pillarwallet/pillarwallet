@@ -25,7 +25,7 @@ import {
   Sdk,
 } from '@archanova/sdk';
 import { BigNumber } from 'bignumber.js';
-import { onSmartWalletSdkAction } from 'actions/smartWalletActions';
+import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 
 const SLOW = 'slow';
 const REGULAR = 'regular';
@@ -48,6 +48,7 @@ let subscribedToEvents = false;
 
 export default class SmartWallet {
   sdk: Sdk;
+  sdkInitialized: boolean = false;
 
   constructor() {
     const config = getSdkEnvironment(SdkEnvironmentNames.Ropsten);
@@ -60,15 +61,21 @@ export default class SmartWallet {
   }
 
   async init(privateKey: string, dispatch?: Function) {
-    await this.sdk.initialize({ device: { privateKey } }).catch(this.handleError);
-    this.subscribeToEvents(dispatch);
+    await this.sdk
+      .initialize({ device: { privateKey } })
+      .then(() => { this.sdkInitialized = true; })
+      .catch(this.handleError);
+
+    if (this.sdkInitialized) {
+      this.subscribeToEvents(dispatch);
+    }
     // TODO: remove private key from smart wallet sdk
   }
 
   subscribeToEvents(dispatch?: Function) {
     if (subscribedToEvents || !dispatch) return;
     this.sdk.event$.subscribe(event => {
-      if (dispatch) dispatch(onSmartWalletSdkAction(event));
+      if (dispatch) dispatch(onSmartWalletSdkEventAction(event));
     });
     subscribedToEvents = true;
   }
@@ -110,7 +117,7 @@ export default class SmartWallet {
       .then(({ totalCost }) => totalCost)
       .catch(this.handleError);
 
-    const accountBalance = this.getAccountBalance();
+    const accountBalance = this.getAccountRealBalance();
     if (deployEstimate && accountBalance.gte(deployEstimate)) {
       return this.sdk.deployAccount();
     }
@@ -119,9 +126,12 @@ export default class SmartWallet {
     return {};
   }
 
-  getAccountBalance() {
-    const accountBalance = get(this.sdk, 'state.account.balance.real', new BigNumber(0));
-    return accountBalance;
+  getAccountRealBalance() {
+    return get(this.sdk, 'state.account.balance.real', new BigNumber(0));
+  }
+
+  getAccountVirtualBalance() {
+    return get(this.sdk, 'state.account.balance.virtual', new BigNumber(0));
   }
 
   async fetchConnectedAccount() {

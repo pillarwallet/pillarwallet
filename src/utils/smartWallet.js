@@ -68,3 +68,7 @@ export function getSmartWalletStatus(accounts: Accounts, smartWalletState: Objec
     sendingBlockedMessage,
   };
 }
+
+export function isConnectedToSmartAccount(connectedAccountRecord: ?Object) {
+  return connectedAccountRecord && Object.keys(connectedAccountRecord).length;
+}

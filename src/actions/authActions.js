@@ -54,6 +54,7 @@ import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
+import { initSmartWalletAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from './dbActions';
 
 const Crashlytics = firebase.crashlytics();
@@ -123,6 +124,11 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         dispatch(saveDbAction('user', { user }, true));
         await
         dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys));
+
+        const { featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } } } = getState();
+        if (smartWalletFeatureEnabled) {
+          dispatch(initSmartWalletAccountAction(wallet.privateKey));
+        }
       } else {
         api.init();
       }

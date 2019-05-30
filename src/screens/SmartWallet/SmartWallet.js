@@ -28,7 +28,7 @@ import { ButtonMini } from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 
-// models
+// types
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type { Account, Accounts } from 'models/Account';
 import type { Balances } from 'models/Asset';

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { sdkModules } from '@archanova/sdk';
-import { ethToWei } from '@netgum/utils';
+import { ethToWei, weiToEth } from '@netgum/utils';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 
@@ -46,6 +46,7 @@ import {
   SET_HISTORY, ADD_TRANSACTION,
 } from 'constants/historyConstants';
 import {
+  UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   SET_ESTIMATED_TOPUP_FEE,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
@@ -81,6 +82,7 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 // utils
 import { buildHistoryTransaction } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+import { isConnectedToSmartAccount } from 'utils/smartWallet';
 
 
 const storage = Storage.getInstance('db');
@@ -90,9 +92,10 @@ export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
   return async (dispatch: Function) => {
     smartWalletService = new SmartWalletService();
     await smartWalletService.init(walletPrivateKey, dispatch);
+    const initialized = smartWalletService.sdkInitialized;
     dispatch({
       type: SET_SMART_WALLET_SDK_INIT,
-      payload: true,
+      payload: initialized,
     });
   };
 };
@@ -186,7 +189,7 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
 
 export const connectSmartWalletAccountAction = (accountId: string) => {
   return async (dispatch: Function, getState: Function) => {
-    if (!smartWalletService) return;
+    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
     const connectedAccount = await smartWalletService.connectAccount(accountId).catch(() => null);
     if (!connectedAccount) {
       Toast.show({
@@ -484,7 +487,7 @@ export const cleanAllAccountsAction = () => {
   };
 };
 
-export const onSmartWalletSdkAction = (event: Object) => {
+export const onSmartWalletSdkEventAction = (event: Object) => {
   return async (dispatch: Function, getState: Function) => {
     if (!event) return;
 
@@ -564,7 +567,7 @@ export const initFundTankProcessAction = (privateKey: string) => {
       await dispatch(initSmartWalletSdkAction(privateKey));
     }
 
-    if (!connectedAccount || !Object.keys(connectedAccount).length) {
+    if (!isConnectedToSmartAccount(connectedAccount)) {
       await dispatch(connectSmartWalletAccountAction(accountId));
     }
 
@@ -642,9 +645,6 @@ export const topUpVirtualAccountAction = (amount: string) => {
       });
 
     if (txHash) {
-      console.log({ txHash });
-      // TODO: subscribe to tx status
-
       const historyTx = buildHistoryTransaction({
         from: accountAddress,
         hash: txHash,
@@ -677,5 +677,35 @@ export const topUpVirtualAccountAction = (amount: string) => {
         autoClose: true,
       });
     }
+  };
+};
+
+export const fetchVirtualAccountBalanceAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+
+    const {
+      accounts: { data: accounts },
+      session: { data: { isOnline } },
+      smartWallet: { connectedAccount },
+    } = getState();
+
+    if (!isConnectedToSmartAccount(connectedAccount) || !isOnline) return;
+
+    const accountId = getActiveAccountId(accounts);
+    const virtualBalance = smartWalletService.getAccountVirtualBalance();
+    const balanceInEth = !virtualBalance.eq(0) ? weiToEth(virtualBalance).toString() : '0';
+    dispatch({
+      type: UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
+      payload: {
+        accountId,
+        balances: {
+          [ETH]: {
+            balance: balanceInEth,
+            symbol: ETH,
+          },
+        },
+      },
+    });
   };
 };

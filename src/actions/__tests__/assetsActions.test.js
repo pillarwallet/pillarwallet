@@ -32,6 +32,7 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import type { Assets } from 'models/Asset';
 import PillarSdk from 'services/api';
 import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
+import { INITIAL_FEATURE_FLAGS } from '../../constants/featureFlagsConstants';
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -93,6 +94,7 @@ const initialState = {
   wallet: { data: { address: mockWallet.address } },
   accounts: { data: mockAccounts },
   balances: { data: {} },
+  featureFlags: { data: INITIAL_FEATURE_FLAGS },
 };
 
 describe('Wallet actions', () => {

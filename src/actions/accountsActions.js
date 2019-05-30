@@ -31,6 +31,7 @@ import {
   connectSmartWalletAccountAction,
   initSmartWalletSdkAction,
   setSmartWalletUpgradeStatusAction,
+  fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -40,6 +41,7 @@ import { migrateBalancesToAccountsFormat } from 'services/dataMigration/balances
 import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history';
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
+import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
 
 const storage = Storage.getInstance('db');
 
@@ -202,5 +204,19 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
 
     dispatch(fetchAssetsBalancesAction(assets));
     dispatch(fetchCollectiblesAction());
+  };
+};
+
+export const initSmartWalletAccountAction = (privateKey: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    const { accounts: { data: accounts } } = getState();
+    const activeAccountId = getActiveAccountId(accounts);
+    const activeAccountType = getActiveAccountType(accounts);
+
+    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
+
+    await dispatch(initSmartWalletSdkAction(privateKey));
+    await dispatch(connectSmartWalletAccountAction(activeAccountId));
+    await dispatch(fetchVirtualAccountBalanceAction());
   };
 };
