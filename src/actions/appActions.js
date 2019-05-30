@@ -50,6 +50,7 @@ import {
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
 } from 'constants/smartWalletConstants';
+import { UPDATE_PAYMENT_NETWORK_BALANCES } from 'constants/paymentNetworkConstants';
 
 
 const storage = Storage.getInstance('db');
@@ -109,6 +110,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { badges = [] } = await storage.get('badges');
       dispatch({ type: UPDATE_BADGES, payload: badges });
 
+      const { paymentNetworkBalances = {} } = await storage.get('paymentNetworkBalances');
+      dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });
+
       const { offlineQueue = [] } = await storage.get('offlineQueue');
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
@@ -123,7 +127,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const {
         upgradeTransferTransactions = [],
         upgradeStatus = null,
-      } = await storage.get('smartWallet') || {};
+      } = await storage.get('smartWallet');
       dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
       dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
 

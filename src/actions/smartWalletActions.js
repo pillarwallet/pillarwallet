@@ -713,6 +713,13 @@ export const fetchVirtualAccountBalanceAction = () => {
       },
     };
 
+    const { paymentNetwork: { balances } } = getState();
+    const updatedBalances = {
+      ...balances,
+      [accountId]: accountBalances,
+    };
+    dispatch(saveDbAction('paymentNetworkBalances', { paymentNetworkBalances: updatedBalances }, true));
+
     dispatch({
       type: UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
       payload: {
