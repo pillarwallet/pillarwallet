@@ -78,7 +78,6 @@ export const fetchCollectiblesHistoryAction = () => {
     const {
       accounts: { data: accounts },
       collectibles: { transactionHistory: collectiblesHistory },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
     const walletAddress = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
@@ -142,13 +141,16 @@ export const fetchCollectiblesHistoryAction = () => {
     dispatch(getExistingTxNotesAction());
     dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
     dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: updatedCollectiblesHistory });
-    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
   };
 };
 
 export const fetchAllCollectiblesDataAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+    } = getState();
     await dispatch(fetchCollectiblesAction());
     await dispatch(fetchCollectiblesHistoryAction());
+    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
   };
 };

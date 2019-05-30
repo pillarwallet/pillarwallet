@@ -64,7 +64,7 @@ import {
   getAccountAddress,
 } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
-import { fetchCollectiblesAction, fetchCollectiblesHistoryAction } from './collectiblesActions';
+import { fetchCollectiblesAction, fetchAllCollectiblesDataAction } from './collectiblesActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
 import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
 
@@ -74,10 +74,13 @@ type TransactionStatus = {
 };
 
 export const sendSignedAssetTransactionAction = (
-  signedTransaction: TransactionPayload,
+  transaction: any,
 ) => {
   return async (dispatch: Function) => {
-    const { signedHash } = signedTransaction;
+    const {
+      signedTransaction: { signedHash },
+      transaction: { tokenType },
+    } = transaction;
     if (!signedHash) return null;
     const transactionHash = await transferSigned(signedHash).catch(e => ({ error: e }));
     if (transactionHash.error) {
@@ -85,8 +88,11 @@ export const sendSignedAssetTransactionAction = (
     }
     waitForTransaction(transactionHash)
       .then(() => {
-        dispatch(fetchTransactionsHistoryAction());
-        dispatch(fetchCollectiblesHistoryAction());
+        dispatch(
+          tokenType === COLLECTIBLES
+            ? fetchAllCollectiblesDataAction()
+            : fetchTransactionsHistoryAction(),
+        );
       })
       .catch(() => null);
     return transactionHash;

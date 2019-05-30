@@ -375,8 +375,7 @@ export const checkAssetTransferTransactionsAction = () => {
       );
       // grab first in queue
       const unsentTransaction = unsentTransactions[0];
-      const { signedTransaction } = unsentTransaction;
-      const transactionHash = await dispatch(sendSignedAssetTransactionAction(signedTransaction));
+      const transactionHash = await dispatch(sendSignedAssetTransactionAction(unsentTransaction));
       if (!transactionHash) {
         Toast.show({
           message: 'Failed to send signed asset',
@@ -387,8 +386,9 @@ export const checkAssetTransferTransactionsAction = () => {
         return;
       }
       console.log('sent new asset transfer transaction: ', transactionHash);
+      const { signedTransaction: { signedHash } } = unsentTransaction;
       updatedTransactions = updatedTransactions.filter(
-        transaction => transaction.signedTransaction.signedHash !== signedTransaction.signedHash,
+        transaction => transaction.signedTransaction.signedHash !== signedHash,
       );
       updatedTransactions.push({
         ...unsentTransaction,
