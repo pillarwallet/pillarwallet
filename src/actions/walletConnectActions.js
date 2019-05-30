@@ -27,6 +27,7 @@ import {
   WALLETCONNECT_SESSION_REJECTED,
   WALLETCONNECT_SESSION_DISCONNECTED,
   WALLETCONNECT_SESSION_KILLED,
+  WALLETCONNECT_CLEAR_PENDING,
   WALLETCONNECT_CALL_REQUEST,
   WALLETCONNECT_ERROR,
   SESSION_REQUEST_EVENT,
@@ -200,6 +201,29 @@ export function killWalletConnectSessionByUrl(url: string) {
           },
         });
       }
+    } catch (e) {
+      dispatch({
+        type: WALLETCONNECT_ERROR,
+        payload: {
+          code: SESSION_KILLED_ERROR,
+          message: e.toString(),
+        },
+      });
+    }
+  };
+}
+
+export function clearPendingWalletConnectSessionByUrl(url: string) {
+  return async (dispatch: Function, getState: () => Object) => {
+    try {
+      const { pending } = getState().walletConnect;
+
+      const newPending = pending.filter(c => c.peerMeta.url !== url);
+
+      dispatch({
+        type: WALLETCONNECT_CLEAR_PENDING,
+        payload: newPending,
+      });
     } catch (e) {
       dispatch({
         type: WALLETCONNECT_ERROR,

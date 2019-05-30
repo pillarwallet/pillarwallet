@@ -29,7 +29,11 @@ import ProfileImage from 'components/ProfileImage/ProfileImage';
 import QRCodeScanner from 'components/QRCodeScanner';
 import CircleButton from 'components/CircleButton';
 import SettingsListItem from 'components/ListItem/SettingsItem';
-import { killWalletConnectSessionByUrl, onWalletConnectSessionRequest } from 'actions/walletConnectActions';
+import {
+  killWalletConnectSessionByUrl,
+  clearPendingWalletConnectSessionByUrl,
+  onWalletConnectSessionRequest,
+} from 'actions/walletConnectActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import * as styled from './styles';
 
@@ -45,7 +49,8 @@ type Props = {
   user: Object,
   connectors: any[],
   pending: any[],
-  killWalletConnectSessionByUrl: (peerId: string) => void,
+  clearPendingWalletConnectSessionByUrl: (url: string) => void,
+  killWalletConnectSessionByUrl: (url: string) => void,
   onWalletConnectSessionRequest: (uri: string) => void,
   onWalletLinkScan: (uri: string) => void,
 };
@@ -105,6 +110,14 @@ class MeScreen extends React.Component<Props, State> {
     return sessions;
   };
 
+  disconnectByUrl = (url: string) => {
+    if (this.state.activeTab === ACTIVE) {
+      this.props.killWalletConnectSessionByUrl(url);
+    } else {
+      this.props.clearPendingWalletConnectSessionByUrl(url);
+    }
+  };
+
   renderSheetContent() {
     const { activeTab } = this.state;
     const { connectors, pending } = this.props;
@@ -135,8 +148,8 @@ class MeScreen extends React.Component<Props, State> {
                   key={`walletconnect-session-${peerMeta.url}`}
                   label={peerMeta.name}
                   avatarUrl={peerMeta.icons[0]}
-                  buttonAction={() => this.props.killWalletConnectSessionByUrl(peerMeta.url)}
-                  buttonActionLabel="Disconnect"
+                  buttonAction={() => this.disconnectByUrl(peerMeta.url)}
+                  buttonActionLabel={activeTab === ACTIVE ? 'Disconnect' : 'Cancel'}
                 />
               );
             }
@@ -252,6 +265,7 @@ const mapStateToProps = ({ user: { data: user }, walletConnect: { connectors, pe
 });
 
 const mapDispatchToProps = dispatch => ({
+  clearPendingWalletConnectSessionByUrl: url => dispatch(clearPendingWalletConnectSessionByUrl(url)),
   killWalletConnectSessionByUrl: url => dispatch(killWalletConnectSessionByUrl(url)),
   onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
   onWalletLinkScan: uri => dispatch(executeDeepLinkAction(uri)),

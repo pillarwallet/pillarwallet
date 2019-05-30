@@ -24,6 +24,9 @@ import {
   WALLETCONNECT_SESSION_REQUEST,
   WALLETCONNECT_SESSION_APPROVED,
   WALLETCONNECT_SESSION_REJECTED,
+  WALLETCONNECT_SESSION_DISCONNECTED,
+  WALLETCONNECT_SESSION_KILLED,
+  WALLETCONNECT_CLEAR_PENDING,
   WALLETCONNECT_ERROR,
 } from 'constants/walletConnectConstants';
 
@@ -59,12 +62,14 @@ export default function walletConnectReducer(
 ) {
   switch (action.type) {
     case WALLETCONNECT_INIT_SESSIONS:
+    case WALLETCONNECT_SESSION_DISCONNECTED:
+    case WALLETCONNECT_SESSION_KILLED:
       return merge({}, state, { connectors: action.payload });
-    case WALLETCONNECT_SESSION_REQUEST:
-      return merge({}, state, { pending: action.payload });
     case WALLETCONNECT_SESSION_APPROVED:
       return merge({}, state, { pending: action.payload.pending, connectors: action.payload.connectors });
+    case WALLETCONNECT_SESSION_REQUEST:
     case WALLETCONNECT_SESSION_REJECTED:
+    case WALLETCONNECT_CLEAR_PENDING:
       return merge({}, state, { pending: action.payload });
     case WALLETCONNECT_ERROR:
       return merge({}, state, { error: action.payload });
