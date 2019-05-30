@@ -3,24 +3,24 @@ import { createSelector } from 'reselect';
 import { ETH } from 'constants/assetsConstants';
 import { getBalance } from 'utils/assets';
 import type { Balances } from 'models/Asset';
-import { activeAccountIdSelector, paymentNetworkAccountsSelector } from './selectors';
+import { activeAccountIdSelector, paymentNetworkBalancesSelector } from './selectors';
 
-export const paymentNetworkBalancesSelector: Balances = createSelector(
-  paymentNetworkAccountsSelector,
+export const paymentNetworkAccountBalancesSelector: Balances = createSelector(
+  paymentNetworkBalancesSelector,
   activeAccountIdSelector,
-  (accounts, activeAccountId) => {
+  (balances, activeAccountId) => {
     if (!activeAccountId) return {};
-    return accounts[activeAccountId] || {};
+    return balances[activeAccountId] || {};
   },
 );
 
 export const availableStakeSelector: number = createSelector(
-  paymentNetworkBalancesSelector,
+  paymentNetworkAccountBalancesSelector,
   (balances) => getBalance(balances, ETH),
 );
 
 export const paymentNetworkNonZeroBalancesSelector: Balances = createSelector(
-  paymentNetworkBalancesSelector,
+  paymentNetworkAccountBalancesSelector,
   (balances) => {
     return Object.keys(balances).reduce((nonZeroBalances, ticker) => {
       const balance = getBalance(balances, ticker);

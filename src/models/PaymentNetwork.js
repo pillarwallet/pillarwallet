@@ -18,15 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import type { Balances } from './Asset';
-
-type AccountData = {
-  balances: Balances,
-};
-
-export type Accounts = {
-  [accountId: string]: AccountData,
-};
 
 export type TopUpFeeInfo = ?{
   fixedGas: BigNumber,
