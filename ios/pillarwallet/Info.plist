@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>pillarwallet</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -20,15 +29,6 @@
 	<string>0.0.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>pillarwallet</string>
-			</array>
-		</dict>
-	</array>
 	<key>CFBundleVersion</key>
 	<string>2461</string>
 	<key>Fabric</key>
@@ -75,10 +75,6 @@
 	<string>Allow Pillar Wallet to use your camera to take your profile picture or scan qr codes</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Allow Pillar Wallet to access your contacts</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Enabling Face ID allows you quick and secure access to your account.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Allow Pillar Wallet to always access the location of your device</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow Pillar Wallet to use your location</string>
 	<key>NSMotionUsageDescription</key>
@@ -91,6 +87,8 @@
 	<string>Allow Pillar Wallet to access your reminders</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Allow Pillar Wallet recognize speech</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Allow Pillar Wallet to always access the location of your device</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>PillarIcons.ttf</string>
@@ -133,5 +131,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Enabling Face ID allows you quick and secure access to your account.</string>
 </dict>
 </plist>
