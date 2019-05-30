@@ -30,6 +30,11 @@ export function getActiveAccountId(accounts: Accounts = []): string {
   return activeAccount.id || '';
 }
 
+export function getActiveAccountType(accounts: Accounts = []): string {
+  const activeAccount = getActiveAccount(accounts) || {};
+  return activeAccount.type || '';
+}
+
 export function getAccountAddress(account: Account): string {
   return account.id || '';
 }

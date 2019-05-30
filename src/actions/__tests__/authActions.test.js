@@ -26,6 +26,7 @@ import {
   DECRYPTING,
 } from 'constants/walletConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
+import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
@@ -71,6 +72,7 @@ describe('Wallet actions', () => {
       },
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
       accounts: { data: [] },
+      featureFlags: { data: INITIAL_FEATURE_FLAGS },
     });
   });
 
