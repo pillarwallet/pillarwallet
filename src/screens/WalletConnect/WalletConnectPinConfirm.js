@@ -28,7 +28,7 @@ import { onWalletConnectApproveCallRequest, onWalletConnectRejectCallRequest } f
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
-import { signMessage, signTransaction } from 'utils/wallet';
+import { signMessage, signPersonalMessage, signTransaction } from 'utils/wallet';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -123,9 +123,16 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 
   handleSignMessage = async (peerId: string, payload: Object, wallet: Object) => {
     const { approveCallRequest, rejectCallRequest } = this.props;
-    const message = payload.params[1];
+    let message = '';
     try {
-      const result = await signMessage(message, wallet);
+      let result = null;
+      if (payload.method === 'personal_sign') {
+        message = payload.params[0] // eslint-disable-line
+        result = await signPersonalMessage(message, wallet);
+      } else {
+        message = payload.params[1] // eslint-disable-line
+        result = await signMessage(message, wallet);
+      }
       await approveCallRequest(peerId, payload.id, result);
     } catch (error) {
       await rejectCallRequest(peerId, payload.id);

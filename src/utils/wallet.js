@@ -41,9 +41,8 @@ export function generateWordsToValidate(numWordsToGenerate: number, maxWords: nu
   return chosenWords;
 }
 
-
 export async function getSaltedPin(pin: string, dispatch: Function): Promise<string> {
-  let { deviceUniqueId = null } = await storage.get('deviceUniqueId') || {};
+  let { deviceUniqueId = null } = (await storage.get('deviceUniqueId')) || {};
   if (!deviceUniqueId) {
     deviceUniqueId = DeviceInfo.getUniqueID();
     await dispatch(saveDbAction('deviceUniqueId', { deviceUniqueId }, true));
@@ -51,12 +50,29 @@ export async function getSaltedPin(pin: string, dispatch: Function): Promise<str
   return deviceUniqueId + pin + deviceUniqueId.slice(0, 5);
 }
 
-export function signTransaction(trx: Object, wallet: Object): string {
+// handle eth_signTransaction
+export async function signTransaction(trx: Object, wallet: Object): Promise<string> {
   wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
-  return wallet.sign(trx);
+  if (trx && trx.from) {
+    delete trx.from;
+  }
+  const result = await wallet.sign(trx);
+  return result;
 }
 
-export function signMessage(message: string, wallet: Object): string {
+// handle eth_sign
+export async function signMessage(message: any, wallet: Object): Promise<string> {
   wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
-  return wallet.signMessage(message);
+  const signingKey = new ethers.utils.SigningKey(wallet.privateKey);
+  const sigParams = await signingKey.signDigest(ethers.utils.arrayify(message));
+  const result = await ethers.utils.joinSignature(sigParams);
+
+  return result;
+}
+
+// handle personal_sign
+export async function signPersonalMessage(message: string, wallet: Object): Promise<string> {
+  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  const result = await wallet.signMessage(ethers.utils.isHexString(message) ? ethers.utils.arrayify(message) : message);
+  return result;
 }

@@ -173,6 +173,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
     let type = 'Call';
     let body = null;
+    let address = '';
+    let message = '';
 
     switch (payload.method) {
       case 'eth_sendTransaction':
@@ -258,11 +260,28 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         );
         break;
       case 'eth_sign':
+        type = 'Message';
+
+        address = payload.params[0]; // eslint-disable-line
+        message = payload.params[1]; // eslint-disable-line
+        body = (
+          <ScrollWrapper regularPadding>
+            <LabeledRow>
+              <Label>Address</Label>
+              <Value>{address}</Value>
+            </LabeledRow>
+            <LabeledRow>
+              <Label>Message</Label>
+              <Value>{message}</Value>
+            </LabeledRow>
+          </ScrollWrapper>
+        );
+        break;
       case 'personal_sign':
         type = 'Message';
 
-        const address = payload.params[0];
-        const message = payload.method === 'eth_sign' ? payload.params[1] : utils.toUtf8String(payload.params[1]);
+        address = payload.params[1]; // eslint-disable-line
+        message = utils.toUtf8String(payload.params[0]);
         body = (
           <ScrollWrapper regularPadding>
             <LabeledRow>
