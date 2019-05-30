@@ -26,6 +26,7 @@ import {
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
+import { checkAssetTransferTransactionsAction } from './smartWalletActions';
 
 export const fetchCollectiblesAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -77,6 +78,7 @@ export const fetchCollectiblesHistoryAction = () => {
     const {
       accounts: { data: accounts },
       collectibles: { transactionHistory: collectiblesHistory },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
     const walletAddress = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
@@ -140,6 +142,7 @@ export const fetchCollectiblesHistoryAction = () => {
     dispatch(getExistingTxNotesAction());
     dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
     dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: updatedCollectiblesHistory });
+    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
   };
 };
 

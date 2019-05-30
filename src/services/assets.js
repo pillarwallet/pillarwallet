@@ -51,6 +51,8 @@ type ERC721TransferOptions = {
   wallet: Object,
   nonce?: number,
   signOnly?: ?boolean,
+  gasLimit?: ?number,
+  gasPrice?: ?number,
 };
 
 type ETHTransferOptions = {
@@ -125,6 +127,9 @@ export async function transferERC721(options: ERC721TransferOptions) {
     tokenId,
     wallet,
     nonce,
+    gasLimit,
+    gasPrice,
+    signOnly = false,
   } = options;
   wallet.provider = getEthereumProvider(COLLECTIBLES_NETWORK);
 
@@ -132,16 +137,43 @@ export async function transferERC721(options: ERC721TransferOptions) {
   const code = await wallet.provider.getCode(contractAddress);
   const contractTransferMethod = getERC721ContractTransferMethod(code);
 
+  // used if signOnly
+  let contractSignedTransaction;
+  let contractMethodApplied;
+  if (signOnly) {
+    contractSignedTransaction = {
+      gasLimit,
+      gasPrice: utils.bigNumberify(gasPrice),
+      to: contractAddress,
+      nonce,
+    };
+  }
+
   switch (contractTransferMethod) {
     case 'safeTransferFrom':
       contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
-      return contract.safeTransferFrom(from, to, tokenId, { nonce });
+      if (!signOnly) return contract.safeTransferFrom(from, to, tokenId, { nonce });
+      contractMethodApplied = await contract.interface.functions.safeTransferFrom.apply(null, [from, to, tokenId]);
+      return wallet.sign({
+        ...contractSignedTransaction,
+        data: contractMethodApplied.data,
+      });
     case 'transfer':
       contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
-      return contract.transfer(to, tokenId, { nonce });
+      if (!signOnly) return contract.transfer(to, tokenId, { nonce });
+      contractMethodApplied = await contract.interface.functions.transfer.apply(null, [to, tokenId]);
+      return wallet.sign({
+        ...contractSignedTransaction,
+        data: contractMethodApplied.data,
+      });
     case 'transferFrom':
       contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
-      return contract.transferFrom(from, to, tokenId, { nonce });
+      if (!signOnly) return contract.transferFrom(from, to, tokenId, { nonce });
+      contractMethodApplied = await contract.interface.functions.transferFrom.apply(null, [from, to, tokenId]);
+      return wallet.sign({
+        ...contractSignedTransaction,
+        data: contractMethodApplied.data,
+      });
     default:
   }
 

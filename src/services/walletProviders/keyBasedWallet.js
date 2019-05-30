@@ -33,9 +33,12 @@ export default class KeyBasedWalletProvider {
       to,
       contractAddress,
       tokenId,
+      gasLimit,
+      gasPrice,
+      signOnly = false,
     } = transaction;
     const from = getAccountAddress(account);
-    const { nonce, transactionCount } = await this.calculateNonce(from, state);
+    const { nonce, transactionCount } = await this.calculateNonce(from, state, signOnly);
 
     return transferERC721({
       from,
@@ -44,8 +47,21 @@ export default class KeyBasedWalletProvider {
       tokenId,
       wallet: this.wallet,
       nonce,
+      gasLimit,
+      gasPrice,
+      signOnly,
     })
-      .then(result => ({ ...result, transactionCount }))
+      .then(result => {
+        if (!signOnly) return { ...result, transactionCount };
+        // result is signed hash
+        return {
+          signedHash: result,
+          nonce,
+          transactionCount,
+          from,
+          to,
+        };
+      })
       .catch((e) => {
         catchTransactionError(e, 'ERC721', {
           contractAddress,

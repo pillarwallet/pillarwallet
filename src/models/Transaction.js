@@ -67,6 +67,8 @@ export type CollectibleTransactionPayload = {
   tokenId: string,
   signOnly?: ?boolean,
   signedHash?: ?string,
+  gasPrice?: ?number,
+  gasLimit?: ?number,
 }
 
 export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;

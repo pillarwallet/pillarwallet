@@ -269,7 +269,7 @@ export const dismissSmartWalletUpgradeAction = () => {
 
 export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {
   return async (dispatch: Function) => {
-    dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: transactions }));
+    dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: transactions }, true));
     dispatch({
       type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
       payload: transactions,
@@ -308,6 +308,7 @@ export const checkAssetTransferTransactionsAction = () => {
       history: {
         data: transactionsHistory,
       },
+      collectibles: { transactionHistory: collectiblesHistory = {} },
       smartWallet: {
         upgrade: {
           status: upgradeStatus,
@@ -317,6 +318,7 @@ export const checkAssetTransferTransactionsAction = () => {
         },
       },
     } = getState();
+
     if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS) return;
     if (!transferTransactions.length) {
       // TODO: no transactions at all?
@@ -325,13 +327,16 @@ export const checkAssetTransferTransactionsAction = () => {
 
     // update with statuses from history
     // TODO: visit current workaround to get history from all wallets
-    const combinedHistory = Object.values(transactionsHistory);
-    const allHistory = combinedHistory.reduce(
+    const accountIds = Object.keys(transactionsHistory);
+    const allHistory = accountIds.reduce(
       // $FlowFixMe
-      (existing = [], walletHistory = []) => [...existing, ...walletHistory],
+      (existing = [], accountId) => {
+        const walletCollectiblesHistory = collectiblesHistory[accountId] || [];
+        const walletAssetsHistory = transactionsHistory[accountId] || [];
+        return [...existing, ...walletAssetsHistory, ...walletCollectiblesHistory];
+      },
       [],
     );
-
     let updatedTransactions = transferTransactions.map(transaction => {
       const { transactionHash } = transaction;
       if (!transactionHash) return transaction;
@@ -370,7 +375,12 @@ export const checkAssetTransferTransactionsAction = () => {
       const { signedTransaction } = unsentTransaction;
       const transactionHash = await dispatch(sendSignedAssetTransactionAction(signedTransaction));
       if (!transactionHash) {
-        // TODO: failed to send?
+        Toast.show({
+          message: 'Failed to send signed asset',
+          type: 'warning',
+          title: 'Unable to upgrade',
+          autoClose: false,
+        });
         return;
       }
       console.log('sent new asset transfer transaction: ', transactionHash);

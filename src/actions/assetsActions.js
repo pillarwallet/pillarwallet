@@ -57,7 +57,7 @@ import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccount, getActiveAccountId, getAccountAddress } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
-import { fetchCollectiblesAction } from './collectiblesActions';
+import { fetchCollectiblesAction, fetchCollectiblesHistoryAction } from './collectiblesActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
 
 type TransactionStatus = {
@@ -73,11 +73,13 @@ export const sendSignedAssetTransactionAction = (
     if (!signedHash) return null;
     const transactionHash = await transferSigned(signedHash).catch(e => ({ error: e }));
     if (transactionHash.error) {
-      // TODO: error?
       return null;
     }
     waitForTransaction(transactionHash)
-      .then(() => dispatch(fetchTransactionsHistoryAction()))
+      .then(() => {
+        dispatch(fetchTransactionsHistoryAction());
+        dispatch(fetchCollectiblesHistoryAction());
+      })
       .catch(() => null);
     return transactionHash;
   };
@@ -91,24 +93,21 @@ export const signAssetTransactionAction = (
     const tokenType = get(assetTransaction, 'tokenType', '');
     const symbol = get(assetTransaction, 'symbol', '');
 
-    // if (tokenType === COLLECTIBLES) {
-    //   await dispatch(fetchCollectiblesAction());
-    // }
+    if (tokenType === COLLECTIBLES) {
+      await dispatch(fetchCollectiblesAction());
+    }
 
     const {
       accounts: { data: accounts },
-      // collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
+      collectibles: { data: collectibles },
     } = getState();
 
-    // const accountId = getActiveAccountId(accounts);
+    const accountId = getActiveAccountId(accounts);
     const activeAccount = getActiveAccount(accounts);
-    // const accountAddress = getActiveAccountAddress(accounts);
     if (!activeAccount) return {};
+    const accountCollectibles = collectibles[accountId] || [];
 
     let signedTransaction;
-    // const accountCollectibles = collectibles[accountId] || [];
-    // const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
-    // const { to } = assetTransaction;
 
     // get wallet provider
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
@@ -118,7 +117,18 @@ export const signAssetTransactionAction = (
     const transaction = { ...assetTransaction, signOnly: true };
 
     if (tokenType === COLLECTIBLES) {
-      // TODO: sign collectible transfer
+      // $FlowFixMe
+      const { tokenId } = (assetTransaction: CollectibleTransactionPayload);
+      const collectibleInfo = accountCollectibles.find(item => item.id === tokenId);
+      if (collectibleInfo) {
+        // $FlowFixMe
+        signedTransaction = await walletProvider.transferERC721(
+          activeAccount,
+          // $FlowFixMe
+          transaction,
+          getState(),
+        );
+      }
     } else if (symbol === ETH) {
       // $FlowFixMe
       signedTransaction = await walletProvider.transferETH(

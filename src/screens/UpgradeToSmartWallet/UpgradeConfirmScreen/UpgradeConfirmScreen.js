@@ -158,6 +158,8 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           contractAddress,
           tokenType,
           tokenId,
+          gasLimit: GAS_LIMIT,
+          gasPrice,
         };
       }
       const asset: any = assetsArray.find((_asset: any) => _asset.name === assetName);
