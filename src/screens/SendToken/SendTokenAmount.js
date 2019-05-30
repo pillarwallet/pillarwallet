@@ -220,11 +220,14 @@ class SendTokenAmount extends React.Component<Props, State> {
   formSubmitted: boolean = false;
   enoughForFee: boolean = false;
   receiver: string;
+  source: string;
 
   constructor(props: Props) {
     super(props);
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.receiver = this.props.navigation.getParam('receiver', '');
+    this.source = this.props.navigation.getParam('source', '');
+
     this.state = {
       value: null,
       transactionSpeed: NORMAL,
@@ -274,6 +277,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     Keyboard.dismiss();
     navigation.navigate(SEND_TOKEN_CONFIRM, {
       transactionPayload,
+      source: this.source,
     });
   };
 

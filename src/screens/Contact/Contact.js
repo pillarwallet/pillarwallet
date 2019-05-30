@@ -268,6 +268,10 @@ class Contact extends React.Component<Props, State> {
     );
   };
 
+  onSendPress(contact: Object): void {
+    this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
+  }
+
   render() {
     const {
       navigation,
@@ -372,7 +376,7 @@ class Contact extends React.Component<Props, State> {
             <CircleButton
               label="Send"
               icon={iconSend}
-              onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
+              onPress={() => this.onSendPress(displayContact)}
             />
           </CircleButtonsWrapper>
          }
