@@ -84,7 +84,9 @@ class MeScreen extends React.Component<Props, State> {
 
   handleSheetOpen = () => {};
 
-  toggleManageSessions = () => this.setState({ showActiveSessions: !this.state.showActiveSessions });
+  toggleManageSessions = () => this.setState(state => (
+    { showActiveSessions: !state.showActiveSessions }
+  ));
 
   meSettingsItems = () => {
     return [

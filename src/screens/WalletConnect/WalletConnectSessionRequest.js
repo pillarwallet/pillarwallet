@@ -38,10 +38,7 @@ type Props = {
 };
 
 const FooterWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 0 20px;
+  flex-direction: column;
   width: 100%;
 `;
 
@@ -51,6 +48,11 @@ const LabeledRow = styled.View`
 
 const Value = styled(BoldText)`
   font-size: ${fontSizes.medium};
+`;
+
+const OptionButton = styled(Button)`
+  margin-top: 14px;
+  flex-grow: 1;
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
@@ -121,8 +123,18 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
           </ScrollWrapper>
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
-              <Button onPress={this.handleSessionRejection} title="Reject" />
-              <Button onPress={this.handleSessionApproval} title="Approve" />
+              <OptionButton
+                primaryInverted
+                onPress={this.handleSessionApproval}
+                textStyle={{ fontWeight: 'normal' }}
+                title="Approve"
+              />
+              <OptionButton
+                dangerInverted
+                onPress={this.handleSessionRejection}
+                textStyle={{ fontWeight: 'normal' }}
+                title="Reject"
+              />
             </FooterWrapper>
           </Footer>
         </Container>
