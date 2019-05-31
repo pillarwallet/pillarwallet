@@ -43,8 +43,9 @@ type Props = {
   },
   icon: string,
   assetData: Object,
-  amountOnNetwork?: string,
-  amountOnNetworkInFiat?: string,
+  paymentNetworkBalance?: number,
+  paymentNetworkBalanceFormatted?: string,
+  paymentNetworkBalanceInFiat?: string,
 }
 
 const defaultCircleColor = '#ACBCCD';
@@ -126,20 +127,21 @@ class AssetCardSimplified extends React.Component<Props, {}> {
       balanceInFiat,
       disclaimer,
       icon,
-      amountOnNetwork,
-      amountOnNetworkInFiat,
+      paymentNetworkBalance,
+      paymentNetworkBalanceFormatted,
+      paymentNetworkBalanceInFiat,
     } = this.props;
 
-    const cardHeight = amountOnNetwork || amountOnNetworkInFiat ? 94 : 74;
+    const cardHeight = paymentNetworkBalance || paymentNetworkBalanceInFiat ? 94 : 74;
     const balance = {
       value: amount,
       valueInFiat: balanceInFiat.amount,
     };
 
-    const balanceOnNetwork = {
-      valueOnNetwork: amountOnNetwork,
-      valueOnNetworkInFiat: amountOnNetworkInFiat,
-    };
+    const balanceOnNetwork = paymentNetworkBalance ? {
+      valueOnNetwork: paymentNetworkBalanceFormatted,
+      valueOnNetworkInFiat: paymentNetworkBalanceInFiat,
+    } : {};
 
     return (
       <AssetOutter cardWidth={cardWidth}>
