@@ -23,13 +23,22 @@ import {
   getSdkEnvironment,
   createSdk,
   Sdk,
+  sdkModules,
 } from '@archanova/sdk';
 import { BigNumber } from 'bignumber.js';
+import { utils } from 'ethers';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 
-const SLOW = 'slow';
-const REGULAR = 'regular';
-const FAST = 'fast';
+const {
+  Eth: {
+    TransactionSpeeds: {
+      Slow: SLOW,
+      Regular: REGULAR,
+      Fast: FAST,
+    },
+  },
+} = sdkModules;
 
 const TransactionSpeeds = {
   [SLOW]: SLOW,
@@ -46,12 +55,15 @@ type AccountTransaction = {
 
 let subscribedToEvents = false;
 
-export default class SmartWallet {
+class SmartWallet {
   sdk: Sdk;
   sdkInitialized: boolean = false;
 
   constructor() {
-    const config = getSdkEnvironment(SdkEnvironmentNames.Ropsten);
+    const environmentNetwork = NETWORK_PROVIDER === 'rinkeby'
+      ? SdkEnvironmentNames.Rinkeby
+      : SdkEnvironmentNames.Ropsten;
+    const config = getSdkEnvironment(environmentNetwork);
 
     try {
       this.sdk = createSdk(config);
@@ -178,7 +190,20 @@ export default class SmartWallet {
     return this.sdk.submitAccountTransaction(estimated);
   }
 
+  getDeployEstimate() {
+    /**
+     * can also call `this.sdk.estimateAccountDeployment(REGULAR);`,
+     * but it needs sdk init and when migrating we don't have SDK initated yet
+     * so we're using calculation method below that is provided by SDK creators
+     */
+    const { gasPrice } = this.sdk.state.eth;
+    return utils.bigNumberify(650000).mul(gasPrice);
+  }
+
   handleError(error: any) {
     console.log('SmartWallet handleError: ', error);
   }
 }
+
+const smartWalletInstance = new SmartWallet();
+export default smartWalletInstance;

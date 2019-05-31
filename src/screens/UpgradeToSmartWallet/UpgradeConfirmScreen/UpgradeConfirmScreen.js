@@ -42,6 +42,7 @@ import { getRate, getBalance } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
+import smartWalletService from 'services/smartWallet';
 import type { GasInfo } from 'models/GasInfo';
 import type { Collectible } from 'models/Collectible';
 
@@ -238,7 +239,8 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
         `${feeCollectiblesTransferEth} ETH (${fiatSymbol}${feeCollectiblesTransferFiat.toFixed(2)})`;
     }
 
-    const feeSmartContractDeployEth = formatAmount(utils.formatEther(gasPriceWei));
+    const deployEstimate = smartWalletService.getDeployEstimate();
+    const feeSmartContractDeployEth = formatAmount(utils.formatEther(deployEstimate));
     const feeSmartContractDeployFiat = parseFloat(feeSmartContractDeployEth) * getRate(rates, ETH, fiatCurrency);
     const smartContractDeployFee =
       `${feeSmartContractDeployEth} ETH (${fiatSymbol}${feeSmartContractDeployFiat.toFixed(2)})`;

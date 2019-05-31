@@ -55,7 +55,7 @@ import {
 import { FUND_TANK } from 'constants/navigationConstants';
 
 // services
-import SmartWalletService from 'services/smartWallet';
+import smartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 
@@ -87,10 +87,8 @@ import { isConnectedToSmartAccount } from 'utils/smartWallet';
 
 const storage = Storage.getInstance('db');
 
-let smartWalletService: SmartWalletService;
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
   return async (dispatch: Function) => {
-    smartWalletService = new SmartWalletService();
     await smartWalletService.init(walletPrivateKey, dispatch);
     const initialized = smartWalletService.sdkInitialized;
     dispatch({

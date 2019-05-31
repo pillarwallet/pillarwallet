@@ -11,7 +11,7 @@ import { ETH } from 'constants/assetsConstants';
 import type { Account } from 'models/Account';
 import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
 import { getERC721ContractTransferMethod } from 'services/assets';
-import SmartWalletService from 'services/smartWallet';
+import smartWalletService from 'services/smartWallet';
 import { getEthereumProvider } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
@@ -19,15 +19,13 @@ import { catchTransactionError } from 'utils/wallet';
 
 export default class SmartWalletProvider {
   wallet: Object;
-  smartWalletService: SmartWalletService;
   sdkInitialized: boolean = false;
   sdkInitPromise: Promise<any>;
 
   constructor(privateKey: string, account: Account) {
-    this.smartWalletService = new SmartWalletService();
-    this.sdkInitPromise = this.smartWalletService
+    this.sdkInitPromise = smartWalletService
       .init(privateKey)
-      .then(() => this.smartWalletService.connectAccount(account.id))
+      .then(() => smartWalletService.connectAccount(account.id))
       .then(() => { this.sdkInitialized = true; })
       .catch(() => null);
   }
@@ -46,7 +44,7 @@ export default class SmartWalletProvider {
     const from = getAccountAddress(account);
     const value = ethToWei(amount);
 
-    return this.smartWalletService
+    return smartWalletService
       .transferAsset({
         recipient: to,
         value,
@@ -87,7 +85,7 @@ export default class SmartWalletProvider {
     const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
     const data = abi.encodeMethod(transferMethod, [to, value]);
 
-    return this.smartWalletService
+    return smartWalletService
       .transferAsset({
         // $FlowFixMe
         recipient: contractAddress,
@@ -145,7 +143,7 @@ export default class SmartWalletProvider {
       default:
     }
 
-    return this.smartWalletService
+    return smartWalletService
       .transferAsset({
         // $FlowFixMe
         recipient: contractAddress,

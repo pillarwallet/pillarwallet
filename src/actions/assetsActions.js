@@ -226,6 +226,7 @@ export const sendAssetAction = (
           noRetry: true,
         };
       } else {
+        // $FlowFixMe
         tokenTx = await walletProvider.transferERC721(
           activeAccount,
           // $FlowFixMe

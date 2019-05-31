@@ -200,6 +200,13 @@ const mockArchanovaSdkInstance = {
 
 jest.setMock('@archanova/sdk', {
   sdkModules: {
+    Eth: {
+      TransactionSpeeds: {
+        Slow: 'Slow',
+        Regular: 'Regular',
+        Fast: 'Fast',
+      },
+    },
     Device: {
       StorageKeys: {
         PrivateKey: 'PrivateKey',
@@ -212,6 +219,7 @@ jest.setMock('@archanova/sdk', {
     },
   },
   SdkEnvironmentNames: {
+    Rinkeby: 'Rinkeby',
     Ropsten: 'Ropsten',
   },
   getSdkEnvironment: () => mockArchanovaSdkInstance,
