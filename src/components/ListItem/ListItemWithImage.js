@@ -280,8 +280,8 @@ const ItemImage = (props: Props) => {
         shadowColorAndroid="#38105baa"
         heightAndroid={54}
         widthAndroid={54}
-        heightIOS={48}
-        widthIOS={48}
+        heightIOS={54}
+        widthIOS={54}
         shadowRadius={24}
       >
         <TokenImageWrapper>

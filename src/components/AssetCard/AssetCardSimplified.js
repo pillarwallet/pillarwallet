@@ -132,7 +132,7 @@ class AssetCardSimplified extends React.Component<Props, {}> {
       paymentNetworkBalanceInFiat,
     } = this.props;
 
-    const cardHeight = paymentNetworkBalance || paymentNetworkBalanceInFiat ? 94 : 74;
+    const cardHeight = paymentNetworkBalance ? 94 : 74;
     const balance = {
       value: amount,
       valueInFiat: balanceInFiat.amount,

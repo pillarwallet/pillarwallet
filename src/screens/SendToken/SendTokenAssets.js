@@ -34,16 +34,19 @@ import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
+import TankAssetBalance from 'components/TankAssetBalance';
 
-import { formatAmount } from 'utils/common';
+import { formatAmount, formatMoney } from 'utils/common';
 import { getBalance } from 'utils/assets';
 
 import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import assetsConfig from 'configs/assetsConfig';
+
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 
 type Props = {
   fetchAssetsBalances: (assets: Assets) => Function,
@@ -52,6 +55,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   fetchAllCollectiblesData: Function,
   collectibles: Collectible[],
+  paymentNetworkBalances: Balances,
 };
 
 type State = {
@@ -115,12 +119,15 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 
 
   renderAsset = ({ item }) => {
-    const { balances, navigation } = this.props;
+    const { balances, navigation, paymentNetworkBalances } = this.props;
     const contact = navigation.getParam('contact', {});
     const assetBalance = formatAmount(getBalance(balances, item.symbol));
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const fullIconMonoUrl = `${SDK_PROVIDER}/${item.iconMonoUrl}?size=2`;
     const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
+    const paymentNetworkBalance = getBalance(paymentNetworkBalances, item.symbol);
+    const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
+
     const nextScreenAssetData = {
       token: item.symbol,
       contractAddress: item.address,
@@ -139,6 +146,16 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         itemImageUrl={fullIconUrl || genericToken}
         itemValue={`${assetBalance} ${item.symbol}`}
         fallbackSource={genericToken}
+        customAddon={paymentNetworkBalance
+          ? (
+            <TankAssetBalance
+              amount={paymentNetworkBalanceFormatted}
+              isSynthetic={item.symbol !== 'ETH'}
+            />
+            )
+          : null
+        }
+        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
       />
     );
   };
@@ -267,6 +284,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   collectibles: accountCollectiblesSelector,
+  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
