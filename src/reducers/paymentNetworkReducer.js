@@ -20,6 +20,7 @@
 import merge from 'lodash.merge';
 import {
   SET_ESTIMATED_TOPUP_FEE,
+  UPDATE_PAYMENT_NETWORK_BALANCES,
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
@@ -52,6 +53,8 @@ export default function paymentNetworkReducer(
   action: PaymentNetworkAction,
 ): PaymentNetworkState {
   switch (action.type) {
+    case UPDATE_PAYMENT_NETWORK_BALANCES:
+      return merge({}, state, { balances: action.payload });
     case UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES:
       return merge({}, state, { balances: { [action.payload.accountId]: action.payload.balances } });
     case SET_ESTIMATED_TOPUP_FEE:
