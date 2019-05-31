@@ -114,8 +114,8 @@ const AssetInfo = (props: Props) => {
         ? <Disclaimer>{disclaimer}</Disclaimer>
         :
         <AmountRow>
-          {!!valueOnNetworkInFiat && <FiatAmount>{currencySymbol}{valueOnNetworkInFiat} + </FiatAmount>}
           <FiatAmount>{currencySymbol}{valueInFiat}</FiatAmount>
+          {!!parseFloat(valueOnNetworkInFiat) && <FiatAmount> + {currencySymbol}{valueOnNetworkInFiat}</FiatAmount>}
         </AmountRow>
       }
     </AmountWrapper>
