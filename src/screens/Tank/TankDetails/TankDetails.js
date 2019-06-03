@@ -26,7 +26,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { initFundTankProcessAction } from 'actions/smartWalletActions';
+import { initFundTankProcessAction, initSettleBalanceProcessAction } from 'actions/smartWalletActions';
 
 // components
 import { ScrollWrapper, Container } from 'components/Layout';
@@ -39,7 +39,6 @@ import CheckPin from 'components/CheckPin';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { SETTLE_BALANCE } from 'constants/navigationConstants';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -65,6 +64,7 @@ type Props = {
   availableStake: number,
   resetIncorrectPassword: Function,
   initFundTankProcess: Function,
+  initSettleBalanceProcess: Function,
 };
 
 type DashLineProps = {
@@ -75,8 +75,10 @@ type State = {
   tankValueAnimated: Animated.Value,
   leftColumnHeightHalf: number,
   rightColumnHeightHalf: number,
-  showCheckPinModal: boolean,
+  showCheckPinModal1: boolean,
+  showCheckPinModal2: boolean,
   topUpButtonSubmitted: boolean,
+  settleBalanceButtonSubmitted: boolean,
 };
 
 const HeaderWrapper = styled.View`
@@ -206,8 +208,10 @@ class TankDetails extends React.Component<Props, State> {
       tankValueAnimated: new Animated.Value(this.props.availableStake),
       leftColumnHeightHalf: 0,
       rightColumnHeightHalf: 0,
-      showCheckPinModal: false,
+      showCheckPinModal1: false,
+      showCheckPinModal2: false,
       topUpButtonSubmitted: false,
+      settleBalanceButtonSubmitted: false,
     };
   }
 
@@ -233,15 +237,28 @@ class TankDetails extends React.Component<Props, State> {
   handleCheckPinModalClose = () => {
     const { resetIncorrectPassword } = this.props;
     resetIncorrectPassword();
-    this.setState({ showCheckPinModal: false, topUpButtonSubmitted: false });
+    this.setState({
+      showCheckPinModal1: false,
+      showCheckPinModal2: false,
+      topUpButtonSubmitted: false,
+      settleBalanceButtonSubmitted: false,
+    });
   };
 
   navigateToFundTankScreen = async (_: string, wallet: Object) => {
     const { initFundTankProcess } = this.props;
-    this.setState({ showCheckPinModal: false });
+    this.setState({ showCheckPinModal1: false });
 
     await initFundTankProcess(wallet.privateKey);
     this.setState({ topUpButtonSubmitted: false });
+  };
+
+  navigateToSettleBalanceScreen = async (_: string, wallet: Object) => {
+    const { initSettleBalanceProcess } = this.props;
+    this.setState({ showCheckPinModal2: false });
+
+    await initSettleBalanceProcess(wallet.privateKey);
+    this.setState({ settleBalanceButtonSubmitted: false });
   };
 
   render() {
@@ -249,8 +266,10 @@ class TankDetails extends React.Component<Props, State> {
       tankValueAnimated,
       rightColumnHeightHalf,
       leftColumnHeightHalf,
-      showCheckPinModal,
+      showCheckPinModal1,
+      showCheckPinModal2,
       topUpButtonSubmitted,
+      settleBalanceButtonSubmitted,
     } = this.state;
     const {
       tankData,
@@ -383,20 +402,20 @@ class TankDetails extends React.Component<Props, State> {
               noPadding
               width="197px"
               style={{ marginBottom: 18 }}
-              onPress={() => this.setState({ showCheckPinModal: true, topUpButtonSubmitted: true })}
+              onPress={() => this.setState({ showCheckPinModal1: true, topUpButtonSubmitted: true })}
             />
             <Button
               secondaryTransparent
               title="Settle"
+              disabled={settleBalanceButtonSubmitted || !Object.keys(assetsOnNetwork).length}
               noPadding
               width="197px"
-              onPress={() => navigation.navigate(SETTLE_BALANCE)}
-              disabled={!Object.keys(assetsOnNetwork).length}
+              onPress={() => this.setState({ showCheckPinModal2: true, settleBalanceButtonSubmitted: true })}
             />
           </FooterWrapper>
         </ScrollWrapper>
         <SlideModal
-          isVisible={showCheckPinModal}
+          isVisible={showCheckPinModal1}
           onModalHide={this.handleCheckPinModalClose}
           title="enter pincode"
           centerTitle
@@ -405,6 +424,18 @@ class TankDetails extends React.Component<Props, State> {
         >
           <Wrapper flex={1}>
             <CheckPin onPinValid={this.navigateToFundTankScreen} />
+          </Wrapper>
+        </SlideModal>
+        <SlideModal
+          isVisible={showCheckPinModal2}
+          onModalHide={this.handleCheckPinModalClose}
+          title="enter pincode"
+          centerTitle
+          fullScreen
+          showHeader
+        >
+          <Wrapper flex={1}>
+            <CheckPin onPinValid={this.navigateToSettleBalanceScreen} />
           </Wrapper>
         </SlideModal>
       </Container>
@@ -435,6 +466,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   initFundTankProcess: (privateKey: string) => dispatch(initFundTankProcessAction(privateKey)),
+  initSettleBalanceProcess: (privateKey: string) => dispatch(initSettleBalanceProcessAction(privateKey)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 

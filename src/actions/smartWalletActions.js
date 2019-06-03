@@ -52,7 +52,7 @@ import {
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
 } from 'constants/paymentNetworkConstants';
-import { FUND_TANK } from 'constants/navigationConstants';
+import { FUND_TANK, SETTLE_BALANCE } from 'constants/navigationConstants';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -725,5 +725,26 @@ export const fetchVirtualAccountBalanceAction = () => {
         balances: accountBalances,
       },
     });
+  };
+};
+
+export const initSettleBalanceProcessAction = (privateKey: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accounts: { data: accounts },
+      smartWallet: { connectedAccount },
+    } = getState();
+
+    const accountId = getActiveAccountId(accounts);
+
+    if (!smartWalletService) {
+      await dispatch(initSmartWalletSdkAction(privateKey));
+    }
+
+    if (!isConnectedToSmartAccount(connectedAccount)) {
+      await dispatch(connectSmartWalletAccountAction(accountId));
+    }
+
+    navigate(NavigationActions.navigate({ routeName: SETTLE_BALANCE }));
   };
 };

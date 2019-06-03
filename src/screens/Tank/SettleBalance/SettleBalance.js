@@ -42,11 +42,12 @@ import assetsConfig from 'configs/assetsConfig';
 
 import { baseColors, fontSizes } from 'utils/variables';
 import { formatMoney, getCurrencySymbol, formatAmount } from 'utils/common';
+import { paymentNetworkAccountBalancesSelector } from '../../../selectors/paymentNetwork';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object[],
-  balances: Balances,
+  paymentNetworkBalances: Balances,
   baseFiatCurrency: string,
   rates: Rates,
 };
@@ -201,6 +202,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
