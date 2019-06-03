@@ -40,7 +40,7 @@ import { formatAmount, formatMoney } from 'utils/common';
 import { getBalance } from 'utils/assets';
 
 import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
-import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+import { ETH, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import assetsConfig from 'configs/assetsConfig';
 
@@ -146,13 +146,11 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         itemImageUrl={fullIconUrl || genericToken}
         itemValue={`${assetBalance} ${item.symbol}`}
         fallbackSource={genericToken}
-        customAddon={paymentNetworkBalance
-          ? (
-            <TankAssetBalance
-              amount={paymentNetworkBalanceFormatted}
-              isSynthetic={item.symbol !== 'ETH'}
-            />
-            )
+        customAddon={paymentNetworkBalance ? (
+          <TankAssetBalance
+            amount={paymentNetworkBalanceFormatted}
+            isSynthetic={item.symbol !== ETH}
+          />)
           : null
         }
         rightColumnInnerStyle={{ alignItems: 'flex-end' }}
