@@ -57,6 +57,7 @@ import {
   FUND_TANK,
   SETTLE_BALANCE,
   SMART_WALLET_UNLOCK,
+  ASSETS,
 } from 'constants/navigationConstants';
 
 // services
@@ -703,7 +704,12 @@ export const fetchVirtualAccountBalanceAction = () => {
     } = getState();
 
     if (!smartWalletService.sdkInitialized || !sdkInitialized) {
-      navigate(NavigationActions.navigate({ routeName: SMART_WALLET_UNLOCK }));
+      navigate(NavigationActions.navigate({
+        routeName: SMART_WALLET_UNLOCK,
+        params: {
+          successNavigateScreen: ASSETS,
+        },
+      }));
       return;
     }
 

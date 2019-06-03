@@ -126,7 +126,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys));
 
         const { featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } } } = getState();
-        if (smartWalletFeatureEnabled) {
+        if (smartWalletFeatureEnabled && wallet.privateKey) {
           dispatch(initSmartWalletAccountAction(wallet.privateKey));
         }
       } else {

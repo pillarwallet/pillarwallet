@@ -73,12 +73,12 @@ class SmartWalletUnlock extends React.Component<Props, State> {
       if (transferTransactions.length) {
         const upgradeComplete = await upgradeToSmartWallet(wallet, transferTransactions)
           .catch(() => null);
-        if (upgradeComplete) {
-          navigation.navigate(successNavigateScreen || ASSETS, {});
-        } else {
+        if (!upgradeComplete) {
           navigation.goBack();
+          return;
         }
       }
+      navigation.navigate(successNavigateScreen || ASSETS, {});
     });
   };
 
