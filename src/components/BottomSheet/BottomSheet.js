@@ -31,6 +31,7 @@ import { baseColors } from 'utils/variables';
 import { getiOSNavbarHeight } from 'utils/common';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
 import Tabs from 'components/Tabs';
+import Title from 'components/Title';
 
 type Props = {
   screenHeight: number, // IMPORTANT to calculate sheet height,
@@ -51,6 +52,8 @@ type Props = {
   activeTab?: string,
   inverse?: boolean, // set to true if content should be absolute and positioned to the bottom of the sheet
   // (resulting in cropping overflow and revealing upper content on sheet opening)
+  sheetHeader?: string,
+  onSheetLayout?: Function,
 }
 
 type State = {
@@ -67,9 +70,7 @@ const USABLE_SCREEN_HEIGHT = Platform.OS === 'android'
   : screenHeightFromDimensions - getiOSNavbarHeight();
 
 const ModalWrapper = styled.View`
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  padding-top: 10px;
+  padding-top: 6px;
   flex: 1;
   overflow: hidden;
 `;
@@ -88,16 +89,23 @@ const Sheet = styled.View`
   z-index: 9999;
 `;
 
+const RelativeHeader = styled.View`
+  width: 100%;
+  z-index: 10;
+  min-height: 30px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  padding: 0 16px;
+`;
+
 const FloatingHeader = styled.View`
   width: 100%;
   position: absolute;
-  top: 0;
+  top: -10px;
   left: 0;
   z-index: 10;
   background-color: transparent;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  min-height: 80px;
+  min-height: 60px;
 `;
 
 const Cover = styled.View`
@@ -107,12 +115,10 @@ const Cover = styled.View`
   left: 0;
   z-index: -1;
   background-color: white;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  height: 40px;
+  height: 30px;
   justify-content: flex-start;
   align-items: center;
-  padding-top: 6px;
+  padding-top: 0px;
 `;
 
 const HandlebarsWrapper = styled.View`
@@ -120,6 +126,8 @@ const HandlebarsWrapper = styled.View`
   position: relative;
   height: 10px;
   width: 40px;
+  align-self: center;
+  margin-top: 10px;
 `;
 
 const Handlebar = styled.View`
@@ -162,6 +170,7 @@ export default class BottomSheet extends React.Component<Props, State> {
   isTransitioning: boolean;
   forceAnimateAfterNotCapturedTouch: boolean;
   currentDirection: string;
+  tabHeaderHeight: number;
 
   static defaultProps = {
     screenHeight: USABLE_SCREEN_HEIGHT,
@@ -183,6 +192,7 @@ export default class BottomSheet extends React.Component<Props, State> {
     this.isTransitioning = false;
     this.forceAnimateAfterNotCapturedTouch = false;
     this.currentDirection = '';
+    this.tabHeaderHeight = 0;
 
     const initialHeight = forceOpen ? screenHeight - topOffset : sheetHeight;
 
@@ -263,7 +273,7 @@ export default class BottomSheet extends React.Component<Props, State> {
         } = this.props;
         const { isSheetOpen, animatedHeight } = this.state;
         const { pageX, pageY } = e.nativeEvent;
-        const topValueSheetPosition = screenHeight - animatedHeight._value;
+        const topValueSheetPosition = (screenHeight - animatedHeight._value) + this.tabHeaderHeight;
 
         if (!captureTabs && !!tabs) {
           if (pageY > topValueSheetPosition + 30
@@ -366,6 +376,8 @@ export default class BottomSheet extends React.Component<Props, State> {
       activeTab,
       inverse,
       sheetWrapperStyle,
+      sheetHeader,
+      onSheetLayout,
     } = this.props;
 
     const openedSheetHeight = screenHeight - topOffset;
@@ -432,40 +444,57 @@ export default class BottomSheet extends React.Component<Props, State> {
       };
     }
 
+    // if (tabs) {
+    //   wrapperStyle.paddingTop = 30;
+    // }
+
     return (
       <React.Fragment>
         <AnimatedSheet
           style={style}
           {...this.panResponder.panHandlers}
           useNativeDriver
+          onLayout={(e) => { if (onSheetLayout) onSheetLayout(e.nativeEvent.layout.height); }}
         >
-          <FloatingHeader>
-            <Cover>
-              <HandlebarsWrapper>
-                <AnimatedLeftHandlebar
-                  style={leftHandlebarAnimation}
-                />
-                <AnimatedRightHandlebar
-                  right
-                  style={rightHandlebarAnimation}
-                />
-              </HandlebarsWrapper>
-            </Cover>
-            {!!tabs &&
+          <RelativeHeader>
+            <HandlebarsWrapper>
+              <AnimatedLeftHandlebar
+                style={leftHandlebarAnimation}
+              />
+              <AnimatedRightHandlebar
+                right
+                style={rightHandlebarAnimation}
+              />
+            </HandlebarsWrapper>
+            {!!sheetHeader &&
+            <Title
+              title={sheetHeader}
+              fullWidth
+              noMargin
+              onLayout={(e) => {
+                this.tabHeaderHeight = e.nativeEvent.layout.height;
+              }}
+              style={{ paddingTop: 6, paddingBottom: 12 }}
+            />
+            }
+          </RelativeHeader>
+          <AnimatedModalWrapper style={{ height: animatedHeight }}>
+            <FloatingHeader>
+              <Cover />
+              {!!tabs &&
               <Tabs
                 initialActiveTab={activeTab}
                 tabs={tabs}
                 wrapperStyle={{
                   position: 'absolute',
-                  top: 8,
+                  top: 0,
                   left: 0,
                   zIndex: 2,
                   width: '100%',
                 }}
               />
-            }
-          </FloatingHeader>
-          <AnimatedModalWrapper style={{ height: animatedHeight }}>
+              }
+            </FloatingHeader>
             <View style={[{ flex: 1, width: '100%' }, wrapperStyle, sheetWrapperStyle]}>
               {children}
             </View>

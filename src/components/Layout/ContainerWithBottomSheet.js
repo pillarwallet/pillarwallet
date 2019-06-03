@@ -45,9 +45,14 @@ export const Center = styled.View`
 `;
 
 export default class ContainerWithBottomSheet extends React.Component<Props, State> {
-  state = {
-    screenHeight: 0,
-  };
+  sheetHeightOnLayout: number;
+  constructor(props: Props) {
+    super(props);
+    this.sheetHeightOnLayout = 0;
+    this.state = {
+      screenHeight: 0,
+    };
+  }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
@@ -76,14 +81,18 @@ export default class ContainerWithBottomSheet extends React.Component<Props, Sta
       <ContainerOuter color={color} style={style} forceInset={{ top: 'always', ...inset }}>
         <ContainerInner
           center={center}
-          style={{ paddingBottom: bottomPadding }}
+          style={{ paddingBottom: this.sheetHeightOnLayout || bottomPadding }}
           onLayout={(event) => {
             this.setState({ screenHeight: event.nativeEvent.layout.height });
           }}
         >
           {children}
           {!!screenHeight && !hideSheet &&
-          <BottomSheet {...bottomSheetProps} screenHeight={screenHeight}>
+          <BottomSheet
+            {...bottomSheetProps}
+            screenHeight={screenHeight}
+            onSheetLayout={(height) => { this.sheetHeightOnLayout = height; }}
+          >
             {bottomSheetChildren}
           </BottomSheet>
           }

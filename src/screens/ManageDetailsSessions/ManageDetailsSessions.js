@@ -403,10 +403,11 @@ class MeScreen extends React.Component<Props, State> {
         inset={{ bottom: 0 }}
         color={baseColors.white}
         bottomSheetProps={{
-          sheetHeight: 240,
+          sheetHeight: 210,
           swipeToCloseHeight: 62,
           tabs: sessionTabs,
           activeTab,
+          sheetHeader: 'sessions',
         }}
         bottomSheetChildren={<SheetContentWrapper>{this.renderSheetContent()}</SheetContentWrapper>}
       >
