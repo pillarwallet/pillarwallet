@@ -47,22 +47,33 @@ type Props = {
   light?: boolean,
   style?: Object,
   headerRightFlex?: string,
-  overlay?: boolean,
   backIcon?: string,
   nextIconSize?: number,
   titleStyles?: ?Object,
+  headerRightAddon?: React.Node,
+  white?: boolean,
 }
 
 const Wrapper = styled.View`
   border-bottom-width: 0;
-  padding: ${props => props.noPadding ? 0 : '0 20px'};
-  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '48px'};
+  padding: ${props => props.noPadding ? 0 : '0 16px'};
+  z-index: 10;
+  ${props => props.white
+    ? `
+      background-color: ${baseColors.white};
+      border-bottom-width: 1px;
+      border-bottom-color: ${baseColors.mediumLightGray};
+    `
+    : ''}
+`;
+
+const InnerWrapper = styled.View`
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
   margin-top: ${spacing.rhythm};
-  margin-bottom: ${props => props.flexStart ? 'auto' : 0};
-  z-index: 10;
+  margin-bottom: ${props => props.flexStart ? 'auto' : 4};
+  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '50px'};
 `;
 
 const BackIcon = styled(IconButton)`
@@ -127,16 +138,16 @@ const Header = (props: Props) => {
     centerTitle,
     noWrapTitle,
     noPadding,
-    noMargin,
     style,
     light,
     headerRightFlex,
-    overlay,
     flexStart,
     backIcon,
     titleStyles,
+    headerRightAddon,
+    white,
   } = props;
-  const showRight = nextText || nextIcon || onBack || onClose || centerTitle;
+  const showRight = nextText || nextIcon || onBack || onClose || centerTitle || headerRightAddon;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
@@ -153,80 +164,80 @@ const Header = (props: Props) => {
 
   return (
     <Wrapper
-      overlay={overlay}
-      noMargin={noMargin}
-      flexStart={flexStart}
       style={style}
       noPadding={noPadding}
-      noWrapTitle={noWrapTitle}
+      white={white}
     >
-      <HeaderLeft showTitleLeft={showTitleLeft}>
-        {onBack &&
-          <BackIcon
-            icon={backIcon || 'back'}
-            color={light ? baseColors.white : UIColors.defaultNavigationColor}
-            onPress={() => onBack()}
-            fontSize={fontSizes.extraLarge}
-            horizontalAlign="flex-start"
-          />
+      <InnerWrapper flexStart={flexStart} noWrapTitle={noWrapTitle}>
+        <HeaderLeft showTitleLeft={showTitleLeft}>
+          {onBack &&
+            <BackIcon
+              icon={backIcon || 'back'}
+              color={light ? baseColors.white : UIColors.defaultNavigationColor}
+              onPress={() => onBack()}
+              fontSize={fontSizes.extraLarge}
+              horizontalAlign="flex-start"
+            />
+          }
+          {showTitleLeft &&
+            <Title
+              noMargin
+              title={title}
+              noBlueDot={noBlueDotOnTitle}
+              dotColor={dotColor}
+              fullWidth={fullWidthTitle}
+              titleStyles={titleStyles}
+            />
+          }
+        </HeaderLeft>
+        {showTitleCenter &&
+          <HeaderBody onCloseText={onCloseText}>
+            <Title
+              align="center"
+              noMargin
+              title={title}
+              onTitlePress={onTitlePress}
+              noBlueDot={noBlueDotOnTitle}
+              dotColor={dotColor}
+              fullWidth={fullWidthTitle}
+              titleStyles={titleStyles}
+            />
+          </HeaderBody>
         }
-        {showTitleLeft &&
-          <Title
-            noMargin
-            title={title}
-            noBlueDot={noBlueDotOnTitle}
-            dotColor={dotColor}
-            fullWidth={fullWidthTitle}
-            titleStyles={titleStyles}
-          />
+        {showRight && !noClose &&
+          <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
+            {headerRightAddon}
+            {nextText &&
+              <TextLink onPress={onNextPress}>{nextText}</TextLink>
+            }
+            {nextIcon &&
+              <IconWrapper>
+                <NextIcon
+                  icon={nextIcon}
+                  color={light ? baseColors.white : UIColors.primary}
+                  onPress={onNextPress}
+                  fontSize={nextIconSize || fontSizes.small}
+                  horizontalAlign="flex-end"
+                />
+              </IconWrapper>
+            }
+            {onClose &&
+              <IconWrapper>
+                {onCloseText &&
+                  <CloseIconText light={light} >{onCloseText}</CloseIconText>
+                }
+                <NextIcon
+                  icon="close"
+                  color={light ? baseColors.white : UIColors.defaultNavigationColor}
+                  onPress={onClose}
+                  fontSize={fontSizes.small}
+                  horizontalAlign="flex-end"
+                />
+              </IconWrapper>
+            }
+          </HeaderRight>
         }
-      </HeaderLeft>
-      {showTitleCenter &&
-        <HeaderBody onCloseText={onCloseText}>
-          <Title
-            align="center"
-            noMargin
-            title={title}
-            onTitlePress={onTitlePress}
-            noBlueDot={noBlueDotOnTitle}
-            dotColor={dotColor}
-            fullWidth={fullWidthTitle}
-            titleStyles={titleStyles}
-          />
-        </HeaderBody>
-      }
-      {showRight && !noClose &&
-        <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
-          {nextText &&
-            <TextLink onPress={onNextPress}>{nextText}</TextLink>
-          }
-          {nextIcon &&
-            <IconWrapper>
-              <NextIcon
-                icon={nextIcon}
-                color={light ? baseColors.white : UIColors.primary}
-                onPress={onNextPress}
-                fontSize={nextIconSize || fontSizes.small}
-                horizontalAlign="flex-end"
-              />
-            </IconWrapper>
-          }
-          {onClose &&
-            <IconWrapper>
-              {onCloseText &&
-                <CloseIconText light={light} >{onCloseText}</CloseIconText>
-              }
-              <NextIcon
-                icon="close"
-                color={light ? baseColors.white : UIColors.defaultNavigationColor}
-                onPress={onClose}
-                fontSize={fontSizes.small}
-                horizontalAlign="flex-end"
-              />
-            </IconWrapper>
-          }
-        </HeaderRight>
-      }
+      </InnerWrapper>
     </Wrapper>
   );
 };
