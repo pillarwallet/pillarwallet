@@ -20,7 +20,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { UPGRADE_REVIEW, ASSETS } from 'constants/navigationConstants';
+import { ASSETS } from 'constants/navigationConstants';
 import { Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
@@ -40,14 +40,17 @@ type Props = {
 type State = {
   transferTransactions: Object[],
   isChecking: boolean,
+  successNavigateScreen?: ?string,
 };
 
 class SmartWalletUnlock extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const transferTransactions = this.props.navigation.getParam('transferTransactions', []);
+    const successNavigateScreen = this.props.navigation.getParam('successNavigateScreen');
     this.state = {
       transferTransactions,
+      successNavigateScreen,
       isChecking: false,
     };
   }
@@ -58,24 +61,30 @@ class SmartWalletUnlock extends React.Component<Props, State> {
       upgradeToSmartWallet,
       navigation,
     } = this.props;
-    const { transferTransactions = [] } = this.state;
+    const {
+      transferTransactions = [],
+      successNavigateScreen,
+    } = this.state;
     this.setState({
       isChecking: true,
     }, async () => {
       await initSmartWalletSdk(wallet.privateKey);
-      const upgradeComplete = await upgradeToSmartWallet(wallet, transferTransactions).catch(() => null);
-      if (upgradeComplete) {
-        navigation.navigate(ASSETS, {});
-      } else {
-        navigation.goBack();
+      // perform upgrade step if transferTransactions is given
+      if (transferTransactions.length) {
+        const upgradeComplete = await upgradeToSmartWallet(wallet, transferTransactions)
+          .catch(() => null);
+        if (upgradeComplete) {
+          navigation.navigate(successNavigateScreen || ASSETS, {});
+        } else {
+          navigation.goBack();
+        }
       }
     });
   };
 
   handleBack = () => {
     const { navigation, resetIncorrectPassword } = this.props;
-    // navigation.goBack(null);
-    navigation.navigate(UPGRADE_REVIEW, {});
+    navigation.goBack(null);
     resetIncorrectPassword();
   };
 

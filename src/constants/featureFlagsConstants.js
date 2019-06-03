@@ -25,3 +25,6 @@ export const INITIAL_FEATURE_FLAGS = {
   DEBUGGING_ENABLED: false,
   SMART_WALLET_ENABLED: false,
 };
+export const DEVELOPMENT_FEATURE_FLAGS = {
+  SMART_WALLET_ENABLED: true,
+};

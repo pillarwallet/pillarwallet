@@ -40,6 +40,7 @@ import {
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { UPDATE_BALANCES, ETH } from 'constants/assetsConstants';
+
 import {
   TX_PENDING_STATUS,
   TX_CONFIRMED_STATUS,
@@ -52,7 +53,11 @@ import {
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
 } from 'constants/paymentNetworkConstants';
-import { FUND_TANK, SETTLE_BALANCE } from 'constants/navigationConstants';
+import {
+  FUND_TANK,
+  SETTLE_BALANCE,
+  SMART_WALLET_UNLOCK,
+} from 'constants/navigationConstants';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -690,13 +695,17 @@ export const topUpVirtualAccountAction = (amount: string) => {
 
 export const fetchVirtualAccountBalanceAction = () => {
   return async (dispatch: Function, getState: Function) => {
-    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
-
+    if (!smartWalletService) return;
     const {
       accounts: { data: accounts },
       session: { data: { isOnline } },
-      smartWallet: { connectedAccount },
+      smartWallet: { connectedAccount, sdkInitialized },
     } = getState();
+
+    if (!smartWalletService.sdkInitialized || !sdkInitialized) {
+      navigate(NavigationActions.navigate({ routeName: SMART_WALLET_UNLOCK }));
+      return;
+    }
 
     if (!isConnectedToSmartAccount(connectedAccount) || !isOnline) return;
 
