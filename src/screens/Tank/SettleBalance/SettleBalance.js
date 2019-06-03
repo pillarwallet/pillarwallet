@@ -18,31 +18,42 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
-import type { Balances, Rates } from 'models/Asset';
-import { connect } from 'react-redux';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
+import { SDK_PROVIDER } from 'react-native-dotenv';
+import type { NavigationScreenProp } from 'react-navigation';
 
+// config
+import assetsConfig from 'configs/assetsConfig';
+
+// components
 import { Container, Footer } from 'components/Layout';
 import { Label, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { SETTLE_BALANCE_CONFIRM } from 'constants/navigationConstants';
 import TankAssetBalance from 'components/TankAssetBalance';
 import Checkbox from 'components/Checkbox';
 
-import { accountBalancesSelector } from 'selectors/balances';
-import assetsConfig from 'configs/assetsConfig';
+// constants
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { SETTLE_BALANCE_CONFIRM } from 'constants/navigationConstants';
 
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
+import { paymentNetworkNonZeroBalancesSelector } from 'selectors/paymentNetwork';
+
+// types
+import type { Assets, Balances, Rates } from 'models/Asset';
+
+// utils
 import { baseColors, fontSizes } from 'utils/variables';
 import { formatMoney, getCurrencySymbol, formatAmount } from 'utils/common';
-import { paymentNetworkAccountBalancesSelector } from '../../../selectors/paymentNetwork';
+import { getRate } from 'utils/assets';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -50,6 +61,7 @@ type Props = {
   paymentNetworkBalances: Balances,
   baseFiatCurrency: string,
   rates: Rates,
+  assets: Assets,
 };
 
 type State = {
@@ -90,39 +102,38 @@ class SettleBalance extends React.Component<Props, State> {
 
   renderAsset = ({ item }) => {
     const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
-    if (assetShouldRender) {
-      return null;
-    }
+    if (assetShouldRender) return null;
     const { assetsToSettle } = this.state;
-    const {
-      baseFiatCurrency,
-    } = this.props;
-    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
-    const formattedAmount = formatAmount(item.amount);
+    const { baseFiatCurrency, assets, rates } = this.props;
+    const assetInfo = {
+      ...(assets[item.symbol] || {}),
+      ...item,
+    };
+
+    const fullIconUrl = `${SDK_PROVIDER}/${assetInfo.iconUrl}?size=3`;
+    const formattedAmount = formatAmount(assetInfo.balance);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    // const balance = getBalance(balances, item.symbol);
-    // const totalInFiat = balance * getRate(rates, item.symbol, fiatCurrency);
-    // const formattedAmountInFiat = formatMoney(totalInFiat);
-    const formattedAmountInFiat = formatMoney(item.mockInFiat);
+    const totalInFiat = assetInfo.balance * getRate(rates, assetInfo.symbol, fiatCurrency);
+    const formattedAmountInFiat = formatMoney(totalInFiat);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     return (
       <ListItemWithImage
-        label={item.name}
+        label={assetInfo.name}
         itemImageUrl={fullIconUrl || genericToken}
         fallbackSource={genericToken}
-        onPress={() => this.toggleAssetInTransferList(item)}
+        onPress={() => this.toggleAssetInTransferList(assetInfo)}
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
-              <TankAssetBalance amount={formattedAmount} isSynthetic={item.symbol !== 'ETH'} />
+              <TankAssetBalance amount={formattedAmount} isSynthetic={assetInfo.symbol !== ETH} />
               <ValueInFiat>
                 {`${currencySymbol}${formattedAmountInFiat}`}
               </ValueInFiat>
             </BalanceWrapper>
             <Checkbox
-              onPress={() => this.toggleAssetInTransferList(item)}
-              checked={!!assetsToSettle.find(asset => asset.name === item.name)}
+              onPress={() => this.toggleAssetInTransferList(assetInfo)}
+              checked={!!assetsToSettle.find(asset => asset.name === assetInfo.name)}
               rounded
               wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
             />
@@ -137,7 +148,7 @@ class SettleBalance extends React.Component<Props, State> {
     const { assetsToSettle } = this.state;
     let updatedAssetsToSettle;
     if (assetsToSettle.find(thisAsset => thisAsset.name === asset.name)) {
-      updatedAssetsToSettle = assetsToSettle.filter((thisAsset) => { return thisAsset.name !== asset.name; });
+      updatedAssetsToSettle = assetsToSettle.filter(_asset => _asset.name !== asset.name);
     } else {
       updatedAssetsToSettle = [...assetsToSettle, asset];
     }
@@ -148,16 +159,10 @@ class SettleBalance extends React.Component<Props, State> {
     const { navigation } = this.props;
     const { assetsToSettle } = this.state;
     navigation.navigate(SETTLE_BALANCE_CONFIRM, { assetsToSettle });
-  }
+  };
 
   render() {
     const { navigation, assetsOnNetwork } = this.props;
-    // const tankAssets = Object.values(assetsOnNetwork)
-    //   .map((asset: any) => {
-    //     const amount = getBalance(balances, asset.symbol);
-    //     return { ...asset, amount };
-    //   });
-
     return (
       <Container>
         <Header
@@ -167,7 +172,7 @@ class SettleBalance extends React.Component<Props, State> {
         />
         <FlatList
           keyExtractor={item => item.symbol}
-          data={assetsOnNetwork}
+          data={Object.values(assetsOnNetwork)}
           renderItem={this.renderAsset}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
           contentContainerStyle={{
@@ -191,18 +196,18 @@ class SettleBalance extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  tank: { assetsOnNetwork },
+  assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
-  assetsOnNetwork,
+  assets,
   rates,
   baseFiatCurrency,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
+  assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
