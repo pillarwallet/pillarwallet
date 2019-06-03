@@ -52,6 +52,7 @@ import {
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+  SET_ESTIMATED_SETTLE_BALANCE_FEE,
 } from 'constants/paymentNetworkConstants';
 import {
   FUND_TANK,
@@ -64,6 +65,9 @@ import {
 import smartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
+
+// selectors
+import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 
 // actions
 import {
@@ -89,6 +93,7 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 import { buildHistoryTransaction } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
+import { getBalance } from 'utils/assets';
 
 
 const storage = Storage.getInstance('db');
@@ -761,5 +766,49 @@ export const initSettleBalanceProcessAction = (privateKey: string) => {
     }
 
     navigate(NavigationActions.navigate({ routeName: SETTLE_BALANCE }));
+  };
+};
+
+export const estimateSettleBalanceAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    if (!smartWalletService) return;
+
+    const balances = paymentNetworkAccountBalancesSelector(getState());
+    const ethBalance = getBalance(balances, ETH);
+    console.log({ ethBalance });
+
+    // TODO: uncomment this when SDK stops automatically withdraw funds
+    // when we call the estimate function
+    // const value = ethToWei(ethBalance);
+    const value = ethToWei(10000);
+    const response = await smartWalletService
+      .estimateWithdrawFromAccountVirtualBalance(value)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString(),
+          type: 'warning',
+          autoClose: false,
+        });
+        return {};
+      });
+
+    if (!response || !Object.keys(response).length) return;
+
+    const {
+      fixedGas,
+      totalGas,
+      totalCost,
+      gasPrice,
+    } = response;
+
+    dispatch({
+      type: SET_ESTIMATED_SETTLE_BALANCE_FEE,
+      payload: {
+        fixedGas,
+        totalGas,
+        totalCost,
+        gasPrice,
+      },
+    });
   };
 };

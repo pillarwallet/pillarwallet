@@ -24,13 +24,15 @@ import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+  SET_ESTIMATED_SETTLE_BALANCE_FEE,
 } from 'constants/paymentNetworkConstants';
-import type { TopUpFee } from 'models/PaymentNetwork';
+import type { TopUpFee, SettleBalanceFee } from 'models/PaymentNetwork';
 import type { Balances } from 'models/Asset';
 
 export type PaymentNetworkState = {
   balances: Balances,
   topUpFee: TopUpFee,
+  settleBalanceFee: SettleBalanceFee,
   txToListen: string[],
 };
 
@@ -42,6 +44,10 @@ export type PaymentNetworkAction = {
 const initialState = {
   balances: {},
   topUpFee: {
+    isFetched: false,
+    feeInfo: null,
+  },
+  settleBalanceFee: {
     isFetched: false,
     feeInfo: null,
   },
@@ -59,6 +65,8 @@ export default function paymentNetworkReducer(
       return merge({}, state, { balances: { [action.payload.accountId]: action.payload.balances } });
     case SET_ESTIMATED_TOPUP_FEE:
       return merge({}, state, { topUpFee: { feeInfo: action.payload, isFetched: true } });
+    case SET_ESTIMATED_SETTLE_BALANCE_FEE:
+      return merge({}, state, { settleBalanceFee: { feeInfo: action.payload, isFetched: true } });
     case PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS:
       return merge({}, state, { txToListen: [...state.txToListen, action.payload] });
     case PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS:

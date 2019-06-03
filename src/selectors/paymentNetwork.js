@@ -5,7 +5,7 @@ import { getBalance } from 'utils/assets';
 import type { Balances } from 'models/Asset';
 import { activeAccountIdSelector, paymentNetworkBalancesSelector } from './selectors';
 
-export const paymentNetworkAccountBalancesSelector: Balances = createSelector(
+export const paymentNetworkAccountBalancesSelector: (state: Object) => Balances = createSelector(
   paymentNetworkBalancesSelector,
   activeAccountIdSelector,
   (balances, activeAccountId) => {
@@ -14,12 +14,12 @@ export const paymentNetworkAccountBalancesSelector: Balances = createSelector(
   },
 );
 
-export const availableStakeSelector: number = createSelector(
+export const availableStakeSelector: (state: Object) => number = createSelector(
   paymentNetworkAccountBalancesSelector,
   (balances) => getBalance(balances, ETH),
 );
 
-export const paymentNetworkNonZeroBalancesSelector: Balances = createSelector(
+export const paymentNetworkNonZeroBalancesSelector: (state: Object) => Balances = createSelector(
   paymentNetworkAccountBalancesSelector,
   (balances) => {
     return Object.keys(balances).reduce((nonZeroBalances, ticker) => {

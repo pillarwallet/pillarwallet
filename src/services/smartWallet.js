@@ -186,6 +186,10 @@ class SmartWallet {
     return this.sdk.estimateTopUpAccountVirtualBalance(value);
   }
 
+  estimateWithdrawFromAccountVirtualBalance(value: BigNumber) {
+    return this.sdk.estimateWithdrawFromAccountVirtualBalance(value);
+  }
+
   topUpAccountVirtualBalance(estimated: Object) {
     return this.sdk.submitAccountTransaction(estimated);
   }

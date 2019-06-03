@@ -236,7 +236,7 @@ class FundTank extends React.Component<Props, State> {
         </Wrapper>
         <Footer keyboardVerticalOffset={35}>
           <FooterInner>
-            <Label>{`Estimated fee ${feeInEth} ETH`}</Label>
+            <Label>Estimated fee {feeInEth} ETH</Label>
             {!!value && !!parseFloat(value.amount) &&
               <Button
                 disabled={!session.isOnline || !topUpFee.isFetched}
