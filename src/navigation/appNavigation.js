@@ -62,6 +62,7 @@ import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfi
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
+import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -90,6 +91,7 @@ import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import {
   ADD_TOKEN,
   ME,
+  ME_TAB,
   ASSETS,
   ASSET,
   PROFILE,
@@ -130,6 +132,7 @@ import {
   BADGE,
   OTP,
   CONFIRM_CLAIM,
+  MANAGE_DETAILS_SESSIONS,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -200,6 +203,7 @@ assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 // ME FLOW
 const meFlow = createStackNavigator({
   [ME]: MeScreen,
+  [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
 }, StackNavigatorConfig);
 
 meFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -325,7 +329,7 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
-    [ME]: {
+    [ME_TAB]: {
       screen: meFlow,
       navigationOptions: ({ screenProps }) => ({
         tabBarIcon: ({ focused }) => (

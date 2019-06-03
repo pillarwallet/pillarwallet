@@ -10,6 +10,7 @@ export const CardContainer = styled.View`
   padding: 16px;
   border-bottom-width: 1;
   border-bottom-color: ${baseColors.mediumLightGray};
+  background-color: ${baseColors.snowWhite};
 `;
 
 export const Card = styled.View``;
