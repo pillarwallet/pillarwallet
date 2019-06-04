@@ -194,6 +194,10 @@ class SmartWallet {
     return this.sdk.submitAccountTransaction(estimated);
   }
 
+  withdrawAccountVirtualBalance(estimated: Object) {
+    return this.sdk.submitAccountTransaction(estimated);
+  }
+
   getDeployEstimate() {
     /**
      * can also call `this.sdk.estimateAccountDeployment(REGULAR);`,

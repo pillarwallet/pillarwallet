@@ -777,8 +777,7 @@ export const estimateSettleBalanceAction = () => {
     const ethBalance = getBalance(balances, ETH);
     console.log({ ethBalance });
 
-    // TODO: uncomment this when SDK stops automatically withdraw funds
-    // when we call the estimate function
+    // TODO: uncomment this when SDK stops automatically withdraw funds on every estimate function call
     // const value = ethToWei(ethBalance);
     const value = ethToWei(10000);
     const response = await smartWalletService
@@ -810,5 +809,49 @@ export const estimateSettleBalanceAction = () => {
         gasPrice,
       },
     });
+  };
+};
+
+export const settleBalancesAction = (assetsToSettle: Object[]) => {
+  return async (dispatch: Function, getState: Function) => {
+    if (!smartWalletService) return;
+    console.log({ assetsToSettle });
+
+    const balances = paymentNetworkAccountBalancesSelector(getState());
+    const ethBalance = getBalance(balances, ETH);
+    const balanceInWei = ethToWei(parseFloat(ethBalance));
+
+    const estimated = await smartWalletService
+      .estimateWithdrawFromAccountVirtualBalance(balanceInWei)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString(),
+          type: 'warning',
+          autoClose: false,
+        });
+        return {};
+      });
+
+    if (!estimated || !Object.keys(estimated).length) return;
+
+    const txHash = await smartWalletService.withdrawAccountVirtualBalance(estimated)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString() || 'Failed to withdraw the balance',
+          type: 'warning',
+          autoClose: false,
+        });
+        return null;
+      });
+
+    if (txHash) {
+      // TODO: create tx history record
+      Toast.show({
+        message: 'Settlement was successful',
+        type: 'success',
+        title: 'Success',
+        autoClose: true,
+      });
+    }
   };
 };
