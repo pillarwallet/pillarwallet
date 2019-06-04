@@ -53,7 +53,7 @@ type Props = {
   inverse?: boolean, // set to true if content should be absolute and positioned to the bottom of the sheet
   // (resulting in cropping overflow and revealing upper content on sheet opening)
   sheetHeader?: string,
-  onSheetLayout?: Function,
+  onHeaderLayout?: Function,
 }
 
 type State = {
@@ -377,7 +377,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       inverse,
       sheetWrapperStyle,
       sheetHeader,
-      onSheetLayout,
+      onHeaderLayout,
     } = this.props;
 
     const openedSheetHeight = screenHeight - topOffset;
@@ -454,7 +454,6 @@ export default class BottomSheet extends React.Component<Props, State> {
           style={style}
           {...this.panResponder.panHandlers}
           useNativeDriver
-          onLayout={(e) => { if (onSheetLayout) onSheetLayout(e.nativeEvent.layout.height); }}
         >
           <RelativeHeader>
             <HandlebarsWrapper>
@@ -473,6 +472,7 @@ export default class BottomSheet extends React.Component<Props, State> {
               noMargin
               onLayout={(e) => {
                 this.tabHeaderHeight = e.nativeEvent.layout.height;
+                if (onHeaderLayout) onHeaderLayout(e.nativeEvent.layout.height);
               }}
               style={{ paddingTop: 6, paddingBottom: 12 }}
             />

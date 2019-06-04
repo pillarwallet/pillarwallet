@@ -421,6 +421,7 @@ class MeScreen extends React.Component<Props, State> {
             data={this.generateProfileSettings()}
             renderItem={this.renderProfileSettingsItem}
             keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ paddingBottom: 30 }}
           />
           <SlideModal
             isVisible={!!visibleModal}
