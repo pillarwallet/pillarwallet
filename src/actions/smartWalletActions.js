@@ -708,7 +708,7 @@ export const fetchVirtualAccountBalanceAction = () => {
       smartWallet: { connectedAccount, sdkInitialized },
     } = getState();
 
-    if (!smartWalletService.sdkInitialized || !sdkInitialized) {
+    if ((!smartWalletService.sdkInitialized || !sdkInitialized) && isOnline) {
       navigate(NavigationActions.navigate({
         routeName: SMART_WALLET_UNLOCK,
         params: {

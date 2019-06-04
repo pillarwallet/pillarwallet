@@ -127,7 +127,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
 
         const { featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } } } = getState();
         if (smartWalletFeatureEnabled && wallet.privateKey) {
-          dispatch(initSmartWalletAccountAction(wallet.privateKey));
+          await dispatch(initSmartWalletAccountAction(wallet.privateKey));
         }
       } else {
         api.init();
