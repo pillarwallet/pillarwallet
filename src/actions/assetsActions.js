@@ -64,9 +64,9 @@ import {
   getAccountAddress,
 } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
-import { fetchCollectiblesAction, fetchAllCollectiblesDataAction } from './collectiblesActions';
-import { fetchTransactionsHistoryAction } from './historyActions';
+import { fetchCollectiblesAction } from './collectiblesActions';
 import {
+  checkAssetTransferTransactionsAction,
   fetchVirtualAccountBalanceAction,
   setAssetsTransferTransactionsAction,
 } from './smartWalletActions';
@@ -83,16 +83,15 @@ export const sendSignedAssetTransactionAction = (
   return async (dispatch: Function, getState: Function) => {
     const {
       signedTransaction: { signedHash },
-      transaction: { tokenType },
     } = transaction;
     if (!signedHash) return null;
     const transactionHash = await transferSigned(signedHash).catch(e => ({ error: e }));
     if (transactionHash.error) {
       return null;
     }
-    waitForTransaction(transactionHash)
-      .then(async () => {
-        if (smartWalletAssetTransfer) {
+    if (smartWalletAssetTransfer) {
+      waitForTransaction(transactionHash)
+        .then(async () => {
           const {
             smartWallet: {
               upgrade: {
@@ -103,11 +102,11 @@ export const sendSignedAssetTransactionAction = (
             },
           } = getState();
           const matchingTransaction = transferTransactions.find(
-            _transaction => _transaction.hash === transactionHash,
+            ({ transactionHash: transferTransactionHash }) => transferTransactionHash === transactionHash,
           );
           if (matchingTransaction) {
             const updatedTransactions = transferTransactions.filter(
-              _transaction => _transaction.hash !== transactionHash,
+              _transaction => _transaction.transactionHash !== transactionHash,
             );
             updatedTransactions.push({
               ...matchingTransaction,
@@ -115,14 +114,10 @@ export const sendSignedAssetTransactionAction = (
             });
             await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
           }
-        }
-        dispatch(
-          tokenType === COLLECTIBLES
-            ? fetchAllCollectiblesDataAction()
-            : fetchTransactionsHistoryAction(),
-        );
-      })
-      .catch(() => null);
+          dispatch(checkAssetTransferTransactionsAction());
+        })
+        .catch(() => null);
+    }
     return transactionHash;
   };
 };

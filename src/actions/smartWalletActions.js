@@ -232,6 +232,9 @@ export const deploySmartWalletAction = () => {
           address: accountAddress,
           state: accountState,
         },
+        upgrade: {
+          status: upgradeStatus,
+        },
       },
     } = getState();
     dispatch(setActiveAccountAction(accountAddress));
@@ -244,10 +247,13 @@ export const deploySmartWalletAction = () => {
     }
     const deployTxHash = await smartWalletService.deploy();
     console.log('deploySmartWalletAction deployTxHash: ', deployTxHash);
+    // depends from where called status might be `deploying` already
+    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYING) {
+      await dispatch(setSmartWalletUpgradeStatusAction(
+        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+      ));
+    }
     // update accounts info
-    dispatch(setSmartWalletUpgradeStatusAction(
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-    ));
     dispatch(loadSmartWalletAccountsAction());
     const account = await smartWalletService.fetchConnectedAccount();
     dispatch({
@@ -370,7 +376,7 @@ export const checkAssetTransferTransactionsAction = () => {
         },
       } = getState();
       // account should be already created by this step
-      dispatch(setSmartWalletUpgradeStatusAction(
+      await dispatch(setSmartWalletUpgradeStatusAction(
         SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
       ));
       const { address } = accounts[0];
