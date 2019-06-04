@@ -49,15 +49,16 @@ import type { Accounts } from 'models/Account';
 // constants
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { TRANSACTIONS } from 'constants/activityConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { MAIN_NETWORK, PILLAR_NETWORK } from 'constants/tabsConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
-
+import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 // configs
 import assetsConfig from 'configs/assetsConfig';
 
@@ -65,6 +66,7 @@ import assetsConfig from 'configs/assetsConfig';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // local components
 import ReceiveModal from './ReceiveModal';
@@ -90,11 +92,14 @@ type Props = {
   rates: Object,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
-  contacts: Object,
+  contacts: Object[],
   resetHideRemoval: Function,
   smartWalletState: Object,
   accounts: Accounts,
   paymentNetworkBalances: Balances,
+  openSeaTxHistory: Object[],
+  smartWalletFeatureEnabled: boolean,
+  history: Array<*>,
 };
 
 type State = {
@@ -108,6 +113,7 @@ type State = {
     },
   },
   showDescriptionModal: boolean,
+  activeTab: string,
 };
 
 const AssetCardWrapper = styled.View`
@@ -175,6 +181,7 @@ class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
     showDescriptionModal: false,
+    activeTab: MAIN_NETWORK,
   };
 
   componentDidMount() {
@@ -229,6 +236,18 @@ class AssetScreen extends React.Component<Props, State> {
     }
   };
 
+  setActiveTab = (activeTab) => {
+    this.setState({ activeTab });
+  };
+
+  getFilterByNetwork = (data, assetData) => {
+    const { activeTab } = this.state;
+    if (activeTab === PILLAR_NETWORK) {
+      return data.filter(({ asset, type }) => asset === assetData.token && type === 'TRANSACTION_ON_NETWORK_EVENT');
+    }
+    return data.filter(({ asset, type }) => asset === assetData.token && type === 'transactionEvent');
+  };
+
   render() {
     const {
       assets,
@@ -241,9 +260,13 @@ class AssetScreen extends React.Component<Props, State> {
       navigation,
       smartWalletState,
       accounts,
+      history,
+      contacts,
+      openSeaTxHistory,
+      smartWalletFeatureEnabled,
     } = this.props;
 
-    const { showDescriptionModal } = this.state;
+    const { showDescriptionModal, activeTab } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -268,6 +291,40 @@ class AssetScreen extends React.Component<Props, State> {
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
+
+    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+
+    const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
+    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, TRANSACTION_EVENT);
+    const tokenTransactionsOnMainnet = transactionsOnMainnet.filter(({ asset }) => asset === assetData.token);
+
+    const transactionsTabs = [
+      {
+        id: MAIN_NETWORK,
+        name: 'Main network',
+        onPress: () => this.setActiveTab(MAIN_NETWORK),
+        data: [...tokenTransactionsOnMainnet, ...mappedCTransactions],
+        emptyState: {
+          title: 'Make your first step',
+          body: 'Your transactions on Main network will appear here.',
+        },
+      },
+    ];
+
+    const PillarNetworkTab = {
+      id: PILLAR_NETWORK,
+      name: 'Pillar network',
+      onPress: () => this.setActiveTab(PILLAR_NETWORK),
+      data: [],
+      emptyState: {
+        title: 'Make your first step',
+        body: 'Your transactions on Pillar network will appear here.',
+      },
+    };
+
+    if (smartWalletFeatureEnabled && smartWalletStatus.hasAccount) { transactionsTabs.push(PillarNetworkTab); }
 
     return (
       <Container color={baseColors.white} inset={{ bottom: 0 }}>
@@ -354,11 +411,11 @@ class AssetScreen extends React.Component<Props, State> {
           <ActivityFeed
             feedTitle="transactions."
             navigation={navigation}
-            activeTab={TRANSACTIONS}
-            additionalFiltering={data => data.filter(({ asset }) => asset === assetData.token)}
             backgroundColor={baseColors.white}
             noBorder
             wrapperStyle={{ marginTop: 10 }}
+            tabs={transactionsTabs}
+            activeTab={activeTab}
           />
         </ScrollWrapper>
 
@@ -391,6 +448,7 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   contacts,
   assets,
@@ -398,12 +456,14 @@ const mapStateToProps = ({
   baseFiatCurrency,
   smartWalletState,
   accounts,
+  smartWalletFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   history: accountHistorySelector,
+  openSeaTxHistory: accountCollectiblesHistorySelector,
 });
 
 const combinedMapStateToProps = (state) => ({
