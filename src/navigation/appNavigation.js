@@ -67,8 +67,7 @@ import ChooseAssetsScreen from 'screens/UpgradeToSmartWallet/ChooseAssetsScreen'
 import EditAssetAmountScreen from 'screens/UpgradeToSmartWallet/EditAssetAmountScreen';
 import UpgradeReviewScreen from 'screens/UpgradeToSmartWallet/UpgradeReviewScreen';
 import UpgradeConfirmScreen from 'screens/UpgradeToSmartWallet/UpgradeConfirmScreen';
-import SmartWalletScreen from 'screens/SmartWallet';
-import SmartWalletUnlockScreen from 'screens/SmartWallet/SmartWalletUnlock';
+import SmartWalletUnlockScreen from 'screens/UpgradeToSmartWallet/SmartWalletUnlock';
 import TankDetailsScreen from 'screens/Tank/TankDetails';
 import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
@@ -147,8 +146,6 @@ import {
   EDIT_ASSET_AMOUNT_TO_TRANSFER,
   UPGRADE_REVIEW,
   UPGRADE_CONFIRM,
-  SMART_WALLET_TAB,
-  SMART_WALLET,
   SMART_WALLET_UNLOCK,
   MANAGE_TANK_FLOW,
   TANK_DETAILS,
@@ -255,13 +252,6 @@ const homeFlow = createStackNavigator({
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// SMART_WALLET FLOW
-const smartWalletFlow = createStackNavigator({
-  [SMART_WALLET]: SmartWalletScreen,
-}, StackNavigatorConfig);
-
-smartWalletFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => ({ focused }) => {
   const notificationColor = warningNotification ? baseColors.burningFire : baseColors.sunYellow;
 
@@ -336,13 +326,6 @@ const tabNavigation = createBottomTabNavigator(
             (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount)),
           !screenProps.isWalletBackedUp),
         tabBarLabel: tabBarLabel('Home'),
-      }),
-    },
-    [SMART_WALLET_TAB]: {
-      screen: smartWalletFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
-        tabBarLabel: tabBarLabel('Debug'),
       }),
     },
   }, {
@@ -422,7 +405,7 @@ const backupWalletFlow = createStackNavigator({
 }, StackNavigatorModalConfig);
 
 // UPGRADE TO SMART WALLET FLOW
-const smartWalletFlowUI = createStackNavigator({
+const smartWalletUpgradeFlow = createStackNavigator({
   [UPGRADE_INTRO]: UpgradeIntroScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
@@ -433,7 +416,7 @@ const smartWalletFlowUI = createStackNavigator({
   [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
-smartWalletFlow.navigationOptions = hideTabNavigatorOnChildView;
+smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // MANAGE WALLETS FLOW
 const manageWalletsFlow = createStackNavigator({
@@ -470,7 +453,7 @@ const AppFlowNavigation = createStackNavigator(
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
-    [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletFlowUI,
+    [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletUpgradeFlow,
     [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
     [MANAGE_TANK_FLOW]: manageTankFlow,
   }, modalTransition,
