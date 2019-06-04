@@ -70,13 +70,10 @@ export default function paymentNetworkReducer(
     case PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS:
       return merge({}, state, { txToListen: [...state.txToListen, action.payload] });
     case PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS:
-      return merge(
-        {},
-        state,
-        {
-          txToListen: state.txToListen.filter(hash => hash.toLowerCase() !== action.payload.toLowerCase()),
-        },
-      );
+      return {
+        ...state,
+        txToListen: state.txToListen.filter(hash => hash.toLowerCase() !== action.payload.toLowerCase()),
+      };
     default:
       return state;
   }
