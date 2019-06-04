@@ -34,7 +34,7 @@ const EmptyStateBGWrapper = styled.View`
 `;
 
 const Wrapper = styled.View`
-  padding-top: 20px;
+  padding: 20px 0 40px 0;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -54,7 +54,7 @@ const EmptyTransactions = (props: Props) => {
     bodyText,
   } = props;
 
-  if (!title && bodyText) return null;
+  if (!title && !bodyText) return null;
 
   return (
     <Wrapper>
