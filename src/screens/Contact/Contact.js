@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
+import { createStructuredSelector } from 'reselect';
 import { baseColors, fontSizes } from 'utils/variables';
 import {
   syncContactAction,
@@ -38,6 +39,7 @@ import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { CHAT, ACTIVITY } from 'constants/tabsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
@@ -46,9 +48,11 @@ import ChatTab from 'components/ChatTab';
 import { BaseText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { mapTransactionsHistory } from 'utils/feedData';
 import type { ApiUser } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
+import { accountHistorySelector } from 'selectors/history';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
@@ -111,6 +115,7 @@ type Props = {
   blockContact: Function,
   smartWalletState: Object,
   accounts: Accounts,
+  history: Array<*>,
 };
 
 type State = {
@@ -120,7 +125,9 @@ type State = {
   activeTab: string,
   isSheetOpen: boolean,
   forceOpen: boolean,
-  collapseHeight: ?number,
+  collapsedActivityHeight: ?number,
+  collapsedChatHeight: ?number,
+  relatedTransactions: Object[],
 };
 
 class Contact extends React.Component<Props, State> {
@@ -140,10 +147,12 @@ class Contact extends React.Component<Props, State> {
       showManageContactModal: false,
       showConfirmationModal: false,
       manageContactType: '',
-      activeTab: 'CHAT',
+      activeTab: CHAT,
       isSheetOpen: shouldOpenSheet,
       forceOpen: shouldOpenSheet,
-      collapseHeight: null,
+      collapsedChatHeight: null,
+      collapsedActivityHeight: null,
+      relatedTransactions: [],
     };
   }
 
@@ -158,6 +167,7 @@ class Contact extends React.Component<Props, State> {
     const contactName = navigation.getParam('username', '');
     const contact = navigation.getParam('contact', { username: contactName });
     const defaultImageCacheManager = ImageCacheManager();
+    this.getRelatedTransactions();
 
     if (contact.profileImage && session.isOnline) {
       defaultImageCacheManager
@@ -179,9 +189,25 @@ class Contact extends React.Component<Props, State> {
     }
   }
 
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.history !== this.props.history) this.getRelatedTransactions();
+  }
+
   componentWillUnmount() {
     this.isComponentMounted = false;
   }
+
+  getRelatedTransactions = () => {
+    const { navigation, history, contacts } = this.props;
+    const contactName = navigation.getParam('username', '');
+    const contact = navigation.getParam('contact', { username: contactName });
+    const localContact = contacts.find(({ username }) => username === contact.username);
+    const displayContact = localContact || contact;
+    const transactionsOnMainnet = mapTransactionsHistory(history, contacts, TRANSACTION_EVENT) || [];
+    const relatedTransactions = transactionsOnMainnet.filter(({ username }) => username === displayContact.username);
+    this.manageFeedCollapseHeight(relatedTransactions.length);
+    this.setState({ relatedTransactions });
+  };
 
   getUserAvatar = (isAccepted, url, updateTime) => {
     if (isAccepted && updateTime) {
@@ -245,33 +271,33 @@ class Contact extends React.Component<Props, State> {
   };
 
   manageFeedCollapseHeight = (length: number) => {
-    const { collapseHeight } = this.state;
+    const { collapsedActivityHeight } = this.state;
     const TWO_ITEMS_HEIGHT = 215;
     const EMPTY_STATE_HEIGHT = 260;
-    if (length && collapseHeight !== TWO_ITEMS_HEIGHT) {
-      this.setState({ collapseHeight: TWO_ITEMS_HEIGHT });
-    } else if (!length && collapseHeight !== EMPTY_STATE_HEIGHT) {
-      this.setState({ collapseHeight: EMPTY_STATE_HEIGHT });
+    if (length && collapsedActivityHeight !== TWO_ITEMS_HEIGHT) {
+      this.setState({ collapsedActivityHeight: TWO_ITEMS_HEIGHT });
+    } else if (!length && collapsedActivityHeight !== EMPTY_STATE_HEIGHT) {
+      this.setState({ collapsedActivityHeight: EMPTY_STATE_HEIGHT });
     }
   };
 
   renderSheetContent = (displayContact, unreadCount) => {
-    const { activeTab, isSheetOpen } = this.state;
+    const { activeTab, isSheetOpen, relatedTransactions } = this.state;
     const { navigation } = this.props;
+
     if (activeTab === ACTIVITY) {
       return (
         <ActivityFeed
           ref={(ref) => { this.activityFeedRef = ref; }}
           navigation={navigation}
+          feedData={relatedTransactions}
           activeTab={TRANSACTIONS}
-          additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
           showArrowsOnly
           contentContainerStyle={{ paddingTop: 10 }}
           esData={{
             title: 'Make your first step',
             body: 'Your activity will appear here.',
           }}
-          getFeedLength={(length) => this.manageFeedCollapseHeight(length)}
         />
       );
     }
@@ -281,7 +307,7 @@ class Contact extends React.Component<Props, State> {
         isOpen={activeTab === CHAT && isSheetOpen}
         navigation={navigation}
         hasUnreads={!!unreadCount}
-        getCollapseHeight={(cHeight) => { this.setState({ collapseHeight: cHeight }); }}
+        getCollapseHeight={(cHeight) => { this.setState({ collapsedChatHeight: cHeight }); }}
       />
     );
   };
@@ -301,7 +327,8 @@ class Contact extends React.Component<Props, State> {
       manageContactType,
       activeTab,
       forceOpen,
-      collapseHeight,
+      collapsedActivityHeight,
+      collapsedChatHeight,
     } = this.state;
 
     const contactName = navigation.getParam('username', '');
@@ -346,7 +373,7 @@ class Contact extends React.Component<Props, State> {
         hideSheet={!isAccepted}
         bottomSheetProps={{
           forceOpen,
-          sheetHeight: activeTab === CHAT ? collapseHeight + 130 : collapseHeight,
+          sheetHeight: activeTab === CHAT ? collapsedChatHeight + 130 : collapsedActivityHeight,
           swipeToCloseHeight: 62,
           onSheetOpen: this.handleSheetOpen,
           onSheetClose: () => { this.setState({ isSheetOpen: false }); },
@@ -453,6 +480,16 @@ const mapStateToProps = ({
   accounts,
 });
 
+const structuredSelector = createStructuredSelector({
+  history: accountHistorySelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+
 const mapDispatchToProps = (dispatch: Function) => ({
   syncContact: userId => dispatch(syncContactAction(userId)),
   fetchContactTransactions: (contactAddress) => dispatch(fetchContactTransactionsAction(contactAddress)),
@@ -461,4 +498,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Contact);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(Contact);

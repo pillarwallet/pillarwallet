@@ -28,6 +28,8 @@ import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 
 import { PROFILE, CONTACT, BADGE } from 'constants/navigationConstants';
+import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
+
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
@@ -45,7 +47,6 @@ import {
   approveLoginAttemptAction,
 } from 'actions/deepLinkActions';
 import IconButton from 'components/IconButton';
-import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import BadgeImage from 'components/BadgeImage';
@@ -54,6 +55,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import Permissions from 'react-native-permissions';
 import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -62,8 +64,10 @@ import {
 } from 'actions/invitationsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import type { Badges } from 'models/Badge';
 import { accountHistorySelector } from 'selectors/history';
+import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -87,17 +91,14 @@ type Props = {
   approveLoginAttempt: Function,
   fetchBadges: Function,
   badges: Badges,
+  openSeaTxHistory: Object[],
+  history: Array<*>,
 };
 
-type esDataType = {
-  title: string,
-  body: string,
-}
 type State = {
   showCamera: boolean,
   usernameWidth: number,
   activeTab: string,
-  esData: esDataType,
   permissionsGranted: boolean,
   scrollY: Animated.Value,
   forceCloseLoginApprovalModal: boolean,
@@ -228,11 +229,6 @@ const RecentConnectionsItemName = styled(BaseText)`
   })};
 `;
 
-const TabsHeader = styled.View`
-  padding: 20px ${spacing.mediumLarge}px 12px;
-  background-color: ${baseColors.white};
-`;
-
 const Description = styled(Paragraph)`
   text-align: center;
   padding-bottom: ${spacing.rhythm}px;
@@ -304,10 +300,6 @@ class HomeScreen extends React.Component<Props, State> {
     scrollY: new Animated.Value(0),
     activeTab: ALL,
     usernameWidth: 0,
-    esData: {
-      title: 'Make your first step',
-      body: 'Your activity will appear here.',
-    },
   };
 
   componentDidMount() {
@@ -412,11 +404,8 @@ class HomeScreen extends React.Component<Props, State> {
     fetchBadges();
   };
 
-  setActiveTab = (activeTab, esData?) => {
-    this.setState({
-      activeTab,
-      esData,
-    });
+  setActiveTab = (activeTab) => {
+    this.setState({ activeTab });
   };
 
   goToProfileEmailSettings = () => {
@@ -447,12 +436,14 @@ class HomeScreen extends React.Component<Props, State> {
       resetDeepLinkData,
       approveLoginAttempt,
       badges,
+      history,
+      openSeaTxHistory,
+      contacts,
     } = this.props;
     const {
       showCamera,
       permissionsGranted,
       scrollY,
-      esData,
       usernameWidth,
       forceCloseLoginApprovalModal,
     } = this.state;
@@ -516,44 +507,51 @@ class HomeScreen extends React.Component<Props, State> {
       extrapolate: 'clamp',
     });
 
+    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+
+    const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
+    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, TRANSACTION_EVENT);
+
+    const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
+
     const activityFeedTabs = [
       {
         id: ALL,
         name: 'All',
         tabImageNormal: allIconNormal,
         tabImageActive: allIconActive,
-        onPress: () => this.setActiveTab(
-          ALL,
-          {
-            title: 'Make your first step',
-            body: 'Your activity will appear here.',
-          }),
+        onPress: () => this.setActiveTab(ALL),
+        data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts],
+        emptyState: {
+          title: 'Make your first step',
+          body: 'Your activity will appear here.',
+        },
       },
       {
         id: TRANSACTIONS,
         name: 'Transactions',
         tabImageNormal: transactionsIconNormal,
         tabImageActive: transactionsIconActive,
-        onPress: () => this.setActiveTab(
-          TRANSACTIONS,
-          {
-            title: 'Make your first step',
-            body: 'Your transactions will appear here. Send or receive tokens to start.',
-          },
-        ),
+        onPress: () => this.setActiveTab(TRANSACTIONS),
+        data: [...transactionsOnMainnet, ...mappedCTransactions],
+        emptyState: {
+          title: 'Make your first step',
+          body: 'Your transactions will appear here. Send or receive tokens to start.',
+        },
       },
       {
         id: SOCIAL,
         name: 'Social',
         tabImageNormal: socialIconNormal,
         tabImageActive: socialIconActive,
-        onPress: () => this.setActiveTab(
-          SOCIAL,
-          {
-            title: 'Make your first step',
-            body: 'Information on your connections will appear here. Send a connection request to start.',
-          },
-        ),
+        onPress: () => this.setActiveTab(SOCIAL),
+        data: mappedContacts,
+        emptyState: {
+          title: 'Make your first step',
+          body: 'Information on your connections will appear here. Send a connection request to start.',
+        },
       },
     ];
 
@@ -715,10 +713,6 @@ class HomeScreen extends React.Component<Props, State> {
 
             <BadgesSpacer />
           }
-          <TabsHeader>
-            <Title subtitle noMargin title="your activity." />
-          </TabsHeader>
-          <Tabs tabs={activityFeedTabs} bgColor={baseColors.white} />
           <ActivityFeed
             backgroundColor={baseColors.white}
             onCancelInvitation={cancelInvitation}
@@ -726,8 +720,8 @@ class HomeScreen extends React.Component<Props, State> {
             onAcceptInvitation={acceptInvitation}
             navigation={navigation}
             activeTab={this.state.activeTab}
-            esData={esData}
-            sortable
+            feedTitle="your activity."
+            tabs={activityFeedTabs}
           />
         </Animated.ScrollView>
         <Camera
@@ -794,6 +788,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
+  openSeaTxHistory: accountCollectiblesHistorySelector,
 });
 
 const combinedMapStateToProps = (state) => ({
