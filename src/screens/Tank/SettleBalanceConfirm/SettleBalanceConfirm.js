@@ -18,30 +18,32 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-// import { utils } from 'ethers';
+import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
+import get from 'lodash.get';
+import { utils } from 'ethers';
+import type { NavigationScreenProp } from 'react-navigation';
+
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
-import { Label, BoldText, MediumText } from 'components/Typography';
+import { Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
-import TextInput from 'components/TextInput';
-import Toast from 'components/Toast';
+import { settleBalancesAction } from 'actions/smartWalletActions';
+import type { SettleBalanceFee } from 'models/PaymentNetwork';
 import { fontSizes } from 'utils/variables';
-import { settleNetwokAssetsBalanceAction } from 'actions/tankActions';
+import { formatAmount } from 'utils/common';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
-  settleNetwokAssetsBalance: Function,
+  settleBalances: Function,
   assetsOnNetwork: Object[],
+  settleBalanceFee: SettleBalanceFee,
 };
 
 type State = {
-  note: ?string,
-  scrollPos: number,
+  settleButtonSubmitted: boolean,
 };
 
 const FooterWrapper = styled.View`
@@ -60,6 +62,7 @@ const Value = styled(BoldText)`
   font-size: ${fontSizes.medium}
 `;
 
+/*
 const TextButton = styled.TouchableOpacity`
   padding: 10px;
   margin-top: 10px;
@@ -70,42 +73,30 @@ const ButtonText = styled(MediumText)`
   letter-spacing: 0.1;
   color: #c95c45;
 `;
+*/
 
 class SettleBalanceConfirm extends React.Component<Props, State> {
-  scroll: Object;
-
-  constructor(props) {
-    super(props);
-    this.scroll = React.createRef();
-    this.state = {
-      note: null,
-      scrollPos: 0,
-    };
-  }
-
-  handleFormSubmit = async () => {
-    Keyboard.dismiss();
-    const { navigation, settleNetwokAssetsBalance } = this.props;
-    const assetsToSettle = navigation.getParam('assetsToSettle', []);
-    // const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
-    await settleNetwokAssetsBalance(assetsToSettle);
-    navigation.dismiss();
-    Toast.show({
-      message: 'Settlement was successful',
-      type: 'success',
-      title: 'Success',
-      autoClose: true,
-    });
+  state = {
+    settleButtonSubmitted: false,
   };
 
-  handleNoteChange(text) {
-    this.setState({ note: text });
-  }
+  handleFormSubmit = async () => {
+    const { navigation, settleBalances } = this.props;
+    this.setState({ settleButtonSubmitted: true });
+    const assetsToSettle = navigation.getParam('assetsToSettle', []);
+    await settleBalances(assetsToSettle);
+    this.setState({ settleButtonSubmitted: false }, () => navigation.dismiss());
+  };
+
+  getTxFeeInWei = (): BigNumber => {
+    return get(this.props, 'settleBalanceFee.feeInfo.totalCost', 0);
+  };
 
   render() {
-    const { scrollPos } = this.state;
-    const { session, navigation } = this.props;
+    const { settleButtonSubmitted } = this.state;
+    const { session, navigation, settleBalanceFee } = this.props;
     const assetsToSettle = navigation.getParam('assetsToSettle', []);
+    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
 
     return (
       <Container>
@@ -116,56 +107,29 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
         />
         <ScrollWrapper
           regularPadding
-          disableAutomaticScroll
-          innerRef={ref => { this.scroll = ref; }}
-          onKeyboardWillShow={() => {
-            this.scroll.scrollToPosition(0, scrollPos);
-          }}
           contentContainerStyle={{ marginTop: 40 }}
         >
           <LabeledRow>
             <Label>Assets to settle</Label>
-            {/* <Value>{amount} {symbol}</Value> */}
-            {/* temp */}
-            {assetsToSettle.map((asset: any, index: number) =>
-              <Value key={index}>{`${asset.amount} ${asset.symbol}`}</Value>)
+            {assetsToSettle.map((asset: Object, index: number) =>
+              <Value key={index}>{`${formatAmount(asset.balance)} ${asset.symbol}`}</Value>)
             }
-          </LabeledRow>
-          <LabeledRow>
-            <Label>PLR used</Label>
-            <Value>6,351.2 PLR {/* temp */}</Value>
           </LabeledRow>
           <LabeledRow>
             <Label>Transaction fee</Label>
-            <Value>0.004 ETH  (£0.013) {/* temp */} </Value>
-            {/* <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value> */}
+            <Value>{feeInEth} ETH</Value>
           </LabeledRow>
-          <TextInput
-            inputProps={{
-              onChange: (text) => this.handleNoteChange(text),
-              value: this.state.note,
-              autoCapitalize: 'none',
-              multiline: true,
-              numberOfLines: 3,
-              placeholder: 'Add a note to this transaction',
-            }}
-            inputType="secondary"
-            labelBigger
-            noBorder
-            keyboardAvoidance
-            onLayout={(e) => {
-              const scrollPosition = e.nativeEvent.layout.y + 180;
-              this.setState({ scrollPos: scrollPosition });
-              }
-            }
-          />
         </ScrollWrapper>
         <Footer keyboardVerticalOffset={40}>
           <FooterWrapper>
-            <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Release Funds" />
-            <TextButton onPress={() => {}}>
+            <Button
+              disabled={!session.isOnline || !settleBalanceFee.isFetched || settleButtonSubmitted}
+              onPress={this.handleFormSubmit}
+              title="Release Funds"
+            />
+            {/* <TextButton onPress={() => {}}>
               <ButtonText>Open dispute</ButtonText>
-            </TextButton>
+            </TextButton> */}
           </FooterWrapper>
         </Footer>
       </Container>
@@ -175,13 +139,14 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   session: { data: session },
+  paymentNetwork: { settleBalanceFee },
 }) => ({
   session,
+  settleBalanceFee,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  settleNetwokAssetsBalance: (assets) => dispatch(settleNetwokAssetsBalanceAction(assets)),
+  settleBalances: (assets) => dispatch(settleBalancesAction(assets)),
 });
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettleBalanceConfirm);

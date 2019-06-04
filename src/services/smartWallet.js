@@ -60,9 +60,7 @@ class SmartWallet {
   sdkInitialized: boolean = false;
 
   constructor() {
-    const environmentNetwork = NETWORK_PROVIDER === 'rinkeby'
-      ? SdkEnvironmentNames.Rinkeby
-      : SdkEnvironmentNames.Ropsten;
+    const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
     const config = getSdkEnvironment(environmentNetwork);
 
     try {
@@ -72,10 +70,18 @@ class SmartWallet {
     }
   }
 
-  async init(privateKey: string, dispatch?: Function) {
-    if (this.sdkInitialized) {
-      return;
+  getEnvironmentNetwork(networkName: string) {
+    // TODO: add support for the mainnet
+    switch (networkName) {
+      case 'rinkeby': return SdkEnvironmentNames.Rinkeby;
+      case 'ropsten': return SdkEnvironmentNames.Ropsten;
+      default: return SdkEnvironmentNames.Ropsten;
     }
+  }
+
+  async init(privateKey: string, dispatch?: Function) {
+    if (this.sdkInitialized) return;
+
     await this.sdk
       .initialize({ device: { privateKey } })
       .then(() => { this.sdkInitialized = true; })
@@ -194,6 +200,10 @@ class SmartWallet {
   }
 
   topUpAccountVirtualBalance(estimated: Object) {
+    return this.sdk.submitAccountTransaction(estimated);
+  }
+
+  withdrawAccountVirtualBalance(estimated: Object) {
     return this.sdk.submitAccountTransaction(estimated);
   }
 
