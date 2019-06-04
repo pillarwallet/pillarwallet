@@ -33,17 +33,18 @@ type Props = {
 };
 
 export default class CustomTabBarComponent extends React.Component<Props> {
-  // keep method brackets version to support more flags
+  /**
+   * if the return is false or undefined then the default button component is rendered
+   * otherwise let's pass hidden tab item
+   **
+   *  keep method brackets version to support more flags
+   */
   getButtonComponent = (route: any) => { // eslint-disable-line
+    const hideTabButton = false;
     // const { screenProps: { smartWalletFeatureEnabled } } = this.props;
-    /**
-     * if the return is false or undefined then the default button component is rendered
-     * otherwise let's pass hidden tab item add `or` ternary for more feature flags
-    */
-    // return (route.routeName === SMART_WALLET_TAB && !smartWalletFeatureEnabled)
-    // || (other route name and other features)
-    //   && HiddenTabItemView;
-    return HiddenTabItemView;
+    // add `or` ternary for more feature flags
+    // hideTabButton = route.routeName === SMART_WALLET_TAB && !smartWalletFeatureEnabled;
+    return hideTabButton && HiddenTabItemView;
   };
 
   render() {
