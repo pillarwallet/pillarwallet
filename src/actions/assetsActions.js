@@ -36,7 +36,7 @@ import {
   COLLECTIBLES,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
-import { ADD_TRANSACTION } from 'constants/historyConstants';
+import { ADD_TRANSACTION, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
@@ -66,7 +66,10 @@ import {
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction, fetchAllCollectiblesDataAction } from './collectiblesActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
-import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
+import {
+  fetchVirtualAccountBalanceAction,
+  setAssetsTransferTransactionsAction,
+} from './smartWalletActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -75,8 +78,9 @@ type TransactionStatus = {
 
 export const sendSignedAssetTransactionAction = (
   transaction: any,
+  smartWalletAssetTransfer?: ?boolean,
 ) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
     const {
       signedTransaction: { signedHash },
       transaction: { tokenType },
@@ -87,7 +91,31 @@ export const sendSignedAssetTransactionAction = (
       return null;
     }
     waitForTransaction(transactionHash)
-      .then(() => {
+      .then(async () => {
+        if (smartWalletAssetTransfer) {
+          const {
+            smartWallet: {
+              upgrade: {
+                transfer: {
+                  transactions: transferTransactions = [],
+                },
+              },
+            },
+          } = getState();
+          const matchingTransaction = transferTransactions.find(
+            _transaction => _transaction.hash === transactionHash,
+          );
+          if (matchingTransaction) {
+            const updatedTransactions = transferTransactions.filter(
+              _transaction => _transaction.hash !== transactionHash,
+            );
+            updatedTransactions.push({
+              ...matchingTransaction,
+              status: TX_CONFIRMED_STATUS,
+            });
+            await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
+          }
+        }
         dispatch(
           tokenType === COLLECTIBLES
             ? fetchAllCollectiblesDataAction()

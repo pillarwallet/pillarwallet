@@ -281,7 +281,7 @@ export const dismissSmartWalletUpgradeAction = () => {
 
 export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {
   return async (dispatch: Function) => {
-    dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: transactions }, true));
+    await dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: transactions }, true));
     dispatch({
       type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
       payload: transactions,
@@ -351,7 +351,7 @@ export const checkAssetTransferTransactionsAction = () => {
     );
     let updatedTransactions = transferTransactions.map(transaction => {
       const { transactionHash } = transaction;
-      if (!transactionHash) return transaction;
+      if (!transactionHash || transaction.status === TX_CONFIRMED_STATUS) return transaction;
       const logged = allHistory.find(_transaction => _transaction.hash === transactionHash);
       console.log('transaction history check: ', !!logged, transactionHash);
       if (!logged) return transaction;
@@ -384,7 +384,7 @@ export const checkAssetTransferTransactionsAction = () => {
       );
       // grab first in queue
       const unsentTransaction = unsentTransactions[0];
-      const transactionHash = await dispatch(sendSignedAssetTransactionAction(unsentTransaction));
+      const transactionHash = await dispatch(sendSignedAssetTransactionAction(unsentTransaction, true));
       if (!transactionHash) {
         Toast.show({
           message: 'Failed to send signed asset',
