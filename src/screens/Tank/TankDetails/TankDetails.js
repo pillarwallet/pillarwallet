@@ -26,7 +26,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { initFundTankProcessAction, initSettleBalanceProcessAction } from 'actions/smartWalletActions';
+import { ensureSmartAccountConnectedAction } from 'actions/smartWalletActions';
 
 // components
 import { ScrollWrapper, Container } from 'components/Layout';
@@ -39,6 +39,7 @@ import CheckPin from 'components/CheckPin';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { FUND_TANK, SETTLE_BALANCE } from 'constants/navigationConstants';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -50,7 +51,7 @@ import type { Balances } from 'models/Asset';
 // utils
 import { getRate } from 'utils/assets';
 import { baseColors, fontSizes } from 'utils/variables';
-import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { delay, formatMoney, getCurrencySymbol } from 'utils/common';
 
 
 type Props = {
@@ -63,8 +64,7 @@ type Props = {
   assetsOnNetwork: Balances,
   availableStake: number,
   resetIncorrectPassword: Function,
-  initFundTankProcess: Function,
-  initSettleBalanceProcess: Function,
+  ensureSmartAccountConnected: Function,
 };
 
 type DashLineProps = {
@@ -246,19 +246,27 @@ class TankDetails extends React.Component<Props, State> {
   };
 
   navigateToFundTankScreen = async (_: string, wallet: Object) => {
-    const { initFundTankProcess } = this.props;
+    const { ensureSmartAccountConnected, navigation } = this.props;
     this.setState({ showCheckPinModal1: false });
 
-    await initFundTankProcess(wallet.privateKey);
-    this.setState({ topUpButtonSubmitted: false });
+    await delay(500);
+    ensureSmartAccountConnected(wallet.privateKey)
+      .then(() => {
+        this.setState({ topUpButtonSubmitted: false }, () => navigation.navigate(FUND_TANK));
+      })
+      .catch(() => null);
   };
 
   navigateToSettleBalanceScreen = async (_: string, wallet: Object) => {
-    const { initSettleBalanceProcess } = this.props;
+    const { ensureSmartAccountConnected, navigation } = this.props;
     this.setState({ showCheckPinModal2: false });
 
-    await initSettleBalanceProcess(wallet.privateKey);
-    this.setState({ settleBalanceButtonSubmitted: false });
+    await delay(500);
+    ensureSmartAccountConnected(wallet.privateKey)
+      .then(() => {
+        this.setState({ settleBalanceButtonSubmitted: false }, () => navigation.navigate(SETTLE_BALANCE));
+      })
+      .catch(() => null);
   };
 
   render() {
@@ -465,8 +473,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  initFundTankProcess: (privateKey: string) => dispatch(initFundTankProcessAction(privateKey)),
-  initSettleBalanceProcess: (privateKey: string) => dispatch(initSettleBalanceProcessAction(privateKey)),
+  ensureSmartAccountConnected: (privateKey: string) => dispatch(ensureSmartAccountConnectedAction(privateKey)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
