@@ -188,6 +188,7 @@ describe('Wallet actions', () => {
       },
       accounts: { data: [mockSmartWalletAccount] },
       featureFlags: { data: { SMART_WALLET_ENABLED: true } },
+      smartWallet: { upgrade: { status: null } },
     });
     const expectedActions = [
       { type: UPDATE_CONTACTS, payload: [] },

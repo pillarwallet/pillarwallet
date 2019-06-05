@@ -39,6 +39,7 @@ import TankAssetBalance from 'components/TankAssetBalance';
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // models
 import type { Transaction } from 'models/Transaction';
@@ -100,6 +101,7 @@ type Props = {
   openSeaTxHistory: Object[],
   smartWalletFeatureEnabled: boolean,
   history: Array<*>,
+  deploySmartWallet: Function,
 };
 
 type State = {
@@ -264,6 +266,7 @@ class AssetScreen extends React.Component<Props, State> {
       contacts,
       openSeaTxHistory,
       smartWalletFeatureEnabled,
+      deploySmartWallet,
     } = this.props;
 
     const { showDescriptionModal, activeTab } = this.state;
@@ -400,9 +403,8 @@ class AssetScreen extends React.Component<Props, State> {
                 marginTop="20px"
                 height={52}
                 title="Deploy Smart Wallet"
-                onPress={() => {
-                  // TODO: navigate to last upgrade step?
-                }}
+                disabled={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
+                onPress={() => deploySmartWallet()}
               />
               }
             </Wrapper>
@@ -478,6 +480,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchTransactionsHistory: (asset, indexFrom) => {
     dispatch(fetchTransactionsHistoryAction(asset, indexFrom));
   },
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);

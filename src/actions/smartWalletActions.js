@@ -141,7 +141,7 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
 
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
   return async (dispatch: Function) => {
-    dispatch(saveDbAction('smartWallet', { upgradeStatus }));
+    dispatch(saveDbAction('smartWallet', { upgradeStatus }, true));
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
       payload: upgradeStatus,
@@ -199,13 +199,14 @@ export const deploySmartWalletAction = () => {
       },
     } = getState();
     dispatch(setActiveAccountAction(accountAddress));
-    if (accountState.toLowerCase() === 'deployed') {
+    if (accountState === sdkConstants.AccountStates.Deployed) {
       dispatch(setSmartWalletUpgradeStatusAction(
         SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
       ));
       console.log('deploySmartWalletAction account is already deployed!');
       return;
     }
+    // TODO: show toast if not enough funds
     const deployTxHash = await smartWalletService.deploy();
     console.log('deploySmartWalletAction deployTxHash: ', deployTxHash);
     // depends from where called status might be `deploying` already
@@ -297,7 +298,6 @@ export const checkAssetTransferTransactionsAction = () => {
         },
       },
     } = getState();
-
     if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS) return;
     if (!transferTransactions.length) {
       // TODO: no transactions at all?

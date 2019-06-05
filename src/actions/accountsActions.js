@@ -42,6 +42,7 @@ import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
 import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
+import { sdkConstants } from '@archanova/sdk';
 
 const storage = Storage.getInstance('db');
 
@@ -156,7 +157,14 @@ export const addNewAccountAction = (
 
 export const setActiveAccountAction = (accountId: string) => {
   return async (dispatch: Function, getState: Function) => {
-    const { accounts: { data: accounts } } = getState();
+    const {
+      accounts: { data: accounts },
+      smartWallet: {
+        upgrade: {
+          status: upgradeStatus,
+        },
+      },
+    } = getState();
     const account = accounts.find(acc => acc.id === accountId);
     if (!account) {
       // TODO: account not found in storage
@@ -173,16 +181,18 @@ export const setActiveAccountAction = (accountId: string) => {
     if (account.type !== ACCOUNT_TYPES.SMART_WALLET || !account.extra) return;
 
     const { extra: { state = '' } } = account;
-    switch (state.toString().toLowerCase()) {
-      case 'deployed':
-        dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
-        break;
-      case 'created':
-        dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED));
-        break;
-      default:
-        break;
+    console.log('state: ', state);
+    if (state === sdkConstants.AccountStates.Deployed) {
+      dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+      return;
     }
+    if ([
+      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+    ].includes(upgradeStatus)) {
+      return;
+    }
+    dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED));
   };
 };
 

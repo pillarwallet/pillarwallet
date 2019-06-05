@@ -199,6 +199,12 @@ const mockArchanovaSdkInstance = {
 };
 
 jest.setMock('@archanova/sdk', {
+  sdkConstants: {
+    AccountStates: {
+      Created: 'Created',
+      Updated: 'Updated',
+    },
+  },
   sdkModules: {
     Eth: {
       TransactionSpeeds: {

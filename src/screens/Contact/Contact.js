@@ -32,6 +32,7 @@ import {
   blockContactAction,
 } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
 import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
@@ -116,6 +117,7 @@ type Props = {
   smartWalletState: Object,
   accounts: Accounts,
   history: Array<*>,
+  deploySmartWallet: Function,
 };
 
 type State = {
@@ -320,6 +322,7 @@ class Contact extends React.Component<Props, State> {
       chats,
       smartWalletState,
       accounts,
+      deploySmartWallet,
     } = this.props;
     const {
       showManageContactModal,
@@ -434,9 +437,8 @@ class Contact extends React.Component<Props, State> {
                 marginTop="20px"
                 height={52}
                 title="Deploy Smart Wallet"
-                onPress={() => {
-                  // TODO: navigate to last upgrade step?
-                }}
+                disabled={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
+                onPress={() => deploySmartWallet()}
               />
               }
             </Wrapper>
@@ -496,6 +498,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(Contact);

@@ -17,22 +17,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { utils } from 'ethers';
+
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
+import smartWalletService from 'services/smartWallet';
 
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+
 import { getActiveAccount } from './accounts';
+import { formatAmount } from './common';
 
 function getMessage(status: string, activeAccountType: string, smartWalletState: Object) {
   switch (status) {
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
       if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return {};
-      // TODO: get fee
+      const deployEstimate = smartWalletService.getDeployEstimate();
+      const feeSmartContractDeployEth = formatAmount(utils.formatEther(deployEstimate));
       return {
         title: 'To send assets, deploy Smart Wallet first',
-        message: 'You will have to pay a small fee ~0.0004 ETH',
+        message: `You will have to pay a small fee ~${feeSmartContractDeployEth} ETH`,
       };
     case SMART_WALLET_UPGRADE_STATUSES.DEPLOYING:
       if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return {};
