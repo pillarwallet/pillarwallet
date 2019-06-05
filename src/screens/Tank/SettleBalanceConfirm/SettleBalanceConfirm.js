@@ -20,9 +20,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { BigNumber } from 'bignumber.js';
-import get from 'lodash.get';
-import { utils } from 'ethers';
 import type { NavigationScreenProp } from 'react-navigation';
 
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
@@ -30,7 +27,6 @@ import { Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import { settleBalancesAction } from 'actions/smartWalletActions';
-import type { SettleBalanceFee } from 'models/PaymentNetwork';
 import { fontSizes } from 'utils/variables';
 import { formatAmount } from 'utils/common';
 
@@ -39,7 +35,6 @@ type Props = {
   session: Object,
   settleBalances: Function,
   assetsOnNetwork: Object[],
-  settleBalanceFee: SettleBalanceFee,
 };
 
 type State = {
@@ -82,22 +77,16 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
   handleFormSubmit = async () => {
     const { navigation, settleBalances } = this.props;
-    this.setState({ settleButtonSubmitted: true });
     const assetsToSettle = navigation.getParam('assetsToSettle', []);
+    this.setState({ settleButtonSubmitted: true });
     await settleBalances(assetsToSettle);
     this.setState({ settleButtonSubmitted: false }, () => navigation.dismiss());
   };
 
-  getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'settleBalanceFee.feeInfo.totalCost', 0);
-  };
-
   render() {
     const { settleButtonSubmitted } = this.state;
-    const { session, navigation, settleBalanceFee } = this.props;
+    const { session, navigation } = this.props;
     const assetsToSettle = navigation.getParam('assetsToSettle', []);
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
-
     return (
       <Container>
         <Header
@@ -115,15 +104,11 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
               <Value key={index}>{`${formatAmount(asset.balance)} ${asset.symbol}`}</Value>)
             }
           </LabeledRow>
-          <LabeledRow>
-            <Label>Transaction fee</Label>
-            <Value>{feeInEth} ETH</Value>
-          </LabeledRow>
         </ScrollWrapper>
         <Footer keyboardVerticalOffset={40}>
           <FooterWrapper>
             <Button
-              disabled={!session.isOnline || !settleBalanceFee.isFetched || settleButtonSubmitted}
+              disabled={!session.isOnline || settleButtonSubmitted}
               onPress={this.handleFormSubmit}
               title="Release Funds"
             />
@@ -139,10 +124,8 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   session: { data: session },
-  paymentNetwork: { settleBalanceFee },
 }) => ({
   session,
-  settleBalanceFee,
 });
 
 const mapDispatchToProps = (dispatch) => ({
