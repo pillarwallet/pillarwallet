@@ -36,14 +36,13 @@ import {
   COLLECTIBLES,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
-import { ADD_TRANSACTION, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
+import { ADD_TRANSACTION } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 import {
   getExchangeRates,
   transferSigned,
-  waitForTransaction,
 } from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
 
