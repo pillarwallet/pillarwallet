@@ -65,11 +65,7 @@ import {
 } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import {
-  checkAssetTransferTransactionsAction,
-  fetchVirtualAccountBalanceAction,
-  setAssetsTransferTransactionsAction,
-} from './smartWalletActions';
+import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -78,9 +74,8 @@ type TransactionStatus = {
 
 export const sendSignedAssetTransactionAction = (
   transaction: any,
-  smartWalletAssetTransfer?: ?boolean,
 ) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async () => {
     const {
       signedTransaction: { signedHash },
     } = transaction;
@@ -88,35 +83,6 @@ export const sendSignedAssetTransactionAction = (
     const transactionHash = await transferSigned(signedHash).catch(e => ({ error: e }));
     if (transactionHash.error) {
       return null;
-    }
-    if (smartWalletAssetTransfer) {
-      waitForTransaction(transactionHash)
-        .then(async () => {
-          const {
-            smartWallet: {
-              upgrade: {
-                transfer: {
-                  transactions: transferTransactions = [],
-                },
-              },
-            },
-          } = getState();
-          const matchingTransaction = transferTransactions.find(
-            ({ transactionHash: transferTransactionHash }) => transferTransactionHash === transactionHash,
-          );
-          if (matchingTransaction) {
-            const updatedTransactions = transferTransactions.filter(
-              _transaction => _transaction.transactionHash !== transactionHash,
-            );
-            updatedTransactions.push({
-              ...matchingTransaction,
-              status: TX_CONFIRMED_STATUS,
-            });
-            await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
-          }
-          dispatch(checkAssetTransferTransactionsAction());
-        })
-        .catch(() => null);
     }
     return transactionHash;
   };

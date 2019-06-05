@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { sdkModules } from '@archanova/sdk';
+import { sdkModules, sdkConstants } from '@archanova/sdk';
 import { ethToWei, weiToEth } from '@netgum/utils';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
@@ -351,7 +351,7 @@ export const checkAssetTransferTransactionsAction = () => {
       );
       // grab first in queue
       const unsentTransaction = unsentTransactions[0];
-      const transactionHash = await dispatch(sendSignedAssetTransactionAction(unsentTransaction, true));
+      const transactionHash = await dispatch(sendSignedAssetTransactionAction(unsentTransaction));
       if (!transactionHash) {
         Toast.show({
           message: 'Failed to send signed asset',
@@ -437,50 +437,73 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         history: { data: currentHistory },
         assets: { data: assets },
         paymentNetwork: { txToListen },
+        smartWallet: {
+          upgrade: {
+            transfer: {
+              transactions: transferTransactions = [],
+            },
+          },
+        },
       } = getState();
       const txHash = get(event, 'payload.hash', '').toLowerCase();
       const txStatus = get(event, 'payload.state', '');
       const txGasInfo = get(event, 'payload.gas', {});
       const txFound = txToListen.find(hash => hash.toLowerCase() === txHash);
+      const transferTxFound = transferTransactions.find(
+        ({ transactionHash: transferTransactionHash }) => transferTransactionHash === txHash,
+      );
 
-      if (txFound && txStatus === 'Completed') {
-        let txUpdated = null;
-        const updatedHistory = Object.keys(currentHistory).reduce((memo, accountId) => {
-          const accountHistory = currentHistory[accountId].map(transaction => {
-            if (transaction.hash.toLowerCase() === txHash) {
-              txUpdated = {
-                ...transaction,
-                gasPrice: txGasInfo.price ? txGasInfo.price.toString() : transaction.gasPrice,
-                gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
-                status: TX_CONFIRMED_STATUS,
-              };
-              return txUpdated;
-            }
-            return transaction;
+      if (txStatus === sdkConstants.AccountTransactionStates.Completed) {
+        if (transferTxFound) {
+          const updatedTransactions = transferTransactions.filter(
+            _transaction => _transaction.transactionHash !== transferTxFound.transactionHash,
+          );
+          updatedTransactions.push({
+            ...transferTxFound,
+            status: TX_CONFIRMED_STATUS,
           });
-          return { ...memo, [accountId]: accountHistory };
-        }, {});
+          await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
+        }
+        if (txFound) {
+          let txUpdated = null;
+          const updatedHistory = Object.keys(currentHistory).reduce((memo, accountId) => {
+            const accountHistory = currentHistory[accountId].map(transaction => {
+              if (transaction.hash.toLowerCase() === txHash) {
+                txUpdated = {
+                  ...transaction,
+                  gasPrice: txGasInfo.price ? txGasInfo.price.toString() : transaction.gasPrice,
+                  gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
+                  status: TX_CONFIRMED_STATUS,
+                };
+                return txUpdated;
+              }
+              return transaction;
+            });
+            return { ...memo, [accountId]: accountHistory };
+          }, {});
 
-        if (txUpdated) {
-          if (txUpdated.note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-            Toast.show({
-              message: 'Your Pillar Tank was successfully funded!',
-              type: 'success',
-              title: 'Success',
-              autoClose: true,
+          if (txUpdated) {
+            if (txUpdated.note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+              Toast.show({
+                message: 'Your Pillar Tank was successfully funded!',
+                type: 'success',
+                title: 'Success',
+                autoClose: true,
+              });
+            }
+            dispatch(fetchAssetsBalancesAction(assets));
+            dispatch(saveDbAction('history', { history: updatedHistory }, true));
+            dispatch({
+              type: SET_HISTORY,
+              payload: updatedHistory,
+            });
+            dispatch({
+              type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+              payload: txHash,
             });
           }
-          dispatch(fetchAssetsBalancesAction(assets));
-          dispatch(saveDbAction('history', { history: updatedHistory }, true));
-          dispatch({
-            type: SET_HISTORY,
-            payload: updatedHistory,
-          });
-          dispatch({
-            type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
-            payload: txHash,
-          });
         }
+        dispatch(checkAssetTransferTransactionsAction());
       }
     }
     console.log(event);
