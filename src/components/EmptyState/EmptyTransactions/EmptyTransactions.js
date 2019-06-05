@@ -35,6 +35,7 @@ const EmptyStateBGWrapper = styled.View`
 
 const Wrapper = styled.View`
   padding-top: 20px;
+  padding-bottom: 40px;
   justify-content: center;
   align-items: center;
   width: 100%;
