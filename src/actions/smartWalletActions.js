@@ -508,7 +508,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
   };
 };
 
-export const initFundTankProcessAction = (privateKey: string) => {
+export const ensureSmartAccountConnectedAction = (privateKey: string) => {
   return async (dispatch: Function, getState: Function) => {
     const {
       accounts: { data: accounts },
@@ -524,8 +524,6 @@ export const initFundTankProcessAction = (privateKey: string) => {
     if (!isConnectedToSmartAccount(connectedAccount)) {
       await dispatch(connectSmartWalletAccountAction(accountId));
     }
-
-    navigate(NavigationActions.navigate({ routeName: FUND_TANK }));
   };
 };
 
@@ -680,27 +678,6 @@ export const fetchVirtualAccountBalanceAction = () => {
         balances: accountBalances,
       },
     });
-  };
-};
-
-export const initSettleBalanceProcessAction = (privateKey: string) => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      accounts: { data: accounts },
-      smartWallet: { connectedAccount },
-    } = getState();
-
-    const accountId = getActiveAccountId(accounts);
-
-    if (!smartWalletService) {
-      await dispatch(initSmartWalletSdkAction(privateKey));
-    }
-
-    if (!isConnectedToSmartAccount(connectedAccount)) {
-      await dispatch(connectSmartWalletAccountAction(accountId));
-    }
-
-    navigate(NavigationActions.navigate({ routeName: SETTLE_BALANCE }));
   };
 };
 
