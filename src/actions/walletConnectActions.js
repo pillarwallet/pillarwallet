@@ -352,6 +352,50 @@ export function initWalletConnectSessions() {
   };
 }
 
+export function onWalletConnectSubscribeToSessionRequestEvent(clientId: string) {
+  return async (dispatch: Function, getState: () => Object) => {
+    try {
+      const { pending } = getState().walletConnect;
+
+      if (pending && pending.length) {
+        const matchingPending = pending.filter(c => c.clientId === clientId);
+
+        if (matchingPending && matchingPending.length) {
+          const connector = matchingPending[0];
+
+          connector.on(SESSION_REQUEST_EVENT, async (e: any, payload: any) => {
+            if (e) {
+              dispatch({
+                type: WALLETCONNECT_ERROR,
+                payload: {
+                  code: SESSION_REQUEST_ERROR,
+                  message: e.toString(),
+                },
+              });
+            }
+            const { peerId, peerMeta } = payload.params[0];
+
+            navigate(
+              NavigationActions.navigate({
+                routeName: WALLETCONNECT_SESSION_REQUEST_SCREEN,
+                params: { peerId, peerMeta },
+              }),
+            );
+          });
+        }
+      }
+    } catch (e) {
+      dispatch({
+        type: WALLETCONNECT_ERROR,
+        payload: {
+          code: SESSION_REQUEST_ERROR,
+          message: e.toString(),
+        },
+      });
+    }
+  };
+}
+
 export function onWalletConnectSessionRequest(uri: string) {
   return async (dispatch: Function, getState: () => Object) => {
     try {
@@ -362,7 +406,7 @@ export function onWalletConnectSessionRequest(uri: string) {
       const connector = new WalletConnect({ uri }, nativeOptions);
 
       if (pending && pending.length) {
-        const matchingPending = pending.filter(c => c.peerId === connector.peerId);
+        const matchingPending = pending.filter(c => c.clientId === connector.clientId);
 
         if (matchingPending && matchingPending.length) {
           return;
@@ -371,23 +415,9 @@ export function onWalletConnectSessionRequest(uri: string) {
 
       const newPending = [...pending, connector];
 
-      connector.on(SESSION_REQUEST_EVENT, async (e: any, payload: any) => {
-        if (e) {
-          dispatch({
-            type: WALLETCONNECT_ERROR,
-            payload: {
-              code: SESSION_REQUEST_ERROR,
-              message: e.toString(),
-            },
-          });
-        }
-        const { peerId, peerMeta } = payload.params[0];
-        navigate(
-          NavigationActions.navigate({ routeName: WALLETCONNECT_SESSION_REQUEST_SCREEN, params: { peerId, peerMeta } }),
-        );
-      });
-
       dispatch({ type: WALLETCONNECT_SESSION_REQUEST, payload: newPending });
+
+      dispatch(onWalletConnectSubscribeToSessionRequestEvent(connector.clientId));
     } catch (e) {
       dispatch({
         type: WALLETCONNECT_ERROR,
