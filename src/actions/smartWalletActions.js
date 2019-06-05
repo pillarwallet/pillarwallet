@@ -53,12 +53,7 @@ import {
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
 } from 'constants/paymentNetworkConstants';
-import {
-  FUND_TANK,
-  SETTLE_BALANCE,
-  SMART_WALLET_UNLOCK,
-  ASSETS,
-} from 'constants/navigationConstants';
+import { SMART_WALLET_UNLOCK, ASSETS } from 'constants/navigationConstants';
 
 // services
 import smartWalletService from 'services/smartWallet';
