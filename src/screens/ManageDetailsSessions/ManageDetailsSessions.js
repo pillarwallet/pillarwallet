@@ -166,8 +166,10 @@ class MeScreen extends React.Component<Props, State> {
       >
         <Header
           onBack={() => navigation.goBack()}
+          title="sessions"
           nextText="Get help"
           onNextPress={() => Intercom.displayMessenger()}
+          headerRightFlex={2}
         />
         <Tabs initialActiveTab={activeTab} tabs={sessionTabs} />
         <SheetContentWrapper>{this.renderSheetContent()}</SheetContentWrapper>

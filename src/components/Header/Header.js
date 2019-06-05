@@ -46,7 +46,7 @@ type Props = {
   flexStart?: boolean,
   light?: boolean,
   style?: Object,
-  headerRightFlex?: string,
+  headerRightFlex?: number,
   backIcon?: string,
   nextIconSize?: number,
   titleStyles?: ?Object,
@@ -105,7 +105,7 @@ const NextIcon = styled(IconButton)`
 `;
 
 const HeaderLeft = styled(Left)`
-  flex: ${props => props.showTitleLeft ? 2 : 1};
+  flex: ${props => props.flex ? props.flex : 1};
   justify-content: flex-start;
   align-items: flex-end;
 `;
@@ -162,6 +162,15 @@ const Header = (props: Props) => {
     return 1;
   };
 
+  const getHeaderLeftFlex = () => {
+    if (showTitleLeft) {
+      return 2;
+    } else if (headerRightFlex && !showTitleLeft && !!title && !!showTitleCenter) {
+      return headerRightFlex;
+    }
+    return 1;
+  };
+
   return (
     <Wrapper
       style={style}
@@ -169,7 +178,7 @@ const Header = (props: Props) => {
       white={white}
     >
       <InnerWrapper flexStart={flexStart} noWrapTitle={noWrapTitle}>
-        <HeaderLeft showTitleLeft={showTitleLeft}>
+        <HeaderLeft showTitleLeft={showTitleLeft} flex={getHeaderLeftFlex}>
           {onBack &&
             <BackIcon
               icon={backIcon || 'back'}
