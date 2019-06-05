@@ -146,14 +146,6 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
       type: SET_SMART_WALLET_UPGRADE_STATUS,
       payload: upgradeStatus,
     });
-    if (upgradeStatus === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
-      Toast.show({
-        message: 'Your Smart wallet has been deployed',
-        type: 'success',
-        title: 'Success',
-        autoClose: true,
-      });
-    }
   };
 };
 
@@ -424,11 +416,18 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
   return async (dispatch: Function, getState: Function) => {
     if (!event) return;
 
-    const accountState = get(getState(), 'smartWallet.upgrade.status', '').toLowerCase();
+    const accountState = get(getState(), 'smartWallet.upgrade.status', '');
     if (event.name === sdkModules.Api.EventNames.AccountDeviceUpdated) {
-      const newAccountState = get(event, 'payload.state', '').toLowerCase();
-      if (newAccountState === 'deployed' && accountState !== 'deployed') {
+      const newAccountState = get(event, 'payload.state', '');
+      const deployedAccountState = sdkConstants.AccountStates.Deployed;
+      if (newAccountState === deployedAccountState && accountState !== deployedAccountState) {
         dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+        Toast.show({
+          message: 'Your Smart wallet has been deployed',
+          type: 'success',
+          title: 'Success',
+          autoClose: true,
+        });
       }
     }
 
