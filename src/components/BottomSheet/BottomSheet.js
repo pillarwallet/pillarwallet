@@ -265,7 +265,9 @@ export default class BottomSheet extends React.Component<Props, State> {
         const { pageX, pageY } = e.nativeEvent;
         const topValueSheetPosition = screenHeight - animatedHeight._value;
 
-        if (!captureTabs && !!tabs) {
+        if (isSheetOpen) {
+          return false;
+        } else if (!captureTabs && !!tabs) {
           if (pageY > topValueSheetPosition + 30
             && pageY < topValueSheetPosition + 60
             && pageX.toFixed(2) > HORIZONTAL_TAB_BOUNDARIES[0]
@@ -284,7 +286,7 @@ export default class BottomSheet extends React.Component<Props, State> {
             }
           }
         }
-        return !isSheetOpen;
+        return true;
       },
       onPanResponderTerminationRequest: () => false,
     });
@@ -307,16 +309,6 @@ export default class BottomSheet extends React.Component<Props, State> {
     animatedHeight.setValue(updatedSheetHeight);
   };
 
-  onAnimationEnd = (isGoingToUp: boolean) => {
-    this.isTransitioning = false;
-    const { onSheetOpen, onSheetClose } = this.props;
-    if (isGoingToUp && onSheetOpen) {
-      onSheetOpen();
-    } else if (onSheetClose) {
-      onSheetClose();
-    }
-  };
-
   animateSheet = (direction?: string) => {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
@@ -327,6 +319,8 @@ export default class BottomSheet extends React.Component<Props, State> {
       sheetHeight,
       screenHeight,
       topOffset,
+      onSheetOpen,
+      onSheetClose,
     } = this.props;
 
     let isGoingToUp = !isSheetOpen;
@@ -343,11 +337,18 @@ export default class BottomSheet extends React.Component<Props, State> {
         ref.scrollToOffset({ x: 0, y: 0, animated: false });
       });
     }
+
+    if (isGoingToUp && onSheetOpen) {
+      onSheetOpen();
+    } else if (onSheetClose) {
+      onSheetClose();
+    }
+
     Animated.spring(animatedHeight, {
       toValue: updatedSheetHeight,
       bounciness: 0,
     }).start(() => {
-      this.onAnimationEnd(isGoingToUp);
+      this.isTransitioning = false;
     });
   };
 
