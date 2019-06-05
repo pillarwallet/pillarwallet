@@ -45,6 +45,8 @@ const ImageTouchable = styled.TouchableOpacity`
   position: relative;
   border: ${props => `${props.borderWidth}px solid ${props.borderColor || baseColors.white}`};
   overflow: hidden;
+  justify-content: center;
+  align-items: center;
 `;
 
 const InnerBackground = styled.View`

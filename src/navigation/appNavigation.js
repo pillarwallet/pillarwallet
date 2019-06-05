@@ -151,10 +151,12 @@ const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_new.png');
-const iconPeople = require('assets/icons/icon_people_new.png');
+const iconPeople = require('assets/icons/icon_people_group.png');
+const iconMe = require('assets/icons/icon_me.png');
 const iconHome = require('assets/icons/icon_home_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
-const iconPeopleActive = require('assets/icons/icon_people_active.png');
+const iconPeopleActive = require('assets/icons/icon_people_group_active.png');
+const iconMeActive = require('assets/icons/icon_me_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
 
 const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
@@ -271,6 +273,22 @@ const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => 
   );
 };
 
+const tabBarImage = (image) => ({ focused }) => {
+  return (
+    <View style={{ padding: 4 }}>
+      <ProfileImage
+        noShadow
+        borderWidth={2}
+        borderColor={focused ? baseColors.electricBlue : baseColors.white}
+        borderSpacing={1}
+        initialsSize={10}
+        diameter={24}
+        uri={image}
+      />
+    </View>
+  );
+};
+
 const tabBarLabel = labelText => ({ focused, tintColor }) => (
   <BaseText
     style={{
@@ -332,19 +350,9 @@ const tabNavigation = createBottomTabNavigator(
     [ME_TAB]: {
       screen: meFlow,
       navigationOptions: ({ screenProps }) => ({
-        tabBarIcon: ({ focused }) => (
-          <View style={{ padding: 4 }}>
-            <ProfileImage
-              noShadow
-              borderWidth={2}
-              borderColor={focused ? baseColors.electricBlue : baseColors.white}
-              borderSpacing={1}
-              initialsSize={24}
-              diameter={24}
-              uri={screenProps.profileImage}
-            />
-          </View>
-        ),
+        tabBarIcon: screenProps.profileImage
+          ? tabBarImage(screenProps.profileImage)
+          : tabBarIcon(iconMeActive, iconMe),
         tabBarLabel: tabBarLabel('Me'),
       }),
     },
