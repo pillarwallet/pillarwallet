@@ -52,7 +52,6 @@ import {
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
-  SET_ESTIMATED_SETTLE_BALANCE_FEE,
 } from 'constants/paymentNetworkConstants';
 import {
   FUND_TANK,
@@ -702,49 +701,6 @@ export const initSettleBalanceProcessAction = (privateKey: string) => {
     }
 
     navigate(NavigationActions.navigate({ routeName: SETTLE_BALANCE }));
-  };
-};
-
-export const estimateSettleBalanceAction = () => {
-  return async (dispatch: Function, getState: Function) => {
-    if (!smartWalletService) return;
-
-    const balances = paymentNetworkAccountBalancesSelector(getState());
-    const ethBalance = getBalance(balances, ETH);
-    console.log({ ethBalance });
-
-    // TODO: uncomment this when SDK stops automatically withdraw funds on every estimate function call
-    // const value = ethToWei(ethBalance);
-    const value = ethToWei(10000);
-    const response = await smartWalletService
-      .estimateWithdrawFromAccountVirtualBalance(value)
-      .catch((e) => {
-        Toast.show({
-          message: e.toString(),
-          type: 'warning',
-          autoClose: false,
-        });
-        return {};
-      });
-
-    if (!response || !Object.keys(response).length) return;
-
-    const {
-      fixedGas,
-      totalGas,
-      totalCost,
-      gasPrice,
-    } = response;
-
-    dispatch({
-      type: SET_ESTIMATED_SETTLE_BALANCE_FEE,
-      payload: {
-        fixedGas,
-        totalGas,
-        totalCost,
-        gasPrice,
-      },
-    });
   };
 };
 
