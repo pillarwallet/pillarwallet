@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import merge from 'lodash.merge';
 import WalletConnect from '@walletconnect/react-native';
 import {
   WALLETCONNECT_INIT_SESSIONS,
@@ -64,15 +63,15 @@ export default function walletConnectReducer(
     case WALLETCONNECT_INIT_SESSIONS:
     case WALLETCONNECT_SESSION_DISCONNECTED:
     case WALLETCONNECT_SESSION_KILLED:
-      return merge({}, state, { connectors: action.payload });
+      return { ...state, connectors: action.payload };
     case WALLETCONNECT_SESSION_APPROVED:
-      return merge({}, state, { pending: action.payload.pending, connectors: action.payload.connectors });
+      return { ...state, pending: action.payload.pending, connectors: action.payload.connectors };
     case WALLETCONNECT_SESSION_REQUEST:
     case WALLETCONNECT_SESSION_REJECTED:
     case WALLETCONNECT_CLEAR_PENDING:
-      return merge({}, state, { pending: action.payload });
+      return { ...state, pending: action.payload };
     case WALLETCONNECT_ERROR:
-      return merge({}, state, { error: action.payload });
+      return { ...state, error: action.payload };
     default:
       return state;
   }
