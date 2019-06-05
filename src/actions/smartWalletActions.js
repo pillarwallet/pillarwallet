@@ -752,6 +752,7 @@ export const estimateSettleBalanceAction = () => {
 export const settleBalancesAction = (assetsToSettle: Object[]) => {
   return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService) return;
+    // NOTE: while we support only the ETH settlement we can ignore the assetsToSettle array
     console.log({ assetsToSettle });
 
     const balances = paymentNetworkAccountBalancesSelector(getState());
@@ -761,8 +762,12 @@ export const settleBalancesAction = (assetsToSettle: Object[]) => {
     const estimated = await smartWalletService
       .estimateWithdrawFromAccountVirtualBalance(balanceInWei)
       .catch((e) => {
+        let errorMessage = 'You need to deposit ETH to cover the withdrawal';
+        if (typeof e === 'object' && get(e, 'errors.value') === 'tooHigh') {
+          errorMessage = 'You\'re trying to withdraw more funds then you have';
+        }
         Toast.show({
-          message: e.toString(),
+          message: errorMessage,
           type: 'warning',
           autoClose: false,
         });
@@ -784,7 +789,7 @@ export const settleBalancesAction = (assetsToSettle: Object[]) => {
     if (txHash) {
       // TODO: create tx history record
       Toast.show({
-        message: 'Settlement was successful',
+        message: 'Settlement was successful. Please wait for transaction to be mined',
         type: 'success',
         title: 'Success',
         autoClose: true,

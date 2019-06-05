@@ -23,13 +23,7 @@ import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
 import { createStructuredSelector } from 'reselect';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-import { utils } from 'ethers';
-import { BigNumber } from 'bignumber.js';
-import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
-
-// actions
-import { estimateSettleBalanceAction } from 'actions/smartWalletActions';
 
 // config
 import assetsConfig from 'configs/assetsConfig';
@@ -43,36 +37,31 @@ import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import Checkbox from 'components/Checkbox';
-import Toast from 'components/Toast';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { SETTLE_BALANCE_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkNonZeroBalancesSelector } from 'selectors/paymentNetwork';
 
 // types
 import type { Assets, Balances, Rates } from 'models/Asset';
-import type { SettleBalanceFee } from 'models/PaymentNetwork';
 
 // utils
 import { baseColors, fontSizes } from 'utils/variables';
 import { formatMoney, getCurrencySymbol, formatAmount } from 'utils/common';
-import { checkIfEnoughForFee, getRate } from 'utils/assets';
+import { getRate } from 'utils/assets';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object[],
-  balances: Balances,
   paymentNetworkBalances: Balances,
   baseFiatCurrency: string,
   rates: Rates,
   assets: Assets,
   session: Object,
-  settleBalanceFee: SettleBalanceFee,
   estimateSettleBalance: Function,
 };
 
@@ -111,16 +100,6 @@ class SettleBalance extends React.Component<Props, State> {
   state = {
     assetsToSettle: [],
   };
-
-  componentDidMount() {
-    this.props.estimateSettleBalance();
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
-      this.props.estimateSettleBalance();
-    }
-  }
 
   renderAsset = ({ item }) => {
     const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
@@ -178,36 +157,14 @@ class SettleBalance extends React.Component<Props, State> {
   };
 
   goToConfirm = () => {
-    const { navigation, balances } = this.props;
+    const { navigation } = this.props;
     const { assetsToSettle } = this.state;
-    const txFeeInWei = this.getTxFeeInWei();
-    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
-    if (!isEnoughForFee) {
-      Toast.show({
-        message: 'You need to deposit ETH to cover the withdrawal',
-        type: 'warning',
-        title: 'Balance Issue',
-        autoClose: true,
-      });
-    } else {
-      navigation.navigate(SETTLE_BALANCE_CONFIRM, { assetsToSettle });
-    }
-  };
-
-  getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'settleBalanceFee.feeInfo.totalCost', 0);
+    navigation.navigate(SETTLE_BALANCE_CONFIRM, { assetsToSettle });
   };
 
   render() {
-    const {
-      navigation,
-      assetsOnNetwork,
-      session,
-      settleBalanceFee,
-    } = this.props;
+    const { navigation, assetsOnNetwork, session } = this.props;
     const { assetsToSettle } = this.state;
-    const txFeeInWei = this.getTxFeeInWei();
-    const feeInEth = formatAmount(utils.formatEther(txFeeInWei));
     return (
       <Container>
         <Header
@@ -227,11 +184,11 @@ class SettleBalance extends React.Component<Props, State> {
         />
         <Footer>
           <FooterInner style={{ alignItems: 'center' }}>
-            <Label>Estimated fee {feeInEth} ETH</Label>
+            <Label>&nbsp;</Label>
             {!!assetsToSettle.length && (
               <Button
                 small
-                disabled={!session.isOnline || !settleBalanceFee.isFetched}
+                disabled={!session.isOnline}
                 title="Next"
                 onPress={this.goToConfirm}
               />
@@ -248,17 +205,14 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
-  paymentNetwork: { settleBalanceFee },
 }) => ({
   assets,
   rates,
   baseFiatCurrency,
   session,
-  settleBalanceFee,
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
 });
 
@@ -267,8 +221,4 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  estimateSettleBalance: () => dispatch(estimateSettleBalanceAction()),
-});
-
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SettleBalance);
+export default connect(combinedMapStateToProps)(SettleBalance);
