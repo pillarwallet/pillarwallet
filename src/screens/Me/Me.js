@@ -80,7 +80,7 @@ class MeScreen extends React.Component<Props, State> {
     return [
       {
         key: 'manageDetailsSessions',
-        title: 'Manage details / Sessions',
+        title: 'Manage Sessions',
         onPress: () => navigation.navigate(MANAGE_DETAILS_SESSIONS),
       },
     ];
