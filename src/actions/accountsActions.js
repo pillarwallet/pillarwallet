@@ -160,6 +160,7 @@ export const setActiveAccountAction = (accountId: string) => {
     const {
       accounts: { data: accounts },
       smartWallet: {
+        connectedAccount = {},
         upgrade: {
           status: upgradeStatus,
         },
@@ -180,8 +181,7 @@ export const setActiveAccountAction = (accountId: string) => {
 
     if (account.type !== ACCOUNT_TYPES.SMART_WALLET || !account.extra) return;
 
-    const { extra: { state = '' } } = account;
-    console.log('state: ', state);
+    const { state = '' } = connectedAccount;
     if (state === sdkConstants.AccountStates.Deployed) {
       dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
       return;
