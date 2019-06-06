@@ -23,6 +23,7 @@ export const baseColors = {
   periwinkle: '#9191ff',
   fireEngineRed: '#ff0005',
   warmPurple: '#b2329c',
+  brightPurple: '#4f1a91',
   electricBlue: '#007AFF',
   duckEggBlue: '#e6eefa',
   selago: '#f6fafe',

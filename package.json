@@ -107,6 +107,8 @@
   "dependencies": {
     "@pillarwallet/pillarwallet-nodejs-sdk": "1.27.1514",
     "@tradle/react-native-http": "^2.0.0",
+    "@walletconnect/react-native": "^1.0.0-beta.25",
+    "@walletconnect/utils": "^1.0.0-beta.25",
     "add": "^2.0.6",
     "asyncstorage-down": "^4.0.1",
     "axios": "^0.18.0",
@@ -116,6 +118,7 @@
     "cryptocompare": "^0.5.0",
     "date-fns": "^1.29.0",
     "dns.js": "^1.0.1",
+    "ethereumjs-util": "^6.1.0",
     "ethers": "https://github.com/pillarwallet/ethers.js#master",
     "events": "^1.0.0",
     "https-browserify": "~0.0.0",
