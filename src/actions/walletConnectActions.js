@@ -21,6 +21,8 @@ import WalletConnect from '@walletconnect/react-native';
 import { NavigationActions } from 'react-navigation';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import {
+  WALLETCONNECT_CANCEL_REQUEST,
+  WALLETCONNECT_TIMEOUT,
   WALLETCONNECT_INIT_SESSIONS,
   WALLETCONNECT_SESSION_REQUEST,
   WALLETCONNECT_SESSION_APPROVED,
@@ -45,6 +47,7 @@ import {
 import Storage from 'services/storage';
 import { WALLETCONNECT_SESSION_REQUEST_SCREEN, WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
 import { navigate } from 'services/navigation';
+import Toast from 'components/Toast';
 import { saveDbAction } from './dbActions';
 
 const storage = Storage.getInstance('db');
@@ -396,17 +399,50 @@ export function onWalletConnectSubscribeToSessionRequestEvent(clientId: string) 
   };
 }
 
+export function cancelWaitingRequest(clientId: string, timeout: boolean = false) {
+  return async (dispatch: Function, getState: () => Object) => {
+    const { pending, waitingRequest } = getState().walletConnect;
+
+    if (waitingRequest !== clientId) {
+      return;
+    }
+
+    if (!pending || pending.length < 1) {
+      return;
+    }
+
+    const filteredPending = pending.filter(c => {
+      if (c.peerId) {
+        return false;
+      }
+
+      return c.clientId === clientId;
+    });
+
+    dispatch({ type: WALLETCONNECT_CANCEL_REQUEST, payload: filteredPending });
+
+    if (timeout) {
+      Toast.show({
+        message: 'The session timed out',
+        type: 'warning',
+        title: 'Session error',
+        autoClose: false,
+      });
+    }
+  };
+}
+
 export function onWalletConnectSessionRequest(uri: string) {
   return async (dispatch: Function, getState: () => Object) => {
     try {
       const { pending } = getState().walletConnect;
 
       const nativeOptions = await getNativeOptions();
-
       const connector = new WalletConnect({ uri }, nativeOptions);
+      const { clientId } = connector;
 
       if (pending && pending.length) {
-        const matchingPending = pending.filter(c => c.clientId === connector.clientId);
+        const matchingPending = pending.filter(c => c.clientId === clientId);
 
         if (matchingPending && matchingPending.length) {
           return;
@@ -415,9 +451,16 @@ export function onWalletConnectSessionRequest(uri: string) {
 
       const newPending = [...pending, connector];
 
-      dispatch({ type: WALLETCONNECT_SESSION_REQUEST, payload: newPending });
+      dispatch({
+        type: WALLETCONNECT_SESSION_REQUEST,
+        payload: { clientId, pending: newPending },
+      });
 
-      dispatch(onWalletConnectSubscribeToSessionRequestEvent(connector.clientId));
+      dispatch(onWalletConnectSubscribeToSessionRequestEvent(clientId));
+
+      setTimeout(() => {
+        dispatch(cancelWaitingRequest(connector.clientId, true));
+      }, WALLETCONNECT_TIMEOUT);
     } catch (e) {
       dispatch({
         type: WALLETCONNECT_ERROR,
