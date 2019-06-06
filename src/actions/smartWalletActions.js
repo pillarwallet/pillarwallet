@@ -21,6 +21,7 @@ import { sdkModules, sdkConstants } from '@archanova/sdk';
 import { ethToWei, weiToEth } from '@netgum/utils';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
+import { utils } from 'ethers';
 
 // components
 import Toast from 'components/Toast';
@@ -62,6 +63,7 @@ import { navigate } from 'services/navigation';
 
 // selectors
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+import { accountBalancesSelector } from 'selectors/balances';
 
 // actions
 import {
@@ -87,6 +89,7 @@ import { buildHistoryTransaction } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { getBalance } from 'utils/assets';
+import { formatAmount } from 'utils/common';
 
 
 const storage = Storage.getInstance('db');
@@ -185,7 +188,19 @@ export const deploySmartWalletAction = () => {
       console.log('deploySmartWalletAction account is already deployed!');
       return;
     }
-    // TODO: show toast if not enough funds
+    const deployEstimate = smartWalletService.getDeployEstimate();
+    const feeSmartContractDeployEth = parseFloat(formatAmount(utils.formatEther(deployEstimate)));
+    const balances = accountBalancesSelector(getState());
+    const etherBalance = getBalance(balances, ETH);
+    if (etherBalance < feeSmartContractDeployEth) {
+      Toast.show({
+        message: 'Not enough ETH to make deployment',
+        type: 'warning',
+        title: 'Unable to upgrade',
+        autoClose: false,
+      });
+      return;
+    }
     const deployTxHash = await smartWalletService.deploy();
     console.log('deploySmartWalletAction deployTxHash: ', deployTxHash);
     // depends from where called status might be `deploying` already

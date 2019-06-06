@@ -49,13 +49,13 @@ function getMessage(status: string, activeAccountType: string, smartWalletState:
           '\nCurrent average waiting time is 4 mins',
       };
     case SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS:
-      if (activeAccountType === ACCOUNT_TYPES.SMART_WALLET) return {};
       const { upgrade: { transfer: { transactions } } } = smartWalletState;
       const total = transactions.length;
       const complete = transactions.filter(tx => tx.status === TX_CONFIRMED_STATUS).length;
       return {
         title: 'Assets are being transferred to Smart Wallet',
-        message: 'You will be able to send assets once submitted transfer is complete.' +
+        message: 'You will be able to send assets once submitted transfer is complete' +
+          `${activeAccountType === ACCOUNT_TYPES.SMART_WALLET ? ' and Smart Wallet is deployed' : ''}.` +
           `\nCurrently ${complete} of ${total} assets are transferred.`,
       };
     default:
