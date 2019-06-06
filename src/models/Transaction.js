@@ -47,6 +47,7 @@ export type TokenTransactionPayload = {
   to: string,
   gasPrice: number,
   txFeeInWei: number,
+  txSpeed?: string,
   symbol: string,
   contractAddress: ?string,
   decimals: number,
@@ -69,6 +70,7 @@ export type CollectibleTransactionPayload = {
   signedHash?: ?string,
   gasPrice?: ?number,
   gasLimit?: ?number,
+  txSpeed?: string,
 }
 
 export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;

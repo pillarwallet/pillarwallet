@@ -47,7 +47,7 @@ import type { Balances, Rates } from 'models/Asset';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
+import { ETH, defaultFiatCurrency, SPEED_TYPES } from 'constants/assetsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -121,14 +121,10 @@ const { Form } = t.form;
 const GAS_LIMIT = 500000;
 const MIN_TX_AMOUNT = 0.000000000000000001;
 
-const SLOW = 'min';
-const NORMAL = 'avg';
-const FAST = 'max';
-
-const SPEED_TYPES = {
-  [SLOW]: 'Slow',
-  [NORMAL]: 'Normal',
-  [FAST]: 'Fast',
+const SPEED_TYPE_LABELS = {
+  [SPEED_TYPES.SLOW]: 'Slow',
+  [SPEED_TYPES.NORMAL]: 'Normal',
+  [SPEED_TYPES.FAST]: 'Fast',
 };
 
 class SendTokenAmount extends React.Component<Props, State> {
@@ -144,7 +140,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.state = {
       value: null,
-      transactionSpeed: NORMAL,
+      transactionSpeed: SPEED_TYPES.NORMAL,
       showModal: false,
     };
   }
@@ -175,6 +171,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const txFeeInWei = this.getTxFeeInWei();
     const value = this._form.getValue();
     const { navigation } = this.props;
+    const { transactionSpeed } = this.state;
     const gasPrice = txFeeInWei.div(GAS_LIMIT).toNumber();
 
     if (!value) return;
@@ -184,6 +181,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       gasLimit: GAS_LIMIT,
       gasPrice,
       txFeeInWei,
+      txSpeed: transactionSpeed,
       symbol: this.assetData.token,
       contractAddress: this.assetData.contractAddress,
       decimals: this.assetData.decimals,
@@ -220,7 +218,7 @@ class SendTokenAmount extends React.Component<Props, State> {
   renderTxSpeedButtons = () => {
     const { rates, baseFiatCurrency } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    return Object.keys(SPEED_TYPES).map(txSpeed => {
+    return Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
       return (
@@ -229,7 +227,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           primaryInverted
           onPress={this.handleGasPriceChange(txSpeed)}
         >
-          <TextLink>{SPEED_TYPES[txSpeed]} - {feeInEth} ETH</TextLink>
+          <TextLink>{SPEED_TYPE_LABELS[txSpeed]} - {feeInEth} ETH</TextLink>
           <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
         </Btn>
       );
@@ -313,7 +311,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
               <SendTokenDetailsValue>
                 <Label small>Fee:</Label>
-                <TextLink> {SPEED_TYPES[transactionSpeed]}</TextLink>
+                <TextLink> {SPEED_TYPE_LABELS[transactionSpeed]}</TextLink>
               </SendTokenDetailsValue>
             </TouchableOpacity>
             {!!value && !!parseFloat(value.amount) &&

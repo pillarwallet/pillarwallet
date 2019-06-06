@@ -44,3 +44,9 @@ export const defaultFiatCurrency = GBP;
 
 export const TOKENS = 'TOKENS';
 export const COLLECTIBLES = 'COLLECTIBLES';
+
+export const SPEED_TYPES = {
+  SLOW: 'min',
+  NORMAL: 'avg',
+  FAST: 'max',
+};

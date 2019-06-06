@@ -7,7 +7,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
-import { ETH } from 'constants/assetsConstants';
+import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 import type { Account } from 'models/Account';
 import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
 import { getERC721ContractTransferMethod } from 'services/assets';
@@ -15,7 +15,18 @@ import smartWalletService from 'services/smartWallet';
 import { getEthereumProvider } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
+import { sdkModules } from '@archanova/sdk';
 
+
+const {
+  Eth: {
+    TransactionSpeeds: {
+      Slow: SLOW,
+      Regular: REGULAR,
+      Fast: FAST,
+    },
+  },
+} = sdkModules;
 
 export default class SmartWalletProvider {
   wallet: Object;
@@ -35,12 +46,12 @@ export default class SmartWalletProvider {
   }
 
   async transferETH(account: Account, transaction: TokenTransactionPayload) {
-    // TODO: connect transactionSpeed selector from the UI
     if (!this.sdkInitialized) {
       return Promise.reject(new Error('SDK is not initialized'));
     }
 
     const { to, amount } = transaction;
+    const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
     const from = getAccountAddress(account);
     const value = ethToWei(amount);
 
@@ -49,7 +60,7 @@ export default class SmartWalletProvider {
         recipient: to,
         value,
         data: '',
-        // transactionSpeed
+        transactionSpeed,
       })
       .then(hash => ({
         from,
@@ -65,7 +76,6 @@ export default class SmartWalletProvider {
   }
 
   async transferERC20(account: Account, transaction: TokenTransactionPayload) {
-    // TODO: connect transactionSpeed selector from the UI
     if (!this.sdkInitialized) {
       return Promise.reject(new Error('SDK is not initialized'));
     }
@@ -84,6 +94,7 @@ export default class SmartWalletProvider {
 
     const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
     const data = abi.encodeMethod(transferMethod, [to, value]);
+    const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
 
     return smartWalletService
       .transferAsset({
@@ -91,7 +102,7 @@ export default class SmartWalletProvider {
         recipient: contractAddress,
         value,
         data,
-        // transactionSpeed
+        transactionSpeed,
       })
       .then(hash => ({
         from,
@@ -116,6 +127,7 @@ export default class SmartWalletProvider {
 
     const { to, contractAddress, tokenId } = transaction;
     const from = getAccountAddress(account);
+    const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
 
     let data = '';
     let transferMethodSignature;
@@ -149,7 +161,7 @@ export default class SmartWalletProvider {
         recipient: contractAddress,
         value: 0,
         data,
-        // transactionSpeed
+        transactionSpeed,
       })
       .then(hash => ({
         from,
@@ -169,5 +181,14 @@ export default class SmartWalletProvider {
   getTransactionCount(walletAddress: string) { //eslint-disable-line
     // TODO: connect this to sdk
     return 0;
+  }
+
+  mapTransactionSpeed(txSpeed?: string) {
+    switch (txSpeed) {
+      case SPEED_TYPES.FAST: return FAST;
+      case SPEED_TYPES.NORMAL: return REGULAR;
+      case SPEED_TYPES.SLOW: return SLOW;
+      default: return REGULAR;
+    }
   }
 }
