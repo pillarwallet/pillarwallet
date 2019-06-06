@@ -227,6 +227,8 @@ const parsePatterns = () => [
 ];
 
 class ChatTab extends React.Component<Props, State> {
+  composer: Object;
+
   static defaultProps = {
     isOpen: false,
   };
@@ -241,6 +243,7 @@ class ChatTab extends React.Component<Props, State> {
       chatText: '',
       firstChatLoaded: true, // check this issue https://github.com/FaridSafi/react-native-gifted-chat/issues/638
     };
+    this.composer = React.createRef();
   }
 
   componentDidMount() {
@@ -294,6 +297,10 @@ class ChatTab extends React.Component<Props, State> {
       navigation.setParams({ chatTabOpen: false });
       Keyboard.dismiss();
     }
+
+    if (prevProps.isOpen !== isOpen && isOpen && this.composer && this.composer.focus !== undefined) {
+      this.composer.focus();
+    }
   }
 
   componentWillUnmount() {
@@ -334,6 +341,13 @@ class ChatTab extends React.Component<Props, State> {
     sendMessageByContact(contact.username, messages[0]);
     clearChatDraftState();
     this.setState({ chatText: '' });
+  };
+
+  handleComposerFocus = () => {
+    const { isOpen } = this.props;
+    if (isOpen && this.composer && this.composer.focus !== undefined) {
+      this.composer.focus();
+    }
   };
 
   renderCustomAvatar = () => {
@@ -385,6 +399,10 @@ class ChatTab extends React.Component<Props, State> {
           lineHeight: fontSizes.small,
         }}
         placeholder="Type your message here"
+        textInputProps={{
+          ref: (input) => { this.composer = input; },
+          onLayout: this.handleComposerFocus,
+        }}
       />
     );
   };
