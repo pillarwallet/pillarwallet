@@ -4,6 +4,8 @@ import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Center } from 'components/Layout';
 import { BoldText } from 'components/Typography';
+import Spinner from 'components/Spinner';
+import ButtonText from 'components/ButtonText';
 
 export const CardContainer = styled.View`
   align-items: center;
@@ -24,6 +26,18 @@ export const CardBoard = styled.View`
 `;
 
 export const NewSession = styled.View``;
+
+export const StatusMessage = styled(BoldText)`
+  padding-top: 10px;
+`;
+
+export const LoadingSpinner = styled(Spinner)`
+  padding: 10px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const CancelButton = styled(ButtonText)``;
 
 export const Username = styled(BoldText)`
   font-size: ${fontSizes.large};

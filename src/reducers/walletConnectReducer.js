@@ -27,6 +27,7 @@ import {
   WALLETCONNECT_SESSION_KILLED,
   WALLETCONNECT_CLEAR_PENDING,
   WALLETCONNECT_ERROR,
+  WALLETCONNECT_CANCEL_REQUEST,
 } from 'constants/walletConnectConstants';
 
 export type WalletConnectReducerState = {
@@ -41,6 +42,7 @@ export type WalletConnectReducerState = {
     code: string,
     message: string,
   },
+  waitingRequest: ?string,
 };
 
 export type WalletConnectReducerAction = {
@@ -53,25 +55,36 @@ const initialState = {
   pending: [],
   requests: [],
   error: null,
+  waitingRequest: null,
 };
 
 export default function walletConnectReducer(
   state: WalletConnectReducerState = initialState,
   action: WalletConnectReducerAction,
 ) {
+  const { payload } = action;
+
   switch (action.type) {
     case WALLETCONNECT_INIT_SESSIONS:
     case WALLETCONNECT_SESSION_DISCONNECTED:
     case WALLETCONNECT_SESSION_KILLED:
-      return { ...state, connectors: action.payload };
+      return { ...state, connectors: payload };
     case WALLETCONNECT_SESSION_APPROVED:
-      return { ...state, pending: action.payload.pending, connectors: action.payload.connectors };
+      return {
+        ...state,
+        pending: payload.pending,
+        connectors: payload.connectors,
+        waitingRequest: null,
+      };
     case WALLETCONNECT_SESSION_REQUEST:
+      return { ...state, pending: payload.pending, waitingRequest: payload.clientId };
+    case WALLETCONNECT_CANCEL_REQUEST:
+      return { ...state, pending: payload, waitingRequest: null };
     case WALLETCONNECT_SESSION_REJECTED:
     case WALLETCONNECT_CLEAR_PENDING:
-      return { ...state, pending: action.payload };
+      return { ...state, pending: payload, waitingRequest: null };
     case WALLETCONNECT_ERROR:
-      return { ...state, error: action.payload };
+      return { ...state, error: payload, waitingRequest: null };
     default:
       return state;
   }

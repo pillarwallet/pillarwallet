@@ -29,7 +29,10 @@ import QRCodeScanner from 'components/QRCodeScanner';
 import CircleButton from 'components/CircleButton';
 import SettingsListItem from 'components/ListItem/SettingsItem';
 import Header from 'components/Header';
-import { onWalletConnectSessionRequest } from 'actions/walletConnectActions';
+import {
+  onWalletConnectSessionRequest,
+  cancelWaitingRequest,
+} from 'actions/walletConnectActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import { MANAGE_DETAILS_SESSIONS } from 'constants/navigationConstants';
 import * as styled from './styles';
@@ -46,10 +49,12 @@ type Props = {
   user: Object,
   connectors: any[],
   pending: any[],
+  waitingRequest?: string,
   clearPendingWalletConnectSessionByUrl: (url: string) => void,
   killWalletConnectSessionByUrl: (url: string) => void,
   onWalletConnectSessionRequest: (uri: string) => void,
   onWalletLinkScan: (uri: string) => void,
+  cancelWaitingRequest: (clientId: string) => void,
 };
 
 class MeScreen extends React.Component<Props, State> {
@@ -74,6 +79,14 @@ class MeScreen extends React.Component<Props, State> {
     }
     this.handleQRScannerClose();
   };
+
+  cancelWaiting = () => {
+    const { waitingRequest } = this.props;
+
+    if (waitingRequest) {
+      this.props.cancelWaitingRequest(waitingRequest);
+    }
+  }
 
   meSettingsItems = () => {
     const { navigation } = this.props;
@@ -126,9 +139,7 @@ class MeScreen extends React.Component<Props, State> {
                     diameter={128}
                   />
 
-                  <styled.NewSession>
-                    <CircleButton label="New Session" icon={iconReceive} onPress={this.toggleQRScanner} />
-                  </styled.NewSession>
+                  {this.renderNewSession()}
                 </styled.CardBoard>
               </Shadow>
             </styled.Card>
@@ -152,17 +163,47 @@ class MeScreen extends React.Component<Props, State> {
       </Container>
     );
   }
+
+  renderNewSession() {
+    const { waitingRequest } = this.props;
+
+    if (waitingRequest) {
+      return (
+        <styled.NewSession>
+          <styled.StatusMessage>
+            Adding session ...
+          </styled.StatusMessage>
+          <styled.LoadingSpinner />
+          <styled.CancelButton
+            buttonText="Cancel"
+            onPress={this.cancelWaiting}
+          />
+        </styled.NewSession>
+      );
+    }
+
+    return (
+      <styled.NewSession>
+        <CircleButton label="New Session" icon={iconReceive} onPress={this.toggleQRScanner} />
+      </styled.NewSession>
+    );
+  }
 }
 
-const mapStateToProps = ({ user: { data: user }, walletConnect: { connectors, pending } }) => ({
+const mapStateToProps = ({
+  user: { data: user },
+  walletConnect: { connectors, pending, waitingRequest },
+}) => ({
   user,
   connectors,
   pending,
+  waitingRequest,
 });
 
 const mapDispatchToProps = dispatch => ({
   onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
   onWalletLinkScan: uri => dispatch(executeDeepLinkAction(uri)),
+  cancelWaitingRequest: clientId => dispatch(cancelWaitingRequest(clientId)),
 });
 
 export default connect(

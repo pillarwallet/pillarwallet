@@ -205,7 +205,10 @@ class MeScreen extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ user: { data: user }, walletConnect: { connectors, pending } }) => ({
+const mapStateToProps = ({
+  user: { data: user },
+  walletConnect: { connectors, pending },
+}) => ({
   user,
   connectors,
   pending,
