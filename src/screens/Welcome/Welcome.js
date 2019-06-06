@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { IMPORT_WALLET } from 'constants/navigationConstants';
+import { IMPORT_WALLET, PERMISSIONS, NEW_WALLET } from 'constants/navigationConstants';
 import { Wrapper, Container, Footer } from 'components/Layout';
 import { fontSizes } from 'utils/variables';
 import Button from 'components/Button';
@@ -60,12 +60,20 @@ class Welcome extends React.Component<Props, State> {
   };
 
   loginAction = () => {
-    this.props.navigateToNewWalletPage();
+    if (Platform.OS === 'android') {
+      this.props.navigation.navigate(PERMISSIONS, { nextScreen: NEW_WALLET });
+    } else {
+      this.props.navigateToNewWalletPage();
+    }
   };
 
   navigateToWalletImportPage = () => {
     const { navigation } = this.props;
-    navigation.navigate(IMPORT_WALLET);
+    if (Platform.OS === 'android') {
+      this.props.navigation.navigate(PERMISSIONS, { nextScreen: IMPORT_WALLET });
+    } else {
+      navigation.navigate(IMPORT_WALLET);
+    }
   };
 
   componentDidMount() {
