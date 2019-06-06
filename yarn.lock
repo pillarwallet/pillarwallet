@@ -11887,6 +11887,13 @@ react-native-clcasher@1.0.0:
   dependencies:
     mock-async-storage "^1.0.3"
 
+react-native-collapsible@^1.4.0:
+  version "1.4.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-collapsible/-/react-native-collapsible-1.4.0.tgz#ec03cac361178319b77bb9993b73677356dd89d2"
+  integrity sha1-7APKw2EXgxm3e7mZO3Nnc1bdidI=
+  dependencies:
+    prop-types "^15.6.2"
+
 react-native-color-matrix-image-filters@^5.1.4:
   version "5.1.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-color-matrix-image-filters/-/react-native-color-matrix-image-filters-5.1.4.tgz#15ca04cb3b9499727cc8983b7a63d4c6e0824ea3"

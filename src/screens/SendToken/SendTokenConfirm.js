@@ -62,10 +62,12 @@ const Value = styled(BoldText)`
 
 class SendTokenContacts extends React.Component<Props, State> {
   scroll: Object;
+  source: string;
 
   constructor(props) {
     super(props);
     this.scroll = React.createRef();
+    this.source = this.props.navigation.getParam('source', '');
     this.state = {
       note: null,
       scrollPos: 0,
@@ -78,6 +80,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
+      source: this.source,
     });
   };
 

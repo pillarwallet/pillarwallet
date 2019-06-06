@@ -20,6 +20,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import { Answers } from 'react-native-fabric';
 import { Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
@@ -40,9 +41,12 @@ type State = {
 };
 
 class SendTokenPinConfirmScreen extends React.Component<Props, State> {
+  source: string;
+
   constructor(props: Props) {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
+    this.source = this.props.navigation.getParam('source', '');
     this.state = {
       transactionPayload,
       isChecking: false,
@@ -58,9 +62,10 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   handleTransaction = (pin: string, wallet: Object) => {
     const { sendAsset } = this.props;
     const { transactionPayload } = this.state;
-    this.setState({
-      isChecking: true,
-    }, () => sendAsset(transactionPayload, wallet, this.handleNavigationToTransactionState));
+    this.setState({ isChecking: true }, () => {
+      Answers.logCustom('Send Transaction', { Source: this.source });
+      sendAsset(transactionPayload, wallet, this.handleNavigationToTransactionState);
+    });
   };
 
   handleNavigationToTransactionState = (params: ?Object) => {
