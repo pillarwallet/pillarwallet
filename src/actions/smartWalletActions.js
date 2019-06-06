@@ -418,6 +418,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
   return async (dispatch: Function, getState: Function) => {
     if (!event) return;
 
+    // on wallet deployed
     const accountState = get(getState(), 'smartWallet.upgrade.status', '');
     if (event.name === sdkModules.Api.EventNames.AccountDeviceUpdated) {
       const newAccountState = get(event, 'payload.state', '');
@@ -433,54 +434,34 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       }
     }
 
+    // manual transactions tracker
     if (event.name === sdkModules.Api.EventNames.AccountTransactionUpdated) {
       const {
         history: { data: currentHistory },
         assets: { data: assets },
         paymentNetwork: { txToListen },
-        smartWallet: {
-          upgrade: {
-            transfer: {
-              transactions: transferTransactions = [],
-            },
-          },
-        },
       } = getState();
       const txHash = get(event, 'payload.hash', '').toLowerCase();
       const txStatus = get(event, 'payload.state', '');
       const txGasInfo = get(event, 'payload.gas', {});
       const txFound = txToListen.find(hash => hash.toLowerCase() === txHash);
-      const transferTxFound = transferTransactions.find(
-        ({ transactionHash: transferTransactionHash }) => transferTransactionHash === txHash,
-      );
 
       if (txStatus === sdkConstants.AccountTransactionStates.Completed) {
-        if (transferTxFound) {
-          const updatedTransactions = transferTransactions.filter(
-            _transaction => _transaction.transactionHash !== transferTxFound.transactionHash,
-          );
-          updatedTransactions.push({
-            ...transferTxFound,
-            status: TX_CONFIRMED_STATUS,
-          });
-          await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
-        }
         if (txFound) {
           let txUpdated = null;
-          const updatedHistory = Object.keys(currentHistory).reduce((memo, accountId) => {
+          const accounts = Object.keys(currentHistory);
+          const updatedHistory = accounts.reduce((history, accountId) => {
             const accountHistory = currentHistory[accountId].map(transaction => {
-              if (transaction.hash.toLowerCase() === txHash) {
-                txUpdated = {
-                  ...transaction,
-                  gasPrice: txGasInfo.price ? txGasInfo.price.toString() : transaction.gasPrice,
-                  gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
-                  status: TX_CONFIRMED_STATUS,
-                };
-                return txUpdated;
-              }
-              return transaction;
+              if (transaction.hash.toLowerCase() !== txHash) return transaction;
+              txUpdated = {
+                ...transaction,
+                gasPrice: txGasInfo.price ? txGasInfo.price.toString() : transaction.gasPrice,
+                gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
+                status: TX_CONFIRMED_STATUS,
+              };
+              return txUpdated;
             });
-            return { ...memo, [accountId]: accountHistory };
+            return { ...history, [accountId]: accountHistory };
           }, {});
 
           if (txUpdated) {
@@ -492,7 +473,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
                 autoClose: true,
               });
             }
-            dispatch(fetchAssetsBalancesAction(assets));
             dispatch(saveDbAction('history', { history: updatedHistory }, true));
             dispatch({
               type: SET_HISTORY,
@@ -503,6 +483,28 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
               payload: txHash,
             });
           }
+        }
+        dispatch(fetchAssetsBalancesAction(assets));
+      }
+    }
+
+    // check status for assets transfer during migration
+    if (event.name === sdkModules.Api.EventNames.AccountTransactionUpdated) {
+      const transferTransactions = get(getState('smartWallet.upgrade.transfer.transactions'), '', []);
+      const txHash = get(event, 'payload.hash', '').toLowerCase();
+      const txStatus = get(event, 'payload.state', '');
+      const txFound = transferTransactions.find(({ transactionHash }) => transactionHash === txHash);
+
+      if (txStatus === sdkConstants.AccountTransactionStates.Completed) {
+        if (txFound) {
+          const updatedTransactions = transferTransactions.filter(
+            _tx => _tx.transactionHash !== txFound.transactionHash,
+          );
+          updatedTransactions.push({
+            ...txFound,
+            status: TX_CONFIRMED_STATUS,
+          });
+          await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
         }
         dispatch(checkAssetTransferTransactionsAction());
       }
