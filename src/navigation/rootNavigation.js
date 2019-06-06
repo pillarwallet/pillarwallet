@@ -25,6 +25,7 @@ import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
 import NewProfileScreen from 'screens/NewProfile';
 import SecurityConfirmScreen from 'screens/SecurityConfirm';
+import PermissionsScreen from 'screens/Permissions';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import LegalTermsScreen from 'screens/LegalTerms';
@@ -54,6 +55,7 @@ import {
   ONBOARDING_HOME,
   WELCOME,
   FORGOT_PIN,
+  PERMISSIONS,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
@@ -72,6 +74,7 @@ const onBoardingFlow = createStackNavigator({
       header: null,
     },
   },
+  [PERMISSIONS]: PermissionsScreen,
   [ONBOARDING_HOME]: OnboardingScreen,
   [NEW_WALLET]: {
     screen: NewWalletScreen,
