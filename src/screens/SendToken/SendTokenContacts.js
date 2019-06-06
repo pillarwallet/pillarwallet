@@ -44,6 +44,7 @@ type Props = {
   accounts: Accounts,
   localContacts: Object[],
   wallet: Object,
+  smartWalletFeatureEnabled: boolean,
 };
 
 type State = {
@@ -210,7 +211,8 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 
   getUserAccounts() {
-    const { accounts = [] } = this.props;
+    const { accounts = [], smartWalletFeatureEnabled } = this.props;
+    if (!smartWalletFeatureEnabled) return [];
     const accountsWithoutActive = accounts.filter(({ isActive }) => !isActive);
     return accountsWithoutActive.map(account => ({
       ethAddress: getAccountAddress(account),
@@ -280,10 +282,12 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   contacts: { data: localContacts },
   wallet: { data: wallet },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   accounts,
   localContacts,
   wallet,
+  smartWalletFeatureEnabled,
 });
 
 export default connect(mapStateToProps)(SendTokenContacts);
