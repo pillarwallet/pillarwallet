@@ -21,9 +21,11 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
+import { NavigationActions } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import { Container } from 'components/Layout';
+import { WALLETCONNECT_SESSION_REQUEST_SCREEN } from 'constants/navigationConstants';
 import { baseColors } from 'utils/variables';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Header from 'components/Header';
@@ -32,7 +34,9 @@ import Tabs from 'components/Tabs';
 import {
   killWalletConnectSessionByUrl,
   clearPendingWalletConnectSessionByUrl,
+  onWalletConnectSessionRejection,
 } from 'actions/walletConnectActions';
+import { navigate } from 'services/navigation';
 
 export const SheetContentWrapper = styled.View`
   flex: 1;
@@ -49,6 +53,7 @@ type Props = {
   pending: any[],
   clearPendingWalletConnectSessionByUrl: (url: string) => void,
   killWalletConnectSessionByUrl: (url: string) => void,
+  onWalletConnectSessionRejection: Function,
 };
 
 const ACTIVE = 'ACTIVE';
@@ -73,24 +78,46 @@ class MeScreen extends React.Component<Props, State> {
     return sessions;
   };
 
-  disconnectByUrl = (url: string) => {
+  disconnect = (item) => {
+    const {
+      peerMeta: { url },
+      peerId,
+    } = item;
     if (this.state.activeTab === ACTIVE) {
       this.props.killWalletConnectSessionByUrl(url);
     } else {
+      this.props.onWalletConnectSessionRejection(peerId);
       this.props.clearPendingWalletConnectSessionByUrl(url);
+    }
+  };
+
+  onSessionItemPress = (item) => {
+    const { activeTab } = this.state;
+    const { peerMeta, peerId } = item;
+    if (activeTab === REQUESTS) {
+      navigate(
+        NavigationActions.navigate({
+          routeName: WALLETCONNECT_SESSION_REQUEST_SCREEN,
+          params: {
+            peerId,
+            peerMeta,
+          },
+        }),
+      );
     }
   };
 
   renderSessionItem = ({ item }) => {
     const { activeTab } = this.state;
     const { peerMeta = {} } = item;
-    const { name, icons, url } = peerMeta;
+    const { name, icons } = peerMeta;
     return (
       <ListItemWithImage
         label={name}
         avatarUrl={icons[0]}
-        buttonAction={() => this.disconnectByUrl(url)}
+        buttonAction={() => this.disconnect(item)}
         buttonActionLabel={activeTab === ACTIVE ? 'Disconnect' : 'Cancel'}
+        onPress={() => this.onSessionItemPress(item)}
       />
     );
   };
@@ -187,6 +214,7 @@ const mapStateToProps = ({ user: { data: user }, walletConnect: { connectors, pe
 const mapDispatchToProps = dispatch => ({
   clearPendingWalletConnectSessionByUrl: url => dispatch(clearPendingWalletConnectSessionByUrl(url)),
   killWalletConnectSessionByUrl: url => dispatch(killWalletConnectSessionByUrl(url)),
+  onWalletConnectSessionRejection: peerId => dispatch(onWalletConnectSessionRejection(peerId)),
 });
 
 export default connect(
