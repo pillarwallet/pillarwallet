@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Dimensions, FlatList } from 'react-native';
+import { Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ScrollWrapper, Container } from 'components/Layout';
@@ -145,7 +145,7 @@ class MeScreen extends React.Component<Props, State> {
             </styled.Card>
           </styled.CardContainer>
 
-          <FlatList
+          <styled.SettingsList
             data={this.meSettingsItems()}
             renderItem={({ item: { key, title, onPress } }) => (
               <SettingsListItem key={key} label={title} onPress={onPress} />

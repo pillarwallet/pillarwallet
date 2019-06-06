@@ -6,6 +6,12 @@ import { Center } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import ButtonText from 'components/ButtonText';
+import { FlatList } from 'react-native';
+
+export const SettingsList = styled(FlatList)`
+  border-bottom-width: 1;
+  border-color: ${baseColors.mediumLightGray};
+`;
 
 export const CardContainer = styled.View`
   align-items: center;
