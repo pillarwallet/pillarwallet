@@ -138,7 +138,7 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
 
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
   return async (dispatch: Function) => {
-    dispatch(saveDbAction('smartWallet', { upgradeStatus }, true));
+    dispatch(saveDbAction('smartWallet', { upgradeStatus }));
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
       payload: upgradeStatus,
@@ -243,7 +243,7 @@ export const dismissSmartWalletUpgradeAction = () => {
 
 export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {
   return async (dispatch: Function) => {
-    await dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: transactions }, true));
+    await dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: transactions }));
     dispatch({
       type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
       payload: transactions,
