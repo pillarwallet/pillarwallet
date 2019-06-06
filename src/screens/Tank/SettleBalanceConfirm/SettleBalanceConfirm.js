@@ -87,6 +87,8 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const { settleButtonSubmitted } = this.state;
     const { session, navigation } = this.props;
     const assetsToSettle = navigation.getParam('assetsToSettle', []);
+    const submitButtonTitle = !settleButtonSubmitted ? 'Release Funds' : 'Processing..';
+
     return (
       <Container>
         <Header
@@ -110,7 +112,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
             <Button
               disabled={!session.isOnline || settleButtonSubmitted}
               onPress={this.handleFormSubmit}
-              title="Release Funds"
+              title={submitButtonTitle}
             />
             {/* <TextButton onPress={() => {}}>
               <ButtonText>Open dispute</ButtonText>

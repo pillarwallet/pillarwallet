@@ -95,6 +95,7 @@ class FundConfirm extends React.Component<Props, State> {
     const { topUpButtonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
     const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
+    const submitButtonTitle = !topUpButtonSubmitted ? 'Fund Pillar Tank' : 'Processing..';
 
     return (
       <Container>
@@ -125,7 +126,7 @@ class FundConfirm extends React.Component<Props, State> {
             <Button
               disabled={!session.isOnline || !topUpFee.isFetched || topUpButtonSubmitted}
               onPress={this.handleFormSubmit}
-              title="Fund Pillar Tank"
+              title={submitButtonTitle}
             />
           </FooterWrapper>
         </Footer>
