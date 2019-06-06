@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { RefreshControl, Platform } from 'react-native';
+import { RefreshControl, Platform, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -50,6 +50,7 @@ import { BaseText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapTransactionsHistory } from 'utils/feedData';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { ApiUser } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
@@ -275,7 +276,7 @@ class Contact extends React.Component<Props, State> {
   manageFeedCollapseHeight = (length: number) => {
     const { collapsedActivityHeight } = this.state;
     const TWO_ITEMS_HEIGHT = 215;
-    const EMPTY_STATE_HEIGHT = 260;
+    const EMPTY_STATE_HEIGHT = 160;
     if (length && collapsedActivityHeight !== TWO_ITEMS_HEIGHT) {
       this.setState({ collapsedActivityHeight: TWO_ITEMS_HEIGHT });
     } else if (!length && collapsedActivityHeight !== EMPTY_STATE_HEIGHT) {
@@ -296,10 +297,14 @@ class Contact extends React.Component<Props, State> {
           activeTab={TRANSACTIONS}
           showArrowsOnly
           contentContainerStyle={{ paddingTop: 10 }}
-          esData={{
-            title: 'Make your first step',
-            body: 'Your activity will appear here.',
-          }}
+          esComponent={(
+            <View style={{ width: '100%', alignItems: 'center' }}>
+              <EmptyStateParagraph
+                title="Make your first step"
+                bodyText="Your activity will appear here."
+              />
+            </View>
+          )}
         />
       );
     }

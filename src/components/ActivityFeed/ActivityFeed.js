@@ -105,6 +105,7 @@ type Props = {
   activeTab?: string,
   feedData?: Object[],
   extraFeedData?: Object[],
+  esComponent?: React.Node,
 }
 
 type State = {
@@ -335,6 +336,7 @@ class ActivityFeed extends React.Component<Props, State> {
       esData,
       feedData = [],
       extraFeedData,
+      esComponent,
     } = this.props;
 
     const {
@@ -345,7 +347,6 @@ class ActivityFeed extends React.Component<Props, State> {
     } = this.state;
 
     const feedList = getSortedFeedData(tabs, activeTab, feedData);
-
     const additionalContentContainerStyle = !feedList.length
       ? { justifyContent: 'center', flex: 1 }
       : {};
@@ -380,7 +381,8 @@ class ActivityFeed extends React.Component<Props, State> {
           onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
           keyExtractor={this.getActivityFeedListKeyExtractor}
-          ListEmptyComponent={<EmptyTransactions {...getEmptyStateData(tabs, activeTab, esData)} />}
+          ListEmptyComponent={esComponent
+          || <EmptyTransactions {...getEmptyStateData(tabs, activeTab, esData)} />}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
         />
 

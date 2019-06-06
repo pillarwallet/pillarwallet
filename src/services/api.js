@@ -447,17 +447,13 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
 };
 
 SDKWrapper.prototype.fetchGasInfo = function () {
-  return fetch('https://www.etherchain.org/api/gasPriceOracle')
-    .then(data => data.json())
+  return BCXSdk.gasStation()
     .then(data => ({
       min: data.safeLow,
       avg: data.standard,
       max: data.fast,
     }))
     .catch(() => ({}));
-  // return BCXSdk.gasInfo({ nBlocks: 10 })
-  //   .then(({ gasUsed }) => gasUsed)
-  //   .catch(() => ({}));
 };
 
 SDKWrapper.prototype.fetchTxInfo = function (hash: string) {
