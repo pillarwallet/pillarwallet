@@ -96,7 +96,6 @@ class MeScreen extends React.Component<Props, State> {
     return (
       <Container
         inset={{ bottom: 0 }}
-        color={baseColors.white}
         hideSheet={!showActiveSessions}
       >
         <Header title="me" white />
