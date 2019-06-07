@@ -48,6 +48,7 @@ import Tabs from 'components/Tabs';
 // types
 import type { Assets, Balances, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
+import type { Badges } from 'models/Badge';
 
 // actions
 import {
@@ -78,7 +79,6 @@ import { spacing } from 'utils/variables';
 import AssetsList from './AssetsList';
 import CollectiblesList from './CollectiblesList';
 
-
 type Props = {
   fetchInitialAssets: () => Function,
   assets: Assets,
@@ -98,6 +98,7 @@ type Props = {
   assetsSearchState: string,
   addAsset: Function,
   removeAsset: Function,
+  badges: Badges,
 }
 
 type State = {
@@ -375,6 +376,7 @@ class AssetsScreen extends React.Component<Props, State> {
       assetsSearchState,
       navigation,
       collectibles,
+      badges,
     } = this.props;
     const { query, activeTab, forceHideRemoval } = this.state;
 
@@ -414,6 +416,10 @@ class AssetsScreen extends React.Component<Props, State> {
       ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
       : collectibles;
 
+    const filteredBadges = isInCollectiblesSearchMode
+      ? badges.filter(({ name = '' }) => name.toUpperCase().includes(query.toUpperCase()))
+      : badges;
+
     return (
       <Container inset={{ bottom: 0 }}>
         <SearchBlock
@@ -447,13 +453,16 @@ class AssetsScreen extends React.Component<Props, State> {
               />
             )}
             {activeTab === COLLECTIBLES && (
-              <CollectiblesList
-                collectibles={filteredCollectibles}
-                searchQuery={query}
-                navigation={navigation}
-                horizontalPadding={horizontalPadding}
-                updateHideRemoval={this.updateHideRemoval}
-              />
+              <React.Fragment>
+                <CollectiblesList
+                  collectibles={filteredCollectibles}
+                  badges={filteredBadges}
+                  searchQuery={query}
+                  navigation={navigation}
+                  horizontalPadding={horizontalPadding}
+                  updateHideRemoval={this.updateHideRemoval}
+                />
+              </React.Fragment>
             )}
           </React.Fragment>}
         </TokensWrapper>
@@ -474,6 +483,7 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
   collectibles: { assets: collectibles },
+  badges: { data: badges },
 }) => ({
   wallet,
   assets,
@@ -485,6 +495,7 @@ const mapStateToProps = ({
   baseFiatCurrency,
   assetsLayout,
   collectibles,
+  badges,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

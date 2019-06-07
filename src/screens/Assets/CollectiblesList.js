@@ -34,25 +34,33 @@ import type { NavigationScreenProp } from 'react-navigation';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
 import { Wrapper } from 'components/Layout';
+import Title from 'components/Title';
+import BadgeTouchableItem from 'components/BadgeTouchableItem';
 
 // actions
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // constants
 import { EXTRASMALL } from 'constants/assetsLayoutConstants';
-import { COLLECTIBLE } from 'constants/navigationConstants';
+import { COLLECTIBLE, BADGE } from 'constants/navigationConstants';
 
 // utils
 import { smallScreen } from 'utils/common';
+import { spacing } from 'utils/variables';
 
 // types
 import type { Collectible } from 'models/Collectible';
+import type { Badges } from 'models/Badge';
 
 
 const EmptyStateWrapper = styled(Wrapper)`
   padding-top: 90px;
   padding-bottom: 90px;
   align-items: center;
+`;
+
+const StyledTitle = styled(Title)`
+  margin: ${spacing.medium}px 2px;
 `;
 
 const viewConfig = {
@@ -63,6 +71,7 @@ const viewConfig = {
 
 type Props = {
   collectibles: Collectible[],
+  badges: Badges,
   searchQuery: string,
   navigation: NavigationScreenProp<*>,
   horizontalPadding: Function,
@@ -97,7 +106,15 @@ class CollectiblesList extends React.Component<Props> {
         onPress={() => { this.handleCardTap(item); }}
         isCollectible
         columnCount={2}
+        useSVGShadow
       />
+    );
+  };
+
+  renderBadge = ({ item }) => {
+    const { navigation } = this.props;
+    return (
+      <BadgeTouchableItem data={item} onPress={() => navigation.navigate(BADGE, { id: item.id })} />
     );
   };
 
@@ -107,6 +124,7 @@ class CollectiblesList extends React.Component<Props> {
       collectibles,
       searchQuery,
       horizontalPadding,
+      badges,
     } = this.props;
 
     const emptyStateInfo = {
@@ -143,6 +161,29 @@ class CollectiblesList extends React.Component<Props> {
           <EmptyStateWrapper fullScreen>
             <EmptyStateParagraph {...emptyStateInfo} />
           </EmptyStateWrapper>
+        }
+        ListHeaderComponent={
+          <React.Fragment>
+            {!!badges.length &&
+            <React.Fragment>
+              <StyledTitle subtitle title="game of badges." />
+              <FlatList
+                data={badges}
+                keyExtractor={item => `${item.assetContract}${item.id}`}
+                renderItem={this.renderBadge}
+                style={{ width: '100%' }}
+                contentContainerStyle={{
+                  marginLeft: -6,
+                }}
+                initialNumToRender={5}
+                removeClippedSubviews
+                viewabilityConfig={viewConfig}
+                horizontal
+              />
+            </React.Fragment>
+              }
+            {!!collectibles.length && <StyledTitle subtitle title="all collectibles." />}
+          </React.Fragment>
         }
         initialNumToRender={10}
         removeClippedSubviews

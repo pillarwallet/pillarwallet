@@ -195,6 +195,7 @@ const assetsFlow = createStackNavigator(
     [ASSETS]: AssetsScreen,
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
+    [BADGE]: BadgeScreen,
     [CONTACT]: ContactScreen,
   },
   StackNavigatorConfig,
