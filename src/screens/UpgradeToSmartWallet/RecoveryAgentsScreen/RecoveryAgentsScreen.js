@@ -231,8 +231,9 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addRecoveryAgentsToSmartWalletUpgrade:
-    (recoveryAgents: RecoveryAgent[]) => dispatch(addRecoveryAgentsToSmartWalletUpgradeAction(recoveryAgents)),
+  addRecoveryAgentsToSmartWalletUpgrade: (recoveryAgents: RecoveryAgent[]) => {
+    return dispatch(addRecoveryAgentsToSmartWalletUpgradeAction(recoveryAgents));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecoveryAgentsScreen);

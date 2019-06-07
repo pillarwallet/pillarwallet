@@ -289,8 +289,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     } = this.props;
     const { assetsToTransfer, collectiblesToTransfer } = this.state;
     const updatedAssetsToTransfer = assetsToTransfer.map(asset => {
-      const addedAsset = addedAssets
-        .find(addedAssetCheck => addedAssetCheck.name === asset.name);
+      const addedAsset = addedAssets.find(addedAssetCheck => addedAssetCheck.name === asset.name);
       const amount = addedAsset ? addedAsset.amount : asset.amount;
       return { ...asset, amount };
     });
@@ -338,8 +337,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = assetsArray
       .map((asset: any) => {
-        const assetsTransferAmount = addedAssets
-          .find(addedAsset => addedAsset.name === asset.name);
+        const assetsTransferAmount = addedAssets.find(addedAsset => addedAsset.name === asset.name);
 
         // added/edited amount or default – all balance
         const amount = assetsTransferAmount
@@ -370,6 +368,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       BigNumber(gasPriceWei * (assetsToTransfer.length + collectiblesToTransfer.length)).toFixed(),
     ));
     const options = navigation.getParam('options', { isSeparateRecovery: false });
+    // NOTE: we can come to this page later when we decide to transfer assets to the existing smart wallet
     const { isSeparateFund } = options;
 
     return (

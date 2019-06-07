@@ -29,10 +29,7 @@ import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { RECOVERY_AGENTS } from 'constants/navigationConstants';
 
 type Props = {
-  changePin: (newPin: string, currentPin: string) => Function,
-  walletState: ?string,
   navigation: NavigationScreenProp<*>,
-  resetIncorrectPassword: () => Function,
 };
 
 const WhiteWrapper = styled.View`
