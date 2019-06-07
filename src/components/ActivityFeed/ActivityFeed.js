@@ -105,7 +105,6 @@ type Props = {
   contentContainerStyle?: Object,
   initialNumToRender: number,
   getFeedLength?: Function,
-  esComponent?: React.Node,
 };
 
 type State = {
@@ -375,9 +374,6 @@ class ActivityFeed extends React.Component<Props, State> {
       openSeaTxHistory,
       contentContainerStyle,
       initialNumToRender,
-      activeTab,
-      esData,
-      esComponent,
     } = this.props;
 
     const {
@@ -423,6 +419,7 @@ class ActivityFeed extends React.Component<Props, State> {
       .sort((a, b) => b.createdAt - a.createdAt);
 
     const feedData = customFeedData || allFeedData;
+    const { activeTab, esData } = this.props;
 
     const filteredHistory = feedData.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
@@ -436,7 +433,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
     this.feedData = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
 
-    if (this.feedData.length < 1 && !(esData || esComponent)) {
+    if (this.feedData.length < 1 && !esData) {
       return null;
     }
 
@@ -464,8 +461,7 @@ class ActivityFeed extends React.Component<Props, State> {
           onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
           keyExtractor={this.getActivityFeedListKeyExtractor}
-          ListEmptyComponent={esComponent
-          || <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />}
+          ListEmptyComponent={<EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
         />
         <SlideModal
