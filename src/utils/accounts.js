@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
+import get from 'lodash.get';
 import type { Account, Accounts } from 'models/Account';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -36,7 +36,7 @@ export function getActiveAccountType(accounts: Accounts = []): string {
 }
 
 export function getAccountAddress(account: Account): string {
-  return account.id || '';
+  return get(account, 'id', '');
 }
 
 export function getActiveAccountAddress(accounts: Accounts = []): string {
