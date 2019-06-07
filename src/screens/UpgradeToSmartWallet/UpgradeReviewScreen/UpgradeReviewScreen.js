@@ -26,6 +26,11 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
+
+// actions
+import { fetchGasInfoAction } from 'actions/historyActions';
+
+// components
 import { Container, Wrapper, Footer } from 'components/Layout';
 import Header from 'components/Header';
 import Button from 'components/Button';
@@ -37,8 +42,11 @@ import {
   TextLink,
   BaseText,
 } from 'components/Typography';
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+
+// configs
 import assetsConfig from 'configs/assetsConfig';
+
+// constants
 import {
   RECOVERY_AGENTS,
   CHOOSE_ASSETS_TO_TRANSFER,
@@ -46,14 +54,22 @@ import {
   UPGRADE_CONFIRM,
 } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
-import { fetchGasInfoAction } from 'actions/historyActions';
-import { formatAmount } from 'utils/common';
+
+// selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
+
+// types
 import type { Assets, Balances, AssetTransfer } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { Collectible } from 'models/Collectible';
+
+// utils
+import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { formatAmount } from 'utils/common';
+import { getBalance } from 'utils/assets';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -202,6 +218,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 
   render() {
     const {
+      balances,
       navigation,
       transferAssets,
       transferCollectibles,
@@ -257,11 +274,10 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
         toEdit: CHOOSE_ASSETS_TO_TRANSFER,
       });
     }
-    const etherTransfer = nonEmptyAssets.find((asset: any) => asset.symbol === ETH);
+    const etherBalance = getBalance(balances, ETH);
 
     // there should be enough to transfer selected assets from primary wallet
-    const notEnoughEther = !etherTransfer || etherTransfer.amount < parseFloat(assetsTransferFeeEth);
-
+    const notEnoughEther = !etherBalance || etherBalance < parseFloat(assetsTransferFeeEth);
     return (
       <Container>
         <WhiteWrapper>
@@ -306,8 +322,15 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = ({
-  smartWallet:
-    { upgrade: { recoveryAgents, transfer: { assets: transferAssets, collectibles: transferCollectibles } } },
+  smartWallet: {
+    upgrade: {
+      recoveryAgents,
+      transfer: {
+        assets: transferAssets,
+        collectibles: transferCollectibles,
+      },
+    },
+  },
   assets: { data: assets },
   session: { data: session },
   history: { gasInfo },
