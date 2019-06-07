@@ -73,7 +73,8 @@ export default function assetsReducer(
     case UPDATE_SUPPORTED_ASSETS:
       return { ...state, supportedAssets: action.payload };
     case UPDATE_ASSETS:
-      return { ...state, data: action.payload, assetsState: FETCHED };
+      const assetsState = Object.keys(action.payload).length ? FETCHED : initialState.assetsState;
+      return { ...state, data: action.payload || {}, assetsState };
     case ADD_ASSET:
       const addedAsset = action.payload;
       return merge({}, state, { data: { [addedAsset.symbol]: { ...addedAsset } } });
