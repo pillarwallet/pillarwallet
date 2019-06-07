@@ -347,6 +347,7 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
 };
 
 SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
+  if (!walletAddress) return Promise.resolve({ assets: [] });
   return new Promise((resolve, reject) => {
     getLimitedData(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=listing_date&order_direction=asc`,
       [], 300, 0, 'assets', resolve, reject);
