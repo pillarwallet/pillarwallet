@@ -21,7 +21,7 @@ export default async function (dispatch: Function) {
   const { appSettings = {} } = await storage.get('app_settings');
   const { wallet } = await storage.get('wallet');
 
-  if (appSettings.wallet && appSettings.lastTxSyncDatetime) {
+  if (appSettings.wallet && appSettings.lastTxSyncDatetime && wallet.address) {
     const migratedAppSettings = migrateAppSettingsToAccountsFormat(appSettings, normalizeWalletAddress(wallet.address));
     dispatch(saveDbAction('app_settings', { appSettings: migratedAppSettings }, true));
     return migratedAppSettings;
