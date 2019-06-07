@@ -104,6 +104,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         icon,
       },
       receiver: ethAddress,
+      source: 'Assets',
     });
   }
 
@@ -114,6 +115,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
       assetData,
       receiver: contact.ethAddress,
+      source: 'Assets',
     });
   }
 

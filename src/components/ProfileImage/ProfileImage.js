@@ -43,8 +43,10 @@ const ImageTouchable = styled.TouchableOpacity`
   background-color: ${props => (props.needBackground ? baseColors.geyser : baseColors.lightGray)};
   ${props => (props.additionalContainerStyle)};
   position: relative;
-  border: ${props => `${props.borderWidth}px solid ${baseColors.white}`};
+  border: ${props => `${props.borderWidth}px solid ${props.borderColor || baseColors.white}`};
   overflow: hidden;
+  justify-content: center;
+  align-items: center;
 `;
 
 const InnerBackground = styled.View`
@@ -68,6 +70,8 @@ type Props = {
   onPress?: ?Function,
   diameter?: number,
   borderWidth?: number,
+  borderSpacing?: number,
+  borderColor?: string,
   style?: Object,
   children?: React.Node,
   initialsSize?: number,
@@ -127,14 +131,16 @@ const ProfileImage = (props: Props) => {
     onPress,
     style,
     diameter = 50,
+    borderColor,
     borderWidth = 2,
+    borderSpacing = 0,
     children,
     userName,
     initialsSize,
     noShadow,
   } = props;
 
-  const diameterWithBorder = diameter + (borderWidth * 2);
+  const diameterWithBorder = diameter + (borderWidth * 2) + (borderSpacing * 2);
 
   const renderDefaultImage = () => (
     <DefaultPicture userName={userName} innerComponent={children} initialsSize={initialsSize} />
@@ -158,6 +164,7 @@ const ProfileImage = (props: Props) => {
         style={style}
         hasChildren={children}
         borderWidth={borderWidth}
+        borderColor={borderColor}
         needBackground={!uri}
       >
         {!uri && renderDefaultImage()}

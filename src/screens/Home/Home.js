@@ -36,16 +36,10 @@ import { Container, Wrapper } from 'components/Layout';
 import { BaseText, Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
-import {
-  fetchTransactionsHistoryAction,
-  fetchTransactionsHistoryNotificationsAction,
-} from 'actions/historyActions';
+import { fetchTransactionsHistoryAction, fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import {
-  resetDeepLinkDataAction,
-  approveLoginAttemptAction,
-} from 'actions/deepLinkActions';
+import { resetDeepLinkDataAction, approveLoginAttemptAction } from 'actions/deepLinkActions';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
@@ -148,9 +142,9 @@ const HomeHeaderUsername = styled(BaseText)`
 const AnimatedHomeHeaderUsername = Animated.createAnimatedComponent(HomeHeaderUsername);
 
 const HomeHeaderButton = styled(IconButton)`
-  align-items: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
-  margin: ${props => props.flexEnd ? `0 -${spacing.rhythm}px 0 0` : `0 0 0 -${spacing.rhythm}px`};
-  padding: ${props => props.flexEnd ? `0 ${spacing.rhythm}px 0 0` : `0 0 0 ${spacing.rhythm}px`};
+  align-items: ${props => (props.flexEnd ? 'flex-end' : 'flex-start')};
+  margin: ${props => (props.flexEnd ? `0 -${spacing.rhythm}px 0 0` : `0 0 0 -${spacing.rhythm}px`)};
+  padding: ${props => (props.flexEnd ? `0 ${spacing.rhythm}px 0 0` : `0 0 0 ${spacing.rhythm}px`)};
   width: 64px;
   height: 44px;
 `;
@@ -314,10 +308,9 @@ class HomeScreen extends React.Component<Props, State> {
     // TODO: remove this when notifications service becomes reliable
     fetchTransactionsHistory();
 
-    this._willFocus = this.props.navigation.addListener(
-      'willFocus',
-      () => { this.props.setUnreadNotificationsStatus(false); },
-    );
+    this._willFocus = this.props.navigation.addListener('willFocus', () => {
+      this.props.setUnreadNotificationsStatus(false);
+    });
   }
 
   componentWillUnmount() {
@@ -365,15 +358,8 @@ class HomeScreen extends React.Component<Props, State> {
           : contact.profileImage;
 
         return (
-          <RecentConnectionsItem
-            key={contact.username}
-            onPress={() => navigation.navigate(CONTACT, { contact })}
-          >
-            <RecentConnectionsItemProfileImage
-              uri={profileImage}
-              userName={contact.username}
-              diameter={52}
-            />
+          <RecentConnectionsItem key={contact.username} onPress={() => navigation.navigate(CONTACT, { contact })}>
+            <RecentConnectionsItemProfileImage uri={profileImage} userName={contact.username} diameter={52} />
             <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
           </RecentConnectionsItem>
         );
@@ -440,6 +426,7 @@ class HomeScreen extends React.Component<Props, State> {
       openSeaTxHistory,
       contacts,
     } = this.props;
+
     const {
       showCamera,
       permissionsGranted,
@@ -448,10 +435,7 @@ class HomeScreen extends React.Component<Props, State> {
       forceCloseLoginApprovalModal,
     } = this.state;
 
-    const {
-      isImported,
-      isBackedUp,
-    } = backupStatus;
+    const { isImported, isBackedUp } = backupStatus;
 
     const profileUsernameTranslateX = scrollY.interpolate({
       inputRange: [0, 100],
@@ -571,31 +555,35 @@ class HomeScreen extends React.Component<Props, State> {
                 fontSize={24}
                 onPress={() => Intercom.displayMessenger()}
               />
-              {hasIntercomNotifications && <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  backgroundColor: baseColors.sunYellow,
-                  borderRadius: 4,
-                  position: 'absolute',
-                  top: 6,
-                  right: 8,
-                }}
-              />}
+              {hasIntercomNotifications && (
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: baseColors.sunYellow,
+                    borderRadius: 4,
+                    position: 'absolute',
+                    top: 6,
+                    right: 8,
+                  }}
+                />
+              )}
             </HomeHeaderLeft>
             <HomeHeaderBody />
             <HomeHeaderRight>
-              {!isWalletBackedUp && <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  backgroundColor: baseColors.burningFire,
-                  borderRadius: 4,
-                  position: 'absolute',
-                  top: 6,
-                  right: -6,
-                }}
-              />}
+              {!isWalletBackedUp && (
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: baseColors.burningFire,
+                    borderRadius: 4,
+                    position: 'absolute',
+                    top: 6,
+                    right: -6,
+                  }}
+                />
+              )}
               <HomeHeaderButton
                 flexEnd
                 icon="settings"
@@ -633,7 +621,7 @@ class HomeScreen extends React.Component<Props, State> {
                 <AnimatedHomeHeaderUsername
                   ellipsizeMode="tail"
                   numberOfLines={2}
-                  onLayout={(event) => {
+                  onLayout={event => {
                     const { width } = event.nativeEvent.layout;
                     this.setState({
                       usernameWidth: width,
@@ -652,10 +640,7 @@ class HomeScreen extends React.Component<Props, State> {
               </HomeHeaderImageUsername>
               <AnimatedHomeHeaderPortfolioBalance
                 style={{
-                  transform: [
-                    { scale: profileBalanceScale },
-                    { translateY: profileBalancePositionY },
-                  ],
+                  transform: [{ scale: profileBalanceScale }, { translateY: profileBalancePositionY }],
                   opacity: profileBalanceOpacity,
                 }}
               />
@@ -678,14 +663,9 @@ class HomeScreen extends React.Component<Props, State> {
             { useNativeDriver: true },
           )}
           scrollEventThrottle={16}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={this.refreshScreenData}
-            />
-          }
+          refreshControl={<RefreshControl refreshing={false} onRefresh={this.refreshScreenData} />}
         >
-          {this.props.contacts.length ?
+          {this.props.contacts.length ? (
             <RecentConnectionsWrapper>
               <RecentConnections>
                 <View style={{ backgroundColor: baseColors.snowWhite }}>
@@ -695,11 +675,11 @@ class HomeScreen extends React.Component<Props, State> {
                   {this.renderRecentConnections()}
                 </RecentConnectionsScrollView>
               </RecentConnections>
-            </RecentConnectionsWrapper> :
-
+            </RecentConnectionsWrapper>
+          ) : (
             <RecentConnectionsSpacer />
-          }
-          {badges && badges.length ?
+          )}
+          {badges && badges.length ? (
             <BadgesWrapper>
               <BadgesBlock>
                 <View style={{ backgroundColor: baseColors.snowWhite }}>
@@ -709,9 +689,8 @@ class HomeScreen extends React.Component<Props, State> {
                   {this.renderBadges()}
                 </BadgesScrollView>
               </BadgesBlock>
-            </BadgesWrapper> :
-
-            <BadgesSpacer />
+            </BadgesWrapper>
+          ) : (<BadgesSpacer />)
           }
           <ActivityFeed
             backgroundColor={baseColors.white}
@@ -745,17 +724,14 @@ class HomeScreen extends React.Component<Props, State> {
               <Description>
                 You are about to confirm your login with your Pillar wallet to external resource.
               </Description>
-              { !user.email &&
+              {!user.email && (
                 <DescriptionWarning>
                   In order to proceed with Discourse login you must have email added to your profile.
                 </DescriptionWarning>
-              }
+              )}
               <Button
                 title={!user.email ? 'Add your email' : 'Confirm login'}
-                onPress={() => user.email
-                  ? approveLoginAttempt(loginAttemptToken)
-                  : this.goToProfileEmailSettings()
-                }
+                onPress={() => (user.email ? approveLoginAttempt(loginAttemptToken) : this.goToProfileEmailSettings())}
                 style={{
                   marginBottom: 13,
                 }}
@@ -803,7 +779,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
-  setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
+  setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   resetDeepLinkData: () => dispatch(resetDeepLinkDataAction()),
   approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
@@ -811,3 +787,4 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
+

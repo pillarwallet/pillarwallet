@@ -22,9 +22,9 @@ exports[`Header should render Header correctly 1`] = `
         Object {
           "alignItems": "flex-end",
           "flexDirection": "row",
-          "height": 48,
+          "height": 50,
           "justifyContent": "flex-end",
-          "marginBottom": 0,
+          "marginBottom": 4,
           "marginTop": 20,
         },
         undefined,
@@ -32,6 +32,7 @@ exports[`Header should render Header correctly 1`] = `
     }
   >
     <View
+      flex={[Function]}
       showTitleLeft={false}
       style={
         Array [

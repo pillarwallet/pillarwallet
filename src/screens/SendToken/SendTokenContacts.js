@@ -189,6 +189,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       this.props.navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
         assetData: this.assetData,
         receiver: ethAddress,
+        source: 'Contact',
       });
       return;
     }
@@ -196,6 +197,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
       assetData: this.assetData,
       receiver: ethAddress,
+      source: 'Contact',
     });
   }
 

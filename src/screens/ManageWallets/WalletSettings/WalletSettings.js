@@ -31,7 +31,7 @@ import {
   REVEAL_BACKUP_PHRASE,
   CHOOSE_ASSETS_TO_TRANSFER,
 } from 'constants/navigationConstants';
-import ProfileSettingsItem from 'screens/Profile/ProfileSettingsItem';
+import SettingsItem from 'components/ListItem/SettingsItem';
 import { spacing } from 'utils/variables';
 
 type Props = {
@@ -59,7 +59,7 @@ export default class WalletSettings extends React.PureComponent<Props> {
         />
         {isSmartWallet &&
         <React.Fragment>
-          <ProfileSettingsItem
+          <SettingsItem
             key="fundSmartWallet"
             label="Fund Smart Wallet"
             onPress={() => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER, { options: { isSeparateFund: true } })}
@@ -71,7 +71,7 @@ export default class WalletSettings extends React.PureComponent<Props> {
               ability to recover your wallet with help of trusted people, etc.
             </Paragraph>
           </ParagraphWrapper>
-          <ProfileSettingsItem
+          <SettingsItem
             key="settupSocialRecovery"
             label="Setup Social Recovery"
             onPress={() => navigation.navigate(RECOVERY_AGENTS,
@@ -85,7 +85,7 @@ export default class WalletSettings extends React.PureComponent<Props> {
           </ParagraphWrapper>
         </React.Fragment>
         }
-        {!isSmartWallet && <ProfileSettingsItem
+        {!isSmartWallet && <SettingsItem
           key="revealBackupPhrase"
           label="Reveal backup phrase"
           onPress={() => navigation.navigate(REVEAL_BACKUP_PHRASE)}

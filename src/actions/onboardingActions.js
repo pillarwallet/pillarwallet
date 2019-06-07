@@ -24,6 +24,7 @@ import { delay, uniqBy } from 'utils/common';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { generateMnemonicPhrase, getSaltedPin } from 'utils/wallet';
+import { Answers } from 'react-native-fabric';
 import {
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
@@ -99,7 +100,9 @@ const getTokenWalletAndRegister = async (privateKey: string, api: Object, user: 
     },
   });
 
-  if (!registrationSucceed) {
+  if (registrationSucceed) {
+    Answers.logCustom('Create Wallet');
+  } else {
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: sdkWallet.reason,
@@ -305,6 +308,8 @@ export const registerOnBackendAction = () => {
       dispatch,
     );
     if (!registrationSucceed) { return; }
+
+    Answers.logCustom('Create User');
 
     await finishRegistration(api, userInfo, dispatch, mnemonic, privateKey);
     const isWalletBackedUp = isImported || isBackedUp;

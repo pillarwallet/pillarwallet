@@ -47,8 +47,7 @@ type Props = {
   flexStart?: boolean,
   light?: boolean,
   style?: Object,
-  headerRightFlex?: string,
-  overlay?: boolean,
+  headerRightFlex?: number,
   backIcon?: string,
   nextIconSize?: number,
   titleStyles?: ?Object,
@@ -74,8 +73,8 @@ const InnerWrapper = styled.View`
   align-items: flex-end;
   flex-direction: row;
   margin-top: ${spacing.rhythm};
-  margin-bottom: ${props => props.flexStart ? 'auto' : 0};
-  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '48px'};
+  margin-bottom: ${props => props.flexStart ? 'auto' : '4px'};
+  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '50px'};
 `;
 
 const BackIcon = styled(IconButton)`
@@ -107,7 +106,7 @@ const NextIcon = styled(IconButton)`
 `;
 
 const HeaderLeft = styled(Left)`
-  flex: ${props => props.showTitleLeft ? 2 : 1};
+  flex: ${props => props.flex ? props.flex : 1};
   justify-content: flex-start;
   align-items: flex-end;
 `;
@@ -142,11 +141,9 @@ const Header = (props: Props) => {
     centerTitle,
     noWrapTitle,
     noPadding,
-    noMargin,
     style,
     light,
     headerRightFlex,
-    overlay,
     flexStart,
     backIcon,
     titleStyles,
@@ -168,82 +165,89 @@ const Header = (props: Props) => {
     return 1;
   };
 
+  const getHeaderLeftFlex = () => {
+    if (showTitleLeft) {
+      return 2;
+    } else if (headerRightFlex && !showTitleLeft && !!title && !!showTitleCenter) {
+      return headerRightFlex;
+    }
+    return 1;
+  };
+
   return (
     <Wrapper
-      overlay={overlay}
-      noMargin={noMargin}
       style={style}
       noPadding={noPadding}
       white={white}
     >
       <InnerWrapper flexStart={flexStart} noWrapTitle={noWrapTitle}>
-        <HeaderLeft showTitleLeft={showTitleLeft}>
+        <HeaderLeft showTitleLeft={showTitleLeft} flex={getHeaderLeftFlex}>
           {onBack &&
-          <BackIcon
-            icon={backIcon || 'back'}
-            color={light ? baseColors.white : UIColors.defaultNavigationColor}
-            onPress={() => onBack()}
-            fontSize={fontSizes.extraLarge}
-            horizontalAlign="flex-start"
-          />
+            <BackIcon
+              icon={backIcon || 'back'}
+              color={light ? baseColors.white : UIColors.defaultNavigationColor}
+              onPress={() => onBack()}
+              fontSize={fontSizes.extraLarge}
+              horizontalAlign="flex-start"
+            />
           }
           {showTitleLeft &&
-          <Title
-            noMargin
-            title={title}
-            noBlueDot={noBlueDotOnTitle}
-            dotColor={dotColor}
-            fullWidth={fullWidthTitle}
-            titleStyles={titleStyles}
-          />
+            <Title
+              noMargin
+              title={title}
+              noBlueDot={noBlueDotOnTitle}
+              dotColor={dotColor}
+              fullWidth={fullWidthTitle}
+              titleStyles={titleStyles}
+            />
           }
         </HeaderLeft>
         {showTitleCenter &&
-        <HeaderBody onCloseText={onCloseText}>
-          <Title
-            align="center"
-            noMargin
-            title={title}
-            onTitlePress={onTitlePress}
-            noBlueDot={noBlueDotOnTitle}
-            dotColor={dotColor}
-            fullWidth={fullWidthTitle}
-            titleStyles={titleStyles}
-          />
-        </HeaderBody>
+          <HeaderBody onCloseText={onCloseText}>
+            <Title
+              align="center"
+              noMargin
+              title={title}
+              onTitlePress={onTitlePress}
+              noBlueDot={noBlueDotOnTitle}
+              dotColor={dotColor}
+              fullWidth={fullWidthTitle}
+              titleStyles={titleStyles}
+            />
+          </HeaderBody>
         }
         {showRight && !noClose &&
-        <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
-          {headerRightAddon}
-          {nextText &&
-          <TextLink style={nextTextStyle} onPress={onNextPress}>{nextText}</TextLink>
-          }
-          {nextIcon &&
-          <IconWrapper>
-            <NextIcon
-              icon={nextIcon}
-              color={light ? baseColors.white : UIColors.primary}
-              onPress={onNextPress}
-              fontSize={nextIconSize || fontSizes.small}
-              horizontalAlign="flex-end"
-            />
-          </IconWrapper>
-          }
-          {onClose &&
-          <IconWrapper>
-            {onCloseText &&
-            <CloseIconText light={light} >{onCloseText}</CloseIconText>
+          <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
+            {headerRightAddon}
+            {nextText &&
+              <TextLink style={nextTextStyle} onPress={onNextPress}>{nextText}</TextLink>
             }
-            <NextIcon
-              icon="close"
-              color={light ? baseColors.white : UIColors.defaultNavigationColor}
-              onPress={onClose}
-              fontSize={fontSizes.small}
-              horizontalAlign="flex-end"
-            />
-          </IconWrapper>
-          }
-        </HeaderRight>
+            {nextIcon &&
+              <IconWrapper>
+                <NextIcon
+                  icon={nextIcon}
+                  color={light ? baseColors.white : UIColors.primary}
+                  onPress={onNextPress}
+                  fontSize={nextIconSize || fontSizes.small}
+                  horizontalAlign="flex-end"
+                />
+              </IconWrapper>
+            }
+            {onClose &&
+              <IconWrapper>
+                {onCloseText &&
+                  <CloseIconText light={light} >{onCloseText}</CloseIconText>
+                }
+                <NextIcon
+                  icon="close"
+                  color={light ? baseColors.white : UIColors.defaultNavigationColor}
+                  onPress={onClose}
+                  fontSize={fontSizes.small}
+                  horizontalAlign="flex-end"
+                />
+              </IconWrapper>
+            }
+          </HeaderRight>
         }
       </InnerWrapper>
     </Wrapper>
