@@ -24,6 +24,9 @@ export default async function (dispatch: Function, getState: Function) {
   const { wallet } = await storage.get('wallet');
   const { user = {} } = await storage.get('user');
 
+  // wallet is not registered yet
+  if (!user.walletId) return accounts;
+
   if (!accounts.length) {
     await dispatch(initDefaultAccountAction(normalizeWalletAddress(wallet.address), user.walletId));
     const { accounts: { data: migratedAccounts } } = getState();
