@@ -18,12 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import ethers from 'ethers';
+import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { delay, uniqBy } from 'utils/common';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
-import { generateMnemonicPhrase, getSaltedPin } from 'utils/wallet';
+import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { Answers } from 'react-native-fabric';
 import {
   ENCRYPTING,
@@ -52,21 +53,23 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { UPDATE_SESSION } from 'constants/sessionConstants';
+import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
 import { signalInitAction } from 'actions/signalClientActions';
-import { setActiveAccountAction } from 'actions/accountsActions';
 import {
   initSmartWalletSdkAction,
-  loadSmartWalletAccountsAction,
+  importSmartWalletAccountsAction,
 } from 'actions/smartWalletActions';
-import { saveDbAction } from './dbActions';
-import { generateWalletMnemonicAction } from './walletActions';
-import { updateConnectionKeyPairs } from './connectionKeyPairActions';
+import { saveDbAction } from 'actions/dbActions';
+import { generateWalletMnemonicAction } from 'actions/walletActions';
+import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
+import { initDefaultAccountAction } from 'actions/accountsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -92,6 +95,7 @@ const getTokenWalletAndRegister = async (privateKey: string, api: Object, user: 
   const updateOAuth = updateOAuthTokensCB(dispatch);
   await updateOAuth(oAuthTokens);
 
+  dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
   dispatch({
     type: UPDATE_USER,
     payload: {
@@ -122,8 +126,19 @@ const getTokenWalletAndRegister = async (privateKey: string, api: Object, user: 
   };
 };
 
-const finishRegistration = async (
-  api: Object, userInfo: Object, dispatch: Function, mnemonic: string, privateKey: string) => {
+const finishRegistration = async ({
+  api,
+  dispatch,
+  getState,
+  userInfo,
+  mnemonic,
+  privateKey,
+  address,
+  isImported,
+}) => {
+  // create default key-based account if needed
+  await dispatch(initDefaultAccountAction(address, userInfo.walletId, false));
+
   // get & store initial assets
   const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
   const rates = await getExchangeRates(Object.keys(initialAssets));
@@ -137,8 +152,15 @@ const finishRegistration = async (
     type: SET_INITIAL_ASSETS,
     payload: initialAssets,
   });
-
   dispatch(saveDbAction('assets', { assets: initialAssets }));
+
+  const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
+  if (smartWalletFeatureEnabled) {
+    // create smart wallet account only for new wallets
+    const createNewAccount = !isImported;
+    await dispatch(initSmartWalletSdkAction(privateKey));
+    await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount));
+  }
 
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
@@ -165,7 +187,6 @@ const navigateToAppFlow = (isWalletBackedUp: boolean) => {
 export const registerWalletAction = () => {
   return async (dispatch: Function, getState: () => any, api: Object) => {
     const currentState = getState();
-    const { featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } } } = currentState;
     const {
       mnemonic,
       pin,
@@ -178,12 +199,15 @@ export const registerWalletAction = () => {
 
     // STEP 0: Clear local storage
     await storage.removeAll();
+    dispatch({ type: UPDATE_ACCOUNTS, payload: [] });
     dispatch({ type: UPDATE_CONTACTS, payload: [] });
     dispatch({ type: UPDATE_INVITATIONS, payload: [] });
     dispatch({ type: UPDATE_ASSETS, payload: {} });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
     dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
     dispatch({ type: SET_HISTORY, payload: {} });
+    dispatch({ type: UPDATE_COLLECTIBLES, payload: {} });
+    dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} });
 
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
@@ -251,18 +275,6 @@ export const registerWalletAction = () => {
       ...oAuthTokens,
     }));
 
-    // create smart wallet account only for new wallets
-    if (smartWalletFeatureEnabled && !importedWallet) {
-      await dispatch(initSmartWalletSdkAction(wallet.privateKey));
-      await dispatch(loadSmartWalletAccountsAction(wallet.privateKey));
-      const { accounts: { data: accounts } } = getState();
-      const account = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
-      if (account) {
-        // TODO: what if account failed?
-        await dispatch(setActiveAccountAction(account.id));
-      }
-    }
-
     if (!registrationSucceed) { return; }
 
     // STEP 5: finish registration
@@ -274,7 +286,16 @@ export const registerWalletAction = () => {
         finalMnemonic = '';
       }
     }
-    await finishRegistration(api, userInfo, dispatch, finalMnemonic, wallet.privateKey);
+    await finishRegistration({
+      api,
+      dispatch,
+      getState,
+      userInfo,
+      address: normalizeWalletAddress(wallet.address),
+      mnemonic: finalMnemonic,
+      privateKey: wallet.privateKey,
+      isImported,
+    });
 
     // STEP 6: all done, navigate to the assets screen
     const isWalletBackedUp = isImported || isBackedUp;
@@ -282,15 +303,45 @@ export const registerWalletAction = () => {
   };
 };
 
+/*
+  We call this action in various cases when we fail to register user wallet:
+  1) during import
+  2) during new wallet creation
+  3) when user re-opened the app and sees RetryApiRegistration screen
+ */
 export const registerOnBackendAction = () => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const {
       wallet: {
         data: walletData,
-        onboarding: { apiUser, mnemonic, privateKey },
+        onboarding: {
+          apiUser,
+          mnemonic,
+          privateKey,
+          importedWallet,
+        },
         backupStatus: { isBackedUp, isImported },
       },
     } = getState();
+
+    let walletMnemonic = '';
+    if (get(importedWallet, 'mnemonic')) {
+      walletMnemonic = get(importedWallet, 'mnemonic');
+    } else if (get(mnemonic, 'original')) {
+      walletMnemonic = get(mnemonic, 'original');
+    } else if (get(walletData, 'mnemonic')) {
+      walletMnemonic = get(walletData, 'mnemonic');
+    }
+
+    let walletPrivateKey = '';
+    if (get(importedWallet, 'privateKey')) {
+      walletPrivateKey = get(importedWallet, 'privateKey');
+    } else if (privateKey) {
+      walletPrivateKey = privateKey;
+    } else if (get(walletData, 'privateKey')) {
+      walletPrivateKey = get(walletData, 'privateKey');
+    }
+
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
@@ -302,7 +353,7 @@ export const registerOnBackendAction = () => {
     await delay(1000);
 
     const { registrationSucceed, userInfo } = await getTokenWalletAndRegister(
-      walletData.privateKey,
+      walletPrivateKey,
       api,
       user,
       dispatch,
@@ -311,7 +362,17 @@ export const registerOnBackendAction = () => {
 
     Answers.logCustom('Create User');
 
-    await finishRegistration(api, userInfo, dispatch, mnemonic, privateKey);
+    await finishRegistration({
+      api,
+      dispatch,
+      getState,
+      userInfo,
+      address: normalizeWalletAddress(walletData.address),
+      mnemonic: walletMnemonic,
+      privateKey: walletPrivateKey,
+      isImported,
+    });
+
     const isWalletBackedUp = isImported || isBackedUp;
     navigateToAppFlow(isWalletBackedUp);
   };

@@ -46,7 +46,7 @@ import { sdkConstants } from '@archanova/sdk';
 
 const storage = Storage.getInstance('db');
 
-export const initDefaultAccountAction = (walletAddress: string, walletId: string) => {
+export const initDefaultAccountAction = (walletAddress: string, walletId: string, migrateData: boolean = true) => {
   return async (dispatch: Function) => {
     const { balances = {} } = await storage.get('balances');
     const { history = {} } = await storage.get('history');
@@ -63,6 +63,12 @@ export const initDefaultAccountAction = (walletAddress: string, walletId: string
       type: ADD_ACCOUNT,
       payload: keyBasedAccount,
     });
+    await dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
+
+    // data migration is optional
+    if (!migrateData) {
+      return Promise.resolve();
+    }
 
     /*
      * Data migration
@@ -73,7 +79,7 @@ export const initDefaultAccountAction = (walletAddress: string, walletId: string
       const migratedBalances = migrateBalancesToAccountsFormat(balances, [keyBasedAccount]);
       if (migratedBalances) {
         dispatch({ type: UPDATE_BALANCES, payload: migratedBalances });
-        dispatch(saveDbAction('balances', { balances: migratedBalances }, true));
+        await dispatch(saveDbAction('balances', { balances: migratedBalances }, true));
       }
     }
 
@@ -82,7 +88,7 @@ export const initDefaultAccountAction = (walletAddress: string, walletId: string
       const migratedHistory = migrateTxHistoryToAccountsFormat(history, [keyBasedAccount]);
       if (migratedHistory) {
         dispatch({ type: SET_HISTORY, payload: migratedHistory });
-        dispatch(saveDbAction('history', { history: migratedHistory }, true));
+        await dispatch(saveDbAction('history', { history: migratedHistory }, true));
       }
     }
 
@@ -91,7 +97,7 @@ export const initDefaultAccountAction = (walletAddress: string, walletId: string
       const migratedCollectibles = migrateCollectiblesToAccountsFormat(collectibles, [keyBasedAccount]);
       if (migratedCollectibles) {
         dispatch({ type: UPDATE_COLLECTIBLES, payload: migratedCollectibles });
-        dispatch(saveDbAction('collectibles', { collectibles: migratedCollectibles }, true));
+        await dispatch(saveDbAction('collectibles', { collectibles: migratedCollectibles }, true));
       }
     }
 
@@ -103,11 +109,10 @@ export const initDefaultAccountAction = (walletAddress: string, walletId: string
       );
       if (migratedCollectiblesHistory) {
         dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: migratedCollectiblesHistory });
-        dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: migratedCollectiblesHistory }, true));
+        await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: migratedCollectiblesHistory }, true));
       }
     }
 
-    dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
     return Promise.resolve();
   };
 };

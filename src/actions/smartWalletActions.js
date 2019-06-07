@@ -136,6 +136,63 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
   };
 };
 
+export const importSmartWalletAccountsAction = (privateKey: string, createNewAccount: boolean) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    if (!smartWalletService) return;
+
+    const { user = {} } = await storage.get('user');
+    const {
+      session: { data: session },
+      assets: { data: assets },
+    } = getState();
+
+    const smartAccounts = await smartWalletService.getAccounts();
+    if (!smartAccounts.length && createNewAccount) {
+      const newSmartAccount = await smartWalletService.createAccount();
+      await api.registerSmartWallet({
+        walletId: user.walletId,
+        privateKey,
+        ethAddress: newSmartAccount.address,
+        fcmToken: session.fcmToken,
+      });
+      if (newSmartAccount) smartAccounts.push(newSmartAccount);
+    }
+    dispatch({
+      type: SET_SMART_WALLET_ACCOUNTS,
+      payload: smartAccounts,
+    });
+
+    // register on backend missed accounts
+    let backendAccounts = await api.listAccounts(user.walletId);
+    const registerOnBackendPromises = smartAccounts.map(async account => {
+      const accountAddress = account.address.toLowerCase();
+      const backendAccount = backendAccounts.find(({ ethAddress }) => ethAddress.toLowerCase() === accountAddress);
+      if (!backendAccount) {
+        return api.registerSmartWallet({
+          walletId: user.walletId,
+          privateKey,
+          ethAddress: account.address,
+          fcmToken: session.fcmToken,
+        });
+      }
+      return Promise.resolve();
+    });
+    await Promise.all(registerOnBackendPromises);
+    backendAccounts = await api.listAccounts(user.walletId);
+
+    const newAccountsPromises = smartAccounts.map(async account => {
+      return dispatch(addNewAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, backendAccounts));
+    });
+    await Promise.all(newAccountsPromises);
+
+    if (smartAccounts.length) {
+      await dispatch(setActiveAccountAction(smartAccounts[0].address));
+      dispatch(fetchAssetsBalancesAction(assets));
+      dispatch(fetchCollectiblesAction());
+    }
+  };
+};
+
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
   return async (dispatch: Function) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
@@ -210,7 +267,7 @@ export const deploySmartWalletAction = () => {
       ));
     }
     // update accounts info
-    dispatch(loadSmartWalletAccountsAction());
+    await dispatch(loadSmartWalletAccountsAction());
     const account = await smartWalletService.fetchConnectedAccount();
     dispatch({
       type: SET_SMART_WALLET_CONNECTED_ACCOUNT,

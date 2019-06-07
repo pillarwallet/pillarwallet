@@ -38,13 +38,14 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
-import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { ACCOUNT_TYPES, UPDATE_ACCOUNTS, ADD_ACCOUNT } from 'constants/accountsConstants';
 import {
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_SDK_INIT,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
+import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import * as connectionKeyActions from 'actions/connectionKeyPairActions';
@@ -93,6 +94,13 @@ const mockSmartWalletAccount = {
   isActive: false,
   type: ACCOUNT_TYPES.SMART_WALLET,
   extra: mockSmartWalletAccountApiData,
+};
+
+const mockKeyBasedAccount = {
+  id: mockWallet.address,
+  isActive: true,
+  type: ACCOUNT_TYPES.KEY_BASED,
+  walletId: 2,
 };
 
 const mockImportedWallet: Object = {
@@ -148,19 +156,24 @@ describe('Wallet actions', () => {
       featureFlags: { data: { SMART_WALLET_ENABLED: false } },
     });
     const expectedActions = [
+      { type: UPDATE_ACCOUNTS, payload: [] },
       { type: UPDATE_CONTACTS, payload: [] },
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
+      { type: UPDATE_COLLECTIBLES, payload: {} },
+      { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
       { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
+      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
+      { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
@@ -189,28 +202,34 @@ describe('Wallet actions', () => {
       accounts: { data: [mockSmartWalletAccount] },
       featureFlags: { data: { SMART_WALLET_ENABLED: true } },
       smartWallet: { upgrade: { status: null } },
+      assets: { data: {} },
     });
     const expectedActions = [
+      { type: UPDATE_ACCOUNTS, payload: [] },
       { type: UPDATE_CONTACTS, payload: [] },
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
+      { type: UPDATE_COLLECTIBLES, payload: {} },
+      { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
       { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
+      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
+      { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
+      { type: UPDATE_RATES, payload: mockExchangeRates },
+      { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
       { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
       { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, isActive: true }] },
       { type: SET_SMART_WALLET_UPGRADE_STATUS, payload: SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED },
-      { type: UPDATE_RATES, payload: mockExchangeRates },
-      { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
@@ -237,20 +256,28 @@ describe('Wallet actions', () => {
         backupStatus: mockBackupStatus,
       },
       featureFlags: { data: { SMART_WALLET_ENABLED: false } },
+      assets: { data: {} },
+      connectionIdentityKeys: { data: [] },
+      connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
     });
     const expectedActions = [
+      { type: UPDATE_ACCOUNTS, payload: [] },
       { type: UPDATE_CONTACTS, payload: [] },
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
+      { type: UPDATE_COLLECTIBLES, payload: {} },
+      { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
       { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
+      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
+      { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },

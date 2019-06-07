@@ -51,6 +51,7 @@ import Intercom from 'react-native-intercom';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
+import { userHasSmartWallet } from 'utils/smartWallet';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
@@ -65,6 +66,8 @@ const chat = new ChatService();
 export const loginAction = (pin: string, touchID?: boolean = false, onLoginSuccess?: Function) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const {
+      accounts: { data: accounts },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
     } = getState();
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
@@ -125,8 +128,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         await
         dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys));
 
-        const { featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } } } = getState();
-        if (smartWalletFeatureEnabled && wallet.privateKey) {
+        if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
           await dispatch(initSmartWalletAccountAction(wallet.privateKey));
         }
       } else {

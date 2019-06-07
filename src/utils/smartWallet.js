@@ -78,3 +78,8 @@ export function getSmartWalletStatus(accounts: Accounts, smartWalletState: Objec
 export function isConnectedToSmartAccount(connectedAccountRecord: ?Object) {
   return connectedAccountRecord && Object.keys(connectedAccountRecord).length;
 }
+
+export function userHasSmartWallet(accounts: Accounts = []) {
+  const smartAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+  return !!smartAccount;
+}
