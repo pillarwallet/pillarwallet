@@ -5,16 +5,10 @@ exports[`Header should render Header correctly 1`] = `
   style={
     Array [
       Object {
-        "alignItems": "flex-end",
         "borderBottomWidth": 0,
-        "flexDirection": "row",
-        "height": 48,
-        "justifyContent": "flex-end",
-        "marginBottom": 0,
-        "marginTop": 20,
         "paddingBottom": 0,
-        "paddingLeft": 20,
-        "paddingRight": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
         "paddingTop": 0,
         "zIndex": 10,
       },
@@ -23,87 +17,104 @@ exports[`Header should render Header correctly 1`] = `
   }
 >
   <View
-    showTitleLeft={false}
     style={
       Array [
         Object {
-          "alignItems": "flex-start",
-          "alignSelf": "center",
-          "flex": 1,
-        },
-        Object {
           "alignItems": "flex-end",
-          "flexBasis": 0,
-          "flexGrow": 1,
-          "flexShrink": 1,
-          "justifyContent": "flex-start",
+          "flexDirection": "row",
+          "height": 50,
+          "justifyContent": "flex-end",
+          "marginBottom": 4,
+          "marginTop": 20,
         },
         undefined,
       ]
     }
   >
     <View
-      accessible={true}
-      isTVSelectable={true}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
+      flex={[Function]}
+      showTitleLeft={false}
       style={
-        Object {
-          "alignItems": "flex-start",
-          "alignSelf": "flex-start",
-          "height": 44,
-          "justifyContent": "center",
-          "marginLeft": -10,
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 10,
-          "paddingRight": 0,
-          "paddingTop": 0,
-          "position": "relative",
-          "width": 44,
-        }
+        Array [
+          Object {
+            "alignItems": "flex-start",
+            "alignSelf": "center",
+            "flex": 1,
+          },
+          Object {
+            "alignItems": "flex-end",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-start",
+          },
+          undefined,
+        ]
       }
     >
       <View
-        name="back"
+        accessible={true}
+        isTVSelectable={true}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
         style={
           Object {
-            "color": "#0A1427",
-            "fontSize": 24,
-            "marginBottom": undefined,
-            "marginLeft": undefined,
-            "marginRight": undefined,
-            "marginTop": undefined,
+            "alignItems": "flex-start",
+            "alignSelf": "flex-start",
+            "height": 44,
+            "justifyContent": "center",
+            "marginLeft": -10,
+            "opacity": 1,
+            "paddingBottom": 0,
+            "paddingLeft": 10,
+            "paddingRight": 0,
             "paddingTop": 0,
+            "position": "relative",
+            "width": 44,
           }
         }
-      />
+      >
+        <View
+          name="back"
+          style={
+            Object {
+              "color": "#0A1427",
+              "fontSize": 24,
+              "marginBottom": undefined,
+              "marginLeft": undefined,
+              "marginRight": undefined,
+              "marginTop": undefined,
+              "paddingTop": 0,
+            }
+          }
+        />
+      </View>
     </View>
+    <View
+      flex={[Function]}
+      onClose={[Function]}
+      style={
+        Array [
+          Object {
+            "alignItems": "flex-end",
+            "alignSelf": "center",
+            "flex": 1,
+          },
+          Object {
+            "alignItems": "flex-end",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
   </View>
-  <View
-    flex={[Function]}
-    onClose={[Function]}
-    style={
-      Array [
-        Object {
-          "alignItems": "flex-end",
-          "alignSelf": "center",
-          "flex": 1,
-        },
-        Object {
-          "alignItems": "flex-end",
-          "flexBasis": 0,
-          "flexGrow": 1,
-          "flexShrink": 1,
-          "justifyContent": "flex-end",
-        },
-        undefined,
-      ]
-    }
-  />
 </View>
 `;

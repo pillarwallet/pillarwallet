@@ -62,10 +62,14 @@ const SOCIAL_TYPES = [
   CHAT,
 ];
 
-const ActivityFeedList = styled.FlatList``;
+const ActivityFeedList = styled.FlatList`
+  width: 100%;
+  flex: 1;
+`;
 
 const ActivityFeedWrapper = styled.View`
   background-color: ${props => props.color ? props.color : baseColors.white};
+  flex: 1;
 `;
 
 const ActivityFeedHeader = styled.View`
@@ -100,6 +104,8 @@ type Props = {
   fetchAllCollectiblesData: Function,
   contentContainerStyle?: Object,
   initialNumToRender: number,
+  getFeedLength?: Function,
+  esComponent?: React.Node,
 };
 
 type State = {
@@ -110,20 +116,54 @@ type State = {
 };
 
 class ActivityFeed extends React.Component<Props, State> {
-  state = {
-    showModal: false,
-    selectedEventData: null,
-    eventType: '',
-    eventStatus: '',
-  };
+  feedData: Object[];
 
   static defaultProps = {
     initialNumToRender: 7,
   };
 
+  constructor(props: Props) {
+    super(props);
+    this.feedData = [];
+    this.state = {
+      showModal: false,
+      selectedEventData: null,
+      eventType: '',
+      eventStatus: '',
+    };
+  }
+
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
+  }
+
+  componentDidMount() {
+    const { getFeedLength } = this.props;
+    if (getFeedLength) getFeedLength(this.feedData.length);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      notifications,
+      contacts,
+      invitations,
+      history,
+      customFeedData,
+      openSeaTxHistory,
+      esData,
+      getFeedLength,
+    } = this.props;
+
+    if (getFeedLength && (prevProps.notifications !== notifications ||
+      prevProps.contacts !== contacts ||
+      prevProps.invitations !== invitations ||
+      prevProps.history !== history ||
+      prevProps.customFeedData !== customFeedData ||
+      prevProps.openSeaTxHistory !== openSeaTxHistory ||
+      prevProps.esData !== esData)) {
+      getFeedLength(this.feedData.length);
+    }
   }
 
   selectEvent = (eventData: Object, eventType, eventStatus) => {
@@ -335,6 +375,9 @@ class ActivityFeed extends React.Component<Props, State> {
       openSeaTxHistory,
       contentContainerStyle,
       initialNumToRender,
+      activeTab,
+      esData,
+      esComponent,
     } = this.props;
 
     const {
@@ -380,7 +423,6 @@ class ActivityFeed extends React.Component<Props, State> {
       .sort((a, b) => b.createdAt - a.createdAt);
 
     const feedData = customFeedData || allFeedData;
-    const { activeTab, esData } = this.props;
 
     const filteredHistory = feedData.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
@@ -392,11 +434,15 @@ class ActivityFeed extends React.Component<Props, State> {
       return true;
     });
 
-    const processedHistory = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
+    this.feedData = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
 
-    if (processedHistory.length < 1 && !esData) {
+    if (this.feedData.length < 1 && !(esData || esComponent)) {
       return null;
     }
+
+    const additionalContentContainerStyle = !this.feedData.length
+      ? { justifyContent: 'center', flex: 1 }
+      : {};
 
     return (
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
@@ -405,7 +451,7 @@ class ActivityFeed extends React.Component<Props, State> {
           <Title subtitle title={feedTitle} />
         </ActivityFeedHeader>}
         <ActivityFeedList
-          data={processedHistory}
+          data={this.feedData}
           initialNumToRender={initialNumToRender}
           extraData={notifications}
           renderItem={this.renderActivityFeedItem}
@@ -418,8 +464,9 @@ class ActivityFeed extends React.Component<Props, State> {
           onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
           keyExtractor={this.getActivityFeedListKeyExtractor}
-          ListEmptyComponent={<EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />}
-          contentContainerStyle={contentContainerStyle}
+          ListEmptyComponent={esComponent
+          || <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />}
+          contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
         />
         <SlideModal
           isVisible={showModal}

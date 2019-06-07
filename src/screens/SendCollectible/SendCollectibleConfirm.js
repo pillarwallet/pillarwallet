@@ -58,12 +58,15 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   assetData: Object;
   receiver: string;
   scroll: Object;
+  source: string;
 
   constructor(props) {
     super(props);
     this.scroll = React.createRef();
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.receiver = this.props.navigation.getParam('receiver', '');
+    this.source = this.props.navigation.getParam('source', '');
+
     this.state = {
       note: null,
       rinkebyETH: '',
@@ -110,6 +113,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
+      source: this.source,
     });
   };
 

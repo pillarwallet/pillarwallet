@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Sentry } from 'react-native-sentry';
+import { Answers } from 'react-native-fabric';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import {
   UPDATE_ASSETS_STATE,
@@ -217,10 +218,7 @@ export const sendAssetAction = (
         const updatedCollectibles = collectibles.filter(thisAsset => thisAsset.id !== transaction.tokenId);
         dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
       } else {
-        dispatch({
-          type: ADD_TRANSACTION,
-          payload: historyTx,
-        });
+        dispatch({ type: ADD_TRANSACTION, payload: historyTx });
         const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
       }
@@ -229,10 +227,7 @@ export const sendAssetAction = (
     // update transaction count
     if (tokenTx.hash) {
       const txCountNew = { lastCount: transactionCount, lastNonce: tokenTx.nonce };
-      dispatch({
-        type: UPDATE_TX_COUNT,
-        payload: txCountNew,
-      });
+      dispatch({ type: UPDATE_TX_COUNT, payload: txCountNew });
       dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
     }
 
@@ -326,11 +321,10 @@ export const addAssetAction = (asset: Asset) => {
     } = getState();
     const updatedAssets = { ...assets, [asset.symbol]: { ...asset } };
     dispatch(saveDbAction('assets', { assets: updatedAssets }));
-    dispatch({
-      type: UPDATE_ASSETS,
-      payload: updatedAssets,
-    });
+    dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
     dispatch(fetchAssetsBalancesAction(assets));
+
+    Answers.logCustom('Token Assets Added', { Symbol: asset.symbol });
   };
 };
 

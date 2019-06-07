@@ -18,8 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import DeviceInfo from 'react-native-device-info';
-import ethers from 'ethers';
-import { getRandomInt } from 'utils/common';
+import ethers, { providers } from 'ethers';
+
+import { isHexString } from '@walletconnect/utils';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { getRandomInt, ethSign } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
 
@@ -40,12 +43,36 @@ export function generateWordsToValidate(numWordsToGenerate: number, maxWords: nu
   return chosenWords;
 }
 
-
 export async function getSaltedPin(pin: string, dispatch: Function): Promise<string> {
-  let { deviceUniqueId = null } = await storage.get('deviceUniqueId') || {};
+  let { deviceUniqueId = null } = (await storage.get('deviceUniqueId')) || {};
   if (!deviceUniqueId) {
     deviceUniqueId = DeviceInfo.getUniqueID();
     await dispatch(saveDbAction('deviceUniqueId', { deviceUniqueId }, true));
   }
   return deviceUniqueId + pin + deviceUniqueId.slice(0, 5);
+}
+
+// handle eth_signTransaction
+export async function signTransaction(trx: Object, wallet: Object): Promise<string> {
+  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  if (trx && trx.from) {
+    delete trx.from;
+  }
+  const result = await wallet.sign(trx);
+  return result;
+}
+
+// handle eth_sign
+export async function signMessage(message: any, wallet: Object): Promise<string> {
+  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  // TODO: this method needs to be replaced when ethers.js is migrated to v4.0
+  const result = ethSign(message, wallet.privateKey);
+  return result;
+}
+
+// handle personal_sign
+export async function signPersonalMessage(message: string, wallet: Object): Promise<string> {
+  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  const result = await wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
+  return result;
 }

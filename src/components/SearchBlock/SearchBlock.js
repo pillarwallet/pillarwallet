@@ -166,7 +166,6 @@ class SearchBlock extends React.Component<Props, State> {
                 autoCapitalize: 'none',
               }}
               placeholder={searchInputPlaceholder}
-              marginTop={15}
             />
           </Wrapper>
         </HeaderWrapper>

@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Answers } from 'react-native-fabric';
 import { UPDATE_USER, REGISTERED, USER_PHONE_VERIFIED } from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { saveDbAction } from './dbActions';
@@ -33,11 +34,16 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
         type: UPDATE_USER,
         payload: { user: updatedUser, state: REGISTERED },
       });
+      Answers.logCustom('Update User Profile');
       if (callback) callback();
     } else {
       dispatch({
         type: ADD_NOTIFICATION,
-        payload: { message: 'Please try again later', title: 'Changes have not been saved', messageType: 'warning' },
+        payload: {
+          message: 'Please try again later',
+          title: 'Changes have not been saved',
+          messageType: 'warning',
+        },
       });
     }
   };
@@ -74,9 +80,7 @@ export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Fun
     const response = await api.verifyPhone(props);
     const { responseStatus } = response;
     if (responseStatus === 200) {
-      dispatch({
-        type: USER_PHONE_VERIFIED,
-      });
+      dispatch({ type: USER_PHONE_VERIFIED });
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
@@ -85,6 +89,7 @@ export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Fun
           messageType: 'success',
         },
       });
+
       if (callback) callback();
     } else {
       dispatch({

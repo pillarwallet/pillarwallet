@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { RefreshControl, Platform } from 'react-native';
+import { RefreshControl, Platform, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -42,7 +42,7 @@ import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import ChatTab from 'components/ChatTab';
-import Tabs from 'components/Tabs';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { ApiUser } from 'models/Contacts';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
@@ -102,6 +102,7 @@ type State = {
   activeTab: string,
   isSheetOpen: boolean,
   forceOpen: boolean,
+  collapseHeight: number,
 };
 
 class Contact extends React.Component<Props, State> {
@@ -124,6 +125,7 @@ class Contact extends React.Component<Props, State> {
       activeTab: 'CHAT',
       isSheetOpen: shouldOpenSheet,
       forceOpen: shouldOpenSheet,
+      collapseHeight: 0,
     };
   }
 
@@ -225,6 +227,17 @@ class Contact extends React.Component<Props, State> {
     this.setState({ isSheetOpen: true });
   };
 
+  manageFeedCollapseHeight = (length: number) => {
+    const { collapseHeight } = this.state;
+    const TWO_ITEMS_HEIGHT = 215;
+    const EMPTY_STATE_HEIGHT = 160;
+    if (length && collapseHeight !== TWO_ITEMS_HEIGHT) {
+      this.setState({ collapseHeight: TWO_ITEMS_HEIGHT });
+    } else if (!length && collapseHeight !== EMPTY_STATE_HEIGHT) {
+      this.setState({ collapseHeight: EMPTY_STATE_HEIGHT });
+    }
+  };
+
   renderSheetContent = (displayContact, unreadCount) => {
     const { activeTab, isSheetOpen } = this.state;
     const { navigation } = this.props;
@@ -237,10 +250,15 @@ class Contact extends React.Component<Props, State> {
           additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
           showArrowsOnly
           contentContainerStyle={{ paddingTop: 10 }}
-          esData={{
-            title: 'Make your first step',
-            body: 'Your activity will appear here.',
-          }}
+          esComponent={(
+            <View style={{ width: '100%', alignItems: 'center' }}>
+              <EmptyStateParagraph
+                title="Make your first step"
+                bodyText="Your activity will appear here."
+              />
+            </View>
+          )}
+          getFeedLength={(length) => this.manageFeedCollapseHeight(length)}
         />
       );
     }
@@ -250,9 +268,14 @@ class Contact extends React.Component<Props, State> {
         isOpen={activeTab === CHAT && isSheetOpen}
         navigation={navigation}
         hasUnreads={!!unreadCount}
+        getCollapseHeight={(cHeight) => { this.setState({ collapseHeight: cHeight }); }}
       />
     );
   };
+
+  onSendPress(contact: Object): void {
+    this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
+  }
 
   render() {
     const {
@@ -268,6 +291,7 @@ class Contact extends React.Component<Props, State> {
       manageContactType,
       activeTab,
       forceOpen,
+      collapseHeight,
     } = this.state;
 
     const contactName = navigation.getParam('username', '');
@@ -308,24 +332,13 @@ class Contact extends React.Component<Props, State> {
         hideSheet={!isAccepted}
         bottomSheetProps={{
           forceOpen,
-          initialSheetHeight: 240,
+          sheetHeight: activeTab === CHAT ? collapseHeight + 130 : collapseHeight,
           swipeToCloseHeight: 62,
           onSheetOpen: this.handleSheetOpen,
           onSheetClose: () => { this.setState({ isSheetOpen: false }); },
-          animateHeight: activeTab === CHAT,
-          floatingHeaderContent: (
-            <Tabs
-              initialActiveTab={activeTab}
-              tabs={contactTabs}
-              wrapperStyle={{
-                position: 'absolute',
-                top: 8,
-                left: 0,
-                zIndex: 2,
-                width: '100%',
-              }}
-            />
-          ),
+          tabs: contactTabs,
+          activeTab,
+          inverse: activeTab === CHAT,
         }}
         bottomSheetChildren={
           (
@@ -368,7 +381,7 @@ class Contact extends React.Component<Props, State> {
             <CircleButton
               label="Send"
               icon={iconSend}
-              onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
+              onPress={() => this.onSendPress(displayContact)}
             />
           </CircleButtonsWrapper>
          }
