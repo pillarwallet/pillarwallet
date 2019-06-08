@@ -49,7 +49,6 @@ import Spinner from 'components/Spinner';
 import { isIphoneX, handleUrlPress } from 'utils/common';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 import { Answers } from 'react-native-fabric';
-import truncate from 'lodash.truncate';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -68,7 +67,6 @@ type Props = {
   draft: ?string,
   isOpen: boolean,
   hasUnreads?: boolean,
-  getCollapseHeight: Function,
 }
 
 type State = {
@@ -139,6 +137,70 @@ const renderTime = (props: Props) => {
   );
 };
 
+const renderBubble = (props: Props) => {
+  const isWarning = isWarningMessage(props.currentMessage.type);
+  return (<Bubble
+    {...props}
+    textStyle={{
+      left: {
+        color: isWarning ? baseColors.white : baseColors.slateBlack,
+        fontSize: fontSizes.extraSmall,
+        fontFamily: 'Aktiv Grotesk App',
+        fontWeight: '400',
+      },
+      right: {
+        color: baseColors.slateBlack,
+        fontSize: fontSizes.extraSmall,
+        fontFamily: 'Aktiv Grotesk App',
+        fontWeight: '400',
+      },
+    }}
+    wrapperStyle={{
+      left: {
+        backgroundColor: isWarning ? baseColors.brightBlue : baseColors.zumthor,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: isWarning ? baseColors.brightBlue : baseColors.tropicalBlue,
+        maxWidth: 262,
+        marginTop: 4,
+        paddingHorizontal: 2,
+        paddingTop: 2,
+        minWidth: 120,
+      },
+      right: {
+        backgroundColor: baseColors.white,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: baseColors.tropicalBlue,
+        maxWidth: 262,
+        marginTop: 4,
+        paddingHorizontal: 2,
+        paddingTop: 2,
+        minWidth: 120,
+        marginLeft: 20,
+      },
+    }}
+    renderTime={() => (
+      <TimeWrapper>
+        {renderTime(props)}
+      </TimeWrapper>
+    )}
+    touchableProps={{
+      onPress: () => {
+        const { status } = props.currentMessage;
+
+        if (status === UNDECRYPTABLE_MESSAGE) {
+          // TODO: change the alert message text
+          Alert.alert(
+            'Cannot decrypt the message',
+            'We are using end-to-end encryption. You or your interlocutor should update chat keys.',
+          );
+        }
+      },
+    }}
+  />);
+};
+
 const renderSend = (props: Props) => (
   <Send
     {...props}
@@ -180,7 +242,6 @@ const renderInputToolbar = (props: Props) => {
         borderColor: baseColors.lightGray,
         margin: 0,
       }}
-
     />
   );
 };
@@ -207,6 +268,27 @@ const renderMessage = (props: Props) => (
     }}
   />
 );
+
+const customSystemMessage = (props) => {
+  if (props.currentMessage.empty) {
+    return (
+      <SystemMessageWrapper>
+        <EmptyStateParagraph
+          title="Break the ice"
+          bodyText="Start chatting - recent chats will appear here"
+        />
+      </SystemMessageWrapper>
+    );
+  }
+  if (props.currentMessage.loading) {
+    return (
+      <SystemMessageWrapper>
+        <Spinner />
+      </SystemMessageWrapper>
+    );
+  }
+  return null;
+};
 
 const parsePatterns = () => [
   {
@@ -371,6 +453,7 @@ class ChatTab extends React.Component<Props, State> {
   };
 
   renderComposer = (props: Props) => {
+    const { isOpen } = this.props;
     return (
       <Composer
         {...props}
@@ -385,114 +468,11 @@ class ChatTab extends React.Component<Props, State> {
           lineHeight: fontSizes.small,
         }}
         placeholder="Type your message here"
+        textInputProps={{
+          editable: isOpen,
+        }}
       />
     );
-  };
-
-  renderBubble = (props) => {
-    const isWarning = isWarningMessage(props.currentMessage.type);
-    return (<Bubble
-      {...props}
-      textStyle={{
-        left: {
-          color: isWarning ? baseColors.white : baseColors.slateBlack,
-          fontSize: fontSizes.extraSmall,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-        },
-        right: {
-          color: baseColors.slateBlack,
-          fontSize: fontSizes.extraSmall,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-        },
-      }}
-      wrapperStyle={{
-        left: {
-          backgroundColor: isWarning ? baseColors.brightBlue : baseColors.zumthor,
-          borderRadius: 5,
-          borderWidth: 1,
-          borderColor: isWarning ? baseColors.brightBlue : baseColors.tropicalBlue,
-          maxWidth: 262,
-          marginTop: 4,
-          paddingHorizontal: 2,
-          paddingTop: 2,
-          minWidth: 120,
-        },
-        right: {
-          backgroundColor: baseColors.white,
-          borderRadius: 5,
-          borderWidth: 1,
-          borderColor: baseColors.tropicalBlue,
-          maxWidth: 262,
-          marginTop: 4,
-          paddingHorizontal: 2,
-          paddingTop: 2,
-          minWidth: 120,
-          marginLeft: 20,
-        },
-      }}
-      renderTime={() => (
-        <TimeWrapper>
-          {renderTime(props)}
-        </TimeWrapper>
-      )}
-      touchableProps={{
-        onPress: () => {
-          const { status } = props.currentMessage;
-
-          if (status === UNDECRYPTABLE_MESSAGE) {
-            // TODO: change the alert message text
-            Alert.alert(
-              'Cannot decrypt the message',
-              'We are using end-to-end encryption. You or your interlocutor should update chat keys.',
-            );
-          }
-        },
-        onLayout: (e) => {
-          const { getCollapseHeight } = this.props;
-          if (!Object.keys(props.nextMessage).length && getCollapseHeight) {
-            getCollapseHeight(e.nativeEvent.layout.height);
-          }
-          },
-      }}
-    />);
-  };
-
-  renderCustomSystemMessage = (props) => {
-    if (props.currentMessage.empty) {
-      return (
-        <SystemMessageWrapper
-          onLayout={(e) => {
-            const { getCollapseHeight } = this.props;
-            if (!Object.keys(props.nextMessage).length && getCollapseHeight) {
-              getCollapseHeight(e.nativeEvent.layout.height);
-            }
-          }}
-          style={{ paddingTop: 0 }}
-        >
-          <EmptyStateParagraph
-            title="Break the ice"
-            bodyText="Start chatting - recent chats will appear here"
-          />
-        </SystemMessageWrapper>
-      );
-    }
-    if (props.currentMessage.loading) {
-      return (
-        <SystemMessageWrapper
-          onLayout={(e) => {
-            const { getCollapseHeight } = this.props;
-            if (!Object.keys(props.nextMessage).length && getCollapseHeight) {
-              getCollapseHeight(e.nativeEvent.layout.height);
-            }
-          }}
-        >
-          <Spinner />
-        </SystemMessageWrapper>
-      );
-    }
-    return null;
   };
 
   updateChatInput = (text) => {
@@ -557,15 +537,6 @@ class ChatTab extends React.Component<Props, State> {
           },
         },
       ];
-    } else if (messages[contact.username] && messages[contact.username].length && !isOpen) {
-      const messageToShowCopy = messages[contact.username];
-      const lastMessageToShow = { ...messageToShowCopy[0] };
-
-      if (lastMessageToShow.text.length > 65) {
-        const messageTextCopy = lastMessageToShow.text;
-        lastMessageToShow.text = truncate(messageTextCopy, { length: 65 });
-      }
-      messagesToShow = [lastMessageToShow];
     } else if (messages[contact.username] && messages[contact.username].length) {
       messagesToShow = messages[contact.username];
     }
@@ -579,7 +550,7 @@ class ChatTab extends React.Component<Props, State> {
         user={{
           _id: this.props.user.username,
         }}
-        renderBubble={this.renderBubble}
+        renderBubble={renderBubble}
         renderAvatar={this.renderAvatar}
         renderComposer={this.renderComposer}
         renderInputToolbar={renderInputToolbar}
@@ -591,7 +562,7 @@ class ChatTab extends React.Component<Props, State> {
         renderTime={renderTime}
         minInputToolbarHeight={INPUT_HEIGHT}
         parsePatterns={parsePatterns}
-        renderSystemMessage={this.renderCustomSystemMessage}
+        renderSystemMessage={customSystemMessage}
       />
     );
   }
