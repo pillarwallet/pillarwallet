@@ -275,7 +275,9 @@ export default class BottomSheet extends React.Component<Props, State> {
         const { pageX, pageY } = e.nativeEvent;
         const topValueSheetPosition = (screenHeight - animatedHeight._value) + this.tabHeaderHeight;
 
-        if (!captureTabs && !!tabs) {
+        if (isSheetOpen) {
+          return false;
+        } else if (!captureTabs && !!tabs) {
           if (pageY > topValueSheetPosition + 30
             && pageY < topValueSheetPosition + 60
             && pageX.toFixed(2) > HORIZONTAL_TAB_BOUNDARIES[0]
@@ -294,7 +296,7 @@ export default class BottomSheet extends React.Component<Props, State> {
             }
           }
         }
-        return !isSheetOpen;
+        return true;
       },
       onPanResponderTerminationRequest: () => false,
     });
