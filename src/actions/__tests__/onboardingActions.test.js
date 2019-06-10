@@ -140,7 +140,6 @@ describe('Wallet actions', () => {
   let store;
   beforeEach(() => {
     store = mockStore({});
-    return storage.save('user', { user: { username: 'asd' } });
   });
 
   it(`should expect series of actions with payload to be dispatched 
@@ -257,8 +256,6 @@ describe('Wallet actions', () => {
       },
       featureFlags: { data: { SMART_WALLET_ENABLED: false } },
       assets: { data: {} },
-      connectionIdentityKeys: { data: [] },
-      connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
