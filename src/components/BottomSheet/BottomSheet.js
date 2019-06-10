@@ -25,6 +25,7 @@ import {
   Platform,
   View,
   TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
@@ -32,6 +33,7 @@ import { getiOSNavbarHeight } from 'utils/common';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
 import Tabs from 'components/Tabs';
 import Title from 'components/Title';
+import { CHAT } from 'constants/tabsConstants';
 
 type Props = {
   screenHeight: number, // IMPORTANT to calculate sheet height,
@@ -54,12 +56,14 @@ type Props = {
   // (resulting in cropping overflow and revealing upper content on sheet opening)
   sheetHeader?: string,
   onHeaderLayout?: Function,
+  constantScreenHeight: number,
 }
 
 type State = {
   animatedHeight: Animated.Value,
   isSheetOpen: boolean,
   isDragging: boolean,
+  keyboardVisible: boolean,
 }
 
 const screenHeightFromDimensions = Dimensions.get('window').height;
@@ -171,6 +175,7 @@ export default class BottomSheet extends React.Component<Props, State> {
   forceAnimateAfterNotCapturedTouch: boolean;
   currentDirection: string;
   tabHeaderHeight: number;
+  keyboardEventListeners: any[] = [];
 
   static defaultProps = {
     screenHeight: USABLE_SCREEN_HEIGHT,
@@ -187,6 +192,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       screenHeight,
       topOffset,
       sheetHeight,
+      activeTab,
     } = this.props;
     this.panResponder = React.createRef();
     this.isTransitioning = false;
@@ -200,11 +206,20 @@ export default class BottomSheet extends React.Component<Props, State> {
       animatedHeight: new Animated.Value(initialHeight),
       isSheetOpen: forceOpen,
       isDragging: false,
+      keyboardVisible: forceOpen && activeTab === CHAT,
     };
   }
 
   componentDidMount() {
     this.buildPanResponder();
+    this.keyboardEventListeners = [
+      Keyboard.addListener('keyboardDidShow', () => this.setState({ keyboardVisible: true })),
+      Keyboard.addListener('keyboardDidHide', () => this.setState({ keyboardVisible: false })),
+    ];
+  }
+
+  componentWillUnmount() {
+    this.keyboardEventListeners.forEach((eventListener) => eventListener.remove());
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -275,7 +290,9 @@ export default class BottomSheet extends React.Component<Props, State> {
         const { pageX, pageY } = e.nativeEvent;
         const topValueSheetPosition = (screenHeight - animatedHeight._value) + this.tabHeaderHeight;
 
-        if (!captureTabs && !!tabs) {
+        if (isSheetOpen) {
+          return false;
+        } else if (!captureTabs && !!tabs) {
           if (pageY > topValueSheetPosition + 30
             && pageY < topValueSheetPosition + 60
             && pageX.toFixed(2) > HORIZONTAL_TAB_BOUNDARIES[0]
@@ -286,7 +303,7 @@ export default class BottomSheet extends React.Component<Props, State> {
               }, 100);
               return false;
             }
-          } else if (activeTab === 'CHAT') {
+          } else if (activeTab === CHAT) {
             if (pageY > screenHeight - 50
               && pageY < screenHeight) {
               this.animateSheet();
@@ -294,7 +311,7 @@ export default class BottomSheet extends React.Component<Props, State> {
             }
           }
         }
-        return !isSheetOpen;
+        return true;
       },
       onPanResponderTerminationRequest: () => false,
     });
@@ -317,16 +334,6 @@ export default class BottomSheet extends React.Component<Props, State> {
     animatedHeight.setValue(updatedSheetHeight);
   };
 
-  onAnimationEnd = (isGoingToUp: boolean) => {
-    this.isTransitioning = false;
-    const { onSheetOpen, onSheetClose } = this.props;
-    if (isGoingToUp && onSheetOpen) {
-      onSheetOpen();
-    } else if (onSheetClose) {
-      onSheetClose();
-    }
-  };
-
   animateSheet = (direction?: string) => {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
@@ -337,6 +344,8 @@ export default class BottomSheet extends React.Component<Props, State> {
       sheetHeight,
       screenHeight,
       topOffset,
+      onSheetOpen,
+      onSheetClose,
     } = this.props;
 
     let isGoingToUp = !isSheetOpen;
@@ -353,11 +362,18 @@ export default class BottomSheet extends React.Component<Props, State> {
         ref.scrollToOffset({ x: 0, y: 0, animated: false });
       });
     }
+
+    if (isGoingToUp && onSheetOpen) {
+      onSheetOpen();
+    } else if (onSheetClose) {
+      onSheetClose();
+    }
+
     Animated.spring(animatedHeight, {
       toValue: updatedSheetHeight,
       bounciness: 0,
     }).start(() => {
-      this.onAnimationEnd(isGoingToUp);
+      this.isTransitioning = false;
     });
   };
 
@@ -366,11 +382,11 @@ export default class BottomSheet extends React.Component<Props, State> {
       animatedHeight,
       isSheetOpen,
       isDragging,
+      keyboardVisible,
     } = this.state;
     const {
       topOffset,
       children,
-      screenHeight,
       sheetHeight,
       tabs,
       activeTab,
@@ -378,9 +394,10 @@ export default class BottomSheet extends React.Component<Props, State> {
       sheetWrapperStyle,
       sheetHeader,
       onHeaderLayout,
+      constantScreenHeight,
     } = this.props;
 
-    const openedSheetHeight = screenHeight - topOffset;
+    const openedSheetHeight = constantScreenHeight - topOffset;
 
     const style = {
       height: animatedHeight,
@@ -404,7 +421,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       openedSheetHeight,
     ];
 
-    const leftHandlebarAnimation = {
+    let leftHandlebarAnimation = {
       transform: [
         {
           rotate: animatedHeight.interpolate({
@@ -415,7 +432,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       ],
     };
 
-    const rightHandlebarAnimation = {
+    let rightHandlebarAnimation = {
       transform: [
         {
           rotate: animatedHeight.interpolate({
@@ -426,12 +443,18 @@ export default class BottomSheet extends React.Component<Props, State> {
       ],
     };
 
-    const backdropAnimation = {
+    let backdropAnimation = {
       opacity: animatedHeight.interpolate({
         inputRange: backdropOutputRanges,
         outputRange: [0, BACKDROP_OPACITY],
       }),
     };
+
+    if (keyboardVisible) {
+      leftHandlebarAnimation = { transform: [{ rotate: '15deg' }] };
+      rightHandlebarAnimation = { transform: [{ rotate: '-15deg' }] };
+      backdropAnimation = { opacity: BACKDROP_OPACITY };
+    }
 
     if (inverse) {
       wrapperStyle = {
@@ -443,10 +466,6 @@ export default class BottomSheet extends React.Component<Props, State> {
         overflow: 'hidden',
       };
     }
-
-    // if (tabs) {
-    //   wrapperStyle.paddingTop = 30;
-    // }
 
     return (
       <React.Fragment>
