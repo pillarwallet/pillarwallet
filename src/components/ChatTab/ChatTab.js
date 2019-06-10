@@ -581,7 +581,7 @@ class ChatTab extends React.Component<Props, State> {
 
       if (lastMessageToShow.text.length > 65) {
         const messageTextCopy = lastMessageToShow.text;
-        lastMessageToShow.text = truncate(messageTextCopy, { length: 65 });
+        lastMessageToShow.text = truncate(messageTextCopy, { length: 55 });
       }
       messagesToShow = [lastMessageToShow];
     } else if (messages[contact.username] && messages[contact.username].length) {

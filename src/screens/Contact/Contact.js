@@ -275,7 +275,7 @@ class Contact extends React.Component<Props, State> {
 
   manageFeedCollapseHeight = (length: number) => {
     const { collapsedActivityHeight } = this.state;
-    const TWO_ITEMS_HEIGHT = 215;
+    const TWO_ITEMS_HEIGHT = 245;
     const EMPTY_STATE_HEIGHT = 160;
     if (length && collapsedActivityHeight !== TWO_ITEMS_HEIGHT) {
       this.setState({ collapsedActivityHeight: TWO_ITEMS_HEIGHT });
@@ -385,7 +385,7 @@ class Contact extends React.Component<Props, State> {
         hideSheet={!isAccepted}
         bottomSheetProps={{
           forceOpen,
-          sheetHeight: activeTab === CHAT ? collapsedChatHeight + 130 : collapsedActivityHeight,
+          sheetHeight: activeTab === CHAT ? collapsedChatHeight + 140 : collapsedActivityHeight,
           swipeToCloseHeight: 62,
           onSheetOpen: this.handleSheetOpen,
           onSheetClose: () => { this.setState({ isSheetOpen: false }); },
