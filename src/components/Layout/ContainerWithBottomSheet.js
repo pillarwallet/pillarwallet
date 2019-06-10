@@ -38,6 +38,7 @@ type Props = {
 
 type State = {
   screenHeight: number,
+  constantScreenHeight: number,
 };
 
 export const Center = styled.View`
@@ -51,6 +52,7 @@ export default class ContainerWithBottomSheet extends React.Component<Props, Sta
     this.sheetHeaderHeight = 0;
     this.state = {
       screenHeight: 0,
+      constantScreenHeight: 0,
     };
   }
 
@@ -71,7 +73,7 @@ export default class ContainerWithBottomSheet extends React.Component<Props, Sta
       hideSheet,
     } = this.props;
 
-    const { screenHeight } = this.state;
+    const { screenHeight, constantScreenHeight } = this.state;
     const bottomPadding = !hideSheet && screenHeight && Object.keys(bottomSheetProps).length
     && !!bottomSheetProps.sheetHeight
       ? (bottomSheetProps.sheetHeight - 30)
@@ -84,6 +86,7 @@ export default class ContainerWithBottomSheet extends React.Component<Props, Sta
           style={{ paddingBottom: bottomPadding + this.sheetHeaderHeight }}
           onLayout={(event) => {
             this.setState({ screenHeight: event.nativeEvent.layout.height });
+            if (!constantScreenHeight) this.setState({ constantScreenHeight: event.nativeEvent.layout.height });
           }}
         >
           {children}
@@ -91,6 +94,7 @@ export default class ContainerWithBottomSheet extends React.Component<Props, Sta
           <BottomSheet
             {...bottomSheetProps}
             screenHeight={screenHeight}
+            constantScreenHeight={constantScreenHeight}
             onHeaderLayout={(height) => { this.sheetHeaderHeight = height; }}
           >
             {bottomSheetChildren}

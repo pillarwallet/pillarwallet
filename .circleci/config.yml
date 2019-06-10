@@ -845,14 +845,14 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/chatTab
+                  - develop
       - hockeyapp_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - fix/chatTab
+                  - develop
       - stage_ios:
           requires:
             - build-and-test

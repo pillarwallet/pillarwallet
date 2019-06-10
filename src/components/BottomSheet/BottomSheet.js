@@ -25,6 +25,7 @@ import {
   Platform,
   View,
   TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
@@ -32,6 +33,7 @@ import { getiOSNavbarHeight } from 'utils/common';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
 import Tabs from 'components/Tabs';
 import Title from 'components/Title';
+import { CHAT } from 'constants/tabsConstants';
 
 type Props = {
   screenHeight: number, // IMPORTANT to calculate sheet height,
@@ -54,12 +56,14 @@ type Props = {
   // (resulting in cropping overflow and revealing upper content on sheet opening)
   sheetHeader?: string,
   onHeaderLayout?: Function,
+  constantScreenHeight: number,
 }
 
 type State = {
   animatedHeight: Animated.Value,
   isSheetOpen: boolean,
   isDragging: boolean,
+  keyboardVisible: boolean,
 }
 
 const screenHeightFromDimensions = Dimensions.get('window').height;
@@ -130,17 +134,17 @@ const HandlebarsWrapper = styled.View`
   margin-top: 10px;
 `;
 
-// const Handlebar = styled.View`
-//   height: 5px;
-//   width: 20px;
-//   background-color: ${baseColors.electricBlue};
-//   position: absolute;
-//   top: 2px;
-//   border-radius: 6px;
-//   ${props => props.right
-//     ? 'right: 2.2px;'
-//     : 'left: 2.2px;'}
-// `;
+const Handlebar = styled.View`
+  height: 5px;
+  width: 20px;
+  background-color: ${baseColors.electricBlue};
+  position: absolute;
+  top: 2px;
+  border-radius: 6px;
+  ${props => props.right
+    ? 'right: 2.2px;'
+    : 'left: 2.2px;'}
+`;
 
 const ClickableBackdrop = styled.View`
   flex: 1;
@@ -151,13 +155,12 @@ const ClickableBackdrop = styled.View`
   bottom: 0;
   z-index: 10;
   background-color: ${baseColors.black};
-  opacity: 0.5;
 `;
 
 const AnimatedSheet = Animated.createAnimatedComponent(Sheet);
 const AnimatedModalWrapper = Animated.createAnimatedComponent(ModalWrapper);
-// const AnimatedLeftHandlebar = Animated.createAnimatedComponent(Handlebar);
-// const AnimatedRightHandlebar = Animated.createAnimatedComponent(Handlebar);
+const AnimatedLeftHandlebar = Animated.createAnimatedComponent(Handlebar);
+const AnimatedRightHandlebar = Animated.createAnimatedComponent(Handlebar);
 const AnimatedClickableBackdrop = Animated.createAnimatedComponent(ClickableBackdrop);
 
 const HORIZONTAL_TAB_BOUNDARIES = [14, screenWidth - 28];
@@ -172,6 +175,7 @@ export default class BottomSheet extends React.Component<Props, State> {
   forceAnimateAfterNotCapturedTouch: boolean;
   currentDirection: string;
   tabHeaderHeight: number;
+  keyboardEventListeners: any[] = [];
 
   static defaultProps = {
     screenHeight: USABLE_SCREEN_HEIGHT,
@@ -188,6 +192,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       screenHeight,
       topOffset,
       sheetHeight,
+      activeTab,
     } = this.props;
     this.panResponder = React.createRef();
     this.isTransitioning = false;
@@ -201,11 +206,20 @@ export default class BottomSheet extends React.Component<Props, State> {
       animatedHeight: new Animated.Value(initialHeight),
       isSheetOpen: forceOpen,
       isDragging: false,
+      keyboardVisible: forceOpen && activeTab === CHAT,
     };
   }
 
   componentDidMount() {
     this.buildPanResponder();
+    this.keyboardEventListeners = [
+      Keyboard.addListener('keyboardDidShow', () => this.setState({ keyboardVisible: true })),
+      Keyboard.addListener('keyboardDidHide', () => this.setState({ keyboardVisible: false })),
+    ];
+  }
+
+  componentWillUnmount() {
+    this.keyboardEventListeners.forEach((eventListener) => eventListener.remove());
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -289,7 +303,7 @@ export default class BottomSheet extends React.Component<Props, State> {
               }, 100);
               return false;
             }
-          } else if (activeTab === 'CHAT') {
+          } else if (activeTab === CHAT) {
             if (pageY > screenHeight - 50
               && pageY < screenHeight) {
               this.animateSheet();
@@ -368,21 +382,22 @@ export default class BottomSheet extends React.Component<Props, State> {
       animatedHeight,
       isSheetOpen,
       isDragging,
+      keyboardVisible,
     } = this.state;
     const {
       topOffset,
       children,
-      screenHeight,
-      // sheetHeight,
+      sheetHeight,
       tabs,
       activeTab,
       inverse,
       sheetWrapperStyle,
       sheetHeader,
       onHeaderLayout,
+      constantScreenHeight,
     } = this.props;
 
-    const openedSheetHeight = screenHeight - topOffset;
+    const openedSheetHeight = constantScreenHeight - topOffset;
 
     const style = {
       height: animatedHeight,
@@ -392,48 +407,54 @@ export default class BottomSheet extends React.Component<Props, State> {
 
     let wrapperStyle = {};
 
-    // const handlebarsOutputRanges = [
-    //   sheetHeight,
-    //   sheetHeight + 10,
-    //   sheetHeight + 20,
-    //   openedSheetHeight - 20,
-    //   openedSheetHeight - 10,
-    //   openedSheetHeight,
-    // ];
-    //
-    // const backdropOutputRanges = [
-    //   sheetHeight,
-    //   openedSheetHeight,
-    // ];
+    const handlebarsOutputRanges = [
+      sheetHeight,
+      sheetHeight + 10,
+      sheetHeight + 20,
+      openedSheetHeight - 20,
+      openedSheetHeight - 10,
+      openedSheetHeight,
+    ];
 
-    // const leftHandlebarAnimation = {
-    //   transform: [
-    //     {
-    //       rotate: animatedHeight.interpolate({
-    //         inputRange: handlebarsOutputRanges,
-    //         outputRange: ['-15deg', '-15deg', '0deg', '0deg', '15deg', '15deg'],
-    //       }),
-    //     },
-    //   ],
-    // };
-    //
-    // const rightHandlebarAnimation = {
-    //   transform: [
-    //     {
-    //       rotate: animatedHeight.interpolate({
-    //         inputRange: handlebarsOutputRanges,
-    //         outputRange: ['15deg', '15deg', '0deg', '0deg', '-15deg', '-15deg'],
-    //       }),
-    //     },
-    //   ],
-    // };
-    //
-    // const backdropAnimation = {
-    //   opacity: animatedHeight.interpolate({
-    //     inputRange: backdropOutputRanges,
-    //     outputRange: [0, BACKDROP_OPACITY],
-    //   }),
-    // };
+    const backdropOutputRanges = [
+      sheetHeight,
+      openedSheetHeight,
+    ];
+
+    let leftHandlebarAnimation = {
+      transform: [
+        {
+          rotate: animatedHeight.interpolate({
+            inputRange: handlebarsOutputRanges,
+            outputRange: ['-15deg', '-15deg', '0deg', '0deg', '15deg', '15deg'],
+          }),
+        },
+      ],
+    };
+
+    let rightHandlebarAnimation = {
+      transform: [
+        {
+          rotate: animatedHeight.interpolate({
+            inputRange: handlebarsOutputRanges,
+            outputRange: ['15deg', '15deg', '0deg', '0deg', '-15deg', '-15deg'],
+          }),
+        },
+      ],
+    };
+
+    let backdropAnimation = {
+      opacity: animatedHeight.interpolate({
+        inputRange: backdropOutputRanges,
+        outputRange: [0, BACKDROP_OPACITY],
+      }),
+    };
+
+    if (keyboardVisible) {
+      leftHandlebarAnimation = { transform: [{ rotate: '15deg' }] };
+      rightHandlebarAnimation = { transform: [{ rotate: '-15deg' }] };
+      backdropAnimation = { opacity: BACKDROP_OPACITY };
+    }
 
     if (inverse) {
       wrapperStyle = {
@@ -446,10 +467,6 @@ export default class BottomSheet extends React.Component<Props, State> {
       };
     }
 
-    // if (tabs) {
-    //   wrapperStyle.paddingTop = 30;
-    // }
-
     return (
       <React.Fragment>
         <AnimatedSheet
@@ -459,13 +476,13 @@ export default class BottomSheet extends React.Component<Props, State> {
         >
           <RelativeHeader>
             <HandlebarsWrapper>
-              { /* <AnimatedLeftHandlebar
+              <AnimatedLeftHandlebar
                 style={leftHandlebarAnimation}
               />
               <AnimatedRightHandlebar
                 right
                 style={rightHandlebarAnimation}
-              /> */}
+              />
             </HandlebarsWrapper>
             {!!sheetHeader &&
             <Title
@@ -507,7 +524,7 @@ export default class BottomSheet extends React.Component<Props, State> {
             onPress={this.animateSheet}
           >
             <AnimatedClickableBackdrop
-              // style={backdropAnimation}
+              style={backdropAnimation}
               activeOpacity={BACKDROP_OPACITY}
             />
           </TouchableWithoutFeedback>
