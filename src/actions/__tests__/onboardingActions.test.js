@@ -51,7 +51,6 @@ import { registerWalletAction } from 'actions/onboardingActions';
 import * as connectionKeyActions from 'actions/connectionKeyPairActions';
 import { transformAssetsToObject } from 'utils/assets';
 import PillarSdk from 'services/api';
-import Storage from 'services/storage';
 import { WebSocket } from 'mock-socket';
 
 global.WebSocket = WebSocket;
@@ -125,8 +124,6 @@ const mockBackupStatus: Object = {
   isImported: false,
   isBackedUp: false,
 };
-
-const storage = Storage.getInstance('db');
 
 const mockExchangeRates = {
   ETH: {
