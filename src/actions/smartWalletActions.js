@@ -39,8 +39,8 @@ import {
   SMART_WALLET_UPGRADE_STATUSES,
   ADD_SMART_WALLET_RECOVERY_AGENTS,
 } from 'constants/smartWalletConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { ETH } from 'constants/assetsConstants';
+import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { ETH, UPDATE_BALANCES } from 'constants/assetsConstants';
 
 import {
   TX_PENDING_STATUS,
@@ -69,6 +69,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import {
   addNewAccountAction,
   setActiveAccountAction,
+  switchAccountAction,
 } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 import {
@@ -789,5 +790,58 @@ export const settleBalancesAction = (assetsToSettle: Object[]) => {
         autoClose: true,
       });
     }
+  };
+};
+
+export const cleanSmartWalletAccountsAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accounts: { data: accounts },
+      balances: { data: balances },
+      history: { data: history },
+    } = getState();
+
+    const activeAccount = accounts.find(({ isActive }) => isActive);
+    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+    const smartAccounts = accounts.filter(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
+
+    if (!smartAccounts.length) {
+      Toast.show({
+        message: 'Smart Accounts not found',
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
+
+    dispatch({
+      type: UPDATE_ACCOUNTS,
+      payload: [keyBasedAccount],
+    });
+    dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
+
+    const updatedBalances = { [keyBasedAccount.id]: balances[keyBasedAccount.id] };
+    dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
+    dispatch({
+      type: UPDATE_BALANCES,
+      payload: updatedBalances,
+    });
+
+    const updatedHistory = { [keyBasedAccount.id]: history[keyBasedAccount.id] };
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch({
+      type: SET_HISTORY,
+      payload: updatedHistory,
+    });
+
+    if (activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
+      dispatch(switchAccountAction(keyBasedAccount.id));
+    }
+
+    Toast.show({
+      message: 'Smart Accounts cleaned',
+      type: 'success',
+      autoClose: false,
+    });
   };
 };
