@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { RefreshControl, Platform } from 'react-native';
+import { RefreshControl, Platform, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -42,6 +42,7 @@ import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import ChatTab from 'components/ChatTab';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { ApiUser } from 'models/Contacts';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
@@ -101,7 +102,7 @@ type State = {
   activeTab: string,
   isSheetOpen: boolean,
   forceOpen: boolean,
-  collapseHeight: ?number,
+  collapseHeight: number,
 };
 
 class Contact extends React.Component<Props, State> {
@@ -124,7 +125,7 @@ class Contact extends React.Component<Props, State> {
       activeTab: 'CHAT',
       isSheetOpen: shouldOpenSheet,
       forceOpen: shouldOpenSheet,
-      collapseHeight: null,
+      collapseHeight: 0,
     };
   }
 
@@ -229,7 +230,7 @@ class Contact extends React.Component<Props, State> {
   manageFeedCollapseHeight = (length: number) => {
     const { collapseHeight } = this.state;
     const TWO_ITEMS_HEIGHT = 215;
-    const EMPTY_STATE_HEIGHT = 260;
+    const EMPTY_STATE_HEIGHT = 160;
     if (length && collapseHeight !== TWO_ITEMS_HEIGHT) {
       this.setState({ collapseHeight: TWO_ITEMS_HEIGHT });
     } else if (!length && collapseHeight !== EMPTY_STATE_HEIGHT) {
@@ -249,10 +250,14 @@ class Contact extends React.Component<Props, State> {
           additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
           showArrowsOnly
           contentContainerStyle={{ paddingTop: 10 }}
-          esData={{
-            title: 'Make your first step',
-            body: 'Your activity will appear here.',
-          }}
+          esComponent={(
+            <View style={{ width: '100%', alignItems: 'center' }}>
+              <EmptyStateParagraph
+                title="Make your first step"
+                bodyText="Your activity will appear here."
+              />
+            </View>
+          )}
           getFeedLength={(length) => this.manageFeedCollapseHeight(length)}
         />
       );

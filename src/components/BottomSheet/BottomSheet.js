@@ -130,17 +130,17 @@ const HandlebarsWrapper = styled.View`
   margin-top: 10px;
 `;
 
-const Handlebar = styled.View`
-  height: 5px;
-  width: 20px;
-  background-color: ${baseColors.electricBlue};
-  position: absolute;
-  top: 2px;
-  border-radius: 6px;
-  ${props => props.right
-    ? 'right: 2.2px;'
-    : 'left: 2.2px;'}
-`;
+// const Handlebar = styled.View`
+//   height: 5px;
+//   width: 20px;
+//   background-color: ${baseColors.electricBlue};
+//   position: absolute;
+//   top: 2px;
+//   border-radius: 6px;
+//   ${props => props.right
+//     ? 'right: 2.2px;'
+//     : 'left: 2.2px;'}
+// `;
 
 const ClickableBackdrop = styled.View`
   flex: 1;
@@ -151,12 +151,13 @@ const ClickableBackdrop = styled.View`
   bottom: 0;
   z-index: 10;
   background-color: ${baseColors.black};
+  opacity: 0.5;
 `;
 
 const AnimatedSheet = Animated.createAnimatedComponent(Sheet);
 const AnimatedModalWrapper = Animated.createAnimatedComponent(ModalWrapper);
-const AnimatedLeftHandlebar = Animated.createAnimatedComponent(Handlebar);
-const AnimatedRightHandlebar = Animated.createAnimatedComponent(Handlebar);
+// const AnimatedLeftHandlebar = Animated.createAnimatedComponent(Handlebar);
+// const AnimatedRightHandlebar = Animated.createAnimatedComponent(Handlebar);
 const AnimatedClickableBackdrop = Animated.createAnimatedComponent(ClickableBackdrop);
 
 const HORIZONTAL_TAB_BOUNDARIES = [14, screenWidth - 28];
@@ -319,16 +320,6 @@ export default class BottomSheet extends React.Component<Props, State> {
     animatedHeight.setValue(updatedSheetHeight);
   };
 
-  onAnimationEnd = (isGoingToUp: boolean) => {
-    this.isTransitioning = false;
-    const { onSheetOpen, onSheetClose } = this.props;
-    if (isGoingToUp && onSheetOpen) {
-      onSheetOpen();
-    } else if (onSheetClose) {
-      onSheetClose();
-    }
-  };
-
   animateSheet = (direction?: string) => {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
@@ -339,6 +330,8 @@ export default class BottomSheet extends React.Component<Props, State> {
       sheetHeight,
       screenHeight,
       topOffset,
+      onSheetOpen,
+      onSheetClose,
     } = this.props;
 
     let isGoingToUp = !isSheetOpen;
@@ -355,11 +348,18 @@ export default class BottomSheet extends React.Component<Props, State> {
         ref.scrollToOffset({ x: 0, y: 0, animated: false });
       });
     }
+
+    if (isGoingToUp && onSheetOpen) {
+      onSheetOpen();
+    } else if (onSheetClose) {
+      onSheetClose();
+    }
+
     Animated.spring(animatedHeight, {
       toValue: updatedSheetHeight,
       bounciness: 0,
     }).start(() => {
-      this.onAnimationEnd(isGoingToUp);
+      this.isTransitioning = false;
     });
   };
 
@@ -373,7 +373,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       topOffset,
       children,
       screenHeight,
-      sheetHeight,
+      // sheetHeight,
       tabs,
       activeTab,
       inverse,
@@ -392,48 +392,48 @@ export default class BottomSheet extends React.Component<Props, State> {
 
     let wrapperStyle = {};
 
-    const handlebarsOutputRanges = [
-      sheetHeight,
-      sheetHeight + 10,
-      sheetHeight + 20,
-      openedSheetHeight - 20,
-      openedSheetHeight - 10,
-      openedSheetHeight,
-    ];
+    // const handlebarsOutputRanges = [
+    //   sheetHeight,
+    //   sheetHeight + 10,
+    //   sheetHeight + 20,
+    //   openedSheetHeight - 20,
+    //   openedSheetHeight - 10,
+    //   openedSheetHeight,
+    // ];
+    //
+    // const backdropOutputRanges = [
+    //   sheetHeight,
+    //   openedSheetHeight,
+    // ];
 
-    const backdropOutputRanges = [
-      sheetHeight,
-      openedSheetHeight,
-    ];
-
-    const leftHandlebarAnimation = {
-      transform: [
-        {
-          rotate: animatedHeight.interpolate({
-            inputRange: handlebarsOutputRanges,
-            outputRange: ['-15deg', '-15deg', '0deg', '0deg', '15deg', '15deg'],
-          }),
-        },
-      ],
-    };
-
-    const rightHandlebarAnimation = {
-      transform: [
-        {
-          rotate: animatedHeight.interpolate({
-            inputRange: handlebarsOutputRanges,
-            outputRange: ['15deg', '15deg', '0deg', '0deg', '-15deg', '-15deg'],
-          }),
-        },
-      ],
-    };
-
-    const backdropAnimation = {
-      opacity: animatedHeight.interpolate({
-        inputRange: backdropOutputRanges,
-        outputRange: [0, BACKDROP_OPACITY],
-      }),
-    };
+    // const leftHandlebarAnimation = {
+    //   transform: [
+    //     {
+    //       rotate: animatedHeight.interpolate({
+    //         inputRange: handlebarsOutputRanges,
+    //         outputRange: ['-15deg', '-15deg', '0deg', '0deg', '15deg', '15deg'],
+    //       }),
+    //     },
+    //   ],
+    // };
+    //
+    // const rightHandlebarAnimation = {
+    //   transform: [
+    //     {
+    //       rotate: animatedHeight.interpolate({
+    //         inputRange: handlebarsOutputRanges,
+    //         outputRange: ['15deg', '15deg', '0deg', '0deg', '-15deg', '-15deg'],
+    //       }),
+    //     },
+    //   ],
+    // };
+    //
+    // const backdropAnimation = {
+    //   opacity: animatedHeight.interpolate({
+    //     inputRange: backdropOutputRanges,
+    //     outputRange: [0, BACKDROP_OPACITY],
+    //   }),
+    // };
 
     if (inverse) {
       wrapperStyle = {
@@ -459,13 +459,13 @@ export default class BottomSheet extends React.Component<Props, State> {
         >
           <RelativeHeader>
             <HandlebarsWrapper>
-              <AnimatedLeftHandlebar
+              { /* <AnimatedLeftHandlebar
                 style={leftHandlebarAnimation}
               />
               <AnimatedRightHandlebar
                 right
                 style={rightHandlebarAnimation}
-              />
+              /> */}
             </HandlebarsWrapper>
             {!!sheetHeader &&
             <Title
@@ -507,7 +507,7 @@ export default class BottomSheet extends React.Component<Props, State> {
             onPress={this.animateSheet}
           >
             <AnimatedClickableBackdrop
-              style={backdropAnimation}
+              // style={backdropAnimation}
               activeOpacity={BACKDROP_OPACITY}
             />
           </TouchableWithoutFeedback>
