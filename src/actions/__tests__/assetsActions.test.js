@@ -31,8 +31,8 @@ import {
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import type { Assets } from 'models/Asset';
 import PillarSdk from 'services/api';
-import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
-import { INITIAL_FEATURE_FLAGS } from '../../constants/featureFlagsConstants';
+import { sendAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);

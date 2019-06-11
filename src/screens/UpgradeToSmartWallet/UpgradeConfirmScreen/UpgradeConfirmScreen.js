@@ -77,7 +77,7 @@ const DetailsTitle = styled(BaseText)`
 `;
 
 const DetailsValue = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.medium}px;
   color: ${baseColors.slateBlack};
   font-weight: ${fontWeights.medium};
 `;
@@ -92,7 +92,7 @@ const DetailsWrapper = styled.View`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;

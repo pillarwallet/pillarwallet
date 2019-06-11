@@ -135,7 +135,7 @@ const StatusIcon = styled.View`
 const StatusText = styled(BaseText)`
   color: ${props => props.active ? baseColors.emerald : baseColors.fireEngineRed};
   font-size: ${fontSizes.extraExtraSmall}px;
-  letter-spacing: 0.15;
+  letter-spacing: 0.15px;
 `;
 
 const ValueLabel = styled(BaseText)`

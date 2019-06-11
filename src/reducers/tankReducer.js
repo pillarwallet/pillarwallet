@@ -14,7 +14,7 @@ const initialState = {
   },
 };
 
-export default function badgesReducer(
+export default function tankReducer(
   state: TankReducerState = initialState,
   action: TankReducerAction,
 ) {
