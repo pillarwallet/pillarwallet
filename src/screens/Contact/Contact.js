@@ -102,7 +102,8 @@ type State = {
   activeTab: string,
   isSheetOpen: boolean,
   forceOpen: boolean,
-  collapseHeight: number,
+  collapsedActivityHeight: ?number,
+  collapsedChatHeight: ?number,
 };
 
 class Contact extends React.Component<Props, State> {
@@ -122,10 +123,11 @@ class Contact extends React.Component<Props, State> {
       showManageContactModal: false,
       showConfirmationModal: false,
       manageContactType: '',
-      activeTab: 'CHAT',
+      activeTab: CHAT,
       isSheetOpen: shouldOpenSheet,
       forceOpen: shouldOpenSheet,
-      collapseHeight: 0,
+      collapsedChatHeight: null,
+      collapsedActivityHeight: null,
     };
   }
 
@@ -228,13 +230,13 @@ class Contact extends React.Component<Props, State> {
   };
 
   manageFeedCollapseHeight = (length: number) => {
-    const { collapseHeight } = this.state;
-    const TWO_ITEMS_HEIGHT = 215;
+    const { collapsedActivityHeight } = this.state;
+    const TWO_ITEMS_HEIGHT = 245;
     const EMPTY_STATE_HEIGHT = 160;
-    if (length && collapseHeight !== TWO_ITEMS_HEIGHT) {
-      this.setState({ collapseHeight: TWO_ITEMS_HEIGHT });
-    } else if (!length && collapseHeight !== EMPTY_STATE_HEIGHT) {
-      this.setState({ collapseHeight: EMPTY_STATE_HEIGHT });
+    if (length && collapsedActivityHeight !== TWO_ITEMS_HEIGHT) {
+      this.setState({ collapsedActivityHeight: TWO_ITEMS_HEIGHT });
+    } else if (!length && collapsedActivityHeight !== EMPTY_STATE_HEIGHT) {
+      this.setState({ collapsedActivityHeight: EMPTY_STATE_HEIGHT });
     }
   };
 
@@ -268,7 +270,7 @@ class Contact extends React.Component<Props, State> {
         isOpen={activeTab === CHAT && isSheetOpen}
         navigation={navigation}
         hasUnreads={!!unreadCount}
-        getCollapseHeight={(cHeight) => { this.setState({ collapseHeight: cHeight }); }}
+        getCollapseHeight={(cHeight) => { this.setState({ collapsedChatHeight: cHeight }); }}
       />
     );
   };
@@ -291,7 +293,8 @@ class Contact extends React.Component<Props, State> {
       manageContactType,
       activeTab,
       forceOpen,
-      collapseHeight,
+      collapsedActivityHeight,
+      collapsedChatHeight,
     } = this.state;
 
     const contactName = navigation.getParam('username', '');
@@ -332,7 +335,7 @@ class Contact extends React.Component<Props, State> {
         hideSheet={!isAccepted}
         bottomSheetProps={{
           forceOpen,
-          sheetHeight: activeTab === CHAT ? collapseHeight + 130 : collapseHeight,
+          sheetHeight: activeTab === CHAT ? collapsedChatHeight + 140 : collapsedActivityHeight,
           swipeToCloseHeight: 62,
           onSheetOpen: this.handleSheetOpen,
           onSheetClose: () => { this.setState({ isSheetOpen: false }); },
