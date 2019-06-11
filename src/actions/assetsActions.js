@@ -181,7 +181,10 @@ export const sendAssetAction = (
           });
         }
       } else {
+        // $FlowFixMe
         tokenTx = await transferERC20({
+          gasLimit,
+          gasPrice,
           to,
           amount,
           contractAddress,
@@ -194,6 +197,7 @@ export const sendAssetAction = (
           to,
           amount,
         }));
+        // $FlowFixMe
         if (tokenTx.hash) {
           historyTx = buildHistoryTransaction({
             ...tokenTx,

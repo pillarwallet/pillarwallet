@@ -23,21 +23,24 @@ import { BigNumber } from 'bignumber.js';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { utils } from 'ethers';
+import { utils, Interface } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
-import { Label, BoldText } from 'components/Typography';
-import type { Asset } from 'models/Asset';
+import { Label, BoldText, Paragraph } from 'components/Typography';
+import type { Asset, Balances } from 'models/Asset';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import type { JsonRpcRequest } from 'models/JsonRpc';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import { onWalletConnectRejectCallRequest } from 'actions/walletConnectActions';
-import { spacing, fontSizes } from 'utils/variables';
+import { spacing, fontSizes, baseColors } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
+import { getBalance } from 'utils/assets';
 import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+import { ETH } from 'constants/assetsConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -45,6 +48,7 @@ type Props = {
   session: Object,
   contacts: Object[],
   supportedAssets: Asset[],
+  balances: Balances,
 };
 
 type State = {
@@ -67,6 +71,13 @@ const Value = styled(BoldText)`
   font-size: ${fontSizes.medium};
 `;
 
+const WarningMessage = styled(Paragraph)`
+  text-align: center;
+  font-size: ${fontSizes.extraSmall};
+  color: ${baseColors.fireEngineRed};
+  padding-bottom: ${spacing.rhythm}px;
+`;
+
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 const GAS_LIMIT = 500000;
@@ -80,16 +91,16 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const { supportedAssets } = this.props;
 
     const {
-      to,
       gasPrice,
       gasLimit = GAS_LIMIT,
       value,
       data,
     } = payload.params[0];
+    let { to } = payload.params[0];
 
     let symbol = 'ETH';
     let asset = null;
-    let amount = new BigNumber(utils.formatEther(utils.bigNumberify(value).toString())).toNumber();
+    let amount = 0;
 
     const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
 
@@ -98,10 +109,18 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       if (matchingAssets && matchingAssets.length) {
         asset = matchingAssets[0]; // eslint-disable-line
         symbol = asset.symbol; // eslint-disable-line
-        amount = utils
-          .bigNumberify(data.substring(73))
-          .mul(utils.bigNumberify('10').pow(asset.decimals));
+        const iface = new Interface(ERC20_CONTRACT_ABI);
+        const {
+          args: [
+            methodToAddress,
+            methodValue = 0,
+          ],
+        } = iface.parseTransaction({ data, value }) || {}; // get method value
+        amount = parseFloat(utils.formatUnits(methodValue, asset.decimals));
+        to = methodToAddress;
       }
+    } else {
+      amount = new BigNumber(utils.formatEther(utils.bigNumberify(value).toString())).toNumber();
     }
 
     const txFeeInWei = utils
@@ -169,7 +188,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { contacts, session, navigation } = this.props;
+    const {
+      contacts,
+      session,
+      navigation,
+      balances,
+    } = this.props;
 
     const payload = navigation.getParam('payload', {});
     const { icon, name } = navigation.getParam('peerMeta', {});
@@ -178,6 +202,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     let body = null;
     let address = '';
     let message = '';
+    let errorMessage;
 
     switch (payload.method) {
       case 'eth_sendTransaction':
@@ -193,7 +218,17 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
           contractAddress,
         } = this.getTokenTransactionPayload(payload);
 
+        if (!amount) {
+          errorMessage = 'This token is not supported in Pillar Wallet yet';
+        }
+
         const txFee = utils.formatEther(txFeeInWei.toString());
+
+        const ethBalance = getBalance(balances, ETH);
+        const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
+        if (!errorMessage && !balanceInWei.gte(txFeeInWei)) {
+          errorMessage = 'Not enough ETH for transaction fee';
+        }
 
         const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
         const recipientUsername = getUserName(contact);
@@ -308,8 +343,13 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
           <Header onBack={this.handleDismissal} title={`${type} Request`} />
           {body}
           <Footer keyboardVerticalOffset={40}>
+            {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
             <FooterWrapper>
-              <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title={`Confirm ${type}`} />
+              <Button
+                disabled={!session.isOnline || !!errorMessage}
+                onPress={this.handleFormSubmit}
+                title={`Confirm ${type}`}
+              />
             </FooterWrapper>
           </Footer>
         </Container>
@@ -319,13 +359,14 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
+  assets: { supportedAssets, balances },
   contacts: { data: contacts },
   session: { data: session },
 }) => ({
   contacts,
   session,
   supportedAssets,
+  balances,
 });
 
 const mapDispatchToProps = dispatch => ({
