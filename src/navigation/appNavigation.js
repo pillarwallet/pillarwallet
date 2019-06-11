@@ -24,7 +24,7 @@ import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
 import { Animated, Easing, View, Platform, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
-// import ProfileImage from 'components/ProfileImage/ProfileImage';
+import ProfileImage from 'components/ProfileImage/ProfileImage';
 
 // services
 import { updateNavigationLastScreenState } from 'services/navigation';
@@ -91,7 +91,7 @@ import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import {
   ADD_TOKEN,
   ME,
-  // ME_TAB,
+  ME_TAB,
   ASSETS,
   ASSET,
   PROFILE,
@@ -152,11 +152,11 @@ const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_new.png');
 const iconPeople = require('assets/icons/icon_people_group.png');
-// const iconMe = require('assets/icons/icon_me.png');
+const iconMe = require('assets/icons/icon_me.png');
 const iconHome = require('assets/icons/icon_home_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_group_active.png');
-// const iconMeActive = require('assets/icons/icon_me_active.png');
+const iconMeActive = require('assets/icons/icon_me_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
 
 const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
@@ -273,21 +273,21 @@ const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => 
   );
 };
 
-// const tabBarImage = (image) => ({ focused }) => {
-//   return (
-//     <View style={{ padding: 4 }}>
-//       <ProfileImage
-//         noShadow
-//         borderWidth={2}
-//         borderColor={focused ? baseColors.electricBlue : baseColors.white}
-//         borderSpacing={1}
-//         initialsSize={10}
-//         diameter={24}
-//         uri={image}
-//       />
-//     </View>
-//   );
-// };
+const tabBarImage = (image) => ({ focused }) => {
+  return (
+    <View style={{ padding: 4 }}>
+      <ProfileImage
+        noShadow
+        borderWidth={2}
+        borderColor={focused ? baseColors.electricBlue : baseColors.white}
+        borderSpacing={1}
+        initialsSize={10}
+        diameter={24}
+        uri={image}
+      />
+    </View>
+  );
+};
 
 const tabBarLabel = labelText => ({ focused, tintColor }) => (
   <BaseText
@@ -347,15 +347,15 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
-    // [ME_TAB]: {
-    //   screen: meFlow,
-    //   navigationOptions: ({ screenProps }) => ({
-    //     tabBarIcon: screenProps.profileImage
-    //       ? tabBarImage(screenProps.profileImage)
-    //       : tabBarIcon(iconMeActive, iconMe),
-    //     tabBarLabel: tabBarLabel('Me'),
-    //   }),
-    // },
+    [ME_TAB]: {
+      screen: meFlow,
+      navigationOptions: ({ screenProps }) => ({
+        tabBarIcon: screenProps.profileImage
+          ? tabBarImage(screenProps.profileImage)
+          : tabBarIcon(iconMeActive, iconMe),
+        tabBarLabel: tabBarLabel('Me'),
+      }),
+    },
   }, {
     tabBarOptions: {
       activeTintColor: UIColors.primary,

@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -68,6 +69,8 @@ const Value = styled(BoldText)`
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
+const GAS_LIMIT = 500000;
+
 class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   state = {
     note: null,
@@ -79,14 +82,14 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const {
       to,
       gasPrice,
-      gasLimit,
+      gasLimit = GAS_LIMIT,
       value,
       data,
     } = payload.params[0];
 
     let symbol = 'ETH';
     let asset = null;
-    let amount = utils.bigNumberify(value).mul(utils.bigNumberify('10').pow(18));
+    let amount = new BigNumber(utils.formatEther(utils.bigNumberify(value).toString())).toNumber();
 
     const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
 
@@ -108,7 +111,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
     const transactionPayload = {
       gasLimit: utils.bigNumberify(gasLimit).toNumber(),
-      amount: utils.bigNumberify(amount).toNumber(),
+      amount,
       to,
       gasPrice: utils.bigNumberify(gasPrice).toNumber(),
       txFeeInWei: utils.bigNumberify(txFeeInWei).toNumber(),
