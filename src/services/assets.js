@@ -77,10 +77,10 @@ export async function transferERC20(options: ERC20TransferOptions) {
   } = options;
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
-  const decimals = defaultDecimals > 0
+  const contractAmount = defaultDecimals > 0
     ? utils.parseUnits(amount.toString(), defaultDecimals)
     : utils.bigNumberify(amount.toString());
-  const tokenTransfer = await contract.interface.functions.transfer.apply(null, [to, decimals]);
+  const tokenTransfer = await contract.interface.functions.transfer.apply(null, [to, contractAmount]);
   const { data } = tokenTransfer;
   return wallet.sendTransaction({
     gasLimit,
