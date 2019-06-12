@@ -115,8 +115,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             methodToAddress,
             methodValue = 0,
           ],
-        } = iface.parseTransaction({ data, value }) || {}; // get method value
-        amount = parseFloat(utils.formatUnits(methodValue, asset.decimals));
+        } = iface.parseTransaction({ data, value }) || {}; // get method value and address input
+        // do not parse amount as number, last decimal numbers might change after converting
+        amount = utils.formatUnits(methodValue, asset.decimals);
         to = methodToAddress;
       }
     } else {
@@ -128,7 +129,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       .mul(utils.bigNumberify(gasPrice))
       .toNumber();
 
-    const transactionPayload = {
+    return {
       gasLimit: utils.bigNumberify(gasLimit).toNumber(),
       amount,
       to,
@@ -139,8 +140,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       decimals: asset ? asset.decimals : 18,
       note: this.state.note,
     };
-
-    return transactionPayload;
   };
 
   handleFormSubmit = () => {

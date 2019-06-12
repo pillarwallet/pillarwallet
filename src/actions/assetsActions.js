@@ -202,7 +202,7 @@ export const sendAssetAction = (
           historyTx = buildHistoryTransaction({
             ...tokenTx,
             asset: symbol,
-            value: amount * (10 ** decimals),
+            value: parseFloat(amount) * (10 ** decimals),
             to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
             note,
           });

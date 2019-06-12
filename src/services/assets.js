@@ -34,7 +34,7 @@ type Address = string;
 type ERC20TransferOptions = {
   contractAddress: ?string,
   to: Address,
-  amount: number,
+  amount: number | string,
   wallet: Object,
   decimals: number,
   nonce?: number,
@@ -54,7 +54,7 @@ type ERC721TransferOptions = {
 type ETHTransferOptions = {
   gasLimit: number,
   gasPrice: number,
-  amount: number,
+  amount: number | string,
   to: Address,
   wallet: Object,
   nonce?: number,
