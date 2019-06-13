@@ -79,7 +79,7 @@ export default class WalletSettings extends React.PureComponent<Props> {
           />
           <ParagraphWrapper>
             <Paragraph light small>
-              No more worries about loosing everything. Friends are here to help. Nominate selected contacts to help
+              No more worries about losing everything. Friends are here to help. Nominate selected contacts to help
               you recover your wallet in case of loss of access to it.
             </Paragraph>
           </ParagraphWrapper>
