@@ -27,13 +27,11 @@ import { utils, Interface } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText, Paragraph } from 'components/Typography';
-import type { Asset, Balances } from 'models/Asset';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
-import type { JsonRpcRequest } from 'models/JsonRpc';
-import type { TokenTransactionPayload } from 'models/Transaction';
 import { onWalletConnectRejectCallRequest } from 'actions/walletConnectActions';
+import { fetchGasInfoAction } from 'actions/historyActions';
 import { spacing, fontSizes, baseColors } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { getBalance } from 'utils/assets';
@@ -41,6 +39,10 @@ import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import { ETH } from 'constants/assetsConstants';
+import type { Asset, Balances } from 'models/Asset';
+import type { JsonRpcRequest } from 'models/JsonRpc';
+import type { TokenTransactionPayload } from 'models/Transaction';
+import type { GasInfo } from 'models/GasInfo';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -49,6 +51,8 @@ type Props = {
   contacts: Object[],
   supportedAssets: Asset[],
   balances: Balances,
+  gasInfo: GasInfo,
+  fetchGasInfo: Function,
 };
 
 type State = {
@@ -56,10 +60,7 @@ type State = {
 };
 
 const FooterWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 0 20px;
+  flex-direction: column;
   width: 100%;
 `;
 
@@ -69,6 +70,10 @@ const LabeledRow = styled.View`
 
 const Value = styled(BoldText)`
   font-size: ${fontSizes.medium};
+`;
+
+const LabelSub = styled(Label)`
+  font-size: ${fontSizes.tiny};
 `;
 
 const WarningMessage = styled(Paragraph)`
@@ -92,12 +97,24 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     note: null,
   };
 
+  componentDidMount() {
+    this.props.fetchGasInfo();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      fetchGasInfo,
+      session: { isOnline },
+    } = this.props;
+    if (prevProps.session.isOnline !== isOnline && isOnline) {
+      fetchGasInfo();
+    }
+  }
+
   getTokenTransactionPayload = (payload: JsonRpcRequest): TokenTransactionPayload => {
-    const { supportedAssets } = this.props;
+    const { supportedAssets, gasInfo } = this.props;
 
     const {
-      gasPrice,
-      gasLimit = GAS_LIMIT,
       value,
       data,
     } = payload.params[0];
@@ -129,17 +146,27 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       amount = new BigNumber(utils.formatEther(utils.bigNumberify(value).toString())).toNumber();
     }
 
-    const txFeeInWei = utils
-      .bigNumberify(gasLimit)
-      .mul(utils.bigNumberify(gasPrice))
-      .toNumber();
+    /**
+     *  we're using our wallet avg gas price and gas limit if no gas price provided by WC
+     *
+     *  the reason we're not using gasPrice provided by WC since it's optional in platform end
+     *  also gas limit and gas price values provided are not always enough to fulfill transaction
+     *
+     *  if we start using gasPrice provided by then WC incoming value is gwei in hex
+     *  `gasPrice = utils.bigNumberify(gasPrice);`
+     *  and both gasPrice and gasLimit is not always present from plaforms
+     */
+
+    const defaultGasPrice = gasInfo.gasPrice.avg || 0;
+    const gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
+    const txFeeInWei = gasPrice.mul(GAS_LIMIT);
 
     return {
-      gasLimit: utils.bigNumberify(gasLimit).toNumber(),
+      gasLimit: GAS_LIMIT,
       amount,
       to,
-      gasPrice: utils.bigNumberify(gasPrice).toNumber(),
-      txFeeInWei: utils.bigNumberify(txFeeInWei).toNumber(),
+      gasPrice,
+      txFeeInWei,
       symbol,
       contractAddress: asset ? asset.address : '',
       decimals: asset ? asset.decimals : 18,
@@ -222,17 +249,19 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         } = this.getTokenTransactionPayload(payload);
 
         if (!amount) {
-          errorMessage = 'This token is not supported in Pillar Wallet yet';
+          errorMessage = 'This smart contract address or token is not supported in Pillar Wallet yet';
         }
 
         const txFee = utils.formatEther(txFeeInWei.toString());
 
         const ethBalance = getBalance(balances, ETH);
         const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
-        if (!errorMessage && !balanceInWei.gte(txFeeInWei)) {
+        const enoughBalance = symbol === ETH
+          ? balanceInWei.sub(utils.parseUnits(amount.toString(), 'ether')).gte(txFeeInWei)
+          : balanceInWei.gte(txFeeInWei);
+        if (!errorMessage && !enoughBalance) {
           errorMessage = 'Not enough ETH for transaction fee';
         }
-
         const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
         const recipientUsername = getUserName(contact);
 
@@ -273,6 +302,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             </LabeledRow>
             <LabeledRow>
               <Label>Est. Network Fee</Label>
+              <LabelSub>Note: value might be different from what is provided on sender platform</LabelSub>
               <Value>{txFee} ETH</Value>
             </LabeledRow>
             {data.toLowerCase() !== '0x' && !contractAddress && (
@@ -351,6 +381,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
               <OptionButton
                 primaryInverted
                 onPress={this.handleFormSubmit}
+                disabled={!!errorMessage}
                 textStyle={{ fontWeight: 'normal' }}
                 title={`Approve ${type}`}
               />
@@ -372,17 +403,20 @@ const mapStateToProps = ({
   assets: { supportedAssets, balances },
   contacts: { data: contacts },
   session: { data: session },
+  history: { gasInfo },
 }) => ({
   contacts,
   session,
   supportedAssets,
   balances,
+  gasInfo,
 });
 
 const mapDispatchToProps = dispatch => ({
   rejectCallRequest: (peerId: string, callId: string) => {
     dispatch(onWalletConnectRejectCallRequest(peerId, callId));
   },
+  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
 export default connect(
