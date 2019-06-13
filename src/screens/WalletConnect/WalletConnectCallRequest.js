@@ -147,10 +147,11 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     }
 
     /**
-     *  we're using our wallet avg gas price and gas limit if no gas price provided by WC
+     *  we're using our wallet avg gas price and gas limit
      *
-     *  the reason we're not using gasPrice provided by WC since it's optional in platform end
-     *  also gas limit and gas price values provided are not always enough to fulfill transaction
+     *  the reason we're not using gas price and gas limit provided by WC since it's
+     *  optional in platform end while also gas limit and gas price values provided
+     *  by platform are not always enough to fulfill transaction
      *
      *  if we start using gasPrice provided by then WC incoming value is gwei in hex
      *  `gasPrice = utils.bigNumberify(gasPrice);`
@@ -302,7 +303,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             </LabeledRow>
             <LabeledRow>
               <Label>Est. Network Fee</Label>
-              <LabelSub>Note: value might be different from what is provided on sender platform</LabelSub>
+              <LabelSub>
+                Note: a fee below might be shown as higher than provided on the connected platform,
+                however, normally it will be less
+              </LabelSub>
               <Value>{txFee} ETH</Value>
             </LabeledRow>
             {data.toLowerCase() !== '0x' && !contractAddress && (
