@@ -25,17 +25,13 @@ import { NavigationActions } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import { Container } from 'components/Layout';
-import { WALLETCONNECT_SESSION_REQUEST_SCREEN } from 'constants/navigationConstants';
+import { WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
 import { baseColors } from 'utils/variables';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Header from 'components/Header';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
-import {
-  killWalletConnectSessionByUrl,
-  clearPendingWalletConnectSessionByUrl,
-  onWalletConnectSessionRejection,
-} from 'actions/walletConnectActions';
+import { killWalletConnectSessionByUrl } from 'actions/walletConnectActions';
 import { navigate } from 'services/navigation';
 
 export const SheetContentWrapper = styled.View`
@@ -50,10 +46,8 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   user: Object,
   connectors: any[],
-  pending: any[],
-  clearPendingWalletConnectSessionByUrl: (url: string) => void,
+  requests: any[],
   killWalletConnectSessionByUrl: (url: string) => void,
-  onWalletConnectSessionRejection: Function,
 };
 
 const ACTIVE = 'ACTIVE';
@@ -78,30 +72,46 @@ class MeScreen extends React.Component<Props, State> {
     return sessions;
   };
 
-  disconnect = (item) => {
+  getRequestLabel = (payload: any) => {
+    let label = 'Transaction Request';
+
+    switch (payload.method) {
+      case 'eth_sendTransaction':
+      case 'eth_signTransaction':
+        label = 'Transaction Request';
+        break;
+      case 'eth_sign':
+      case 'eth_signTypedData':
+      case 'eth_signTypedData_v1':
+      case 'eth_signTypedData_v3':
+      case 'personal_sign':
+        label = 'Message Request';
+        break;
+      default:
+        label = 'Call Request';
+        break;
+    }
+    return label;
+  };
+
+  onSessionButtonPress = item => {
     const {
       peerMeta: { url },
-      peerId,
     } = item;
     if (this.state.activeTab === ACTIVE) {
       this.props.killWalletConnectSessionByUrl(url);
     } else {
-      this.props.onWalletConnectSessionRejection(peerId);
-      this.props.clearPendingWalletConnectSessionByUrl(url);
+      this.onSessionItemPress(item);
     }
   };
 
-  onSessionItemPress = (item) => {
+  onSessionItemPress = item => {
     const { activeTab } = this.state;
-    const { peerMeta, peerId } = item;
     if (activeTab === REQUESTS) {
       navigate(
         NavigationActions.navigate({
-          routeName: WALLETCONNECT_SESSION_REQUEST_SCREEN,
-          params: {
-            peerId,
-            peerMeta,
-          },
+          routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
+          params: item,
         }),
       );
     }
@@ -111,12 +121,13 @@ class MeScreen extends React.Component<Props, State> {
     const { activeTab } = this.state;
     const { peerMeta = {} } = item;
     const { name, icons } = peerMeta;
+    const label = activeTab === ACTIVE ? name : this.getRequestLabel(item.payload);
     return (
       <ListItemWithImage
-        label={name}
+        label={label}
         avatarUrl={icons[0]}
-        buttonAction={() => this.disconnect(item)}
-        buttonActionLabel={activeTab === ACTIVE ? 'Disconnect' : 'Cancel'}
+        buttonAction={() => this.onSessionButtonPress(item)}
+        buttonActionLabel={activeTab === ACTIVE ? 'Disconnect' : 'Open'}
         onPress={() => this.onSessionItemPress(item)}
       />
     );
@@ -124,7 +135,7 @@ class MeScreen extends React.Component<Props, State> {
 
   renderSheetContent() {
     const { activeTab } = this.state;
-    const { connectors, pending } = this.props;
+    const { connectors, requests } = this.props;
 
     let data = [];
     let emptyTitle = '';
@@ -135,7 +146,7 @@ class MeScreen extends React.Component<Props, State> {
         emptyTitle = 'No Active Sessions';
         break;
       case REQUESTS:
-        data = this.filterSessionsByUrl(pending);
+        data = this.filterSessionsByUrl(requests);
         emptyTitle = 'No Pending Requests';
         break;
       default:
@@ -145,7 +156,7 @@ class MeScreen extends React.Component<Props, State> {
     return (
       <FlatList
         data={data}
-        keyExtractor={(item) => `walletconnect-session-${item.url}`}
+        keyExtractor={({ peerMeta }) => `walletconnect-session-${peerMeta.url}`}
         renderItem={this.renderSessionItem}
         initialNumToRender={8}
         style={{ flex: 1 }}
@@ -158,12 +169,7 @@ class MeScreen extends React.Component<Props, State> {
               }
             : {}
         }
-        ListEmptyComponent={
-          <EmptyStateParagraph
-            title={emptyTitle}
-          />
-        }
-
+        ListEmptyComponent={<EmptyStateParagraph title={emptyTitle} />}
       />
     );
   }
@@ -187,10 +193,7 @@ class MeScreen extends React.Component<Props, State> {
     ];
 
     return (
-      <Container
-        inset={{ bottom: 0 }}
-        color={baseColors.white}
-      >
+      <Container inset={{ bottom: 0 }} color={baseColors.white}>
         <Header
           onBack={() => navigation.goBack()}
           title="sessions"
@@ -205,19 +208,14 @@ class MeScreen extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({
-  user: { data: user },
-  walletConnect: { connectors, pending },
-}) => ({
+const mapStateToProps = ({ user: { data: user }, walletConnect: { connectors, requests } }) => ({
   user,
   connectors,
-  pending,
+  requests,
 });
 
 const mapDispatchToProps = dispatch => ({
-  clearPendingWalletConnectSessionByUrl: url => dispatch(clearPendingWalletConnectSessionByUrl(url)),
   killWalletConnectSessionByUrl: url => dispatch(killWalletConnectSessionByUrl(url)),
-  onWalletConnectSessionRejection: peerId => dispatch(onWalletConnectSessionRejection(peerId)),
 });
 
 export default connect(

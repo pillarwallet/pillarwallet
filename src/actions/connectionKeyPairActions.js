@@ -207,7 +207,6 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
   };
 };
 
-
 export const backgroundPreKeyGeneratorAction = (mnemonic: ?string, privateKey: ?string, insideRun?: ?boolean) => {
   return async (dispatch: Function, getState: Function) => {
     if (insideRun) {
