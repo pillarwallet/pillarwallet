@@ -156,6 +156,7 @@ export const sendAssetAction = (
         symbol,
         contractAddress,
         decimals,
+        data,
         // $FlowFixMe
       } = (transaction: TokenTransactionPayload);
 
@@ -167,6 +168,7 @@ export const sendAssetAction = (
           amount,
           wallet,
           nonce,
+          data,
         }).catch((e) => catchTransactionError(e, ETH, {
           gasLimit,
           gasPrice,
@@ -181,7 +183,10 @@ export const sendAssetAction = (
           });
         }
       } else {
+        // $FlowFixMe
         tokenTx = await transferERC20({
+          gasLimit,
+          gasPrice,
           to,
           amount,
           contractAddress,
@@ -194,11 +199,12 @@ export const sendAssetAction = (
           to,
           amount,
         }));
+        // $FlowFixMe
         if (tokenTx.hash) {
           historyTx = buildHistoryTransaction({
             ...tokenTx,
             asset: symbol,
-            value: amount * (10 ** decimals),
+            value: parseFloat(amount) * (10 ** decimals),
             to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
             note,
           });
