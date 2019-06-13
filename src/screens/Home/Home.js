@@ -754,6 +754,7 @@ class HomeScreen extends React.Component<Props, State> {
                 key="manage_sessions"
                 label="Manage sessions"
                 onPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
+                wrapperPaddingHorizontal={spacing.mediumLarge}
               />
             </ItemWrapper>
           </SessionUIWrapper>

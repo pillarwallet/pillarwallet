@@ -145,7 +145,7 @@ class MeScreen extends React.Component<Props, State> {
     return (
       <FlatList
         data={data}
-        keyExtractor={(item) => `walletconnect-session-${item.url}`}
+        keyExtractor={({ peerMeta }) => `walletconnect-session-${peerMeta.url}`}
         renderItem={this.renderSessionItem}
         initialNumToRender={8}
         style={{ flex: 1 }}
