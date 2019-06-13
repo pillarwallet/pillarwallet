@@ -178,9 +178,6 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     return (
       <RNCamera
         captureAudio={false}
-        ref={ref => {
-          this.camera = ref;
-        }}
         style={{
           width: screenWidth,
           height: screenHeight,
