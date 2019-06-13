@@ -125,7 +125,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     let amount = new BigNumber(utils.formatEther(utils.bigNumberify(value).toString())).toNumber();
 
     const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
-    const isDataTransaction = !isTokenTransfer && data.toLowerCase() !== '0x' && data.toLowerCase().startsWith('0x');
 
     if (isTokenTransfer) {
       const matchingAssets = supportedAssets.filter(a => a.address === to);
@@ -163,7 +162,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const txFeeInWei = gasPrice.mul(GAS_LIMIT);
 
     return {
-      unsupportedAction: isDataTransaction || (isTokenTransfer && asset === null),
+      unsupportedAction: isTokenTransfer && asset === null,
       transaction: {
         gasLimit: GAS_LIMIT,
         amount,
