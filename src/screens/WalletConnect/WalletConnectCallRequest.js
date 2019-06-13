@@ -66,6 +66,12 @@ const Value = styled(BoldText)`
   font-size: ${fontSizes.medium};
 `;
 
+const OptionButton = styled(Button)`
+  margin-top: 14px;
+  flex-grow: 1;
+`;
+
+
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 class WalletConnectCallRequestScreen extends React.Component<Props, State> {
@@ -166,7 +172,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { contacts, session, navigation } = this.props;
+    const { contacts, navigation } = this.props;
 
     const payload = navigation.getParam('payload', {});
     const { icon, name } = navigation.getParam('peerMeta', {});
@@ -302,11 +308,22 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Container>
-          <Header onBack={this.handleDismissal} title={`${type} Request`} />
+          <Header onBack={() => this.props.navigation.goBack(null)} title={`${type} Request`} />
           {body}
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
-              <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title={`Confirm ${type}`} />
+              <OptionButton
+                primaryInverted
+                onPress={this.handleFormSubmit}
+                textStyle={{ fontWeight: 'normal' }}
+                title={`Approve ${type}`}
+              />
+              <OptionButton
+                dangerInverted
+                onPress={this.handleDismissal}
+                textStyle={{ fontWeight: 'normal' }}
+                title="Reject"
+              />
             </FooterWrapper>
           </Footer>
         </Container>
