@@ -160,7 +160,7 @@ platform :ios do
   lane :deploy_ios_hockeyapp do |options|
 
     MY_APP_ID = "com.pillarproject.wallet.staging"
-    MY_PROFILE = "match AdHoc com.pillarproject.wallet.staging 1557933129"
+    MY_PROFILE = "match AdHoc com.pillarproject.wallet.staging 1560284712"
 
     # insert circleCI's build number as our build number
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
@@ -196,7 +196,7 @@ platform :ios do
       workspace: "pillarwallet.xcworkspace",
       configuration: "Staging.Release",
       scheme: "Staging",
-      xcargs: "-UseModernBuildSystem='NO' BUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AdHoc com.pillarproject.wallet.staging 1557933129' DEVELOPMENT_TEAM='J9DEY3FGPD'",
+      xcargs: "-UseModernBuildSystem='NO' BUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AdHoc com.pillarproject.wallet.staging 1560284712' DEVELOPMENT_TEAM='J9DEY3FGPD'",
       export_method: "ad-hoc",
       export_options: {
         provisioningProfiles: { 

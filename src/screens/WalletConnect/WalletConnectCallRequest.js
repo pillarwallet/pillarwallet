@@ -78,6 +78,11 @@ const WarningMessage = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
 `;
 
+const OptionButton = styled(Button)`
+  margin-top: 14px;
+  flex-grow: 1;
+`;
+
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 const GAS_LIMIT = 500000;
@@ -189,7 +194,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   render() {
     const {
       contacts,
-      session,
       navigation,
       balances,
     } = this.props;
@@ -339,15 +343,22 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Container>
-          <Header onBack={this.handleDismissal} title={`${type} Request`} />
+          <Header onBack={() => this.props.navigation.goBack(null)} title={`${type} Request`} />
           {body}
           <Footer keyboardVerticalOffset={40}>
             {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
             <FooterWrapper>
-              <Button
-                disabled={!session.isOnline || !!errorMessage}
+              <OptionButton
+                primaryInverted
                 onPress={this.handleFormSubmit}
-                title={`Confirm ${type}`}
+                textStyle={{ fontWeight: 'normal' }}
+                title={`Approve ${type}`}
+              />
+              <OptionButton
+                dangerInverted
+                onPress={this.handleDismissal}
+                textStyle={{ fontWeight: 'normal' }}
+                title="Reject"
               />
             </FooterWrapper>
           </Footer>
