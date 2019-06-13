@@ -156,6 +156,7 @@ export const sendAssetAction = (
         symbol,
         contractAddress,
         decimals,
+        data,
         // $FlowFixMe
       } = (transaction: TokenTransactionPayload);
 
@@ -167,6 +168,7 @@ export const sendAssetAction = (
           amount,
           wallet,
           nonce,
+          data,
         }).catch((e) => catchTransactionError(e, ETH, {
           gasLimit,
           gasPrice,

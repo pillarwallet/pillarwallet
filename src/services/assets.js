@@ -58,6 +58,7 @@ type ETHTransferOptions = {
   to: Address,
   wallet: Object,
   nonce?: number,
+  data?: string,
 };
 
 function contractHasMethod(contractCode, encodedMethodName) {
@@ -141,6 +142,7 @@ export function transferETH(options: ETHTransferOptions) {
     gasLimit,
     amount,
     nonce,
+    data,
   } = options;
   const trx = {
     gasLimit,
@@ -148,6 +150,7 @@ export function transferETH(options: ETHTransferOptions) {
     value: utils.parseEther(amount.toString()),
     to,
     nonce,
+    data,
   };
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
   return wallet.sendTransaction(trx);

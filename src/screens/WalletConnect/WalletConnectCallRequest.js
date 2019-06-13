@@ -111,39 +111,39 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     }
   }
 
-  getTokenTransactionPayload = (payload: JsonRpcRequest): TokenTransactionPayload => {
+  getTokenTransactionPayload = (payload: JsonRpcRequest): {
+    unsupportedAction: boolean,
+    transaction: TokenTransactionPayload,
+  } => {
     const { supportedAssets, gasInfo } = this.props;
 
-    const {
-      value,
-      data,
-    } = payload.params[0];
+    const { value, data } = payload.params[0];
     let { to } = payload.params[0];
 
     let symbol = 'ETH';
     let asset = null;
-    let amount = 0;
+    let amount = new BigNumber(utils.formatEther(utils.bigNumberify(value).toString())).toNumber();
 
     const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
+    const isDataTransaction = !isTokenTransfer && data.toLowerCase() !== '0x' && data.toLowerCase().startsWith('0x');
 
     if (isTokenTransfer) {
       const matchingAssets = supportedAssets.filter(a => a.address === to);
       if (matchingAssets && matchingAssets.length) {
+        const iface = new Interface(ERC20_CONTRACT_ABI);
+        const parsedTransaction = iface.parseTransaction({ data, value }) || {};
         asset = matchingAssets[0]; // eslint-disable-line
         symbol = asset.symbol; // eslint-disable-line
-        const iface = new Interface(ERC20_CONTRACT_ABI);
         const {
           args: [
             methodToAddress,
             methodValue = 0,
           ],
-        } = iface.parseTransaction({ data, value }) || {}; // get method value and address input
+        } = parsedTransaction; // get method value and address input
         // do not parse amount as number, last decimal numbers might change after converting
         amount = utils.formatUnits(methodValue, asset.decimals);
         to = methodToAddress;
       }
-    } else {
-      amount = new BigNumber(utils.formatEther(utils.bigNumberify(value).toString())).toNumber();
     }
 
     /**
@@ -163,15 +163,19 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const txFeeInWei = gasPrice.mul(GAS_LIMIT);
 
     return {
-      gasLimit: GAS_LIMIT,
-      amount,
-      to,
-      gasPrice,
-      txFeeInWei,
-      symbol,
-      contractAddress: asset ? asset.address : '',
-      decimals: asset ? asset.decimals : 18,
-      note: this.state.note,
+      unsupportedAction: isDataTransaction || (isTokenTransfer && asset === null),
+      transaction: {
+        gasLimit: GAS_LIMIT,
+        amount,
+        to,
+        gasPrice,
+        txFeeInWei,
+        symbol,
+        contractAddress: asset ? asset.address : '',
+        decimals: asset ? asset.decimals : 18,
+        note: this.state.note,
+        data,
+      },
     };
   };
 
@@ -184,7 +188,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     switch (payload.method) {
       case 'eth_sendTransaction':
       case 'eth_signTransaction':
-        const transactionPayload = this.getTokenTransactionPayload(payload);
+        const {
+          transaction: transactionPayload,
+        } = this.getTokenTransactionPayload(payload);
 
         navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
           peerId,
@@ -243,14 +249,17 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         type = 'Transaction';
 
         const {
-          amount,
-          symbol,
-          txFeeInWei,
-          contractAddress,
+          unsupportedAction,
+          transaction: {
+            amount,
+            symbol,
+            txFeeInWei,
+            contractAddress,
+          },
         } = this.getTokenTransactionPayload(payload);
 
-        if (!amount) {
-          errorMessage = 'This smart contract address or token is not supported in Pillar Wallet yet';
+        if (unsupportedAction) {
+          errorMessage = 'This data transaction or token is not supported in Pillar Wallet yet';
         }
 
         const txFee = utils.formatEther(txFeeInWei.toString());
@@ -285,12 +294,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 resizeMode="contain"
               />
             )}
-            <LabeledRow>
-              <Label>Amount</Label>
-              <Value>
-                {amount} {symbol}
-              </Value>
-            </LabeledRow>
+            {!unsupportedAction &&
+              <LabeledRow>
+                <Label>Amount</Label>
+                <Value>{amount} {symbol}</Value>
+              </LabeledRow>
+            }
             {!!recipientUsername && (
               <LabeledRow>
                 <Label>Recipient Username</Label>

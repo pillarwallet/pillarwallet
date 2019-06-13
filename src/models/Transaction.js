@@ -48,6 +48,7 @@ export type TokenTransactionPayload = {
   note?: ?string,
   name?: string,
   tokenId?: string,
+  data?: string,
 }
 
 export type CollectibleTransactionPayload = {
