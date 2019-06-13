@@ -88,7 +88,7 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
     return (
       <React.Fragment>
         <Container>
-          <Header onBack={() => this.props.navigation.goBack(null)} title="walletconnect" />
+          <Header onBack={this.handleSessionRejection} title="walletconnect" />
           <ScrollWrapper regularPadding>
             <Title subtitle title="WalletConnect Request" />
             {!!icon && (
