@@ -485,7 +485,7 @@ class HomeScreen extends React.Component<Props, State> {
       return (
         <View>
           <StatusMessage>
-            Adding session ...
+            Adding session...
           </StatusMessage>
           <LoadingSpinner />
           <ButtonText
