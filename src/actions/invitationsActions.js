@@ -28,7 +28,10 @@ import {
   rejectOldInvitationAction,
   cancelOldInvitationAction,
 } from 'actions/oldInvitationsActions';
-import { mapIdentityKeysAction } from 'actions/connectionKeyPairActions';
+import {
+  mapIdentityKeysAction,
+  prependConnectionKeyPairs,
+} from 'actions/connectionKeyPairActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { getIdentityKeyPairs } from 'utils/connections';
 import { saveDbAction } from './dbActions';
@@ -44,7 +47,6 @@ export const sendInvitationAction = (user: ApiUser) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
-      connectionKeyPairs: { data: connectionKeyPairs },
       connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
 
@@ -61,7 +63,8 @@ export const sendInvitationAction = (user: ApiUser) => {
       sourceIdentityKey,
       targetIdentityKey,
       connIdKeyResult,
-    } = getIdentityKeyPairs(user.id, connectionIdentityKeys, connectionKeyPairs);
+      connKeyPairReserved,
+    } = await getIdentityKeyPairs(user.id, connectionIdentityKeys, dispatch);
 
     const sentInvitation = await api.sendInvitation(
       user.id,
@@ -69,6 +72,10 @@ export const sendInvitationAction = (user: ApiUser) => {
       targetIdentityKey,
       walletId,
     );
+
+    if (!connIdKeyResult) {
+      await dispatch(prependConnectionKeyPairs(connKeyPairReserved));
+    }
 
     if (!sentInvitation) {
       return;
@@ -98,7 +105,6 @@ export const acceptInvitationAction = (invitation: Object) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
-      connectionKeyPairs: { data: connectionKeyPairs },
       connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
 
@@ -106,7 +112,8 @@ export const acceptInvitationAction = (invitation: Object) => {
       sourceIdentityKey,
       targetIdentityKey,
       connIdKeyResult,
-    } = getIdentityKeyPairs(invitation.id, connectionIdentityKeys, connectionKeyPairs);
+      connKeyPairReserved,
+    } = await getIdentityKeyPairs(invitation.id, connectionIdentityKeys, dispatch);
 
     const sourceUserIdentityKeys = {
       sourceIdentityKey,
@@ -124,6 +131,10 @@ export const acceptInvitationAction = (invitation: Object) => {
       targetUserIdentityKeys,
       walletId,
     );
+
+    if (!connIdKeyResult) {
+      await dispatch(prependConnectionKeyPairs(connKeyPairReserved));
+    }
 
     if (!acceptedInvitation) {
       dispatch(({

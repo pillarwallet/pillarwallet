@@ -19,30 +19,35 @@
 */
 
 import type { ConnectionIdentityKey } from 'models/Connections';
+import { useConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 
-export function getIdentityKeyPairs(
+export async function getIdentityKeyPairs(
   userId: string,
   connectionIdentityKeys: ConnectionIdentityKey[] = [],
-  connectionKeyPairs: Object[] = []) {
+  dispatch: Function,
+) {
   const connIdKeyResult = connectionIdentityKeys.find((conIdKey) => {
     return conIdKey.targetUserId === userId;
   });
 
   let sourceIdentityKey;
   let targetIdentityKey;
+  let connKeyPairReserved;
   if (connIdKeyResult) {
     sourceIdentityKey = connIdKeyResult.sourceIdentityKey; // eslint-disable-line prefer-destructuring
     targetIdentityKey = connIdKeyResult.targetIdentityKey; // eslint-disable-line prefer-destructuring
   } else {
-    const connKeyPairs = connectionKeyPairs.slice(0, 1);
+    const connKeyPairs = await dispatch(useConnectionKeyPairs(1));
     if (connKeyPairs.length > 0) {
       sourceIdentityKey = connKeyPairs[0].A;
       targetIdentityKey = connKeyPairs[0].Ad;
+      connKeyPairReserved = connKeyPairs;
     }
   }
   return {
     sourceIdentityKey,
     targetIdentityKey,
     connIdKeyResult,
+    connKeyPairReserved,
   };
 }
