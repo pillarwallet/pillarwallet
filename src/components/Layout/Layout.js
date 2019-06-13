@@ -91,7 +91,7 @@ export const Container = (props: ContainerProps) => {
 };
 
 export const Wrapper = styled.View`
-  margin: ${props => (props.regularPadding ? '0 20px' : '0')};
+  margin: ${props => (props.regularPadding ? '0 16px' : '0')};
   ${({ center }) => center && 'align-items: center; justify-content: center;'}
   ${({ fullScreen }) => fullScreen && 'height: 100%; width: 100%;'}
   ${({ flex }) => flex && `flex: ${flex};`}
