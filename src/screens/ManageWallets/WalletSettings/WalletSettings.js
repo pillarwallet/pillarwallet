@@ -67,7 +67,7 @@ export default class WalletSettings extends React.PureComponent<Props> {
           <ParagraphWrapper>
             <Paragraph light small>
               Transfer funds from your oldschool key based boring wallet to Pillar Smart Wallet and get
-              unprecedented control over your funds, extra layer of security more flexible control over spendings,
+              unprecedented control over your funds, extra layer of security, more flexible control over spendings,
               ability to recover your wallet with help of trusted people, etc.
             </Paragraph>
           </ParagraphWrapper>
