@@ -38,7 +38,7 @@ export type Transaction = {
 
 export type TokenTransactionPayload = {
   gasLimit: number,
-  amount: number,
+  amount: number | string,
   to: string,
   gasPrice: number,
   txFeeInWei: number,
@@ -48,6 +48,7 @@ export type TokenTransactionPayload = {
   note?: ?string,
   name?: string,
   tokenId?: string,
+  data?: string,
 }
 
 export type CollectibleTransactionPayload = {

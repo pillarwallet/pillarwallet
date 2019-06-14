@@ -241,6 +241,7 @@ const homeFlow = createStackNavigator({
   [CONTACT]: ContactScreen,
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
+  [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

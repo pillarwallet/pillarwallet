@@ -39,7 +39,7 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
-import { mapIdentityKeysAction } from 'actions/connectionKeyPairActions';
+import { mapIdentityKeysAction, prependConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { saveDbAction } from './dbActions';
 
 export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => {
@@ -209,7 +209,6 @@ export const acceptOldInvitationAction = (invitation: Object) => {
       invitations: { data: invitations },
       contacts: { data: contacts },
       accessTokens: { data: accessTokens },
-      connectionKeyPairs: { data: connectionKeyPairs },
       connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
     const sourceUserAccessKey = generateAccessKey();
@@ -218,7 +217,8 @@ export const acceptOldInvitationAction = (invitation: Object) => {
       sourceIdentityKey,
       targetIdentityKey,
       connIdKeyResult,
-    } = getIdentityKeyPairs(invitation.id, connectionIdentityKeys, connectionKeyPairs);
+      connKeyPairReserved,
+    } = await getIdentityKeyPairs(invitation.id, connectionIdentityKeys, dispatch);
 
     const acceptedInvitation = await api.acceptOldInvitation(
       invitation.id,
@@ -228,6 +228,11 @@ export const acceptOldInvitationAction = (invitation: Object) => {
       targetIdentityKey,
       walletId,
     );
+
+    if (!connIdKeyResult) {
+      await dispatch(prependConnectionKeyPairs(connKeyPairReserved));
+    }
+
     if (!acceptedInvitation) {
       dispatch(({
         type: ADD_NOTIFICATION,
