@@ -117,7 +117,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   } => {
     const { supportedAssets, gasInfo } = this.props;
 
-    const { value, data } = payload.params[0];
+    const { value = 0, data } = payload.params[0];
     let { to } = payload.params[0];
 
     let symbol = 'ETH';
