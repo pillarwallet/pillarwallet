@@ -24,8 +24,7 @@ import { Sentry } from 'react-native-sentry';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { loadAndMigrate } from 'services/dataMigration';
-
-// constants
+import firebase from 'react-native-firebase';
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -58,14 +57,27 @@ const storage = Storage.getInstance('db');
 const BACKGROUND = 'background';
 const ANDROID = 'android';
 
+const logUserProperty = (analytics: any, name: string, value?: string) => {
+  analytics.setUserProperty(name, value || '-');
+};
+
 export const initAppAndRedirectAction = (appState: string, platform: string) => {
   return async (dispatch: Function, getState: Function) => {
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
-
     // $FlowFixMe
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
+
     const { wallet } = await storage.get('wallet');
+    const {
+      appearanceSettings = {},
+      baseFiatCurrency,
+    } = appSettings;
+    const { assetsLayout } = appearanceSettings;
+
+    const analytics = firebase.analytics();
+    logUserProperty(analytics, 'assets_layout', assetsLayout);
+    logUserProperty(analytics, 'currency', baseFiatCurrency);
 
     if (appSettings.wallet) {
       const accounts = await loadAndMigrate('accounts', dispatch, getState);

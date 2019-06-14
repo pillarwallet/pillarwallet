@@ -18,29 +18,40 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import firebase from 'react-native-firebase';
 import set from 'lodash.set';
 import { saveDbAction } from './dbActions';
 
 export const saveBaseFiatCurrencyAction = (currency: string) => {
   return (dispatch: Function) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { baseFiatCurrency: currency } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: {
-        baseFiatCurrency: currency,
-      },
-    });
+    const settings = { baseFiatCurrency: currency };
+    const analytics = firebase.analytics();
+
+    dispatch(saveDbAction('app_settings', { appSettings: settings }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
+
+    analytics.setUserProperty('currency', currency);
   };
 };
 
 export const updateAppSettingsAction = (path: string, fieldValue: any) => {
   return (dispatch: Function) => {
     const settings = set({}, path, fieldValue);
+
     dispatch(saveDbAction('app_settings', { appSettings: settings }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: settings,
-    });
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
+  };
+};
+
+export const updateAssetsLayoutAction = (layoutId: string) => {
+  return (dispatch: Function) => {
+    const settings = { appearanceSettings: { assetsLayout: layoutId } };
+    const analytics = firebase.analytics();
+
+    dispatch(saveDbAction('app_settings', { appSettings: settings }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
+
+    analytics.setUserProperty('assets_layout', layoutId);
   };
 };
 

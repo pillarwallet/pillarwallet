@@ -45,7 +45,7 @@ import CheckPin from 'components/CheckPin';
 import {
   saveBaseFiatCurrencyAction,
   changeUseBiometricsAction,
-  updateAppSettingsAction,
+  updateAssetsLayoutAction,
 } from 'actions/appSettingsActions';
 import { updateUserAction, createOneTimePasswordAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
@@ -139,7 +139,7 @@ type Props = {
   intercomNotificationsCount: number,
   hasDBConflicts: boolean,
   repairStorage: Function,
-  updateAppSettings: (path: string, value: any) => Function,
+  updateAssetsLayout: (value: string) => Function,
   updateUser: (walletId: string, field: Object, callback?: Function) => Function,
   createOneTimePassword: (walletId: string, field: Object, callback?: Function) => Function,
   resetIncorrectPassword: () => Function,
@@ -303,6 +303,12 @@ class Profile extends React.Component<Props, State> {
     });
   }
 
+  handleUpdateAppearance = (layoutId: string) => {
+    const { updateAssetsLayout } = this.props;
+
+    updateAssetsLayout(layoutId);
+  }
+
   render() {
     const {
       user,
@@ -310,7 +316,6 @@ class Profile extends React.Component<Props, State> {
       baseFiatCurrency,
       navigation,
       lockScreen,
-      updateAppSettings,
       appSettings: { appearanceSettings },
       hasDBConflicts,
       repairStorage,
@@ -574,7 +579,10 @@ class Profile extends React.Component<Props, State> {
             <ListSeparator>
               <SubHeading>APPEARANCE SETTINGS</SubHeading>
             </ListSeparator>
-            <AppearanceSettingsSection settings={appearanceSettings} onUpdate={updateAppSettings} />
+            <AppearanceSettingsSection
+              settings={appearanceSettings}
+              onUpdate={this.handleUpdateAppearance}
+            />
 
             {!isProdEnv && (
               <View>
@@ -736,7 +744,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
     dispatch(updateUserAction(walletId, field, callback)),
   createOneTimePassword: (walletId: string, field: Object, callback: Function) =>
     dispatch(createOneTimePasswordAction(walletId, field, callback)),
-  updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
+  updateAssetsLayout: (value: string) => dispatch(updateAssetsLayoutAction(value)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
   changeUseBiometrics: (value) => dispatch(changeUseBiometricsAction(value)),

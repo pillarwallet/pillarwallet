@@ -108,7 +108,9 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
   };
 
   handleAssetsLayoutSelect = (layoutId: string) => {
-    this.props.onUpdate('appearanceSettings.assetsLayout', layoutId);
+    const { onUpdate } = this.props;
+    onUpdate(layoutId);
+
     this.toggleSlideModalOpen();
   }
 
