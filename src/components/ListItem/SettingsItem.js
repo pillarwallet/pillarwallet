@@ -30,7 +30,8 @@ const StyledItemTouchable = styled.TouchableHighlight`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 20px ${spacing.rhythm}px;
+  padding-horizontal: ${props => props.wrapperPaddingHorizontal ? props.wrapperPaddingHorizontal : spacing.rhythm}px;
+  padding-vertical: ${spacing.rhythm}px;
   background-color: #ffffff;
   border-bottom-color: ${baseColors.lightGray};
   border-top-color: ${baseColors.lightGray};
@@ -43,7 +44,8 @@ const StyledItemView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 20px ${spacing.rhythm}px;
+  padding-horizontal: ${props => props.wrapperPaddingHorizontal ? props.wrapperPaddingHorizontal : spacing.rhythm}px;
+  padding-vertical: ${spacing.rhythm}px;
   background-color: #ffffff;
   border-bottom-color: ${baseColors.lightGray};
   border-top-color: ${baseColors.lightGray};
@@ -106,14 +108,14 @@ const ListAddon = styled.View`
   align-items: center;
 `;
 
-const ButtonWrapper = ({ onPress, children }) => {
+const ButtonWrapper = ({ onPress, children, wrapperPaddingHorizontal }) => {
   if (Platform.OS === 'android') {
     return (
       <TouchableNativeFeedback
         onPress={onPress}
         background={TouchableNativeFeedback.Ripple()}
       >
-        <StyledItemView>
+        <StyledItemView wrapperPaddingHorizontal={wrapperPaddingHorizontal}>
           {children}
         </StyledItemView>
       </TouchableNativeFeedback>
@@ -123,6 +125,7 @@ const ButtonWrapper = ({ onPress, children }) => {
     <StyledItemTouchable
       onPress={onPress}
       underlayColor={baseColors.lightGray}
+      wrapperPaddingHorizontal={wrapperPaddingHorizontal}
     >
       {children}
     </StyledItemTouchable>
@@ -137,6 +140,7 @@ type Props = {
   toggle?: ?boolean,
   value?: ?string | ?boolean,
   disabled?: ?boolean
+  wrapperPaddingHorizontal?: number,
 }
 
 export default class SettingsListItem extends React.Component<Props> {
@@ -187,6 +191,7 @@ export default class SettingsListItem extends React.Component<Props> {
       onPress,
       toggle,
       value,
+      wrapperPaddingHorizontal,
     } = this.props;
 
     let processedValue;
@@ -205,14 +210,14 @@ export default class SettingsListItem extends React.Component<Props> {
 
     if (!toggle) {
       return (
-        <ButtonWrapper onPress={onPress}>
+        <ButtonWrapper onPress={onPress} wrapperPaddingHorizontal={wrapperPaddingHorizontal}>
           {this.renderContent(processedValue)}
         </ButtonWrapper>
       );
     }
 
     return (
-      <StyledItemView>
+      <StyledItemView wrapperPaddingHorizontal={wrapperPaddingHorizontal}>
         {this.renderContent(processedValue)}
       </StyledItemView>
     );
