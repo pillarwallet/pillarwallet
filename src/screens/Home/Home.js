@@ -59,6 +59,7 @@ import {
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import type { Badges } from 'models/Badge';
 import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
@@ -496,7 +497,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, TRANSACTION_EVENT);
+    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, COLLECTIBLE_TRANSACTION);
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
 

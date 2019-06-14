@@ -60,7 +60,7 @@ import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
-import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
+import { mapTransactionsHistory } from 'utils/feedData';
 import { getActiveAccountType } from 'utils/accounts';
 
 // configs
@@ -70,7 +70,6 @@ import assetsConfig from 'configs/assetsConfig';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
-import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // local components
 import ReceiveModal from './ReceiveModal';
@@ -101,7 +100,6 @@ type Props = {
   smartWalletState: Object,
   accounts: Accounts,
   paymentNetworkBalances: Balances,
-  openSeaTxHistory: Object[],
   smartWalletFeatureEnabled: boolean,
   history: Array<*>,
   deploySmartWallet: Function,
@@ -245,14 +243,6 @@ class AssetScreen extends React.Component<Props, State> {
     this.setState({ activeTab });
   };
 
-  getFilterByNetwork = (data, assetData) => {
-    const { activeTab } = this.state;
-    if (activeTab === PILLAR_NETWORK) {
-      return data.filter(({ asset, type }) => asset === assetData.token && type === 'TRANSACTION_ON_NETWORK_EVENT');
-    }
-    return data.filter(({ asset, type }) => asset === assetData.token && type === 'transactionEvent');
-  };
-
   render() {
     const {
       assets,
@@ -267,7 +257,6 @@ class AssetScreen extends React.Component<Props, State> {
       accounts,
       history,
       contacts,
-      openSeaTxHistory,
       smartWalletFeatureEnabled,
       deploySmartWallet,
     } = this.props;
@@ -301,11 +290,7 @@ class AssetScreen extends React.Component<Props, State> {
     const isSmartWallet = smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
-
     const mainNetworkTransactions = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
-    const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, TRANSACTION_EVENT);
     const tokenTransactionsOnMainNetwork = mainNetworkTransactions.filter(({ asset }) => asset === assetData.token);
 
     const transactionsTabs = [
@@ -313,10 +298,12 @@ class AssetScreen extends React.Component<Props, State> {
         id: MAIN_NETWORK,
         name: 'Main network',
         onPress: () => this.setActiveTab(MAIN_NETWORK),
-        data: [...tokenTransactionsOnMainNetwork, ...mappedCTransactions],
+        data: tokenTransactionsOnMainNetwork,
         emptyState: {
           title: 'Make your first step',
-          body: 'Your transactions on Main network will appear here.',
+          body: isSmartWallet
+            ? 'Your transactions on Main network will appear here.'
+            : 'Your transactions will appear here.',
         },
       },
     ];
@@ -470,7 +457,6 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   history: accountHistorySelector,
-  openSeaTxHistory: accountCollectiblesHistorySelector,
 });
 
 const combinedMapStateToProps = (state) => ({

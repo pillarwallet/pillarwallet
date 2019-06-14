@@ -37,10 +37,10 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
 import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
-import { TRANSACTIONS } from 'constants/activityConstants';
 import { CHAT, ACTIVITY } from 'constants/tabsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
@@ -49,12 +49,13 @@ import ChatTab from 'components/ChatTab';
 import { BaseText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import { getSmartWalletStatus } from 'utils/smartWallet';
-import { mapTransactionsHistory } from 'utils/feedData';
+import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { ApiUser } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import { accountHistorySelector } from 'selectors/history';
+import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
@@ -119,6 +120,7 @@ type Props = {
   accounts: Accounts,
   history: Array<*>,
   deploySmartWallet: Function,
+  openSeaTxHistory: Object[],
 };
 
 type State = {
@@ -193,7 +195,9 @@ class Contact extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.history !== this.props.history) this.getRelatedTransactions();
+    if (prevProps.history !== this.props.history || prevProps.openSeaTxHistory !== this.props.openSeaTxHistory) {
+      this.getRelatedTransactions();
+    }
   }
 
   componentWillUnmount() {
@@ -201,13 +205,26 @@ class Contact extends React.Component<Props, State> {
   }
 
   getRelatedTransactions = () => {
-    const { navigation, history, contacts } = this.props;
+    const {
+      navigation,
+      history,
+      contacts,
+      openSeaTxHistory,
+    } = this.props;
     const contactName = navigation.getParam('username', '');
     const contact = navigation.getParam('contact', { username: contactName });
     const localContact = contacts.find(({ username }) => username === contact.username);
     const displayContact = localContact || contact;
-    const transactionsOnMainnet = mapTransactionsHistory(history, contacts, TRANSACTION_EVENT) || [];
-    const relatedTransactions = transactionsOnMainnet.filter(({ username }) => username === displayContact.username);
+
+    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+
+    const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
+    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, COLLECTIBLE_TRANSACTION);
+
+    const relatedTransactions = [...transactionsOnMainnet, ...mappedCTransactions]
+      .filter(({ username }) => username === displayContact.username);
     this.manageFeedCollapseHeight(relatedTransactions.length);
     this.setState({ relatedTransactions });
   };
@@ -294,7 +311,6 @@ class Contact extends React.Component<Props, State> {
           ref={(ref) => { this.activityFeedRef = ref; }}
           navigation={navigation}
           feedData={relatedTransactions}
-          activeTab={TRANSACTIONS}
           showArrowsOnly
           contentContainerStyle={{ paddingTop: 10 }}
           esComponent={(
@@ -493,6 +509,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
+  openSeaTxHistory: accountCollectiblesHistorySelector,
 });
 
 const combinedMapStateToProps = (state) => ({

@@ -331,7 +331,7 @@ const ImageAddon = (props: Props) => {
     const warm = imageAddonIconName === 'sent';
     return (
       <ImageAddonHolder>
-        <IconCircle warm={warm} diameter={22} bordered>
+        <IconCircle fillColor={warm ? baseColors.fairPink : baseColors.lightGray} diameter={22} bordered>
           <ItemIcon
             name={imageAddonIconName}
             warm={warm}
