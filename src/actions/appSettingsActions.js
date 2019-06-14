@@ -19,28 +19,50 @@
 */
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import set from 'lodash.set';
+import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
+
+export const saveOptOutTrackingAction = (status: boolean) => {
+  return async (dispatch: Function) => {
+    const settings = { optOutTracking: status };
+
+    if (status) {
+      dispatch(logEventAction('tracking_opted_out'));
+    } else {
+      dispatch(logEventAction('tracking_opted_in'));
+    }
+    dispatch(saveDbAction('app_settings', { appSettings: settings }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
+  };
+};
 
 export const saveBaseFiatCurrencyAction = (currency: string) => {
   return (dispatch: Function) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { baseFiatCurrency: currency } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: {
-        baseFiatCurrency: currency,
-      },
-    });
+    const settings = { baseFiatCurrency: currency };
+
+    dispatch(saveDbAction('app_settings', { appSettings: settings }));
+    dispatch(logUserPropertyAction('currency', currency));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
   };
 };
 
 export const updateAppSettingsAction = (path: string, fieldValue: any) => {
   return (dispatch: Function) => {
     const settings = set({}, path, fieldValue);
+
     dispatch(saveDbAction('app_settings', { appSettings: settings }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: settings,
-    });
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
+  };
+};
+
+export const updateAssetsLayoutAction = (layoutId: string) => {
+  return (dispatch: Function) => {
+    const settings = { appearanceSettings: { assetsLayout: layoutId } };
+
+    dispatch(saveDbAction('app_settings', { appSettings: settings }));
+    dispatch(logEventAction('assets_layout_changed'));
+    dispatch(logUserPropertyAction('assets_layout', layoutId));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
   };
 };
 

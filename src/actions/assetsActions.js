@@ -19,7 +19,6 @@
 */
 import get from 'lodash.get';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { Answers } from 'react-native-fabric';
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
@@ -63,6 +62,7 @@ import {
   getActiveAccountType,
   getAccountAddress,
 } from 'utils/accounts';
+import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
@@ -443,11 +443,12 @@ export const addAssetAction = (asset: Asset) => {
       assets: { data: assets },
     } = getState();
     const updatedAssets = { ...assets, [asset.symbol]: { ...asset } };
+
     dispatch(saveDbAction('assets', { assets: updatedAssets }));
     dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
     dispatch(fetchAssetsBalancesAction(assets));
 
-    Answers.logCustom('Token Assets Added', { Symbol: asset.symbol });
+    dispatch(logEventAction('asset_token_added', { symbol: asset.symbol }));
   };
 };
 
