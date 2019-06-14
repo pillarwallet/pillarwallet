@@ -87,11 +87,6 @@ const SheetContentWrapper = styled.View`
   padding-top: 30px;
 `;
 
-// const EmptyStateParagraphWrapper = styled.View`
-//   margin-bottom: 30px;
-//   align-items: center;
-// `;
-
 type Props = {
   name: string,
   navigation: NavigationScreenProp<*>,
@@ -434,14 +429,6 @@ class Contact extends React.Component<Props, State> {
                       !badges.length ? { width: '100%', justifyContent: 'center' } : {},
                       ]}
                     horizontal
-                    ListEmptyComponent={
-                      <EmptyStateParagraphWrapper>
-                        <EmptyStateParagraph
-                          title="No badges"
-                          bodyText="This user has no badges yet"
-                        />
-                      </EmptyStateParagraphWrapper>
-                    }
                     initialNumToRender={5}
                     removeClippedSubviews
                   />
