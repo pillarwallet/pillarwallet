@@ -91,6 +91,7 @@ import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { getBalance } from 'utils/assets';
 import { formatAmount } from 'utils/common';
+import { Sentry } from 'react-native-sentry';
 
 
 const storage = Storage.getInstance('db');
@@ -475,12 +476,17 @@ export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions:
 export const onSmartWalletSdkEventAction = (event: Object) => {
   return async (dispatch: Function, getState: Function) => {
     if (!event) return;
-    const {
-      AccountDeviceUpdated: ACCOUNT_DEVICE_UPDATED,
-      AccountTransactionUpdated: ACCOUNT_TRANSACTION_UPDATED,
-    } = sdkModules.Api.EventNames;
 
-    const { completed: TRANSACTION_COMPLETED } = sdkConstants.AccountTransactionStates;
+    const ACCOUNT_DEVICE_UPDATED = get(sdkModules, 'Api.EventNames.AccountDeviceUpdated', '');
+    const ACCOUNT_TRANSACTION_UPDATED = get(sdkModules, 'Api.EventNames.AccountTransactionUpdated', '');
+    const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.completed', '');
+
+    if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !TRANSACTION_COMPLETED) {
+      let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
+      if (!ACCOUNT_TRANSACTION_UPDATED) path = 'sdkModules.Api.EventNames.AccountTransactionUpdated';
+      if (!TRANSACTION_COMPLETED) path = 'sdkConstants.AccountTransactionStates.completed';
+      Sentry.captureMessage('Missing Smart Wallet SDK constant', { extra: { path } });
+    }
 
     // on wallet deployed
     const accountState = get(getState(), 'smartWallet.upgrade.status', '');
