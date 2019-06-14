@@ -75,10 +75,9 @@ type State = {
   tankValueAnimated: Animated.Value,
   leftColumnHeightHalf: number,
   rightColumnHeightHalf: number,
-  showCheckPinModal1: boolean,
-  showCheckPinModal2: boolean,
   topUpButtonSubmitted: boolean,
   settleBalanceButtonSubmitted: boolean,
+  showPinScreenForAction: string,
 };
 
 const HeaderWrapper = styled.View`
@@ -208,10 +207,9 @@ class TankDetails extends React.Component<Props, State> {
       tankValueAnimated: new Animated.Value(this.props.availableStake),
       leftColumnHeightHalf: 0,
       rightColumnHeightHalf: 0,
-      showCheckPinModal1: false,
-      showCheckPinModal2: false,
       topUpButtonSubmitted: false,
       settleBalanceButtonSubmitted: false,
+      showPinScreenForAction: '',
     };
   }
 
@@ -238,8 +236,7 @@ class TankDetails extends React.Component<Props, State> {
     const { resetIncorrectPassword } = this.props;
     resetIncorrectPassword();
     this.setState({
-      showCheckPinModal1: false,
-      showCheckPinModal2: false,
+      showPinScreenForAction: '',
       topUpButtonSubmitted: false,
       settleBalanceButtonSubmitted: false,
     });
@@ -247,7 +244,7 @@ class TankDetails extends React.Component<Props, State> {
 
   navigateToFundTankScreen = async (_: string, wallet: Object) => {
     const { ensureSmartAccountConnected, navigation } = this.props;
-    this.setState({ showCheckPinModal1: false });
+    this.setState({ showPinScreenForAction: '' });
 
     await delay(500);
     ensureSmartAccountConnected(wallet.privateKey)
@@ -259,7 +256,7 @@ class TankDetails extends React.Component<Props, State> {
 
   navigateToSettleBalanceScreen = async (_: string, wallet: Object) => {
     const { ensureSmartAccountConnected, navigation } = this.props;
-    this.setState({ showCheckPinModal2: false });
+    this.setState({ showPinScreenForAction: '' });
 
     await delay(500);
     ensureSmartAccountConnected(wallet.privateKey)
@@ -274,8 +271,7 @@ class TankDetails extends React.Component<Props, State> {
       tankValueAnimated,
       rightColumnHeightHalf,
       leftColumnHeightHalf,
-      showCheckPinModal1,
-      showCheckPinModal2,
+      showPinScreenForAction,
       topUpButtonSubmitted,
       settleBalanceButtonSubmitted,
     } = this.state;
@@ -410,7 +406,7 @@ class TankDetails extends React.Component<Props, State> {
               noPadding
               width="197px"
               style={{ marginBottom: 18 }}
-              onPress={() => this.setState({ showCheckPinModal1: true, topUpButtonSubmitted: true })}
+              onPress={() => this.setState({ showPinScreenForAction: FUND_TANK, topUpButtonSubmitted: true })}
             />
             <Button
               secondaryTransparent
@@ -418,12 +414,15 @@ class TankDetails extends React.Component<Props, State> {
               disabled={settleBalanceButtonSubmitted || !Object.keys(assetsOnNetwork).length}
               noPadding
               width="197px"
-              onPress={() => this.setState({ showCheckPinModal2: true, settleBalanceButtonSubmitted: true })}
+              onPress={() => this.setState({
+                showPinScreenForAction: SETTLE_BALANCE,
+                settleBalanceButtonSubmitted: true,
+              })}
             />
           </FooterWrapper>
         </ScrollWrapper>
         <SlideModal
-          isVisible={showCheckPinModal1}
+          isVisible={!!showPinScreenForAction}
           onModalHide={this.handleCheckPinModalClose}
           title="enter pincode"
           centerTitle
@@ -431,19 +430,12 @@ class TankDetails extends React.Component<Props, State> {
           showHeader
         >
           <Wrapper flex={1}>
-            <CheckPin onPinValid={this.navigateToFundTankScreen} />
-          </Wrapper>
-        </SlideModal>
-        <SlideModal
-          isVisible={showCheckPinModal2}
-          onModalHide={this.handleCheckPinModalClose}
-          title="enter pincode"
-          centerTitle
-          fullScreen
-          showHeader
-        >
-          <Wrapper flex={1}>
-            <CheckPin onPinValid={this.navigateToSettleBalanceScreen} />
+            <CheckPin
+              onPinValid={showPinScreenForAction === FUND_TANK
+                ? this.navigateToFundTankScreen
+                : this.navigateToSettleBalanceScreen
+              }
+            />
           </Wrapper>
         </SlideModal>
       </Container>
