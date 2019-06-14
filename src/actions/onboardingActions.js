@@ -324,23 +324,8 @@ export const registerOnBackendAction = () => {
       },
     } = getState();
 
-    let walletMnemonic = '';
-    if (get(importedWallet, 'mnemonic')) {
-      walletMnemonic = get(importedWallet, 'mnemonic');
-    } else if (get(mnemonic, 'original')) {
-      walletMnemonic = get(mnemonic, 'original');
-    } else if (get(walletData, 'mnemonic')) {
-      walletMnemonic = get(walletData, 'mnemonic');
-    }
-
-    let walletPrivateKey = '';
-    if (get(importedWallet, 'privateKey')) {
-      walletPrivateKey = get(importedWallet, 'privateKey');
-    } else if (privateKey) {
-      walletPrivateKey = privateKey;
-    } else if (get(walletData, 'privateKey')) {
-      walletPrivateKey = get(walletData, 'privateKey');
-    }
+    const walletMnemonic = get(importedWallet, 'mnemonic') || get(mnemonic, 'original') || get(walletData, 'mnemonic');
+    const walletPrivateKey = get(importedWallet, 'privateKey') || privateKey || get(walletData, 'privateKey');
 
     dispatch({
       type: UPDATE_WALLET_STATE,
