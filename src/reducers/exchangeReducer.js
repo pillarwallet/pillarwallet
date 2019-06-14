@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { APPEND_OFFER } from 'constants/exchangeConstants';
-import type { SearchResults, Offer } from 'models/Exchange';
+import type { SearchResults } from 'models/Exchange';
 
 export type ExchangeReducerState = {
   data: SearchResults,
@@ -66,22 +66,23 @@ const initialState = {
   },
 };
 
-export default function badgesReducer(
+export default function exchangeReducer(
   state: ExchangeReducerState = initialState,
   action: ExchangeReducerAction,
 ): ExchangeReducerState {
-  return state;
-  // switch (action.type) {
-  //   case APPEND_OFFER:
-  //     const { data: { offers } } = state;
-  //
-  //     const newOffers = [...offers, action.payload];
-  //
-  //     return {
-  //       ...state,
-  //       data: { offers: newOffers }
-  //     };
-  //   default:
-  //     return state;
-  // }
+  switch (action.type) {
+    case APPEND_OFFER:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          offers: [
+            ...state.data.offers,
+            action.payload,
+          ],
+        },
+      };
+    default:
+      return state;
+  }
 }

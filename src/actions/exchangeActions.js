@@ -18,8 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+
+import ExchangeService from 'services/exchange';
+
+const exchangeService = new ExchangeService();
+
 export const searchOffersAction = (buyToken: string, sellToken: string, sellAmount: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    //
+  return async (dispatch: Function, getState: Function) => {
+    console.log('buyToken: ', buyToken);
+    console.log('sellToken: ', sellToken);
+    console.log('sellAmount: ', sellAmount);
+    const { oAuthTokens: { data: oAuthTokens } } = getState();
+    await exchangeService.listen(oAuthTokens.accessToken);
+    exchangeService.onOpen();
   };
 };

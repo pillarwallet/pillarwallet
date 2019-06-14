@@ -126,11 +126,10 @@ const ServicesScreen = (props: Props) => {
   );
 };
 
+// const mapStateToProps = ({
+// }) => ({
+// });
+//
+// const mapDispatchToProps = (dispatch: Function) => ({});
 
-const mapStateToProps = ({
-}) => ({
-});
-
-const mapDispatchToProps = (dispatch: Function) => ({});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServicesScreen);
+export default connect(null, null)(ServicesScreen);
