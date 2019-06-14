@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { BigNumber } from 'bignumber.js';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -118,11 +117,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const { supportedAssets, gasInfo } = this.props;
 
     const { value = 0, data } = payload.params[0];
+
     let { to } = payload.params[0];
 
     let symbol = 'ETH';
     let asset = null;
-    let amount = new BigNumber(utils.formatEther(utils.bigNumberify(value).toString())).toNumber();
+    let amount = utils.formatEther(utils.bigNumberify(value).toString());
 
     const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
 
