@@ -205,7 +205,7 @@ class CollectiblesList extends React.Component<Props> {
             data={item}
             horizontal={section.key === BADGES}
             keyExtractor={(it) => {
-              return section.key === COLLECTIBLE ? `${it.assetContract}${it.id}` : `${it.id}`;
+              return section.key === COLLECTIBLE ? `${it.assetContract}${it.id}` : it.id.toString();
             }}
             renderItem={section.key === COLLECTIBLES ? this.renderCollectible : this.renderBadge}
             numColumns={section.key === COLLECTIBLES ? 2 : 1}

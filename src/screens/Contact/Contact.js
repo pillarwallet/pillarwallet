@@ -18,7 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { RefreshControl, Platform, View } from 'react-native';
+import {
+  RefreshControl,
+  Platform,
+  View,
+  // FlatList,
+} from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -33,7 +38,7 @@ import {
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
-import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
+import { BADGE, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { CHAT, ACTIVITY } from 'constants/tabsConstants';
@@ -42,7 +47,9 @@ import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import ChatTab from 'components/ChatTab';
+import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+// import { CollapsibleSection } from 'components/CollapsibleSection';
 import type { ApiUser } from 'models/Contacts';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
@@ -65,7 +72,6 @@ const CircleButtonsWrapper = styled.View`
     ios: '30px',
     android: '15px',
   })};
-  margin-bottom: 25px;
   padding-top: 20px;
   padding-bottom: 30px;
   background-color: ${baseColors.snowWhite};
@@ -80,6 +86,11 @@ const SheetContentWrapper = styled.View`
   flex: 1;
   padding-top: 30px;
 `;
+
+// const EmptyStateParagraphWrapper = styled.View`
+//   margin-bottom: 30px;
+//   align-items: center;
+// `;
 
 type Props = {
   name: string,
@@ -104,12 +115,14 @@ type State = {
   forceOpen: boolean,
   collapsedActivityHeight: ?number,
   collapsedChatHeight: ?number,
+  // isBadgesSectionOpen: boolean,
 };
 
 class Contact extends React.Component<Props, State> {
   isComponentMounted: boolean = false;
   localContact: ?ApiUser;
   activityFeedRef: ?Object;
+  scroll: Object;
 
   constructor(props: Props) {
     super(props);
@@ -119,6 +132,7 @@ class Contact extends React.Component<Props, State> {
     const shouldOpenSheet = navigation.getParam('chatTabOpen', false);
     const contact = navigation.getParam('contact', { username: contactName });
     this.localContact = contacts.find(({ username }) => username === contact.username);
+    this.scroll = React.createRef();
     this.state = {
       showManageContactModal: false,
       showConfirmationModal: false,
@@ -128,6 +142,7 @@ class Contact extends React.Component<Props, State> {
       forceOpen: shouldOpenSheet,
       collapsedChatHeight: null,
       collapsedActivityHeight: null,
+      // isBadgesSectionOpen: true,
     };
   }
 
@@ -240,6 +255,16 @@ class Contact extends React.Component<Props, State> {
     }
   };
 
+  renderBadge = ({ item }) => {
+    const { navigation } = this.props;
+    return (
+      <BadgeTouchableItem
+        data={item}
+        onPress={() => navigation.navigate(BADGE, { id: item.id })}
+      />
+    );
+  };
+
   renderSheetContent = (displayContact, unreadCount) => {
     const { activeTab, isSheetOpen } = this.state;
     const { navigation } = this.props;
@@ -279,6 +304,10 @@ class Contact extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
   }
 
+  // toggleBadgesSection = () => {
+  //   this.setState({ isBadgesSectionOpen: !this.state.isBadgesSectionOpen });
+  // };
+
   render() {
     const {
       navigation,
@@ -295,6 +324,7 @@ class Contact extends React.Component<Props, State> {
       forceOpen,
       collapsedActivityHeight,
       collapsedChatHeight,
+      // isBadgesSectionOpen,
     } = this.state;
 
     const contactName = navigation.getParam('username', '');
@@ -367,6 +397,7 @@ class Contact extends React.Component<Props, State> {
               }}
             />
           }
+          innerRef={ref => { this.scroll = ref; }}
         >
           <ContactWrapper>
             <ProfileImage
@@ -380,13 +411,50 @@ class Contact extends React.Component<Props, State> {
             />
           </ContactWrapper>
           {isAccepted &&
-          <CircleButtonsWrapper>
-            <CircleButton
-              label="Send"
-              icon={iconSend}
-              onPress={() => this.onSendPress(displayContact)}
-            />
-          </CircleButtonsWrapper>
+            <React.Fragment>
+              <CircleButtonsWrapper>
+                <CircleButton
+                  label="Send"
+                  icon={iconSend}
+                  onPress={() => this.onSendPress(displayContact)}
+                />
+              </CircleButtonsWrapper>
+              { /* CONTACT'S BADGES [Commented out since we do not have endpoint to fetch them]
+              <CollapsibleSection
+                label="game of badges."
+                sectionWrapperStyle={{ marginBottom: 25 }}
+                collapseContent={
+                  <FlatList
+                    data={badges}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={this.renderBadge}
+                    style={{ width: '100%' }}
+                    contentContainerStyle={[
+                      { paddingHorizontal: 10 },
+                      !badges.length ? { width: '100%', justifyContent: 'center' } : {},
+                      ]}
+                    horizontal
+                    ListEmptyComponent={
+                      <EmptyStateParagraphWrapper>
+                        <EmptyStateParagraph
+                          title="No badges"
+                          bodyText="This user has no badges yet"
+                        />
+                      </EmptyStateParagraphWrapper>
+                    }
+                    initialNumToRender={5}
+                    removeClippedSubviews
+                  />
+                }
+                onPress={this.toggleBadgesSection}
+                open={isBadgesSectionOpen}
+                onAnimationEnd={
+                  isBadgesSectionOpen
+                  ? () => { this.scroll.scrollToEnd(); }
+                  : () => {}
+                }
+              /> */ }
+            </React.Fragment>
          }
         </ScrollWrapper>
         <ManageContactModal
