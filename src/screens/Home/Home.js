@@ -37,6 +37,7 @@ import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
+import Tabs from 'components/Tabs';
 import ProfileImage from 'components/ProfileImage';
 import BadgeImage from 'components/BadgeImage';
 import Camera from 'components/Camera';
@@ -309,6 +310,11 @@ export const LoadingSpinner = styled(Spinner)`
 
 export const ItemWrapper = styled.View`
   margin-top: ${spacing.large}px;
+`;
+
+const TabsHeader = styled.View`
+  padding: ${spacing.medium}px ${spacing.mediumLarge}px;
+  background-color: ${baseColors.white};
 `;
 
 const allIconNormal = require('assets/icons/all_normal.png');
@@ -789,15 +795,20 @@ class HomeScreen extends React.Component<Props, State> {
             </BadgesWrapper>
           ) : (<BadgesSpacer />)
           }
+          <TabsHeader>
+            <Title subtitle noMargin title="your activity." />
+          </TabsHeader>
+          <Tabs tabs={activityFeedTabs} bgColor={baseColors.white} />
           <ActivityFeed
             backgroundColor={baseColors.white}
             onCancelInvitation={cancelInvitation}
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}
             navigation={navigation}
-            feedTitle="your activity."
             tabs={activityFeedTabs}
             activeTab={activeTab}
+            hideTabs
+            initialNumToRender={6}
           />
         </Animated.ScrollView>
 

@@ -106,6 +106,7 @@ type Props = {
   feedData?: Object[],
   extraFeedData?: Object[],
   esComponent?: React.Node,
+  hideTabs: boolean,
 }
 
 type State = {
@@ -337,6 +338,7 @@ class ActivityFeed extends React.Component<Props, State> {
       feedData = [],
       extraFeedData,
       esComponent,
+      hideTabs,
     } = this.props;
 
     const {
@@ -363,7 +365,7 @@ class ActivityFeed extends React.Component<Props, State> {
         <ActivityFeedHeader noBorder={noBorder}>
           <Title subtitle title={feedTitle} />
         </ActivityFeedHeader>}
-        {tabs.length > 1 &&
+        {tabs.length > 1 && !hideTabs &&
         <Tabs initialActiveTab={activeTab} tabs={tabsProps} wrapperStyle={{ paddingTop: 0 }} />
         }
 
@@ -384,6 +386,7 @@ class ActivityFeed extends React.Component<Props, State> {
           ListEmptyComponent={esComponent
           || <EmptyTransactions {...getEmptyStateData(tabs, activeTab, esData)} />}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
+          removeClippedSubviews
         />
 
         <SlideModal
