@@ -139,7 +139,7 @@ type Props = {
   onPress?: ?Function,
   toggle?: ?boolean,
   value?: ?string | ?boolean,
-  disabled?: ?boolean
+  disabled?: ?boolean,
   wrapperPaddingHorizontal?: number,
 }
 
