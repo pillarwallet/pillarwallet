@@ -18,83 +18,102 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { EXCHANGE_URL } from 'react-native-dotenv';
+import SocketIO from 'socket.io-client';
+
+const executeCallback = (data?: any, callback?: Function) => {
+  if (typeof callback === 'function') callback(data);
+};
+
+const buildApiUrl = (path: string) => {
+  return `${EXCHANGE_URL}/${path}`;
+};
 
 export default class ExchangeService {
-  ws: WebSocket;
+  io: SocketIO;
   running: boolean;
+  apiConfig: Object;
 
   listen(accessToken: string) {
     this.stop();
-    const timestamp = (new Date()).getTime() / 1000;
-    const transport = 'polling'; // websocket
     // 123456PLRTST654321QA
-    const wsUrl = `${EXCHANGE_URL
-      .replace(/(https:\/\/)/gi, 'wss://')
-      .replace(/(http:\/\/)/gi, 'ws://')}/?token=${accessToken}&EIO=3&transport=${transport}&t=${timestamp}`;
-    /**
-     * `EIO=3` the current version of the Engine.IO protocol
-     * `transport=polling` transport being established
-     * `t=123` a hashed timestamp for cache-busting
-     */
-    console.log('wsUrl: ', wsUrl);
+    // const wsUrl = `${EXCHANGE_URL
+    //   .replace(/(https:\/\/)/gi, 'wss://')
+    //   .replace(/(http:\/\/)/gi, 'ws://')}`;
     try {
-      this.ws = new WebSocket(wsUrl);
-      // this.ws.binaryType = 'arraybuffer';
+      accessToken = '123456PLRTST654321QA';
+      this.apiConfig = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      this.io = new SocketIO(EXCHANGE_URL, {
+        query: {
+          token: accessToken,
+        },
+        // reconnection: false,
+      });
+      this.io.on('disconnect', () => {
+        this.setRunning(false);
+      });
+      this.io.on('error', (err) => {
+        console.log('EXCHANGE WS ON ERR', err.message);
+        this.setRunning(false);
+      });
       this.setRunning(true);
     } catch (e) {
+      console.log('errr', e);
       this.setRunning(false);
     }
   }
 
   send(data: Object, callback?: Function) {
-    // this.ws.send(data);
+    // this.io.send(data);
     console.log('EXCHANGE SENDING: ', data);
     if (!this.isRunning()) return;
-    if (typeof callback === 'function') callback();
+    executeCallback(data, callback);
   }
 
   stop(callback?: Function) {
-    if (this.isRunning()) this.ws.close(1000, 'OK');
     this.setRunning(false);
-    if (!this.ws) return;
-    this.ws.onclose = () => {
-      if (typeof callback === 'function') callback();
-    };
+    if (this.io) {
+      this.io.close();
+      this.io.on('close', data => executeCallback(data, callback));
+    }
   }
 
-
-  onMessage(callback?: Function) {
+  onConnect(callback?: Function) {
     if (!this.isRunning()) return;
-    this.ws.onmessage = async (data: Object) => {
-      console.log('RECEIVED WS DATA: ', data);
-      if (typeof callback === 'function') callback();
-    };
-  }
-
-  onOpen(callback?: Function) {
-    if (this.ws === undefined) return;
-    this.ws.onopen = () => {
-      console.log('EXCHANGE WS ON OPEN');
+    this.io.on('connect', data => {
       this.setRunning(true);
-      if (typeof callback === 'function') callback();
-    };
-    this.ws.onclose = () => {
-      this.setRunning(false);
-    };
-    this.ws.onerror = () => {
-      // console.log('EXCHANGE WS ON ERR', err.message);
-      this.setRunning(false);
-    };
+      executeCallback(data, callback);
+    });
   }
 
   setRunning(state: boolean) {
     this.running = state;
     if (!state) {
-      delete this.ws;
+      delete this.io;
     }
   }
 
   isRunning(): boolean {
-    return this.running && typeof this.ws !== 'undefined';
+    return this.running && this.io && typeof this.io !== 'undefined';
+  }
+
+  onOffers(callback?: Function) {
+    if (!this.isRunning()) return;
+    this.io.on('offers', data => executeCallback(data, callback));
+  }
+
+  async requestOffers(buyToken: string, sellToken: string) {
+    const urlPath = `offers?name=${buyToken}-${sellToken}`;
+    return fetch(buildApiUrl(urlPath), this.apiConfig)
+      .then(async response => {
+        const body = await response.text();
+        return body.toLowerCase() === 'ok'
+          ? {}
+          : response.json();
+      })
+      .catch(error => ({ error }));
   }
 }

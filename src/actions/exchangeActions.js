@@ -23,13 +23,24 @@ import ExchangeService from 'services/exchange';
 
 const exchangeService = new ExchangeService();
 
-export const searchOffersAction = (buyToken: string, sellToken: string, sellAmount: string) => {
+export const searchOffersAction = (sellToken: string, buyToken: string, sellAmount: string) => {
   return async (dispatch: Function, getState: Function) => {
-    console.log('buyToken: ', buyToken);
     console.log('sellToken: ', sellToken);
+    console.log('buyToken: ', buyToken);
     console.log('sellAmount: ', sellAmount);
     const { oAuthTokens: { data: oAuthTokens } } = getState();
-    await exchangeService.listen(oAuthTokens.accessToken);
-    exchangeService.onOpen();
+    exchangeService.listen(oAuthTokens.accessToken);
+    exchangeService.onConnect(async () => {
+      console.log('ws connected!');
+      // TODO: pass assets symbols from action
+      // this triggers ws event
+      const result = await exchangeService.requestOffers('SNT', 'ETH');
+      if (result.error) {
+        // TODO: handle error
+        console.log('errr', result);
+      }
+      console.log('offers request result: ', result);
+    });
+    exchangeService.onOffers(data => console.log('received ws offers: ', data));
   };
 };
