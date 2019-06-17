@@ -220,7 +220,7 @@ class CollectiblesList extends React.Component<Props> {
               </EmptyStateWrapper>
             }
             initialNumToRender={section.key === BADGES ? 5 : 4}
-            removeClippedSubviews
+            removeClippedSubviews={section.key === COLLECTIBLES}
             viewabilityConfig={viewConfig}
           />
         )}
