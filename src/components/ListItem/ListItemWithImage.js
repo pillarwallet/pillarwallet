@@ -495,7 +495,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
             <Column type={type}>
               {!!label &&
               <Row>
-                <ItemTitle type={type}>{label}</ItemTitle>
+                <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>
                 {(type === CHAT_ITEM && !!timeSent) &&
                 <TimeWrapper>
                   <TimeSent>{timeSent}</TimeSent>

@@ -335,8 +335,17 @@ class ChatTab extends React.Component<Props, State> {
   };
 
   onSend = (messages: Object[] = []) => {
-    const { sendMessageByContact, clearChatDraftState } = this.props;
+    const {
+      sendMessageByContact,
+      clearChatDraftState,
+      messages: chatMessages,
+    } = this.props;
     const { contact } = this.state;
+    const contactMessages = chatMessages[contact.username];
+
+    if (!contactMessages || !contactMessages.length) {
+      Answers.logCustom('Start Chat');
+    }
 
     sendMessageByContact(contact.username, messages[0]);
     clearChatDraftState();

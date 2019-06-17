@@ -34,13 +34,13 @@ type Address = string;
 type ERC20TransferOptions = {
   contractAddress: ?string,
   to: Address,
-  amount: number,
+  amount: number | string,
   wallet: Object,
   decimals: number,
   nonce?: number,
   signOnly?: ?boolean,
-  gasLimit?: ?number,
-  gasPrice?: ?number,
+  gasLimit: number,
+  gasPrice: number,
 };
 
 type ERC721TransferOptions = {
@@ -58,11 +58,12 @@ type ERC721TransferOptions = {
 type ETHTransferOptions = {
   gasLimit: number,
   gasPrice: number,
-  amount: number,
+  amount: number | string,
   to: Address,
   wallet: Object,
   nonce?: number,
   signOnly?: ?boolean,
+  data?: string,
 };
 
 function contractHasMethod(contractCode, encodedMethodName) {
@@ -81,15 +82,14 @@ export async function transferERC20(options: ERC20TransferOptions) {
     gasPrice,
     signOnly = false,
   } = options;
+
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
+
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
-  const decimals = defaultDecimals > 0
+  const contractAmount = defaultDecimals > 0
     ? utils.parseUnits(amount.toString(), defaultDecimals)
     : utils.bigNumberify(amount.toString());
-
-  if (!signOnly) return contract.transfer(to, decimals, { nonce });
-
-  const tokenTransfer = await contract.interface.functions.transfer.apply(null, [to, decimals]);
+  const tokenTransfer = await contract.interface.functions.transfer.apply(null, [to, contractAmount]);
   const { data } = tokenTransfer;
   const transaction = {
     gasLimit,
@@ -98,8 +98,10 @@ export async function transferERC20(options: ERC20TransferOptions) {
     nonce,
     data,
   };
+  if (!signOnly) return wallet.sendTransaction(transaction);
+
   const signedHash = await wallet.sign(transaction);
-  return { signedHash, value: decimals };
+  return { signedHash, value: contractAmount };
 }
 
 export function getERC721ContractTransferMethod(code: any): string {
@@ -198,6 +200,7 @@ export async function transferETH(options: ETHTransferOptions) {
     amount,
     nonce,
     signOnly = false,
+    data,
   } = options;
   const value = utils.parseEther(amount.toString());
   const trx = {
@@ -206,6 +209,7 @@ export async function transferETH(options: ETHTransferOptions) {
     value,
     to,
     nonce,
+    data,
   };
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
   if (!signOnly) return wallet.sendTransaction(trx);

@@ -805,12 +805,12 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceProdBuilds.sh
-            .circleci/announceProdBuilds.sh "Pillar Wallet" "Production Google Play Store" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "Production Google Play Store - Pending review" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
       - run:
            name: Announce Deployment
            command: |
              chmod +x .circleci/announceDeployment.sh
-             .circleci/announceDeployment.sh "Pillar Wallet" "Production Google Play Store" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
+             .circleci/announceDeployment.sh "Pillar Wallet" "Production Google Play Store - Pending review" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
       - run:
           name: Announce Prod Android URL
           command: |
