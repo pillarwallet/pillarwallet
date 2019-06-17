@@ -91,6 +91,8 @@ class App extends React.Component<Props, *> {
     SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
+    StatusBar.setTranslucent(true);
+    StatusBar.setBackgroundColor('transparent');
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     Linking.getInitialURL()
       .then(url => {
