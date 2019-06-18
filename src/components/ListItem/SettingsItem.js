@@ -139,6 +139,7 @@ type Props = {
   onPress?: ?Function,
   toggle?: ?boolean,
   value?: ?string | ?boolean,
+  disabled?: ?boolean,
   wrapperPaddingHorizontal?: number,
 }
 
@@ -150,6 +151,7 @@ export default class SettingsListItem extends React.Component<Props> {
       onPress,
       notificationsCount,
       warningNotification,
+      disabled,
     } = this.props;
     if (!toggle) {
       return (
@@ -177,6 +179,7 @@ export default class SettingsListItem extends React.Component<Props> {
       <ItemLabelHolder>
         <ItemLabel>{label}</ItemLabel>
         <Switch
+          disabled={disabled}
           onValueChange={onPress}
           value={processedValue}
         />
