@@ -24,7 +24,8 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import { UIColors } from 'utils/variables';
-import { Container, Wrapper } from 'components/Layout';
+import { formatMoney } from 'utils/common';
+import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import SelectToken from 'components/SelectToken';
 import SelectTokenAmount from 'components/SelectTokenAmount';
@@ -41,7 +42,7 @@ const HeaderWrapper = styled(Wrapper)`
   background-color: ${UIColors.defaultHeaderColor};
 `;
 
-const BodyWrapper = styled(Wrapper)`
+const BodyWrapper = styled(ScrollWrapper)`
   margin: 20px 20px 0;
 `;
 
@@ -90,25 +91,25 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   onSellTokenChanged = (selectedSellToken: string) => {
     this.setState({ selectedSellToken }, () => this.triggerSearch());
-  }
+  };
 
   onSellAmountChanged = (selectedSellAmount: string) => {
     this.setState({ selectedSellAmount }, () => this.triggerSearch());
-  }
+  };
 
   onBuyTokenChanged = (selectedBuyToken: string) => {
     this.setState({ selectedBuyToken }, () => this.triggerSearch());
-  }
+  };
 
   triggerSearch = () => {
     const { selectedSellAmount, selectedSellToken, selectedBuyToken } = this.state;
     const { searchOffers } = this.props;
     const fromAmount = parseFloat(selectedSellAmount);
 
-    if ((fromAmount > 0) && (selectedBuyToken !== '') && (selectedSellToken !== '')) {
+    if (fromAmount > 0 && selectedBuyToken && selectedSellToken) {
       searchOffers(selectedBuyToken, selectedSellToken, fromAmount);
     }
-  }
+  };
 
   render() {
     const {
@@ -119,6 +120,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     } = this.props;
     const { selectedBuyToken, selectedSellAmount, selectedSellToken } = this.state;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
+    const sellAmount = parseFloat(selectedSellAmount);
 
     return (
       <Screen inset={{ bottom: 0 }}>
@@ -150,9 +152,15 @@ class ExchangeScreen extends React.Component<Props, State> {
             data={offers}
             contentContainerStyle={{ width: '100%' }}
             keyExtractor={({ _id }) => _id}
-            renderItem={({ item: { provider } }) => (
+            renderItem={({ item }) => (
               <ListItem>
-                <Text>PROVIDER: {provider}</Text>
+                <Text>{item.provider}</Text>
+                <Text>Exchange rate</Text>
+                <Text>{item.askRate} {item.fromAssetCode} / {item.toAssetCode}</Text>
+                <Text>Available</Text>
+                <Text>{item.minQuantity} - {item.maxQuantity}</Text>
+                <Text>You will get</Text>
+                <Text>{formatMoney(item.askRate * sellAmount)} {item.toAssetCode}</Text>
               </ListItem>
             )}
           />
