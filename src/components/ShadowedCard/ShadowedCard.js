@@ -31,7 +31,6 @@ const CardOutter = styled.View`
 const ContentWrapper = styled.View`
   flex-direction: column;
   justify-content: flex-start;
-  shadow-radius: 6px;
   border-radius: 6px;
   background: ${baseColors.white};
   width: 100%;
@@ -67,7 +66,8 @@ export default class ShadowedCard extends React.PureComponent<Props, State> {
     const { cardHeight, cardWidth } = this.state;
     return (
       <CardOutter style={wrapperStyle}>
-        {!!(cardHeight && cardWidth) && <Shadow
+        {!!(cardHeight && cardWidth) &&
+        <Shadow
           heightAndroid={cardHeight}
           heightIOS={cardHeight}
           widthIOS={cardWidth}
@@ -79,6 +79,7 @@ export default class ShadowedCard extends React.PureComponent<Props, State> {
             left: -(SHADOW_LENGTH / 2),
             opacity: 0.8,
           }}
+          shadowRadius={4}
         />}
         <TouchableWithoutFeedback onPress={onPress}>
           <ContentWrapper>

@@ -73,6 +73,7 @@ export const baseColors = {
   shark: '#292c33',
   tropicalBlue: '#CAE1F8',
   zumthor: '#EBF5FF',
+  fruitSalad: '#459d53',
 };
 
 export const brandColors = [

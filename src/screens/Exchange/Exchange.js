@@ -18,47 +18,39 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ShadowedCard from 'components/ShadowedCard';
-import { BaseText } from 'components/Typography';
-
-
+import { BaseText, BoldText } from 'components/Typography';
 import SelectToken from 'components/SelectToken';
 import SelectTokenAmount from 'components/SelectTokenAmount';
+import Button from 'components/Button';
+
 import { searchOffersAction } from 'actions/exchangeActions';
 
 import type { SearchResults } from 'models/Exchange';
 import type { Assets, Rates } from 'models/Asset';
-import Button from '../../components/Button';
 
-const Screen = styled(Container)`
-  background-color: ${UIColors.defaultBackgroundColor};
+const Subtitle = styled(BoldText)`
+  margin: 10px 0;
+  color: ${baseColors.slateBlack};
+  font-size: ${fontSizes.medium}px;
 `;
 
-const HeaderWrapper = styled(Wrapper)`
-  background-color: ${UIColors.defaultHeaderColor};
-`;
-
-const BodyWrapper = styled(Wrapper)`
-`;
-
-const Subtitle = styled(Text)`
-  margin: 9px 0;
-  color: black;
-  font-size: 17px;
-  font-weight: bold;
+const PaddingWrapper = styled.View`
+  padding: 0 ${spacing.mediumLarge}px;
 `;
 
 const CardWrapper = styled.View`
   width: 100%;
 `;
+
 const CardRow = styled.View`
   flex: 1;
   flex-direction: row;
@@ -82,6 +74,23 @@ const CardText = styled(BaseText)`
   color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
   flex-wrap: wrap;
   flex: 1;
+`;
+
+const ListHeader = styled.View`
+  width: 100%;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin: 14px 0;
+`;
+
+const HeaderButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ButtonLabel = styled(BaseText)`
+  color: ${baseColors.fruitSalad};
+  font-size: ${fontSizes.extraSmall}px;
 `;
 
 const dummyOffers = [
@@ -244,40 +253,44 @@ class ExchangeScreen extends React.Component<Props, State> {
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
 
     return (
-      <Screen inset={{ bottom: 0 }}>
-        <HeaderWrapper>
-          <Header title="exchange" />
-        </HeaderWrapper>
+      <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
+        <Header title="exchange" />
+        <ScrollWrapper>
+          <PaddingWrapper>
+            <Subtitle>Selling</Subtitle>
+            <SelectTokenAmount
+              baseFiatCurrency={baseFiatCurrency}
+              selectedToken={selectedSellToken}
+              selectedAmount={selectedSellAmount}
+              onTokenChange={this.onSellTokenChanged}
+              onAmountChange={this.onSellAmountChanged}
+              assets={assetsList}
+              rates={rates}
+            />
 
-        <BodyWrapper inset={{ bottom: 0 }}>
-          <Subtitle>Selling</Subtitle>
-          <SelectTokenAmount
-            baseFiatCurrency={baseFiatCurrency}
-            selectedToken={selectedSellToken}
-            selectedAmount={selectedSellAmount}
-            onTokenChange={this.onSellTokenChanged}
-            onAmountChange={this.onSellAmountChanged}
-            assets={assetsList}
-            rates={rates}
-          />
-
-          <Subtitle>Buying</Subtitle>
-          <SelectToken
-            assets={assetsList}
-            selectedToken={selectedBuyToken}
-            onTokenChange={this.onBuyTokenChanged}
-          />
-
-          <Text>OFFERS</Text>
+            <Subtitle>Buying</Subtitle>
+            <SelectToken
+              assets={assetsList}
+              selectedToken={selectedBuyToken}
+              onTokenChange={this.onBuyTokenChanged}
+            />
+          </PaddingWrapper>
           <FlatList
             // data={offers}
             data={dummyOffers}
             keyExtractor={(item) => item._id}
-            contentContainerStyle={{ width: '100%', paddingHorizontal: 20 }}
+            contentContainerStyle={{ width: '100%', paddingHorizontal: 20, paddingVertical: 10 }}
             renderItem={this.renderOffers}
+            ListHeaderComponent={
+              <ListHeader>
+                <HeaderButton onPress={() => {}}>
+                  <ButtonLabel>Connect more exchanges</ButtonLabel>
+                </HeaderButton>
+              </ListHeader>
+            }
           />
-        </BodyWrapper>
-      </Screen>
+        </ScrollWrapper>
+      </Container>
     );
   }
 }
