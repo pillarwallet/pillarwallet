@@ -237,9 +237,9 @@ export const rejectInvitationAction = (invitation: Object) => {
     } = getState();
 
     const rejectedInvitation = await api.rejectInvitation(
-      invitation.id,
-      invitation.sourceIdentityKey,
-      invitation.targetIdentityKey,
+      invitations[0].id,
+      invitations[0].sourceIdentityKey,
+      invitations[0].targetIdentityKey,
       walletId,
     );
 
