@@ -32,7 +32,7 @@ const buildApiUrl = (path: string) => {
 
 export default class ExchangeService {
   io: SocketIO;
-  running: boolean;
+  isConnected: boolean;
   apiConfig: Object;
 
   listen(accessToken: string) {
@@ -52,21 +52,21 @@ export default class ExchangeService {
       });
       this.io.on('disconnect', err => {
         console.log('exchange on disconnect: ', err);
-        this.setRunning(false);
+        this.setConnected(false);
       });
       this.io.on('error', (err) => {
         console.log('exchange on error', err);
-        this.setRunning(false);
+        this.setConnected(false);
       });
-      this.setRunning(true);
+      this.setConnected(true);
     } catch (e) {
       console.log('exchange service error: ', e);
-      this.setRunning(false);
+      this.setConnected(false);
     }
   }
 
   stop(callback?: Function) {
-    this.setRunning(false);
+    this.setConnected(false);
     if (this.io) {
       this.io.close();
       this.io.on('close', data => executeCallback(data, callback));
@@ -74,38 +74,34 @@ export default class ExchangeService {
   }
 
   onConnect(callback?: Function) {
-    if (!this.isRunning()) return;
+    if (!this.connected()) return;
     this.io.on('connect', data => {
-      this.setRunning(true);
+      this.setConnected(true);
       executeCallback(data, callback);
     });
   }
 
-  setRunning(state: boolean) {
-    this.running = state;
-    if (!state) {
+  setConnected(value: boolean) {
+    this.isConnected = value;
+    if (!this.isConnected) {
       delete this.io;
     }
   }
 
-  isRunning(): boolean {
-    return this.running && this.io && typeof this.io !== 'undefined';
+  connected(): boolean {
+    return this.isConnected && this.io;
   }
 
   onOffers(callback?: Function) {
-    if (!this.isRunning()) return;
+    if (!this.connected()) return;
     this.io.on('offers', data => executeCallback(data, callback));
   }
 
   requestOffers(fromAssetCode: string, toAssetCode: string) {
     const urlPath = `offers?name=${fromAssetCode}-${toAssetCode}`;
     return fetch(buildApiUrl(urlPath), this.apiConfig)
-      .then(async response => {
-        const body = await response.text();
-        return body.toLowerCase() === 'ok'
-          ? {}
-          : response.json();
-      })
+      .then(response => response.text())
+      .then(response => response.toLowerCase() === 'ok' ? {} : response.json())
       .catch(error => ({ error }));
   }
 
