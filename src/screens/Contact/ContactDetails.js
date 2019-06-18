@@ -31,6 +31,7 @@ import {
   blockContactAction,
 } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
+import { logScreenViewAction } from 'actions/analyticsActions';
 import { ScrollWrapper, Container } from 'components/Layout';
 import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
@@ -92,6 +93,7 @@ type Props = {
   disconnectContact: Function,
   muteContact: Function,
   blockContact: Function,
+  logScreenView: (view: string, screen: string) => void,
 };
 
 type State = {
@@ -207,17 +209,15 @@ class Contact extends React.Component<Props, State> {
     }
 
     setTimeout(() => {
-      this.setState({
-        showConfirmationModal: false,
-      });
+      this.setState({ showConfirmationModal: false });
     }, 1000);
   };
 
   setActiveTab = (activeTab) => {
-    this.setState({
-      activeTab,
-      tabActiveTap: true,
-    });
+    const { logScreenView } = this.props;
+    logScreenView(activeTab, 'ContactDetails');
+
+    this.setState({ activeTab, tabActiveTap: true });
   };
 
   handleUsernameTap = () => {
@@ -409,6 +409,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Contact);

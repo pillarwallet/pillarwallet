@@ -24,7 +24,8 @@ import { Sentry } from 'react-native-sentry';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { loadAndMigrate } from 'services/dataMigration';
-import firebase from 'react-native-firebase';
+
+// constants
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -51,15 +52,13 @@ import {
 } from 'constants/smartWalletConstants';
 import { UPDATE_PAYMENT_NETWORK_BALANCES } from 'constants/paymentNetworkConstants';
 
+// actions
+import { logUserPropertyAction, optOutTrackingAction } from 'actions/analyticsActions';
 
 const storage = Storage.getInstance('db');
 
 const BACKGROUND = 'background';
 const ANDROID = 'android';
-
-const logUserProperty = (analytics: any, name: string, value?: string) => {
-  analytics.setUserProperty(name, value || '-');
-};
 
 export const initAppAndRedirectAction = (appState: string, platform: string) => {
   return async (dispatch: Function, getState: Function) => {
@@ -72,12 +71,13 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     const {
       appearanceSettings = {},
       baseFiatCurrency,
+      optOutTracking = false,
     } = appSettings;
     const { assetsLayout } = appearanceSettings;
 
-    const analytics = firebase.analytics();
-    logUserProperty(analytics, 'assets_layout', assetsLayout);
-    logUserProperty(analytics, 'currency', baseFiatCurrency);
+    dispatch(optOutTrackingAction(optOutTracking));
+    dispatch(logUserPropertyAction('assets_layout', assetsLayout));
+    dispatch(logUserPropertyAction('currency', baseFiatCurrency));
 
     if (appSettings.wallet) {
       const accounts = await loadAndMigrate('accounts', dispatch, getState);

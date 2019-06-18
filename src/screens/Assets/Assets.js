@@ -29,7 +29,6 @@ import isEqual from 'lodash.isequal';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-import { Answers } from 'react-native-fabric';
 import debounce from 'lodash.debounce';
 import { createStructuredSelector } from 'reselect';
 
@@ -61,6 +60,7 @@ import {
   addAssetAction,
   removeAssetAction,
 } from 'actions/assetsActions';
+import { logScreenViewAction } from 'actions/analyticsActions';
 
 // constants
 import {
@@ -108,6 +108,7 @@ type Props = {
   accounts: Accounts,
   smartWalletState: Object,
   smartWalletFeatureEnabled: boolean,
+  logScreenView: (view: string, screen: string) => void,
 }
 
 type State = {
@@ -189,20 +190,22 @@ class AssetsScreen extends React.Component<Props, State> {
     const {
       fetchInitialAssets,
       assets,
+      navigation,
+      logScreenView,
     } = this.props;
 
-    Answers.logContentView('Assets screen');
+    logScreenView('assets', 'Assets');
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets();
     }
 
-    this.willFocus = this.props.navigation.addListener(
+    this.willFocus = navigation.addListener(
       'willFocus',
       () => { this.setState({ forceHideRemoval: false }); },
     );
 
-    this.didBlur = this.props.navigation.addListener(
+    this.didBlur = navigation.addListener(
       'didBlur',
       () => { this.setState({ forceHideRemoval: true }); },
     );
@@ -229,9 +232,7 @@ class AssetsScreen extends React.Component<Props, State> {
   handleSearchChange = (query: string) => {
     const formattedQuery = !query ? '' : query.trim();
 
-    this.setState({
-      query: formattedQuery,
-    });
+    this.setState({ query: formattedQuery });
 
     if (this.state.activeTab === TOKENS) {
       this.props.startAssetsSearch();
@@ -556,6 +557,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);

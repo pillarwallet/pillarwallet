@@ -69,26 +69,25 @@ class Welcome extends React.Component<Props, State> {
 
   navigateToWalletImportPage = () => {
     const { navigation } = this.props;
+
     if (Platform.OS === 'android') {
-      this.props.navigation.navigate(PERMISSIONS, { nextScreen: IMPORT_WALLET });
+      navigation.navigate(PERMISSIONS, { nextScreen: IMPORT_WALLET });
     } else {
       navigation.navigate(IMPORT_WALLET);
     }
   };
 
   componentDidMount() {
+    const { navigation } = this.props;
+
     this.listeners = [
-      this.props.navigation.addListener('willFocus', () => {
-        this.setState({ shouldAnimate: true });
-      }),
-      this.props.navigation.addListener('willBlur', () => this.setState({ shouldAnimate: false })),
+      navigation.addListener('willFocus', () => this.setState({ shouldAnimate: true })),
+      navigation.addListener('willBlur', () => this.setState({ shouldAnimate: false })),
     ];
   }
 
   componentWillUnmount() {
-    this.listeners.forEach((listenerItem) => {
-      listenerItem.remove();
-    });
+    this.listeners.forEach((listenerItem) => listenerItem.remove());
   }
 
   render() {

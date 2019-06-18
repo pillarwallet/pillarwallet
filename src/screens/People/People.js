@@ -44,6 +44,7 @@ import {
   blockContactAction,
 } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
+import { logScreenViewAction } from 'actions/analyticsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
@@ -61,7 +62,6 @@ import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
-import { Answers } from 'react-native-fabric';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -135,6 +135,7 @@ type Props = {
   invitations: Object[],
   localContacts: Object[],
   chats: Object[],
+  logScreenView: (view: string, screen: string) => void,
 }
 
 type ConnectionStatusProps = {
@@ -186,14 +187,15 @@ class PeopleScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    Answers.logContentView('People screen');
+    const { logScreenView, navigation } = this.props;
+    logScreenView('people', 'People');
 
-    this.willFocus = this.props.navigation.addListener(
+    this.willFocus = navigation.addListener(
       'willFocus',
       () => { this.setState({ forceHideRemoval: false }); },
     );
 
-    this.didBlur = this.props.navigation.addListener(
+    this.didBlur = navigation.addListener(
       'didBlur',
       () => { this.setState({ forceHideRemoval: true }); },
     );
@@ -507,6 +509,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);

@@ -36,25 +36,28 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
-import { SubHeading } from 'components/Typography';
+import { SubHeading, BaseText } from 'components/Typography';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
 import CountrySelect from 'components/CountrySelect';
+import Checkbox from 'components/Checkbox';
 import CheckPin from 'components/CheckPin';
 import {
   saveBaseFiatCurrencyAction,
   changeUseBiometricsAction,
   updateAssetsLayoutAction,
+  saveOptOutTrackingAction,
 } from 'actions/appSettingsActions';
 import { updateUserAction, createOneTimePasswordAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
 import { repairStorageAction } from 'actions/appActions';
 import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
+import { logScreenViewAction } from 'actions/analyticsActions';
 import { isProdEnv } from 'utils/environment';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
-import { baseColors, spacing } from 'utils/variables';
+import { fontSizes, fontTrackings, baseColors, spacing } from 'utils/variables';
 import { delay } from 'utils/common';
 import ProfileSettingsItem from 'components/ListItem/SettingsItem';
 import EditProfile from './EditProfile';
@@ -79,6 +82,13 @@ const ListSeparator = styled.View`
   border-bottom-width: 1px;
   border-color: ${baseColors.lightGray};
   background-color: ${baseColors.lighterGray};
+`;
+
+const CheckboxText = styled(BaseText)`
+  font-size: ${fontSizes.small}px;
+  margin-top: 2px;
+  letter-spacing: ${fontTrackings.small}px;
+  line-height: 20px;
 `;
 
 const cityFormFields = [{
@@ -150,6 +160,9 @@ type Props = {
   changeUseBiometrics: (value: boolean) => Function,
   cleanSmartWalletAccounts: Function,
   smartWalletFeatureEnabled: boolean,
+  logScreenView: (view: string, screen: string) => void,
+  saveOptOutTracking: (status: boolean) => void,
+  optOutTracking: boolean,
 }
 
 type State = {
@@ -159,6 +172,7 @@ type State = {
   showSystemInfoModal: boolean,
   showCheckPinModal: boolean,
   showBiometricsSelector: boolean,
+  showTrackingModal: boolean,
 }
 
 class Profile extends React.Component<Props, State> {
@@ -177,10 +191,15 @@ class Profile extends React.Component<Props, State> {
       showSystemInfoModal: false,
       showCheckPinModal: false,
       showBiometricsSelector: false,
+      showTrackingModal: false,
     };
   }
 
   componentDidMount() {
+    const { logScreenView } = this.props;
+
+    logScreenView('profile', 'Profile');
+
     TouchID.isSupported({})
       .then(() => this.setState({ showBiometricsSelector: true }))
       .catch(() => null);
@@ -197,12 +216,16 @@ class Profile extends React.Component<Props, State> {
   };
 
   toggleTermsConditionsModal = () => {
-    this.setState({ showTermsConditionsModal: !this.state.showTermsConditionsModal });
+    this.setState((prev: State) => ({ showTermsConditionsModal: !prev.showTermsConditionsModal }));
   };
 
   togglePrivacyPolicyModal = () => {
-    this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
+    this.setState((prev: State) => ({ showPrivacyPolicyModal: !prev.showPrivacyPolicyModal }));
   };
+
+  toggleTrackingModal = () => {
+    this.setState((prev: State) => ({ showTrackingModal: !prev.showTrackingModal }));
+  }
 
   handleChangeUseBiometrics = (value) => {
     const { changeUseBiometrics } = this.props;
@@ -229,6 +252,12 @@ class Profile extends React.Component<Props, State> {
     } = this.props;
 
     updateUser(user.walletId, field, () => this.toggleSlideModalOpen(null));
+  };
+
+  handleToggleOptOutTracking = () => {
+    const { saveOptOutTracking, optOutTracking } = this.props;
+
+    saveOptOutTracking(!optOutTracking);
   };
 
   handleUserPhoneFieldUpdate = (field: Object) => {
@@ -322,6 +351,7 @@ class Profile extends React.Component<Props, State> {
       backupStatus,
       useBiometrics,
       smartWalletFeatureEnabled,
+      optOutTracking,
     } = this.props;
 
     const {
@@ -335,12 +365,37 @@ class Profile extends React.Component<Props, State> {
       showSystemInfoModal,
       showCheckPinModal,
       showBiometricsSelector,
+      showTrackingModal,
     } = this.state;
 
     const isWalletBackedUp = isImported || isBackedUp;
     return (
       <Container inset={{ bottom: 0 }}>
         <Header gray title="settings" onBack={() => navigation.goBack(null)} />
+        <SlideModal
+          isVisible={showTrackingModal}
+          fullScreen
+          showHeader
+          onModalHide={this.toggleTrackingModal}
+          backgroundColor={baseColors.lightGray}
+          avoidKeyboard
+        >
+          <Wrapper regularPadding flex={1}>
+            <SettingsModalTitle extraHorizontalSpacing>
+              Opt out of tracking
+            </SettingsModalTitle>
+
+            <Checkbox
+              checked={optOutTracking}
+              onPress={() => this.handleToggleOptOutTracking()}
+            >
+              <CheckboxText>
+                I do not want my activity to be tracked
+              </CheckboxText>
+            </Checkbox>
+          </Wrapper>
+        </SlideModal>
+
         <SlideModal
           isVisible={this.state.visibleModal === 'country'}
           fullScreen
@@ -630,16 +685,26 @@ class Profile extends React.Component<Props, State> {
               onPress={this.toggleTermsConditionsModal}
             />
 
+            <HTMLContentModal
+              isVisible={showTermsConditionsModal}
+              modalHide={this.toggleTermsConditionsModal}
+              htmlEndpoint="terms_of_service"
+            />
+
+            <ListSeparator>
+              <SubHeading>PRIVACY</SubHeading>
+            </ListSeparator>
+
             <ProfileSettingsItem
               key="privacyPolicy"
               label="Privacy Policy"
               onPress={this.togglePrivacyPolicyModal}
             />
 
-            <HTMLContentModal
-              isVisible={showTermsConditionsModal}
-              modalHide={this.toggleTermsConditionsModal}
-              htmlEndpoint="terms_of_service"
+            <ProfileSettingsItem
+              key="privacyTracking"
+              label="Tracking"
+              onPress={this.toggleTrackingModal}
             />
 
             <HTMLContentModal
@@ -721,7 +786,10 @@ class Profile extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-  appSettings: { data: { useBiometrics = false, baseFiatCurrency }, data: appSettings },
+  appSettings: {
+    data: { useBiometrics = false, baseFiatCurrency, optOutTracking = false },
+    data: appSettings,
+  },
   notifications: { intercomNotificationsCount },
   session: { data: { hasDBConflicts } },
   wallet: { backupStatus },
@@ -735,6 +803,7 @@ const mapStateToProps = ({
   backupStatus,
   useBiometrics,
   smartWalletFeatureEnabled,
+  optOutTracking,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -750,6 +819,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   changeUseBiometrics: (value) => dispatch(changeUseBiometricsAction(value)),
   repairStorage: () => dispatch(repairStorageAction()),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+  saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

@@ -45,10 +45,10 @@ import {
   getChatDraftByContactAction,
   saveDraftAction,
 } from 'actions/chatActions';
+import { logEventAction } from 'actions/analyticsActions';
 import Spinner from 'components/Spinner';
 import { isIphoneX, handleUrlPress } from 'utils/common';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
-import { Answers } from 'react-native-fabric';
 import truncate from 'lodash.truncate';
 
 type Props = {
@@ -69,7 +69,8 @@ type Props = {
   isOpen: boolean,
   hasUnreads?: boolean,
   getCollapseHeight: Function,
-}
+  logEvent: (name: string) => void,
+};
 
 type State = {
   contact: Object,
@@ -77,7 +78,7 @@ type State = {
   isFetching: boolean,
   chatText: string,
   firstChatLoaded: boolean,
-}
+};
 
 const INPUT_HEIGHT = isIphoneX() ? 62 : 52;
 
@@ -262,7 +263,6 @@ class ChatTab extends React.Component<Props, State> {
       getChatByContact(contact.username, contact.id, contact.profileImage);
       navigation.setParams({ chatTabOpen: true });
     }
-    Answers.logContentView('Chat screen');
     AppState.addEventListener('change', this.shouldPersistDraft);
 
     getChatDraftByContact(contact.id);
@@ -339,12 +339,13 @@ class ChatTab extends React.Component<Props, State> {
       sendMessageByContact,
       clearChatDraftState,
       messages: chatMessages,
+      logEvent,
     } = this.props;
     const { contact } = this.state;
     const contactMessages = chatMessages[contact.username];
 
     if (!contactMessages || !contactMessages.length) {
-      Answers.logCustom('Start Chat');
+      logEvent('chat_started');
     }
 
     sendMessageByContact(contact.username, messages[0]);
@@ -650,6 +651,7 @@ const mapDispatchToProps = (dispatch) => ({
   clearChatDraftState: () => dispatch(clearChatDraftStateAction()),
   getChatDraftByContact: (contactId: string) => dispatch(getChatDraftByContactAction(contactId)),
   saveDraft: (contactId: string, draftText: string) => dispatch(saveDraftAction(contactId, draftText)),
+  logEvent: (name: string) => dispatch(logEventAction(name)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatTab);

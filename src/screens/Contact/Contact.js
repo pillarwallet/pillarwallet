@@ -34,6 +34,7 @@ import {
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
+import { logScreenViewAction } from 'actions/analyticsActions';
 import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
 import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
@@ -121,6 +122,7 @@ type Props = {
   history: Array<*>,
   deploySmartWallet: Function,
   openSeaTxHistory: Object[],
+  logScreenView: (view: string, screen: string) => void,
 };
 
 type State = {
@@ -283,6 +285,10 @@ class Contact extends React.Component<Props, State> {
   };
 
   setActiveTab = (activeTab) => {
+    const { logScreenView } = this.props;
+
+    logScreenView(activeTab, 'Contact');
+
     this.setState({ activeTab });
   };
 
@@ -336,7 +342,9 @@ class Contact extends React.Component<Props, State> {
   };
 
   onSendPress(contact: Object): void {
-    this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
+    const { navigation } = this.props;
+
+    navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
   }
 
   render() {
@@ -525,6 +533,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(Contact);

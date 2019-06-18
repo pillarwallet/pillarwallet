@@ -40,6 +40,7 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
+import { logScreenViewAction } from 'actions/analyticsActions';
 
 // models
 import type { Transaction } from 'models/Transaction';
@@ -103,6 +104,7 @@ type Props = {
   smartWalletFeatureEnabled: boolean,
   history: Array<*>,
   deploySmartWallet: Function,
+  logScreenView: (view: string, screen: string) => void,
 };
 
 type State = {
@@ -188,9 +190,12 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, navigation } = this.props;
+    const { fetchTransactionsHistory, navigation, logScreenView } = this.props;
     const { assetData, resetHideRemoval } = navigation.state.params;
     fetchTransactionsHistory(assetData.token);
+
+    logScreenView('asset', 'Asset');
+
     resetHideRemoval();
   }
 
@@ -472,6 +477,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
     dispatch(fetchTransactionsHistoryAction(asset, indexFrom));
   },
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);

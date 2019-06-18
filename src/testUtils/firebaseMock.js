@@ -45,6 +45,7 @@ class FirebaseMock {
 
   analytics = () => ({
     setUserProperty: () => true,
+    logEvent: () => true,
   })
 }
 
