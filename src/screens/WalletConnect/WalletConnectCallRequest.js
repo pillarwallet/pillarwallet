@@ -120,7 +120,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
     const { value = 0, data } = payload.params[0];
 
-    let { to } = payload.params[0];
+    let { to = '' } = payload.params[0];
 
     let symbol = 'ETH';
     let asset = null;
@@ -129,7 +129,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
 
     if (isTokenTransfer) {
-      const matchingAssets = supportedAssets.filter(a => a.address === to);
+      const matchingAssets = supportedAssets.filter(a => a.address.toLowerCase() === to.toLowerCase());
       if (matchingAssets && matchingAssets.length) {
         const iface = new Interface(ERC20_CONTRACT_ABI);
         const parsedTransaction = iface.parseTransaction({ data, value }) || {};
