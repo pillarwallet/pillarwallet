@@ -35,12 +35,7 @@ export default class ExchangeService {
 
   listen(accessToken: string) {
     this.stop();
-    // 123456PLRTST654321QA
-    // const wsUrl = `${EXCHANGE_URL
-    //   .replace(/(https:\/\/)/gi, 'wss://')
-    //   .replace(/(http:\/\/)/gi, 'ws://')}`;
     try {
-      accessToken = '123456PLRTST654321QA';
       this.apiConfig = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -50,27 +45,20 @@ export default class ExchangeService {
         query: {
           token: accessToken,
         },
-        // reconnection: false,
       });
-      this.io.on('disconnect', () => {
+      this.io.on('disconnect', err => {
+        console.log('exchange on disconnect: ', err);
         this.setRunning(false);
       });
       this.io.on('error', (err) => {
-        console.log('EXCHANGE WS ON ERR', err.message);
+        console.log('exchange on error', err);
         this.setRunning(false);
       });
       this.setRunning(true);
     } catch (e) {
-      console.log('errr', e);
+      console.log('exchange service error: ', e);
       this.setRunning(false);
     }
-  }
-
-  send(data: Object, callback?: Function) {
-    // this.io.send(data);
-    console.log('EXCHANGE SENDING: ', data);
-    if (!this.isRunning()) return;
-    executeCallback(data, callback);
   }
 
   stop(callback?: Function) {
