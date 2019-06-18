@@ -28,3 +28,10 @@ export type Offer = {
   minQuantity: number,
   maxQuantity: number,
 }
+
+export type OfferRequest = {
+  quantity: number,
+  provider: string,
+  fromAssetCode: string,
+  toAssetCode: string,
+}

@@ -22,14 +22,31 @@
 import ExchangeService from 'services/exchange';
 import { RESET_OFFERS, APPEND_OFFER } from 'constants/exchangeConstants';
 
+import type { Offer } from 'models/Offer';
+
 const exchangeService = new ExchangeService();
 
-export const searchOffersAction = (sellToken: string, buyToken: string, sellAmount: string) => {
+export const takeOfferAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number, provider: string) => {
+  return async () => {
+    const offerRequest = {
+      quantity: parseFloat(fromAmount),
+      provider,
+      fromAssetCode: 'SNT',
+      toAssetCode: 'ETH',
+    };
+    console.log('offer request: ', offerRequest);
+    const order = await exchangeService.takeOffer(offerRequest);
+    console.log('offer order: ', order);
+    return order;
+  };
+};
+
+export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Function, getState: Function) => {
     dispatch({ type: RESET_OFFERS });
-    console.log('sellToken: ', sellToken);
-    console.log('buyToken: ', buyToken);
-    console.log('sellAmount: ', sellAmount);
+    console.log('sellToken: ', fromAssetCode);
+    console.log('buyToken: ', toAssetCode);
+    console.log('sellAmount: ', fromAmount);
     const { oAuthTokens: { data: oAuthTokens } } = getState();
     exchangeService.listen(oAuthTokens.accessToken);
     exchangeService.onConnect(async () => {
@@ -43,9 +60,7 @@ export const searchOffersAction = (sellToken: string, buyToken: string, sellAmou
       }
     });
     exchangeService.onOffers(offers =>
-      offers.map(offer =>
-        dispatch({ type: APPEND_OFFER, payload: offer }),
-      ),
+      offers.map((offer: Offer) => dispatch({ type: APPEND_OFFER, payload: offer })),
     );
   };
 };

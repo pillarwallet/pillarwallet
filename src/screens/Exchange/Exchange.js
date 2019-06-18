@@ -28,7 +28,7 @@ import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
 import SelectToken from 'components/SelectToken';
 import SelectTokenAmount from 'components/SelectTokenAmount';
-import { searchOffersAction } from 'actions/exchangeActions';
+import { searchOffersAction, takeOfferAction } from 'actions/exchangeActions';
 
 import type { Offer } from 'models/Offer';
 import type { Assets, Rates } from 'models/Asset';
@@ -60,8 +60,9 @@ type Props = {
   baseFiatCurrency: string,
   user: Object,
   assets: Assets,
-  searchOffers: (string, string, string) => void,
+  searchOffers: (string, string, number) => void,
   offers: Offer[],
+  takeOffer: (string, string, number, string) => Object,
 };
 
 type State = {
@@ -102,10 +103,10 @@ class ExchangeScreen extends React.Component<Props, State> {
   triggerSearch = () => {
     const { selectedSellAmount, selectedSellToken, selectedBuyToken } = this.state;
     const { searchOffers } = this.props;
-    const sellAmount = parseFloat(selectedSellAmount);
+    const fromAmount = parseFloat(selectedSellAmount);
 
-    if ((sellAmount > 0) && (selectedBuyToken !== '') && (selectedSellToken !== '')) {
-      searchOffers(selectedBuyToken, selectedSellToken, selectedSellAmount);
+    if ((fromAmount > 0) && (selectedBuyToken !== '') && (selectedSellToken !== '')) {
+      searchOffers(selectedBuyToken, selectedSellToken, fromAmount);
     }
   }
 
@@ -174,8 +175,11 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  searchOffers: (buyToken, sellToken, sellAmount) => dispatch(
-    searchOffersAction(buyToken, sellToken, sellAmount),
+  searchOffers: (fromAssetCode, toAssetCode, fromAmount) => dispatch(
+    searchOffersAction(fromAssetCode, toAssetCode, fromAmount),
+  ),
+  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider) => dispatch(
+    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider),
   ),
 });
 

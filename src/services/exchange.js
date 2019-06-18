@@ -20,6 +20,8 @@
 import { EXCHANGE_URL } from 'react-native-dotenv';
 import SocketIO from 'socket.io-client';
 
+import type { OfferRequest } from 'models/Offer';
+
 const executeCallback = (data?: any, callback?: Function) => {
   if (typeof callback === 'function') callback(data);
 };
@@ -39,6 +41,8 @@ export default class ExchangeService {
       this.apiConfig = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
       };
       this.io = new SocketIO(EXCHANGE_URL, {
@@ -93,8 +97,8 @@ export default class ExchangeService {
     this.io.on('offers', data => executeCallback(data, callback));
   }
 
-  async requestOffers(buyToken: string, sellToken: string) {
-    const urlPath = `offers?name=${buyToken}-${sellToken}`;
+  requestOffers(fromAssetCode: string, toAssetCode: string) {
+    const urlPath = `offers?name=${fromAssetCode}-${toAssetCode}`;
     return fetch(buildApiUrl(urlPath), this.apiConfig)
       .then(async response => {
         const body = await response.text();
@@ -102,6 +106,16 @@ export default class ExchangeService {
           ? {}
           : response.json();
       })
+      .catch(error => ({ error }));
+  }
+
+  takeOffer(order: OfferRequest) {
+    return fetch(buildApiUrl('orders'), {
+      ...this.apiConfig,
+      method: 'POST',
+      body: JSON.stringify(order),
+    })
+      .then(response => response.json())
       .catch(error => ({ error }));
   }
 }
