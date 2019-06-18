@@ -29,7 +29,7 @@ import SelectToken from 'components/SelectToken';
 import SelectTokenAmount from 'components/SelectTokenAmount';
 import { searchOffersAction } from 'actions/exchangeActions';
 
-import type { SearchResults } from 'models/Exchange';
+import type { Offer } from 'models/Offer';
 import type { Assets, Rates } from 'models/Asset';
 
 const Screen = styled(Container)`
@@ -56,14 +56,11 @@ const Subtitle = styled(Text)`
 type Props = {
   rates: Rates,
   navigation: NavigationScreenProp<*>,
-  searchResults: SearchResults,
   baseFiatCurrency: string,
   user: Object,
   assets: Assets,
   searchOffers: (string, string, string) => void,
-  offers: {
-    searchResults: SearchResults,
-  },
+  offers: Offer[],
 };
 
 type State = {
@@ -115,7 +112,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       rates,
       assets,
       baseFiatCurrency,
-      searchResults: offers,
+      offers,
     } = this.props;
     const { selectedBuyToken, selectedSellAmount, selectedSellToken } = this.state;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
@@ -149,6 +146,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           <FlatList
             data={offers}
             contentContainerStyle={{ width: '100%' }}
+            keyExtractor={({ _id }) => _id}
             renderItem={({ item: { provider } }) => (
               <ListItem>
                 <Text>PROVIDER: {provider}</Text>
@@ -163,12 +161,12 @@ class ExchangeScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
-  exchange: { data: { offers: searchResults } },
+  exchange: { data: { offers } },
   assets: { data: assets },
   rates: { data: rates },
 }) => ({
   baseFiatCurrency,
-  searchResults,
+  offers,
   assets,
   rates,
 });

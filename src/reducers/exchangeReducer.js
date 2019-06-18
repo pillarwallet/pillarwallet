@@ -17,11 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { APPEND_OFFER } from 'constants/exchangeConstants';
-import type { SearchResults } from 'models/Exchange';
+import { APPEND_OFFER, RESET_OFFERS } from 'constants/exchangeConstants';
+import type { Offer } from 'models/Offer';
 
 export type ExchangeReducerState = {
-  data: SearchResults,
+  data: {
+    offers: Offer[],
+  },
 };
 
 export type ExchangeReducerAction = {
@@ -31,38 +33,7 @@ export type ExchangeReducerAction = {
 
 const initialState = {
   data: {
-    offers: [
-      {
-        key: 'test1',
-        provider: 'test1',
-        toAssetCode: '',
-        minQuantity: 0,
-        maxQuantity: 10,
-        fromAssetCode: '',
-        description: '',
-        askRate: 0,
-      },
-      {
-        key: 'test2',
-        provider: 'test2',
-        toAssetCode: '',
-        minQuantity: 0,
-        maxQuantity: 10,
-        fromAssetCode: '',
-        description: '',
-        askRate: 0,
-      },
-      {
-        key: 'test3',
-        provider: 'test3',
-        toAssetCode: '',
-        minQuantity: 0,
-        maxQuantity: 10,
-        fromAssetCode: '',
-        description: '',
-        askRate: 0,
-      },
-    ],
+    offers: [],
   },
 };
 
@@ -71,6 +42,14 @@ export default function exchangeReducer(
   action: ExchangeReducerAction,
 ): ExchangeReducerState {
   switch (action.type) {
+    case RESET_OFFERS:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          offers: [],
+        },
+      };
     case APPEND_OFFER:
       return {
         ...state,

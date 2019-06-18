@@ -20,11 +20,13 @@
 
 
 import ExchangeService from 'services/exchange';
+import { RESET_OFFERS, APPEND_OFFER } from 'constants/exchangeConstants';
 
 const exchangeService = new ExchangeService();
 
 export const searchOffersAction = (sellToken: string, buyToken: string, sellAmount: string) => {
   return async (dispatch: Function, getState: Function) => {
+    dispatch({ type: RESET_OFFERS });
     console.log('sellToken: ', sellToken);
     console.log('buyToken: ', buyToken);
     console.log('sellAmount: ', sellAmount);
@@ -39,8 +41,11 @@ export const searchOffersAction = (sellToken: string, buyToken: string, sellAmou
         // TODO: handle error
         console.log('errr', result);
       }
-      console.log('offers request result: ', result);
     });
-    exchangeService.onOffers(data => console.log('received ws offers: ', data));
+    exchangeService.onOffers(offers =>
+      offers.map(offer =>
+        dispatch({ type: APPEND_OFFER, payload: offer }),
+      ),
+    );
   };
 };
