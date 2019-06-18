@@ -22,6 +22,7 @@ import { TouchableOpacity, FlatList, Text } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
+import debounce from 'lodash.debounce';
 import { UIColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -83,6 +84,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     this.state.selectedSellToken = firstAssetSymbol;
     this.state.selectedBuyToken = firstAssetSymbol;
+    this.triggerSearch = debounce(this.triggerSearch, 500);
   }
 
   onSellTokenChanged = (selectedSellToken: string) => {
