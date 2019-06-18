@@ -61,6 +61,7 @@ import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallReq
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
+import ContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 import UpgradeIntroScreen from 'screens/UpgradeToSmartWallet/UpgradeIntroScreen';
 import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
@@ -166,6 +167,7 @@ import {
   WALLETS_LIST,
   WALLET_SETTINGS,
   MANAGE_DETAILS_SESSIONS,
+  CONTACT_INFO,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -268,6 +270,7 @@ const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
+  [CONTACT_INFO]: ContactInfo,
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [CONTACT]: ContactScreen,
   [COLLECTIBLE]: CollectibleScreen,
