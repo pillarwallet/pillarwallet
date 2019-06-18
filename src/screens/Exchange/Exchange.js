@@ -18,19 +18,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TouchableOpacity, FlatList, Text } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { UIColors } from 'utils/variables';
+import { baseColors, fontSizes, UIColors } from 'utils/variables';
+
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
+import ShadowedCard from 'components/ShadowedCard';
+import { BaseText } from 'components/Typography';
+
+
 import SelectToken from 'components/SelectToken';
 import SelectTokenAmount from 'components/SelectTokenAmount';
 import { searchOffersAction } from 'actions/exchangeActions';
 
 import type { SearchResults } from 'models/Exchange';
 import type { Assets, Rates } from 'models/Asset';
+import Button from '../../components/Button';
 
 const Screen = styled(Container)`
   background-color: ${UIColors.defaultBackgroundColor};
@@ -41,10 +47,7 @@ const HeaderWrapper = styled(Wrapper)`
 `;
 
 const BodyWrapper = styled(Wrapper)`
-  margin: 20px 20px 0;
 `;
-
-const ListItem = styled(TouchableOpacity)``;
 
 const Subtitle = styled(Text)`
   margin: 9px 0;
@@ -52,6 +55,87 @@ const Subtitle = styled(Text)`
   font-size: 17px;
   font-weight: bold;
 `;
+
+const CardWrapper = styled.View`
+  width: 100%;
+`;
+const CardRow = styled.View`
+  flex: 1;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 10px 0;
+  ${props => props.withBorder
+    ? `border-bottom-width: 1px;
+      border-bottom-color: ${baseColors.mediumLightGray};`
+    : ''}
+`;
+
+const CardColumn = styled.View`
+  flex-direction: column;
+`;
+
+const CardText = styled(BaseText)`
+  line-height: 18px;
+  font-size: ${fontSizes.extraSmall}px;
+  letter-spacing: 0.18px;
+  color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
+  flex-wrap: wrap;
+  flex: 1;
+`;
+
+const dummyOffers = [
+  {
+    _id: 'shapeshift',
+    provider: 'SHAPESHIFT-SHIM',
+    description: '',
+    fromAssetCode: 'SNT',
+    toAssetCode: 'ETH',
+    askRate: 0.00010297,
+    minQuantity: 57.24350649,
+    maxQuantity: 180637.01281294,
+  },
+  {
+    _id: 'shapeshift2',
+    provider: 'SHAPESHIFT-SHIM',
+    description: '',
+    fromAssetCode: 'SNT',
+    toAssetCode: 'ETH',
+    askRate: 0.00010297,
+    minQuantity: 57.24350649,
+    maxQuantity: 180637.01281294,
+  },
+  {
+    _id: 'shapeshift3',
+    provider: 'SHAPESHIFT-SHIM',
+    description: '',
+    fromAssetCode: 'SNT',
+    toAssetCode: 'ETH',
+    askRate: 0.00010297,
+    minQuantity: null,
+    maxQuantity: 180637.01281294,
+  },
+  {
+    _id: 'shapeshift4',
+    provider: 'SHAPESHIFT-SHIM',
+    description: '',
+    fromAssetCode: 'SNT',
+    toAssetCode: 'ETH',
+    askRate: 0.00010297,
+    minQuantity: 57.24350649,
+    maxQuantity: null,
+  },
+  {
+    _id: 'shapeshift5',
+    provider: 'SHAPESHIFT-SHIM',
+    description: '',
+    fromAssetCode: 'SNT',
+    toAssetCode: 'ETH',
+    askRate: 0.00010297,
+    minQuantity: null,
+    maxQuantity: null,
+  },
+];
 
 type Props = {
   rates: Rates,
@@ -70,6 +154,15 @@ type State = {
   selectedSellToken: string,
   selectedSellAmount: string,
   selectedBuyToken: string,
+};
+
+const getAvailable = (min, max) => {
+  if (!min && !max) {
+    return 'N/A';
+  } else if (!min || !max || min === max) {
+    return `${min || max}`;
+  }
+  return `${min} - ${max}`;
 };
 
 class ExchangeScreen extends React.Component<Props, State> {
@@ -108,6 +201,36 @@ class ExchangeScreen extends React.Component<Props, State> {
     if ((sellAmount > 0) && (selectedBuyToken !== '') && (selectedSellToken !== '')) {
       searchOffers(selectedBuyToken, selectedSellToken, selectedSellAmount);
     }
+  };
+
+  renderOffers = ({ item: offer }) => {
+    const available = getAvailable(offer.minQuantity, offer.maxQuantity);
+    return (
+      <ShadowedCard
+        wrapperStyle={{ marginBottom: 10 }}
+        contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
+      >
+        <CardWrapper>
+          <CardRow withBorder>
+            <CardColumn>
+              <CardText label>Exchange rate</CardText>
+              <CardText>{`${offer.askRate} ${offer.fromAssetCode || ''}`}</CardText>
+            </CardColumn>
+          </CardRow>
+          <CardRow>
+            <CardColumn style={{ flex: 1 }}>
+              <CardText label>Available</CardText>
+              <View style={{ flexDirection: 'row' }}>
+                <CardText>{available}</CardText>
+              </View>
+            </CardColumn>
+            <CardColumn >
+              <Button title={`${offer.askRate} ${offer.toAssetCode}`} small />
+            </CardColumn>
+          </CardRow>
+        </CardWrapper>
+      </ShadowedCard>
+    );
   }
 
   render() {
@@ -115,7 +238,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       rates,
       assets,
       baseFiatCurrency,
-      searchResults: offers,
+      // searchResults: offers,
     } = this.props;
     const { selectedBuyToken, selectedSellAmount, selectedSellToken } = this.state;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
@@ -147,13 +270,11 @@ class ExchangeScreen extends React.Component<Props, State> {
 
           <Text>OFFERS</Text>
           <FlatList
-            data={offers}
-            contentContainerStyle={{ width: '100%' }}
-            renderItem={({ item: { provider } }) => (
-              <ListItem>
-                <Text>PROVIDER: {provider}</Text>
-              </ListItem>
-            )}
+            // data={offers}
+            data={dummyOffers}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={{ width: '100%', paddingHorizontal: 20 }}
+            renderItem={this.renderOffers}
           />
         </BodyWrapper>
       </Screen>
