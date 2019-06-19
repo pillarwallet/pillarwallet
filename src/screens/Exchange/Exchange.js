@@ -37,6 +37,8 @@ import { searchOffersAction } from 'actions/exchangeActions';
 import type { SearchResults } from 'models/Exchange';
 import type { Assets, Rates } from 'models/Asset';
 
+import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+
 const Subtitle = styled(BoldText)`
   margin: 10px 0;
   color: ${baseColors.slateBlack};
@@ -213,7 +215,17 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   renderOffers = ({ item: offer }) => {
+    const { selectedSellAmount } = this.state;
+    const { navigation } = this.props;
     const available = getAvailable(offer.minQuantity, offer.maxQuantity);
+    const amountToBuy = parseFloat(selectedSellAmount) * offer.askRate;
+    const transactionPayload = {
+      amountToBuy,
+      selectedSellAmount,
+      toAssetCode: offer.toAssetCode,
+      fromAssetCode: offer.fromAssetCode,
+    };
+
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
@@ -223,7 +235,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           <CardRow withBorder>
             <CardColumn>
               <CardText label>Exchange rate</CardText>
-              <CardText>{`${offer.askRate} ${offer.fromAssetCode || ''}`}</CardText>
+              <CardText>{`${amountToBuy} ${offer.fromAssetCode || ''}`}</CardText>
             </CardColumn>
           </CardRow>
           <CardRow>
@@ -234,7 +246,11 @@ class ExchangeScreen extends React.Component<Props, State> {
               </View>
             </CardColumn>
             <CardColumn >
-              <Button title={`${offer.askRate} ${offer.toAssetCode}`} small />
+              <Button
+                title={`${offer.askRate} ${offer.toAssetCode}`}
+                small
+                onPress={() => { navigation.navigate(EXCHANGE_CONFIRM, { transactionPayload }); }}
+              />
             </CardColumn>
           </CardRow>
         </CardWrapper>

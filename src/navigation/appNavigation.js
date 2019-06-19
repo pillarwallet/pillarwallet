@@ -39,6 +39,7 @@ import MarketScreen from 'screens/Market';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
 import ExchangeScreen from 'screens/Exchange';
+import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ContactScreen from 'screens/Contact';
 import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
@@ -95,6 +96,7 @@ import {
   ASSET,
   ICO,
   EXCHANGE,
+  EXCHANGE_CONFIRM,
   PROFILE,
   PEOPLE,
   CONTACT,
@@ -211,6 +213,7 @@ assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 // EXCHANGE FLOW
 const exchangeFlow = createStackNavigator({
   [EXCHANGE]: ExchangeScreen,
+  [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
 }, StackNavigatorConfig);
 
 // PEOPLE FLOW
