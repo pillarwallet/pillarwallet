@@ -23,6 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
+import { formatMoney } from 'utils/common';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 
@@ -209,7 +210,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             </CardColumn>
             <CardColumn >
               <Button
-                title={`${amountToBuy} ${offer.toAssetCode}`}
+                title={`${formatMoney(amountToBuy)} ${offer.toAssetCode}`}
                 small
                 onPress={() => { navigation.navigate(EXCHANGE_CONFIRM, { transactionPayload }); }}
               />
