@@ -21,6 +21,7 @@ import { EXCHANGE_URL } from 'react-native-dotenv';
 import SocketIO from 'socket.io-client';
 
 import type { OfferRequest } from 'models/Offer';
+import { getRandomString } from 'utils/common';
 
 const executeCallback = (data?: any, callback?: Function) => {
   if (typeof callback === 'function') callback(data);
@@ -35,7 +36,7 @@ export default class ExchangeService {
   isConnected: boolean;
   apiConfig: Object;
 
-  listen(accessToken: string) {
+  listen(accessToken: string, shapeshiftAccessToken?: string) {
     this.stop();
     try {
       this.apiConfig = {
@@ -45,6 +46,13 @@ export default class ExchangeService {
           'Content-Type': 'application/json',
         },
       };
+      if (!!shapeshiftAccessToken
+        && shapeshiftAccessToken !== '') {
+        this.apiConfig.headers = {
+          ...this.apiConfig.headers,
+          token: shapeshiftAccessToken,
+        };
+      }
       this.io = new SocketIO(EXCHANGE_URL, {
         query: {
           token: accessToken,
@@ -113,5 +121,11 @@ export default class ExchangeService {
     })
       .then(response => response.json())
       .catch(error => ({ error }));
+  }
+
+  getShapeshiftAuthUrl() {
+    const sessionId = getRandomString();
+    const urlPath = `authorize?sessionID=${sessionId}`;
+    return buildApiUrl(urlPath);
   }
 }

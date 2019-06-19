@@ -28,7 +28,7 @@ import {
   AppState,
   DeviceEventEmitter,
 } from 'react-native';
-import { providers } from 'ethers';
+import { providers, utils } from 'ethers';
 import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 
 export function delay(ms: number): Promise<void> {
@@ -251,4 +251,8 @@ export function getEthereumProvider(network: string) {
     infuraProvider,
     etherscanProvider,
   ]);
+}
+
+export function getRandomString(): string {
+  return utils.bigNumberify(utils.randomBytes(32)).toHexString().slice(2);
 }

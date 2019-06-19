@@ -18,11 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-
+import { Linking } from 'react-native';
 import ExchangeService from 'services/exchange';
-import { RESET_OFFERS, APPEND_OFFER } from 'constants/exchangeConstants';
+import Toast from 'components/Toast';
+import {
+  RESET_OFFERS,
+  APPEND_OFFER,
+  SET_SHAPESHIFT_ACCESS_TOKEN,
+} from 'constants/exchangeConstants';
 
 import type { Offer } from 'models/Offer';
+import { saveDbAction } from './dbActions';
 
 const exchangeService = new ExchangeService();
 
@@ -47,20 +53,58 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     console.log('sellToken: ', fromAssetCode);
     console.log('buyToken: ', toAssetCode);
     console.log('sellAmount: ', fromAmount);
-    const { oAuthTokens: { data: oAuthTokens } } = getState();
-    exchangeService.listen(oAuthTokens.accessToken);
+    const {
+      oAuthTokens: { data: oAuthTokens },
+      exchange: { data: { shapeshiftAccessToken } },
+    } = getState();
+    exchangeService.listen(oAuthTokens.accessToken, shapeshiftAccessToken);
     exchangeService.onConnect(async () => {
-      console.log('ws connected!');
       // TODO: pass assets symbols from action
       // this triggers ws event
       const result = await exchangeService.requestOffers('SNT', 'ETH');
       if (result.error) {
-        // TODO: handle error
-        console.log('errr', result);
+        Toast.show({
+          message: 'Exchange service failed',
+          type: 'warning',
+          title: 'Unable to connect',
+        });
       }
     });
     exchangeService.onOffers(offers =>
       offers.map((offer: Offer) => dispatch({ type: APPEND_OFFER, payload: offer })),
     );
+  };
+};
+
+export const authorizeWithShapeshiftAction = () => {
+  return () => {
+    const shapeshiftAuthUrl = exchangeService.getShapeshiftAuthUrl();
+    return Linking.canOpenURL(shapeshiftAuthUrl)
+      .then((supported) => {
+        if (supported) Linking.openURL(shapeshiftAuthUrl);
+      })
+      .catch(() => {
+        Toast.show({
+          message: 'Unable to authorize with Shapeshift',
+          type: 'warning',
+          title: 'Cannot get authorize url',
+        });
+      });
+  };
+};
+
+export const setShapeshiftAccessTokenAction = (token: ?string) => {
+  return (dispatch: Function) => {
+    dispatch({
+      type: SET_SHAPESHIFT_ACCESS_TOKEN,
+      payload: token,
+    });
+    dispatch(saveDbAction('exchange', { shapeshiftAccessToken: token }, true));
+  };
+};
+
+export const resetShapeshiftAccessTokenAction = () => {
+  return (dispatch: Function) => {
+    dispatch(setShapeshiftAccessTokenAction(null));
   };
 };

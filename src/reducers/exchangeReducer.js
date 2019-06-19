@@ -17,12 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { APPEND_OFFER, RESET_OFFERS } from 'constants/exchangeConstants';
+import {
+  APPEND_OFFER,
+  RESET_OFFERS,
+  SET_SHAPESHIFT_ACCESS_TOKEN,
+} from 'constants/exchangeConstants';
 import type { Offer } from 'models/Offer';
 
 export type ExchangeReducerState = {
   data: {
     offers: Offer[],
+    shapeshiftAccessToken?: string,
   },
 };
 
@@ -59,6 +64,14 @@ export default function exchangeReducer(
             ...state.data.offers,
             action.payload,
           ],
+        },
+      };
+    case SET_SHAPESHIFT_ACCESS_TOKEN:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          shapeshiftAccessToken: action.payload,
         },
       };
     default:

@@ -88,6 +88,14 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="pillarwallet" android:host="approve" />
             </intent-filter>
+            <intent-filter android:label="@string/label_deep_link_proceed">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="pillarwallet" android:host="referral" />
+                <data android:scheme="pillarwallet" android:host="shapeshift" />
+                <!-- add more lines to support other hosts -->
+            </intent-filter>
         </activity>
 
         <activity

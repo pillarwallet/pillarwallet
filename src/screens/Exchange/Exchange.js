@@ -34,7 +34,12 @@ import SelectToken from 'components/SelectToken';
 import SelectTokenAmount from 'components/SelectTokenAmount';
 import Button from 'components/Button';
 
-import { searchOffersAction, takeOfferAction } from 'actions/exchangeActions';
+import {
+  searchOffersAction,
+  takeOfferAction,
+  authorizeWithShapeshiftAction,
+  resetShapeshiftAccessTokenAction,
+} from 'actions/exchangeActions';
 
 import type { Offer } from 'models/Offer';
 import type { Assets, Rates } from 'models/Asset';
@@ -97,6 +102,10 @@ const ButtonLabel = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
 `;
 
+const ButtonLabelNegative = styled(ButtonLabel)`
+  color: ${baseColors.burningFire};
+`;
+
 type Props = {
   rates: Rates,
   navigation: NavigationScreenProp<*>,
@@ -106,12 +115,16 @@ type Props = {
   searchOffers: (string, string, number) => void,
   offers: Offer[],
   takeOffer: (string, string, number, string) => Object,
+  authorizeWithShapeshift: Function,
+  shapeshiftAccessToken?: string,
+  resetShapeshiftAccessToken: Function,
 };
 
 type State = {
   selectedSellToken: string,
   selectedSellAmount: string,
   selectedBuyToken: string,
+  shapeshiftAuthClicked: boolean,
 };
 
 const getAvailable = (min, max) => {
@@ -128,6 +141,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     selectedSellAmount: '0.0',
     selectedSellToken: '',
     selectedBuyToken: '',
+    shapeshiftAuthClicked: false,
   };
 
   constructor(props: Props) {
@@ -206,14 +220,29 @@ class ExchangeScreen extends React.Component<Props, State> {
     );
   };
 
+  onShapeshiftAuthClick = () => {
+    const { authorizeWithShapeshift } = this.props;
+    this.setState({ shapeshiftAuthClicked: true }, async () => {
+      await authorizeWithShapeshift();
+      this.setState({ shapeshiftAuthClicked: false });
+    });
+  };
+
   render() {
     const {
       rates,
       assets,
       baseFiatCurrency,
       offers,
+      shapeshiftAccessToken,
+      resetShapeshiftAccessToken,
     } = this.props;
-    const { selectedBuyToken, selectedSellAmount, selectedSellToken } = this.state;
+    const {
+      selectedBuyToken,
+      selectedSellAmount,
+      selectedSellToken,
+      shapeshiftAuthClicked,
+    } = this.state;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
 
     return (
@@ -246,9 +275,14 @@ class ExchangeScreen extends React.Component<Props, State> {
             renderItem={this.renderOffers}
             ListHeaderComponent={
               <ListHeader>
-                <HeaderButton onPress={() => {}}>
-                  <ButtonLabel>Connect more exchanges</ButtonLabel>
-                </HeaderButton>
+                {(!shapeshiftAccessToken &&
+                  <HeaderButton disabled={shapeshiftAuthClicked} onPress={() => this.onShapeshiftAuthClick()}>
+                    <ButtonLabel>Connect to ShapeShift</ButtonLabel>
+                  </HeaderButton>) ||
+                  <HeaderButton onPress={() => resetShapeshiftAccessToken()}>
+                    <ButtonLabelNegative>Disconnect ShapeShift</ButtonLabelNegative>
+                  </HeaderButton>
+                }
               </ListHeader>
             }
           />
@@ -260,7 +294,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
-  exchange: { data: { offers } },
+  exchange: { data: { offers, shapeshiftAccessToken } },
   assets: { data: assets },
   rates: { data: rates },
 }) => ({
@@ -268,6 +302,7 @@ const mapStateToProps = ({
   offers,
   assets,
   rates,
+  shapeshiftAccessToken,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -277,6 +312,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider) => dispatch(
     takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider),
   ),
+  authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
+  resetShapeshiftAccessToken: () => dispatch(resetShapeshiftAccessTokenAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExchangeScreen);
