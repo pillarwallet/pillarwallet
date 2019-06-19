@@ -18,41 +18,83 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TouchableOpacity, FlatList, Text } from 'react-native';
+import { FlatList, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import { UIColors } from 'utils/variables';
-import { formatMoney } from 'utils/common';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+
+import { baseColors, fontSizes, spacing } from 'utils/variables';
+
+import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
+import ShadowedCard from 'components/ShadowedCard';
+import { BaseText, BoldText } from 'components/Typography';
 import SelectToken from 'components/SelectToken';
 import SelectTokenAmount from 'components/SelectTokenAmount';
+import Button from 'components/Button';
+
 import { searchOffersAction, takeOfferAction } from 'actions/exchangeActions';
 
 import type { Offer } from 'models/Offer';
 import type { Assets, Rates } from 'models/Asset';
 
-const Screen = styled(Container)`
-  background-color: ${UIColors.defaultBackgroundColor};
+import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+
+const Subtitle = styled(BoldText)`
+  margin: 10px 0;
+  color: ${baseColors.slateBlack};
+  font-size: ${fontSizes.medium}px;
 `;
 
-const HeaderWrapper = styled(Wrapper)`
-  background-color: ${UIColors.defaultHeaderColor};
+const PaddingWrapper = styled.View`
+  padding: 0 ${spacing.mediumLarge}px;
 `;
 
-const BodyWrapper = styled(ScrollWrapper)`
-  margin: 20px 20px 0;
+const CardWrapper = styled.View`
+  width: 100%;
 `;
 
-const ListItem = styled(TouchableOpacity)``;
+const CardRow = styled.View`
+  flex: 1;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 10px 0;
+  ${props => props.withBorder
+    ? `border-bottom-width: 1px;
+      border-bottom-color: ${baseColors.mediumLightGray};`
+    : ''}
+`;
 
-const Subtitle = styled(Text)`
-  margin: 9px 0;
-  color: black;
-  font-size: 17px;
-  font-weight: bold;
+const CardColumn = styled.View`
+  flex-direction: column;
+`;
+
+const CardText = styled(BaseText)`
+  line-height: 18px;
+  font-size: ${fontSizes.extraSmall}px;
+  letter-spacing: 0.18px;
+  color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
+  flex-wrap: wrap;
+  flex: 1;
+`;
+
+const ListHeader = styled.View`
+  width: 100%;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin: 14px 0;
+`;
+
+const HeaderButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ButtonLabel = styled(BaseText)`
+  color: ${baseColors.fruitSalad};
+  font-size: ${fontSizes.extraSmall}px;
 `;
 
 type Props = {
@@ -70,6 +112,15 @@ type State = {
   selectedSellToken: string,
   selectedSellAmount: string,
   selectedBuyToken: string,
+};
+
+const getAvailable = (min, max) => {
+  if (!min && !max) {
+    return 'N/A';
+  } else if (!min || !max || min === max) {
+    return `${min || max}`;
+  }
+  return `${min} - ${max}`;
 };
 
 class ExchangeScreen extends React.Component<Props, State> {
@@ -111,6 +162,50 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
   };
 
+  renderOffers = ({ item: offer }) => {
+    const { selectedSellAmount } = this.state;
+    const { navigation } = this.props;
+    const available = getAvailable(offer.minQuantity, offer.maxQuantity);
+    const amountToBuy = parseFloat(selectedSellAmount) * offer.askRate;
+    const transactionPayload = {
+      amountToBuy,
+      selectedSellAmount,
+      toAssetCode: offer.toAssetCode,
+      fromAssetCode: offer.fromAssetCode,
+    };
+
+    return (
+      <ShadowedCard
+        wrapperStyle={{ marginBottom: 10 }}
+        contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
+      >
+        <CardWrapper>
+          <CardRow withBorder>
+            <CardColumn>
+              <CardText label>Exchange rate</CardText>
+              <CardText>{`${offer.askRate} ${offer.fromAssetCode || ''}`}</CardText>
+            </CardColumn>
+          </CardRow>
+          <CardRow>
+            <CardColumn style={{ flex: 1 }}>
+              <CardText label>Available</CardText>
+              <View style={{ flexDirection: 'row' }}>
+                <CardText>{available}</CardText>
+              </View>
+            </CardColumn>
+            <CardColumn >
+              <Button
+                title={`${amountToBuy} ${offer.toAssetCode}`}
+                small
+                onPress={() => { navigation.navigate(EXCHANGE_CONFIRM, { transactionPayload }); }}
+              />
+            </CardColumn>
+          </CardRow>
+        </CardWrapper>
+      </ShadowedCard>
+    );
+  };
+
   render() {
     const {
       rates,
@@ -120,52 +215,45 @@ class ExchangeScreen extends React.Component<Props, State> {
     } = this.props;
     const { selectedBuyToken, selectedSellAmount, selectedSellToken } = this.state;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-    const sellAmount = parseFloat(selectedSellAmount);
 
     return (
-      <Screen inset={{ bottom: 0 }}>
-        <HeaderWrapper>
-          <Header title="exchange" />
-        </HeaderWrapper>
+      <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
+        <Header title="exchange" />
+        <ScrollWrapper>
+          <PaddingWrapper>
+            <Subtitle>Selling</Subtitle>
+            <SelectTokenAmount
+              baseFiatCurrency={baseFiatCurrency}
+              selectedToken={selectedSellToken}
+              selectedAmount={selectedSellAmount}
+              onTokenChange={this.onSellTokenChanged}
+              onAmountChange={this.onSellAmountChanged}
+              assets={assetsList}
+              rates={rates}
+            />
 
-        <BodyWrapper inset={{ bottom: 0 }}>
-          <Subtitle>Selling</Subtitle>
-          <SelectTokenAmount
-            baseFiatCurrency={baseFiatCurrency}
-            selectedToken={selectedSellToken}
-            selectedAmount={selectedSellAmount}
-            onTokenChange={this.onSellTokenChanged}
-            onAmountChange={this.onSellAmountChanged}
-            assets={assetsList}
-            rates={rates}
-          />
-
-          <Subtitle>Buying</Subtitle>
-          <SelectToken
-            assets={assetsList}
-            selectedToken={selectedBuyToken}
-            onTokenChange={this.onBuyTokenChanged}
-          />
-
-          <Text>OFFERS</Text>
+            <Subtitle>Buying</Subtitle>
+            <SelectToken
+              assets={assetsList}
+              selectedToken={selectedBuyToken}
+              onTokenChange={this.onBuyTokenChanged}
+            />
+          </PaddingWrapper>
           <FlatList
             data={offers}
-            contentContainerStyle={{ width: '100%' }}
-            keyExtractor={({ _id }) => _id}
-            renderItem={({ item }) => (
-              <ListItem>
-                <Text>{item.provider}</Text>
-                <Text>Exchange rate</Text>
-                <Text>{item.askRate} {item.fromAssetCode} / {item.toAssetCode}</Text>
-                <Text>Available</Text>
-                <Text>{item.minQuantity} - {item.maxQuantity}</Text>
-                <Text>You will get</Text>
-                <Text>{formatMoney(item.askRate * sellAmount)} {item.toAssetCode}</Text>
-              </ListItem>
-            )}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={{ width: '100%', paddingHorizontal: 20, paddingVertical: 10 }}
+            renderItem={this.renderOffers}
+            ListHeaderComponent={
+              <ListHeader>
+                <HeaderButton onPress={() => {}}>
+                  <ButtonLabel>Connect more exchanges</ButtonLabel>
+                </HeaderButton>
+              </ListHeader>
+            }
           />
-        </BodyWrapper>
-      </Screen>
+        </ScrollWrapper>
+      </Container>
     );
   }
 }

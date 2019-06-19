@@ -12049,6 +12049,14 @@ react-native-modal@7.0.2:
     prop-types "^15.6.1"
     react-native-animatable "^1.2.4"
 
+react-native-modalbox@^1.7.1:
+  version "1.7.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-modalbox/-/react-native-modalbox-1.7.1.tgz#cdb623ecd1cbe8699a450217c25b2d6666dc63e6"
+  integrity sha1-zbYj7NHL6GmaRQIXwlstZmbcY+Y=
+  dependencies:
+    create-react-class "^15.6.0"
+    prop-types "^15.5.10"
+
 react-native-os@^1.0.1:
   version "1.2.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-os/-/react-native-os-1.2.2.tgz#402cee00ac00a0588200a66b90e1d2b5a593fec0"
