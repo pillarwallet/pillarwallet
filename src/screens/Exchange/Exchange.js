@@ -194,15 +194,15 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   onSellTokenChanged = (selectedSellToken: string) => {
     this.setState({ selectedSellToken }, () => this.triggerSearch());
-  }
+  };
 
   onSellAmountChanged = (selectedSellAmount: string) => {
     this.setState({ selectedSellAmount }, () => this.triggerSearch());
-  }
+  };
 
   onBuyTokenChanged = (selectedBuyToken: string) => {
     this.setState({ selectedBuyToken }, () => this.triggerSearch());
-  }
+  };
 
   triggerSearch = () => {
     const { selectedSellAmount, selectedSellToken, selectedBuyToken } = this.state;
@@ -256,7 +256,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         </CardWrapper>
       </ShadowedCard>
     );
-  }
+  };
 
   render() {
     const {
