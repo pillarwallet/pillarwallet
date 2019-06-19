@@ -23,7 +23,7 @@ import {
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
 import { utils } from 'ethers';
-import type { Transaction, TransactionEthers } from 'models/Transaction';
+import type { Transaction, TransactionEthers, TransactionsStore } from 'models/Transaction';
 
 export const buildHistoryTransaction = ({
   from,
@@ -57,4 +57,15 @@ export const isTransactionEvent = (eventType: string) => {
     TRANSACTION_PENDING_EVENT,
     TRANSACTION_CONFIRMATION_EVENT,
   ].includes(eventType);
+};
+
+export const updateAccountHistory = (
+  history: TransactionsStore,
+  accountId: string,
+  accountHistory: Transaction[] = [],
+) => {
+  return {
+    ...history,
+    [accountId]: accountHistory,
+  };
 };

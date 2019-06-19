@@ -55,7 +55,7 @@ const EmptyTransactions = (props: Props) => {
     bodyText,
   } = props;
 
-  if (!title && bodyText) return null;
+  if (!title && !bodyText) return null;
 
   return (
     <Wrapper>

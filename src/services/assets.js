@@ -38,6 +38,7 @@ type ERC20TransferOptions = {
   wallet: Object,
   decimals: number,
   nonce?: number,
+  signOnly?: ?boolean,
   gasLimit: number,
   gasPrice: number,
 };
@@ -49,6 +50,9 @@ type ERC721TransferOptions = {
   tokenId: string,
   wallet: Object,
   nonce?: number,
+  signOnly?: ?boolean,
+  gasLimit?: ?number,
+  gasPrice?: ?number,
 };
 
 type ETHTransferOptions = {
@@ -58,6 +62,7 @@ type ETHTransferOptions = {
   to: Address,
   wallet: Object,
   nonce?: number,
+  signOnly?: ?boolean,
   data?: string,
 };
 
@@ -75,21 +80,45 @@ export async function transferERC20(options: ERC20TransferOptions) {
     nonce,
     gasLimit,
     gasPrice,
+    signOnly = false,
   } = options;
+
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
+
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
   const contractAmount = defaultDecimals > 0
     ? utils.parseUnits(amount.toString(), defaultDecimals)
     : utils.bigNumberify(amount.toString());
   const tokenTransfer = await contract.interface.functions.transfer.apply(null, [to, contractAmount]);
   const { data } = tokenTransfer;
-  return wallet.sendTransaction({
+  const transaction = {
     gasLimit,
     gasPrice: utils.bigNumberify(gasPrice),
     to: contractAddress,
     nonce,
     data,
-  });
+  };
+  if (!signOnly) return wallet.sendTransaction(transaction);
+
+  const signedHash = await wallet.sign(transaction);
+  return { signedHash, value: contractAmount };
+}
+
+export function getERC721ContractTransferMethod(code: any): string {
+  // first 4 bytes of the encoded signature for a lookup in the contract code
+  // encoding: utils.keccak256(utils.toUtf8Bytes(signature)
+  const transferHash = 'a9059cbb'; // transfer(address,uint256)
+  const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
+  const safeTransferFromHash = '42842e0e'; // safeTransferFrom(address,address,uint256)
+
+  if (contractHasMethod(code, safeTransferFromHash)) {
+    return 'safeTransferFrom';
+  } else if (contractHasMethod(code, transferHash)) {
+    return 'transfer';
+  } else if (contractHasMethod(code, transferFromHash)) {
+    return 'transferFrom';
+  }
+  return '';
 }
 
 export async function transferERC721(options: ERC721TransferOptions) {
@@ -100,28 +129,56 @@ export async function transferERC721(options: ERC721TransferOptions) {
     tokenId,
     wallet,
     nonce,
+    gasLimit,
+    gasPrice,
+    signOnly = false,
   } = options;
   wallet.provider = getEthereumProvider(COLLECTIBLES_NETWORK);
 
-  const code = await wallet.provider.getCode(contractAddress).then((result) => result);
-
-  // first 4 bytes of the encoded signature for a lookup in the contract code
-  // encoding: utils.keccak256(utils.toUtf8Bytes(signature)
-  const transferHash = 'a9059cbb'; // transfer(address,uint256)
-  const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
-  const safeTransferFromHash = '42842e0e'; // safeTransferFrom(address,address,uint256)
-
   let contract;
-  if (contractHasMethod(code, safeTransferFromHash)) {
-    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
-    return contract.safeTransferFrom(from, to, tokenId, { nonce });
-  } else if (contractHasMethod(code, transferHash)) {
-    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
-    return contract.transfer(to, tokenId, { nonce });
-  } else if (contractHasMethod(code, transferFromHash)) {
-    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
-    return contract.transferFrom(from, to, tokenId, { nonce });
+  const code = await wallet.provider.getCode(contractAddress);
+  const contractTransferMethod = getERC721ContractTransferMethod(code);
+
+  // used if signOnly
+  let contractSignedTransaction;
+  let contractMethodApplied;
+  if (signOnly) {
+    contractSignedTransaction = {
+      gasLimit,
+      gasPrice: utils.bigNumberify(gasPrice),
+      to: contractAddress,
+      nonce,
+    };
   }
+
+  switch (contractTransferMethod) {
+    case 'safeTransferFrom':
+      contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
+      if (!signOnly) return contract.safeTransferFrom(from, to, tokenId, { nonce });
+      contractMethodApplied = await contract.interface.functions.safeTransferFrom.apply(null, [from, to, tokenId]);
+      return wallet.sign({
+        ...contractSignedTransaction,
+        data: contractMethodApplied.data,
+      });
+    case 'transfer':
+      contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
+      if (!signOnly) return contract.transfer(to, tokenId, { nonce });
+      contractMethodApplied = await contract.interface.functions.transfer.apply(null, [to, tokenId]);
+      return wallet.sign({
+        ...contractSignedTransaction,
+        data: contractMethodApplied.data,
+      });
+    case 'transferFrom':
+      contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
+      if (!signOnly) return contract.transferFrom(from, to, tokenId, { nonce });
+      contractMethodApplied = await contract.interface.functions.transferFrom.apply(null, [from, to, tokenId]);
+      return wallet.sign({
+        ...contractSignedTransaction,
+        data: contractMethodApplied.data,
+      });
+    default:
+  }
+
   Sentry.captureMessage('Could not transfer collectible',
     {
       level: 'info',
@@ -134,7 +191,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
   return { error: 'can not be transferred', noRetry: true };
 }
 
-export function transferETH(options: ETHTransferOptions) {
+export async function transferETH(options: ETHTransferOptions) {
   const {
     to,
     wallet,
@@ -142,18 +199,22 @@ export function transferETH(options: ETHTransferOptions) {
     gasLimit,
     amount,
     nonce,
+    signOnly = false,
     data,
   } = options;
+  const value = utils.parseEther(amount.toString());
   const trx = {
     gasLimit,
     gasPrice: utils.bigNumberify(gasPrice),
-    value: utils.parseEther(amount.toString()),
+    value,
     to,
     nonce,
     data,
   };
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
-  return wallet.sendTransaction(trx);
+  if (!signOnly) return wallet.sendTransaction(trx);
+  const signedHash = await wallet.sign(trx);
+  return { signedHash, value };
 }
 
 // Fetch methods are temporary until the BCX API provided
@@ -208,4 +269,14 @@ export function fetchTransactionReceipt(hash: string): Promise<?Object> {
 export function fetchLastBlockNumber(): Promise<number> {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.getBlockNumber().then(parseInt).catch(() => 0);
+}
+
+export function transferSigned(signed: string) {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  return provider.sendTransaction(signed);
+}
+
+export function waitForTransaction(hash: string) {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  return provider.waitForTransaction(hash);
 }

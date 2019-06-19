@@ -19,7 +19,10 @@
 */
 import firebase from 'react-native-firebase';
 import { isTest } from 'utils/environment';
-import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import {
+  INITIAL_FEATURE_FLAGS,
+  DEVELOPMENT_FEATURE_FLAGS,
+} from 'constants/featureFlagsConstants';
 
 export async function getRemoteFeatureFlags() {
   const isDev = isTest || __DEV__;
@@ -30,8 +33,11 @@ export async function getRemoteFeatureFlags() {
   await firebaseConfig.activateFetched().catch(() => null);
   const featureFlagKeys = Object.keys(INITIAL_FEATURE_FLAGS || {});
   const fetchedFlags = await firebaseConfig.getValues(featureFlagKeys).catch(() => {});
-  return Object.keys(fetchedFlags).reduce((flags, flagKey) => ({
+  const mappedFeatureFlags = Object.keys(fetchedFlags).reduce((flags, flagKey) => ({
     ...flags,
     [flagKey]: !!fetchedFlags[flagKey].val(),
   }), {});
+  return isDev
+    ? { ...mappedFeatureFlags, ...DEVELOPMENT_FEATURE_FLAGS }
+    : mappedFeatureFlags;
 }

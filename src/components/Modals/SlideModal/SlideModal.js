@@ -262,7 +262,7 @@ export default class SlideModal extends React.Component<Props, *> {
       <Modal
         isVisible={isVisible}
         scrollTo={this.handleScroll}
-        onSwipe={this.hideModal}
+        onSwipeComplete={this.hideModal}
         onModalHide={onModalHidden}
         onBackdropPress={this.hideModal}
         backdropOpacity={fullScreen ? 1 : 0.7}

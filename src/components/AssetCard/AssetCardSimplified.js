@@ -43,6 +43,9 @@ type Props = {
   },
   icon: string,
   assetData: Object,
+  paymentNetworkBalance?: number,
+  paymentNetworkBalanceFormatted?: string,
+  paymentNetworkBalanceInFiat?: string,
 }
 
 const defaultCircleColor = '#ACBCCD';
@@ -50,8 +53,8 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 const AssetOutter = styled.View`
   padding: ${Platform.select({
-    ios: `8px 9px 10px ${spacing.rhythm}px`,
-    android: '2px 0 6px 0',
+    ios: `8px 30px 10px ${spacing.rhythm}px`,
+    android: '2px 0 6px 10px',
   })};
   margin-top: ${Platform.select({
     ios: 0,
@@ -63,33 +66,26 @@ const AssetOutter = styled.View`
 
 const AssetWrapper = styled.View`
   flex-direction: row;
-  shadow-radius: 6px;
   border-radius: 6px;
   background: ${baseColors.white};
-  height: 70px;
   width: 100%;
-`;
-
-const InnerWrapper = styled.View`
-  width: 100%;
-  flex-direction: row;
-  justify-content: space-between;
   align-items: center;
   padding: ${Platform.select({
-    ios: '15px 16px 15px 12px',
-    android: '15px 32px 15px 12px',
+    ios: '15px 16px',
+    android: '15px 32px 15px 16px',
   })};
 `;
 
 const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
   z-index: 10;
+  width: 100%;
 `;
 
 const DetailsWrapper = styled.View`
-  flex: 1;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  flex: 1;
 `;
 
 const IconCircle = styled.View`
@@ -107,7 +103,6 @@ const Name = styled(BoldText)`
   letter-spacing: ${fontTrackings.small};
   line-height: ${fontSizes.medium};
   color: ${baseColors.slateBlack};
-  flex: 1;
   text-align-vertical: center;
 `;
 
@@ -132,36 +127,53 @@ class AssetCardSimplified extends React.Component<Props, {}> {
       balanceInFiat,
       disclaimer,
       icon,
+      paymentNetworkBalance,
+      paymentNetworkBalanceFormatted,
+      paymentNetworkBalanceInFiat,
     } = this.props;
+
+    const cardHeight = paymentNetworkBalance ? 94 : 74;
+    const balance = {
+      value: amount,
+      valueInFiat: balanceInFiat.amount,
+    };
+
+    const balanceOnNetwork = paymentNetworkBalance ? {
+      valueOnNetwork: paymentNetworkBalanceFormatted,
+      valueOnNetworkInFiat: paymentNetworkBalanceInFiat,
+    } : {};
 
     return (
       <AssetOutter cardWidth={cardWidth}>
-        <Shadow heightAndroid={70} widthIOS={cardWidth - 20} heightIOS={70}>
+        <Shadow
+          heightAndroid={cardHeight}
+          heightIOS={cardHeight}
+          widthIOS={cardWidth - 20}
+        >
           <TouchableWithoutFeedback onPress={this.handleOnPress}>
             <AssetWrapper>
-              <InnerWrapper>
-                <IconCircle>
-                  <CachedImage
-                    key={token}
-                    style={{
-                      height: 44,
-                      width: 44,
-                    }}
-                    source={{ uri: icon }}
-                    fallbackSource={genericToken}
-                    resizeMode="contain"
-                  />
-                </IconCircle>
-                <DetailsWrapper>
-                  <Name>{name}</Name>
-                  <AssetInfo
-                    token={token}
-                    amount={amount}
-                    disclaimer={disclaimer}
-                    balanceInFiat={balanceInFiat}
-                  />
-                </DetailsWrapper>
-              </InnerWrapper>
+              <IconCircle>
+                <CachedImage
+                  key={token}
+                  style={{
+                    height: 44,
+                    width: 44,
+                  }}
+                  source={{ uri: icon }}
+                  fallbackSource={genericToken}
+                  resizeMode="contain"
+                />
+              </IconCircle>
+              <DetailsWrapper>
+                <Name>{name}</Name>
+                <AssetInfo
+                  token={token}
+                  currency={balanceInFiat.currency}
+                  balance={balance}
+                  balanceOnNetwork={balanceOnNetwork}
+                  disclaimer={disclaimer}
+                />
+              </DetailsWrapper>
             </AssetWrapper>
           </TouchableWithoutFeedback>
         </Shadow>

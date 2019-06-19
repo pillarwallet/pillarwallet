@@ -19,7 +19,6 @@
 */
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
-import { getSaltedPin } from 'utils/wallet';
 import merge from 'lodash.merge';
 import {
   DECRYPT_WALLET,
@@ -42,6 +41,7 @@ import {
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
@@ -50,9 +50,12 @@ import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
+import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
+import { userHasSmartWallet } from 'utils/smartWallet';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
+import { initSmartWalletAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from './dbActions';
 
 const Crashlytics = firebase.crashlytics();
@@ -63,6 +66,8 @@ const chat = new ChatService();
 export const loginAction = (pin: string, touchID?: boolean = false, onLoginSuccess?: Function) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const {
+      accounts: { data: accounts },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
     } = getState();
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
@@ -87,10 +92,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
           decryptionOptions,
         );
       } else {
-        let walletAddress = encryptedWallet.address;
-        if (walletAddress.indexOf('0x') !== 0) {
-          walletAddress = `0x${walletAddress}`;
-        }
+        const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, address: walletAddress };
       }
 
@@ -98,6 +100,8 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
         const fcmToken = await firebase.messaging().getToken().catch(() => null);
+        dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
+
         await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
         const signalCredentials = {
           userId: user.id,
@@ -123,6 +127,10 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         dispatch(saveDbAction('user', { user }, true));
         await
         dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys));
+
+        if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
+          await dispatch(initSmartWalletAccountAction(wallet.privateKey));
+        }
       } else {
         api.init();
       }
@@ -152,7 +160,8 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       const currentFlow = pathAndParams.path.split('/')[0];
 
       const navigateToLastActiveScreen = NavigationActions.navigate({
-        routeName: lastActiveScreen || ASSETS, // current active screen will be always AUTH_FLOW due to login/logout
+        // current active screen will be always AUTH_FLOW due to login/logout
+        routeName: lastActiveScreen || ASSETS,
         params: lastActiveScreenParams,
       });
 

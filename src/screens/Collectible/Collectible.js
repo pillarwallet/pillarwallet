@@ -19,14 +19,14 @@
 */
 
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
+import { createStructuredSelector } from 'reselect';
 
-import { TRANSACTIONS } from 'constants/activityConstants';
 import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
@@ -35,12 +35,22 @@ import Header from 'components/Header';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
+
+import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
+import { accountHistorySelector } from 'selectors/history';
+
+import type { Collectible } from 'models/Collectible';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  collectibles: Object[],
+  collectibles: Collectible[],
+  openSeaTxHistory: Object[],
+  contacts: Object[],
+  history: Object[],
 };
 
 const ActionButtonsWrapper = styled.View`
@@ -99,7 +109,13 @@ class CollectibleScreen extends React.Component<Props> {
   };
 
   render() {
-    const { navigation, collectibles } = this.props;
+    const {
+      navigation,
+      collectibles,
+      openSeaTxHistory,
+      contacts,
+      history,
+    } = this.props;
     const { assetData } = navigation.state.params;
     const {
       id,
@@ -111,6 +127,13 @@ class CollectibleScreen extends React.Component<Props> {
     const isOwned = collectibles.find(collectible => {
       return collectible.id === id;
     });
+
+    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+
+    const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
+    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, COLLECTIBLE_TRANSACTION);
+    const relatedCollectibleTransactions = mappedCTransactions.filter(({ assetData: thisAssetData }) =>
+      !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id);
 
     return (
       <Container color={baseColors.white} inset={{ bottom: 0 }}>
@@ -140,16 +163,22 @@ class CollectibleScreen extends React.Component<Props> {
               />
             </CircleButtonsWrapper>
           </ActionButtonsWrapper>
+
           <ActivityFeed
-            feedTitle="transactions."
             navigation={navigation}
-            activeTab={TRANSACTIONS}
-            additionalFiltering={data => data.filter(({ type, assetData: thisAssetData }) =>
-              type === COLLECTIBLE_TRANSACTION && !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id)}
-            backgroundColor={baseColors.white}
-            noBorder
-            wrapperStyle={{ marginTop: 10 }}
+            feedData={relatedCollectibleTransactions}
+            showArrowsOnly
+            contentContainerStyle={{ paddingTop: 10 }}
             invertAddon
+            feedTitle="transactions."
+            esComponent={(
+              <View style={{ width: '100%', alignItems: 'center' }}>
+                <EmptyStateParagraph
+                  title="Make your first step"
+                  bodyText="Your transactions will appear here."
+                />
+              </View>
+            )}
           />
         </ScrollWrapper>
       </Container>
@@ -158,9 +187,20 @@ class CollectibleScreen extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  collectibles: { assets: collectibles },
+  contacts: { data: contacts },
 }) => ({
-  collectibles,
+  contacts,
 });
 
-export default connect(mapStateToProps)(CollectibleScreen);
+const structuredSelector = createStructuredSelector({
+  collectibles: accountCollectiblesSelector,
+  history: accountHistorySelector,
+  openSeaTxHistory: accountCollectiblesHistorySelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default connect(combinedMapStateToProps)(CollectibleScreen);
