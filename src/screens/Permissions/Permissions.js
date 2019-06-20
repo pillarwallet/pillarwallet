@@ -231,6 +231,23 @@ class Permissions extends React.Component<Props, State> {
             }
           />
           <CollapsibleListItem
+            label="Firebase"
+            open={openCollapseKey === 'FIREBASE'}
+            onPress={() => this.toggleCollapse('FIREBASE')}
+            collapseContent={
+              <Paragraph light small>
+                used to track information regarding how you use the application.
+                This includes what screens you open and what features you use, and it helps us
+                improve the user experience, understand what are the more useful features.
+
+                More on Google&rsquo;s privacy policy -
+                <TextLink onPress={() => handleUrlPress('https://policies.google.com/privacy')}>
+                  https://policies.google.com/privacy
+                </TextLink>
+              </Paragraph>
+            }
+          />
+          <CollapsibleListItem
             label="Intercom"
             open={openCollapseKey === 'INTERCOM'}
             onPress={() => this.toggleCollapse('INTERCOM')}
