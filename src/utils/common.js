@@ -256,3 +256,10 @@ export function getEthereumProvider(network: string) {
 export function getRandomString(): string {
   return utils.bigNumberify(utils.randomBytes(32)).toHexString().slice(2);
 }
+
+export function extractJwtPayload(jwtToken: string): Object {
+  // extract: header (not needed), payload, signature (not needed)
+  const [, encodedPayload] = jwtToken.split('.');
+  // do not use Buffer.toJSON
+  return JSON.parse(Buffer.from(encodedPayload, 'base64').toString());
+}

@@ -21,7 +21,7 @@ import { EXCHANGE_URL } from 'react-native-dotenv';
 import SocketIO from 'socket.io-client';
 
 import type { OfferRequest } from 'models/Offer';
-import { getRandomString } from 'utils/common';
+import { extractJwtPayload, getRandomString } from 'utils/common';
 
 const executeCallback = (data?: any, callback?: Function) => {
   if (typeof callback === 'function') callback(data);
@@ -134,8 +134,9 @@ export default class ExchangeService {
   }
 
   getShapeshiftAuthUrl() {
+    const { sub: regId } = extractJwtPayload(this.tokens.accessToken) || {};
     const sessionId = getRandomString();
-    const urlPath = `authorize?sessionID=${sessionId}`;
+    const urlPath = `authorize?sessionID=${sessionId}&regId=${regId}`;
     return buildApiUrl(urlPath);
   }
 

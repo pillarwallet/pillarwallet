@@ -90,7 +90,8 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 };
 
 export const authorizeWithShapeshiftAction = () => {
-  return () => {
+  return (dispatch: Function, getState: Function) => {
+    connectExchangeService(getState());
     const shapeshiftAuthUrl = exchangeService.getShapeshiftAuthUrl();
     return Linking.canOpenURL(shapeshiftAuthUrl)
       .then((supported) => {
