@@ -32,16 +32,18 @@ import Header from 'components/Header';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
+type InputValue = {
+  selector?: Object,
+  input?: string,
+}
 
 type Props = {
   wrapperStyle?: Object,
   inputProps: Object,
-  onValueSelected: Function,
   options: Object[],
-  selectedOption: Object,
   hasInput?: boolean,
   errorMessage?: string,
-  onInputChange: Function,
+  value: InputValue,
 }
 
 type State = {
@@ -70,6 +72,7 @@ const ItemHolder = styled.View`
   border: 1px solid ${baseColors.mediumLightGray};
   background-color: ${baseColors.white};
   flex-direction: row;
+  ${props => props.error ? 'tomato' : ''}
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -163,6 +166,13 @@ const Placeholder = styled(BaseText)`
   color: ${baseColors.darkGray};
 `;
 
+const ErrorMessage = styled(BaseText)`
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: ${fontSizes.medium}px;
+  color: tomato;
+  margin: 8px 12px;
+`;
+
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 export default class SelectorInput extends React.Component<Props, State> {
@@ -171,18 +181,18 @@ export default class SelectorInput extends React.Component<Props, State> {
   };
 
   handleChange = (e: EventLike) => {
-    const { inputProps = {}, onInputChange } = this.props;
+    const { inputProps = {}, value } = this.props;
+    const { selector } = value;
     const { onChange } = inputProps;
-    if (onChange) onChange(e.nativeEvent.text);
-    if (onInputChange) onInputChange(e.nativeEvent.text);
+    if (onChange) onChange({ selector, input: e.nativeEvent.text });
   };
 
-  selectValue = (value: Object) => {
-    const { onValueSelected, inputProps = {} } = this.props;
+  selectValue = (selectedValue: Object) => {
+    const { inputProps = {}, value } = this.props;
+    const { input } = value;
     const { onChange } = inputProps;
-    if (onValueSelected) onValueSelected(value);
     this.setState({ showOptionsSelector: false });
-    if (onChange) onChange(value);
+    if (onChange) onChange({ selector: selectedValue, input });
   };
 
   renderOption = ({ item: option }: Object) => {
@@ -207,15 +217,15 @@ export default class SelectorInput extends React.Component<Props, State> {
       wrapperStyle,
       inputProps = {},
       options,
-      selectedOption = {},
       hasInput,
+      value,
+      errorMessage,
     } = this.props;
     const {
       label,
-      value,
-      errorMessage,
       placeholderSelector,
     } = inputProps;
+    const { selector: selectedOption = {}, input: inputValue } = value;
     const { value: selectedValue, icon } = selectedOption;
     const iconUrl = `${SDK_PROVIDER}/${icon}?size=3`;
 
@@ -223,7 +233,7 @@ export default class SelectorInput extends React.Component<Props, State> {
       <React.Fragment>
         <Wrapper style={wrapperStyle}>
           {!!label && <Label>{label}</Label>}
-          <ItemHolder>
+          <ItemHolder error={!!errorMessage}>
             {!!options &&
             <Selector fullWidth={!hasInput} onPress={() => this.setState({ showOptionsSelector: true })}>
               <ValueWrapper>
@@ -265,7 +275,7 @@ export default class SelectorInput extends React.Component<Props, State> {
                     error={!!errorMessage}
                     onChange={this.handleChange}
                     numberOfLines={1}
-                    value={value}
+                    value={inputValue}
                     textAlignVertical="center"
                     placeholderTextColor={baseColors.darkGray}
                     underlineColorAndroid="white"
@@ -274,7 +284,7 @@ export default class SelectorInput extends React.Component<Props, State> {
               )
             }
           </ItemHolder>
-          {!!errorMessage && <Label style={{ color: 'red' }}>{errorMessage}</Label>}
+          {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </Wrapper>
         <Modal
           style={{ flex: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }}

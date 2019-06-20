@@ -119,10 +119,8 @@ type Props = {
 
 type State = {
   value: Object,
-  selectedSellAmount: string,
-  selectedValueSelling: Object,
-  selectedValueBuying: Object,
   shapeshiftAuthPressed: boolean,
+  formOptions: Object,
 };
 
 const getAvailable = (min, max) => {
@@ -136,36 +134,51 @@ const getAvailable = (min, max) => {
 
 const { Form } = t.form;
 
-const Amount = t.String;
+const FromOption = t.refinement(t.Object, ({ selector, input }) => {
+  let isValid = true;
+  if (!Object.keys(selector).length) {
+    isValid = false;
+  } else if (!input || parseFloat(input) < 0) {
+    isValid = false;
+  }
+  return isValid;
+});
 
-Amount.getValidationErrorMessage = () => {
-  return 'Amount should be specified.';
+FromOption.getValidationErrorMessage = ({ selector, input }) => {
+  if (!Object.keys(selector).length) return 'Asset should be selected';
+  if (!input) return 'Amount should be specified.';
+  if (parseFloat(input) < 0) return 'Amount should be bigger than 0.';
+  return null;
+};
+
+const ToOption = t.refinement(t.Object, ({ selector }) => {
+  return !!Object.keys(selector).length;
+});
+
+ToOption.getValidationErrorMessage = () => {
+  return 'Asset should be selected';
 };
 
 const formStructure = t.struct({
-  selling: Amount,
-  buying: t.String,
+  fromInput: FromOption,
+  toInput: ToOption,
 });
 
 function SelectorInputTemplate(locals) {
   const {
     config: {
-      onValueSelected,
-      options,
-      selectedOption,
       label,
       hasInput,
-      onInputChange,
       wrapperStyle,
       placeholderSelector,
       placeholderInput,
+      options,
     },
   } = locals;
   const errorMessage = locals.error;
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
-    value: locals.value,
     keyboardType: locals.keyboardType,
     maxLength: 42,
     label,
@@ -175,53 +188,14 @@ function SelectorInputTemplate(locals) {
   return (
     <SelectorInput
       inputProps={inputProps}
-      onValueSelected={onValueSelected}
       options={options}
-      selectedOption={selectedOption}
       errorMessage={errorMessage}
       hasInput={hasInput}
-      onInputChange={onInputChange}
       wrapperStyle={wrapperStyle}
+      value={locals.value}
     />
   );
 }
-
-const generateFormOptions = (config: Object): Object => ({
-  fields: {
-    selling: {
-      keyboardType: 'decimal-pad',
-      placeholder: '0.0',
-      template: SelectorInputTemplate,
-      config: {
-        label: 'Selling',
-        hasInput: true,
-        selectedOption: config.selectedOptionSelling,
-        options: config.optionsSelling,
-        inputProps: {
-          autoCapitalize: 'none',
-        },
-        onValueSelected: config.onValueSelectedSelling,
-        onInputChange: config.onInputChange,
-        placeholderSelector: 'select',
-        placeholderInput: '0',
-      },
-    },
-    buying: {
-      template: SelectorInputTemplate,
-      config: {
-        label: 'Buying',
-        selectedOption: config.selectedOptionBuying,
-        options: config.optionsBuying,
-        inputProps: {
-          autoCapitalize: 'none',
-        },
-        onValueSelected: config.onValueSelectedBuying,
-        wrapperStyle: { marginTop: spacing.mediumLarge },
-        placeholderSelector: 'select asset',
-      },
-    },
-  },
-});
 
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
@@ -229,12 +203,39 @@ class ExchangeScreen extends React.Component<Props, State> {
   state = {
     shapeshiftAuthPressed: false,
     value: {
-      selling: '',
-      buying: '',
+      fromInput: {
+        selector: {},
+        input: '',
+      },
+      toInput: {
+        selector: {},
+        input: '',
+      },
     },
-    selectedSellAmount: '',
-    selectedValueSelling: {},
-    selectedValueBuying: {},
+    formOptions: {
+      fields: {
+        fromInput: {
+          keyboardType: 'decimal-pad',
+          template: SelectorInputTemplate,
+          config: {
+            label: 'Selling',
+            hasInput: true,
+            options: [],
+            placeholderSelector: 'select',
+            placeholderInput: '0',
+          },
+        },
+        toInput: {
+          template: SelectorInputTemplate,
+          config: {
+            label: 'Buying',
+            options: [],
+            wrapperStyle: { marginTop: spacing.mediumLarge },
+            placeholderSelector: 'select asset',
+          },
+        },
+      },
+    },
   };
 
   constructor(props: Props) {
@@ -243,31 +244,68 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    this.provideOptions();
     this.setInitialSelection();
   }
+
+  provideOptions = () => {
+    const { assets } = this.props;
+    const assetsOptionsFrom = this.generateOptions(assets);
+    const assetsOptionsBuying = this.generateOptions(assets);
+    const initialAssetsOptionsBuying = assetsOptionsBuying.filter((option) => option.value !== ETH);
+
+    this.setState({
+      formOptions: {
+        fields: {
+          fromInput: {
+            keyboardType: 'decimal-pad',
+            template: SelectorInputTemplate,
+            config: {
+              label: 'Selling',
+              hasInput: true,
+              options: assetsOptionsFrom,
+              placeholderSelector: 'select',
+              placeholderInput: '0',
+            },
+          },
+          toInput: {
+            template: SelectorInputTemplate,
+            config: {
+              label: 'Buying',
+              options: initialAssetsOptionsBuying,
+              wrapperStyle: { marginTop: spacing.mediumLarge },
+              placeholderSelector: 'select asset',
+            },
+          },
+        },
+      },
+    });
+  };
 
   setInitialSelection = () => {
     const { assets } = this.props;
     const assetsOptions = this.generateOptions({ ETH: assets[ETH] });
-    this.setState({
-      selectedValueSelling: assetsOptions[0],
-    });
+    const initialFormState = { ...this.state.value };
+    initialFormState.fromInput = {
+      selector: assetsOptions[0],
+      input: '',
+    };
+    this.setState({ value: initialFormState });
   };
 
   triggerSearch = () => {
-    const { selectedSellAmount, selectedValueSelling, selectedValueBuying } = this.state;
-    const { value: selectedSellToken } = selectedValueSelling;
-    const { value: selectedBuyToken } = selectedValueBuying;
+    const { value: { fromInput, toInput } } = this.state;
+    const { selector: { value: from }, input: amount } = fromInput;
+    const { selector: { value: to } } = toInput;
     const { searchOffers } = this.props;
-    const fromAmount = parseFloat(selectedSellAmount);
+    const parsedAmount = parseFloat(amount);
 
-    if (fromAmount > 0 && selectedBuyToken && selectedSellToken) {
-      searchOffers(selectedBuyToken, selectedSellToken, fromAmount);
-    }
+    searchOffers(from, to, parsedAmount);
   };
 
   renderOffers = ({ item: offer }) => {
-    const { selectedSellAmount } = this.state;
+    const { value: { fromInput } } = this.state;
+    const { input: selectedSellAmount } = fromInput;
     const { navigation } = this.props;
     const available = getAvailable(offer.minQuantity, offer.maxQuantity);
     const amountToBuy = parseFloat(selectedSellAmount) * offer.askRate;
@@ -333,22 +371,52 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   handleSearch = () => {
-    // const formValue = this.exchangeForm.getValue();
-    // if (!formValue) return;
+    const formValue = this.exchangeForm.getValue();
+    if (!formValue) return;
     this.triggerSearch();
   };
 
   handleFormChange = (value: Object) => {
     this.setState({ value });
+    this.handleSearch();
+    this.updateOptions(value);
   };
 
-  handleInputChange = (inputVal: string) => {
-    this.setState({ selectedSellAmount: inputVal });
-  }
+  updateOptions = (value) => {
+    const { assets } = this.props;
+    const { fromInput, toInput } = value;
+    const { selector: selectedFromOption } = fromInput;
+    const { selector: selectedToOption } = toInput;
+
+    const optionsFrom = this.generateOptions(assets);
+    let newOptionsFrom = optionsFrom;
+    if (Object.keys(selectedToOption).length) {
+      newOptionsFrom = optionsFrom.filter((option) => option.value !== selectedToOption.value);
+    }
+
+    const optionsTo = this.generateOptions(assets);
+    let newOptionsTo = optionsTo;
+    // const newOptionsTo = this.generateOptions(supportedAssets);
+    if (Object.keys(selectedFromOption).length) {
+      newOptionsTo = optionsTo.filter((option) => option.value !== selectedFromOption.value);
+    }
+
+    const newOptions = t.update(this.state.formOptions, {
+      fields: {
+        fromInput: {
+          config: { options: { $set: newOptionsFrom } },
+        },
+        toInput: {
+          config: { options: { $set: newOptionsTo } },
+        },
+      },
+    });
+
+    this.setState({ formOptions: newOptions });
+  };
 
   render() {
     const {
-      assets,
       offers,
       shapeshiftAccessToken,
       resetShapeshiftAccessToken,
@@ -356,29 +424,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       shapeshiftAuthPressed,
       value,
-      selectedValueSelling,
-      selectedValueBuying,
-      // supportedAssets = [],
+      formOptions,
     } = this.state;
-    const assetsOptionsSelling = this.generateOptions(assets);
-    // const assetsOptionsBuying = this.generateOptions(supportedAssets);
-    const assetsOptionsBuying = this.generateOptions(assets);
-
-    const formOptions = generateFormOptions({
-      optionsSelling: assetsOptionsSelling,
-      selectedOptionSelling: selectedValueSelling,
-      onValueSelectedSelling: (val) => {
-        this.setState({ selectedValueSelling: val });
-        this.handleSearch();
-      },
-      onInputChange: (val) => { this.handleInputChange(val); },
-      optionsBuying: assetsOptionsBuying,
-      selectedOptionBuying: selectedValueBuying,
-      onValueSelectedBuying: (val) => {
-        this.setState({ selectedValueBuying: val });
-        this.handleSearch();
-      },
-    });
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
