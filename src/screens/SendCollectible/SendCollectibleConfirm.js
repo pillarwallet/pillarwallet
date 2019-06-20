@@ -26,7 +26,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   contacts: Object[],
-  categories: Object[],
   fetchGasInfo: Function,
   gasInfo: GasInfo,
   wallet: Object,
@@ -220,13 +219,11 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   session: { data: session },
   history: { gasInfo },
-  collectibles: { categories },
   wallet: { data: wallet },
 }) => ({
   contacts,
   session,
   gasInfo,
-  categories,
   wallet,
 });
 

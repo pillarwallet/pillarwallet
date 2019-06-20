@@ -22,18 +22,19 @@ import merge from 'lodash.merge';
 
 export type SessionReducerState = {
   data: Object,
-}
+};
 
 export type SessionReducerAction = {
   type: string,
-  payload: any
-}
+  payload: any,
+};
 
 const initialState = {
   data: {
     isOnline: true,
     hasDBConflicts: false,
     isSignalInitiated: false,
+    fcmToken: '',
   },
 };
 

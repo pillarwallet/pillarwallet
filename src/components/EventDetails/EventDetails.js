@@ -27,16 +27,25 @@ import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
+import { createStructuredSelector } from 'reselect';
+
+// models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
+
+// components
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
 import ProfileImage from 'components/ProfileImage';
+
+// utils
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { formatFullAmount, noop } from 'utils/common';
 import { createAlert } from 'utils/alerts';
+
+// actions
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { getTxNoteByContactAction } from 'actions/txNoteActions';
 
@@ -55,6 +64,10 @@ import {
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
 
+// selectors
+import { accountHistorySelector } from 'selectors/history';
+
+// local components
 import EventHeader from './EventHeader';
 
 type Props = {
@@ -503,15 +516,22 @@ class EventDetails extends React.Component<Props, {}> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   wallet: { data: wallet },
-  history: { data: history },
   txNotes: { data: txNotes },
   assets: { data: assets },
 }) => ({
   contacts,
   wallet,
-  history,
   txNotes,
   assets: Object.values(assets),
+});
+
+const structuredSelector = createStructuredSelector({
+  history: accountHistorySelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -519,4 +539,4 @@ const mapDispatchToProps = (dispatch) => ({
   getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(EventDetails);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(EventDetails);

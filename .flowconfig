@@ -112,6 +112,9 @@ module.name_mapper='^configs' -> '<PROJECT_ROOT>/src/configs'
 module.name_mapper='^abi\/\(.*\)$' -> '<PROJECT_ROOT>/src/abi/\1'
 module.name_mapper='^abi' -> '<PROJECT_ROOT>/src/abi'
 
+module.name_mapper='^selectors\/\(.*\)$' -> '<PROJECT_ROOT>/src/selectors/\1'
+module.name_mapper='^selectors' -> '<PROJECT_ROOT>/src/selectors'
+
 suppress_type=$FlowIssue
 suppress_type=$FlowFixMe
 suppress_type=$FlowFixMeProps

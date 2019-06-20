@@ -23,20 +23,21 @@ import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
-import Permissions from 'react-native-permissions';
 import { Answers } from 'react-native-fabric';
+import { createStructuredSelector } from 'reselect';
+import Intercom from 'react-native-intercom';
+import Permissions from 'react-native-permissions';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
-import Intercom from 'react-native-intercom';
 import { BaseText, BoldText, Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
 import IconButton from 'components/IconButton';
-import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
+import Tabs from 'components/Tabs';
 import ProfileImage from 'components/ProfileImage';
 import BadgeImage from 'components/BadgeImage';
 import Camera from 'components/Camera';
@@ -51,6 +52,9 @@ import SettingsListItem from 'components/ListItem/SettingsItem';
 // constants
 import { PROFILE, CONTACT, BADGE, MANAGE_DETAILS_SESSIONS } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 
 // actions
 import { fetchTransactionsHistoryAction, fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
@@ -69,8 +73,13 @@ import {
   cancelWaitingRequest,
 } from 'actions/walletConnectActions';
 
+// selectors
+import { accountHistorySelector } from 'selectors/history';
+import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
+
 // utils
 import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 
 // types
 import type { Badges } from 'models/Badge';
@@ -97,21 +106,18 @@ type Props = {
   approveLoginAttempt: Function,
   fetchBadges: Function,
   badges: Badges,
+  openSeaTxHistory: Object[],
+  history: Array<*>,
   waitingRequest?: string,
   onWalletConnectSessionRequest: Function,
   onWalletLinkScan: Function,
   cancelWaitingRequest: Function,
 };
 
-type esDataType = {
-  title: string,
-  body: string,
-};
 type State = {
   showCamera: boolean,
   usernameWidth: number,
   activeTab: string,
-  esData: esDataType,
   permissionsGranted: boolean,
   scrollY: Animated.Value,
   forceCloseLoginApprovalModal: boolean,
@@ -238,11 +244,6 @@ const RecentConnectionsItemName = styled(BaseText)`
   })};
 `;
 
-const TabsHeader = styled.View`
-  padding: ${spacing.medium}px ${spacing.mediumLarge}px;
-  background-color: ${baseColors.white};
-`;
-
 const Description = styled(Paragraph)`
   text-align: center;
   padding-bottom: ${spacing.rhythm}px;
@@ -311,6 +312,11 @@ export const ItemWrapper = styled.View`
   margin-top: ${spacing.large}px;
 `;
 
+const TabsHeader = styled.View`
+  padding: ${spacing.medium}px ${spacing.mediumLarge}px;
+  background-color: ${baseColors.white};
+`;
+
 const allIconNormal = require('assets/icons/all_normal.png');
 const allIconActive = require('assets/icons/all_active.png');
 const socialIconNormal = require('assets/icons/social_normal.png');
@@ -329,10 +335,6 @@ class HomeScreen extends React.Component<Props, State> {
     scrollY: new Animated.Value(0),
     activeTab: ALL,
     usernameWidth: 0,
-    esData: {
-      title: 'Make your first step',
-      body: 'Your activity will appear here.',
-    },
     isScanning: false,
   };
 
@@ -430,11 +432,8 @@ class HomeScreen extends React.Component<Props, State> {
     fetchBadges();
   };
 
-  setActiveTab = (activeTab, esData?) => {
-    this.setState({
-      activeTab,
-      esData,
-    });
+  setActiveTab = (activeTab) => {
+    this.setState({ activeTab });
   };
 
   goToProfileEmailSettings = () => {
@@ -515,6 +514,8 @@ class HomeScreen extends React.Component<Props, State> {
       resetDeepLinkData,
       approveLoginAttempt,
       badges,
+      history,
+      openSeaTxHistory,
       contacts,
     } = this.props;
 
@@ -522,7 +523,6 @@ class HomeScreen extends React.Component<Props, State> {
       showCamera,
       permissionsGranted,
       scrollY,
-      esData,
       usernameWidth,
       forceCloseLoginApprovalModal,
       activeTab,
@@ -545,7 +545,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileImagePositionX = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [usernameWidth / 2, 10],
+      outputRange: [(usernameWidth / 2), 10],
       extrapolate: 'clamp',
     });
 
@@ -585,39 +585,51 @@ class HomeScreen extends React.Component<Props, State> {
       extrapolate: 'clamp',
     });
 
+    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+
+    const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
+    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, COLLECTIBLE_TRANSACTION);
+
+    const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
+
     const activityFeedTabs = [
       {
         id: ALL,
         name: 'All',
         tabImageNormal: allIconNormal,
         tabImageActive: allIconActive,
-        onPress: () =>
-          this.setActiveTab(ALL, {
-            title: 'Make your first step',
-            body: 'Your activity will appear here.',
-          }),
+        onPress: () => this.setActiveTab(ALL),
+        data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts],
+        emptyState: {
+          title: 'Make your first step',
+          body: 'Your activity will appear here.',
+        },
       },
       {
         id: TRANSACTIONS,
         name: 'Transactions',
         tabImageNormal: transactionsIconNormal,
         tabImageActive: transactionsIconActive,
-        onPress: () =>
-          this.setActiveTab(TRANSACTIONS, {
-            title: 'Make your first step',
-            body: 'Your transactions will appear here. Send or receive tokens to start.',
-          }),
+        onPress: () => this.setActiveTab(TRANSACTIONS),
+        data: [...transactionsOnMainnet, ...mappedCTransactions],
+        emptyState: {
+          title: 'Make your first step',
+          body: 'Your transactions will appear here. Send or receive tokens to start.',
+        },
       },
       {
         id: SOCIAL,
         name: 'Social',
         tabImageNormal: socialIconNormal,
         tabImageActive: socialIconActive,
-        onPress: () =>
-          this.setActiveTab(SOCIAL, {
-            title: 'Make your first step',
-            body: 'Information on your connections will appear here. Send a connection request to start.',
-          }),
+        onPress: () => this.setActiveTab(SOCIAL),
+        data: mappedContacts,
+        emptyState: {
+          title: 'Make your first step',
+          body: 'Information on your connections will appear here. Send a connection request to start.',
+        },
       },
     ];
 
@@ -781,9 +793,8 @@ class HomeScreen extends React.Component<Props, State> {
                 </BadgesScrollView>
               </BadgesBlock>
             </BadgesWrapper>
-          ) : (
-            <BadgesSpacer />
-          )}
+          ) : (<BadgesSpacer />)
+          }
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
           </TabsHeader>
@@ -794,9 +805,10 @@ class HomeScreen extends React.Component<Props, State> {
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}
             navigation={navigation}
+            tabs={activityFeedTabs}
             activeTab={activeTab}
-            esData={esData}
-            sortable
+            hideTabs
+            initialNumToRender={6}
           />
         </Animated.ScrollView>
 
@@ -850,7 +862,6 @@ class HomeScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   user: { data: user },
-  history: { data: history },
   invitations: { data: invitations },
   wallet: { backupStatus },
   notifications: { intercomNotificationsCount },
@@ -859,7 +870,6 @@ const mapStateToProps = ({
 }) => ({
   contacts,
   user,
-  history,
   invitations,
   intercomNotificationsCount,
   backupStatus,
@@ -867,10 +877,20 @@ const mapStateToProps = ({
   badges,
 });
 
-const mapDispatchToProps = dispatch => ({
-  cancelInvitation: invitation => dispatch(cancelInvitationAction(invitation)),
-  acceptInvitation: invitation => dispatch(acceptInvitationAction(invitation)),
-  rejectInvitation: invitation => dispatch(rejectInvitationAction(invitation)),
+const structuredSelector = createStructuredSelector({
+  history: accountHistorySelector,
+  openSeaTxHistory: accountCollectiblesHistorySelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
+  acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
+  rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
@@ -884,7 +904,5 @@ const mapDispatchToProps = dispatch => ({
   cancelWaitingRequest: clientId => dispatch(cancelWaitingRequest(clientId)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HomeScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
+

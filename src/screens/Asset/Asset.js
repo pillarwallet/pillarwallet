@@ -18,31 +18,62 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Share, RefreshControl } from 'react-native';
 import isEqual from 'lodash.isequal';
-import { baseColors, spacing, fontSizes } from 'utils/variables';
-import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import type { Transaction } from 'models/Transaction';
-import type { Assets, Balances } from 'models/Asset';
+import styled from 'styled-components/native';
+import { createStructuredSelector } from 'reselect';
+
+// components
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 import SlideModal from 'components/Modals/SlideModal';
-
 import Header from 'components/Header';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BoldText, BaseText, Paragraph } from 'components/Typography';
+import Button from 'components/Button';
+import TankAssetBalance from 'components/TankAssetBalance';
+
+// actions
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
+
+// models
+import type { Transaction } from 'models/Transaction';
+import type { Assets, Balances } from 'models/Asset';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
+
+// constants
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { TRANSACTIONS } from 'constants/activityConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { MAIN_NETWORK, PILLAR_NETWORK } from 'constants/tabsConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+
+// utils
+import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
+import { getSmartWalletStatus } from 'utils/smartWallet';
+import { mapTransactionsHistory } from 'utils/feedData';
+import { getActiveAccountType } from 'utils/accounts';
+
+// configs
 import assetsConfig from 'configs/assetsConfig';
+
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
+import { accountHistorySelector } from 'selectors/history';
+import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+
+// local components
 import ReceiveModal from './ReceiveModal';
+
 
 const RECEIVE = 'RECEIVE';
 
@@ -64,8 +95,14 @@ type Props = {
   rates: Object,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
-  contacts: Object,
+  contacts: Object[],
   resetHideRemoval: Function,
+  smartWalletState: Object,
+  accounts: Accounts,
+  paymentNetworkBalances: Balances,
+  smartWalletFeatureEnabled: boolean,
+  history: Array<*>,
+  deploySmartWallet: Function,
 };
 
 type State = {
@@ -79,12 +116,13 @@ type State = {
     },
   },
   showDescriptionModal: boolean,
+  activeTab: string,
 };
 
 const AssetCardWrapper = styled.View`
   flex: 1;
   justify-content: flex-start;
-  padding-top: 5px;
+  padding-top: 10px;
   padding-bottom: 30px;
   background-color: ${baseColors.snowWhite};
   border-top-width: 1px;
@@ -96,6 +134,8 @@ const AssetCardWrapper = styled.View`
 const DataWrapper = styled.View`
   margin: 0 ${spacing.large}px ${spacing.large}px;
   justify-content: center;
+  align-items: center;
+  padding-bottom: 8px;
 `;
 
 const TokenValue = styled(BoldText)`
@@ -122,10 +162,29 @@ const Description = styled(Paragraph)`
   line-height: ${fontSizes.mediumLarge};
 `;
 
+const MessageTitle = styled(BoldText)`
+  font-size: ${fontSizes.small}px;
+  text-align: center;
+  letter-spacing: 0.03px;
+  color: #3f3d56;
+`;
+
+const Message = styled(BaseText)`
+  padding-top: 6px;
+  font-size: ${fontSizes.extraExtraSmall}px;
+  color: ${baseColors.darkGray};
+  text-align: center;
+`;
+
+const ValuesWrapper = styled.View`
+  flex-direction: row;
+`;
+
 class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
     showDescriptionModal: false,
+    activeTab: MAIN_NETWORK,
   };
 
   componentDidMount() {
@@ -180,17 +239,29 @@ class AssetScreen extends React.Component<Props, State> {
     }
   };
 
+  setActiveTab = (activeTab) => {
+    this.setState({ activeTab });
+  };
+
   render() {
     const {
       assets,
       rates,
       balances,
+      paymentNetworkBalances,
       fetchAssetsBalances,
       fetchTransactionsHistory,
       baseFiatCurrency,
       navigation,
+      smartWalletState,
+      accounts,
+      history,
+      contacts,
+      smartWalletFeatureEnabled,
+      deploySmartWallet,
     } = this.props;
-    const { showDescriptionModal } = this.state;
+
+    const { showDescriptionModal, activeTab } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -198,15 +269,57 @@ class AssetScreen extends React.Component<Props, State> {
     const isWalletEmpty = balance <= 0;
     const totalInFiat = balance * getRate(rates, token, fiatCurrency);
     const formattedBalanceInFiat = formatMoney(totalInFiat);
+    const paymentNetworkBalance = getBalance(paymentNetworkBalances, token);
+    const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
+    const paymentNetworkBalanceInFiat = paymentNetworkBalance * getRate(rates, token, fiatCurrency);
+    const formattedPaymentNetworkBalanceInFiat = formatMoney(paymentNetworkBalanceInFiat);
     const displayAmount = formatMoney(balance, 4);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     const {
       listed: isListed = true,
-      send: isSendActive = true,
+      send: isAssetConfigSendActive = true,
       receive: isReceiveActive = true,
       disclaimer,
     } = assetsConfig[assetData.token] || {};
+
+    const activeAccountType = getActiveAccountType(accounts);
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
+    const isSmartWallet = smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET;
+
+    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+    const mainNetworkTransactions = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const tokenTransactionsOnMainNetwork = mainNetworkTransactions.filter(({ asset }) => asset === assetData.token);
+
+    const transactionsTabs = [
+      {
+        id: MAIN_NETWORK,
+        name: 'Main network',
+        onPress: () => this.setActiveTab(MAIN_NETWORK),
+        data: tokenTransactionsOnMainNetwork,
+        emptyState: {
+          title: 'Make your first step',
+          body: isSmartWallet
+            ? 'Your transactions on Main network will appear here.'
+            : 'Your transactions will appear here.',
+        },
+      },
+    ];
+
+    const pillarNetworkTab = {
+      id: PILLAR_NETWORK,
+      name: 'Pillar network',
+      onPress: () => this.setActiveTab(PILLAR_NETWORK),
+      data: [],
+      emptyState: {
+        title: 'Make your first step',
+        body: 'Your transactions on Pillar network will appear here.',
+      },
+    };
+
+    if (isSmartWallet) transactionsTabs.push(pillarNetworkTab);
 
     return (
       <Container color={baseColors.white} inset={{ bottom: 0 }}>
@@ -239,10 +352,21 @@ class AssetScreen extends React.Component<Props, State> {
             <TokenValue>
               {`${displayAmount} ${token}`}
             </TokenValue>
+            {!!paymentNetworkBalance &&
+            <TankAssetBalance amount={paymentNetworkBalanceFormatted} monoColor wrapperStyle={{ marginBottom: 18 }} />
+            }
             {!!isListed &&
-            <ValueInFiat>
-              {`${currencySymbol}${formattedBalanceInFiat}`}
-            </ValueInFiat>}
+              <ValuesWrapper>
+                <ValueInFiat>
+                  {`${currencySymbol}${formattedBalanceInFiat}`}
+                </ValueInFiat>
+                {!!paymentNetworkBalance && (
+                  <ValueInFiat>
+                    {` + ${currencySymbol}${formattedPaymentNetworkBalanceInFiat}`}
+                  </ValueInFiat>
+                )}
+              </ValuesWrapper>
+            }
             {!isListed &&
             <Disclaimer>
               {disclaimer}
@@ -255,7 +379,6 @@ class AssetScreen extends React.Component<Props, State> {
               <TruncatedText lines={1} text={assetData.description} />
            </View
            > */}
-
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
@@ -263,16 +386,30 @@ class AssetScreen extends React.Component<Props, State> {
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
             />
+            {!isSendActive &&
+            <Wrapper regularPadding style={{ marginTop: 30, alignItems: 'center' }}>
+              <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
+              <Message>{ sendingBlockedMessage.message }</Message>
+              {smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED &&
+              <Button
+                marginTop="20px"
+                height={52}
+                title="Deploy Smart Wallet"
+                disabled={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
+                onPress={() => deploySmartWallet()}
+              />
+              }
+            </Wrapper>
+            }
           </AssetCardWrapper>
-
           <ActivityFeed
             feedTitle="transactions."
             navigation={navigation}
-            activeTab={TRANSACTIONS}
-            additionalFiltering={data => data.filter(({ asset }) => asset === assetData.token)}
             backgroundColor={baseColors.white}
             noBorder
             wrapperStyle={{ marginTop: 10 }}
+            tabs={transactionsTabs}
+            activeTab={activeTab}
           />
         </ScrollWrapper>
 
@@ -300,17 +437,31 @@ class AssetScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  assets: { data: assets, balances },
+  assets: { data: assets },
   rates: { data: rates },
-  history: { data: history },
   appSettings: { data: { baseFiatCurrency } },
+  smartWallet: smartWalletState,
+  accounts: { data: accounts },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   contacts,
   assets,
-  balances,
   rates,
-  history,
   baseFiatCurrency,
+  smartWalletState,
+  accounts,
+  smartWalletFeatureEnabled,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
+  history: accountHistorySelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -320,6 +471,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchTransactionsHistory: (asset, indexFrom) => {
     dispatch(fetchTransactionsHistoryAction(asset, indexFrom));
   },
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AssetScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);
