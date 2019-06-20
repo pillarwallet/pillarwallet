@@ -60,7 +60,7 @@ export default class ExchangeService {
           token: shapeshiftAccessToken,
         };
       }
-      this.io = new SocketIO(EXCHANGE_URL, {
+      this.io = new SocketIO(`${EXCHANGE_URL}:443`, {
         query: {
           token: accessToken,
         },
@@ -73,7 +73,10 @@ export default class ExchangeService {
         console.log('exchange on error', err);
         this.setConnected(false);
       });
-      this.setConnected(true);
+      this.io.on('connect', () => {
+        console.log('on connect');
+        this.setConnected(true);
+      });
     } catch (e) {
       console.log('exchange service error: ', e);
       this.setConnected(false);
@@ -88,14 +91,6 @@ export default class ExchangeService {
     }
   }
 
-  onConnect(callback?: Function) {
-    if (!this.connected()) return;
-    this.io.on('connect', data => {
-      this.setConnected(true);
-      executeCallback(data, callback);
-    });
-  }
-
   setConnected(value: boolean) {
     this.isConnected = value;
     if (!this.isConnected) {
@@ -108,7 +103,13 @@ export default class ExchangeService {
   }
 
   onOffers(callback?: Function) {
-    if (!this.connected()) return;
+    /**
+     * may not be connected yet, but event bind can already be done
+     * if client is created, however, cannot put this as callback on connect event
+     * as it's not recommended since it will be fired each time websocket is reconnected,
+     * (see – https://socket.io/docs/client-api/#Event-%E2%80%98connect%E2%80%99)
+     */
+    if (!this.io) return;
     this.io
       .off('offers')
       .on('offers', data => executeCallback(data, callback));

@@ -32,6 +32,23 @@ import { saveDbAction } from './dbActions';
 
 const exchangeService = new ExchangeService();
 
+const connectExchangeService = (state: Object) => {
+  const {
+    oAuthTokens: { data: oAuthTokens },
+    exchange: { data: { shapeshiftAccessToken } },
+  } = state;
+  // proceed with new instance only if one is not running and access token changed
+  if (exchangeService.connected()) {
+    const {
+      accessToken: existingAccessToken,
+      shapeshiftAccessToken: existingShapeshiftToken,
+    } = exchangeService.tokens || {};
+    if (existingAccessToken === oAuthTokens.accessToken
+      && existingShapeshiftToken === shapeshiftAccessToken) return;
+  }
+  exchangeService.connect(oAuthTokens.accessToken, shapeshiftAccessToken);
+};
+
 export const takeOfferAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number, provider: string) => {
   return async () => {
     const offerRequest = {
@@ -47,53 +64,28 @@ export const takeOfferAction = (fromAssetCode: string, toAssetCode: string, from
   };
 };
 
-export const connectExchangeService = (callback: Function) => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      oAuthTokens: { data: oAuthTokens },
-      exchange: { data: { shapeshiftAccessToken } },
-    } = getState();
-    // proceed with new instance only if one is not running and access token changed
-    if (exchangeService.connected()) {
-      const {
-        accessToken: existingAccessToken,
-        shapeshiftAccessToken: existingShapeshiftToken,
-      } = exchangeService.tokens || {};
-      if (existingAccessToken === oAuthTokens.accessToken
-        && existingShapeshiftToken === shapeshiftAccessToken) {
-        callback();
-      }
-      return;
-    }
-    exchangeService.connect(oAuthTokens.accessToken, shapeshiftAccessToken);
-    exchangeService.onConnect(async () => {
-      console.log('exchange service connected');
-      callback();
-    });
-  };
-};
-
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
+    console.log('searchOffersAction');
     dispatch({ type: RESET_OFFERS });
     console.log('sellToken: ', fromAssetCode);
     console.log('buyToken: ', toAssetCode);
     console.log('sellAmount: ', fromAmount);
-    dispatch(connectExchangeService(async () => {
-      exchangeService.onOffers(offers =>
-        offers.map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
-      );
-      console.log('requesting offers');
-      // TODO: pass assets symbols from action
-      const result = await exchangeService.requestOffers('SNT', 'ETH');
-      if (result.error) {
-        Toast.show({
-          title: 'Exchange service failed',
-          type: 'warning',
-          message: 'Unable to connect',
-        });
-      }
-    }));
+    connectExchangeService(getState());
+    exchangeService.onOffers(offers =>
+      offers.map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
+    );
+    console.log('requesting offers');
+    // we're requesting although it will start delivering when connection is established
+    // TODO: pass assets symbols from action
+    const result = await exchangeService.requestOffers('SNT', 'ETH');
+    if (result.error) {
+      Toast.show({
+        title: 'Exchange service failed',
+        type: 'warning',
+        message: 'Unable to connect',
+      });
+    }
   };
 };
 
@@ -131,20 +123,20 @@ export const resetShapeshiftAccessTokenAction = () => {
 };
 
 export const requestShapeshiftAccessTokenAction = (tokenHash: string) => {
-  return (dispatch: Function) => {
-    dispatch(connectExchangeService(async () => {
-      const result = await exchangeService.getShapeshiftAccessToken(tokenHash) || {};
-      console.log('requestShapeshiftAccessTokenAction result: ', result);
-      const { shapeshiftAccessToken, error } = result;
-      if (error || !shapeshiftAccessToken) {
-        Toast.show({
-          title: 'Shapeshift authorize failed',
-          type: 'warning',
-          message: 'Cannot get Shapeshift access token',
-        });
-        return;
-      }
-      dispatch(setShapeshiftAccessTokenAction(shapeshiftAccessToken));
-    }));
+  return async (dispatch: Function, getState: Function) => {
+    connectExchangeService(getState());
+    const result = await exchangeService.getShapeshiftAccessToken(tokenHash) || {};
+    console.log('requestShapeshiftAccessTokenAction tokenHash: ', tokenHash);
+    console.log('requestShapeshiftAccessTokenAction result: ', result);
+    const { token: shapeshiftAccessToken, error } = result;
+    if (error || !shapeshiftAccessToken) {
+      Toast.show({
+        title: 'Shapeshift authorize failed',
+        type: 'warning',
+        message: 'Cannot get Shapeshift access token',
+      });
+      return;
+    }
+    dispatch(setShapeshiftAccessTokenAction(shapeshiftAccessToken));
   };
 };

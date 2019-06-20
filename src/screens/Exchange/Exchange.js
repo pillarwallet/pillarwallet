@@ -122,7 +122,7 @@ type State = {
   selectedSellAmount: string,
   selectedValueSelling: Object,
   selectedValueBuying: Object,
-  shapeshiftAuthClicked: boolean,
+  shapeshiftAuthPressed: boolean,
 };
 
 const getAvailable = (min, max) => {
@@ -227,7 +227,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
 
   state = {
-    shapeshiftAuthClicked: false,
+    shapeshiftAuthPressed: false,
     value: {
       selling: '',
       buying: '',
@@ -312,9 +312,9 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   onShapeshiftAuthClick = () => {
     const { authorizeWithShapeshift } = this.props;
-    this.setState({ shapeshiftAuthClicked: true }, async () => {
+    this.setState({ shapeshiftAuthPressed: true }, async () => {
       await authorizeWithShapeshift();
-      this.setState({ shapeshiftAuthClicked: false });
+      this.setState({ shapeshiftAuthPressed: false });
     });
   };
 
@@ -354,7 +354,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       resetShapeshiftAccessToken,
     } = this.props;
     const {
-      shapeshiftAuthClicked,
+      shapeshiftAuthPressed,
       value,
       selectedValueSelling,
       selectedValueBuying,
@@ -401,7 +401,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             ListHeaderComponent={
               <ListHeader>
                 {(!shapeshiftAccessToken &&
-                  <HeaderButton disabled={shapeshiftAuthClicked} onPress={() => this.onShapeshiftAuthClick()}>
+                  <HeaderButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthClick}>
                     <ButtonLabel>Connect to ShapeShift</ButtonLabel>
                   </HeaderButton>) ||
                   <HeaderButton onPress={() => resetShapeshiftAccessToken()}>
