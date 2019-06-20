@@ -53,14 +53,9 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     console.log('sellToken: ', fromAssetCode);
     console.log('buyToken: ', toAssetCode);
     console.log('sellAmount: ', fromAmount);
-    const {
-      oAuthTokens: { data: oAuthTokens },
-      exchange: { data: { shapeshiftAccessToken } },
-    } = getState();
-    exchangeService.listen(oAuthTokens.accessToken, shapeshiftAccessToken);
-    exchangeService.onConnect(async () => {
+    const requestOffers = async () => {
+      console.log('requesting offers');
       // TODO: pass assets symbols from action
-      // this triggers ws event
       const result = await exchangeService.requestOffers('SNT', 'ETH');
       if (result.error) {
         Toast.show({
@@ -69,10 +64,31 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
           title: 'Unable to connect',
         });
       }
+    };
+    const {
+      oAuthTokens: { data: oAuthTokens },
+      exchange: { data: { shapeshiftAccessToken } },
+    } = getState();
+    // proceed with new instance only if one is not running and access token changed
+    if (exchangeService.connected()) {
+      const {
+        accessToken: existingAccessToken,
+        shapeshiftAccessToken: existingShapeshiftToken,
+      } = exchangeService.tokens || {};
+      if (existingAccessToken === oAuthTokens.accessToken
+        && existingShapeshiftToken === shapeshiftAccessToken) {
+        await requestOffers();
+        return;
+      }
+    }
+    exchangeService.listen(oAuthTokens.accessToken, shapeshiftAccessToken);
+    exchangeService.onConnect(async () => {
+      console.log('exchange service connected');
+      exchangeService.onOffers(offers =>
+        offers.map((offer: Offer) => dispatch({ type: APPEND_OFFER, payload: offer })),
+      );
+      await requestOffers();
     });
-    exchangeService.onOffers(offers =>
-      offers.map((offer: Offer) => dispatch({ type: APPEND_OFFER, payload: offer })),
-    );
   };
 };
 

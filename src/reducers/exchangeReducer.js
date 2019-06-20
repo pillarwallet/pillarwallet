@@ -61,7 +61,7 @@ export default function exchangeReducer(
         data: {
           ...state.data,
           offers: [
-            ...state.data.offers,
+            ...state.data.offers.filter(offer => offer._id !== action.payload._id),
             action.payload,
           ],
         },

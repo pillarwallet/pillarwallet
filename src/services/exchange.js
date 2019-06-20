@@ -35,9 +35,14 @@ export default class ExchangeService {
   io: SocketIO;
   isConnected: boolean;
   apiConfig: Object;
+  tokens: Object;
 
   listen(accessToken: string, shapeshiftAccessToken?: string) {
     this.stop();
+    this.tokens = {
+      accessToken,
+      shapeshiftAccessToken,
+    };
     try {
       this.apiConfig = {
         headers: {
