@@ -24,15 +24,15 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import { formatMoney } from 'utils/common';
+import t from 'tcomb-form-native';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ShadowedCard from 'components/ShadowedCard';
-import { BaseText, BoldText } from 'components/Typography';
-import SelectToken from 'components/SelectToken';
-import SelectTokenAmount from 'components/SelectTokenAmount';
+import { BaseText } from 'components/Typography';
+import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 
 import {
@@ -46,16 +46,7 @@ import type { Offer } from 'models/Offer';
 import type { Assets, Rates } from 'models/Asset';
 
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
-
-const Subtitle = styled(BoldText)`
-  margin: 10px 0;
-  color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.medium}px;
-`;
-
-const PaddingWrapper = styled.View`
-  padding: 0 ${spacing.mediumLarge}px;
-`;
+import { ETH } from 'constants/assetsConstants';
 
 const CardWrapper = styled.View`
   width: 100%;
@@ -107,6 +98,10 @@ const ButtonLabelNegative = styled(ButtonLabel)`
   color: ${baseColors.burningFire};
 `;
 
+const FormWrapper = styled.View`
+  padding: 0 ${spacing.mediumLarge}px;
+`;
+
 type Props = {
   rates: Rates,
   navigation: NavigationScreenProp<*>,
@@ -122,9 +117,10 @@ type Props = {
 };
 
 type State = {
-  selectedSellToken: string,
+  value: Object,
   selectedSellAmount: string,
-  selectedBuyToken: string,
+  selectedValueSelling: Object,
+  selectedValueBuying: Object,
   shapeshiftAuthClicked: boolean,
 };
 
@@ -137,38 +133,123 @@ const getAvailable = (min, max) => {
   return `${min} - ${max}`;
 };
 
+const { Form } = t.form;
+
+const Amount = t.String;
+
+Amount.getValidationErrorMessage = () => {
+  return 'Amount should be specified.';
+};
+
+const formStructure = t.struct({
+  selling: Amount,
+  buying: t.String,
+});
+
+function SelectorInputTemplate(locals) {
+  const {
+    config: {
+      onValueSelected,
+      options,
+      selectedOption,
+      label,
+      hasInput,
+      onInputChange,
+    },
+  } = locals;
+  const errorMessage = locals.error;
+  const inputProps = {
+    onChange: locals.onChange,
+    onBlur: locals.onBlur,
+    placeholder: '0',
+    value: locals.value,
+    keyboardType: locals.keyboardType,
+    maxLength: 42,
+    label,
+  };
+  return (
+    <SelectorInput
+      inputProps={inputProps}
+      onValueSelected={onValueSelected}
+      options={options}
+      selectedOption={selectedOption}
+      errorMessage={errorMessage}
+      hasInput={hasInput}
+      onInputChange={onInputChange}
+    />
+  );
+}
+
+const generateFormOptions = (config: Object): Object => ({
+  fields: {
+    selling: {
+      keyboardType: 'decimal-pad',
+      placeholder: '0.0',
+      template: SelectorInputTemplate,
+      config: {
+        label: 'Selling',
+        hasInput: true,
+        selectedOption: config.selectedOptionSelling,
+        options: config.optionsSelling,
+        inputProps: {
+          autoCapitalize: 'none',
+          placeholder: '0',
+        },
+        onValueSelected: config.onValueSelectedSelling,
+        onInputChange: config.onInputChange,
+      },
+    },
+    buying: {
+      template: SelectorInputTemplate,
+      config: {
+        label: 'Buying',
+        selectedOption: config.selectedOptionBuying,
+        options: config.optionsBuying,
+        inputProps: {
+          autoCapitalize: 'none',
+          placeholder: '0',
+        },
+        onValueSelected: config.onValueSelectedBuying,
+      },
+    },
+  },
+});
+
 class ExchangeScreen extends React.Component<Props, State> {
+  exchangeForm: t.form;
+
   state = {
-    selectedSellAmount: '0.0',
-    selectedSellToken: '',
-    selectedBuyToken: '',
     shapeshiftAuthClicked: false,
+    value: {
+      selling: '',
+      buying: '',
+    },
+    selectedSellAmount: '',
+    selectedValueSelling: {},
+    selectedValueBuying: {},
   };
 
   constructor(props: Props) {
     super(props);
-    const firstAssetKey = Object.keys(props.assets)[0];
-    const firstAssetSymbol = props.assets[firstAssetKey].symbol;
-
-    this.state.selectedSellToken = firstAssetSymbol;
-    this.state.selectedBuyToken = firstAssetSymbol;
     this.triggerSearch = debounce(this.triggerSearch, 500);
   }
 
-  onSellTokenChanged = (selectedSellToken: string) => {
-    this.setState({ selectedSellToken }, () => this.triggerSearch());
-  };
+  componentDidMount() {
+    this.setInitialSelection();
+  }
 
-  onSellAmountChanged = (selectedSellAmount: string) => {
-    this.setState({ selectedSellAmount }, () => this.triggerSearch());
-  };
-
-  onBuyTokenChanged = (selectedBuyToken: string) => {
-    this.setState({ selectedBuyToken }, () => this.triggerSearch());
+  setInitialSelection = () => {
+    const { assets } = this.props;
+    const assetsOptions = this.generateOptions({ ETH: assets[ETH] });
+    this.setState({
+      selectedValueSelling: assetsOptions[0],
+    });
   };
 
   triggerSearch = () => {
-    const { selectedSellAmount, selectedSellToken, selectedBuyToken } = this.state;
+    const { selectedSellAmount, selectedValueSelling, selectedValueBuying } = this.state;
+    const { value: selectedSellToken } = selectedValueSelling;
+    const { value: selectedBuyToken } = selectedValueBuying;
     const { searchOffers } = this.props;
     const fromAmount = parseFloat(selectedSellAmount);
 
@@ -229,46 +310,81 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
+  generateOptions = (assets) => {
+    const assetsList = Object.keys(assets).map((key: string) => assets[key]);
+    // TODO: filter out assets without balance
+    return assetsList.map(({ symbol, iconUrl, ...rest }) =>
+      ({
+        key: symbol,
+        value: symbol,
+        icon: iconUrl,
+        iconUrl,
+        symbol,
+        ...rest,
+      }));
+  };
+
+  handleSearch = () => {
+    // const formValue = this.exchangeForm.getValue();
+    // if (!formValue) return;
+    this.triggerSearch();
+  };
+
+  handleFormChange = (value: Object) => {
+    this.setState({ value });
+  };
+
+  handleInputChange = (inputVal: string) => {
+    this.setState({ selectedSellAmount: inputVal });
+  }
+
   render() {
     const {
-      rates,
       assets,
-      baseFiatCurrency,
       offers,
       shapeshiftAccessToken,
       resetShapeshiftAccessToken,
     } = this.props;
     const {
-      selectedBuyToken,
-      selectedSellAmount,
-      selectedSellToken,
       shapeshiftAuthClicked,
+      value,
+      selectedValueSelling,
+      selectedValueBuying,
+      // supportedAssets = [],
     } = this.state;
-    const assetsList = Object.keys(assets).map((key: string) => assets[key]);
+    const assetsOptionsSelling = this.generateOptions(assets);
+    // const assetsOptionsBuying = this.generateOptions(supportedAssets);
+    const assetsOptionsBuying = this.generateOptions(assets);
+
+    const formOptions = generateFormOptions({
+      optionsSelling: assetsOptionsSelling,
+      selectedOptionSelling: selectedValueSelling,
+      onValueSelectedSelling: (val) => {
+        this.setState({ selectedValueSelling: val });
+        this.handleSearch();
+      },
+      onInputChange: (val) => { this.handleInputChange(val); },
+      optionsBuying: assetsOptionsBuying,
+      selectedOptionBuying: selectedValueBuying,
+      onValueSelectedBuying: (val) => {
+        this.setState({ selectedValueBuying: val });
+        this.handleSearch();
+      },
+    });
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
         <Header title="exchange" />
         <ScrollWrapper>
-          <PaddingWrapper>
-            <Subtitle>Selling</Subtitle>
-            <SelectTokenAmount
-              baseFiatCurrency={baseFiatCurrency}
-              selectedToken={selectedSellToken}
-              selectedAmount={selectedSellAmount}
-              onTokenChange={this.onSellTokenChanged}
-              onAmountChange={this.onSellAmountChanged}
-              assets={assetsList}
-              rates={rates}
+          <FormWrapper>
+            <Form
+              ref={node => { this.exchangeForm = node; }}
+              type={formStructure}
+              options={formOptions}
+              value={value}
+              onChange={this.handleFormChange}
             />
-
-            <Subtitle>Buying</Subtitle>
-            <SelectToken
-              assets={assetsList}
-              selectedToken={selectedBuyToken}
-              onTokenChange={this.onBuyTokenChanged}
-            />
-          </PaddingWrapper>
+          </FormWrapper>
           <FlatList
             data={offers}
             keyExtractor={(item) => item._id}
@@ -296,12 +412,13 @@ class ExchangeScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   exchange: { data: { offers, shapeshiftAccessToken } },
-  assets: { data: assets },
+  assets: { data: assets, supportedAssets },
   rates: { data: rates },
 }) => ({
   baseFiatCurrency,
   offers,
   assets,
+  supportedAssets,
   rates,
   shapeshiftAccessToken,
 });

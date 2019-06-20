@@ -30,6 +30,7 @@ import Header from 'components/Header';
 
 // UTILS
 import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 
 type Props = {
@@ -39,6 +40,8 @@ type Props = {
   options: Object[],
   selectedOption: Object,
   hasInput?: boolean,
+  errorMessage?: string,
+  onInputChange: Function,
 }
 
 type State = {
@@ -159,23 +162,28 @@ export default class SelectorInput extends React.Component<Props, State> {
   };
 
   handleChange = (e: EventLike) => {
-    const { inputProps = {} } = this.props;
+    const { inputProps = {}, onInputChange } = this.props;
     const { onChange } = inputProps;
     if (onChange) onChange(e.nativeEvent.text);
+    if (onInputChange) onInputChange(e.nativeEvent.text);
   };
 
   selectValue = (value: Object) => {
-    const { onValueSelected } = this.props;
+    const { onValueSelected, inputProps = {} } = this.props;
+    const { onChange } = inputProps;
     if (onValueSelected) onValueSelected(value);
     this.setState({ showOptionsSelector: false });
+    if (onChange) onChange(value);
   };
 
   renderOption = ({ item: option }: Object) => {
+    const iconUrl = `${SDK_PROVIDER}/${option.icon}?size=3`;
+
     return (
       <OptionWrapper onPress={() => this.selectValue(option)}>
         <SelectorImage
           key={option.value}
-          source={{ uri: option.icon }}
+          source={{ uri: iconUrl }}
           fallbackSource={genericToken}
           resizeMode="contain"
         />
@@ -195,18 +203,19 @@ export default class SelectorInput extends React.Component<Props, State> {
     } = this.props;
     const { label, value, errorMessage } = inputProps;
     const { value: selectedValue, icon } = selectedOption;
+    const iconUrl = `${SDK_PROVIDER}/${icon}?size=3`;
 
     return (
       <React.Fragment>
         <Wrapper style={wrapperStyle}>
           {!!label && <Label>{label}</Label>}
           <ItemHolder>
-            {!!options &&
+            {!!(options && Object.keys(selectedOption)) &&
             <Selector fullWidth={!hasInput} onPress={() => this.setState({ showOptionsSelector: true })}>
               <ValueWrapper>
                 <SelectorImage
                   key={selectedValue}
-                  source={{ uri: icon }}
+                  source={{ uri: iconUrl }}
                   fallbackSource={genericToken}
                   resizeMode="contain"
                 />
@@ -244,6 +253,7 @@ export default class SelectorInput extends React.Component<Props, State> {
               )
             }
           </ItemHolder>
+          {!!errorMessage && <Label style={{ color: 'red' }}>{errorMessage}</Label>}
         </Wrapper>
         <Modal
           style={{ flex: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }}
