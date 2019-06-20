@@ -99,7 +99,8 @@ const ButtonLabelNegative = styled(ButtonLabel)`
 `;
 
 const FormWrapper = styled.View`
-  padding: 0 ${spacing.mediumLarge}px;
+  padding: 0 ${spacing.large}px;
+  margin-top: ${spacing.large}px;
 `;
 
 type Props = {
@@ -155,17 +156,21 @@ function SelectorInputTemplate(locals) {
       label,
       hasInput,
       onInputChange,
+      wrapperStyle,
+      placeholderSelector,
+      placeholderInput,
     },
   } = locals;
   const errorMessage = locals.error;
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
-    placeholder: '0',
     value: locals.value,
     keyboardType: locals.keyboardType,
     maxLength: 42,
     label,
+    placeholderSelector,
+    placeholder: placeholderInput,
   };
   return (
     <SelectorInput
@@ -176,6 +181,7 @@ function SelectorInputTemplate(locals) {
       errorMessage={errorMessage}
       hasInput={hasInput}
       onInputChange={onInputChange}
+      wrapperStyle={wrapperStyle}
     />
   );
 }
@@ -193,10 +199,11 @@ const generateFormOptions = (config: Object): Object => ({
         options: config.optionsSelling,
         inputProps: {
           autoCapitalize: 'none',
-          placeholder: '0',
         },
         onValueSelected: config.onValueSelectedSelling,
         onInputChange: config.onInputChange,
+        placeholderSelector: 'select',
+        placeholderInput: '0',
       },
     },
     buying: {
@@ -207,9 +214,10 @@ const generateFormOptions = (config: Object): Object => ({
         options: config.optionsBuying,
         inputProps: {
           autoCapitalize: 'none',
-          placeholder: '0',
         },
         onValueSelected: config.onValueSelectedBuying,
+        wrapperStyle: { marginTop: spacing.mediumLarge },
+        placeholderSelector: 'select asset',
       },
     },
   },

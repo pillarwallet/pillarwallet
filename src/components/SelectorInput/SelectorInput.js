@@ -24,7 +24,7 @@ import { CachedImage } from 'react-native-cached-image';
 import Modal from 'react-native-modalbox';
 
 // COMPONENTS
-import { BoldText, MediumText } from 'components/Typography';
+import { BoldText, BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Header from 'components/Header';
 
@@ -145,13 +145,22 @@ const OptionsContentWrapper = styled.View`
   border-top-left-radius: 30px;
   border-top-right-radius:  30px;
   background-color: ${baseColors.white};
-  
 `;
 
 const Separator = styled.View`
   width: 100%;
   height: 1px;
   background-color: ${baseColors.mediumLightGray}
+`;
+
+const PlaceholderWrapper = styled.View`
+`;
+
+const Placeholder = styled(BaseText)`
+  font-size: ${fontSizes.medium}px;
+  line-height: ${fontSizes.mediumLarge}px;
+  letter-spacing: 0.23px;
+  color: ${baseColors.darkGray};
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
@@ -201,7 +210,12 @@ export default class SelectorInput extends React.Component<Props, State> {
       selectedOption = {},
       hasInput,
     } = this.props;
-    const { label, value, errorMessage } = inputProps;
+    const {
+      label,
+      value,
+      errorMessage,
+      placeholderSelector,
+    } = inputProps;
     const { value: selectedValue, icon } = selectedOption;
     const iconUrl = `${SDK_PROVIDER}/${icon}?size=3`;
 
@@ -210,15 +224,22 @@ export default class SelectorInput extends React.Component<Props, State> {
         <Wrapper style={wrapperStyle}>
           {!!label && <Label>{label}</Label>}
           <ItemHolder>
-            {!!(options && Object.keys(selectedOption)) &&
+            {!!options &&
             <Selector fullWidth={!hasInput} onPress={() => this.setState({ showOptionsSelector: true })}>
               <ValueWrapper>
-                <SelectorImage
-                  key={selectedValue}
-                  source={{ uri: iconUrl }}
-                  fallbackSource={genericToken}
-                  resizeMode="contain"
-                />
+                {Object.keys(selectedOption).length
+                  ? (
+                    <SelectorImage
+                      key={selectedValue}
+                      source={{ uri: iconUrl }}
+                      fallbackSource={genericToken}
+                      resizeMode="contain"
+                    />)
+                  : (
+                    <PlaceholderWrapper>
+                      <Placeholder>{placeholderSelector || 'select'}</Placeholder>
+                    </PlaceholderWrapper>
+                  )}
                 <SlectorValue>{selectedValue}</SlectorValue>
               </ValueWrapper>
               <ChevronWrapper>
