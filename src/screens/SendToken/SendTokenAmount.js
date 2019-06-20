@@ -51,6 +51,7 @@ import { ETH, defaultFiatCurrency, SPEED_TYPES } from 'constants/assetsConstants
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
+import { updateAppSettingsAction } from 'actions/appSettingsActions';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -107,13 +108,14 @@ type Props = {
   gasInfo: GasInfo,
   rates: Rates,
   baseFiatCurrency: string,
+  transactionSpeed: string,
+  updateAppSettings: Function,
 };
 
 type State = {
   value: ?{
     amount: ?string,
   },
-  transactionSpeed: string,
   showModal: boolean,
 };
 
@@ -143,7 +145,6 @@ class SendTokenAmount extends React.Component<Props, State> {
 
     this.state = {
       value: null,
-      transactionSpeed: SPEED_TYPES.NORMAL,
       showModal: false,
     };
   }
@@ -158,9 +159,13 @@ class SendTokenAmount extends React.Component<Props, State> {
     }
   }
 
+  getTxSpeed = () => {
+    return this.props.transactionSpeed || SPEED_TYPES.NORMAL;
+  };
+
   handleGasPriceChange = (txSpeed: string) => () => {
+    this.props.updateAppSettings('transactionSpeed', txSpeed);
     this.setState({
-      transactionSpeed: txSpeed,
       showModal: false,
     });
   };
@@ -174,7 +179,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const txFeeInWei = this.getTxFeeInWei();
     const value = this._form.getValue();
     const { navigation } = this.props;
-    const { transactionSpeed } = this.state;
+    const transactionSpeed = this.getTxSpeed();
     const gasPrice = txFeeInWei.div(GAS_LIMIT).toNumber();
 
     if (!value) return;
@@ -212,7 +217,7 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   getTxFeeInWei = (txSpeed?: string): BigNumber => {
-    txSpeed = txSpeed || this.state.transactionSpeed;
+    txSpeed = txSpeed || this.getTxSpeed();
     const { gasInfo } = this.props;
     const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
@@ -239,11 +244,7 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      value,
-      showModal,
-      transactionSpeed,
-    } = this.state;
+    const { value, showModal } = this.state;
     const {
       session,
       balances,
@@ -252,6 +253,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       baseFiatCurrency,
     } = this.props;
 
+    const transactionSpeed = this.getTxSpeed();
     const { token, icon, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const currencySymbol = getCurrencySymbol(fiatCurrency);
@@ -347,12 +349,13 @@ const mapStateToProps = ({
   session: { data: session },
   rates: { data: rates },
   history: { gasInfo },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, transactionSpeed } },
 }) => ({
   rates,
   session,
   gasInfo,
   baseFiatCurrency,
+  transactionSpeed,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -366,6 +369,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
+  updateAppSettings: (path, value) => dispatch(updateAppSettingsAction(path, value)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenAmount);
