@@ -65,15 +65,15 @@ export default class ExchangeService {
           token: accessToken,
         },
       });
-      this.io.on('disconnect', err => {
+      this.io.off('disconnect').on('disconnect', err => {
         console.log('exchange on disconnect: ', err);
         this.setConnected(false);
       });
-      this.io.on('error', (err) => {
+      this.io.off('error').on('error', (err) => {
         console.log('exchange on error', err);
         this.setConnected(false);
       });
-      this.io.on('connect', () => {
+      this.io.off('connect').on('connect', () => {
         console.log('on connect');
         this.setConnected(true);
       });
@@ -87,7 +87,10 @@ export default class ExchangeService {
     this.setConnected(false);
     if (this.io) {
       this.io.close();
-      this.io.on('close', data => executeCallback(data, callback));
+      this.io.off('close').on('close', data => {
+        executeCallback(data, callback);
+        delete this.io;
+      });
     }
   }
 
@@ -110,9 +113,7 @@ export default class ExchangeService {
      * (see – https://socket.io/docs/client-api/#Event-%E2%80%98connect%E2%80%99)
      */
     if (!this.io) return;
-    this.io
-      .off('offers')
-      .on('offers', data => executeCallback(data, callback));
+    this.io.off('offers').on('offers', data => executeCallback(data, callback));
   }
 
   requestOffers(fromAssetCode: string, toAssetCode: string) {

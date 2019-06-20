@@ -126,10 +126,9 @@ export const resetShapeshiftAccessTokenAction = () => {
 export const requestShapeshiftAccessTokenAction = (tokenHash: string) => {
   return async (dispatch: Function, getState: Function) => {
     connectExchangeService(getState());
-    const result = await exchangeService.getShapeshiftAccessToken(tokenHash) || {};
+    const { token: shapeshiftAccessToken, error } = await exchangeService.getShapeshiftAccessToken(tokenHash) || {};
     console.log('requestShapeshiftAccessTokenAction tokenHash: ', tokenHash);
-    console.log('requestShapeshiftAccessTokenAction result: ', result);
-    const { token: shapeshiftAccessToken, error } = result;
+    console.log('shapeshiftAccessToken: ', shapeshiftAccessToken);
     if (error || !shapeshiftAccessToken) {
       Toast.show({
         title: 'Shapeshift authorize failed',

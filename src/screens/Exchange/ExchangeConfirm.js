@@ -41,6 +41,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 import type { GasInfo } from 'models/GasInfo';
 import type { Rates } from 'models/Asset';
+import type { OfferOrder } from 'models/Offer';
 
 const FooterWrapper = styled.View`
   flex-direction: row;
@@ -147,13 +148,13 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       session,
     } = this.props;
 
-    const transactionPayload = navigation.getParam('transactionPayload', {});
+    const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
     const {
-      amountToBuy,
-      selectedSellAmount,
+      receiveAmount,
+      payAmount,
       toAssetCode,
       fromAssetCode,
-    } = transactionPayload;
+    } = offerOrder;
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
@@ -163,12 +164,12 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             Review the details and confirm the exchange rate as well as the cost of transaction.
           </Paragraph>
           <LabeledRow>
-            <Label>Amount to buy</Label>
-            <Value>{`${amountToBuy} ${toAssetCode}`}</Value>
+            <Label>Amount to receive</Label>
+            <Value>{`${receiveAmount} ${toAssetCode}`}</Value>
           </LabeledRow>
           <LabeledRow>
-            <Label>Amount to spend</Label>
-            <Value>{`${selectedSellAmount} ${fromAssetCode}`}</Value>
+            <Label>Amount to pay</Label>
+            <Value>{`${payAmount} ${fromAssetCode}`}</Value>
           </LabeledRow>
           <LabeledRow>
             <Label>Transaction fee</Label>

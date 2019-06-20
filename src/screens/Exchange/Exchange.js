@@ -34,6 +34,8 @@ import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
 import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
+import Spinner from 'components/Spinner';
+import Toast from 'components/Toast';
 
 import {
   searchOffersAction,
@@ -121,6 +123,8 @@ type State = {
   value: Object,
   shapeshiftAuthPressed: boolean,
   formOptions: Object,
+  // offer id will be passed to prevent double clicking
+  pressedOfferId: string,
 };
 
 const getAvailable = (min, max) => {
@@ -202,6 +206,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   state = {
     shapeshiftAuthPressed: false,
+    pressedOfferId: '',
     value: {
       fromInput: {
         selector: {},
@@ -303,19 +308,56 @@ class ExchangeScreen extends React.Component<Props, State> {
     searchOffers(from, to, parsedAmount);
   };
 
+  onShapeshiftAuthClick = () => {
+    const { authorizeWithShapeshift } = this.props;
+    this.setState({ shapeshiftAuthPressed: true }, async () => {
+      await authorizeWithShapeshift();
+      this.setState({ shapeshiftAuthPressed: false });
+    });
+  };
+
+  onOfferPress = (offer: Offer) => {
+    const {
+      navigation,
+      takeOffer,
+    } = this.props;
+    const {
+      value: {
+        fromInput: {
+          input: selectedSellAmount,
+        },
+      },
+    } = this.state;
+    const {
+      _id,
+      provider,
+      fromAssetCode,
+      toAssetCode,
+      askRate,
+    } = offer;
+    const amountToBuy = parseFloat(selectedSellAmount) * askRate;
+    this.setState({ pressedOfferId: _id }, async () => {
+      const offerOrder = await takeOffer(fromAssetCode, toAssetCode, amountToBuy, provider);
+      this.setState({ pressedOfferId: '' }); // reset
+      if (!offerOrder || !offerOrder.data || offerOrder.error) {
+        Toast.show({
+          title: 'Exchange service failed',
+          type: 'warning',
+          message: 'Unable to request offer',
+        });
+        return;
+      }
+      const { data: offerOrderData } = offerOrder;
+      navigation.navigate(EXCHANGE_CONFIRM, { offerOrder: offerOrderData });
+    });
+  };
+
   renderOffers = ({ item: offer }) => {
-    const { value: { fromInput } } = this.state;
+    const { value: { fromInput }, pressedOfferId } = this.state;
     const { input: selectedSellAmount } = fromInput;
-    const { navigation } = this.props;
     const available = getAvailable(offer.minQuantity, offer.maxQuantity);
     const amountToBuy = parseFloat(selectedSellAmount) * offer.askRate;
-    const transactionPayload = {
-      amountToBuy,
-      selectedSellAmount,
-      toAssetCode: offer.toAssetCode,
-      fromAssetCode: offer.fromAssetCode,
-    };
-
+    const isPressed = pressedOfferId === offer._id;
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
@@ -337,23 +379,18 @@ class ExchangeScreen extends React.Component<Props, State> {
             </CardColumn>
             <CardColumn >
               <Button
-                title={`${formatMoney(amountToBuy)} ${offer.toAssetCode}`}
+                disabled={isPressed}
+                title={isPressed ? '' : `${formatMoney(amountToBuy)} ${offer.toAssetCode}`}
                 small
-                onPress={() => { navigation.navigate(EXCHANGE_CONFIRM, { transactionPayload }); }}
-              />
+                onPress={() => this.onOfferPress(offer)}
+              >
+                {isPressed && <Spinner width={20} height={20} />}
+              </Button>
             </CardColumn>
           </CardRow>
         </CardWrapper>
       </ShadowedCard>
     );
-  };
-
-  onShapeshiftAuthClick = () => {
-    const { authorizeWithShapeshift } = this.props;
-    this.setState({ shapeshiftAuthPressed: true }, async () => {
-      await authorizeWithShapeshift();
-      this.setState({ shapeshiftAuthPressed: false });
-    });
   };
 
   generateOptions = (assets) => {
