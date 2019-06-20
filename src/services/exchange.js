@@ -37,12 +37,14 @@ export default class ExchangeService {
   apiConfig: Object;
   tokens: Object;
 
-  listen(accessToken: string, shapeshiftAccessToken?: string) {
+  connect(accessToken: string, shapeshiftAccessToken?: string) {
     this.stop();
     this.tokens = {
       accessToken,
       shapeshiftAccessToken,
     };
+    console.log('shapeshiftAccessToken: ', shapeshiftAccessToken);
+    console.log('accessToken: ', accessToken);
     try {
       this.apiConfig = {
         headers: {
@@ -107,7 +109,9 @@ export default class ExchangeService {
 
   onOffers(callback?: Function) {
     if (!this.connected()) return;
-    this.io.on('offers', data => executeCallback(data, callback));
+    this.io
+      .off('offers')
+      .on('offers', data => executeCallback(data, callback));
   }
 
   requestOffers(fromAssetCode: string, toAssetCode: string) {
@@ -132,5 +136,12 @@ export default class ExchangeService {
     const sessionId = getRandomString();
     const urlPath = `authorize?sessionID=${sessionId}`;
     return buildApiUrl(urlPath);
+  }
+
+  getShapeshiftAccessToken(tokenHash: string) {
+    const urlPath = `gettoken?hash=${tokenHash}`;
+    return fetch(buildApiUrl(urlPath), this.apiConfig)
+      .then(response => response.json())
+      .catch(error => ({ error }));
   }
 }

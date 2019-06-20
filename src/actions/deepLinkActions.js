@@ -23,7 +23,7 @@ import { Alert } from 'react-native';
 import url from 'url';
 import Toast from 'components/Toast';
 import { updateNavigationLastScreenState, navigate, getNavigationPathAndParamsState } from 'services/navigation';
-import { setShapeshiftAccessTokenAction } from 'actions/exchangeActions';
+import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
 import { HOME, APP_FLOW, AUTH_FLOW, CONFIRM_CLAIM } from 'constants/navigationConstants';
 import { ADD_DEEP_LINK_DATA, RESET_DEEP_LINK_DATA } from 'constants/deepLinkConstants';
 
@@ -78,9 +78,9 @@ export const executeDeepLinkAction = (deepLink: string) => {
         }
         break;
       case 'shapeshift':
-        const { query: { status: authStatus, auth: shapeshiftAccessToken } } = params;
-        if (!authStatus || !shapeshiftAccessToken) break;
-        dispatch(setShapeshiftAccessTokenAction(shapeshiftAccessToken));
+        const { query: { status: authStatus, auth: shapeshiftTokenHash } } = params;
+        if (!authStatus || !shapeshiftTokenHash) break;
+        dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
         break;
       default:
         break;

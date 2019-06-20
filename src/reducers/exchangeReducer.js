@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  APPEND_OFFER,
+  ADD_OFFER,
   RESET_OFFERS,
   SET_SHAPESHIFT_ACCESS_TOKEN,
 } from 'constants/exchangeConstants';
@@ -55,7 +55,7 @@ export default function exchangeReducer(
           offers: [],
         },
       };
-    case APPEND_OFFER:
+    case ADD_OFFER:
       return {
         ...state,
         data: {

@@ -23,7 +23,7 @@ import ExchangeService from 'services/exchange';
 import Toast from 'components/Toast';
 import {
   RESET_OFFERS,
-  APPEND_OFFER,
+  ADD_OFFER,
   SET_SHAPESHIFT_ACCESS_TOKEN,
 } from 'constants/exchangeConstants';
 
@@ -47,24 +47,8 @@ export const takeOfferAction = (fromAssetCode: string, toAssetCode: string, from
   };
 };
 
-export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
+export const connectExchangeService = (callback: Function) => {
   return async (dispatch: Function, getState: Function) => {
-    dispatch({ type: RESET_OFFERS });
-    console.log('sellToken: ', fromAssetCode);
-    console.log('buyToken: ', toAssetCode);
-    console.log('sellAmount: ', fromAmount);
-    const requestOffers = async () => {
-      console.log('requesting offers');
-      // TODO: pass assets symbols from action
-      const result = await exchangeService.requestOffers('SNT', 'ETH');
-      if (result.error) {
-        Toast.show({
-          message: 'Exchange service failed',
-          type: 'warning',
-          title: 'Unable to connect',
-        });
-      }
-    };
     const {
       oAuthTokens: { data: oAuthTokens },
       exchange: { data: { shapeshiftAccessToken } },
@@ -77,18 +61,39 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       } = exchangeService.tokens || {};
       if (existingAccessToken === oAuthTokens.accessToken
         && existingShapeshiftToken === shapeshiftAccessToken) {
-        await requestOffers();
-        return;
+        callback();
       }
+      return;
     }
-    exchangeService.listen(oAuthTokens.accessToken, shapeshiftAccessToken);
+    exchangeService.connect(oAuthTokens.accessToken, shapeshiftAccessToken);
     exchangeService.onConnect(async () => {
       console.log('exchange service connected');
-      exchangeService.onOffers(offers =>
-        offers.map((offer: Offer) => dispatch({ type: APPEND_OFFER, payload: offer })),
-      );
-      await requestOffers();
+      callback();
     });
+  };
+};
+
+export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
+  return async (dispatch: Function) => {
+    dispatch({ type: RESET_OFFERS });
+    console.log('sellToken: ', fromAssetCode);
+    console.log('buyToken: ', toAssetCode);
+    console.log('sellAmount: ', fromAmount);
+    dispatch(connectExchangeService(async () => {
+      exchangeService.onOffers(offers =>
+        offers.map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
+      );
+      console.log('requesting offers');
+      // TODO: pass assets symbols from action
+      const result = await exchangeService.requestOffers('SNT', 'ETH');
+      if (result.error) {
+        Toast.show({
+          title: 'Exchange service failed',
+          type: 'warning',
+          message: 'Unable to connect',
+        });
+      }
+    }));
   };
 };
 
@@ -101,9 +106,9 @@ export const authorizeWithShapeshiftAction = () => {
       })
       .catch(() => {
         Toast.show({
-          message: 'Unable to authorize with Shapeshift',
+          title: 'Shapeshift authorize failed',
           type: 'warning',
-          title: 'Cannot get authorize url',
+          message: 'Cannot get authorize url',
         });
       });
   };
@@ -122,5 +127,24 @@ export const setShapeshiftAccessTokenAction = (token: ?string) => {
 export const resetShapeshiftAccessTokenAction = () => {
   return (dispatch: Function) => {
     dispatch(setShapeshiftAccessTokenAction(null));
+  };
+};
+
+export const requestShapeshiftAccessTokenAction = (tokenHash: string) => {
+  return (dispatch: Function) => {
+    dispatch(connectExchangeService(async () => {
+      const result = await exchangeService.getShapeshiftAccessToken(tokenHash) || {};
+      console.log('requestShapeshiftAccessTokenAction result: ', result);
+      const { shapeshiftAccessToken, error } = result;
+      if (error || !shapeshiftAccessToken) {
+        Toast.show({
+          title: 'Shapeshift authorize failed',
+          type: 'warning',
+          message: 'Cannot get Shapeshift access token',
+        });
+        return;
+      }
+      dispatch(setShapeshiftAccessTokenAction(shapeshiftAccessToken));
+    }));
   };
 };
