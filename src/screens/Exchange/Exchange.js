@@ -76,6 +76,7 @@ const CardRow = styled.View`
 
 const CardColumn = styled.View`
   flex-direction: column;
+  align-items: ${props => props.alignRight ? 'flex-end' : 'flex-start'};
 `;
 
 const CardText = styled(BaseText)`
@@ -177,6 +178,8 @@ const SPEED_TYPES = {
   [NORMAL]: 'Normal',
   [FAST]: 'Fast',
 };
+
+const PROVIDER_SHAPESHIFT = 'SHAPESHIFT-SHIM';
 
 const checkIfEnoughForFee = (balances: Balances, txFeeInWei) => {
   if (!balances[ETH]) return false;
@@ -461,12 +464,14 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   renderOffers = ({ item: offer }) => {
-    const { value: { fromInput }, pressedOfferId } = this.state;
+    const { value: { fromInput }, pressedOfferId, shapeshiftAuthPressed } = this.state;
+    const { shapeshiftAccessToken } = this.props;
     const { input: selectedSellAmount } = fromInput;
     const available = getAvailable(offer.minQuantity, offer.maxQuantity);
     const amountToBuy = parseFloat(selectedSellAmount) * offer.askRate;
     const isPressed = pressedOfferId === offer._id;
     console.log('offer: ', offer);
+    const isShapeShift = offer.provider === PROVIDER_SHAPESHIFT;
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
@@ -478,6 +483,13 @@ class ExchangeScreen extends React.Component<Props, State> {
               <CardText label>Exchange rate</CardText>
               <CardText>{`${offer.askRate} ${offer.fromAssetCode || ''}`}</CardText>
             </CardColumn>
+            {isShapeShift && !shapeshiftAccessToken &&
+            <CardColumn alignRight>
+              <HeaderButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthClick}>
+                <ButtonLabel color={baseColors.fruitSalad}>Connect to ShapeShift</ButtonLabel>
+              </HeaderButton>
+              <ButtonLabel>to accept</ButtonLabel>
+            </CardColumn>}
           </CardRow>
           <CardRow>
             <CardColumn style={{ flex: 1 }}>
@@ -486,9 +498,9 @@ class ExchangeScreen extends React.Component<Props, State> {
                 <CardText>{available}</CardText>
               </View>
             </CardColumn>
-            <CardColumn >
+            <CardColumn>
               <Button
-                disabled={isPressed}
+                disabled={isPressed || isShapeShift}
                 title={isPressed ? '' : `${formatMoney(amountToBuy)} ${offer.toAssetCode}`}
                 small
                 onPress={() => this.onOfferPress(offer)}
@@ -631,7 +643,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       balances,
     } = this.props;
     const {
-      shapeshiftAuthPressed,
       value,
       formOptions,
       showFeeModal,
@@ -674,10 +685,7 @@ class ExchangeScreen extends React.Component<Props, State> {
                     />
                   </View>
                 </FeeInfo>
-                {(!shapeshiftAccessToken &&
-                  <HeaderButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthClick}>
-                    <ButtonLabel color={baseColors.fruitSalad}>Connect to ShapeShift</ButtonLabel>
-                  </HeaderButton>) ||
+                {!!shapeshiftAccessToken &&
                   <HeaderButton onPress={() => resetShapeshiftAccessToken()}>
                     <ButtonLabel color={baseColors.burningFire}>Disconnect ShapeShift</ButtonLabel>
                   </HeaderButton>
