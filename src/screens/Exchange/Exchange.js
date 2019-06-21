@@ -45,6 +45,7 @@ import {
   takeOfferAction,
   authorizeWithShapeshiftAction,
   resetShapeshiftAccessTokenAction,
+  resetOffersAction,
 } from 'actions/exchangeActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
@@ -117,7 +118,7 @@ type Props = {
   baseFiatCurrency: string,
   user: Object,
   assets: Assets,
-  searchOffers: (string, string, number) => void,
+  searchOffers: (string, string) => void,
   offers: Offer[],
   takeOffer: (string, string, number, string) => Object,
   authorizeWithShapeshift: Function,
@@ -127,6 +128,7 @@ type Props = {
   fetchGasInfo: Function,
   balances: Balances,
   gasInfo: GasInfo,
+  resetOffers: Function,
 };
 
 type State = {
@@ -389,10 +391,13 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { value: { fromInput, toInput } } = this.state;
     const { selector: { value: from }, input: amount } = fromInput;
     const { selector: { value: to } } = toInput;
-    const { searchOffers } = this.props;
+    const { searchOffers, resetOffers } = this.props;
     const parsedAmount = parseFloat(amount);
-
-    searchOffers(from, to, parsedAmount);
+    if (parsedAmount <= 0) {
+      resetOffers();
+      return;
+    }
+    searchOffers(from, to);
   };
 
   onShapeshiftAuthClick = () => {
@@ -642,8 +647,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  searchOffers: (fromAssetCode, toAssetCode, fromAmount) => dispatch(
-    searchOffersAction(fromAssetCode, toAssetCode, fromAmount),
+  searchOffers: (fromAssetCode, toAssetCode) => dispatch(
+    searchOffersAction(fromAssetCode, toAssetCode),
   ),
   takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider) => dispatch(
     takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider),
@@ -651,6 +656,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   resetShapeshiftAccessToken: () => dispatch(resetShapeshiftAccessTokenAction()),
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
+  resetOffers: () => dispatch(resetOffersAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExchangeScreen);

@@ -54,8 +54,8 @@ export const takeOfferAction = (fromAssetCode: string, toAssetCode: string, from
     const offerRequest = {
       quantity: parseFloat(fromAmount),
       provider,
-      fromAssetCode: 'SNT',
-      toAssetCode: 'ETH',
+      fromAssetCode,
+      toAssetCode,
     };
     console.log('offer request: ', offerRequest);
     const order = await exchangeService.takeOffer(offerRequest);
@@ -64,21 +64,22 @@ export const takeOfferAction = (fromAssetCode: string, toAssetCode: string, from
   };
 };
 
-export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
-  return async (dispatch: Function, getState: Function) => {
-    console.log('searchOffersAction');
+export const resetOffersAction = () => {
+  return async (dispatch: Function) => {
     dispatch({ type: RESET_OFFERS });
-    console.log('sellToken: ', fromAssetCode);
-    console.log('buyToken: ', toAssetCode);
-    console.log('sellAmount: ', fromAmount);
+  };
+};
+
+export const searchOffersAction = (fromAssetCode: string, toAssetCode: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    dispatch(resetOffersAction());
     connectExchangeService(getState());
     exchangeService.onOffers(offers =>
       offers.map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
     );
     console.log('requesting offers');
     // we're requesting although it will start delivering when connection is established
-    // TODO: pass assets symbols from action
-    const result = await exchangeService.requestOffers('SNT', 'ETH');
+    const result = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
     if (result.error) {
       Toast.show({
         title: 'Exchange service failed',
