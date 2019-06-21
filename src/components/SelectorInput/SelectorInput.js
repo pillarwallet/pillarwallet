@@ -125,6 +125,7 @@ const InputWrapper = styled.View`
   border-left-color: ${baseColors.mediumLightGray};
   padding: 0 ${spacing.mediumLarge}px
   justify-content: flex-end;
+  align-items: center;
   flex-direction: row;
 `;
 
@@ -138,9 +139,7 @@ const InputField = styled(TextInput)`
   height: 100%;
   ${props => Platform.OS === 'ios' || props.value ? 'font-family: Aktiv Grotesk App;' : ''}
   ${props => props.value && Platform.OS === 'android'
-    ? `margin-bottom: -6px;
-    lineHeight: ${fontSizes.giant}px;
-    height: ${fontSizes.giant}px`
+    ? 'lineHeight: 42px;'
     : ''}
     min-width: 10px;
 `;
