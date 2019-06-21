@@ -461,7 +461,13 @@ class ExchangeScreen extends React.Component<Props, State> {
         return;
       }
       const { data: offerOrderData } = offerOrder;
-      navigation.navigate(EXCHANGE_CONFIRM, { offerOrder: { ...offerOrderData, transactionSpeed } });
+      navigation.navigate(EXCHANGE_CONFIRM, {
+        offerOrder: {
+          ...offerOrderData,
+          transactionSpeed,
+          receiveAmount: amountToBuy,
+        },
+      });
     });
   };
 

@@ -32,6 +32,8 @@ import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
@@ -40,8 +42,9 @@ import { getRate } from 'utils/assets';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
 import type { GasInfo } from 'models/GasInfo';
-import type { Rates } from 'models/Asset';
+import type { Asset, Rates } from 'models/Asset';
 import type { OfferOrder } from 'models/Offer';
+import type { TokenTransactionPayload } from 'models/Transaction';
 
 const FooterWrapper = styled.View`
   flex-direction: row;
@@ -78,6 +81,7 @@ type Props = {
   gasInfo: GasInfo,
   rates: Rates,
   baseFiatCurrency: string,
+  supportedAssets: Asset[],
 };
 
 type State = {
@@ -115,11 +119,15 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     this.setState({ transactionSpeed });
   };
 
-  getTxFeeInWei = (txSpeed?: string) => {
+  getGasPriceWei = (txSpeed?: string) => {
     txSpeed = txSpeed || this.state.transactionSpeed;
     const { gasInfo } = this.props;
     const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
-    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+    return utils.parseUnits(gasPrice.toString(), 'gwei');
+  };
+
+  getTxFeeInWei = (txSpeed?: string) => {
+    const gasPriceWei = this.getGasPriceWei(txSpeed);
     return gasPriceWei.mul(GAS_LIMIT);
   };
 
@@ -147,6 +155,44 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       transactionSpeed: txSpeed,
       showFeeModal: false,
     });
+  };
+
+  onConfirmTransactionPress = (offerOrder: OfferOrder) => {
+    const {
+      navigation,
+      supportedAssets,
+    } = this.props;
+    const { transactionSpeed } = this.state;
+
+    const {
+      payAmount,
+      fromAssetCode,
+      payToAddress,
+      transactionObj: {
+        data,
+      } = {},
+    } = offerOrder;
+
+    // going from previous screen, asset will always be present in reducer
+    const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
+    const gasPrice = this.getGasPriceWei(transactionSpeed);
+    const txFeeInWei = gasPrice.mul(GAS_LIMIT);
+
+    const transactionPayload: TokenTransactionPayload = {
+      gasLimit: GAS_LIMIT,
+      txFeeInWei,
+      gasPrice,
+      amount: payAmount,
+      to: payToAddress,
+      symbol: fromAssetCode,
+      contractAddress: asset ? asset.address : '',
+      decimals: asset ? asset.decimals : 18,
+      data,
+    };
+
+    console.log('transactionPayload: ', transactionPayload);
+
+    navigation.navigate(SEND_TOKEN_CONFIRM, { transactionPayload });
   };
 
   render() {
@@ -193,7 +239,11 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         </ScrollWrapper>
         <Footer keyboardVerticalOffset={40}>
           <FooterWrapper>
-            <Button disabled={!session.isOnline} onPress={() => {}} title="Confirm Transaction" />
+            <Button
+              disabled={!session.isOnline}
+              onPress={() => this.onConfirmTransactionPress(offerOrder)}
+              title="Confirm Transaction"
+            />
           </FooterWrapper>
         </Footer>
         <SlideModal
@@ -215,11 +265,13 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   history: { gasInfo },
+  assets: { supportedAssets },
 }) => ({
   session,
   rates,
   baseFiatCurrency,
   gasInfo,
+  supportedAssets,
 });
 
 const mapDispatchToProps = (dispatch) => ({

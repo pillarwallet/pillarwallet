@@ -35,11 +35,15 @@ export type OfferRequest = {
   fromAssetCode: string,
   toAssetCode: string,
 }
+
 export type OfferOrder = {
   _id: string,
   receiveAmount: string,
   payAmount: string,
   fromAssetCode: string,
   toAssetCode: string,
-  payToAddress: number,
+  payToAddress: string,
+  transactionObj: {
+    data: string,
+  },
 }
