@@ -18,27 +18,29 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList, Platform, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import { formatAmount, formatMoney, isValidNumber } from 'utils/common';
+import { formatAmount, formatMoney, getCurrencySymbol, isValidNumber } from 'utils/common';
 import t from 'tcomb-form-native';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { getBalance } from 'utils/assets';
+import { getBalance, getRate } from 'utils/assets';
 
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ShadowedCard from 'components/ShadowedCard';
-import { BaseText } from 'components/Typography';
+import { BaseText, Label, TextLink } from 'components/Typography';
 import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';
+import SlideModal from 'components/Modals/SlideModal';
+import ButtonText from 'components/ButtonText';
 
 import {
   searchOffersAction,
@@ -54,8 +56,7 @@ import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
-import { ETH } from 'constants/assetsConstants';
-
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 const CardWrapper = styled.View`
   width: 100%;
@@ -89,7 +90,8 @@ const CardText = styled(BaseText)`
 const ListHeader = styled.View`
   width: 100%;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: flex-end;
   margin: 14px 0;
 `;
 
@@ -99,17 +101,28 @@ const HeaderButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  color: ${baseColors.fruitSalad};
+  color: ${props => props.color ? props.color : baseColors.slateBlack};
   font-size: ${fontSizes.extraSmall}px;
-`;
-
-const ButtonLabelNegative = styled(ButtonLabel)`
-  color: ${baseColors.burningFire};
 `;
 
 const FormWrapper = styled.View`
   padding: 0 ${spacing.large}px;
   margin-top: ${spacing.large}px;
+`;
+
+const ButtonWrapper = styled.View`
+  margin-top: ${spacing.rhythm / 2}px;
+  margin-bottom: ${spacing.rhythm + 10}px;
+`;
+
+const SpeedButton = styled(Button)`
+  margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const FeeInfo = styled.View`
+  padding-right: ${spacing.small}px;
 `;
 
 type Props = {
@@ -138,6 +151,7 @@ type State = {
   // offer id will be passed to prevent double clicking
   pressedOfferId: string,
   transactionSpeed: string,
+  showFeeModal: boolean,
 };
 
 const getAvailable = (min, max) => {
@@ -154,15 +168,15 @@ const { Form } = t.form;
 const MIN_TX_AMOUNT = 0.000000000000000001;
 const GAS_LIMIT = 500000;
 
-// const SLOW = 'min';
+const SLOW = 'min';
 const NORMAL = 'avg';
-// const FAST = 'max';
+const FAST = 'max';
 
-// const SPEED_TYPES = {
-//   [SLOW]: 'Slow',
-//   [NORMAL]: 'Normal',
-//   [FAST]: 'Fast',
-// };
+const SPEED_TYPES = {
+  [SLOW]: 'Slow',
+  [NORMAL]: 'Normal',
+  [FAST]: 'Fast',
+};
 
 const checkIfEnoughForFee = (balances: Balances, txFeeInWei) => {
   if (!balances[ETH]) return false;
@@ -222,7 +236,7 @@ const generateFormStructure = (data: Object) => {
     } else if (amount > maxAmount) {
       let additionalMsg = '';
       if (symbol === ETH) {
-        additionalMsg = `and est. network fee (${feeInEth} ETH)`;
+        additionalMsg = `and est. transaction fee (${feeInEth} ETH)`;
       }
       return `Amount should not be bigger than your balance - ${balance} ${symbol} ${additionalMsg}`;
     } else if (!isEnoughForFee) {
@@ -297,6 +311,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       },
     },
     transactionSpeed: NORMAL,
+    showFeeModal: false,
     formOptions: {
       fields: {
         fromInput: {
@@ -389,14 +404,9 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   triggerSearch = () => {
     const { value: { fromInput, toInput } } = this.state;
-    const { selector: { value: from }, input: amount } = fromInput;
+    const { selector: { value: from } } = fromInput;
     const { selector: { value: to } } = toInput;
-    const { searchOffers, resetOffers } = this.props;
-    const parsedAmount = parseFloat(amount);
-    if (parsedAmount <= 0) {
-      resetOffers();
-      return;
-    }
+    const { searchOffers } = this.props;
     searchOffers(from, to);
   };
 
@@ -419,6 +429,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           input: selectedSellAmount,
         },
       },
+      transactionSpeed,
     } = this.state;
     const {
       _id,
@@ -440,7 +451,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         return;
       }
       const { data: offerOrderData } = offerOrder;
-      navigation.navigate(EXCHANGE_CONFIRM, { offerOrder: offerOrderData });
+      navigation.navigate(EXCHANGE_CONFIRM, { offerOrder: { ...offerOrderData, transactionSpeed } });
     });
   };
 
@@ -525,8 +536,12 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   handleSearch = () => {
+    const { resetOffers } = this.props;
     const formValue = this.exchangeForm.getValue();
-    if (!formValue) return;
+    if (!formValue) {
+      resetOffers();
+      return;
+    }
     this.triggerSearch();
   };
 
@@ -576,6 +591,32 @@ class ExchangeScreen extends React.Component<Props, State> {
     return gasPriceWei.mul(GAS_LIMIT);
   };
 
+  renderTxSpeedButtons = () => {
+    const { rates, baseFiatCurrency } = this.props;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    return Object.keys(SPEED_TYPES).map(txSpeed => {
+      const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
+      const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
+      return (
+        <SpeedButton
+          key={txSpeed}
+          primaryInverted
+          onPress={() => this.handleGasPriceChange(txSpeed)}
+        >
+          <TextLink>{SPEED_TYPES[txSpeed]} - {feeInEth} ETH</TextLink>
+          <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
+        </SpeedButton>
+      );
+    });
+  };
+
+  handleGasPriceChange = (txSpeed: string) => {
+    this.setState({
+      transactionSpeed: txSpeed,
+      showFeeModal: false,
+    });
+  };
+
   render() {
     const {
       offers,
@@ -587,6 +628,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       shapeshiftAuthPressed,
       value,
       formOptions,
+      showFeeModal,
+      transactionSpeed,
     } = this.state;
 
     const txFeeInWei = this.getTxFeeInWei();
@@ -612,17 +655,39 @@ class ExchangeScreen extends React.Component<Props, State> {
             renderItem={this.renderOffers}
             ListHeaderComponent={
               <ListHeader>
+                <FeeInfo>
+                  <Label>Est. transaction fee:</Label>
+                  <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                    <ButtonLabel>
+                      {formatAmount(utils.formatEther(this.getTxFeeInWei(transactionSpeed)))} ETH
+                    </ButtonLabel>
+                    <ButtonText
+                      buttonText="Change"
+                      onPress={() => this.setState({ showFeeModal: true })}
+                      wrapperStyle={{ marginLeft: 8, marginBottom: Platform.OS === 'ios' ? 2 : -1 }}
+                    />
+                  </View>
+                </FeeInfo>
                 {(!shapeshiftAccessToken &&
                   <HeaderButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthClick}>
-                    <ButtonLabel>Connect to ShapeShift</ButtonLabel>
+                    <ButtonLabel color={baseColors.fruitSalad}>Connect to ShapeShift</ButtonLabel>
                   </HeaderButton>) ||
                   <HeaderButton onPress={() => resetShapeshiftAccessToken()}>
-                    <ButtonLabelNegative>Disconnect ShapeShift</ButtonLabelNegative>
+                    <ButtonLabel color={baseColors.burningFire}>Disconnect ShapeShift</ButtonLabel>
                   </HeaderButton>
                 }
               </ListHeader>
             }
           />
+          <SlideModal
+            isVisible={showFeeModal}
+            title="transaction speed"
+            onModalHide={() => { this.setState({ showFeeModal: false }); }}
+          >
+            <Label>Choose your gas price.</Label>
+            <Label>Faster transaction requires more fee.</Label>
+            <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
+          </SlideModal>
         </ScrollWrapper>
       </Container>
     );

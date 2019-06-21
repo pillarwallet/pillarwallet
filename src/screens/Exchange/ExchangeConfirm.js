@@ -105,7 +105,15 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
   componentDidMount() {
     const { fetchGasInfo } = this.props;
     fetchGasInfo();
+    this.setSelectedTransactionFee();
   }
+
+  setSelectedTransactionFee = () => {
+    const { navigation } = this.props;
+    const offerOrder = navigation.getParam('offerOrder', {});
+    const { transactionSpeed } = offerOrder;
+    this.setState({ transactionSpeed });
+  };
 
   getTxFeeInWei = (txSpeed?: string) => {
     txSpeed = txSpeed || this.state.transactionSpeed;
