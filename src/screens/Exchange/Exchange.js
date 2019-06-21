@@ -23,10 +23,13 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import { formatMoney } from 'utils/common';
+import { formatAmount, formatMoney, isValidNumber } from 'utils/common';
 import t from 'tcomb-form-native';
+import { utils } from 'ethers';
+import { BigNumber } from 'bignumber.js';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { getBalance } from 'utils/assets';
 
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -43,12 +46,15 @@ import {
   authorizeWithShapeshiftAction,
   resetShapeshiftAccessTokenAction,
 } from 'actions/exchangeActions';
+import { fetchGasInfoAction } from 'actions/historyActions';
 
 import type { Offer } from 'models/Offer';
-import type { Assets, Rates } from 'models/Asset';
+import type { Asset, Assets, Balances, Rates } from 'models/Asset';
+import type { GasInfo } from 'models/GasInfo';
 
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
+
 
 const CardWrapper = styled.View`
   width: 100%;
@@ -117,6 +123,10 @@ type Props = {
   authorizeWithShapeshift: Function,
   shapeshiftAccessToken?: string,
   resetShapeshiftAccessToken: Function,
+  supportedAssets: Asset[],
+  fetchGasInfo: Function,
+  balances: Balances,
+  gasInfo: GasInfo,
 };
 
 type State = {
@@ -125,6 +135,7 @@ type State = {
   formOptions: Object,
   // offer id will be passed to prevent double clicking
   pressedOfferId: string,
+  transactionSpeed: string,
 };
 
 const getAvailable = (min, max) => {
@@ -138,35 +149,101 @@ const getAvailable = (min, max) => {
 
 const { Form } = t.form;
 
-const FromOption = t.refinement(t.Object, ({ selector, input }) => {
-  let isValid = true;
-  if (!Object.keys(selector).length) {
-    isValid = false;
-  } else if (!input || parseFloat(input) < 0) {
-    isValid = false;
+const MIN_TX_AMOUNT = 0.000000000000000001;
+const GAS_LIMIT = 500000;
+
+// const SLOW = 'min';
+const NORMAL = 'avg';
+// const FAST = 'max';
+
+// const SPEED_TYPES = {
+//   [SLOW]: 'Slow',
+//   [NORMAL]: 'Normal',
+//   [FAST]: 'Fast',
+// };
+
+const checkIfEnoughForFee = (balances: Balances, txFeeInWei) => {
+  if (!balances[ETH]) return false;
+  const ethBalance = getBalance(balances, ETH);
+  const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
+  return balanceInWei.gte(txFeeInWei);
+};
+
+const calculateMaxAmount = (token: string, balance: number | string, txFeeInWei: ?Object): number => {
+  if (typeof balance !== 'string') {
+    balance = balance.toString();
   }
-  return isValid;
-});
-
-FromOption.getValidationErrorMessage = ({ selector, input }) => {
-  if (!Object.keys(selector).length) return 'Asset should be selected';
-  if (!input) return 'Amount should be specified.';
-  if (parseFloat(input) < 0) return 'Amount should be bigger than 0.';
-  return null;
+  if (token !== ETH) {
+    return +balance;
+  }
+  const maxAmount = utils.parseUnits(balance, 'ether').sub(txFeeInWei);
+  if (maxAmount.lt(0)) return 0;
+  return new BigNumber(utils.formatEther(maxAmount)).toNumber();
 };
 
-const ToOption = t.refinement(t.Object, ({ selector }) => {
-  return !!Object.keys(selector).length;
-});
+const generateFormStructure = (data: Object) => {
+  const { balances, txFeeInWei } = data;
+  let balance;
+  let maxAmount;
+  let amount;
 
-ToOption.getValidationErrorMessage = () => {
-  return 'Asset should be selected';
+  const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
+  const FromOption = t.refinement(t.Object, ({ selector, input }) => {
+    if (!Object.keys(selector).length || !input) return false;
+    if (!isValidNumber(input)) return false;
+
+    const { symbol, decimals } = selector;
+
+    if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+      return false;
+    }
+    balance = getBalance(balances, symbol);
+    maxAmount = calculateMaxAmount(symbol, balance, txFeeInWei);
+    amount = parseFloat(input);
+    return isEnoughForFee && amount <= maxAmount && amount >= MIN_TX_AMOUNT;
+  });
+
+  FromOption.getValidationErrorMessage = ({ selector, input }) => {
+    const feeInEth = formatAmount(utils.formatEther(txFeeInWei));
+    const { symbol } = selector;
+
+    if (!isValidNumber(input.toString())) {
+      return 'Incorrect number entered.';
+    }
+
+    if (!Object.keys(selector).length) {
+      return 'Asset should be selected';
+    } else if (!input) {
+      return 'Amount should be specified.';
+    } else if (parseFloat(input) < 0) {
+      return 'Amount should be bigger than 0.';
+    } else if (amount > maxAmount) {
+      let additionalMsg = '';
+      if (symbol === ETH) {
+        additionalMsg = `and est. network fee (${feeInEth} ETH)`;
+      }
+      return `Amount should not be bigger than your balance - ${balance} ${symbol} ${additionalMsg}`;
+    } else if (!isEnoughForFee) {
+      return 'Not enough ETH to process the transaction fee';
+    } else if (amount < MIN_TX_AMOUNT) {
+      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
+    }
+    return true;
+  };
+
+  const ToOption = t.refinement(t.Object, ({ selector }) => {
+    return !!Object.keys(selector).length;
+  });
+
+  ToOption.getValidationErrorMessage = () => {
+    return 'Asset should be selected';
+  };
+
+  return t.struct({
+    fromInput: FromOption,
+    toInput: ToOption,
+  });
 };
-
-const formStructure = t.struct({
-  fromInput: FromOption,
-  toInput: ToOption,
-});
 
 function SelectorInputTemplate(locals) {
   const {
@@ -217,6 +294,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         input: '',
       },
     },
+    transactionSpeed: NORMAL,
     formOptions: {
       fields: {
         fromInput: {
@@ -249,14 +327,23 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    const { fetchGasInfo } = this.props;
+    fetchGasInfo();
     this.provideOptions();
     this.setInitialSelection();
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const { assets, supportedAssets } = this.props;
+    if (assets !== prevProps.assets || supportedAssets !== prevProps.supportedAssets) {
+      this.provideOptions();
+    }
+  }
+
   provideOptions = () => {
-    const { assets } = this.props;
-    const assetsOptionsFrom = this.generateOptions(assets);
-    const assetsOptionsBuying = this.generateOptions(assets);
+    const { assets, supportedAssets } = this.props;
+    const assetsOptionsFrom = this.generateAssetsOptions(assets);
+    const assetsOptionsBuying = this.generateSupportedAssetsOptions(supportedAssets);
     const initialAssetsOptionsBuying = assetsOptionsBuying.filter((option) => option.value !== ETH);
 
     this.setState({
@@ -289,7 +376,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   setInitialSelection = () => {
     const { assets } = this.props;
-    const assetsOptions = this.generateOptions({ ETH: assets[ETH] });
+    const assetsOptions = this.generateAssetsOptions({ ETH: assets[ETH] });
     const initialFormState = { ...this.state.value };
     initialFormState.fromInput = {
       selector: assetsOptions[0],
@@ -393,10 +480,35 @@ class ExchangeScreen extends React.Component<Props, State> {
     );
   };
 
-  generateOptions = (assets) => {
+  onShapeshiftAuthClick = () => {
+    const { authorizeWithShapeshift } = this.props;
+    this.setState({ shapeshiftAuthPressed: true }, async () => {
+      await authorizeWithShapeshift();
+      this.setState({ shapeshiftAuthPressed: false });
+    });
+  };
+
+  generateAssetsOptions = (assets) => {
+    const { balances } = this.props;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-    // TODO: filter out assets without balance
-    return assetsList.map(({ symbol, iconUrl, ...rest }) =>
+    const nonEmptyAssets = assetsList.filter((asset: any) => {
+      return getBalance(balances, asset.symbol) !== 0 || asset.symbol === ETH;
+    });
+    const alphabeticalAssets = nonEmptyAssets.sort((a, b) => a.symbol.localeCompare(b.symbol));
+    return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) =>
+      ({
+        key: symbol,
+        value: symbol,
+        icon: iconUrl,
+        iconUrl,
+        symbol,
+        ...rest,
+      }));
+  };
+
+  generateSupportedAssetsOptions = (assets) => {
+    const alphabeticalSupportedAssets = assets.sort((a, b) => a.symbol.localeCompare(b.symbol));
+    return alphabeticalSupportedAssets.map(({ symbol, iconUrl, ...rest }) =>
       ({
         key: symbol,
         value: symbol,
@@ -420,20 +532,19 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   updateOptions = (value) => {
-    const { assets } = this.props;
+    const { assets, supportedAssets } = this.props;
     const { fromInput, toInput } = value;
     const { selector: selectedFromOption } = fromInput;
     const { selector: selectedToOption } = toInput;
 
-    const optionsFrom = this.generateOptions(assets);
+    const optionsFrom = this.generateAssetsOptions(assets);
     let newOptionsFrom = optionsFrom;
     if (Object.keys(selectedToOption).length) {
       newOptionsFrom = optionsFrom.filter((option) => option.value !== selectedToOption.value);
     }
 
-    const optionsTo = this.generateOptions(assets);
+    const optionsTo = this.generateSupportedAssetsOptions(supportedAssets);
     let newOptionsTo = optionsTo;
-    // const newOptionsTo = this.generateOptions(supportedAssets);
     if (Object.keys(selectedFromOption).length) {
       newOptionsTo = optionsTo.filter((option) => option.value !== selectedFromOption.value);
     }
@@ -452,17 +563,29 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setState({ formOptions: newOptions });
   };
 
+  getTxFeeInWei = (txSpeed?: string) => {
+    txSpeed = txSpeed || this.state.transactionSpeed;
+    const { gasInfo } = this.props;
+    const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
+    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+    return gasPriceWei.mul(GAS_LIMIT);
+  };
+
   render() {
     const {
       offers,
       shapeshiftAccessToken,
       resetShapeshiftAccessToken,
+      balances,
     } = this.props;
     const {
       shapeshiftAuthPressed,
       value,
       formOptions,
     } = this.state;
+
+    const txFeeInWei = this.getTxFeeInWei();
+    const formStructure = generateFormStructure({ balances, txFeeInWei });
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
@@ -504,15 +627,18 @@ class ExchangeScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   exchange: { data: { offers, shapeshiftAccessToken } },
-  assets: { data: assets, supportedAssets },
+  assets: { data: assets, supportedAssets, balances },
   rates: { data: rates },
+  history: { gasInfo },
 }) => ({
   baseFiatCurrency,
   offers,
   assets,
   supportedAssets,
+  balances,
   rates,
   shapeshiftAccessToken,
+  gasInfo,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -524,6 +650,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   ),
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   resetShapeshiftAccessToken: () => dispatch(resetShapeshiftAccessTokenAction()),
+  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExchangeScreen);

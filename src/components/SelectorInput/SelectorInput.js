@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Platform, TextInput, FlatList, Easing } from 'react-native';
+import { Platform, TextInput, FlatList, Easing, Dimensions } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import Modal from 'react-native-modalbox';
 
@@ -31,11 +31,15 @@ import Header from 'components/Header';
 // UTILS
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { noop } from 'utils/common';
 
 type InputValue = {
   selector?: Object,
   input?: string,
 }
+
+const { height } = Dimensions.get('window');
+const halfScreen = height / 2;
 
 type Props = {
   wrapperStyle?: Object,
@@ -72,7 +76,7 @@ const ItemHolder = styled.View`
   border: 1px solid ${baseColors.mediumLightGray};
   background-color: ${baseColors.white};
   flex-direction: row;
-  ${props => props.error ? 'tomato' : ''}
+  ${props => props.error ? 'border-color: tomato' : ''}
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -128,7 +132,6 @@ const InputField = styled(TextInput)`
   font-weight: bold;
   padding: 0;
   margin: 0;
-  overflow: visible;
   font-size: ${fontSizes.giant}px;
   height: ${fontSizes.giant}px;
   ${props => Platform.OS === 'ios' || props.value ? 'font-family: Aktiv Grotesk App;' : ''}
@@ -160,7 +163,7 @@ const PlaceholderWrapper = styled.View`
 `;
 
 const Placeholder = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.extraSmall}px;
   line-height: ${fontSizes.mediumLarge}px;
   letter-spacing: 0.23px;
   color: ${baseColors.darkGray};
@@ -216,7 +219,7 @@ export default class SelectorInput extends React.Component<Props, State> {
     const {
       wrapperStyle,
       inputProps = {},
-      options,
+      options = [],
       hasInput,
       value,
       errorMessage,
@@ -234,8 +237,12 @@ export default class SelectorInput extends React.Component<Props, State> {
         <Wrapper style={wrapperStyle}>
           {!!label && <Label>{label}</Label>}
           <ItemHolder error={!!errorMessage}>
-            {!!options &&
-            <Selector fullWidth={!hasInput} onPress={() => this.setState({ showOptionsSelector: true })}>
+            {!!options.length &&
+            <Selector
+              fullWidth={!hasInput}
+              onPress={options.length > 1 ? () => this.setState({ showOptionsSelector: true }) : noop}
+              disabled={options.length < 1}
+            >
               <ValueWrapper>
                 {Object.keys(selectedOption).length
                   ? (
@@ -252,19 +259,20 @@ export default class SelectorInput extends React.Component<Props, State> {
                   )}
                 <SlectorValue>{selectedValue}</SlectorValue>
               </ValueWrapper>
-              <ChevronWrapper>
-                <SelectorChevron
-                  name="chevron-right"
-                  style={{ transform: [{ rotate: '-90deg' }] }}
-                />
-                <SelectorChevron
-                  name="chevron-right"
-                  style={{
-                    transform: [{ rotate: '90deg' }],
-                    marginTop: 4,
-                  }}
-                />
-              </ChevronWrapper>
+              {options.length > 1 &&
+                <ChevronWrapper>
+                  <SelectorChevron
+                    name="chevron-right"
+                    style={{ transform: [{ rotate: '-90deg' }] }}
+                  />
+                  <SelectorChevron
+                    name="chevron-right"
+                    style={{
+                      transform: [{ rotate: '90deg' }],
+                      marginTop: 4,
+                    }}
+                  />
+                </ChevronWrapper>}
             </Selector>
             }
             {!!hasInput
@@ -304,7 +312,7 @@ export default class SelectorInput extends React.Component<Props, State> {
               data={options}
               keyExtractor={(item) => item.key}
               renderItem={this.renderOption}
-              style={{ height: 200, paddingHorizontal: spacing.large }}
+              style={{ maxHeight: halfScreen, paddingHorizontal: spacing.large }}
               contentContainerStyle={{ paddingBottom: 40 }}
               ItemSeparatorComponent={() => (<Separator />)}
             />
