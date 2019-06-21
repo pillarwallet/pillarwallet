@@ -57,9 +57,7 @@ export const takeOfferAction = (fromAssetCode: string, toAssetCode: string, from
       fromAssetCode,
       toAssetCode,
     };
-    console.log('offer request: ', offerRequest);
     const order = await exchangeService.takeOffer(offerRequest);
-    console.log('offer order: ', order);
     return order;
   };
 };
@@ -78,13 +76,11 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       offers
         .filter(({ askRate = 0, minQuantity = 0, maxQuantity = 0 }) => {
           if (!askRate) return false;
-          const amount = fromAmount * parseFloat(askRate);
-          return amount >= parseFloat(minQuantity)
-            && (parseFloat(maxQuantity) === 0 || amount <= parseFloat(maxQuantity));
+          return fromAmount >= parseFloat(minQuantity)
+            && (parseFloat(maxQuantity) === 0 || fromAmount <= parseFloat(maxQuantity));
         })
         .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
     );
-    console.log('requesting offers');
     // we're requesting although it will start delivering when connection is established
     const result = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
     if (result.error) {

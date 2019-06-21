@@ -187,10 +187,13 @@ type State = {
   showFeeModal: boolean,
 };
 
-const getAvailable = (min, max) => {
-  if (!min && !max) {
+const getAvailable = (_min, _max, rate) => {
+  if (!_min && !_max) {
     return 'N/A';
-  } else if (!min || !max || min === max) {
+  }
+  const min = _min * rate;
+  const max = _max * rate;
+  if (!min || !max || min === max) {
     return `${min || max}`;
   }
   return `${min} - ${max}`;
@@ -460,9 +463,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       toAssetCode,
       askRate,
     } = offer;
-    const amountToBuy = parseFloat(selectedSellAmount) * askRate;
+    const amountToSell = parseFloat(selectedSellAmount);
+    const amountToBuy = amountToSell * askRate;
     this.setState({ pressedOfferId: _id }, async () => {
-      const offerOrder = await takeOffer(fromAssetCode, toAssetCode, amountToBuy, provider);
+      const offerOrder = await takeOffer(fromAssetCode, toAssetCode, amountToSell, provider);
       this.setState({ pressedOfferId: '' }); // reset
       if (!offerOrder || !offerOrder.data || offerOrder.error) {
         Toast.show({
@@ -487,11 +491,19 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { value: { fromInput }, pressedOfferId, shapeshiftAuthPressed } = this.state;
     const { shapeshiftAccessToken } = this.props;
     const { input: selectedSellAmount } = fromInput;
-    const available = getAvailable(offer.minQuantity, offer.maxQuantity);
-    const amountToBuy = parseFloat(selectedSellAmount) * offer.askRate;
-    const isPressed = pressedOfferId === offer._id;
-    console.log('offer: ', offer);
-    const isShapeShift = offer.provider === PROVIDER_SHAPESHIFT;
+    const {
+      _id: offerId,
+      minQuantity,
+      maxQuantity,
+      askRate,
+      fromAssetCode,
+      toAssetCode,
+      provider: offerProvider,
+    } = offer;
+    const available = getAvailable(minQuantity, maxQuantity, askRate);
+    const amountToBuy = parseFloat(selectedSellAmount) * askRate;
+    const isPressed = pressedOfferId === offerId;
+    const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
@@ -501,7 +513,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           <CardRow withBorder>
             <CardColumn>
               <CardText label>Exchange rate</CardText>
-              <CardText>{`${offer.askRate} ${offer.fromAssetCode || ''}`}</CardText>
+              <CardText>{`${askRate} ${fromAssetCode || ''}`}</CardText>
             </CardColumn>
           </CardRow>
           <CardRow>
@@ -514,7 +526,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             <CardColumn>
               <Button
                 disabled={isPressed || (isShapeShift && !shapeshiftAccessToken)}
-                title={isPressed ? '' : `${formatMoney(amountToBuy)} ${offer.toAssetCode}`}
+                title={isPressed ? '' : `${formatMoney(amountToBuy)} ${toAssetCode}`}
                 small
                 onPress={() => this.onOfferPress(offer)}
               >
