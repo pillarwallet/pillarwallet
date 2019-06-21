@@ -264,21 +264,21 @@ const generateFormStructure = (data: Object) => {
     }
 
     if (!Object.keys(selector).length) {
-      return 'Asset should be selected';
+      return 'Asset should be selected.';
     } else if (!input) {
       return 'Amount should be specified.';
     } else if (parseFloat(input) < 0) {
       return 'Amount should be bigger than 0.';
     } else if (amount > maxAmount) {
-      let additionalMsg = '';
+      let additionalMsg = '.';
       if (symbol === ETH) {
-        additionalMsg = `and est. transaction fee (${feeInEth} ETH)`;
+        additionalMsg = ` and est. transaction fee (${feeInEth} ETH.`;
       }
-      return `Amount should not be bigger than your balance - ${balance} ${symbol} ${additionalMsg}`;
+      return `Amount should not be bigger than your balance - ${balance} ${symbol}${additionalMsg}`;
     } else if (!isEnoughForFee) {
-      return 'Not enough ETH to process the transaction fee';
+      return 'Not enough ETH to process the transaction fee.';
     } else if (amount < MIN_TX_AMOUNT) {
-      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
+      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH).';
     }
     return true;
   };
@@ -288,7 +288,7 @@ const generateFormStructure = (data: Object) => {
   });
 
   ToOption.getValidationErrorMessage = () => {
-    return 'Asset should be selected';
+    return 'Asset should be selected.';
   };
 
   return t.struct({
@@ -716,7 +716,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             <FeeInfo>
               <Label>Est. transaction fee:</Label>
               <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                <ButtonLabel>
+                <ButtonLabel style={Platform.OS === 'ios' ? { marginBottom: 2 } : {}}>
                   {formatAmount(utils.formatEther(this.getTxFeeInWei(transactionSpeed)))} ETH
                 </ButtonLabel>
                 <ButtonText
