@@ -131,7 +131,7 @@ type Props = {
   baseFiatCurrency: string,
   user: Object,
   assets: Assets,
-  searchOffers: (string, string) => void,
+  searchOffers: (string, string, number) => void,
   offers: Offer[],
   takeOffer: (string, string, number, string) => Object,
   authorizeWithShapeshift: Function,
@@ -404,10 +404,15 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   triggerSearch = () => {
     const { value: { fromInput, toInput } } = this.state;
-    const { selector: { value: from } } = fromInput;
+    const {
+      selector: { value: from },
+      input: amountString = 0,
+    } = fromInput;
     const { selector: { value: to } } = toInput;
     const { searchOffers } = this.props;
-    searchOffers(from, to);
+    const amount = parseFloat(amountString);
+    if (!amount) return;
+    searchOffers(from, to, amount);
   };
 
   onShapeshiftAuthClick = () => {
@@ -461,6 +466,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const available = getAvailable(offer.minQuantity, offer.maxQuantity);
     const amountToBuy = parseFloat(selectedSellAmount) * offer.askRate;
     const isPressed = pressedOfferId === offer._id;
+    console.log('offer: ', offer);
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
@@ -712,8 +718,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  searchOffers: (fromAssetCode, toAssetCode) => dispatch(
-    searchOffersAction(fromAssetCode, toAssetCode),
+  searchOffers: (fromAssetCode, toAssetCode, fromAmount) => dispatch(
+    searchOffersAction(fromAssetCode, toAssetCode, fromAmount),
   ),
   takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider) => dispatch(
     takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider),

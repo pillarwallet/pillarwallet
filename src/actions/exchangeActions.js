@@ -70,12 +70,19 @@ export const resetOffersAction = () => {
   };
 };
 
-export const searchOffersAction = (fromAssetCode: string, toAssetCode: string) => {
+export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Function, getState: Function) => {
     dispatch(resetOffersAction());
     connectExchangeService(getState());
     exchangeService.onOffers(offers =>
-      offers.map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
+      offers
+        .filter(({ askRate = 0, minQuantity = 0, maxQuantity = 0 }) => {
+          if (!askRate) return false;
+          const amount = fromAmount * askRate;
+          return amount >= minQuantity
+            && (maxQuantity === 0 || amount <= maxQuantity);
+        })
+        .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
     );
     console.log('requesting offers');
     // we're requesting although it will start delivering when connection is established
