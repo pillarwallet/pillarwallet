@@ -33,13 +33,11 @@ import type {
 
 
 class EthplorerSdk {
-  key: string;
-  host = 'api.ethplorer.io';
-  uri = '/';
-  // baseURL = 'https://api.ethplorer.io/';
+  apiKey: string;
+  baseURL = 'https://api.ethplorer.io/';
 
-  constructor(key: string) {
-    this.key = key;
+  constructor(apiKey: string) {
+    this.apiKey = apiKey;
   }
 
   /*
@@ -128,9 +126,9 @@ class EthplorerSdk {
   }
 
   pubRequest(uri: string, params: string[] = []) {
-    params.push(`apiKey=${this.key}`);
-    const url = `${this.host}${this.uri}${uri}?${params.join('&')}`;
-    return fetch(url);
+    params.push(`apiKey=${this.apiKey}`);
+    const url = `${this.baseURL}${uri}?${params.join('&')}`;
+    return fetch(url).then(data => data.json());
   }
 }
 
