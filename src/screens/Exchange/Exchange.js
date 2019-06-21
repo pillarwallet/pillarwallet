@@ -500,7 +500,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             </CardColumn>
             <CardColumn>
               <Button
-                disabled={isPressed || isShapeShift}
+                disabled={isPressed || !shapeshiftAccessToken}
                 title={isPressed ? '' : `${formatMoney(amountToBuy)} ${offer.toAssetCode}`}
                 small
                 onPress={() => this.onOfferPress(offer)}

@@ -78,9 +78,9 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       offers
         .filter(({ askRate = 0, minQuantity = 0, maxQuantity = 0 }) => {
           if (!askRate) return false;
-          const amount = fromAmount * askRate;
-          return amount >= minQuantity
-            && (maxQuantity === 0 || amount <= maxQuantity);
+          const amount = fromAmount * parseFloat(askRate);
+          return amount >= parseFloat(minQuantity)
+            && (parseFloat(maxQuantity) === 0 || amount <= parseFloat(maxQuantity));
         })
         .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
     );
