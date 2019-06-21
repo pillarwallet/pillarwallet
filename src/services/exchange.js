@@ -43,8 +43,6 @@ export default class ExchangeService {
       accessToken,
       shapeshiftAccessToken,
     };
-    console.log('shapeshiftAccessToken: ', shapeshiftAccessToken);
-    console.log('accessToken: ', accessToken);
     try {
       this.apiConfig = {
         headers: {
