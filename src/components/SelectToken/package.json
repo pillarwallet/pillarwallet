@@ -1,6 +1,0 @@
-{
-  "name": "SelectToken",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./SelectToken.js"
-}
