@@ -27,6 +27,7 @@ import { formatAmount, formatMoney, getCurrencySymbol, isValidNumber } from 'uti
 import t from 'tcomb-form-native';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
+import { createStructuredSelector } from 'reselect';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
@@ -57,6 +58,7 @@ import type { GasInfo } from 'models/GasInfo';
 
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { accountBalancesSelector } from 'selectors/balances';
 
 const CardWrapper = styled.View`
   width: 100%;
@@ -711,7 +713,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   exchange: { data: { offers, shapeshiftAccessToken } },
-  assets: { data: assets, supportedAssets, balances },
+  assets: { data: assets, supportedAssets },
   rates: { data: rates },
   history: { gasInfo },
 }) => ({
@@ -719,10 +721,18 @@ const mapStateToProps = ({
   offers,
   assets,
   supportedAssets,
-  balances,
   rates,
   shapeshiftAccessToken,
   gasInfo,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -738,4 +748,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   resetOffers: () => dispatch(resetOffersAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ExchangeScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);
