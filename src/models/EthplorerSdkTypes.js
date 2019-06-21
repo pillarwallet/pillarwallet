@@ -50,20 +50,27 @@ type TokenInfo = {
 };
 
 export type GetTokenHistoryParams = {
-  type: string, //      # show operations of specified type only (transfer, approve, issuance, mint, burn, etc)
-  limit: number, //     # maximum number of operations [1 - 1000, default = 10]
-  timestamp: number, // # starting offset for operations [optional, unix timestamp]
+  type?: string, //      # show operations of specified type only (transfer, approve, issuance, mint, burn, etc)
+  limit?: number, //     # maximum number of operations [1 - 1000, default = 10]
+  timestamp?: number, // # starting offset for operations [unix timestamp]
 };
 
 export type GetAddressInfoParams = {
-  token: string, //          # show balances for specified token address only
-  showETHTotals: 0 | 1, //   # request total incoming and outcoming ETH values
+  token?: string, //          # show balances for specified token address only
+  showETHTotals?: 0 | 1, //   # request total incoming and outcoming ETH values
+};
+
+export type GetAddressHistoryParams = {
+  token?: string, //         show only specified token address operations
+  type?: string, //          show operations of specified type only (transfer, approve, issuance, mint, burn, etc)
+  limit?: number, //         maximum number of operations [1 - 10, default = 10]
+  timestamp?: number, //     starting offset for operations [unix timestamp]
 };
 
 export type GetAddressTransactionsParams = {
-  limit: number, //          maximum number of operations [1 - 50, default = 10]
-  timestamp: number, //      starting offset for operations [optional, unix timestamp]
-  showZeroValues: 0 | 1, //  show transactions with zero ETH value, default = 0
+  limit?: number, //          maximum number of operations [1 - 50, default = 10]
+  timestamp?: number, //      starting offset for operations [unix timestamp]
+  showZeroValues?: 0 | 1, //  show transactions with zero ETH value, default = 0
 };
 
 type TokenOperation = {
@@ -123,13 +130,6 @@ export type GetTxInfoResponse = {
     data: string, //    # log record data
   }>,
   operations: TokenOperation[], // # token operations list for this transaction
-};
-
-export type GetAddressHistoryParams = {
-  token: string, //         show only specified token address operations
-  type: string, //          show operations of specified type only (transfer, approve, issuance, mint, burn, etc)
-  limit: number, //         maximum number of operations [1 - 10, default = 10]
-  timestamp: number, //     starting offset for operations [unix timestamp]
 };
 
 export type GetAddressHistoryResponse = {
