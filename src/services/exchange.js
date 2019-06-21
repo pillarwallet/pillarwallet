@@ -63,20 +63,16 @@ export default class ExchangeService {
           token: accessToken,
         },
       });
-      this.io.off('disconnect').on('disconnect', err => {
-        console.log('exchange on disconnect: ', err);
+      this.io.off('disconnect').on('disconnect', () => {
         this.setConnected(false);
       });
-      this.io.off('error').on('error', (err) => {
-        console.log('exchange on error', err);
+      this.io.off('error').on('error', () => {
         this.setConnected(false);
       });
       this.io.off('connect').on('connect', () => {
-        console.log('on connect');
         this.setConnected(true);
       });
     } catch (e) {
-      console.log('exchange service error: ', e);
       this.setConnected(false);
     }
   }

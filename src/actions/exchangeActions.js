@@ -57,9 +57,7 @@ export const takeOfferAction = (fromAssetCode: string, toAssetCode: string, from
       fromAssetCode,
       toAssetCode,
     };
-    console.log('offer request: ', offerRequest);
     const order = await exchangeService.takeOffer(offerRequest);
-    console.log('offer order: ', order);
     return order;
   };
 };

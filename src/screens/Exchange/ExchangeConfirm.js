@@ -190,8 +190,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       data,
     };
 
-    console.log('transactionPayload: ', transactionPayload);
-
     navigation.navigate(SEND_TOKEN_CONFIRM, { transactionPayload });
   };
 

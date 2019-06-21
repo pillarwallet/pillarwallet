@@ -35,13 +35,14 @@ import { getBalance, getRate } from 'utils/assets';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ShadowedCard from 'components/ShadowedCard';
-import { BaseText, Label, TextLink } from 'components/Typography';
+import { BaseText, Label, TextLink, Paragraph, BoldText } from 'components/Typography';
 import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
+import Animation from 'components/Animation';
 
 import {
   searchOffersAction,
@@ -93,7 +94,7 @@ const CardText = styled(BaseText)`
 const ListHeader = styled.View`
   width: 100%;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: flex-end;
   margin: 14px 0;
 `;
@@ -125,7 +126,36 @@ const SpeedButton = styled(Button)`
 `;
 
 const FeeInfo = styled.View`
-  padding-right: ${spacing.small}px;
+  margin-top: ${spacing.small}px;
+`;
+
+const Status = styled.View`
+  flex-direction: row;
+  height: 50px;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const StatusIcon = styled.View`
+  height: 8px;
+  width: 8px;
+  border-radius: 4px;
+  background-color: ${baseColors.fruitSalad};
+  position: absolute;
+  top: 7px;
+  left: 7px;
+`;
+
+const StatusText = styled(BoldText)`
+  color: ${baseColors.fruitSalad};
+  font-size: ${fontSizes.tiny}px;
+  letter-spacing: 0.15px;
+  line-height: ${fontSizes.tiny}px;
+  margin-top: 2px;
+`;
+
+const IconHolder = styled.View`
+  position: relative;
 `;
 
 type Props = {
@@ -185,6 +215,7 @@ const SPEED_TYPES = {
 };
 
 const PROVIDER_SHAPESHIFT = 'SHAPESHIFT-SHIM';
+const animationSource = require('assets/animations/livePulsatingAnimation.json');
 
 const checkIfEnoughForFee = (balances: Balances, txFeeInWei) => {
   if (!balances[ETH]) return false;
@@ -236,21 +267,21 @@ const generateFormStructure = (data: Object) => {
     }
 
     if (!Object.keys(selector).length) {
-      return 'Asset should be selected';
+      return 'Asset should be selected.';
     } else if (!input) {
       return 'Amount should be specified.';
     } else if (parseFloat(input) < 0) {
       return 'Amount should be bigger than 0.';
     } else if (amount > maxAmount) {
-      let additionalMsg = '';
+      let additionalMsg = '.';
       if (symbol === ETH) {
-        additionalMsg = `and est. transaction fee (${feeInEth} ETH)`;
+        additionalMsg = ` and est. transaction fee (${feeInEth} ETH.`;
       }
-      return `Amount should not be bigger than your balance - ${balance} ${symbol} ${additionalMsg}`;
+      return `Amount should not be bigger than your balance - ${balance} ${symbol}${additionalMsg}`;
     } else if (!isEnoughForFee) {
-      return 'Not enough ETH to process the transaction fee';
+      return 'Not enough ETH to process the transaction fee.';
     } else if (amount < MIN_TX_AMOUNT) {
-      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
+      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH).';
     }
     return true;
   };
@@ -260,7 +291,7 @@ const generateFormStructure = (data: Object) => {
   });
 
   ToOption.getValidationErrorMessage = () => {
-    return 'Asset should be selected';
+    return 'Asset should be selected.';
   };
 
   return t.struct({
@@ -503,13 +534,6 @@ class ExchangeScreen extends React.Component<Props, State> {
               <CardText label>Exchange rate</CardText>
               <CardText>{`${askRate} ${fromAssetCode || ''}`}</CardText>
             </CardColumn>
-            {isShapeShift && !shapeshiftAccessToken &&
-            <CardColumn alignRight>
-              <HeaderButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthClick}>
-                <ButtonLabel color={baseColors.fruitSalad}>Connect to ShapeShift</ButtonLabel>
-              </HeaderButton>
-              <ButtonLabel>to accept</ButtonLabel>
-            </CardColumn>}
           </CardRow>
           <CardRow>
             <CardColumn style={{ flex: 1 }}>
@@ -520,7 +544,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             </CardColumn>
             <CardColumn>
               <Button
-                disabled={isPressed || !shapeshiftAccessToken}
+                disabled={isPressed || (isShapeShift && !shapeshiftAccessToken)}
                 title={isPressed ? '' : `${formatMoney(amountToBuy)} ${toAssetCode}`}
                 small
                 onPress={() => this.onOfferPress(offer)}
@@ -529,6 +553,12 @@ class ExchangeScreen extends React.Component<Props, State> {
               </Button>
             </CardColumn>
           </CardRow>
+          {isShapeShift && !shapeshiftAccessToken &&
+          <CardRow style={{ paddingTop: 0, paddingBottom: 6, justifyContent: 'flex-end' }}>
+            <HeaderButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthClick}>
+              <ButtonLabel color={baseColors.fruitSalad}>Connect to ShapeShift to accept</ButtonLabel>
+            </HeaderButton>
+          </CardRow>}
         </CardWrapper>
       </ShadowedCard>
     );
@@ -674,7 +704,18 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
-        <Header title="exchange" />
+        <Header
+          title="exchange"
+          headerRightAddon={
+            <Status>
+              <IconHolder>
+                <Animation source={animationSource} style={{ height: 22, width: 22 }} loop speed={0.9} />
+                <StatusIcon />
+              </IconHolder>
+              <StatusText>ACTIVE</StatusText>
+            </Status>
+          }
+        />
         <ScrollWrapper>
           <FormWrapper>
             <Form
@@ -684,27 +725,28 @@ class ExchangeScreen extends React.Component<Props, State> {
               value={value}
               onChange={this.handleFormChange}
             />
+            <FeeInfo>
+              <Label>Est. transaction fee:</Label>
+              <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                <ButtonLabel style={Platform.OS === 'ios' ? { marginBottom: 2 } : {}}>
+                  {formatAmount(utils.formatEther(this.getTxFeeInWei(transactionSpeed)))} ETH
+                </ButtonLabel>
+                <ButtonText
+                  buttonText="Change"
+                  onPress={() => this.setState({ showFeeModal: true })}
+                  wrapperStyle={{ marginLeft: 8, marginBottom: Platform.OS === 'ios' ? 2 : -1 }}
+                />
+              </View>
+            </FeeInfo>
           </FormWrapper>
           <FlatList
             data={offers}
             keyExtractor={(item) => item._id}
+            style={{ width: '100%' }}
             contentContainerStyle={{ width: '100%', paddingHorizontal: 20, paddingVertical: 10 }}
             renderItem={this.renderOffers}
             ListHeaderComponent={
               <ListHeader>
-                <FeeInfo>
-                  <Label>Est. transaction fee:</Label>
-                  <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                    <ButtonLabel>
-                      {formatAmount(utils.formatEther(this.getTxFeeInWei(transactionSpeed)))} ETH
-                    </ButtonLabel>
-                    <ButtonText
-                      buttonText="Change"
-                      onPress={() => this.setState({ showFeeModal: true })}
-                      wrapperStyle={{ marginLeft: 8, marginBottom: Platform.OS === 'ios' ? 2 : -1 }}
-                    />
-                  </View>
-                </FeeInfo>
                 {!!shapeshiftAccessToken &&
                   <HeaderButton onPress={() => resetShapeshiftAccessToken()}>
                     <ButtonLabel color={baseColors.burningFire}>Disconnect ShapeShift</ButtonLabel>
@@ -712,6 +754,11 @@ class ExchangeScreen extends React.Component<Props, State> {
                 }
               </ListHeader>
             }
+            ListEmptyComponent={(
+              <Paragraph small style={{ textAlign: 'center', marginTop: '15%' }}>
+                {'If there are any matching offers\nthey will appear live here'}
+              </Paragraph>
+            )}
           />
           <SlideModal
             isVisible={showFeeModal}
