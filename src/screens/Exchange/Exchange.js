@@ -272,7 +272,7 @@ const generateFormStructure = (data: Object) => {
     } else if (amount > maxAmount) {
       let additionalMsg = '.';
       if (symbol === ETH) {
-        additionalMsg = ` and est. transaction fee (${feeInEth} ETH.`;
+        additionalMsg = ` and est. transaction fee (${feeInEth} ETH).`;
       }
       return `Amount should not be bigger than your balance - ${balance} ${symbol}${additionalMsg}`;
     } else if (!isEnoughForFee) {
@@ -306,6 +306,7 @@ function SelectorInputTemplate(locals) {
       placeholderSelector,
       placeholderInput,
       options,
+      inputAddonText,
     },
   } = locals;
   const errorMessage = locals.error;
@@ -326,6 +327,7 @@ function SelectorInputTemplate(locals) {
       hasInput={hasInput}
       wrapperStyle={wrapperStyle}
       value={locals.value}
+      inputAddonText={inputAddonText}
     />
   );
 }
@@ -385,7 +387,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.provideOptions();
     this.setInitialSelection();
   }
-
   componentDidUpdate(prevProps: Props) {
     const { assets, supportedAssets } = this.props;
     if (assets !== prevProps.assets || supportedAssets !== prevProps.supportedAssets) {
@@ -398,32 +399,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(supportedAssets);
     const initialAssetsOptionsBuying = assetsOptionsBuying.filter((option) => option.value !== ETH);
+    const thisStateFormOptionsCopy = { ...this.state.formOptions };
+    thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
+    thisStateFormOptionsCopy.fields.toInput.config.options = initialAssetsOptionsBuying;
 
     this.setState({
-      formOptions: {
-        fields: {
-          fromInput: {
-            keyboardType: 'decimal-pad',
-            template: SelectorInputTemplate,
-            config: {
-              label: 'Selling',
-              hasInput: true,
-              options: assetsOptionsFrom,
-              placeholderSelector: 'select',
-              placeholderInput: '0',
-            },
-          },
-          toInput: {
-            template: SelectorInputTemplate,
-            config: {
-              label: 'Buying',
-              options: initialAssetsOptionsBuying,
-              wrapperStyle: { marginTop: spacing.mediumLarge },
-              placeholderSelector: 'select asset',
-            },
-          },
-        },
-      },
+      formOptions: thisStateFormOptionsCopy,
     });
   };
 
@@ -608,10 +589,28 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   updateOptions = (value) => {
-    const { assets, supportedAssets } = this.props;
+    const {
+      assets,
+      supportedAssets,
+      balances,
+      rates,
+      baseFiatCurrency,
+    } = this.props;
     const { fromInput, toInput } = value;
-    const { selector: selectedFromOption } = fromInput;
+    const { selector: selectedFromOption, input: amount } = fromInput;
     const { selector: selectedToOption } = toInput;
+    let amountValueInFiat;
+    let fiatSymbol;
+    let valueInFiatToShow;
+    if (amount && Object.keys(selectedFromOption).length) {
+      const { symbol: token } = selectedFromOption;
+      const balance = getBalance(balances, token);
+      const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+      const totalInFiat = balance * getRate(rates, token, fiatCurrency);
+      amountValueInFiat = formatMoney(totalInFiat);
+      fiatSymbol = getCurrencySymbol(fiatCurrency);
+      valueInFiatToShow = totalInFiat > 0 ? `${amountValueInFiat} ${fiatSymbol}` : null;
+    }
 
     const optionsFrom = this.generateAssetsOptions(assets);
     let newOptionsFrom = optionsFrom;
@@ -628,7 +627,10 @@ class ExchangeScreen extends React.Component<Props, State> {
     const newOptions = t.update(this.state.formOptions, {
       fields: {
         fromInput: {
-          config: { options: { $set: newOptionsFrom } },
+          config: {
+            options: { $set: newOptionsFrom },
+            inputAddonText: { $set: valueInFiatToShow },
+          },
         },
         toInput: {
           config: { options: { $set: newOptionsTo } },

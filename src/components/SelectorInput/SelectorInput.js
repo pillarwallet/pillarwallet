@@ -29,7 +29,7 @@ import Icon from 'components/Icon';
 import Header from 'components/Header';
 
 // UTILS
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { noop } from 'utils/common';
 
@@ -48,6 +48,7 @@ type Props = {
   hasInput?: boolean,
   errorMessage?: string,
   value: InputValue,
+  inputAddonText?: string,
 }
 
 type State = {
@@ -123,7 +124,8 @@ const InputWrapper = styled.View`
   border-left-width: 1px;
   border-left-color: ${baseColors.mediumLightGray};
   padding: 0 ${spacing.mediumLarge}px
-  justify-content: center;
+  justify-content: flex-end;
+  flex-direction: row;
 `;
 
 const InputField = styled(TextInput)`
@@ -133,12 +135,14 @@ const InputField = styled(TextInput)`
   padding: 0;
   margin: 0;
   font-size: ${fontSizes.giant}px;
-  height: ${fontSizes.giant}px;
+  height: 100%;
   ${props => Platform.OS === 'ios' || props.value ? 'font-family: Aktiv Grotesk App;' : ''}
   ${props => props.value && Platform.OS === 'android'
     ? `margin-bottom: -6px;
-    lineHeight: ${fontSizes.giant}px;`
+    lineHeight: ${fontSizes.giant}px;
+    height: ${fontSizes.giant}px`
     : ''}
+    min-width: 10px;
 `;
 
 const OptionWrapper = styled.TouchableOpacity`
@@ -174,6 +178,17 @@ const ErrorMessage = styled(BaseText)`
   line-height: ${fontSizes.medium}px;
   color: tomato;
   margin: 8px 12px;
+`;
+
+const TextHolder = styled.View`
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  padding-right: ${spacing.small}px;
+`;
+
+const AddonText = styled(BaseText)`
+  color: ${UIColors.placeholderTextColor};
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
@@ -223,6 +238,7 @@ export default class SelectorInput extends React.Component<Props, State> {
       hasInput,
       value,
       errorMessage,
+      inputAddonText,
     } = this.props;
     const {
       label,
@@ -278,6 +294,11 @@ export default class SelectorInput extends React.Component<Props, State> {
             {!!hasInput
               && (
                 <InputWrapper>
+                  {!!inputAddonText &&
+                  <TextHolder>
+                    <AddonText numberOfLines={2} ellipsizeMode="tail">{inputAddonText}</AddonText>
+                  </TextHolder>
+                  }
                   <InputField
                     {...inputProps}
                     error={!!errorMessage}
