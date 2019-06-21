@@ -25,7 +25,9 @@ YellowBox.ignoreWarnings([
   'Module RNOS',
   'Module RNFetchBlob',
   'Module Intercom',
-  'Class EX'
+  'Class EX',
+  // TODO: try removing after moving exchange to websocket transport
+  'Unrecognized WebSocket connection option(s)'
 ]);
 import 'utils/shim';
 import'crypto';
