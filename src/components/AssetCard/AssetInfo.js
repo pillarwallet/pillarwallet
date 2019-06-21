@@ -20,23 +20,27 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
+import TankAssetBalance from 'components/TankAssetBalance';
 import { getCurrencySymbol } from 'utils/common';
 import { fontSizes, baseColors } from 'utils/variables';
 
 type Props = {
   token: string,
-  amount: string,
   disclaimer?: string,
-  balanceInFiat: {
-    amount: string | number,
-    currency: string,
+  balance: {
+    value: string,
+    valueInFiat: string | number,
   },
+  balanceOnNetwork?: {
+    valueOnNetwork?: string,
+    valueOnNetworkInFiat?: string | number,
+  },
+  currency: string,
 }
 
 const AmountWrapper = styled.View`
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
+  align-items: flex-end;
 `;
 
 const TokenAmountWrapper = styled.View`
@@ -75,25 +79,44 @@ const AmountToken = styled(BoldText)`
   color: ${baseColors.slateBlack};
 `;
 
+const AmountRow = styled.View`
+  flex-direction: row;
+`;
+
 const AssetInfo = (props: Props) => {
   const {
-    amount,
+    balance = {},
+    balanceOnNetwork = {},
     token,
-    balanceInFiat,
     disclaimer,
+    currency,
   } = props;
 
-  const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
+  const { value, valueInFiat } = balance;
+  const { valueOnNetwork, valueOnNetworkInFiat } = balanceOnNetwork;
+
+  const currencySymbol = getCurrencySymbol(currency);
 
   return (
     <AmountWrapper>
       <TokenAmountWrapper>
-        <Amount>{amount}</Amount>
+        <Amount>{value}</Amount>
         <AmountToken> {token}</AmountToken>
       </TokenAmountWrapper>
+      {!!valueOnNetwork &&
+      <TankAssetBalance
+        amount={valueOnNetwork}
+        isSynthetic={token !== 'ETH'}
+        wrapperStyle={{ marginBottom: 5, marginTop: -2 }}
+      />
+      }
       {disclaimer
         ? <Disclaimer>{disclaimer}</Disclaimer>
-        : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+        :
+        <AmountRow>
+          <FiatAmount>{currencySymbol}{valueInFiat}</FiatAmount>
+          {!!parseFloat(valueOnNetworkInFiat) && <FiatAmount> + {currencySymbol}{valueOnNetworkInFiat}</FiatAmount>}
+        </AmountRow>
       }
     </AmountWrapper>
   );

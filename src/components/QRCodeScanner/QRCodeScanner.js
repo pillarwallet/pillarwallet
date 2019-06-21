@@ -41,11 +41,11 @@ type Props = {
   dataFormatter: Function,
   rectangleColor: string,
   isActive: boolean,
-}
+};
 
 type State = {
   authorizationState: string,
-}
+};
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -64,7 +64,6 @@ const SquareContainer = styled.View`
   border-width: 4px;
   border-color: ${props => props.color};
   background-color: transparent;
-
 `;
 
 const HeaderWrapper = styled.SafeAreaView`
@@ -124,13 +123,13 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       x: +bounds.origin.x,
       y: +bounds.origin.y,
     };
-  }
+  };
 
   handleIosQRRead = (data: Object) => {
     const { bounds, data: address } = data;
     const { x, y } = this.getIOSCoordinates(bounds);
-    const isInRecognitionArea = x > viewMinScanX + 20 && y > viewMinScanY &&
-      x < viewMinScanX + 100 && y < viewMinScanY + 100;
+    const isInRecognitionArea =
+      x > viewMinScanX + 20 && y > viewMinScanY && x < viewMinScanX + 100 && y < viewMinScanY + 100;
     if (!isInRecognitionArea) return;
     const { onRead, validator, dataFormatter } = this.props;
     const isValid = validator(address);
@@ -139,7 +138,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       Vibration.vibrate();
       onRead(dataFormatter(address));
     }
-  }
+  };
 
   handleAndroidQRRead = (data: Object) => {
     const { onRead, validator, dataFormatter } = this.props;
@@ -150,13 +149,13 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       Vibration.vibrate();
       onRead(dataFormatter(address));
     }
-  }
+  };
 
   handleAnimationDismiss = () => {
     const { onDismiss } = this.props;
     this.isScanned = false;
     onDismiss();
-  }
+  };
 
   renderNoPermissions() {
     return (
@@ -179,9 +178,6 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     return (
       <RNCamera
         captureAudio={false}
-        ref={ref => {
-          this.camera = ref;
-        }}
         style={{
           width: screenWidth,
           height: screenHeight,
@@ -207,9 +203,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       return null;
     }
 
-    const content = (authorizationState === DENIED)
-      ? this.renderNoPermissions()
-      : this.renderScanner();
+    const content = authorizationState === DENIED ? this.renderNoPermissions() : this.renderScanner();
 
     const animationInTiming = 300;
     const animationOutTiming = this.isScanned ? 1 : 300;
@@ -233,4 +227,3 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     );
   }
 }
-

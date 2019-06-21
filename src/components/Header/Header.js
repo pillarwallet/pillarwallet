@@ -19,12 +19,12 @@
 */
 import * as React from 'react';
 import { Left, Body, Right } from 'native-base';
+import styled from 'styled-components/native';
 import { TextLink, BaseText } from 'components/Typography';
+import Title from 'components/Title';
+import IconButton from 'components/IconButton';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import { noop } from 'utils/common';
-import Title from 'components/Title';
-import styled from 'styled-components/native';
-import IconButton from 'components/IconButton';
 
 type Props = {
   onBack?: Function,
@@ -34,6 +34,7 @@ type Props = {
   onNextPress?: ?Function,
   onTitlePress?: Function,
   nextText?: string,
+  nextTextStyle?: Object,
   nextIcon?: ?string,
   title?: string,
   fullWidthTitle?: boolean,
@@ -46,23 +47,34 @@ type Props = {
   flexStart?: boolean,
   light?: boolean,
   style?: Object,
-  headerRightFlex?: string,
-  overlay?: boolean,
+  headerRightFlex?: number,
   backIcon?: string,
   nextIconSize?: number,
   titleStyles?: ?Object,
+  headerRightAddon?: React.Node,
+  white?: boolean,
 }
 
 const Wrapper = styled.View`
   border-bottom-width: 0;
   padding: ${props => props.noPadding ? 0 : '0 20px'};
-  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '48px'};
+  z-index: 10;
+  ${props => props.white
+    ? `
+      background-color: ${baseColors.white};
+      border-bottom-width: 1px;
+      border-bottom-color: ${baseColors.mediumLightGray};
+    `
+    : ''}
+`;
+
+const InnerWrapper = styled.View`
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
   margin-top: ${spacing.rhythm};
-  margin-bottom: ${props => props.flexStart ? 'auto' : 0};
-  z-index: 10;
+  margin-bottom: ${props => props.flexStart ? 'auto' : '4px'};
+  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '50px'};
 `;
 
 const BackIcon = styled(IconButton)`
@@ -94,7 +106,7 @@ const NextIcon = styled(IconButton)`
 `;
 
 const HeaderLeft = styled(Left)`
-  flex: ${props => props.showTitleLeft ? 2 : 1};
+  flex: ${props => props.flex ? props.flex : 1};
   justify-content: flex-start;
   align-items: flex-end;
 `;
@@ -107,12 +119,14 @@ const HeaderRight = styled(Right)`
   flex: ${props => props.flex};
   justify-content: flex-end;
   align-items: flex-end;
+  flex-direction: row;
 `;
 
 const Header = (props: Props) => {
   const {
     onBack,
     nextText,
+    nextTextStyle,
     nextIcon,
     nextIconSize,
     onNextPress,
@@ -127,16 +141,16 @@ const Header = (props: Props) => {
     centerTitle,
     noWrapTitle,
     noPadding,
-    noMargin,
     style,
     light,
     headerRightFlex,
-    overlay,
     flexStart,
     backIcon,
     titleStyles,
+    headerRightAddon,
+    white,
   } = props;
-  const showRight = nextText || nextIcon || onBack || onClose || centerTitle;
+  const showRight = nextText || nextIcon || onBack || onClose || centerTitle || headerRightAddon;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
@@ -151,82 +165,91 @@ const Header = (props: Props) => {
     return 1;
   };
 
+  const getHeaderLeftFlex = () => {
+    if (showTitleLeft) {
+      return 2;
+    } else if (headerRightFlex && !showTitleLeft && !!title && !!showTitleCenter) {
+      return headerRightFlex;
+    }
+    return 1;
+  };
+
   return (
     <Wrapper
-      overlay={overlay}
-      noMargin={noMargin}
-      flexStart={flexStart}
       style={style}
       noPadding={noPadding}
-      noWrapTitle={noWrapTitle}
+      white={white}
     >
-      <HeaderLeft showTitleLeft={showTitleLeft}>
-        {onBack &&
-          <BackIcon
-            icon={backIcon || 'back'}
-            color={light ? baseColors.white : UIColors.defaultNavigationColor}
-            onPress={() => onBack()}
-            fontSize={fontSizes.extraLarge}
-            horizontalAlign="flex-start"
-          />
+      <InnerWrapper flexStart={flexStart} noWrapTitle={noWrapTitle}>
+        <HeaderLeft showTitleLeft={showTitleLeft} flex={getHeaderLeftFlex}>
+          {onBack &&
+            <BackIcon
+              icon={backIcon || 'back'}
+              color={light ? baseColors.white : UIColors.defaultNavigationColor}
+              onPress={() => onBack()}
+              fontSize={fontSizes.extraLarge}
+              horizontalAlign="flex-start"
+            />
+          }
+          {showTitleLeft &&
+            <Title
+              noMargin
+              title={title}
+              noBlueDot={noBlueDotOnTitle}
+              dotColor={dotColor}
+              fullWidth={fullWidthTitle}
+              titleStyles={titleStyles}
+            />
+          }
+        </HeaderLeft>
+        {showTitleCenter &&
+          <HeaderBody onCloseText={onCloseText}>
+            <Title
+              align="center"
+              noMargin
+              title={title}
+              onTitlePress={onTitlePress}
+              noBlueDot={noBlueDotOnTitle}
+              dotColor={dotColor}
+              fullWidth={fullWidthTitle}
+              titleStyles={titleStyles}
+            />
+          </HeaderBody>
         }
-        {showTitleLeft &&
-          <Title
-            noMargin
-            title={title}
-            noBlueDot={noBlueDotOnTitle}
-            dotColor={dotColor}
-            fullWidth={fullWidthTitle}
-            titleStyles={titleStyles}
-          />
+        {showRight && !noClose &&
+          <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
+            {headerRightAddon}
+            {nextText &&
+              <TextLink style={nextTextStyle} onPress={onNextPress}>{nextText}</TextLink>
+            }
+            {nextIcon &&
+              <IconWrapper>
+                <NextIcon
+                  icon={nextIcon}
+                  color={light ? baseColors.white : UIColors.primary}
+                  onPress={onNextPress}
+                  fontSize={nextIconSize || fontSizes.small}
+                  horizontalAlign="flex-end"
+                />
+              </IconWrapper>
+            }
+            {onClose &&
+              <IconWrapper>
+                {onCloseText &&
+                  <CloseIconText light={light} >{onCloseText}</CloseIconText>
+                }
+                <NextIcon
+                  icon="close"
+                  color={light ? baseColors.white : UIColors.defaultNavigationColor}
+                  onPress={onClose}
+                  fontSize={fontSizes.small}
+                  horizontalAlign="flex-end"
+                />
+              </IconWrapper>
+            }
+          </HeaderRight>
         }
-      </HeaderLeft>
-      {showTitleCenter &&
-        <HeaderBody onCloseText={onCloseText}>
-          <Title
-            align="center"
-            noMargin
-            title={title}
-            onTitlePress={onTitlePress}
-            noBlueDot={noBlueDotOnTitle}
-            dotColor={dotColor}
-            fullWidth={fullWidthTitle}
-            titleStyles={titleStyles}
-          />
-        </HeaderBody>
-      }
-      {showRight && !noClose &&
-        <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
-          {nextText &&
-            <TextLink onPress={onNextPress}>{nextText}</TextLink>
-          }
-          {nextIcon &&
-            <IconWrapper>
-              <NextIcon
-                icon={nextIcon}
-                color={light ? baseColors.white : UIColors.primary}
-                onPress={onNextPress}
-                fontSize={nextIconSize || fontSizes.small}
-                horizontalAlign="flex-end"
-              />
-            </IconWrapper>
-          }
-          {onClose &&
-            <IconWrapper>
-              {onCloseText &&
-                <CloseIconText light={light} >{onCloseText}</CloseIconText>
-              }
-              <NextIcon
-                icon="close"
-                color={light ? baseColors.white : UIColors.defaultNavigationColor}
-                onPress={onClose}
-                fontSize={fontSizes.small}
-                horizontalAlign="flex-end"
-              />
-            </IconWrapper>
-          }
-        </HeaderRight>
-      }
+      </InnerWrapper>
     </Wrapper>
   );
 };

@@ -30,13 +30,12 @@ import { baseColors, fontSizes, spacing } from 'utils/variables';
 // components
 import { BaseText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
-import ProfileSettingsItem from './ProfileSettingsItem';
+import ProfileSettingsItem from 'components/ListItem/SettingsItem';
 import SettingsModalTitle from './SettingsModalTitle';
 
 const SIMPLIFIED_IMG = require('assets/images/assetsSimplified.png');
 const MINIMIZED_IMG = require('assets/images/assetsMinified.png');
 const EXTRASMALL_IMG = require('assets/images/assetsExtraSmall.png');
-// const EXPANDED_IMG = require('assets/images/assetsExtended.png');
 
 const halfScreenWidth = (Dimensions.get('window').width - 80) / 2;
 
@@ -71,13 +70,7 @@ const assetsLayouts = [{
   image: EXTRASMALL_IMG,
   name: 'Extra Small',
   id: EXTRASMALL,
-},
-// {
-//   image: EXPANDED_IMG,
-//   name: 'Extended',
-//   id: EXPANDED,
-// }
-];
+}];
 
 const AssetLayoutHolder = styled.View`
   display: flex;

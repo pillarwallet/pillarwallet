@@ -23,54 +23,54 @@ import {
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   ADD_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
+import type { CollectiblesStore, CollectiblesHistoryStore } from 'models/Collectible';
 
-type Asset = {
-  id: number,
-  category: string,
-  name: string,
-  description: string,
-  icon?: string,
-  contractAddress: string,
-  assetContract: string,
-  tokenType: string,
-}
 
-export type CollectiblesReducerState = {
-  assets: Asset[],
-  transactionHistory: Object[],
+export type CollectiblesState = {
+  data: CollectiblesStore,
+  transactionHistory: CollectiblesHistoryStore,
 };
 
-export type CollectiblesReducerAction = {
+export type CollectiblesAction = {
   type: string,
   payload: any,
 };
 
 const initialState = {
-  assets: [],
-  transactionHistory: [],
+  data: {},
+  transactionHistory: {},
 };
 
 
-export default function assetsReducer(
-  state: CollectiblesReducerState = initialState,
-  action: CollectiblesReducerAction,
-): CollectiblesReducerState {
+export default function collectiblesReducer(
+  state: CollectiblesState = initialState,
+  action: CollectiblesAction,
+): CollectiblesState {
   switch (action.type) {
     case UPDATE_COLLECTIBLES:
       return {
         ...state,
-        assets: action.payload || [],
+        data: action.payload || {},
       };
     case SET_COLLECTIBLES_TRANSACTION_HISTORY:
       return {
         ...state,
-        transactionHistory: action.payload || [],
+        transactionHistory: action.payload || {},
       };
     case ADD_COLLECTIBLE_TRANSACTION:
+      const { accountId, tokenId, transactionData } = action.payload;
+      const accountCollectibles = state.data[accountId] || [];
+      const accountTransactionHistory = state.transactionHistory[accountId] || [];
       return {
         ...state,
-        assets: [...state.assets].filter(({ id }) => id !== action.payload.tokenId),
-        transactionHistory: [...state.transactionHistory, action.payload.transactionData],
+        data: {
+          ...state.data,
+          [accountId]: [...accountCollectibles].filter(({ id }) => id !== tokenId),
+        },
+        transactionHistory: {
+          ...state.transactionHistory,
+          [accountId]: [...accountTransactionHistory, transactionData],
+        },
       };
     default:
       return state;

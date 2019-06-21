@@ -20,3 +20,5 @@
 
 export const CHAT = 'CHAT';
 export const ACTIVITY = 'ACTIVITY';
+export const MAIN_NETWORK = 'MAIN_NETWORK';
+export const PILLAR_NETWORK = 'PILLAR_NETWORK';

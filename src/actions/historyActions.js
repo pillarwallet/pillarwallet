@@ -28,28 +28,36 @@ import {
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { updateAccountHistory } from 'utils/history';
+import { getActiveAccountAddress, getActiveAccountId, getActiveAccountWalletId } from 'utils/accounts';
 import { checkForMissedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
+import { checkAssetTransferTransactionsAction } from './smartWalletActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
 export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      wallet: { data: wallet },
+      accounts: { data: accounts },
+      history: { data: currentHistory },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
+    const accountId = getActiveAccountId(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
 
     const history = await api.fetchHistory({
-      address1: wallet.address,
+      address1: accountAddress,
       asset,
       nbTx: TRANSACTIONS_HISTORY_STEP,
       fromIndex,
     });
     if (!history.length) return;
 
-    const { history: { data: currentHistory } } = getState();
-    const updatedHistory = uniqBy([...history, ...currentHistory], 'hash');
+    const accountHistory = currentHistory[accountId] || [];
+    const updatedAccountHistory = uniqBy([...history, ...accountHistory], 'hash');
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
     dispatch(getExistingTxNotesAction());
@@ -58,13 +66,22 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
       type: SET_HISTORY,
       payload: updatedHistory,
     });
+
+    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
   };
 };
 
-export const fetchContactTransactionsAction = (myAddress: string, contactAddress: string, asset?: string = 'ALL') => {
+export const fetchContactTransactionsAction = (contactAddress: string, asset?: string = 'ALL') => {
   return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      accounts: { data: accounts },
+      history: { data: currentHistory },
+    } = getState();
+    const accountId = getActiveAccountId(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
+
     const history = await api.fetchHistory({
-      address1: myAddress,
+      address1: accountAddress,
       address2: contactAddress,
       asset,
       nbTx: TRANSACTIONS_HISTORY_STEP,
@@ -72,8 +89,9 @@ export const fetchContactTransactionsAction = (myAddress: string, contactAddress
     });
     if (!history.length) return;
 
-    const { history: { data: currentHistory } } = getState();
-    const updatedHistory = uniqBy([...history, ...currentHistory], 'hash');
+    const accountHistory = currentHistory[accountId] || [];
+    const updatedAccountHistory = uniqBy([...history, ...accountHistory], 'hash');
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
     dispatch({
@@ -86,10 +104,14 @@ export const fetchContactTransactionsAction = (myAddress: string, contactAddress
 export const fetchTransactionsHistoryNotificationsAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      user: { data: { walletId } },
+      accounts: { data: accounts },
       history: { data: currentHistory },
-      appSettings: { data: { lastTxSyncDatetime = 0 } },
+      appSettings: { data: { lastTxSyncDatetimes = {} } },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
+    const accountId = getActiveAccountId(accounts);
+    const walletId = getActiveAccountWalletId(accounts);
+    const lastTxSyncDatetime = lastTxSyncDatetimes[accountId] || 0;
 
     const d = new Date(lastTxSyncDatetime * 1000);
     const types = [
@@ -113,8 +135,8 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       .filter(tx => tx.status === TX_PENDING_STATUS);
 
     // add new records & update data for mined transactions
-    const fixedCurrentHistory = currentHistory.filter(tx => !!tx.createdAt);
-    const updatedHistory = uniqBy([...fixedCurrentHistory, ...pendingTransactions], 'hash')
+    const accountHistory = (currentHistory[accountId] || []).filter(tx => !!tx.createdAt);
+    const updatedAccountHistory = uniqBy([...accountHistory, ...pendingTransactions], 'hash')
       .map(tx => {
         if (!minedTransactions[tx.hash]) return tx;
         const { status, gasUsed, blockNumber } = minedTransactions[tx.hash];
@@ -126,12 +148,18 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         };
       });
 
-    const lastCreatedAt = Math.max(...updatedHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
+    const lastCreatedAt = Math.max(...updatedAccountHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
-    dispatch(saveDbAction('app_settings', { appSettings: { lastTxSyncDatetime: lastCreatedAt } }));
+    const updatedLastTxSyncDatetimes = {
+      ...lastTxSyncDatetimes,
+      [accountId]: lastCreatedAt,
+    };
+    dispatch(saveDbAction('app_settings', { appSettings: { lastTxSyncDatetimes: updatedLastTxSyncDatetimes } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: { lastTxSyncDatetime: lastCreatedAt },
+      payload: { lastTxSyncDatetimes: updatedLastTxSyncDatetimes },
     });
     dispatch({
       type: SET_HISTORY,
@@ -153,9 +181,11 @@ export const fetchGasInfoAction = () => {
 export const updateTransactionStatusAction = (hash: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
+      accounts: { data: accounts },
       session: { data: { isOnline } },
-      history: { data: history },
+      history: { data: currentHistory },
     } = getState();
+    const accountId = getActiveAccountId(accounts);
 
     if (!isOnline) return;
 
@@ -167,7 +197,8 @@ export const updateTransactionStatusAction = (hash: string) => {
     const nbConfirmations = lastBlockNumber - txReceipt.blockNumber;
     const status = txReceipt.status ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS;
 
-    const updatedHistory = history.map(tx => {
+    const accountHistory = currentHistory[accountId] || [];
+    const updatedAccountHistory = accountHistory.map(tx => {
       if (tx.hash !== hash) return tx;
       return {
         ...tx,
@@ -175,6 +206,8 @@ export const updateTransactionStatusAction = (hash: string) => {
         status,
       };
     });
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+
     dispatch({
       type: SET_HISTORY,
       payload: updatedHistory,

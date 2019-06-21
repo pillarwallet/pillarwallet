@@ -6,8 +6,10 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
   hardwareAccelerated={false}
   hideModalContentWhileAnimating={false}
   onModalHide={[Function]}
+  onModalWillHide={[Function]}
+  onModalWillShow={[Function]}
   onRequestClose={[Function]}
-  onSwipe={[Function]}
+  onSwipeComplete={[Function]}
   scrollOffset={0}
   scrollOffsetMax={0}
   scrollTo={[Function]}
@@ -47,6 +49,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
   <View
     hideModalContentWhileAnimating={false}
     onModalHide={[Function]}
+    onModalWillHide={[Function]}
+    onModalWillShow={[Function]}
     onMoveShouldSetResponder={[Function]}
     onMoveShouldSetResponderCapture={[Function]}
     onResponderEnd={[Function]}
@@ -59,7 +63,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
     onResponderTerminationRequest={[Function]}
     onStartShouldSetResponder={[Function]}
     onStartShouldSetResponderCapture={[Function]}
-    onSwipe={[Function]}
+    onSwipeComplete={[Function]}
     pointerEvents="box-none"
     scrollOffset={0}
     scrollOffsetMax={0}
@@ -169,18 +173,11 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             }
           >
             <View
-              noMargin={true}
               noPadding={true}
               style={
                 Array [
                   Object {
-                    "alignItems": "flex-end",
                     "borderBottomWidth": 0,
-                    "flexDirection": "row",
-                    "height": 48,
-                    "justifyContent": "flex-end",
-                    "marginBottom": 0,
-                    "marginTop": 20,
                     "paddingBottom": 0,
                     "paddingLeft": 0,
                     "paddingRight": 0,
@@ -192,81 +189,61 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               }
             >
               <View
-                showTitleLeft={true}
                 style={
                   Array [
                     Object {
-                      "alignItems": "flex-start",
-                      "alignSelf": "center",
-                      "flex": 1,
-                    },
-                    Object {
                       "alignItems": "flex-end",
-                      "flexBasis": 0,
-                      "flexGrow": 2,
-                      "flexShrink": 1,
-                      "justifyContent": "flex-start",
+                      "flexDirection": "row",
+                      "height": 50,
+                      "justifyContent": "flex-end",
+                      "marginBottom": 4,
+                      "marginTop": 20,
                     },
                     undefined,
                   ]
                 }
               >
                 <View
-                  noMargin={true}
+                  flex={[Function]}
+                  showTitleLeft={true}
                   style={
                     Array [
                       Object {
-                        "alignSelf": "flex-start",
-                        "marginBottom": 0,
-                        "marginLeft": 0,
-                        "marginRight": 0,
-                        "marginTop": 0,
-                        "position": "relative",
-                        "top": 0,
+                        "alignItems": "flex-start",
+                        "alignSelf": "center",
+                        "flex": 1,
+                      },
+                      Object {
+                        "alignItems": "flex-end",
+                        "flexBasis": 0,
+                        "flexGrow": 2,
+                        "flexShrink": 1,
+                        "justifyContent": "flex-start",
                       },
                       undefined,
                     ]
                   }
                 >
-                  <Text
-                    ellipsizeMode="middle"
-                    numberOfLines={1}
+                  <View
+                    noMargin={true}
                     style={
                       Array [
                         Object {
-                          "color": "#0A1427",
-                          "fontFamily": "Aktiv Grotesk App",
-                          "fontWeight": "400",
-                          "includeFontPadding": false,
-                          "textAlignVertical": "center",
+                          "alignSelf": "flex-start",
+                          "marginBottom": 0,
+                          "marginLeft": 0,
+                          "marginRight": 0,
+                          "marginTop": 0,
+                          "position": "relative",
+                          "top": 0,
                         },
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "Aktiv Grotesk App",
-                            "fontWeight": "600",
-                            "includeFontPadding": false,
-                            "textAlignVertical": "center",
-                          },
-                          Array [
-                            Object {
-                              "fontSize": 22,
-                              "fontWeight": "700",
-                              "lineHeight": 28,
-                            },
-                            Array [
-                              Object {
-                                "fontFamily": "Aktiv Grotesk App",
-                              },
-                              Object {},
-                            ],
-                          ],
-                        ],
+                        undefined,
                       ]
                     }
                   >
-                    title
                     <Text
+                      ellipsizeMode="middle"
+                      numberOfLines={1}
                       style={
                         Array [
                           Object {
@@ -286,47 +263,72 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                             },
                             Array [
                               Object {
-                                "color": "#00bfff",
-                                "fontSize": 30,
+                                "fontSize": 22,
+                                "fontWeight": "700",
+                                "lineHeight": 28,
                               },
-                              undefined,
+                              Array [
+                                Object {
+                                  "fontFamily": "Aktiv Grotesk App",
+                                },
+                                Object {},
+                              ],
                             ],
                           ],
                         ]
                       }
                     >
-                      .
+                      title
+                      <Text
+                        style={
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "Aktiv Grotesk App",
+                              "fontWeight": "400",
+                              "includeFontPadding": false,
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontFamily": "Aktiv Grotesk App",
+                                "fontWeight": "600",
+                                "includeFontPadding": false,
+                                "textAlignVertical": "center",
+                              },
+                              Array [
+                                Object {
+                                  "color": "#00bfff",
+                                  "fontSize": 30,
+                                },
+                                undefined,
+                              ],
+                            ],
+                          ]
+                        }
+                      >
+                        .
+                      </Text>
                     </Text>
-                  </Text>
+                  </View>
                 </View>
-              </View>
-              <View
-                flex={[Function]}
-                onClose={[Function]}
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "flex-end",
-                      "alignSelf": "center",
-                      "flex": 1,
-                    },
-                    Object {
-                      "alignItems": "flex-end",
-                      "flexBasis": 44,
-                      "flexGrow": 0,
-                      "flexShrink": 0,
-                      "justifyContent": "flex-end",
-                    },
-                    undefined,
-                  ]
-                }
-              >
                 <View
+                  flex={[Function]}
+                  onClose={[Function]}
                   style={
                     Array [
                       Object {
-                        "alignItems": "center",
+                        "alignItems": "flex-end",
+                        "alignSelf": "center",
+                        "flex": 1,
+                      },
+                      Object {
+                        "alignItems": "flex-end",
+                        "flexBasis": 44,
                         "flexDirection": "row",
+                        "flexGrow": 0,
+                        "flexShrink": 0,
                         "justifyContent": "flex-end",
                       },
                       undefined,
@@ -334,43 +336,56 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   }
                 >
                   <View
-                    accessible={true}
-                    isTVSelectable={true}
-                    onResponderGrant={[Function]}
-                    onResponderMove={[Function]}
-                    onResponderRelease={[Function]}
-                    onResponderTerminate={[Function]}
-                    onResponderTerminationRequest={[Function]}
-                    onStartShouldSetResponder={[Function]}
                     style={
-                      Object {
-                        "alignItems": "flex-end",
-                        "height": 44,
-                        "justifyContent": "center",
-                        "marginRight": -10,
-                        "opacity": 1,
-                        "paddingBottom": 0,
-                        "paddingLeft": 0,
-                        "paddingRight": 10,
-                        "paddingTop": 0,
-                        "width": 44,
-                      }
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "flex-end",
+                        },
+                        undefined,
+                      ]
                     }
                   >
                     <View
-                      name="close"
+                      accessible={true}
+                      isTVSelectable={true}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
                       style={
                         Object {
-                          "color": "#0A1427",
-                          "fontSize": 16,
-                          "marginBottom": undefined,
-                          "marginLeft": undefined,
-                          "marginRight": undefined,
-                          "marginTop": undefined,
+                          "alignItems": "flex-end",
+                          "height": 44,
+                          "justifyContent": "center",
+                          "marginRight": -10,
+                          "opacity": 1,
+                          "paddingBottom": 0,
+                          "paddingLeft": 0,
+                          "paddingRight": 10,
                           "paddingTop": 0,
+                          "width": 44,
                         }
                       }
-                    />
+                    >
+                      <View
+                        name="close"
+                        style={
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 16,
+                            "marginBottom": undefined,
+                            "marginLeft": undefined,
+                            "marginRight": undefined,
+                            "marginTop": undefined,
+                            "paddingTop": 0,
+                          }
+                        }
+                      />
+                    </View>
                   </View>
                 </View>
               </View>

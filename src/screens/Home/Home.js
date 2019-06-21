@@ -18,39 +18,49 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Animated, RefreshControl, Platform, View } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
-import { Animated, RefreshControl, Platform, View } from 'react-native';
-import { PROFILE, CONTACT, BADGE } from 'constants/navigationConstants';
+import { Answers } from 'react-native-fabric';
+import { createStructuredSelector } from 'reselect';
+import Intercom from 'react-native-intercom';
+import Permissions from 'react-native-permissions';
+
+// components
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
-import Intercom from 'react-native-intercom';
-import { BaseText, Paragraph } from 'components/Typography';
+import { BaseText, BoldText, Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
-import {
-  fetchTransactionsHistoryAction,
-  fetchTransactionsHistoryNotificationsAction,
-} from 'actions/historyActions';
-import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
-import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import {
-  resetDeepLinkDataAction,
-  approveLoginAttemptAction,
-} from 'actions/deepLinkActions';
 import IconButton from 'components/IconButton';
-import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
+import Tabs from 'components/Tabs';
 import ProfileImage from 'components/ProfileImage';
 import BadgeImage from 'components/BadgeImage';
 import Camera from 'components/Camera';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
-import Permissions from 'react-native-permissions';
-import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import CircleButton from 'components/CircleButton';
+import QRCodeScanner from 'components/QRCodeScanner';
+import ButtonText from 'components/ButtonText';
+import Spinner from 'components/Spinner';
+import SettingsListItem from 'components/ListItem/SettingsItem';
+
+// constants
+import { PROFILE, CONTACT, BADGE, MANAGE_DETAILS_SESSIONS } from 'constants/navigationConstants';
+import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
+
+// actions
+import { fetchTransactionsHistoryAction, fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
+import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import { resetDeepLinkDataAction, approveLoginAttemptAction, executeDeepLinkAction } from 'actions/deepLinkActions';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -58,9 +68,21 @@ import {
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
-import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
+import {
+  onWalletConnectSessionRequest,
+  cancelWaitingRequest,
+} from 'actions/walletConnectActions';
+
+// selectors
+import { accountHistorySelector } from 'selectors/history';
+import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
+
+// utils
+import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
+
+// types
 import type { Badges } from 'models/Badge';
-import { Answers } from 'react-native-fabric';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -84,20 +106,22 @@ type Props = {
   approveLoginAttempt: Function,
   fetchBadges: Function,
   badges: Badges,
+  openSeaTxHistory: Object[],
+  history: Array<*>,
+  waitingRequest?: string,
+  onWalletConnectSessionRequest: Function,
+  onWalletLinkScan: Function,
+  cancelWaitingRequest: Function,
 };
 
-type esDataType = {
-  title: string,
-  body: string,
-}
 type State = {
   showCamera: boolean,
   usernameWidth: number,
   activeTab: string,
-  esData: esDataType,
   permissionsGranted: boolean,
   scrollY: Animated.Value,
   forceCloseLoginApprovalModal: boolean,
+  isScanning: boolean,
 };
 
 const profileImageWidth = 96;
@@ -144,9 +168,9 @@ const HomeHeaderUsername = styled(BaseText)`
 const AnimatedHomeHeaderUsername = Animated.createAnimatedComponent(HomeHeaderUsername);
 
 const HomeHeaderButton = styled(IconButton)`
-  align-items: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
-  margin: ${props => props.flexEnd ? `0 -${spacing.rhythm}px 0 0` : `0 0 0 -${spacing.rhythm}px`};
-  padding: ${props => props.flexEnd ? `0 ${spacing.rhythm}px 0 0` : `0 0 0 ${spacing.rhythm}px`};
+  align-items: ${props => (props.flexEnd ? 'flex-end' : 'flex-start')};
+  margin: ${props => (props.flexEnd ? `0 -${spacing.rhythm}px 0 0` : `0 0 0 -${spacing.rhythm}px`)};
+  padding: ${props => (props.flexEnd ? `0 ${spacing.rhythm}px 0 0` : `0 0 0 ${spacing.rhythm}px`)};
   width: 64px;
   height: 44px;
 `;
@@ -173,11 +197,6 @@ const RecentConnectionsWrapper = styled.View`
   shadow-radius: 6px;
   shadow-opacity: 0.15;
   shadow-offset: 0px 6px;
-  padding-top: 124px;
-`;
-
-const RecentConnectionsSpacer = styled.View`
-  min-height: 100px;
 `;
 
 const RecentConnectionsScrollView = styled.ScrollView`
@@ -194,8 +213,8 @@ const RecentConnectionsItemProfileImage = styled(ProfileImage)`
   margin-bottom: ${spacing.rhythm / 2};
 `;
 
-const RecentConnectionsSubtitle = styled(Title)`
-  margin-left: ${spacing.mediumLarge}px;
+const StyledSubtitle = styled(Title)`
+  margin: ${spacing.medium}px ${spacing.mediumLarge}px;
 `;
 
 const RecentConnectionsItem = styled.TouchableOpacity`
@@ -225,11 +244,6 @@ const RecentConnectionsItemName = styled(BaseText)`
   })};
 `;
 
-const TabsHeader = styled.View`
-  padding: 20px ${spacing.mediumLarge}px 12px;
-  background-color: ${baseColors.white};
-`;
-
 const Description = styled(Paragraph)`
   text-align: center;
   padding-bottom: ${spacing.rhythm}px;
@@ -251,10 +265,6 @@ const BadgesBlock = styled.View`
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${UIColors.defaultBorderColor};
-`;
-
-const BadgesSubtitle = styled(Title)`
-  margin-left: ${spacing.mediumLarge}px;
 `;
 
 const BadgesScrollView = styled.ScrollView`
@@ -284,12 +294,36 @@ const BadgesSpacer = styled.View`
   min-height: 0;
 `;
 
+const SessionUIWrapper = styled.View`
+  padding-top: 110px;
+`;
+
+export const StatusMessage = styled(BoldText)`
+  padding-top: 10px;
+`;
+
+export const LoadingSpinner = styled(Spinner)`
+  padding: 10px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ItemWrapper = styled.View`
+  margin-top: ${spacing.large}px;
+`;
+
+const TabsHeader = styled.View`
+  padding: ${spacing.medium}px ${spacing.mediumLarge}px;
+  background-color: ${baseColors.white};
+`;
+
 const allIconNormal = require('assets/icons/all_normal.png');
 const allIconActive = require('assets/icons/all_active.png');
 const socialIconNormal = require('assets/icons/social_normal.png');
 const socialIconActive = require('assets/icons/social_active.png');
 const transactionsIconNormal = require('assets/icons/transactions_normal.png');
 const transactionsIconActive = require('assets/icons/transactions_active.png');
+const iconReceive = require('assets/icons/icon_receive.png');
 
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
@@ -301,10 +335,7 @@ class HomeScreen extends React.Component<Props, State> {
     scrollY: new Animated.Value(0),
     activeTab: ALL,
     usernameWidth: 0,
-    esData: {
-      title: 'Make your first step',
-      body: 'Your activity will appear here.',
-    },
+    isScanning: false,
   };
 
   componentDidMount() {
@@ -319,10 +350,9 @@ class HomeScreen extends React.Component<Props, State> {
     // TODO: remove this when notifications service becomes reliable
     fetchTransactionsHistory();
 
-    this._willFocus = this.props.navigation.addListener(
-      'willFocus',
-      () => { this.props.setUnreadNotificationsStatus(false); },
-    );
+    this._willFocus = this.props.navigation.addListener('willFocus', () => {
+      this.props.setUnreadNotificationsStatus(false);
+    });
   }
 
   componentWillUnmount() {
@@ -370,15 +400,8 @@ class HomeScreen extends React.Component<Props, State> {
           : contact.profileImage;
 
         return (
-          <RecentConnectionsItem
-            key={contact.username}
-            onPress={() => navigation.navigate(CONTACT, { contact })}
-          >
-            <RecentConnectionsItemProfileImage
-              uri={profileImage}
-              userName={contact.username}
-              diameter={52}
-            />
+          <RecentConnectionsItem key={contact.username} onPress={() => navigation.navigate(CONTACT, { contact })}>
+            <RecentConnectionsItemProfileImage uri={profileImage} userName={contact.username} diameter={52} />
             <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
           </RecentConnectionsItem>
         );
@@ -409,11 +432,8 @@ class HomeScreen extends React.Component<Props, State> {
     fetchBadges();
   };
 
-  setActiveTab = (activeTab, esData?) => {
-    this.setState({
-      activeTab,
-      esData,
-    });
+  setActiveTab = (activeTab) => {
+    this.setState({ activeTab });
   };
 
   goToProfileEmailSettings = () => {
@@ -431,6 +451,56 @@ class HomeScreen extends React.Component<Props, State> {
     });
   };
 
+  // START OF Wallet connect related methods
+  validateWalletConnectQRCode = (uri: string) => {
+    return uri.startsWith('wc:') || uri.startsWith('pillarwallet:');
+  };
+
+  handleQRScannerClose = () => this.setState({ isScanning: false });
+
+  toggleQRScanner = () => this.setState({ isScanning: !this.state.isScanning });
+
+  handleQRRead = (uri: string) => {
+    if (uri.startsWith('wc:')) {
+      this.props.onWalletConnectSessionRequest(uri);
+    } else {
+      this.props.onWalletLinkScan(uri);
+    }
+    this.handleQRScannerClose();
+  };
+
+  cancelWaiting = () => {
+    const { waitingRequest } = this.props;
+
+    if (waitingRequest) {
+      this.props.cancelWaitingRequest(waitingRequest);
+    }
+  };
+
+  renderNewSession() {
+    const { waitingRequest } = this.props;
+
+    if (waitingRequest) {
+      return (
+        <View>
+          <StatusMessage>
+            Adding session...
+          </StatusMessage>
+          <LoadingSpinner />
+          <ButtonText
+            buttonText="Cancel"
+            onPress={this.cancelWaiting}
+          />
+        </View>
+      );
+    }
+
+    return (
+      <CircleButton label="New Session" icon={iconReceive} onPress={this.toggleQRScanner} />
+    );
+  }
+  // END OF Wallet connect related methods
+
   render() {
     const {
       user,
@@ -444,20 +514,22 @@ class HomeScreen extends React.Component<Props, State> {
       resetDeepLinkData,
       approveLoginAttempt,
       badges,
+      history,
+      openSeaTxHistory,
+      contacts,
     } = this.props;
+
     const {
       showCamera,
       permissionsGranted,
       scrollY,
-      esData,
       usernameWidth,
       forceCloseLoginApprovalModal,
+      activeTab,
+      isScanning,
     } = this.state;
 
-    const {
-      isImported,
-      isBackedUp,
-    } = backupStatus;
+    const { isImported, isBackedUp } = backupStatus;
 
     const profileUsernameTranslateX = scrollY.interpolate({
       inputRange: [0, 100],
@@ -513,44 +585,51 @@ class HomeScreen extends React.Component<Props, State> {
       extrapolate: 'clamp',
     });
 
+    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+
+    const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
+    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, COLLECTIBLE_TRANSACTION);
+
+    const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
+
     const activityFeedTabs = [
       {
         id: ALL,
         name: 'All',
         tabImageNormal: allIconNormal,
         tabImageActive: allIconActive,
-        onPress: () => this.setActiveTab(
-          ALL,
-          {
-            title: 'Make your first step',
-            body: 'Your activity will appear here.',
-          }),
+        onPress: () => this.setActiveTab(ALL),
+        data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts],
+        emptyState: {
+          title: 'Make your first step',
+          body: 'Your activity will appear here.',
+        },
       },
       {
         id: TRANSACTIONS,
         name: 'Transactions',
         tabImageNormal: transactionsIconNormal,
         tabImageActive: transactionsIconActive,
-        onPress: () => this.setActiveTab(
-          TRANSACTIONS,
-          {
-            title: 'Make your first step',
-            body: 'Your transactions will appear here. Send or receive tokens to start.',
-          },
-        ),
+        onPress: () => this.setActiveTab(TRANSACTIONS),
+        data: [...transactionsOnMainnet, ...mappedCTransactions],
+        emptyState: {
+          title: 'Make your first step',
+          body: 'Your transactions will appear here. Send or receive tokens to start.',
+        },
       },
       {
         id: SOCIAL,
         name: 'Social',
         tabImageNormal: socialIconNormal,
         tabImageActive: socialIconActive,
-        onPress: () => this.setActiveTab(
-          SOCIAL,
-          {
-            title: 'Make your first step',
-            body: 'Information on your connections will appear here. Send a connection request to start.',
-          },
-        ),
+        onPress: () => this.setActiveTab(SOCIAL),
+        data: mappedContacts,
+        emptyState: {
+          title: 'Make your first step',
+          body: 'Information on your connections will appear here. Send a connection request to start.',
+        },
       },
     ];
 
@@ -570,31 +649,35 @@ class HomeScreen extends React.Component<Props, State> {
                 fontSize={24}
                 onPress={() => Intercom.displayMessenger()}
               />
-              {hasIntercomNotifications && <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  backgroundColor: baseColors.sunYellow,
-                  borderRadius: 4,
-                  position: 'absolute',
-                  top: 6,
-                  right: 8,
-                }}
-              />}
+              {hasIntercomNotifications && (
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: baseColors.sunYellow,
+                    borderRadius: 4,
+                    position: 'absolute',
+                    top: 6,
+                    right: 8,
+                  }}
+                />
+              )}
             </HomeHeaderLeft>
             <HomeHeaderBody />
             <HomeHeaderRight>
-              {!isWalletBackedUp && <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  backgroundColor: baseColors.burningFire,
-                  borderRadius: 4,
-                  position: 'absolute',
-                  top: 6,
-                  right: -6,
-                }}
-              />}
+              {!isWalletBackedUp && (
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: baseColors.burningFire,
+                    borderRadius: 4,
+                    position: 'absolute',
+                    top: 6,
+                    right: -6,
+                  }}
+                />
+              )}
               <HomeHeaderButton
                 flexEnd
                 icon="settings"
@@ -632,7 +715,7 @@ class HomeScreen extends React.Component<Props, State> {
                 <AnimatedHomeHeaderUsername
                   ellipsizeMode="tail"
                   numberOfLines={2}
-                  onLayout={(event) => {
+                  onLayout={event => {
                     const { width } = event.nativeEvent.layout;
                     this.setState({
                       usernameWidth: width,
@@ -651,10 +734,7 @@ class HomeScreen extends React.Component<Props, State> {
               </HomeHeaderImageUsername>
               <AnimatedHomeHeaderPortfolioBalance
                 style={{
-                  transform: [
-                    { scale: profileBalanceScale },
-                    { translateY: profileBalancePositionY },
-                  ],
+                  transform: [{ scale: profileBalanceScale }, { translateY: profileBalancePositionY }],
                   opacity: profileBalanceOpacity,
                 }}
               />
@@ -662,9 +742,9 @@ class HomeScreen extends React.Component<Props, State> {
           </HomeHeaderRow>
         </AnimatedHomeHeader>
         <Animated.ScrollView
-          stickyHeaderIndices={[3]}
+          stickyHeaderIndices={contacts.length ? [4] : [3]}
           style={{
-            marginTop: this.props.contacts.length ? -100 : -76,
+            marginTop: contacts.length ? -100 : -76,
           }}
           onScroll={Animated.event(
             [
@@ -677,40 +757,43 @@ class HomeScreen extends React.Component<Props, State> {
             { useNativeDriver: true },
           )}
           scrollEventThrottle={16}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={this.refreshScreenData}
-            />
-          }
+          refreshControl={<RefreshControl refreshing={false} onRefresh={this.refreshScreenData} />}
         >
-          {this.props.contacts.length ?
+          <SessionUIWrapper>
+            {this.renderNewSession()}
+            <ItemWrapper>
+              <SettingsListItem
+                key="manage_sessions"
+                label="Manage sessions"
+                onPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
+                wrapperPaddingHorizontal={spacing.mediumLarge}
+              />
+            </ItemWrapper>
+          </SessionUIWrapper>
+          {!!contacts.length &&
             <RecentConnectionsWrapper>
               <RecentConnections>
                 <View style={{ backgroundColor: baseColors.snowWhite }}>
-                  <RecentConnectionsSubtitle subtitle title="recent connections." />
+                  <StyledSubtitle noMargin subtitle title="recent connections." />
                 </View>
                 <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
                   {this.renderRecentConnections()}
                 </RecentConnectionsScrollView>
               </RecentConnections>
-            </RecentConnectionsWrapper> :
-
-            <RecentConnectionsSpacer />
+            </RecentConnectionsWrapper>
           }
-          {badges && badges.length ?
+          {badges && badges.length ? (
             <BadgesWrapper>
               <BadgesBlock>
                 <View style={{ backgroundColor: baseColors.snowWhite }}>
-                  <BadgesSubtitle subtitle title="game of badges." />
+                  <StyledSubtitle noMargin subtitle title="game of badges." />
                 </View>
                 <BadgesScrollView horizontal nestedScrollEnabled overScrollMode="always">
                   {this.renderBadges()}
                 </BadgesScrollView>
               </BadgesBlock>
-            </BadgesWrapper> :
-
-            <BadgesSpacer />
+            </BadgesWrapper>
+          ) : (<BadgesSpacer />)
           }
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
@@ -722,17 +805,13 @@ class HomeScreen extends React.Component<Props, State> {
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}
             navigation={navigation}
-            activeTab={this.state.activeTab}
-            esData={esData}
-            sortable
+            tabs={activityFeedTabs}
+            activeTab={activeTab}
+            hideTabs
+            initialNumToRender={6}
           />
         </Animated.ScrollView>
-        <Camera
-          isVisible={showCamera}
-          modalHide={this.closeCamera}
-          permissionsGranted={permissionsGranted}
-          navigation={navigation}
-        />
+
         <SlideModal
           isVisible={!!loginAttemptToken && !forceCloseLoginApprovalModal}
           fullScreen
@@ -748,17 +827,14 @@ class HomeScreen extends React.Component<Props, State> {
               <Description>
                 You are about to confirm your login with your Pillar wallet to external resource.
               </Description>
-              { !user.email &&
+              {!user.email && (
                 <DescriptionWarning>
                   In order to proceed with Discourse login you must have email added to your profile.
                 </DescriptionWarning>
-              }
+              )}
               <Button
                 title={!user.email ? 'Add your email' : 'Confirm login'}
-                onPress={() => user.email
-                  ? approveLoginAttempt(loginAttemptToken)
-                  : this.goToProfileEmailSettings()
-                }
+                onPress={() => (user.email ? approveLoginAttempt(loginAttemptToken) : this.goToProfileEmailSettings())}
                 style={{
                   marginBottom: 13,
                 }}
@@ -766,6 +842,18 @@ class HomeScreen extends React.Component<Props, State> {
             </View>
           </Wrapper>
         </SlideModal>
+        <Camera
+          isVisible={showCamera}
+          modalHide={this.closeCamera}
+          permissionsGranted={permissionsGranted}
+          navigation={navigation}
+        />
+        <QRCodeScanner
+          validator={this.validateWalletConnectQRCode}
+          isActive={isScanning}
+          onDismiss={this.handleQRScannerClose}
+          onRead={this.handleQRRead}
+        />
       </Container>
     );
   }
@@ -774,7 +862,6 @@ class HomeScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   user: { data: user },
-  history: { data: history },
   invitations: { data: invitations },
   wallet: { backupStatus },
   notifications: { intercomNotificationsCount },
@@ -783,12 +870,21 @@ const mapStateToProps = ({
 }) => ({
   contacts,
   user,
-  history,
   invitations,
   intercomNotificationsCount,
   backupStatus,
   deepLinkData,
   badges,
+});
+
+const structuredSelector = createStructuredSelector({
+  history: accountHistorySelector,
+  openSeaTxHistory: accountCollectiblesHistorySelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -798,11 +894,15 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
-  setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
+  setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   resetDeepLinkData: () => dispatch(resetDeepLinkDataAction()),
   approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
   fetchBadges: () => dispatch(fetchBadgesAction()),
+  onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
+  onWalletLinkScan: uri => dispatch(executeDeepLinkAction(uri)),
+  cancelWaitingRequest: clientId => dispatch(cancelWaitingRequest(clientId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
+

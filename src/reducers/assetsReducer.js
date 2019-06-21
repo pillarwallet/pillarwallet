@@ -23,25 +23,21 @@ import {
   UPDATE_ASSETS_STATE,
   ADD_ASSET,
   REMOVE_ASSET,
-  UPDATE_ASSETS_BALANCES,
   SET_INITIAL_ASSETS,
   FETCHING,
   FETCHED,
   FETCHED_INITIAL,
   UPDATE_SUPPORTED_ASSETS,
-  UPDATE_BALANCES,
   UPDATE_ASSETS_SEARCH_RESULT,
   START_ASSETS_SEARCH,
   RESET_ASSETS_SEARCH_RESULT,
 } from 'constants/assetsConstants';
-import { transformAssetsToObject } from 'utils/assets';
 import type { Asset } from 'models/Asset';
 import merge from 'lodash.merge';
 
 export type AssetsReducerState = {
   data: Object,
   supportedAssets: Asset[],
-  balances: Object,
   assetsState: ?string,
 };
 
@@ -53,7 +49,6 @@ export type AssetsReducerAction = {
 const initialState = {
   data: {},
   supportedAssets: [],
-  balances: {},
   assetsState: null,
   assetsSearchResults: [],
 };
@@ -78,7 +73,8 @@ export default function assetsReducer(
     case UPDATE_SUPPORTED_ASSETS:
       return { ...state, supportedAssets: action.payload };
     case UPDATE_ASSETS:
-      return { ...state, data: action.payload, assetsState: FETCHED };
+      const assetsState = Object.keys(action.payload).length ? FETCHED : initialState.assetsState;
+      return { ...state, data: action.payload || {}, assetsState };
     case ADD_ASSET:
       const addedAsset = action.payload;
       return merge({}, state, { data: { [addedAsset.symbol]: { ...addedAsset } } });
@@ -90,16 +86,6 @@ export default function assetsReducer(
       return { ...clonedState };
     case SET_INITIAL_ASSETS:
       return { ...state, data: action.payload || {}, assetsState: FETCHED_INITIAL };
-    case UPDATE_ASSETS_BALANCES:
-      const mappedAssets = transformAssetsToObject(action.payload);
-      return merge(
-        {},
-        state,
-        { assetsState: FETCHED },
-        { data: mappedAssets },
-      );
-    case UPDATE_BALANCES:
-      return { ...state, balances: action.payload };
     case START_ASSETS_SEARCH:
       return {
         ...state,

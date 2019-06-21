@@ -24,6 +24,7 @@ import { Keyboard } from 'react-native';
 import Separator from 'components/Separator';
 import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import t from 'tcomb-form-native';
 import { fontSizes, spacing } from 'utils/variables';
 import { Container, Footer } from 'components/Layout';
@@ -35,11 +36,15 @@ import QRCodeScanner from 'components/QRCodeScanner';
 import Header from 'components/Header';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
+import { getAccountAddress } from 'utils/accounts';
+import type { Accounts, AccountTypes } from 'models/Account';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  accounts: Accounts,
   localContacts: Object[],
   wallet: Object,
+  smartWalletFeatureEnabled: boolean,
 };
 
 type State = {
@@ -184,6 +189,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       this.props.navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
         assetData: this.assetData,
         receiver: ethAddress,
+        source: 'Contact',
       });
       return;
     }
@@ -191,7 +197,29 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
       assetData: this.assetData,
       receiver: ethAddress,
+      source: 'Contact',
     });
+  }
+
+  getAccountName(accountType: AccountTypes): string {
+    switch (accountType) {
+      case ACCOUNT_TYPES.SMART_WALLET:
+        return 'Smart Wallet';
+      case ACCOUNT_TYPES.KEY_BASED:
+        return 'Key Based account';
+      default:
+        return '';
+    }
+  }
+
+  getUserAccounts() {
+    const { accounts = [], smartWalletFeatureEnabled } = this.props;
+    if (!smartWalletFeatureEnabled) return [];
+    const accountsWithoutActive = accounts.filter(({ isActive }) => !isActive);
+    return accountsWithoutActive.map(account => ({
+      ethAddress: getAccountAddress(account),
+      username: this.getAccountName(account.type),
+    }));
   }
 
   render() {
@@ -199,10 +227,12 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { isScanning, formStructure, value } = this.state;
 
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
-    let contactsToRender = localContacts;
+    const userAccounts = this.getUserAccounts();
+    const allContacts = [...userAccounts, ...localContacts];
+    let contactsToRender = [...allContacts];
     if (value && value.address.length) {
       const searchStr = value.address.toLowerCase();
-      contactsToRender = localContacts.filter(({ username, ethAddress }) => {
+      contactsToRender = allContacts.filter(({ username, ethAddress }) => {
         const usernameFound = username.toLowerCase().includes(searchStr);
         if (value.address.length < 3) return usernameFound;
         return usernameFound || ethAddress.toLowerCase().startsWith(searchStr);
@@ -251,11 +281,15 @@ class SendTokenContacts extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
+  accounts: { data: accounts },
   contacts: { data: localContacts },
   wallet: { data: wallet },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
+  accounts,
   localContacts,
   wallet,
+  smartWalletFeatureEnabled,
 });
 
 export default connect(mapStateToProps)(SendTokenContacts);

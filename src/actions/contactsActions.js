@@ -24,6 +24,7 @@ import {
   UPDATE_CONTACTS_STATE,
   UPDATE_CONTACTS,
 } from 'constants/contactsConstants';
+import { Answers } from 'react-native-fabric';
 import type { ConnectionIdentityKey } from 'models/Connections';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
@@ -92,7 +93,12 @@ export const syncContactAction = (userId: string) => {
     const currentDate = +new Date();
     const updatedContacts = contacts
       .filter(({ id }) => id !== userId)
-      .concat({ ...userInfo, createdAt: oldInfo.createdAt || currentDate, lastUpdateTime: currentDate });
+      .concat({
+        ...userInfo,
+        createdAt: oldInfo.createdAt || currentDate,
+        lastUpdateTime: currentDate,
+        status: oldInfo.status,
+      });
     dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
     dispatch({
@@ -131,6 +137,8 @@ export const disconnectContactAction = (contactId: string) => {
       dispatch(updateConnectionsAction(walletId));
       return;
     }
+
+    Answers.logCustom('Connection', { Action: 'Disconnect' });
 
     const [contactToDisconnect, updatedContacts] = partition(contacts, (contact) =>
       contact.id === contactId);
@@ -193,6 +201,8 @@ export const muteContactAction = (contactId: string, mute: boolean) => {
       return;
     }
 
+    Answers.logCustom('Connection', { Action: mute ? 'Mute' : 'Unmute' });
+
     const updatedInvitations = invitations.filter(({ id }) => id !== contactId);
 
     await dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
@@ -241,6 +251,8 @@ export const blockContactAction = (contactId: string, block: boolean) => {
       dispatch(updateConnectionsAction(walletId));
       return;
     }
+
+    Answers.logCustom('Connection', { Action: block ? 'Block' : 'Unblock' });
 
     const [contactToBlock, updatedContacts] = partition(contacts, (contact) =>
       contact.id === contactId);

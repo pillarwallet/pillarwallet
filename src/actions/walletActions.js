@@ -40,6 +40,7 @@ import {
 } from 'constants/navigationConstants';
 import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
+import { Answers } from 'react-native-fabric';
 import { navigate } from 'services/navigation';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
@@ -61,14 +62,11 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
         };
       }
 
-      const payload = {
-        importedWallet,
-        apiUser,
-      };
-      dispatch({
-        type: IMPORT_WALLET,
-        payload,
-      });
+      const payload = { importedWallet, apiUser };
+      dispatch({ type: IMPORT_WALLET, payload });
+
+      Answers.logCustom('Import Wallet', { Method: 'Words Phrase' });
+
       navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
     } catch (e) {
       dispatch({
@@ -101,14 +99,11 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
         };
       }
 
-      const payload = {
-        importedWallet,
-        apiUser,
-      };
-      dispatch({
-        type: IMPORT_WALLET,
-        payload,
-      });
+      const payload = { importedWallet, apiUser };
+      dispatch({ type: IMPORT_WALLET, payload });
+
+      Answers.logCustom('Import Wallet', { Method: 'Private key' });
+
       navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
     } catch (e) {
       dispatch({
@@ -125,9 +120,7 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
 
 export const navigateToNewWalletPageAction = () => {
   return async (dispatch: Function) => {
-    dispatch({
-      type: RESET_WALLET_IMPORT,
-    });
+    dispatch({ type: RESET_WALLET_IMPORT });
     navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
 };
@@ -190,10 +183,10 @@ export const backupWalletAction = () => {
         backupStatus: { isBackedUp: true },
       },
     }));
-    dispatch({
-      type: BACKUP_WALLET,
-    });
+    dispatch({ type: BACKUP_WALLET });
     dispatch(selfAwardBadgeAction('wallet-backed-up'));
+
+    Answers.logCustom('Backup wallet phrase');
   };
 };
 

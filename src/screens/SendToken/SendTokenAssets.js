@@ -21,6 +21,7 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import type { Assets, Balances } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 
@@ -33,14 +34,19 @@ import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
+import TankAssetBalance from 'components/TankAssetBalance';
 
-import { formatAmount } from 'utils/common';
+import { formatAmount, formatMoney } from 'utils/common';
 import { getBalance } from 'utils/assets';
 
 import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
-import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+import { ETH, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import assetsConfig from 'configs/assetsConfig';
+
+import { accountBalancesSelector } from 'selectors/balances';
+import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 
 type Props = {
   fetchAssetsBalances: (assets: Assets) => Function,
@@ -48,7 +54,8 @@ type Props = {
   balances: Balances,
   navigation: NavigationScreenProp<*>,
   fetchAllCollectiblesData: Function,
-  collectibles: Array<Collectible>,
+  collectibles: Collectible[],
+  paymentNetworkBalances: Balances,
 };
 
 type State = {
@@ -97,6 +104,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         icon,
       },
       receiver: ethAddress,
+      source: 'Assets',
     });
   }
 
@@ -107,17 +115,21 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
       assetData,
       receiver: contact.ethAddress,
+      source: 'Assets',
     });
   }
 
 
   renderAsset = ({ item }) => {
-    const { balances, navigation } = this.props;
+    const { balances, navigation, paymentNetworkBalances } = this.props;
     const contact = navigation.getParam('contact', {});
     const assetBalance = formatAmount(getBalance(balances, item.symbol));
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const fullIconMonoUrl = `${SDK_PROVIDER}/${item.iconMonoUrl}?size=2`;
     const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
+    const paymentNetworkBalance = getBalance(paymentNetworkBalances, item.symbol);
+    const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
+
     const nextScreenAssetData = {
       token: item.symbol,
       contractAddress: item.address,
@@ -136,6 +148,14 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         itemImageUrl={fullIconUrl || genericToken}
         itemValue={`${assetBalance} ${item.symbol}`}
         fallbackSource={genericToken}
+        customAddon={paymentNetworkBalance ? (
+          <TankAssetBalance
+            amount={paymentNetworkBalanceFormatted}
+            isSynthetic={item.symbol !== ETH}
+          />)
+          : null
+        }
+        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
       />
     );
   };
@@ -256,12 +276,20 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets, balances },
-  collectibles: { assets: collectibles },
+  assets: { data: assets },
 }) => ({
   assets,
-  balances,
-  collectibles,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+  collectibles: accountCollectiblesSelector,
+  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -269,4 +297,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SendTokenAssetsScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenAssetsScreen);

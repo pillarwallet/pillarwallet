@@ -38,10 +38,12 @@ type Props = {
   headerProps: Object,
   itemSearchState?: boolean,
   searchInputPlaceholder?: string,
+  backgroundColor?: string,
+  hideSearch?: boolean,
 }
 
 const HeaderWrapper = styled(Wrapper)`
-  background-color: ${baseColors.snowWhite};
+  background-color: ${props => props.color ? props.color : baseColors.snowWhite};
   z-index: 100;
 `;
 
@@ -143,6 +145,8 @@ class SearchBlock extends React.Component<Props, State> {
       headerProps,
       itemSearchState,
       searchInputPlaceholder,
+      backgroundColor,
+      hideSearch,
     } = this.props;
     const {
       query,
@@ -154,21 +158,22 @@ class SearchBlock extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <HeaderWrapper>
+        <HeaderWrapper color={backgroundColor}>
           <Header {...headerProps} />
-          <Wrapper regularPadding>
-            <SearchBar
-              inputProps={{
-                onChange: this.handleSearchChange,
-                onBlur: this.handleSearchBlur,
-                onFocus: this.handleSearchFocus,
-                value: query,
-                autoCapitalize: 'none',
-              }}
-              placeholder={searchInputPlaceholder}
-              marginTop={15}
-            />
-          </Wrapper>
+          {!hideSearch &&
+            <Wrapper regularPadding>
+              <SearchBar
+                inputProps={{
+                  onChange: this.handleSearchChange,
+                  onBlur: this.handleSearchBlur,
+                  onFocus: this.handleSearchFocus,
+                  value: query,
+                  autoCapitalize: 'none',
+                }}
+                placeholder={searchInputPlaceholder}
+              />
+            </Wrapper>
+          }
         </HeaderWrapper>
         {!!searchIsFocused && !inSearchMode &&
         <FullScreenOverlayWrapper onPress={this.handleSearchBlur}>

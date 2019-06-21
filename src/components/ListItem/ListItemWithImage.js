@@ -64,9 +64,15 @@ type Props = {
   imageAddonName?: string,
   imageUpdateTimeStamp?: number,
   rightColumnInnerStyle?: Object,
+  customAddonFullWidth?: React.Node,
+  imageColorFill?: string,
 }
 
-const ItemWrapper = styled.TouchableOpacity`
+const ItemWrapper = styled.View`
+  flex-direction: column;
+`;
+
+const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -131,7 +137,7 @@ const IconCircle = styled.View`
   width: ${props => props.diameter || 52}px;
   height: ${props => props.diameter || 52}px;
   border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
-  background-color: ${props => props.warm ? baseColors.fairPink : baseColors.lightGray};
+  background-color: ${props => props.fillColor ? props.fillColor : 'transparent'};
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -176,7 +182,7 @@ const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
   border-radius: 10px;
-  background-color: ${baseColors.electricBlue}
+  background-color: ${baseColors.darkGray}
   align-self: flex-end;
   padding: 3px 0;
   margin-top: 2px;
@@ -257,12 +263,13 @@ const ItemImage = (props: Props) => {
     navigateToProfile,
     type,
     imageUpdateTimeStamp,
+    imageColorFill,
   } = props;
 
   if (iconName) {
     const warm = iconName === 'sent';
     return (
-      <IconCircle warm={warm}>
+      <IconCircle fillColor={warm ? baseColors.fairPink : baseColors.lightGray}>
         <ItemIcon name={iconName} warm={warm} />
       </IconCircle>
     );
@@ -273,13 +280,27 @@ const ItemImage = (props: Props) => {
         shadowColorAndroid="#38105baa"
         heightAndroid={54}
         widthAndroid={54}
-        heightIOS={48}
-        widthIOS={48}
+        heightIOS={54}
+        widthIOS={54}
         shadowRadius={24}
       >
         <TokenImageWrapper>
           <TokenImage source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
         </TokenImageWrapper>
+      </Shadow>
+    );
+  }
+  if (imageColorFill) {
+    return (
+      <Shadow
+        shadowColorAndroid="#38105baa"
+        heightAndroid={54}
+        widthAndroid={54}
+        heightIOS={48}
+        widthIOS={48}
+        shadowRadius={24}
+      >
+        <IconCircle fillColor={imageColorFill} />
       </Shadow>
     );
   }
@@ -310,7 +331,7 @@ const ImageAddon = (props: Props) => {
     const warm = imageAddonIconName === 'sent';
     return (
       <ImageAddonHolder>
-        <IconCircle warm={warm} diameter={22} bordered>
+        <IconCircle fillColor={warm ? baseColors.fairPink : baseColors.lightGray} diameter={22} bordered>
           <ItemIcon
             name={imageAddonIconName}
             warm={warm}
@@ -459,59 +480,59 @@ class ListItemWithImage extends React.Component<Props, {}> {
       imageAddonIconName,
       imageAddonName,
       rightColumnInnerStyle,
+      customAddonFullWidth,
     } = this.props;
 
     const type = getType(this.props);
     return (
-      <ItemWrapper
-        type={type}
-        onPress={onPress}
-        disabled={!onPress}
-      >
-        <ImageWrapper>
-          <ItemImage {...this.props} type={type} />
-          {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
-        </ImageWrapper>
-        <InfoWrapper type={type}>
-          <Column type={type}>
-            {!!label &&
+      <ItemWrapper>
+        <InnerWrapper type={type} onPress={onPress} disabled={!onPress}>
+          <ImageWrapper>
+            <ItemImage {...this.props} type={type} />
+            {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
+          </ImageWrapper>
+          <InfoWrapper type={type}>
+            <Column type={type}>
+              {!!label &&
               <Row>
-                <ItemTitle type={type}>{label}</ItemTitle>
+                <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>
                 {(type === CHAT_ITEM && !!timeSent) &&
-                  <TimeWrapper>
-                    <TimeSent>{timeSent}</TimeSent>
-                  </TimeWrapper>
+                <TimeWrapper>
+                  <TimeSent>{timeSent}</TimeSent>
+                </TimeWrapper>
                 }
               </Row>
-            }
-            {!!paragraph &&
+              }
+              {!!paragraph &&
               <Row>
                 <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
                 {type === CHAT_ITEM &&
-                  <BadgePlacer>
-                    {!!unreadCount &&
-                      <ItemBadge>
-                        <UnreadNumber>
-                          {unreadCount}
-                        </UnreadNumber>
-                      </ItemBadge>
-                    }
-                  </BadgePlacer>
+                <BadgePlacer>
+                  {!!unreadCount &&
+                  <ItemBadge>
+                    <UnreadNumber>
+                      {unreadCount}
+                    </UnreadNumber>
+                  </ItemBadge>
+                  }
+                </BadgePlacer>
                 }
               </Row>
-            }
-            {!!subtext &&
+              }
+              {!!subtext &&
               <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
-            }
-          </Column>
-          <Column rightColumn type={type}>
-            <View style={rightColumnInnerStyle}>
-              {customAddon}
-              <Addon {...this.props} type={type} />
-              {children}
-            </View>
-          </Column>
-        </InfoWrapper>
+              }
+            </Column>
+            <Column rightColumn type={type}>
+              <View style={rightColumnInnerStyle}>
+                <Addon {...this.props} type={type} />
+                {customAddon}
+                {children}
+              </View>
+            </Column>
+          </InfoWrapper>
+        </InnerWrapper>
+        {customAddonFullWidth}
       </ItemWrapper>
     );
   }

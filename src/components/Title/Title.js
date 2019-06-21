@@ -36,6 +36,7 @@ type Props = {
   dotColor?: string,
   onTitlePress?: Function,
   titleStyles?: ?Object,
+  onLayout?: Function,
 };
 
 const Wrapper = styled.View`
@@ -96,6 +97,7 @@ const Title = (props: Props) => {
     title,
     noBlueDot,
     dotColor,
+    onLayout,
   } = props;
 
   const noBlueDotNeeded = noBlueDot || !title;
@@ -107,6 +109,7 @@ const Title = (props: Props) => {
       align={align}
       maxWidth={maxWidth}
       fullWidth={fullWidth}
+      onLayout={onLayout}
     >
       {onTitlePress ?
         <TouchableOpacity onPress={onTitlePress}>

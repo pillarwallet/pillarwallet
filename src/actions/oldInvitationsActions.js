@@ -39,7 +39,7 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
-import { mapIdentityKeysAction } from 'actions/connectionKeyPairActions';
+import { mapIdentityKeysAction, prependConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { saveDbAction } from './dbActions';
 
 export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => {
@@ -55,7 +55,6 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
     } = getState();
 
     if (accessTokens === undefined || !accessTokens.length) {
-      Sentry.captureMessage('Empty connection access tokens, dispatching restoreAccessTokensAction', { level: 'info' });
       await dispatch(restoreAccessTokensAction(walletId));
       const {
         accessTokens: { data: updatedAccessTokens },
@@ -99,7 +98,9 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       ...groupedNotifications.connectionRejectedEvent,
     ].map(({ id: userId }) => userId);
 
-    const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
+    const sentInvitations = invitations.filter(invi => invi.type === TYPE_SENT);
+
+    const updatedInvitations = uniqBy(latestEventPerId.concat(sentInvitations), 'id')
       .filter(({ id }) => !invitationsToExclude.includes(id));
 
     // find new connections
@@ -207,7 +208,6 @@ export const acceptOldInvitationAction = (invitation: Object) => {
       invitations: { data: invitations },
       contacts: { data: contacts },
       accessTokens: { data: accessTokens },
-      connectionKeyPairs: { data: connectionKeyPairs },
       connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
     const sourceUserAccessKey = generateAccessKey();
@@ -216,7 +216,8 @@ export const acceptOldInvitationAction = (invitation: Object) => {
       sourceIdentityKey,
       targetIdentityKey,
       connIdKeyResult,
-    } = getIdentityKeyPairs(invitation.id, connectionIdentityKeys, connectionKeyPairs);
+      connKeyPairReserved,
+    } = await getIdentityKeyPairs(invitation.id, connectionIdentityKeys, dispatch);
 
     const acceptedInvitation = await api.acceptOldInvitation(
       invitation.id,
@@ -226,12 +227,25 @@ export const acceptOldInvitationAction = (invitation: Object) => {
       targetIdentityKey,
       walletId,
     );
+
+    if (!connIdKeyResult) {
+      await dispatch(prependConnectionKeyPairs(connKeyPairReserved));
+    }
+
     if (!acceptedInvitation) {
       dispatch(({
         type: ADD_NOTIFICATION,
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(fetchOldInviteNotificationsAction());
+      Sentry.captureMessage('Ghost invitation on acceptOld', {
+        level: 'info',
+        extra: {
+          invitationId: invitation.id,
+          connectionKey: invitation.connectionKey,
+          walletId,
+        },
+      });
       return;
     }
 
@@ -339,6 +353,14 @@ export const rejectOldInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(fetchOldInviteNotificationsAction());
+      Sentry.captureMessage('Ghost invitation on rejectOld', {
+        level: 'info',
+        extra: {
+          invitationId: invitation.id,
+          connectionKey: invitation.connectionKey,
+          walletId,
+        },
+      });
       return;
     }
 

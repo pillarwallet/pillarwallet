@@ -27,7 +27,6 @@ import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
 
 import { baseColors, spacing } from 'utils/variables';
-import type { Notification } from 'models/Notification';
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 
@@ -37,9 +36,9 @@ import SlideModal from 'components/Modals/SlideModal';
 import Title from 'components/Title';
 import EventDetails from 'components/EventDetails';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import Tabs from 'components/Tabs';
 
-import { getUserName } from 'utils/contacts';
-import { partial, uniqBy, formatAmount } from 'utils/common';
+import { partial, formatAmount } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import {
   TYPE_RECEIVED,
@@ -48,24 +47,18 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
-import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
-const SOCIAL_TYPES = [
-  TYPE_RECEIVED,
-  TYPE_ACCEPTED,
-  TYPE_REJECTED,
-  TYPE_SENT,
-  CHAT,
-];
-
-const ActivityFeedList = styled.FlatList``;
+const ActivityFeedList = styled.FlatList`
+  width: 100%;
+  flex: 1;
+`;
 
 const ActivityFeedWrapper = styled.View`
   background-color: ${props => props.color ? props.color : baseColors.white};
+  flex: 1;
 `;
 
 const ActivityFeedHeader = styled.View`
@@ -74,52 +67,98 @@ const ActivityFeedHeader = styled.View`
   border-top-color: ${baseColors.mediumLightGray};
 `;
 
+type esState = {
+  title?: string,
+  body?: string,
+}
+
+type Tab = {
+  id: string,
+  name: string,
+  icon?: string,
+  onPress: Function,
+  unread?: number,
+  tabImageNormal?: string,
+  tabImageActive?: string,
+  data: Object[],
+  emptyState?: esState,
+}
+
 type Props = {
-  history: Array<*>,
   assets: Asset[],
   onAcceptInvitation: Function,
   onCancelInvitation: Function,
   onRejectInvitation: Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
-  notifications: Notification[],
-  activeTab: string,
-  esData: Object,
-  resetUnread: Function,
-  customFeedData?: Object,
+  esData?: Object,
   contacts: Object,
-  invitations: Object,
-  additionalFiltering?: Function,
   feedTitle?: string,
   backgroundColor?: string,
   wrapperStyle?: Object,
   showArrowsOnly?: boolean,
   noBorder?: boolean,
-  openSeaTxHistory: Object[],
   invertAddon?: boolean,
-  fetchAllCollectiblesData: Function,
   contentContainerStyle?: Object,
   initialNumToRender: number,
-};
+  tabs?: Array<Tab>,
+  activeTab?: string,
+  feedData?: Object[],
+  extraFeedData?: Object[],
+  esComponent?: React.Node,
+  hideTabs: boolean,
+}
 
 type State = {
   showModal: boolean,
   selectedEventData: ?Object | ?Transaction,
   eventType: string,
   eventStatus: string,
-};
+}
+
+function getSortedFeedData(tabs, activeTab, feedData) {
+  if (tabs.length) {
+    const aTab = tabs.find(({ id, data = [] }) => id === activeTab && data.length) || { data: [] };
+    return aTab.data.sort((a, b) => b.createdAt - a.createdAt);
+  } else if (feedData.length) {
+    return feedData.sort((a, b) => b.createdAt - a.createdAt);
+  }
+  return [];
+}
+
+function getEmptyStateData(tabs, activeTab, esData = {}) {
+  if (tabs.length) {
+    const aTab = tabs.find(tab => tab.id === activeTab) || {};
+    const { emptyState = {} } = aTab;
+    if (Object.keys(emptyState).length) {
+      const { title, body } = emptyState;
+      return { title, bodyText: body };
+    }
+    return null;
+  } else if (Object.keys(esData).length) {
+    const { title, body } = esData;
+    return { title, bodyText: body };
+  }
+  return null;
+}
 
 class ActivityFeed extends React.Component<Props, State> {
-  state = {
-    showModal: false,
-    selectedEventData: null,
-    eventType: '',
-    eventStatus: '',
-  };
+  feedData: Object[];
 
   static defaultProps = {
     initialNumToRender: 7,
   };
+
+  constructor(props: Props) {
+    super(props);
+    this.feedData = [];
+    this.state = {
+      showModal: false,
+      selectedEventData: null,
+      eventType: '',
+      eventStatus: '',
+    };
+  }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
@@ -139,41 +178,6 @@ class ActivityFeed extends React.Component<Props, State> {
     const { navigation } = this.props;
     navigation.navigate(CHAT, { username: contact.username });
   };
-
-  mapTransactionsHistory(history, contacts, eventType) {
-    const concatedHistory = history
-      .map(({ ...rest }) => ({ ...rest, type: eventType }))
-      .map(({ to, from, ...rest }) => {
-        const contact = contacts.find(({ ethAddress }) => {
-          return from.toUpperCase() === ethAddress.toUpperCase()
-            || to.toUpperCase() === ethAddress.toUpperCase();
-        });
-
-        return {
-          username: getUserName(contact),
-          to,
-          from,
-          ...rest,
-        };
-      });
-    return uniqBy(concatedHistory, 'hash');
-  }
-
-  mapOpenSeaAndBCXTransactionsHistory(openSeaHistory, BCXHistory) {
-    const concatedCollectiblesHistory = openSeaHistory
-      .map(({ hash, ...rest }) => {
-        const historyEntry = BCXHistory.find(({ hash: bcxHash }) => {
-          return hash.toUpperCase() === bcxHash.toUpperCase();
-        });
-
-        return {
-          hash,
-          ...rest,
-          ...historyEntry,
-        };
-      });
-    return uniqBy(concatedCollectiblesHistory, 'hash');
-  }
 
   getRightLabel = (type: string) => {
     switch (type) {
@@ -321,20 +325,20 @@ class ActivityFeed extends React.Component<Props, State> {
 
   render() {
     const {
-      notifications,
-      contacts,
-      invitations,
-      history,
-      additionalFiltering,
-      customFeedData,
       feedTitle,
       navigation,
       backgroundColor,
       wrapperStyle,
       noBorder,
-      openSeaTxHistory,
       contentContainerStyle,
       initialNumToRender,
+      tabs = [],
+      activeTab,
+      esData,
+      feedData = [],
+      extraFeedData,
+      esComponent,
+      hideTabs,
     } = this.props;
 
     const {
@@ -344,59 +348,16 @@ class ActivityFeed extends React.Component<Props, State> {
       eventStatus,
     } = this.state;
 
-    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+    const feedList = getSortedFeedData(tabs, activeTab, feedData);
+    const additionalContentContainerStyle = !feedList.length
+      ? { justifyContent: 'center', flex: 1 }
+      : {};
 
-    // extending OpenSea transaction data with BCX data
-    const collectiblesHistory =
-      this.mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-
-    const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
-    const mappedHistory = this.mapTransactionsHistory(tokenTxHistory, mappedContacts, TRANSACTION_EVENT);
-    const mappedCollectiblesHistory =
-      this.mapTransactionsHistory(collectiblesHistory, mappedContacts, COLLECTIBLE_TRANSACTION);
-    const chatNotifications = [];
-    /* chats.chats
-      .map((
-        {
-          username,
-          lastMessage,
-        }) => {
-        if (lastMessage.savedTimestamp === '') return {};
-        return {
-          content: lastMessage.content,
-          username,
-          type: 'CHAT',
-          createdAt: lastMessage.savedTimestamp,
-        };
-      }); */
-    const allFeedData = [
-      ...mappedContacts,
-      ...invitations,
-      ...mappedHistory,
-      ...chatNotifications,
-      ...mappedCollectiblesHistory]
-      .filter(value => Object.keys(value).length !== 0)
-      .sort((a, b) => b.createdAt - a.createdAt);
-
-    const feedData = customFeedData || allFeedData;
-    const { activeTab, esData } = this.props;
-
-    const filteredHistory = feedData.filter(({ type }) => {
-      if (activeTab === TRANSACTIONS) {
-        return type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION;
-      }
-      if (activeTab === SOCIAL) {
-        return SOCIAL_TYPES.includes(type);
-      }
-      return true;
+    const tabsProps = [];
+    tabs.forEach((tab) => {
+      const { data, emptyState, ...necessaryTabProps } = tab;
+      tabsProps.push(necessaryTabProps);
     });
-
-    const processedHistory = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
-
-    if (processedHistory.length < 1 && !esData) {
-      return null;
-    }
 
     return (
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
@@ -404,10 +365,14 @@ class ActivityFeed extends React.Component<Props, State> {
         <ActivityFeedHeader noBorder={noBorder}>
           <Title subtitle title={feedTitle} />
         </ActivityFeedHeader>}
+        {tabs.length > 1 && !hideTabs &&
+        <Tabs initialActiveTab={activeTab} tabs={tabsProps} wrapperStyle={{ paddingTop: 0 }} />
+        }
+
         <ActivityFeedList
-          data={processedHistory}
+          data={feedList}
           initialNumToRender={initialNumToRender}
-          extraData={notifications}
+          extraData={extraFeedData}
           renderItem={this.renderActivityFeedItem}
           getItemLayout={(data, index) => ({
             length: 70,
@@ -418,9 +383,12 @@ class ActivityFeed extends React.Component<Props, State> {
           onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
           keyExtractor={this.getActivityFeedListKeyExtractor}
-          ListEmptyComponent={<EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />}
-          contentContainerStyle={contentContainerStyle}
+          ListEmptyComponent={esComponent
+          || <EmptyTransactions {...getEmptyStateData(tabs, activeTab, esData)} />}
+          contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
+          removeClippedSubviews
         />
+
         <SlideModal
           isVisible={showModal}
           title="transaction details"
@@ -445,24 +413,13 @@ class ActivityFeed extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  notifications: { data: notifications },
-  history: { data: history },
-  invitations: { data: invitations },
   assets: { data: assets },
   wallet: { data: wallet },
-  collectibles: { transactionHistory: openSeaTxHistory },
 }) => ({
   contacts,
-  notifications,
-  history,
-  invitations,
   assets: Object.values(assets),
   wallet,
-  openSeaTxHistory,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActivityFeed);
+export default connect(mapStateToProps)(ActivityFeed);
