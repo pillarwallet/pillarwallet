@@ -63,13 +63,13 @@ export default class ExchangeService {
           token: accessToken,
         },
       });
-      this.io.off('disconnect').on('disconnect', () => {
+      this.io.on('disconnect', () => {
         this.setConnected(false);
       });
-      this.io.off('error').on('error', () => {
+      this.io.on('error', () => {
         this.setConnected(false);
       });
-      this.io.off('connect').on('connect', () => {
+      this.io.on('connect', () => {
         this.setConnected(true);
       });
     } catch (e) {
@@ -77,12 +77,11 @@ export default class ExchangeService {
     }
   }
 
-  stop(callback?: Function) {
+  stop() {
     this.setConnected(false);
     if (this.io) {
       this.io.close();
-      this.io.off('close').on('close', data => {
-        executeCallback(data, callback);
+      this.io.on('close', () => {
         delete this.io;
       });
     }
@@ -90,13 +89,10 @@ export default class ExchangeService {
 
   setConnected(value: boolean) {
     this.isConnected = value;
-    if (!this.isConnected) {
-      delete this.io;
-    }
   }
 
   connected(): boolean {
-    return this.isConnected && this.io;
+    return this.isConnected && !!this.io;
   }
 
   onOffers(callback?: Function) {
@@ -114,7 +110,7 @@ export default class ExchangeService {
     const urlPath = `offers?name=${fromAssetCode}-${toAssetCode}`;
     return fetch(buildApiUrl(urlPath), this.apiConfig)
       .then(response => response.text())
-      .then(response => response.toLowerCase() === 'ok' ? {} : response.json())
+      .then(response => response.toLowerCase() === 'ok' ? {} : JSON.parse(response))
       .catch(error => ({ error }));
   }
 
