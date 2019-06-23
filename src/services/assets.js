@@ -41,6 +41,7 @@ type ERC20TransferOptions = {
   signOnly?: ?boolean,
   gasLimit: number,
   gasPrice: number,
+  data?: string,
 };
 
 type ERC721TransferOptions = {
@@ -73,7 +74,6 @@ function contractHasMethod(contractCode, encodedMethodName) {
 export async function transferERC20(options: ERC20TransferOptions) {
   const {
     contractAddress,
-    to,
     amount,
     wallet,
     decimals: defaultDecimals = 18,
@@ -82,6 +82,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
     gasPrice,
     signOnly = false,
   } = options;
+  let { data, to } = options;
 
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
 
@@ -89,12 +90,17 @@ export async function transferERC20(options: ERC20TransferOptions) {
   const contractAmount = defaultDecimals > 0
     ? utils.parseUnits(amount.toString(), defaultDecimals)
     : utils.bigNumberify(amount.toString());
-  const tokenTransfer = await contract.interface.functions.transfer.apply(null, [to, contractAmount]);
-  const { data } = tokenTransfer;
+
+  if (!data) {
+    const tokenTransfer = await contract.interface.functions.transfer.apply(null, [to, contractAmount]);
+    ({ data } = tokenTransfer);
+    to = contractAddress;
+  }
+
   const transaction = {
     gasLimit,
     gasPrice: utils.bigNumberify(gasPrice),
-    to: contractAddress,
+    to,
     nonce,
     data,
   };

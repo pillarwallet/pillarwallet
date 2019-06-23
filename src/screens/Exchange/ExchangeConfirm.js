@@ -32,7 +32,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
@@ -190,7 +190,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       data,
     };
 
-    navigation.navigate(SEND_TOKEN_CONFIRM, { transactionPayload });
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
   };
 
   render() {
