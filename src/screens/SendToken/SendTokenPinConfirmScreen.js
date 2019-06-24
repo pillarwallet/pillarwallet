@@ -54,11 +54,13 @@ type State = {
 
 class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   source: string;
+  goBackDismiss: boolean;
 
   constructor(props: Props) {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
     this.source = this.props.navigation.getParam('source', '');
+    this.goBackDismiss = this.props.navigation.getParam('goBackDismiss', false);
     this.state = {
       transactionPayload,
       isChecking: false,
@@ -109,7 +111,11 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
 
   handleBack = () => {
     const { navigation, resetIncorrectPassword } = this.props;
-    navigation.goBack(null);
+    if (this.goBackDismiss) {
+      navigation.dismiss();
+    } else {
+      navigation.goBack(null);
+    }
     resetIncorrectPassword();
   };
 
