@@ -163,13 +163,13 @@ const finishRegistration = async ({
     await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount));
   }
 
+  // restore transactions history
+  await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
+
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
   // restore access tokens
   await dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
-
-  // restore transactions history
-  await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
 
   await dispatch({
     type: UPDATE_WALLET_STATE,
