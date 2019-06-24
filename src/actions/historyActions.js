@@ -17,6 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import get from 'lodash.get';
+import orderBy from 'lodash.orderby';
+import { BigNumber } from 'bignumber.js';
 import { uniqBy } from 'utils/common';
 import {
   SET_HISTORY,
@@ -28,12 +31,13 @@ import {
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { updateAccountHistory } from 'utils/history';
+import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId, getActiveAccountWalletId } from 'utils/accounts';
 import { checkForMissedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
+import { ETH } from '../constants/assetsConstants';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
@@ -213,5 +217,88 @@ export const updateTransactionStatusAction = (hash: string) => {
       payload: updatedHistory,
     });
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
+  };
+};
+
+export const restoreTransactionHistoryAction = (walletAddress: string, walletId: string) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      accounts: { data: accounts },
+      history: { data: currentHistory },
+    } = getState();
+
+    const [allAssets, _erc20History, ethHistory] = await Promise.all([
+      api.fetchSupportedAssets(walletId),
+      api.importedErc20TransactionHistory(walletAddress),
+      api.importedEthTransactionHistory(walletAddress),
+    ]);
+    if (!allAssets || !allAssets.length) return;
+
+    const erc20History = _erc20History.filter(tx => {
+      const hashExists = ethHistory.find(el => el.hash === tx.transactionHash);
+      return !hashExists;
+    });
+
+    const accountId = getActiveAccountId(accounts);
+    const accountHistory = currentHistory[accountId] || [];
+
+    // 1) filter out frecords those exists in accountHistory
+    const ethTransactions = ethHistory.filter(tx => {
+      const hashExists = accountHistory.find(el => el.hash === tx.hash);
+      return !hashExists;
+    });
+
+    // 2) filter out records those exists in accountHistory
+    const erc20Transactions = erc20History
+      .filter(tx => {
+        const hashExists = accountHistory.find(el => el.hash === tx.transactionHash);
+        return !hashExists;
+      })
+      // 3) filter out unsupported tokens
+      .filter(tx => {
+        const tokenAddress = get(tx, 'tokenInfo.address');
+        const tokenSupported = allAssets.find(el => el.address === tokenAddress);
+        return !!tokenAddress && tokenSupported;
+      });
+
+    // 4) combine accountHistory, ethHistory and erc20History (convert to the same format)
+    const updatedAccountHistory = [
+      ...accountHistory,
+      ...ethTransactions.map(tx => buildHistoryTransaction({
+        from: tx.from,
+        to: tx.to,
+        hash: tx.hash,
+        value: new BigNumber((tx.value) * (10 ** 18)),
+        asset: ETH,
+        createdAt: tx.timestamp,
+        status: tx.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,
+      })),
+      ...erc20Transactions.map(tx => {
+        const tokenAddress = get(tx, 'tokenInfo.address');
+        const assetInfo = allAssets.find(el => el.address === tokenAddress) || {};
+        return buildHistoryTransaction({
+          asset: assetInfo.symbol,
+          createdAt: tx.timestamp,
+          from: tx.from,
+          hash: tx.transactionHash,
+          protocol: 'Ethereum',
+          status: TX_CONFIRMED_STATUS,
+          to: tx.to,
+          value: new BigNumber(tx.value).toString(),
+        });
+      }),
+    ];
+
+    // 5) sort by date
+    const sortedHistory = orderBy(updatedAccountHistory, ['createdAt'], ['asc']);
+
+    // 6) update history in storage
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, sortedHistory);
+
+    await dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch({
+      type: SET_HISTORY,
+      payload: updatedHistory,
+    });
   };
 };

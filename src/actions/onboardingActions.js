@@ -70,6 +70,7 @@ import { saveDbAction } from 'actions/dbActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
+import { restoreTransactionHistoryAction } from 'actions/historyActions';
 
 const storage = Storage.getInstance('db');
 
@@ -166,6 +167,9 @@ const finishRegistration = async ({
 
   // restore access tokens
   await dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
+
+  // restore transactions history
+  await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
 
   await dispatch({
     type: UPDATE_WALLET_STATE,

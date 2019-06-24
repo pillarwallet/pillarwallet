@@ -719,7 +719,14 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
     .catch(() => false);
 };
 
-SDKWrapper.prototype.fetchExternalBcxTransactionHistory = function (walletAddress: string) {
+SDKWrapper.prototype.importedEthTransactionHistory = function (walletAddress: string) {
+  return Promise.resolve()
+    .then(() => ethplorerSdk.getAddressTransactions(walletAddress))
+    .then(data => Array.isArray(data) ? data : [])
+    .catch(() => []);
+};
+
+SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: string) {
   return Promise.resolve()
     .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer' }))
     .then(data => get(data, 'operations', []))
