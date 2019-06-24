@@ -511,6 +511,20 @@ class ExchangeScreen extends React.Component<Props, State> {
     const amountToBuy = parseFloat(selectedSellAmount) * askRate;
     const isPressed = pressedOfferId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
+
+    /**
+     * avoid text overlapping on many decimals,
+     * full amount will be displayed n confirm screen
+     * also show only 2 decimals for amounts above 1.00
+     * to avoid same text overlapping in the other side
+    */
+    let amountToBuyString;
+    if (amountToBuy > 1) {
+      amountToBuyString = formatMoney(amountToBuy, 2);
+    } else {
+      amountToBuyString = amountToBuy > 0.00001 ? formatMoney(amountToBuy, 5) : '<0.00001';
+    }
+
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
@@ -533,7 +547,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             <CardColumn>
               <Button
                 disabled={isPressed || (isShapeShift && !shapeshiftAccessToken)}
-                title={isPressed ? '' : `${formatMoney(amountToBuy)} ${toAssetCode}`}
+                title={isPressed ? '' : `${amountToBuyString} ${toAssetCode}`}
                 small
                 onPress={() => this.onOfferPress(offer)}
               >
