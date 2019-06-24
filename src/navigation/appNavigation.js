@@ -112,6 +112,7 @@ import {
   // ME_TAB,
   ASSETS,
   ASSET,
+  EXCHANGE_TAB,
   EXCHANGE,
   EXCHANGE_CONFIRM,
   PROFILE,
@@ -361,7 +362,7 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('Assets'),
       }),
     },
-    [EXCHANGE]: {
+    [EXCHANGE_TAB]: {
       screen: exchangeFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconExchangeActive, iconExchange),

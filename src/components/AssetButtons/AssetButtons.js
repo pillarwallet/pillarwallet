@@ -24,6 +24,7 @@ import CircleButton from 'components/CircleButton';
 type Props = {
   onPressReceive: Function,
   onPressSend: Function,
+  onPressExchange: Function,
   noBalance?: boolean,
   isSendDisabled?: boolean,
   isReceiveDisabled?: boolean,
@@ -53,6 +54,12 @@ const AssetButtons = (props: Props) => {
         label="Send"
         icon={iconSend}
         onPress={props.onPressSend}
+      />
+      <CircleButton
+        disabled={props.noBalance || props.isSendDisabled}
+        label="Exchange"
+        icon={iconSend} // TODO: change icon when we have it
+        onPress={props.onPressExchange}
       />
     </AssetButtonsWrapper>
   );

@@ -388,12 +388,19 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { fetchGasInfo } = this.props;
     fetchGasInfo();
     this.provideOptions();
-    this.setInitialSelection();
+    this.setInitialSelection(ETH);
   }
+
   componentDidUpdate(prevProps: Props) {
-    const { assets, supportedAssets } = this.props;
+    const { assets, supportedAssets, navigation } = this.props;
     if (assets !== prevProps.assets || supportedAssets !== prevProps.supportedAssets) {
       this.provideOptions();
+    }
+    const fromAssetCode = navigation.getParam('fromAssetCode');
+    if (fromAssetCode) {
+      this.setInitialSelection(fromAssetCode);
+      // reset to prevent nav value change over newly selected
+      navigation.setParams({ fromAssetCode: null });
     }
   }
 
@@ -411,9 +418,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  setInitialSelection = () => {
+  setInitialSelection = (fromAssetCode: string) => {
     const { assets } = this.props;
-    const assetsOptions = this.generateAssetsOptions({ ETH: assets[ETH] });
+    const assetsOptions = this.generateAssetsOptions({ [fromAssetCode]: assets[fromAssetCode] });
     const initialFormState = { ...this.state.value };
     initialFormState.fromInput = {
       selector: assetsOptions[0],

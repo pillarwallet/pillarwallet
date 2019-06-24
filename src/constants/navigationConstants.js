@@ -23,7 +23,7 @@ export const APP_FLOW = 'APP_FLOW';
 export const TAB_NAVIGATION = 'TAB_NAVIGATION';
 export const ASSETS = 'ASSETS';
 export const SERVICES = 'SERVICES';
-export const EXCHANGE = 'EXCHANGE';
+export const EXCHANGE_TAB = 'EXCHANGE_TAB';
 export const ME_TAB = 'ME_TAB';
 export const PEOPLE = 'PEOPLE';
 export const ASSET = 'ASSET';
@@ -104,6 +104,7 @@ export const HOME = 'HOME';
 export const HOME_TAB = 'HOME_TAB';
 
 // EXCHANGE FLOW
+export const EXCHANGE = 'EXCHANGE';
 export const EXCHANGE_CONFIRM = 'EXCHANGE_CONFIRM';
 
 // UPGRADE TO SMART WALLET FLOW
