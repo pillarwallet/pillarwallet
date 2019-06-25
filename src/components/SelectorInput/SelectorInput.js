@@ -184,6 +184,12 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 const MIN_QUERY_LENGTH = 2;
 
+const viewConfig = {
+  minimumViewTime: 300,
+  viewAreaCoveragePercentThreshold: 100,
+  waitForInteraction: true,
+};
+
 export default class SelectorInput extends React.Component<Props, State> {
   state = {
     showOptionsSelector: false,
@@ -340,6 +346,7 @@ export default class SelectorInput extends React.Component<Props, State> {
           onModalHide={() => this.setState({ showOptionsSelector: false })}
           backgroundColor={baseColors.lightGray}
           avoidKeyboard
+          noSwipeToDismiss
         >
           <Wrapper flex={1}>
             <SearchBarWrapper>
@@ -372,6 +379,10 @@ export default class SelectorInput extends React.Component<Props, State> {
                 </Wrapper>
               }
               ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+              initialNumToRender={10}
+              maxToRenderPerBatch={5}
+              removeClippedSubviews
+              viewabilityConfig={viewConfig}
             />
           </Wrapper>
         </SlideModal>
