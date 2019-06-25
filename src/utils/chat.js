@@ -33,7 +33,7 @@ export function getConnectionStateCheckParamsByUserId(getState: Function, target
     userId,
     sourceIdentityKey,
     targetIdentityKey,
-  } = connectionIdentityKeys.find(entry => entry.targetUserId === targetUserId);
+  } = connectionIdentityKeys.find(entry => entry.targetUserId === targetUserId) || {};
   return {
     userId,
     targetUserId,
@@ -46,6 +46,6 @@ export function getConnectionStateCheckParamsByUsername(getState: Function, user
   const {
     contacts: { data: contacts },
   } = getState();
-  const { id: targetUserId } = contacts.find(contact => contact.username === username);
+  const { id: targetUserId } = contacts.find(contact => contact.username === username) || {};
   return getConnectionStateCheckParamsByUserId(getState, targetUserId);
 }

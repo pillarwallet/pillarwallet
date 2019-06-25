@@ -76,7 +76,7 @@ class CheckPin extends React.Component<Props, *> {
 
     if (walletState === DECRYPTING || isChecking || walletState === GENERATING_CONNECTIONS) {
       return (
-        <Container center>
+        <Container center color="transparent">
           <BaseText style={{ marginBottom: 20 }}>Checking</BaseText>
           <Spinner />
         </Container>

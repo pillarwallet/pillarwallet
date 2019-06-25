@@ -43,6 +43,7 @@ type Props = {
   marginVertical?: number,
   useSVGShadow?: boolean,
   shadowOpacity?: number,
+  wrapperStyle?: Object,
 };
 
 const ShadowInnerWrapper = styled.View`
@@ -67,6 +68,7 @@ export const Shadow = (props: Props) => {
     shadowColorOS = UIColors.cardShadowColor,
     useSVGShadow,
     shadowOpacity,
+    wrapperStyle,
   } = props;
 
   const pixelRatio = PixelRatio.get();
@@ -88,7 +90,7 @@ export const Shadow = (props: Props) => {
 
   if (Platform.OS === 'ios' || useSVGShadow) {
     return (
-      <View style={{ position: 'relative' }}>
+      <View style={[{ position: 'relative' }, wrapperStyle]}>
         <BoxShadow
           setting={{
             color: shadowColorOS,
@@ -111,7 +113,7 @@ export const Shadow = (props: Props) => {
   }
 
   return (
-    <View style={{ width: widthWithPaddings }}>
+    <View style={[{ width: widthWithPaddings }, wrapperStyle]}>
       <NativeAndroidShadow
         shadowAngle={90}
         shadowRadius={sSpread}

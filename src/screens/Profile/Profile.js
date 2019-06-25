@@ -30,6 +30,7 @@ import {
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   OTP,
   CONFIRM_CLAIM,
+  CONTACT_INFO,
 } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
@@ -49,6 +50,7 @@ import {
 import { updateUserAction, createOneTimePasswordAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
 import { repairStorageAction } from 'actions/appActions';
+import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
 import { isProdEnv } from 'utils/environment';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
@@ -146,6 +148,8 @@ type Props = {
   backupStatus: Object,
   useBiometrics: ?boolean,
   changeUseBiometrics: (value: boolean) => Function,
+  cleanSmartWalletAccounts: Function,
+  smartWalletFeatureEnabled: boolean,
 }
 
 type State = {
@@ -292,6 +296,13 @@ class Profile extends React.Component<Props, State> {
     }
   };
 
+  navigateToContactInfo = () => {
+    requestAnimationFrame(() => {
+      const { navigation } = this.props;
+      navigation.navigate(CONTACT_INFO);
+    });
+  }
+
   render() {
     const {
       user,
@@ -305,6 +316,7 @@ class Profile extends React.Component<Props, State> {
       repairStorage,
       backupStatus,
       useBiometrics,
+      smartWalletFeatureEnabled,
     } = this.props;
 
     const {
@@ -579,6 +591,11 @@ class Profile extends React.Component<Props, State> {
                   label="Get PLR's tokens"
                   onPress={() => this.toggleSlideModalOpen('claimTokens')}
                 />
+                <ProfileSettingsItem
+                  key="contactInfo"
+                  label="Share contact info"
+                  onPress={this.navigateToContactInfo}
+                />
               </View>
             )}
 
@@ -622,6 +639,19 @@ class Profile extends React.Component<Props, State> {
               modalHide={this.togglePrivacyPolicyModal}
               htmlEndpoint="privacy_policy"
             />
+
+            {smartWalletFeatureEnabled && (
+              <React.Fragment>
+                <ListSeparator>
+                  <SubHeading>Smart wallet</SubHeading>
+                </ListSeparator>
+                <ProfileSettingsItem
+                  key="clearSmartAccounts"
+                  label="Clear Smart Accounts"
+                  onPress={() => { this.props.cleanSmartWalletAccounts(); }}
+                />
+              </React.Fragment>
+            )}
 
             {(!!hasDBConflicts || !!__DEV__) &&
             <React.Fragment>
@@ -687,6 +717,7 @@ const mapStateToProps = ({
   notifications: { intercomNotificationsCount },
   session: { data: { hasDBConflicts } },
   wallet: { backupStatus },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   user,
   baseFiatCurrency,
@@ -695,6 +726,7 @@ const mapStateToProps = ({
   hasDBConflicts,
   backupStatus,
   useBiometrics,
+  smartWalletFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -707,10 +739,9 @@ const mapDispatchToProps = (dispatch: Function) => ({
   updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
-  changeUseBiometrics: (value) => {
-    dispatch(changeUseBiometricsAction(value));
-  },
+  changeUseBiometrics: (value) => dispatch(changeUseBiometricsAction(value)),
   repairStorage: () => dispatch(repairStorageAction()),
+  cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

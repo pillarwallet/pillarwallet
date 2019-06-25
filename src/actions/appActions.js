@@ -19,8 +19,13 @@
 */
 import { NavigationActions } from 'react-navigation';
 import { Sentry } from 'react-native-sentry';
+
+// services
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
+import { loadAndMigrate } from 'services/dataMigration';
+
+// constants
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -39,7 +44,14 @@ import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'const
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
-import { saveDbAction } from './dbActions';
+import { SET_SHAPESHIFT_ACCESS_TOKEN } from 'constants/exchangeConstants';
+import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import {
+  DISMISS_SMART_WALLET_UPGRADE,
+  SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
+  SET_SMART_WALLET_UPGRADE_STATUS,
+} from 'constants/smartWalletConstants';
+import { UPDATE_PAYMENT_NETWORK_BALANCES } from 'constants/paymentNetworkConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -47,17 +59,25 @@ const BACKGROUND = 'background';
 const ANDROID = 'android';
 
 export const initAppAndRedirectAction = (appState: string, platform: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
-    const { appSettings = {} } = await storage.get('app_settings');
+
+    // TEMP: remove after we move to AsyncStorage
+    await storage.repair();
+
+    // $FlowFixMe
+    const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
     const { wallet } = await storage.get('wallet');
 
     if (appSettings.wallet) {
+      const accounts = await loadAndMigrate('accounts', dispatch, getState);
+      dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
+
       const { assets = {} } = await storage.get('assets');
       dispatch({ type: UPDATE_ASSETS, payload: assets });
 
-      const { balances = {} } = await storage.get('balances');
+      const balances = await loadAndMigrate('balances', dispatch, getState);
       dispatch({ type: UPDATE_BALANCES, payload: balances });
 
       const { rates = {} } = await storage.get('rates');
@@ -84,28 +104,38 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { connectionIdentityKeys = [] } = await storage.get('connectionIdentityKeys');
       dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: connectionIdentityKeys });
 
-      const { collectibles = [] } = await storage.get('collectibles');
+      const collectibles = await loadAndMigrate('collectibles', dispatch, getState);
       dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
 
-      const { collectiblesHistory = [] } = await storage.get('collectiblesHistory');
+      const collectiblesHistory = await loadAndMigrate('collectiblesHistory', dispatch, getState);
       dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
 
       const { badges = [] } = await storage.get('badges');
       dispatch({ type: UPDATE_BADGES, payload: badges });
 
+      const { paymentNetworkBalances = {} } = await storage.get('paymentNetworkBalances');
+      dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });
+
       const { offlineQueue = [] } = await storage.get('offlineQueue');
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const { history = [] } = await storage.get('history');
-      // TEMP FIX, REMOVE LATER
-      const filteredHistory = history
-        .filter(({ hash }) => !!hash)
-        .filter(({ value }) => typeof value !== 'object');
-      if (filteredHistory.length !== history.length) {
-        dispatch(saveDbAction('history', { history: filteredHistory }, true));
+      const { shapeshiftAccessToken } = await storage.get('exchange');
+      dispatch({ type: SET_SHAPESHIFT_ACCESS_TOKEN, payload: shapeshiftAccessToken });
+
+      const history = await loadAndMigrate('history', dispatch, getState);
+      dispatch({ type: SET_HISTORY, payload: history });
+
+      if (appSettings.smartWalletUpgradeDismissed) {
+        dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
       }
-      dispatch({ type: SET_HISTORY, payload: filteredHistory });
+
+      const {
+        upgradeTransferTransactions = [],
+        upgradeStatus = null,
+      } = await storage.get('smartWallet');
+      dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
+      dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 

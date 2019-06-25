@@ -23,7 +23,7 @@ import {
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
 import { utils } from 'ethers';
-import type { Transaction, TransactionEthers } from 'models/Transaction';
+import type { Transaction, TransactionEthers, TransactionsStore } from 'models/Transaction';
 
 export const buildHistoryTransaction = ({
   from,
@@ -34,8 +34,10 @@ export const buildHistoryTransaction = ({
   gasLimit,
   asset,
   note,
+  status,
+  createdAt,
 }: TransactionEthers): Transaction => ({
-  status: TX_PENDING_STATUS,
+  status: status || TX_PENDING_STATUS,
   gasUsed: gasPrice && gasLimit ? parseFloat(utils.formatEther(gasPrice.mul(gasLimit))) : 0,
   gasPrice: gasPrice ? Number(gasPrice) : 0,
   value: typeof value === 'object' ? value.toString() : value,
@@ -44,7 +46,7 @@ export const buildHistoryTransaction = ({
   to,
   _id: hash,
   asset,
-  createdAt: +new Date() / 1000, // seconds
+  createdAt: createdAt || Math.round(+new Date() / 1000), // seconds
   nbConfirmations: 0,
   transaction: {},
   __v: 0,
@@ -57,4 +59,15 @@ export const isTransactionEvent = (eventType: string) => {
     TRANSACTION_PENDING_EVENT,
     TRANSACTION_CONFIRMATION_EVENT,
   ].includes(eventType);
+};
+
+export const updateAccountHistory = (
+  history: TransactionsStore,
+  accountId: string,
+  accountHistory: Transaction[] = [],
+) => {
+  return {
+    ...history,
+    [accountId]: accountHistory,
+  };
 };

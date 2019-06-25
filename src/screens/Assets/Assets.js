@@ -23,7 +23,6 @@ import {
   Keyboard,
   Switch,
   Alert,
-  Platform,
 } from 'react-native';
 import styled from 'styled-components/native';
 import isEqual from 'lodash.isequal';
@@ -32,9 +31,10 @@ import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { Answers } from 'react-native-fabric';
 import debounce from 'lodash.debounce';
+import { createStructuredSelector } from 'reselect';
 
 // components
-import { BaseText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
@@ -46,8 +46,10 @@ import Separator from 'components/Separator';
 import Tabs from 'components/Tabs';
 
 // types
-import type { Assets, Balances, Asset } from 'models/Asset';
+import type { Assets, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
 
 // actions
 import {
@@ -70,20 +72,25 @@ import {
   COLLECTIBLES,
 } from 'constants/assetsConstants';
 import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils
-import { spacing } from 'utils/variables';
+import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { getSmartWalletStatus } from 'utils/smartWallet';
+
+// selectors
+import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 // local components
 import AssetsList from './AssetsList';
 import CollectiblesList from './CollectiblesList';
+import HeaderButtonsForSmartWallet from './HeaderButtonsForSmartWallet';
 
 
 type Props = {
   fetchInitialAssets: () => Function,
   assets: Assets,
-  collectibles: Array<Collectible>,
-  balances: Balances,
+  collectibles: Collectible[],
   wallet: Object,
   rates: Object,
   assetsState: ?string,
@@ -98,6 +105,9 @@ type Props = {
   assetsSearchState: string,
   addAsset: Function,
   removeAsset: Function,
+  accounts: Accounts,
+  smartWalletState: Object,
+  smartWalletFeatureEnabled: boolean,
 }
 
 type State = {
@@ -125,8 +135,7 @@ const horizontalPadding = (layout, side) => {
     default: {
       // if (Platform.OS === 'android') return 10;
       // return 0;
-      if (Platform.OS === 'android') return 10;
-      return side === 'left' ? 0 : spacing.rhythm - 9;
+      return side === 'left' ? 0 : 10;
     }
   }
 };
@@ -144,6 +153,18 @@ const EmptyStateWrapper = styled(Wrapper)`
   padding-top: 90px;
   padding-bottom: 90px;
   align-items: center;
+`;
+
+const MessageTitle = styled(BoldText)`
+  font-size: ${fontSizes.large}px;
+  text-align: center;
+`;
+
+const Message = styled(BaseText)`
+  padding-top: 20px;
+  font-size: ${fontSizes.extraSmall}px;
+  color: ${baseColors.darkGray};
+  text-align: center;
 `;
 
 class AssetsScreen extends React.Component<Props, State> {
@@ -375,6 +396,9 @@ class AssetsScreen extends React.Component<Props, State> {
       assetsSearchState,
       navigation,
       collectibles,
+      accounts,
+      smartWalletState,
+      smartWalletFeatureEnabled,
     } = this.props;
     const { query, activeTab, forceHideRemoval } = this.state;
 
@@ -414,77 +438,114 @@ class AssetsScreen extends React.Component<Props, State> {
       ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
       : collectibles;
 
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
+      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
+
+    const isSmartWallet = smartWalletStatus.hasAccount;
+
     return (
       <Container inset={{ bottom: 0 }}>
         <SearchBlock
-          headerProps={{ title: 'assets' }}
+          headerProps={{
+            title: 'assets',
+            headerRightAddon: smartWalletFeatureEnabled && <HeaderButtonsForSmartWallet
+              isSmartWallet={isSmartWallet}
+              navigation={navigation}
+            />,
+            headerRightFlex: 2,
+          }}
+          headerRightFlex={4}
+          hideSearch={blockAssetsView}
           searchInputPlaceholder={activeTab === TOKENS ? 'Search or add new asset' : 'Search'}
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={activeTab === TOKENS ? !!assetsSearchState : !!isInCollectiblesSearchMode}
           navigation={navigation}
         />
-        <TokensWrapper>
-          {inSearchMode && isSearchOver &&
-          <Wrapper>
-            {this.renderFoundTokensList()}
+        {(blockAssetsView &&
+          <Wrapper flex={1} regularPadding center>
+            <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
+            <Message>{ sendingBlockedMessage.message }</Message>
+            <Wrapper style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
+              <Spinner />
+            </Wrapper>
           </Wrapper>
-          }
-          {isSearching &&
-          <SearchSpinner center>
-            <Spinner />
-          </SearchSpinner>
-          }
-          {!inSearchMode &&
-          <React.Fragment>
-            {!isInCollectiblesSearchMode && <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />}
-            {activeTab === TOKENS && (
-              <AssetsList
-                navigation={navigation}
-                onHideTokenFromWallet={this.handleAssetRemoval}
-                horizontalPadding={horizontalPadding}
-                forceHideRemoval={forceHideRemoval}
-                updateHideRemoval={this.updateHideRemoval}
-              />
-            )}
-            {activeTab === COLLECTIBLES && (
-              <CollectiblesList
-                collectibles={filteredCollectibles}
-                searchQuery={query}
-                navigation={navigation}
-                horizontalPadding={horizontalPadding}
-                updateHideRemoval={this.updateHideRemoval}
-              />
-            )}
-          </React.Fragment>}
-        </TokensWrapper>
+        ) ||
+          <TokensWrapper>
+            {inSearchMode && isSearchOver &&
+            <Wrapper>
+              {this.renderFoundTokensList()}
+            </Wrapper>
+            }
+            {isSearching &&
+            <SearchSpinner center>
+              <Spinner />
+            </SearchSpinner>
+            }
+            {!inSearchMode &&
+            <React.Fragment>
+              {!isInCollectiblesSearchMode && <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />}
+              {activeTab === TOKENS && (
+                <AssetsList
+                  navigation={navigation}
+                  onHideTokenFromWallet={this.handleAssetRemoval}
+                  horizontalPadding={horizontalPadding}
+                  forceHideRemoval={forceHideRemoval}
+                  updateHideRemoval={this.updateHideRemoval}
+                />
+              )}
+              {activeTab === COLLECTIBLES && (
+                <CollectiblesList
+                  collectibles={filteredCollectibles}
+                  searchQuery={query}
+                  navigation={navigation}
+                  horizontalPadding={horizontalPadding}
+                  updateHideRemoval={this.updateHideRemoval}
+                />
+              )}
+            </React.Fragment>}
+          </TokensWrapper>
+        }
       </Container>
     );
   }
 }
 
 const mapStateToProps = ({
+  accounts: { data: accounts },
   wallet: { data: wallet },
   assets: {
     data: assets,
     assetsState,
-    balances,
     assetsSearchState,
     assetsSearchResults,
   },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
-  collectibles: { assets: collectibles },
+  smartWallet: smartWalletState,
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   wallet,
+  accounts,
   assets,
   assetsState,
-  balances,
   assetsSearchState,
   assetsSearchResults,
   rates,
   baseFiatCurrency,
   assetsLayout,
-  collectibles,
+  smartWalletState,
+  smartWalletFeatureEnabled,
+});
+
+const structuredSelector = createStructuredSelector({
+  collectibles: accountCollectiblesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -497,4 +558,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);

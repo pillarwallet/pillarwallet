@@ -32,6 +32,7 @@ type Props = {
   disabled?: boolean,
   disabledTransparent?: boolean,
   secondary?: boolean,
+  secondaryTransparent?: boolean,
   danger?: boolean,
   primaryInverted?: boolean,
   dangerInverted?: boolean,
@@ -84,6 +85,19 @@ const themes = {
     borderColor: baseColors.electricBlue,
     borderWidth: '1px',
   },
+  secondaryTransparent: {
+    background: 'transparent',
+    color: baseColors.white,
+    borderColor: baseColors.electricBlue,
+    borderWidth: '1px',
+  },
+  secondaryTransparentDisabled: {
+    background: 'transparent',
+    color: baseColors.darkGray,
+    borderColor: baseColors.darkGray,
+    borderWidth: '1px',
+    opacity: 0.5,
+  },
   secondaryDanger: {
     background: baseColors.white,
     color: baseColors.fireEngineRed,
@@ -127,8 +141,6 @@ const themes = {
 const getButtonHeight = (props) => {
   if (props.height) {
     return `${props.height}px`;
-  } else if (props.noPadding) {
-    return '0';
   } else if (props.small) {
     return '34px';
   }
@@ -141,6 +153,8 @@ const getButtonWidth = (props) => {
     return getButtonHeight(props);
   } else if (props.block) {
     return '100%';
+  } else if (props.width) {
+    return props.width;
   }
 
   return 'auto';
@@ -229,6 +243,10 @@ const ButtonMiniText = styled(BoldText)`
 const getTheme = (props: Props) => {
   if (props.secondary && props.danger) {
     return themes.secondaryDanger;
+  }
+
+  if (props.secondaryTransparent && props.disabled) {
+    return themes.secondaryTransparentDisabled;
   }
 
   const propsKeys = Object.keys(props);

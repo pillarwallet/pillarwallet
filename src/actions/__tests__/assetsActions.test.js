@@ -31,7 +31,8 @@ import {
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import type { Assets } from 'models/Asset';
 import PillarSdk from 'services/api';
-import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
+import { sendAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -46,6 +47,11 @@ const mockWallet: Object = {
   address: '0x9c',
   provider: { getTransactionCount: getTransactionCountMock },
 };
+
+const mockAccounts: Object[] = [{
+  id: '0x9c',
+  isActive: true,
+}];
 
 const mockTransaction: Object = {
   gasLimit: 2000000,
@@ -84,8 +90,11 @@ Object.defineProperty(mockWallet, 'sendTransaction', {
 const initialState = {
   assets: { data: { [ETH]: { balance: 10 } } },
   txCount: { data: { lastCount: 0, lastNonce: 0 } },
-  history: { data: [] },
+  history: { data: {} },
   wallet: { data: { address: mockWallet.address } },
+  accounts: { data: mockAccounts },
+  balances: { data: {} },
+  featureFlags: { data: INITIAL_FEATURE_FLAGS },
 };
 
 describe('Wallet actions', () => {
@@ -109,7 +118,7 @@ describe('Wallet actions', () => {
   });
 
   it('should expect series of actions with payload to be dispatch on fetchAssetsBalancesAction execution', () => {
-    const updateBalancesPayload = { ETH: { balance: 1, symbol: 'ETH' } };
+    const updateBalancesPayload = { [mockAccounts[0].id]: { ETH: { balance: 1, symbol: 'ETH' } } };
     const expectedActions = [
       { payload: FETCHING, type: UPDATE_ASSETS_STATE },
       { payload: updateBalancesPayload, type: UPDATE_BALANCES },

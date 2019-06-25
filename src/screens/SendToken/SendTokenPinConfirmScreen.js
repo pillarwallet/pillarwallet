@@ -24,29 +24,43 @@ import { Answers } from 'react-native-fabric';
 import { Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import type { TransactionPayload } from 'models/Transaction';
+import ErrorMessage from 'components/ErrorMessage';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { initSmartWalletSdkAction } from 'actions/smartWalletActions';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { getActiveAccountType } from 'utils/accounts';
+
+import type { TransactionPayload } from 'models/Transaction';
+import type { Accounts } from 'models/Account';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   sendAsset: (transactionPayload: TransactionPayload, wallet: Object, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
+  accounts: Accounts,
+  isOnline: boolean,
+  smartWalletSdkInitialized: boolean,
+  smartWalletFeatureEnabled: boolean,
+  initSmartWalletSdk: Function,
 }
 
 type State = {
   transactionPayload: TransactionPayload,
   isChecking: boolean,
+  errorMessage?: ?string;
 };
 
 class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   source: string;
+  goBackDismiss: boolean;
 
   constructor(props: Props) {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
     this.source = this.props.navigation.getParam('source', '');
+    this.goBackDismiss = this.props.navigation.getParam('goBackDismiss', false);
     this.state = {
       transactionPayload,
       isChecking: false,
@@ -59,10 +73,31 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
     navigation.dismiss();
   };
 
-  handleTransaction = (pin: string, wallet: Object) => {
-    const { sendAsset } = this.props;
+  handleTransaction = async (pin: string, wallet: Object) => {
+    const {
+      sendAsset,
+      smartWalletFeatureEnabled,
+      smartWalletSdkInitialized,
+      isOnline,
+      initSmartWalletSdk,
+      accounts,
+    } = this.props;
     const { transactionPayload } = this.state;
-    this.setState({ isChecking: true }, () => {
+    const activeAccountType = getActiveAccountType(accounts);
+    const isSmartWallet = smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET;
+    if (isSmartWallet && !isOnline) {
+      this.setState({
+        errorMessage: 'Cannot make Smart Wallet transaction offline',
+      });
+      return;
+    }
+    this.setState({
+      isChecking: true,
+    }, async () => {
+      if (isSmartWallet && !smartWalletSdkInitialized) {
+        // make sure sdk is inited before next step
+        await initSmartWalletSdk(wallet.privateKey);
+      }
       Answers.logCustom('Send Transaction', { Source: this.source });
       sendAsset(transactionPayload, wallet, this.handleNavigationToTransactionState);
     });
@@ -76,30 +111,52 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
 
   handleBack = () => {
     const { navigation, resetIncorrectPassword } = this.props;
-    navigation.goBack(null);
+    if (this.goBackDismiss) {
+      navigation.dismiss();
+    } else {
+      navigation.goBack(null);
+    }
     resetIncorrectPassword();
   };
 
   render() {
-    const { isChecking } = this.state;
+    const { isChecking, errorMessage } = this.state;
     return (
       <Container>
         <Header
           onBack={this.handleBack}
           title="enter pincode"
         />
-        <CheckPin onPinValid={this.handleTransaction} isChecking={isChecking} />
+        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        <CheckPin
+          onPinValid={this.handleTransaction}
+          isChecking={isChecking}
+          pinError={!!errorMessage}
+        />
       </Container>
     );
   }
 }
+
+const mapStateToProps = ({
+  accounts: { data: accounts },
+  session: { data: { isOnline } },
+  smartWallet: { sdkInitialized: smartWalletSdkInitialized },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+}) => ({
+  accounts,
+  isOnline,
+  smartWalletSdkInitialized,
+  smartWalletFeatureEnabled,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   sendAsset: (transaction: TransactionPayload, wallet: Object, navigate) => {
     dispatch(sendAssetAction(transaction, wallet, navigate));
   },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+  initSmartWalletSdk: (walletPrivateKey: string) => dispatch(initSmartWalletSdkAction(walletPrivateKey)),
 });
 
 
-export default connect(null, mapDispatchToProps)(SendTokenPinConfirmScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(SendTokenPinConfirmScreen);

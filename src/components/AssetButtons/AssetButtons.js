@@ -24,9 +24,11 @@ import CircleButton from 'components/CircleButton';
 type Props = {
   onPressReceive: Function,
   onPressSend: Function,
+  onPressExchange: Function,
   noBalance?: boolean,
   isSendDisabled?: boolean,
   isReceiveDisabled?: boolean,
+  exchangeFeatureEnabled?: boolean,
 }
 
 const AssetButtonsWrapper = styled.View`
@@ -38,6 +40,7 @@ const AssetButtonsWrapper = styled.View`
 
 const iconReceive = require('assets/icons/icon_receive.png');
 const iconSend = require('assets/icons/icon_send.png');
+const iconExchange = require('assets/icons/icon_exchange.png');
 
 const AssetButtons = (props: Props) => {
   return (
@@ -54,6 +57,14 @@ const AssetButtons = (props: Props) => {
         icon={iconSend}
         onPress={props.onPressSend}
       />
+      {props.exchangeFeatureEnabled &&
+        <CircleButton
+          disabled={props.noBalance || props.isSendDisabled}
+          label="Exchange"
+          icon={iconExchange}
+          onPress={props.onPressExchange}
+        />
+      }
     </AssetButtonsWrapper>
   );
 };

@@ -34,7 +34,12 @@ export type Transaction = {
   __v: number,
   receipt: Object,
   note?: ?string,
+  signOnly?: ?boolean,
 }
+
+export type TransactionsStore = {
+  [accountId: string]: Transaction[],
+};
 
 export type TokenTransactionPayload = {
   gasLimit: number,
@@ -42,12 +47,15 @@ export type TokenTransactionPayload = {
   to: string,
   gasPrice: number,
   txFeeInWei: number,
+  txSpeed?: string,
   symbol: string,
   contractAddress: ?string,
   decimals: number,
   note?: ?string,
   name?: string,
   tokenId?: string,
+  signOnly?: ?boolean,
+  signedHash?: ?string,
   data?: string,
 }
 
@@ -59,6 +67,11 @@ export type CollectibleTransactionPayload = {
   tokenId: string,
   note?: ?string,
   tokenId: string,
+  signOnly?: ?boolean,
+  signedHash?: ?string,
+  gasPrice?: ?number,
+  gasLimit?: ?number,
+  txSpeed?: string,
 }
 
 export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;
@@ -67,9 +80,17 @@ export type TransactionEthers = {
   from: string,
   hash: string,
   to: string,
-  value: Object,
-  gasPrice: Object,
-  gasLimit: Object,
+  value: string | Object,
+  gasPrice?: Object,
+  gasLimit?: Object,
   asset: string,
   note?: ?string,
-}
+  status?: string,
+  createdAt?: number,
+};
+
+export type SmartWalletTransferTransaction = {
+  hash: string,
+  value: Object,
+  asset: string,
+};

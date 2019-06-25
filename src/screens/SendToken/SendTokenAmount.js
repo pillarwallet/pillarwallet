@@ -24,19 +24,20 @@ import t from 'tcomb-form-native';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
+import { createStructuredSelector } from 'reselect';
 
 // components
 import { Container, Footer, Wrapper } from 'components/Layout';
-import SingleInput from 'components/TextInput/SingleInput';
 import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
 import Header from 'components/Header';
 import SlideModal from 'components/Modals/SlideModal';
 
 // utils
-import { parseNumber, formatAmount, isValidNumber, getCurrencySymbol, formatMoney } from 'utils/common';
+import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
-import { getBalance, getRate } from 'utils/assets';
+import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
+import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -46,102 +47,15 @@ import type { Balances, Rates } from 'models/Asset';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
+import { ETH, defaultFiatCurrency, SPEED_TYPES } from 'constants/assetsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
+import { updateAppSettingsAction } from 'actions/appSettingsActions';
 
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
 
-const { Form } = t.form;
-const GAS_LIMIT = 500000;
-const MIN_TX_AMOUNT = 0.000000000000000001;
-const genericToken = require('assets/images/tokens/genericTokenIcon.png');
-
-const getFormStructure = (
-  maxAmount: number,
-  minAmount: number,
-  enoughForFee: boolean,
-  formSubmitted: boolean,
-  decimals: number) => {
-  const Amount = t.refinement(t.String, (amount): boolean => {
-    if (!isValidNumber(amount.toString())) return false;
-
-    if (decimals === 0 && amount.toString().indexOf('.') > -1) {
-      return false;
-    }
-
-    amount = parseNumber(amount.toString());
-    const isValid = enoughForFee && amount <= maxAmount && amount >= minAmount;
-
-    if (formSubmitted) return isValid && amount > 0;
-    return isValid;
-  });
-
-  Amount.getValidationErrorMessage = (amount): string => {
-    if (!isValidNumber(amount.toString())) {
-      return 'Incorrect number entered.';
-    }
-
-    amount = parseNumber(amount.toString());
-    if (!enoughForFee) {
-      return 'Not enough ETH to process the transaction fee';
-    } else if (amount >= maxAmount) {
-      return 'Amount should not exceed the sum of total balance and est. network fee';
-    } else if (amount < minAmount) {
-      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
-    } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
-      return 'Amount should not contain decimal places';
-    }
-    return 'Amount should be specified.';
-  };
-
-  return t.struct({
-    amount: Amount,
-  });
-};
-
-function AmountInputTemplate(locals) {
-  const { config: { icon, valueInFiatOutput } } = locals;
-  const errorMessage = locals.error;
-  const inputProps = {
-    autoFocus: true,
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    placeholder: '0',
-    value: locals.value,
-    ellipsizeMode: 'middle',
-    keyboardType: 'decimal-pad',
-    textAlign: 'right',
-    autoCapitalize: 'words',
-  };
-
-  return (
-    <SingleInput
-      innerImageURI={icon}
-      fallbackSource={genericToken}
-      errorMessage={errorMessage}
-      id="amount"
-      inputProps={inputProps}
-      inlineLabel
-      fontSize={fontSizes.giant}
-      innerImageText={valueInFiatOutput}
-      marginTop={30}
-    />
-  );
-}
-
-const generateFormOptions = (config: Object): Object => ({
-  fields: {
-    amount: {
-      template: AmountInputTemplate,
-      config,
-      transformer: {
-        parse: (str = '') => str.toString().replace(/,/g, '.'),
-        format: (value = '') => value.toString().replace(/,/g, '.'),
-      },
-    },
-  },
-});
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -194,24 +108,25 @@ type Props = {
   gasInfo: GasInfo,
   rates: Rates,
   baseFiatCurrency: string,
-}
+  transactionSpeed: string,
+  updateAppSettings: Function,
+};
 
 type State = {
   value: ?{
     amount: ?string,
   },
-  transactionSpeed: string,
   showModal: boolean,
-}
+};
 
-const SLOW = 'min';
-const NORMAL = 'avg';
-const FAST = 'max';
+const { Form } = t.form;
+const GAS_LIMIT = 500000;
+const MIN_TX_AMOUNT = 0.000000000000000001;
 
-const SPEED_TYPES = {
-  [SLOW]: 'Slow',
-  [NORMAL]: 'Normal',
-  [FAST]: 'Fast',
+const SPEED_TYPE_LABELS = {
+  [SPEED_TYPES.SLOW]: 'Slow',
+  [SPEED_TYPES.NORMAL]: 'Normal',
+  [SPEED_TYPES.FAST]: 'Fast',
 };
 
 class SendTokenAmount extends React.Component<Props, State> {
@@ -230,7 +145,6 @@ class SendTokenAmount extends React.Component<Props, State> {
 
     this.state = {
       value: null,
-      transactionSpeed: NORMAL,
       showModal: false,
     };
   }
@@ -245,9 +159,13 @@ class SendTokenAmount extends React.Component<Props, State> {
     }
   }
 
+  getTxSpeed = () => {
+    return this.props.transactionSpeed || SPEED_TYPES.NORMAL;
+  };
+
   handleGasPriceChange = (txSpeed: string) => () => {
+    this.props.updateAppSettings('transactionSpeed', txSpeed);
     this.setState({
-      transactionSpeed: txSpeed,
       showModal: false,
     });
   };
@@ -261,7 +179,9 @@ class SendTokenAmount extends React.Component<Props, State> {
     const txFeeInWei = this.getTxFeeInWei();
     const value = this._form.getValue();
     const { navigation } = this.props;
+    const transactionSpeed = this.getTxSpeed();
     const gasPrice = txFeeInWei.div(GAS_LIMIT).toNumber();
+
     if (!value) return;
     const transactionPayload: TokenTransactionPayload = {
       to: this.receiver,
@@ -269,6 +189,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       gasLimit: GAS_LIMIT,
       gasPrice,
       txFeeInWei,
+      txSpeed: transactionSpeed,
       symbol: this.assetData.token,
       contractAddress: this.assetData.contractAddress,
       decimals: this.assetData.decimals,
@@ -286,8 +207,8 @@ class SendTokenAmount extends React.Component<Props, State> {
     const { balances } = this.props;
     const { token } = this.assetData;
     const balance = getBalance(balances, token);
-    const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
-    this.enoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
+    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
+    this.enoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
     this.setState({
       value: {
         amount: formatAmount(maxAmount),
@@ -295,27 +216,8 @@ class SendTokenAmount extends React.Component<Props, State> {
     });
   };
 
-  calculateMaxAmount(token: string, balance: number | string, txFeeInWei: ?Object): number {
-    if (typeof balance !== 'string') {
-      balance = balance.toString();
-    }
-    if (token !== ETH) {
-      return +balance;
-    }
-    const maxAmount = utils.parseUnits(balance, 'ether').sub(txFeeInWei);
-    if (maxAmount.lt(0)) return 0;
-    return new BigNumber(utils.formatEther(maxAmount)).toNumber();
-  }
-
-  checkIfEnoughForFee(balances: Balances, txFeeInWei): boolean {
-    if (!balances[ETH]) return false;
-    const ethBalance = getBalance(balances, ETH);
-    const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
-    return balanceInWei.gte(txFeeInWei);
-  }
-
-  getTxFeeInWei = (txSpeed?: string) => {
-    txSpeed = txSpeed || this.state.transactionSpeed;
+  getTxFeeInWei = (txSpeed?: string): BigNumber => {
+    txSpeed = txSpeed || this.getTxSpeed();
     const { gasInfo } = this.props;
     const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
@@ -325,7 +227,7 @@ class SendTokenAmount extends React.Component<Props, State> {
   renderTxSpeedButtons = () => {
     const { rates, baseFiatCurrency } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    return Object.keys(SPEED_TYPES).map(txSpeed => {
+    return Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
       return (
@@ -334,7 +236,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           primaryInverted
           onPress={this.handleGasPriceChange(txSpeed)}
         >
-          <TextLink>{SPEED_TYPES[txSpeed]} - {feeInEth} ETH</TextLink>
+          <TextLink>{SPEED_TYPE_LABELS[txSpeed]} - {feeInEth} ETH</TextLink>
           <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
         </Btn>
       );
@@ -342,11 +244,7 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      value,
-      showModal,
-      transactionSpeed,
-    } = this.state;
+    const { value, showModal } = this.state;
     const {
       session,
       balances,
@@ -354,22 +252,39 @@ class SendTokenAmount extends React.Component<Props, State> {
       rates,
       baseFiatCurrency,
     } = this.props;
+
+    const transactionSpeed = this.getTxSpeed();
     const { token, icon, decimals } = this.assetData;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
+
+    // balance
     const balance = getBalance(balances, token);
     const formattedBalance = formatAmount(balance);
-    const txFeeInWei = this.getTxFeeInWei();
-    const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
-    const isEnoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
-    const formStructure = getFormStructure(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+
+    // balance in fiat
     const totalInFiat = balance * getRate(rates, token, fiatCurrency);
     const formattedBalanceInFiat = formatMoney(totalInFiat);
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
+
+    // fee
+    const txFeeInWei = this.getTxFeeInWei();
+    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
+
+    // max amount
+    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
+
+    // value
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
+
+    // value in fiat
     const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);
     const formattedValueInFiat = formatMoney(valueInFiat);
     const valueInFiatOutput = `${currencySymbol}${formattedValueInFiat}`;
-    const formOptions = generateFormOptions({ icon, currency: token, valueInFiatOutput });
+
+    // form
+    const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
+    const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
+
     return (
       <Container>
         <Header
@@ -380,7 +295,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           <Form
             ref={node => { this._form = node; }}
             type={formStructure}
-            options={formOptions}
+            options={formFields}
             value={value}
             onChange={this.handleChange}
           />
@@ -402,7 +317,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
               <SendTokenDetailsValue>
                 <Label small>Fee:</Label>
-                <TextLink> {SPEED_TYPES[transactionSpeed]}</TextLink>
+                <TextLink> {SPEED_TYPE_LABELS[transactionSpeed]}</TextLink>
               </SendTokenDetailsValue>
             </TouchableOpacity>
             {!!value && !!parseFloat(value.amount) &&
@@ -431,21 +346,30 @@ class SendTokenAmount extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { balances },
   session: { data: session },
   rates: { data: rates },
   history: { gasInfo },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, transactionSpeed } },
 }) => ({
   rates,
-  balances,
   session,
   gasInfo,
   baseFiatCurrency,
+  transactionSpeed,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
+  updateAppSettings: (path, value) => dispatch(updateAppSettingsAction(path, value)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SendTokenAmount);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenAmount);

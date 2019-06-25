@@ -52,6 +52,7 @@ type Props = {
   scrollOffset?: any,
   subtitleStyles?: ?Object,
   titleStyles?: ?Object,
+  noSwipeToDismiss?: boolean,
 };
 
 const themes = {
@@ -190,6 +191,7 @@ export default class SlideModal extends React.Component<Props, *> {
       scrollOffset,
       subtitleStyles,
       titleStyles,
+      noSwipeToDismiss,
     } = this.props;
 
     const theme = getTheme(this.props);
@@ -262,7 +264,7 @@ export default class SlideModal extends React.Component<Props, *> {
       <Modal
         isVisible={isVisible}
         scrollTo={this.handleScroll}
-        onSwipe={this.hideModal}
+        onSwipeComplete={this.hideModal}
         onModalHide={onModalHidden}
         onBackdropPress={this.hideModal}
         backdropOpacity={fullScreen ? 1 : 0.7}
@@ -273,7 +275,7 @@ export default class SlideModal extends React.Component<Props, *> {
         scrollOffset={scrollOffset}
         animationIn="slideInUp"
         animationOut="slideOutDown"
-        swipeDirection="down"
+        swipeDirection={!noSwipeToDismiss ? 'down' : null}
         avoidKeyboard={avoidKeyboard}
         style={{
           margin: 0,

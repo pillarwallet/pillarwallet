@@ -25,6 +25,7 @@ import { LOG_OUT } from 'constants/authConstants';
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
 import walletReducer from './walletReducer';
+import smartWalletReducer from './smartWalletReducer';
 import walletConnectReducer from './walletConnectReducer';
 import assetsReducer from './assetsReducer';
 import appSettingsReducer from './appSettingsReducer';
@@ -46,11 +47,17 @@ import collectiblesReducer from './collectiblesReducer';
 import deepLinkReducer from './deepLinkReducer';
 import connectionIdentityKeysReducer from './connectionIdentityKeysReducer';
 import badgesReducer from './badgesReducer';
+import exchangeReducer from './exchangeReducer';
+import tankReducer from './tankReducer';
+import accountsReducer from './accountsReducer';
+import balancesReducer from './balancesReducer';
+import paymentNetworkReducer from './paymentNetworkReducer';
 import featureFlagsReducer from './featureFlagsReducer';
 
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
   wallet: walletReducer,
+  smartWallet: smartWalletReducer,
   walletConnect: walletConnectReducer,
   assets: assetsReducer,
   appSettings: appSettingsReducer,
@@ -72,6 +79,11 @@ const appReducer = combineReducers({
   connectionKeyPairs: connectionKeyPairsReducer,
   connectionIdentityKeys: connectionIdentityKeysReducer,
   badges: badgesReducer,
+  exchange: exchangeReducer,
+  tank: tankReducer,
+  accounts: accountsReducer,
+  balances: balancesReducer,
+  paymentNetwork: paymentNetworkReducer,
   featureFlags: featureFlagsReducer,
 });
 

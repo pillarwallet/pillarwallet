@@ -1,0 +1,14 @@
+{
+    "title": "Connection Model - List",
+    "description": "Schema definition for Connection Model - list method",
+    "additionalProperties": false,
+    "type": "object",
+    "properties": {
+      "query": {
+        "description": "The search query",
+        "type": "string"
+      }
+    },
+    "required": [ "query" ]
+  }
+

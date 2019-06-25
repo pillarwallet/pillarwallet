@@ -85,7 +85,7 @@ const initialState = {
   error: null,
 };
 
-export default function newWalletReducer(
+export default function walletReducer(
   state: WalletReducerState = initialState,
   action: WalletReducerAction,
 ) {
