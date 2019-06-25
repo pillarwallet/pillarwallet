@@ -191,12 +191,12 @@ const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_new.png');
-const iconExchange = require('assets/icons/icon_wallet_new.png'); // TODO
+const iconExchange = require('assets/icons/icon_exchange_new.png');
 const iconPeople = require('assets/icons/icon_people_group.png');
 // const iconMe = require('assets/icons/icon_me.png');
 const iconHome = require('assets/icons/icon_home_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
-const iconExchangeActive = require('assets/icons/icon_wallet_active.png'); // TODO
+const iconExchangeActive = require('assets/icons/icon_exchange_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_group_active.png');
 // const iconMeActive = require('assets/icons/icon_me_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
