@@ -17,10 +17,16 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { fetchTransactionsHistoryAction } from '../historyActions';
-import { SET_HISTORY } from '../../constants/historyConstants';
+import { BigNumber } from 'bignumber.js';
+import { fetchTransactionsHistoryAction, restoreTransactionHistoryAction } from 'actions/historyActions';
+import { SET_HISTORY, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
+import { ETH, PLR } from 'constants/assetsConstants';
+import type { Assets } from 'models/Asset';
+import { buildHistoryTransaction } from 'utils/history';
 
 const walletAddress = 'wallet-address';
+const walletId = '12345';
+const bobAddress = 'bob-address';
 
 const mockWallet: Object = {
   address: walletAddress,
@@ -31,11 +37,130 @@ const mockAccounts: Object[] = [{
   isActive: true,
 }];
 
+const plrContractAddress = '0x1234567';
+const mockAssets: Assets = {
+  ETH: {
+    symbol: ETH,
+    name: 'Ethereum',
+    address: '',
+    description: '',
+    iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+    decimals: 18,
+  },
+  PLR: {
+    symbol: PLR,
+    name: 'Pillar',
+    address: plrContractAddress,
+    description: '',
+    iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+    decimals: 18,
+  },
+};
+
+const mockDates = [];
+for (let i = 1; i <= 6; ++i) {
+  mockDates.push(Math.round(+new Date() / 1000) + i);
+}
+
+const mockEthTransaction = {
+  asset: ETH,
+  blockNumber: 111,
+  contractAddress: null,
+  createdAt: mockDates[2],
+  from: walletAddress,
+  gasPrice: 0,
+  gasUsed: 0,
+  hash: '0x10000',
+  pillarId: '10000',
+  protocol: 'Ethereum',
+  status: 'confirmed',
+  to: bobAddress,
+  value: 10000000000000000,
+  __v: 0,
+};
+
+const mockPlrTransactions = {
+  asset: PLR,
+  blockNumber: 112,
+  contractAddress: plrContractAddress,
+  createdAt: mockDates[3],
+  from: walletAddress,
+  gasPrice: 0,
+  gasUsed: 0,
+  hash: '0x20000',
+  pillarId: '20000',
+  protocol: 'Ethereum',
+  status: 'confirmed',
+  to: bobAddress,
+  value: 10000000000000000,
+  __v: 0,
+};
+
+const mockImportedEthTransction = {
+  timestamp: mockDates[0],
+  from: bobAddress,
+  to: walletAddress,
+  hash: '0x30000',
+  value: 0.001,
+  input: '0x',
+  success: true,
+};
+
+const mockImportedPlrTransaction = {
+  timestamp: mockDates[4],
+  transactionHash: '0x40000',
+  type: 'transfer',
+  value: '1408000000',
+  from: walletAddress,
+  to: bobAddress,
+  tokenInfo: {
+    address: plrContractAddress,
+    name: mockAssets[PLR].name,
+    decimals: mockAssets[PLR].decimals,
+    symbol: mockAssets[PLR].symbol,
+    totalSupply: '55191260000000',
+    owner: '',
+    txsCount: 111,
+    transfersCount: 2222,
+    lastUpdated: mockDates[5],
+    issuancesCount: 0,
+    holdersCount: 2135,
+    price: false,
+  },
+};
+
+const transformedImportedEthTransaction = buildHistoryTransaction({
+  from: mockImportedEthTransction.from,
+  to: mockImportedEthTransction.to,
+  hash: mockImportedEthTransction.hash,
+  value: new BigNumber((mockImportedEthTransction.value) * (10 ** 18)),
+  asset: ETH,
+  createdAt: mockImportedEthTransction.timestamp,
+  status: mockImportedEthTransction.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,
+});
+
+const transformedImportedPlrTransaction = buildHistoryTransaction({
+  from: mockImportedPlrTransaction.from,
+  to: mockImportedPlrTransaction.to,
+  hash: mockImportedPlrTransaction.transactionHash,
+  value: new BigNumber(mockImportedPlrTransaction.value),
+  asset: PLR,
+  createdAt: mockImportedPlrTransaction.timestamp,
+  status: TX_CONFIRMED_STATUS,
+});
+
 describe('History Actions', () => {
   const transactionsHistoryStep = 10;
 
   const api = {
     fetchHistory: jest.fn(),
+    fetchSupportedAssets: jest.fn(),
+    importedEthTransactionHistory: jest.fn(),
+    importedErc20TransactionHistory: jest.fn(),
   };
   const dispatchMock = jest.fn();
   const getState = jest.fn();
@@ -101,6 +226,169 @@ describe('History Actions', () => {
 
       it('should NOT call the dispatch function', () => {
         expect(dispatchMock).not.toBeCalled();
+      });
+    });
+  });
+
+  describe('restoreTransactionHistoryAction()', () => {
+    beforeEach(() => {
+      getState.mockImplementation(() => ({
+        accounts: { data: mockAccounts },
+        history: { data: {} },
+        wallet: { data: mockWallet },
+      }));
+      api.fetchSupportedAssets.mockImplementation(() => Promise.resolve(Object.values(mockAssets)));
+    });
+
+    afterEach(() => {
+      getState.mockRestore();
+      api.fetchSupportedAssets.mockRestore();
+      api.importedEthTransactionHistory.mockRestore();
+      api.importedErc20TransactionHistory.mockRestore();
+    });
+
+    describe('when user has no transaction history', () => {
+      const transactions = [];
+      const accountTransactions = {
+        [mockAccounts[0].id]: transactions,
+      };
+
+      beforeEach(async () => {
+        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([]));
+        api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([]));
+        await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
+      });
+
+      it('should call the api.fetchSupportedAssets function', () => {
+        expect(api.fetchSupportedAssets).toBeCalledWith(walletId);
+      });
+
+      it('should call the api.importedErc20TransactionHistory function', () => {
+        expect(api.importedErc20TransactionHistory).toBeCalledWith(walletAddress);
+      });
+
+      it('should call the api.fetchSupportedAssets function', () => {
+        expect(api.importedEthTransactionHistory).toBeCalledWith(walletAddress);
+      });
+
+      it('should call the dispatch function', () => {
+        expect(dispatchMock).toBeCalledWith({
+          type: SET_HISTORY,
+          payload: accountTransactions,
+        });
+      });
+    });
+
+    describe('when user already has transactions in state and gets nothing to import', () => {
+      const transactions = [mockEthTransaction, mockPlrTransactions];
+      const accountTransactions = {
+        [mockAccounts[0].id]: transactions,
+      };
+
+      beforeEach(async () => {
+        getState.mockImplementation(() => ({
+          accounts: { data: mockAccounts },
+          history: { data: accountTransactions },
+          wallet: { data: mockWallet },
+        }));
+
+        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([]));
+        api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([]));
+        await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
+      });
+
+      it('should call the dispatch function', () => {
+        expect(dispatchMock).toBeCalledWith({
+          type: SET_HISTORY,
+          payload: accountTransactions,
+        });
+      });
+    });
+
+    describe('when user imports eth transaction history', () => {
+      const transactions = [mockEthTransaction, mockPlrTransactions];
+      const accountTransactions = {
+        [mockAccounts[0].id]: transactions,
+      };
+
+      beforeEach(async () => {
+        getState.mockImplementation(() => ({
+          accounts: { data: mockAccounts },
+          history: { data: accountTransactions },
+          wallet: { data: mockWallet },
+        }));
+
+        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransction]));
+        api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([]));
+        await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
+      });
+
+      it('should call the dispatch function', () => {
+        const expectTransactions = {
+          [mockAccounts[0].id]: [transformedImportedEthTransaction, ...transactions],
+        };
+        expect(dispatchMock).toBeCalledWith({
+          type: SET_HISTORY,
+          payload: expectTransactions,
+        });
+      });
+    });
+
+    describe('when user imports erc20 tokens transaction history', () => {
+      const transactions = [mockEthTransaction, mockPlrTransactions];
+      const accountTransactions = {
+        [mockAccounts[0].id]: transactions,
+      };
+
+      beforeEach(async () => {
+        getState.mockImplementation(() => ({
+          accounts: { data: mockAccounts },
+          history: { data: accountTransactions },
+          wallet: { data: mockWallet },
+        }));
+
+        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([]));
+        api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([mockImportedPlrTransaction]));
+        await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
+      });
+
+      it('should call the dispatch function', () => {
+        const expectTransactions = {
+          [mockAccounts[0].id]: [...transactions, transformedImportedPlrTransaction],
+        };
+        expect(dispatchMock).toBeCalledWith({
+          type: SET_HISTORY,
+          payload: expectTransactions,
+        });
+      });
+    });
+
+    describe('when user imports eth and erc20 tokens transaction history', () => {
+      const transactions = [mockEthTransaction, mockPlrTransactions];
+      const accountTransactions = {
+        [mockAccounts[0].id]: transactions,
+      };
+
+      beforeEach(async () => {
+        getState.mockImplementation(() => ({
+          accounts: { data: mockAccounts },
+          history: { data: accountTransactions },
+          wallet: { data: mockWallet },
+        }));
+
+        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransction]));
+        api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([mockImportedPlrTransaction]));
+        await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
+      });
+
+      it('should call the dispatch function', () => {
+        const expectTransactions = {
+          [mockAccounts[0].id]: [transformedImportedEthTransaction, ...transactions, transformedImportedPlrTransaction],
+        };
+        expect(dispatchMock).toBeCalledWith({
+          type: SET_HISTORY,
+          payload: expectTransactions,
+        });
       });
     });
   });

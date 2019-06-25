@@ -80,15 +80,17 @@ export type TransactionEthers = {
   from: string,
   hash: string,
   to: string,
-  value: Object,
+  value: string | Object,
   gasPrice?: Object,
   gasLimit?: Object,
   asset: string,
   note?: ?string,
-}
+  status?: string,
+  createdAt?: number,
+};
 
 export type SmartWalletTransferTransaction = {
   hash: string,
   value: Object,
   asset: string,
-}
+};
