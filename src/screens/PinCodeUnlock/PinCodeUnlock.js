@@ -41,6 +41,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
   connectionKeyPairs: Object,
+  smartWalletFeatureEnabled: boolean,
 }
 
 class PinCodeUnlock extends React.Component<Props> {
@@ -56,13 +57,15 @@ class PinCodeUnlock extends React.Component<Props> {
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { useBiometrics } = this.props;
+    const { useBiometrics, smartWalletFeatureEnabled } = this.props;
 
     if (!this.errorMessage && DEFAULT_PIN) {
       this.handlePinSubmit(DEFAULT_PIN);
     }
 
-    if (useBiometrics && !this.errorMessage) {
+    if (useBiometrics
+      && !smartWalletFeatureEnabled
+      && !this.errorMessage) {
       this.showBiometricLogin();
     }
   }
@@ -132,10 +135,12 @@ const mapStateToProps = ({
   wallet,
   appSettings: { data: { useBiometrics = false } },
   connectionKeyPairs,
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   wallet,
   useBiometrics,
   connectionKeyPairs,
+  smartWalletFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

@@ -18,110 +18,114 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Dimensions } from 'react-native';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
-import Title from 'components/Title';
-import Button from 'components/Button';
+import LinearGradient from 'react-native-linear-gradient';
+import IconButton from 'components/IconButton';
+import { baseColors, fontSizes } from 'utils/variables';
 
 type Props = {
-  title?: string,
-  headerImage?: string,
+  bgColor: string,
+  bgColor2?: string,
   children?: React.Node,
   fullScreenComponent?: ?React.Node,
-  onModalHide?: Function,
+  onModalHide: Function,
   onModalHidden?: Function,
   isVisible: boolean,
-  animationOutTiming: number,
-  animationInTiming: number,
-  backdropTransitionInTiming: number,
-  backdropTransitionOutTiming: number,
 };
 
-const window = Dimensions.get('window');
-
 const ModalWrapper = styled.View`
-  position: absolute;
-  width: 100%;
+  flex: 1;
   align-items: center;
   justify-content: center;
-`;
-
-const ModalHeaderImage = styled.Image`
-  width: 300;
-  height: 150;
-`;
-
-const ModalBackground = styled.View`
-  background-color: white;
+  flex-direction: column;
+  background-color: rgba(32, 55, 86, 0.8);
   padding: 20px;
-  border-radius: 20;
-  box-shadow: 10px 5px 5px rgba(0,0,0,.5);
-  width: ${window.width - 40};
+`;
+
+const StyledLinearGradient = styled(LinearGradient)`
+  padding: 16px 20px;
+  border-radius: 30px;
+  width: 100%;
   overflow: hidden;
 `;
 
-const ModalContent = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: space-around;
+const StyledWrapper = styled.View`
+  background-color: ${props => props.color};
+  padding: 16px 20px;
+  border-radius: 30px;
+  width: 100%;
+  overflow: hidden;
 `;
 
+const CloseButton = styled(IconButton)`
+  height: 44px;
+  width: 44px;
+  padding-right: 10px;
+  margin-right: -10px;
+  align-items: flex-end;
+  align-self: flex-end;
+  margin-bottom: 8px;
+`;
 
 export default class PopModal extends React.Component<Props, *> {
   static defaultProps = {
     fullScreenComponent: null,
-    animationInTiming: 300,
-    animationOutTiming: 400,
-    backdropTransitionInTiming: 300,
-    backdropTransitionOutTiming: 300,
   };
 
   hideModal = () => {
     if (this.props.onModalHide) {
       this.props.onModalHide();
     }
-  }
+  };
 
   render() {
     const {
       children,
-      title,
       fullScreenComponent,
       onModalHidden,
-      headerImage,
-      animationInTiming,
-      animationOutTiming,
-      backdropTransitionInTiming,
-      backdropTransitionOutTiming,
       isVisible,
+      bgColor = baseColors.white,
+      bgColor2,
     } = this.props;
+
     return (
       <Modal
         isVisible={isVisible}
-        onSwipe={this.hideModal}
         onModalHide={onModalHidden}
         onBackdropPress={this.hideModal}
-        animationInTiming={animationInTiming}
-        animationOutTiming={animationOutTiming}
-        backdropTransitionInTiming={backdropTransitionInTiming}
-        backdropTransitionOutTiming={backdropTransitionOutTiming}
-        animationIn="zoomIn"
-        animationOut="zoomOut"
-        swipeDirection="down"
+        animationInTiming={400}
+        animationOutTiming={400}
+        backdropTransitionInTiming={400}
+        backdropTransitionOutTiming={400}
+        animationIn="fadeIn"
+        animationOut="fadeOut"
         style={{
           margin: 0,
         }}
+        hasBackdrop={false}
+        useNativeDriver={false}
       >
         <ModalWrapper>
-          <ModalBackground>
-            <ModalContent>
-              {!!headerImage && <ModalHeaderImage source={headerImage} />}
-              {!!title && <Title title={title} />}
-              {isVisible && children}
-              <Button block title="Dismiss" onPress={this.hideModal} />
-            </ModalContent>
-          </ModalBackground>
+          <CloseButton
+            icon="close"
+            color={baseColors.white}
+            onPress={this.hideModal}
+            fontSize={fontSizes.small}
+            horizontalAlign="flex-end"
+          />
+          {bgColor2 &&
+          <StyledLinearGradient
+            colors={[bgColor, bgColor2]}
+          >
+            {children}
+          </StyledLinearGradient>
+          }
+          {!bgColor2 &&
+          <StyledWrapper color={bgColor}>
+            {children}
+          </StyledWrapper>
+          }
         </ModalWrapper>
         {fullScreenComponent}
       </Modal>

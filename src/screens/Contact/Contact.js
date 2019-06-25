@@ -28,6 +28,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
+import { createStructuredSelector } from 'reselect';
 import { baseColors, fontSizes } from 'utils/variables';
 import {
   syncContactAction,
@@ -36,21 +37,32 @@ import {
   blockContactAction,
 } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
-import { ScrollWrapper } from 'components/Layout';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
+import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
 import { BADGE, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
-import { TRANSACTIONS } from 'constants/activityConstants';
 import { CHAT, ACTIVITY } from 'constants/tabsConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import ChatTab from 'components/ChatTab';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
+import { BaseText, BoldText } from 'components/Typography';
+import Button from 'components/Button';
+import { getSmartWalletStatus } from 'utils/smartWallet';
+import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 // import { CollapsibleSection } from 'components/CollapsibleSection';
 import type { ApiUser } from 'models/Contacts';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
+import { accountHistorySelector } from 'selectors/history';
+import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
@@ -87,18 +99,34 @@ const SheetContentWrapper = styled.View`
   padding-top: 30px;
 `;
 
+const MessageTitle = styled(BoldText)`
+  font-size: ${fontSizes.small}px;
+  text-align: center;
+`;
+
+const Message = styled(BaseText)`
+  padding-top: 10px;
+  font-size: ${fontSizes.tiny}px;
+  color: ${baseColors.darkGray};
+  text-align: center;
+`;
+
 type Props = {
   name: string,
   navigation: NavigationScreenProp<*>,
   contacts: ApiUser[],
   syncContact: Function,
-  fetchContactTransactions: (walletAddress: string, contactAddress: string, asset?: string) => Function,
-  wallet: Object,
+  fetchContactTransactions: (contactAddress: string, asset?: string) => Function,
   chats: Object[],
   session: Object,
   disconnectContact: Function,
   muteContact: Function,
   blockContact: Function,
+  smartWalletState: Object,
+  accounts: Accounts,
+  history: Array<*>,
+  deploySmartWallet: Function,
+  openSeaTxHistory: Object[],
 };
 
 type State = {
@@ -111,6 +139,7 @@ type State = {
   collapsedActivityHeight: ?number,
   collapsedChatHeight: ?number,
   // isBadgesSectionOpen: boolean,
+  relatedTransactions: Object[],
 };
 
 class Contact extends React.Component<Props, State> {
@@ -138,13 +167,13 @@ class Contact extends React.Component<Props, State> {
       collapsedChatHeight: null,
       collapsedActivityHeight: null,
       // isBadgesSectionOpen: true,
+      relatedTransactions: [],
     };
   }
 
   componentDidMount() {
     const {
       fetchContactTransactions,
-      wallet,
       syncContact,
       session,
       navigation,
@@ -153,6 +182,7 @@ class Contact extends React.Component<Props, State> {
     const contactName = navigation.getParam('username', '');
     const contact = navigation.getParam('contact', { username: contactName });
     const defaultImageCacheManager = ImageCacheManager();
+    this.getRelatedTransactions();
 
     if (contact.profileImage && session.isOnline) {
       defaultImageCacheManager
@@ -170,13 +200,44 @@ class Contact extends React.Component<Props, State> {
     const localContact = this.localContact; // eslint-disable-line
     if (localContact && session.isOnline) {
       syncContact(localContact.id);
-      fetchContactTransactions(wallet.address, localContact.ethAddress);
+      fetchContactTransactions(localContact.ethAddress);
+    }
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.history !== this.props.history || prevProps.openSeaTxHistory !== this.props.openSeaTxHistory) {
+      this.getRelatedTransactions();
     }
   }
 
   componentWillUnmount() {
     this.isComponentMounted = false;
   }
+
+  getRelatedTransactions = () => {
+    const {
+      navigation,
+      history,
+      contacts,
+      openSeaTxHistory,
+    } = this.props;
+    const contactName = navigation.getParam('username', '');
+    const contact = navigation.getParam('contact', { username: contactName });
+    const localContact = contacts.find(({ username }) => username === contact.username);
+    const displayContact = localContact || contact;
+
+    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+
+    const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
+    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, COLLECTIBLE_TRANSACTION);
+
+    const relatedTransactions = [...transactionsOnMainnet, ...mappedCTransactions]
+      .filter(({ username }) => username === displayContact.username);
+    this.manageFeedCollapseHeight(relatedTransactions.length);
+    this.setState({ relatedTransactions });
+  };
 
   getUserAvatar = (isAccepted, url, updateTime) => {
     if (isAccepted && updateTime) {
@@ -261,15 +322,15 @@ class Contact extends React.Component<Props, State> {
   };
 
   renderSheetContent = (displayContact, unreadCount) => {
-    const { activeTab, isSheetOpen } = this.state;
+    const { activeTab, isSheetOpen, relatedTransactions } = this.state;
     const { navigation } = this.props;
+
     if (activeTab === ACTIVITY) {
       return (
         <ActivityFeed
           ref={(ref) => { this.activityFeedRef = ref; }}
           navigation={navigation}
-          activeTab={TRANSACTIONS}
-          additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
+          feedData={relatedTransactions}
           showArrowsOnly
           contentContainerStyle={{ paddingTop: 10 }}
           esComponent={(
@@ -280,7 +341,6 @@ class Contact extends React.Component<Props, State> {
               />
             </View>
           )}
-          getFeedLength={(length) => this.manageFeedCollapseHeight(length)}
         />
       );
     }
@@ -308,8 +368,10 @@ class Contact extends React.Component<Props, State> {
       navigation,
       contacts,
       fetchContactTransactions,
-      wallet,
       chats,
+      smartWalletState,
+      accounts,
+      deploySmartWallet,
     } = this.props;
     const {
       showManageContactModal,
@@ -353,6 +415,10 @@ class Contact extends React.Component<Props, State> {
       },
     ];
 
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const disableSend = !!Object.keys(sendingBlockedMessage).length;
+
     return (
       <ContainerWithBottomSheet
         inset={{ bottom: 0 }}
@@ -388,7 +454,7 @@ class Contact extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                fetchContactTransactions(wallet.address, displayContact.ethAddress);
+                fetchContactTransactions(displayContact.ethAddress);
               }}
             />
           }
@@ -409,10 +475,26 @@ class Contact extends React.Component<Props, State> {
             <React.Fragment>
               <CircleButtonsWrapper>
                 <CircleButton
+                  disabled={disableSend}
                   label="Send"
                   icon={iconSend}
                   onPress={() => this.onSendPress(displayContact)}
                 />
+                {disableSend &&
+                <Wrapper regularPadding style={{ marginTop: 30, alignItems: 'center' }}>
+                  <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
+                  <Message>{ sendingBlockedMessage.message }</Message>
+                  {smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED &&
+                  <Button
+                    marginTop="20px"
+                    height={52}
+                    title="Deploy Smart Wallet"
+                    disabled={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
+                    onPress={() => deploySmartWallet()}
+                  />
+                  }
+                </Wrapper>
+                }
               </CircleButtonsWrapper>
               { /* CONTACT'S BADGES [Commented out since we do not have endpoint to fetch them]
               <CollapsibleSection
@@ -442,7 +524,7 @@ class Contact extends React.Component<Props, State> {
                 }
               /> */ }
             </React.Fragment>
-         }
+          }
         </ScrollWrapper>
         <ManageContactModal
           showManageContactModal={showManageContactModal}
@@ -468,24 +550,36 @@ class Contact extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  wallet: { data: wallet },
   chat: { data: { chats } },
   session: { data: session },
+  smartWallet: smartWalletState,
+  accounts: { data: accounts },
 }) => ({
   contacts,
-  wallet,
   chats,
   session,
+  smartWalletState,
+  accounts,
 });
+
+const structuredSelector = createStructuredSelector({
+  history: accountHistorySelector,
+  openSeaTxHistory: accountCollectiblesHistorySelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 
 const mapDispatchToProps = (dispatch: Function) => ({
   syncContact: userId => dispatch(syncContactAction(userId)),
-  fetchContactTransactions: (walletAddress, contactAddress) => {
-    dispatch(fetchContactTransactionsAction(walletAddress, contactAddress));
-  },
+  fetchContactTransactions: (contactAddress) => dispatch(fetchContactTransactionsAction(contactAddress)),
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Contact);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(Contact);

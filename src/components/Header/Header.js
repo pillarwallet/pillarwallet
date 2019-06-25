@@ -19,12 +19,12 @@
 */
 import * as React from 'react';
 import { Left, Body, Right } from 'native-base';
+import styled from 'styled-components/native';
 import { TextLink, BaseText } from 'components/Typography';
+import Title from 'components/Title';
+import IconButton from 'components/IconButton';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import { noop } from 'utils/common';
-import Title from 'components/Title';
-import styled from 'styled-components/native';
-import IconButton from 'components/IconButton';
 
 type Props = {
   onBack?: Function,
@@ -34,6 +34,7 @@ type Props = {
   onNextPress?: ?Function,
   onTitlePress?: Function,
   nextText?: string,
+  nextTextStyle?: Object,
   nextIcon?: ?string,
   title?: string,
   fullWidthTitle?: boolean,
@@ -56,7 +57,7 @@ type Props = {
 
 const Wrapper = styled.View`
   border-bottom-width: 0;
-  padding: ${props => props.noPadding ? 0 : '0 16px'};
+  padding: ${props => props.noPadding ? 0 : '0 20px'};
   z-index: 10;
   ${props => props.white
     ? `
@@ -118,12 +119,14 @@ const HeaderRight = styled(Right)`
   flex: ${props => props.flex};
   justify-content: flex-end;
   align-items: flex-end;
+  flex-direction: row;
 `;
 
 const Header = (props: Props) => {
   const {
     onBack,
     nextText,
+    nextTextStyle,
     nextIcon,
     nextIconSize,
     onNextPress,
@@ -217,7 +220,7 @@ const Header = (props: Props) => {
           <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
             {headerRightAddon}
             {nextText &&
-              <TextLink onPress={onNextPress}>{nextText}</TextLink>
+              <TextLink style={nextTextStyle} onPress={onNextPress}>{nextText}</TextLink>
             }
             {nextIcon &&
               <IconWrapper>

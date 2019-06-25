@@ -24,6 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils, Interface } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
+import { createStructuredSelector } from 'reselect';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
@@ -42,6 +43,7 @@ import type { Asset, Balances } from 'models/Asset';
 import type { JsonRpcRequest } from 'models/JsonRpc';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
+import { accountBalancesSelector } from 'selectors/balances';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -118,7 +120,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
     const { value = 0, data } = payload.params[0];
 
-    let { to } = payload.params[0];
+    let { to = '' } = payload.params[0];
 
     let symbol = 'ETH';
     let asset = null;
@@ -127,7 +129,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
 
     if (isTokenTransfer) {
-      const matchingAssets = supportedAssets.filter(a => a.address === to);
+      const matchingAssets = supportedAssets.filter(a => a.address.toLowerCase() === to.toLowerCase());
       if (matchingAssets && matchingAssets.length) {
         const iface = new Interface(ERC20_CONTRACT_ABI);
         const parsedTransaction = iface.parseTransaction({ data, value }) || {};
@@ -412,7 +414,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { supportedAssets, balances },
+  assets: { supportedAssets },
   contacts: { data: contacts },
   session: { data: session },
   history: { gasInfo },
@@ -420,8 +422,16 @@ const mapStateToProps = ({
   contacts,
   session,
   supportedAssets,
-  balances,
   gasInfo,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -431,7 +441,4 @@ const mapDispatchToProps = dispatch => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(WalletConnectCallRequestScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectCallRequestScreen);

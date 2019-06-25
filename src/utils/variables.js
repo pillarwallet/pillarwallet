@@ -25,6 +25,7 @@ export const baseColors = {
   warmPurple: '#b2329c',
   brightPurple: '#4f1a91',
   electricBlue: '#007AFF',
+  electricBlueIntense: '#2329d6',
   duckEggBlue: '#e6eefa',
   selago: '#f6fafe',
   hawkesBlue: '#f0f7fe',
@@ -72,8 +73,18 @@ export const baseColors = {
   tumbleweed: '#db9a84',
   pattensBlue: '#F0F5FA',
   shark: '#292c33',
+  caribbeanGreen: '#4cf18b',
+  royalBlue: '#4588de',
+  blumine: '#275692',
+  emerald: '#3dd276',
+  greyser: '#d1d9e4',
+  midnight: '#222e44',
+  eucalypus: '#2aa057',
   tropicalBlue: '#CAE1F8',
   zumthor: '#EBF5FF',
+  lavenderBlue: '#c3e0ff',
+  hoki: '#647fa4',
+  deepSkyBlue: '#01BFFF',
 };
 
 export const brandColors = [

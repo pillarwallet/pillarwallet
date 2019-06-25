@@ -29,6 +29,7 @@ import isEqualWith from 'lodash.isequalwith';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import Swipeout from 'react-native-swipeout';
+import { createStructuredSelector } from 'reselect';
 
 // components
 import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
@@ -43,6 +44,7 @@ import { EXPANDED, EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLay
 import { ASSET } from 'constants/navigationConstants';
 
 // utils
+import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
 import { formatMoney, smallScreen } from 'utils/common';
 
@@ -51,6 +53,12 @@ import assetsConfig from 'configs/assetsConfig';
 
 // types
 import type { Assets, Balances } from 'models/Asset';
+import type { Account } from 'models/Account';
+
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
+import { activeAccountSelector } from 'selectors';
+import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 
 // local components
 import HideAssetButton from './HideAssetButton';
@@ -64,13 +72,14 @@ type Props = {
   horizontalPadding: Function,
   assets: Assets,
   balances: Balances,
-  wallet: Object,
   rates: Object,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetsLayout: string,
   forceHideRemoval: boolean,
   updateHideRemoval: Function,
+  activeAccount: Account,
+  paymentNetworkBalances: Balances,
 }
 
 class AssetsList extends React.Component<Props> {
@@ -123,7 +132,7 @@ class AssetsList extends React.Component<Props> {
 
   renderToken = ({ item: asset }) => {
     const {
-      wallet,
+      activeAccount,
       baseFiatCurrency,
       assetsLayout,
       onHideTokenFromWallet,
@@ -141,6 +150,8 @@ class AssetsList extends React.Component<Props> {
       wallpaperUrl,
       decimals,
       iconUrl,
+      paymentNetworkBalance,
+      paymentNetworkBalanceInFiat,
     } = asset;
 
     const fullIconMonoUrl = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
@@ -157,7 +168,7 @@ class AssetsList extends React.Component<Props> {
       description: asset.description,
       balance,
       balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
-      address: wallet.address,
+      address: getAccountAddress(activeAccount),
       icon: fullIconMonoUrl,
       iconColor: fullIconUrl,
       wallpaper: fullIconWallpaperUrl,
@@ -181,6 +192,9 @@ class AssetsList extends React.Component<Props> {
       isListed,
       disclaimer,
       assetData,
+      paymentNetworkBalance,
+      paymentNetworkBalanceFormatted: formatMoney(paymentNetworkBalance, 4),
+      paymentNetworkBalanceInFiat: formatMoney(paymentNetworkBalanceInFiat),
     };
     const isETH = asset.symbol === ETH;
 
@@ -271,6 +285,7 @@ class AssetsList extends React.Component<Props> {
       rates,
       balances,
       horizontalPadding,
+      paymentNetworkBalances,
     } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
@@ -279,12 +294,15 @@ class AssetsList extends React.Component<Props> {
       .map(({ symbol, balance, ...rest }) => ({
         symbol,
         balance: getBalance(balances, symbol),
+        paymentNetworkBalance: getBalance(paymentNetworkBalances, symbol),
         ...rest,
       }))
-      .map(({ balance, symbol, ...rest }) => ({
+      .map(({ balance, symbol, paymentNetworkBalance, ...rest }) => ({ // eslint-disable-line
         balance,
         symbol,
         balanceInFiat: balance * getRate(rates, symbol, fiatCurrency),
+        paymentNetworkBalance,
+        paymentNetworkBalanceInFiat: paymentNetworkBalance * getRate(rates, symbol, fiatCurrency),
         ...rest,
       }))
       .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
@@ -326,24 +344,29 @@ class AssetsList extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  wallet: { data: wallet },
-  assets: {
-    data: assets,
-    balances,
-  },
+  assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
 }) => ({
-  wallet,
   assets,
-  balances,
   rates,
   baseFiatCurrency,
   assetsLayout,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
+  activeAccount: activeAccountSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AssetsList);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsList);

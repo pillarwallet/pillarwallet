@@ -17,9 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Sentry } from 'react-native-sentry';
+import get from 'lodash.get';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { Answers } from 'react-native-fabric';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
@@ -42,11 +42,11 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 import {
-  transferETH,
-  transferERC20,
-  transferERC721,
   getExchangeRates,
+  transferSigned,
 } from 'services/assets';
+import CryptoWallet from 'services/cryptoWallet';
+
 import type {
   TokenTransactionPayload,
   CollectibleTransactionPayload,
@@ -54,23 +54,119 @@ import type {
 } from 'models/Transaction';
 import type { Asset, Assets } from 'models/Asset';
 import { transformAssetsToObject } from 'utils/assets';
-import { delay, getEthereumProvider, noop, uniqBy } from 'utils/common';
-import { buildHistoryTransaction } from 'utils/history';
+import { delay, noop, uniqBy } from 'utils/common';
+import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
+import {
+  getActiveAccountAddress,
+  getActiveAccount,
+  getActiveAccountId,
+  getActiveAccountType,
+  getAccountAddress,
+} from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
+import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
   error: ?string,
 };
 
-const catchTransactionError = (e, type, tx) => {
-  Sentry.captureException({
-    tx,
-    type,
-    error: e.message,
-  });
-  return { error: e.message };
+export const sendSignedAssetTransactionAction = (
+  transaction: any,
+) => {
+  return async () => {
+    const {
+      signedTransaction: { signedHash },
+    } = transaction;
+    if (!signedHash) return null;
+    const transactionHash = await transferSigned(signedHash).catch(e => ({ error: e }));
+    if (transactionHash.error) {
+      return null;
+    }
+    return transactionHash;
+  };
+};
+
+export const signAssetTransactionAction = (
+  assetTransaction: TransactionPayload,
+  wallet: Object,
+) => {
+  return async (dispatch: Function, getState: Function) => {
+    const tokenType = get(assetTransaction, 'tokenType', '');
+    const symbol = get(assetTransaction, 'symbol', '');
+
+    if (tokenType === COLLECTIBLES) {
+      await dispatch(fetchCollectiblesAction());
+    }
+
+    const {
+      accounts: { data: accounts },
+      collectibles: { data: collectibles },
+    } = getState();
+
+    const accountId = getActiveAccountId(accounts);
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) return {};
+    const accountCollectibles = collectibles[accountId] || [];
+
+    let signedTransaction;
+
+    // get wallet provider
+    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
+    const walletProvider = await cryptoWallet.getProvider();
+
+    // get only signed transaction
+    const transaction = { ...assetTransaction, signOnly: true };
+
+    if (tokenType === COLLECTIBLES) {
+      // $FlowFixMe
+      const { tokenId } = (assetTransaction: CollectibleTransactionPayload);
+      const collectibleInfo = accountCollectibles.find(item => item.id === tokenId);
+      if (collectibleInfo) {
+        // $FlowFixMe
+        signedTransaction = await walletProvider.transferERC721(
+          activeAccount,
+          // $FlowFixMe
+          transaction,
+          getState(),
+        );
+      }
+    } else if (symbol === ETH) {
+      // $FlowFixMe
+      signedTransaction = await walletProvider.transferETH(
+        activeAccount,
+        // $FlowFixMe
+        transaction,
+        getState(),
+      );
+    } else {
+      signedTransaction = await walletProvider.transferERC20(
+        activeAccount,
+        // $FlowFixMe
+        transaction,
+        getState(),
+      );
+    }
+
+    // $FlowFixMe
+    if (signedTransaction.error) {
+      return {};
+    }
+
+    // update transaction count
+    if (signedTransaction) {
+      const { nonce: lastNonce, transactionCount: lastCount } = signedTransaction;
+      const txCountNew = { lastCount, lastNonce };
+      dispatch({
+        type: UPDATE_TX_COUNT,
+        payload: txCountNew,
+      });
+      dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
+    }
+
+    return signedTransaction;
+  };
 };
 
 export const sendAssetAction = (
@@ -79,136 +175,111 @@ export const sendAssetAction = (
   navigateToNextScreen: Function = noop,
 ) => {
   return async (dispatch: Function, getState: Function) => {
-    const {
-      history: { data: currentHistory },
-      txCount: { data: { lastNonce } },
-      collectibles: { assets, transactionHistory: collectiblesHistory },
-    } = getState();
-    wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
-    const transactionCount = await wallet.provider.getTransactionCount(wallet.address, 'pending');
+    const tokenType = get(transaction, 'tokenType', '');
+    const symbol = get(transaction, 'symbol', '');
 
-    let nonce;
-    let tokenTx = {};
-    let historyTx;
-    let collectibles = assets;
-    const { to, note } = transaction;
-
-    if (lastNonce === transactionCount && lastNonce > 0) {
-      nonce = lastNonce + 1;
+    if (tokenType === COLLECTIBLES) {
+      await dispatch(fetchCollectiblesAction());
     }
 
-    if (transaction.tokenType && transaction.tokenType === COLLECTIBLES) {
+    const {
+      history: { data: currentHistory },
+      accounts: { data: accounts },
+      collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
+    } = getState();
+
+    const accountId = getActiveAccountId(accounts);
+    const activeAccount = getActiveAccount(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
+    if (!activeAccount) return;
+
+    let tokenTx = {};
+    let historyTx;
+    const accountCollectibles = collectibles[accountId] || [];
+    const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
+    const { to, note } = transaction;
+
+    // get wallet provider
+    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
+    const walletProvider = await cryptoWallet.getProvider();
+
+    // send collectible
+    if (tokenType === COLLECTIBLES) {
       // $FlowFixMe
-      const { contractAddress, tokenId } = (transaction: CollectibleTransactionPayload);
-      await dispatch(fetchCollectiblesAction());
-      const {
-        collectibles: { assets: newlyFetchedCollectibles },
-      } = getState();
-
-      collectibles = newlyFetchedCollectibles;
-      const thisCollectible = collectibles.find(collectible => {
-        return collectible.id === tokenId;
-      });
-
-      if (!thisCollectible) {
+      const { tokenId } = (transaction: CollectibleTransactionPayload);
+      const collectibleInfo = accountCollectibles.find(item => item.id === tokenId);
+      if (!collectibleInfo) {
         tokenTx = {
           error: 'is not owned',
           hash: null,
           noRetry: true,
         };
       } else {
-        tokenTx = await transferERC721({
-          from: wallet.address,
-          to,
-          contractAddress,
-          tokenId,
-          wallet,
-          nonce,
-        }).catch((e) => {
-          catchTransactionError(e, 'ERC721', {
-            contractAddress,
-            from: wallet.address,
-            to,
-            tokenId,
-          });
-        });
+        // $FlowFixMe
+        tokenTx = await walletProvider.transferERC721(
+          activeAccount,
+          // $FlowFixMe
+          transaction,
+          getState(),
+        );
+
         if (tokenTx.hash) {
-          const historyTxPart = buildHistoryTransaction({
-            ...tokenTx,
-            asset: transaction.name,
-            note,
-          });
           historyTx = {
-            ...historyTxPart,
+            ...buildHistoryTransaction({
+              ...tokenTx,
+              asset: transaction.name,
+              note,
+            }),
             to,
-            from: wallet.address,
-            assetData: { ...thisCollectible },
+            from: accountAddress,
+            assetData: { ...collectibleInfo },
             type: COLLECTIBLE_TRANSACTION,
-            icon: thisCollectible.icon,
+            icon: collectibleInfo.icon,
           };
         }
       }
+    // send Ether
+    } else if (symbol === ETH) {
+      // $FlowFixMe
+      tokenTx = await walletProvider.transferETH(
+        activeAccount,
+        // $FlowFixMe
+        transaction,
+        getState(),
+      );
+
+      // $FlowFixMe
+      if (tokenTx.hash) {
+        historyTx = buildHistoryTransaction({
+          ...tokenTx,
+          asset: symbol,
+          note,
+        });
+      }
+    // send ERC20 token
     } else {
       const {
-        gasLimit,
         amount,
-        gasPrice,
-        symbol,
-        contractAddress,
         decimals,
-        data,
         // $FlowFixMe
       } = (transaction: TokenTransactionPayload);
 
-      if (symbol === ETH) {
-        tokenTx = await transferETH({
-          gasLimit,
-          gasPrice,
-          to,
-          amount,
-          wallet,
-          nonce,
-          data,
-        }).catch((e) => catchTransactionError(e, ETH, {
-          gasLimit,
-          gasPrice,
-          to,
-          amount,
-        }));
-        if (tokenTx.hash) {
-          historyTx = buildHistoryTransaction({
-            ...tokenTx,
-            asset: symbol,
-            note,
-          });
-        }
-      } else {
+      tokenTx = await walletProvider.transferERC20(
+        activeAccount,
         // $FlowFixMe
-        tokenTx = await transferERC20({
-          gasLimit,
-          gasPrice,
-          to,
-          amount,
-          contractAddress,
-          wallet,
-          decimals,
-          nonce,
-        }).catch((e) => catchTransactionError(e, 'ERC20', {
-          decimals,
-          contractAddress,
-          to,
-          amount,
-        }));
-        // $FlowFixMe
-        if (tokenTx.hash) {
-          historyTx = buildHistoryTransaction({
-            ...tokenTx,
-            asset: symbol,
-            value: parseFloat(amount) * (10 ** decimals),
-            to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
-            note,
-          });
-        }
+        transaction,
+        getState(),
+      );
+
+      // $FlowFixMe
+      if (tokenTx.hash) {
+        historyTx = buildHistoryTransaction({
+          ...tokenTx,
+          asset: symbol,
+          value: parseFloat(amount) * (10 ** decimals),
+          to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
+          note,
+        });
       }
     }
 
@@ -217,23 +288,45 @@ export const sendAssetAction = (
       if (transaction.tokenType && transaction.tokenType === COLLECTIBLES) {
         dispatch({
           type: ADD_COLLECTIBLE_TRANSACTION,
-          payload: { transactionData: { ...historyTx }, tokenId: transaction.tokenId },
+          payload: {
+            transactionData: { ...historyTx },
+            tokenId: transaction.tokenId,
+            accountId,
+          },
         });
-        const updatedCollectiblesHistory = [...collectiblesHistory, historyTx];
+        const updatedCollectiblesHistory = {
+          ...collectiblesHistory,
+          [accountId]: [...accountCollectiblesHistory, historyTx],
+        };
         await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
-        const updatedCollectibles = collectibles.filter(thisAsset => thisAsset.id !== transaction.tokenId);
+        const updatedAccountCollectibles = accountCollectibles.filter(item => item.id !== transaction.tokenId);
+        const updatedCollectibles = {
+          ...collectibles,
+          [accountId]: updatedAccountCollectibles,
+        };
         dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
       } else {
-        dispatch({ type: ADD_TRANSACTION, payload: historyTx });
-        const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
+        dispatch({
+          type: ADD_TRANSACTION,
+          payload: {
+            accountId,
+            historyTx,
+          },
+        });
+        const accountHistory = currentHistory[accountId] || [];
+        const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
+        const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
       }
     }
 
     // update transaction count
-    if (tokenTx.hash) {
-      const txCountNew = { lastCount: transactionCount, lastNonce: tokenTx.nonce };
-      dispatch({ type: UPDATE_TX_COUNT, payload: txCountNew });
+    if (tokenTx.hash && tokenTx.transactionCount) {
+      const txCountNew = { lastCount: tokenTx.transactionCount, lastNonce: tokenTx.nonce };
+      dispatch({
+        type: UPDATE_TX_COUNT,
+        payload: txCountNew,
+      });
       dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
     }
 
@@ -269,19 +362,31 @@ export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = 
 export const fetchAssetsBalancesAction = (assets: Assets) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      wallet: { data: wallet },
+      accounts: { data: accounts },
+      balances: { data: balances },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
 
+    const walletAddress = getActiveAccountAddress(accounts);
+    const accountId = getActiveAccountId(accounts);
+    const activeAccountType = getActiveAccountType(accounts);
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
     });
 
-    const balances = await api.fetchBalances({ address: wallet.address, assets: Object.values(assets) });
-    if (balances && balances.length) {
-      const transformedBalances = transformAssetsToObject(balances);
-      dispatch(saveDbAction('balances', { balances: transformedBalances }, true));
-      dispatch({ type: UPDATE_BALANCES, payload: transformedBalances });
+    const newBalances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
+    if (newBalances && newBalances.length) {
+      const transformedBalances = transformAssetsToObject(newBalances);
+      const updatedBalances = {
+        ...balances,
+        [accountId]: transformedBalances,
+      };
+      dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
+      dispatch({
+        type: UPDATE_BALANCES,
+        payload: updatedBalances,
+      });
     }
 
     // @TODO: Extract "rates fetching" to it's own action ones required.
@@ -289,6 +394,10 @@ export const fetchAssetsBalancesAction = (assets: Assets) => {
     if (rates && Object.keys(rates).length) {
       dispatch(saveDbAction('rates', { rates }, true));
       dispatch({ type: UPDATE_RATES, payload: rates });
+    }
+
+    if (smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
+      dispatch(fetchVirtualAccountBalanceAction());
     }
   };
 };
@@ -413,5 +522,28 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
       dispatch(updateAssetsAction(newAssets));
       dispatch(fetchAssetsBalancesAction(newAssets));
     }
+  };
+};
+
+export const resetLocalNonceToTransactionCountAction = (wallet: Object) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accounts: { data: accounts },
+    } = getState();
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) return;
+    const accountAddress = getAccountAddress(activeAccount);
+    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
+    const walletProvider = await cryptoWallet.getProvider();
+    const transactionCount = await walletProvider.getTransactionCount(accountAddress);
+    const txCountNew = {
+      lastCount: transactionCount,
+      lastNonce: transactionCount - 1,
+    };
+    await dispatch({
+      type: UPDATE_TX_COUNT,
+      payload: txCountNew,
+    });
+    dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
   };
 };

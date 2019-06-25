@@ -7,8 +7,8 @@ exports[`Header should render Header correctly 1`] = `
       Object {
         "borderBottomWidth": 0,
         "paddingBottom": 0,
-        "paddingLeft": 16,
-        "paddingRight": 16,
+        "paddingLeft": 20,
+        "paddingRight": 20,
         "paddingTop": 0,
         "zIndex": 10,
       },
@@ -107,6 +107,7 @@ exports[`Header should render Header correctly 1`] = `
           Object {
             "alignItems": "flex-end",
             "flexBasis": 0,
+            "flexDirection": "row",
             "flexGrow": 1,
             "flexShrink": 1,
             "justifyContent": "flex-end",

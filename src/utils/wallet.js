@@ -25,6 +25,7 @@ import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { getRandomInt, ethSign } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
+import { Sentry } from 'react-native-sentry';
 
 const storage = Storage.getInstance('db');
 
@@ -44,12 +45,28 @@ export function generateWordsToValidate(numWordsToGenerate: number, maxWords: nu
 }
 
 export async function getSaltedPin(pin: string, dispatch: Function): Promise<string> {
-  let { deviceUniqueId = null } = (await storage.get('deviceUniqueId')) || {};
+  let { deviceUniqueId = null } = await storage.get('deviceUniqueId') || {};
   if (!deviceUniqueId) {
     deviceUniqueId = DeviceInfo.getUniqueID();
     await dispatch(saveDbAction('deviceUniqueId', { deviceUniqueId }, true));
   }
   return deviceUniqueId + pin + deviceUniqueId.slice(0, 5);
+}
+
+export function normalizeWalletAddress(walletAddress: string): string {
+  if (walletAddress.indexOf('0x') !== 0) {
+    walletAddress = `0x${walletAddress}`;
+  }
+  return walletAddress;
+}
+
+export function catchTransactionError(e: Object, type: string, tx: Object) {
+  Sentry.captureException({
+    tx,
+    type,
+    error: e.message,
+  });
+  return { error: e.message };
 }
 
 // handle eth_signTransaction

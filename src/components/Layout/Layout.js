@@ -50,6 +50,7 @@ type ScrollWrapperProps = {
   disableAutomaticScroll?: boolean,
   onKeyboardWillShow?: Function,
   innerRef?: Object,
+  contentContainerStyle?: Object,
 };
 
 export const Center = styled.View`
@@ -116,16 +117,27 @@ const FooterInner = styled.KeyboardAvoidingView`
 `;
 
 export const ScrollWrapper = (props: ScrollWrapperProps) => {
+  const {
+    regularPadding,
+    color,
+    disableAutomaticScroll,
+    innerRef,
+    onKeyboardWillShow,
+    contentContainerStyle,
+    children,
+  } = props;
+
   return (
     <KAScrollView
-      regularPadding={props.regularPadding}
-      color={props.color}
+      regularPadding={regularPadding}
+      color={color}
       enableOnAndroid
-      enableAutomaticScroll={!props.disableAutomaticScroll}
-      innerRef={props.innerRef}
-      onKeyboardWillShow={props.onKeyboardWillShow}
+      enableAutomaticScroll={!disableAutomaticScroll}
+      innerRef={innerRef}
+      onKeyboardWillShow={onKeyboardWillShow}
+      contentContainerStyle={contentContainerStyle}
     >
-      {props.children}
+      {children}
     </KAScrollView>
   );
 };

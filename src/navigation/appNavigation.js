@@ -22,7 +22,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
-import { Animated, Easing, View, Platform, Image } from 'react-native';
+import { Animated, Easing, View, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
 // import ProfileImage from 'components/ProfileImage/ProfileImage';
 
@@ -61,12 +61,28 @@ import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallReq
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
+import ContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
+import UpgradeIntroScreen from 'screens/UpgradeToSmartWallet/UpgradeIntroScreen';
+import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
+import RecoveryAgentsScreen from 'screens/UpgradeToSmartWallet/RecoveryAgentsScreen';
+import ChooseAssetsScreen from 'screens/UpgradeToSmartWallet/ChooseAssetsScreen';
+import EditAssetAmountScreen from 'screens/UpgradeToSmartWallet/EditAssetAmountScreen';
+import UpgradeReviewScreen from 'screens/UpgradeToSmartWallet/UpgradeReviewScreen';
+import UpgradeConfirmScreen from 'screens/UpgradeToSmartWallet/UpgradeConfirmScreen';
+import SmartWalletUnlockScreen from 'screens/UpgradeToSmartWallet/SmartWalletUnlock';
+import TankDetailsScreen from 'screens/Tank/TankDetails';
+import FundTankScreen from 'screens/Tank/FundTank';
+import FundConfirmScreen from 'screens/Tank/FundConfirm';
+import SettleBalanceScreen from 'screens/Tank/SettleBalance';
+import SettleBalanceConfrimScreen from 'screens/Tank/SettleBalanceConfirm';
+import WalletsListScreen from 'screens/ManageWallets/WalletsList';
+import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
-import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
+import CustomTabBarComponent from 'components/CustomTabBarComponent';
 import Toast from 'components/Toast';
 
 // actions
@@ -132,7 +148,26 @@ import {
   BADGE,
   OTP,
   CONFIRM_CLAIM,
+  UPGRADE_TO_SMART_WALLET_FLOW,
+  UPGRADE_INTRO,
+  UPGRADE_INFO,
+  RECOVERY_AGENTS,
+  CHOOSE_ASSETS_TO_TRANSFER,
+  EDIT_ASSET_AMOUNT_TO_TRANSFER,
+  UPGRADE_REVIEW,
+  UPGRADE_CONFIRM,
+  SMART_WALLET_UNLOCK,
+  MANAGE_TANK_FLOW,
+  TANK_DETAILS,
+  FUND_TANK,
+  FUND_CONFIRM,
+  SETTLE_BALANCE,
+  SETTLE_BALANCE_CONFIRM,
+  MANAGE_WALLETS_FLOW,
+  WALLETS_LIST,
+  WALLET_SETTINGS,
   MANAGE_DETAILS_SESSIONS,
+  CONTACT_INFO,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -237,6 +272,7 @@ const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
+  [CONTACT_INFO]: ContactInfo,
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [CONTACT]: ContactScreen,
   [COLLECTIBLE]: CollectibleScreen,
@@ -306,17 +342,6 @@ const tabBarLabel = labelText => ({ focused, tintColor }) => (
 );
 
 // TAB NAVIGATION FLOW
-const generateCustomBottomBar = (): Object => {
-  if (Platform.OS !== 'android') {
-    return {};
-  }
-
-  return {
-    tabBarComponent: props => <AndroidTabBarComponent {...props} />,
-    tabBarPosition: 'bottom',
-  };
-};
-
 const tabNavigation = createBottomTabNavigator(
   {
     [ASSETS]: {
@@ -381,7 +406,7 @@ const tabNavigation = createBottomTabNavigator(
     tabBarPosition: 'bottom',
     animationEnabled: false,
     swipeEnabled: false,
-    ...generateCustomBottomBar(),
+    tabBarComponent: props => <CustomTabBarComponent {...props} />,
   },
 );
 
@@ -436,13 +461,46 @@ const participateInICOFlow = createStackNavigator(
 );
 
 // WALLET BACKUP IN SETTINGS FLOW
-const backupWalletFlow = createStackNavigator(
-  {
-    [BACKUP_PHRASE]: BackupPhraseScreen,
-    [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
-  },
-  StackNavigatorModalConfig,
-);
+const backupWalletFlow = createStackNavigator({
+  [BACKUP_PHRASE]: BackupPhraseScreen,
+  [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
+}, StackNavigatorModalConfig);
+
+// UPGRADE TO SMART WALLET FLOW
+const smartWalletUpgradeFlow = createStackNavigator({
+  [UPGRADE_INTRO]: UpgradeIntroScreen,
+  [UPGRADE_INFO]: UpgradeInfoScreen,
+  [RECOVERY_AGENTS]: RecoveryAgentsScreen,
+  [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
+  [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
+  [UPGRADE_REVIEW]: UpgradeReviewScreen,
+  [UPGRADE_CONFIRM]: UpgradeConfirmScreen,
+  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
+}, StackNavigatorConfig);
+
+smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+// MANAGE WALLETS FLOW
+const manageWalletsFlow = createStackNavigator({
+  [WALLETS_LIST]: WalletsListScreen,
+  [WALLET_SETTINGS]: WalletSettingsScreen,
+  [FUND_CONFIRM]: FundConfirmScreen,
+  [RECOVERY_AGENTS]: RecoveryAgentsScreen,
+  [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
+}, StackNavigatorConfig);
+
+manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+// TANK FLOW
+const manageTankFlow = createStackNavigator({
+  [TANK_DETAILS]: TankDetailsScreen,
+  [FUND_TANK]: FundTankScreen,
+  [FUND_CONFIRM]: FundConfirmScreen,
+  [SETTLE_BALANCE]: SettleBalanceScreen,
+  [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfrimScreen,
+}, StackNavigatorConfig);
+
+manageTankFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -456,6 +514,9 @@ const AppFlowNavigation = createStackNavigator(
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
+    [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletUpgradeFlow,
+    [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
+    [MANAGE_TANK_FLOW]: manageTankFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
   },
   modalTransition,
@@ -489,6 +550,7 @@ type Props = {
   updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
+  smartWalletFeatureEnabled: boolean,
 }
 
 let lockTimer;
@@ -598,6 +660,7 @@ class AppFlow extends React.Component<Props, {}> {
       hasUnreadChatNotifications,
       navigation,
       backupStatus,
+      smartWalletFeatureEnabled,
     } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
@@ -615,6 +678,7 @@ class AppFlow extends React.Component<Props, {}> {
           hasUnreadChatNotifications,
           intercomNotificationsCount,
           isWalletBackedUp,
+          smartWalletFeatureEnabled,
         }}
         navigation={navigation}
       />
@@ -632,9 +696,8 @@ const mapStateToProps = ({
   },
   assets: { data: assets },
   wallet: { data: wallet, backupStatus },
-  appSettings: {
-    data: { isPickingImage },
-  },
+  appSettings: { data: { isPickingImage } },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   profileImage,
   userState,
@@ -646,6 +709,7 @@ const mapStateToProps = ({
   hasUnreadChatNotifications,
   intercomNotificationsCount,
   isPickingImage,
+  smartWalletFeatureEnabled,
 });
 
 const mapDispatchToProps = dispatch => ({

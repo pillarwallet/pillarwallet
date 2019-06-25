@@ -33,7 +33,7 @@ export type AppSettingsReducerAction = {
 
 const initialState = {
   data: {
-    lastTxSyncDatetime: 0,
+    lastTxSyncDatetimes: {},
     appearanceSettings: {
       assetsLayout: SIMPLIFIED,
     },
