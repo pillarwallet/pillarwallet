@@ -40,7 +40,6 @@ import { BaseText, Label, TextLink, Paragraph, BoldText } from 'components/Typog
 import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
-import Toast from 'components/Toast';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 import Animation from 'components/Animation';
@@ -484,14 +483,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setState({ pressedOfferId: _id }, () =>
       takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, order => {
         this.setState({ pressedOfferId: '' }); // reset
-        if (!order || !order.data || order.error) {
-          Toast.show({
-            title: 'Exchange service failed',
-            type: 'warning',
-            message: 'Unable to request offer',
-          });
-          return;
-        }
         const { data: offerOrderData } = order;
         navigation.navigate(EXCHANGE_CONFIRM, {
           offerOrder: {

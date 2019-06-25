@@ -54,7 +54,7 @@ export const takeOfferAction = (
   toAssetCode: string,
   fromAmount: number,
   provider: string,
-  onOrderFunction: Function,
+  successCallback: Function,
 ) => {
   return async () => {
     const offerRequest = {
@@ -64,7 +64,15 @@ export const takeOfferAction = (
       toAssetCode,
     };
     const order = await exchangeService.takeOffer(offerRequest);
-    onOrderFunction(order);
+    if (!order || !order.data || order.error) {
+      Toast.show({
+        title: 'Exchange service failed',
+        type: 'warning',
+        message: 'Unable to request offer',
+      });
+      return;
+    }
+    successCallback(order);
   };
 };
 
