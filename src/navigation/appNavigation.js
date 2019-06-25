@@ -569,6 +569,7 @@ type Props = {
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
   smartWalletFeatureEnabled: boolean,
+  exchangeFeatureEnabled: boolean,
 }
 
 let lockTimer;
@@ -679,6 +680,7 @@ class AppFlow extends React.Component<Props, {}> {
       navigation,
       backupStatus,
       smartWalletFeatureEnabled,
+      exchangeFeatureEnabled,
     } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
@@ -697,6 +699,7 @@ class AppFlow extends React.Component<Props, {}> {
           intercomNotificationsCount,
           isWalletBackedUp,
           smartWalletFeatureEnabled,
+          exchangeFeatureEnabled,
         }}
         navigation={navigation}
       />
@@ -715,7 +718,12 @@ const mapStateToProps = ({
   assets: { data: assets },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage } },
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  featureFlags: {
+    data: {
+      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
+      EXCHANGE_ENABLED: exchangeFeatureEnabled,
+    },
+  },
 }) => ({
   profileImage,
   userState,
@@ -728,6 +736,7 @@ const mapStateToProps = ({
   intercomNotificationsCount,
   isPickingImage,
   smartWalletFeatureEnabled,
+  exchangeFeatureEnabled,
 });
 
 const mapDispatchToProps = dispatch => ({
