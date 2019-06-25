@@ -62,7 +62,9 @@ export const takeOfferAction = (fromAssetCode: string, toAssetCode: string, from
   };
 };
 
-export const resetOffersAction = () => {
+export const resetOffersAction = () => ({
+  type: RESET_OFFERS,
+});
   return async (dispatch: Function) => {
     dispatch({ type: RESET_OFFERS });
   };
