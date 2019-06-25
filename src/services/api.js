@@ -32,7 +32,7 @@ import {
 } from 'react-native-dotenv';
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
-import type { UserBadgesResponse, BadgesInfoResponse, SelfAwardBadgeResponse } from 'models/Badge';
+import type { UserBadgesResponse, BadgesInfoResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
 import {
   fetchAssetBalances,
   fetchLastBlockNumber,
@@ -45,6 +45,7 @@ import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ConnectionIdentityKeyMap, ConnectionUpdateIdentityKeys } from 'models/Connections';
 import { getLimitedData } from 'utils/opensea';
+import { uniqBy } from 'utils/common';
 
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
@@ -476,6 +477,14 @@ SDKWrapper.prototype.fetchBadgesInfo = function (walletId: string): Promise<Badg
     .then(({ data }) => data)
     .then(data => data.reduce((memo, badge) => ({ ...memo, [badge.id]: badge }), {}))
     .catch(() => ({}));
+};
+
+SDKWrapper.prototype.fetchContactBadges = function (walletId: string, userId: string): Promise<Badges> {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.badge.get({ walletId, userId }))
+    .then(({ data }) => data)
+    .then((data) => uniqBy(data, 'id'))
+    .catch(() => ([]));
 };
 
 SDKWrapper.prototype.selfAwardBadge = function (walletId: string, event: string): Promise<SelfAwardBadgeResponse | {}> {

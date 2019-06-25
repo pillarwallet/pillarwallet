@@ -22,13 +22,14 @@ import {
   RefreshControl,
   Platform,
   View,
-  // FlatList,
+  FlatList,
 } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
+import get from 'lodash.get';
 import { baseColors, fontSizes } from 'utils/variables';
 import {
   syncContactAction,
@@ -38,6 +39,7 @@ import {
 } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
+import { fetchContactBadgesAction } from 'actions/badgesActions';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
 import { BADGE, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
@@ -57,10 +59,12 @@ import Button from 'components/Button';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-// import { CollapsibleSection } from 'components/CollapsibleSection';
+import { CollapsibleSection } from 'components/CollapsibleSection';
+import Spinner from 'components/Spinner';
 import type { ApiUser } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
+import type { Badges } from 'models/Badge';
 import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
@@ -111,6 +115,10 @@ const Message = styled(BaseText)`
   text-align: center;
 `;
 
+const EmptyStateWrapper = styled.View`
+  margin-bottom: 30px;
+`;
+
 type Props = {
   name: string,
   navigation: NavigationScreenProp<*>,
@@ -127,6 +135,9 @@ type Props = {
   history: Array<*>,
   deploySmartWallet: Function,
   openSeaTxHistory: Object[],
+  contactsBadges: Badges,
+  fetchContactBadges: Function,
+  isFetchingBadges: boolean,
 };
 
 type State = {
@@ -138,7 +149,7 @@ type State = {
   forceOpen: boolean,
   collapsedActivityHeight: ?number,
   collapsedChatHeight: ?number,
-  // isBadgesSectionOpen: boolean,
+  isBadgesSectionOpen: boolean,
   relatedTransactions: Object[],
 };
 
@@ -166,7 +177,7 @@ class Contact extends React.Component<Props, State> {
       forceOpen: shouldOpenSheet,
       collapsedChatHeight: null,
       collapsedActivityHeight: null,
-      // isBadgesSectionOpen: true,
+      isBadgesSectionOpen: true,
       relatedTransactions: [],
     };
   }
@@ -177,6 +188,7 @@ class Contact extends React.Component<Props, State> {
       syncContact,
       session,
       navigation,
+      fetchContactBadges,
     } = this.props;
     this.isComponentMounted = true;
     const contactName = navigation.getParam('username', '');
@@ -200,6 +212,7 @@ class Contact extends React.Component<Props, State> {
     const localContact = this.localContact; // eslint-disable-line
     if (localContact && session.isOnline) {
       syncContact(localContact.id);
+      fetchContactBadges(localContact);
       fetchContactTransactions(localContact.ethAddress);
     }
   }
@@ -316,7 +329,7 @@ class Contact extends React.Component<Props, State> {
     return (
       <BadgeTouchableItem
         data={item}
-        onPress={() => navigation.navigate(BADGE, { id: item.id })}
+        onPress={() => navigation.navigate(BADGE, { badge: item })}
       />
     );
   };
@@ -359,9 +372,27 @@ class Contact extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
   }
 
-  // toggleBadgesSection = () => {
-  //   this.setState({ isBadgesSectionOpen: !this.state.isBadgesSectionOpen });
-  // };
+  toggleBadgesSection = () => {
+    this.setState({ isBadgesSectionOpen: !this.state.isBadgesSectionOpen });
+  };
+
+  renderEmptyBadgesState = () => {
+    const { isFetchingBadges } = this.props;
+    if (isFetchingBadges) {
+      return (
+        <Spinner />
+      );
+    }
+
+    return (
+      <EmptyStateWrapper>
+        <EmptyStateParagraph
+          title="No badges"
+          bodyText="This user does not have badges yet"
+        />
+      </EmptyStateWrapper>
+    );
+  };
 
   render() {
     const {
@@ -372,6 +403,7 @@ class Contact extends React.Component<Props, State> {
       smartWalletState,
       accounts,
       deploySmartWallet,
+      contactsBadges,
     } = this.props;
     const {
       showManageContactModal,
@@ -381,7 +413,7 @@ class Contact extends React.Component<Props, State> {
       forceOpen,
       collapsedActivityHeight,
       collapsedChatHeight,
-      // isBadgesSectionOpen,
+      isBadgesSectionOpen,
     } = this.state;
 
     const contactName = navigation.getParam('username', '');
@@ -418,6 +450,8 @@ class Contact extends React.Component<Props, State> {
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const disableSend = !!Object.keys(sendingBlockedMessage).length;
+
+    const contactBadges = get(contactsBadges, contact.username, []);
 
     return (
       <ContainerWithBottomSheet
@@ -496,23 +530,23 @@ class Contact extends React.Component<Props, State> {
                 </Wrapper>
                 }
               </CircleButtonsWrapper>
-              { /* CONTACT'S BADGES [Commented out since we do not have endpoint to fetch them]
               <CollapsibleSection
                 label="game of badges."
                 sectionWrapperStyle={{ marginBottom: 25 }}
                 collapseContent={
                   <FlatList
-                    data={badges}
+                    data={contactBadges}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={this.renderBadge}
                     style={{ width: '100%' }}
                     contentContainerStyle={[
                       { paddingHorizontal: 10 },
-                      !badges.length ? { width: '100%', justifyContent: 'center' } : {},
+                      !contactBadges.length ? { width: '100%', justifyContent: 'center' } : {},
                       ]}
                     horizontal
                     initialNumToRender={5}
                     removeClippedSubviews
+                    ListEmptyComponent={this.renderEmptyBadgesState}
                   />
                 }
                 onPress={this.toggleBadgesSection}
@@ -522,7 +556,7 @@ class Contact extends React.Component<Props, State> {
                   ? () => { this.scroll.scrollToEnd(); }
                   : () => {}
                 }
-              /> */ }
+              />
             </React.Fragment>
           }
         </ScrollWrapper>
@@ -554,12 +588,15 @@ const mapStateToProps = ({
   session: { data: session },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
+  badges: { contactsBadges, isFetchingBadges },
 }) => ({
   contacts,
   chats,
   session,
   smartWalletState,
   accounts,
+  contactsBadges,
+  isFetchingBadges,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -580,6 +617,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+  fetchContactBadges: (contact) => dispatch(fetchContactBadgesAction(contact)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(Contact);

@@ -57,6 +57,7 @@ import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initSmartWalletAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from './dbActions';
+import { fetchBadgesAction } from './badgesActions';
 
 const Crashlytics = firebase.crashlytics();
 
@@ -185,6 +186,8 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
 
       const isWalletBackedUp = isImported || isBackedUp;
       toastWalletBackup(isWalletBackedUp);
+
+      dispatch(fetchBadgesAction());
 
       navigate(navigateToAppAction);
     } catch (e) {
