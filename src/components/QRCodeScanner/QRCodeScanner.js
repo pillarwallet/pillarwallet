@@ -41,6 +41,7 @@ type Props = {
   dataFormatter: Function,
   rectangleColor: string,
   isActive: boolean,
+  onModalHide?: Function,
 };
 
 type State = {
@@ -196,7 +197,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   }
 
   render() {
-    const { isActive } = this.props;
+    const { isActive, onModalHide } = this.props;
     const { authorizationState } = this.state;
 
     if (authorizationState === PENDING) {
@@ -221,6 +222,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
           margin: 0,
           justifyContent: 'flex-start',
         }}
+        onModalHide={onModalHide}
       >
         {content}
       </Modal>
