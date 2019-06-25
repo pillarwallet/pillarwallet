@@ -19,27 +19,30 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Platform, TextInput, FlatList, Easing, Dimensions } from 'react-native';
+import { Platform, TextInput, FlatList } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
-import Modal from 'react-native-modalbox';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // COMPONENTS
 import { BoldText, BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
-import Header from 'components/Header';
+import SlideModal from 'components/Modals/SlideModal';
+import TankAssetBalance from 'components/TankAssetBalance';
+import SearchBar from 'components/SearchBar';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Separator from 'components/Separator';
 
 // UTILS
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import { SDK_PROVIDER } from 'react-native-dotenv';
-import { noop } from 'utils/common';
+import { formatMoney, noop } from 'utils/common';
+
+import { ETH } from 'constants/assetsConstants';
 
 type InputValue = {
   selector?: Object,
   input?: string,
 }
-
-const { height } = Dimensions.get('window');
-const halfScreen = height / 2;
 
 type Props = {
   wrapperStyle?: Object,
@@ -53,6 +56,7 @@ type Props = {
 
 type State = {
   showOptionsSelector: boolean,
+  query: string,
 }
 
 type EventLike = {
@@ -144,24 +148,6 @@ const InputField = styled(TextInput)`
     min-width: 10px;
 `;
 
-const OptionWrapper = styled.TouchableOpacity`
-  padding: 20px 0;
-  width: 100%;
-  flex-direction: row;
-`;
-
-const OptionsContentWrapper = styled.View`
-  border-top-left-radius: 30px;
-  border-top-right-radius:  30px;
-  background-color: ${baseColors.white};
-`;
-
-const Separator = styled.View`
-  width: 100%;
-  height: 1px;
-  background-color: ${baseColors.mediumLightGray}
-`;
-
 const PlaceholderWrapper = styled.View`
 `;
 
@@ -190,11 +176,18 @@ const AddonText = styled(BaseText)`
   color: ${UIColors.placeholderTextColor};
 `;
 
+const SearchBarWrapper = styled.View`
+  padding: 0 ${spacing.mediumLarge}px;
+`;
+
 const genericToken = require('assets/images/tokens/genericToken.png');
+
+const MIN_QUERY_LENGTH = 2;
 
 export default class SelectorInput extends React.Component<Props, State> {
   state = {
     showOptionsSelector: false,
+    query: '',
   };
 
   handleChange = (e: EventLike) => {
@@ -202,6 +195,14 @@ export default class SelectorInput extends React.Component<Props, State> {
     const { selector } = value;
     const { onChange } = inputProps;
     if (onChange) onChange({ selector, input: e.nativeEvent.text });
+  };
+
+  handleSearch = (query: string) => {
+    const formattedQuery = !query ? '' : query.trim();
+
+    this.setState({
+      query: formattedQuery,
+    });
   };
 
   selectValue = (selectedValue: Object) => {
@@ -213,23 +214,37 @@ export default class SelectorInput extends React.Component<Props, State> {
   };
 
   renderOption = ({ item: option }: Object) => {
+    const {
+      value,
+      symbol,
+      assetBalance,
+      paymentNetworkBalance,
+    } = option;
     const iconUrl = `${SDK_PROVIDER}/${option.icon}?size=3`;
+    const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
 
     return (
-      <OptionWrapper onPress={() => this.selectValue(option)}>
-        <SelectorImage
-          key={option.value}
-          source={{ uri: iconUrl }}
-          fallbackSource={genericToken}
-          resizeMode="contain"
-        />
-        <SlectorValue>{option.value}</SlectorValue>
-      </OptionWrapper>
+      <ListItemWithImage
+        onPress={() => this.selectValue(option)}
+        label={value}
+        itemImageUrl={iconUrl || genericToken}
+        itemValue={`${assetBalance} ${symbol}`}
+        fallbackSource={genericToken}
+        customAddon={paymentNetworkBalance
+          ? (
+            <TankAssetBalance
+              amount={paymentNetworkBalanceFormatted}
+              isSynthetic={symbol !== ETH}
+            />)
+          : null
+        }
+        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
+      />
     );
   };
 
   render() {
-    const { showOptionsSelector } = this.state;
+    const { showOptionsSelector, query } = this.state;
     const {
       wrapperStyle,
       inputProps = {},
@@ -246,6 +261,10 @@ export default class SelectorInput extends React.Component<Props, State> {
     const { selector: selectedOption = {}, input: inputValue } = value;
     const { value: selectedValue, icon } = selectedOption;
     const iconUrl = `${SDK_PROVIDER}/${icon}?size=3`;
+
+    const filteredListData = (query && query.length >= MIN_QUERY_LENGTH && options.length)
+      ? options.filter(({ value: val }) => val.toUpperCase().includes(query.toUpperCase()))
+      : options;
 
     return (
       <React.Fragment>
@@ -314,30 +333,48 @@ export default class SelectorInput extends React.Component<Props, State> {
           </ItemHolder>
           {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </Wrapper>
-        <Modal
-          style={{ flex: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }}
-          swipeToClose
-          swipeThreshold={50} // The threshold to reach in pixels to close the modal
-          isOpen={showOptionsSelector}
-          onClosed={() => this.setState({ showOptionsSelector: false })}
-          easing={Easing.linear()}
-          coverScreen
+        <SlideModal
+          isVisible={showOptionsSelector}
+          fullScreen
+          showHeader
+          onModalHide={() => this.setState({ showOptionsSelector: false })}
+          backgroundColor={baseColors.lightGray}
+          avoidKeyboard
         >
-          <OptionsContentWrapper>
-            <Header
-              title="select options"
-              onClose={() => this.setState({ showOptionsSelector: false })}
-            />
+          <Wrapper flex={1}>
+            <SearchBarWrapper>
+              <SearchBar
+                inputProps={{
+                  onChange: this.handleSearch,
+                  value: query,
+                  autoCapitalize: 'none',
+                }}
+                placeholder="Search for an asset"
+                backgroundColor={baseColors.white}
+              />
+            </SearchBarWrapper>
             <FlatList
-              data={options}
-              keyExtractor={(item) => item.key}
+              data={filteredListData}
               renderItem={this.renderOption}
-              style={{ maxHeight: halfScreen, paddingHorizontal: spacing.large }}
+              keyExtractor={({ value: val }) => val}
+              keyboardShouldPersistTaps="always"
               contentContainerStyle={{ paddingBottom: 40 }}
-              ItemSeparatorComponent={() => (<Separator />)}
+              ListEmptyComponent={
+                <Wrapper
+                  fullScreen
+                  style={{
+                    paddingTop: 90,
+                    paddingBottom: 90,
+                    alignItems: 'center',
+                  }}
+                >
+                  <EmptyStateParagraph title="Nothing found" />
+                </Wrapper>
+              }
+              ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
             />
-          </OptionsContentWrapper>
-        </Modal>
+          </Wrapper>
+        </SlideModal>
       </React.Fragment>
     );
   }

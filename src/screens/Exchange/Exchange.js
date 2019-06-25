@@ -28,6 +28,7 @@ import t from 'tcomb-form-native';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
@@ -43,6 +44,8 @@ import Toast from 'components/Toast';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 import Animation from 'components/Animation';
+import TankAssetBalance from 'components/TankAssetBalance';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
 import {
   searchOffersAction,
@@ -56,10 +59,13 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 import type { Offer } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
+import assetsConfig from 'configs/assetsConfig';
 
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+
 import { accountBalancesSelector } from 'selectors/balances';
+import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 
 const CardWrapper = styled.View`
   width: 100%;
@@ -175,6 +181,7 @@ type Props = {
   balances: Balances,
   gasInfo: GasInfo,
   resetOffers: Function,
+  paymentNetworkBalances: Balances,
 };
 
 type State = {
@@ -216,6 +223,7 @@ const SPEED_TYPES = {
 
 const PROVIDER_SHAPESHIFT = 'SHAPESHIFT-SHIM';
 const animationSource = require('assets/animations/livePulsatingAnimation.json');
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 const checkIfEnoughForFee = (balances: Balances, txFeeInWei) => {
   if (!balances[ETH]) return false;
@@ -322,6 +330,7 @@ function SelectorInputTemplate(locals) {
     placeholderSelector,
     placeholder: placeholderInput,
   };
+
   return (
     <SelectorInput
       inputProps={inputProps}
@@ -575,34 +584,47 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   generateAssetsOptions = (assets) => {
-    const { balances } = this.props;
+    const { balances, paymentNetworkBalances } = this.props;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
     const nonEmptyAssets = assetsList.filter((asset: any) => {
       return getBalance(balances, asset.symbol) !== 0 || asset.symbol === ETH;
     });
     const alphabeticalAssets = nonEmptyAssets.sort((a, b) => a.symbol.localeCompare(b.symbol));
-    return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) =>
-      ({
+    return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) => {
+      const assetBalance = formatAmount(getBalance(balances, symbol));
+      const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
+
+      return ({
         key: symbol,
         value: symbol,
         icon: iconUrl,
         iconUrl,
         symbol,
         ...rest,
-      }));
+        assetBalance,
+        paymentNetworkBalance,
+      });
+    });
   };
 
   generateSupportedAssetsOptions = (assets) => {
+    const { balances, paymentNetworkBalances } = this.props;
     const alphabeticalSupportedAssets = assets.sort((a, b) => a.symbol.localeCompare(b.symbol));
-    return alphabeticalSupportedAssets.map(({ symbol, iconUrl, ...rest }) =>
-      ({
+    return alphabeticalSupportedAssets.map(({ symbol, iconUrl, ...rest }) => {
+      const assetBalance = formatAmount(getBalance(balances, symbol));
+      const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
+
+      return ({
         key: symbol,
         value: symbol,
         icon: iconUrl,
         iconUrl,
         symbol,
         ...rest,
-      }));
+        assetBalance,
+        paymentNetworkBalance,
+      });
+    });
   };
 
   handleSearch = () => {
@@ -706,6 +728,37 @@ class ExchangeScreen extends React.Component<Props, State> {
       transactionSpeed: txSpeed,
       showFeeModal: false,
     });
+  };
+
+  renderAsset = ({ item }) => {
+    const { balances, paymentNetworkBalances } = this.props;
+    const assetBalance = formatAmount(getBalance(balances, item.symbol));
+    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
+    const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
+    const paymentNetworkBalance = getBalance(paymentNetworkBalances, item.symbol);
+    const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
+
+    if (assetShouldRender) {
+      return null;
+    }
+
+    return (
+      <ListItemWithImage
+        onPress={() => {}}
+        label={item.name}
+        itemImageUrl={fullIconUrl || genericToken}
+        itemValue={`${assetBalance} ${item.symbol}`}
+        fallbackSource={genericToken}
+        customAddon={paymentNetworkBalance ? (
+          <TankAssetBalance
+            amount={paymentNetworkBalanceFormatted}
+            isSynthetic={item.symbol !== ETH}
+          />)
+        : null
+        }
+        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
+      />
+    );
   };
 
   render() {
@@ -816,6 +869,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
