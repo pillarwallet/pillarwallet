@@ -56,7 +56,7 @@ import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initSmartWalletAccountAction } from 'actions/accountsActions';
-import { saveDbAction } from './dbActions';
+import { saveDbAction } from 'actions/dbActions';
 
 const Crashlytics = firebase.crashlytics();
 
