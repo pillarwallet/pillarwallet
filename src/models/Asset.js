@@ -33,8 +33,6 @@ export type Assets = {
   [string]: Asset,
 };
 
-export type AssetsList = Array<Asset>;
-
 export type Balances = {
   [ticker: string]: {
     balance: string,
