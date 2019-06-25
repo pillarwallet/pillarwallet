@@ -172,7 +172,7 @@ type Props = {
   assets: Assets,
   searchOffers: (string, string, number) => void,
   offers: Offer[],
-  takeOffer: (string, string, number, string) => Object,
+  takeOffer: (string, string, number, string, Function) => Object,
   authorizeWithShapeshift: Function,
   shapeshiftAccessToken?: string,
   resetShapeshiftAccessToken: Function,
@@ -481,26 +481,27 @@ class ExchangeScreen extends React.Component<Props, State> {
     } = offer;
     const amountToSell = parseFloat(selectedSellAmount);
     const amountToBuy = amountToSell * askRate;
-    this.setState({ pressedOfferId: _id }, async () => {
-      const offerOrder = await takeOffer(fromAssetCode, toAssetCode, amountToSell, provider);
-      this.setState({ pressedOfferId: '' }); // reset
-      if (!offerOrder || !offerOrder.data || offerOrder.error) {
-        Toast.show({
-          title: 'Exchange service failed',
-          type: 'warning',
-          message: 'Unable to request offer',
+    this.setState({ pressedOfferId: _id }, () =>
+      takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, order => {
+        this.setState({ pressedOfferId: '' }); // reset
+        if (!order || !order.data || order.error) {
+          Toast.show({
+            title: 'Exchange service failed',
+            type: 'warning',
+            message: 'Unable to request offer',
+          });
+          return;
+        }
+        const { data: offerOrderData } = order;
+        navigation.navigate(EXCHANGE_CONFIRM, {
+          offerOrder: {
+            ...offerOrderData,
+            transactionSpeed,
+            receiveAmount: amountToBuy,
+          },
         });
-        return;
-      }
-      const { data: offerOrderData } = offerOrder;
-      navigation.navigate(EXCHANGE_CONFIRM, {
-        offerOrder: {
-          ...offerOrderData,
-          transactionSpeed,
-          receiveAmount: amountToBuy,
-        },
-      });
-    });
+      }),
+    );
   };
 
   renderOffers = ({ item: offer }) => {
@@ -881,8 +882,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   searchOffers: (fromAssetCode, toAssetCode, fromAmount) => dispatch(
     searchOffersAction(fromAssetCode, toAssetCode, fromAmount),
   ),
-  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider) => dispatch(
-    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider),
+  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider, onOrderFunction) => dispatch(
+    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, onOrderFunction),
   ),
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   resetShapeshiftAccessToken: () => dispatch(resetShapeshiftAccessTokenAction()),

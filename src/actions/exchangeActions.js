@@ -49,7 +49,13 @@ const connectExchangeService = (state: Object) => {
   exchangeService.connect(oAuthTokens.accessToken, shapeshiftAccessToken);
 };
 
-export const takeOfferAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number, provider: string) => {
+export const takeOfferAction = (
+  fromAssetCode: string,
+  toAssetCode: string,
+  fromAmount: number,
+  provider: string,
+  onOrderFunction: Function,
+) => {
   return async () => {
     const offerRequest = {
       quantity: parseFloat(fromAmount),
@@ -58,17 +64,13 @@ export const takeOfferAction = (fromAssetCode: string, toAssetCode: string, from
       toAssetCode,
     };
     const order = await exchangeService.takeOffer(offerRequest);
-    return order;
+    onOrderFunction(order);
   };
 };
 
 export const resetOffersAction = () => ({
   type: RESET_OFFERS,
 });
-  return async (dispatch: Function) => {
-    dispatch({ type: RESET_OFFERS });
-  };
-};
 
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Function, getState: Function) => {
