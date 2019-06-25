@@ -81,25 +81,29 @@ export default class SmartWalletProvider {
     }
 
     const {
-      to,
       amount,
       contractAddress,
       decimals = 18,
     } = transaction;
+    let { data, to: recipient } = transaction;
     const from = getAccountAddress(account);
 
     const value = decimals > 0
       ? utils.parseUnits(amount.toString(), decimals)
       : utils.bigNumberify(amount.toString());
 
-    const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
-    const data = abi.encodeMethod(transferMethod, [to, value]);
+    if (!data) {
+      const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
+      data = abi.encodeMethod(transferMethod, [recipient, value]);
+      recipient = contractAddress;
+    }
+
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
 
     return smartWalletService
       .transferAsset({
         // $FlowFixMe
-        recipient: contractAddress,
+        recipient,
         value,
         data,
         transactionSpeed,
@@ -107,13 +111,13 @@ export default class SmartWalletProvider {
       .then(hash => ({
         from,
         hash,
-        to,
+        to: recipient,
         value,
       }))
       .catch((e) => catchTransactionError(e, 'ERC20', {
         decimals,
         contractAddress,
-        to,
+        to: recipient,
         amount,
         value,
         data,

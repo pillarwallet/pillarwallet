@@ -39,7 +39,12 @@ const navigationMiddleware = createReactNavigationReduxMiddleware(
   state => state.navigation,
 );
 
-const middlewares = [thunk.withExtraArgument(pillarSdk), navigationMiddleware, ReduxAsyncQueue, offlineMiddleware];
+const middlewares = [
+  thunk.withExtraArgument(pillarSdk),
+  navigationMiddleware,
+  ReduxAsyncQueue,
+  offlineMiddleware,
+];
 const enhancer = composeWithDevTools({
   // Options: https://github.com/jhen0409/react-native-debugger#options
 })(applyMiddleware(...middlewares));

@@ -35,6 +35,8 @@ import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
+import ExchangeScreen from 'screens/Exchange';
+import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ContactScreen from 'screens/Contact';
 import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
@@ -110,6 +112,9 @@ import {
   // ME_TAB,
   ASSETS,
   ASSET,
+  EXCHANGE_TAB,
+  EXCHANGE,
+  EXCHANGE_CONFIRM,
   PROFILE,
   PEOPLE,
   CONTACT,
@@ -186,10 +191,12 @@ const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_new.png');
+const iconExchange = require('assets/icons/icon_exchange_new.png');
 const iconPeople = require('assets/icons/icon_people_group.png');
 // const iconMe = require('assets/icons/icon_me.png');
 const iconHome = require('assets/icons/icon_home_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
+const iconExchangeActive = require('assets/icons/icon_exchange_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_group_active.png');
 // const iconMeActive = require('assets/icons/icon_me_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
@@ -236,6 +243,12 @@ const assetsFlow = createStackNavigator(
 );
 
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+// EXCHANGE FLOW
+const exchangeFlow = createStackNavigator({
+  [EXCHANGE]: ExchangeScreen,
+  [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
+}, StackNavigatorConfig);
 
 // ME FLOW
 const meFlow = createStackNavigator({
@@ -347,6 +360,13 @@ const tabNavigation = createBottomTabNavigator(
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
         tabBarLabel: tabBarLabel('Assets'),
+      }),
+    },
+    [EXCHANGE_TAB]: {
+      screen: exchangeFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconExchangeActive, iconExchange),
+        tabBarLabel: tabBarLabel('Exchange'),
       }),
     },
     [PEOPLE]: {

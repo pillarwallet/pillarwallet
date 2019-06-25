@@ -48,7 +48,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 
 // constants
-import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { MAIN_NETWORK, PILLAR_NETWORK } from 'constants/tabsConstants';
@@ -213,6 +213,10 @@ class AssetScreen extends React.Component<Props, State> {
 
   goToSendTokenFlow = (assetData: Object) => {
     this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
+  };
+
+  goToExchangeFlow = (fromAssetCode: string) => {
+    this.props.navigation.navigate(EXCHANGE, { fromAssetCode });
   };
 
   openReceiveTokenModal = assetData => {
@@ -382,6 +386,7 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
+              onPressExchange={() => this.goToExchangeFlow(assetData.token)}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
