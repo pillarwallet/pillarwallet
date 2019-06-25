@@ -228,7 +228,7 @@ export default class SelectorInput extends React.Component<Props, State> {
         onPress={() => this.selectValue(option)}
         label={value}
         itemImageUrl={iconUrl || genericToken}
-        itemValue={`${assetBalance} ${symbol}`}
+        itemValue={assetBalance ? `${assetBalance} ${symbol}` : null}
         fallbackSource={genericToken}
         customAddon={paymentNetworkBalance
           ? (

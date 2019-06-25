@@ -612,7 +612,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { balances, paymentNetworkBalances } = this.props;
     const alphabeticalSupportedAssets = assets.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return alphabeticalSupportedAssets.map(({ symbol, iconUrl, ...rest }) => {
-      const assetBalance = formatAmount(getBalance(balances, symbol));
+      const rawAssetBalance = getBalance(balances, symbol);
+      const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
       const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
 
       return ({

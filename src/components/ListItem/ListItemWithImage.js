@@ -46,7 +46,7 @@ type Props = {
   fallbackSource?: string,
   timeSent?: string,
   unreadCount?: number | string,
-  itemValue?: string,
+  itemValue?: ?string,
   itemStatusIcon?: string,
   valueColor?: ?string,
   buttonActionLabel?: string,
