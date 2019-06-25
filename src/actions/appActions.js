@@ -63,6 +63,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
 
+    // TEMP: remove after we move to AsyncStorage
+    await storage.repair();
+
     // $FlowFixMe
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
     const { wallet } = await storage.get('wallet');
