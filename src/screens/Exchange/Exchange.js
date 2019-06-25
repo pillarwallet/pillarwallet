@@ -874,8 +874,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   searchOffers: (fromAssetCode, toAssetCode, fromAmount) => dispatch(
     searchOffersAction(fromAssetCode, toAssetCode, fromAmount),
   ),
-  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider, onOrderFunction) => dispatch(
-    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, onOrderFunction),
+  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider, successCallback) => dispatch(
+    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, successCallback),
   ),
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   resetShapeshiftAccessToken: () => dispatch(resetShapeshiftAccessTokenAction()),
