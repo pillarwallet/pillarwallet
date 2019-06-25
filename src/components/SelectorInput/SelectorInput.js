@@ -42,7 +42,7 @@ import { ETH } from 'constants/assetsConstants';
 type InputValue = {
   selector?: Object,
   input?: string,
-}
+};
 
 type Props = {
   wrapperStyle?: Object,
@@ -52,12 +52,12 @@ type Props = {
   errorMessage?: string,
   value: InputValue,
   inputAddonText?: string,
-}
+};
 
 type State = {
   showOptionsSelector: boolean,
   query: string,
-}
+};
 
 type EventLike = {
   nativeEvent: Object,
@@ -81,7 +81,7 @@ const ItemHolder = styled.View`
   border: 1px solid ${baseColors.mediumLightGray};
   background-color: ${baseColors.white};
   flex-direction: row;
-  ${props => props.error ? 'border-color: tomato' : ''}
+  ${props => props.error ? 'border-color: tomato;' : ''}
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -90,7 +90,7 @@ const Selector = styled.TouchableOpacity`
   justify-content: space-between;
   align-items: center;
   padding: 10px 16px 10px 12px;
-  ${props => props.fullWidth ? 'flex: 1' : ''}
+  ${props => props.fullWidth ? 'flex: 1;' : ''}
 `;
 
 const ValueWrapper = styled.View`
@@ -145,7 +145,7 @@ const InputField = styled(TextInput)`
   ${props => props.value && Platform.OS === 'android'
     ? 'lineHeight: 42px;'
     : ''}
-    min-width: 10px;
+  min-width: 10px;
 `;
 
 const PlaceholderWrapper = styled.View`
