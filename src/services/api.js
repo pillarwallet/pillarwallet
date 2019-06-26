@@ -485,8 +485,8 @@ SDKWrapper.prototype.fetchContactBadges = function (walletId: string, userId: st
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.badge.get({ walletId, userId }))
     .then(({ data }) => data)
-    .then((data) => uniqBy(data, 'id'))
-    .catch(() => ([]));
+    .then(data => uniqBy(data, 'id'))
+    .catch(() => []);
 };
 
 SDKWrapper.prototype.selfAwardBadge = function (walletId: string, event: string): Promise<SelfAwardBadgeResponse | {}> {
