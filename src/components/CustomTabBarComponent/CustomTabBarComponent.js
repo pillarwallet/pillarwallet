@@ -21,6 +21,7 @@ import React from 'react';
 import { Platform, View } from 'react-native';
 import { BottomTabBar } from 'react-navigation-tabs';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
+import { EXCHANGE_TAB } from 'constants/navigationConstants';
 
 const HiddenTabItemView = () => {
   return <View style={{ display: 'none' }} />;
@@ -29,6 +30,7 @@ const HiddenTabItemView = () => {
 type Props = {
   screenProps: {
     smartWalletFeatureEnabled: boolean,
+    exchangeFeatureEnabled: boolean,
   }
 };
 
@@ -40,10 +42,9 @@ export default class CustomTabBarComponent extends React.Component<Props> {
    *  keep method brackets version to support more flags
    */
   getButtonComponent = (route: any) => { // eslint-disable-line
-    const hideTabButton = false;
-    // const { screenProps: { smartWalletFeatureEnabled } } = this.props;
+    const { screenProps: { exchangeFeatureEnabled } } = this.props;
     // add `or` ternary for more feature flags
-    // hideTabButton = route.routeName === SMART_WALLET_TAB && !smartWalletFeatureEnabled;
+    const hideTabButton = route.routeName === EXCHANGE_TAB && !exchangeFeatureEnabled;
     return hideTabButton && HiddenTabItemView;
   };
 

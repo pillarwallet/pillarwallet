@@ -113,8 +113,9 @@ type State = {
   activeTab: string,
   permissionsGranted: boolean,
   scrollY: Animated.Value,
-  forceCloseLoginApprovalModal: boolean,
+  addEmailRedirect: boolean,
   isScanning: boolean,
+  showLoginModal: boolean,
 };
 
 const profileImageWidth = 96;
@@ -284,13 +285,14 @@ class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   state = {
-    forceCloseLoginApprovalModal: false,
+    addEmailRedirect: false,
     showCamera: false,
     permissionsGranted: false,
     scrollY: new Animated.Value(0),
     activeTab: ALL,
     usernameWidth: 0,
     isScanning: false,
+    showLoginModal: false,
   };
 
   componentDidMount() {
@@ -379,18 +381,50 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   goToProfileEmailSettings = () => {
+    this.setState({ showLoginModal: false });
+  };
+
+  /**
+   * modals can't be shown if one is not fully closed,
+   * this issue happens on iOS when camera modal is not yet closed
+   * and forum login approve modal is set to appear
+   * https://github.com/react-native-community/react-native-modal#i-cant-show-multiple-modals-one-after-another
+   */
+  checkLoginModalVisibility = () => {
+    const { deepLinkData: { loginAttemptToken } } = this.props;
+    const { showLoginModal } = this.state;
+    if (!!loginAttemptToken && !showLoginModal) {
+      this.setState({ showLoginModal: true });
+    }
+  };
+
+  /**
+   * modals can't be shown if one is not fully closed,
+   * this case happens on iOS when login approve modal is not yet closed
+   * and add email modal is set to appear on other screen
+   * https://github.com/react-native-community/react-native-modal#i-cant-show-multiple-modals-one-after-another
+   */
+  checkAddEmailRedirect = () => {
     const { navigation } = this.props;
-    this.setState({ forceCloseLoginApprovalModal: true }, () => {
+    const { addEmailRedirect } = this.state;
+    if (!addEmailRedirect) return;
+    this.setState({ addEmailRedirect: false }, () => {
       /**
-       * NOTE: `forceCloseLoginApprovalModal` needs reset because
-       * after: (1) navigating to email settings with login token to approve
-       * then (2) saving email and (3) closing email modal should have
-       * login approve modal open in Home screen, however,
-       * login approve modal cannot be open while navigating
-       */
-      this.setState({ forceCloseLoginApprovalModal: false });
+      * NOTE: `showLoginModal` needs reset because
+      * after: (1) navigating to email settings with login token to approve
+      * then (2) saving email and (3) closing email modal should have
+      * login approve modal open in Home screen, however,
+      * login approve modal cannot be open while navigating
+      */
+      this.setState({ showLoginModal: true });
       navigation.navigate(PROFILE, { visibleModal: 'email' });
     });
+  };
+
+  closeLoginModal = () => {
+    const { resetDeepLinkData } = this.props;
+    resetDeepLinkData();
+    this.setState({ showLoginModal: false });
   };
 
   // START OF Wallet connect related methods
@@ -453,7 +487,6 @@ class HomeScreen extends React.Component<Props, State> {
       navigation,
       backupStatus,
       deepLinkData,
-      resetDeepLinkData,
       approveLoginAttempt,
       history,
       openSeaTxHistory,
@@ -465,9 +498,9 @@ class HomeScreen extends React.Component<Props, State> {
       permissionsGranted,
       scrollY,
       usernameWidth,
-      forceCloseLoginApprovalModal,
       activeTab,
       isScanning,
+      showLoginModal,
     } = this.state;
 
     const { isImported, isBackedUp } = backupStatus;
@@ -741,10 +774,11 @@ class HomeScreen extends React.Component<Props, State> {
         </Animated.ScrollView>
 
         <SlideModal
-          isVisible={!!loginAttemptToken && !forceCloseLoginApprovalModal}
+          isVisible={!!loginAttemptToken && showLoginModal}
           fullScreen
           showHeader
-          onModalHide={resetDeepLinkData}
+          onModalHide={this.closeLoginModal}
+          onModalHidden={this.checkAddEmailRedirect}
           backgroundColor={baseColors.snowWhite}
           avoidKeyboard
           centerTitle
@@ -762,7 +796,10 @@ class HomeScreen extends React.Component<Props, State> {
               )}
               <Button
                 title={!user.email ? 'Add your email' : 'Confirm login'}
-                onPress={() => (user.email ? approveLoginAttempt(loginAttemptToken) : this.goToProfileEmailSettings())}
+                onPress={() => (user.email
+                  ? approveLoginAttempt(loginAttemptToken)
+                  : this.setState({ showLoginModal: false, addEmailRedirect: true })
+                )}
                 style={{
                   marginBottom: 13,
                 }}
@@ -781,6 +818,7 @@ class HomeScreen extends React.Component<Props, State> {
           isActive={isScanning}
           onDismiss={this.handleQRScannerClose}
           onRead={this.handleQRRead}
+          onModalHide={this.checkLoginModalVisibility}
         />
       </Container>
     );

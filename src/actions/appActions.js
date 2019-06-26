@@ -44,6 +44,7 @@ import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'const
 import { UPDATE_BADGES, SET_CONTACTS_BADGES } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
+import { SET_SHAPESHIFT_ACCESS_TOKEN } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   DISMISS_SMART_WALLET_UPGRADE,
@@ -51,7 +52,6 @@ import {
   SET_SMART_WALLET_UPGRADE_STATUS,
 } from 'constants/smartWalletConstants';
 import { UPDATE_PAYMENT_NETWORK_BALANCES } from 'constants/paymentNetworkConstants';
-
 
 const storage = Storage.getInstance('db');
 
@@ -62,6 +62,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
   return async (dispatch: Function, getState: Function) => {
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
+
+    // TEMP: remove after we move to AsyncStorage
+    await storage.repair();
 
     // $FlowFixMe
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
@@ -119,6 +122,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { offlineQueue = [] } = await storage.get('offlineQueue');
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
+
+      const { shapeshiftAccessToken } = await storage.get('exchange');
+      dispatch({ type: SET_SHAPESHIFT_ACCESS_TOKEN, payload: shapeshiftAccessToken });
 
       const history = await loadAndMigrate('history', dispatch, getState);
       dispatch({ type: SET_HISTORY, payload: history });

@@ -29,6 +29,7 @@ import {
   INVESTMENTS_URL,
   OPEN_SEA_API,
   OPEN_SEA_API_KEY,
+  ETHPLORER_API_KEY,
 } from 'react-native-dotenv';
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
@@ -40,6 +41,7 @@ import {
   fetchTransactionReceipt,
 } from 'services/assets';
 import { fetchBadges } from 'services/badges';
+import EthplorerSdk from 'services/EthplorerSdk';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
@@ -80,6 +82,7 @@ type RegisterSmartWalletPayload = {
 };
 
 const BCXSdk = new BCX({ apiUrl: BCX_URL });
+const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
 export default function SDKWrapper() {
   this.pillarWalletSdk = null;
@@ -179,7 +182,6 @@ SDKWrapper.prototype.fetchInitialAssets = function (walletId: string) {
     .catch(() => [])
     .then(transformAssetsToObject);
 };
-
 
 SDKWrapper.prototype.updateUser = function (user: Object) {
   return Promise.resolve()
@@ -725,3 +727,16 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
     .catch(() => false);
 };
 
+SDKWrapper.prototype.importedEthTransactionHistory = function (walletAddress: string) {
+  return Promise.resolve()
+    .then(() => ethplorerSdk.getAddressTransactions(walletAddress))
+    .then(data => Array.isArray(data) ? data : [])
+    .catch(() => []);
+};
+
+SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: string) {
+  return Promise.resolve()
+    .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer' }))
+    .then(data => get(data, 'operations', []))
+    .catch(() => []);
+};
