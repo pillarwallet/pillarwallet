@@ -4,11 +4,6 @@ import renderer from 'react-test-renderer';
 import { shallow } from 'enzyme';
 import { ContactInfo } from '../ContactInfo';
 
-jest.mock('react-navigation', () => ({
-  goBack: jest.fn(),
-}));
-
-
 const user = {
   firstName: 'test',
   lastName: 'test',
@@ -18,21 +13,25 @@ const user = {
   country: 'testCountry',
 };
 
+const navigation: any = {};
+
+const Component = <ContactInfo user={user} navigation={navigation} />;
+
 describe('Contact info', () => {
   it('should render Contact info correctly', () => {
-    const component = renderer.create(<ContactInfo user={user} />).toJSON();
+    const component = renderer.create(Component).toJSON();
     expect(component).toMatchSnapshot();
   });
 
   it('should create mecard string for qr code with email and name', () => {
-    const wrapper = shallow(<ContactInfo user={user} />);
+    const wrapper = shallow(Component);
     const instance = wrapper.instance();
     const data = instance.getDataQR();
     expect(data).toBe('MECARD:N:test,test;NICKNAME:;EMAIL:test@test.com;ADR:;');
   });
 
   it('should create mecard string for qr code with more user info', () => {
-    const wrapper = shallow(<ContactInfo user={user} />);
+    const wrapper = shallow(Component);
     const instance = wrapper.instance();
     wrapper.setState({
       name: true,
