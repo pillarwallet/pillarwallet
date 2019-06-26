@@ -79,6 +79,7 @@ export default class KeyBasedWalletProvider {
       gasLimit,
       gasPrice,
       signOnly = false,
+      data,
     } = transaction;
     const from = getAccountAddress(account);
     const { nonce, transactionCount } = await this.calculateNonce(from, state, signOnly);
@@ -90,6 +91,7 @@ export default class KeyBasedWalletProvider {
       wallet: this.wallet,
       nonce,
       signOnly,
+      data,
     })
       .then(result => {
         if (!signOnly) return { ...result, transactionCount };
