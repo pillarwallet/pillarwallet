@@ -22,14 +22,14 @@ import {
   RefreshControl,
   Platform,
   View,
-  FlatList,
+  // FlatList,
 } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
-import get from 'lodash.get';
+// import get from 'lodash.get';
 import { baseColors, fontSizes } from 'utils/variables';
 import {
   syncContactAction,
@@ -59,7 +59,7 @@ import Button from 'components/Button';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import { CollapsibleSection } from 'components/CollapsibleSection';
+// import { CollapsibleSection } from 'components/CollapsibleSection';
 import Spinner from 'components/Spinner';
 import type { ApiUser } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -117,6 +117,10 @@ const Message = styled(BaseText)`
 
 const EmptyStateWrapper = styled.View`
   margin-bottom: 30px;
+`;
+
+const ContentWrapper = styled.View`
+  margin-bottom: 25px;
 `;
 
 type Props = {
@@ -188,7 +192,7 @@ class Contact extends React.Component<Props, State> {
       syncContact,
       session,
       navigation,
-      fetchContactBadges,
+      // fetchContactBadges,
     } = this.props;
     this.isComponentMounted = true;
     const contactName = navigation.getParam('username', '');
@@ -212,7 +216,7 @@ class Contact extends React.Component<Props, State> {
     const localContact = this.localContact; // eslint-disable-line
     if (localContact && session.isOnline) {
       syncContact(localContact.id);
-      fetchContactBadges(localContact);
+      // fetchContactBadges(localContact);
       fetchContactTransactions(localContact.ethAddress);
     }
   }
@@ -329,7 +333,7 @@ class Contact extends React.Component<Props, State> {
     return (
       <BadgeTouchableItem
         data={item}
-        onPress={() => navigation.navigate(BADGE, { badge: item })}
+        onPress={() => navigation.navigate(BADGE, { badge: item, hideDescription: true })}
       />
     );
   };
@@ -403,7 +407,7 @@ class Contact extends React.Component<Props, State> {
       smartWalletState,
       accounts,
       deploySmartWallet,
-      contactsBadges,
+      // contactsBadges,
     } = this.props;
     const {
       showManageContactModal,
@@ -413,7 +417,7 @@ class Contact extends React.Component<Props, State> {
       forceOpen,
       collapsedActivityHeight,
       collapsedChatHeight,
-      isBadgesSectionOpen,
+      // isBadgesSectionOpen,
     } = this.state;
 
     const contactName = navigation.getParam('username', '');
@@ -451,7 +455,7 @@ class Contact extends React.Component<Props, State> {
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const disableSend = !!Object.keys(sendingBlockedMessage).length;
 
-    const contactBadges = get(contactsBadges, contact.username, []);
+    // const contactBadges = get(contactsBadges, contact.username, []);
 
     return (
       <ContainerWithBottomSheet
@@ -506,7 +510,7 @@ class Contact extends React.Component<Props, State> {
             />
           </ContactWrapper>
           {isAccepted &&
-            <React.Fragment>
+            <ContentWrapper>
               <CircleButtonsWrapper>
                 <CircleButton
                   disabled={disableSend}
@@ -530,9 +534,8 @@ class Contact extends React.Component<Props, State> {
                 </Wrapper>
                 }
               </CircleButtonsWrapper>
-              <CollapsibleSection
+              { /* <CollapsibleSection
                 label="game of badges."
-                sectionWrapperStyle={{ marginBottom: 25 }}
                 collapseContent={
                   <FlatList
                     data={contactBadges}
@@ -556,8 +559,8 @@ class Contact extends React.Component<Props, State> {
                   ? () => { this.scroll.scrollToEnd(); }
                   : () => {}
                 }
-              />
-            </React.Fragment>
+              /> */}
+            </ContentWrapper>
           }
         </ScrollWrapper>
         <ManageContactModal

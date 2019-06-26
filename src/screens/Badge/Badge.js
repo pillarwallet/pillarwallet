@@ -55,6 +55,7 @@ class Badge extends React.Component<Props, {}> {
     const { navigation, badges } = this.props;
     const badgeId = Number(navigation.getParam('id', 0));
     const passedBadge = navigation.getParam('badge', null);
+    const hideDescription = navigation.getParam('hideDescription', false);
     const badge = passedBadge || badges.find(({ id }) => id === badgeId) || {};
     return (
       <Container inset={{ bottom: 0 }}>
@@ -70,7 +71,7 @@ class Badge extends React.Component<Props, {}> {
               {badge.subtitle}
             </Subtitle>
             )}
-            {!!badge.description && (
+            {!!(badge.description && !hideDescription) && (
             <Description>
               {badge.description}
             </Description>
