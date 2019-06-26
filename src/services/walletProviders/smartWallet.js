@@ -50,7 +50,7 @@ export default class SmartWalletProvider {
       return Promise.reject(new Error('SDK is not initialized'));
     }
 
-    const { to, amount } = transaction;
+    const { to, amount, data: transactionData } = transaction;
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
     const from = getAccountAddress(account);
     const value = ethToWei(amount);
@@ -59,7 +59,7 @@ export default class SmartWalletProvider {
       .transferAsset({
         recipient: to,
         value,
-        data: '',
+        data: transactionData || '',
         transactionSpeed,
       })
       .then(hash => ({
