@@ -22,12 +22,15 @@
 export const APP_FLOW = 'APP_FLOW';
 export const TAB_NAVIGATION = 'TAB_NAVIGATION';
 export const ASSETS = 'ASSETS';
+export const SERVICES = 'SERVICES';
+export const EXCHANGE_TAB = 'EXCHANGE_TAB';
 export const ME_TAB = 'ME_TAB';
 export const PEOPLE = 'PEOPLE';
 export const ASSET = 'ASSET';
 export const MARKET = 'MARKET';
 export const ADD_TOKEN = 'ADD_TOKEN';
 export const PROFILE = 'PROFILE';
+export const CONTACT_INFO = 'CONTACT_INFO';
 export const REVEAL_BACKUP_PHRASE = 'REVEAL_BACKUP_PHRASE';
 export const CHAT_LIST = 'CHAT_LIST';
 export const NEW_CHAT = 'NEW_CHAT';
@@ -99,6 +102,10 @@ export const CONNECTION_REQUESTS = 'CONNECTION_REQUESTS';
 // HOME FLOW
 export const HOME = 'HOME';
 export const HOME_TAB = 'HOME_TAB';
+
+// EXCHANGE FLOW
+export const EXCHANGE = 'EXCHANGE';
+export const EXCHANGE_CONFIRM = 'EXCHANGE_CONFIRM';
 
 // UPGRADE TO SMART WALLET FLOW
 export const UPGRADE_TO_SMART_WALLET_FLOW = 'UPGRADE_TO_SMART_WALLET_FLOW';

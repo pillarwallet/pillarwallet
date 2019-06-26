@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import get from 'lodash.get';
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
@@ -28,7 +29,8 @@ import {
   INVESTMENTS_URL,
   OPEN_SEA_API,
   OPEN_SEA_API_KEY,
-} from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
+  ETHPLORER_API_KEY,
+} from 'react-native-dotenv';
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { UserBadgesResponse, BadgesInfoResponse, SelfAwardBadgeResponse } from 'models/Badge';
@@ -39,6 +41,7 @@ import {
   fetchTransactionReceipt,
 } from 'services/assets';
 import { fetchBadges } from 'services/badges';
+import EthplorerSdk from 'services/EthplorerSdk';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
@@ -78,6 +81,7 @@ type RegisterSmartWalletPayload = {
 };
 
 const BCXSdk = new BCX({ apiUrl: BCX_URL });
+const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
 export default function SDKWrapper() {
   this.pillarWalletSdk = null;
@@ -110,7 +114,8 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string
     .then(() => this.pillarWalletSdk.wallet.register({ fcmToken: fcm, username }))
     .then(({ data }) => data)
     .catch((e = {}) => {
-      if (e.response && e.response.status === USERNAME_EXISTS_ERROR_CODE) {
+      const status = get(e, 'response.status');
+      if (status === USERNAME_EXISTS_ERROR_CODE) {
         return {
           error: true,
           reason: USERNAME_EXISTS,
@@ -177,18 +182,14 @@ SDKWrapper.prototype.fetchInitialAssets = function (walletId: string) {
     .then(transformAssetsToObject);
 };
 
-
 SDKWrapper.prototype.updateUser = function (user: Object) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.update(user))
     .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
-    .catch((error) => {
-      const {
-        response: {
-          status,
-          data: { message } = {},
-        },
-      } = error;
+    .catch(error => {
+      const status = get(error, 'response.status');
+      const message = get(error, 'response.data.message');
+
       Sentry.captureException({
         error: 'Failed to update user',
         walletId: user.walletId,
@@ -204,13 +205,10 @@ SDKWrapper.prototype.createOneTimePassword = function (user: Object) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.createOneTimePassword(user))
     .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
-    .catch((error) => {
-      const {
-        response: {
-          status,
-          data: { message } = {},
-        },
-      } = error;
+    .catch(error => {
+      const status = get(error, 'response.status');
+      const message = get(error, 'response.data.message');
+
       Sentry.captureException({
         error: 'Failed to send text',
         walletId: user.walletId,
@@ -226,13 +224,10 @@ SDKWrapper.prototype.verifyPhone = function (user: Object) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.validatePhone(user))
     .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
-    .catch((error) => {
-      const {
-        response: {
-          status,
-          data: { message } = {},
-        },
-      } = error;
+    .catch(error => {
+      const status = get(error, 'response.status');
+      const message = get(error, 'response.data.message');
+
       Sentry.captureException({
         error: 'Can\'t verify code',
         walletId: user.walletId,
@@ -250,13 +245,10 @@ SDKWrapper.prototype.claimTokens = function ({ walletId, code }: ClaimTokenActio
     // .then(() => this.pillarWalletSdk.referral.claimTokens({ walletId, code }))
     // TODO return just 200
     .then(() => ({ responseStatus: 200, walletId, code }))
-    .catch((error) => {
-      const {
-        response: {
-          status,
-          data: { message } = {},
-        },
-      } = error;
+    .catch(error => {
+      const status = get(error, 'response.status');
+      const message = get(error, 'response.data.message');
+
       Sentry.captureException({
         error: 'Can\'t claim referral code',
         walletId,
@@ -306,13 +298,9 @@ SDKWrapper.prototype.usernameSearch = function (username: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.usernameSearch({ username }))
     .then(({ data }) => data)
-    .catch((error) => {
-      const {
-        response: {
-          status,
-          data: { message } = {},
-        },
-      } = error;
+    .catch(error => {
+      const status = get(error, 'response.status');
+      const message = get(error, 'response.data.message');
 
       switch (status) {
         case 400:
@@ -727,8 +715,19 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.updateIdentityKeys(updatedIdentityKeys))
     .then(({ data }) => data)
-    .catch(() => {
-      return false;
-    });
+    .catch(() => false);
 };
 
+SDKWrapper.prototype.importedEthTransactionHistory = function (walletAddress: string) {
+  return Promise.resolve()
+    .then(() => ethplorerSdk.getAddressTransactions(walletAddress))
+    .then(data => Array.isArray(data) ? data : [])
+    .catch(() => []);
+};
+
+SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: string) {
+  return Promise.resolve()
+    .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer' }))
+    .then(data => get(data, 'operations', []))
+    .catch(() => []);
+};

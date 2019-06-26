@@ -48,7 +48,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 
 // constants
-import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { MAIN_NETWORK, PILLAR_NETWORK } from 'constants/tabsConstants';
@@ -103,6 +103,7 @@ type Props = {
   smartWalletFeatureEnabled: boolean,
   history: Array<*>,
   deploySmartWallet: Function,
+  exchangeFeatureEnabled: boolean,
 };
 
 type State = {
@@ -215,6 +216,10 @@ class AssetScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
+  goToExchangeFlow = (fromAssetCode: string) => {
+    this.props.navigation.navigate(EXCHANGE, { fromAssetCode });
+  };
+
   openReceiveTokenModal = assetData => {
     this.setState({
       activeModal: {
@@ -259,6 +264,7 @@ class AssetScreen extends React.Component<Props, State> {
       contacts,
       smartWalletFeatureEnabled,
       deploySmartWallet,
+      exchangeFeatureEnabled,
     } = this.props;
 
     const { showDescriptionModal, activeTab } = this.state;
@@ -382,9 +388,11 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
+              onPressExchange={() => this.goToExchangeFlow(assetData.token)}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
+              exchangeFeatureEnabled={exchangeFeatureEnabled}
             />
             {!isSendActive &&
             <Wrapper regularPadding style={{ marginTop: 30, alignItems: 'center' }}>
@@ -442,7 +450,12 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  featureFlags: {
+    data: {
+      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
+      EXCHANGE_ENABLED: exchangeFeatureEnabled,
+    },
+  },
 }) => ({
   contacts,
   assets,
@@ -451,6 +464,7 @@ const mapStateToProps = ({
   smartWalletState,
   accounts,
   smartWalletFeatureEnabled,
+  exchangeFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({

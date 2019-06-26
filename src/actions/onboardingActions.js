@@ -70,6 +70,7 @@ import { saveDbAction } from 'actions/dbActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
+import { restoreTransactionHistoryAction } from 'actions/historyActions';
 
 const storage = Storage.getInstance('db');
 
@@ -161,6 +162,9 @@ const finishRegistration = async ({
     await dispatch(initSmartWalletSdkAction(privateKey));
     await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount));
   }
+
+  // restore transactions history
+  await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
 
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
@@ -331,9 +335,9 @@ export const registerOnBackendAction = () => {
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
     });
-    let { user } = await storage.get('user');
+    let { user = {} } = await storage.get('user');
     if (apiUser.username) {
-      user = apiUser;
+      user = { ...apiUser };
     }
     await delay(1000);
 

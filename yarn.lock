@@ -1019,10 +1019,10 @@
     xcode "^2.0.0"
     xmldoc "^0.4.0"
 
-"@sentry/cli@^1.36.1":
-  version "1.41.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/cli/-/cli-1.41.2.tgz#4d3e14a9b9cc069a23146de933396d0ce9375d08"
-  integrity sha1-TT4UqbnMBpojFG3pMzltDOk3XQg=
+"@sentry/cli@^1.43.0":
+  version "1.45.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/cli/-/cli-1.45.0.tgz#a330ce2c6877ab7a61ead7cd22456a2e22a8062c"
+  integrity sha1-ozDOLGh3q3ph6tfNIkVqLiKoBiw=
   dependencies:
     fs-copy-file-sync "^1.1.1"
     https-proxy-agent "^2.2.1"
@@ -1031,12 +1031,12 @@
     progress "2.0.0"
     proxy-from-env "^1.0.0"
 
-"@sentry/wizard@^0.12.1":
-  version "0.12.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/wizard/-/wizard-0.12.1.tgz#e63bb94c26479e958418dfdce6387ad39b31bdbc"
-  integrity sha1-5ju5TCZHnpWEGN/c5jh605sxvbw=
+"@sentry/wizard@^0.13.0":
+  version "0.13.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/wizard/-/wizard-0.13.0.tgz#9eb2c2a9051f849815856293bca086725ecfc298"
+  integrity sha1-nrLCqQUfhJgVhWKTvKCGcl7Pwpg=
   dependencies:
-    "@sentry/cli" "^1.36.1"
+    "@sentry/cli" "^1.43.0"
     chalk "^2.4.1"
     glob "^7.1.3"
     inquirer "^6.2.0"
@@ -1044,7 +1044,7 @@
     opn "^5.4.0"
     r2 "^2.0.1"
     read-env "^1.3.0"
-    xcode "https://github.com/apache/cordova-node-xcode#e7646f0680d509b590b839e567c217590451505b"
+    xcode "2.0.0"
     yargs "^12.0.2"
 
 "@tradle/react-native-http@^2.0.0":
@@ -1594,6 +1594,11 @@ aes-js@^3.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/aes-js/-/aes-js-3.1.2.tgz#db9aabde85d5caabbfc0d4f2a4446960f627146a"
   integrity sha1-25qr3oXVyqu/wNTypERpYPYnFGo=
 
+after@0.8.2:
+  version "0.8.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/after/-/after-0.8.2.tgz#fedb394f9f0e02aa9768e702bda23b505fae7e1f"
+  integrity sha1-/ts5T58OAqqXaOcCvaI7UF+ufh8=
+
 agent-base@4, agent-base@^4.1.0:
   version "4.2.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/agent-base/-/agent-base-4.2.1.tgz#d89e5999f797875674c07d87f260fc41e83e8ca9"
@@ -1973,6 +1978,11 @@ array.prototype.flat@^1.2.1:
     define-properties "^1.1.2"
     es-abstract "^1.10.0"
     function-bind "^1.1.1"
+
+arraybuffer.slice@~0.0.7:
+  version "0.0.7"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/arraybuffer.slice/-/arraybuffer.slice-0.0.7.tgz#3bbc4275dd584cc1b10809b89d4e8b63a69e7675"
+  integrity sha1-O7xCdd1YTMGxCAm4nU6LY6aednU=
 
 arrify@^1.0.0, arrify@^1.0.1:
   version "1.0.1"
@@ -2981,6 +2991,11 @@ babylon@^6.18.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/babylon/-/babylon-6.18.0.tgz#af2f3b88fa6f5c1e4c634d1a0f8eac4f55b395e3"
   integrity sha1-ry87iPpvXB5MY00aD46sT1WzleM=
 
+backo2@1.0.2:
+  version "1.0.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/backo2/-/backo2-1.0.2.tgz#31ab1ac8b129363463e35b3ebb69f4dfcfba7947"
+  integrity sha1-MasayLEpNjRj41s+u2n038+6eUc=
+
 balanced-match@^0.4.2:
   version "0.4.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/balanced-match/-/balanced-match-0.4.2.tgz#cb3f3e3c732dc0f01ee70b403f302e61d7709838"
@@ -3003,15 +3018,15 @@ base-x@^3.0.2:
   dependencies:
     safe-buffer "^5.0.1"
 
+base64-arraybuffer@0.1.5:
+  version "0.1.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/base64-arraybuffer/-/base64-arraybuffer-0.1.5.tgz#73926771923b5a19747ad666aa5cd4bf9c6e9ce8"
+  integrity sha1-c5JncZI7Whl0etZmqlzUv5xunOg=
+
 base64-js@0.0.8:
   version "0.0.8"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/base64-js/-/base64-js-0.0.8.tgz#1101e9544f4a76b1bc3b26d452ca96d7a35e7978"
   integrity sha1-EQHpVE9KdrG8OybUUsqW16NeeXg=
-
-base64-js@1.1.2:
-  version "1.1.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/base64-js/-/base64-js-1.1.2.tgz#d6400cac1c4c660976d90d07a04351d89395f5e8"
-  integrity sha1-1kAMrBxMZgl22Q0HoENR2JOV9eg=
 
 base64-js@^1.0.2, base64-js@^1.1.2, base64-js@^1.2.3:
   version "1.3.0"
@@ -3054,6 +3069,13 @@ before-after-hook@^1.1.0:
   version "1.4.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/before-after-hook/-/before-after-hook-1.4.0.tgz#2b6bf23dca4f32e628fd2747c10a37c74a4b484d"
   integrity sha1-K2vyPcpPMuYo/SdHwQo3x0pLSE0=
+
+better-assert@~1.0.0:
+  version "1.0.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/better-assert/-/better-assert-1.0.2.tgz#40866b9e1b9e0b55b481894311e68faffaebc522"
+  integrity sha1-QIZrnhueC1W0gYlDEeaPr/rrxSI=
+  dependencies:
+    callsite "1.0.0"
 
 big-integer@^1.6.17, big-integer@^1.6.7:
   version "1.6.43"
@@ -3137,6 +3159,11 @@ blob-polyfill@2.0.20171115:
   version "2.0.20171115"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blob-polyfill/-/blob-polyfill-2.0.20171115.tgz#8e5c2659dda443365fafd6dd421517653f1d5ffd"
   integrity sha1-jlwmWd2kQzZfr9bdQhUXZT8dX/0=
+
+blob@0.0.5:
+  version "0.0.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blob/-/blob-0.0.5.tgz#d680eeef25f8cd91ad533f5b01eed48e64caf683"
+  integrity sha1-1oDu7yX4zZGtUz9bAe7UjmTK9oM=
 
 blockchain-explorer-sdk@^0.1.163:
   version "0.1.205"
@@ -3635,6 +3662,11 @@ caller-path@^2.0.0:
   dependencies:
     caller-callsite "^2.0.0"
 
+callsite@1.0.0:
+  version "1.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/callsite/-/callsite-1.0.0.tgz#280398e5d664bd74038b6f0905153e6e8af1bc20"
+  integrity sha1-KAOY5dZkvXQDi28JBRU+borxvCA=
+
 callsites@^0.2.0:
   version "0.2.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/callsites/-/callsites-0.2.0.tgz#afab96262910a7f33c19a5775825c69f34e350ca"
@@ -4129,10 +4161,25 @@ commondir@^1.0.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
   integrity sha1-3dgA2gxmEnOTzKWVDqloo6rxJTs=
 
+component-bind@1.0.0:
+  version "1.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/component-bind/-/component-bind-1.0.0.tgz#00c608ab7dcd93897c0009651b1d3a8e1e73bbd1"
+  integrity sha1-AMYIq33Nk4l8AAllGx06jh5zu9E=
+
+component-emitter@1.2.1:
+  version "1.2.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/component-emitter/-/component-emitter-1.2.1.tgz#137918d6d78283f7df7a6b7c5a63e140e69425e6"
+  integrity sha1-E3kY1teCg/ffemt8WmPhQOaUJeY=
+
 component-emitter@^1.2.1:
   version "1.3.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/component-emitter/-/component-emitter-1.3.0.tgz#16e4070fba8ae29b679f2215853ee181ab2eabc0"
   integrity sha1-FuQHD7qK4ptnnyIVhT7hgasuq8A=
+
+component-inherit@0.0.3:
+  version "0.0.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/component-inherit/-/component-inherit-0.0.3.tgz#645fc4adf58b72b649d5cae65135619db26ff143"
+  integrity sha1-ZF/ErfWLcrZJ1crmUTVhnbJv8UM=
 
 compressible@~2.0.16:
   version "2.0.17"
@@ -4669,7 +4716,7 @@ debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.6, debug@^2.6.8, debug@^2.6.
   dependencies:
     ms "2.0.0"
 
-debug@3.1.0:
+debug@3.1.0, debug@~3.1.0:
   version "3.1.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
   integrity sha1-W7WgZyYotkFJVmuhaBnmFRjGcmE=
@@ -5158,6 +5205,34 @@ end-of-stream@^1.0.0, end-of-stream@^1.1.0:
   integrity sha1-7SljTRm6ukY7bOa4CjchPqtx7EM=
   dependencies:
     once "^1.4.0"
+
+engine.io-client@~3.3.1:
+  version "3.3.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/engine.io-client/-/engine.io-client-3.3.2.tgz#04e068798d75beda14375a264bb3d742d7bc33aa"
+  integrity sha1-BOBoeY11vtoUN1omS7PXQte8M6o=
+  dependencies:
+    component-emitter "1.2.1"
+    component-inherit "0.0.3"
+    debug "~3.1.0"
+    engine.io-parser "~2.1.1"
+    has-cors "1.1.0"
+    indexof "0.0.1"
+    parseqs "0.0.5"
+    parseuri "0.0.5"
+    ws "~6.1.0"
+    xmlhttprequest-ssl "~1.5.4"
+    yeast "0.1.2"
+
+engine.io-parser@~2.1.1:
+  version "2.1.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/engine.io-parser/-/engine.io-parser-2.1.3.tgz#757ab970fbf2dfb32c7b74b033216d5739ef79a6"
+  integrity sha1-dXq5cPvy37Mse3SwMyFtVznveaY=
+  dependencies:
+    after "0.8.2"
+    arraybuffer.slice "~0.0.7"
+    base64-arraybuffer "0.1.5"
+    blob "0.0.5"
+    has-binary2 "~1.0.2"
 
 enhanced-resolve@^3.3.0, enhanced-resolve@^3.4.0:
   version "3.4.1"
@@ -7033,6 +7108,18 @@ has-ansi@^2.0.0:
   dependencies:
     ansi-regex "^2.0.0"
 
+has-binary2@~1.0.2:
+  version "1.0.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/has-binary2/-/has-binary2-1.0.3.tgz#7776ac627f3ea77250cfc332dab7ddf5e4f5d11d"
+  integrity sha1-d3asYn8+p3JQz8My2rfd9eT10R0=
+  dependencies:
+    isarray "2.0.1"
+
+has-cors@1.1.0:
+  version "1.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/has-cors/-/has-cors-1.1.0.tgz#5e474793f7ea9843d1bb99c23eef49ff126fff39"
+  integrity sha1-XkdHk/fqmEPRu5nCPu9J/xJv/zk=
+
 has-flag@^1.0.0:
   version "1.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/has-flag/-/has-flag-1.0.0.tgz#9d9e793165ce017a00f00418c43f942a7b1d11fa"
@@ -8104,6 +8191,11 @@ isarray@1.0.0, isarray@^1.0.0, isarray@~1.0.0:
   version "1.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
   integrity sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=
+
+isarray@2.0.1:
+  version "2.0.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/isarray/-/isarray-2.0.1.tgz#a37d94ed9cda2d59865c9f76fe596ee1f338741e"
+  integrity sha1-o32U7ZzaLVmGXJ92/llu4fM4dB4=
 
 isarray@^2.0.1:
   version "2.0.4"
@@ -10912,6 +11004,11 @@ object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
 
+object-component@0.0.3:
+  version "0.0.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/object-component/-/object-component-0.0.3.tgz#f0c69aa50efc95b866c186f400a33769cb2f1291"
+  integrity sha1-8MaapQ78lbhmwYb0AKM3acsvEpE=
+
 object-copy@^0.1.0:
   version "0.1.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/object-copy/-/object-copy-0.1.0.tgz#7e7d858b781bd7c991a41ba975ed3812754e998c"
@@ -11370,6 +11467,20 @@ parse5@^3.0.1:
   dependencies:
     "@types/node" "*"
 
+parseqs@0.0.5:
+  version "0.0.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/parseqs/-/parseqs-0.0.5.tgz#d5208a3738e46766e291ba2ea173684921a8b89d"
+  integrity sha1-1SCKNzjkZ2bikbouoXNoSSGouJ0=
+  dependencies:
+    better-assert "~1.0.0"
+
+parseuri@0.0.5:
+  version "0.0.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/parseuri/-/parseuri-0.0.5.tgz#80204a50d4dbb779bfdc6ebe2778d90e4bce320a"
+  integrity sha1-gCBKUNTbt3m/3G6+J3jZDkvOMgo=
+  dependencies:
+    better-assert "~1.0.0"
+
 parseurl@~1.3.2:
   version "1.3.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/parseurl/-/parseurl-1.3.3.tgz#9da19e7bee8d12dff0513ed5b76957793bc2e8d4"
@@ -11551,15 +11662,6 @@ please-upgrade-node@^3.1.1:
   integrity sha1-7TIAUd/MUCT65pZxLIKImTWV6Kw=
   dependencies:
     semver-compare "^1.0.0"
-
-plist@2.0.1:
-  version "2.0.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/plist/-/plist-2.0.1.tgz#0a32ca9481b1c364e92e18dc55c876de9d01da8b"
-  integrity sha1-CjLKlIGxw2TpLhjcVch23p0B2os=
-  dependencies:
-    base64-js "1.1.2"
-    xmlbuilder "8.2.2"
-    xmldom "0.1.x"
 
 plist@^3.0.0, plist@^3.0.1:
   version "3.0.1"
@@ -12530,10 +12632,10 @@ range-parser@^1.0.3, range-parser@~1.2.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/range-parser/-/range-parser-1.2.0.tgz#f49be6b487894ddc40dcc94a322f611092e00d5e"
   integrity sha1-9JvmtIeJTdxA3MlKMi9hEJLgDV4=
 
-raven-js@^3.24.2:
-  version "3.27.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/raven-js/-/raven-js-3.27.0.tgz#9f47c03e17933ce756e189f3669d49c441c1ba6e"
-  integrity sha1-n0fAPheTPOdW4YnzZp1JxEHBum4=
+raven-js@^3.27.1:
+  version "3.27.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/raven-js/-/raven-js-3.27.2.tgz#6c33df952026cd73820aa999122b7b7737a66775"
+  integrity sha1-bDPflSAmzXOCCqmZEit7dzemZ3U=
 
 raw-body@2.3.3:
   version "2.3.3"
@@ -12899,13 +13001,13 @@ react-native-scrypt@1.0.0, react-native-scrypt@^1.0.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-scrypt/-/react-native-scrypt-1.0.0.tgz#c397c951fa53b0a6b82f6da980bb3b090cd961e4"
   integrity sha1-w5fJUfpTsKa4L22pgLs7CQzZYeQ=
 
-react-native-sentry@^0.42.0:
-  version "0.42.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-sentry/-/react-native-sentry-0.42.0.tgz#9cd59659d9b6cd36d6fc4c48f50613cd82cde25f"
-  integrity sha1-nNWWWdm2zTbW/ExI9QYTzYLN4l8=
+react-native-sentry@^0.43.2:
+  version "0.43.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-sentry/-/react-native-sentry-0.43.2.tgz#1505d16d334656f25f4d515e004d0c5a4ac5a01b"
+  integrity sha1-FQXRbTNGVvJfTVFeAE0MWkrFoBs=
   dependencies:
-    "@sentry/wizard" "^0.12.1"
-    raven-js "^3.24.2"
+    "@sentry/wizard" "^0.13.0"
+    raven-js "^3.27.1"
 
 react-native-shadow@^1.2.2:
   version "1.2.2"
@@ -14384,15 +14486,6 @@ simple-get@^2.7.0:
     once "^1.3.1"
     simple-concat "^1.0.0"
 
-simple-plist@^0.2.1:
-  version "0.2.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/simple-plist/-/simple-plist-0.2.1.tgz#71766db352326928cf3a807242ba762322636723"
-  integrity sha1-cXZts1IyaSjPOoByQrp2IyJjZyM=
-  dependencies:
-    bplist-creator "0.0.7"
-    bplist-parser "0.1.1"
-    plist "2.0.1"
-
 simple-plist@^1.0.0:
   version "1.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/simple-plist/-/simple-plist-1.0.0.tgz#bed3085633b22f371e111f45d159a1ccf94b81eb"
@@ -14482,6 +14575,35 @@ sntp@2.x.x:
   integrity sha1-LGzsFP7cIiJznK+bXD2F0cxaLMg=
   dependencies:
     hoek "4.x.x"
+
+socket.io-client@^2.2.0:
+  version "2.2.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/socket.io-client/-/socket.io-client-2.2.0.tgz#84e73ee3c43d5020ccc1a258faeeb9aec2723af7"
+  integrity sha1-hOc+48Q9UCDMwaJY+u65rsJyOvc=
+  dependencies:
+    backo2 "1.0.2"
+    base64-arraybuffer "0.1.5"
+    component-bind "1.0.0"
+    component-emitter "1.2.1"
+    debug "~3.1.0"
+    engine.io-client "~3.3.1"
+    has-binary2 "~1.0.2"
+    has-cors "1.1.0"
+    indexof "0.0.1"
+    object-component "0.0.3"
+    parseqs "0.0.5"
+    parseuri "0.0.5"
+    socket.io-parser "~3.3.0"
+    to-array "0.1.4"
+
+socket.io-parser@~3.3.0:
+  version "3.3.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/socket.io-parser/-/socket.io-parser-3.3.0.tgz#2b52a96a509fdf31440ba40fed6094c7d4f1262f"
+  integrity sha1-K1KpalCf3zFEC6QP7WCUx9TxJi8=
+  dependencies:
+    component-emitter "1.2.1"
+    debug "~3.1.0"
+    isarray "2.0.1"
 
 sockjs-client@1.1.5:
   version "1.1.5"
@@ -15265,6 +15387,11 @@ tmpl@1.0.x:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/tmpl/-/tmpl-1.0.4.tgz#23640dd7b42d00433911140820e5cf440e521dd1"
   integrity sha1-I2QN17QtAEM5ERQIIOXPRA5SHdE=
 
+to-array@0.1.4:
+  version "0.1.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/to-array/-/to-array-0.1.4.tgz#17e6c11f73dd4f3d74cda7a4ff3238e9ad9bf890"
+  integrity sha1-F+bBH3PdTz10zaek/zI46a2b+JA=
+
 to-arraybuffer@^1.0.0:
   version "1.0.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/to-arraybuffer/-/to-arraybuffer-1.0.1.tgz#7d229b1fcc637e466ca081180836a7aabff83f43"
@@ -15853,11 +15980,6 @@ uuid@2.0.1:
   version "2.0.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uuid/-/uuid-2.0.1.tgz#c2a30dedb3e535d72ccf82e343941a50ba8533ac"
   integrity sha1-wqMN7bPlNdcsz4LjQ5QaULqFM6w=
-
-uuid@3.0.1:
-  version "3.0.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
-  integrity sha1-ZUS7ot/ajBzxfmKaOjBeK7H+5sE=
 
 uuid@3.2.1:
   version "3.2.1"
@@ -16504,20 +16626,20 @@ ws@^5.2.0:
   dependencies:
     async-limiter "~1.0.0"
 
-xcode@^2.0.0:
+ws@~6.1.0:
+  version "6.1.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ws/-/ws-6.1.4.tgz#5b5c8800afab925e94ccb29d153c8d02c1776ef9"
+  integrity sha1-W1yIAK+rkl6UzLKdFTyNAsF3bvk=
+  dependencies:
+    async-limiter "~1.0.0"
+
+xcode@2.0.0, xcode@^2.0.0:
   version "2.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/xcode/-/xcode-2.0.0.tgz#134f1f94c26fbfe8a9aaa9724bfb2772419da1a2"
   integrity sha1-E08flMJvv+ipqqlyS/snckGdoaI=
   dependencies:
     simple-plist "^1.0.0"
     uuid "^3.3.2"
-
-"xcode@https://github.com/apache/cordova-node-xcode#e7646f0680d509b590b839e567c217590451505b":
-  version "1.0.1-dev"
-  resolved "https://github.com/apache/cordova-node-xcode#e7646f0680d509b590b839e567c217590451505b"
-  dependencies:
-    simple-plist "^0.2.1"
-    uuid "3.0.1"
 
 xhr-request-promise@^0.1.2:
   version "0.1.2"
@@ -16590,6 +16712,11 @@ xmldom@0.1.x:
   version "0.1.27"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/xmldom/-/xmldom-0.1.27.tgz#d501f97b3bdb403af8ef9ecc20573187aadac0e9"
   integrity sha1-1QH5ezvbQDr4757MIFcxh6rawOk=
+
+xmlhttprequest-ssl@~1.5.4:
+  version "1.5.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/xmlhttprequest-ssl/-/xmlhttprequest-ssl-1.5.5.tgz#c2876b06168aadc40e57d97e81191ac8f4398b3e"
+  integrity sha1-wodrBhaKrcQOV9l+gRkayPQ5iz4=
 
 xmlhttprequest@*, xmlhttprequest@1.8.0:
   version "1.8.0"
@@ -16865,3 +16992,8 @@ yarn@^1.7.0:
   version "1.15.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/yarn/-/yarn-1.15.2.tgz#7a064ca81ca34235f16376ad2f796ed432f9e285"
   integrity sha1-egZMqByjQjXxY3atL3lu1DL54oU=
+
+yeast@0.1.2:
+  version "0.1.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/yeast/-/yeast-0.1.2.tgz#008e06d8094320c372dbc2f8ed76a0ca6c8ac419"
+  integrity sha1-AI4G2AlDIMNy28L47XagymyKxBk=

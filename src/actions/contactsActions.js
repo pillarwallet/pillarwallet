@@ -93,7 +93,12 @@ export const syncContactAction = (userId: string) => {
     const currentDate = +new Date();
     const updatedContacts = contacts
       .filter(({ id }) => id !== userId)
-      .concat({ ...userInfo, createdAt: oldInfo.createdAt || currentDate, lastUpdateTime: currentDate });
+      .concat({
+        ...userInfo,
+        createdAt: oldInfo.createdAt || currentDate,
+        lastUpdateTime: currentDate,
+        status: oldInfo.status,
+      });
     dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
     dispatch({

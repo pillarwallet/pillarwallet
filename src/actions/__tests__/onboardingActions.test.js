@@ -150,6 +150,7 @@ describe('Wallet actions', () => {
       },
       accounts: { data: [mockSmartWalletAccount] },
       featureFlags: { data: { SMART_WALLET_ENABLED: false } },
+      history: { data: {} },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -199,6 +200,7 @@ describe('Wallet actions', () => {
       featureFlags: { data: { SMART_WALLET_ENABLED: true } },
       smartWallet: { upgrade: { status: null } },
       assets: { data: {} },
+      history: { data: {} },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -251,8 +253,10 @@ describe('Wallet actions', () => {
         },
         backupStatus: mockBackupStatus,
       },
+      accounts: { data: [mockSmartWalletAccount] },
       featureFlags: { data: { SMART_WALLET_ENABLED: false } },
       assets: { data: {} },
+      history: { data: {} },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -276,6 +280,9 @@ describe('Wallet actions', () => {
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
+
+    // $FlowFixMe
+    connectionKeyActions.updateConnectionKeyPairs = () => async () => Promise.resolve(true);
 
     return store.dispatch(registerWalletAction())
       .then(() => {

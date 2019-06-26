@@ -35,6 +35,8 @@ import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
+import ExchangeScreen from 'screens/Exchange';
+import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ContactScreen from 'screens/Contact';
 import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
@@ -61,6 +63,7 @@ import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallReq
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
+import ContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 import UpgradeIntroScreen from 'screens/UpgradeToSmartWallet/UpgradeIntroScreen';
 import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
@@ -109,6 +112,9 @@ import {
   // ME_TAB,
   ASSETS,
   ASSET,
+  EXCHANGE_TAB,
+  EXCHANGE,
+  EXCHANGE_CONFIRM,
   PROFILE,
   PEOPLE,
   CONTACT,
@@ -166,6 +172,7 @@ import {
   WALLETS_LIST,
   WALLET_SETTINGS,
   MANAGE_DETAILS_SESSIONS,
+  CONTACT_INFO,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -184,10 +191,12 @@ const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_new.png');
+const iconExchange = require('assets/icons/icon_exchange_new.png');
 const iconPeople = require('assets/icons/icon_people_group.png');
 // const iconMe = require('assets/icons/icon_me.png');
 const iconHome = require('assets/icons/icon_home_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
+const iconExchangeActive = require('assets/icons/icon_exchange_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_group_active.png');
 // const iconMeActive = require('assets/icons/icon_me_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
@@ -235,6 +244,12 @@ const assetsFlow = createStackNavigator(
 
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// EXCHANGE FLOW
+const exchangeFlow = createStackNavigator({
+  [EXCHANGE]: ExchangeScreen,
+  [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
+}, StackNavigatorConfig);
+
 // ME FLOW
 const meFlow = createStackNavigator({
   [ME]: MeScreen,
@@ -268,6 +283,7 @@ const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
+  [CONTACT_INFO]: ContactInfo,
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [CONTACT]: ContactScreen,
   [COLLECTIBLE]: CollectibleScreen,
@@ -344,6 +360,13 @@ const tabNavigation = createBottomTabNavigator(
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
         tabBarLabel: tabBarLabel('Assets'),
+      }),
+    },
+    [EXCHANGE_TAB]: {
+      screen: exchangeFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconExchangeActive, iconExchange),
+        tabBarLabel: tabBarLabel('Exchange'),
       }),
     },
     [PEOPLE]: {
@@ -546,6 +569,7 @@ type Props = {
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
   smartWalletFeatureEnabled: boolean,
+  exchangeFeatureEnabled: boolean,
 }
 
 let lockTimer;
@@ -656,6 +680,7 @@ class AppFlow extends React.Component<Props, {}> {
       navigation,
       backupStatus,
       smartWalletFeatureEnabled,
+      exchangeFeatureEnabled,
     } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
@@ -674,6 +699,7 @@ class AppFlow extends React.Component<Props, {}> {
           intercomNotificationsCount,
           isWalletBackedUp,
           smartWalletFeatureEnabled,
+          exchangeFeatureEnabled,
         }}
         navigation={navigation}
       />
@@ -692,7 +718,12 @@ const mapStateToProps = ({
   assets: { data: assets },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage } },
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  featureFlags: {
+    data: {
+      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
+      EXCHANGE_ENABLED: exchangeFeatureEnabled,
+    },
+  },
 }) => ({
   profileImage,
   userState,
@@ -705,6 +736,7 @@ const mapStateToProps = ({
   intercomNotificationsCount,
   isPickingImage,
   smartWalletFeatureEnabled,
+  exchangeFeatureEnabled,
 });
 
 const mapDispatchToProps = dispatch => ({

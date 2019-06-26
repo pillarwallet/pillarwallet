@@ -85,53 +85,56 @@ export const fetchCollectiblesHistoryAction = () => {
 
     if (response.error || !response.asset_events) return;
 
-    const accountCollectiblesHistory = response.asset_events.map(event => {
-      const {
-        asset,
-        transaction,
-        to_account: toAcc,
-        from_account: fromAcc,
-      } = event;
-      const {
-        asset_contract: assetContract,
-        name,
-        token_id: id,
-        description,
-        image_preview_url: image,
-      } = asset;
-      const { name: category, address: contractAddress } = assetContract;
-      const { transaction_hash: trxHash, block_number: blockNumber, timestamp } = transaction;
+    // NOTE: for some rare transactions we don't have information about the asset sent
+    const accountCollectiblesHistory = response.asset_events
+      .filter(event => !!event.asset)
+      .map(event => {
+        const {
+          asset,
+          transaction,
+          to_account: toAcc,
+          from_account: fromAcc,
+        } = event;
+        const {
+          asset_contract: assetContract,
+          name,
+          token_id: id,
+          description,
+          image_preview_url: image,
+        } = asset;
+        const { name: category, address: contractAddress } = assetContract;
+        const { transaction_hash: trxHash, block_number: blockNumber, timestamp } = transaction;
 
-      const collectibleName = name || `${category} ${id}`;
+        const collectibleName = name || `${category} ${id}`;
 
-      const assetData = {
-        id,
-        category,
-        name: collectibleName,
-        description,
-        icon: (/\.(png)$/i).test(image) ? image : '',
-        contractAddress,
-        assetContract: category,
-        tokenType: COLLECTIBLES,
-      };
+        const assetData = {
+          id,
+          category,
+          name: collectibleName,
+          description,
+          icon: (/\.(png)$/i).test(image) ? image : '',
+          contractAddress,
+          assetContract: category,
+          tokenType: COLLECTIBLES,
+        };
 
-      return {
-        to: toAcc.address,
-        from: fromAcc.address,
-        hash: trxHash,
-        createdAt: (new Date(timestamp).getTime()) / 1000,
-        _id: transaction.id,
-        protocol: 'Ethereum',
-        asset: collectibleName,
-        contractAddress,
-        value: 1,
-        blockNumber,
-        status: 'confirmed',
-        type: COLLECTIBLE_TRANSACTION,
-        icon: (/\.(png)$/i).test(image) ? image : '',
-        assetData,
-      };
-    });
+        return {
+          to: toAcc.address,
+          from: fromAcc.address,
+          hash: trxHash,
+          createdAt: (new Date(timestamp).getTime()) / 1000,
+          _id: transaction.id,
+          protocol: 'Ethereum',
+          asset: collectibleName,
+          contractAddress,
+          value: 1,
+          blockNumber,
+          status: 'confirmed',
+          type: COLLECTIBLE_TRANSACTION,
+          icon: (/\.(png)$/i).test(image) ? image : '',
+          assetData,
+        };
+      });
 
     const updatedCollectiblesHistory = {
       ...collectiblesHistory,

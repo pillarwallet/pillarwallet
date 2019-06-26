@@ -29,7 +29,7 @@ import {
   AppState,
   DeviceEventEmitter,
 } from 'react-native';
-import { providers } from 'ethers';
+import { providers, utils } from 'ethers';
 import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 
 export function delay(ms: number): Promise<void> {
@@ -274,4 +274,15 @@ export function ethSign(msgHex: String, privateKeyHex: string): string {
   const sigParams = ethUtil.ecsign(message, privateKey);
   const result = concatSig(sigParams);
   return result;
+}
+
+export function getRandomString(): string {
+  return utils.bigNumberify(utils.randomBytes(32)).toHexString().slice(2);
+}
+
+export function extractJwtPayload(jwtToken: string): Object {
+  // extract: header (not needed), payload, signature (not needed)
+  const [, encodedPayload] = jwtToken.split('.');
+  // do not use Buffer.toJSON
+  return JSON.parse(Buffer.from(encodedPayload, 'base64').toString());
 }
