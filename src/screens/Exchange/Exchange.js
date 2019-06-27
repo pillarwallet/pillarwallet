@@ -55,7 +55,7 @@ import {
 } from 'actions/exchangeActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
-import type { Offer } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import assetsConfig from 'configs/assetsConfig';
@@ -181,6 +181,7 @@ type Props = {
   gasInfo: GasInfo,
   resetOffers: Function,
   paymentNetworkBalances: Balances,
+  exchangeSearchRequest: ExchangeSearchRequest,
 };
 
 type State = {
@@ -393,10 +394,11 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { fetchGasInfo } = this.props;
+    const { fetchGasInfo, exchangeSearchRequest = {} } = this.props;
     fetchGasInfo();
     this.provideOptions();
-    this.setInitialSelection(ETH);
+    const { fromAssetCode = ETH, toAssetCode, fromAmount } = exchangeSearchRequest;
+    this.setInitialSelection(fromAssetCode, toAssetCode, fromAmount);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -426,14 +428,27 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  setInitialSelection = (fromAssetCode: string) => {
-    const { assets } = this.props;
-    const assetsOptions = this.generateAssetsOptions({ [fromAssetCode]: assets[fromAssetCode] });
-    const initialFormState = { ...this.state.value };
-    initialFormState.fromInput = {
-      selector: assetsOptions[0],
-      input: '',
+  setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
+    const { assets, supportedAssets } = this.props;
+    const assetsOptions = this.generateAssetsOptions({
+      [fromAssetCode]: assets[fromAssetCode],
+    });
+    const initialFormState = {
+      ...this.state.value,
+      fromInput: {
+        selector: assetsOptions[0],
+        input: fromAmount ? fromAmount.toString() : '',
+      },
     };
+    if (toAssetCode) {
+      const toAsset = supportedAssets.find(({ symbol }) => symbol === toAssetCode);
+      if (toAsset) {
+        const supportedAssetsOptions = this.generateSupportedAssetsOptions([toAsset]);
+        initialFormState.toInput = {
+          selector: supportedAssetsOptions[0],
+        };
+      }
+    }
     this.setState({ value: initialFormState });
   };
 
@@ -482,7 +497,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     const amountToBuy = amountToSell * askRate;
     this.setState({ pressedOfferId: _id }, () =>
       takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, order => {
-        this.setState({ pressedOfferId: '' }); // reset
+        this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
+        if (!order || !Object.keys(order).length) return;
         const { data: offerOrderData } = order;
         navigation.navigate(EXCHANGE_CONFIRM, {
           offerOrder: {
@@ -846,7 +862,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
-  exchange: { data: { offers, shapeshiftAccessToken } },
+  exchange: { data: { offers, shapeshiftAccessToken, searchRequest: exchangeSearchRequest } },
   assets: { data: assets, supportedAssets },
   rates: { data: rates },
   history: { gasInfo },
@@ -858,6 +874,7 @@ const mapStateToProps = ({
   rates,
   shapeshiftAccessToken,
   gasInfo,
+  exchangeSearchRequest,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -874,8 +891,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   searchOffers: (fromAssetCode, toAssetCode, fromAmount) => dispatch(
     searchOffersAction(fromAssetCode, toAssetCode, fromAmount),
   ),
-  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider, successCallback) => dispatch(
-    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, successCallback),
+  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider, callback) => dispatch(
+    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, callback),
   ),
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   resetShapeshiftAccessToken: () => dispatch(resetShapeshiftAccessTokenAction()),
