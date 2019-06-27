@@ -60,11 +60,7 @@ import {
   ADD_WEBSOCKET_RECEIVED_MESSAGE,
   REMOVE_WEBSOCKET_SENT_MESSAGE,
 } from 'constants/chatConstants';
-import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
 import { MESSAGE_DISCONNECTED, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
-import ChatService from 'services/chat';
-
-import { SOCKET } from '../services/sockets';
 import {
   CONNECTION_ACCEPTED_EVENT,
   CONNECTION_CANCELLED_EVENT,
@@ -72,7 +68,10 @@ import {
   CONNECTION_REJECTED_EVENT,
   CONNECTION_REQUESTED_EVENT,
   CONNECTION_COLLECTIBLE_EVENT,
-} from '../constants/socketConstants';
+} from 'constants/socketConstants';
+import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
+import ChatService from 'services/chat';
+import { SOCKET } from 'services/sockets';
 
 const storage = Storage.getInstance('db');
 
