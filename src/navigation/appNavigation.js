@@ -238,6 +238,7 @@ const assetsFlow = createStackNavigator(
     [ASSETS]: AssetsScreen,
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
+    [BADGE]: BadgeScreen,
     [CONTACT]: ContactScreen,
   },
   StackNavigatorConfig,
@@ -265,6 +266,7 @@ const peopleFlow = createStackNavigator({
   [CONTACT]: ContactScreen,
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
   [COLLECTIBLE]: CollectibleScreen,
+  [BADGE]: BadgeScreen,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;

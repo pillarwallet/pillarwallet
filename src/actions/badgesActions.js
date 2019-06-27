@@ -1,5 +1,10 @@
 // @flow
-import { UPDATE_BADGES } from 'constants/badgesConstants';
+import {
+  UPDATE_BADGES,
+  ADD_CONTACT_BADGES,
+  FETCHING_CONTACTS_BADGES,
+  STOP_FETCHING_CONTACTS_BADGES,
+} from 'constants/badgesConstants';
 import { saveDbAction } from './dbActions';
 import { offlineApiCall } from './offlineApiActions';
 
@@ -29,6 +34,28 @@ export const fetchBadgesAction = () => {
       dispatch(saveDbAction('badges', { badges: updatedBadges }, true));
       dispatch({ type: UPDATE_BADGES, payload: updatedBadges });
     }
+  };
+};
+
+
+export const fetchContactBadgesAction = (contact: Object) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      badges: { contactsBadges },
+    } = getState();
+    dispatch({ type: FETCHING_CONTACTS_BADGES });
+
+    const contactBadges = await api.fetchContactBadges(walletId, contact.id);
+    if (!contactBadges.length) {
+      dispatch({ type: STOP_FETCHING_CONTACTS_BADGES });
+      return;
+    }
+
+    const updatedContactsBadges = { ...contactsBadges, [contact.username]: contactBadges };
+
+    dispatch(saveDbAction('contactsBadges', { contactsBadges: updatedContactsBadges }, true));
+    dispatch({ type: ADD_CONTACT_BADGES, payload: { username: contact.username, badges: contactBadges } });
   };
 };
 
