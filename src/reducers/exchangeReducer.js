@@ -21,13 +21,15 @@ import {
   ADD_OFFER,
   RESET_OFFERS,
   SET_SHAPESHIFT_ACCESS_TOKEN,
+  SET_EXCHANGE_SEARCH_REQUEST,
 } from 'constants/exchangeConstants';
-import type { Offer } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest } from 'models/Offer';
 
 export type ExchangeReducerState = {
   data: {
     offers: Offer[],
     shapeshiftAccessToken?: string,
+    searchRequest?: ExchangeSearchRequest,
   },
 };
 
@@ -72,6 +74,14 @@ export default function exchangeReducer(
         data: {
           ...state.data,
           shapeshiftAccessToken: action.payload,
+        },
+      };
+    case SET_EXCHANGE_SEARCH_REQUEST:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          searchRequest: action.payload,
         },
       };
     default:

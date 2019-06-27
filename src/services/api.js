@@ -25,6 +25,7 @@ import { Sentry } from 'react-native-sentry';
 import {
   SDK_PROVIDER,
   BCX_URL,
+  NETWORK_PROVIDER,
   NOTIFICATIONS_URL,
   INVESTMENTS_URL,
   OPEN_SEA_API,
@@ -728,15 +729,17 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
 };
 
 SDKWrapper.prototype.importedEthTransactionHistory = function (walletAddress: string) {
+  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
   return Promise.resolve()
-    .then(() => ethplorerSdk.getAddressTransactions(walletAddress))
+    .then(() => ethplorerSdk.getAddressTransactions(walletAddress, { limit: 40 }))
     .then(data => Array.isArray(data) ? data : [])
     .catch(() => []);
 };
 
 SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: string) {
+  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
   return Promise.resolve()
-    .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer' }))
+    .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer', limit: 40 }))
     .then(data => get(data, 'operations', []))
     .catch(() => []);
 };

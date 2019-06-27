@@ -55,7 +55,7 @@ const ItemButton = styled.View`
   marginLeft: ${spacing.rhythm}px;
 `;
 
-class ContactInfo extends React.Component<Props, State> {
+export class ContactInfo extends React.Component<Props, State> {
   state = {
     name: !!this.props.user.firstName,
     username: !this.props.user.firstName && !this.props.user.email,

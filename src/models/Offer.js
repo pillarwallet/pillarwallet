@@ -47,3 +47,10 @@ export type OfferOrder = {
     data: string,
   },
 }
+
+export type ExchangeSearchRequest = {
+  fromAssetCode: string,
+  toAssetCode: string,
+  fromAmount: number,
+}
+
