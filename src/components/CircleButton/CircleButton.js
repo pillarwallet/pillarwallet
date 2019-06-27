@@ -93,6 +93,8 @@ const CircleButton = (props: Props) => {
           <CircleButtonIcon
             disabled={disabled}
             source={icon}
+            resizeMode="contain"
+            resizeMethod="resize"
           />
         </CircleButtonIconWrapper>
 
