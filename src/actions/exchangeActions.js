@@ -25,6 +25,7 @@ import {
   RESET_OFFERS,
   ADD_OFFER,
   SET_SHAPESHIFT_ACCESS_TOKEN,
+  SET_EXCHANGE_SEARCH_REQUEST,
 } from 'constants/exchangeConstants';
 
 import type { Offer } from 'models/Offer';
@@ -54,9 +55,10 @@ export const takeOfferAction = (
   toAssetCode: string,
   fromAmount: number,
   provider: string,
-  successCallback: Function,
+  callback: Function,
 ) => {
-  return async () => {
+  return async (dispatch: Function, getState: Function) => {
+    connectExchangeService(getState());
     const offerRequest = {
       quantity: parseFloat(fromAmount),
       provider,
@@ -70,9 +72,10 @@ export const takeOfferAction = (
         type: 'warning',
         message: 'Unable to request offer',
       });
+      callback({}); // let's return callback to dismiss loading spinner on offer card button
       return;
     }
-    successCallback(order);
+    callback(order);
   };
 };
 
@@ -83,6 +86,15 @@ export const resetOffersAction = () => ({
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Function, getState: Function) => {
     dispatch(resetOffersAction());
+    // let's put values to reducer in order to see the previous offers and search values after app gets locked
+    dispatch({
+      type: SET_EXCHANGE_SEARCH_REQUEST,
+      payload: {
+        fromAssetCode,
+        toAssetCode,
+        fromAmount,
+      },
+    });
     connectExchangeService(getState());
     exchangeService.onOffers(offers =>
       offers
