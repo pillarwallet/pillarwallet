@@ -58,7 +58,11 @@ export default class ExchangeService {
           token: shapeshiftAccessToken,
         };
       }
-      this.io = new SocketIO(`${EXCHANGE_URL}:443`, {
+      const wsUrl = EXCHANGE_URL
+        .replace(/(https:\/\/)/gi, 'wss://')
+        .replace(/(http:\/\/)/gi, 'ws://');
+      this.io = new SocketIO(`${wsUrl}:443`, {
+        transports: ['websocket'],
         query: {
           token: accessToken,
         },
