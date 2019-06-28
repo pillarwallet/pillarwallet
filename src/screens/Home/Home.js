@@ -491,6 +491,7 @@ class HomeScreen extends React.Component<Props, State> {
       history,
       openSeaTxHistory,
       contacts,
+      invitations,
     } = this.props;
 
     const {
@@ -575,7 +576,7 @@ class HomeScreen extends React.Component<Props, State> {
         tabImageNormal: allIconNormal,
         tabImageActive: allIconActive,
         onPress: () => this.setActiveTab(ALL),
-        data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts],
+        data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts, ...invitations],
         emptyState: {
           title: 'Make your first step',
           body: 'Your activity will appear here.',
@@ -599,7 +600,7 @@ class HomeScreen extends React.Component<Props, State> {
         tabImageNormal: socialIconNormal,
         tabImageActive: socialIconActive,
         onPress: () => this.setActiveTab(SOCIAL),
-        data: mappedContacts,
+        data: [...mappedContacts, ...invitations],
         emptyState: {
           title: 'Make your first step',
           body: 'Information on your connections will appear here. Send a connection request to start.',

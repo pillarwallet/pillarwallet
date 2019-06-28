@@ -442,7 +442,7 @@ class Contact extends React.Component<Props, State> {
         id: CHAT,
         name: 'Chat',
         onPress: () => this.setActiveTab(CHAT),
-        unread: unreadCount,
+        unread: activeTab === CHAT ? null : unreadCount,
       },
       {
         id: ACTIVITY,
