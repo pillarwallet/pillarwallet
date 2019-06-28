@@ -1,5 +1,8 @@
 // @flow
+import { Sentry } from 'react-native-sentry';
+import isEmpty from 'lodash.isempty';
 import { saveDbAction } from 'actions/dbActions';
+import { SET_HISTORY } from 'constants/historyConstants';
 import type { Accounts } from 'models/Account';
 import type { Transaction, TransactionsStore } from 'models/Transaction';
 import Storage from 'services/storage';
@@ -21,16 +24,31 @@ export function migrateTxHistoryToAccountsFormat(history: Transaction[], account
   };
 }
 
-export default async function (dispatch: Function) {
+export default async function (dispatch: Function, getState: Function) {
+  // check if we've already migrated the data to redux-persist
+  const { dataMigration = {} } = await storage.get('dataMigration');
+
   const { accounts = [] } = await storage.get('accounts');
   const { history = {} } = await storage.get('history');
+  const { history: { data: stateHistory } } = getState();
+
+  // check if data migrated, but the current state is empty and history from storage is not empty
+  if (dataMigration.history && isEmpty(stateHistory) && !isEmpty(history)) {
+    Sentry.captureMessage('Possible redux-persist crash', { level: 'info' });
+  }
+
+  // data migrated, no need to do anything
+  if (dataMigration.history) {
+    dispatch({ type: SET_HISTORY, payload: history });
+    return;
+  }
 
   if (Array.isArray(history) && accounts.length) {
     const migratedHistory = migrateTxHistoryToAccountsFormat(history, accounts);
     if (migratedHistory) {
       dispatch(saveDbAction('history', { history: migratedHistory }, true));
-      return migratedHistory;
+      dispatch({ type: SET_HISTORY, payload: migratedHistory });
     }
   }
-  return history;
+  await dispatch(saveDbAction('dataMigration', { dataMigration: { history: +new Date() } }));
 }
