@@ -417,6 +417,7 @@ class Contact extends React.Component<Props, State> {
       forceOpen,
       collapsedActivityHeight,
       collapsedChatHeight,
+      isSheetOpen,
       // isBadgesSectionOpen,
     } = this.state;
 
@@ -442,7 +443,7 @@ class Contact extends React.Component<Props, State> {
         id: CHAT,
         name: 'Chat',
         onPress: () => this.setActiveTab(CHAT),
-        unread: activeTab === CHAT ? null : unreadCount,
+        unread: activeTab === CHAT && isSheetOpen ? null : unreadCount,
       },
       {
         id: ACTIVITY,
