@@ -36,6 +36,7 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 import { fetchGasInfoAction } from 'actions/historyActions';
+import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
@@ -91,6 +92,8 @@ type Props = {
   baseFiatCurrency: string,
   supportedAssets: Asset[],
   balances: Balances,
+  executingExchangeTransaction: boolean,
+  setDismissTransaction: Function,
 };
 
 type State = {
@@ -114,6 +117,16 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     showFeeModal: false,
     transactionSpeed: NORMAL,
   };
+
+  componentDidUpdate() {
+    const {
+      executingExchangeTransaction,
+      navigation,
+    } = this.props;
+    if (!executingExchangeTransaction) {
+      navigation.goBack();
+    }
+  }
 
   componentDidMount() {
     const { fetchGasInfo } = this.props;
@@ -202,6 +215,20 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload, goBackDismiss: true });
   };
 
+
+  handleBack = () => {
+    const {
+      setDismissTransaction,
+      executingExchangeTransaction,
+      navigation,
+    } = this.props;
+    if (executingExchangeTransaction) {
+      setDismissTransaction();
+    } else {
+      navigation.goBack();
+    }
+  };
+
   render() {
     const { showFeeModal, transactionSpeed } = this.state;
     const {
@@ -228,7 +255,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
-        <Header title="exchange" onBack={() => navigation.goBack(null)} />
+        <Header title="exchange" onBack={this.handleBack} />
         <ScrollWrapper regularPadding>
           <Paragraph style={{ marginBottom: 30 }}>
             Review the details and confirm the exchange rate as well as the cost of transaction.
@@ -283,12 +310,14 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   history: { gasInfo },
   assets: { supportedAssets },
+  exchange: { data: { executingTransaction: executingExchangeTransaction } },
 }) => ({
   session,
   rates,
   baseFiatCurrency,
   gasInfo,
   supportedAssets,
+  executingExchangeTransaction,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -302,6 +331,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
+  setDismissTransaction: () => dispatch(setDismissTransactionAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen);

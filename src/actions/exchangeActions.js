@@ -26,6 +26,8 @@ import {
   ADD_OFFER,
   SET_SHAPESHIFT_ACCESS_TOKEN,
   SET_EXCHANGE_SEARCH_REQUEST,
+  SET_EXECUTING_TRANSACTION,
+  SET_DISMISS_TRANSACTION,
 } from 'constants/exchangeConstants';
 
 import type { Offer } from 'models/Offer';
@@ -166,3 +168,11 @@ export const requestShapeshiftAccessTokenAction = (tokenHash: string) => {
     dispatch(setShapeshiftAccessTokenAction(shapeshiftAccessToken));
   };
 };
+
+export const setExecutingTransactionAction = () => ({
+  type: SET_EXECUTING_TRANSACTION,
+});
+
+export const setDismissTransactionAction = () => ({
+  type: SET_DISMISS_TRANSACTION,
+});

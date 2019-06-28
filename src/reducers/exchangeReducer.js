@@ -22,6 +22,8 @@ import {
   RESET_OFFERS,
   SET_SHAPESHIFT_ACCESS_TOKEN,
   SET_EXCHANGE_SEARCH_REQUEST,
+  SET_EXECUTING_TRANSACTION,
+  SET_DISMISS_TRANSACTION,
 } from 'constants/exchangeConstants';
 import type { Offer, ExchangeSearchRequest } from 'models/Offer';
 
@@ -30,6 +32,7 @@ export type ExchangeReducerState = {
     offers: Offer[],
     shapeshiftAccessToken?: string,
     searchRequest?: ExchangeSearchRequest,
+    executingTransaction: boolean,
   },
 };
 
@@ -41,6 +44,7 @@ export type ExchangeReducerAction = {
 const initialState = {
   data: {
     offers: [],
+    executingTransaction: false,
   },
 };
 
@@ -82,6 +86,22 @@ export default function exchangeReducer(
         data: {
           ...state.data,
           searchRequest: action.payload,
+        },
+      };
+    case SET_EXECUTING_TRANSACTION:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          executingTransaction: true,
+        },
+      };
+    case SET_DISMISS_TRANSACTION:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          executingTransaction: false,
         },
       };
     default:

@@ -52,6 +52,7 @@ import {
   authorizeWithShapeshiftAction,
   resetShapeshiftAccessTokenAction,
   resetOffersAction,
+  setExecutingTransactionAction,
 } from 'actions/exchangeActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
@@ -182,6 +183,7 @@ type Props = {
   resetOffers: Function,
   paymentNetworkBalances: Balances,
   exchangeSearchRequest: ExchangeSearchRequest,
+  setExecutingTransaction: Function,
 };
 
 type State = {
@@ -477,6 +479,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       navigation,
       takeOffer,
+      setExecutingTransaction,
     } = this.props;
     const {
       value: {
@@ -500,6 +503,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (!order || !Object.keys(order).length) return;
         const { data: offerOrderData } = order;
+        setExecutingTransaction();
         navigation.navigate(EXCHANGE_CONFIRM, {
           offerOrder: {
             ...offerOrderData,
@@ -551,7 +555,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           <CardRow withBorder>
             <CardColumn>
               <CardText label>Exchange rate</CardText>
-              <CardText>{`${askRate} ${fromAssetCode || ''}`}</CardText>
+              <CardText>{`1 ${fromAssetCode} = ${askRate} ${toAssetCode}`}</CardText>
             </CardColumn>
           </CardRow>
           <CardRow>
@@ -898,6 +902,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   resetShapeshiftAccessToken: () => dispatch(resetShapeshiftAccessTokenAction()),
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   resetOffers: () => dispatch(resetOffersAction()),
+  setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);
