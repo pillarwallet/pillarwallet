@@ -271,13 +271,14 @@ class AssetScreen extends React.Component<Props, State> {
     const { assetData } = this.props.navigation.state.params;
     const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const tokenRate = getRate(rates, token, fiatCurrency);
     const balance = getBalance(balances, token);
     const isWalletEmpty = balance <= 0;
-    const totalInFiat = balance * getRate(rates, token, fiatCurrency);
+    const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const paymentNetworkBalance = getBalance(paymentNetworkBalances, token);
     const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
-    const paymentNetworkBalanceInFiat = paymentNetworkBalance * getRate(rates, token, fiatCurrency);
+    const paymentNetworkBalanceInFiat = paymentNetworkBalance * tokenRate;
     const formattedPaymentNetworkBalanceInFiat = formatMoney(paymentNetworkBalanceInFiat);
     const displayAmount = formatMoney(balance, 4);
     const currencySymbol = getCurrencySymbol(fiatCurrency);

@@ -34,7 +34,32 @@ export function getBalance(balances: Balances = {}, asset: string = ''): number 
 }
 
 export function getRate(rates: Rates = {}, token: string, fiatCurrency: string): number {
-  return rates[token] && rates[token][fiatCurrency] ? Number(rates[token][fiatCurrency]) : 0;
+  const tokenRates = rates[token];
+  const ethRate = rates[ETH];
+
+  if (!tokenRates) {
+    return 0;
+  }
+
+  if (!ethRate) {
+    return tokenRates[fiatCurrency] || 0;
+  }
+
+  const ethToFiat = ethRate[fiatCurrency];
+  if (!ethToFiat) {
+    return 0;
+  }
+
+  if (token === ETH) {
+    return ethToFiat;
+  }
+
+  const tokenToETH = tokenRates[ETH];
+  if (!tokenToETH) {
+    return tokenRates[fiatCurrency] || 0;
+  }
+
+  return ethToFiat * tokenToETH;
 }
 
 export function calculateMaxAmount(token: string, balance: number | string, txFeeInWei: BigNumber): number {
