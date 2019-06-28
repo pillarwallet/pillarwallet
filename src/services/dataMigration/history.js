@@ -25,25 +25,24 @@ export function migrateTxHistoryToAccountsFormat(history: Transaction[], account
 }
 
 export default async function (dispatch: Function, getState: Function) {
-  // check if we've already migrated the data to redux-persist
-  const { dataMigration = {} } = await storage.get('dataMigration');
-
+  const { migratedToReduxPersist = {} } = await storage.get('dataMigration');
   const { accounts = [] } = await storage.get('accounts');
   const { history = {} } = await storage.get('history');
   const { history: { data: stateHistory } } = getState();
 
-  // check if data migrated, but the current state is empty and history from storage is not empty
-  if (dataMigration.history && isEmpty(stateHistory) && !isEmpty(history)) {
+  // check if the data was migrated, but the current state is empty and history from storage is not empty
+  if (migratedToReduxPersist.history && isEmpty(stateHistory) && !isEmpty(history)) {
     Sentry.captureMessage('Possible redux-persist crash', { level: 'info' });
   }
 
   // data migrated, no need to do anything
-  if (dataMigration.history) {
+  if (migratedToReduxPersist.history) {
+    // TODO: remove this dispatch method once we decide to fully use the redux-persist
     dispatch({ type: SET_HISTORY, payload: history });
     return;
   }
 
-  await dispatch(saveDbAction('dataMigration', { dataMigration: { history: +new Date() } }));
+  await dispatch(saveDbAction('dataMigration', { migratedToReduxPersist: { history: +new Date() } }));
 
   if (Array.isArray(history) && accounts.length) {
     const migratedHistory = migrateTxHistoryToAccountsFormat(history, accounts);

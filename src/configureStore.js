@@ -39,6 +39,11 @@ ReactotronConfig();
 
 // migration example
 /*
+ * TODO: pouchdb old migrations should be run before redux-persist
+ * consider the case when user has no accounts yet and needs to
+ * migrate first to the accounts model and then to redux-persist migration
+ */
+/*
 const migrations = {
   '0': state => { // eslint-disable-line
     return {
