@@ -43,12 +43,16 @@ export default async function (dispatch: Function, getState: Function) {
     return;
   }
 
+  await dispatch(saveDbAction('dataMigration', { dataMigration: { history: +new Date() } }));
+
   if (Array.isArray(history) && accounts.length) {
     const migratedHistory = migrateTxHistoryToAccountsFormat(history, accounts);
     if (migratedHistory) {
       dispatch(saveDbAction('history', { history: migratedHistory }, true));
       dispatch({ type: SET_HISTORY, payload: migratedHistory });
+      return;
     }
   }
-  await dispatch(saveDbAction('dataMigration', { dataMigration: { history: +new Date() } }));
+
+  dispatch({ type: SET_HISTORY, payload: history });
 }
