@@ -74,7 +74,7 @@ export const baseColors = {
   pattensBlue: '#F0F5FA',
   shark: '#292c33',
   caribbeanGreen: '#4cf18b',
-  royalBlue: '#4588de',
+  royalBlue: '#3b7af2',
   blumine: '#275692',
   emerald: '#3dd276',
   greyser: '#d1d9e4',
@@ -87,6 +87,7 @@ export const baseColors = {
   hoki: '#647fa4',
   deepSkyBlue: '#01BFFF',
   ultramarine: '#0a0c78',
+  toryBlue: '#2f3195',
 };
 
 export const brandColors = [
@@ -115,6 +116,7 @@ export const UIColors = {
   actionButtonShadowColor: 'rgba(18, 63, 111, 0.1)',
   defaultDividerColor: baseColors.mediumLightGray,
   actionButtonBorderColor: 'rgba(255, 255, 255, 0.37)',
+  headerContentBorder: 'rgba(255, 255, 255, 0.1)',
 };
 
 export const fontSizes = {

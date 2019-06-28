@@ -18,28 +18,62 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, StatusBar } from 'react-native';
+import { StatusBar, View } from 'react-native';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import isEqual from 'lodash.isequal';
 import HeaderBlock from 'components/HeaderBlock';
+import { isColorDark } from 'utils/ui';
 
 type Props = {
+  navigation: NavigationScreenProp<*>,
   children?: React.Node,
+  headerProps?: Object,
 };
 
 export default class ContainerWithHeaderBlock extends React.Component<Props> {
+  focusSubscriptions: NavigationEventSubscription[];
+
   shouldComponentUpdate(nextProps: Props) {
     const isEq = isEqual(this.props, nextProps);
     return !isEq;
   }
 
+  componentDidMount() {
+    const { navigation } = this.props;
+    this.focusSubscriptions = [
+      navigation.addListener('didFocus', this.setStatusBarStyleForView),
+      navigation.addListener('willBlur', this.resetStatusBarStyle),
+    ];
+  }
+
+  componentWillUnmount() {
+    this.resetStatusBarStyle();
+    this.focusSubscriptions.forEach(sub => sub.remove());
+  }
+
+  setStatusBarStyleForView = () => {
+    const { headerProps = {} } = this.props;
+    const { color } = headerProps;
+    let statusBarStyle = 'dark-content';
+    if (color && isColorDark(color)) {
+      statusBarStyle = 'light-content';
+    }
+    StatusBar.setBarStyle(statusBarStyle);
+  };
+
+  resetStatusBarStyle = () => {
+    StatusBar.setBarStyle('dark-content');
+  };
+
   render() {
     const {
       children,
+      headerProps,
     } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
-        <HeaderBlock androidStatusbarHeight={StatusBar.currentHeight} />
+        <HeaderBlock {...headerProps} />
         {children}
       </View>
     );
