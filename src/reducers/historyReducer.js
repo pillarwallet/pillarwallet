@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import get from 'lodash.get';
+import { REHYDRATE } from 'redux-persist';
 import { SET_HISTORY, ADD_TRANSACTION, SET_GAS_INFO } from 'constants/historyConstants';
 import type { TransactionsStore } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
@@ -46,6 +48,11 @@ export default function historyReducer(
   action: HistoryAction,
 ): HistoryState {
   switch (action.type) {
+    case REHYDRATE:
+      return {
+        ...state,
+        data: get(action.payload, 'history.data', {}),
+      };
     case ADD_TRANSACTION:
       const accountTrxs = state.data[action.payload.accountId] || [];
       const trxs = {

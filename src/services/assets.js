@@ -257,7 +257,8 @@ export function fetchAssetBalances(assets: Asset[], walletAddress: string): Prom
 
 export function getExchangeRates(assets: string[]): Promise<?Object> {
   if (!assets.length) return Promise.resolve({});
-  return cryptocompare.priceMulti(assets, supportedFiatCurrencies).catch(() => ({}));
+  const targetCurrencies = supportedFiatCurrencies.concat(ETH);
+  return cryptocompare.priceMulti(assets, targetCurrencies).catch(() => ({}));
 }
 
 // from the getTransaction() method you'll get the the basic tx info without the status

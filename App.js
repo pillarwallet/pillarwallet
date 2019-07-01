@@ -25,6 +25,8 @@ import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
 import RootNavigation from 'navigation/rootNavigation';
 import { Sentry } from 'react-native-sentry';
+import { PersistGate } from 'redux-persist/lib/integration/react';
+import styled from 'styled-components/native';
 import { setTopLevelNavigator } from 'services/navigation';
 import { SENTRY_DSN, BUILD_TYPE } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -38,9 +40,16 @@ import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
+import Spinner from 'components/Spinner';
 import configureStore from './src/configureStore';
 
-const store = configureStore();
+export const LoadingSpinner = styled(Spinner)`
+  padding: 10px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const { store, persistor } = configureStore();
 
 type Props = {
   dispatch: Function,
@@ -159,7 +168,9 @@ const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App)
 const AppRoot = () => (
   <Root>
     <Provider store={store}>
-      <AppWithNavigationState />
+      <PersistGate loading={<LoadingSpinner />} persistor={persistor}>
+        <AppWithNavigationState />
+      </PersistGate>
     </Provider>
   </Root>
 );

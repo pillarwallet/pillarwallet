@@ -34,14 +34,13 @@ import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
-import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_WALLET_IMPORT_STATE } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
-import { UPDATE_BADGES } from 'constants/badgesConstants';
+import { UPDATE_BADGES, SET_CONTACTS_BADGES } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { SET_SHAPESHIFT_ACCESS_TOKEN, SET_EXCHANGE_ALLOWANCES } from 'constants/exchangeConstants';
@@ -113,6 +112,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { badges = [] } = await storage.get('badges');
       dispatch({ type: UPDATE_BADGES, payload: badges });
 
+      const { contactsBadges = {} } = await storage.get('contactsBadges');
+      dispatch({ type: SET_CONTACTS_BADGES, payload: contactsBadges });
+
       const { paymentNetworkBalances = {} } = await storage.get('paymentNetworkBalances');
       dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });
 
@@ -124,8 +126,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_SHAPESHIFT_ACCESS_TOKEN, payload: shapeshiftAccessToken });
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
-      const history = await loadAndMigrate('history', dispatch, getState);
-      dispatch({ type: SET_HISTORY, payload: history });
+      await loadAndMigrate('history', dispatch, getState);
 
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });

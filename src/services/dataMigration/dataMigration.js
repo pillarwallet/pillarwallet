@@ -11,7 +11,7 @@ export function loadAndMigrate(collection: string, dispatch: Function, getState:
     case 'app_settings': return loadAndMigrateAppSettings(dispatch);
     case 'accounts': return loadAndMigrateAccounts(dispatch, getState);
     case 'balances': return loadAndMigrateBalances(dispatch);
-    case 'history': return loadAndMigrateHistory(dispatch);
+    case 'history': return loadAndMigrateHistory(dispatch, getState);
     case 'collectibles': return loadAndMigrateCollectibles(dispatch);
     case 'collectiblesHistory': return loadAndMigrateCollectiblesHistory(dispatch);
     default: return null;

@@ -25,7 +25,7 @@ import { fontSizes } from 'utils/variables';
 
 type Props = {
   buttonText: string,
-  onPress: Function,
+  onPress?: Function,
   fontSize?: number,
   wrapperStyle?: Object,
 }

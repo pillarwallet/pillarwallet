@@ -523,6 +523,11 @@ class Profile extends React.Component<Props, State> {
                 onPress={() => this.toggleSlideModalOpen('phone')}
               />)
             }
+            <ProfileSettingsItem
+              key="contactInfo"
+              label="Share contact info"
+              onPress={this.navigateToContactInfo}
+            />
             <ListSeparator>
               <SubHeading>GENERAL SETTINGS</SubHeading>
             </ListSeparator>
@@ -590,11 +595,6 @@ class Profile extends React.Component<Props, State> {
                   key="claimTokens"
                   label="Get PLR's tokens"
                   onPress={() => this.toggleSlideModalOpen('claimTokens')}
-                />
-                <ProfileSettingsItem
-                  key="contactInfo"
-                  label="Share contact info"
-                  onPress={this.navigateToContactInfo}
                 />
               </View>
             )}

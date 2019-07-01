@@ -21,6 +21,10 @@
  * Create the Redux store
  */
 import { createStore, applyMiddleware, compose } from 'redux';
+import { AsyncStorage } from 'react-native';
+import { persistStore, persistReducer } from 'redux-persist';
+// import { createMigrate } from 'redux-persist';
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers';
@@ -32,6 +36,31 @@ import rootReducer from './reducers/rootReducer';
 import { ReactotronConfig } from '../reactotron.config';
 
 ReactotronConfig();
+
+// migration example
+/*
+ * TODO: pouchdb old migrations should be run before redux-persist
+ * consider the case when user has no accounts yet and needs to
+ * migrate first to the accounts model and then to redux-persist migration
+ */
+/*
+const migrations = {
+  '0': state => { // eslint-disable-line
+    return {
+      ...state,
+    };
+  },
+};
+*/
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+  // version: 0,
+  stateReconciler: autoMergeLevel2,
+  whitelist: ['history'],
+  // migrate: createMigrate(migrations, { debug: true }),
+};
+const pReducer = persistReducer(persistConfig, rootReducer);
 
 const pillarSdk = new PillarSdk();
 const navigationMiddleware = createReactNavigationReduxMiddleware(
@@ -54,15 +83,20 @@ export default function configureStore(initialState: ?Object): Object {
 
   const store = useReactotron ?
     createStore(
-      rootReducer,
+      pReducer,
       initialState,
       compose(enhancer, Reactotron.createEnhancer()), // eslint-disable-line no-undef
     ) :
     createStore(
-      rootReducer,
+      pReducer,
       initialState,
       enhancer,
     );
 
-  return store;
+  const persistor = persistStore(store);
+
+  return {
+    store,
+    persistor,
+  };
 }

@@ -98,7 +98,7 @@ describe('Wallet actions', () => {
       });
   });
 
-  it('Should expect a different set of actions for registered users.', () => {
+  it('Should expect a different set of actions for registered users.', async () => {
     const storage = Storage.getInstance('db');
     storage.save('user', { user: registeredMockUser });
     const expectedActions = [

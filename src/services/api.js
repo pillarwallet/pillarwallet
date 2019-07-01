@@ -25,6 +25,7 @@ import { Sentry } from 'react-native-sentry';
 import {
   SDK_PROVIDER,
   BCX_URL,
+  NETWORK_PROVIDER,
   NOTIFICATIONS_URL,
   INVESTMENTS_URL,
   OPEN_SEA_API,
@@ -33,7 +34,7 @@ import {
 } from 'react-native-dotenv';
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
-import type { UserBadgesResponse, BadgesInfoResponse, SelfAwardBadgeResponse } from 'models/Badge';
+import type { UserBadgesResponse, BadgesInfoResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
 import {
   fetchAssetBalances,
   fetchLastBlockNumber,
@@ -47,6 +48,7 @@ import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ConnectionIdentityKeyMap, ConnectionUpdateIdentityKeys } from 'models/Connections';
 import { getLimitedData } from 'utils/opensea';
+import { uniqBy } from 'utils/common';
 
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
@@ -480,6 +482,14 @@ SDKWrapper.prototype.fetchBadgesInfo = function (walletId: string): Promise<Badg
     .catch(() => ({}));
 };
 
+SDKWrapper.prototype.fetchContactBadges = function (walletId: string, userId: string): Promise<Badges> {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.badge.get({ walletId, userId }))
+    .then(({ data }) => data)
+    .then(data => uniqBy(data, 'id'))
+    .catch(() => []);
+};
+
 SDKWrapper.prototype.selfAwardBadge = function (walletId: string, event: string): Promise<SelfAwardBadgeResponse | {}> {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.badge.selfAward({ walletId, event }))
@@ -719,15 +729,17 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
 };
 
 SDKWrapper.prototype.importedEthTransactionHistory = function (walletAddress: string) {
+  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
   return Promise.resolve()
-    .then(() => ethplorerSdk.getAddressTransactions(walletAddress))
+    .then(() => ethplorerSdk.getAddressTransactions(walletAddress, { limit: 40 }))
     .then(data => Array.isArray(data) ? data : [])
     .catch(() => []);
 };
 
 SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: string) {
+  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
   return Promise.resolve()
-    .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer' }))
+    .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer', limit: 40 }))
     .then(data => get(data, 'operations', []))
     .catch(() => []);
 };
