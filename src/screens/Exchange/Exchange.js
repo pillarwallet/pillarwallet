@@ -806,6 +806,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const txFeeInWei = this.getTxFeeInWei();
     const formStructure = generateFormStructure({ balances, txFeeInWei });
+    const sortedOffers = offers.sort((a, b) => b.askRate - a.askRate);
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
@@ -845,7 +846,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             </FeeInfo>
           </FormWrapper>
           <FlatList
-            data={offers}
+            data={sortedOffers}
             keyExtractor={(item) => item._id}
             style={{ width: '100%' }}
             contentContainerStyle={{ width: '100%', paddingHorizontal: 20, paddingVertical: 10 }}
