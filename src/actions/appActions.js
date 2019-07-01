@@ -34,7 +34,6 @@ import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
-import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_WALLET_IMPORT_STATE } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -126,8 +125,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { shapeshiftAccessToken } = await storage.get('exchange');
       dispatch({ type: SET_SHAPESHIFT_ACCESS_TOKEN, payload: shapeshiftAccessToken });
 
-      const history = await loadAndMigrate('history', dispatch, getState);
-      dispatch({ type: SET_HISTORY, payload: history });
+      await loadAndMigrate('history', dispatch, getState);
 
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
