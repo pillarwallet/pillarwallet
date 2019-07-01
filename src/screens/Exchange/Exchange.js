@@ -28,7 +28,6 @@ import t from 'tcomb-form-native';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
@@ -43,8 +42,6 @@ import Spinner from 'components/Spinner';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 import Animation from 'components/Animation';
-import TankAssetBalance from 'components/TankAssetBalance';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
 import {
   searchOffersAction,
@@ -59,7 +56,6 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 import type { Offer, ExchangeSearchRequest } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
-import assetsConfig from 'configs/assetsConfig';
 
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -225,7 +221,6 @@ const SPEED_TYPES = {
 
 const PROVIDER_SHAPESHIFT = 'SHAPESHIFT-SHIM';
 const animationSource = require('assets/animations/livePulsatingAnimation.json');
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 const checkIfEnoughForFee = (balances: Balances, txFeeInWei) => {
   if (!balances[ETH]) return false;
@@ -741,37 +736,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       transactionSpeed: txSpeed,
       showFeeModal: false,
     });
-  };
-
-  renderAsset = ({ item }) => {
-    const { balances, paymentNetworkBalances } = this.props;
-    const assetBalance = formatAmount(getBalance(balances, item.symbol));
-    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
-    const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
-    const paymentNetworkBalance = getBalance(paymentNetworkBalances, item.symbol);
-    const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
-
-    if (assetShouldRender) {
-      return null;
-    }
-
-    return (
-      <ListItemWithImage
-        onPress={() => {}}
-        label={item.name}
-        itemImageUrl={fullIconUrl || genericToken}
-        itemValue={`${assetBalance} ${item.symbol}`}
-        fallbackSource={genericToken}
-        customAddon={paymentNetworkBalance ? (
-          <TankAssetBalance
-            amount={paymentNetworkBalanceFormatted}
-            isSynthetic={item.symbol !== ETH}
-          />)
-        : null
-        }
-        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
-      />
-    );
   };
 
   render() {
