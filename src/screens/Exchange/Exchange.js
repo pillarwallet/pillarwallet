@@ -36,13 +36,12 @@ import { getBalance, getRate } from 'utils/assets';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ShadowedCard from 'components/ShadowedCard';
-import { BaseText, Label, TextLink, Paragraph, BoldText } from 'components/Typography';
+import { BaseText, Label, TextLink, Paragraph } from 'components/Typography';
 import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
-import Animation from 'components/Animation';
 
 import {
   searchOffersAction,
@@ -59,12 +58,15 @@ import type { Offer, ExchangeSearchRequest } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 
-import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+import { EXCHANGE_CONFIRM, EXCHANGE_INFO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { PROVIDER_SHAPESHIFT, PROVIDER_UNISWAP, PROVIDER_ZEROX, PROVIDER_CHANGELLY } from 'constants/exchangeConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+
+// partials
+import { ExchangeStatus } from './ExchangeStatus';
 
 const CardWrapper = styled.View`
   width: 100%;
@@ -98,10 +100,7 @@ const CardText = styled(BaseText)`
 
 const ListHeader = styled.View`
   width: 100%;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: flex-end;
-  margin: 14px 0;
+  align-items: center;
 `;
 
 const HeaderButton = styled.TouchableOpacity`
@@ -134,33 +133,25 @@ const FeeInfo = styled.View`
   margin-top: ${spacing.small}px;
 `;
 
-const Status = styled.View`
+const HeaderAddonWrapper = styled.View`
   flex-direction: row;
-  height: 50px;
-  justify-content: flex-start;
   align-items: center;
+  height: 52px;
 `;
 
-const StatusIcon = styled.View`
-  height: 8px;
-  width: 8px;
-  border-radius: 4px;
-  background-color: ${baseColors.fruitSalad};
-  position: absolute;
-  top: 7px;
-  left: 7px;
+const SettingsButton = styled.TouchableOpacity`
+  padding: 10px;
+  padding-right: -10px;
 `;
 
-const StatusText = styled(BoldText)`
-  color: ${baseColors.fruitSalad};
-  font-size: ${fontSizes.tiny}px;
-  letter-spacing: 0.15px;
-  line-height: ${fontSizes.tiny}px;
-  margin-top: 2px;
+const SettingsIcon = styled(CachedImage)`
+  width: 24px;
+  height: 24px;
 `;
 
-const IconHolder = styled.View`
-  position: relative;
+const ESWrapper = styled.View`
+  width: 100%;
+  align-items: center;
 `;
 
 type Props = {
@@ -223,8 +214,7 @@ const SPEED_TYPES = {
   [NORMAL]: 'Normal',
   [FAST]: 'Fast',
 };
-
-const animationSource = require('assets/animations/livePulsatingAnimation.json');
+const settingsIcon = require('assets/icons/icon_key.png');
 const zeroxLogo = require('assets/images/exchangeProviders/logo_0x.png');
 const shapeshiftLogo = require('assets/images/exchangeProviders/logo_shapeshift.png');
 const uniswapLogo = require('assets/images/exchangeProviders/logo_uniswap.png');
@@ -844,6 +834,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       shapeshiftAccessToken,
       resetShapeshiftAccessToken,
       balances,
+      navigation,
     } = this.props;
     const {
       value,
@@ -861,13 +852,13 @@ class ExchangeScreen extends React.Component<Props, State> {
         <Header
           title="exchange"
           headerRightAddon={
-            <Status>
-              <IconHolder>
-                <Animation source={animationSource} style={{ height: 22, width: 22 }} loop speed={0.9} />
-                <StatusIcon />
-              </IconHolder>
-              <StatusText>ACTIVE</StatusText>
-            </Status>
+            <HeaderAddonWrapper>
+              <SettingsButton onPress={() => navigation.navigate(EXCHANGE_INFO)}>
+                <SettingsIcon
+                  source={settingsIcon}
+                />
+              </SettingsButton>
+            </HeaderAddonWrapper>
           }
         />
         <ScrollWrapper>
@@ -901,6 +892,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             renderItem={this.renderOffers}
             ListHeaderComponent={
               <ListHeader>
+                {!!sortedOffers.length && <ExchangeStatus />}
                 {!!shapeshiftAccessToken &&
                   <HeaderButton onPress={() => resetShapeshiftAccessToken()}>
                     <ButtonLabel color={baseColors.burningFire}>Disconnect ShapeShift</ButtonLabel>
@@ -909,9 +901,12 @@ class ExchangeScreen extends React.Component<Props, State> {
               </ListHeader>
             }
             ListEmptyComponent={(
-              <Paragraph small style={{ textAlign: 'center', marginTop: '15%' }}>
-                {'If there are any matching offers\nthey will appear live here'}
-              </Paragraph>
+              <ESWrapper style={{ marginTop: '15%' }}>
+                <ExchangeStatus />
+                <Paragraph small style={{ textAlign: 'center' }}>
+                  {'If there are any matching offers\nthey will appear live here'}
+                </Paragraph>
+              </ESWrapper>
             )}
           />
           <SlideModal

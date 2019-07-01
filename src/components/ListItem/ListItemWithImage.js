@@ -70,6 +70,7 @@ type Props = {
 
 const ItemWrapper = styled.View`
   flex-direction: column;
+  width: 100%;
 `;
 
 const InnerWrapper = styled.TouchableOpacity`
@@ -78,6 +79,7 @@ const InnerWrapper = styled.TouchableOpacity`
   justify-content: center;
   padding: ${spacing.small}px ${spacing.mediumLarge}px;
   height: ${props => props.type === DEFAULT ? 70 : 84}px;
+  width: 100%;
 `;
 
 const Row = styled.View`
