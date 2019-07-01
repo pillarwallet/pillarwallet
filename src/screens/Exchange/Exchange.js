@@ -25,6 +25,7 @@ import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import { formatAmount, formatMoney, getCurrencySymbol, isValidNumber } from 'utils/common';
 import t from 'tcomb-form-native';
+import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
@@ -59,6 +60,7 @@ import type { GasInfo } from 'models/GasInfo';
 
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { PROVIDER_SHAPESHIFT, PROVIDER_UNISWAP, PROVIDER_ZEROX, PROVIDER_CHANGELLY } from 'constants/exchangeConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
@@ -71,7 +73,7 @@ const CardRow = styled.View`
   flex: 1;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: ${props => props.alignTop ? 'flex-start' : 'flex-end'};
   padding: 10px 0;
   ${props => props.withBorder
     ? `border-bottom-width: 1px;
@@ -219,8 +221,11 @@ const SPEED_TYPES = {
   [FAST]: 'Fast',
 };
 
-const PROVIDER_SHAPESHIFT = 'SHAPESHIFT-SHIM';
 const animationSource = require('assets/animations/livePulsatingAnimation.json');
+const zeroxLogo = require('assets/images/exchangeProviders/logo_0x.png');
+const shapeshiftLogo = require('assets/images/exchangeProviders/logo_shapeshift.png');
+const uniswapLogo = require('assets/images/exchangeProviders/logo_uniswap.png');
+const changellyLogo = require('assets/images/exchangeProviders/logo_changelly.png');
 
 const checkIfEnoughForFee = (balances: Balances, txFeeInWei) => {
   if (!balances[ETH]) return false;
@@ -340,6 +345,48 @@ function SelectorInputTemplate(locals) {
     />
   );
 }
+
+const getProviderLogo = (provider: string) => {
+  switch (provider) {
+    case PROVIDER_SHAPESHIFT:
+      return shapeshiftLogo;
+    case PROVIDER_UNISWAP:
+      return uniswapLogo;
+    case PROVIDER_ZEROX:
+      return zeroxLogo;
+    case PROVIDER_CHANGELLY:
+      return changellyLogo;
+    default:
+      return '';
+  }
+};
+
+const getProviderLogoStyle = (provider: string) => {
+  switch (provider) {
+    case PROVIDER_SHAPESHIFT:
+      return {
+        width: 62,
+        height: 24,
+      };
+    case PROVIDER_UNISWAP:
+      return {
+        width: 72,
+        height: 24,
+      };
+    case PROVIDER_ZEROX:
+      return {
+        width: 40,
+        height: 24,
+      };
+    case PROVIDER_CHANGELLY:
+      return {
+        width: 86,
+        height: 24,
+      };
+    default:
+      return null;
+  }
+};
 
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
@@ -527,6 +574,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     const amountToBuy = parseFloat(selectedSellAmount) * askRate;
     const isPressed = pressedOfferId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
+    const providerLogo = getProviderLogo(offerProvider);
+    const providerLogoStyle = getProviderLogoStyle(offerProvider);
 
     /**
      * avoid text overlapping on many decimals,
@@ -547,10 +596,13 @@ class ExchangeScreen extends React.Component<Props, State> {
         contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
       >
         <CardWrapper>
-          <CardRow withBorder>
-            <CardColumn>
+          <CardRow withBorder alignTop>
+            <CardColumn style={{ flex: 1 }}>
               <CardText label>Exchange rate</CardText>
               <CardText>{`1 ${fromAssetCode} = ${askRate} ${toAssetCode}`}</CardText>
+            </CardColumn>
+            <CardColumn>
+              {!!providerLogo && <CachedImage style={[{ marginTop: 2 }, providerLogoStyle]} source={providerLogo} />}
             </CardColumn>
           </CardRow>
           <CardRow>
