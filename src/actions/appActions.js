@@ -44,7 +44,7 @@ import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'const
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
-import { SET_SHAPESHIFT_ACCESS_TOKEN } from 'constants/exchangeConstants';
+import { SET_SHAPESHIFT_ACCESS_TOKEN, SET_EXCHANGE_ALLOWANCES } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   DISMISS_SMART_WALLET_UPGRADE,
@@ -120,8 +120,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const { shapeshiftAccessToken } = await storage.get('exchange');
+      const { shapeshiftAccessToken, allowances = [] } = await storage.get('exchange');
       dispatch({ type: SET_SHAPESHIFT_ACCESS_TOKEN, payload: shapeshiftAccessToken });
+      dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
       const history = await loadAndMigrate('history', dispatch, getState);
       dispatch({ type: SET_HISTORY, payload: history });

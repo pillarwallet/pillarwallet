@@ -193,6 +193,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         data,
       } = {},
       setTokenAllowance,
+      provider,
     } = offerOrder;
 
     // going from previous screen, asset will always be present in reducer
@@ -211,6 +212,15 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       decimals: asset ? asset.decimals : 18,
       data,
     };
+
+    if (setTokenAllowance) {
+      transactionPayload.extra = {
+        allowance: {
+          provider,
+          assetCode: fromAssetCode,
+        },
+      };
+    }
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload, goBackDismiss: true });
   };

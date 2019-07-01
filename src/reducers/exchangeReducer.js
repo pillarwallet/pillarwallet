@@ -24,8 +24,11 @@ import {
   SET_EXCHANGE_SEARCH_REQUEST,
   SET_EXECUTING_TRANSACTION,
   SET_DISMISS_TRANSACTION,
+  SET_EXCHANGE_ALLOWANCES,
+  ADD_EXCHANGE_ALLOWANCE,
+  UPDATE_EXCHANGE_ALLOWANCE,
 } from 'constants/exchangeConstants';
-import type { Offer, ExchangeSearchRequest } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, Allowance } from 'models/Offer';
 
 export type ExchangeReducerState = {
   data: {
@@ -33,6 +36,7 @@ export type ExchangeReducerState = {
     shapeshiftAccessToken?: string,
     searchRequest?: ExchangeSearchRequest,
     executingTransaction: boolean,
+    allowances: Allowance[]
   },
 };
 
@@ -45,6 +49,7 @@ const initialState = {
   data: {
     offers: [],
     executingTransaction: false,
+    allowances: [],
   },
 };
 
@@ -102,6 +107,41 @@ export default function exchangeReducer(
         data: {
           ...state.data,
           executingTransaction: false,
+        },
+      };
+    case SET_EXCHANGE_ALLOWANCES:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          allowances: action.payload,
+        },
+      };
+    case ADD_EXCHANGE_ALLOWANCE:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          allowances: [
+            ...state.data.allowances,
+            action.payload,
+          ],
+        },
+      };
+    case UPDATE_EXCHANGE_ALLOWANCE:
+      const {
+        transactionHash,
+      } = action.payload || {};
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          allowances: [
+            ...state.data.allowances.filter(
+              ({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash,
+            ),
+            action.payload,
+          ],
         },
       };
     default:

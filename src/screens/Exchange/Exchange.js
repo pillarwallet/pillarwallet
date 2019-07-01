@@ -54,7 +54,7 @@ import {
 } from 'actions/exchangeActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
-import type { Offer, ExchangeSearchRequest } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, Allowance } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 
@@ -175,6 +175,7 @@ type Props = {
   exchangeSearchRequest: ExchangeSearchRequest,
   setExecutingTransaction: Function,
   setTokenAllowance: Function,
+  exchangeAllowances: Allowance[],
 };
 
 type State = {
@@ -594,7 +595,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       shapeshiftAuthPressed,
       pressedTokenAllowanceId,
     } = this.state;
-    const { shapeshiftAccessToken } = this.props;
+    const { shapeshiftAccessToken, exchangeAllowances } = this.props;
     const { input: selectedSellAmount } = fromInput;
     const {
       _id: offerId,
@@ -604,8 +605,14 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAssetCode,
       toAssetCode,
       provider: offerProvider,
-      allowanceSet = true,
     } = offer;
+    let { allowanceSet = true } = offer;
+
+    if (!allowanceSet) {
+      allowanceSet = !!exchangeAllowances.find(
+        ({ provider, assetCode, enabled }) => fromAssetCode === assetCode && provider === offerProvider && enabled,
+      );
+    }
 
     const available = getAvailable(minQuantity, maxQuantity, askRate);
     const amountToBuy = parseFloat(selectedSellAmount) * askRate;
@@ -926,7 +933,14 @@ class ExchangeScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
-  exchange: { data: { offers, shapeshiftAccessToken, searchRequest: exchangeSearchRequest } },
+  exchange: {
+    data: {
+      offers,
+      shapeshiftAccessToken,
+      searchRequest: exchangeSearchRequest,
+      allowances: exchangeAllowances,
+    },
+  },
   assets: { data: assets, supportedAssets },
   rates: { data: rates },
   history: { gasInfo },
@@ -939,6 +953,7 @@ const mapStateToProps = ({
   shapeshiftAccessToken,
   gasInfo,
   exchangeSearchRequest,
+  exchangeAllowances,
 });
 
 const structuredSelector = createStructuredSelector({

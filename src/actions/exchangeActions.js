@@ -28,6 +28,8 @@ import {
   SET_EXCHANGE_SEARCH_REQUEST,
   SET_EXECUTING_TRANSACTION,
   SET_DISMISS_TRANSACTION,
+  ADD_EXCHANGE_ALLOWANCE,
+  UPDATE_EXCHANGE_ALLOWANCE,
 } from 'constants/exchangeConstants';
 
 import type { Offer } from 'models/Offer';
@@ -203,5 +205,44 @@ export const setTokenAllowanceAction = (
       return;
     }
     callback(response);
+  };
+};
+
+export const addExchangeAllowanceAction = (
+  provider: string,
+  assetCode: string,
+  transactionHash: string,
+) => {
+  return async (dispatch: Function, getState: Function) => {
+    const { exchange: { data: { allowances = [] } } } = getState();
+    const allowance = {
+      provider,
+      assetCode,
+      transactionHash,
+      enabled: false,
+    };
+    allowances.push(allowance);
+    dispatch({
+      type: ADD_EXCHANGE_ALLOWANCE,
+      payload: allowance,
+    });
+    dispatch(saveDbAction('exchange', { allowances }, true));
+  };
+};
+
+export const enableExchangeAllowanceByHashAction = (transactionHash: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    const { exchange: { data: { allowances = [] } } } = getState();
+    const allowance = allowances.find(
+      ({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash,
+    );
+    if (!allowance) return;
+    dispatch({
+      type: UPDATE_EXCHANGE_ALLOWANCE,
+      payload: {
+        ...allowance,
+        enabled: true,
+      },
+    });
   };
 };

@@ -53,11 +53,19 @@ export type OfferOrder = {
     data: string,
   },
   setTokenAllowance?: boolean,
+  provider?: string,
 }
 
 export type ExchangeSearchRequest = {
   fromAssetCode: string,
   toAssetCode: string,
   fromAmount: number,
+}
+
+export type Allowance = {
+  provider: string,
+  assetCode: string,
+  transactionHash: string,
+  enabled?: boolean,
 }
 

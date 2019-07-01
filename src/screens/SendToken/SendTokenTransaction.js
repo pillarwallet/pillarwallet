@@ -133,14 +133,25 @@ class SendTokenTransaction extends React.Component<Props, State> {
     const {
       isSuccess,
       error,
-      transactionPayload,
+      transactionPayload: {
+        tokenType: transactionTokenType,
+        extra: {
+          allowance = {},
+        } = {},
+      },
       noRetry,
     } = navigation.state.params;
     const animationSource = isSuccess ? animationSuccess : animationFailure;
     const transactionStatusText = isSuccess ? transactionSuccessText : getTransactionErrorMessage(error);
-    const successText = transactionPayload.tokenType === COLLECTIBLES
-      ? 'Collectible is on its way'
-      : 'Tokens are on their way';
+    let successText;
+    const isAllowanceTransaction = Object.keys(allowance).length;
+    if (transactionTokenType === COLLECTIBLES) {
+      successText = 'Collectible is on its way';
+    } else {
+      successText = isAllowanceTransaction
+        ? 'Transaction is on it\'s way'
+        : 'Tokens are on their way';
+    }
     const transactionStatusTitle = isSuccess ? successText : 'Transaction failed';
     return (
       <Container>
