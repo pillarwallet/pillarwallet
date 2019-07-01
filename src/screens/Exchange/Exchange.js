@@ -752,7 +752,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       assets,
       supportedAssets,
-      balances,
       rates,
       baseFiatCurrency,
     } = this.props;
@@ -764,9 +763,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     let valueInFiatToShow;
     if (amount && Object.keys(selectedFromOption).length) {
       const { symbol: token } = selectedFromOption;
-      const balance = getBalance(balances, token);
       const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-      const totalInFiat = balance * getRate(rates, token, fiatCurrency);
+      const totalInFiat = parseFloat(amount) * getRate(rates, token, fiatCurrency);
       amountValueInFiat = formatMoney(totalInFiat);
       fiatSymbol = getCurrencySymbol(fiatCurrency);
       valueInFiatToShow = totalInFiat > 0 ? `${amountValueInFiat} ${fiatSymbol}` : null;
