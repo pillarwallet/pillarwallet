@@ -69,10 +69,14 @@ export const takeOfferAction = (
     };
     const order = await exchangeService.takeOffer(offerRequest);
     if (!order || !order.data || order.error) {
+      let { message = 'Unable to request offer' } = order.error || {};
+      if (message.toString().toLowerCase().includes('kyc')) {
+        message = 'Shapeshift KYC must be complete in order to proceed';
+      }
       Toast.show({
         title: 'Exchange service failed',
         type: 'warning',
-        message: 'Unable to request offer',
+        message,
       });
       callback({}); // let's return callback to dismiss loading spinner on offer card button
       return;
