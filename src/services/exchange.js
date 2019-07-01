@@ -20,7 +20,7 @@
 import { EXCHANGE_URL } from 'react-native-dotenv';
 import SocketIO from 'socket.io-client';
 
-import type { OfferRequest } from 'models/Offer';
+import type { OfferRequest, TokenAllowanceRequest } from 'models/Offer';
 import { extractJwtPayload, getRandomString } from 'utils/common';
 
 const executeCallback = (data?: any, callback?: Function) => {
@@ -123,6 +123,16 @@ export default class ExchangeService {
       ...this.apiConfig,
       method: 'POST',
       body: JSON.stringify(order),
+    })
+      .then(response => response.json())
+      .catch(error => ({ error }));
+  }
+
+  setTokenAllowance(request: TokenAllowanceRequest) {
+    return fetch(buildApiUrl('orders/allowance'), {
+      ...this.apiConfig,
+      method: 'POST',
+      body: JSON.stringify(request),
     })
       .then(response => response.json())
       .catch(error => ({ error }));

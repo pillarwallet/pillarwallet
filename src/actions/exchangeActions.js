@@ -176,3 +176,28 @@ export const setExecutingTransactionAction = () => ({
 export const setDismissTransactionAction = () => ({
   type: SET_DISMISS_TRANSACTION,
 });
+
+export const setTokenAllowanceAction = (
+  assetCode: string,
+  provider: string,
+  callback: Function,
+) => {
+  return async (dispatch: Function, getState: Function) => {
+    connectExchangeService(getState());
+    const allowanceRequest = {
+      provider,
+      token: assetCode,
+    };
+    const response = await exchangeService.setTokenAllowance(allowanceRequest);
+    if (!response || !response.data || response.error) {
+      Toast.show({
+        title: 'Exchange service failed',
+        type: 'warning',
+        message: 'Unable to set token allowance',
+      });
+      callback({}); // let's return callback to dismiss loading spinner on offer card button
+      return;
+    }
+    callback(response);
+  };
+};

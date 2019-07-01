@@ -136,8 +136,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
   setSelectedTransactionFee = () => {
     const { navigation } = this.props;
-    const offerOrder = navigation.getParam('offerOrder', {});
-    const { transactionSpeed } = offerOrder;
+    const transactionSpeed = navigation.getParam('transactionSpeed', NORMAL);
     this.setState({ transactionSpeed });
   };
 
@@ -193,6 +192,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       transactionObj: {
         data,
       } = {},
+      setTokenAllowance,
     } = offerOrder;
 
     // going from previous screen, asset will always be present in reducer
@@ -204,7 +204,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       gasLimit: GAS_LIMIT,
       txFeeInWei,
       gasPrice,
-      amount: payAmount,
+      amount: setTokenAllowance ? 0 : payAmount,
       to: payToAddress,
       symbol: fromAssetCode,
       contractAddress: asset ? asset.address : '',
@@ -243,6 +243,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       payAmount,
       toAssetCode,
       fromAssetCode,
+      setTokenAllowance,
     } = offerOrder;
 
     const txFeeInWei = this.getTxFeeInWei(transactionSpeed);
@@ -258,16 +259,28 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         <Header title="exchange" onBack={this.handleBack} />
         <ScrollWrapper regularPadding>
           <Paragraph style={{ marginBottom: 30 }}>
-            Review the details and confirm the exchange rate as well as the cost of transaction.
+            {setTokenAllowance
+              ? 'Review the details and confirm token allowance set as well as the cost of data transaction.'
+              : 'Review the details and confirm the exchange rate as well as the cost of transaction.'
+            }
           </Paragraph>
-          <LabeledRow>
-            <Label>Amount to receive</Label>
-            <Value>{`${receiveAmount} ${toAssetCode}`}</Value>
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Amount to pay</Label>
-            <Value>{`${payAmount} ${fromAssetCode}`}</Value>
-          </LabeledRow>
+          {(setTokenAllowance &&
+            <LabeledRow>
+              <Label>Set token allowance</Label>
+              <Value>{fromAssetCode}</Value>
+            </LabeledRow>
+          ) ||
+            <View>
+              <LabeledRow>
+                <Label>Amount to receive</Label>
+                <Value>{`${receiveAmount} ${toAssetCode}`}</Value>
+              </LabeledRow>
+              <LabeledRow>
+                <Label>Amount to pay</Label>
+                <Value>{`${payAmount} ${fromAssetCode}`}</Value>
+              </LabeledRow>
+            </View>
+          }
           <LabeledRow>
             <Label>Transaction fee</Label>
             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
@@ -286,7 +299,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             <Button
               disabled={!session.isOnline || !!errorMessage}
               onPress={() => this.onConfirmTransactionPress(offerOrder)}
-              title="Confirm Transaction"
+              title={setTokenAllowance ? 'Set Token Allowance' : 'Confirm Transaction'}
             />
           </FooterWrapper>
         </Footer>

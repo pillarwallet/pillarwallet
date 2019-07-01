@@ -51,6 +51,7 @@ import {
   resetShapeshiftAccessTokenAction,
   resetOffersAction,
   setExecutingTransactionAction,
+  setTokenAllowanceAction,
 } from 'actions/exchangeActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
@@ -182,6 +183,7 @@ type Props = {
   paymentNetworkBalances: Balances,
   exchangeSearchRequest: ExchangeSearchRequest,
   setExecutingTransaction: Function,
+  setTokenAllowance: Function,
 };
 
 type State = {
@@ -192,6 +194,7 @@ type State = {
   pressedOfferId: string,
   transactionSpeed: string,
   showFeeModal: boolean,
+  pressedTokenAllowanceId: string,
 };
 
 const getAvailable = (_min, _max, rate) => {
@@ -394,6 +397,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   state = {
     shapeshiftAuthPressed: false,
     pressedOfferId: '',
+    pressedTokenAllowanceId: '',
     value: {
       fromInput: {
         selector: {},
@@ -509,7 +513,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     searchOffers(from, to, amount);
   };
 
-  onShapeshiftAuthClick = () => {
+  onShapeshiftAuthPress = () => {
     const { authorizeWithShapeshift } = this.props;
     this.setState({ shapeshiftAuthPressed: true }, async () => {
       await authorizeWithShapeshift();
@@ -540,25 +544,66 @@ class ExchangeScreen extends React.Component<Props, State> {
     } = offer;
     const amountToSell = parseFloat(selectedSellAmount);
     const amountToBuy = amountToSell * askRate;
-    this.setState({ pressedOfferId: _id }, () =>
+    this.setState({ pressedOfferId: _id }, () => {
       takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, order => {
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (!order || !Object.keys(order).length) return;
         const { data: offerOrderData } = order;
         setExecutingTransaction();
         navigation.navigate(EXCHANGE_CONFIRM, {
+          transactionSpeed,
           offerOrder: {
             ...offerOrderData,
-            transactionSpeed,
             receiveAmount: amountToBuy,
           },
         });
-      }),
-    );
+      });
+    });
+  };
+
+  onSetTokenAllowancePress = (offer: Offer) => {
+    const {
+      navigation,
+      setTokenAllowance,
+      setExecutingTransaction,
+    } = this.props;
+    const {
+      transactionSpeed,
+    } = this.state;
+    const {
+      _id,
+      provider,
+      fromAssetCode,
+    } = offer;
+    this.setState({ pressedTokenAllowanceId: _id }, () => {
+      setTokenAllowance(fromAssetCode, provider, (response) => {
+        this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
+        if (!response || !Object.keys(response).length) return;
+        const { data: { to: payToAddress, data } } = response;
+        setExecutingTransaction();
+        navigation.navigate(EXCHANGE_CONFIRM, {
+          offerOrder: {
+            provider,
+            fromAssetCode,
+            payToAddress,
+            transactionObj: {
+              data,
+            },
+            setTokenAllowance: true,
+          },
+          transactionSpeed,
+        });
+      });
+    });
   };
 
   renderOffers = ({ item: offer }) => {
-    const { value: { fromInput }, pressedOfferId, shapeshiftAuthPressed } = this.state;
+    const {
+      value: { fromInput },
+      pressedOfferId,
+      shapeshiftAuthPressed,
+      pressedTokenAllowanceId,
+    } = this.state;
     const { shapeshiftAccessToken } = this.props;
     const { input: selectedSellAmount } = fromInput;
     const {
@@ -569,10 +614,13 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAssetCode,
       toAssetCode,
       provider: offerProvider,
+      allowanceSet = true,
     } = offer;
+
     const available = getAvailable(minQuantity, maxQuantity, askRate);
     const amountToBuy = parseFloat(selectedSellAmount) * askRate;
-    const isPressed = pressedOfferId === offerId;
+    const isTakeOfferPressed = pressedOfferId === offerId;
+    const isSetAllowancePressed = pressedTokenAllowanceId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
     const providerLogo = getProviderLogo(offerProvider);
     const providerLogoStyle = getProviderLogoStyle(offerProvider);
@@ -614,32 +662,32 @@ class ExchangeScreen extends React.Component<Props, State> {
             </CardColumn>
             <CardColumn>
               <Button
-                disabled={isPressed || (isShapeShift && !shapeshiftAccessToken)}
-                title={isPressed ? '' : `${amountToBuyString} ${toAssetCode}`}
+                disabled={isTakeOfferPressed || !allowanceSet || (isShapeShift && !shapeshiftAccessToken)}
+                title={isTakeOfferPressed ? '' : `${amountToBuyString} ${toAssetCode}`}
                 small
                 onPress={() => this.onOfferPress(offer)}
               >
-                {isPressed && <Spinner width={20} height={20} />}
+                {isTakeOfferPressed && <Spinner width={20} height={20} />}
               </Button>
             </CardColumn>
           </CardRow>
           {isShapeShift && !shapeshiftAccessToken &&
-          <CardRow style={{ paddingTop: 0, paddingBottom: 6, justifyContent: 'flex-end' }}>
-            <HeaderButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthClick}>
-              <ButtonLabel color={baseColors.fruitSalad}>Connect to ShapeShift to accept</ButtonLabel>
-            </HeaderButton>
-          </CardRow>}
+            <CardRow style={{ paddingTop: 0, paddingBottom: 6, justifyContent: 'flex-end' }}>
+              <HeaderButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthPress}>
+                <ButtonLabel color={baseColors.fruitSalad}>Connect to ShapeShift to accept</ButtonLabel>
+              </HeaderButton>
+            </CardRow>
+          }
+          {!allowanceSet &&
+            <CardRow style={{ paddingTop: 0, paddingBottom: 6, justifyContent: 'flex-end' }}>
+              <HeaderButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
+                <ButtonLabel color={baseColors.fruitSalad}>Set token allowance</ButtonLabel>
+              </HeaderButton>
+            </CardRow>
+          }
         </CardWrapper>
       </ShadowedCard>
     );
-  };
-
-  onShapeshiftAuthClick = () => {
-    const { authorizeWithShapeshift } = this.props;
-    this.setState({ shapeshiftAuthPressed: true }, async () => {
-      await authorizeWithShapeshift();
-      this.setState({ shapeshiftAuthPressed: false });
-    });
   };
 
   generateAssetsOptions = (assets) => {
@@ -919,6 +967,9 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   resetOffers: () => dispatch(resetOffersAction()),
   setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
+  setTokenAllowance: (assetCode, provider, callback) => dispatch(
+    setTokenAllowanceAction(assetCode, provider, callback),
+  ),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);
