@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import renderer from 'react-test-renderer';
-import ModalQRCode from '../modalQRCode';
+import ModalQRCode from 'screens/ContactInfo/ModalQRCode';
 
 const data = 'MECARD:N:test,test;NICKNAME:testUser;EMAIL:test@test.com;ADR:testCity,testCountry;';
 

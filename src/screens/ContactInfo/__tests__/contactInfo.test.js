@@ -2,7 +2,7 @@
 import * as React from 'react';
 import renderer from 'react-test-renderer';
 import { shallow } from 'enzyme';
-import { ContactInfo } from '../ContactInfo';
+import { ContactInfo } from 'screens/ContactInfo';
 
 const user = {
   firstName: 'test',
