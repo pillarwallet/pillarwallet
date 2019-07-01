@@ -199,9 +199,9 @@ const getAvailable = (_min, _max, rate) => {
   const min = _min * rate;
   const max = _max * rate;
   if (!min || !max || min === max) {
-    return `${min || max}`;
+    return `${formatMoney(min || max, 2)}`;
   }
-  return `${min} - ${max}`;
+  return `${formatMoney(min, 2)} - ${formatMoney(max, 2)}`;
 };
 
 const { Form } = t.form;
@@ -550,7 +550,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           <CardRow withBorder>
             <CardColumn>
               <CardText label>Exchange rate</CardText>
-              <CardText>{`1 ${fromAssetCode} = ${askRate} ${toAssetCode}`}</CardText>
+              <CardText>{`1 ${fromAssetCode} = ~${formatMoney(askRate, 2)} ${toAssetCode}`}</CardText>
             </CardColumn>
           </CardRow>
           <CardRow>
