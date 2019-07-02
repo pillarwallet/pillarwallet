@@ -202,8 +202,15 @@ const getAvailable = (_min, _max, rate) => {
   if (!_min && !_max) {
     return 'N/A';
   }
-  const min = _min * rate;
-  const max = _max * rate;
+  let min = (new BigNumber(rate)).multipliedBy(_min);
+  let max = (new BigNumber(rate)).multipliedBy(_max);
+  if ((min.gt(0) && min.lt(0.01)) || (max.gt(0) && max.lt(0.01))) {
+    return min.eq(max)
+      ? '<0.01'
+      : '<0.01 - <0.01';
+  }
+  min = min.toNumber();
+  max = max.toNumber();
   if (!min || !max || min === max) {
     return `${formatMoney(min || max, 2)}`;
   }
@@ -247,6 +254,10 @@ const calculateMaxAmount = (token: string, balance: number | string, txFeeInWei:
   const maxAmount = utils.parseUnits(balance, 'ether').sub(txFeeInWei);
   if (maxAmount.lt(0)) return 0;
   return new BigNumber(utils.formatEther(maxAmount)).toNumber();
+};
+
+const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string) => {
+  return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
 };
 
 const generateFormStructure = (data: Object) => {
@@ -545,7 +556,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       askRate,
     } = offer;
     const amountToSell = parseFloat(selectedSellAmount);
-    const amountToBuy = amountToSell * askRate;
+    const amountToBuy = calculateAmountToBuy(askRate, amountToSell);
     this.setState({ pressedOfferId: _id }, () => {
       takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, order => {
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
@@ -628,7 +639,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
 
     const available = getAvailable(minQuantity, maxQuantity, askRate);
-    const amountToBuy = parseFloat(selectedSellAmount) * askRate;
+    const amountToBuy = calculateAmountToBuy(askRate, selectedSellAmount);
     const isTakeOfferPressed = pressedOfferId === offerId;
     const isSetAllowancePressed = pressedTokenAllowanceId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
@@ -654,6 +665,11 @@ class ExchangeScreen extends React.Component<Props, State> {
         .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {});
     }
 
+    const askRateBn = new BigNumber(askRate);
+    const askRateFormatted = askRateBn.lt(0.01)
+      ? '<0.01'
+      : `~${formatMoney(askRateBn.toFixed(), 2)}`;
+
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
@@ -663,7 +679,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           <CardRow withBorder alignTop>
             <CardColumn>
               <CardText label>Exchange rate</CardText>
-              <CardText>{`1 ${fromAssetCode} = ~${formatMoney(askRate, 2)} ${toAssetCode}`}</CardText>
+              <CardText>{`1 ${fromAssetCode} = ${askRateFormatted} ${toAssetCode}`}</CardText>
             </CardColumn>
             <CardInnerRow style={{ flexShrink: 1 }}>
               {!!providerLogo && <CachedImage style={providerLogoStyle} source={providerLogo} />}
@@ -871,7 +887,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const txFeeInWei = this.getTxFeeInWei();
     const formStructure = generateFormStructure({ balances, txFeeInWei });
     const shapeShiftOffer = offers.find(offer => offer.provider === PROVIDER_SHAPESHIFT) || null;
-    const reorderedOffers = offers.sort((a, b) => b.askRate - a.askRate)
+    const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber())
       .filter(offer => offer.provider !== PROVIDER_SHAPESHIFT) || [];
     if (shapeShiftOffer) reorderedOffers.push(shapeShiftOffer);
 
