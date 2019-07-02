@@ -30,6 +30,9 @@ import {
   SET_DISMISS_TRANSACTION,
   ADD_EXCHANGE_ALLOWANCE,
   UPDATE_EXCHANGE_ALLOWANCE,
+  CONNECT_TO_EXCHANGE,
+  DISCONNECT_FROM_EXCHANGE,
+  PROVIDER_SHAPESHIFT,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -144,18 +147,46 @@ export const authorizeWithShapeshiftAction = () => {
 };
 
 export const setShapeshiftAccessTokenAction = (token: ?string) => {
-  return (dispatch: Function) => {
+  return (dispatch: Function, getState: Function) => {
+    const { exchange: { data: { exchanges } } } = getState();
+    const shapeShiftExchange = {
+      id: PROVIDER_SHAPESHIFT,
+      name: 'ShapeShift',
+      dateConnected: +new Date(),
+    };
+    let updatedExchanges = exchanges;
+    if (token) {
+      updatedExchanges = exchanges.push(shapeShiftExchange);
+      dispatch({
+        type: CONNECT_TO_EXCHANGE,
+        payload: shapeShiftExchange,
+      });
+    }
     dispatch({
       type: SET_SHAPESHIFT_ACCESS_TOKEN,
       payload: token,
     });
-    dispatch(saveDbAction('exchange', { shapeshiftAccessToken: token }, true));
+    dispatch(saveDbAction('exchange', {
+      shapeshiftAccessToken: token,
+      exchanges: updatedExchanges,
+    }));
   };
 };
 
-export const resetShapeshiftAccessTokenAction = () => {
-  return (dispatch: Function) => {
+export const resetShapeshiftAccessTokenAction = (id: string) => {
+  return (dispatch: Function, getState: Function) => {
+    const { exchange: { data: { exchanges } } } = getState();
+    const updatedExchanges = exchanges.filter(({ id: exchangeId }) => exchangeId !== id);
+    console.log('updatedExchanges on delete ---->', updatedExchanges);
     dispatch(setShapeshiftAccessTokenAction(null));
+    dispatch({
+      type: DISCONNECT_FROM_EXCHANGE,
+      payload: id,
+    });
+    dispatch(saveDbAction('exchange', {
+      shapeshiftAccessToken: null,
+      exchanges: updatedExchanges,
+    }));
   };
 };
 
@@ -234,7 +265,7 @@ export const addExchangeAllowanceAction = (
       type: ADD_EXCHANGE_ALLOWANCE,
       payload: allowance,
     });
-    dispatch(saveDbAction('exchange', { allowances }, true));
+    dispatch(saveDbAction('exchange', { allowances }));
   };
 };
 
@@ -258,7 +289,7 @@ export const enableExchangeAllowanceByHashAction = (transactionHash: string) => 
         ({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash,
       );
     allowances.push(updatedAllowance);
-    dispatch(saveDbAction('exchange', { allowances }, true));
+    dispatch(saveDbAction('exchange', { allowances }));
   };
 };
 

@@ -47,14 +47,13 @@ import {
   searchOffersAction,
   takeOfferAction,
   authorizeWithShapeshiftAction,
-  resetShapeshiftAccessTokenAction,
   resetOffersAction,
   setExecutingTransactionAction,
   setTokenAllowanceAction,
 } from 'actions/exchangeActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
-import type { Offer, ExchangeSearchRequest, Allowance } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, Allowance, Exchange } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 
@@ -109,11 +108,6 @@ const CardText = styled(BaseText)`
 
 const ListHeader = styled.View`
   width: 100%;
-  align-items: center;
-`;
-
-const HeaderButton = styled.TouchableOpacity`
-  flex-direction: row;
   align-items: center;
 `;
 
@@ -181,7 +175,6 @@ type Props = {
   takeOffer: (string, string, number, string, Function) => Object,
   authorizeWithShapeshift: Function,
   shapeshiftAccessToken?: string,
-  resetShapeshiftAccessToken: Function,
   supportedAssets: Asset[],
   fetchGasInfo: Function,
   balances: Balances,
@@ -192,6 +185,7 @@ type Props = {
   setExecutingTransaction: Function,
   setTokenAllowance: Function,
   exchangeAllowances: Allowance[],
+  connectedExchanges: Exchange[],
 };
 
 type State = {
@@ -857,10 +851,10 @@ class ExchangeScreen extends React.Component<Props, State> {
   render() {
     const {
       offers,
-      shapeshiftAccessToken,
-      resetShapeshiftAccessToken,
       balances,
       navigation,
+      exchangeAllowances,
+      connectedExchanges,
     } = this.props;
     const {
       value,
@@ -881,6 +875,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         <Header
           title="exchange"
           headerRightAddon={
+            (!!exchangeAllowances.length || !!connectedExchanges.length) &&
             <HeaderAddonWrapper>
               <SettingsButton onPress={() => navigation.navigate(EXCHANGE_INFO)}>
                 <SettingsIcon
@@ -919,15 +914,12 @@ class ExchangeScreen extends React.Component<Props, State> {
             style={{ width: '100%' }}
             contentContainerStyle={{ width: '100%', paddingHorizontal: 20, paddingVertical: 10 }}
             renderItem={this.renderOffers}
-            ListHeaderComponent={
-              <ListHeader>
-                {!!reorderedOffers.length && <ExchangeStatus />}
-                {!!shapeshiftAccessToken &&
-                  <HeaderButton onPress={() => resetShapeshiftAccessToken()}>
-                    <ButtonLabel color={baseColors.burningFire}>Disconnect ShapeShift</ButtonLabel>
-                  </HeaderButton>
-                }
-              </ListHeader>
+            ListHeaderComponent={reorderedOffers.length
+              ? (
+                <ListHeader>
+                  <ExchangeStatus />
+                </ListHeader>)
+              : null
             }
             ListEmptyComponent={(
               <ESWrapper style={{ marginTop: '15%' }}>
@@ -961,6 +953,7 @@ const mapStateToProps = ({
       shapeshiftAccessToken,
       searchRequest: exchangeSearchRequest,
       allowances: exchangeAllowances,
+      exchanges: connectedExchanges,
     },
   },
   assets: { data: assets, supportedAssets },
@@ -976,6 +969,7 @@ const mapStateToProps = ({
   gasInfo,
   exchangeSearchRequest,
   exchangeAllowances,
+  connectedExchanges,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -996,7 +990,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
     takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, callback),
   ),
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
-  resetShapeshiftAccessToken: () => dispatch(resetShapeshiftAccessTokenAction()),
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   resetOffers: () => dispatch(resetOffersAction()),
   setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),

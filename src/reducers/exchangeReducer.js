@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import merge from 'lodash.merge';
 import {
   ADD_OFFER,
   RESET_OFFERS,
@@ -27,8 +28,11 @@ import {
   SET_EXCHANGE_ALLOWANCES,
   ADD_EXCHANGE_ALLOWANCE,
   UPDATE_EXCHANGE_ALLOWANCE,
+  CONNECT_TO_EXCHANGE,
+  DISCONNECT_FROM_EXCHANGE,
+  SET_CONNECTED_EXCHANGES,
 } from 'constants/exchangeConstants';
-import type { Offer, ExchangeSearchRequest, Allowance } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, Allowance, Exchange } from 'models/Offer';
 
 export type ExchangeReducerState = {
   data: {
@@ -37,6 +41,7 @@ export type ExchangeReducerState = {
     searchRequest?: ExchangeSearchRequest,
     executingTransaction: boolean,
     allowances: Allowance[],
+    exchanges: Exchange[],
   },
 };
 
@@ -50,6 +55,7 @@ const initialState = {
     offers: [],
     executingTransaction: false,
     allowances: [],
+    exchanges: [],
   },
 };
 
@@ -142,6 +148,31 @@ export default function exchangeReducer(
             ),
             action.payload,
           ],
+        },
+      };
+    case SET_CONNECTED_EXCHANGES:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          exchanges: action.payload,
+        },
+      };
+    case CONNECT_TO_EXCHANGE:
+      return merge(
+        {},
+        state,
+        {
+          data:
+            { exchanges: action.payload },
+        },
+      );
+    case DISCONNECT_FROM_EXCHANGE:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          exchanges: [...state.data.exchanges.filter(({ id }) => id !== action.payload)],
         },
       };
     default:

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, View, RefreshControl } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -32,7 +32,9 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Separator from 'components/Separator';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { noop } from 'utils/common';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { resetShapeshiftAccessTokenAction } from 'actions/exchangeActions';
 import {
   PROVIDER_CHANGELLY,
   PROVIDER_SHAPESHIFT,
@@ -40,13 +42,15 @@ import {
   PROVIDER_ZEROX,
 } from 'constants/exchangeConstants';
 import type { Assets } from 'models/Asset';
-import type { Allowance } from 'models/Offer';
+import type { Allowance, Exchange } from 'models/Offer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   assets: Assets,
   exchangeAllowances: Allowance[],
   fetchTransactionsHistory: Function,
+  resetShapeshiftAccessToken: Function,
+  exchanges: Exchange[],
 };
 
 type State = {
@@ -103,18 +107,6 @@ const getProviderDisplayName = (provider: string) => {
       return 'Unknown';
   }
 };
-const dummyExchanges = [
-  {
-    id: 'UNISWAP',
-    name: 'Uniswap',
-    dateConnected: +new Date(),
-  },
-  {
-    id: 'SHAPESHIFT',
-    name: 'ShapeShift',
-    dateConnected: +new Date(),
-  },
-];
 
 class ExchangeInfo extends React.Component<Props, State> {
   state = {
@@ -177,7 +169,8 @@ class ExchangeInfo extends React.Component<Props, State> {
   };
 
   renderExchange = ({ item: exchange }: Object) => {
-    const { name, dateConnected } = exchange;
+    const { resetShapeshiftAccessToken } = this.props;
+    const { name, dateConnected, id } = exchange;
     const dateToShow = formatDate(new Date(dateConnected), 'MM.DD.YY');
     return (
       <ListItemWithImage
@@ -186,13 +179,16 @@ class ExchangeInfo extends React.Component<Props, State> {
         fallbackSource={genericToken}
         subtext={`Connected ${dateToShow}`}
         customAddon={(
-          <DisconnectButton onPress={() => {}}>
+          <DisconnectButton onPress={id === PROVIDER_SHAPESHIFT
+            ? () => resetShapeshiftAccessToken(exchange.id)
+            : noop}
+          >
             <DisconnectButtonLabel>Disconnect</DisconnectButtonLabel>
           </DisconnectButton>
         )}
       />
     );
-  }
+  };
 
   render() {
     const {
@@ -200,31 +196,30 @@ class ExchangeInfo extends React.Component<Props, State> {
       assets,
       exchangeAllowances,
       fetchTransactionsHistory,
+      exchanges,
     } = this.props;
     const assetsArray = Object.keys(assets)
       .map(id => assets[id])
       .filter(({ symbol }) => exchangeAllowances.find(({ assetCode }) => assetCode === symbol));
+
     return (
       <Container>
         <Header title="exchange settings" onBack={() => navigation.goBack(null)} />
         <ScrollWrapper>
-          <SectionTitle>Connected exchanges:</SectionTitle>
-          <FlatList
-            data={dummyExchanges}
-            keyExtractor={(item) => item.id}
-            renderItem={this.renderExchange}
-            initialNumToRender={8}
-            onEndReachedThreshold={0.5}
-            style={{ width: '100%' }}
-            // refreshControl={
-            //   <RefreshControl
-            //     refreshing={false}
-            //     onRefresh={() => {}}
-            //   />
-            // }
-          />
+          {!!exchanges.length &&
+          <React.Fragment>
+            <SectionTitle>Connected exchanges:</SectionTitle>
+            <FlatList
+              data={exchanges}
+              keyExtractor={(item) => item.id}
+              renderItem={this.renderExchange}
+              initialNumToRender={8}
+              onEndReachedThreshold={0.5}
+              style={{ width: '100%' }}
+            />
+          </React.Fragment>}
           {!!assetsArray.length &&
-            <View>
+            <React.Fragment>
               <SectionTitle>Enabled exchange assets:</SectionTitle>
               <FlatList
                 data={assetsArray}
@@ -241,7 +236,7 @@ class ExchangeInfo extends React.Component<Props, State> {
                   />
                 }
               />
-            </View>
+            </React.Fragment>
           }
         </ScrollWrapper>
       </Container>
@@ -251,16 +246,19 @@ class ExchangeInfo extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { data: assets },
-  exchange: { data: { allowances: exchangeAllowances } },
+  exchange: { data: { allowances: exchangeAllowances, shapeshiftAccessToken, exchanges } },
 }) => ({
   assets,
   exchangeAllowances,
+  shapeshiftAccessToken,
+  exchanges,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchTransactionsHistory: () => dispatch(
     fetchTransactionsHistoryAction(),
   ),
+  resetShapeshiftAccessToken: (id: string) => dispatch(resetShapeshiftAccessTokenAction(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExchangeInfo);
