@@ -74,7 +74,7 @@ const ProviderName = styled(BaseText)`
 
 const ProviderStatus = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
-  color: ${props => props.isPending ? baseColors.darkGray : baseColors.jadeGreen}
+  color: ${props => props.isPending ? baseColors.darkGray : baseColors.jadeGreen};
 `;
 
 const DisconnectButton = styled.TouchableOpacity`
@@ -84,7 +84,7 @@ const DisconnectButton = styled.TouchableOpacity`
 
 const DisconnectButtonLabel = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
-  color: ${baseColors.burningFire}
+  color: ${baseColors.burningFire};
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
