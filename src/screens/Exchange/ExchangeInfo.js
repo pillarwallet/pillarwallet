@@ -34,12 +34,14 @@ import Separator from 'components/Separator';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
+import { EXCHANGE } from 'constants/navigationConstants';
 import {
   PROVIDER_CHANGELLY,
   PROVIDER_SHAPESHIFT,
   PROVIDER_UNISWAP,
   PROVIDER_ZEROX,
 } from 'constants/exchangeConstants';
+
 import type { Assets } from 'models/Asset';
 import type { Allowance, ExchangeProvider } from 'models/Offer';
 
@@ -111,6 +113,15 @@ class ExchangeInfo extends React.Component<Props, State> {
   state = {
     openCollapseKey: '',
   };
+
+  componentDidUpdate(prevProps: Props) {
+    const { navigation, exchangeAllowances, connectedProviders } = this.props;
+    // Navigating from empty settings screen automatically
+    if ((prevProps.exchangeAllowances !== exchangeAllowances || prevProps.connectedProviders !== connectedProviders)
+      && !(exchangeAllowances.length || connectedProviders.length)) {
+      navigation.navigate(EXCHANGE);
+    }
+  }
 
   toggleCollapse = (key: string) => {
     const { openCollapseKey } = this.state;

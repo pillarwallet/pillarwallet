@@ -163,6 +163,11 @@ export const addConnectedExchangeProviderAction = (providerId: string, extra?: a
       type: ADD_CONNECTED_EXCHANGE_PROVIDER,
       payload: provider,
     });
+    Toast.show({
+      title: 'Success',
+      type: 'success',
+      message: 'You have connected ShapeShift',
+    });
     dispatch(saveDbAction('exchangeProviders', {
       connectedProviders: updatedProviders,
     }, true));
@@ -172,10 +177,15 @@ export const addConnectedExchangeProviderAction = (providerId: string, extra?: a
 export const disconnectExchangeProviderAction = (id: string) => {
   return (dispatch: Function, getState: Function) => {
     const { exchange: { data: { connectedProviders } } } = getState();
-    const updatedProviders = connectedProviders.filter(({ id: exchangeId }) => exchangeId !== id);
+    const updatedProviders = connectedProviders.filter(({ id: providerId }) => providerId !== id);
     dispatch({
       type: REMOVE_CONNECTED_EXCHANGE_PROVIDER,
       payload: id,
+    });
+    Toast.show({
+      title: 'Success',
+      type: 'success',
+      message: 'You have disconnected ShapeShift',
     });
     dispatch(saveDbAction('exchangeProviders', {
       connectedProviders: updatedProviders,
