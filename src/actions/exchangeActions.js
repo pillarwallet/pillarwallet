@@ -161,6 +161,11 @@ export const setShapeshiftAccessTokenAction = (token: ?string) => {
         type: CONNECT_TO_EXCHANGE,
         payload: shapeShiftExchange,
       });
+      Toast.show({
+        title: 'Success',
+        type: 'success',
+        message: 'You have connected ShapeShift',
+      });
     }
     dispatch({
       type: SET_SHAPESHIFT_ACCESS_TOKEN,
@@ -177,11 +182,15 @@ export const resetShapeshiftAccessTokenAction = (id: string) => {
   return (dispatch: Function, getState: Function) => {
     const { exchange: { data: { exchanges } } } = getState();
     const updatedExchanges = exchanges.filter(({ id: exchangeId }) => exchangeId !== id);
-    console.log('updatedExchanges on delete ---->', updatedExchanges);
     dispatch(setShapeshiftAccessTokenAction(null));
     dispatch({
       type: DISCONNECT_FROM_EXCHANGE,
       payload: id,
+    });
+    Toast.show({
+      title: 'Success',
+      type: 'success',
+      message: 'You have disconnected ShapeShift',
     });
     dispatch(saveDbAction('exchange', {
       shapeshiftAccessToken: null,

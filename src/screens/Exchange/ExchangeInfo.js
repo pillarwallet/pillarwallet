@@ -43,6 +43,7 @@ import {
 } from 'constants/exchangeConstants';
 import type { Assets } from 'models/Asset';
 import type { Allowance, Exchange } from 'models/Offer';
+import { EXCHANGE } from '../../constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -112,6 +113,15 @@ class ExchangeInfo extends React.Component<Props, State> {
   state = {
     openCollapseKey: '',
   };
+
+  componentDidUpdate(prevProps: Props) {
+    const { navigation, exchangeAllowances, exchanges } = this.props;
+    // Navigating from empty settings screen automatically
+    if ((prevProps.exchangeAllowances !== exchangeAllowances || prevProps.exchanges !== exchanges)
+      && !(exchangeAllowances.length || exchanges.length)) {
+      navigation.navigate(EXCHANGE);
+    }
+  }
 
   toggleCollapse = (key: string) => {
     const { openCollapseKey } = this.state;
