@@ -66,6 +66,8 @@ type Props = {
   rightColumnInnerStyle?: Object,
   customAddonFullWidth?: React.Node,
   imageColorFill?: string,
+  customImage?: React.Node,
+  imageDiameter?: number,
 }
 
 const ItemWrapper = styled.View`
@@ -266,6 +268,8 @@ const ItemImage = (props: Props) => {
     type,
     imageUpdateTimeStamp,
     imageColorFill,
+    customImage,
+    imageDiameter,
   } = props;
 
   if (iconName) {
@@ -274,6 +278,22 @@ const ItemImage = (props: Props) => {
       <IconCircle fillColor={warm ? baseColors.fairPink : baseColors.lightGray}>
         <ItemIcon name={iconName} warm={warm} />
       </IconCircle>
+    );
+  }
+  if (customImage) {
+    const shadowDiameter = imageDiameter || 54;
+    return (
+      <Shadow
+        shadowColorAndroid="#38105baa"
+        heightAndroid={shadowDiameter}
+        widthAndroid={shadowDiameter}
+        heightIOS={shadowDiameter}
+        widthIOS={shadowDiameter}
+        shadowRadius={shadowDiameter / 2}
+        useSVGShadow
+      >
+        {customImage}
+      </Shadow>
     );
   }
   if (itemImageUrl) {

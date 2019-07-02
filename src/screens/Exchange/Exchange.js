@@ -32,6 +32,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
+import { getProviderLogo } from 'utils/exchange';
 
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -59,7 +60,7 @@ import type { GasInfo } from 'models/GasInfo';
 
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-import { PROVIDER_SHAPESHIFT, PROVIDER_UNISWAP, PROVIDER_ZEROX, PROVIDER_CHANGELLY } from 'constants/exchangeConstants';
+import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
@@ -159,6 +160,11 @@ const SettingsIcon = styled(CachedImage)`
   height: 24px;
 `;
 
+const ProviderIcon = styled(CachedImage)`
+  width: 24px;
+  height: 24px;
+`;
+
 const ESWrapper = styled.View`
   width: 100%;
   align-items: center;
@@ -232,10 +238,6 @@ const SPEED_TYPES = {
   [FAST]: 'Fast',
 };
 const settingsIcon = require('assets/icons/icon_key.png');
-const zeroxLogo = require('assets/images/exchangeProviders/logo_0x.png');
-const shapeshiftLogo = require('assets/images/exchangeProviders/logo_shapeshift.png');
-const uniswapLogo = require('assets/images/exchangeProviders/logo_uniswap.png');
-const changellyLogo = require('assets/images/exchangeProviders/logo_changelly.png');
 
 const checkIfEnoughForFee = (balances: Balances, txFeeInWei) => {
   if (!balances[ETH]) return false;
@@ -359,48 +361,6 @@ function SelectorInputTemplate(locals) {
     />
   );
 }
-
-const getProviderLogo = (provider: string) => {
-  switch (provider) {
-    case PROVIDER_SHAPESHIFT:
-      return shapeshiftLogo;
-    case PROVIDER_UNISWAP:
-      return uniswapLogo;
-    case PROVIDER_ZEROX:
-      return zeroxLogo;
-    case PROVIDER_CHANGELLY:
-      return changellyLogo;
-    default:
-      return '';
-  }
-};
-
-const getProviderLogoStyle = (provider: string) => {
-  switch (provider) {
-    case PROVIDER_SHAPESHIFT:
-      return {
-        width: 62,
-        height: 24,
-      };
-    case PROVIDER_UNISWAP:
-      return {
-        width: 72,
-        height: 24,
-      };
-    case PROVIDER_ZEROX:
-      return {
-        width: 40,
-        height: 24,
-      };
-    case PROVIDER_CHANGELLY:
-      return {
-        width: 86,
-        height: 24,
-      };
-    default:
-      return null;
-  }
-};
 
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
@@ -568,6 +528,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           offerOrder: {
             ...offerOrderData,
             receiveAmount: amountToBuy,
+            provider,
           },
         });
       });
@@ -644,7 +605,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const isSetAllowancePressed = pressedTokenAllowanceId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
     const providerLogo = getProviderLogo(offerProvider);
-    const providerLogoStyle = getProviderLogoStyle(offerProvider);
 
     /**
      * avoid text overlapping on many decimals,
@@ -682,7 +642,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               <CardText>{`1 ${fromAssetCode} = ${askRateFormatted} ${toAssetCode}`}</CardText>
             </CardColumn>
             <CardInnerRow style={{ flexShrink: 1 }}>
-              {!!providerLogo && <CachedImage style={providerLogoStyle} source={providerLogo} />}
+              {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
               {isShapeShift && !shapeshiftAccessToken &&
               <CardButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthPress}>
                 <ButtonLabel color={baseColors.electricBlue}>Connect</ButtonLabel>
