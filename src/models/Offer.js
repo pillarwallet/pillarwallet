@@ -24,9 +24,10 @@ export type Offer = {
   description: string,
   fromAssetCode: string,
   toAssetCode: string,
-  askRate: number,
+  askRate: number | string,
   minQuantity: number,
   maxQuantity: number,
+  allowanceSet?: boolean,
 }
 
 export type OfferRequest = {
@@ -34,6 +35,11 @@ export type OfferRequest = {
   provider: string,
   fromAssetCode: string,
   toAssetCode: string,
+}
+
+export type TokenAllowanceRequest = {
+  token: string,
+  provider: string,
 }
 
 export type OfferOrder = {
@@ -46,11 +52,26 @@ export type OfferOrder = {
   transactionObj: {
     data: string,
   },
+  setTokenAllowance?: boolean,
+  provider?: string,
 }
 
 export type ExchangeSearchRequest = {
   fromAssetCode: string,
   toAssetCode: string,
   fromAmount: number,
+}
+
+export type Allowance = {
+  provider: string,
+  assetCode: string,
+  transactionHash: string,
+  enabled?: boolean,
+}
+
+export type ExchangeProvider = {
+  id: string,
+  dateConnected: Date,
+  extra?: any,
 }
 

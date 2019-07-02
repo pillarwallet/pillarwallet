@@ -24,9 +24,16 @@ import Toast from 'components/Toast';
 import {
   RESET_OFFERS,
   ADD_OFFER,
-  SET_SHAPESHIFT_ACCESS_TOKEN,
   SET_EXCHANGE_SEARCH_REQUEST,
+  SET_EXECUTING_TRANSACTION,
+  SET_DISMISS_TRANSACTION,
+  ADD_EXCHANGE_ALLOWANCE,
+  UPDATE_EXCHANGE_ALLOWANCE,
+  ADD_CONNECTED_EXCHANGE_PROVIDER,
+  REMOVE_CONNECTED_EXCHANGE_PROVIDER,
+  PROVIDER_SHAPESHIFT,
 } from 'constants/exchangeConstants';
+import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 import type { Offer } from 'models/Offer';
 import { saveDbAction } from './dbActions';
@@ -36,8 +43,10 @@ const exchangeService = new ExchangeService();
 const connectExchangeService = (state: Object) => {
   const {
     oAuthTokens: { data: oAuthTokens },
-    exchange: { data: { shapeshiftAccessToken } },
+    exchange: { data: { connectedProviders } },
   } = state;
+  const { extra: shapeshiftAccessToken } = connectedProviders
+    .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {};
   // proceed with new instance only if one is not running and access token changed
   if (exchangeService.connected()) {
     const {
@@ -67,10 +76,14 @@ export const takeOfferAction = (
     };
     const order = await exchangeService.takeOffer(offerRequest);
     if (!order || !order.data || order.error) {
+      let { message = 'Unable to request offer' } = order.error || {};
+      if (message.toString().toLowerCase().includes('kyc')) {
+        message = 'Shapeshift KYC must be complete in order to proceed';
+      }
       Toast.show({
         title: 'Exchange service failed',
         type: 'warning',
-        message: 'Unable to request offer',
+        message,
       });
       callback({}); // let's return callback to dismiss loading spinner on offer card button
       return;
@@ -85,7 +98,6 @@ export const resetOffersAction = () => ({
 
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Function, getState: Function) => {
-    dispatch(resetOffersAction());
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
       type: SET_EXCHANGE_SEARCH_REQUEST,
@@ -135,19 +147,49 @@ export const authorizeWithShapeshiftAction = () => {
   };
 };
 
-export const setShapeshiftAccessTokenAction = (token: ?string) => {
-  return (dispatch: Function) => {
+export const addConnectedExchangeProviderAction = (providerId: string, extra?: any) => {
+  return (dispatch: Function, getState: Function) => {
+    const { exchange: { data: { connectedProviders } } } = getState();
+    const provider = {
+      id: providerId,
+      dateConnected: +new Date(),
+      extra,
+    };
+    const updatedProviders = [
+      ...connectedProviders,
+      provider,
+    ];
     dispatch({
-      type: SET_SHAPESHIFT_ACCESS_TOKEN,
-      payload: token,
+      type: ADD_CONNECTED_EXCHANGE_PROVIDER,
+      payload: provider,
     });
-    dispatch(saveDbAction('exchange', { shapeshiftAccessToken: token }, true));
+    Toast.show({
+      title: 'Success',
+      type: 'success',
+      message: 'You have connected ShapeShift',
+    });
+    dispatch(saveDbAction('exchangeProviders', {
+      connectedProviders: updatedProviders,
+    }, true));
   };
 };
 
-export const resetShapeshiftAccessTokenAction = () => {
-  return (dispatch: Function) => {
-    dispatch(setShapeshiftAccessTokenAction(null));
+export const disconnectExchangeProviderAction = (id: string) => {
+  return (dispatch: Function, getState: Function) => {
+    const { exchange: { data: { connectedProviders } } } = getState();
+    const updatedProviders = connectedProviders.filter(({ id: providerId }) => providerId !== id);
+    dispatch({
+      type: REMOVE_CONNECTED_EXCHANGE_PROVIDER,
+      payload: id,
+    });
+    Toast.show({
+      title: 'Success',
+      type: 'success',
+      message: 'You have disconnected ShapeShift',
+    });
+    dispatch(saveDbAction('exchangeProviders', {
+      connectedProviders: updatedProviders,
+    }, true));
   };
 };
 
@@ -163,6 +205,133 @@ export const requestShapeshiftAccessTokenAction = (tokenHash: string) => {
       });
       return;
     }
-    dispatch(setShapeshiftAccessTokenAction(shapeshiftAccessToken));
+    dispatch(addConnectedExchangeProviderAction(PROVIDER_SHAPESHIFT, shapeshiftAccessToken));
+  };
+};
+
+export const setExecutingTransactionAction = () => ({
+  type: SET_EXECUTING_TRANSACTION,
+});
+
+export const setDismissTransactionAction = () => ({
+  type: SET_DISMISS_TRANSACTION,
+});
+
+export const setTokenAllowanceAction = (
+  assetCode: string,
+  provider: string,
+  callback: Function,
+) => {
+  return async (dispatch: Function, getState: Function) => {
+    connectExchangeService(getState());
+    const allowanceRequest = {
+      provider,
+      token: assetCode,
+    };
+    const response = await exchangeService.setTokenAllowance(allowanceRequest);
+    if (!response || !response.data || response.error) {
+      Toast.show({
+        title: 'Exchange service failed',
+        type: 'warning',
+        message: 'Unable to set token allowance',
+      });
+      callback({}); // let's return callback to dismiss loading spinner on offer card button
+      return;
+    }
+    callback(response);
+  };
+};
+
+export const addExchangeAllowanceAction = (
+  provider: string,
+  assetCode: string,
+  transactionHash: string,
+) => {
+  return async (dispatch: Function, getState: Function) => {
+    const { exchange: { data: { allowances: _allowances = [] } } } = getState();
+    const allowance = {
+      provider,
+      assetCode,
+      transactionHash,
+      enabled: false,
+    };
+
+    // filter pending for current provider and asset match to override failed transactions
+    const allowances = _allowances
+      .filter(({ provider: _provider, assetCode: _assetCode }) =>
+        assetCode !== _assetCode && provider !== _provider,
+      );
+
+    allowances.push(allowance);
+
+    dispatch({
+      type: ADD_EXCHANGE_ALLOWANCE,
+      payload: allowance,
+    });
+    dispatch(saveDbAction('exchangeAllowances', { allowances }, true));
+  };
+};
+
+export const enableExchangeAllowanceByHashAction = (transactionHash: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    const { exchange: { data: { allowances: _allowances = [] } } } = getState();
+    const allowance = _allowances.find(
+      ({ transactionHash: _transactionHash }) => _transactionHash === transactionHash,
+    );
+    if (!allowance) return;
+    const updatedAllowance = {
+      ...allowance,
+      enabled: true,
+    };
+    dispatch({
+      type: UPDATE_EXCHANGE_ALLOWANCE,
+      payload: updatedAllowance,
+    });
+    const allowances = _allowances
+      .filter(
+        ({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash,
+      );
+    allowances.push(updatedAllowance);
+    dispatch(saveDbAction('exchangeAllowances', { allowances }, true));
+  };
+};
+
+export const checkEnableExchangeAllowanceTransactionsAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      history: {
+        data: transactionsHistory,
+      },
+      exchange: {
+        data: {
+          allowances: exchangeAllowances,
+        },
+      },
+    } = getState();
+    const accountIds = Object.keys(transactionsHistory);
+    const allHistory = accountIds.reduce(
+      // $FlowFixMe
+      (existing = [], accountId) => {
+        const walletAssetsHistory = transactionsHistory[accountId] || [];
+        return [...existing, ...walletAssetsHistory];
+      },
+      [],
+    );
+    exchangeAllowances
+      .filter(({ enabled }) => !enabled)
+      .map(({ transactionHash, assetCode }) => {  // eslint-disable-line
+        const enabledAllowance = allHistory.find(
+          ({ hash, status }) => hash === transactionHash && status === TX_CONFIRMED_STATUS,
+        );
+        if (enabledAllowance) {
+          Toast.show({
+            message: `${assetCode} token exchange was enabled`,
+            type: 'success',
+            title: 'Success',
+            autoClose: true,
+          });
+          dispatch(enableExchangeAllowanceByHashAction(transactionHash));
+        }
+      });
   };
 };
