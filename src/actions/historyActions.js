@@ -42,17 +42,26 @@ import { ETH } from '../constants/assetsConstants';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
-export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex: number = 0) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+export const afterHistoryUpdatedAction = () => {
+  return async (dispatch: Function, getState: Function) => {
     const {
-      accounts: { data: accounts },
-      history: { data: currentHistory },
       featureFlags: {
         data: {
           SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
           EXCHANGE_ENABLED: exchangeFeatureEnabled,
         },
       },
+    } = getState();
+    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
+    if (exchangeFeatureEnabled) dispatch(checkEnableExchangeAllowanceTransactionsAction());
+  };
+};
+
+export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex: number = 0) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      accounts: { data: accounts },
+      history: { data: currentHistory },
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
@@ -77,8 +86,7 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
       payload: updatedHistory,
     });
 
-    if (exchangeFeatureEnabled) dispatch(checkEnableExchangeAllowanceTransactionsAction());
-    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
+    dispatch(afterHistoryUpdatedAction());
   };
 };
 
@@ -109,6 +117,8 @@ export const fetchContactTransactionsAction = (contactAddress: string, asset?: s
       type: SET_HISTORY,
       payload: updatedHistory,
     });
+
+    dispatch(afterHistoryUpdatedAction());
   };
 };
 
@@ -118,12 +128,6 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       accounts: { data: accounts },
       history: { data: currentHistory },
       appSettings: { data: { lastTxSyncDatetimes = {} } },
-      featureFlags: {
-        data: {
-          SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
-          EXCHANGE_ENABLED: exchangeFeatureEnabled,
-        },
-      },
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const walletId = getActiveAccountWalletId(accounts);
@@ -166,8 +170,6 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
 
     const lastCreatedAt = Math.max(...updatedAccountHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-    if (exchangeFeatureEnabled) dispatch(checkEnableExchangeAllowanceTransactionsAction());
-    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     const updatedLastTxSyncDatetimes = {
       ...lastTxSyncDatetimes,
@@ -182,6 +184,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       type: SET_HISTORY,
       payload: updatedHistory,
     });
+    dispatch(afterHistoryUpdatedAction());
   };
 };
 
@@ -229,6 +232,9 @@ export const updateTransactionStatusAction = (hash: string) => {
       type: SET_HISTORY,
       payload: updatedHistory,
     });
+
+    dispatch(afterHistoryUpdatedAction());
+
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
   };
 };
