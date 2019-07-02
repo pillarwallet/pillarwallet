@@ -36,7 +36,7 @@ export type ExchangeReducerState = {
     shapeshiftAccessToken?: string,
     searchRequest?: ExchangeSearchRequest,
     executingTransaction: boolean,
-    allowances: Allowance[]
+    allowances: Allowance[],
   },
 };
 
