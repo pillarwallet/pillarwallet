@@ -51,6 +51,8 @@
 		8018645422DF4DC3855F3A3D /* libRNThread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CC6F631CBBF458CB455FF9C /* libRNThread.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		88752814D92B408586AD02C6 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7368FD1086E94DC4B397E71D /* FontAwesome.ttf */; };
+		8B0259ED22C64BC4007F0B7A /* PermissionIosFaceId.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0259B322C64BC4007F0B7A /* PermissionIosFaceId.m */; };
+		8B340CD422C9E9EF0084FC59 /* PermissonIosFaceId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B340CD322C9E9EF0084FC59 /* PermissonIosFaceId.swift */; };
 		96E7E806E3064D22B04CF13F /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5AEBDC667D4447CBD30E595 /* Entypo.ttf */; };
 		98467FF6160142B2B6D9A5EC /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B57A98E6235840519278085C /* FontAwesome5_Brands.ttf */; };
 		A619D15ABDF942EC8912E9AD /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 65478B02B8C2492D810CAC24 /* Roboto.ttf */; };
@@ -565,6 +567,8 @@
 		8077EDE7F41E4886A341A9B2 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		81EA8192DC2A459991B604E1 /* Aktiv Grotesk App_bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Aktiv Grotesk App_bold.ttf"; path = "../src/assets/fonts/Aktiv Grotesk App_bold.ttf"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		8B0259B322C64BC4007F0B7A /* PermissionIosFaceId.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PermissionIosFaceId.m; sourceTree = "<group>"; };
+		8B340CD322C9E9EF0084FC59 /* PermissonIosFaceId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissonIosFaceId.swift; sourceTree = "<group>"; };
 		9D7991B635D44345AB154292 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		9DDE0EB81B5B432389D30BE2 /* RNFirebase.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFirebase.xcodeproj; path = "../node_modules/react-native-firebase/ios/RNFirebase.xcodeproj"; sourceTree = "<group>"; };
 		A030F51609C4ED022BBF639F /* Pods-pillarwallet.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.staging.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.staging.release.xcconfig"; sourceTree = "<group>"; };
@@ -698,6 +702,7 @@
 		13B07FAE1A68108700A75B9A /* pillarwallet */ = {
 			isa = PBXGroup;
 			children = (
+				8B0259B322C64BC4007F0B7A /* PermissionIosFaceId.m */,
 				FA315B2022256F1F008E0303 /* index.thread.jsbundle */,
 				1D07F6ED211B3CD8009D15F8 /* GoogleService-Info.plist */,
 				162E180B21186C160028BE96 /* launch_background_image.png */,
@@ -709,6 +714,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				16A4A6812111EBD9008E645C /* pillarwallet-Bridging-Header.h */,
+				8B340CD322C9E9EF0084FC59 /* PermissonIosFaceId.swift */,
 			);
 			name = pillarwallet;
 			sourceTree = "<group>";
@@ -1775,6 +1781,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B0259ED22C64BC4007F0B7A /* PermissionIosFaceId.m in Sources */,
+				8B340CD422C9E9EF0084FC59 /* PermissonIosFaceId.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				16A4A6832111EBDA008E645C /* SwiftBridge.swift in Sources */,

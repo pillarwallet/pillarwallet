@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FlatList, Alert, ScrollView, Keyboard, View } from 'react-native';
+import { FlatList, Alert, ScrollView, Keyboard, View, NativeModules } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
@@ -63,6 +63,8 @@ import ReferralCodeModal from './ReferralCodeModal';
 
 // sections
 import AppearanceSettingsSection from './AppearanceSettingsSection';
+
+const FaceId = NativeModules.PermissionIosFaceId;
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
@@ -204,15 +206,32 @@ class Profile extends React.Component<Props, State> {
     this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
   };
 
-  handleChangeUseBiometrics = (value) => {
-    const { changeUseBiometrics } = this.props;
-    changeUseBiometrics(value);
+  setBiometricState = (value) => {
     this.setState({ showCheckPinModal: false }, () => {
       const message = value ? 'Biometric login enabled' : 'Biometric login disabled';
       delay(500)
         .then(() => Toast.show({ title: 'Success', type: 'success', message }))
         .catch(() => null);
     });
+  };
+
+  handleChangeUseBiometrics = (value) => {
+    const { changeUseBiometrics } = this.props;
+    changeUseBiometrics(value);
+    if (value) {
+      return TouchID.isSupported()
+        .then(biometryType => {
+          if (biometryType === 'FaceID') {
+            FaceId.request();
+            this.setBiometricState(value);
+          } else if (biometryType === 'TouchID') {
+            this.setBiometricState(value);
+          } else if (biometryType === true) {
+            this.setBiometricState(value);
+          }
+        }).catch(() => (this.setBiometricState(value)));
+    }
+    return this.setBiometricState(value);
   };
 
   handleCheckPinModalClose = () => {
