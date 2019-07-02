@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
+import { CachedImage } from 'react-native-cached-image';
 
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -42,6 +43,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
+import { getProviderDisplayName, getProviderLogo } from 'utils/exchange';
 
 import type { GasInfo } from 'models/GasInfo';
 import type { Asset, Balances, Rates } from 'models/Asset';
@@ -55,7 +57,6 @@ const FooterWrapper = styled.View`
   padding: 0 20px;
   width: 100%;
 `;
-
 
 const LabeledRow = styled.View`
   margin: 10px 0;
@@ -81,6 +82,18 @@ const WarningMessage = styled(Paragraph)`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
+`;
+
+const ProviderWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-top: 6px;
+`;
+
+const ProviderIcon = styled(CachedImage)`
+  width: 24px;
+  height: 24px;
+  margin-right: 4px;
 `;
 
 type Props = {
@@ -254,6 +267,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       toAssetCode,
       fromAssetCode,
       setTokenAllowance,
+      provider,
     } = offerOrder;
 
     const txFeeInWei = this.getTxFeeInWei(transactionSpeed);
@@ -263,6 +277,8 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       ? balanceInWei.sub(utils.parseUnits(payAmount.toString(), 'ether')).gte(txFeeInWei)
       : balanceInWei.gte(txFeeInWei);
     const errorMessage = !enoughBalance && 'Not enough ETH for transaction fee';
+    const providerLogo = getProviderLogo(provider);
+    const providerName = getProviderDisplayName(provider);
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
@@ -282,12 +298,19 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           ) ||
             <View>
               <LabeledRow>
-                <Label>Amount to receive</Label>
+                <Label>You will receive</Label>
                 <Value>{`${receiveAmount} ${toAssetCode}`}</Value>
               </LabeledRow>
               <LabeledRow>
-                <Label>Amount to pay</Label>
+                <Label>You will pay</Label>
                 <Value>{`${payAmount} ${fromAssetCode}`}</Value>
+              </LabeledRow>
+              <LabeledRow>
+                <Label>Exchange</Label>
+                <ProviderWrapper>
+                  {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
+                  <Value>{providerName}</Value>
+                </ProviderWrapper>
               </LabeledRow>
             </View>
           }
@@ -309,7 +332,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             <Button
               disabled={!session.isOnline || !!errorMessage}
               onPress={() => this.onConfirmTransactionPress(offerOrder)}
-              title={setTokenAllowance ? 'Set Token Allowance' : 'Confirm Transaction'}
+              title={setTokenAllowance ? 'Set Token Allowance' : 'Confirm exchange'}
             />
           </FooterWrapper>
         </Footer>

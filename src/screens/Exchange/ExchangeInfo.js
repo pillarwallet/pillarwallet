@@ -24,6 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
+import { CachedImage } from 'react-native-cached-image';
 
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -35,15 +36,12 @@ import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
 import { EXCHANGE } from 'constants/navigationConstants';
-import {
-  PROVIDER_CHANGELLY,
-  PROVIDER_SHAPESHIFT,
-  PROVIDER_UNISWAP,
-  PROVIDER_ZEROX,
-} from 'constants/exchangeConstants';
+import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 
 import type { Assets } from 'models/Asset';
 import type { Allowance, ExchangeProvider } from 'models/Offer';
+
+import { getProviderDisplayName } from 'utils/exchange';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -89,23 +87,38 @@ const DisconnectButton = styled.TouchableOpacity`
 
 const DisconnectButtonLabel = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
-  color: ${baseColors.burningFire};
+  color: ${baseColors.blueViolet};
 `;
 
+const ProviderIconWrapper = styled.View`
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  background-color: ${props => props.backgroundFill ? props.backgroundFill : baseColors.darkGray};
+  align-items: center;
+  justify-content: center;
+`;
+
+const ProviderIcon = styled(CachedImage)`
+  width: 24px;
+  height: 24px;
+`;
+
+const shapeshiftLogo = require('assets/images/exchangeProviders/logo_shapeshift_white.png');
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-const getProviderDisplayName = (provider: string) => {
+const getProviderLogo = (provider: string) => {
   switch (provider) {
     case PROVIDER_SHAPESHIFT:
-      return 'ShapeShift';
-    case PROVIDER_UNISWAP:
-      return 'Uniswap';
-    case PROVIDER_ZEROX:
-      return '0x';
-    case PROVIDER_CHANGELLY:
-      return 'Changelly';
+      return (
+        <ProviderIconWrapper backgroundFill={baseColors.black}>
+          <ProviderIcon source={shapeshiftLogo} resizeMode="contain" style={{ marginTop: 0.5, marginLeft: 0.2 }} />
+        </ProviderIconWrapper>
+      );
     default:
-      return 'Unknown';
+      return (
+        <ProviderIconWrapper />
+      );
   }
 };
 
@@ -185,8 +198,8 @@ class ExchangeInfo extends React.Component<Props, State> {
     return (
       <ListItemWithImage
         label={getProviderDisplayName(exchangeProviderId)}
-        itemImageUrl={genericToken}
-        fallbackSource={genericToken}
+        customImage={getProviderLogo(exchangeProviderId)}
+        imageDiameter={44}
         subtext={`Connected ${dateToShow}`}
         customAddon={(
           <DisconnectButton onPress={() => disconnectExchangeProvider(exchangeProviderId)}>
