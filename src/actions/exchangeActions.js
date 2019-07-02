@@ -24,14 +24,13 @@ import Toast from 'components/Toast';
 import {
   RESET_OFFERS,
   ADD_OFFER,
-  SET_SHAPESHIFT_ACCESS_TOKEN,
   SET_EXCHANGE_SEARCH_REQUEST,
   SET_EXECUTING_TRANSACTION,
   SET_DISMISS_TRANSACTION,
   ADD_EXCHANGE_ALLOWANCE,
   UPDATE_EXCHANGE_ALLOWANCE,
-  CONNECT_TO_EXCHANGE,
-  DISCONNECT_FROM_EXCHANGE,
+  ADD_CONNECTED_EXCHANGE_PROVIDER,
+  REMOVE_CONNECTED_EXCHANGE_PROVIDER,
   PROVIDER_SHAPESHIFT,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
@@ -44,8 +43,10 @@ const exchangeService = new ExchangeService();
 const connectExchangeService = (state: Object) => {
   const {
     oAuthTokens: { data: oAuthTokens },
-    exchange: { data: { shapeshiftAccessToken } },
+    exchange: { data: { connectedProviders } },
   } = state;
+  const { extra: shapeshiftAccessToken } = connectedProviders
+    .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {};
   // proceed with new instance only if one is not running and access token changed
   if (exchangeService.connected()) {
     const {
@@ -146,47 +147,39 @@ export const authorizeWithShapeshiftAction = () => {
   };
 };
 
-export const setShapeshiftAccessTokenAction = (token: ?string) => {
+export const addConnectedExchangeProviderAction = (providerId: string, extra?: any) => {
   return (dispatch: Function, getState: Function) => {
-    const { exchange: { data: { exchanges } } } = getState();
-    const shapeShiftExchange = {
-      id: PROVIDER_SHAPESHIFT,
-      name: 'ShapeShift',
+    const { exchange: { data: { connectedProviders } } } = getState();
+    const provider = {
+      id: providerId,
       dateConnected: +new Date(),
+      extra,
     };
-    let updatedExchanges = exchanges;
-    if (token) {
-      updatedExchanges = exchanges.push(shapeShiftExchange);
-      dispatch({
-        type: CONNECT_TO_EXCHANGE,
-        payload: shapeShiftExchange,
-      });
-    }
+    const updatedProviders = [
+      ...connectedProviders,
+      provider,
+    ];
     dispatch({
-      type: SET_SHAPESHIFT_ACCESS_TOKEN,
-      payload: token,
+      type: ADD_CONNECTED_EXCHANGE_PROVIDER,
+      payload: provider,
     });
-    dispatch(saveDbAction('exchange', {
-      shapeshiftAccessToken: token,
-      exchanges: updatedExchanges,
-    }));
+    dispatch(saveDbAction('exchangeProviders', {
+      connectedProviders: updatedProviders,
+    }, true));
   };
 };
 
-export const resetShapeshiftAccessTokenAction = (id: string) => {
+export const disconnectExchangeProviderAction = (id: string) => {
   return (dispatch: Function, getState: Function) => {
-    const { exchange: { data: { exchanges } } } = getState();
-    const updatedExchanges = exchanges.filter(({ id: exchangeId }) => exchangeId !== id);
-    console.log('updatedExchanges on delete ---->', updatedExchanges);
-    dispatch(setShapeshiftAccessTokenAction(null));
+    const { exchange: { data: { connectedProviders } } } = getState();
+    const updatedProviders = connectedProviders.filter(({ id: exchangeId }) => exchangeId !== id);
     dispatch({
-      type: DISCONNECT_FROM_EXCHANGE,
+      type: REMOVE_CONNECTED_EXCHANGE_PROVIDER,
       payload: id,
     });
-    dispatch(saveDbAction('exchange', {
-      shapeshiftAccessToken: null,
-      exchanges: updatedExchanges,
-    }));
+    dispatch(saveDbAction('exchangeProviders', {
+      connectedProviders: updatedProviders,
+    }, true));
   };
 };
 
@@ -202,7 +195,7 @@ export const requestShapeshiftAccessTokenAction = (tokenHash: string) => {
       });
       return;
     }
-    dispatch(setShapeshiftAccessTokenAction(shapeshiftAccessToken));
+    dispatch(addConnectedExchangeProviderAction(PROVIDER_SHAPESHIFT, shapeshiftAccessToken));
   };
 };
 
@@ -265,7 +258,7 @@ export const addExchangeAllowanceAction = (
       type: ADD_EXCHANGE_ALLOWANCE,
       payload: allowance,
     });
-    dispatch(saveDbAction('exchange', { allowances }));
+    dispatch(saveDbAction('exchangeAllowances', { allowances }, true));
   };
 };
 
@@ -289,7 +282,7 @@ export const enableExchangeAllowanceByHashAction = (transactionHash: string) => 
         ({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash,
       );
     allowances.push(updatedAllowance);
-    dispatch(saveDbAction('exchange', { allowances }));
+    dispatch(saveDbAction('exchangeAllowances', { allowances }, true));
   };
 };
 

@@ -53,7 +53,7 @@ import {
 } from 'actions/exchangeActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
-import type { Offer, ExchangeSearchRequest, Allowance, Exchange } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 
@@ -174,7 +174,6 @@ type Props = {
   offers: Offer[],
   takeOffer: (string, string, number, string, Function) => Object,
   authorizeWithShapeshift: Function,
-  shapeshiftAccessToken?: string,
   supportedAssets: Asset[],
   fetchGasInfo: Function,
   balances: Balances,
@@ -185,7 +184,7 @@ type Props = {
   setExecutingTransaction: Function,
   setTokenAllowance: Function,
   exchangeAllowances: Allowance[],
-  connectedExchanges: Exchange[],
+  connectedProviders: ExchangeProvider[],
 };
 
 type State = {
@@ -607,7 +606,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       shapeshiftAuthPressed,
       pressedTokenAllowanceId,
     } = this.state;
-    const { shapeshiftAccessToken, exchangeAllowances } = this.props;
+    const { exchangeAllowances, connectedProviders } = this.props;
     const { input: selectedSellAmount } = fromInput;
     const {
       _id: offerId,
@@ -647,6 +646,12 @@ class ExchangeScreen extends React.Component<Props, State> {
       amountToBuyString = formatMoney(amountToBuy, 2);
     } else {
       amountToBuyString = amountToBuy > 0.00001 ? formatMoney(amountToBuy, 5) : '<0.00001';
+    }
+
+    let shapeshiftAccessToken;
+    if (isShapeShift) {
+      ({ extra: shapeshiftAccessToken } = connectedProviders
+        .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {});
     }
 
     return (
@@ -854,7 +859,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       balances,
       navigation,
       exchangeAllowances,
-      connectedExchanges,
+      connectedProviders,
     } = this.props;
     const {
       value,
@@ -875,7 +880,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         <Header
           title="exchange"
           headerRightAddon={
-            (!!exchangeAllowances.length || !!connectedExchanges.length) &&
+            (!!exchangeAllowances.length || !!connectedProviders.length) &&
             <HeaderAddonWrapper>
               <SettingsButton onPress={() => navigation.navigate(EXCHANGE_INFO)}>
                 <SettingsIcon
@@ -950,10 +955,9 @@ const mapStateToProps = ({
   exchange: {
     data: {
       offers,
-      shapeshiftAccessToken,
       searchRequest: exchangeSearchRequest,
       allowances: exchangeAllowances,
-      exchanges: connectedExchanges,
+      connectedProviders,
     },
   },
   assets: { data: assets, supportedAssets },
@@ -965,11 +969,10 @@ const mapStateToProps = ({
   assets,
   supportedAssets,
   rates,
-  shapeshiftAccessToken,
   gasInfo,
   exchangeSearchRequest,
   exchangeAllowances,
-  connectedExchanges,
+  connectedProviders,
 });
 
 const structuredSelector = createStructuredSelector({

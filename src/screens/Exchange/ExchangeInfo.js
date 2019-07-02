@@ -32,9 +32,8 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Separator from 'components/Separator';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { noop } from 'utils/common';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { resetShapeshiftAccessTokenAction } from 'actions/exchangeActions';
+import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
 import {
   PROVIDER_CHANGELLY,
   PROVIDER_SHAPESHIFT,
@@ -42,15 +41,15 @@ import {
   PROVIDER_ZEROX,
 } from 'constants/exchangeConstants';
 import type { Assets } from 'models/Asset';
-import type { Allowance, Exchange } from 'models/Offer';
+import type { Allowance, ExchangeProvider } from 'models/Offer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   assets: Assets,
   exchangeAllowances: Allowance[],
   fetchTransactionsHistory: Function,
-  resetShapeshiftAccessToken: Function,
-  exchanges: Exchange[],
+  disconnectExchangeProvider: Function,
+  connectedProviders: ExchangeProvider[],
 };
 
 type State = {
@@ -168,21 +167,18 @@ class ExchangeInfo extends React.Component<Props, State> {
     );
   };
 
-  renderExchange = ({ item: exchange }: Object) => {
-    const { resetShapeshiftAccessToken } = this.props;
-    const { name, dateConnected, id } = exchange;
+  renderExchangeProvider = ({ item: provider }: Object) => {
+    const { disconnectExchangeProvider } = this.props;
+    const { dateConnected, id: exchangeProviderId } = provider;
     const dateToShow = formatDate(new Date(dateConnected), 'MM.DD.YY');
     return (
       <ListItemWithImage
-        label={name}
+        label={getProviderDisplayName(exchangeProviderId)}
         itemImageUrl={genericToken}
         fallbackSource={genericToken}
         subtext={`Connected ${dateToShow}`}
         customAddon={(
-          <DisconnectButton onPress={id === PROVIDER_SHAPESHIFT
-            ? () => resetShapeshiftAccessToken(exchange.id)
-            : noop}
-          >
+          <DisconnectButton onPress={() => disconnectExchangeProvider(exchangeProviderId)}>
             <DisconnectButtonLabel>Disconnect</DisconnectButtonLabel>
           </DisconnectButton>
         )}
@@ -196,7 +192,7 @@ class ExchangeInfo extends React.Component<Props, State> {
       assets,
       exchangeAllowances,
       fetchTransactionsHistory,
-      exchanges,
+      connectedProviders,
     } = this.props;
     const assetsArray = Object.keys(assets)
       .map(id => assets[id])
@@ -206,13 +202,13 @@ class ExchangeInfo extends React.Component<Props, State> {
       <Container>
         <Header title="exchange settings" onBack={() => navigation.goBack(null)} />
         <ScrollWrapper>
-          {!!exchanges.length &&
+          {!!connectedProviders.length &&
           <React.Fragment>
             <SectionTitle>Connected exchanges:</SectionTitle>
             <FlatList
-              data={exchanges}
+              data={connectedProviders}
               keyExtractor={(item) => item.id}
-              renderItem={this.renderExchange}
+              renderItem={this.renderExchangeProvider}
               initialNumToRender={8}
               onEndReachedThreshold={0.5}
               style={{ width: '100%' }}
@@ -246,19 +242,20 @@ class ExchangeInfo extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { data: assets },
-  exchange: { data: { allowances: exchangeAllowances, shapeshiftAccessToken, exchanges } },
+  exchange: { data: { allowances: exchangeAllowances, connectedProviders } },
 }) => ({
   assets,
   exchangeAllowances,
-  shapeshiftAccessToken,
-  exchanges,
+  connectedProviders,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchTransactionsHistory: () => dispatch(
     fetchTransactionsHistoryAction(),
   ),
-  resetShapeshiftAccessToken: (id: string) => dispatch(resetShapeshiftAccessTokenAction(id)),
+  disconnectExchangeProvider: (id: string) => dispatch(
+    disconnectExchangeProviderAction(id),
+  ),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExchangeInfo);

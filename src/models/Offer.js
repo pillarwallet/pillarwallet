@@ -69,9 +69,9 @@ export type Allowance = {
   enabled?: boolean,
 }
 
-export type Exchange = {
+export type ExchangeProvider = {
   id: string,
-  name: string,
   dateConnected: Date,
+  extra?: any,
 }
 

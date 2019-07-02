@@ -17,22 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import merge from 'lodash.merge';
 import {
   ADD_OFFER,
   RESET_OFFERS,
-  SET_SHAPESHIFT_ACCESS_TOKEN,
   SET_EXCHANGE_SEARCH_REQUEST,
   SET_EXECUTING_TRANSACTION,
   SET_DISMISS_TRANSACTION,
   SET_EXCHANGE_ALLOWANCES,
   ADD_EXCHANGE_ALLOWANCE,
   UPDATE_EXCHANGE_ALLOWANCE,
-  CONNECT_TO_EXCHANGE,
-  DISCONNECT_FROM_EXCHANGE,
-  SET_CONNECTED_EXCHANGES,
+  ADD_CONNECTED_EXCHANGE_PROVIDER,
+  REMOVE_CONNECTED_EXCHANGE_PROVIDER,
+  SET_CONNECTED_EXCHANGE_PROVIDERS,
 } from 'constants/exchangeConstants';
-import type { Offer, ExchangeSearchRequest, Allowance, Exchange } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
 
 export type ExchangeReducerState = {
   data: {
@@ -41,7 +39,7 @@ export type ExchangeReducerState = {
     searchRequest?: ExchangeSearchRequest,
     executingTransaction: boolean,
     allowances: Allowance[],
-    exchanges: Exchange[],
+    connectedProviders: ExchangeProvider[],
   },
 };
 
@@ -55,7 +53,7 @@ const initialState = {
     offers: [],
     executingTransaction: false,
     allowances: [],
-    exchanges: [],
+    connectedProviders: [],
   },
 };
 
@@ -81,14 +79,6 @@ export default function exchangeReducer(
             ...state.data.offers.filter(offer => offer._id !== action.payload._id),
             action.payload,
           ],
-        },
-      };
-    case SET_SHAPESHIFT_ACCESS_TOKEN:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          shapeshiftAccessToken: action.payload,
         },
       };
     case SET_EXCHANGE_SEARCH_REQUEST:
@@ -150,29 +140,33 @@ export default function exchangeReducer(
           ],
         },
       };
-    case SET_CONNECTED_EXCHANGES:
+    case SET_CONNECTED_EXCHANGE_PROVIDERS:
       return {
         ...state,
         data: {
           ...state.data,
-          exchanges: action.payload,
+          connectedProviders: action.payload,
         },
       };
-    case CONNECT_TO_EXCHANGE:
-      return merge(
-        {},
-        state,
-        {
-          data:
-            { exchanges: action.payload },
-        },
-      );
-    case DISCONNECT_FROM_EXCHANGE:
+    case ADD_CONNECTED_EXCHANGE_PROVIDER:
       return {
         ...state,
         data: {
           ...state.data,
-          exchanges: [...state.data.exchanges.filter(({ id }) => id !== action.payload)],
+          connectedProviders: [
+            ...state.data.connectedProviders,
+            action.payload,
+          ],
+        },
+      };
+    case REMOVE_CONNECTED_EXCHANGE_PROVIDER:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          connectedProviders: [
+            ...state.data.connectedProviders.filter(({ id }) => id !== action.payload),
+          ],
         },
       };
     default:

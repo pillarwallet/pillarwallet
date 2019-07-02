@@ -44,9 +44,8 @@ import { UPDATE_BADGES, SET_CONTACTS_BADGES } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import {
-  SET_SHAPESHIFT_ACCESS_TOKEN,
   SET_EXCHANGE_ALLOWANCES,
-  SET_CONNECTED_EXCHANGES,
+  SET_CONNECTED_EXCHANGE_PROVIDERS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -126,10 +125,12 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const { shapeshiftAccessToken, allowances = [], exchanges = [] } = await storage.get('exchange');
-      dispatch({ type: SET_SHAPESHIFT_ACCESS_TOKEN, payload: shapeshiftAccessToken });
+      const { allowances = [] } = await storage.get('exchangeAllowances');
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
-      dispatch({ type: SET_CONNECTED_EXCHANGES, payload: exchanges });
+
+      const { connectedProviders = [] } = await storage.get('exchangeProviders');
+      dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
+
       await loadAndMigrate('history', dispatch, getState);
 
       if (appSettings.smartWalletUpgradeDismissed) {
