@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -32,11 +32,19 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Separator from 'components/Separator';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
+import {
+  PROVIDER_CHANGELLY,
+  PROVIDER_SHAPESHIFT,
+  PROVIDER_UNISWAP,
+  PROVIDER_ZEROX,
+} from 'constants/exchangeConstants';
 import type { Assets } from 'models/Asset';
+import type { Allowance } from 'models/Offer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   assets: Assets,
+  exchangeAllowances: Allowance[],
 };
 
 type State = {
@@ -79,26 +87,20 @@ const DisconnectButtonLabel = styled(BaseText)`
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-const PENDING = 'pending';
-
-const dummyProviders = [
-  {
-    id: 'UNISWAP',
-    name: 'Uniswap',
-    status: 'pending',
-  },
-  {
-    id: 'ZEROX',
-    name: '0x',
-    status: 'unlocked',
-  },
-  {
-    id: 'CHANGELLY',
-    name: 'Changelly',
-    status: 'unlocked',
-  },
-];
-
+const getProviderDisplayName = (provider: string) => {
+  switch (provider) {
+    case PROVIDER_SHAPESHIFT:
+      return 'ShapeShift';
+    case PROVIDER_UNISWAP:
+      return 'Uniswap';
+    case PROVIDER_ZEROX:
+      return '0x';
+    case PROVIDER_CHANGELLY:
+      return 'Changelly';
+    default:
+      return 'Unknown';
+  }
+};
 const dummyExchanges = [
   {
     id: 'UNISWAP',
@@ -126,19 +128,25 @@ class ExchangeInfo extends React.Component<Props, State> {
     }
   };
 
-  renderProvider = ({ item: provider }: Object) => {
+  renderProvider = ({ item: { provider, enabled: providerEnabled } }: Object) => {
     return (
       <ProviderItem>
-        <ProviderName>{provider.name}</ProviderName>
-        <ProviderStatus isPending={provider.status === PENDING}>{provider.status}</ProviderStatus>
+        <ProviderName>{getProviderDisplayName(provider)}</ProviderName>
+        <ProviderStatus isPending={!providerEnabled}>
+          {providerEnabled
+            ? 'Enabled'
+            : 'Pending'
+          }
+        </ProviderStatus>
       </ProviderItem>
     );
   };
 
   renderToken = ({ item: token }: Object) => {
+    const { exchangeAllowances } = this.props;
     const { openCollapseKey } = this.state;
     const fullIconUrl = `${SDK_PROVIDER}/${token.iconUrl}?size=3`;
-
+    const tokenAllowances = exchangeAllowances.filter(({ assetCode }) => assetCode === token.symbol);
     return (
       <CollapsibleListItem
         label={token.symbol}
@@ -153,8 +161,8 @@ class ExchangeInfo extends React.Component<Props, State> {
         )}
         collapseContent={
           <FlatList
-            data={dummyProviders}
-            keyExtractor={(item) => item.id}
+            data={tokenAllowances}
+            keyExtractor={({ provider, assetCode }) => `${provider}-${assetCode}`}
             renderItem={this.renderProvider}
             initialNumToRender={8}
             onEndReachedThreshold={0.5}
@@ -185,8 +193,10 @@ class ExchangeInfo extends React.Component<Props, State> {
   }
 
   render() {
-    const { navigation, assets } = this.props;
-    const assetsArray = Object.keys(assets).map(id => assets[id]);
+    const { navigation, assets, exchangeAllowances } = this.props;
+    const assetsArray = Object.keys(assets)
+      .map(id => assets[id])
+      .filter(({ symbol }) => exchangeAllowances.find(({ assetCode }) => assetCode === symbol));
     return (
       <Container>
         <Header title="exchange settings" onBack={() => navigation.goBack(null)} />
@@ -206,22 +216,26 @@ class ExchangeInfo extends React.Component<Props, State> {
             //   />
             // }
           />
-          <SectionTitle>Enabled assets:</SectionTitle>
-          <FlatList
-            data={assetsArray}
-            keyExtractor={(item) => item.id}
-            renderItem={this.renderToken}
-            initialNumToRender={8}
-            onEndReachedThreshold={0.5}
-            style={{ width: '100%' }}
-            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-            // refreshControl={
-            //   <RefreshControl
-            //     refreshing={false}
-            //     onRefresh={() => {}}
-            //   />
-            // }
-          />
+          {!!assetsArray.length &&
+            <View>
+              <SectionTitle>Enabled exchange assets:</SectionTitle>
+              <FlatList
+                data={assetsArray}
+                keyExtractor={(item) => item.id}
+                renderItem={this.renderToken}
+                initialNumToRender={8}
+                onEndReachedThreshold={0.5}
+                style={{ width: '100%' }}
+                ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+                // refreshControl={
+                //   <RefreshControl
+                //     refreshing={false}
+                //     onRefresh={() => {}}
+                //   />
+                // }
+              />
+            </View>
+          }
         </ScrollWrapper>
       </Container>
     );
@@ -230,8 +244,10 @@ class ExchangeInfo extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { data: assets },
+  exchange: { data: { allowances: exchangeAllowances } },
 }) => ({
   assets,
+  exchangeAllowances,
 });
 
 export default connect(mapStateToProps)(ExchangeInfo);

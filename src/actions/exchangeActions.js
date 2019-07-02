@@ -93,7 +93,6 @@ export const resetOffersAction = () => ({
 
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Function, getState: Function) => {
-    dispatch(resetOffersAction());
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
       type: SET_EXCHANGE_SEARCH_REQUEST,
@@ -221,7 +220,14 @@ export const addExchangeAllowanceAction = (
       transactionHash,
       enabled: false,
     };
-    allowances.push(allowance);
+
+    // filter pending for current provider and asset match to override failed transactions
+    allowances
+      .filter(({ provider: _provider, assetCode: _assetCode }) =>
+        assetCode !== _assetCode && provider !== _provider,
+      )
+      .push(allowance);
+
     dispatch({
       type: ADD_EXCHANGE_ALLOWANCE,
       payload: allowance,

@@ -492,6 +492,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   triggerSearch = () => {
+    const { resetOffers } = this.props;
     const { value: { fromInput, toInput } } = this.state;
     const {
       selector: { value: from },
@@ -501,6 +502,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { searchOffers } = this.props;
     const amount = parseFloat(amountString);
     if (!amount) return;
+    resetOffers(); // reset here to avoid cards reload delay
     searchOffers(from, to, amount);
   };
 
