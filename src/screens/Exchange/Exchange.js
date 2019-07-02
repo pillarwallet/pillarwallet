@@ -84,9 +84,18 @@ const CardRow = styled.View`
     : ''}
 `;
 
+const CardInnerRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding-left: 10px;
+  flex-wrap: wrap;
+`;
+
 const CardColumn = styled.View`
   flex-direction: column;
   align-items: ${props => props.alignRight ? 'flex-end' : 'flex-start'};
+  justify-content: flex-start;
 `;
 
 const CardText = styled(BaseText)`
@@ -95,7 +104,7 @@ const CardText = styled(BaseText)`
   letter-spacing: 0.18px;
   color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
   flex-wrap: wrap;
-  flex: 1;
+  width: 100%;
 `;
 
 const ListHeader = styled.View`
@@ -106,6 +115,13 @@ const ListHeader = styled.View`
 const HeaderButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
+`;
+
+const CardButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 0;
+  margin-left: 10px;
 `;
 
 const ButtonLabel = styled(BaseText)`
@@ -644,13 +660,23 @@ class ExchangeScreen extends React.Component<Props, State> {
       >
         <CardWrapper>
           <CardRow withBorder alignTop>
-            <CardColumn style={{ flex: 1 }}>
+            <CardColumn>
               <CardText label>Exchange rate</CardText>
               <CardText>{`1 ${fromAssetCode} = ~${formatMoney(askRate, 2)} ${toAssetCode}`}</CardText>
             </CardColumn>
-            <CardColumn>
-              {!!providerLogo && <CachedImage style={[{ marginTop: 2 }, providerLogoStyle]} source={providerLogo} />}
-            </CardColumn>
+            <CardInnerRow style={{ flexShrink: 1 }}>
+              {!!providerLogo && <CachedImage style={providerLogoStyle} source={providerLogo} />}
+              {isShapeShift && !shapeshiftAccessToken &&
+              <CardButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthPress}>
+                <ButtonLabel color={baseColors.electricBlue}>Connect</ButtonLabel>
+              </CardButton>
+              }
+              {!allowanceSet &&
+              <CardButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
+                <ButtonLabel color={baseColors.electricBlue}>Enable</ButtonLabel>
+              </CardButton>
+              }
+            </CardInnerRow>
           </CardRow>
           <CardRow>
             <CardColumn style={{ flex: 1 }}>
@@ -670,20 +696,6 @@ class ExchangeScreen extends React.Component<Props, State> {
               </Button>
             </CardColumn>
           </CardRow>
-          {isShapeShift && !shapeshiftAccessToken &&
-            <CardRow style={{ paddingTop: 0, paddingBottom: 6, justifyContent: 'flex-end' }}>
-              <HeaderButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthPress}>
-                <ButtonLabel color={baseColors.fruitSalad}>Connect to ShapeShift to accept</ButtonLabel>
-              </HeaderButton>
-            </CardRow>
-          }
-          {!allowanceSet &&
-            <CardRow style={{ paddingTop: 0, paddingBottom: 6, justifyContent: 'flex-end' }}>
-              <HeaderButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
-                <ButtonLabel color={baseColors.fruitSalad}>Set token allowance</ButtonLabel>
-              </HeaderButton>
-            </CardRow>
-          }
         </CardWrapper>
       </ShadowedCard>
     );
