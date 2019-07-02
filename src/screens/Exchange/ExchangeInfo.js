@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList, View, RefreshControl } from 'react-native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -32,6 +32,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Separator from 'components/Separator';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import {
   PROVIDER_CHANGELLY,
   PROVIDER_SHAPESHIFT,
@@ -45,6 +46,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   assets: Assets,
   exchangeAllowances: Allowance[],
+  fetchTransactionsHistory: Function,
 };
 
 type State = {
@@ -193,7 +195,12 @@ class ExchangeInfo extends React.Component<Props, State> {
   }
 
   render() {
-    const { navigation, assets, exchangeAllowances } = this.props;
+    const {
+      navigation,
+      assets,
+      exchangeAllowances,
+      fetchTransactionsHistory,
+    } = this.props;
     const assetsArray = Object.keys(assets)
       .map(id => assets[id])
       .filter(({ symbol }) => exchangeAllowances.find(({ assetCode }) => assetCode === symbol));
@@ -227,12 +234,12 @@ class ExchangeInfo extends React.Component<Props, State> {
                 onEndReachedThreshold={0.5}
                 style={{ width: '100%' }}
                 ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-                // refreshControl={
-                //   <RefreshControl
-                //     refreshing={false}
-                //     onRefresh={() => {}}
-                //   />
-                // }
+                refreshControl={
+                  <RefreshControl
+                    refreshing={false}
+                    onRefresh={() => fetchTransactionsHistory()}
+                  />
+                }
               />
             </View>
           }
@@ -250,4 +257,10 @@ const mapStateToProps = ({
   exchangeAllowances,
 });
 
-export default connect(mapStateToProps)(ExchangeInfo);
+const mapDispatchToProps = (dispatch: Function) => ({
+  fetchTransactionsHistory: () => dispatch(
+    fetchTransactionsHistoryAction(),
+  ),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ExchangeInfo);

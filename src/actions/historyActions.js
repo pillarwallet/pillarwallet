@@ -37,6 +37,7 @@ import { checkForMissedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
+import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { ETH } from '../constants/assetsConstants';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
@@ -46,7 +47,12 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
     const {
       accounts: { data: accounts },
       history: { data: currentHistory },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+      featureFlags: {
+        data: {
+          SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
+          EXCHANGE_ENABLED: exchangeFeatureEnabled,
+        },
+      },
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
@@ -71,6 +77,7 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
       payload: updatedHistory,
     });
 
+    if (exchangeFeatureEnabled) dispatch(checkEnableExchangeAllowanceTransactionsAction());
     if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
   };
 };
@@ -111,7 +118,12 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       accounts: { data: accounts },
       history: { data: currentHistory },
       appSettings: { data: { lastTxSyncDatetimes = {} } },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+      featureFlags: {
+        data: {
+          SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
+          EXCHANGE_ENABLED: exchangeFeatureEnabled,
+        },
+      },
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const walletId = getActiveAccountWalletId(accounts);
@@ -154,6 +166,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
 
     const lastCreatedAt = Math.max(...updatedAccountHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+    if (exchangeFeatureEnabled) dispatch(checkEnableExchangeAllowanceTransactionsAction());
     if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     const updatedLastTxSyncDatetimes = {

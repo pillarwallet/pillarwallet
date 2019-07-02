@@ -626,10 +626,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     } = offer;
     let { allowanceSet = true } = offer;
 
+    let storedAllowance;
     if (!allowanceSet) {
-      allowanceSet = !!exchangeAllowances.find(
-        ({ provider, assetCode, enabled }) => fromAssetCode === assetCode && provider === offerProvider && enabled,
+      storedAllowance = exchangeAllowances.find(
+        ({ provider, assetCode }) => fromAssetCode === assetCode && provider === offerProvider,
       );
+      allowanceSet = storedAllowance && storedAllowance.enabled;
     }
 
     const available = getAvailable(minQuantity, maxQuantity, askRate);
@@ -673,7 +675,12 @@ class ExchangeScreen extends React.Component<Props, State> {
               }
               {!allowanceSet &&
               <CardButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
-                <ButtonLabel color={baseColors.electricBlue}>Enable</ButtonLabel>
+                <ButtonLabel color={storedAllowance ? baseColors.darkGray : baseColors.electricBlue} >
+                  {storedAllowance
+                    ? 'Pending'
+                    : 'Enable'
+                  }
+                </ButtonLabel>
               </CardButton>
               }
             </CardInnerRow>
