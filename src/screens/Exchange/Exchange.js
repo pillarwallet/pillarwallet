@@ -864,7 +864,10 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const txFeeInWei = this.getTxFeeInWei();
     const formStructure = generateFormStructure({ balances, txFeeInWei });
-    const sortedOffers = offers.sort((a, b) => b.askRate - a.askRate);
+    const shapeShiftOffer = offers.find(offer => offer.provider === PROVIDER_SHAPESHIFT) || null;
+    const reorderedOffers = offers.sort((a, b) => b.askRate - a.askRate)
+      .filter(offer => offer.provider !== PROVIDER_SHAPESHIFT) || [];
+    if (shapeShiftOffer) reorderedOffers.push(shapeShiftOffer);
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
@@ -904,14 +907,14 @@ class ExchangeScreen extends React.Component<Props, State> {
             </FeeInfo>
           </FormWrapper>
           <FlatList
-            data={sortedOffers}
+            data={reorderedOffers}
             keyExtractor={(item) => item._id}
             style={{ width: '100%' }}
             contentContainerStyle={{ width: '100%', paddingHorizontal: 20, paddingVertical: 10 }}
             renderItem={this.renderOffers}
             ListHeaderComponent={
               <ListHeader>
-                {!!sortedOffers.length && <ExchangeStatus />}
+                {!!reorderedOffers.length && <ExchangeStatus />}
                 {!!shapeshiftAccessToken &&
                   <HeaderButton onPress={() => resetShapeshiftAccessToken()}>
                     <ButtonLabel color={baseColors.burningFire}>Disconnect ShapeShift</ButtonLabel>
