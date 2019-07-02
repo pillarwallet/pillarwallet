@@ -32,7 +32,6 @@ const StyledItemTouchable = styled.TouchableHighlight`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 14px ${spacing.mediumLarge}px;
 `;
 
 const StyledItemView = styled.View`
@@ -40,7 +39,6 @@ const StyledItemView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 14px ${spacing.mediumLarge}px;
 `;
 
 const ItemLabelHolder = styled.View`
@@ -69,6 +67,7 @@ const ListAddon = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin-right: ${spacing.large}px;
 `;
 
 const CollapseWrapper = styled.View`
@@ -105,6 +104,7 @@ type Props = {
   onPress?: ?Function,
   open?: boolean,
   collapseContent?: React.Node,
+  customToggle?: React.Node,
 }
 
 export default class CollapsibleListItem extends React.Component<Props> {
@@ -133,41 +133,66 @@ export default class CollapsibleListItem extends React.Component<Props> {
     ).start();
   };
 
-  render() {
-    const {
-      onPress,
-      label,
-      open,
-      collapseContent,
-    } = this.props;
-
+  renderToggleArrow = (shouldRender: boolean) => {
     const spinAngle = this.spinValue.interpolate({
       inputRange: [0, 1],
       outputRange: ['90deg', '-90deg'],
     });
 
+    if (shouldRender) {
+      return (
+        <ListAddon>
+          <Animated.View
+            style={{ transform: [{ rotate: spinAngle }] }}
+          >
+            <Icon
+              name="chevron-right"
+              style={{
+                fontSize: fontSizes.tiny,
+                color: baseColors.coolGrey,
+              }}
+            />
+          </Animated.View>
+        </ListAddon>
+      );
+    }
+    return null;
+  };
+
+  renderSectionToggle = () => {
+    const { label, customToggle, collapseContent } = this.props;
+    if (customToggle) {
+      return (
+        <ListItemMainPart>
+          <ItemLabelHolder>
+            {customToggle}
+          </ItemLabelHolder>
+          {this.renderToggleArrow(!!collapseContent)}
+        </ListItemMainPart>
+      );
+    }
+
+    return (
+      <ListItemMainPart style={{ paddingHorizontal: spacing.mediumLarge, paddingLeft: 14 }}>
+        <ItemLabelHolder>
+          <ItemLabel>{label}</ItemLabel>
+          {this.renderToggleArrow(!!collapseContent)}
+        </ItemLabelHolder>
+      </ListItemMainPart>
+    );
+  };
+
+  render() {
+    const {
+      onPress,
+      open,
+      collapseContent,
+    } = this.props;
+
     return (
       <ListItem>
         <ButtonWrapper onPress={onPress} collapseContent={collapseContent}>
-          <ListItemMainPart>
-            <ItemLabelHolder>
-              <ItemLabel>{label}</ItemLabel>
-            </ItemLabelHolder>
-            {!!collapseContent &&
-            <ListAddon>
-              <Animated.View
-                style={{ transform: [{ rotate: spinAngle }] }}
-              >
-                <Icon
-                  name="chevron-right"
-                  style={{
-                    fontSize: fontSizes.tiny,
-                    color: baseColors.coolGrey,
-                  }}
-                />
-              </Animated.View>
-            </ListAddon>}
-          </ListItemMainPart>
+          {this.renderSectionToggle()}
         </ButtonWrapper>
         <Collapsible collapsed={!open}>
           <CollapseWrapper>

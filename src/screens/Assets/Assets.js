@@ -48,6 +48,7 @@ import Tabs from 'components/Tabs';
 // types
 import type { Assets, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
+import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 
@@ -86,7 +87,6 @@ import AssetsList from './AssetsList';
 import CollectiblesList from './CollectiblesList';
 import HeaderButtonsForSmartWallet from './HeaderButtonsForSmartWallet';
 
-
 type Props = {
   fetchInitialAssets: () => Function,
   assets: Assets,
@@ -105,6 +105,7 @@ type Props = {
   assetsSearchState: string,
   addAsset: Function,
   removeAsset: Function,
+  badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
   smartWalletFeatureEnabled: boolean,
@@ -396,6 +397,7 @@ class AssetsScreen extends React.Component<Props, State> {
       assetsSearchState,
       navigation,
       collectibles,
+      badges,
       accounts,
       smartWalletState,
       smartWalletFeatureEnabled,
@@ -438,6 +440,9 @@ class AssetsScreen extends React.Component<Props, State> {
       ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
       : collectibles;
 
+    const filteredBadges = isInCollectiblesSearchMode
+      ? badges.filter(({ name = '' }) => name.toUpperCase().includes(query.toUpperCase()))
+      : badges;
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
@@ -498,12 +503,12 @@ class AssetsScreen extends React.Component<Props, State> {
               {activeTab === COLLECTIBLES && (
                 <CollectiblesList
                   collectibles={filteredCollectibles}
+                  badges={filteredBadges}
                   searchQuery={query}
                   navigation={navigation}
                   horizontalPadding={horizontalPadding}
                   updateHideRemoval={this.updateHideRemoval}
-                />
-              )}
+                />)}
             </React.Fragment>}
           </TokensWrapper>
         }
@@ -523,6 +528,7 @@ const mapStateToProps = ({
   },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  badges: { data: badges },
   smartWallet: smartWalletState,
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
@@ -535,6 +541,7 @@ const mapStateToProps = ({
   rates,
   baseFiatCurrency,
   assetsLayout,
+  badges,
   smartWalletState,
   smartWalletFeatureEnabled,
 });

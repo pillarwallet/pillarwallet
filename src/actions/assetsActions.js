@@ -66,6 +66,7 @@ import {
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
+import { addExchangeAllowanceAction } from './exchangeActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -177,6 +178,7 @@ export const sendAssetAction = (
   return async (dispatch: Function, getState: Function) => {
     const tokenType = get(transaction, 'tokenType', '');
     const symbol = get(transaction, 'symbol', '');
+    const allowancePayload = get(transaction, 'extra.allowance', {});
 
     if (tokenType === COLLECTIBLES) {
       await dispatch(fetchCollectiblesAction());
@@ -337,6 +339,12 @@ export const sendAssetAction = (
       : {
         isSuccess: false, error: tokenTx.error, note, to, noRetry: tokenTx.noRetry,
       };
+
+    if (Object.keys(allowancePayload).length && tokenTx.hash) {
+      const { provider, assetCode } = allowancePayload;
+      dispatch(addExchangeAllowanceAction(provider, assetCode, tokenTx.hash));
+    }
+
     navigateToNextScreen(txStatus);
   };
 };

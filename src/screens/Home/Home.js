@@ -39,7 +39,6 @@ import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 import Tabs from 'components/Tabs';
 import ProfileImage from 'components/ProfileImage';
-import BadgeImage from 'components/BadgeImage';
 import Camera from 'components/Camera';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
@@ -50,7 +49,7 @@ import Spinner from 'components/Spinner';
 import SettingsListItem from 'components/ListItem/SettingsItem';
 
 // constants
-import { PROFILE, CONTACT, BADGE, MANAGE_DETAILS_SESSIONS } from 'constants/navigationConstants';
+import { PROFILE, CONTACT, MANAGE_DETAILS_SESSIONS } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -67,7 +66,6 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import { fetchBadgesAction } from 'actions/badgesActions';
 import {
   onWalletConnectSessionRequest,
   cancelWaitingRequest,
@@ -80,9 +78,6 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 // utils
 import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
-
-// types
-import type { Badges } from 'models/Badge';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -104,8 +99,6 @@ type Props = {
   deepLinkData: Object,
   resetDeepLinkData: Function,
   approveLoginAttempt: Function,
-  fetchBadges: Function,
-  badges: Badges,
   openSeaTxHistory: Object[],
   history: Array<*>,
   waitingRequest?: string,
@@ -257,44 +250,6 @@ const DescriptionWarning = styled(Description)`
   color: ${baseColors.burningFire};
 `;
 
-const BadgesWrapper = styled.View`
-  padding-top: 0;
-`;
-
-const BadgesBlock = styled.View`
-  height: 170px;
-  border-bottom-width: 1px;
-  border-style: solid;
-  border-color: ${UIColors.defaultBorderColor};
-`;
-
-const BadgesScrollView = styled.ScrollView`
-  background-color: ${baseColors.snowWhite};
-  padding-left: 6px;
-  margin-top: -4px;
-  padding-top: ${Platform.select({
-    ios: '4px',
-    android: 0,
-  })};
-`;
-
-const BadgesItem = styled.TouchableOpacity`
-  align-items: center;
-  width: 96px;
-  margin: ${Platform.select({
-    ios: '4px 4px 0',
-    android: '0',
-  })};
-`;
-
-const BadgesItemImage = styled(BadgeImage)`
-  margin-bottom: ${spacing.rhythm / 2};
-`;
-
-const BadgesSpacer = styled.View`
-  min-height: 0;
-`;
-
 const SessionUIWrapper = styled.View`
   padding-top: 110px;
 `;
@@ -410,28 +365,15 @@ class HomeScreen extends React.Component<Props, State> {
       });
   };
 
-  renderBadges = () => {
-    const { badges, navigation } = this.props;
-    return badges
-      .sort((a, b) => (b.receivedAt || 0) - (a.receivedAt || 0))
-      .map(badge => (
-        <BadgesItem key={badge.id} onPress={() => navigation.navigate(BADGE, { id: badge.id })}>
-          <BadgesItemImage data={badge} />
-        </BadgesItem>
-      ));
-  };
-
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
       fetchAllCollectiblesData,
-      fetchBadges,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
     fetchAllCollectiblesData();
-    fetchBadges();
   };
 
   setActiveTab = (activeTab) => {
@@ -546,7 +488,6 @@ class HomeScreen extends React.Component<Props, State> {
       backupStatus,
       deepLinkData,
       approveLoginAttempt,
-      badges,
       history,
       openSeaTxHistory,
       contacts,
@@ -775,7 +716,7 @@ class HomeScreen extends React.Component<Props, State> {
           </HomeHeaderRow>
         </AnimatedHomeHeader>
         <Animated.ScrollView
-          stickyHeaderIndices={contacts.length ? [4] : [3]}
+          stickyHeaderIndices={contacts.length ? [3] : [2]}
           style={{
             marginTop: contacts.length ? -100 : -76,
           }}
@@ -814,19 +755,6 @@ class HomeScreen extends React.Component<Props, State> {
                 </RecentConnectionsScrollView>
               </RecentConnections>
             </RecentConnectionsWrapper>
-          }
-          {badges && badges.length ? (
-            <BadgesWrapper>
-              <BadgesBlock>
-                <View style={{ backgroundColor: baseColors.snowWhite }}>
-                  <StyledSubtitle noMargin subtitle title="game of badges." />
-                </View>
-                <BadgesScrollView horizontal nestedScrollEnabled overScrollMode="always">
-                  {this.renderBadges()}
-                </BadgesScrollView>
-              </BadgesBlock>
-            </BadgesWrapper>
-          ) : (<BadgesSpacer />)
           }
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
@@ -904,7 +832,6 @@ const mapStateToProps = ({
   wallet: { backupStatus },
   notifications: { intercomNotificationsCount },
   deepLink: { data: deepLinkData },
-  badges: { data: badges },
 }) => ({
   contacts,
   user,
@@ -912,7 +839,6 @@ const mapStateToProps = ({
   intercomNotificationsCount,
   backupStatus,
   deepLinkData,
-  badges,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -936,7 +862,6 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   resetDeepLinkData: () => dispatch(resetDeepLinkDataAction()),
   approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
-  fetchBadges: () => dispatch(fetchBadgesAction()),
   onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
   onWalletLinkScan: uri => dispatch(executeDeepLinkAction(uri)),
   cancelWaitingRequest: clientId => dispatch(cancelWaitingRequest(clientId)),
