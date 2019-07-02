@@ -42,7 +42,7 @@ import { ETH } from '../constants/assetsConstants';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
-export const afterHistoryUpdatedAction = () => {
+const afterHistoryUpdatedAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
       featureFlags: {
