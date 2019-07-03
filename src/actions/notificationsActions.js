@@ -420,7 +420,7 @@ export const startListeningChatWebSocketAction = () => {
             const senderNameInNavParams = get(navParams, 'contact.username', '')
               || (get(navParams, 'username', ''));
             const relatedContact = get(navParams, 'contact', null)
-              || contacts.find(c => c.username === navParams.username) || {};
+              || contacts.find(c => c.username === senderNameInNavParams) || {};
 
             if (senderNameInNavParams === senderUsername && !!navParams.chatTabOpen
               && !!Object.keys(relatedContact).length) {
