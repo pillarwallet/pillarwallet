@@ -295,7 +295,7 @@ const generateFormStructure = (data: Object) => {
     if (!Object.keys(selector).length) {
       return 'Asset should be selected.';
     } else if (!input) {
-      return 'Amount should be specified.';
+      return false; // should still validate (to not trigger search if empty), yet error should not be visible to user
     } else if (parseFloat(input) < 0) {
       return 'Amount should be bigger than 0.';
     } else if (amount > maxAmount) {
@@ -317,7 +317,7 @@ const generateFormStructure = (data: Object) => {
   });
 
   ToOption.getValidationErrorMessage = () => {
-    return 'Asset should be selected.';
+    return false; // should still validate (to not trigger search if empty), yet error should not be visible to user
   };
 
   return t.struct({
