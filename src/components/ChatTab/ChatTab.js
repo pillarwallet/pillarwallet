@@ -288,8 +288,11 @@ class ChatTab extends React.Component<Props, State> {
       this.setState({ chatText: draft }); // eslint-disable-line
     }
 
-    if (prevProps.isOpen !== isOpen && isOpen && hasUnreads) {
+    if (prevProps.isOpen !== isOpen) {
       navigation.setParams({ chatTabOpen: true });
+    }
+
+    if (isOpen && hasUnreads) {
       getChatByContact(contact.username, contact.id, contact.profileImage);
     }
 
