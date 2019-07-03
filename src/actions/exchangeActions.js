@@ -32,6 +32,7 @@ import {
   ADD_CONNECTED_EXCHANGE_PROVIDER,
   REMOVE_CONNECTED_EXCHANGE_PROVIDER,
   PROVIDER_SHAPESHIFT,
+  MARK_NOTIFICATION_SEEN,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -333,5 +334,13 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
           dispatch(enableExchangeAllowanceByHashAction(transactionHash));
         }
       });
+  };
+};
+
+export const markNotificationAsSeenAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: MARK_NOTIFICATION_SEEN,
+    });
   };
 };

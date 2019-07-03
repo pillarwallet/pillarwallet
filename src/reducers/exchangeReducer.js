@@ -29,6 +29,7 @@ import {
   ADD_CONNECTED_EXCHANGE_PROVIDER,
   REMOVE_CONNECTED_EXCHANGE_PROVIDER,
   SET_CONNECTED_EXCHANGE_PROVIDERS,
+  MARK_NOTIFICATION_SEEN,
 } from 'constants/exchangeConstants';
 import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
 
@@ -40,6 +41,7 @@ export type ExchangeReducerState = {
     executingTransaction: boolean,
     allowances: Allowance[],
     connectedProviders: ExchangeProvider[],
+    hasNotification: boolean,
   },
 };
 
@@ -54,6 +56,7 @@ const initialState = {
     executingTransaction: false,
     allowances: [],
     connectedProviders: [],
+    hasNotification: false,
   },
 };
 
@@ -122,6 +125,7 @@ export default function exchangeReducer(
             ...state.data.allowances,
             action.payload,
           ],
+          hasNotification: true,
         },
       };
     case UPDATE_EXCHANGE_ALLOWANCE:
@@ -138,6 +142,7 @@ export default function exchangeReducer(
             ),
             action.payload,
           ],
+          hasNotification: true,
         },
       };
     case SET_CONNECTED_EXCHANGE_PROVIDERS:
@@ -157,6 +162,7 @@ export default function exchangeReducer(
             ...state.data.connectedProviders,
             action.payload,
           ],
+          hasNotification: true,
         },
       };
     case REMOVE_CONNECTED_EXCHANGE_PROVIDER:
@@ -167,6 +173,14 @@ export default function exchangeReducer(
           connectedProviders: [
             ...state.data.connectedProviders.filter(({ id }) => id !== action.payload),
           ],
+        },
+      };
+    case MARK_NOTIFICATION_SEEN:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          hasNotification: false,
         },
       };
     default:

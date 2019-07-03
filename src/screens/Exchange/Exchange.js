@@ -51,6 +51,7 @@ import {
   resetOffersAction,
   setExecutingTransactionAction,
   setTokenAllowanceAction,
+  markNotificationAsSeenAction,
 } from 'actions/exchangeActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
@@ -191,6 +192,8 @@ type Props = {
   setTokenAllowance: Function,
   exchangeAllowances: Allowance[],
   connectedProviders: ExchangeProvider[],
+  hasUnreadExchangeNotification: boolean,
+  markNotificationAsSeen: Function,
 };
 
 type State = {
@@ -857,6 +860,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       navigation,
       exchangeAllowances,
       connectedProviders,
+      hasUnreadExchangeNotification,
+      markNotificationAsSeen,
     } = this.props;
     const {
       value,
@@ -876,10 +881,27 @@ class ExchangeScreen extends React.Component<Props, State> {
           headerRightAddon={
             (!!exchangeAllowances.length || !!connectedProviders.length) &&
             <HeaderAddonWrapper>
-              <SettingsButton onPress={() => navigation.navigate(EXCHANGE_INFO)}>
+              <SettingsButton
+                onPress={() => {
+                  navigation.navigate(EXCHANGE_INFO);
+                  if (hasUnreadExchangeNotification) markNotificationAsSeen();
+                }}
+              >
                 <SettingsIcon
                   source={settingsIcon}
                 />
+                {!!hasUnreadExchangeNotification &&
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: baseColors.sunYellow,
+                    borderRadius: 4,
+                    position: 'absolute',
+                    top: 14,
+                    right: -3,
+                  }}
+                />}
               </SettingsButton>
             </HeaderAddonWrapper>
           }
@@ -952,6 +974,7 @@ const mapStateToProps = ({
       searchRequest: exchangeSearchRequest,
       allowances: exchangeAllowances,
       connectedProviders,
+      hasNotification: hasUnreadExchangeNotification,
     },
   },
   assets: { data: assets, supportedAssets },
@@ -967,6 +990,7 @@ const mapStateToProps = ({
   exchangeSearchRequest,
   exchangeAllowances,
   connectedProviders,
+  hasUnreadExchangeNotification,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -993,6 +1017,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   setTokenAllowance: (assetCode, provider, callback) => dispatch(
     setTokenAllowanceAction(assetCode, provider, callback),
   ),
+  markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);
