@@ -867,10 +867,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const txFeeInWei = this.getTxFeeInWei();
     const formStructure = generateFormStructure({ balances, txFeeInWei });
-    const shapeShiftOffer = offers.find(offer => offer.provider === PROVIDER_SHAPESHIFT) || null;
-    const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber())
-      .filter(offer => offer.provider !== PROVIDER_SHAPESHIFT) || [];
-    if (shapeShiftOffer) reorderedOffers.push(shapeShiftOffer);
+    const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
