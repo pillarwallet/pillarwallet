@@ -336,6 +336,8 @@ function SelectorInputTemplate(locals) {
       placeholderInput,
       options,
       inputAddonText,
+      inputRef,
+      onSelectorOpen,
     },
   } = locals;
   const errorMessage = locals.error;
@@ -347,6 +349,7 @@ function SelectorInputTemplate(locals) {
     label,
     placeholderSelector,
     placeholder: placeholderInput,
+    onSelectorOpen,
   };
 
   return (
@@ -358,57 +361,75 @@ function SelectorInputTemplate(locals) {
       wrapperStyle={wrapperStyle}
       value={locals.value}
       inputAddonText={inputAddonText}
+      inputRef={inputRef}
     />
   );
 }
 
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
-
-  state = {
-    shapeshiftAuthPressed: false,
-    pressedOfferId: '',
-    pressedTokenAllowanceId: '',
-    value: {
-      fromInput: {
-        selector: {},
-        input: '',
-      },
-      toInput: {
-        selector: {},
-        input: '',
-      },
-    },
-    transactionSpeed: NORMAL,
-    showFeeModal: false,
-    formOptions: {
-      fields: {
-        fromInput: {
-          keyboardType: 'decimal-pad',
-          template: SelectorInputTemplate,
-          config: {
-            label: 'Selling',
-            hasInput: true,
-            options: [],
-            placeholderSelector: 'select',
-            placeholderInput: '0',
-          },
-        },
-        toInput: {
-          template: SelectorInputTemplate,
-          config: {
-            label: 'Buying',
-            options: [],
-            wrapperStyle: { marginTop: spacing.mediumLarge },
-            placeholderSelector: 'select asset',
-          },
-        },
-      },
-    },
-  };
+  fromInputRef: ?Object;
 
   constructor(props: Props) {
     super(props);
+    this.state = {
+      shapeshiftAuthPressed: false,
+      pressedOfferId: '',
+      pressedTokenAllowanceId: '',
+      value: {
+        fromInput: {
+          selector: {},
+          input: '',
+        },
+        toInput: {
+          selector: {},
+          input: '',
+        },
+      },
+      transactionSpeed: NORMAL,
+      showFeeModal: false,
+      formOptions: {
+        fields: {
+          fromInput: {
+            keyboardType: 'decimal-pad',
+            template: SelectorInputTemplate,
+            config: {
+              label: 'Selling',
+              hasInput: true,
+              options: [],
+              placeholderSelector: 'select',
+              placeholderInput: '0',
+              inputRef: (ref) => { this.fromInputRef = ref; },
+            },
+            transformer: {
+              parse: (value) => {
+                let formattedAmount = value.input;
+                if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
+                return { ...value, input: formattedAmount };
+              },
+              format: (value) => {
+                let formattedAmount = value.input;
+                if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
+                return { ...value, input: formattedAmount };
+              },
+            },
+          },
+          toInput: {
+            template: SelectorInputTemplate,
+            config: {
+              label: 'Buying',
+              options: [],
+              wrapperStyle: { marginTop: spacing.mediumLarge },
+              placeholderSelector: 'select asset',
+              onSelectorOpen: () => {
+                if (this.fromInputRef) this.fromInputRef.blur();
+              },
+            },
+          },
+        },
+      },
+    };
+    this.fromInputRef = React.createRef();
     this.triggerSearch = debounce(this.triggerSearch, 500);
   }
 
@@ -866,7 +887,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             </HeaderAddonWrapper>
           }
         />
-        <ScrollWrapper>
+        <ScrollWrapper keyboardShouldPersistTaps="handled">
           <FormWrapper>
             <Form
               ref={node => { this.exchangeForm = node; }}

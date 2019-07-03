@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Platform, TextInput, FlatList } from 'react-native';
+import { Platform, TextInput, FlatList, Keyboard } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
@@ -52,6 +52,7 @@ type Props = {
   errorMessage?: string,
   value: InputValue,
   inputAddonText?: string,
+  inputRef?: Object,
 };
 
 type State = {
@@ -191,10 +192,16 @@ const viewConfig = {
 };
 
 export default class SelectorInput extends React.Component<Props, State> {
-  state = {
-    showOptionsSelector: false,
-    query: '',
-  };
+  searchInput: ?Object;
+
+  constructor(props: Props) {
+    super(props);
+    this.searchInput = React.createRef();
+    this.state = {
+      showOptionsSelector: false,
+      query: '',
+    };
+  }
 
   handleChange = (e: EventLike) => {
     const { inputProps = {}, value } = this.props;
@@ -214,9 +221,14 @@ export default class SelectorInput extends React.Component<Props, State> {
   selectValue = (selectedValue: Object) => {
     const { inputProps = {}, value } = this.props;
     const { input } = value;
-    const { onChange } = inputProps;
+    const { onChange, onSelectorChange } = inputProps;
     this.setState({ showOptionsSelector: false, query: '' });
     if (onChange) onChange({ selector: selectedValue, input });
+    if (onSelectorChange) onSelectorChange();
+  };
+
+  focusInput = () => {
+    if (this.searchInput) this.searchInput.focus();
   };
 
   renderOption = ({ item: option }: Object) => {
@@ -249,6 +261,13 @@ export default class SelectorInput extends React.Component<Props, State> {
     );
   };
 
+  openSelector = () => {
+    this.setState({ showOptionsSelector: true });
+    const { inputProps } = this.props;
+    const { onSelectorOpen } = inputProps;
+    if (onSelectorOpen) onSelectorOpen();
+  };
+
   render() {
     const { showOptionsSelector, query } = this.state;
     const {
@@ -259,6 +278,7 @@ export default class SelectorInput extends React.Component<Props, State> {
       value,
       errorMessage,
       inputAddonText,
+      inputRef,
     } = this.props;
     const {
       label,
@@ -280,7 +300,7 @@ export default class SelectorInput extends React.Component<Props, State> {
             {!!options.length &&
             <Selector
               fullWidth={!hasInput}
-              onPress={options.length > 1 ? () => this.setState({ showOptionsSelector: true }) : noop}
+              onPress={options.length > 1 ? this.openSelector : noop}
               disabled={options.length < 1}
             >
               <ValueWrapper>
@@ -332,6 +352,7 @@ export default class SelectorInput extends React.Component<Props, State> {
                     textAlignVertical="center"
                     placeholderTextColor={baseColors.darkGray}
                     underlineColorAndroid="white"
+                    innerRef={inputRef}
                   />
                 </InputWrapper>
               )
@@ -343,7 +364,11 @@ export default class SelectorInput extends React.Component<Props, State> {
           isVisible={showOptionsSelector}
           fullScreen
           showHeader
-          onModalHide={() => this.setState({ showOptionsSelector: false, query: '' })}
+          onModalHide={() => {
+            this.setState({ showOptionsSelector: false, query: '' });
+            Keyboard.dismiss();
+          }}
+          onModalShow={this.focusInput}
           backgroundColor={baseColors.lightGray}
           avoidKeyboard
           noSwipeToDismiss
@@ -358,6 +383,7 @@ export default class SelectorInput extends React.Component<Props, State> {
                 }}
                 placeholder="Search for an asset"
                 backgroundColor={baseColors.white}
+                inputRef={ref => { this.searchInput = ref; }}
               />
             </SearchBarWrapper>
             <FlatList
