@@ -416,15 +416,16 @@ export const startListeningChatWebSocketAction = () => {
               type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
               payload: true,
             });
-            if (get(navParams, 'contact.username', '') === senderUsername && navParams.chatTabOpen) {
-              const { contact } = navParams;
-              dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
-              return;
-            }
 
-            if (get(navParams, 'username', '') === senderUsername && !!navParams.chatTabOpen) {
-              const contact = contacts.find(c => c.username === navParams.username) || {};
-              dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
+            const senderNameInNavParams = get(navParams, 'contact.username', '')
+              || (get(navParams, 'username', ''));
+            const relatedContact = get(navParams, 'contact', null)
+              || contacts.find(c => c.username === navParams.username) || {};
+
+            if (senderNameInNavParams === senderUsername && !!navParams.chatTabOpen
+              && !!Object.keys(relatedContact).length) {
+              const { username, id, profileImage } = relatedContact;
+              dispatch(getChatByContactAction(username, id, profileImage));
               return;
             }
 
