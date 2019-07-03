@@ -626,9 +626,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
 
     const askRateBn = new BigNumber(askRate);
-    const askRateFormatted = askRateBn.lt(0.01)
-      ? '<0.01'
-      : `~${formatMoney(askRateBn.toFixed(), 2)}`;
 
     return (
       <ShadowedCard
@@ -642,7 +639,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           <CardRow withBorder alignTop>
             <CardColumn>
               <CardText label>Exchange rate</CardText>
-              <CardText>{`1 ${fromAssetCode} = ${askRateFormatted} ${toAssetCode}`}</CardText>
+              <CardText>{`${askRateBn.toFixed()} ${toAssetCode}`}</CardText>
             </CardColumn>
             <CardInnerRow style={{ flexShrink: 1 }}>
               {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
