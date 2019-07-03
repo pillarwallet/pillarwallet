@@ -34,7 +34,6 @@ import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
-import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_WALLET_IMPORT_STATE } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -44,7 +43,10 @@ import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'const
 import { UPDATE_BADGES, SET_CONTACTS_BADGES } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
-import { SET_SHAPESHIFT_ACCESS_TOKEN } from 'constants/exchangeConstants';
+import {
+  SET_EXCHANGE_ALLOWANCES,
+  SET_CONNECTED_EXCHANGE_PROVIDERS,
+} from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   DISMISS_SMART_WALLET_UPGRADE,
@@ -123,11 +125,13 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const { shapeshiftAccessToken } = await storage.get('exchange');
-      dispatch({ type: SET_SHAPESHIFT_ACCESS_TOKEN, payload: shapeshiftAccessToken });
+      const { allowances = [] } = await storage.get('exchangeAllowances');
+      dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
-      const history = await loadAndMigrate('history', dispatch, getState);
-      dispatch({ type: SET_HISTORY, payload: history });
+      const { connectedProviders = [] } = await storage.get('exchangeProviders');
+      dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
+
+      await loadAndMigrate('history', dispatch, getState);
 
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });

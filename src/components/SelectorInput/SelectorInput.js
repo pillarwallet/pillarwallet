@@ -215,7 +215,7 @@ export default class SelectorInput extends React.Component<Props, State> {
     const { inputProps = {}, value } = this.props;
     const { input } = value;
     const { onChange } = inputProps;
-    this.setState({ showOptionsSelector: false });
+    this.setState({ showOptionsSelector: false, query: '' });
     if (onChange) onChange({ selector: selectedValue, input });
   };
 
@@ -343,7 +343,7 @@ export default class SelectorInput extends React.Component<Props, State> {
           isVisible={showOptionsSelector}
           fullScreen
           showHeader
-          onModalHide={() => this.setState({ showOptionsSelector: false })}
+          onModalHide={() => this.setState({ showOptionsSelector: false, query: '' })}
           backgroundColor={baseColors.lightGray}
           avoidKeyboard
           noSwipeToDismiss

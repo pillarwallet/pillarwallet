@@ -25,46 +25,48 @@ import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import { formatAmount, formatMoney, getCurrencySymbol, isValidNumber } from 'utils/common';
 import t from 'tcomb-form-native';
+import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
+import { getProviderLogo } from 'utils/exchange';
 
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ShadowedCard from 'components/ShadowedCard';
-import { BaseText, Label, TextLink, Paragraph, BoldText } from 'components/Typography';
+import { BaseText, Label, TextLink, Paragraph } from 'components/Typography';
 import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
-import Animation from 'components/Animation';
-import TankAssetBalance from 'components/TankAssetBalance';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
 import {
   searchOffersAction,
   takeOfferAction,
   authorizeWithShapeshiftAction,
-  resetShapeshiftAccessTokenAction,
   resetOffersAction,
+  setExecutingTransactionAction,
+  setTokenAllowanceAction,
 } from 'actions/exchangeActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
-import type { Offer, ExchangeSearchRequest } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
-import assetsConfig from 'configs/assetsConfig';
 
-import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+import { EXCHANGE_CONFIRM, EXCHANGE_INFO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+
+// partials
+import { ExchangeStatus } from './ExchangeStatus';
 
 const CardWrapper = styled.View`
   width: 100%;
@@ -74,7 +76,7 @@ const CardRow = styled.View`
   flex: 1;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: ${props => props.alignTop ? 'flex-start' : 'flex-end'};
   padding: 10px 0;
   ${props => props.withBorder
     ? `border-bottom-width: 1px;
@@ -82,9 +84,18 @@ const CardRow = styled.View`
     : ''}
 `;
 
+const CardInnerRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding-left: 10px;
+  flex-wrap: wrap;
+`;
+
 const CardColumn = styled.View`
   flex-direction: column;
   align-items: ${props => props.alignRight ? 'flex-end' : 'flex-start'};
+  justify-content: flex-start;
 `;
 
 const CardText = styled(BaseText)`
@@ -93,20 +104,19 @@ const CardText = styled(BaseText)`
   letter-spacing: 0.18px;
   color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
   flex-wrap: wrap;
-  flex: 1;
+  width: 100%;
 `;
 
 const ListHeader = styled.View`
   width: 100%;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: flex-end;
-  margin: 14px 0;
+  align-items: center;
 `;
 
-const HeaderButton = styled.TouchableOpacity`
+const CardButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
+  padding: 4px 0;
+  margin-left: 10px;
 `;
 
 const ButtonLabel = styled(BaseText)`
@@ -134,33 +144,30 @@ const FeeInfo = styled.View`
   margin-top: ${spacing.small}px;
 `;
 
-const Status = styled.View`
+const HeaderAddonWrapper = styled.View`
   flex-direction: row;
-  height: 50px;
-  justify-content: flex-start;
   align-items: center;
+  height: 52px;
 `;
 
-const StatusIcon = styled.View`
-  height: 8px;
-  width: 8px;
-  border-radius: 4px;
-  background-color: ${baseColors.fruitSalad};
-  position: absolute;
-  top: 7px;
-  left: 7px;
+const SettingsButton = styled.TouchableOpacity`
+  padding: 10px;
+  padding-right: -10px;
 `;
 
-const StatusText = styled(BoldText)`
-  color: ${baseColors.fruitSalad};
-  font-size: ${fontSizes.tiny}px;
-  letter-spacing: 0.15px;
-  line-height: ${fontSizes.tiny}px;
-  margin-top: 2px;
+const SettingsIcon = styled(CachedImage)`
+  width: 24px;
+  height: 24px;
 `;
 
-const IconHolder = styled.View`
-  position: relative;
+const ProviderIcon = styled(CachedImage)`
+  width: 24px;
+  height: 24px;
+`;
+
+const ESWrapper = styled.View`
+  width: 100%;
+  align-items: center;
 `;
 
 type Props = {
@@ -173,8 +180,6 @@ type Props = {
   offers: Offer[],
   takeOffer: (string, string, number, string, Function) => Object,
   authorizeWithShapeshift: Function,
-  shapeshiftAccessToken?: string,
-  resetShapeshiftAccessToken: Function,
   supportedAssets: Asset[],
   fetchGasInfo: Function,
   balances: Balances,
@@ -182,6 +187,10 @@ type Props = {
   resetOffers: Function,
   paymentNetworkBalances: Balances,
   exchangeSearchRequest: ExchangeSearchRequest,
+  setExecutingTransaction: Function,
+  setTokenAllowance: Function,
+  exchangeAllowances: Allowance[],
+  connectedProviders: ExchangeProvider[],
 };
 
 type State = {
@@ -192,18 +201,26 @@ type State = {
   pressedOfferId: string,
   transactionSpeed: string,
   showFeeModal: boolean,
+  pressedTokenAllowanceId: string,
 };
 
 const getAvailable = (_min, _max, rate) => {
   if (!_min && !_max) {
     return 'N/A';
   }
-  const min = _min * rate;
-  const max = _max * rate;
-  if (!min || !max || min === max) {
-    return `${min || max}`;
+  let min = (new BigNumber(rate)).multipliedBy(_min);
+  let max = (new BigNumber(rate)).multipliedBy(_max);
+  if ((min.gt(0) && min.lt(0.01)) || (max.gt(0) && max.lt(0.01))) {
+    return min.eq(max)
+      ? '<0.01'
+      : '<0.01 - <0.01';
   }
-  return `${min} - ${max}`;
+  min = min.toNumber();
+  max = max.toNumber();
+  if (!min || !max || min === max) {
+    return `${formatMoney(min || max, 2)}`;
+  }
+  return `${formatMoney(min, 2)} - ${formatMoney(max, 2)}`;
 };
 
 const { Form } = t.form;
@@ -220,10 +237,7 @@ const SPEED_TYPES = {
   [NORMAL]: 'Normal',
   [FAST]: 'Fast',
 };
-
-const PROVIDER_SHAPESHIFT = 'SHAPESHIFT-SHIM';
-const animationSource = require('assets/animations/livePulsatingAnimation.json');
-const genericToken = require('assets/images/tokens/genericToken.png');
+const settingsIcon = require('assets/icons/icon_key.png');
 
 const checkIfEnoughForFee = (balances: Balances, txFeeInWei) => {
   if (!balances[ETH]) return false;
@@ -242,6 +256,10 @@ const calculateMaxAmount = (token: string, balance: number | string, txFeeInWei:
   const maxAmount = utils.parseUnits(balance, 'ether').sub(txFeeInWei);
   if (maxAmount.lt(0)) return 0;
   return new BigNumber(utils.formatEther(maxAmount)).toNumber();
+};
+
+const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string) => {
+  return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
 };
 
 const generateFormStructure = (data: Object) => {
@@ -350,6 +368,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   state = {
     shapeshiftAuthPressed: false,
     pressedOfferId: '',
+    pressedTokenAllowanceId: '',
     value: {
       fromInput: {
         selector: {},
@@ -453,6 +472,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   triggerSearch = () => {
+    const { resetOffers } = this.props;
     const { value: { fromInput, toInput } } = this.state;
     const {
       selector: { value: from },
@@ -462,10 +482,11 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { searchOffers } = this.props;
     const amount = parseFloat(amountString);
     if (!amount) return;
+    resetOffers(); // reset here to avoid cards reload delay
     searchOffers(from, to, amount);
   };
 
-  onShapeshiftAuthClick = () => {
+  onShapeshiftAuthPress = () => {
     const { authorizeWithShapeshift } = this.props;
     this.setState({ shapeshiftAuthPressed: true }, async () => {
       await authorizeWithShapeshift();
@@ -477,6 +498,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       navigation,
       takeOffer,
+      setExecutingTransaction,
     } = this.props;
     const {
       value: {
@@ -494,26 +516,69 @@ class ExchangeScreen extends React.Component<Props, State> {
       askRate,
     } = offer;
     const amountToSell = parseFloat(selectedSellAmount);
-    const amountToBuy = amountToSell * askRate;
-    this.setState({ pressedOfferId: _id }, () =>
+    const amountToBuy = calculateAmountToBuy(askRate, amountToSell);
+    this.setState({ pressedOfferId: _id }, () => {
       takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, order => {
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (!order || !Object.keys(order).length) return;
         const { data: offerOrderData } = order;
+        setExecutingTransaction();
         navigation.navigate(EXCHANGE_CONFIRM, {
+          transactionSpeed,
           offerOrder: {
             ...offerOrderData,
-            transactionSpeed,
             receiveAmount: amountToBuy,
+            provider,
           },
         });
-      }),
-    );
+      });
+    });
+  };
+
+  onSetTokenAllowancePress = (offer: Offer) => {
+    const {
+      navigation,
+      setTokenAllowance,
+      setExecutingTransaction,
+    } = this.props;
+    const {
+      transactionSpeed,
+    } = this.state;
+    const {
+      _id,
+      provider,
+      fromAssetCode,
+    } = offer;
+    this.setState({ pressedTokenAllowanceId: _id }, () => {
+      setTokenAllowance(fromAssetCode, provider, (response) => {
+        this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
+        if (!response || !Object.keys(response).length) return;
+        const { data: { to: payToAddress, data } } = response;
+        setExecutingTransaction();
+        navigation.navigate(EXCHANGE_CONFIRM, {
+          offerOrder: {
+            provider,
+            fromAssetCode,
+            payToAddress,
+            transactionObj: {
+              data,
+            },
+            setTokenAllowance: true,
+          },
+          transactionSpeed,
+        });
+      });
+    });
   };
 
   renderOffers = ({ item: offer }) => {
-    const { value: { fromInput }, pressedOfferId, shapeshiftAuthPressed } = this.state;
-    const { shapeshiftAccessToken } = this.props;
+    const {
+      value: { fromInput },
+      pressedOfferId,
+      shapeshiftAuthPressed,
+      pressedTokenAllowanceId,
+    } = this.state;
+    const { exchangeAllowances, connectedProviders } = this.props;
     const { input: selectedSellAmount } = fromInput;
     const {
       _id: offerId,
@@ -524,10 +589,22 @@ class ExchangeScreen extends React.Component<Props, State> {
       toAssetCode,
       provider: offerProvider,
     } = offer;
+    let { allowanceSet = true } = offer;
+
+    let storedAllowance;
+    if (!allowanceSet) {
+      storedAllowance = exchangeAllowances.find(
+        ({ provider, assetCode }) => fromAssetCode === assetCode && provider === offerProvider,
+      );
+      allowanceSet = storedAllowance && storedAllowance.enabled;
+    }
+
     const available = getAvailable(minQuantity, maxQuantity, askRate);
-    const amountToBuy = parseFloat(selectedSellAmount) * askRate;
-    const isPressed = pressedOfferId === offerId;
+    const amountToBuy = calculateAmountToBuy(askRate, selectedSellAmount);
+    const isTakeOfferPressed = pressedOfferId === offerId;
+    const isSetAllowancePressed = pressedTokenAllowanceId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
+    const providerLogo = getProviderLogo(offerProvider);
 
     /**
      * avoid text overlapping on many decimals,
@@ -542,17 +619,46 @@ class ExchangeScreen extends React.Component<Props, State> {
       amountToBuyString = amountToBuy > 0.00001 ? formatMoney(amountToBuy, 5) : '<0.00001';
     }
 
+    let shapeshiftAccessToken;
+    if (isShapeShift) {
+      ({ extra: shapeshiftAccessToken } = connectedProviders
+        .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {});
+    }
+
+    const askRateBn = new BigNumber(askRate);
+    const askRateFormatted = askRateBn.lt(0.01)
+      ? '<0.01'
+      : `~${formatMoney(askRateBn.toFixed(), 2)}`;
+
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
         contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
       >
         <CardWrapper>
-          <CardRow withBorder>
+          <CardRow withBorder alignTop>
             <CardColumn>
               <CardText label>Exchange rate</CardText>
-              <CardText>{`${askRate} ${fromAssetCode || ''}`}</CardText>
+              <CardText>{`1 ${fromAssetCode} = ${askRateFormatted} ${toAssetCode}`}</CardText>
             </CardColumn>
+            <CardInnerRow style={{ flexShrink: 1 }}>
+              {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
+              {isShapeShift && !shapeshiftAccessToken &&
+              <CardButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthPress}>
+                <ButtonLabel color={baseColors.electricBlue}>Connect</ButtonLabel>
+              </CardButton>
+              }
+              {!allowanceSet &&
+              <CardButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
+                <ButtonLabel color={storedAllowance ? baseColors.darkGray : baseColors.electricBlue} >
+                  {storedAllowance
+                    ? 'Pending'
+                    : 'Enable'
+                  }
+                </ButtonLabel>
+              </CardButton>
+              }
+            </CardInnerRow>
           </CardRow>
           <CardRow>
             <CardColumn style={{ flex: 1 }}>
@@ -563,32 +669,18 @@ class ExchangeScreen extends React.Component<Props, State> {
             </CardColumn>
             <CardColumn>
               <Button
-                disabled={isPressed || (isShapeShift && !shapeshiftAccessToken)}
-                title={isPressed ? '' : `${amountToBuyString} ${toAssetCode}`}
+                disabled={isTakeOfferPressed || !allowanceSet || (isShapeShift && !shapeshiftAccessToken)}
+                title={isTakeOfferPressed ? '' : `${amountToBuyString} ${toAssetCode}`}
                 small
                 onPress={() => this.onOfferPress(offer)}
               >
-                {isPressed && <Spinner width={20} height={20} />}
+                {isTakeOfferPressed && <Spinner width={20} height={20} />}
               </Button>
             </CardColumn>
           </CardRow>
-          {isShapeShift && !shapeshiftAccessToken &&
-          <CardRow style={{ paddingTop: 0, paddingBottom: 6, justifyContent: 'flex-end' }}>
-            <HeaderButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthClick}>
-              <ButtonLabel color={baseColors.fruitSalad}>Connect to ShapeShift to accept</ButtonLabel>
-            </HeaderButton>
-          </CardRow>}
         </CardWrapper>
       </ShadowedCard>
     );
-  };
-
-  onShapeshiftAuthClick = () => {
-    const { authorizeWithShapeshift } = this.props;
-    this.setState({ shapeshiftAuthPressed: true }, async () => {
-      await authorizeWithShapeshift();
-      this.setState({ shapeshiftAuthPressed: false });
-    });
   };
 
   generateAssetsOptions = (assets) => {
@@ -656,7 +748,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       assets,
       supportedAssets,
-      balances,
       rates,
       baseFiatCurrency,
     } = this.props;
@@ -668,9 +759,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     let valueInFiatToShow;
     if (amount && Object.keys(selectedFromOption).length) {
       const { symbol: token } = selectedFromOption;
-      const balance = getBalance(balances, token);
       const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-      const totalInFiat = balance * getRate(rates, token, fiatCurrency);
+      const totalInFiat = parseFloat(amount) * getRate(rates, token, fiatCurrency);
       amountValueInFiat = formatMoney(totalInFiat);
       fiatSymbol = getCurrencySymbol(fiatCurrency);
       valueInFiatToShow = totalInFiat > 0 ? `${amountValueInFiat} ${fiatSymbol}` : null;
@@ -739,43 +829,13 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  renderAsset = ({ item }) => {
-    const { balances, paymentNetworkBalances } = this.props;
-    const assetBalance = formatAmount(getBalance(balances, item.symbol));
-    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
-    const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
-    const paymentNetworkBalance = getBalance(paymentNetworkBalances, item.symbol);
-    const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
-
-    if (assetShouldRender) {
-      return null;
-    }
-
-    return (
-      <ListItemWithImage
-        onPress={() => {}}
-        label={item.name}
-        itemImageUrl={fullIconUrl || genericToken}
-        itemValue={`${assetBalance} ${item.symbol}`}
-        fallbackSource={genericToken}
-        customAddon={paymentNetworkBalance ? (
-          <TankAssetBalance
-            amount={paymentNetworkBalanceFormatted}
-            isSynthetic={item.symbol !== ETH}
-          />)
-        : null
-        }
-        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
-      />
-    );
-  };
-
   render() {
     const {
       offers,
-      shapeshiftAccessToken,
-      resetShapeshiftAccessToken,
       balances,
+      navigation,
+      exchangeAllowances,
+      connectedProviders,
     } = this.props;
     const {
       value,
@@ -786,19 +846,24 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const txFeeInWei = this.getTxFeeInWei();
     const formStructure = generateFormStructure({ balances, txFeeInWei });
+    const shapeShiftOffer = offers.find(offer => offer.provider === PROVIDER_SHAPESHIFT) || null;
+    const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber())
+      .filter(offer => offer.provider !== PROVIDER_SHAPESHIFT) || [];
+    if (shapeShiftOffer) reorderedOffers.push(shapeShiftOffer);
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
         <Header
           title="exchange"
           headerRightAddon={
-            <Status>
-              <IconHolder>
-                <Animation source={animationSource} style={{ height: 22, width: 22 }} loop speed={0.9} />
-                <StatusIcon />
-              </IconHolder>
-              <StatusText>ACTIVE</StatusText>
-            </Status>
+            (!!exchangeAllowances.length || !!connectedProviders.length) &&
+            <HeaderAddonWrapper>
+              <SettingsButton onPress={() => navigation.navigate(EXCHANGE_INFO)}>
+                <SettingsIcon
+                  source={settingsIcon}
+                />
+              </SettingsButton>
+            </HeaderAddonWrapper>
           }
         />
         <ScrollWrapper>
@@ -825,24 +890,25 @@ class ExchangeScreen extends React.Component<Props, State> {
             </FeeInfo>
           </FormWrapper>
           <FlatList
-            data={offers}
+            data={reorderedOffers}
             keyExtractor={(item) => item._id}
             style={{ width: '100%' }}
             contentContainerStyle={{ width: '100%', paddingHorizontal: 20, paddingVertical: 10 }}
             renderItem={this.renderOffers}
-            ListHeaderComponent={
-              <ListHeader>
-                {!!shapeshiftAccessToken &&
-                  <HeaderButton onPress={() => resetShapeshiftAccessToken()}>
-                    <ButtonLabel color={baseColors.burningFire}>Disconnect ShapeShift</ButtonLabel>
-                  </HeaderButton>
-                }
-              </ListHeader>
+            ListHeaderComponent={reorderedOffers.length
+              ? (
+                <ListHeader>
+                  <ExchangeStatus />
+                </ListHeader>)
+              : null
             }
             ListEmptyComponent={(
-              <Paragraph small style={{ textAlign: 'center', marginTop: '15%' }}>
-                {'If there are any matching offers\nthey will appear live here'}
-              </Paragraph>
+              <ESWrapper style={{ marginTop: '15%' }}>
+                <ExchangeStatus />
+                <Paragraph small style={{ textAlign: 'center' }}>
+                  {'If there are any matching offers\nthey will appear live here'}
+                </Paragraph>
+              </ESWrapper>
             )}
           />
           <SlideModal
@@ -862,7 +928,14 @@ class ExchangeScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
-  exchange: { data: { offers, shapeshiftAccessToken, searchRequest: exchangeSearchRequest } },
+  exchange: {
+    data: {
+      offers,
+      searchRequest: exchangeSearchRequest,
+      allowances: exchangeAllowances,
+      connectedProviders,
+    },
+  },
   assets: { data: assets, supportedAssets },
   rates: { data: rates },
   history: { gasInfo },
@@ -872,9 +945,10 @@ const mapStateToProps = ({
   assets,
   supportedAssets,
   rates,
-  shapeshiftAccessToken,
   gasInfo,
   exchangeSearchRequest,
+  exchangeAllowances,
+  connectedProviders,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -895,9 +969,12 @@ const mapDispatchToProps = (dispatch: Function) => ({
     takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, callback),
   ),
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
-  resetShapeshiftAccessToken: () => dispatch(resetShapeshiftAccessTokenAction()),
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   resetOffers: () => dispatch(resetOffersAction()),
+  setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
+  setTokenAllowance: (assetCode, provider, callback) => dispatch(
+    setTokenAllowanceAction(assetCode, provider, callback),
+  ),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);

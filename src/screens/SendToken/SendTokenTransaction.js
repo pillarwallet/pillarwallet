@@ -32,16 +32,21 @@ import Animation from 'components/Animation';
 // utils
 import { baseColors, fontSizes } from 'utils/variables';
 
+// actions
+import { sendTxNoteByContactAction } from 'actions/txNoteActions';
+import { setDismissTransactionAction } from 'actions/exchangeActions';
+
 // constants
 import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { connect } from 'react-redux';
-import { sendTxNoteByContactAction } from '../../actions/txNoteActions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object,
   sendTxNoteByContact: Function,
+  executingExchangeTransaction: boolean,
+  setDismissExchangeTransaction: Function,
 }
 
 type State = {
@@ -99,7 +104,14 @@ class SendTokenTransaction extends React.Component<Props, State> {
   }
 
   handleDismissal = () => {
-    const { navigation } = this.props;
+    const {
+      navigation,
+      executingExchangeTransaction,
+      setDismissExchangeTransaction,
+    } = this.props;
+    if (executingExchangeTransaction) {
+      setDismissExchangeTransaction();
+    }
     navigation.dismiss();
   };
 
@@ -121,14 +133,25 @@ class SendTokenTransaction extends React.Component<Props, State> {
     const {
       isSuccess,
       error,
-      transactionPayload,
+      transactionPayload: {
+        tokenType: transactionTokenType,
+        extra: {
+          allowance = {},
+        } = {},
+      },
       noRetry,
     } = navigation.state.params;
     const animationSource = isSuccess ? animationSuccess : animationFailure;
     const transactionStatusText = isSuccess ? transactionSuccessText : getTransactionErrorMessage(error);
-    const successText = transactionPayload.tokenType === COLLECTIBLES
-      ? 'Collectible is on its way'
-      : 'Tokens are on their way';
+    let successText;
+    const isAllowanceTransaction = Object.keys(allowance).length;
+    if (transactionTokenType === COLLECTIBLES) {
+      successText = 'Collectible is on its way';
+    } else {
+      successText = isAllowanceTransaction
+        ? 'Transaction is on it\'s way'
+        : 'Tokens are on their way';
+    }
     const transactionStatusTitle = isSuccess ? successText : 'Transaction failed';
     return (
       <Container>
@@ -160,14 +183,17 @@ class SendTokenTransaction extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
+  exchange: { data: { executingTransaction: executingExchangeTransaction } },
 }) => ({
   contacts,
+  executingExchangeTransaction,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   sendTxNoteByContact: (username: string, message: Object) => {
     dispatch(sendTxNoteByContactAction(username, message));
   },
+  setDismissExchangeTransaction: () => dispatch(setDismissTransactionAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenTransaction);
