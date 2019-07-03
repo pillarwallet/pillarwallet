@@ -639,7 +639,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           <CardRow withBorder alignTop>
             <CardColumn>
               <CardText label>Exchange rate</CardText>
-              <CardText>{`${askRateBn.toFixed()} ${toAssetCode}`}</CardText>
+              <CardText>{`${askRateBn.toFixed()}`}</CardText>
             </CardColumn>
             <CardInnerRow style={{ flexShrink: 1 }}>
               {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
@@ -763,7 +763,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       const totalInFiat = parseFloat(amount) * getRate(rates, token, fiatCurrency);
       amountValueInFiat = formatMoney(totalInFiat);
       fiatSymbol = getCurrencySymbol(fiatCurrency);
-      valueInFiatToShow = totalInFiat > 0 ? `${amountValueInFiat} ${fiatSymbol}` : null;
+      valueInFiatToShow = totalInFiat > 0 ? `${fiatSymbol}${amountValueInFiat}` : null;
     }
 
     const optionsFrom = this.generateAssetsOptions(assets);
