@@ -68,7 +68,7 @@ import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork'
 // partials
 import { ExchangeStatus } from './ExchangeStatus';
 
-const CardWrapper = styled.View`
+const CardWrapper = styled.TouchableOpacity`
   width: 100%;
 `;
 
@@ -635,7 +635,10 @@ class ExchangeScreen extends React.Component<Props, State> {
         wrapperStyle={{ marginBottom: 10 }}
         contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
       >
-        <CardWrapper>
+        <CardWrapper
+          disabled={isTakeOfferPressed || !allowanceSet || (isShapeShift && !shapeshiftAccessToken)}
+          onPress={() => this.onOfferPress(offer)}
+        >
           <CardRow withBorder alignTop>
             <CardColumn>
               <CardText label>Exchange rate</CardText>
