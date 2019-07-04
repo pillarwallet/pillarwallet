@@ -112,12 +112,15 @@ type Props = {
 type State = {
   showFeeModal: boolean,
   transactionSpeed: string,
+  exchangeProviderGasPrice: number,
 }
 
+const EXCHANGE_PROVIDER = 'provider';
 const SLOW = 'min';
 const NORMAL = 'avg';
 const FAST = 'max';
 
+// do not add exchange provider to speed types list as it might not always be present
 const SPEED_TYPES = {
   [SLOW]: 'Slow',
   [NORMAL]: 'Normal',
@@ -126,37 +129,53 @@ const SPEED_TYPES = {
 const GAS_LIMIT = 500000;
 
 class ExchangeConfirmScreen extends React.Component<Props, State> {
-  state = {
-    showFeeModal: false,
-    transactionSpeed: NORMAL,
-  };
-
-  componentDidUpdate() {
-    const {
-      executingExchangeTransaction,
-      navigation,
-    } = this.props;
-    if (!executingExchangeTransaction) {
-      navigation.goBack();
-    }
+  constructor(props) {
+    super(props);
+    const { navigation } = this.props;
+    const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
+    const { transactionObj: { gasLimit, gasPrice } = {} } = offerOrder;
+    const isProviderGasInfo = gasLimit && gasPrice;
+    this.state = {
+      showFeeModal: false,
+      transactionSpeed: isProviderGasInfo ? EXCHANGE_PROVIDER : NORMAL,
+      exchangeProviderGasPrice: isProviderGasInfo ? gasPrice : 0,
+    };
   }
 
   componentDidMount() {
     const { fetchGasInfo } = this.props;
     fetchGasInfo();
-    this.setSelectedTransactionFee();
   }
 
-  setSelectedTransactionFee = () => {
-    const { navigation } = this.props;
-    const transactionSpeed = navigation.getParam('transactionSpeed', NORMAL);
-    this.setState({ transactionSpeed });
-  };
+  componentDidUpdate(prevProps: Props) {
+    const {
+      executingExchangeTransaction,
+      navigation,
+      fetchGasInfo,
+      session: { isOnline },
+    } = this.props;
+    if (!executingExchangeTransaction) {
+      navigation.goBack();
+      return;
+    }
+    if (prevProps.session.isOnline !== isOnline && isOnline) {
+      fetchGasInfo();
+    }
+  }
 
   getGasPriceWei = (txSpeed?: string) => {
-    txSpeed = txSpeed || this.state.transactionSpeed;
+    const {
+      transactionSpeed,
+      exchangeProviderGasPrice,
+    } = this.state;
+    txSpeed = txSpeed || transactionSpeed;
     const { gasInfo } = this.props;
-    const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
+    const gasPrice = (
+      txSpeed === EXCHANGE_PROVIDER
+        ? exchangeProviderGasPrice
+        // $FlowFixMe
+        : gasInfo.gasPrice[txSpeed]
+    ) || 0;
     return utils.parseUnits(gasPrice.toString(), 'gwei');
   };
 
@@ -165,19 +184,29 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     return gasPriceWei.mul(GAS_LIMIT);
   };
 
-  renderTxSpeedButtons = () => {
+  renderTxSpeedButtons = (providerName: string) => {
     const { rates, baseFiatCurrency } = this.props;
+    const { exchangeProviderGasPrice } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    return Object.keys(SPEED_TYPES).map(txSpeed => {
+    let speedTypesList = SPEED_TYPES;
+    if (exchangeProviderGasPrice) {
+      speedTypesList = {
+        [EXCHANGE_PROVIDER]: `By ${providerName}`, // first in list, keep it very short to not overlap elements
+        ...speedTypesList,
+      };
+    }
+    return Object.keys(speedTypesList).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
+      // $FlowFixMe
+      const speedTitle = speedTypesList[txSpeed];
       return (
         <SpeedButton
           key={txSpeed}
           primaryInverted
           onPress={() => this.handleGasPriceChange(txSpeed)}
         >
-          <TextLink>{SPEED_TYPES[txSpeed]} - {feeInEth} ETH</TextLink>
+          <TextLink>{speedTitle} - {feeInEth} ETH</TextLink>
           <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
         </SpeedButton>
       );
@@ -203,19 +232,24 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       fromAssetCode,
       payToAddress,
       transactionObj: {
+        gasLimit: exchangeProviderGasLimit,
         data,
       } = {},
       setTokenAllowance,
       provider,
     } = offerOrder;
 
+    const gasLimit = transactionSpeed === EXCHANGE_PROVIDER
+      ? exchangeProviderGasLimit
+      : GAS_LIMIT;
+
     // going from previous screen, asset will always be present in reducer
     const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
     const gasPrice = this.getGasPriceWei(transactionSpeed);
-    const txFeeInWei = gasPrice.mul(GAS_LIMIT);
+    const txFeeInWei = gasPrice.mul(gasLimit);
 
     const transactionPayload: TokenTransactionPayload = {
-      gasLimit: GAS_LIMIT,
+      gasLimit,
       txFeeInWei,
       gasPrice,
       amount: setTokenAllowance ? 0 : payAmount,
@@ -286,13 +320,13 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         <ScrollWrapper regularPadding>
           <Paragraph style={{ marginBottom: 30 }}>
             {setTokenAllowance
-              ? 'Review the details and confirm token allowance set as well as the cost of data transaction.'
+              ? 'Review the details and enable asset as well as the cost of data transaction.'
               : 'Review the details and confirm the exchange rate as well as the cost of transaction.'
             }
           </Paragraph>
           {(setTokenAllowance &&
             <LabeledRow>
-              <Label>Set token allowance</Label>
+              <Label>Asset to enable</Label>
               <Value>{fromAssetCode}</Value>
             </LabeledRow>
           ) ||
@@ -332,7 +366,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             <Button
               disabled={!session.isOnline || !!errorMessage}
               onPress={() => this.onConfirmTransactionPress(offerOrder)}
-              title={setTokenAllowance ? 'Set Token Allowance' : 'Confirm exchange'}
+              title={setTokenAllowance ? 'Enable Asset' : 'Confirm exchange'}
             />
           </FooterWrapper>
         </Footer>
@@ -343,7 +377,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         >
           <Label>Choose your gas price.</Label>
           <Label>Faster transaction requires more fee.</Label>
-          <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
+          <ButtonWrapper>{this.renderTxSpeedButtons(providerName)}</ButtonWrapper>
         </SlideModal>
       </Container>
     );

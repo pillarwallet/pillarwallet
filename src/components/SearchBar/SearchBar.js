@@ -76,6 +76,7 @@ type Props = {
   placeholder?: string,
   backgroundColor?: string,
   marginTop?: number,
+  inputRef?: Object,
 };
 
 type State = {
@@ -162,6 +163,7 @@ class SearchBar extends React.Component<Props, State> {
       placeholder,
       backgroundColor,
       marginTop,
+      inputRef,
     } = this.props;
     const {
       animShrink,
@@ -192,6 +194,7 @@ class SearchBar extends React.Component<Props, State> {
             placeholderTextColor={UIColors.placeholderTextColor}
             underlineColorAndroid="transparent"
             autoCorrect={false}
+            innerRef={inputRef}
           />
           <InputIcon
             icon="search"
