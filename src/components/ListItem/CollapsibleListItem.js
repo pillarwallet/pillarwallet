@@ -173,8 +173,8 @@ export default class CollapsibleListItem extends React.Component<Props> {
     }
 
     return (
-      <ListItemMainPart style={{ paddingHorizontal: spacing.mediumLarge, paddingLeft: 14 }}>
-        <ItemLabelHolder>
+      <ListItemMainPart>
+        <ItemLabelHolder style={{ paddingVertical: 14, paddingLeft: spacing.mediumLarge }}>
           <ItemLabel>{label}</ItemLabel>
           {this.renderToggleArrow(!!collapseContent)}
         </ItemLabelHolder>
