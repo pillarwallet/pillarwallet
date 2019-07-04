@@ -225,8 +225,7 @@ const calculateAmountToBuy = (askRate: number | string, amountToSell: number | s
   return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
 };
 
-const generateFormStructure = (data: Object) => {
-  const { balances } = data;
+const generateFormStructure = (balances: Balances) => {
   let balance;
   let maxAmount;
   let amount;
@@ -777,7 +776,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       formOptions,
     } = this.state;
 
-    const formStructure = generateFormStructure({ balances });
+    const formStructure = generateFormStructure(balances);
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
 
     return (
