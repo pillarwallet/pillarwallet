@@ -51,6 +51,7 @@ import {
   resetOffersAction,
   setExecutingTransactionAction,
   setTokenAllowanceAction,
+  markNotificationAsSeenAction,
 } from 'actions/exchangeActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
@@ -68,7 +69,7 @@ import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork'
 // partials
 import { ExchangeStatus } from './ExchangeStatus';
 
-const CardWrapper = styled.View`
+const CardWrapper = styled.TouchableOpacity`
   width: 100%;
 `;
 
@@ -191,6 +192,8 @@ type Props = {
   setTokenAllowance: Function,
   exchangeAllowances: Allowance[],
   connectedProviders: ExchangeProvider[],
+  hasUnreadExchangeNotification: boolean,
+  markNotificationAsSeen: Function,
 };
 
 type State = {
@@ -295,7 +298,7 @@ const generateFormStructure = (data: Object) => {
     if (!Object.keys(selector).length) {
       return 'Asset should be selected.';
     } else if (!input) {
-      return 'Amount should be specified.';
+      return false; // should still validate (to not trigger search if empty), yet error should not be visible to user
     } else if (parseFloat(input) < 0) {
       return 'Amount should be bigger than 0.';
     } else if (amount > maxAmount) {
@@ -317,7 +320,7 @@ const generateFormStructure = (data: Object) => {
   });
 
   ToOption.getValidationErrorMessage = () => {
-    return 'Asset should be selected.';
+    return false; // should still validate (to not trigger search if empty), yet error should not be visible to user
   };
 
   return t.struct({
@@ -336,6 +339,8 @@ function SelectorInputTemplate(locals) {
       placeholderInput,
       options,
       inputAddonText,
+      inputRef,
+      onSelectorOpen,
     },
   } = locals;
   const errorMessage = locals.error;
@@ -347,6 +352,7 @@ function SelectorInputTemplate(locals) {
     label,
     placeholderSelector,
     placeholder: placeholderInput,
+    onSelectorOpen,
   };
 
   return (
@@ -358,57 +364,75 @@ function SelectorInputTemplate(locals) {
       wrapperStyle={wrapperStyle}
       value={locals.value}
       inputAddonText={inputAddonText}
+      inputRef={inputRef}
     />
   );
 }
 
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
-
-  state = {
-    shapeshiftAuthPressed: false,
-    pressedOfferId: '',
-    pressedTokenAllowanceId: '',
-    value: {
-      fromInput: {
-        selector: {},
-        input: '',
-      },
-      toInput: {
-        selector: {},
-        input: '',
-      },
-    },
-    transactionSpeed: NORMAL,
-    showFeeModal: false,
-    formOptions: {
-      fields: {
-        fromInput: {
-          keyboardType: 'decimal-pad',
-          template: SelectorInputTemplate,
-          config: {
-            label: 'Selling',
-            hasInput: true,
-            options: [],
-            placeholderSelector: 'select',
-            placeholderInput: '0',
-          },
-        },
-        toInput: {
-          template: SelectorInputTemplate,
-          config: {
-            label: 'Buying',
-            options: [],
-            wrapperStyle: { marginTop: spacing.mediumLarge },
-            placeholderSelector: 'select asset',
-          },
-        },
-      },
-    },
-  };
+  fromInputRef: ?Object;
 
   constructor(props: Props) {
     super(props);
+    this.state = {
+      shapeshiftAuthPressed: false,
+      pressedOfferId: '',
+      pressedTokenAllowanceId: '',
+      value: {
+        fromInput: {
+          selector: {},
+          input: '',
+        },
+        toInput: {
+          selector: {},
+          input: '',
+        },
+      },
+      transactionSpeed: NORMAL,
+      showFeeModal: false,
+      formOptions: {
+        fields: {
+          fromInput: {
+            keyboardType: 'decimal-pad',
+            template: SelectorInputTemplate,
+            config: {
+              label: 'Selling',
+              hasInput: true,
+              options: [],
+              placeholderSelector: 'select',
+              placeholderInput: '0',
+              inputRef: (ref) => { this.fromInputRef = ref; },
+            },
+            transformer: {
+              parse: (value) => {
+                let formattedAmount = value.input;
+                if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
+                return { ...value, input: formattedAmount };
+              },
+              format: (value) => {
+                let formattedAmount = value.input;
+                if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
+                return { ...value, input: formattedAmount };
+              },
+            },
+          },
+          toInput: {
+            template: SelectorInputTemplate,
+            config: {
+              label: 'Buying',
+              options: [],
+              wrapperStyle: { marginTop: spacing.mediumLarge },
+              placeholderSelector: 'select asset',
+              onSelectorOpen: () => {
+                if (this.fromInputRef) this.fromInputRef.blur();
+              },
+            },
+          },
+        },
+      },
+    };
+    this.fromInputRef = React.createRef();
     this.triggerSearch = debounce(this.triggerSearch, 500);
   }
 
@@ -626,20 +650,20 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
 
     const askRateBn = new BigNumber(askRate);
-    const askRateFormatted = askRateBn.lt(0.01)
-      ? '<0.01'
-      : `~${formatMoney(askRateBn.toFixed(), 2)}`;
 
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
         contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
       >
-        <CardWrapper>
+        <CardWrapper
+          disabled={isTakeOfferPressed || !allowanceSet || (isShapeShift && !shapeshiftAccessToken)}
+          onPress={() => this.onOfferPress(offer)}
+        >
           <CardRow withBorder alignTop>
             <CardColumn>
               <CardText label>Exchange rate</CardText>
-              <CardText>{`1 ${fromAssetCode} = ${askRateFormatted} ${toAssetCode}`}</CardText>
+              <CardText>{`${askRateBn.toFixed()}`}</CardText>
             </CardColumn>
             <CardInnerRow style={{ flexShrink: 1 }}>
               {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
@@ -763,7 +787,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       const totalInFiat = parseFloat(amount) * getRate(rates, token, fiatCurrency);
       amountValueInFiat = formatMoney(totalInFiat);
       fiatSymbol = getCurrencySymbol(fiatCurrency);
-      valueInFiatToShow = totalInFiat > 0 ? `${amountValueInFiat} ${fiatSymbol}` : null;
+      valueInFiatToShow = totalInFiat > 0 ? `${fiatSymbol}${amountValueInFiat}` : null;
     }
 
     const optionsFrom = this.generateAssetsOptions(assets);
@@ -836,6 +860,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       navigation,
       exchangeAllowances,
       connectedProviders,
+      hasUnreadExchangeNotification,
+      markNotificationAsSeen,
     } = this.props;
     const {
       value,
@@ -846,10 +872,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const txFeeInWei = this.getTxFeeInWei();
     const formStructure = generateFormStructure({ balances, txFeeInWei });
-    const shapeShiftOffer = offers.find(offer => offer.provider === PROVIDER_SHAPESHIFT) || null;
-    const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber())
-      .filter(offer => offer.provider !== PROVIDER_SHAPESHIFT) || [];
-    if (shapeShiftOffer) reorderedOffers.push(shapeShiftOffer);
+    const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
@@ -858,15 +881,32 @@ class ExchangeScreen extends React.Component<Props, State> {
           headerRightAddon={
             (!!exchangeAllowances.length || !!connectedProviders.length) &&
             <HeaderAddonWrapper>
-              <SettingsButton onPress={() => navigation.navigate(EXCHANGE_INFO)}>
+              <SettingsButton
+                onPress={() => {
+                  navigation.navigate(EXCHANGE_INFO);
+                  if (hasUnreadExchangeNotification) markNotificationAsSeen();
+                }}
+              >
                 <SettingsIcon
                   source={settingsIcon}
                 />
+                {!!hasUnreadExchangeNotification &&
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: baseColors.sunYellow,
+                    borderRadius: 4,
+                    position: 'absolute',
+                    top: 14,
+                    right: -3,
+                  }}
+                />}
               </SettingsButton>
             </HeaderAddonWrapper>
           }
         />
-        <ScrollWrapper>
+        <ScrollWrapper keyboardShouldPersistTaps="handled">
           <FormWrapper>
             <Form
               ref={node => { this.exchangeForm = node; }}
@@ -934,6 +974,7 @@ const mapStateToProps = ({
       searchRequest: exchangeSearchRequest,
       allowances: exchangeAllowances,
       connectedProviders,
+      hasNotification: hasUnreadExchangeNotification,
     },
   },
   assets: { data: assets, supportedAssets },
@@ -949,6 +990,7 @@ const mapStateToProps = ({
   exchangeSearchRequest,
   exchangeAllowances,
   connectedProviders,
+  hasUnreadExchangeNotification,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -975,6 +1017,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   setTokenAllowance: (assetCode, provider, callback) => dispatch(
     setTokenAllowanceAction(assetCode, provider, callback),
   ),
+  markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);
