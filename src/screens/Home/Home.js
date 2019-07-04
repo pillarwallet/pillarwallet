@@ -760,7 +760,7 @@ class HomeScreen extends React.Component<Props, State> {
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
           </TabsHeader>
-          <Tabs tabs={activityFeedTabs} bgColor={baseColors.white} />
+          <Tabs tabs={activityFeedTabs} isFloating coverColor={baseColors.white} />
           <ActivityFeed
             backgroundColor={baseColors.white}
             onCancelInvitation={cancelInvitation}
@@ -771,6 +771,7 @@ class HomeScreen extends React.Component<Props, State> {
             activeTab={activeTab}
             hideTabs
             initialNumToRender={6}
+            contentContainerStyle={{ paddingTop: 45 }}
           />
         </Animated.ScrollView>
 

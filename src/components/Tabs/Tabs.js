@@ -43,12 +43,22 @@ type Props = {
   tabs: Tab[],
   bgColor?: string,
   wrapperStyle?: Object,
+  isFloating?: boolean,
+  coverColor?: string,
 }
 
 type TabWrapperProps = {
   children: React.Node,
   width?: number,
   showSVGShadow?: boolean,
+}
+
+type TabsComponentProps = {
+  title: string,
+  bgColor?: string,
+  wrapperStyle?: Object,
+  isFloating?: boolean,
+  renderTabList: Function,
 }
 
 type State = {
@@ -120,6 +130,30 @@ const TextWrapper = styled.View`
     : ''}
 `;
 
+const FloatingHeader = styled.View`
+  width: 100%;
+  position: absolute;
+  top: -10px;
+  left: 0;
+  z-index: 10;
+  background-color: transparent;
+  min-height: 60px;
+`;
+
+const Cover = styled.View`
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background-color: ${props => props.coverColor ? props.coverColor : UIColors.defaultBackgroundColor};
+  height: 30px;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 0px;
+`;
+
+
 const TabWrapper = (props: TabWrapperProps) => {
   const {
     children,
@@ -144,6 +178,40 @@ const TabWrapper = (props: TabWrapperProps) => {
     );
   }
   return children;
+};
+
+const TabsComponent = (props: TabsComponentProps) => {
+  const {
+    title,
+    bgColor,
+    wrapperStyle,
+    isFloating,
+    renderTabList,
+  } = props;
+
+  let additionalWrapperStyle = {};
+  if (isFloating) {
+    additionalWrapperStyle = {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      zIndex: 2,
+      width: '100%',
+    };
+  }
+
+  return (
+    <TabOuterWrapper backgroundColor={bgColor} style={[wrapperStyle, additionalWrapperStyle]}>
+      {!!title &&
+      <ActivityFeedHeader>
+        <Title subtitle noMargin title={title} />
+      </ActivityFeedHeader>
+      }
+      <TabsWrapper>
+        {renderTabList()}
+      </TabsWrapper>
+    </TabOuterWrapper>
+  );
 };
 
 const UnreadBadge = styled.View`
@@ -256,24 +324,19 @@ export default class Tabs extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      title,
-      tabs,
-      bgColor,
-      wrapperStyle,
-    } = this.props;
+    const { isFloating, tabs, coverColor } = this.props;
+
+    if (isFloating) {
+      return (
+        <FloatingHeader>
+          <Cover coverColor={coverColor} />
+          <TabsComponent {...this.props} renderTabList={() => this.renderTabItems(tabs)} />
+        </FloatingHeader>
+      );
+    }
 
     return (
-      <TabOuterWrapper backgroundColor={bgColor} style={wrapperStyle}>
-        {!!title &&
-        <ActivityFeedHeader>
-          <Title subtitle noMargin title={title} />
-        </ActivityFeedHeader>
-        }
-        <TabsWrapper>
-          {this.renderTabItems(tabs)}
-        </TabsWrapper>
-      </TabOuterWrapper>
+      <TabsComponent {...this.props} renderTabList={() => this.renderTabItems(tabs)} />
     );
   }
 }

@@ -168,6 +168,11 @@ const Message = styled(BaseText)`
   text-align: center;
 `;
 
+const ListWrapper = styled.View`
+  position: relative;
+  flex: 1;
+`;
+
 class AssetsScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
@@ -489,8 +494,13 @@ class AssetsScreen extends React.Component<Props, State> {
             </SearchSpinner>
             }
             {!inSearchMode &&
-            <React.Fragment>
-              {!isInCollectiblesSearchMode && <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />}
+            <ListWrapper>
+              {!isInCollectiblesSearchMode &&
+              <Tabs
+                initialActiveTab={activeTab}
+                tabs={assetsTabs}
+                isFloating
+              />}
               {activeTab === TOKENS && (
                 <AssetsList
                   navigation={navigation}
@@ -509,7 +519,7 @@ class AssetsScreen extends React.Component<Props, State> {
                   horizontalPadding={horizontalPadding}
                   updateHideRemoval={this.updateHideRemoval}
                 />)}
-            </React.Fragment>}
+            </ListWrapper>}
           </TokensWrapper>
         }
       </Container>

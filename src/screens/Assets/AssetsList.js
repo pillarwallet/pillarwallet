@@ -320,7 +320,8 @@ class AssetsList extends React.Component<Props> {
         onEndReachedThreshold={0.5}
         style={{ width: '100%' }}
         contentContainerStyle={{
-          paddingVertical: 6,
+          paddingTop: 45,
+          paddingBottom: 6,
           paddingLeft: horizontalPadding(assetsLayout, 'left'),
           paddingRight: horizontalPadding(assetsLayout, 'right'),
           width: '100%',
