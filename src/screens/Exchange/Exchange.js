@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Platform, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -37,12 +37,10 @@ import { getProviderLogo } from 'utils/exchange';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ShadowedCard from 'components/ShadowedCard';
-import { BaseText, Label, TextLink, Paragraph } from 'components/Typography';
+import { BaseText, Paragraph } from 'components/Typography';
 import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
-import SlideModal from 'components/Modals/SlideModal';
-import ButtonText from 'components/ButtonText';
 
 import {
   searchOffersAction,
@@ -53,11 +51,9 @@ import {
   setTokenAllowanceAction,
   markNotificationAsSeenAction,
 } from 'actions/exchangeActions';
-import { fetchGasInfoAction } from 'actions/historyActions';
 
 import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
-import type { GasInfo } from 'models/GasInfo';
 
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -130,21 +126,6 @@ const FormWrapper = styled.View`
   margin-top: ${spacing.large}px;
 `;
 
-const ButtonWrapper = styled.View`
-  margin-top: ${spacing.rhythm / 2}px;
-  margin-bottom: ${spacing.rhythm + 10}px;
-`;
-
-const SpeedButton = styled(Button)`
-  margin-top: 14px;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const FeeInfo = styled.View`
-  margin-top: ${spacing.small}px;
-`;
-
 const HeaderAddonWrapper = styled.View`
   flex-direction: row;
   align-items: center;
@@ -182,9 +163,7 @@ type Props = {
   takeOffer: (string, string, number, string, Function) => Object,
   authorizeWithShapeshift: Function,
   supportedAssets: Asset[],
-  fetchGasInfo: Function,
   balances: Balances,
-  gasInfo: GasInfo,
   resetOffers: Function,
   paymentNetworkBalances: Balances,
   exchangeSearchRequest: ExchangeSearchRequest,
@@ -202,8 +181,6 @@ type State = {
   formOptions: Object,
   // offer id will be passed to prevent double clicking
   pressedOfferId: string,
-  transactionSpeed: string,
-  showFeeModal: boolean,
   pressedTokenAllowanceId: string,
 };
 
@@ -229,34 +206,17 @@ const getAvailable = (_min, _max, rate) => {
 const { Form } = t.form;
 
 const MIN_TX_AMOUNT = 0.000000000000000001;
-const GAS_LIMIT = 500000;
 
-const SLOW = 'min';
-const NORMAL = 'avg';
-const FAST = 'max';
-
-const SPEED_TYPES = {
-  [SLOW]: 'Slow',
-  [NORMAL]: 'Normal',
-  [FAST]: 'Fast',
-};
 const settingsIcon = require('assets/icons/icon_key.png');
 
-const checkIfEnoughForFee = (balances: Balances, txFeeInWei) => {
-  if (!balances[ETH]) return false;
-  const ethBalance = getBalance(balances, ETH);
-  const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
-  return balanceInWei.gte(txFeeInWei);
-};
-
-const calculateMaxAmount = (token: string, balance: number | string, txFeeInWei: ?Object): number => {
+const calculateMaxAmount = (token: string, balance: number | string): number => {
   if (typeof balance !== 'string') {
     balance = balance.toString();
   }
   if (token !== ETH) {
     return +balance;
   }
-  const maxAmount = utils.parseUnits(balance, 'ether').sub(txFeeInWei);
+  const maxAmount = utils.parseUnits(balance, 'ether');
   if (maxAmount.lt(0)) return 0;
   return new BigNumber(utils.formatEther(maxAmount)).toNumber();
 };
@@ -265,13 +225,11 @@ const calculateAmountToBuy = (askRate: number | string, amountToSell: number | s
   return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
 };
 
-const generateFormStructure = (data: Object) => {
-  const { balances, txFeeInWei } = data;
+const generateFormStructure = (balances: Balances) => {
   let balance;
   let maxAmount;
   let amount;
 
-  const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
   const FromOption = t.refinement(t.Object, ({ selector, input }) => {
     if (!Object.keys(selector).length || !input) return false;
     if (!isValidNumber(input)) return false;
@@ -282,13 +240,12 @@ const generateFormStructure = (data: Object) => {
       return false;
     }
     balance = getBalance(balances, symbol);
-    maxAmount = calculateMaxAmount(symbol, balance, txFeeInWei);
+    maxAmount = calculateMaxAmount(symbol, balance);
     amount = parseFloat(input);
-    return isEnoughForFee && amount <= maxAmount && amount >= MIN_TX_AMOUNT;
+    return amount <= maxAmount && amount >= MIN_TX_AMOUNT;
   });
 
   FromOption.getValidationErrorMessage = ({ selector, input }) => {
-    const feeInEth = formatAmount(utils.formatEther(txFeeInWei));
     const { symbol } = selector;
 
     if (!isValidNumber(input.toString())) {
@@ -302,13 +259,7 @@ const generateFormStructure = (data: Object) => {
     } else if (parseFloat(input) < 0) {
       return 'Amount should be bigger than 0.';
     } else if (amount > maxAmount) {
-      let additionalMsg = '.';
-      if (symbol === ETH) {
-        additionalMsg = ` and est. transaction fee (${feeInEth} ETH).`;
-      }
-      return `Amount should not be bigger than your balance - ${balance} ${symbol}${additionalMsg}`;
-    } else if (!isEnoughForFee) {
-      return 'Not enough ETH to process the transaction fee.';
+      return `Amount should not be bigger than your balance - ${balance} ${symbol}.`;
     } else if (amount < MIN_TX_AMOUNT) {
       return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH).';
     }
@@ -389,8 +340,6 @@ class ExchangeScreen extends React.Component<Props, State> {
           input: '',
         },
       },
-      transactionSpeed: NORMAL,
-      showFeeModal: false,
       formOptions: {
         fields: {
           fromInput: {
@@ -437,8 +386,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { fetchGasInfo, exchangeSearchRequest = {} } = this.props;
-    fetchGasInfo();
+    const { exchangeSearchRequest = {} } = this.props;
     this.provideOptions();
     const { fromAssetCode = ETH, toAssetCode, fromAmount } = exchangeSearchRequest;
     this.setInitialSelection(fromAssetCode, toAssetCode, fromAmount);
@@ -530,7 +478,6 @@ class ExchangeScreen extends React.Component<Props, State> {
           input: selectedSellAmount,
         },
       },
-      transactionSpeed,
     } = this.state;
     const {
       _id,
@@ -548,7 +495,6 @@ class ExchangeScreen extends React.Component<Props, State> {
         const { data: offerOrderData } = order;
         setExecutingTransaction();
         navigation.navigate(EXCHANGE_CONFIRM, {
-          transactionSpeed,
           offerOrder: {
             ...offerOrderData,
             receiveAmount: amountToBuy,
@@ -565,9 +511,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       setTokenAllowance,
       setExecutingTransaction,
     } = this.props;
-    const {
-      transactionSpeed,
-    } = this.state;
     const {
       _id,
       provider,
@@ -589,7 +532,6 @@ class ExchangeScreen extends React.Component<Props, State> {
             },
             setTokenAllowance: true,
           },
-          transactionSpeed,
         });
       });
     });
@@ -819,40 +761,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setState({ formOptions: newOptions });
   };
 
-  getTxFeeInWei = (txSpeed?: string) => {
-    txSpeed = txSpeed || this.state.transactionSpeed;
-    const { gasInfo } = this.props;
-    const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
-    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-    return gasPriceWei.mul(GAS_LIMIT);
-  };
-
-  renderTxSpeedButtons = () => {
-    const { rates, baseFiatCurrency } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    return Object.keys(SPEED_TYPES).map(txSpeed => {
-      const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
-      const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
-      return (
-        <SpeedButton
-          key={txSpeed}
-          primaryInverted
-          onPress={() => this.handleGasPriceChange(txSpeed)}
-        >
-          <TextLink>{SPEED_TYPES[txSpeed]} - {feeInEth} ETH</TextLink>
-          <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
-        </SpeedButton>
-      );
-    });
-  };
-
-  handleGasPriceChange = (txSpeed: string) => {
-    this.setState({
-      transactionSpeed: txSpeed,
-      showFeeModal: false,
-    });
-  };
-
   render() {
     const {
       offers,
@@ -866,12 +774,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       value,
       formOptions,
-      showFeeModal,
-      transactionSpeed,
     } = this.state;
 
-    const txFeeInWei = this.getTxFeeInWei();
-    const formStructure = generateFormStructure({ balances, txFeeInWei });
+    const formStructure = generateFormStructure(balances);
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
 
     return (
@@ -915,19 +820,6 @@ class ExchangeScreen extends React.Component<Props, State> {
               value={value}
               onChange={this.handleFormChange}
             />
-            <FeeInfo>
-              <Label>Est. transaction fee:</Label>
-              <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                <ButtonLabel style={Platform.OS === 'ios' ? { marginBottom: 2 } : {}}>
-                  {formatAmount(utils.formatEther(this.getTxFeeInWei(transactionSpeed)))} ETH
-                </ButtonLabel>
-                <ButtonText
-                  buttonText="Change"
-                  onPress={() => this.setState({ showFeeModal: true })}
-                  wrapperStyle={{ marginLeft: 8, marginBottom: Platform.OS === 'ios' ? 2 : -1 }}
-                />
-              </View>
-            </FeeInfo>
           </FormWrapper>
           <FlatList
             data={reorderedOffers}
@@ -951,15 +843,6 @@ class ExchangeScreen extends React.Component<Props, State> {
               </ESWrapper>
             )}
           />
-          <SlideModal
-            isVisible={showFeeModal}
-            title="transaction speed"
-            onModalHide={() => { this.setState({ showFeeModal: false }); }}
-          >
-            <Label>Choose your gas price.</Label>
-            <Label>Faster transaction requires more fee.</Label>
-            <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
-          </SlideModal>
         </ScrollWrapper>
       </Container>
     );
@@ -979,14 +862,12 @@ const mapStateToProps = ({
   },
   assets: { data: assets, supportedAssets },
   rates: { data: rates },
-  history: { gasInfo },
 }) => ({
   baseFiatCurrency,
   offers,
   assets,
   supportedAssets,
   rates,
-  gasInfo,
   exchangeSearchRequest,
   exchangeAllowances,
   connectedProviders,
@@ -1011,7 +892,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
     takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, callback),
   ),
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
-  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   resetOffers: () => dispatch(resetOffersAction()),
   setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
   setTokenAllowance: (assetCode, provider, callback) => dispatch(
