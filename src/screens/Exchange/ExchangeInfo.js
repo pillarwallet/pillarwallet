@@ -42,6 +42,7 @@ import type { Assets } from 'models/Asset';
 import type { Allowance, ExchangeProvider } from 'models/Offer';
 
 import { getProviderDisplayName } from 'utils/exchange';
+import Intercom from 'react-native-intercom';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -224,7 +225,13 @@ class ExchangeInfo extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="exchange settings" onBack={() => navigation.goBack(null)} />
+        <Header
+          title="settings"
+          onBack={() => navigation.goBack(null)}
+          nextText="Get help"
+          onNextPress={() => Intercom.displayMessenger()}
+          headerRightFlex={2}
+        />
         <ScrollWrapper>
           {!!connectedProviders.length &&
           <React.Fragment>

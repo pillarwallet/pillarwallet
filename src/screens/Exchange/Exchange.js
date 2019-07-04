@@ -29,6 +29,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
+import Intercom from 'react-native-intercom';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
@@ -126,15 +127,11 @@ const FormWrapper = styled.View`
   margin-top: ${spacing.large}px;
 `;
 
-const HeaderAddonWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-  height: 52px;
-`;
-
 const SettingsButton = styled.TouchableOpacity`
-  padding: 10px;
+  padding: 8px 10px;
   padding-right: -10px;
+  margin-bottom: -10px;
+  margin-left: 6px;
 `;
 
 const SettingsIcon = styled(CachedImage)`
@@ -785,31 +782,32 @@ class ExchangeScreen extends React.Component<Props, State> {
           title="exchange"
           headerRightAddon={
             (!!exchangeAllowances.length || !!connectedProviders.length) &&
-            <HeaderAddonWrapper>
-              <SettingsButton
-                onPress={() => {
-                  navigation.navigate(EXCHANGE_INFO);
-                  if (hasUnreadExchangeNotification) markNotificationAsSeen();
+            <SettingsButton
+              onPress={() => {
+                navigation.navigate(EXCHANGE_INFO);
+                if (hasUnreadExchangeNotification) markNotificationAsSeen();
+              }}
+            >
+              <SettingsIcon
+                source={settingsIcon}
+              />
+              {!!hasUnreadExchangeNotification &&
+              <View
+                style={{
+                  width: 8,
+                  height: 8,
+                  backgroundColor: baseColors.sunYellow,
+                  borderRadius: 4,
+                  position: 'absolute',
+                  top: 7,
+                  right: 0,
                 }}
-              >
-                <SettingsIcon
-                  source={settingsIcon}
-                />
-                {!!hasUnreadExchangeNotification &&
-                <View
-                  style={{
-                    width: 8,
-                    height: 8,
-                    backgroundColor: baseColors.sunYellow,
-                    borderRadius: 4,
-                    position: 'absolute',
-                    top: 14,
-                    right: -3,
-                  }}
-                />}
-              </SettingsButton>
-            </HeaderAddonWrapper>
+              />}
+            </SettingsButton>
           }
+          nextText="Get help"
+          onNextPress={() => Intercom.displayMessenger()}
+          pushRightAddonToTheSide
         />
         <ScrollWrapper keyboardShouldPersistTaps="handled">
           <FormWrapper>
