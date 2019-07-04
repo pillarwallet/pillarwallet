@@ -286,13 +286,13 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         <ScrollWrapper regularPadding>
           <Paragraph style={{ marginBottom: 30 }}>
             {setTokenAllowance
-              ? 'Review the details and confirm token allowance set as well as the cost of data transaction.'
+              ? 'Review the details and enable asset as well as the cost of data transaction.'
               : 'Review the details and confirm the exchange rate as well as the cost of transaction.'
             }
           </Paragraph>
           {(setTokenAllowance &&
             <LabeledRow>
-              <Label>Set token allowance</Label>
+              <Label>Enable asset</Label>
               <Value>{fromAssetCode}</Value>
             </LabeledRow>
           ) ||
@@ -332,7 +332,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             <Button
               disabled={!session.isOnline || !!errorMessage}
               onPress={() => this.onConfirmTransactionPress(offerOrder)}
-              title={setTokenAllowance ? 'Set Token Allowance' : 'Confirm exchange'}
+              title={setTokenAllowance ? 'Enable Asset' : 'Confirm exchange'}
             />
           </FooterWrapper>
         </Footer>
