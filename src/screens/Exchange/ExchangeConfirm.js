@@ -129,24 +129,17 @@ const SPEED_TYPES = {
 const GAS_LIMIT = 500000;
 
 class ExchangeConfirmScreen extends React.Component<Props, State> {
-  state = {
-    showFeeModal: false,
-    transactionSpeed: NORMAL,
-    exchangeProviderGasPrice: 0,
-  };
-
   constructor(props) {
     super(props);
     const { navigation } = this.props;
     const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
     const { transactionObj: { gasLimit, gasPrice } = {} } = offerOrder;
-    if (gasLimit && gasPrice) {
-      this.state = {
-        ...this.state,
-        transactionSpeed: EXCHANGE_PROVIDER,
-        exchangeProviderGasPrice: gasPrice,
-      };
-    }
+    const isProviderGasInfo = gasLimit && gasPrice;
+    this.state = {
+      showFeeModal: false,
+      transactionSpeed: isProviderGasInfo ? EXCHANGE_PROVIDER : NORMAL,
+      exchangeProviderGasPrice: isProviderGasInfo ? gasPrice : 0,
+    };
   }
 
   componentDidMount() {
