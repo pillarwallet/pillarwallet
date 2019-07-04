@@ -364,14 +364,12 @@ export default class SelectorInput extends React.Component<Props, State> {
           isVisible={showOptionsSelector}
           fullScreen
           showHeader
-          onModalHide={() => {
-            this.setState({ showOptionsSelector: false, query: '' });
-            Keyboard.dismiss();
-          }}
           onModalShow={this.focusInput}
           backgroundColor={baseColors.lightGray}
           avoidKeyboard
           noSwipeToDismiss
+          noClose
+          title={label}
         >
           <Wrapper flex={1}>
             <SearchBarWrapper>
@@ -384,13 +382,18 @@ export default class SelectorInput extends React.Component<Props, State> {
                 placeholder="Search for an asset"
                 backgroundColor={baseColors.white}
                 inputRef={ref => { this.searchInput = ref; }}
+                customCloseAction={() => {
+                  this.setState({ showOptionsSelector: false, query: '' });
+                  Keyboard.dismiss();
+                }}
+                forceShowCloseButton
               />
             </SearchBarWrapper>
             <FlatList
               data={filteredListData}
               renderItem={this.renderOption}
               keyExtractor={({ value: val }) => val}
-              keyboardShouldPersistTaps="always"
+              keyboardShouldPersistTaps="handled"
               contentContainerStyle={{ paddingBottom: 40 }}
               ListEmptyComponent={
                 <Wrapper

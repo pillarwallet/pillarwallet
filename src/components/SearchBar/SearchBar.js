@@ -77,6 +77,8 @@ type Props = {
   backgroundColor?: string,
   marginTop?: number,
   inputRef?: Object,
+  customCloseAction?: Function,
+  forceShowCloseButton?: boolean,
 };
 
 type State = {
@@ -108,7 +110,8 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleBlur = () => {
-    const { inputProps: { onBlur } } = this.props;
+    const { inputProps: { onBlur }, forceShowCloseButton } = this.props;
+    if (forceShowCloseButton) return;
     if (!this.value) {
       this.hideKeyboard();
     }
@@ -164,6 +167,8 @@ class SearchBar extends React.Component<Props, State> {
       backgroundColor,
       marginTop,
       inputRef,
+      customCloseAction,
+      forceShowCloseButton,
     } = this.props;
     const {
       animShrink,
@@ -207,8 +212,8 @@ class SearchBar extends React.Component<Props, State> {
             }}
           />
         </Animated.View>
-        {(isFocused || !!value) &&
-        <CancelButton onPress={this.handleCancel}>
+        {(isFocused || !!value || forceShowCloseButton) &&
+        <CancelButton onPress={customCloseAction || this.handleCancel}>
           <BaseText style={{ color: baseColors.electricBlue }}>Close</BaseText>
         </CancelButton>
         }
