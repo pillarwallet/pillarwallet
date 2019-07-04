@@ -326,7 +326,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           </Paragraph>
           {(setTokenAllowance &&
             <LabeledRow>
-              <Label>Enable asset</Label>
+              <Label>Asset to enable</Label>
               <Value>{fromAssetCode}</Value>
             </LabeledRow>
           ) ||
