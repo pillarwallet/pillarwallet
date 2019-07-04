@@ -353,6 +353,10 @@ export const stopListeningOnOpenNotificationAction = () => {
 
 export const startListeningChatWebSocketAction = () => {
   return async (dispatch: Function, getState: Function) => {
+    const {
+      contacts: { data: contacts },
+    } = getState();
+
     const chatWebSocket = chat.getWebSocketInstance();
     await chatWebSocket.listen();
     chatWebSocket.onOpen();
@@ -412,12 +416,19 @@ export const startListeningChatWebSocketAction = () => {
               type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
               payload: true,
             });
-            if (!!navParams.contact && !!navParams.contact.username
-              && navParams.contact.username === senderUsername && navParams.chatTabOpen) {
-              const { contact } = navParams;
-              dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
+
+            const senderNameInNavParams = get(navParams, 'contact.username', '')
+              || (get(navParams, 'username', ''));
+            const relatedContact = get(navParams, 'contact', null)
+              || contacts.find(c => c.username === senderNameInNavParams) || {};
+
+            if (senderNameInNavParams === senderUsername && !!navParams.chatTabOpen
+              && !!Object.keys(relatedContact).length) {
+              const { username, id, profileImage } = relatedContact;
+              dispatch(getChatByContactAction(username, id, profileImage));
               return;
             }
+
             dispatch(getExistingChatsAction());
             const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
             if (notification == null) return;
