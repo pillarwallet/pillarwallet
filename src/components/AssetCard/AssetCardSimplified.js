@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, Dimensions } from 'react-native';
+import { Dimensions } from 'react-native';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import { BoldText } from 'components/Typography';
@@ -52,14 +52,8 @@ const defaultCircleColor = '#ACBCCD';
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 const AssetOutter = styled.View`
-  padding: ${Platform.select({
-    ios: `8px 30px 10px ${spacing.rhythm}px`,
-    android: '2px 0 6px 10px',
-  })};
-  margin-top: ${Platform.select({
-    ios: 0,
-    android: '-10px',
-  })};
+  padding: 8px 30px 10px ${spacing.rhythm}px;
+  margin-top: 0;
   background-color: transparent;
   width: 100%;
 `;
@@ -70,10 +64,7 @@ const AssetWrapper = styled.View`
   background: ${baseColors.white};
   width: 100%;
   align-items: center;
-  padding: ${Platform.select({
-    ios: '15px 16px',
-    android: '15px 32px 15px 16px',
-  })};
+  padding: 15px 16px;
 `;
 
 const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
@@ -96,6 +87,12 @@ const IconCircle = styled.View`
   margin-right: 16px;
   align-items: center;
   justify-content: center;
+`;
+
+const NameWrapper = styled.View`
+  flex: 1;
+  flex-wrap: wrap;
+  padding-right: ${spacing.small}px;
 `;
 
 const Name = styled(BoldText)`
@@ -149,6 +146,9 @@ class AssetCardSimplified extends React.Component<Props, {}> {
           heightAndroid={cardHeight}
           heightIOS={cardHeight}
           widthIOS={cardWidth - 20}
+          widthAndroid={cardWidth - 20}
+          useSVGShadow
+          shadowOpacity={0.8}
         >
           <TouchableWithoutFeedback onPress={this.handleOnPress}>
             <AssetWrapper>
@@ -165,7 +165,14 @@ class AssetCardSimplified extends React.Component<Props, {}> {
                 />
               </IconCircle>
               <DetailsWrapper>
-                <Name>{name}</Name>
+                <NameWrapper>
+                  <Name
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
+                  >
+                    {name}
+                  </Name>
+                </NameWrapper>
                 <AssetInfo
                   token={token}
                   currency={balanceInFiat.currency}

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, TouchableOpacity, Animated, Easing, Dimensions } from 'react-native';
+import { TouchableOpacity, Animated, Easing, Dimensions } from 'react-native';
 import isEqual from 'lodash.isequal';
 import isEqualWith from 'lodash.isequalwith';
 import styled from 'styled-components/native';
@@ -67,10 +67,7 @@ const AssetWrapper = styled(Animated.View)`
   width: ${props => props.columnCount ? 100 / props.columnCount : 100}%;
   justify-content: center;
   align-items: center;
-  margin-bottom: ${Platform.select({
-    ios: '2px',
-    android: 0,
-  })};
+  margin-bottom: 2px;
 `;
 
 const { width } = Dimensions.get('window');
@@ -89,10 +86,7 @@ const cardHeight = (smallScreen, extraSmall) => {
 };
 
 const ShadowHolder = styled(Shadow)`
-  margin: ${Platform.select({
-    ios: `4px ${spacing.rhythm / 4}px 6px`,
-    android: '0',
-  })};
+  margin: 4px ${spacing.rhythm / 4}px 6px;
   flex-direction: row;
 `;
 
@@ -102,10 +96,7 @@ const Sizer = styled.View`
     : `${cardHeight(props.smallScreen, props.extraSmall)}px`};
   border-radius: 6px;
   background: ${baseColors.white};
-  width: ${Platform.select({
-    ios: '100%',
-    android: '90%',
-  })};
+  width: 100%;
   justify-content: center;
   align-items: center;
 `;
@@ -376,10 +367,13 @@ class AssetCardMinimized extends React.Component<Props, State> {
         <ShadowHolder
           heightAndroid={isCollectible ? 196 : cardHeight(smallScreen, extraSmall)}
           // widthIOS={width / 3.6}
+          widthAndroid={cardWidth(columnCount)}
           widthIOS={cardWidth(columnCount)}
           heightIOS={isCollectible ? 196 : cardHeight(smallScreen, extraSmall)}
           marginVertical={4}
           borderShadow={5}
+          useSVGShadow
+          shadowOpacity={0.8}
         >
           <Sizer
             isCollectible={isCollectible}

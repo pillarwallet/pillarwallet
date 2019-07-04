@@ -268,7 +268,7 @@ class AssetsList extends React.Component<Props> {
     return (
       <View
         style={{
-          marginTop: IS_IOS ? -8 : -4,
+          marginTop: -8,
           height: 0,
           width: '100%',
           backgroundColor: 'transparent',
