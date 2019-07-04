@@ -49,8 +49,10 @@ export type OfferOrder = {
   fromAssetCode: string,
   toAssetCode: string,
   payToAddress: string,
-  transactionObj: {
+  transactionObj?: {
     data: string,
+    gasLimit: number,
+    gasPrice: number,
   },
   setTokenAllowance?: boolean,
   provider?: string,
