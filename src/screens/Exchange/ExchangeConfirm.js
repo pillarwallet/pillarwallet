@@ -40,7 +40,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderDisplayName, getProviderLogo } from 'utils/exchange';
@@ -112,57 +112,67 @@ type Props = {
 type State = {
   showFeeModal: boolean,
   transactionSpeed: string,
+  gasLimit: number,
 }
 
 const SLOW = 'min';
 const NORMAL = 'avg';
 const FAST = 'max';
 
+// do not add exchange provider to speed types list as it might not always be present
 const SPEED_TYPES = {
   [SLOW]: 'Slow',
   [NORMAL]: 'Normal',
   [FAST]: 'Fast',
 };
-const GAS_LIMIT = 500000;
+
+const DEFAULT_GAS_LIMIT = 500000;
 
 class ExchangeConfirmScreen extends React.Component<Props, State> {
-  state = {
-    showFeeModal: false,
-    transactionSpeed: NORMAL,
-  };
-
-  componentDidUpdate() {
-    const {
-      executingExchangeTransaction,
-      navigation,
-    } = this.props;
-    if (!executingExchangeTransaction) {
-      navigation.goBack();
-    }
+  constructor(props) {
+    super(props);
+    const { navigation } = this.props;
+    const { gasLimit = DEFAULT_GAS_LIMIT }: OfferOrder = navigation.getParam('offerOrder', {});
+    this.state = {
+      showFeeModal: false,
+      transactionSpeed: NORMAL,
+      gasLimit,
+    };
   }
 
   componentDidMount() {
     const { fetchGasInfo } = this.props;
     fetchGasInfo();
-    this.setSelectedTransactionFee();
   }
 
-  setSelectedTransactionFee = () => {
-    const { navigation } = this.props;
-    const transactionSpeed = navigation.getParam('transactionSpeed', NORMAL);
-    this.setState({ transactionSpeed });
-  };
+  componentDidUpdate(prevProps: Props) {
+    const {
+      executingExchangeTransaction,
+      navigation,
+      fetchGasInfo,
+      session: { isOnline },
+    } = this.props;
+    if (!executingExchangeTransaction) {
+      navigation.goBack();
+      return;
+    }
+    if (prevProps.session.isOnline !== isOnline && isOnline) {
+      fetchGasInfo();
+    }
+  }
 
   getGasPriceWei = (txSpeed?: string) => {
-    txSpeed = txSpeed || this.state.transactionSpeed;
+    const { transactionSpeed } = this.state;
+    txSpeed = txSpeed || transactionSpeed;
     const { gasInfo } = this.props;
     const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
     return utils.parseUnits(gasPrice.toString(), 'gwei');
   };
 
   getTxFeeInWei = (txSpeed?: string) => {
+    const { gasLimit } = this.state;
     const gasPriceWei = this.getGasPriceWei(txSpeed);
-    return gasPriceWei.mul(GAS_LIMIT);
+    return gasPriceWei.mul(gasLimit);
   };
 
   renderTxSpeedButtons = () => {
@@ -171,13 +181,15 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     return Object.keys(SPEED_TYPES).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
+      // $FlowFixMe
+      const speedTitle = SPEED_TYPES[txSpeed];
       return (
         <SpeedButton
           key={txSpeed}
           primaryInverted
           onPress={() => this.handleGasPriceChange(txSpeed)}
         >
-          <TextLink>{SPEED_TYPES[txSpeed]} - {feeInEth} ETH</TextLink>
+          <TextLink>{speedTitle} - {feeInEth} ETH</TextLink>
           <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
         </SpeedButton>
       );
@@ -196,7 +208,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       navigation,
       supportedAssets,
     } = this.props;
-    const { transactionSpeed } = this.state;
+    const {
+      transactionSpeed,
+      gasLimit,
+    } = this.state;
 
     const {
       payAmount,
@@ -212,10 +227,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     // going from previous screen, asset will always be present in reducer
     const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
     const gasPrice = this.getGasPriceWei(transactionSpeed);
-    const txFeeInWei = gasPrice.mul(GAS_LIMIT);
+    const txFeeInWei = gasPrice.mul(gasLimit);
 
     const transactionPayload: TokenTransactionPayload = {
-      gasLimit: GAS_LIMIT,
+      gasLimit,
       txFeeInWei,
       gasPrice,
       amount: setTokenAllowance ? 0 : payAmount,
@@ -281,18 +296,18 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const providerName = getProviderDisplayName(provider);
 
     return (
-      <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
-        <Header title="exchange" onBack={this.handleBack} />
-        <ScrollWrapper regularPadding>
-          <Paragraph style={{ marginBottom: 30 }}>
+      <Container color={baseColors.white} inset={{ bottom: 0 }}>
+        <Header title="exchange" onBack={this.handleBack} white />
+        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+          <Paragraph style={{ marginBottom: 30, paddingTop: spacing.medium }}>
             {setTokenAllowance
-              ? 'Review the details and confirm token allowance set as well as the cost of data transaction.'
+              ? 'Review the details and enable asset as well as the cost of data transaction.'
               : 'Review the details and confirm the exchange rate as well as the cost of transaction.'
             }
           </Paragraph>
           {(setTokenAllowance &&
             <LabeledRow>
-              <Label>Set token allowance</Label>
+              <Label>Asset to enable</Label>
               <Value>{fromAssetCode}</Value>
             </LabeledRow>
           ) ||
@@ -326,13 +341,13 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             </View>
           </LabeledRow>
         </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40}>
+        <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
           {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <Button
               disabled={!session.isOnline || !!errorMessage}
               onPress={() => this.onConfirmTransactionPress(offerOrder)}
-              title={setTokenAllowance ? 'Set Token Allowance' : 'Confirm exchange'}
+              title={setTokenAllowance ? 'Enable Asset' : 'Confirm exchange'}
             />
           </FooterWrapper>
         </Footer>

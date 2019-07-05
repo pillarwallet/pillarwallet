@@ -334,8 +334,8 @@ class Profile extends React.Component<Props, State> {
 
     const isWalletBackedUp = isImported || isBackedUp;
     return (
-      <Container inset={{ bottom: 0 }}>
-        <Header gray title="settings" onBack={() => navigation.goBack(null)} />
+      <Container inset={{ bottom: 0 }} color={baseColors.white}>
+        <Header white title="settings" onBack={() => navigation.goBack(null)} />
         <SlideModal
           isVisible={this.state.visibleModal === 'country'}
           fullScreen

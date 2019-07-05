@@ -200,6 +200,7 @@ class MeScreen extends React.Component<Props, State> {
           nextText="Get help"
           onNextPress={() => Intercom.displayMessenger()}
           headerRightFlex={2}
+          white
         />
         <Tabs initialActiveTab={activeTab} tabs={sessionTabs} />
         <SheetContentWrapper>{this.renderSheetContent()}</SheetContentWrapper>

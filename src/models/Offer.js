@@ -49,11 +49,12 @@ export type OfferOrder = {
   fromAssetCode: string,
   toAssetCode: string,
   payToAddress: string,
-  transactionObj: {
+  transactionObj?: {
     data: string,
   },
   setTokenAllowance?: boolean,
   provider?: string,
+  gasLimit: number,
 }
 
 export type ExchangeSearchRequest = {

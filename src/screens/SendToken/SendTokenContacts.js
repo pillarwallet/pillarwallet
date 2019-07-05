@@ -26,7 +26,7 @@ import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigatio
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import t from 'tcomb-form-native';
-import { fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
@@ -59,9 +59,19 @@ const qrCode = require('assets/images/qr.png');
 
 const FormWrapper = styled.View`
   padding: 0 ${spacing.rhythm}px;
+  margin-bottom: ${spacing.medium}px;
+  margin-top: -20px;
 `;
 
-const ContactCardList = styled.FlatList``;
+const HeaderWrapper = styled.View`
+  background-color: ${baseColors.white};
+  border-bottom-color: ${baseColors.mediumLightGray};
+  border-bottom-width: 1px;
+`;
+
+const ContactCardList = styled.FlatList`
+  background-color: ${UIColors.defaultBackgroundColor};
+`;
 
 // make Dynamic once more tokens supported
 const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
@@ -241,26 +251,29 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;
     return (
-      <Container inset={{ bottom: 0 }}>
-        <Header onBack={this.props.navigation.dismiss} title={`send ${tokenName}`} centerTitle />
-        <FormWrapper>
-          <Form
-            ref={node => {
-              this._form = node;
-            }}
-            type={formStructure}
-            options={formOptions}
-            onChange={this.handleChange}
-            onBlur={this.handleChange}
-            value={value}
-          />
-        </FormWrapper>
+      <Container inset={{ bottom: 0 }} color={baseColors.white}>
+        <HeaderWrapper>
+          <Header onBack={this.props.navigation.dismiss} title={`send ${tokenName}`} centerTitle />
+          <FormWrapper>
+            <Form
+              ref={node => {
+                this._form = node;
+              }}
+              type={formStructure}
+              options={formOptions}
+              onChange={this.handleChange}
+              onBlur={this.handleChange}
+              value={value}
+            />
+          </FormWrapper>
+        </HeaderWrapper>
         {!!contactsToRender.length &&
           <ContactCardList
             data={contactsToRender}
             renderItem={this.renderContact}
             keyExtractor={({ username }) => username}
             ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+            contentContainerStyle={{ paddingTop: 10, paddingBottom: 40 }}
           />
         }
         <QRCodeScanner

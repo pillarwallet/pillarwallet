@@ -22,7 +22,7 @@ import { FlatList, RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { TYPE_RECEIVED, TYPE_REJECTED } from 'constants/invitationsConstants';
-import { spacing } from 'utils/variables';
+import { baseColors, spacing, UIColors } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -87,21 +87,22 @@ class ConnectionRequests extends React.Component<Props> {
     } = this.props;
 
     return (
-      <Container>
+      <Container color={baseColors.white}>
         <Header
           title="connection requests"
           onBack={() => this.props.navigation.goBack(null)}
+          white
         />
-
         <FlatList
           data={invitations.filter(({ type }) => type === TYPE_RECEIVED)}
           extraData={invitations}
           keyExtractor={(item) => item.id}
           renderItem={this.renderInvitation}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+          style={{ backgroundColor: UIColors.defaultBackgroundColor }}
           contentContainerStyle={{
-            paddingVertical: spacing.rhythm,
-            paddingTop: 0,
+            paddingVertical: spacing.large,
+            paddingTop: spacing.medium,
           }}
           refreshControl={
             <RefreshControl

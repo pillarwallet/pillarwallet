@@ -287,3 +287,24 @@ export function waitForTransaction(hash: string) {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.waitForTransaction(hash);
 }
+
+export async function calculateGasEstimate(transction: Object) {
+  const {
+    from,
+    to,
+    amount,
+    symbol,
+    data,
+  } = transction;
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const value = symbol === ETH
+    ? utils.parseEther(amount.toString())
+    : '0x';
+  // all parameters are required in order to estimate gas limit precisely
+  return provider.estimateGas({
+    from,
+    to,
+    data,
+    value,
+  });
+}

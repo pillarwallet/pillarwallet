@@ -32,7 +32,7 @@ import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import { onWalletConnectRejectCallRequest } from 'actions/walletConnectActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { spacing, fontSizes, baseColors } from 'utils/variables';
+import { spacing, fontSizes, baseColors, UIColors } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { getBalance } from 'utils/assets';
 import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
@@ -368,7 +368,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         address = payload.params[1]; // eslint-disable-line
         message = utils.toUtf8String(payload.params[0]);
         body = (
-          <ScrollWrapper regularPadding>
+          <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
             <LabeledRow>
               <Label>Address</Label>
               <Value>{address}</Value>
@@ -385,30 +385,28 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     }
 
     return (
-      <React.Fragment>
-        <Container>
-          <Header onBack={() => this.props.navigation.goBack(null)} title={`${type} Request`} />
-          {body}
-          <Footer keyboardVerticalOffset={40}>
-            {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
-            <FooterWrapper>
-              <OptionButton
-                primaryInverted
-                onPress={this.handleFormSubmit}
-                disabled={!!errorMessage}
-                textStyle={{ fontWeight: 'normal' }}
-                title={`Approve ${type}`}
-              />
-              <OptionButton
-                dangerInverted
-                onPress={this.handleDismissal}
-                textStyle={{ fontWeight: 'normal' }}
-                title="Reject"
-              />
-            </FooterWrapper>
-          </Footer>
-        </Container>
-      </React.Fragment>
+      <Container color={baseColors.white}>
+        <Header onBack={() => this.props.navigation.goBack(null)} title={`${type} Request`} white />
+        {body}
+        <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
+          {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
+          <FooterWrapper>
+            <OptionButton
+              primaryInverted
+              onPress={this.handleFormSubmit}
+              disabled={!!errorMessage}
+              textStyle={{ fontWeight: 'normal' }}
+              title={`Approve ${type}`}
+            />
+            <OptionButton
+              dangerInverted
+              onPress={this.handleDismissal}
+              textStyle={{ fontWeight: 'normal' }}
+              title="Reject"
+            />
+          </FooterWrapper>
+        </Footer>
+      </Container>
     );
   }
 }

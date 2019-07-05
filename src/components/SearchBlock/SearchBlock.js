@@ -40,11 +40,19 @@ type Props = {
   searchInputPlaceholder?: string,
   backgroundColor?: string,
   hideSearch?: boolean,
+  white?: boolean,
 }
 
 const HeaderWrapper = styled(Wrapper)`
   background-color: ${props => props.color ? props.color : baseColors.snowWhite};
   z-index: 100;
+  ${props => props.white
+    ? `
+    background-color: ${baseColors.white};
+    border-bottom-width: 1px;
+    border-bottom-color: ${baseColors.mediumLightGray};
+    `
+    : ''}
 `;
 
 const FullScreenOverlayWrapper = styled.TouchableOpacity`
@@ -147,6 +155,7 @@ class SearchBlock extends React.Component<Props, State> {
       searchInputPlaceholder,
       backgroundColor,
       hideSearch,
+      white,
     } = this.props;
     const {
       query,
@@ -158,7 +167,7 @@ class SearchBlock extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <HeaderWrapper color={backgroundColor}>
+        <HeaderWrapper color={backgroundColor} white={white}>
           <Header {...headerProps} />
           {!hideSearch &&
             <Wrapper regularPadding>

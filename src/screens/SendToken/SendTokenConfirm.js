@@ -101,70 +101,69 @@ class SendTokenContacts extends React.Component<Props, State> {
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
     const recipientUsername = getUserName(contact);
     return (
-      <React.Fragment>
-        <Container>
-          <Header
-            onBack={() => this.props.navigation.goBack(null)}
-            title="send"
-          />
-          <ScrollWrapper
-            regularPadding
-            disableAutomaticScroll={Platform.OS === 'android'}
-            innerRef={ref => { this.scroll = ref; }}
-            onKeyboardWillShow={() => {
-              if (Platform.OS === 'android') {
-                this.scroll.scrollToPosition(0, scrollPos);
-              }
+      <Container>
+        <Header
+          onBack={() => this.props.navigation.goBack(null)}
+          title="send"
+          white
+        />
+        <ScrollWrapper
+          regularPadding
+          disableAutomaticScroll={Platform.OS === 'android'}
+          innerRef={ref => { this.scroll = ref; }}
+          onKeyboardWillShow={() => {
+            if (Platform.OS === 'android') {
+              this.scroll.scrollToPosition(0, scrollPos);
+            }
+          }}
+        >
+          <Title subtitle title="Review and Confirm" />
+          <LabeledRow>
+            <Label>Amount</Label>
+            <Value>{amount} {symbol}</Value>
+          </LabeledRow>
+          {!!recipientUsername &&
+          <LabeledRow>
+            <Label>Recipient Username</Label>
+            <Value>{recipientUsername}</Value>
+          </LabeledRow>
+          }
+          <LabeledRow>
+            <Label>Recipient Address</Label>
+            <Value>{to}</Value>
+          </LabeledRow>
+          <LabeledRow>
+            <Label>Est. Network Fee</Label>
+            <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
+          </LabeledRow>
+          {!!recipientUsername &&
+          <TextInput
+            inputProps={{
+              onChange: (text) => this.handleNoteChange(text),
+              value: this.state.note,
+              autoCapitalize: 'none',
+              multiline: true,
+              numberOfLines: 3,
+              placeholder: 'Add a note to this transaction',
             }}
-          >
-            <Title subtitle title="Review and Confirm" />
-            <LabeledRow>
-              <Label>Amount</Label>
-              <Value>{amount} {symbol}</Value>
-            </LabeledRow>
-            {!!recipientUsername &&
-            <LabeledRow>
-              <Label>Recipient Username</Label>
-              <Value>{recipientUsername}</Value>
-            </LabeledRow>
-            }
-            <LabeledRow>
-              <Label>Recipient Address</Label>
-              <Value>{to}</Value>
-            </LabeledRow>
-            <LabeledRow>
-              <Label>Est. Network Fee</Label>
-              <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
-            </LabeledRow>
-            {!!recipientUsername &&
-            <TextInput
-              inputProps={{
-                onChange: (text) => this.handleNoteChange(text),
-                value: this.state.note,
-                autoCapitalize: 'none',
-                multiline: true,
-                numberOfLines: 3,
-                placeholder: 'Add a note to this transaction',
-              }}
-              inputType="secondary"
-              labelBigger
-              noBorder
-              keyboardAvoidance
-              onLayout={(e) => {
-                const scrollPosition = e.nativeEvent.layout.y + 180;
-                this.setState({ scrollPos: scrollPosition });
-                }
+            inputType="secondary"
+            labelBigger
+            noBorder
+            keyboardAvoidance
+            onLayout={(e) => {
+              const scrollPosition = e.nativeEvent.layout.y + 180;
+              this.setState({ scrollPos: scrollPosition });
               }
-            />
             }
-          </ScrollWrapper>
-          <Footer keyboardVerticalOffset={40}>
-            <FooterWrapper>
-              <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
-            </FooterWrapper>
-          </Footer>
-        </Container>
-      </React.Fragment>
+          />
+          }
+        </ScrollWrapper>
+        <Footer keyboardVerticalOffset={40}>
+          <FooterWrapper>
+            <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
+          </FooterWrapper>
+        </Footer>
+      </Container>
     );
   }
 }
