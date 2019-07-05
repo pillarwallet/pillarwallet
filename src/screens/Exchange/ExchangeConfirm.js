@@ -112,10 +112,9 @@ type Props = {
 type State = {
   showFeeModal: boolean,
   transactionSpeed: string,
-  exchangeProviderGasPrice: number,
+  gasLimit: number,
 }
 
-const EXCHANGE_PROVIDER = 'provider';
 const SLOW = 'min';
 const NORMAL = 'avg';
 const FAST = 'max';
@@ -126,19 +125,18 @@ const SPEED_TYPES = {
   [NORMAL]: 'Normal',
   [FAST]: 'Fast',
 };
-const GAS_LIMIT = 500000;
+
+const DEFAULT_GAS_LIMIT = 500000;
 
 class ExchangeConfirmScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const { navigation } = this.props;
-    const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
-    const { transactionObj: { gasLimit, gasPrice } = {} } = offerOrder;
-    const isProviderGasInfo = gasLimit && gasPrice;
+    const { gasLimit = DEFAULT_GAS_LIMIT }: OfferOrder = navigation.getParam('offerOrder', {});
     this.state = {
       showFeeModal: false,
-      transactionSpeed: isProviderGasInfo ? EXCHANGE_PROVIDER : NORMAL,
-      exchangeProviderGasPrice: isProviderGasInfo ? gasPrice : 0,
+      transactionSpeed: NORMAL,
+      gasLimit,
     };
   }
 
@@ -164,42 +162,27 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
   }
 
   getGasPriceWei = (txSpeed?: string) => {
-    const {
-      transactionSpeed,
-      exchangeProviderGasPrice,
-    } = this.state;
+    const { transactionSpeed } = this.state;
     txSpeed = txSpeed || transactionSpeed;
     const { gasInfo } = this.props;
-    const gasPrice = (
-      txSpeed === EXCHANGE_PROVIDER
-        ? exchangeProviderGasPrice
-        // $FlowFixMe
-        : gasInfo.gasPrice[txSpeed]
-    ) || 0;
+    const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
     return utils.parseUnits(gasPrice.toString(), 'gwei');
   };
 
   getTxFeeInWei = (txSpeed?: string) => {
+    const { gasLimit } = this.state;
     const gasPriceWei = this.getGasPriceWei(txSpeed);
-    return gasPriceWei.mul(GAS_LIMIT);
+    return gasPriceWei.mul(gasLimit);
   };
 
-  renderTxSpeedButtons = (providerName: string) => {
+  renderTxSpeedButtons = () => {
     const { rates, baseFiatCurrency } = this.props;
-    const { exchangeProviderGasPrice } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    let speedTypesList = SPEED_TYPES;
-    if (exchangeProviderGasPrice) {
-      speedTypesList = {
-        [EXCHANGE_PROVIDER]: `By ${providerName}`, // first in list, keep it very short to not overlap elements
-        ...speedTypesList,
-      };
-    }
-    return Object.keys(speedTypesList).map(txSpeed => {
+    return Object.keys(SPEED_TYPES).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
       // $FlowFixMe
-      const speedTitle = speedTypesList[txSpeed];
+      const speedTitle = SPEED_TYPES[txSpeed];
       return (
         <SpeedButton
           key={txSpeed}
@@ -225,23 +208,21 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       navigation,
       supportedAssets,
     } = this.props;
-    const { transactionSpeed } = this.state;
+    const {
+      transactionSpeed,
+      gasLimit,
+    } = this.state;
 
     const {
       payAmount,
       fromAssetCode,
       payToAddress,
       transactionObj: {
-        gasLimit: exchangeProviderGasLimit,
         data,
       } = {},
       setTokenAllowance,
       provider,
     } = offerOrder;
-
-    const gasLimit = transactionSpeed === EXCHANGE_PROVIDER
-      ? exchangeProviderGasLimit
-      : GAS_LIMIT;
 
     // going from previous screen, asset will always be present in reducer
     const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
@@ -377,7 +358,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         >
           <Label>Choose your gas price.</Label>
           <Label>Faster transaction requires more fee.</Label>
-          <ButtonWrapper>{this.renderTxSpeedButtons(providerName)}</ButtonWrapper>
+          <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
         </SlideModal>
       </Container>
     );

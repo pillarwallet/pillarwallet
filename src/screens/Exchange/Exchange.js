@@ -489,11 +489,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, order => {
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (!order || !Object.keys(order).length) return;
-        const { data: offerOrderData } = order;
         setExecutingTransaction();
         navigation.navigate(EXCHANGE_CONFIRM, {
           offerOrder: {
-            ...offerOrderData,
+            ...order,
             receiveAmount: amountToBuy,
             provider,
           },
@@ -517,16 +516,12 @@ class ExchangeScreen extends React.Component<Props, State> {
       setTokenAllowance(fromAssetCode, provider, (response) => {
         this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
         if (!response || !Object.keys(response).length) return;
-        const { data: { to: payToAddress, data } } = response;
         setExecutingTransaction();
         navigation.navigate(EXCHANGE_CONFIRM, {
           offerOrder: {
+            ...response,
             provider,
             fromAssetCode,
-            payToAddress,
-            transactionObj: {
-              data,
-            },
             setTokenAllowance: true,
           },
         });
