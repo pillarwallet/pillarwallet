@@ -19,6 +19,7 @@
 */
 
 import { Linking } from 'react-native';
+import { utils } from 'ethers';
 import ExchangeService from 'services/exchange';
 import Toast from 'components/Toast';
 import {
@@ -35,11 +36,16 @@ import {
   MARK_NOTIFICATION_SEEN,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
+import { ETH } from 'constants/assetsConstants';
 
-import type { Offer } from 'models/Offer';
+import { calculateGasEstimate } from 'services/assets';
+
+import type { Offer, OfferOrder } from 'models/Offer';
+
 import { saveDbAction } from './dbActions';
 
 const exchangeService = new ExchangeService();
+const DEFAULT_GAS_LIMIT = 500000;
 
 const connectExchangeService = (state: Object) => {
   const {
@@ -58,6 +64,22 @@ const connectExchangeService = (state: Object) => {
       && existingShapeshiftToken === shapeshiftAccessToken) return;
   }
   exchangeService.connect(oAuthTokens.accessToken, shapeshiftAccessToken);
+};
+
+const getGasEstimate = (transaction) => {
+  const { symbol, data } = transaction;
+  /**
+   * if there's no data transaction and we calculate token to token transfer
+   * data by `ethers.js` then the `gasLimit` always is too small,
+   * once this is sorted out we can remove default `DEFAULT_GAS_LIMIT`
+   * this happens to be only for `Shapeshift`
+   */
+  if (symbol !== ETH && !data) return DEFAULT_GAS_LIMIT;
+  return calculateGasEstimate(transaction)
+    .then(calculatedGasLimit =>
+      utils.bigNumberify(calculatedGasLimit).toNumber(),
+    )
+    .catch(() => DEFAULT_GAS_LIMIT);
 };
 
 export const takeOfferAction = (
@@ -89,7 +111,28 @@ export const takeOfferAction = (
       callback({}); // let's return callback to dismiss loading spinner on offer card button
       return;
     }
-    callback(order);
+    const { data: offerOrderData } = order;
+    const {
+      payToAddress,
+      payAmount,
+      transactionObj: {
+        data: transactionObjData,
+      } = {},
+    }: OfferOrder = offerOrderData;
+    const {
+      wallet: { data: wallet },
+    } = getState();
+    const gasLimit = await getGasEstimate({
+      from: wallet.address, // TODO: get address from active account when it's possible
+      to: payToAddress,
+      data: transactionObjData,
+      amount: payAmount,
+      symbol: fromAssetCode,
+    });
+    callback({
+      ...offerOrderData,
+      gasLimit,
+    });
   };
 };
 
@@ -239,7 +282,24 @@ export const setTokenAllowanceAction = (
       callback({}); // let's return callback to dismiss loading spinner on offer card button
       return;
     }
-    callback(response);
+    const { data: { to: payToAddress, data } } = response;
+    const {
+      wallet: { data: wallet },
+    } = getState();
+    const gasLimit = await getGasEstimate({
+      from: wallet.address, // TODO: get address from active account when it's possible
+      to: payToAddress,
+      data,
+      symbol: assetCode,
+    });
+    callback({
+      data,
+      payToAddress,
+      transactionObj: {
+        data,
+      },
+      gasLimit,
+    });
   };
 };
 
