@@ -51,11 +51,10 @@ export type OfferOrder = {
   payToAddress: string,
   transactionObj?: {
     data: string,
-    gasLimit: number,
-    gasPrice: number,
   },
   setTokenAllowance?: boolean,
   provider?: string,
+  gasLimit: number,
 }
 
 export type ExchangeSearchRequest = {
