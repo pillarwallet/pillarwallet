@@ -263,9 +263,9 @@ class ActivityFeed extends React.Component<Props, State> {
             : undefined}
           iconName={invertAddon ? directionIcon.toLowerCase() : null}
           subtext={dateTime}
-          itemValue={directionIcon}
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
-          valueColor={isReceived ? baseColors.jadeGreen : null}
+          actionLabel={directionIcon}
+          actionLabelColor={isReceived ? baseColors.jadeGreen : null}
         />
       );
     }

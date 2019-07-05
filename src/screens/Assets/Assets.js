@@ -76,7 +76,7 @@ import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstan
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, spacing, fontSizes, UIColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
@@ -144,6 +144,8 @@ const horizontalPadding = (layout, side) => {
 const TokensWrapper = styled(Wrapper)`
    flex: 1;
    height: 100%;
+   padding-top: ${spacing.large}px;
+   background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 const SearchSpinner = styled(Wrapper)`
@@ -166,6 +168,11 @@ const Message = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   text-align: center;
+`;
+
+const ListWrapper = styled.View`
+  position: relative;
+  flex: 1;
 `;
 
 class AssetsScreen extends React.Component<Props, State> {
@@ -451,7 +458,7 @@ class AssetsScreen extends React.Component<Props, State> {
     const isSmartWallet = smartWalletStatus.hasAccount;
 
     return (
-      <Container inset={{ bottom: 0 }}>
+      <Container inset={{ bottom: 0 }} color={baseColors.white}>
         <SearchBlock
           headerProps={{
             title: 'assets',
@@ -467,6 +474,7 @@ class AssetsScreen extends React.Component<Props, State> {
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={activeTab === TOKENS ? !!assetsSearchState : !!isInCollectiblesSearchMode}
           navigation={navigation}
+          white
         />
         {(blockAssetsView &&
           <Wrapper flex={1} regularPadding center>
@@ -489,8 +497,13 @@ class AssetsScreen extends React.Component<Props, State> {
             </SearchSpinner>
             }
             {!inSearchMode &&
-            <React.Fragment>
-              {!isInCollectiblesSearchMode && <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />}
+            <ListWrapper>
+              {!isInCollectiblesSearchMode &&
+              <Tabs
+                initialActiveTab={activeTab}
+                tabs={assetsTabs}
+                isFloating
+              />}
               {activeTab === TOKENS && (
                 <AssetsList
                   navigation={navigation}
@@ -509,7 +522,7 @@ class AssetsScreen extends React.Component<Props, State> {
                   horizontalPadding={horizontalPadding}
                   updateHideRemoval={this.updateHideRemoval}
                 />)}
-            </React.Fragment>}
+            </ListWrapper>}
           </TokensWrapper>
         }
       </Container>

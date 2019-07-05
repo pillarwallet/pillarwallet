@@ -32,7 +32,7 @@ import { BoldText, BaseText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Separator from 'components/Separator';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
 import { EXCHANGE } from 'constants/navigationConstants';
@@ -42,6 +42,7 @@ import type { Assets } from 'models/Asset';
 import type { Allowance, ExchangeProvider } from 'models/Offer';
 
 import { getProviderDisplayName } from 'utils/exchange';
+import Intercom from 'react-native-intercom';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -223,9 +224,16 @@ class ExchangeInfo extends React.Component<Props, State> {
       .filter(({ symbol }) => exchangeAllowances.find(({ assetCode }) => assetCode === symbol));
 
     return (
-      <Container>
-        <Header title="exchange settings" onBack={() => navigation.goBack(null)} />
-        <ScrollWrapper>
+      <Container color={baseColors.white}>
+        <Header
+          title="settings"
+          onBack={() => navigation.goBack(null)}
+          nextText="Get help"
+          onNextPress={() => Intercom.displayMessenger()}
+          headerRightFlex={2}
+          white
+        />
+        <ScrollWrapper color={UIColors.defaultBackgroundColor}>
           {!!connectedProviders.length &&
           <React.Fragment>
             <SectionTitle>Connected exchanges:</SectionTitle>

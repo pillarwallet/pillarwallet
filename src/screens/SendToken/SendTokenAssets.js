@@ -22,6 +22,8 @@ import { FlatList } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import styled from 'styled-components/native';
+
 import type { Assets, Balances } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 
@@ -38,6 +40,7 @@ import TankAssetBalance from 'components/TankAssetBalance';
 
 import { formatAmount, formatMoney } from 'utils/common';
 import { getBalance } from 'utils/assets';
+import { baseColors, spacing, UIColors } from 'utils/variables';
 
 import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { ETH, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
@@ -81,6 +84,16 @@ type NextScreenCollectibleData = {
 };
 
 const genericToken = require('assets/images/tokens/genericToken.png');
+
+const ContentBackground = styled(Wrapper)`
+   flex: 1;
+   background-color: ${UIColors.defaultBackgroundColor};
+`;
+
+const InnerWrapper = styled(Wrapper)`
+   flex: 1;
+   margin-top: ${spacing.large}px;
+`;
 
 class SendTokenAssetsScreen extends React.Component<Props, State> {
   state = {
@@ -195,6 +208,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
         contentContainerStyle={{
           flexGrow: 1,
+          paddingTop: 45,
         }}
         refreshing={false}
         onRefresh={this.refreshAssetsList}
@@ -225,6 +239,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
         contentContainerStyle={{
           flexGrow: 1,
+          paddingTop: 45,
         }}
         refreshing={false}
         onRefresh={fetchAllCollectiblesData}
@@ -265,11 +280,15 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 
 
     return (
-      <Container inset={{ bottom: 0 }}>
-        <Header title={`send to ${contactUsername}`} centerTitle onBack={navigation.dismiss} />
-        <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />
-        {activeTab === TOKENS && this.renderAssets()}
-        {activeTab === COLLECTIBLES && this.renderCollectibles()}
+      <Container inset={{ bottom: 0 }} color={baseColors.white}>
+        <Header title={`send to ${contactUsername}`} centerTitle onBack={navigation.dismiss} white />
+        <ContentBackground>
+          <InnerWrapper>
+            <Tabs initialActiveTab={activeTab} tabs={assetsTabs} isFloating />
+            {activeTab === TOKENS && this.renderAssets()}
+            {activeTab === COLLECTIBLES && this.renderCollectibles()}
+          </InnerWrapper>
+        </ContentBackground>
       </Container>
     );
   }

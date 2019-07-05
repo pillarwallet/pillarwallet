@@ -32,6 +32,7 @@ import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
+import { baseColors, UIColors, spacing } from 'utils/variables';
 
 type Props = {
   wallet: Object,
@@ -106,13 +107,15 @@ class BackupPhrase extends React.Component<Props, State> {
 
     if (!mnemonic) return null;
     return (
-      <Container>
-        <Header title="backup phrase" onBack={() => navigation.goBack(null)} />
-        <ScrollWrapper regularPadding>
-          <Paragraph>Write down your 12 word backup phrase in the correct order.</Paragraph>
+      <Container color={baseColors.white}>
+        <Header title="backup phrase" onBack={() => navigation.goBack(null)} white />
+        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+          <Paragraph style={{ marginTop: spacing.medium }}>
+            Write down your 12 word backup phrase in the correct order.
+          </Paragraph>
           <MnemonicPhrase phrase={mnemonic} />
         </ScrollWrapper>
-        <Footer>
+        <Footer backgroundColor={UIColors.defaultBackgroundColor}>
           <Button
             onPress={() => navigation.navigate(BACKUP_PHRASE_VALIDATE,
               { backupViaSettings: this._isBackingupViaSettings })}

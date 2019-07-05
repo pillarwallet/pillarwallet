@@ -54,6 +54,7 @@ type Props = {
   buttonAction?: Function,
   secondaryButton?: boolean,
   actionLabel?: ?string,
+  actionLabelColor?: ?string,
   rejectInvitation?: ?Function,
   acceptInvitation?: ?Function,
   type?: string,
@@ -229,7 +230,7 @@ const ActionLabel = styled.View`
 
 const ActionLabelText = styled(BaseText)`
   font-size: ${fontSizes.small}px;
-  color: ${props => props.button ? baseColors.electricBlue : baseColors.darkGray};
+  color: ${props => props.color ? props.color : baseColors.darkGray};
   margin-left: auto;
   margin-bottom: ${props => props.button ? '2px' : 0};
   padding: ${props => props.button ? `0 ${spacing.large}px` : '6px 0'};
@@ -392,6 +393,7 @@ const Addon = (props: Props) => {
     buttonAction,
     secondaryButton,
     actionLabel,
+    actionLabelColor,
     rejectInvitation,
     acceptInvitation,
   } = props;
@@ -412,7 +414,7 @@ const Addon = (props: Props) => {
   if (actionLabel) {
     return (
       <ActionLabel button={labelAsButton}>
-        <ActionLabelText button={labelAsButton}>
+        <ActionLabelText button={labelAsButton} color={labelAsButton ? baseColors.electricBlue : actionLabelColor}>
           {actionLabel}
         </ActionLabelText>
       </ActionLabel>

@@ -268,7 +268,7 @@ class AssetsList extends React.Component<Props> {
     return (
       <View
         style={{
-          marginTop: IS_IOS ? -8 : -4,
+          marginTop: -8,
           height: 0,
           width: '100%',
           backgroundColor: 'transparent',
@@ -320,7 +320,8 @@ class AssetsList extends React.Component<Props> {
         onEndReachedThreshold={0.5}
         style={{ width: '100%' }}
         contentContainerStyle={{
-          paddingVertical: 6,
+          paddingTop: 45,
+          paddingBottom: 6,
           paddingLeft: horizontalPadding(assetsLayout, 'left'),
           paddingRight: horizontalPadding(assetsLayout, 'right'),
           width: '100%',

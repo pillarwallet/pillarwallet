@@ -19,7 +19,8 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Container, Wrapper } from 'components/Layout';
+import styled from 'styled-components/native';
+import { Container } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
 import Header from 'components/Header';
 import PinCode from 'components/PinCode';
@@ -27,6 +28,7 @@ import ErrorMessage from 'components/ErrorMessage';
 import { confirmPinForNewWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
 import { PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
+import { baseColors, spacing, UIColors } from 'utils/variables';
 
 type Props = {
   confirmPinForNewWallet: (pin: string) => Function,
@@ -37,6 +39,12 @@ type Props = {
 type State = {
   errorMessage: string,
 };
+
+const ContentWrapper = styled.View`
+  flex: 1;
+  background-color: ${UIColors.defaultBackgroundColor};
+  padding-top: ${spacing.medium}px;
+`;
 
 class PinCodeConfirmation extends React.Component<Props, State> {
   state = {
@@ -71,10 +79,10 @@ class PinCodeConfirmation extends React.Component<Props, State> {
 
   render() {
     return (
-      <Container>
+      <Container color={baseColors.white}>
         {!!this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
-        <Header title="confirm pincode" onBack={() => this.props.navigation.goBack(null)} />
-        <Wrapper regularPadding flex={1}>
+        <Header title="confirm pincode" onBack={() => this.props.navigation.goBack(null)} white />
+        <ContentWrapper>
           <PinCode
             onPinEntered={this.handlePinSubmit}
             onPinChanged={this.handlePinChange}
@@ -84,7 +92,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
             flex={false}
             customStyle={{ marginTop: 100 }}
           />
-        </Wrapper>
+        </ContentWrapper>
       </Container>
     );
   }

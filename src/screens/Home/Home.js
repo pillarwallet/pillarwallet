@@ -252,6 +252,7 @@ const DescriptionWarning = styled(Description)`
 
 const SessionUIWrapper = styled.View`
   padding-top: 110px;
+
 `;
 
 export const StatusMessage = styled(BoldText)`
@@ -266,6 +267,9 @@ export const LoadingSpinner = styled(Spinner)`
 
 export const ItemWrapper = styled.View`
   margin-top: ${spacing.large}px;
+  border-bottom-width: 1px;
+  border-top-width: 1px;
+  border-color: ${baseColors.mediumLightGray};
 `;
 
 const TabsHeader = styled.View`
@@ -614,7 +618,7 @@ class HomeScreen extends React.Component<Props, State> {
     const { loginAttemptToken } = deepLinkData;
 
     return (
-      <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
+      <Container color={baseColors.white} inset={{ bottom: 0 }}>
         <AnimatedHomeHeader>
           <HomeHeaderRow>
             <HomeHeaderLeft>
@@ -760,7 +764,7 @@ class HomeScreen extends React.Component<Props, State> {
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
           </TabsHeader>
-          <Tabs tabs={activityFeedTabs} bgColor={baseColors.white} />
+          <Tabs tabs={activityFeedTabs} coverColor={baseColors.white} />
           <ActivityFeed
             backgroundColor={baseColors.white}
             onCancelInvitation={cancelInvitation}

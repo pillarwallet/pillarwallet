@@ -35,7 +35,7 @@ import SlideModal from 'components/Modals/SlideModal';
 
 // utils
 import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
-import { fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
@@ -92,6 +92,11 @@ const FooterInner = styled.View`
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
+`;
+
+const BackgroundWrapper = styled.View`
+  background-color: ${UIColors.defaultBackgroundColor};
+  flex: 1;
 `;
 
 type Props = {
@@ -286,33 +291,36 @@ class SendTokenAmount extends React.Component<Props, State> {
     const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
 
     return (
-      <Container>
+      <Container color={baseColors.white}>
         <Header
           onBack={() => this.props.navigation.goBack(null)}
           title={`send ${this.assetData.token}`}
+          white
         />
-        <Wrapper regularPadding>
-          <Form
-            ref={node => { this._form = node; }}
-            type={formStructure}
-            options={formFields}
-            value={value}
-            onChange={this.handleChange}
-          />
-          <ActionsWrapper>
-            <SendTokenDetails>
-              <Label small>Available Balance</Label>
-              <SendTokenDetailsValue>
-                {formattedBalance} {token}
-                <HelperText> ({currencySymbol}{formattedBalanceInFiat})</HelperText>
-              </SendTokenDetailsValue>
-            </SendTokenDetails>
-            <TouchableOpacity onPress={this.useMaxValue}>
-              <TextLink>Send All</TextLink>
-            </TouchableOpacity>
-          </ActionsWrapper>
-        </Wrapper>
-        <Footer keyboardVerticalOffset={35}>
+        <BackgroundWrapper>
+          <Wrapper regularPadding>
+            <Form
+              ref={node => { this._form = node; }}
+              type={formStructure}
+              options={formFields}
+              value={value}
+              onChange={this.handleChange}
+            />
+            <ActionsWrapper>
+              <SendTokenDetails>
+                <Label small>Available Balance</Label>
+                <SendTokenDetailsValue>
+                  {formattedBalance} {token}
+                  <HelperText> ({currencySymbol}{formattedBalanceInFiat})</HelperText>
+                </SendTokenDetailsValue>
+              </SendTokenDetails>
+              <TouchableOpacity onPress={this.useMaxValue}>
+                <TextLink>Send All</TextLink>
+              </TouchableOpacity>
+            </ActionsWrapper>
+          </Wrapper>
+        </BackgroundWrapper>
+        <Footer keyboardVerticalOffset={35} backgroundColor={UIColors.defaultBackgroundColor}>
           <FooterInner>
             <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
               <SendTokenDetailsValue>
