@@ -360,7 +360,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             </View>
           </LabeledRow>
         </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40}>
+        <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
           {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <Button
