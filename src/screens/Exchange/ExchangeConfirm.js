@@ -40,7 +40,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderDisplayName, getProviderLogo } from 'utils/exchange';
@@ -315,10 +315,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const providerName = getProviderDisplayName(provider);
 
     return (
-      <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
-        <Header title="exchange" onBack={this.handleBack} />
-        <ScrollWrapper regularPadding>
-          <Paragraph style={{ marginBottom: 30 }}>
+      <Container color={baseColors.white} inset={{ bottom: 0 }}>
+        <Header title="exchange" onBack={this.handleBack} white />
+        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+          <Paragraph style={{ marginBottom: 30, paddingTop: spacing.medium }}>
             {setTokenAllowance
               ? 'Review the details and enable asset as well as the cost of data transaction.'
               : 'Review the details and confirm the exchange rate as well as the cost of transaction.'

@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { UIColors, fontSizes, baseColors } from 'utils/variables';
+import { UIColors, fontSizes, baseColors, spacing } from 'utils/variables';
 import styled from 'styled-components/native';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import { Paragraph, Label, BoldText } from 'components/Typography';
@@ -101,6 +101,12 @@ const ShuffledWordWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
+`;
+
+const BackgroundWrapper = styled.View`
+  flex: 1;
+  background-color: ${UIColors.defaultBackgroundColor};
+  padding-top: ${spacing.medium}px;
 `;
 
 const ErrorParagraph = styled(Paragraph)`
@@ -228,22 +234,24 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     if (!wallet.mnemonic.original) return null;
 
     return (
-      <Container>
-        <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} fullWidthTitle />
-        <Wrapper regularPadding>
-          <Paragraph>
-            Please select the correct words.
-          </Paragraph>
-          <WordInputFields>
-            {this.renderInputFields()}
-          </WordInputFields>
-          {enteredWords.length === 3 && !isFormValid &&
-          <ErrorParagraph>
-            Incorrect words selected
-          </ErrorParagraph>
-          }
-        </Wrapper>
-        <Footer style={{ paddingTop: 20 }}>
+      <Container color={baseColors.white}>
+        <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} fullWidthTitle white />
+        <BackgroundWrapper>
+          <Wrapper regularPadding>
+            <Paragraph>
+              Please select the correct words.
+            </Paragraph>
+            <WordInputFields>
+              {this.renderInputFields()}
+            </WordInputFields>
+            {enteredWords.length === 3 && !isFormValid &&
+            <ErrorParagraph>
+              Incorrect words selected
+            </ErrorParagraph>
+            }
+          </Wrapper>
+        </BackgroundWrapper>
+        <Footer style={{ paddingTop: 20 }} backgroundColor={UIColors.defaultBackgroundColor}>
           <ShuffledWordWrapper>
             {this.renderShuffledWordList()}
             {!!__DEV__ && (

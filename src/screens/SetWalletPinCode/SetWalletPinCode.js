@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import PinCode from 'components/PinCode';
@@ -27,6 +28,12 @@ import ErrorMessage from 'components/ErrorMessage';
 import Header from 'components/Header';
 import { setPinForNewWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
+import { baseColors, UIColors } from 'utils/variables';
+
+const ContentWrapper = styled.View`
+  flex: 1;
+  background-color: ${UIColors.defaultBackgroundColor};
+`;
 
 type Props = {
   setPinForNewWallet: (pin: string) => Function,
@@ -72,28 +79,31 @@ class SetWalletPinCode extends React.Component<Props, State> {
     const title = returningUser ? 'set pincode' : titleForNewUser;
 
     return (
-      <Container>
+      <Container color={baseColors.white}>
         {!!error && <ErrorMessage>{error}</ErrorMessage>}
         <Header
           title={title}
           onBack={() => this.props.navigation.goBack(null)}
+          white
         />
-        <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
-          <Paragraph light small style={{ marginBottom: 50, marginTop: 10 }}>
-            {returningUser
-              ? 'It will be used to access the wallet and confirm transactions.'
-              : 'Set your pin-code. It will be used to access the wallet and confirm transactions.'
-            }
-          </Paragraph>
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            onPinChanged={this.handlePinChange}
-            pageInstructions="Setup your Pincode"
-            showForgotButton={false}
-            pinError={!!error}
-            flex={false}
-          />
-        </Wrapper>
+        <ContentWrapper>
+          <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
+            <Paragraph light small style={{ marginBottom: 50, marginTop: 10 }}>
+              {returningUser
+                ? 'It will be used to access the wallet and confirm transactions.'
+                : 'Set your pin-code. It will be used to access the wallet and confirm transactions.'
+              }
+            </Paragraph>
+            <PinCode
+              onPinEntered={this.handlePinSubmit}
+              onPinChanged={this.handlePinChange}
+              pageInstructions="Setup your Pincode"
+              showForgotButton={false}
+              pinError={!!error}
+              flex={false}
+            />
+          </Wrapper>
+        </ContentWrapper>
       </Container>
     );
   }

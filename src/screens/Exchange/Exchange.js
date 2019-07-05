@@ -31,7 +31,7 @@ import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderLogo } from 'utils/exchange';
 
@@ -777,8 +777,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
 
     return (
-      <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
+      <Container color={baseColors.white} inset={{ bottom: 0 }}>
         <Header
+          white
           title="exchange"
           headerRightAddon={
             (!!exchangeAllowances.length || !!connectedProviders.length) &&
@@ -809,7 +810,10 @@ class ExchangeScreen extends React.Component<Props, State> {
           onNextPress={() => Intercom.displayMessenger()}
           pushRightAddonToTheSide
         />
-        <ScrollWrapper keyboardShouldPersistTaps="handled">
+        <ScrollWrapper
+          keyboardShouldPersistTaps="handled"
+          color={UIColors.defaultBackgroundColor}
+        >
           <FormWrapper>
             <Form
               ref={node => { this.exchangeForm = node; }}
