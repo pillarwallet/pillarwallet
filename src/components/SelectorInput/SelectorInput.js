@@ -234,6 +234,7 @@ export default class SelectorInput extends React.Component<Props, State> {
   renderOption = ({ item: option }: Object) => {
     const {
       value,
+      name,
       symbol,
       assetBalance,
       paymentNetworkBalance,
@@ -244,7 +245,8 @@ export default class SelectorInput extends React.Component<Props, State> {
     return (
       <ListItemWithImage
         onPress={() => this.selectValue(option)}
-        label={value}
+        label={name}
+        subtext={value}
         itemImageUrl={iconUrl || genericToken}
         itemValue={assetBalance ? `${assetBalance} ${symbol}` : null}
         fallbackSource={genericToken}
@@ -289,7 +291,8 @@ export default class SelectorInput extends React.Component<Props, State> {
     const iconUrl = `${SDK_PROVIDER}/${icon}?size=3`;
 
     const filteredListData = (query && query.length >= MIN_QUERY_LENGTH && options.length)
-      ? options.filter(({ value: val }) => val.toUpperCase().includes(query.toUpperCase()))
+      ? options.filter(({ value: val, name }) => val.toUpperCase().includes(query.toUpperCase())
+        || name.toUpperCase().includes(query.toUpperCase()))
       : options;
 
     return (
