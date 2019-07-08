@@ -289,7 +289,8 @@ export default class SelectorInput extends React.Component<Props, State> {
     const iconUrl = `${SDK_PROVIDER}/${icon}?size=3`;
 
     const filteredListData = (query && query.length >= MIN_QUERY_LENGTH && options.length)
-      ? options.filter(({ value: val }) => val.toUpperCase().includes(query.toUpperCase()))
+      ? options.filter(({ value: val, name }) => val.toUpperCase().includes(query.toUpperCase())
+        || name.toUpperCase().includes(query.toUpperCase()))
       : options;
 
     return (
