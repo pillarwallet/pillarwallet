@@ -234,6 +234,7 @@ export default class SelectorInput extends React.Component<Props, State> {
   renderOption = ({ item: option }: Object) => {
     const {
       value,
+      name,
       symbol,
       assetBalance,
       paymentNetworkBalance,
@@ -244,7 +245,8 @@ export default class SelectorInput extends React.Component<Props, State> {
     return (
       <ListItemWithImage
         onPress={() => this.selectValue(option)}
-        label={value}
+        label={name}
+        subtext={value}
         itemImageUrl={iconUrl || genericToken}
         itemValue={assetBalance ? `${assetBalance} ${symbol}` : null}
         fallbackSource={genericToken}
