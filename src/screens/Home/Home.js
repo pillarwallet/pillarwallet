@@ -96,7 +96,6 @@ type Props = {
   intercomNotificationsCount: number,
   backupStatus: Object,
   fetchAllCollectiblesData: Function,
-  deepLinkData: Object,
   resetDeepLinkData: Function,
   approveLoginAttempt: Function,
   openSeaTxHistory: Object[],
@@ -105,6 +104,7 @@ type Props = {
   onWalletConnectSessionRequest: Function,
   onWalletLinkScan: Function,
   cancelWaitingRequest: Function,
+  loginAttemptToken?: string,
 };
 
 type State = {
@@ -395,7 +395,7 @@ class HomeScreen extends React.Component<Props, State> {
    * https://github.com/react-native-community/react-native-modal#i-cant-show-multiple-modals-one-after-another
    */
   checkLoginModalVisibility = () => {
-    const { deepLinkData: { loginAttemptToken } } = this.props;
+    const { loginAttemptToken } = this.props;
     const { showLoginModal } = this.state;
     if (!!loginAttemptToken && !showLoginModal) {
       this.setState({ showLoginModal: true });
@@ -426,9 +426,13 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   closeLoginModal = () => {
-    const { resetDeepLinkData } = this.props;
+    const { navigation, resetDeepLinkData } = this.props;
     resetDeepLinkData();
     this.setState({ showLoginModal: false });
+    const showLoginApproveModal = navigation.getParam('showLoginApproveModal');
+    if (showLoginApproveModal) {
+      navigation.setParams({ showLoginApproveModal: null });
+    }
   };
 
   // START OF Wallet connect related methods
@@ -490,7 +494,7 @@ class HomeScreen extends React.Component<Props, State> {
       intercomNotificationsCount,
       navigation,
       backupStatus,
-      deepLinkData,
+      loginAttemptToken,
       approveLoginAttempt,
       history,
       openSeaTxHistory,
@@ -615,7 +619,8 @@ class HomeScreen extends React.Component<Props, State> {
     const hasIntercomNotifications = !!intercomNotificationsCount;
     const isWalletBackedUp = isImported || isBackedUp;
 
-    const { loginAttemptToken } = deepLinkData;
+    // getting from navigation params solves case when forum login approve modal should appear after PIN screen
+    const isLoginModalVisible = showLoginModal || navigation.getParam('showLoginApproveModal');
 
     return (
       <Container color={baseColors.white} inset={{ bottom: 0 }}>
@@ -779,7 +784,7 @@ class HomeScreen extends React.Component<Props, State> {
         </Animated.ScrollView>
 
         <SlideModal
-          isVisible={!!loginAttemptToken && showLoginModal}
+          isVisible={!!loginAttemptToken && isLoginModalVisible}
           fullScreen
           showHeader
           onModalHide={this.closeLoginModal}
@@ -836,14 +841,14 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   wallet: { backupStatus },
   notifications: { intercomNotificationsCount },
-  deepLink: { data: deepLinkData },
+  deepLink: { data: { loginAttemptToken } = {} },
 }) => ({
   contacts,
   user,
   invitations,
   intercomNotificationsCount,
   backupStatus,
-  deepLinkData,
+  loginAttemptToken,
 });
 
 const structuredSelector = createStructuredSelector({
