@@ -74,7 +74,7 @@ const getGasEstimate = (transaction) => {
    */
   return calculateGasEstimate(transaction)
     .then(calculatedGasLimit =>
-      utils.bigNumberify(calculatedGasLimit).toNumber() * 1.5, // safe buffer multiplier
+      Math.round(utils.bigNumberify(calculatedGasLimit).toNumber() * 1.5), // safe buffer multiplier
     )
     .catch(() => DEFAULT_GAS_LIMIT);
 };
