@@ -104,7 +104,7 @@ export default class ChatWebSocket {
         && message.request.path !== '/api/v1/message') {
         const webSocketResponse = this.prepareResponse(message.request.id, 200, 'OK');
         if (webSocketResponse != null) {
-          await this.ws.send(webSocketResponse);
+          this.send(webSocketResponse);
         }
       }
       if (typeof callback === 'function') callback(message);
@@ -124,9 +124,9 @@ export default class ChatWebSocket {
   }
 
   onOpen(callback?: Function) {
-    if (this.ws === undefined) return;
+    if (!this.ws) return;
     this.ws.onopen = () => {
-      if (typeof keepaliveTimer !== 'undefined') clearTimeout(keepaliveTimer);
+      if (keepaliveTimer) clearTimeout(keepaliveTimer);
       this.keepalive();
       this.setRunning(true);
       if (typeof callback === 'function') callback();
@@ -143,12 +143,12 @@ export default class ChatWebSocket {
     this.running = state;
     if (!state) {
       delete this.ws;
-      if (typeof keepaliveTimer !== 'undefined') clearTimeout(keepaliveTimer);
+      if (keepaliveTimer) clearTimeout(keepaliveTimer);
     }
   }
 
   isRunning(): boolean {
-    return this.running && typeof this.ws !== 'undefined';
+    return this.running && !!this.ws;
   }
 
   prepareRequest(requestId: number, verb: string, path: string, body?: string, headers?: string[]): ?Uint8Array {
