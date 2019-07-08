@@ -89,13 +89,20 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   };
   camera: ?Object;
   isScanned: boolean = false;
+  handleQRRead: (data: Object) => void;
+
+  state = {
+    authorizationState: PENDING,
+  };
 
   constructor(props: Props) {
     super(props);
-    this.handleAndroidQRRead = throttle(this.handleAndroidQRRead, 700);
-    this.state = {
-      authorizationState: PENDING,
-    };
+
+    if (Platform.OS === 'ios') {
+      this.handleQRRead = this.handleIosQRRead;
+    } else {
+      this.handleQRRead = throttle(this.handleAndroidQRRead, 700);
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -175,7 +182,6 @@ export default class QRCodeScanner extends React.Component<Props, State> {
 
   renderScanner() {
     const { rectangleColor } = this.props;
-    const handleQRRead = Platform.OS === 'ios' ? this.handleIosQRRead : this.handleAndroidQRRead;
     return (
       <RNCamera
         captureAudio={false}
@@ -186,7 +192,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
           justifyContent: 'center',
         }}
         type={RNCamera.Constants.Type.back}
-        onBarCodeRead={handleQRRead}
+        onBarCodeRead={this.handleQRRead}
       >
         <HeaderWrapper>
           <Header light flexStart onClose={this.handleAnimationDismiss} />

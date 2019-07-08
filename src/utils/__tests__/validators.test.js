@@ -20,13 +20,19 @@
 import {
   validatePin,
   isValidETHAddress,
+  isValidBTCAddress,
   hasAllValues,
   isValidFullname,
   isValidEmail,
   isValidName,
   isValidCityName,
   isValidUKPhone,
-} from '../validators';
+} from 'utils/validators';
+
+import {
+  keyPairAddress,
+  rootFromMnemonic,
+} from 'services/bitcoin';
 
 describe('Validators', () => {
   describe('validatePin', () => {
@@ -43,41 +49,99 @@ describe('Validators', () => {
     });
   });
 
+  describe('isValidBTCAddress', () => {
+    const mnemonic = 'some super random words';
+
+    describe('for testnet', () => {
+      it('does not accept ETH addresses', () => {
+        const isValid = isValidBTCAddress('0xb0604b2d7FBD6cD53f00fA001504135b7aEC9B4D');
+        expect(isValid).toBeFalsy();
+      });
+
+      it('does not accept invalid addresses', () => {
+        const isValid = isValidETHAddress('Jon Snow');
+        expect(isValid).toBeFalsy();
+      });
+
+      it('accepts testnet address', async () => {
+        const root = await rootFromMnemonic(mnemonic, 'testnet');
+        const keyPair = root.derivePath("m/49'/1/0");
+
+        const address = keyPairAddress(keyPair);
+
+        const isValid = isValidBTCAddress(address, 'testnet');
+        expect(isValid).toBeTruthy();
+      });
+
+      it('does not accept bitcoin address', async () => {
+        const root = await rootFromMnemonic(mnemonic, 'bitcoin');
+        const keyPair = root.derivePath("m/49'/1/0");
+
+        const address = keyPairAddress(keyPair);
+
+        const isValid = isValidBTCAddress(address, 'testnet');
+        expect(isValid).toBeFalsy();
+      });
+    });
+
+    describe('for bitcoin network', () => {
+      it('does not accept testnet address', async () => {
+        const root = await rootFromMnemonic(mnemonic, 'testnet');
+        const keyPair = root.derivePath("m/49'/1/0");
+
+        const address = keyPairAddress(keyPair);
+
+        const isValid = isValidBTCAddress(address, 'bitcoin');
+        expect(isValid).toBeFalsy();
+      });
+
+      it('accepts bitcoin address', async () => {
+        const root = await rootFromMnemonic(mnemonic, 'bitcoin');
+        const keyPair = root.derivePath("m/49'/1/0");
+
+        const address = keyPairAddress(keyPair);
+
+        const isValid = isValidBTCAddress(address, 'bitcoin');
+        expect(isValid).toBeTruthy();
+      });
+    });
+  });
+
   describe('isValidETHAddress', () => {
-    it('should return true for the valid ETH address', () => {
+    it('returns true for the valid ETH address', () => {
       const isValid = isValidETHAddress('0xb0604b2d7FBD6cD53f00fA001504135b7aEC9B4D');
       expect(isValid).toBeTruthy();
     });
 
-    it('should return false for the invvalid ETH address', () => {
+    it('returns false for the invalid ETH address', () => {
       const isValid = isValidETHAddress('Jon Snow');
       expect(isValid).toBeFalsy();
     });
   });
 
   describe('hasAllValues', () => {
-    it('should return true for an object with all values', () => {
+    it('returns true for an object with all values', () => {
       const object = { foo: 1, bar: false };
       expect(hasAllValues(object)).toBeTruthy();
     });
-    it('should return false for an object without all values', () => {
+    it('returns false for an object without all values', () => {
       const object = { foo: 1, bar: false, baz: '' };
       expect(hasAllValues(object)).toBeFalsy();
     });
   });
 
   describe('isValidFullname', () => {
-    it('should return false if fullName is not present', () => {
+    it('returns false if fullName is not present', () => {
       const fullName = '';
       expect(isValidFullname(fullName)).toBeFalsy();
     });
 
-    it('should return false if fullName has only one part', () => {
+    it('returns false if fullName has only one part', () => {
       const fullName = 'Jon';
       expect(isValidFullname(fullName)).toBeFalsy();
     });
 
-    it('should return true for a valid fullname', () => {
+    it('returns true for a valid fullname', () => {
       // minimal critera to contain two parts
       const fullName = 'Jon Snow';
       expect(isValidFullname(fullName)).toBeTruthy();
@@ -85,63 +149,63 @@ describe('Validators', () => {
   });
 
   describe('validateEmail', () => {
-    it('should return false for jon@', () => {
+    it('returns false for jon@', () => {
       const email = 'jon@';
       expect(isValidEmail(email)).toBeFalsy();
     });
 
-    it('should return true for jon@snow.com', () => {
+    it('returns true for jon@snow.com', () => {
       const email = 'jon@snow.com';
       expect(isValidEmail(email)).toBeTruthy();
     });
 
-    it('should return false for the email with leading spaces', () => {
+    it('returns false for the email with leading spaces', () => {
       const email = '    jon@snow.com';
       expect(isValidEmail(email)).toBeFalsy();
     });
   });
 
   describe('isValidName', () => {
-    it('should return false if name isn\'t valid', () => {
+    it('returns false if name isn\'t valid', () => {
       const name = 'P1R@T3';
       expect(isValidName(name)).toBeFalsy();
     });
 
-    it('should return true if name is valid', () => {
+    it('returns true if name is valid', () => {
       const name = 'Jonathan';
       expect(isValidName(name)).toBeTruthy();
     });
   });
 
   describe('isValidCityName', () => {
-    it('should return false if city name isn\'t valid', () => {
+    it('returns false if city name isn\'t valid', () => {
       const cityName = 'S3ct0r 9!';
       expect(isValidCityName(cityName)).toBeFalsy();
     });
 
-    it('should return true if city name is valid', () => {
+    it('returns true if city name is valid', () => {
       const cityName = 'San Fransisco';
       expect(isValidCityName(cityName)).toBeTruthy();
     });
   });
 
   describe('isValidUKPhone', () => {
-    it('should return true as valid number', () => {
+    it('returns true as valid number', () => {
       const phone = '+447473222885';
       expect(isValidUKPhone(phone)).toBeTruthy();
     });
 
-    it('should return false for too long number', () => {
+    it('returns false for too long number', () => {
       const phone = '+4474732228852';
       expect(isValidUKPhone(phone)).toBeFalsy();
     });
 
-    it('should return false for other prefix than +44', () => {
+    it('returns false for other prefix than +44', () => {
       const phone = '+407473222885';
       expect(isValidUKPhone(phone)).toBeFalsy();
     });
 
-    it('should return false for missing +', () => {
+    it('returns false for missing +', () => {
       const phone = '447473222885';
       expect(isValidUKPhone(phone)).toBeFalsy();
     });

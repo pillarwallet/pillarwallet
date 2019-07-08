@@ -19,22 +19,11 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Share, RefreshControl } from 'react-native';
+import { Share } from 'react-native';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-
-// components
-import AssetButtons from 'components/AssetButtons';
-import ActivityFeed from 'components/ActivityFeed';
-import SlideModal from 'components/Modals/SlideModal';
-import Header from 'components/Header';
-import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
-import AssetPattern from 'components/AssetPattern';
-import { BoldText, BaseText, Paragraph } from 'components/Typography';
-import Button from 'components/Button';
-import TankAssetBalance from 'components/TankAssetBalance';
+import AssetView from 'screens/Asset/AssetView';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -57,7 +46,6 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
-import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
@@ -71,10 +59,6 @@ import assetsConfig from 'configs/assetsConfig';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
-
-// local components
-import ReceiveModal from './ReceiveModal';
-
 
 const RECEIVE = 'RECEIVE';
 
@@ -120,67 +104,6 @@ type State = {
   showDescriptionModal: boolean,
   activeTab: string,
 };
-
-const AssetCardWrapper = styled.View`
-  flex: 1;
-  justify-content: flex-start;
-  padding-top: 10px;
-  padding-bottom: 30px;
-  background-color: ${baseColors.snowWhite};
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
-  margin-top: 4px;
-`;
-
-const DataWrapper = styled.View`
-  margin: 0 ${spacing.large}px ${spacing.large}px;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 8px;
-`;
-
-const TokenValue = styled(BoldText)`
-  font-size: ${fontSizes.semiGiant}px;
-  text-align: center;
-`;
-
-const ValueInFiat = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  text-align: center;
-  color: ${baseColors.darkGray};
-  margin-top: 5px;
-`;
-
-const Disclaimer = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
-  text-align: center;
-  color: ${baseColors.burningFire};
-  margin-top: 5px;
-`;
-
-const Description = styled(Paragraph)`
-  padding-bottom: 80px;
-  line-height: ${fontSizes.mediumLarge};
-`;
-
-const MessageTitle = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  text-align: center;
-  letter-spacing: 0.03px;
-  color: #3f3d56;
-`;
-
-const Message = styled(BaseText)`
-  padding-top: 6px;
-  font-size: ${fontSizes.extraExtraSmall}px;
-  color: ${baseColors.darkGray};
-  text-align: center;
-`;
-
-const ValuesWrapper = styled.View`
-  flex-direction: row;
-`;
 
 class AssetScreen extends React.Component<Props, State> {
   state = {
@@ -233,21 +156,6 @@ class AssetScreen extends React.Component<Props, State> {
     });
   };
 
-  handleScrollWrapperEndDrag = e => {
-    const { fetchTransactionsHistory, history } = this.props;
-    const {
-      assetData: { token },
-    } = this.props.navigation.state.params;
-    const layoutHeight = e.nativeEvent.layoutMeasurement.height;
-    const contentHeight = e.nativeEvent.contentSize.height;
-    const offsetY = e.nativeEvent.contentOffset.y;
-    const indexFrom = history.filter(({ asset }) => asset === token).length;
-
-    if (layoutHeight + offsetY + 200 >= contentHeight) {
-      fetchTransactionsHistory(token, indexFrom);
-    }
-  };
-
   setActiveTab = (activeTab) => {
     this.setState({ activeTab });
   };
@@ -271,7 +179,7 @@ class AssetScreen extends React.Component<Props, State> {
     } = this.props;
 
     const { showDescriptionModal, activeTab } = this.state;
-    const { assetData } = this.props.navigation.state.params;
+    const { assetData } = navigation.state.params;
     const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const tokenRate = getRate(rates, token, fiatCurrency);
@@ -332,117 +240,53 @@ class AssetScreen extends React.Component<Props, State> {
     if (isSmartWallet) transactionsTabs.push(pillarNetworkTab);
 
     return (
-      <Container color={baseColors.white} inset={{ bottom: 0 }}>
-        <Header
-          onBack={this.handleCardTap}
-          title={assetData.name}
-          onNextPress={() => { this.setState({ showDescriptionModal: true }); }}
-          nextIcon="info-circle-inverse"
-          nextIconSize={fontSizes.extraLarge}
-        />
-        <ScrollWrapper
-          onScrollEndDrag={this.handleScrollWrapperEndDrag}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => {
-                fetchAssetsBalances(assets);
-                fetchTransactionsHistory(assetData.token);
-              }}
-            />
-          }
-        >
-          <AssetPattern
-            token={assetData.token}
-            icon={assetData.iconColor}
-            contractAddress={assetData.contractAddress}
-            isListed={isListed}
-          />
-          <DataWrapper>
-            <TokenValue>
-              {`${displayAmount} ${token}`}
-            </TokenValue>
-            {!!paymentNetworkBalance &&
-            <TankAssetBalance amount={paymentNetworkBalanceFormatted} monoColor wrapperStyle={{ marginBottom: 18 }} />
-            }
-            {!!isListed &&
-              <ValuesWrapper>
-                <ValueInFiat>
-                  {`${currencySymbol}${formattedBalanceInFiat}`}
-                </ValueInFiat>
-                {!!paymentNetworkBalance && (
-                  <ValueInFiat>
-                    {` + ${currencySymbol}${formattedPaymentNetworkBalanceInFiat}`}
-                  </ValueInFiat>
-                )}
-              </ValuesWrapper>
-            }
-            {!isListed &&
-            <Disclaimer>
-              {disclaimer}
-            </Disclaimer>
-            }
-          </DataWrapper>
-          <AssetCardWrapper>
-            { /*
-            <View style={{ paddingHorizontal: spacing.mediumLarge, paddingTop: 10 }}>
-              <TruncatedText lines={1} text={assetData.description} />
-           </View
-           > */}
-            <AssetButtons
-              onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
-              onPressSend={() => this.goToSendTokenFlow(assetData)}
-              onPressExchange={() => this.goToExchangeFlow(assetData.token)}
-              noBalance={isWalletEmpty}
-              isSendDisabled={!isSendActive}
-              isReceiveDisabled={!isReceiveActive}
-            />
-            {!isSendActive &&
-            <Wrapper regularPadding style={{ marginTop: 30, alignItems: 'center' }}>
-              <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
-              <Message>{ sendingBlockedMessage.message }</Message>
-              {smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED &&
-              <Button
-                marginTop="20px"
-                height={52}
-                title="Deploy Smart Wallet"
-                disabled={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
-                onPress={() => deploySmartWallet()}
-              />
-              }
-            </Wrapper>
-            }
-          </AssetCardWrapper>
-          <ActivityFeed
-            feedTitle="transactions."
-            navigation={navigation}
-            backgroundColor={baseColors.white}
-            showArrowsOnly
-            noBorder
-            wrapperStyle={{ marginTop: 10 }}
-            tabs={transactionsTabs}
-            activeTab={activeTab}
-          />
-        </ScrollWrapper>
-
-        <ReceiveModal
-          isVisible={this.state.activeModal.type === RECEIVE}
-          onModalHide={() => {
-            this.setState({ activeModal: activeModalResetState });
-          }}
-          address={assetData.address}
-          token={assetData.token}
-          tokenName={assetData.name}
-          handleOpenShareDialog={this.handleOpenShareDialog}
-        />
-        <SlideModal
-          title={assetData.name}
-          isVisible={showDescriptionModal}
-          onModalHide={() => { this.setState({ showDescriptionModal: false }); }}
-        >
-          <Description small light>{assetData.description}</Description>
-        </SlideModal>
-      </Container>
+      <AssetView
+        assetIsListed={isListed}
+        navigation={navigation}
+        fiatSymbol={currencySymbol}
+        displayAmount={displayAmount}
+        balanceInFiatFormatted={formattedBalanceInFiat}
+        assetIcon={assetData.iconColor}
+        assetSymbol={assetData.token}
+        assetName={assetData.name}
+        assetDescription={assetData.description}
+        assetDisclaimer={disclaimer}
+        receiveAddress={assetData.address}
+        contractAddress={assetData.contractAddress}
+        showDescriptionModal={showDescriptionModal}
+        onDescriptionModalHide={() => this.setState({ showDescriptionModal: false })}
+        onPressInfo={() => { this.setState({ showDescriptionModal: true }); }}
+        onPressBack={this.handleCardTap}
+        onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
+        onPressSend={() => this.goToSendTokenFlow(assetData)}
+        onPressExchange={() => this.goToExchangeFlow(assetData.token)}
+        noBalance={isWalletEmpty}
+        isSendDisabled={!isSendActive}
+        sendingBlockedTitle={sendingBlockedMessage.title}
+        sendingBlockedMessage={sendingBlockedMessage.message}
+        sendingBlockedShowButton={
+          smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+        }
+        sendingBlockedButtonText="Deploy Smart Wallet"
+        sendingBlockedButtonIsDisabled={
+          smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING
+        }
+        sendingBlockedOnPressButton={() => deploySmartWallet()}
+        isReceiveDisabled={!isReceiveActive}
+        isReceiveModalVisible={this.state.activeModal.type === RECEIVE}
+        onReceiveModalHide={() => {
+          this.setState({ activeModal: activeModalResetState });
+        }}
+        onOpenShareDialog={() => this.handleOpenShareDialog(assetData.address)}
+        paymentNetworkBalanceFormatted={paymentNetworkBalanceFormatted}
+        paymentNetworkBalanceInFiatFormatted={formattedPaymentNetworkBalanceInFiat}
+        historyTabs={transactionsTabs}
+        historyActiveTab={activeTab}
+        onRefresh={() => {
+          fetchAssetsBalances(assets);
+          fetchTransactionsHistory(assetData.token);
+        }}
+      />
     );
   }
 }

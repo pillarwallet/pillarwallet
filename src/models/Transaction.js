@@ -35,7 +35,7 @@ export type Transaction = {
   receipt: Object,
   note?: ?string,
   signOnly?: ?boolean,
-}
+};
 
 export type TransactionsStore = {
   [accountId: string]: Transaction[],
@@ -58,7 +58,7 @@ export type TokenTransactionPayload = {
   signedHash?: ?string,
   data?: string,
   extra?: Object,
-}
+};
 
 export type CollectibleTransactionPayload = {
   to: string,

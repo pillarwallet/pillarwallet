@@ -20,7 +20,7 @@
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import type { Balances, Rates } from 'models/Asset';
-import { ETH } from 'constants/assetsConstants';
+import { ETH, BTC } from 'constants/assetsConstants';
 
 export function transformAssetsToObject(assetsArray: Object[] = []): Object {
   return assetsArray.reduce((memo, asset) => {
@@ -33,25 +33,25 @@ export function getBalance(balances: Balances = {}, asset: string = ''): number 
   return balances[asset] ? Number(balances[asset].balance) : 0;
 }
 
-export function getRate(rates: Rates = {}, token: string, fiatCurrency: string): number {
+const baseRate = (rates: Rates, asset: string, fiatCurrency: string): number => {
+  const rate = rates[asset];
+  if (!rate) {
+    return 0;
+  }
+
+  return rate[fiatCurrency];
+};
+
+const tokenRate = (rates: Rates, token: string, fiatCurrency: string): number => {
   const tokenRates = rates[token];
-  const ethRate = rates[ETH];
 
   if (!tokenRates) {
     return 0;
   }
 
-  if (!ethRate) {
-    return tokenRates[fiatCurrency] || 0;
-  }
-
-  const ethToFiat = ethRate[fiatCurrency];
+  const ethToFiat = baseRate(rates, ETH, fiatCurrency);
   if (!ethToFiat) {
-    return 0;
-  }
-
-  if (token === ETH) {
-    return ethToFiat;
+    return tokenRates[fiatCurrency] || 0;
   }
 
   const tokenToETH = tokenRates[ETH];
@@ -60,7 +60,15 @@ export function getRate(rates: Rates = {}, token: string, fiatCurrency: string):
   }
 
   return ethToFiat * tokenToETH;
-}
+};
+
+export const getRate = (rates: Rates = {}, token: string, fiatCurrency: string): number => {
+  if (token === BTC || token === ETH) {
+    return baseRate(rates, token, fiatCurrency);
+  }
+
+  return tokenRate(rates, token, fiatCurrency);
+};
 
 export function calculateMaxAmount(token: string, balance: number | string, txFeeInWei: BigNumber): number {
   if (typeof balance !== 'string') {

@@ -38,8 +38,9 @@ type Props = {
   address: string,
   onModalHide: Function,
   handleOpenShareDialog: Function,
-  token: string,
-  tokenName: string,
+  // These two are not being used
+  token?: string,
+  tokenName?: string,
   isVisible: boolean,
 }
 

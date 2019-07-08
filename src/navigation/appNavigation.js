@@ -84,6 +84,10 @@ import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
+import BitcoinScreen from 'screens/Bitcoin';
+import SendBitcoinAddressScreen from 'screens/Bitcoin/SendAddress';
+import SendBitcoinAmountScreen from 'screens/Bitcoin/SendAmount';
+import SendBitcoinConfirmScreen from 'screens/Bitcoin/SendConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -183,6 +187,9 @@ import {
   CONTACT_INFO,
   FIAT_EXCHANGE,
   FIAT_CRYPTO,
+  SEND_BITCOIN_ADDRESS,
+  SEND_BITCOIN_AMOUNT,
+  SEND_BITCOIN_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -239,6 +246,19 @@ const hideTabNavigatorOnChildView = ({ navigation }) => {
     animationEnabled: true,
   };
 };
+
+// BITCOIN FLOW
+const bitcoinFlow = createStackNavigator(
+  {
+    BITCOIN_SCREEN: BitcoinScreen,
+    [SEND_BITCOIN_ADDRESS]: SendBitcoinAddressScreen,
+    [SEND_BITCOIN_AMOUNT]: SendBitcoinAmountScreen,
+    [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
+  },
+  StackNavigatorConfig,
+);
+
+bitcoinFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // ASSETS FLOW
 const assetsFlow = createStackNavigator(
@@ -369,6 +389,12 @@ const tabBarLabel = labelText => ({ focused, tintColor }) => (
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
+    BITCOIN_SCREEN: {
+      screen: bitcoinFlow,
+      navigationOptions: () => ({
+        tabBarLabel: tabBarLabel('Bitcoin'),
+      }),
+    },
     [ASSETS]: {
       screen: assetsFlow,
       navigationOptions: () => ({

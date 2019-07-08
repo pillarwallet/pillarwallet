@@ -55,6 +55,8 @@ import {
 } from 'constants/smartWalletConstants';
 import { UPDATE_PAYMENT_NETWORK_BALANCES } from 'constants/paymentNetworkConstants';
 
+import { loadBitcoinAddresses } from 'actions/bitcoinActions';
+
 const storage = Storage.getInstance('db');
 
 const BACKGROUND = 'background';
@@ -131,6 +133,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { connectedProviders = [] } = await storage.get('exchangeProviders');
       dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
+
+      dispatch(loadBitcoinAddresses());
 
       await loadAndMigrate('history', dispatch, getState);
 
