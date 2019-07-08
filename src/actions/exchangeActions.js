@@ -36,7 +36,6 @@ import {
   MARK_NOTIFICATION_SEEN,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
-import { ETH } from 'constants/assetsConstants';
 
 import { calculateGasEstimate } from 'services/assets';
 
@@ -67,17 +66,15 @@ const connectExchangeService = (state: Object) => {
 };
 
 const getGasEstimate = (transaction) => {
-  const { symbol, data } = transaction;
   /**
    * if there's no data transaction and we calculate token to token transfer
    * data by `ethers.js` then the `gasLimit` always is too small,
    * once this is sorted out we can remove default `DEFAULT_GAS_LIMIT`
    * this happens to be only for `Shapeshift`
    */
-  if (symbol !== ETH && !data) return DEFAULT_GAS_LIMIT;
   return calculateGasEstimate(transaction)
     .then(calculatedGasLimit =>
-      utils.bigNumberify(calculatedGasLimit).toNumber(),
+      utils.bigNumberify(calculatedGasLimit).toNumber() * 1.5, // safe buffer multiplier
     )
     .catch(() => DEFAULT_GAS_LIMIT);
 };
@@ -121,13 +118,17 @@ export const takeOfferAction = (
     }: OfferOrder = offerOrderData;
     const {
       wallet: { data: wallet },
+      assets: { supportedAssets },
     } = getState();
+    const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
     const gasLimit = await getGasEstimate({
       from: wallet.address, // TODO: get address from active account when it's possible
       to: payToAddress,
       data: transactionObjData,
       amount: payAmount,
       symbol: fromAssetCode,
+      contractAddress: asset ? asset.address : '',
+      decimals: asset ? asset.decimals : 18,
     });
     callback({
       ...offerOrderData,
@@ -285,12 +286,16 @@ export const setTokenAllowanceAction = (
     const { data: { to: payToAddress, data } } = response;
     const {
       wallet: { data: wallet },
+      assets: { supportedAssets },
     } = getState();
+    const asset = supportedAssets.find(a => a.symbol === assetCode);
     const gasLimit = await getGasEstimate({
       from: wallet.address, // TODO: get address from active account when it's possible
       to: payToAddress,
       data,
       symbol: assetCode,
+      contractAddress: asset ? asset.address : '',
+      decimals: asset ? asset.decimals : 18,
     });
     callback({
       data,

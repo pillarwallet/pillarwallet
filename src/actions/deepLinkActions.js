@@ -52,7 +52,9 @@ export const executeDeepLinkAction = (deepLink: string) => {
         if (!pathAndParams) {
           updateNavigationLastScreenState({
             lastActiveScreen: HOME,
-            lastActiveScreenParams: {},
+            lastActiveScreenParams: {
+              showLoginApproveModal: true,
+            },
           });
           break;
         }
@@ -62,7 +64,9 @@ export const executeDeepLinkAction = (deepLink: string) => {
         if (currentScreen !== HOME) {
           updateNavigationLastScreenState({
             lastActiveScreen: HOME,
-            lastActiveScreenParams: {},
+            lastActiveScreenParams: {
+              showLoginApproveModal: true,
+            },
           });
           if (currentFlow !== AUTH_FLOW) {
             const navigateToAppAction = NavigationActions.navigate({
@@ -70,7 +74,9 @@ export const executeDeepLinkAction = (deepLink: string) => {
               params: {},
               action: NavigationActions.navigate({
                 routeName: HOME,
-                params: {},
+                params: {
+                  showLoginApproveModal: true,
+                },
               }),
             });
             navigate(navigateToAppAction);

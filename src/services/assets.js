@@ -92,8 +92,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
     : utils.bigNumberify(amount.toString());
 
   if (!data) {
-    const tokenTransfer = await contract.interface.functions.transfer.apply(null, [to, contractAmount]);
-    ({ data } = tokenTransfer);
+    ({ data } = await contract.interface.functions.transfer.apply(null, [to, contractAmount]) || {});
     to = contractAddress;
   }
 
@@ -288,18 +287,27 @@ export function waitForTransaction(hash: string) {
   return provider.waitForTransaction(hash);
 }
 
-export async function calculateGasEstimate(transction: Object) {
+export async function calculateGasEstimate(transaction: Object) {
   const {
     from,
-    to,
     amount,
     symbol,
-    data,
-  } = transction;
+    contractAddress,
+    decimals: defaultDecimals = 18,
+  } = transaction;
+  let { to, data } = transaction;
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   const value = symbol === ETH
     ? utils.parseEther(amount.toString())
     : '0x';
+  if (!data && contractAddress) {
+    const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
+    const contractAmount = defaultDecimals > 0
+      ? utils.parseUnits(amount.toString(), defaultDecimals)
+      : utils.bigNumberify(amount.toString());
+    ({ data } = await contract.interface.functions.transfer.apply(null, [to, contractAmount]) || {});
+    to = contractAddress;
+  }
   // all parameters are required in order to estimate gas limit precisely
   return provider.estimateGas({
     from,
