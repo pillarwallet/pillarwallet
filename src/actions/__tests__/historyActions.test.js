@@ -100,7 +100,7 @@ const mockPlrTransactions = {
   __v: 0,
 };
 
-const mockImportedEthTransction = {
+const mockImportedEthTransaction = {
   timestamp: mockDates[0],
   from: bobAddress,
   to: walletAddress,
@@ -134,13 +134,13 @@ const mockImportedPlrTransaction = {
 };
 
 const transformedImportedEthTransaction = buildHistoryTransaction({
-  from: mockImportedEthTransction.from,
-  to: mockImportedEthTransction.to,
-  hash: mockImportedEthTransction.hash,
-  value: mockImportedEthTransction.value,
+  from: mockImportedEthTransaction.from,
+  to: mockImportedEthTransaction.to,
+  hash: mockImportedEthTransaction.hash,
+  value: mockImportedEthTransaction.value,
   asset: ETH,
-  createdAt: mockImportedEthTransction.timestamp,
-  status: mockImportedEthTransction.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,
+  createdAt: mockImportedEthTransaction.timestamp,
+  status: mockImportedEthTransaction.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,
 });
 
 const transformedImportedPlrTransaction = buildHistoryTransaction({
@@ -318,7 +318,7 @@ describe('History Actions', () => {
           wallet: { data: mockWallet },
         }));
 
-        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransction]));
+        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransaction]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([]));
         await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
       });
@@ -376,7 +376,7 @@ describe('History Actions', () => {
           wallet: { data: mockWallet },
         }));
 
-        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransction]));
+        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransaction]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([mockImportedPlrTransaction]));
         await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
       });
