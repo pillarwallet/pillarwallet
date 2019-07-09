@@ -23,6 +23,7 @@ import { SET_HISTORY, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/hi
 import { ETH, PLR } from 'constants/assetsConstants';
 import type { Assets } from 'models/Asset';
 import { buildHistoryTransaction } from 'utils/history';
+import { parseEthValue } from 'services/EthplorerSdk';
 
 const walletAddress = 'wallet-address';
 const walletId = '12345';
@@ -100,12 +101,12 @@ const mockPlrTransactions = {
   __v: 0,
 };
 
-const mockImportedEthTransction = {
+const mockImportedEthTransaction = {
   timestamp: mockDates[0],
   from: bobAddress,
   to: walletAddress,
   hash: '0x30000',
-  value: 0.001,
+  value: '1000000000000000', // 0.001
   input: '0x',
   success: true,
 };
@@ -134,13 +135,13 @@ const mockImportedPlrTransaction = {
 };
 
 const transformedImportedEthTransaction = buildHistoryTransaction({
-  from: mockImportedEthTransction.from,
-  to: mockImportedEthTransction.to,
-  hash: mockImportedEthTransction.hash,
-  value: new BigNumber((mockImportedEthTransction.value) * (10 ** 18)),
+  from: mockImportedEthTransaction.from,
+  to: mockImportedEthTransaction.to,
+  hash: mockImportedEthTransaction.hash,
+  value: mockImportedEthTransaction.value,
   asset: ETH,
-  createdAt: mockImportedEthTransction.timestamp,
-  status: mockImportedEthTransction.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,
+  createdAt: mockImportedEthTransaction.timestamp,
+  status: mockImportedEthTransaction.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,
 });
 
 const transformedImportedPlrTransaction = buildHistoryTransaction({
@@ -318,7 +319,7 @@ describe('History Actions', () => {
           wallet: { data: mockWallet },
         }));
 
-        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransction]));
+        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransaction]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([]));
         await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
       });
@@ -331,6 +332,10 @@ describe('History Actions', () => {
           type: SET_HISTORY,
           payload: expectTransactions,
         });
+      });
+
+      it('should handle the wrong eth value that api could return', () => {
+        expect(parseEthValue(1e-22)).toBe('100000000000000');
       });
     });
 
@@ -376,7 +381,7 @@ describe('History Actions', () => {
           wallet: { data: mockWallet },
         }));
 
-        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransction]));
+        api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransaction]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([mockImportedPlrTransaction]));
         await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
       });
