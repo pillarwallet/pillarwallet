@@ -105,7 +105,7 @@ const mockImportedEthTransction = {
   from: bobAddress,
   to: walletAddress,
   hash: '0x30000',
-  value: 0.001,
+  value: '1000000000000000', // 0.001
   input: '0x',
   success: true,
 };
@@ -137,7 +137,7 @@ const transformedImportedEthTransaction = buildHistoryTransaction({
   from: mockImportedEthTransction.from,
   to: mockImportedEthTransction.to,
   hash: mockImportedEthTransction.hash,
-  value: new BigNumber((mockImportedEthTransction.value) * (10 ** 18)),
+  value: mockImportedEthTransction.value,
   asset: ETH,
   createdAt: mockImportedEthTransction.timestamp,
   status: mockImportedEthTransction.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,

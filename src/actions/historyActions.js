@@ -287,7 +287,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
         from: tx.from,
         to: tx.to,
         hash: tx.hash,
-        value: new BigNumber((tx.value) * (10 ** 18)),
+        value: tx.value,
         asset: ETH,
         createdAt: tx.timestamp,
         status: tx.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,
@@ -303,7 +303,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
           protocol: 'Ethereum',
           status: TX_CONFIRMED_STATUS,
           to: tx.to,
-          value: new BigNumber(tx.value).toString(),
+          value: tx.value,
         });
       }),
     ];

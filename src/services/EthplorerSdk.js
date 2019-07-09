@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { BigNumber } from 'bignumber.js';
 import type {
   GetAddressHistoryParams,
   GetAddressHistoryResponse,
@@ -31,6 +32,19 @@ import type {
   GetTxInfoResponse,
 } from 'models/EthplorerSdkTypes';
 
+function parseValue(value: number) {
+  let parsed = new BigNumber(value * (10 ** 18));
+  /**
+   * ethplorer might return number values in format such as `1e-22`
+   * and this would result as number with decimals when parsing with BigNumber
+   * in this case we check if the value is below 1 (has decimals) and then
+   * parse the number again
+   */
+  if (parsed.lt(1)) {
+    parsed = new BigNumber(parsed * (10 ** 18));
+  }
+  return parsed.toString();
+}
 
 class EthplorerSdk {
   apiKey: string;
@@ -102,6 +116,7 @@ class EthplorerSdk {
 
   /*
    * Get address transactions
+   * Note: method used for Ether transactions only
    * @param {string} address of the token
    * @param {object} params the request parameters {[limit], [timestamp], [showZeroValues]}
    */
@@ -112,7 +127,11 @@ class EthplorerSdk {
       if (params.timestamp) paramsArray.push(`timestamp=${params.timestamp}`);
       if (params.showZeroValues) paramsArray.push(`showZeroValues=${params.showZeroValues}`);
     }
-    return this.pubRequest(`getAddressTransactions/${address}`, paramsArray);
+    return this.pubRequest(`getAddressTransactions/${address}`, paramsArray)
+      .then(history => history.map(tx => ({
+        ...tx,
+        value: parseValue(tx.value),
+      })));
   }
 
   /*
