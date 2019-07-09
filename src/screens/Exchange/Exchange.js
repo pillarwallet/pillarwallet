@@ -187,9 +187,10 @@ const getAvailable = (_min, _max, rate) => {
   }
   let min = (new BigNumber(rate)).multipliedBy(_min);
   let max = (new BigNumber(rate)).multipliedBy(_max);
-  if ((min.gt(0) && min.lt(0.01)) || (max.gt(0) && max.lt(0.01))) {
-    return min.eq(max)
-      ? '<0.01'
+  if ((min.gte(0) && min.lt(0.01)) || (max.gte(0) && max.lt(0.01))) {
+    if (max.isZero()) return '>0.01';
+    return min.eq(max) || min.isZero()
+      ? '<0.01' // max available
       : '<0.01 - <0.01';
   }
   min = min.toNumber();
