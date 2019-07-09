@@ -99,7 +99,7 @@ class EthplorerSdk {
   }
 
   /**
-   * Retrieves the address history
+   * Get address tokens transaction history
    * @param {string} address the ETH address
    * @param {object} params the request parameters {[token], [type], [limit], [timestamp]}
    */
@@ -115,7 +115,7 @@ class EthplorerSdk {
   }
 
   /*
-   * Get address transactions
+   * Get address ETH transactions
    * Note: method used for Ether transactions only
    * @param {string} address of the token
    * @param {object} params the request parameters {[limit], [timestamp], [showZeroValues]}
