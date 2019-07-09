@@ -43,10 +43,12 @@
     "reactotron-react-native": "^3.2.2",
     "reactotron-redux": "^3.1.0",
     "redux-mock-store": "^1.5.1",
+    "rimraf": "^2.6.3",
     "rn-nodeify": "^10.0.1",
     "run-s": "^0.0.0"
   },
   "scripts": {
+    "clean": "rimraf node_modules ios/build ios/Pods ios/Podfile.lock",
     "start": "react-native start --reset-cache",
     "android": "react-native run-android --variant=devDebug",
     "ios": "react-native run-ios",
