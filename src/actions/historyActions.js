@@ -19,7 +19,6 @@
 */
 import get from 'lodash.get';
 import orderBy from 'lodash.orderby';
-import { BigNumber } from 'bignumber.js';
 import { uniqBy } from 'utils/common';
 import {
   SET_HISTORY,
@@ -300,7 +299,6 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
           createdAt: tx.timestamp,
           from: tx.from,
           hash: tx.transactionHash,
-          protocol: 'Ethereum',
           status: TX_CONFIRMED_STATUS,
           to: tx.to,
           value: tx.value,
