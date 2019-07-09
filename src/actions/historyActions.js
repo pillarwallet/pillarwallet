@@ -261,7 +261,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
     const accountId = getActiveAccountId(accounts);
     const accountHistory = currentHistory[accountId] || [];
 
-    // 1) filter out frecords those exists in accountHistory
+    // 1) filter out records those exists in accountHistory
     const ethTransactions = ethHistory.filter(tx => {
       const hashExists = accountHistory.find(el => el.hash === tx.hash);
       return !hashExists;
