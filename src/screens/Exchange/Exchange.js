@@ -187,9 +187,10 @@ const getAvailable = (_min, _max, rate) => {
   }
   let min = (new BigNumber(rate)).multipliedBy(_min);
   let max = (new BigNumber(rate)).multipliedBy(_max);
-  if ((min.gt(0) && min.lt(0.01)) || (max.gt(0) && max.lt(0.01))) {
-    return min.eq(max)
-      ? '<0.01'
+  if ((min.gte(0) && min.lt(0.01)) || (max.gte(0) && max.lt(0.01))) {
+    if (max.isZero()) return '>0.01';
+    return min.eq(max) || min.isZero()
+      ? '<0.01' // max available
       : '<0.01 - <0.01';
   }
   min = min.toNumber();
@@ -233,17 +234,18 @@ const generateFormStructure = (balances: Balances) => {
 
     const { symbol, decimals } = selector;
 
+    amount = parseFloat(input);
     if (decimals === 0 && amount.toString().indexOf('.') > -1) {
       return false;
     }
     balance = getBalance(balances, symbol);
     maxAmount = calculateMaxAmount(symbol, balance);
-    amount = parseFloat(input);
+
     return amount <= maxAmount && amount >= MIN_TX_AMOUNT;
   });
 
   FromOption.getValidationErrorMessage = ({ selector, input }) => {
-    const { symbol } = selector;
+    const { symbol, decimals } = selector;
 
     if (!isValidNumber(input.toString())) {
       return 'Incorrect number entered.';
@@ -259,6 +261,8 @@ const generateFormStructure = (balances: Balances) => {
       return `Amount should not be bigger than your balance - ${balance} ${symbol}.`;
     } else if (amount < MIN_TX_AMOUNT) {
       return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH).';
+    } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+      return 'Amount should not contain decimal places';
     }
     return true;
   };

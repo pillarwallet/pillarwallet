@@ -157,6 +157,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       offers
         .filter(({ askRate = 0, minQuantity = 0, maxQuantity = 0 }) => {
           if (!askRate) return false;
+          // maxQuantity might be 0, but offer is acceptable
           return fromAmount >= parseFloat(minQuantity)
             && (parseFloat(maxQuantity) === 0 || fromAmount <= parseFloat(maxQuantity));
         })
