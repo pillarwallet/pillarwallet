@@ -32,13 +32,13 @@ import type {
   GetTxInfoResponse,
 } from 'models/EthplorerSdkTypes';
 
-function parseValue(value: number) {
+export function parseEthValue(value: number): string {
   let parsed = new BigNumber(value * (10 ** 18));
   /**
    * ethplorer might return number values in format such as `1e-22`
-   * and this would result as number with decimals when parsing with BigNumber
+   * and this would result as number with decimals when converting to wei
    * in this case we check if the value is below 1 (has decimals) and then
-   * parse the number again
+   * convert the number again
    */
   if (parsed.lt(1)) {
     parsed = new BigNumber(parsed * (10 ** 18));
@@ -130,7 +130,7 @@ class EthplorerSdk {
     return this.pubRequest(`getAddressTransactions/${address}`, paramsArray)
       .then(history => history.map(tx => ({
         ...tx,
-        value: parseValue(tx.value),
+        value: parseEthValue(tx.value),
       })));
   }
 

@@ -23,6 +23,7 @@ import { SET_HISTORY, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/hi
 import { ETH, PLR } from 'constants/assetsConstants';
 import type { Assets } from 'models/Asset';
 import { buildHistoryTransaction } from 'utils/history';
+import { parseEthValue } from 'services/EthplorerSdk';
 
 const walletAddress = 'wallet-address';
 const walletId = '12345';
@@ -331,6 +332,10 @@ describe('History Actions', () => {
           type: SET_HISTORY,
           payload: expectTransactions,
         });
+      });
+
+      it('should handle the wrong eth value that api could return', () => {
+        expect(parseEthValue(1e-22)).toBe('100000000000000');
       });
     });
 
