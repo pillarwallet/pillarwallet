@@ -50,6 +50,7 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 const ActivityFeedList = styled.FlatList`
   width: 100%;
@@ -212,7 +213,10 @@ class ActivityFeed extends React.Component<Props, State> {
     if (type === TRANSACTION_EVENT) {
       const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
       const address = isReceived ? notification.from : notification.to;
-      const { decimals = 18 } = assets.find(({ symbol }) => symbol === notification.asset) || {};
+      const {
+        decimals = 18,
+        iconUrl,
+      } = assets.find(({ symbol }) => symbol === notification.asset) || {};
       const value = utils.formatUnits(new BigNumber(notification.value.toString()).toFixed(), decimals);
       const formattedValue = formatAmount(value);
       const nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
@@ -223,16 +227,21 @@ class ActivityFeed extends React.Component<Props, State> {
         directionSymbol = '';
       }
 
+      const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+
       const contact = contacts
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const isContact = Object.keys(contact).length !== 0;
+      const itemImage = contact.profileImage || fullIconUrl;
 
       return (
         <ListItemWithImage
           onPress={() => this.selectEvent({ ...notification, value, contact }, type, notification.status)}
           label={nameOrAddress}
-          avatarUrl={contact.profileImage}
-          navigateToProfile={Object.keys(contact).length !== 0 ? navigateToContact : null}
-          iconName={Object.keys(contact).length === 0 || showArrowsOnly ? directionIcon : null}
+          avatarUrl={itemImage}
+          navigateToProfile={isContact ? navigateToContact : null}
+          iconName={(showArrowsOnly || !itemImage) ? directionIcon : null}
+          imageAddonIconName={(itemImage && !showArrowsOnly) ? directionIcon : undefined}
           subtext={dateTime}
           itemValue={`${directionSymbol} ${formattedValue} ${notification.asset}`}
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
