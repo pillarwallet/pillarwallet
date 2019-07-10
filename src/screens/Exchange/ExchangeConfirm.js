@@ -67,7 +67,8 @@ const Value = styled(BoldText)`
 `;
 
 const LabelSub = styled(Label)`
-  font-size: ${fontSizes.tiny};
+  margin-top: 5px;
+  color: ${baseColors.black};
 `;
 
 const SpeedButton = styled(Button)`
@@ -318,11 +319,11 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             <View>
               <LabeledRow>
                 <Label>You will receive</Label>
-                <LabelSub>
-                  Note: final amount may be higher or lower than expected at the end of a transaction.
-                  Crypto is volatile, the rate fluctuates.
-                </LabelSub>
                 <Value>{`${receiveAmount} ${toAssetCode}`}</Value>
+                <LabelSub>
+                    Final amount may be higher or lower than expected at the end of a transaction.
+                    Crypto is volatile, the rate fluctuates.
+                </LabelSub>
               </LabeledRow>
               <LabeledRow>
                 <Label>You will pay</Label>
