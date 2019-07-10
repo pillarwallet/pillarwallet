@@ -66,6 +66,11 @@ const Value = styled(BoldText)`
   font-size: ${fontSizes.medium}
 `;
 
+const LabelSub = styled(Label)`
+  margin-top: 5px;
+  color: ${baseColors.black};
+`;
+
 const SpeedButton = styled(Button)`
   margin-top: 14px;
   display: flex;
@@ -302,7 +307,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           <Paragraph style={{ marginBottom: 30, paddingTop: spacing.medium }}>
             {setTokenAllowance
               ? 'Review the details and enable asset as well as the cost of data transaction.'
-              : 'Review the details and confirm the exchange rate as well as the cost of transaction.'
+              : 'Review the details and confirm the exchange as well as the cost of transaction.'
             }
           </Paragraph>
           {(setTokenAllowance &&
@@ -315,6 +320,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               <LabeledRow>
                 <Label>You will receive</Label>
                 <Value>{`${receiveAmount} ${toAssetCode}`}</Value>
+                <LabelSub>
+                    Final amount may be higher or lower than expected at the end of a transaction.
+                    Crypto is volatile, the rate fluctuates.
+                </LabelSub>
               </LabeledRow>
               <LabeledRow>
                 <Label>You will pay</Label>
@@ -347,7 +356,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             <Button
               disabled={!session.isOnline || !!errorMessage}
               onPress={() => this.onConfirmTransactionPress(offerOrder)}
-              title={setTokenAllowance ? 'Enable Asset' : 'Confirm exchange'}
+              title={setTokenAllowance ? 'Enable Asset' : 'Confirm Exchange'}
             />
           </FooterWrapper>
         </Footer>
