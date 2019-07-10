@@ -47,6 +47,7 @@ export const fetchCollectiblesAction = () => {
         name,
         description,
         image_preview_url: image,
+        image_thumbnail_url: thumbnail,
       } = collectible;
       const { name: category, address: contractAddress } = assetContract;
       const collectibleName = name || `${category} ${id}`;
@@ -56,7 +57,8 @@ export const fetchCollectiblesAction = () => {
         category,
         name: collectibleName,
         description,
-        icon: (/\.(png)$/i).test(image) ? image : '',
+        thumbnail,
+        icon: (/\.(png|gif)$/i).test(image) ? image : '',
         contractAddress,
         assetContract: category,
         tokenType: COLLECTIBLES,
