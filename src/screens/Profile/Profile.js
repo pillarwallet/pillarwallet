@@ -612,7 +612,7 @@ class Profile extends React.Component<Props, State> {
 
             <ProfileSettingsItem
               key="knowledgebase"
-              label="Knowledgebase"
+              label="Knowledge Base"
               onPress={() => Intercom.displayHelpCenter()}
             />
 
