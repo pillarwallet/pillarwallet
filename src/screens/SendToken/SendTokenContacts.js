@@ -284,7 +284,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           onRead={this.handleQRRead}
         />
         {!!value && !!value.address.length &&
-          <Footer keyboardVerticalOffset={35}>
+          <Footer keyboardVerticalOffset={35} backgroundColor={UIColors.defaultBackgroundColor}>
             <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
           </Footer>
         }
