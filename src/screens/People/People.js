@@ -447,9 +447,9 @@ class PeopleScreen extends React.Component<Props, State> {
           }
 
           {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
-          <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'}>
+          <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'} style={{ flex: 1 }}>
             {!!query && contactState === FETCHING &&
-            <Wrapper center><Spinner /></Wrapper>
+            <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>
             }
 
             {inSearchMode && contactState === FETCHED && !usersFound &&
@@ -469,6 +469,8 @@ class PeopleScreen extends React.Component<Props, State> {
               />
             </Wrapper>
             }
+
+
           </KeyboardAvoidingView>
           }
         </InnerWrapper>

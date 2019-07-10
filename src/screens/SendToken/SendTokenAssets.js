@@ -132,7 +132,6 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
     });
   }
 
-
   renderAsset = ({ item }) => {
     const { balances, navigation, paymentNetworkBalances } = this.props;
     const contact = navigation.getParam('contact', {});

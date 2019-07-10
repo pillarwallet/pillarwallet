@@ -75,9 +75,7 @@ const cardWidth = (columnCount) => ((width - 20) / columnCount) - 15;
 const AssetWrapperAnimated = Animated.createAnimatedComponent(AssetWrapper);
 
 const cardHeight = (smallScreen, extraSmall) => {
-  if (smallScreen && extraSmall) {
-    return 55;
-  } else if (smallScreen) {
+  if ((smallScreen && extraSmall) || smallScreen) {
     return 70;
   } else if (extraSmall) {
     return 88;

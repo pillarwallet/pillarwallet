@@ -103,7 +103,6 @@ type Props = {
   smartWalletFeatureEnabled: boolean,
   history: Array<*>,
   deploySmartWallet: Function,
-  exchangeFeatureEnabled: boolean,
 };
 
 type State = {
@@ -264,7 +263,6 @@ class AssetScreen extends React.Component<Props, State> {
       contacts,
       smartWalletFeatureEnabled,
       deploySmartWallet,
-      exchangeFeatureEnabled,
     } = this.props;
 
     const { showDescriptionModal, activeTab } = this.state;
@@ -393,7 +391,6 @@ class AssetScreen extends React.Component<Props, State> {
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
-              exchangeFeatureEnabled={exchangeFeatureEnabled}
             />
             {!isSendActive &&
             <Wrapper regularPadding style={{ marginTop: 30, alignItems: 'center' }}>
@@ -454,7 +451,6 @@ const mapStateToProps = ({
   featureFlags: {
     data: {
       SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
-      EXCHANGE_ENABLED: exchangeFeatureEnabled,
     },
   },
 }) => ({
@@ -465,7 +461,6 @@ const mapStateToProps = ({
   smartWalletState,
   accounts,
   smartWalletFeatureEnabled,
-  exchangeFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({
