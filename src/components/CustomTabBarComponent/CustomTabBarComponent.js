@@ -18,19 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform } from 'react-native';
 import { BottomTabBar } from 'react-navigation-tabs';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
-import { EXCHANGE_TAB } from 'constants/navigationConstants';
 
-const HiddenTabItemView = () => {
-  return <View style={{ display: 'none' }} />;
-};
+// const HiddenTabItemView = () => {
+//   return <View style={{ display: 'none' }} />;
+// };
 
 type Props = {
   screenProps: {
     smartWalletFeatureEnabled: boolean,
-    exchangeFeatureEnabled: boolean,
   }
 };
 
@@ -39,13 +37,16 @@ export default class CustomTabBarComponent extends React.Component<Props> {
    * if the return is false or undefined then the default button component is rendered
    * otherwise let's pass hidden tab item
    **
-   *  keep method brackets version to support more flags
+   * keep method brackets version to support more flags
+   * retrieve feature flag state from props
+   * add `or` ternary for more feature flags
+   **
+   * const { screenProps: { someFeatureEnabled } } = this.props;
+   * const hideTabButton = route.routeName === SOME_ROUTE_NAME && !someFeatureEnabled;
+   * return hideTabButton && HiddenTabItemView
    */
   getButtonComponent = (route: any) => { // eslint-disable-line
-    const { screenProps: { exchangeFeatureEnabled } } = this.props;
-    // add `or` ternary for more feature flags
-    const hideTabButton = route.routeName === EXCHANGE_TAB && !exchangeFeatureEnabled;
-    return hideTabButton && HiddenTabItemView;
+    // do not return anything if tab doesn't need to be excluded
   };
 
   render() {
