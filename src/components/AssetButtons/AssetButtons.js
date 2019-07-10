@@ -28,7 +28,6 @@ type Props = {
   noBalance?: boolean,
   isSendDisabled?: boolean,
   isReceiveDisabled?: boolean,
-  exchangeFeatureEnabled?: boolean,
 }
 
 const AssetButtonsWrapper = styled.View`
@@ -57,14 +56,12 @@ const AssetButtons = (props: Props) => {
         icon={iconSend}
         onPress={props.onPressSend}
       />
-      {props.exchangeFeatureEnabled &&
-        <CircleButton
-          disabled={props.noBalance || props.isSendDisabled}
-          label="Exchange"
-          icon={iconExchange}
-          onPress={props.onPressExchange}
-        />
-      }
+      <CircleButton
+        disabled={props.noBalance || props.isSendDisabled}
+        label="Exchange"
+        icon={iconExchange}
+        onPress={props.onPressExchange}
+      />
     </AssetButtonsWrapper>
   );
 };
