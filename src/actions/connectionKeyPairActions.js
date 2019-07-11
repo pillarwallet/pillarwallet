@@ -278,7 +278,6 @@ export const updateConnectionKeyPairs = (
           });
           await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
         }
-        dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey));
       } catch (e) {
         await dispatch({
           type: UPDATE_WALLET_STATE,
@@ -290,11 +289,15 @@ export const updateConnectionKeyPairs = (
     if (oldConnectionsCount > 0 || (currentConnectionsCount - connectionIdentityKeys.length) > 0) {
       await dispatch(fetchOldInviteNotificationsAction(walletId));
       await dispatch(restoreAccessTokensAction(walletId));
-      await dispatch(mapIdentityKeysAction(totalConnections, walletId));
+      await dispatch(mapIdentityKeysAction(totalConnections + 25, walletId));
       await dispatch(updateOldConnections(oldConnectionsCount, walletId));
     }
 
     await dispatch(updateConnectionsAction(walletId));
+
+    if (generateKeys) {
+      dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey));
+    }
 
     return Promise.resolve(true);
   };
