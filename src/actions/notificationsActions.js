@@ -32,6 +32,7 @@ import {
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import { updateConnectionsAction } from 'actions/connectionsActions';
 import {
   getExistingChatsAction,
   getChatByContactAction,
@@ -59,9 +60,18 @@ import {
   ADD_WEBSOCKET_RECEIVED_MESSAGE,
   REMOVE_WEBSOCKET_SENT_MESSAGE,
 } from 'constants/chatConstants';
+import { MESSAGE_DISCONNECTED, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
+import {
+  CONNECTION_ACCEPTED_EVENT,
+  CONNECTION_CANCELLED_EVENT,
+  CONNECTION_DISCONNECTED_EVENT,
+  CONNECTION_REJECTED_EVENT,
+  CONNECTION_REQUESTED_EVENT,
+  CONNECTION_COLLECTIBLE_EVENT,
+} from 'constants/socketConstants';
 import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
-import { MESSAGE_DISCONNECTED } from 'constants/invitationsConstants';
 import ChatService from 'services/chat';
+import { SOCKET } from 'services/sockets';
 
 const storage = Storage.getInstance('db');
 
@@ -140,7 +150,53 @@ export const startListeningNotificationsAction = () => {
     const {
       wallet: { data: wallet },
       assets: { data: assets },
+      invitations: { data: invitations },
     } = getState();
+    if (SOCKET && SOCKET.socket && SOCKET.socket.readyState === 1) {
+      SOCKET.onMessage(async response => {
+        const data = JSON.parse(response.data.msg);
+        if (data.type === CONNECTION_REQUESTED_EVENT) {
+          dispatch(fetchInviteNotificationsAction());
+        }
+        if (
+          data.type === CONNECTION_CANCELLED_EVENT ||
+          data.type === CONNECTION_REJECTED_EVENT
+        ) {
+          const updatedInvitations = invitations.filter(({ id }) => id !== data.senderUserData.id);
+          dispatch({
+            type: UPDATE_INVITATIONS,
+            payload: updatedInvitations,
+          });
+        }
+        if (
+          data.type === CONNECTION_ACCEPTED_EVENT ||
+          data.type === CONNECTION_DISCONNECTED_EVENT
+        ) {
+          dispatch(updateConnectionsAction(data.senderUserData.id));
+        }
+        if (data.type === CONNECTION_COLLECTIBLE_EVENT) {
+          dispatch(fetchAllCollectiblesDataAction());
+        }
+        if (data.type === BCX) {
+          dispatch(fetchTransactionsHistoryNotificationsAction());
+          dispatch(fetchTransactionsHistoryAction(data.asset));
+          dispatch(fetchAssetsBalancesAction(assets));
+        }
+        if (
+          data.type === CONNECTION_REQUESTED_EVENT ||
+          data.type === CONNECTION_COLLECTIBLE_EVENT ||
+          data.type === BCX
+        ) {
+          const payload = {
+            title: response.notification.title,
+            message: response.notification.body,
+          };
+          dispatch({ type: ADD_NOTIFICATION, payload });
+          dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
+        }
+      });
+      return;
+    }
     let enabled = await firebase.messaging().hasPermission();
     if (!enabled) {
       try {
@@ -161,7 +217,6 @@ export const startListeningNotificationsAction = () => {
       if (!message._data || !Object.keys(message._data).length) return;
       if (checkForSupportAlert(message._data)) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
-
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
@@ -216,11 +271,11 @@ export const stopListeningNotificationsAction = () => {
 
 export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Function, getState: Function) => { // eslint-disable-line
-    const notificationOpen = await firebase.notifications().getInitialNotification();
+    await SOCKET.init();
     const {
       contacts: { data: contacts },
     } = getState();
-
+    const notificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
       checkForSupportAlert(notificationOpen.notification._data);
       const { type, navigationParams } = processNotification(notificationOpen.notification._data) || {};
@@ -298,6 +353,10 @@ export const stopListeningOnOpenNotificationAction = () => {
 
 export const startListeningChatWebSocketAction = () => {
   return async (dispatch: Function, getState: Function) => {
+    const {
+      contacts: { data: contacts },
+    } = getState();
+
     const chatWebSocket = chat.getWebSocketInstance();
     await chatWebSocket.listen();
     chatWebSocket.onOpen();
@@ -357,12 +416,19 @@ export const startListeningChatWebSocketAction = () => {
               type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
               payload: true,
             });
-            if (!!navParams.contact && !!navParams.contact.username
-              && navParams.contact.username === senderUsername && navParams.chatTabOpen) {
-              const { contact } = navParams;
-              dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
+
+            const senderNameInNavParams = get(navParams, 'contact.username', '')
+              || (get(navParams, 'username', ''));
+            const relatedContact = get(navParams, 'contact', null)
+              || contacts.find(c => c.username === senderNameInNavParams) || {};
+
+            if (senderNameInNavParams === senderUsername && !!navParams.chatTabOpen
+              && !!Object.keys(relatedContact).length) {
+              const { username, id, profileImage } = relatedContact;
+              dispatch(getChatByContactAction(username, id, profileImage));
               return;
             }
+
             dispatch(getExistingChatsAction());
             const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
             if (notification == null) return;

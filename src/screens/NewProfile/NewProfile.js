@@ -31,7 +31,7 @@ import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
-import { fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes, fontWeights, UIColors } from 'utils/variables';
 import { InputTemplate, Form } from 'components/ProfileForm';
 import { Username, MAX_USERNAME_LENGTH } from 'components/ProfileForm/profileFormDefs';
 
@@ -57,6 +57,11 @@ const Text = styled(BoldText)`
   width: 100%;
   text-align: center;
   max-width: 230px;
+`;
+
+const ContentWrapper = styled.View`
+  flex: 1;
+  background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 const formStructure = t.struct({
@@ -235,6 +240,7 @@ class NewProfile extends React.Component<Props, State> {
           <Header
             title="let's get started"
             onBack={retry ? undefined : () => this.props.navigation.goBack()}
+            white
           />
           <Wrapper regularPadding>
             <IntroParagraph light small>
@@ -249,7 +255,7 @@ class NewProfile extends React.Component<Props, State> {
             />
           </Wrapper>
         </Wrapper>
-        <Footer>
+        <Footer backgroundColor={UIColors.defaultBackgroundColor}>
           {!!isUsernameValid &&
           <Button
             onPress={this.handleSubmit}
@@ -289,9 +295,11 @@ class NewProfile extends React.Component<Props, State> {
     const { apiUser } = this.props;
 
     return (
-      <Container>
-        {!apiUser.walletId && this.renderChooseUsernameScreen()}
-        {apiUser.walletId && this.renderWelcomeBackScreen()}
+      <Container color={!apiUser.walletId ? baseColors.white : UIColors.defaultBackgroundColor}>
+        <ContentWrapper>
+          {!apiUser.walletId && this.renderChooseUsernameScreen()}
+          {apiUser.walletId && this.renderWelcomeBackScreen()}
+        </ContentWrapper>
       </Container>
     );
   }

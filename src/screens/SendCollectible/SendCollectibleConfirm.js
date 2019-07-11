@@ -13,7 +13,7 @@ import TextInput from 'components/TextInput';
 import type { CollectibleTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { fetchRinkebyETHBalance } from 'services/assets';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -140,77 +140,77 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const canProceedTesting = parseFloat(rinkebyETH) > parseFloat(txFee) || NETWORK_PROVIDER !== 'ropsten';
 
     return (
-      <React.Fragment>
-        <Container>
-          <Header
-            onBack={() => this.props.navigation.goBack(null)}
-            title="review and confirm"
-          />
-          <ScrollWrapper
-            regularPadding
-            disableAutomaticScroll={Platform.OS === 'android'}
-            innerRef={ref => { this.scroll = ref; }}
-            onKeyboardWillShow={() => {
-              if (Platform.OS === 'android') {
-                this.scroll.scrollToPosition(0, scrollPos);
-              }
+      <Container color={baseColors.white}>
+        <Header
+          onBack={() => this.props.navigation.goBack(null)}
+          title="review and confirm"
+          white
+        />
+        <ScrollWrapper
+          regularPadding
+          disableAutomaticScroll={Platform.OS === 'android'}
+          innerRef={ref => { this.scroll = ref; }}
+          onKeyboardWillShow={() => {
+            if (Platform.OS === 'android') {
+              this.scroll.scrollToPosition(0, scrollPos);
+            }
+          }}
+          color={UIColors.defaultBackgroundColor}
+        >
+          <LabeledRow>
+            <Label>Collectible</Label>
+            <Value>{name}</Value>
+          </LabeledRow>
+          {!!recipientUsername &&
+          <LabeledRow>
+            <Label>Recipient Username</Label>
+            <Value>{recipientUsername}</Value>
+          </LabeledRow>
+          }
+          <LabeledRow>
+            <Label>Recipient Address</Label>
+            <Value>{to}</Value>
+          </LabeledRow>
+          <LabeledRow>
+            <Label>Est. Network Fee</Label>
+            <Value>{txFee} ETH</Value>
+          </LabeledRow>
+          {NETWORK_PROVIDER === 'ropsten' &&
+          <LabeledRow>
+            <Label>Balance in Rinkeby ETH (visible in dev and staging)</Label>
+            <Value>{rinkebyETH} ETH</Value>
+          </LabeledRow>}
+          {!!recipientUsername &&
+          <TextInput
+            inputProps={{
+              onChange: (text) => this.handleNoteChange(text),
+              value: this.state.note,
+              autoCapitalize: 'none',
+              multiline: true,
+              numberOfLines: 3,
+              placeholder: 'Add a note to this transaction',
             }}
-          >
-            <LabeledRow>
-              <Label>Collectible</Label>
-              <Value>{name}</Value>
-            </LabeledRow>
-            {!!recipientUsername &&
-            <LabeledRow>
-              <Label>Recipient Username</Label>
-              <Value>{recipientUsername}</Value>
-            </LabeledRow>
-            }
-            <LabeledRow>
-              <Label>Recipient Address</Label>
-              <Value>{to}</Value>
-            </LabeledRow>
-            <LabeledRow>
-              <Label>Est. Network Fee</Label>
-              <Value>{txFee} ETH</Value>
-            </LabeledRow>
-            {NETWORK_PROVIDER === 'ropsten' &&
-            <LabeledRow>
-              <Label>Balance in Rinkeby ETH (visible in dev and staging)</Label>
-              <Value>{rinkebyETH} ETH</Value>
-            </LabeledRow>}
-            {!!recipientUsername &&
-            <TextInput
-              inputProps={{
-                onChange: (text) => this.handleNoteChange(text),
-                value: this.state.note,
-                autoCapitalize: 'none',
-                multiline: true,
-                numberOfLines: 3,
-                placeholder: 'Add a note to this transaction',
-              }}
-              inputType="secondary"
-              labelBigger
-              noBorder
-              keyboardAvoidance
-              onLayout={(e) => {
-                const scrollPosition = e.nativeEvent.layout.y + 180;
-                this.setState({ scrollPos: scrollPosition });
-              }}
+            inputType="secondary"
+            labelBigger
+            noBorder
+            keyboardAvoidance
+            onLayout={(e) => {
+              const scrollPosition = e.nativeEvent.layout.y + 180;
+              this.setState({ scrollPos: scrollPosition });
+            }}
+          />
+          }
+        </ScrollWrapper>
+        <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
+          <FooterWrapper>
+            <Button
+              disabled={!session.isOnline || !gasInfo.isFetched || !canProceedTesting}
+              onPress={this.handleFormSubmit}
+              title="Confirm Transaction"
             />
-            }
-          </ScrollWrapper>
-          <Footer keyboardVerticalOffset={40}>
-            <FooterWrapper>
-              <Button
-                disabled={!session.isOnline || !gasInfo.isFetched || !canProceedTesting}
-                onPress={this.handleFormSubmit}
-                title="Confirm Transaction"
-              />
-            </FooterWrapper>
-          </Footer>
-        </Container>
-      </React.Fragment>
+          </FooterWrapper>
+        </Footer>
+      </Container>
     );
   }
 }

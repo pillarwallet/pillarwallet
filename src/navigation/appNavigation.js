@@ -22,7 +22,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
-import { Animated, Easing, View, Image } from 'react-native';
+import { Animated, Easing, View, Image, AppState } from 'react-native';
 import { BaseText } from 'components/Typography';
 // import ProfileImage from 'components/ProfileImage/ProfileImage';
 
@@ -37,6 +37,7 @@ import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
+import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
 import ContactScreen from 'screens/Contact';
 import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
@@ -63,7 +64,7 @@ import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallReq
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
-import ContactInfo from 'screens/ContactInfo';
+import ConnectedContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 import UpgradeIntroScreen from 'screens/UpgradeToSmartWallet/UpgradeIntroScreen';
 import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
@@ -115,6 +116,7 @@ import {
   EXCHANGE_TAB,
   EXCHANGE,
   EXCHANGE_CONFIRM,
+  EXCHANGE_INFO,
   PROFILE,
   PEOPLE,
   CONTACT,
@@ -187,18 +189,17 @@ import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 
 const SLEEP_TIMEOUT = 20000;
+const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_new.png');
 const iconExchange = require('assets/icons/icon_exchange_new.png');
-const iconPeople = require('assets/icons/icon_people_group.png');
-// const iconMe = require('assets/icons/icon_me.png');
+const iconPeople = require('assets/icons/icon_people.png');
 const iconHome = require('assets/icons/icon_home_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconExchangeActive = require('assets/icons/icon_exchange_active.png');
-const iconPeopleActive = require('assets/icons/icon_people_group_active.png');
-// const iconMeActive = require('assets/icons/icon_me_active.png');
+const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
 
 const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
@@ -237,6 +238,7 @@ const assetsFlow = createStackNavigator(
     [ASSETS]: AssetsScreen,
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
+    [BADGE]: BadgeScreen,
     [CONTACT]: ContactScreen,
   },
   StackNavigatorConfig,
@@ -248,6 +250,7 @@ assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 const exchangeFlow = createStackNavigator({
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
+  [EXCHANGE_INFO]: ExchangeInfoScreen,
 }, StackNavigatorConfig);
 
 // ME FLOW
@@ -264,6 +267,7 @@ const peopleFlow = createStackNavigator({
   [CONTACT]: ContactScreen,
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
   [COLLECTIBLE]: CollectibleScreen,
+  [BADGE]: BadgeScreen,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -283,7 +287,7 @@ const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
-  [CONTACT_INFO]: ContactInfo,
+  [CONTACT_INFO]: ConnectedContactInfo,
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [CONTACT]: ContactScreen,
   [COLLECTIBLE]: CollectibleScreen,
@@ -572,9 +576,17 @@ type Props = {
   exchangeFeatureEnabled: boolean,
 }
 
+type State = {
+  lastAppState: string,
+};
+
 let lockTimer;
 
-class AppFlow extends React.Component<Props, {}> {
+class AppFlow extends React.Component<Props, State> {
+  state = {
+    lastAppState: AppState.currentState,
+  };
+
   componentDidMount() {
     const {
       startListeningNotifications,
@@ -649,13 +661,19 @@ class AppFlow extends React.Component<Props, {}> {
     const {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
+      startListeningChatWebSocket,
       stopListeningChatWebSocket,
       updateSignalInitiatedState,
       navigation,
       isPickingImage,
     } = this.props;
+    const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
-    if (APP_LOGOUT_STATES.includes(nextAppState) && !isPickingImage) {
+    if (isPickingImage) return;
+    // only checking if background state for logout or websocket channel close
+    if (APP_LOGOUT_STATES.includes(nextAppState)) {
+      // close websocket channel instantly to receive PN while in background
+      stopListeningChatWebSocket();
       lockTimer = BackgroundTimer.setTimeout(() => {
         const pathAndParams = navigation.router.getPathAndParamsForState(navigation.state);
         const lastActiveScreen = pathAndParams.path.split('/').slice(-1)[0];
@@ -664,10 +682,13 @@ class AppFlow extends React.Component<Props, {}> {
         navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
         stopListeningIntercomNotifications();
-        stopListeningChatWebSocket();
         updateSignalInitiatedState(false);
       }, SLEEP_TIMEOUT);
+    } else if (APP_LOGOUT_STATES.includes(lastAppState)
+      && nextAppState === ACTIVE_APP_STATE) {
+      startListeningChatWebSocket();
     }
+    this.setState({ lastAppState: nextAppState });
   };
 
   render() {

@@ -20,14 +20,28 @@
 import {
   ADD_OFFER,
   RESET_OFFERS,
-  SET_SHAPESHIFT_ACCESS_TOKEN,
+  SET_EXCHANGE_SEARCH_REQUEST,
+  SET_EXECUTING_TRANSACTION,
+  SET_DISMISS_TRANSACTION,
+  SET_EXCHANGE_ALLOWANCES,
+  ADD_EXCHANGE_ALLOWANCE,
+  UPDATE_EXCHANGE_ALLOWANCE,
+  ADD_CONNECTED_EXCHANGE_PROVIDER,
+  REMOVE_CONNECTED_EXCHANGE_PROVIDER,
+  SET_CONNECTED_EXCHANGE_PROVIDERS,
+  MARK_NOTIFICATION_SEEN,
 } from 'constants/exchangeConstants';
-import type { Offer } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
 
 export type ExchangeReducerState = {
   data: {
     offers: Offer[],
     shapeshiftAccessToken?: string,
+    searchRequest?: ExchangeSearchRequest,
+    executingTransaction: boolean,
+    allowances: Allowance[],
+    connectedProviders: ExchangeProvider[],
+    hasNotification: boolean,
   },
 };
 
@@ -39,6 +53,10 @@ export type ExchangeReducerAction = {
 const initialState = {
   data: {
     offers: [],
+    executingTransaction: false,
+    allowances: [],
+    connectedProviders: [],
+    hasNotification: false,
   },
 };
 
@@ -66,12 +84,103 @@ export default function exchangeReducer(
           ],
         },
       };
-    case SET_SHAPESHIFT_ACCESS_TOKEN:
+    case SET_EXCHANGE_SEARCH_REQUEST:
       return {
         ...state,
         data: {
           ...state.data,
-          shapeshiftAccessToken: action.payload,
+          searchRequest: action.payload,
+        },
+      };
+    case SET_EXECUTING_TRANSACTION:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          executingTransaction: true,
+        },
+      };
+    case SET_DISMISS_TRANSACTION:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          executingTransaction: false,
+        },
+      };
+    case SET_EXCHANGE_ALLOWANCES:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          allowances: action.payload,
+        },
+      };
+    case ADD_EXCHANGE_ALLOWANCE:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          allowances: [
+            ...state.data.allowances,
+            action.payload,
+          ],
+          hasNotification: true,
+        },
+      };
+    case UPDATE_EXCHANGE_ALLOWANCE:
+      const {
+        transactionHash,
+      } = action.payload || {};
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          allowances: [
+            ...state.data.allowances.filter(
+              ({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash,
+            ),
+            action.payload,
+          ],
+          hasNotification: true,
+        },
+      };
+    case SET_CONNECTED_EXCHANGE_PROVIDERS:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          connectedProviders: action.payload,
+        },
+      };
+    case ADD_CONNECTED_EXCHANGE_PROVIDER:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          connectedProviders: [
+            ...state.data.connectedProviders,
+            action.payload,
+          ],
+          hasNotification: true,
+        },
+      };
+    case REMOVE_CONNECTED_EXCHANGE_PROVIDER:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          connectedProviders: [
+            ...state.data.connectedProviders.filter(({ id }) => id !== action.payload),
+          ],
+        },
+      };
+    case MARK_NOTIFICATION_SEEN:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          hasNotification: false,
         },
       };
     default:

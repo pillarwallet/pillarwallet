@@ -38,6 +38,7 @@ type Props = {
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
   onModalHidden?: Function,
+  onModalShow?: Function,
   noClose?: boolean,
   fullScreen?: boolean,
   isVisible: boolean,
@@ -178,6 +179,7 @@ export default class SlideModal extends React.Component<Props, *> {
       dotColor,
       fullScreenComponent,
       onModalHidden,
+      onModalShow,
       noClose,
       fullScreen,
       subtitle,
@@ -266,6 +268,7 @@ export default class SlideModal extends React.Component<Props, *> {
         scrollTo={this.handleScroll}
         onSwipeComplete={this.hideModal}
         onModalHide={onModalHidden}
+        onModalShow={onModalShow}
         onBackdropPress={this.hideModal}
         backdropOpacity={fullScreen ? 1 : 0.7}
         backdropColor={fullScreen ? backgroundColor : baseColors.black}

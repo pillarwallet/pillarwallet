@@ -19,7 +19,6 @@
 */
 import get from 'lodash.get';
 import orderBy from 'lodash.orderby';
-import { BigNumber } from 'bignumber.js';
 import { uniqBy } from 'utils/common';
 import {
   SET_HISTORY,
@@ -37,16 +36,31 @@ import { checkForMissedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
+import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { ETH } from '../constants/assetsConstants';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
+
+const afterHistoryUpdatedAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      featureFlags: {
+        data: {
+          SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
+          EXCHANGE_ENABLED: exchangeFeatureEnabled,
+        },
+      },
+    } = getState();
+    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
+    if (exchangeFeatureEnabled) dispatch(checkEnableExchangeAllowanceTransactionsAction());
+  };
+};
 
 export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
       history: { data: currentHistory },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
@@ -71,7 +85,7 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
       payload: updatedHistory,
     });
 
-    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
+    dispatch(afterHistoryUpdatedAction());
   };
 };
 
@@ -102,6 +116,8 @@ export const fetchContactTransactionsAction = (contactAddress: string, asset?: s
       type: SET_HISTORY,
       payload: updatedHistory,
     });
+
+    dispatch(afterHistoryUpdatedAction());
   };
 };
 
@@ -111,7 +127,6 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       accounts: { data: accounts },
       history: { data: currentHistory },
       appSettings: { data: { lastTxSyncDatetimes = {} } },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const walletId = getActiveAccountWalletId(accounts);
@@ -154,7 +169,6 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
 
     const lastCreatedAt = Math.max(...updatedAccountHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     const updatedLastTxSyncDatetimes = {
       ...lastTxSyncDatetimes,
@@ -169,6 +183,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       type: SET_HISTORY,
       payload: updatedHistory,
     });
+    dispatch(afterHistoryUpdatedAction());
   };
 };
 
@@ -216,6 +231,9 @@ export const updateTransactionStatusAction = (hash: string) => {
       type: SET_HISTORY,
       payload: updatedHistory,
     });
+
+    dispatch(afterHistoryUpdatedAction());
+
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
   };
 };
@@ -242,7 +260,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
     const accountId = getActiveAccountId(accounts);
     const accountHistory = currentHistory[accountId] || [];
 
-    // 1) filter out frecords those exists in accountHistory
+    // 1) filter out records those exists in accountHistory
     const ethTransactions = ethHistory.filter(tx => {
       const hashExists = accountHistory.find(el => el.hash === tx.hash);
       return !hashExists;
@@ -268,7 +286,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
         from: tx.from,
         to: tx.to,
         hash: tx.hash,
-        value: new BigNumber((tx.value) * (10 ** 18)),
+        value: tx.value,
         asset: ETH,
         createdAt: tx.timestamp,
         status: tx.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,
@@ -281,10 +299,9 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
           createdAt: tx.timestamp,
           from: tx.from,
           hash: tx.transactionHash,
-          protocol: 'Ethereum',
           status: TX_CONFIRMED_STATUS,
           to: tx.to,
-          value: new BigNumber(tx.value).toString(),
+          value: tx.value,
         });
       }),
     ];

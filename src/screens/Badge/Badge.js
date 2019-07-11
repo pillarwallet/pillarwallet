@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { fontSizes, spacing, baseColors } from 'utils/variables';
+import { fontSizes, spacing, baseColors, UIColors } from 'utils/variables';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import BadgeImage from 'components/BadgeImage';
@@ -54,14 +54,17 @@ class Badge extends React.Component<Props, {}> {
   render() {
     const { navigation, badges } = this.props;
     const badgeId = Number(navigation.getParam('id', 0));
-    const badge = badges.find(({ id }) => id === badgeId) || {};
+    const passedBadge = navigation.getParam('badge', null);
+    const hideDescription = navigation.getParam('hideDescription', false);
+    const badge = passedBadge || badges.find(({ id }) => id === badgeId) || {};
     return (
-      <Container inset={{ bottom: 0 }}>
+      <Container inset={{ bottom: 0 }} color={baseColors.white}>
         <Header
           title={badge.name || 'Unknown badge'}
           onBack={() => navigation.goBack(null)}
+          white
         />
-        <ScrollWrapper>
+        <ScrollWrapper color={UIColors.defaultBackgroundColor}>
           <BadgeWrapper>
             <Image data={badge} size="150" />
             {!!badge.subtitle && (
@@ -69,7 +72,7 @@ class Badge extends React.Component<Props, {}> {
               {badge.subtitle}
             </Subtitle>
             )}
-            {!!badge.description && (
+            {!!(badge.description && !hideDescription) && (
             <Description>
               {badge.description}
             </Description>

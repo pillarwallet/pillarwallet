@@ -48,6 +48,7 @@ import Tabs from 'components/Tabs';
 // types
 import type { Assets, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
+import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 
@@ -75,7 +76,7 @@ import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstan
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, spacing, fontSizes, UIColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
@@ -85,7 +86,6 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 import AssetsList from './AssetsList';
 import CollectiblesList from './CollectiblesList';
 import HeaderButtonsForSmartWallet from './HeaderButtonsForSmartWallet';
-
 
 type Props = {
   fetchInitialAssets: () => Function,
@@ -105,6 +105,7 @@ type Props = {
   assetsSearchState: string,
   addAsset: Function,
   removeAsset: Function,
+  badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
   smartWalletFeatureEnabled: boolean,
@@ -143,6 +144,8 @@ const horizontalPadding = (layout, side) => {
 const TokensWrapper = styled(Wrapper)`
    flex: 1;
    height: 100%;
+   padding-top: ${spacing.large}px;
+   background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 const SearchSpinner = styled(Wrapper)`
@@ -165,6 +168,11 @@ const Message = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   text-align: center;
+`;
+
+const ListWrapper = styled.View`
+  position: relative;
+  flex: 1;
 `;
 
 class AssetsScreen extends React.Component<Props, State> {
@@ -396,6 +404,7 @@ class AssetsScreen extends React.Component<Props, State> {
       assetsSearchState,
       navigation,
       collectibles,
+      badges,
       accounts,
       smartWalletState,
       smartWalletFeatureEnabled,
@@ -438,6 +447,9 @@ class AssetsScreen extends React.Component<Props, State> {
       ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
       : collectibles;
 
+    const filteredBadges = isInCollectiblesSearchMode
+      ? badges.filter(({ name = '' }) => name.toUpperCase().includes(query.toUpperCase()))
+      : badges;
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
@@ -446,7 +458,7 @@ class AssetsScreen extends React.Component<Props, State> {
     const isSmartWallet = smartWalletStatus.hasAccount;
 
     return (
-      <Container inset={{ bottom: 0 }}>
+      <Container inset={{ bottom: 0 }} color={baseColors.white}>
         <SearchBlock
           headerProps={{
             title: 'assets',
@@ -462,6 +474,7 @@ class AssetsScreen extends React.Component<Props, State> {
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={activeTab === TOKENS ? !!assetsSearchState : !!isInCollectiblesSearchMode}
           navigation={navigation}
+          white
         />
         {(blockAssetsView &&
           <Wrapper flex={1} regularPadding center>
@@ -484,8 +497,13 @@ class AssetsScreen extends React.Component<Props, State> {
             </SearchSpinner>
             }
             {!inSearchMode &&
-            <React.Fragment>
-              {!isInCollectiblesSearchMode && <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />}
+            <ListWrapper>
+              {!isInCollectiblesSearchMode &&
+              <Tabs
+                initialActiveTab={activeTab}
+                tabs={assetsTabs}
+                isFloating
+              />}
               {activeTab === TOKENS && (
                 <AssetsList
                   navigation={navigation}
@@ -498,13 +516,13 @@ class AssetsScreen extends React.Component<Props, State> {
               {activeTab === COLLECTIBLES && (
                 <CollectiblesList
                   collectibles={filteredCollectibles}
+                  badges={filteredBadges}
                   searchQuery={query}
                   navigation={navigation}
                   horizontalPadding={horizontalPadding}
                   updateHideRemoval={this.updateHideRemoval}
-                />
-              )}
-            </React.Fragment>}
+                />)}
+            </ListWrapper>}
           </TokensWrapper>
         }
       </Container>
@@ -523,6 +541,7 @@ const mapStateToProps = ({
   },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  badges: { data: badges },
   smartWallet: smartWalletState,
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
@@ -535,6 +554,7 @@ const mapStateToProps = ({
   rates,
   baseFiatCurrency,
   assetsLayout,
+  badges,
   smartWalletState,
   smartWalletFeatureEnabled,
 });

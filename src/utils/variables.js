@@ -88,6 +88,7 @@ export const baseColors = {
   deepSkyBlue: '#01BFFF',
   ultramarine: '#0a0c78',
   toryBlue: '#2f3195',
+  blueViolet: '#b233e4',
 };
 
 export const brandColors = [

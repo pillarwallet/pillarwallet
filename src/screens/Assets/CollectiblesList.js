@@ -25,6 +25,7 @@ import {
   RefreshControl,
   FlatList,
   Keyboard,
+  SectionList,
 } from 'react-native';
 import styled from 'styled-components/native';
 import isEqualWith from 'lodash.isequalwith';
@@ -33,26 +34,33 @@ import type { NavigationScreenProp } from 'react-navigation';
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
-import { Wrapper } from 'components/Layout';
+import Title from 'components/Title';
+import BadgeTouchableItem from 'components/BadgeTouchableItem';
 
 // actions
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import { fetchBadgesAction } from 'actions/badgesActions';
 
 // constants
-import { EXTRASMALL } from 'constants/assetsLayoutConstants';
-import { COLLECTIBLE } from 'constants/navigationConstants';
+import { COLLECTIBLE, BADGE } from 'constants/navigationConstants';
+import { COLLECTIBLES, BADGES } from 'constants/assetsConstants';
 
 // utils
 import { smallScreen } from 'utils/common';
+import { spacing } from 'utils/variables';
 
 // types
 import type { Collectible } from 'models/Collectible';
+import type { Badges } from 'models/Badge';
 
-
-const EmptyStateWrapper = styled(Wrapper)`
-  padding-top: 90px;
-  padding-bottom: 90px;
+const EmptyStateWrapper = styled.View`
   align-items: center;
+  justify-content: center;
+  padding: 20px;
+`;
+
+const StyledTitle = styled(Title)`
+  margin: ${spacing.medium}px 2px;
 `;
 
 const viewConfig = {
@@ -63,11 +71,13 @@ const viewConfig = {
 
 type Props = {
   collectibles: Collectible[],
+  badges: Badges,
   searchQuery: string,
   navigation: NavigationScreenProp<*>,
   horizontalPadding: Function,
   fetchAllCollectiblesData: Function,
   updateHideRemoval: Function,
+  fetchBadges: Function,
 }
 
 class CollectiblesList extends React.Component<Props> {
@@ -93,20 +103,43 @@ class CollectiblesList extends React.Component<Props> {
     return (
       <AssetCardMinimized
         {...item}
+        icon={item.thumbnail || item.icon}
         smallScreen={smallScreen()}
         onPress={() => { this.handleCardTap(item); }}
         isCollectible
         columnCount={2}
+        useSVGShadow
+      />
+    );
+  };
+
+  renderBadge = ({ item }) => {
+    const { navigation } = this.props;
+    return (
+      <BadgeTouchableItem
+        data={item}
+        onPress={() => navigation.navigate(BADGE, { id: item.id })}
+      />
+    );
+  };
+
+  renderItem = (item) => {
+    const { navigation } = this.props;
+    return (
+      <BadgeTouchableItem
+        data={item}
+        onPress={() => navigation.navigate(BADGE, { id: item.id })}
       />
     );
   };
 
   render() {
     const {
-      fetchAllCollectiblesData,
-      collectibles,
       searchQuery,
-      horizontalPadding,
+      badges,
+      fetchAllCollectiblesData,
+      fetchBadges,
+      collectibles,
     } = this.props;
 
     const emptyStateInfo = {
@@ -119,34 +152,79 @@ class CollectiblesList extends React.Component<Props> {
       emptyStateInfo.bodyText = 'Check if the name was entered correctly';
     }
 
+    const sectionData = [
+      {
+        key: COLLECTIBLES,
+        title: 'all collectibles.',
+        data: [collectibles],
+        emptyStateInfo: {
+          title: 'No collectibles',
+          bodyText: 'There are no collectibles in this wallet',
+        },
+      },
+    ];
+
+    if (badges.length) {
+      sectionData.unshift({
+        key: BADGES,
+        title: 'game of badges.',
+        data: [badges],
+      });
+    }
+
     return (
-      <FlatList
-        data={collectibles}
-        keyExtractor={item => `${item.assetContract}${item.id}`}
-        renderItem={this.renderCollectible}
-        style={{ width: '100%' }}
-        contentContainerStyle={{
-          paddingVertical: 6,
-          paddingLeft: horizontalPadding(EXTRASMALL, 'left'),
-          paddingRight: horizontalPadding(EXTRASMALL, 'right'),
-          width: '100%',
+      <SectionList
+        sections={sectionData}
+        renderSectionHeader={({ section }) => {
+          if (sectionData.length > 1 && section.title) { // no need to show SectionList title if there's only 1 section
+            return (
+              <StyledTitle noMargin style={{ marginLeft: spacing.mediumLarge }} subtitle title={section.title} />
+            );
+          }
+          return null;
         }}
-        numColumns={2}
+        contentContainerStyle={sectionData.length === 1 && !collectibles.length
+        ? {
+            justifyContent: 'center',
+            flex: 1,
+          }
+        : { paddingTop: 40 }}
+        stickySectionHeadersEnabled={false}
+        keyExtractor={(item) => item.key}
         refreshControl={
           <RefreshControl
             refreshing={false}
-            onRefresh={() => fetchAllCollectiblesData()}
+            onRefresh={() => {
+              fetchAllCollectiblesData();
+              fetchBadges();
+            }}
           />
         }
         onScroll={() => Keyboard.dismiss()}
-        ListEmptyComponent={
-          <EmptyStateWrapper fullScreen>
-            <EmptyStateParagraph {...emptyStateInfo} />
-          </EmptyStateWrapper>
-        }
-        initialNumToRender={10}
-        removeClippedSubviews
-        viewabilityConfig={viewConfig}
+        renderItem={({ item, section }) => (
+          <FlatList
+            data={item}
+            horizontal={section.key === BADGES}
+            keyExtractor={(it) => {
+              return section.key === COLLECTIBLE ? `${it.assetContract}${it.id}` : it.id.toString();
+            }}
+            renderItem={section.key === COLLECTIBLES ? this.renderCollectible : this.renderBadge}
+            numColumns={section.key === COLLECTIBLES ? 2 : 1}
+            style={[
+              { width: '100%' },
+              section.key === COLLECTIBLES ? { paddingHorizontal: 10 } : {},
+              ]}
+            contentContainerStyle={section.key === BADGES ? { paddingHorizontal: 10 } : {}}
+            ListEmptyComponent={
+              <EmptyStateWrapper fullScreen>
+                <EmptyStateParagraph {...section.emptyStateInfo} />
+              </EmptyStateWrapper>
+            }
+            initialNumToRender={section.key === BADGES ? 5 : 4}
+            removeClippedSubviews={section.key === COLLECTIBLES}
+            viewabilityConfig={viewConfig}
+          />
+        )}
       />
     );
   }
@@ -154,6 +232,7 @@ class CollectiblesList extends React.Component<Props> {
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
+  fetchBadges: () => dispatch(fetchBadgesAction()),
 });
 
 export default connect(null, mapDispatchToProps)(CollectiblesList);

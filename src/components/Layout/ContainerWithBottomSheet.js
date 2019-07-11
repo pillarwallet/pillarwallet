@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { StatusBar } from 'react-native';
 import styled from 'styled-components/native';
 import isEqual from 'lodash.isequal';
 import BottomSheet from '../BottomSheet';
@@ -80,7 +81,12 @@ export default class ContainerWithBottomSheet extends React.Component<Props, Sta
       : 0;
 
     return (
-      <ContainerOuter color={color} style={style} forceInset={{ top: 'always', ...inset }}>
+      <ContainerOuter
+        color={color}
+        style={style}
+        forceInset={{ top: 'always', ...inset }}
+        androidStatusbarHeight={StatusBar.currentHeight}
+      >
         <ContainerInner
           center={center}
           style={{ paddingBottom: bottomPadding + this.sheetHeaderHeight }}

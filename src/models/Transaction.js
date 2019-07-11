@@ -57,6 +57,7 @@ export type TokenTransactionPayload = {
   signOnly?: ?boolean,
   signedHash?: ?string,
   data?: string,
+  extra?: Object,
 }
 
 export type CollectibleTransactionPayload = {

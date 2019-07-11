@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
+import { CachedImage } from 'react-native-cached-image';
 
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -36,11 +37,13 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 import { fetchGasInfoAction } from 'actions/historyActions';
+import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
+import { getProviderDisplayName, getProviderLogo } from 'utils/exchange';
 
 import type { GasInfo } from 'models/GasInfo';
 import type { Asset, Balances, Rates } from 'models/Asset';
@@ -54,7 +57,6 @@ const FooterWrapper = styled.View`
   padding: 0 20px;
   width: 100%;
 `;
-
 
 const LabeledRow = styled.View`
   margin: 10px 0;
@@ -82,6 +84,18 @@ const WarningMessage = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
 `;
 
+const ProviderWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-top: 6px;
+`;
+
+const ProviderIcon = styled(CachedImage)`
+  width: 24px;
+  height: 24px;
+  margin-right: 4px;
+`;
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
@@ -91,53 +105,74 @@ type Props = {
   baseFiatCurrency: string,
   supportedAssets: Asset[],
   balances: Balances,
+  executingExchangeTransaction: boolean,
+  setDismissTransaction: Function,
 };
 
 type State = {
   showFeeModal: boolean,
   transactionSpeed: string,
+  gasLimit: number,
 }
 
 const SLOW = 'min';
 const NORMAL = 'avg';
 const FAST = 'max';
 
+// do not add exchange provider to speed types list as it might not always be present
 const SPEED_TYPES = {
   [SLOW]: 'Slow',
   [NORMAL]: 'Normal',
   [FAST]: 'Fast',
 };
-const GAS_LIMIT = 500000;
+
+const DEFAULT_GAS_LIMIT = 500000;
 
 class ExchangeConfirmScreen extends React.Component<Props, State> {
-  state = {
-    showFeeModal: false,
-    transactionSpeed: NORMAL,
-  };
+  constructor(props) {
+    super(props);
+    const { navigation } = this.props;
+    const { gasLimit = DEFAULT_GAS_LIMIT }: OfferOrder = navigation.getParam('offerOrder', {});
+    this.state = {
+      showFeeModal: false,
+      transactionSpeed: NORMAL,
+      gasLimit,
+    };
+  }
 
   componentDidMount() {
     const { fetchGasInfo } = this.props;
     fetchGasInfo();
-    this.setSelectedTransactionFee();
   }
 
-  setSelectedTransactionFee = () => {
-    const { navigation } = this.props;
-    const offerOrder = navigation.getParam('offerOrder', {});
-    const { transactionSpeed } = offerOrder;
-    this.setState({ transactionSpeed });
-  };
+  componentDidUpdate(prevProps: Props) {
+    const {
+      executingExchangeTransaction,
+      navigation,
+      fetchGasInfo,
+      session: { isOnline },
+    } = this.props;
+    if (!executingExchangeTransaction) {
+      navigation.goBack();
+      return;
+    }
+    if (prevProps.session.isOnline !== isOnline && isOnline) {
+      fetchGasInfo();
+    }
+  }
 
   getGasPriceWei = (txSpeed?: string) => {
-    txSpeed = txSpeed || this.state.transactionSpeed;
+    const { transactionSpeed } = this.state;
+    txSpeed = txSpeed || transactionSpeed;
     const { gasInfo } = this.props;
     const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
     return utils.parseUnits(gasPrice.toString(), 'gwei');
   };
 
   getTxFeeInWei = (txSpeed?: string) => {
+    const { gasLimit } = this.state;
     const gasPriceWei = this.getGasPriceWei(txSpeed);
-    return gasPriceWei.mul(GAS_LIMIT);
+    return gasPriceWei.mul(gasLimit);
   };
 
   renderTxSpeedButtons = () => {
@@ -146,13 +181,15 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     return Object.keys(SPEED_TYPES).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
+      // $FlowFixMe
+      const speedTitle = SPEED_TYPES[txSpeed];
       return (
         <SpeedButton
           key={txSpeed}
           primaryInverted
           onPress={() => this.handleGasPriceChange(txSpeed)}
         >
-          <TextLink>{SPEED_TYPES[txSpeed]} - {feeInEth} ETH</TextLink>
+          <TextLink>{speedTitle} - {feeInEth} ETH</TextLink>
           <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
         </SpeedButton>
       );
@@ -171,7 +208,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       navigation,
       supportedAssets,
     } = this.props;
-    const { transactionSpeed } = this.state;
+    const {
+      transactionSpeed,
+      gasLimit,
+    } = this.state;
 
     const {
       payAmount,
@@ -180,18 +220,20 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       transactionObj: {
         data,
       } = {},
+      setTokenAllowance,
+      provider,
     } = offerOrder;
 
     // going from previous screen, asset will always be present in reducer
     const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
     const gasPrice = this.getGasPriceWei(transactionSpeed);
-    const txFeeInWei = gasPrice.mul(GAS_LIMIT);
+    const txFeeInWei = gasPrice.mul(gasLimit);
 
     const transactionPayload: TokenTransactionPayload = {
-      gasLimit: GAS_LIMIT,
+      gasLimit,
       txFeeInWei,
       gasPrice,
-      amount: payAmount,
+      amount: setTokenAllowance ? 0 : payAmount,
       to: payToAddress,
       symbol: fromAssetCode,
       contractAddress: asset ? asset.address : '',
@@ -199,7 +241,30 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       data,
     };
 
+    if (setTokenAllowance) {
+      transactionPayload.extra = {
+        allowance: {
+          provider,
+          assetCode: fromAssetCode,
+        },
+      };
+    }
+
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload, goBackDismiss: true });
+  };
+
+
+  handleBack = () => {
+    const {
+      setDismissTransaction,
+      executingExchangeTransaction,
+      navigation,
+    } = this.props;
+    if (executingExchangeTransaction) {
+      setDismissTransaction();
+    } else {
+      navigation.goBack();
+    }
   };
 
   render() {
@@ -216,6 +281,8 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       payAmount,
       toAssetCode,
       fromAssetCode,
+      setTokenAllowance,
+      provider,
     } = offerOrder;
 
     const txFeeInWei = this.getTxFeeInWei(transactionSpeed);
@@ -225,22 +292,43 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       ? balanceInWei.sub(utils.parseUnits(payAmount.toString(), 'ether')).gte(txFeeInWei)
       : balanceInWei.gte(txFeeInWei);
     const errorMessage = !enoughBalance && 'Not enough ETH for transaction fee';
+    const providerLogo = getProviderLogo(provider);
+    const providerName = getProviderDisplayName(provider);
 
     return (
-      <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
-        <Header title="exchange" onBack={() => navigation.goBack(null)} />
-        <ScrollWrapper regularPadding>
-          <Paragraph style={{ marginBottom: 30 }}>
-            Review the details and confirm the exchange rate as well as the cost of transaction.
+      <Container color={baseColors.white} inset={{ bottom: 0 }}>
+        <Header title="exchange" onBack={this.handleBack} white />
+        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+          <Paragraph style={{ marginBottom: 30, paddingTop: spacing.medium }}>
+            {setTokenAllowance
+              ? 'Review the details and enable asset as well as the cost of data transaction.'
+              : 'Review the details and confirm the exchange rate as well as the cost of transaction.'
+            }
           </Paragraph>
-          <LabeledRow>
-            <Label>Amount to receive</Label>
-            <Value>{`${receiveAmount} ${toAssetCode}`}</Value>
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Amount to pay</Label>
-            <Value>{`${payAmount} ${fromAssetCode}`}</Value>
-          </LabeledRow>
+          {(setTokenAllowance &&
+            <LabeledRow>
+              <Label>Asset to enable</Label>
+              <Value>{fromAssetCode}</Value>
+            </LabeledRow>
+          ) ||
+            <View>
+              <LabeledRow>
+                <Label>You will receive</Label>
+                <Value>{`${receiveAmount} ${toAssetCode}`}</Value>
+              </LabeledRow>
+              <LabeledRow>
+                <Label>You will pay</Label>
+                <Value>{`${payAmount} ${fromAssetCode}`}</Value>
+              </LabeledRow>
+              <LabeledRow>
+                <Label>Exchange</Label>
+                <ProviderWrapper>
+                  {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
+                  <Value>{providerName}</Value>
+                </ProviderWrapper>
+              </LabeledRow>
+            </View>
+          }
           <LabeledRow>
             <Label>Transaction fee</Label>
             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
@@ -253,13 +341,13 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             </View>
           </LabeledRow>
         </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40}>
+        <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
           {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <Button
               disabled={!session.isOnline || !!errorMessage}
               onPress={() => this.onConfirmTransactionPress(offerOrder)}
-              title="Confirm Transaction"
+              title={setTokenAllowance ? 'Enable Asset' : 'Confirm exchange'}
             />
           </FooterWrapper>
         </Footer>
@@ -283,12 +371,14 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   history: { gasInfo },
   assets: { supportedAssets },
+  exchange: { data: { executingTransaction: executingExchangeTransaction } },
 }) => ({
   session,
   rates,
   baseFiatCurrency,
   gasInfo,
   supportedAssets,
+  executingExchangeTransaction,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -302,6 +392,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
+  setDismissTransaction: () => dispatch(setDismissTransactionAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen);

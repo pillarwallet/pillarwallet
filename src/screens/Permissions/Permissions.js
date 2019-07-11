@@ -26,7 +26,7 @@ import Header from 'components/Header';
 import { Paragraph, TextLink, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
-import { fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { handleUrlPress } from 'utils/common';
 import ButtonText from 'components/ButtonText';
 import { NEW_WALLET, IMPORT_WALLET } from 'constants/navigationConstants';
@@ -80,14 +80,13 @@ class Permissions extends React.Component<Props, State> {
     const { navigation } = this.props;
 
     return (
-      <Container>
-        <Header title="before we start" onBack={() => this.props.navigation.goBack(null)} />
-        <ScrollWrapper>
-          <Paragraph light small style={{ padding: spacing.mediumLarge }}>
+      <Container color={baseColors.white}>
+        <Header title="before we start" onBack={() => navigation.goBack(null)} white />
+        <ScrollWrapper color={UIColors.defaultBackgroundColor}>
+          <Paragraph light small style={{ paddingHorizontal: spacing.mediumLarge, marginVertical: spacing.medium }}>
             In order to work properly, Pillar Wallet requires your permission to collect, store and use certain
             information.
           </Paragraph>
-
           <SectionTitle>Required device access permissions:</SectionTitle>
           <CollapsibleListItem
             label="Internet Access, Phone and Network State"

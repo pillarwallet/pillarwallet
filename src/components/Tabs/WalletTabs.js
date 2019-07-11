@@ -64,7 +64,7 @@ const TabItemText = styled(BaseText)`
 `;
 
 const TabWrapper = styled.View`
-  padding: 0 0 23px 0;
+  padding: ${spacing.medium}px 0;
   width: 100%;
   flex-direction: row;
 `;

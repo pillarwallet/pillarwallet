@@ -20,7 +20,7 @@
 import { EXCHANGE_URL } from 'react-native-dotenv';
 import SocketIO from 'socket.io-client';
 
-import type { OfferRequest } from 'models/Offer';
+import type { OfferRequest, TokenAllowanceRequest } from 'models/Offer';
 import { extractJwtPayload, getRandomString } from 'utils/common';
 
 const executeCallback = (data?: any, callback?: Function) => {
@@ -58,7 +58,11 @@ export default class ExchangeService {
           token: shapeshiftAccessToken,
         };
       }
-      this.io = new SocketIO(`${EXCHANGE_URL}:443`, {
+      const wsUrl = EXCHANGE_URL
+        .replace(/(https:\/\/)/gi, 'wss://')
+        .replace(/(http:\/\/)/gi, 'ws://');
+      this.io = new SocketIO(`${wsUrl}:443`, {
+        transports: ['websocket'],
         query: {
           token: accessToken,
         },
@@ -119,6 +123,16 @@ export default class ExchangeService {
       ...this.apiConfig,
       method: 'POST',
       body: JSON.stringify(order),
+    })
+      .then(response => response.json())
+      .catch(error => ({ error }));
+  }
+
+  setTokenAllowance(request: TokenAllowanceRequest) {
+    return fetch(buildApiUrl('orders/allowance'), {
+      ...this.apiConfig,
+      method: 'POST',
+      body: JSON.stringify(request),
     })
       .then(response => response.json())
       .catch(error => ({ error }));

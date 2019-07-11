@@ -54,6 +54,7 @@ type Props = {
   buttonAction?: Function,
   secondaryButton?: boolean,
   actionLabel?: ?string,
+  actionLabelColor?: ?string,
   rejectInvitation?: ?Function,
   acceptInvitation?: ?Function,
   type?: string,
@@ -66,10 +67,13 @@ type Props = {
   rightColumnInnerStyle?: Object,
   customAddonFullWidth?: React.Node,
   imageColorFill?: string,
+  customImage?: React.Node,
+  imageDiameter?: number,
 }
 
 const ItemWrapper = styled.View`
   flex-direction: column;
+  width: 100%;
 `;
 
 const InnerWrapper = styled.TouchableOpacity`
@@ -78,6 +82,7 @@ const InnerWrapper = styled.TouchableOpacity`
   justify-content: center;
   padding: ${spacing.small}px ${spacing.mediumLarge}px;
   height: ${props => props.type === DEFAULT ? 70 : 84}px;
+  width: 100%;
 `;
 
 const Row = styled.View`
@@ -106,7 +111,7 @@ const Column = styled.View`
   align-items: ${props => props.rightColumn ? 'flex-end' : 'flex-start'};
   justify-content: ${props => props.type === CHAT_ITEM ? 'flex-start' : 'center'};
   margin-top: ${props => props.type === CHAT_ITEM ? '-2px' : 0};
-  ${props => props.rightColumn ? 'padding-left: 10px;' : 'flex: 1;'}
+  ${props => props.rightColumn ? 'margin-left: 10px;' : 'flex: 1;'}
 `;
 
 const ItemTitle = styled(BoldText)`
@@ -225,7 +230,7 @@ const ActionLabel = styled.View`
 
 const ActionLabelText = styled(BaseText)`
   font-size: ${fontSizes.small}px;
-  color: ${props => props.button ? baseColors.electricBlue : baseColors.darkGray};
+  color: ${props => props.color ? props.color : baseColors.darkGray};
   margin-left: auto;
   margin-bottom: ${props => props.button ? '2px' : 0};
   padding: ${props => props.button ? `0 ${spacing.large}px` : '6px 0'};
@@ -264,6 +269,8 @@ const ItemImage = (props: Props) => {
     type,
     imageUpdateTimeStamp,
     imageColorFill,
+    customImage,
+    imageDiameter,
   } = props;
 
   if (iconName) {
@@ -272,6 +279,22 @@ const ItemImage = (props: Props) => {
       <IconCircle fillColor={warm ? baseColors.fairPink : baseColors.lightGray}>
         <ItemIcon name={iconName} warm={warm} />
       </IconCircle>
+    );
+  }
+  if (customImage) {
+    const shadowDiameter = imageDiameter || 54;
+    return (
+      <Shadow
+        shadowColorAndroid="#38105baa"
+        heightAndroid={shadowDiameter}
+        widthAndroid={shadowDiameter}
+        heightIOS={shadowDiameter}
+        widthIOS={shadowDiameter}
+        shadowRadius={shadowDiameter / 2}
+        useSVGShadow
+      >
+        {customImage}
+      </Shadow>
     );
   }
   if (itemImageUrl) {
@@ -370,14 +393,15 @@ const Addon = (props: Props) => {
     buttonAction,
     secondaryButton,
     actionLabel,
+    actionLabelColor,
     rejectInvitation,
     acceptInvitation,
   } = props;
 
   if (itemValue) {
     return (
-      <Wrapper horizontal center>
-        <ItemValue color={valueColor}>
+      <Wrapper horizontal center style={{ flexWrap: 'wrap' }}>
+        <ItemValue color={valueColor} numberOfLines={2} ellipsizeMode="tail">
           {itemValue}
         </ItemValue>
         {!!itemStatusIcon &&
@@ -390,7 +414,7 @@ const Addon = (props: Props) => {
   if (actionLabel) {
     return (
       <ActionLabel button={labelAsButton}>
-        <ActionLabelText button={labelAsButton}>
+        <ActionLabelText button={labelAsButton} color={labelAsButton ? baseColors.electricBlue : actionLabelColor}>
           {actionLabel}
         </ActionLabelText>
       </ActionLabel>
@@ -492,7 +516,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
             {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
           </ImageWrapper>
           <InfoWrapper type={type}>
-            <Column type={type}>
+            <Column type={type} style={{ flexGrow: 1 }}>
               {!!label &&
               <Row>
                 <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>
@@ -523,8 +547,8 @@ class ListItemWithImage extends React.Component<Props, {}> {
               <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
               }
             </Column>
-            <Column rightColumn type={type}>
-              <View style={rightColumnInnerStyle}>
+            <Column rightColumn type={type} style={{ maxWidth: '50%' }}>
+              <View style={[rightColumnInnerStyle, { flexWrap: 'wrap' }]}>
                 <Addon {...this.props} type={type} />
                 {customAddon}
                 {children}

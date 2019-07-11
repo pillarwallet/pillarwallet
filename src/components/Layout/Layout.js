@@ -51,6 +51,7 @@ type ScrollWrapperProps = {
   onKeyboardWillShow?: Function,
   innerRef?: Object,
   contentContainerStyle?: Object,
+  keyboardShouldPersistTaps?: string,
 };
 
 export const Center = styled.View`
@@ -131,6 +132,7 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
     onKeyboardWillShow,
     contentContainerStyle,
     children,
+    keyboardShouldPersistTaps,
   } = props;
 
   return (
@@ -142,6 +144,7 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
       innerRef={innerRef}
       onKeyboardWillShow={onKeyboardWillShow}
       contentContainerStyle={contentContainerStyle}
+      keyboardShouldPersistTaps={keyboardShouldPersistTaps}
     >
       {children}
     </KAScrollView>

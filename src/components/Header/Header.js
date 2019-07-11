@@ -52,6 +52,7 @@ type Props = {
   nextIconSize?: number,
   titleStyles?: ?Object,
   headerRightAddon?: React.Node,
+  pushRightAddonToTheSide?: boolean,
   white?: boolean,
 }
 
@@ -148,6 +149,7 @@ const Header = (props: Props) => {
     backIcon,
     titleStyles,
     headerRightAddon,
+    pushRightAddonToTheSide,
     white,
   } = props;
   const showRight = nextText || nextIcon || onBack || onClose || centerTitle || headerRightAddon;
@@ -218,7 +220,7 @@ const Header = (props: Props) => {
         }
         {showRight && !noClose &&
           <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
-            {headerRightAddon}
+            {!pushRightAddonToTheSide && headerRightAddon}
             {nextText &&
               <TextLink style={nextTextStyle} onPress={onNextPress}>{nextText}</TextLink>
             }
@@ -233,6 +235,7 @@ const Header = (props: Props) => {
                 />
               </IconWrapper>
             }
+            {pushRightAddonToTheSide && headerRightAddon}
             {onClose &&
               <IconWrapper>
                 {onCloseText &&

@@ -66,11 +66,9 @@ import { Answers } from 'react-native-fabric';
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
   padding-left: 30px;
-  border-top-width: 1px;
   border-bottom-width: 1px;
   border-color: ${UIColors.defaultBorderColor};
   align-items: center;
-  margin-bottom: 9px;
   flex-direction: row;
 `;
 
@@ -115,6 +113,11 @@ const BadgeIcon = styled(Icon)`
   font-size: ${fontSizes.extraExtraSmall};
   line-height: ${fontSizes.extraExtraSmall};
   color: ${baseColors.white};
+`;
+
+const InnerWrapper = styled.View`
+  flex: 1;
+  background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 const MIN_QUERY_LENGTH = 2;
@@ -384,13 +387,14 @@ class PeopleScreen extends React.Component<Props, State> {
     const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
 
     return (
-      <Container inset={{ bottom: 0 }}>
+      <Container inset={{ bottom: 0 }} color={baseColors.white}>
         <SearchBlock
           headerProps={{ title: 'people' }}
           searchInputPlaceholder="Search or add new contact"
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={!!contactState}
           navigation={navigation}
+          white
         />
         {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
@@ -408,17 +412,17 @@ class PeopleScreen extends React.Component<Props, State> {
             </React.Fragment>
           </ConnectionRequestBanner>
         }
-
-        {inSearchMode && contactState === FETCHED && usersFound &&
+        <InnerWrapper>
+          {inSearchMode && contactState === FETCHED && usersFound &&
           <PeopleSearchResults
             searchResults={searchResults}
             navigation={navigation}
             invitations={invitations}
             localContacts={sortedLocalContacts}
           />
-        }
+          }
 
-        {!inSearchMode && !!sortedLocalContacts.length &&
+          {!inSearchMode && !!sortedLocalContacts.length &&
           <FlatList
             data={sortedLocalContacts}
             keyExtractor={(item) => item.id}
@@ -428,7 +432,7 @@ class PeopleScreen extends React.Component<Props, State> {
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
               paddingVertical: spacing.rhythm,
-              paddingTop: 0,
+              paddingTop: spacing.medium,
             }}
             refreshControl={
               <RefreshControl
@@ -440,33 +444,36 @@ class PeopleScreen extends React.Component<Props, State> {
               />
             }
           />
-        }
+          }
 
-        {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
-          <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'}>
+          {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
+          <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'} style={{ flex: 1 }}>
             {!!query && contactState === FETCHING &&
-              <Wrapper center><Spinner /></Wrapper>
+            <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>
             }
 
             {inSearchMode && contactState === FETCHED && !usersFound &&
-              <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-                <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
-              </Wrapper>
+            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+              <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
+            </Wrapper>
             }
 
             {!inSearchMode && !sortedLocalContacts.length &&
-              <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-                <EmptyStateBGWrapper>
-                  <Image source={esBackground} />
-                </EmptyStateBGWrapper>
-                <EmptyStateParagraph
-                  title="Nobody is here"
-                  bodyText="Start building your connection list by inviting friends or by searching for someone"
-                />
-              </Wrapper>
+            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+              <EmptyStateBGWrapper>
+                <Image source={esBackground} />
+              </EmptyStateBGWrapper>
+              <EmptyStateParagraph
+                title="Nobody is here"
+                bodyText="Start building your connection list by inviting friends or by searching for someone"
+              />
+            </Wrapper>
             }
+
+
           </KeyboardAvoidingView>
-        }
+          }
+        </InnerWrapper>
         <ConnectionConfirmationModal
           showConfirmationModal={showConfirmationModal}
           manageContactType={manageContactType}
