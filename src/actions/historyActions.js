@@ -47,12 +47,11 @@ const afterHistoryUpdatedAction = () => {
       featureFlags: {
         data: {
           SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
-          EXCHANGE_ENABLED: exchangeFeatureEnabled,
         },
       },
     } = getState();
     if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
-    if (exchangeFeatureEnabled) dispatch(checkEnableExchangeAllowanceTransactionsAction());
+    dispatch(checkEnableExchangeAllowanceTransactionsAction());
   };
 };
 
