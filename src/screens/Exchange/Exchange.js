@@ -321,6 +321,21 @@ function SelectorInputTemplate(locals) {
   );
 }
 
+/**
+ * avoid text overlapping on many decimals,
+ * full amount will be displayed n confirm screen
+ * also show only 2 decimals for amounts above 1.00
+ * to avoid same text overlapping in the other side
+ */
+function formatAmountDisplay(value: number | string) {
+  if (!value) return 0;
+  const amount = parseFloat(value);
+  if (amount > 1) {
+    return formatMoney(amount, 2);
+  }
+  return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
+}
+
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
   fromInputRef: ?Object;
@@ -533,6 +548,23 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
+  setFromAmount = amount => {
+    this.props.resetOffers();
+    this.setState({
+      value: {
+        ...this.state.value,
+        fromInput: {
+          ...this.state.value.fromInput,
+          input: amount,
+        },
+      },
+    }, () => {
+      const { errors = [] } = this.exchangeForm.validate();
+      if (errors.length) return;
+      this.handleSearch();
+    });
+  };
+
   renderOffers = ({ item: offer }) => {
     const {
       value: { fromInput },
@@ -568,18 +600,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
     const providerLogo = getProviderLogo(offerProvider);
 
-    /**
-     * avoid text overlapping on many decimals,
-     * full amount will be displayed n confirm screen
-     * also show only 2 decimals for amounts above 1.00
-     * to avoid same text overlapping in the other side
-    */
-    let amountToBuyString;
-    if (amountToBuy > 1) {
-      amountToBuyString = formatMoney(amountToBuy, 2);
-    } else {
-      amountToBuyString = amountToBuy > 0.00001 ? formatMoney(amountToBuy, 5) : '<0.00001';
-    }
+    const amountToBuyString = formatAmountDisplay(amountToBuy);
 
     let shapeshiftAccessToken;
     if (isShapeShift) {
@@ -589,13 +610,25 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const askRateBn = new BigNumber(askRate);
 
+    const amountToSell = parseFloat(selectedSellAmount);
+    const isBelowMin = amountToSell < parseFloat(minQuantity);
+    const isAboveMax = amountToSell > parseFloat(maxQuantity);
+
+    const minOrMaxNeeded = isBelowMin || isAboveMax;
+    const minOrMaxAmount = formatAmountDisplay(isBelowMin ? minQuantity : maxQuantity);
+
+    const isTakeButtonDisabled = !!minOrMaxNeeded
+      || isTakeOfferPressed
+      || !allowanceSet
+      || (isShapeShift && !shapeshiftAccessToken);
+
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
         contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
       >
         <CardWrapper
-          disabled={isTakeOfferPressed || !allowanceSet || (isShapeShift && !shapeshiftAccessToken)}
+          disabled={isTakeButtonDisabled}
           onPress={() => this.onOfferPress(offer)}
         >
           <CardRow withBorder alignTop>
@@ -605,12 +638,19 @@ class ExchangeScreen extends React.Component<Props, State> {
             </CardColumn>
             <CardInnerRow style={{ flexShrink: 1 }}>
               {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
-              {isShapeShift && !shapeshiftAccessToken &&
+              {minOrMaxNeeded &&
+              <CardButton onPress={() => this.setFromAmount(minOrMaxAmount)}>
+                <ButtonLabel color={baseColors.electricBlue}>
+                  {`${minOrMaxAmount} ${fromAssetCode} ${isBelowMin ? 'min' : 'max'}`}
+                </ButtonLabel>
+              </CardButton>
+              }
+              {!minOrMaxNeeded && isShapeShift && !shapeshiftAccessToken &&
               <CardButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthPress}>
                 <ButtonLabel color={baseColors.electricBlue}>Connect</ButtonLabel>
               </CardButton>
               }
-              {!allowanceSet &&
+              {!minOrMaxNeeded && !allowanceSet &&
               <CardButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
                 <ButtonLabel color={storedAllowance ? baseColors.darkGray : baseColors.electricBlue} >
                   {storedAllowance
@@ -631,7 +671,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             </CardColumn>
             <CardColumn>
               <Button
-                disabled={isTakeOfferPressed || !allowanceSet || (isShapeShift && !shapeshiftAccessToken)}
+                disabled={isTakeButtonDisabled}
                 title={isTakeOfferPressed ? '' : `${amountToBuyString} ${toAssetCode}`}
                 small
                 onPress={() => this.onOfferPress(offer)}
