@@ -189,8 +189,12 @@ const getAvailable = (_min, _max, rate) => {
   let max = (new BigNumber(rate)).multipliedBy(_max);
   if ((min.gte(0) && min.lt(0.01)) || (max.gte(0) && max.lt(0.01))) {
     if (max.isZero()) return '>0.01';
+    const maxAvailable = max.lt(0.01)
+      ? '<0.01'
+      : formatMoney(max.toNumber(), 2);
     return min.eq(max) || min.isZero()
-      ? '<0.01' // max available
+      // max available displayed if equal to min or min is zero
+      ? maxAvailable
       : '<0.01 - <0.01';
   }
   min = min.toNumber();
@@ -639,7 +643,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             <CardInnerRow style={{ flexShrink: 1 }}>
               {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
               {minOrMaxNeeded &&
-              <CardButton onPress={() => this.setFromAmount(minOrMaxAmount)}>
+              <CardButton onPress={() => this.setFromAmount(isBelowMin ? minQuantity : maxQuantity)}>
                 <ButtonLabel color={baseColors.electricBlue}>
                   {`${minOrMaxAmount} ${fromAssetCode} ${isBelowMin ? 'min' : 'max'}`}
                 </ButtonLabel>
