@@ -2,21 +2,21 @@
 # yarn lockfile v1
 
 
-"@archanova/contracts@^1.0.0-beta.9":
-  version "1.0.0-beta.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/contracts/-/contracts-1.0.0-beta.9.tgz#4987b7ea54398a9625fc7f6278865a766d051f34"
-  integrity sha1-SYe36lQ5ipYl/H9ieIZadm0FHzQ=
+"@archanova/contracts@^1.0.0":
+  version "1.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/contracts/-/contracts-1.0.0.tgz#fb4c4925ab42fc292e797adbc52706a6bdd3a4d1"
+  integrity sha1-+0xJJatC/CkueXrbxScGpr3TpNE=
   dependencies:
     "@ensdomains/ens" "0.3.5"
     openzeppelin-solidity "2.1.2"
-    solidity-bytes-utils "^0.0.7"
+    solidity-bytes-utils "0.0.8"
 
-"@archanova/sdk@^1.0.0-alpha.12":
-  version "1.0.0-alpha.12"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.0.0-alpha.12.tgz#bc9f3954dbcfccf4faec4bf1ec0ff7d3b4987edf"
-  integrity sha1-vJ85VNvPzPT67Evx7A/307SYft8=
+"@archanova/sdk@^1.0.0":
+  version "1.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.0.0.tgz#c334a4ac7e802ffbc9336a60498b57b866203a7e"
+  integrity sha1-wzSkrH6AL/vJM2pgSYtXuGYgOn4=
   dependencies:
-    "@archanova/contracts" "^1.0.0-beta.9"
+    "@archanova/contracts" "^1.0.0"
     "@babel/runtime" "^7.4.4"
     "@netgum/types" "^0.1.7"
     "@netgum/utils" "^0.1.3"
@@ -14669,10 +14669,10 @@ solc@^0.4.20:
     semver "^5.3.0"
     yargs "^4.7.1"
 
-solidity-bytes-utils@^0.0.7:
-  version "0.0.7"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/solidity-bytes-utils/-/solidity-bytes-utils-0.0.7.tgz#ccc865a6694b4865f2020cee37c15cc26f81cf9b"
-  integrity sha1-zMhlpmlLSGXyAgzuN8Fcwm+Bz5s=
+solidity-bytes-utils@0.0.8:
+  version "0.0.8"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/solidity-bytes-utils/-/solidity-bytes-utils-0.0.8.tgz#245f21a004610023a9241f8c09b3ca408373f4b8"
+  integrity sha1-JF8hoARhACOpJB+MCbPKQINz9Lg=
   dependencies:
     truffle-hdwallet-provider "0.0.3"
 
