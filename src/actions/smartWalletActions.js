@@ -79,6 +79,7 @@ import {
   fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
+import { fetchGasInfoAction } from 'actions/historyActions';
 
 // types
 import type { AssetTransfer } from 'models/Asset';
@@ -90,7 +91,7 @@ import { buildHistoryTransaction } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { getBalance } from 'utils/assets';
-import { formatAmount } from 'utils/common';
+import { formatAmount, getGasPriceWei } from 'utils/common';
 import { Sentry } from 'react-native-sentry';
 
 
@@ -247,7 +248,10 @@ export const deploySmartWalletAction = () => {
       console.log('deploySmartWalletAction account is already deployed!');
       return;
     }
-    const deployEstimate = smartWalletService.getDeployEstimate();
+    await dispatch(fetchGasInfoAction());
+    const gasInfo = get(getState(), 'history.gasInfo', {});
+    const gasPriceWei = getGasPriceWei(gasInfo);
+    const deployEstimate = smartWalletService.getDeployEstimate(gasPriceWei);
     const feeSmartContractDeployEth = parseFloat(formatAmount(utils.formatEther(deployEstimate)));
     const balances = accountBalancesSelector(getState());
     const etherBalance = getBalance(balances, ETH);

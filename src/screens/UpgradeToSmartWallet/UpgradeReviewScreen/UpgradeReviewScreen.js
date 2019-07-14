@@ -67,7 +67,7 @@ import type { Collectible } from 'models/Collectible';
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
-import { formatAmount } from 'utils/common';
+import { formatAmount, getGasPriceWei } from 'utils/common';
 import { getBalance } from 'utils/assets';
 
 
@@ -156,7 +156,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     }
 
     // any asset transaction fee
-    const gasPriceWei = this.getGasPriceWei();
+    const gasPriceWei = getGasPriceWei(this.props.gasInfo);
     const transferFee = formatAmount(utils.formatEther(gasPriceWei));
 
     // collectible item
@@ -210,11 +210,9 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     navigation.navigate(UPGRADE_CONFIRM);
   };
 
-  getGasPriceWei = () => {
-    const { gasInfo } = this.props;
-    const gasPrice = gasInfo.gasPrice.avg || 0;
-    return utils.parseUnits(gasPrice.toString(), 'gwei').mul(GAS_LIMIT);
-  };
+  getTokenTransferPrice(gasPriceWei: BigNumber) {
+    return gasPriceWei.mul(GAS_LIMIT);
+  }
 
   render() {
     const {
@@ -225,11 +223,13 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       assets,
       collectibles,
       recoveryAgents,
+      gasInfo,
     } = this.props;
 
-    const gasPriceWei = this.getGasPriceWei();
+    const gasPriceWei = getGasPriceWei(gasInfo);
+    const tokenTransferPrice = this.getTokenTransferPrice(gasPriceWei);
     const assetsTransferFeeEth = formatAmount(utils.formatEther(
-      BigNumber(gasPriceWei * (transferAssets.length + transferCollectibles.length)).toFixed(),
+      new BigNumber(tokenTransferPrice * (transferAssets.length + transferCollectibles.length)).toFixed(),
     ));
 
     const assetsArray = Object.values(assets);

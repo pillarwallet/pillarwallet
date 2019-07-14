@@ -37,7 +37,7 @@ import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { formatAmount, getCurrencySymbol } from 'utils/common';
+import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
 import { getRate, getBalance } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
@@ -197,13 +197,6 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     });
   };
 
-  getGasPriceWei = () => {
-    const { gasInfo } = this.props;
-    const gasPrice = gasInfo.gasPrice.avg || 0;
-    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-    return gasPriceWei;
-  };
-
   getTokenTransferPrice(gasPriceWei: BigNumber) {
     return gasPriceWei.mul(GAS_LIMIT);
   }
@@ -219,13 +212,14 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       assets,
       baseFiatCurrency,
       rates,
+      gasInfo,
     } = this.props;
     const {
       upgradeStarted,
     } = this.state;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const gasPriceWei = this.getGasPriceWei();
+    const gasPriceWei = getGasPriceWei(gasInfo);
     const tokenTransferPrice = this.getTokenTransferPrice(gasPriceWei);
     const fiatSymbol = getCurrencySymbol(fiatCurrency);
 
