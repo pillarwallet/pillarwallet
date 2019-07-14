@@ -61,10 +61,10 @@ class SmartWallet {
 
   constructor() {
     const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
-    const config = getSdkEnvironment(environmentNetwork);
+    const environment = getSdkEnvironment(environmentNetwork);
 
     try {
-      this.sdk = createSdk(config);
+      this.sdk = createSdk(environment);
     } catch (err) {
       this.handleError(err);
     }
@@ -207,18 +207,17 @@ class SmartWallet {
     return this.sdk.submitAccountTransaction(estimated);
   }
 
-  getDeployEstimate() {
+  getDeployEstimate(gasPrice: BigNumber) {
     /**
      * can also call `this.sdk.estimateAccountDeployment(REGULAR);`,
      * but it needs sdk init and when migrating we don't have SDK initated yet
      * so we're using calculation method below that is provided by SDK creators
      */
-    const { gasPrice } = this.sdk.state.eth;
     return utils.bigNumberify(650000).mul(gasPrice);
   }
 
   handleError(error: any) {
-    console.log('SmartWallet handleError: ', error);
+    console.error('SmartWallet handleError: ', error);
   }
 }
 
