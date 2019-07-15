@@ -304,6 +304,7 @@ function SelectorInputTemplate(locals) {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
     keyboardType: locals.keyboardType,
+    autoCapitalize: locals.autoCapitalize,
     maxLength: 42,
     label,
     placeholderSelector,
@@ -364,6 +365,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         fields: {
           fromInput: {
             keyboardType: 'decimal-pad',
+            autoCapitalize: 'words',
             template: SelectorInputTemplate,
             config: {
               label: 'Selling',
