@@ -89,6 +89,7 @@ export const baseColors = {
   ultramarine: '#0a0c78',
   toryBlue: '#2f3195',
   blueViolet: '#b233e4',
+  jellyBean: '#497391',
 };
 
 export const brandColors = [

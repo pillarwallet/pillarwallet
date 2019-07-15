@@ -18,26 +18,37 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StatusBar, Platform } from 'react-native';
+import { StatusBar } from 'react-native';
+import { createStructuredSelector } from 'reselect';
+import { activeAccountSelector } from 'selectors';
+
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
-import TankAssetBalance from 'components/TankAssetBalance';
-import Animation from 'components/Animation';
+import { connect } from 'react-redux';
+import ProfileImage from 'components/ProfileImage';
+import type { Accounts } from 'models/Account';
+
+// partials
+import AssetManagementButton from './AssetManagementButton';
 
 type Props = {
-  style?: Object,
-  color?: string,
+  rightItems?: Object[],
+  leftItems?: Object[],
   title?: string,
-  subtitle?: string,
-  fontColor?: string,
-  onClose?: Function,
-  subtitleAddon?: React.Node,
-  rightSideAddon?: React.Node,
-  headerToggle?: React.Node,
   balanceInfo?: Object[],
+  sideFlex?: number,
+  user: Object,
+  navigation: NavigationScreenProp<*>,
+  activeAccount: Object,
+  smartWalletFeatureEnabled: boolean,
+  accounts: Accounts,
+  smartWalletState: Object,
+  rightIconsSize?: number,
+  type?: string,
 }
 
 type State = {
@@ -46,8 +57,17 @@ type State = {
 
 const Wrapper = styled.View`
   width: 100%;
-  background-color: ${props => props.color || 'transparent'};
+  background-color: ${props => props.theme.backgroundColor || 'transparent'};
+  border-bottom-width: ${props => props.theme.borderBottomWidth || 0};
+  border-bottom-color: ${props => props.theme.borderBottomColor || 'transparent'};
+  ${props => props.floating
+    ? `
+      position: absolute;
+      top: 0;
+      left: 0;`
+    : ''}
 `;
+// const AnimatedWrapper = Animated.createAnimatedComponent(Wrapper);
 
 const HeaderContentWrapper = styled.View`
   padding: ${spacing.large}px ${spacing.large}px 0;
@@ -59,301 +79,269 @@ const SafeArea = styled(SafeAreaView)`
 
 const HeaderRow = styled.View`
   flex-direction: row;
-  align-items: flex-start;
+  width: 100%;
+  align-items: flex-end;
   justify-content: space-between;
   padding-bottom: ${spacing.large}px;
+  margin-top: 10px;
 `;
 
-const TitleWrapper = styled.View`
-  flex: 1;
+const HeaderProfileImage = styled(ProfileImage)``;
+
+const HeaderTitle = styled(BaseText)`
+  line-height: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall}px;
+  color: ${props => props.theme.color || UIColors.defaultTextColor};
+  font-weight: 500;
+`;
+
+const UserButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
 `;
 
 const RightSide = styled.View`
-`;
-
-const SubtitleRow = styled.View`
-  flex-direction: row;
-  margin-top: ${props => props.marginTop ? '4px' : 0};
-  flex-wrap: wrap;
-  width: 100%;
-  align-items: center;
-`;
-
-const Title = styled(BaseText)`
-  width: 100%;
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
-  color: ${props => props.fontColor};
-  font-weight: ${Platform.select({
-    ios: '500',
-    android: '400',
-  })};
-`;
-
-const SubTitle = styled(BaseText)`
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
-  color: ${props => props.fontColor};
-  font-weight: ${Platform.select({
-    ios: '500',
-    android: '400',
-  })};
-  opacity: ${Platform.select({
-    ios: 0.5,
-    android: 0.4,
-  })};
-  marginRight: ${props => props.marginRight ? `${spacing.medium}px` : 0}
-`;
-
-const HeaderIcon = styled(IconButton)`
-  height: 40px;
-  width: 40px;
-  padding-right: 10px;
-  margin-right: -10px;
-  margin-top: -12px;
-`;
-
-const HeaderToggle = styled.TouchableOpacity`
-`;
-
-const HeaderContent = styled.View`
-`;
-
-const HeaderListItemWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 0
-`;
-
-const ItemColumn = styled.View`
-`;
-
-const StyledList = styled.FlatList`
-  border-top-width: 1px;
-  border-top-color: ${UIColors.headerContentBorder};
-`;
-
-const Separator = styled.View`
-  width: 100%;
-  height: 1px;
-  background-color: ${UIColors.headerContentBorder};
-`;
-
-const ItemRow = styled.View`
   flex-direction: row;
   justify-content: flex-end;
+  flex: ${props => props.sideFlex ? props.sideFlex : 1};
+`;
+
+const LeftSide = styled.View`
+  flex-direction: row;
+  flex: ${props => props.sideFlex ? props.sideFlex : 1};
+`;
+
+const MiddlePart = styled.View`
+  flex-direction: row;
+  flex-grow: 1;
   align-items: center;
-  flex: 1;
+  justify-content: center;
 `;
 
-const LIValue = styled(BaseText)`
-  width: 100%;
-  line-height: ${fontSizes.large};
-  font-size: ${fontSizes.mediumLarge}px;
-  color: ${props => props.fontColor};
-  font-weight: ${Platform.select({
-    ios: '600',
-    android: '500',
-  })};
+const BackIcon = styled(IconButton)`
+  position: relative;
+  align-self: flex-start;
+  height: 44px;
+  width: 44px;
+  padding-left: 10px;
+  margin-left: -12px;
+  margin-bottom: -12px;
 `;
 
-const LIText = styled(BaseText)`
+const RightWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  height: 26px;
+  margin-right: -6px;
+`;
+
+const ActionIcon = styled(IconButton)`
+  position: relative;
+  align-self: center;
+  height: 24px;
+  width: 24px;
+  margin: 0 3px -6px;
+`;
+
+const TextButton = styled.TouchableOpacity`
+  padding: 5px;
+`;
+
+const ButtonLabel = styled(BaseText)`
   line-height: ${fontSizes.small};
   font-size: ${fontSizes.extraSmall}px;
-  color: ${props => props.fontColor};
+  color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
 `;
 
-const ButtonText = styled(BaseText)`
-  width: 100%;
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
-  color: ${props => props.fontColor};
-  font-weight: ${Platform.select({
-    ios: '500',
-    android: '400',
-  })};
-`;
+const themes = {
+  default: {
+    backgroundColor: baseColors.white,
+    color: baseColors.slateBlack,
+    borderBottomColor: baseColors.mediumLightGray,
+    borderBottomWidth: 1,
+    iconColor: baseColors.slateBlack,
+    rightActionIconColor: baseColors.electricBlue,
+    rightActionLabelColor: baseColors.electricBlue,
+    buttonBorderColor: baseColors.mediumLightGray,
+    buttonLabelColor: baseColors.coolGrey,
+  },
+  ASSETS: {
+    backgroundColor: baseColors.jellyBean,
+    color: baseColors.white,
+    borderBottomColor: baseColors.jellyBean,
+    borderBottomWidth: 1,
+    iconColor: baseColors.white,
+    rightActionIconColor: baseColors.white,
+    rightActionLabelColor: baseColors.white,
+    buttonBorderColor: UIColors.actionButtonBorderColor,
+    buttonLabelColor: baseColors.white,
+  },
+};
 
-const ListButton = styled.TouchableOpacity`
-  min-width: 100px;
-  padding: 10px 30px;
-  border-radius: 4px;
-  background-color: ${props => props.color || baseColors.electricBlue};
-  margin-left: ${spacing.large}px;
-`;
+const profileImageWidth = 24;
 
-const ToggleWrapper = styled.View`
-  border-radius: 20px;
-  padding: 4px 12px 4px 6px;
-  border: 1px solid ${UIColors.headerContentBorder};
-`;
+const getTheme = (type) => {
+  if (!type || !themes[type]) return themes.default;
+  return themes[type];
+};
 
-const IconHolder = styled.View`
-  position: absolute;
-  top: -6px;
-  right: -7px;
-`;
-
-const StatusIcon = styled.View`
-  height: 8px;
-  width: 8px;
-  border-radius: 4px;
-  background-color: ${baseColors.fruitSalad};
-  position: absolute;
-  top: 7px;
-  left: 7px;
-`;
-
-const animationSource = require('assets/animations/livePulsatingAnimation.json');
-
-// const CustomLayoutAnimation = {
-//   duration: 300,
-//   create: {
-//     type: LayoutAnimation.Types.linear,
-//     property: LayoutAnimation.Properties.opacity,
-//   },
-//   update: {
-//     type: LayoutAnimation.Types.curveEaseInEaseOut,
-//     property: LayoutAnimation.Properties.opacity,
-//   },
-//   delete: {
-//     type: LayoutAnimation.Types.curveEaseInEaseOut,
-//     property: LayoutAnimation.Properties.opacity,
-//   },
-// };
-
-// for android support
-// UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
-
-export default class HeaderBlock extends React.Component<Props, State> {
-  state = {
-    isMoreContentVisible: false,
-  };
-
-  toggleContent = () => {
-    const { isMoreContentVisible } = this.state;
-    // LayoutAnimation.configureNext(CustomLayoutAnimation);
-    this.setState({ isMoreContentVisible: !isMoreContentVisible });
-  };
-
-  renderBalanceListItem = ({ item }: Object) => {
-    const { fontColor = baseColors.white } = this.props;
+class HeaderBlock extends React.Component<Props, State> {
+  renderHeaderContent = (theme: Object) => {
     const {
-      balanceInFiat,
-      amountInTank,
-      buttonAction,
-      buttonLabel,
-      buttonColor,
-      balance,
-      symbol = '',
-    } = item;
+      title,
+      rightItems,
+      sideFlex,
+    } = this.props;
+
     return (
-      <HeaderListItemWrapper>
-        <ItemColumn>
-          <LIValue fontColor={fontColor}>
-            {balanceInFiat}
-          </LIValue>
-          <LIText fontColor={fontColor}>
-            Balance
-          </LIText>
-        </ItemColumn>
-        <ItemRow>
-          {!!amountInTank &&
-          <TankAssetBalance
-            amount={`${amountInTank} ${symbol}`}
-            fillColor={fontColor}
-            textStyle={{ fontSize: fontSizes.extraSmall, color: fontColor, fontWeight: '400' }}
-          />}
-          {!!balance &&
-          <LIText fontColor={fontColor}>
-            {`${balance} ${symbol}`}
-          </LIText>}
-          <ListButton onPress={buttonAction} color={buttonColor}>
-            <ButtonText fontColor={fontColor}>
-              {buttonLabel}
-            </ButtonText>
-          </ListButton>
-        </ItemRow>
-      </HeaderListItemWrapper>
+      <HeaderRow>
+        <LeftSide sideFlex={sideFlex}>
+          {this.renderLeftSideItems(theme)}
+        </LeftSide>
+        {!!title &&
+        <MiddlePart>
+          <HeaderTitle theme={theme}>{title}</HeaderTitle>
+        </MiddlePart>}
+        {!!rightItems &&
+        <RightSide sideFlex={sideFlex}>
+          {this.renderRightSideItems(theme)}
+        </RightSide>}
+      </HeaderRow>
     );
   };
 
-  render() {
+  renderLeftSideItems = (theme) => {
     const {
-      style,
-      color,
-      title,
-      subtitle,
-      fontColor = baseColors.white,
-      onClose,
-      subtitleAddon,
-      rightSideAddon,
-      headerToggle,
-      balanceInfo = [{}],
+      leftItems = [],
+      navigation,
+      user,
+    } = this.props;
+    if (!leftItems.length) {
+      return (
+        <BackIcon
+          icon="back"
+          color={theme.iconColor || UIColors.defaultNavigationColor}
+          onPress={() => {
+            navigation.goBack(null);
+          }}
+          fontSize={fontSizes.extraLarge}
+          horizontalAlign="flex-start"
+        />
+      );
+    }
+
+    return leftItems.map((item) => {
+      if (item.user) {
+        return (
+          <UserButton key="user">
+            <HeaderProfileImage
+              uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
+              userName={user.username}
+              diameter={profileImageWidth}
+              onPress={() => {}}
+              containerStyle={{
+                borderRadius: profileImageWidth / 2,
+                backgroundColor: user.profileImage ? 'transparent' : baseColors.lightGray,
+              }}
+              noShadow
+            />
+            <HeaderTitle theme={theme} style={{ marginLeft: spacing.medium }}>{user.username}</HeaderTitle>
+          </UserButton>
+        );
+      }
+      return null;
+    });
+  };
+
+  renderRightSideItems = (theme) => {
+    const {
+      activeAccount,
+      smartWalletFeatureEnabled,
+      accounts,
+      smartWalletState,
+      rightItems = [],
+      rightIconsSize,
     } = this.props;
 
-    const { isMoreContentVisible } = this.state;
-    const visibleBalanceInfo = isMoreContentVisible
-      ? [...balanceInfo].reverse()
-      : [balanceInfo[0]];
+    if (rightItems.length) {
+      return (
+        <RightWrapper>
+          {rightItems.map((item) => {
+            if (item.icon) {
+              return (
+                <ActionIcon
+                  key={item.icon}
+                  icon={item.icon}
+                  color={theme.rightActionIconColor || UIColors.defaultNavigationColor}
+                  onPress={item.action}
+                  fontSize={rightIconsSize || fontSizes.extraLarge}
+                  horizontalAlign="flex-start"
+                />
+              );
+            }
+            if (item.label) {
+              return (
+                <TextButton onPress={item.onPress} key={item.label}>
+                  <ButtonLabel theme={theme}>{item.label}</ButtonLabel>
+                </TextButton>
+              );
+            }
+            if (item.assetManagement) {
+              return (
+                <AssetManagementButton
+                  key="assetManagement"
+                  smartWalletFeatureEnabled={smartWalletFeatureEnabled}
+                  activeAccount={activeAccount}
+                  accounts={accounts}
+                  smartWalletState={smartWalletState}
+                  theme={theme}
+                />
+              );
+            }
+            return null;
+          })}
+        </RightWrapper>
+      );
+    }
+    return null;
+  };
+
+  render() {
+    const { type } = this.props;
+    const theme = getTheme(type);
 
     return (
-      <Wrapper style={style} color={color}>
+      <Wrapper theme={theme} removeClippedSubviews>
         <SafeArea forceInset={{ bottom: 'never' }} androidStatusbarHeight={StatusBar.currentHeight}>
           <HeaderContentWrapper>
-            <HeaderRow>
-              <TitleWrapper>
-                <Title fontColor={fontColor}>{title}</Title>
-                <SubtitleRow marginTop={!!subtitle || !!subtitleAddon}>
-                  {!!subtitle && <SubTitle fontColor={fontColor} marginRight={!!subtitleAddon}>{subtitle}</SubTitle>}
-                  {subtitleAddon}
-                </SubtitleRow>
-              </TitleWrapper>
-              <RightSide>
-                {!isMoreContentVisible &&
-                  <HeaderToggle onPress={this.toggleContent}>
-                    {headerToggle}
-                    { /* TODO: move to separate tank indicator item  */}
-                    <ToggleWrapper>
-                      <TankAssetBalance
-                        amount="336"
-                        fillColor={fontColor}
-                        textStyle={{ fontSize: fontSizes.extraSmall, color: fontColor, fontWeight: '400' }}
-                      />
-                      <IconHolder>
-                        <Animation source={animationSource} style={{ height: 22, width: 22 }} loop speed={0.9} />
-                        <StatusIcon />
-                      </IconHolder>
-                    </ToggleWrapper>
-                  </HeaderToggle>
-                }
-                {rightSideAddon}
-                {(onClose || isMoreContentVisible) &&
-                <HeaderIcon
-                  icon="close"
-                  color={fontColor}
-                  onPress={isMoreContentVisible ? this.toggleContent : onClose}
-                  fontSize={fontSizes.extraExtraSmall}
-                  horizontalAlign="flex-end"
-                />
-                }
-              </RightSide>
-            </HeaderRow>
-            <HeaderContent removeClippedSubviews>
-              {!!balanceInfo.length &&
-              <StyledList
-                keyExtractor={item => item.key}
-                data={visibleBalanceInfo}
-                extraData={this.state}
-                renderItem={this.renderBalanceListItem}
-                ItemSeparatorComponent={Separator}
-                removeClippedSubviews
-              />}
-            </HeaderContent>
+            {this.renderHeaderContent(theme)}
           </HeaderContentWrapper>
         </SafeArea>
       </Wrapper>
     );
   }
 }
+
+const mapStateToProps = ({
+  accounts: { data: accounts },
+  user: { data: user },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  smartWallet: smartWalletState,
+}) => ({
+  accounts,
+  user,
+  smartWalletFeatureEnabled,
+  smartWalletState,
+});
+
+const structuredSelector = createStructuredSelector({
+  activeAccount: activeAccountSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default connect(combinedMapStateToProps)(HeaderBlock);

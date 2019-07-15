@@ -35,12 +35,13 @@ import { createStructuredSelector } from 'reselect';
 
 // components
 import { BaseText, BoldText } from 'components/Typography';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 import { Container, Wrapper } from 'components/Layout';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import SearchBlock from 'components/SearchBlock';
+// import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import Tabs from 'components/Tabs';
@@ -85,7 +86,7 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 // local components
 import AssetsList from './AssetsList';
 import CollectiblesList from './CollectiblesList';
-import HeaderButtonsForSmartWallet from './HeaderButtonsForSmartWallet';
+// import HeaderButtonsForSmartWallet from './HeaderButtonsForSmartWallet';
 
 type Props = {
   fetchInitialAssets: () => Function,
@@ -407,7 +408,7 @@ class AssetsScreen extends React.Component<Props, State> {
       badges,
       accounts,
       smartWalletState,
-      smartWalletFeatureEnabled,
+      // smartWalletFeatureEnabled,
     } = this.props;
     const { query, activeTab, forceHideRemoval } = this.state;
 
@@ -455,11 +456,21 @@ class AssetsScreen extends React.Component<Props, State> {
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
 
-    const isSmartWallet = smartWalletStatus.hasAccount;
+    // const isSmartWallet = smartWalletStatus.hasAccount;
 
     return (
-      <Container inset={{ bottom: 0 }} color={baseColors.white}>
-        <SearchBlock
+      <ContainerWithHeader
+        inset={{ bottom: 0 }}
+        color={baseColors.white}
+        headerProps={{
+          type: 'ASSETS',
+          leftItems: [{ user: true }],
+          rightItems: [{
+            assetManagement: true,
+          }],
+        }}
+      >
+        { /* <SearchBlock
           headerProps={{
             title: 'assets',
             headerRightAddon: smartWalletFeatureEnabled && <HeaderButtonsForSmartWallet
@@ -475,7 +486,7 @@ class AssetsScreen extends React.Component<Props, State> {
           itemSearchState={activeTab === TOKENS ? !!assetsSearchState : !!isInCollectiblesSearchMode}
           navigation={navigation}
           white
-        />
+        /> */ }
         {(blockAssetsView &&
           <Wrapper flex={1} regularPadding center>
             <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
@@ -525,7 +536,7 @@ class AssetsScreen extends React.Component<Props, State> {
             </ListWrapper>}
           </TokensWrapper>
         }
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

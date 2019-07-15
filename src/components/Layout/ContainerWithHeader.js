@@ -20,6 +20,8 @@
 import * as React from 'react';
 import { StatusBar, View } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
+import { withNavigation } from 'react-navigation';
+
 import isEqual from 'lodash.isequal';
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
@@ -30,7 +32,7 @@ type Props = {
   headerProps?: Object,
 };
 
-export default class ContainerWithHeaderBlock extends React.Component<Props> {
+class ContainerWithHeader extends React.Component<Props> {
   focusSubscriptions: NavigationEventSubscription[];
 
   shouldComponentUpdate(nextProps: Props) {
@@ -69,13 +71,16 @@ export default class ContainerWithHeaderBlock extends React.Component<Props> {
     const {
       children,
       headerProps,
+      navigation,
     } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
-        <HeaderBlock {...headerProps} />
+        <HeaderBlock {...headerProps} navigation={navigation} />
         {children}
       </View>
     );
   }
 }
+
+export default withNavigation(ContainerWithHeader);

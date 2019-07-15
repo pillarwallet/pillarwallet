@@ -29,8 +29,9 @@ import { createStructuredSelector } from 'reselect';
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 import SlideModal from 'components/Modals/SlideModal';
-import Header from 'components/Header';
-import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
+// import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ScrollWrapper, Wrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BoldText, BaseText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
@@ -327,14 +328,19 @@ class AssetScreen extends React.Component<Props, State> {
     if (isSmartWallet) transactionsTabs.push(pillarNetworkTab);
 
     return (
-      <Container color={baseColors.white} inset={{ bottom: 0 }}>
-        <Header
-          onBack={this.handleCardTap}
-          title={assetData.name}
-          onNextPress={() => { this.setState({ showDescriptionModal: true }); }}
-          nextIcon="info-circle-inverse"
-          nextIconSize={fontSizes.extraLarge}
-        />
+      <ContainerWithHeader
+        inset={{ bottom: 0 }}
+        headerProps={{
+          title: assetData.name,
+          rightItems: [
+            {
+              icon: 'info-circle-inverse',
+              action: () => { this.setState({ showDescriptionModal: true }); },
+            },
+          ],
+          rightIconsSize: fontSizes.extraLarge,
+        }}
+      >
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
@@ -436,7 +442,7 @@ class AssetScreen extends React.Component<Props, State> {
         >
           <Description small light>{assetData.description}</Description>
         </SlideModal>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

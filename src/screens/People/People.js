@@ -49,8 +49,8 @@ import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
-import { Container, Wrapper } from 'components/Layout';
-import SearchBlock from 'components/SearchBlock';
+import { Wrapper } from 'components/Layout';
+// import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import Spinner from 'components/Spinner';
@@ -62,6 +62,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 import { Answers } from 'react-native-fabric';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -387,15 +388,30 @@ class PeopleScreen extends React.Component<Props, State> {
     const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
 
     return (
-      <Container inset={{ bottom: 0 }} color={baseColors.white}>
-        <SearchBlock
+      <ContainerWithHeader
+        inset={{ bottom: 0 }}
+        color={baseColors.white}
+        headerProps={{
+          leftItems: [
+            { user: true },
+          ],
+          rightItems: [
+            {
+              label: 'Add contact',
+              action: () => {},
+            },
+          ],
+          rightIconsSize: fontSizes.extraLarge,
+        }}
+      >
+        { /* <SearchBlock
           headerProps={{ title: 'people' }}
           searchInputPlaceholder="Search or add new contact"
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={!!contactState}
           navigation={navigation}
           white
-        />
+        /> */ }
         {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
             onPress={this.handleConnectionsRequestBannerPress}
@@ -486,7 +502,7 @@ class PeopleScreen extends React.Component<Props, State> {
             });
           }}
         />
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }
