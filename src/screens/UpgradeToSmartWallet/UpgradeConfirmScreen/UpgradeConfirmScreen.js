@@ -136,7 +136,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       balances,
     } = this.props;
     this.setState({ upgradeStarted: true });
-    const gasPrice = gasPriceWei.div(GAS_LIMIT).toNumber();
+    const gasPrice = gasPriceWei.toNumber();
     const assetsArray = Object.values(assets);
     const transferTransactionsCombined = [
       ...transferCollectibles,

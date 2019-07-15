@@ -156,8 +156,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     }
 
     // any asset transaction fee
-    const gasPriceWei = getGasPriceWei(this.props.gasInfo);
-    const transferFee = formatAmount(utils.formatEther(gasPriceWei));
+    const transferFee = formatAmount(utils.formatEther(item.tokenTransferPrice));
 
     // collectible item
     if (item.collectibleKey) {
@@ -238,6 +237,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       return {
         ...asset,
         amount: transferAsset.amount,
+        tokenTransferPrice,
       };
     });
 
