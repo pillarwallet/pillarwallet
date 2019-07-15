@@ -137,9 +137,13 @@ export const takeOfferAction = (
   };
 };
 
-export const resetOffersAction = () => ({
-  type: RESET_OFFERS,
-});
+export const resetOffersAction = () => {
+  return async (dispatch: Function) => {
+    // reset websocket listener
+    exchangeService.resetOnOffers();
+    dispatch({ type: RESET_OFFERS });
+  };
+};
 
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Function, getState: Function) => {

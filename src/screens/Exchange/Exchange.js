@@ -554,16 +554,17 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   setFromAmount = amount => {
     this.props.resetOffers();
-    this.setState({
+    this.setState(prevState => ({
       value: {
-        ...this.state.value,
+        ...prevState.value,
         fromInput: {
-          ...this.state.value.fromInput,
+          ...prevState.value.fromInput,
           input: amount,
         },
       },
-    }, () => {
-      const { errors = [] } = this.exchangeForm.validate();
+    }), () => {
+      const validation = this.exchangeForm.validate();
+      const { errors = [] } = validation;
       if (errors.length) return;
       this.handleSearch();
     });
