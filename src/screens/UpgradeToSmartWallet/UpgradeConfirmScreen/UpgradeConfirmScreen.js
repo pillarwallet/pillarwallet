@@ -126,7 +126,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     }
   }
 
-  onNextClick = (gasPriceWei) => {
+  onNextClick = (gasPriceWei: BigNumber) => {
     const {
       assets,
       collectibles,
@@ -197,7 +197,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     });
   };
 
-  getTokenTransferPrice(gasPriceWei: BigNumber) {
+  getTokenTransferPrice(gasPriceWei: BigNumber): BigNumber {
     return gasPriceWei.mul(GAS_LIMIT);
   }
 
@@ -214,9 +214,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       rates,
       gasInfo,
     } = this.props;
-    const {
-      upgradeStarted,
-    } = this.state;
+    const { upgradeStarted } = this.state;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const gasPriceWei = getGasPriceWei(gasInfo);
@@ -227,8 +225,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       new BigNumber(tokenTransferPrice * transferAssets.length).toFixed(),
     ));
     const feeTokensTransferFiat = parseFloat(feeTokensTransferEth) * getRate(rates, ETH, fiatCurrency);
-    const assetsTransferFee =
-      `${feeTokensTransferEth} ETH (${fiatSymbol}${feeTokensTransferFiat.toFixed(2)})`;
+    const assetsTransferFee = `${feeTokensTransferEth} ETH (${fiatSymbol}${feeTokensTransferFiat.toFixed(2)})`;
 
     let collectiblesTransferFee;
     if (transferCollectibles.length) {
@@ -248,7 +245,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = transferAssets.map((transferAsset: any) => {
-      const asset: any = assetsArray.find((_asset: any) => _asset.name === transferAsset.name);
+      const asset: any = assetsArray.find((_asset: any) => _asset.name === transferAsset.name) || {};
       const { amount } = transferAsset;
       const { symbol } = asset;
       return {

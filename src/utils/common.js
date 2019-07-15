@@ -289,7 +289,7 @@ export function extractJwtPayload(jwtToken: string): Object {
   return JSON.parse(Buffer.from(encodedPayload, 'base64').toString());
 }
 
-export function getGasPriceWei(gasInfo: GasInfo) {
+export function getGasPriceWei(gasInfo: GasInfo): BigNumber {
   const gasPrice = get(gasInfo, 'gasPrice.avg', 0);
   const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
   return gasPriceWei;

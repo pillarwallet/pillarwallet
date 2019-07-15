@@ -276,7 +276,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     }
     const etherBalance = getBalance(balances, ETH);
 
-    // there should be enough to transfer selected assets from primary wallet
+    // there should be enough eth to transfer selected assets from primary wallet
     const notEnoughEther = !etherBalance || etherBalance < parseFloat(assetsTransferFeeEth);
     return (
       <Container>

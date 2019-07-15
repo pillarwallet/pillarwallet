@@ -318,9 +318,7 @@ export const createAssetsTransferTransactionsAction = (wallet: Object, transacti
   return async (dispatch: Function) => {
     // reset local nonce to transaction count
     await dispatch(resetLocalNonceToTransactionCountAction(wallet));
-    dispatch(setSmartWalletUpgradeStatusAction(
-      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-    ));
+    dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS));
     const signedTransactions = [];
     // we need this to wait for each to complete because of local nonce increment
     for (const transaction of transactions) { // eslint-disable-line
@@ -435,11 +433,7 @@ export const checkAssetTransferTransactionsAction = () => {
 
 export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions: Object[]) => {
   return async (dispatch: Function, getState: Function) => {
-    const {
-      smartWallet: {
-        sdkInitialized,
-      },
-    } = getState();
+    const { smartWallet: { sdkInitialized } } = getState();
     if (!sdkInitialized) {
       Toast.show({
         message: 'Failed to load Smart Wallet SDK',
@@ -450,11 +444,8 @@ export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions:
       return Promise.reject();
     }
     await dispatch(loadSmartWalletAccountsAction(wallet.privateKey));
-    const {
-      smartWallet: {
-        accounts,
-      },
-    } = getState();
+
+    const { smartWallet: { accounts } } = getState();
     if (!accounts.length) {
       Toast.show({
         message: 'Failed to load Smart Wallet account',
@@ -464,6 +455,7 @@ export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions:
       });
       return Promise.reject();
     }
+
     const { address } = accounts[0];
     const addressedTransferTransactions = transferTransactions.map(transaction => {
       return { ...transaction, to: address };
