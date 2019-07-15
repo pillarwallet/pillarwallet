@@ -137,9 +137,13 @@ export const takeOfferAction = (
   };
 };
 
-export const resetOffersAction = () => ({
-  type: RESET_OFFERS,
-});
+export const resetOffersAction = () => {
+  return async (dispatch: Function) => {
+    // reset websocket listener
+    exchangeService.resetOnOffers();
+    dispatch({ type: RESET_OFFERS });
+  };
+};
 
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Function, getState: Function) => {
@@ -155,12 +159,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     connectExchangeService(getState());
     exchangeService.onOffers(offers =>
       offers
-        .filter(({ askRate = 0, minQuantity = 0, maxQuantity = 0 }) => {
-          if (!askRate) return false;
-          // maxQuantity might be 0, but offer is acceptable
-          return fromAmount >= parseFloat(minQuantity)
-            && (parseFloat(maxQuantity) === 0 || fromAmount <= parseFloat(maxQuantity));
-        })
+        .filter(({ askRate }) => !!askRate)
         .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
     );
     // we're requesting although it will start delivering when connection is established
