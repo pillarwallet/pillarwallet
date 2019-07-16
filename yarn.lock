@@ -1125,37 +1125,37 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/webpack-env/-/webpack-env-1.13.9.tgz#a67287861c928ebf4159a908d1fb1a2a34d4097a"
   integrity sha1-pnKHhhySjr9BWakI0fsaKjTUCXo=
 
-"@walletconnect/core@^1.0.0-beta.25":
-  version "1.0.0-beta.25"
-  resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-1.0.0-beta.25.tgz#a0e1f27df66da3ecb9693eac3672f40970c01083"
-  integrity sha512-EPLn5k6JrWXLvsOTHSYN9cSTFznPvB4rC1NIaSAAAqW+x1mJ8VX5SF7McpTQpxIqAVw6qAwDVOu6xZufhKlvFw==
+"@walletconnect/core@^1.0.0-beta.29":
+  version "1.0.0-beta.29"
+  resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-1.0.0-beta.29.tgz#e180f02aa06b6fa96e8ae36d27010af6b5b2d50a"
+  integrity sha512-Md4ThIW7gsfJ7ahzc3P4yMNw74PFQUNPxHzV4+DA147kxnyvgIdHbBgcKY0+2WAlDQ5h1nCKZ/YLOpblPA4R7g==
   dependencies:
-    "@walletconnect/types" "^1.0.0-beta.25"
-    "@walletconnect/utils" "^1.0.0-beta.25"
+    "@walletconnect/types" "^1.0.0-beta.29"
+    "@walletconnect/utils" "^1.0.0-beta.29"
 
-"@walletconnect/react-native@^1.0.0-beta.25":
-  version "1.0.0-beta.25"
-  resolved "https://registry.yarnpkg.com/@walletconnect/react-native/-/react-native-1.0.0-beta.25.tgz#e2516661167a865894298d3ed205f363460dd9c5"
-  integrity sha512-szugAspNF2Id1M3Da9ams5uMV230TaUWBUjvlBqooA8TzkwTpLSP1kP81Vfbyl+OzfVMZM8Izul+y8/DQ+0r9Q==
+"@walletconnect/react-native@^1.0.0-beta.29":
+  version "1.0.0-beta.29"
+  resolved "https://registry.yarnpkg.com/@walletconnect/react-native/-/react-native-1.0.0-beta.29.tgz#8a6a2f506f03abef4ca777f4a5e49e3c4487b26e"
+  integrity sha512-2DCqjkUvPsGmPxvRKSce/0xiU47pjXMq28w5Hh2pAquCvZombo6mmJx6MS0S+xJCc+wl1Aqz7U26W5gOb8gQxg==
   dependencies:
-    "@walletconnect/core" "^1.0.0-beta.25"
-    "@walletconnect/types" "^1.0.0-beta.25"
-    "@walletconnect/utils" "^1.0.0-beta.25"
+    "@walletconnect/core" "^1.0.0-beta.29"
+    "@walletconnect/types" "^1.0.0-beta.29"
+    "@walletconnect/utils" "^1.0.0-beta.29"
 
-"@walletconnect/types@^1.0.0-beta.25":
-  version "1.0.0-beta.25"
-  resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-1.0.0-beta.25.tgz#18b6bcbd73d25f99023b5124c9d92900b3b71a46"
-  integrity sha512-HF7WOsKzrkjM0T3yCRKiquZFJnk3A8zCnmy6ueQ/lvIQGnnUaJDY4tZRRXdlntTmbiCcIBEz/tYM2Z7r4O79SA==
+"@walletconnect/types@^1.0.0-beta.29":
+  version "1.0.0-beta.29"
+  resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-1.0.0-beta.29.tgz#0fe4426eb461c7adbbd7c2cf88640ad2205ac70b"
+  integrity sha512-8c9QnI6qMFD8QAGXuwUDkfAn75uhMrM2p9BNzQRCrqVnX0hUKP7mL5qjJRGSx4DYau9ziZQDx+D9iihLjdE42g==
 
-"@walletconnect/utils@^1.0.0-beta.25":
-  version "1.0.0-beta.25"
-  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-1.0.0-beta.25.tgz#6ddffb9553e9c013ce4c62297a86b024f7afd250"
-  integrity sha512-IQOFERSMa4IAPdd6kwL2J/wES+wQK8IN2FP0aqpUhZ1TzUfIVo5Nortev91PPsX6yi4de1Q4BwUCxxEWc4fQsQ==
+"@walletconnect/utils@^1.0.0-beta.29":
+  version "1.0.0-beta.29"
+  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-1.0.0-beta.29.tgz#d2ecfc4937d4c430cb6665086dc7e6d0d231fb6b"
+  integrity sha512-KWuM+2qlIw71O3fewPRfKm4v2t3mI7X447ZzFeheF6zJutZ+uPp7Ou25M+Sycs2CUogO4NYDQNbeSpNb5rbyLQ==
   dependencies:
     "@ethersproject/address" "^5.0.0-beta.125"
     "@ethersproject/bytes" "^5.0.0-beta.126"
     "@ethersproject/strings" "^5.0.0-beta.125"
-    "@walletconnect/types" "^1.0.0-beta.25"
+    "@walletconnect/types" "^1.0.0-beta.29"
     bignumber.js "^8.1.1"
 
 "@webassemblyjs/ast@1.5.9":
