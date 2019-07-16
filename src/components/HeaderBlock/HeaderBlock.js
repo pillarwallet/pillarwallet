@@ -48,7 +48,7 @@ type Props = {
   accounts: Accounts,
   smartWalletState: Object,
   rightIconsSize?: number,
-  type?: string,
+  backgroundColor?: string,
 }
 
 type State = {
@@ -98,6 +98,7 @@ const HeaderTitle = styled(BaseText)`
 const UserButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
+  margin-right: ${spacing.medium}px;
 `;
 
 const RightSide = styled.View`
@@ -109,6 +110,7 @@ const RightSide = styled.View`
 const LeftSide = styled.View`
   flex-direction: row;
   flex: ${props => props.sideFlex ? props.sideFlex : 1};
+  align-items: center;
 `;
 
 const MiddlePart = styled.View`
@@ -154,36 +156,33 @@ const ButtonLabel = styled(BaseText)`
   color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
 `;
 
-const themes = {
-  default: {
-    backgroundColor: baseColors.white,
-    color: baseColors.slateBlack,
-    borderBottomColor: baseColors.mediumLightGray,
-    borderBottomWidth: 1,
-    iconColor: baseColors.slateBlack,
-    rightActionIconColor: baseColors.electricBlue,
-    rightActionLabelColor: baseColors.electricBlue,
-    buttonBorderColor: baseColors.mediumLightGray,
-    buttonLabelColor: baseColors.coolGrey,
-  },
-  ASSETS: {
-    backgroundColor: baseColors.jellyBean,
+const profileImageWidth = 24;
+
+const getTheme = (backgroundColor) => {
+  if (!backgroundColor) {
+    return {
+      backgroundColor: baseColors.white,
+      color: baseColors.slateBlack,
+      borderBottomColor: baseColors.mediumLightGray,
+      borderBottomWidth: 1,
+      iconColor: baseColors.slateBlack,
+      rightActionIconColor: baseColors.electricBlue,
+      rightActionLabelColor: baseColors.electricBlue,
+      buttonBorderColor: baseColors.mediumLightGray,
+      buttonLabelColor: baseColors.coolGrey,
+    };
+  }
+  return {
+    backgroundColor,
     color: baseColors.white,
-    borderBottomColor: baseColors.jellyBean,
+    borderBottomColor: backgroundColor,
     borderBottomWidth: 1,
     iconColor: baseColors.white,
     rightActionIconColor: baseColors.white,
     rightActionLabelColor: baseColors.white,
     buttonBorderColor: UIColors.actionButtonBorderColor,
     buttonLabelColor: baseColors.white,
-  },
-};
-
-const profileImageWidth = 24;
-
-const getTheme = (type) => {
-  if (!type || !themes[type]) return themes.default;
-  return themes[type];
+  };
 };
 
 class HeaderBlock extends React.Component<Props, State> {
@@ -232,7 +231,7 @@ class HeaderBlock extends React.Component<Props, State> {
     }
 
     return leftItems.map((item) => {
-      if (item.user) {
+      if (item.user || item.userIcon) {
         return (
           <UserButton key="user">
             <HeaderProfileImage
@@ -246,8 +245,16 @@ class HeaderBlock extends React.Component<Props, State> {
               }}
               noShadow
             />
-            <HeaderTitle theme={theme} style={{ marginLeft: spacing.medium }}>{user.username}</HeaderTitle>
+            {!!item.user &&
+            <HeaderTitle theme={theme} style={{ marginLeft: spacing.medium }}>{user.username}</HeaderTitle>}
           </UserButton>
+        );
+      }
+      if (item.title) {
+        return (
+          <HeaderTitle theme={theme} key={item.title} style={item.color ? { color: item.color } : {}}>
+            {item.title}
+          </HeaderTitle>
         );
       }
       return null;
@@ -262,6 +269,7 @@ class HeaderBlock extends React.Component<Props, State> {
       smartWalletState,
       rightItems = [],
       rightIconsSize,
+      navigation,
     } = this.props;
 
     if (rightItems.length) {
@@ -299,6 +307,19 @@ class HeaderBlock extends React.Component<Props, State> {
                 />
               );
             }
+            if (item.close) {
+              return (
+                <ActionIcon
+                  key="close"
+                  icon="close"
+                  color={baseColors.slateBlack}
+                  onPress={() => navigation.goBack()}
+                  fontSize={fontSizes.extraSmall}
+                  horizontalAlign="flex-start"
+                  style={{ marginBottom: -2, marginRight: -4 }}
+                />
+              );
+            }
             return null;
           })}
         </RightWrapper>
@@ -308,8 +329,8 @@ class HeaderBlock extends React.Component<Props, State> {
   };
 
   render() {
-    const { type } = this.props;
-    const theme = getTheme(type);
+    const { backgroundColor } = this.props;
+    const theme = getTheme(backgroundColor);
 
     return (
       <Wrapper theme={theme} removeClippedSubviews>

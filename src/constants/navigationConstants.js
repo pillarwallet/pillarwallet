@@ -41,6 +41,9 @@ export const COLLECTIBLE = 'COLLECTIBLE';
 export const BADGE = 'BADGE';
 export const CONFIRM_CLAIM = 'CONFIRM_CLAIM';
 
+// ASSETS FLOW
+export const ACCOUNTS = 'ACCOUNTS';
+
 // CHANGE PIN FLOW
 export const CHANGE_PIN_FLOW = 'CHANGE_PIN_FLOW';
 export const CHANGE_PIN_CURRENT_PIN = 'CHANGE_PIN_CURRENT_PIN';

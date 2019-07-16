@@ -389,7 +389,6 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        inset={{ bottom: 0 }}
         color={baseColors.white}
         headerProps={{
           leftItems: [

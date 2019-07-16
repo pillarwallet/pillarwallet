@@ -20,17 +20,25 @@
 import * as React from 'react';
 import { StatusBar, View } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import { withNavigation } from 'react-navigation';
+import { withNavigation, SafeAreaView } from 'react-navigation';
+import styled from 'styled-components/native';
 
 import isEqual from 'lodash.isequal';
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
+import { UIColors } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   children?: React.Node,
   headerProps?: Object,
+  inset?: Object,
 };
+
+export const StyledSafeAreaView = styled(SafeAreaView)`
+  background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
+  flex: 1;
+`;
 
 class ContainerWithHeader extends React.Component<Props> {
   focusSubscriptions: NavigationEventSubscription[];
@@ -72,12 +80,15 @@ class ContainerWithHeader extends React.Component<Props> {
       children,
       headerProps,
       navigation,
+      inset,
     } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
         <HeaderBlock {...headerProps} navigation={navigation} />
-        {children}
+        <StyledSafeAreaView forceInset={{ top: 'never', bottom: 'always', ...inset }}>
+          {children}
+        </StyledSafeAreaView>
       </View>
     );
   }

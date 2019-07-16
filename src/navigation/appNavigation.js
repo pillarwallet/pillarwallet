@@ -82,6 +82,7 @@ import SettleBalanceConfrimScreen from 'screens/Tank/SettleBalanceConfirm';
 import WalletsListScreen from 'screens/ManageWallets/WalletsList';
 import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
+import AccountsScreen from 'screens/Accounts';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -175,6 +176,7 @@ import {
   WALLET_SETTINGS,
   MANAGE_DETAILS_SESSIONS,
   CONTACT_INFO,
+  ACCOUNTS,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -236,6 +238,7 @@ const hideTabNavigatorOnChildView = ({ navigation }) => {
 const assetsFlow = createStackNavigator(
   {
     [ASSETS]: AssetsScreen,
+    [ACCOUNTS]: AccountsScreen,
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [BADGE]: BadgeScreen,

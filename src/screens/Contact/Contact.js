@@ -460,7 +460,6 @@ class Contact extends React.Component<Props, State> {
 
     return (
       <ContainerWithBottomSheet
-        inset={{ bottom: 0 }}
         color={baseColors.white}
         hideSheet={!isAccepted}
         bottomSheetProps={{

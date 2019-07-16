@@ -90,6 +90,10 @@ export const baseColors = {
   toryBlue: '#2f3195',
   blueViolet: '#b233e4',
   jellyBean: '#497391',
+  aluminium: '#a9aeb8',
+  danube: '#5e8fcc',
+  patternsBlue: '#f4f7fb',
+  spindle: '#b5d0ee',
 };
 
 export const brandColors = [

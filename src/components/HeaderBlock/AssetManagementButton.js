@@ -27,7 +27,7 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 import { BaseText } from 'components/Typography';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { MANAGE_WALLETS_FLOW, UPGRADE_TO_SMART_WALLET_FLOW } from 'constants/navigationConstants';
+import { UPGRADE_TO_SMART_WALLET_FLOW, ACCOUNTS } from 'constants/navigationConstants';
 import Icon from 'components/Icon';
 import type { Accounts } from 'models/Account';
 
@@ -43,7 +43,7 @@ type Props = {
 const HeaderButtonRounded = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  padding: 5px 12px;
+  padding: 4px 12px;
   border: 1px solid;
   border-color: ${props => props.theme.buttonBorderColor || UIColors.defaultBorderColor};
   border-radius: 20px;
@@ -87,7 +87,7 @@ class AssetManagementButton extends React.PureComponent<Props> {
     if (smartWalletFeatureEnabled) {
       if (isSmartWallet) {
         return (
-          <HeaderButtonRounded onPress={() => navigation.navigate(MANAGE_WALLETS_FLOW)} theme={theme}>
+          <HeaderButtonRounded onPress={() => navigation.navigate(ACCOUNTS)} theme={theme}>
             <RoundedButtonLabel theme={theme}>{walletTypeLabel}</RoundedButtonLabel>
             <ChevronIcon name="chevron-right" />
           </HeaderButtonRounded>

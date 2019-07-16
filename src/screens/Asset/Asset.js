@@ -329,7 +329,6 @@ class AssetScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        inset={{ bottom: 0 }}
         headerProps={{
           title: assetData.name,
           rightItems: [

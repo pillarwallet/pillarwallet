@@ -460,10 +460,9 @@ class AssetsScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        inset={{ bottom: 0 }}
         color={baseColors.white}
         headerProps={{
-          type: 'ASSETS',
+          backgroundColor: baseColors.jellyBean,
           leftItems: [{ user: true }],
           rightItems: [{
             assetManagement: true,
