@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Dimensions, Platform, PixelRatio } from 'react-native';
 
 export const isColorDark = (color: string) => {
   let r;
@@ -48,3 +49,16 @@ export const isColorDark = (color: string) => {
 
   return hsp < 127.5;
 };
+
+
+const {
+  width: SCREEN_WIDTH,
+} = Dimensions.get('window');
+
+const scale = SCREEN_WIDTH / 375; // based on iPhoneX (used to showcase deigns)
+
+export function responsiveSize(size: number) {
+  const newSize = size * scale;
+  if (Platform.OS === 'ios') return Math.round(PixelRatio.roundToNearestPixel(newSize));
+  return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
+}

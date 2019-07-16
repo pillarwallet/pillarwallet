@@ -33,11 +33,13 @@ type Props = {
   children?: React.Node,
   headerProps?: Object,
   inset?: Object,
+  backgroundColor?: string,
 };
 
 export const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
   flex: 1;
+  ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;
 
 class ContainerWithHeader extends React.Component<Props> {
@@ -78,15 +80,23 @@ class ContainerWithHeader extends React.Component<Props> {
   render() {
     const {
       children,
-      headerProps,
+      headerProps = {},
       navigation,
       inset,
+      backgroundColor,
     } = this.props;
+
+    const topInset = headerProps.floating ? 'always' : 'never';
+    const androidStatusBarSpacing = headerProps.floating ? StatusBar.currentHeight : 0;
 
     return (
       <View style={{ flex: 1 }}>
         <HeaderBlock {...headerProps} navigation={navigation} />
-        <StyledSafeAreaView forceInset={{ top: 'never', bottom: 'always', ...inset }}>
+        <StyledSafeAreaView
+          forceInset={{ top: topInset, bottom: 'always', ...inset }}
+          androidStatusbarHeight={androidStatusBarSpacing}
+          color={backgroundColor}
+        >
           {children}
         </StyledSafeAreaView>
       </View>

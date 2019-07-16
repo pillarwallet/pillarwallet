@@ -49,6 +49,9 @@ type Props = {
   smartWalletState: Object,
   rightIconsSize?: number,
   backgroundColor?: string,
+  floating?: boolean,
+  transparent?: boolean,
+  light?: boolean,
 }
 
 type State = {
@@ -64,7 +67,8 @@ const Wrapper = styled.View`
     ? `
       position: absolute;
       top: 0;
-      left: 0;`
+      left: 0;
+      z-index: 1;`
     : ''}
 `;
 // const AnimatedWrapper = Animated.createAnimatedComponent(Wrapper);
@@ -158,8 +162,21 @@ const ButtonLabel = styled(BaseText)`
 
 const profileImageWidth = 24;
 
-const getTheme = (backgroundColor) => {
-  if (!backgroundColor) {
+const getTheme = (props) => {
+  if (props.transparent) {
+    return {
+      backgroundColor: 'transparent',
+      color: props.light ? baseColors.white : baseColors.slateBlack,
+      borderBottomColor: 'transparent',
+      borderBottomWidth: 0,
+      iconColor: props.light ? baseColors.white : baseColors.slateBlack,
+      rightActionIconColor: props.light ? baseColors.white : baseColors.electricBlue,
+      rightActionLabelColor: props.light ? baseColors.white : baseColors.electricBlue,
+      buttonBorderColor: props.light ? UIColors.actionButtonBorderColor : baseColors.mediumLightGray,
+      buttonLabelColor: props.light ? baseColors.white : baseColors.coolGrey,
+    };
+  }
+  if (!props.backgroundColor) {
     return {
       backgroundColor: baseColors.white,
       color: baseColors.slateBlack,
@@ -173,9 +190,9 @@ const getTheme = (backgroundColor) => {
     };
   }
   return {
-    backgroundColor,
+    backgroundColor: props.backgroundColor,
     color: baseColors.white,
-    borderBottomColor: backgroundColor,
+    borderBottomColor: props.backgroundColor,
     borderBottomWidth: 1,
     iconColor: baseColors.white,
     rightActionIconColor: baseColors.white,
@@ -210,12 +227,29 @@ class HeaderBlock extends React.Component<Props, State> {
     );
   };
 
+  renderUser = (theme, showName: boolean) => {
+    const { user } = this.props;
+    return (
+      <UserButton key="user">
+        <HeaderProfileImage
+          uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
+          userName={user.username}
+          diameter={profileImageWidth}
+          onPress={() => {}}
+          containerStyle={{
+            borderRadius: profileImageWidth / 2,
+            backgroundColor: user.profileImage ? 'transparent' : baseColors.lightGray,
+          }}
+          noShadow
+        />
+        {showName &&
+        <HeaderTitle theme={theme} style={{ marginLeft: spacing.medium }}>{user.username}</HeaderTitle>}
+      </UserButton>
+    );
+  };
+
   renderLeftSideItems = (theme) => {
-    const {
-      leftItems = [],
-      navigation,
-      user,
-    } = this.props;
+    const { leftItems = [], navigation } = this.props;
     if (!leftItems.length) {
       return (
         <BackIcon
@@ -232,23 +266,7 @@ class HeaderBlock extends React.Component<Props, State> {
 
     return leftItems.map((item) => {
       if (item.user || item.userIcon) {
-        return (
-          <UserButton key="user">
-            <HeaderProfileImage
-              uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
-              userName={user.username}
-              diameter={profileImageWidth}
-              onPress={() => {}}
-              containerStyle={{
-                borderRadius: profileImageWidth / 2,
-                backgroundColor: user.profileImage ? 'transparent' : baseColors.lightGray,
-              }}
-              noShadow
-            />
-            {!!item.user &&
-            <HeaderTitle theme={theme} style={{ marginLeft: spacing.medium }}>{user.username}</HeaderTitle>}
-          </UserButton>
-        );
+        return this.renderUser(theme, !item.userIcon);
       }
       if (item.title) {
         return (
@@ -320,6 +338,9 @@ class HeaderBlock extends React.Component<Props, State> {
                 />
               );
             }
+            if (item.user || item.userIcon) {
+              return this.renderUser(theme, !item.userIcon);
+            }
             return null;
           })}
         </RightWrapper>
@@ -329,11 +350,11 @@ class HeaderBlock extends React.Component<Props, State> {
   };
 
   render() {
-    const { backgroundColor } = this.props;
-    const theme = getTheme(backgroundColor);
+    const { floating } = this.props;
+    const theme = getTheme(this.props);
 
     return (
-      <Wrapper theme={theme} removeClippedSubviews>
+      <Wrapper theme={theme} floating={floating}>
         <SafeArea forceInset={{ bottom: 'never' }} androidStatusbarHeight={StatusBar.currentHeight}>
           <HeaderContentWrapper>
             {this.renderHeaderContent(theme)}

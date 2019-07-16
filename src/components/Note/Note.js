@@ -53,7 +53,7 @@ export const Note = (props: Props) => {
   const { note, emoji, containerStyle } = props;
   return (
     <NoteWrapper style={containerStyle}>
-      <Text style={{ lineHeight: 18 }}>
+      <Text style={{ lineHeight: 19 }}>
         <NoteText>
           {note}
         </NoteText>

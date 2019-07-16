@@ -83,6 +83,7 @@ import WalletsListScreen from 'screens/ManageWallets/WalletsList';
 import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
+import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -177,6 +178,7 @@ import {
   MANAGE_DETAILS_SESSIONS,
   CONTACT_INFO,
   ACCOUNTS,
+  PILLAR_NETWORK_INTRO,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -518,6 +520,7 @@ manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // TANK FLOW
 const manageTankFlow = createStackNavigator({
+  [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
   [TANK_DETAILS]: TankDetailsScreen,
   [FUND_TANK]: FundTankScreen,
   [FUND_CONFIRM]: FundConfirmScreen,

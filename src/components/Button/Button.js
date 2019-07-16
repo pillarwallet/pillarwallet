@@ -136,6 +136,15 @@ const themes = {
     borderRadius: 0,
     iconHorizontalMargin: 0,
   },
+  roundedCorners: {
+    background: baseColors.electricBlue,
+    color: baseColors.white,
+    borderColor: 'transparent',
+    borderWidth: 0,
+    flexDirection: 'row',
+    borderRadius: 6,
+    iconHorizontalMargin: 0,
+  },
 };
 
 const getButtonHeight = (props) => {

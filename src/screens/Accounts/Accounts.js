@@ -35,6 +35,9 @@ import { baseColors } from 'utils/variables';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 
+// constants
+import { PILLAR_NETWORK_INTRO } from 'constants/navigationConstants';
+
 type Props = {
   navigation: NavigationScreenProp<*>,
 }
@@ -81,7 +84,7 @@ const accountList = [
     key: 'pillarNetwork',
     title: 'Pillar Network',
     icon: '',
-    screenKey: '',
+    screenKey: PILLAR_NETWORK_INTRO,
     note: {
       note: 'Instant, free and private transactions',
       emoji: 'sunglasses',
