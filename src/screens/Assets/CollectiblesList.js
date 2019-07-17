@@ -103,7 +103,7 @@ class CollectiblesList extends React.Component<Props> {
     return (
       <AssetCardMinimized
         {...item}
-        icon={item.thumbnail || item.icon}
+        icon={item.icon}
         smallScreen={smallScreen()}
         onPress={() => { this.handleCardTap(item); }}
         isCollectible

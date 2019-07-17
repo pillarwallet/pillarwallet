@@ -412,6 +412,7 @@ class AssetScreen extends React.Component<Props, State> {
             feedTitle="transactions."
             navigation={navigation}
             backgroundColor={baseColors.white}
+            showArrowsOnly
             noBorder
             wrapperStyle={{ marginTop: 10 }}
             tabs={transactionsTabs}
