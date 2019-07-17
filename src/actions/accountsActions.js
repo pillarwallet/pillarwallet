@@ -224,11 +224,29 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
 
 export const initSmartWalletAccountAction = (privateKey: string) => {
   return async (dispatch: Function, getState: Function) => {
-    const { accounts: { data: accounts } } = getState();
+    const {
+      accounts: {
+        data: accounts,
+      },
+      smartWallet: {
+        upgrade: {
+          status: upgradeStatus,
+        },
+      },
+    } = getState();
+
     const activeAccountId = getActiveAccountId(accounts);
     const activeAccountType = getActiveAccountType(accounts);
 
-    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
+    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) {
+      if ([
+        SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+      ].includes(upgradeStatus)) {
+        await dispatch(initSmartWalletSdkAction(privateKey));
+      }
+      return;
+    }
 
     await dispatch(initSmartWalletSdkAction(privateKey));
     await dispatch(connectSmartWalletAccountAction(activeAccountId));
