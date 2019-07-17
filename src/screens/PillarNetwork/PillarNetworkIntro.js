@@ -27,11 +27,15 @@ import Icon from 'components/Icon';
 import Button from 'components/Button';
 import { baseColors, fontSizes } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
-import { TANK_DETAILS } from 'constants/navigationConstants';
+import { ASSETS } from 'constants/navigationConstants';
 import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { addNetworkAction } from 'actions/blockchainNetworkActions';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  addNetwork: Function,
 }
 const CustomWrapper = styled.View`
   flex: 1;
@@ -92,9 +96,18 @@ const features = [
   },
 ];
 
-class PillarNetworkIntro extends React.PureComponent<Props> {
+class PillarNetworkIntro extends React.Component<Props> {
+  createPLRTank = () => {
+    const { navigation, addNetwork } = this.props;
+    addNetwork({
+      id: BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK,
+      title: 'Pillar network',
+      isActive: false,
+    });
+    navigation.navigate(ASSETS);
+  };
+
   render() {
-    const { navigation } = this.props;
     return (
       <ContainerWithHeader
         headerProps={{
@@ -138,7 +151,7 @@ class PillarNetworkIntro extends React.PureComponent<Props> {
             <Button
               block
               title="Create PLR Tank"
-              onPress={() => navigation.navigate(TANK_DETAILS)}
+              onPress={this.createPLRTank}
               roundedCorners
               style={{ backgroundColor: baseColors.pomegranate, marginTop: 40, marginBottom: 20 }}
               textStyle={{ color: baseColors.ultramarine }}
@@ -150,4 +163,8 @@ class PillarNetworkIntro extends React.PureComponent<Props> {
   }
 }
 
-export default PillarNetworkIntro;
+const mapDispatchToProps = (dispatch: Function) => ({
+  addNetwork: (network: Object) => dispatch(addNetworkAction(network)),
+});
+
+export default connect(null, mapDispatchToProps)(PillarNetworkIntro);

@@ -51,8 +51,7 @@ import type { Assets, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts } from 'models/Account';
-
+import type { Accounts, Account } from 'models/Account';
 // actions
 import {
   updateAssetsAction,
@@ -75,6 +74,9 @@ import {
 } from 'constants/assetsConstants';
 import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import { ACCOUNTS, UPGRADE_TO_SMART_WALLET_FLOW } from 'constants/navigationConstants';
 
 // utils
 import { baseColors, spacing, fontSizes, UIColors } from 'utils/variables';
@@ -82,11 +84,11 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
 import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { activeAccountSelector } from 'selectors';
 
 // local components
 import AssetsList from './AssetsList';
 import CollectiblesList from './CollectiblesList';
-// import HeaderButtonsForSmartWallet from './HeaderButtonsForSmartWallet';
 
 type Props = {
   fetchInitialAssets: () => Function,
@@ -110,6 +112,8 @@ type Props = {
   accounts: Accounts,
   smartWalletState: Object,
   smartWalletFeatureEnabled: boolean,
+  blockchainNetworks: Object[],
+  activeAccount: Account,
 }
 
 type State = {
@@ -397,6 +401,36 @@ class AssetsScreen extends React.Component<Props, State> {
     this.setState({ activeTab });
   };
 
+  getHeaderActionInfo = (isSmartWallet: boolean) => {
+    const {
+      navigation,
+      blockchainNetworks,
+      activeAccount,
+    } = this.props;
+    const { type: walletType } = activeAccount;
+    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
+    const { id: activeBNetworkId, title: activeBNetworkTitle } = activeBNetwork;
+
+    switch (activeBNetworkId) {
+      case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
+        if (isSmartWallet) {
+          return {
+            label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet',
+            action: () => navigation.navigate(ACCOUNTS),
+          };
+        }
+        return {
+          label: 'Upgrade',
+          action: () => navigation.navigate(UPGRADE_TO_SMART_WALLET_FLOW),
+        };
+      default:
+        return {
+          label: activeBNetworkTitle,
+          action: () => navigation.navigate(ACCOUNTS),
+        };
+    }
+  };
+
   render() {
     const {
       assets,
@@ -408,7 +442,6 @@ class AssetsScreen extends React.Component<Props, State> {
       badges,
       accounts,
       smartWalletState,
-      // smartWalletFeatureEnabled,
     } = this.props;
     const { query, activeTab, forceHideRemoval } = this.state;
 
@@ -456,7 +489,11 @@ class AssetsScreen extends React.Component<Props, State> {
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
 
-    // const isSmartWallet = smartWalletStatus.hasAccount;
+    const isSmartWallet = smartWalletStatus.hasAccount;
+
+    // HEADER PROPS
+    const headerInfo = this.getHeaderActionInfo(isSmartWallet);
+    const { label: headerButtonLabel, action: headerButtonAction } = headerInfo;
 
     return (
       <ContainerWithHeader
@@ -465,14 +502,19 @@ class AssetsScreen extends React.Component<Props, State> {
           backgroundColor: baseColors.jellyBean,
           leftItems: [{ user: true }],
           rightItems: [{
-            assetManagement: true,
+            actionButton: {
+              key: 'manageAccounts',
+              label: headerButtonLabel,
+              hasChevron: isSmartWallet,
+              action: headerButtonAction,
+            },
           }],
         }}
       >
         { /* <SearchBlock
           headerProps={{
             title: 'assets',
-            headerRightAddon: smartWalletFeatureEnabled && <HeaderButtonsForSmartWallet
+            headerRightAddon: smartWalletFeatureEnabled && <ManageAccountsButton
               isSmartWallet={isSmartWallet}
               navigation={navigation}
             />,
@@ -554,6 +596,7 @@ const mapStateToProps = ({
   badges: { data: badges },
   smartWallet: smartWalletState,
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  blockchainNetwork: { data: blockchainNetworks },
 }) => ({
   wallet,
   accounts,
@@ -567,10 +610,12 @@ const mapStateToProps = ({
   badges,
   smartWalletState,
   smartWalletFeatureEnabled,
+  blockchainNetworks,
 });
 
 const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
+  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import { createStructuredSelector } from 'reselect';
 import { activeAccountSelector } from 'selectors';
 
@@ -33,7 +33,7 @@ import ProfileImage from 'components/ProfileImage';
 import type { Accounts } from 'models/Account';
 
 // partials
-import AssetManagementButton from './AssetManagementButton';
+import { HeaderActionButton } from './HeaderActionButton';
 
 type Props = {
   rightItems?: Object[],
@@ -281,10 +281,6 @@ class HeaderBlock extends React.Component<Props, State> {
 
   renderRightSideItems = (theme) => {
     const {
-      activeAccount,
-      smartWalletFeatureEnabled,
-      accounts,
-      smartWalletState,
       rightItems = [],
       rightIconsSize,
       navigation,
@@ -313,18 +309,6 @@ class HeaderBlock extends React.Component<Props, State> {
                 </TextButton>
               );
             }
-            if (item.assetManagement) {
-              return (
-                <AssetManagementButton
-                  key="assetManagement"
-                  smartWalletFeatureEnabled={smartWalletFeatureEnabled}
-                  activeAccount={activeAccount}
-                  accounts={accounts}
-                  smartWalletState={smartWalletState}
-                  theme={theme}
-                />
-              );
-            }
             if (item.close) {
               return (
                 <ActionIcon
@@ -340,6 +324,12 @@ class HeaderBlock extends React.Component<Props, State> {
             }
             if (item.user || item.userIcon) {
               return this.renderUser(theme, !item.userIcon);
+            }
+            if (item.actionButton) {
+              return (<HeaderActionButton {...item.actionButton} theme={theme} />);
+            }
+            if (item.custom) {
+              return <View key={item.key || 'custom'}>{item.custom}</View>;
             }
             return null;
           })}

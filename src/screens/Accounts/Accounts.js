@@ -22,6 +22,7 @@ import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import isEqual from 'lodash.isequal';
 import { CachedImage } from 'react-native-cached-image';
+import { connect } from 'react-redux';
 
 // components
 import { BaseText, BoldText } from 'components/Typography';
@@ -36,10 +37,22 @@ import { baseColors } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
-import { PILLAR_NETWORK_INTRO } from 'constants/navigationConstants';
+import { PILLAR_NETWORK_INTRO, ASSETS } from 'constants/navigationConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import { setActiveBNetworkAction } from 'actions/blockchainNetworkActions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  setActiveBNetwork: Function,
+  blockchainNetworks: Object[],
+}
+
+type CardProps = {
+  icon: string,
+  title: string,
+  subtitle?: string,
+  action?: Function,
+  note?: Object,
 }
 
 const CardRow = styled.View`
@@ -73,34 +86,44 @@ const CardSubtitle = styled(BaseText)`
   margin-top: 4px;
 `;
 
-const accountList = [
-  {
-    key: 'ethereum',
-    title: 'Ethereum',
-    icon: '',
-    screenKey: '',
-  },
-  {
-    key: 'pillarNetwork',
-    title: 'Pillar Network',
-    icon: '',
-    screenKey: PILLAR_NETWORK_INTRO,
-    note: {
-      note: 'Instant, free and private transactions',
-      emoji: 'sunglasses',
-    },
-  },
-  {
-    key: 'bitcoin',
-    title: 'Bitcoin',
-    icon: '',
-    screenKey: '',
-  },
-];
-
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-class AssetsScreen extends React.Component<Props> {
+const ppnInitButton = {
+  id: 'INIT_PPN',
+  title: 'Pillar Network',
+  isNotConnected: true,
+};
+
+const Card = (props: CardProps) => {
+  const {
+    icon,
+    title,
+    subtitle,
+    action,
+    note,
+  } = props;
+
+  return (
+    <ShadowedCard
+      wrapperStyle={{ marginBottom: 10, width: '100%' }}
+      contentWrapperStyle={{ padding: 20 }}
+      onPress={action}
+    >
+      <CardRow>
+        <CardImage source={{ uri: icon }} fallbackSource={genericToken} />
+        <CardContent>
+          <CardTitle>{title}</CardTitle>
+          {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
+        </CardContent>
+      </CardRow>
+      {!!note &&
+      <Note {...note} containerStyle={{ marginTop: 14 }} />
+      }
+    </ShadowedCard>
+  );
+};
+
+class AccountsScreen extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
     const isFocused = this.props.navigation.isFocused();
     if (!isFocused) {
@@ -110,35 +133,61 @@ class AssetsScreen extends React.Component<Props> {
     return !isEq;
   }
 
-  renderAccounts = ({ item: account }: Object) => {
+  setActiveNetwork = (id) => {
+    const { setActiveBNetwork, navigation } = this.props;
+    setActiveBNetwork(id);
+    navigation.navigate(ASSETS);
+  };
+
+  renderNetworks = ({ item: network }: Object) => {
     const { navigation } = this.props;
-    const {
-      icon,
-      title,
-      note,
-      screenKey,
-    } = account;
-    return (
-      <ShadowedCard
-        wrapperStyle={{ marginBottom: 10, width: '100%' }}
-        contentWrapperStyle={{ padding: 20 }}
-        onPress={() => navigation.navigate(screenKey)}
-      >
-        <CardRow>
-          <CardImage source={{ uri: icon }} fallbackSource={genericToken} />
-          <CardContent>
-            <CardTitle>{title}</CardTitle>
-            <CardSubtitle>Balance 1,430.58</CardSubtitle>
-          </CardContent>
-        </CardRow>
-        {!!note &&
-          <Note {...note} containerStyle={{ marginTop: 14 }} />
-        }
-      </ShadowedCard>
-    );
+    const { id } = network;
+
+    const ppnNote = {
+      note: 'Instant, free and private transactions',
+      emoji: 'sunglasses',
+    };
+
+    switch (id) {
+      case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
+        return (
+          <Card
+            {...network}
+            action={() => this.setActiveNetwork(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM)}
+            subtitle="Balance: £130.17"
+          />
+        );
+      case 'INIT_PPN':
+        return (
+          <Card
+            {...network}
+            action={() => navigation.navigate(PILLAR_NETWORK_INTRO)}
+            note={ppnNote}
+          />
+        );
+      case BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK:
+        return (
+          <Card
+            {...network}
+            subtitle="Balance: 0"
+            action={() => this.setActiveNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK)}
+            note={ppnNote}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   render() {
+    const { blockchainNetworks } = this.props;
+    const PillarNetwork = blockchainNetworks
+      .find(({ id: bnetworkId }) => bnetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) || {};
+
+    const networksListData = Object.keys(PillarNetwork).length
+      ? blockchainNetworks
+      : [...blockchainNetworks, ppnInitButton];
+
     return (
       <ContainerWithHeader
         color={baseColors.white}
@@ -154,15 +203,25 @@ class AssetsScreen extends React.Component<Props> {
         }}
       >
         <FlatList
-          data={accountList}
-          keyExtractor={(item) => item.key}
+          data={networksListData}
+          keyExtractor={(item) => item.id}
           style={{ width: '100%' }}
           contentContainerStyle={{ width: '100%', padding: 20 }}
-          renderItem={this.renderAccounts}
+          renderItem={this.renderNetworks}
         />
       </ContainerWithHeader>
     );
   }
 }
 
-export default AssetsScreen;
+const mapStateToProps = ({
+  blockchainNetwork: { data: blockchainNetworks },
+}) => ({
+  blockchainNetworks,
+});
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  setActiveBNetwork: (id: string) => dispatch(setActiveBNetworkAction(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AccountsScreen);

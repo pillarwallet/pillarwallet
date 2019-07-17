@@ -53,6 +53,7 @@ import accountsReducer from './accountsReducer';
 import balancesReducer from './balancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
 import featureFlagsReducer from './featureFlagsReducer';
+import blockchainNetworkReducer from './blockchainNetworkReducer';
 
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
@@ -85,6 +86,7 @@ const appReducer = combineReducers({
   balances: balancesReducer,
   paymentNetwork: paymentNetworkReducer,
   featureFlags: featureFlagsReducer,
+  blockchainNetwork: blockchainNetworkReducer,
 });
 
 const initialState = appReducer(undefined, {});
