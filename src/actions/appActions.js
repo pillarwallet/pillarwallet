@@ -50,7 +50,9 @@ import {
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   DISMISS_SMART_WALLET_UPGRADE,
+  SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
+  SET_SMART_WALLET_DEPLOYMENT_DATA,
   SET_SMART_WALLET_UPGRADE_STATUS,
 } from 'constants/smartWalletConstants';
 import { UPDATE_PAYMENT_NETWORK_BALANCES } from 'constants/paymentNetworkConstants';
@@ -140,9 +142,13 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const {
         upgradeTransferTransactions = [],
         upgradeStatus = null,
+        accounts: smartAccounts = [],
+        deploymentData = {},
       } = await storage.get('smartWallet');
       dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
       dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
+      dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: smartAccounts });
+      dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 
