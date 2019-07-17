@@ -210,6 +210,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       transferAssets,
       transferCollectibles,
       assets,
+      balances,
       baseFiatCurrency,
       rates,
       gasInfo,
@@ -255,13 +256,29 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     });
 
     const etherTransfer = nonEmptyAssets.find(asset => asset.symbol === ETH);
+    const etherBalance = getBalance(balances, ETH);
 
     /**
-     * there should be enough ether at least for deployment when tokens are transferred
-     * and there should be enough ether in primary wallet for asset transfer transactions
+     * there should be selected enough ether for contract deployment
+     * and there should be enough ether in primary wallet for assets transfer
      */
-    const notEnoughEther = !etherTransfer
-      || (etherTransfer.amount - parseFloat(feeSmartContractDeployEth) < parseFloat(feeTokensTransferEth));
+    const notEnoughEtherForTokensTransfer = !etherTransfer
+      || (etherBalance - etherTransfer.amount < parseFloat(feeTokensTransferEth));
+
+    const notEnoughEtherForContractDeployment = !etherTransfer
+      || (etherTransfer.amount < parseFloat(feeSmartContractDeployEth));
+
+    const notEnoughEther = notEnoughEtherForTokensTransfer || notEnoughEtherForContractDeployment;
+
+    let errorMessage = '';
+    if (notEnoughEther && !etherTransfer) {
+      errorMessage = 'You need to select to transfer ETH in order to cover the contract deployment fee.';
+    } else if (notEnoughEtherForTokensTransfer) {
+      errorMessage = `There is not enough ether left in order to cover the assets transfer fee.
+        Please reduce the amount of ETH you would like to transfer`;
+    } else if (notEnoughEtherForContractDeployment) {
+      errorMessage = 'There is not enough ether in order to cover the contract deployment fee.';
+    }
 
     return (
       <React.Fragment>
@@ -285,10 +302,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           <DetailsTitle>Est. fee for smart contract deployment</DetailsTitle>
           <DetailsValue>{smartContractDeployFee}</DetailsValue>
         </DetailsLine>
-        {!!notEnoughEther &&
-        <WarningMessage>
-          There is not enough ether for contract deployment and asset transfer transactions estimated fees.
-        </WarningMessage>}
+        {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
         {!upgradeStarted &&
         <Button
           block
