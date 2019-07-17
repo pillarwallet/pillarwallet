@@ -144,7 +144,7 @@ class SmartWallet {
     }
 
     console.log('insufficient balance, lack: ', deployEstimate.sub(accountBalance).toString());
-    return {};
+    return null;
   }
 
   getAccountRealBalance() {
