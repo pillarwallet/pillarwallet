@@ -46,6 +46,7 @@ export const fetchCollectiblesAction = () => {
         asset_contract: assetContract,
         name,
         description,
+        background_color: backgroundColor,
         image_url: fullImage,
         image_preview_url: preview,
         image_thumbnail_url: thumbnail,
@@ -59,6 +60,7 @@ export const fetchCollectiblesAction = () => {
       return {
         id,
         category,
+        backgroundColor,
         image: image || previewImage,
         name: collectibleName,
         description,

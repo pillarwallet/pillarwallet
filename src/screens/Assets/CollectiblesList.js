@@ -127,6 +127,7 @@ class CollectiblesList extends React.Component<Props> {
     const { navigation } = this.props;
     return (
       <BadgeTouchableItem
+        background={`#${item.backgroundColor}`}
         data={item}
         onPress={() => navigation.navigate(BADGE, { id: item.id })}
       />

@@ -38,6 +38,7 @@ type Props = {
   address?: string,
   wallpaper?: string,
   name: string,
+  backgroundColor?: string,
   children?: React.Node,
   disclaimer?: string,
   balanceInFiat: {
@@ -272,7 +273,9 @@ class AssetCardMinimized extends React.Component<Props, State> {
       balanceInFiat,
       isCollectible,
       name,
+      backgroundColor,
     } = this.props;
+    const background = backgroundColor ? `#${backgroundColor}` : null;
 
     const currencySymbol = isCollectible ? '' : getCurrencySymbol(balanceInFiat.currency);
 
@@ -280,13 +283,21 @@ class AssetCardMinimized extends React.Component<Props, State> {
       const imageSize = icon ? 135 : 55;
       return (
         <InnerWrapper justify="flex-start">
-          <CardRow justify="center" style={{ marginTop: 4, height: 150 }}>
+          <CardRow
+            justify="center"
+            style={{
+              marginTop: 4,
+              marginBottom: 10,
+              height: 140,
+              backgroundColor: background,
+            }}
+          >
             <CachedImage
-              key={name}
               style={{
                 height: imageSize,
                 width: imageSize,
-                marginBottom: spacing.mediumLarge,
+                margin: 0,
+                padding: 0,
               }}
               source={{ uri: icon }}
               fallbackSource={genericToken}
