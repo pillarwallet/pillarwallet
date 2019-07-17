@@ -23,7 +23,6 @@ import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
-import { Answers } from 'react-native-fabric';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import Permissions from 'react-native-permissions';
@@ -70,6 +69,7 @@ import {
   onWalletConnectSessionRequest,
   cancelWaitingRequest,
 } from 'actions/walletConnectActions';
+import { logScreenViewAction } from 'actions/analyticsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -105,6 +105,7 @@ type Props = {
   onWalletLinkScan: Function,
   cancelWaitingRequest: Function,
   loginAttemptToken?: string,
+  logScreenView: (view: string, screen: string) => void,
 };
 
 type State = {
@@ -300,9 +301,9 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory } = this.props;
+    const { fetchTransactionsHistory, logScreenView } = this.props;
 
-    Answers.logContentView('Home screen');
+    logScreenView('View home', 'Home');
 
     if (Platform.OS === 'ios') {
       firebase.notifications().setBadge(0);
@@ -381,6 +382,9 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   setActiveTab = (activeTab) => {
+    const { logScreenView } = this.props;
+
+    logScreenView(`View tab Home.${activeTab}`, 'Home');
     this.setState({ activeTab });
   };
 
@@ -875,6 +879,7 @@ const mapDispatchToProps = (dispatch) => ({
   onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
   onWalletLinkScan: uri => dispatch(executeDeepLinkAction(uri)),
   cancelWaitingRequest: clientId => dispatch(cancelWaitingRequest(clientId)),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
