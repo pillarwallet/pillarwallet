@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Answers } from 'react-native-fabric';
 import { Sentry } from 'react-native-sentry';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
@@ -33,6 +32,7 @@ import {
   prependConnectionKeyPairs,
 } from 'actions/connectionKeyPairActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
+import { logEventAction } from 'actions/analyticsActions';
 import { getIdentityKeyPairs } from 'utils/connections';
 import { saveDbAction } from './dbActions';
 
@@ -85,7 +85,7 @@ export const sendInvitationAction = (user: ApiUser) => {
       await dispatch(mapIdentityKeysAction(1));
     }
 
-    Answers.logCustom('Connection', { Action: 'Request' });
+    dispatch(logEventAction('connection_requested'));
 
     dispatch(({
       type: ADD_NOTIFICATION,
@@ -161,7 +161,7 @@ export const acceptInvitationAction = (invitation: Object) => {
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
     dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
 
-    Answers.logCustom('Connection', { Action: 'Accept' });
+    dispatch(logEventAction('connection_accepted'));
 
     dispatch({
       type: UPDATE_INVITATIONS,
@@ -205,7 +205,7 @@ export const cancelInvitationAction = (invitation: Object) => {
       return;
     }
 
-    Answers.logCustom('Connection', { Action: 'Cancel' });
+    dispatch(logEventAction('connection_cancelled'));
 
     dispatch(({
       type: ADD_NOTIFICATION,
@@ -261,7 +261,7 @@ export const rejectInvitationAction = (invitation: Object) => {
       return;
     }
 
-    Answers.logCustom('Connection', { Action: 'Reject' });
+    dispatch(logEventAction('connection_rejected'));
 
     dispatch(({
       type: ADD_NOTIFICATION,
