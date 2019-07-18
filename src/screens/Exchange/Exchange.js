@@ -421,6 +421,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       supportedAssets,
       navigation,
       oAuthAccessToken,
+      resetOffers,
     } = this.props;
     if (assets !== prevProps.assets || supportedAssets !== prevProps.supportedAssets) {
       this.provideOptions();
@@ -433,7 +434,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
     if (prevProps.oAuthAccessToken !== oAuthAccessToken) {
       // access token has changed, init search again
-      this.props.resetOffers();
+      resetOffers();
       this.triggerSearch();
     }
   }
