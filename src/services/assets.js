@@ -296,6 +296,7 @@ export async function calculateGasEstimate(transaction: Object) {
     decimals: defaultDecimals = 18,
   } = transaction;
   let { to, data } = transaction;
+  const DEFAULT_GAS_LIMIT = 500000;
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   const value = symbol === ETH
     ? utils.parseEther(amount.toString())
@@ -314,5 +315,9 @@ export async function calculateGasEstimate(transaction: Object) {
     to,
     data,
     value,
-  });
+  })
+    .then(calculatedGasLimit =>
+      Math.round(utils.bigNumberify(calculatedGasLimit).toNumber() * 1.5), // safe buffer multiplier
+    )
+    .catch(() => DEFAULT_GAS_LIMIT);
 }

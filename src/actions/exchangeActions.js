@@ -17,9 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import { Linking } from 'react-native';
-import { utils } from 'ethers';
 import ExchangeService from 'services/exchange';
 import Toast from 'components/Toast';
 import {
@@ -44,7 +42,6 @@ import type { Offer, OfferOrder } from 'models/Offer';
 import { saveDbAction } from './dbActions';
 
 const exchangeService = new ExchangeService();
-const DEFAULT_GAS_LIMIT = 500000;
 
 const connectExchangeService = (state: Object) => {
   const {
@@ -63,20 +60,6 @@ const connectExchangeService = (state: Object) => {
       && existingShapeshiftToken === shapeshiftAccessToken) return;
   }
   exchangeService.connect(oAuthTokens.accessToken, shapeshiftAccessToken);
-};
-
-const getGasEstimate = (transaction) => {
-  /**
-   * if there's no data transaction and we calculate token to token transfer
-   * data by `ethers.js` then the `gasLimit` always is too small,
-   * once this is sorted out we can remove default `DEFAULT_GAS_LIMIT`
-   * this happens to be only for `Shapeshift`
-   */
-  return calculateGasEstimate(transaction)
-    .then(calculatedGasLimit =>
-      Math.round(utils.bigNumberify(calculatedGasLimit).toNumber() * 1.5), // safe buffer multiplier
-    )
-    .catch(() => DEFAULT_GAS_LIMIT);
 };
 
 export const takeOfferAction = (
@@ -121,7 +104,7 @@ export const takeOfferAction = (
       assets: { supportedAssets },
     } = getState();
     const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
-    const gasLimit = await getGasEstimate({
+    const gasLimit = await calculateGasEstimate({
       from: wallet.address, // TODO: get address from active account when it's possible
       to: payToAddress,
       data: transactionObjData,
@@ -305,7 +288,7 @@ export const setTokenAllowanceAction = (
       assets: { supportedAssets },
     } = getState();
     const asset = supportedAssets.find(a => a.symbol === assetCode);
-    const gasLimit = await getGasEstimate({
+    const gasLimit = await calculateGasEstimate({
       from: wallet.address, // TODO: get address from active account when it's possible
       to: payToAddress,
       data,
