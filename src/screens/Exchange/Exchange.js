@@ -433,7 +433,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
     if (prevProps.oAuthAccessToken !== oAuthAccessToken) {
       // access token has changed, init search again
-      this.resetOffers();
+      this.props.resetOffers();
       this.triggerSearch();
     }
   }
@@ -474,12 +474,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       }
     }
     this.setState({ value: initialFormState });
-  };
-
-  resetOffers = () => {
-    const { offers, resetOffers } = this.props;
-    if (!offers || !offers.length) return;
-    resetOffers();
   };
 
   triggerSearch = () => {
@@ -579,7 +573,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   setFromAmount = amount => {
-    this.resetOffers(); // reset all cards before they change according to input values
+    this.props.resetOffers(); // reset all cards before they change according to input values
     this.setState(prevState => ({
       value: {
         ...prevState.value,
@@ -762,7 +756,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   handleFormChange = (value: Object) => {
-    this.resetOffers(); // reset all cards before they change according to input values
+    this.props.resetOffers(); // reset all cards before they change according to input values
     this.setState({ value });
     this.triggerSearch();
     this.updateOptions(value);
