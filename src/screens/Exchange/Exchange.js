@@ -475,7 +475,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setState({ value: initialFormState });
   };
 
-  triggerSearch = async () => {
+  triggerSearch = () => {
     this.props.resetOffers();
     const { value: { fromInput, toInput } } = this.state;
     const {
