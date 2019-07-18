@@ -32,7 +32,7 @@ import {
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId, getActiveAccountWalletId } from 'utils/accounts';
-import { checkForMissedAssetsAction } from './assetsActions';
+import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
@@ -200,6 +200,7 @@ export const updateTransactionStatusAction = (hash: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
+      assets: { data: assets },
       session: { data: { isOnline } },
       history: { data: currentHistory },
     } = getState();
@@ -232,8 +233,9 @@ export const updateTransactionStatusAction = (hash: string) => {
     });
 
     dispatch(afterHistoryUpdatedAction());
-
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
+
+    dispatch(fetchAssetsBalancesAction(assets));
   };
 };
 
