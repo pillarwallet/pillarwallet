@@ -636,8 +636,10 @@ class ExchangeScreen extends React.Component<Props, State> {
     const askRateBn = new BigNumber(askRate);
 
     const amountToSell = parseFloat(selectedSellAmount);
-    const isBelowMin = minQuantity !== 0 && amountToSell < parseFloat(minQuantity);
-    const isAboveMax = maxQuantity !== 0 && amountToSell > parseFloat(maxQuantity);
+    const minQuantityNumeric = parseFloat(minQuantity);
+    const maxQuantityNumeric = parseFloat(maxQuantity);
+    const isBelowMin = minQuantityNumeric !== 0 && amountToSell < minQuantityNumeric;
+    const isAboveMax = maxQuantityNumeric !== 0 && amountToSell > maxQuantityNumeric;
 
     const minOrMaxNeeded = isBelowMin || isAboveMax;
     const minOrMaxAmount = formatAmountDisplay(isBelowMin ? minQuantity : maxQuantity);
