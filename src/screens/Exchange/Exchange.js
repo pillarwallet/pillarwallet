@@ -433,6 +433,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
     if (prevProps.oAuthAccessToken !== oAuthAccessToken) {
       // access token has changed, init search again
+      this.resetOffers();
       this.triggerSearch();
     }
   }
@@ -475,17 +476,31 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setState({ value: initialFormState });
   };
 
+  resetOffers = () => {
+    const { offers, resetOffers } = this.props;
+    if (!offers || !offers.length) return;
+    resetOffers();
+  };
+
   triggerSearch = () => {
-    this.props.resetOffers();
-    const { value: { fromInput, toInput } } = this.state;
     const {
-      selector: { value: from },
-      input: amountString = 0,
-    } = fromInput;
-    const { selector: { value: to } } = toInput;
-    const { searchOffers } = this.props;
+      searchOffers,
+    } = this.props;
+    const {
+      value: {
+        fromInput: {
+          selector: { value: from },
+          input: amountString = 0,
+        } = {},
+        toInput: {
+          selector: {
+            value: to,
+          },
+        } = {},
+      } = {},
+    } = this.state;
     const amount = parseFloat(amountString);
-    if (!amount) return;
+    if (!from || !to || !amount) return;
     searchOffers(from, to, amount);
   };
 
@@ -564,7 +579,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   setFromAmount = amount => {
-    this.props.resetOffers();
+    this.resetOffers(); // reset all cards before they change according to input values
     this.setState(prevState => ({
       value: {
         ...prevState.value,
@@ -747,6 +762,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   handleFormChange = (value: Object) => {
+    this.resetOffers(); // reset all cards before they change according to input values
     this.setState({ value });
     this.triggerSearch();
     this.updateOptions(value);
