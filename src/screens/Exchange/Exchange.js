@@ -170,6 +170,7 @@ type Props = {
   connectedProviders: ExchangeProvider[],
   hasUnreadExchangeNotification: boolean,
   markNotificationAsSeen: Function,
+  oAuthAccessToken: string,
 };
 
 type State = {
@@ -189,8 +190,12 @@ const getAvailable = (_min, _max, rate) => {
   let max = (new BigNumber(rate)).multipliedBy(_max);
   if ((min.gte(0) && min.lt(0.01)) || (max.gte(0) && max.lt(0.01))) {
     if (max.isZero()) return '>0.01';
+    const maxAvailable = max.lt(0.01)
+      ? '<0.01'
+      : formatMoney(max.toNumber(), 2);
     return min.eq(max) || min.isZero()
-      ? '<0.01' // max available
+      // max available displayed if equal to min or min is zero
+      ? maxAvailable
       : '<0.01 - <0.01';
   }
   min = min.toNumber();
@@ -306,6 +311,7 @@ function SelectorInputTemplate(locals) {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
     keyboardType: locals.keyboardType,
+    autoCapitalize: locals.autoCapitalize,
     maxLength: 42,
     label,
     placeholderSelector,
@@ -325,6 +331,21 @@ function SelectorInputTemplate(locals) {
       inputRef={inputRef}
     />
   );
+}
+
+/**
+ * avoid text overlapping on many decimals,
+ * full amount will be displayed n confirm screen
+ * also show only 2 decimals for amounts above 1.00
+ * to avoid same text overlapping in the other side
+ */
+function formatAmountDisplay(value: number | string) {
+  if (!value) return 0;
+  const amount = parseFloat(value);
+  if (amount > 1) {
+    return formatMoney(amount, 2);
+  }
+  return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
 }
 
 class ExchangeScreen extends React.Component<Props, State> {
@@ -351,6 +372,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         fields: {
           fromInput: {
             keyboardType: 'decimal-pad',
+            autoCapitalize: 'words',
             template: SelectorInputTemplate,
             config: {
               label: 'Selling',
@@ -400,7 +422,13 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { assets, supportedAssets, navigation } = this.props;
+    const {
+      assets,
+      supportedAssets,
+      navigation,
+      oAuthAccessToken,
+      resetOffers,
+    } = this.props;
     if (assets !== prevProps.assets || supportedAssets !== prevProps.supportedAssets) {
       this.provideOptions();
     }
@@ -409,6 +437,11 @@ class ExchangeScreen extends React.Component<Props, State> {
       this.setInitialSelection(fromAssetCode);
       // reset to prevent nav value change over newly selected
       navigation.setParams({ fromAssetCode: null });
+    }
+    if (prevProps.oAuthAccessToken !== oAuthAccessToken) {
+      // access token has changed, init search again
+      resetOffers();
+      this.triggerSearch();
     }
   }
 
@@ -451,17 +484,24 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   triggerSearch = () => {
-    const { resetOffers } = this.props;
-    const { value: { fromInput, toInput } } = this.state;
     const {
-      selector: { value: from },
-      input: amountString = 0,
-    } = fromInput;
-    const { selector: { value: to } } = toInput;
-    const { searchOffers } = this.props;
+      searchOffers,
+    } = this.props;
+    const {
+      value: {
+        fromInput: {
+          selector: { value: from },
+          input: amountString = 0,
+        } = {},
+        toInput: {
+          selector: {
+            value: to,
+          },
+        } = {},
+      } = {},
+    } = this.state;
     const amount = parseFloat(amountString);
-    if (!amount) return;
-    resetOffers(); // reset here to avoid cards reload delay
+    if (!from || !to || !amount) return;
     searchOffers(from, to, amount);
   };
 
@@ -559,6 +599,24 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
+  setFromAmount = amount => {
+    this.props.resetOffers(); // reset all cards before they change according to input values
+    this.setState(prevState => ({
+      value: {
+        ...prevState.value,
+        fromInput: {
+          ...prevState.value.fromInput,
+          input: amount,
+        },
+      },
+    }), () => {
+      const validation = this.exchangeForm.validate();
+      const { errors = [] } = validation;
+      if (errors.length) return;
+      this.triggerSearch();
+    });
+  };
+
   renderOffers = ({ item: offer }) => {
     const {
       value: { fromInput },
@@ -597,18 +655,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
     const providerLogo = getProviderLogo(offerProvider);
 
-    /**
-     * avoid text overlapping on many decimals,
-     * full amount will be displayed n confirm screen
-     * also show only 2 decimals for amounts above 1.00
-     * to avoid same text overlapping in the other side
-    */
-    let amountToBuyString;
-    if (amountToBuy > 1) {
-      amountToBuyString = formatMoney(amountToBuy, 2);
-    } else {
-      amountToBuyString = amountToBuy > 0.00001 ? formatMoney(amountToBuy, 5) : '<0.00001';
-    }
+    const amountToBuyString = formatAmountDisplay(amountToBuy);
 
     let shapeshiftAccessToken;
     if (isShapeShift) {
@@ -618,6 +665,20 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const askRateBn = new BigNumber(askRate);
 
+    const amountToSell = parseFloat(selectedSellAmount);
+    const minQuantityNumeric = parseFloat(minQuantity);
+    const maxQuantityNumeric = parseFloat(maxQuantity);
+    const isBelowMin = minQuantityNumeric !== 0 && amountToSell < minQuantityNumeric;
+    const isAboveMax = maxQuantityNumeric !== 0 && amountToSell > maxQuantityNumeric;
+
+    const minOrMaxNeeded = isBelowMin || isAboveMax;
+    const minOrMaxAmount = formatAmountDisplay(isBelowMin ? minQuantity : maxQuantity);
+
+    const isTakeButtonDisabled = !!minOrMaxNeeded
+      || isTakeOfferPressed
+      || !allowanceSet
+      || (isShapeShift && !shapeshiftAccessToken);
+
     const isFiat = offerProvider === PROVIDER_MOONPAY || offerProvider === PROVIDER_SENDWYRE;
 
     return (
@@ -626,7 +687,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
       >
         <CardWrapper
-          disabled={isTakeOfferPressed || !allowanceSet || (isShapeShift && !shapeshiftAccessToken)}
+          disabled={isTakeButtonDisabled}
           onPress={() => this.onOfferPress(offer)}
         >
           <CardRow withBorder alignTop>
@@ -644,12 +705,19 @@ class ExchangeScreen extends React.Component<Props, State> {
             }
             <CardInnerRow style={{ flexShrink: 1 }}>
               {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
-              {isShapeShift && !shapeshiftAccessToken &&
+              {minOrMaxNeeded &&
+              <CardButton onPress={() => this.setFromAmount(isBelowMin ? minQuantity : maxQuantity)}>
+                <ButtonLabel color={baseColors.electricBlue}>
+                  {`${minOrMaxAmount} ${fromAssetCode} ${isBelowMin ? 'min' : 'max'}`}
+                </ButtonLabel>
+              </CardButton>
+              }
+              {!minOrMaxNeeded && isShapeShift && !shapeshiftAccessToken &&
               <CardButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthPress}>
                 <ButtonLabel color={baseColors.electricBlue}>Connect</ButtonLabel>
               </CardButton>
               }
-              {!allowanceSet &&
+              {!minOrMaxNeeded && !allowanceSet &&
               <CardButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
                 <ButtonLabel color={storedAllowance ? baseColors.darkGray : baseColors.electricBlue} >
                   {storedAllowance
@@ -692,7 +760,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             {!isFiat &&
             <CardColumn>
               <Button
-                disabled={isTakeOfferPressed || !allowanceSet || (isShapeShift && !shapeshiftAccessToken)}
+                disabled={isTakeButtonDisabled}
                 title={isTakeOfferPressed ? '' : `${amountToBuyString} ${toAssetCode}`}
                 small
                 onPress={() => this.onOfferPress(offer)}
@@ -775,19 +843,10 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  handleSearch = () => {
-    const { resetOffers } = this.props;
-    const formValue = this.exchangeForm.getValue();
-    if (!formValue) {
-      resetOffers();
-      return;
-    }
-    this.triggerSearch();
-  };
-
   handleFormChange = (value: Object) => {
+    this.props.resetOffers(); // reset all cards before they change according to input values
     this.setState({ value });
-    this.handleSearch();
+    this.triggerSearch();
     this.updateOptions(value);
   };
 
@@ -936,6 +995,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
+  oAuthTokens: { data: { accessToken: oAuthAccessToken } },
   appSettings: { data: { baseFiatCurrency } },
   exchange: {
     data: {
@@ -958,6 +1018,7 @@ const mapStateToProps = ({
   exchangeAllowances,
   connectedProviders,
   hasUnreadExchangeNotification,
+  oAuthAccessToken,
 });
 
 const structuredSelector = createStructuredSelector({

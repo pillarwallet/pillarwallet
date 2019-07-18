@@ -20,7 +20,6 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { Answers } from 'react-native-fabric';
 import { Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
@@ -28,6 +27,7 @@ import ErrorMessage from 'components/ErrorMessage';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { initSmartWalletSdkAction } from 'actions/smartWalletActions';
+import { logEventAction } from 'actions/analyticsActions';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { getActiveAccountType } from 'utils/accounts';
@@ -44,6 +44,7 @@ type Props = {
   smartWalletSdkInitialized: boolean,
   smartWalletFeatureEnabled: boolean,
   initSmartWalletSdk: Function,
+  logEvent: (name: string, properties: Object) => void,
 }
 
 type State = {
@@ -81,6 +82,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       isOnline,
       initSmartWalletSdk,
       accounts,
+      logEvent,
     } = this.props;
     const { transactionPayload } = this.state;
     const activeAccountType = getActiveAccountType(accounts);
@@ -98,7 +100,8 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
         // make sure sdk is inited before next step
         await initSmartWalletSdk(wallet.privateKey);
       }
-      Answers.logCustom('Send Transaction', { Source: this.source });
+      logEvent('transaction_sent', { source: this.source });
+
       sendAsset(transactionPayload, wallet, this.handleNavigationToTransactionState);
     });
   };
@@ -156,6 +159,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   initSmartWalletSdk: (walletPrivateKey: string) => dispatch(initSmartWalletSdkAction(walletPrivateKey)),
+  logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
 });
 
 

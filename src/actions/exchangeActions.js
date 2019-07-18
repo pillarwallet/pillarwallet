@@ -137,12 +137,19 @@ export const takeOfferAction = (
   };
 };
 
-export const resetOffersAction = () => ({
-  type: RESET_OFFERS,
-});
+export const resetOffersAction = () => {
+  return async (dispatch: Function) => {
+    // reset websocket listener
+    exchangeService.resetOnOffers();
+    dispatch({ type: RESET_OFFERS });
+  };
+};
 
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
-  return async (dispatch: Function, getState: Function, api: Function) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId: userWalletId } },
+    } = getState();
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
       type: SET_EXCHANGE_SEARCH_REQUEST,
@@ -155,16 +162,11 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     connectExchangeService(getState());
     exchangeService.onOffers(offers =>
       offers
-        .filter(({ askRate = 0, minQuantity = 0, maxQuantity = 0 }) => {
-          if (!askRate) return false;
-          // maxQuantity might be 0, but offer is acceptable
-          return fromAmount >= parseFloat(minQuantity)
-            && (parseFloat(maxQuantity) === 0 || fromAmount <= parseFloat(maxQuantity));
-        })
+        .filter(({ askRate }) => !!askRate)
         .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
     );
     // we're requesting although it will start delivering when connection is established
-    const result = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
+    const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
 
     await api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
       if (!offer.error) {
@@ -178,12 +180,25 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       }
     });
 
-    if (result.error) {
-      Toast.show({
-        title: 'Exchange service failed',
-        type: 'warning',
-        message: 'Unable to connect',
-      });
+    if (error) {
+      const message = error.message || 'Unable to connect';
+      if (message.toString().toLowerCase().startsWith('access token')) {
+        console.log('searchOffersAction expired token');
+        /**
+         * access token is expired or malformed,
+         * let's hit with user info endpoint to update access tokens
+         * or redirect to pin screen (logic being sdk init)
+         * after it's complete (access token's updated) let's dispatch same action again
+         * TODO: change SDK user info endpoint to simple SDK token refresh method when it is reachable within SDK
+         */
+        await api.userInfo(userWalletId).catch(() => null);
+      } else {
+        Toast.show({
+          title: 'Exchange service failed',
+          type: 'warning',
+          message,
+        });
+      }
     }
   };
 };
