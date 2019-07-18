@@ -46,19 +46,23 @@ export const fetchCollectiblesAction = () => {
         asset_contract: assetContract,
         name,
         description,
-        image_preview_url: image,
+        image_url: fullImage,
+        image_preview_url: preview,
         image_thumbnail_url: thumbnail,
       } = collectible;
       const { name: category, address: contractAddress } = assetContract;
       const collectibleName = name || `${category} ${id}`;
 
+      const image = (/\.(png|gif)$/i).test(fullImage) ? fullImage : '';
+      const previewImage = (/\.(png|gif)$/i).test(preview) ? preview : '';
+
       return {
         id,
         category,
+        image: image || previewImage,
         name: collectibleName,
         description,
-        thumbnail,
-        icon: (/\.(png|gif)$/i).test(image) ? image : '',
+        icon: thumbnail || previewImage || image,
         contractAddress,
         assetContract: category,
         tokenType: COLLECTIBLES,
