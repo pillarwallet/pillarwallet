@@ -45,6 +45,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import Tabs from 'components/Tabs';
+import TankBar from 'components/TankBar';
 
 // types
 import type { Assets, Asset } from 'models/Asset';
@@ -528,6 +529,10 @@ class AssetsScreen extends React.Component<Props, State> {
           navigation={navigation}
           white
         /> */ }
+        <TankBar
+          maxValue={1000}
+          currentValue={678}
+        />
         {(blockAssetsView &&
           <Wrapper flex={1} regularPadding center>
             <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>

@@ -98,6 +98,9 @@ export const baseColors = {
   patternsBlue: '#f4f7fb',
   spindle: '#b5d0ee',
   pomegranate: '#f33726',
+  quartz: '#d9e3f5',
+  lavender: '#ebebfc',
+  shipCove: '#8798c2',
 };
 
 export const brandColors = [
