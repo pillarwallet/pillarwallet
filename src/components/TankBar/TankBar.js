@@ -20,8 +20,9 @@
 import * as React from 'react';
 import { Animated } from 'react-native';
 import styled from 'styled-components/native/index';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { MediumText } from 'components/Typography';
+import Icon from 'components/Icon';
 
 type Props = {
   maxValue: number,
@@ -39,14 +40,19 @@ type State = {
 
 const Wrapper = styled.View`
   padding: 20px;
-  background-color: ${baseColors.mediumLightGray};
-  height: 100px;
+  background-color: ${baseColors.white};
+  border-bottom-width: 1px;
+  border-bottom-color: ${baseColors.mediumLightGray};
 `;
 
 const Row = styled.View`
   flex-direction: row;
   width: 100%;
-  align-items: flex-start;
+`;
+
+const Title = styled(MediumText)`
+  font-size: ${fontSizes.extraSmall}px;
+  color: ${baseColors.blueYonder};
 `;
 
 const ProgressBarSide = styled.View`
@@ -64,7 +70,14 @@ const ProgressLabel = styled.View`
   position: absolute;
   top: 12px;
   left: 0;
+  elevation: 5;
+  shadow-color: ${baseColors.black};
+  shadow-radius: 4px;
+  shadow-opacity: 0.3;
+  shadow-offset: 0px 2px;
 `;
+
+
 const AnimatedProgressLabel = Animated.createAnimatedComponent(ProgressLabel);
 
 const LabelLine = styled.View`
@@ -126,6 +139,20 @@ const ButtonText = styled(MediumText)`
 const Value = styled(MediumText)`
   font-size: ${fontSizes.tiny}px;
   line-height: ${fontSizes.tiny}px;
+  color: ${props => props.color ? props.color : baseColors.slateBlack};
+`;
+
+const ChevronWrapper = styled.View`
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+  margin-top: -2px;
+`;
+
+const SelectorChevron = styled(Icon)`
+  font-size: 5px;
+  color: ${baseColors.slateBlack};
 `;
 
 export default class TankBar extends React.Component<Props, State> {
@@ -200,7 +227,10 @@ export default class TankBar extends React.Component<Props, State> {
 
     return (
       <Wrapper>
-        <Row>
+        <Row style={{ marginBottom: spacing.large, marginTop: spacing.small }}>
+          <Title>PLR Tank</Title>
+        </Row>
+        <Row style={{ alignItems: 'flex-start' }}>
           <ProgressBarSide>
             <ProgressBarWrapper
               onLayout={(e) => {
@@ -225,12 +255,24 @@ export default class TankBar extends React.Component<Props, State> {
               this.setState({ sideButtonWidth: width });
             }}
           >
-            <Value>{maxValue}</Value>
-            <Value>PLR</Value>
+            <Value color={baseColors.darkGray}>{maxValue}</Value>
+            <Value style={{ marginLeft: 4 }}>PLR</Value>
+            <ChevronWrapper>
+              <SelectorChevron
+                name="chevron-right"
+                style={{ transform: [{ rotate: '-90deg' }] }}
+              />
+              <SelectorChevron
+                name="chevron-right"
+                style={{
+                  transform: [{ rotate: '90deg' }],
+                }}
+              />
+            </ChevronWrapper>
           </SideButton>
         </Row>
         {!!barWidth && !!sideButtonWidth &&
-        <Row>
+        <Row style={{ height: 40 }}>
           <AnimatedLabelLine
             style={{
               transform: [{

@@ -101,6 +101,7 @@ export const baseColors = {
   quartz: '#d9e3f5',
   lavender: '#ebebfc',
   shipCove: '#8798c2',
+  blueYonder: '#818eb3',
 };
 
 export const brandColors = [
