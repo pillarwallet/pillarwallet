@@ -23,6 +23,8 @@ import {
   PROVIDER_SHAPESHIFT,
   PROVIDER_UNISWAP,
   PROVIDER_ZEROX,
+  PROVIDER_MOONPAY,
+  PROVIDER_SENDWYRE,
 } from 'constants/exchangeConstants';
 
 export const getProviderDisplayName = (provider?: string) => {
@@ -35,6 +37,10 @@ export const getProviderDisplayName = (provider?: string) => {
       return '0x';
     case PROVIDER_CHANGELLY:
       return 'Changelly';
+    case PROVIDER_SENDWYRE:
+      return 'SendWyre';
+    case PROVIDER_MOONPAY:
+      return 'MoonPay';
     default:
       return 'Unknown';
   }
@@ -44,6 +50,8 @@ const zeroxLogo = require('assets/images/exchangeProviders/logo_0x.png');
 const shapeshiftLogo = require('assets/images/exchangeProviders/logo_shapeshift.png');
 const uniswapLogo = require('assets/images/exchangeProviders/logo_uniswap.png');
 const changellyLogo = require('assets/images/exchangeProviders/logo_changelly.png');
+const sendWyreLogo = require('assets/images/exchangeProviders/logo_sendwyre.png');
+const moonPayLogo = require('assets/images/exchangeProviders/logo_moonpay.png');
 
 export const getProviderLogo = (provider?: string) => {
   switch (provider) {
@@ -55,6 +63,10 @@ export const getProviderLogo = (provider?: string) => {
       return zeroxLogo;
     case PROVIDER_CHANGELLY:
       return changellyLogo;
+    case PROVIDER_MOONPAY:
+      return moonPayLogo;
+    case PROVIDER_SENDWYRE:
+      return sendWyreLogo;
     default:
       return '';
   }

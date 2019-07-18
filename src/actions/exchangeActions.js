@@ -142,7 +142,7 @@ export const resetOffersAction = () => ({
 });
 
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function, getState: Function, api: Function) => {
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
       type: SET_EXCHANGE_SEARCH_REQUEST,
@@ -165,6 +165,19 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     );
     // we're requesting although it will start delivering when connection is established
     const result = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
+
+    await api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+      if (!offer.error) {
+        dispatch({ type: ADD_OFFER, payload: offer });
+      }
+    });
+
+    await api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+      if (!offer.error) {
+        dispatch({ type: ADD_OFFER, payload: offer });
+      }
+    });
+
     if (result.error) {
       Toast.show({
         title: 'Exchange service failed',

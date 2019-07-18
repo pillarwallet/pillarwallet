@@ -4453,7 +4453,7 @@ crypto-browserify@^3.11.0:
     randombytes "^2.0.0"
     randomfill "^1.0.3"
 
-crypto-js@3.1.9-1:
+crypto-js@3.1.9-1, crypto-js@^3.1.9-1:
   version "3.1.9-1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/crypto-js/-/crypto-js-3.1.9-1.tgz#fda19e761fc077e01ffbfdc6e9fdfc59e8806cd8"
   integrity sha1-/aGedh/Ad+Af+/3G6f38WeiAbNg=
@@ -12973,9 +12973,9 @@ react-native-qrcode-svg@^5.1.2:
     qrcode "^1.2.0"
 
 react-native-randombytes@^3.5.2:
-  version "3.5.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-randombytes/-/react-native-randombytes-3.5.2.tgz#f23665b7cf1a3125d78d0d95df5d18c2ca9406a0"
-  integrity sha1-8jZlt88aMSXXjQ2V310YwsqUBqA=
+  version "3.5.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-randombytes/-/react-native-randombytes-3.5.3.tgz#b3bdcd11473cce106551a586244b98855e443cd1"
+  integrity sha1-s73NEUc8zhBlUaWGJEuYhV5EPNE=
   dependencies:
     buffer "^4.9.1"
     sjcl "^1.0.3"
@@ -13115,6 +13115,14 @@ react-native-video@^3.2.1:
   dependencies:
     keymirror "0.1.1"
     prop-types "^15.5.10"
+
+react-native-webview@^5.12.0:
+  version "5.12.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-webview/-/react-native-webview-5.12.0.tgz#e673f72a287829444ddcbc7ea2f28f2e5862f9fb"
+  integrity sha1-5nP3Kih4KURN3Lx+ovKPLlhi+fs=
+  dependencies:
+    escape-string-regexp "1.0.5"
+    invariant "2.2.4"
 
 react-native-webview@^5.4.0:
   version "5.8.1"

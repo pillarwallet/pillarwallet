@@ -31,6 +31,9 @@ import {
   OPEN_SEA_API,
   OPEN_SEA_API_KEY,
   ETHPLORER_API_KEY,
+  SENDWYRE_API_URL,
+  MOONPAY_API_URL,
+  MOONPAY_KEY,
 } from 'react-native-dotenv';
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
@@ -742,4 +745,64 @@ SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: 
     .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer', limit: 40 }))
     .then(data => get(data, 'operations', []))
     .catch(() => []);
+};
+
+SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: string, amount: number) {
+  const url = `${MOONPAY_API_URL}/v2/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
+  + `&baseCurrencyAmount=${amount}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
+
+  return Promise.resolve()
+    .then(() => fetch(url))
+    .then(async (data) => {
+      const resp = await data.json();
+      if (resp.totalAmount) {
+        const {
+          totalAmount,
+          feeAmount,
+          extraFeeAmount,
+          quoteCurrencyAmount,
+        } = resp;
+
+        return {
+          provider: 'MoonPay',
+          askRate: totalAmount,
+          fromAssetCode: fromAsset,
+          toAssetCode: toAsset,
+          feeAmount,
+          extraFeeAmount,
+          quoteCurrencyAmount,
+          _id: 'moonpay',
+          minQuantity: 20,
+          maxQuantity: 9999999,
+        };
+      }
+      return { error: true };
+    })
+    .catch(() => ({ error: true }));
+};
+
+SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset: string, amount: number) {
+  return Promise.resolve()
+    .then(async () => {
+      return fetch(`${SENDWYRE_API_URL}/v3/rates?as=MULTIPLIER`);
+    })
+    .then(async (resp) => {
+      const data = await resp.json();
+      if (data[fromAsset + toAsset]) {
+        return {
+          provider: 'SendWyre',
+          askRate: amount,
+          fromAssetCode: fromAsset,
+          toAssetCode: toAsset,
+          feeAmount: '',
+          extraFeeAmount: '',
+          quoteCurrencyAmount: amount * data[fromAsset + toAsset],
+          _id: 'sendwyre',
+          minQuantity: 20,
+          maxQuantity: 9999999,
+        };
+      }
+      return { error: true };
+    })
+    .catch(() => ({ error: true }));
 };
