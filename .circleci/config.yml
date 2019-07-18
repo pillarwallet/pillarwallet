@@ -218,6 +218,7 @@ jobs:
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Upload to Hockeyapp
