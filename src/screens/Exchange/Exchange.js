@@ -170,6 +170,7 @@ type Props = {
   connectedProviders: ExchangeProvider[],
   hasUnreadExchangeNotification: boolean,
   markNotificationAsSeen: Function,
+  oAuthAccessToken: string,
 };
 
 type State = {
@@ -415,7 +416,13 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { assets, supportedAssets, navigation } = this.props;
+    const {
+      assets,
+      supportedAssets,
+      navigation,
+      oAuthAccessToken,
+      resetOffers,
+    } = this.props;
     if (assets !== prevProps.assets || supportedAssets !== prevProps.supportedAssets) {
       this.provideOptions();
     }
@@ -424,6 +431,11 @@ class ExchangeScreen extends React.Component<Props, State> {
       this.setInitialSelection(fromAssetCode);
       // reset to prevent nav value change over newly selected
       navigation.setParams({ fromAssetCode: null });
+    }
+    if (prevProps.oAuthAccessToken !== oAuthAccessToken) {
+      // access token has changed, init search again
+      resetOffers();
+      this.triggerSearch();
     }
   }
 
@@ -466,17 +478,24 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   triggerSearch = () => {
-    const { resetOffers } = this.props;
-    const { value: { fromInput, toInput } } = this.state;
     const {
-      selector: { value: from },
-      input: amountString = 0,
-    } = fromInput;
-    const { selector: { value: to } } = toInput;
-    const { searchOffers } = this.props;
+      searchOffers,
+    } = this.props;
+    const {
+      value: {
+        fromInput: {
+          selector: { value: from },
+          input: amountString = 0,
+        } = {},
+        toInput: {
+          selector: {
+            value: to,
+          },
+        } = {},
+      } = {},
+    } = this.state;
     const amount = parseFloat(amountString);
-    if (!amount) return;
-    resetOffers(); // reset here to avoid cards reload delay
+    if (!from || !to || !amount) return;
     searchOffers(from, to, amount);
   };
 
@@ -555,7 +574,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   setFromAmount = amount => {
-    this.props.resetOffers();
+    this.props.resetOffers(); // reset all cards before they change according to input values
     this.setState(prevState => ({
       value: {
         ...prevState.value,
@@ -568,7 +587,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       const validation = this.exchangeForm.validate();
       const { errors = [] } = validation;
       if (errors.length) return;
-      this.handleSearch();
+      this.triggerSearch();
     });
   };
 
@@ -618,8 +637,10 @@ class ExchangeScreen extends React.Component<Props, State> {
     const askRateBn = new BigNumber(askRate);
 
     const amountToSell = parseFloat(selectedSellAmount);
-    const isBelowMin = amountToSell < parseFloat(minQuantity);
-    const isAboveMax = amountToSell > parseFloat(maxQuantity);
+    const minQuantityNumeric = parseFloat(minQuantity);
+    const maxQuantityNumeric = parseFloat(maxQuantity);
+    const isBelowMin = minQuantityNumeric !== 0 && amountToSell < minQuantityNumeric;
+    const isAboveMax = maxQuantityNumeric !== 0 && amountToSell > maxQuantityNumeric;
 
     const minOrMaxNeeded = isBelowMin || isAboveMax;
     const minOrMaxAmount = formatAmountDisplay(isBelowMin ? minQuantity : maxQuantity);
@@ -737,19 +758,10 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  handleSearch = () => {
-    const { resetOffers } = this.props;
-    const formValue = this.exchangeForm.getValue();
-    if (!formValue) {
-      resetOffers();
-      return;
-    }
-    this.triggerSearch();
-  };
-
   handleFormChange = (value: Object) => {
+    this.props.resetOffers(); // reset all cards before they change according to input values
     this.setState({ value });
-    this.handleSearch();
+    this.triggerSearch();
     this.updateOptions(value);
   };
 
@@ -898,6 +910,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
+  oAuthTokens: { data: { accessToken: oAuthAccessToken } },
   appSettings: { data: { baseFiatCurrency } },
   exchange: {
     data: {
@@ -920,6 +933,7 @@ const mapStateToProps = ({
   exchangeAllowances,
   connectedProviders,
   hasUnreadExchangeNotification,
+  oAuthAccessToken,
 });
 
 const structuredSelector = createStructuredSelector({

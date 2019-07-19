@@ -146,7 +146,10 @@ export const resetOffersAction = () => {
 };
 
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId: userWalletId } },
+    } = getState();
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
       type: SET_EXCHANGE_SEARCH_REQUEST,
@@ -163,13 +166,26 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
         .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
     );
     // we're requesting although it will start delivering when connection is established
-    const result = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
-    if (result.error) {
-      Toast.show({
-        title: 'Exchange service failed',
-        type: 'warning',
-        message: 'Unable to connect',
-      });
+    const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
+    if (error) {
+      const message = error.message || 'Unable to connect';
+      if (message.toString().toLowerCase().startsWith('access token')) {
+        console.log('searchOffersAction expired token');
+        /**
+         * access token is expired or malformed,
+         * let's hit with user info endpoint to update access tokens
+         * or redirect to pin screen (logic being sdk init)
+         * after it's complete (access token's updated) let's dispatch same action again
+         * TODO: change SDK user info endpoint to simple SDK token refresh method when it is reachable within SDK
+         */
+        await api.userInfo(userWalletId).catch(() => null);
+      } else {
+        Toast.show({
+          title: 'Exchange service failed',
+          type: 'warning',
+          message,
+        });
+      }
     }
   };
 };
