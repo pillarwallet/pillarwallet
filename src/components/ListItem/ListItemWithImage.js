@@ -30,6 +30,7 @@ import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
 import { Shadow } from 'components/Shadow';
 import { Wrapper } from 'components/Layout';
+import TankAssetBalance from 'components/TankAssetBalance';
 import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
 
 type Props = {
@@ -69,6 +70,7 @@ type Props = {
   imageColorFill?: string,
   customImage?: React.Node,
   imageDiameter?: number,
+  balance?: Object,
 }
 
 const ItemWrapper = styled.View`
@@ -80,7 +82,7 @@ const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: ${spacing.small}px ${spacing.mediumLarge}px;
+  padding: ${spacing.small}px ${spacing.large}px;
   height: ${props => props.type === DEFAULT ? 70 : 84}px;
   width: 100%;
 `;
@@ -203,6 +205,12 @@ const UnreadNumber = styled(BaseText)`
 `;
 
 const ItemValue = styled(BaseText)`
+  font-size: ${fontSizes.medium};
+  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  text-align: right;
+`;
+
+const ItemValueBold = styled(BoldText)`
   font-size: ${fontSizes.medium};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   text-align: right;
@@ -396,6 +404,7 @@ const Addon = (props: Props) => {
     actionLabelColor,
     rejectInvitation,
     acceptInvitation,
+    balance,
   } = props;
 
   if (itemValue) {
@@ -464,6 +473,29 @@ const Addon = (props: Props) => {
           onPress={acceptInvitation}
         />
       </ButtonIconWrapper>
+    );
+  }
+
+  if (balance) {
+    const {
+      syntheticBalance = '',
+      balance: tokenBalance = '',
+      token = '',
+      currency = '',
+      value = '',
+    } = balance;
+    return (
+      <Wrapper style={{ alignItems: 'flex-end' }}>
+        {!!tokenBalance.toString() && <ItemValueBold>{`${tokenBalance} ${token}`}</ItemValueBold>}
+        {!!syntheticBalance.toString() &&
+        <TankAssetBalance
+          monoColor
+          amount={syntheticBalance}
+          token={token}
+          // wrapperStyle={{ marginTop: -2 }}
+        />}
+        <ItemSubText style={{ marginTop: -2 }}>{`${currency} ${value}`}</ItemSubText>
+      </Wrapper>
     );
   }
 

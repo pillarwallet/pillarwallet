@@ -30,6 +30,7 @@ type Props = {
   monoColor?: boolean,
   fillColor?: string,
   textStyle?: Object,
+  token?: string,
 };
 
 const Wrapper = styled.View`
@@ -59,6 +60,7 @@ const TankAssetBalance = (props: Props) => {
     amount,
     wrapperStyle,
     textStyle,
+    token,
   } = props;
 
   const iconFill = getIconFill(props);
@@ -93,6 +95,7 @@ const TankAssetBalance = (props: Props) => {
         />
       </Svg>
       <BalanceInTank style={textStyle}>{amount}</BalanceInTank>
+      {!!token && <BalanceInTank style={textStyle}> {token}</BalanceInTank>}
     </Wrapper>
   );
 };

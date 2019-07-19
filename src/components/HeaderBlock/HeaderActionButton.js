@@ -23,18 +23,20 @@ import styled from 'styled-components/native';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
+import Animation from 'components/Animation';
 
 type Props = {
   theme: Object,
   label: string,
   action: Function,
   hasChevron?: boolean,
+  isActive?: boolean,
 }
 
 const HeaderButtonRounded = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  padding: 4px 12px;
+  padding: 4px 12px 4px 6px;
   border: 1px solid;
   border-color: ${props => props.theme.buttonBorderColor || UIColors.defaultBorderColor};
   border-radius: 20px;
@@ -49,14 +51,56 @@ const RoundedButtonLabel = styled(BaseText)`
     ios: '500',
     android: '400',
   })};
+  margin-left: 6px;
 `;
 const ChevronIcon = styled(Icon)`
   font-size: 6px;
-  color: ${baseColors.white};
+  color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};
   transform: rotate(90deg);
   margin-top: 2px;
   margin-left: 9px;
 `;
+
+const StatusIcon = styled.View`
+  height: 8px;
+  width: 8px;
+  border-radius: 4px;
+  background-color: ${props => props.isActive ? baseColors.fruitSalad : baseColors.fireEngineRed};
+  position: absolute;
+  top: 5px;
+  left: 5px;
+`;
+
+const StatusIndicatorHolder = styled.View`
+  position: relative;
+  width: 15px;
+  height: 18px;
+`;
+
+const StyledAnimation = styled(Animation)`
+  position: absolute;
+  top: ${Platform.select({
+    ios: '-0.8px',
+    android: '-1px',
+  })};
+  left: ${Platform.select({
+    ios: '-0.8px',
+    android: '-1px',
+  })};
+  width: 22px;
+  height: 22px;
+`;
+
+const animationSource = require('assets/animations/livePulsatingAnimation.json');
+
+const Status = ({ isActive }) => {
+  return (
+    <StatusIndicatorHolder>
+      {!!isActive && <StyledAnimation source={animationSource} loop speed={0.9} />}
+      <StatusIcon isActive={isActive} />
+    </StatusIndicatorHolder>
+  );
+};
 
 export const HeaderActionButton = (props: Props) => {
   const {
@@ -64,12 +108,16 @@ export const HeaderActionButton = (props: Props) => {
     label,
     action,
     hasChevron,
+    isActive,
   } = props;
 
   return (
     <HeaderButtonRounded onPress={action} theme={theme}>
+      {isActive !== undefined && <Status isActive={isActive} />}
       <RoundedButtonLabel theme={theme}>{label}</RoundedButtonLabel>
-      {!!hasChevron && <ChevronIcon name="chevron-right" />}
+      {!!hasChevron && <ChevronIcon name="chevron-right" theme={theme} />}
     </HeaderButtonRounded>
   );
 };
+
+// {isActive !== undefined && <Status isActive={isActive} />} { /* value might be TRUE or FALSE */ }

@@ -299,7 +299,7 @@ export default class TankBar extends React.Component<Props, State> {
             }}
           >
             <LabelText>{`${currentValue} PLR`}</LabelText>
-            <LabelButton>
+            <LabelButton onPress={() => {}}>
               <ButtonText>Top up</ButtonText>
             </LabelButton>
           </AnimatedProgressLabel>

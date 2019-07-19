@@ -37,7 +37,7 @@ import { baseColors } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
-import { PILLAR_NETWORK_INTRO, ASSETS } from 'constants/navigationConstants';
+import { PILLAR_NETWORK_INTRO, ASSETS, WALLETS_LIST } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { setActiveBNetworkAction } from 'actions/blockchainNetworkActions';
 
@@ -153,7 +153,7 @@ class AccountsScreen extends React.Component<Props> {
         return (
           <Card
             {...network}
-            action={() => this.setActiveNetwork(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM)}
+            action={() => navigation.navigate(WALLETS_LIST)}
             subtitle="Balance: £130.17"
           />
         );

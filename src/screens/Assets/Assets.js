@@ -45,7 +45,6 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import Tabs from 'components/Tabs';
-import TankBar from 'components/TankBar';
 
 // types
 import type { Assets, Asset } from 'models/Asset';
@@ -77,7 +76,7 @@ import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstan
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS, UPGRADE_TO_SMART_WALLET_FLOW } from 'constants/navigationConstants';
+import { ACCOUNTS } from 'constants/navigationConstants';
 
 // utils
 import { baseColors, spacing, fontSizes, UIColors } from 'utils/variables';
@@ -90,6 +89,8 @@ import { activeAccountSelector } from 'selectors';
 // local components
 import AssetsList from './AssetsList';
 import CollectiblesList from './CollectiblesList';
+import PPNView from './PPNView';
+import SmartWalletView from './SmartWalletView';
 
 type Props = {
   fetchInitialAssets: () => Function,
@@ -180,6 +181,12 @@ const ListWrapper = styled.View`
   position: relative;
   flex: 1;
 `;
+
+const VIEWS = {
+  KEY_WALLET_VIEW: 'KEY_WALLET_VIEW',
+  SMART_WALLET_VIEW: 'SMART_WALLET_VIEW',
+  PPN_VIEW: 'PPN_VIEW',
+};
 
 class AssetsScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
@@ -402,37 +409,38 @@ class AssetsScreen extends React.Component<Props, State> {
     this.setState({ activeTab });
   };
 
-  getHeaderActionInfo = (isSmartWallet: boolean) => {
+  getScreenInfo = () => {
     const {
       navigation,
       blockchainNetworks,
       activeAccount,
     } = this.props;
+
     const { type: walletType } = activeAccount;
     const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
     const { id: activeBNetworkId, title: activeBNetworkTitle } = activeBNetwork;
 
     switch (activeBNetworkId) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
-        if (isSmartWallet) {
-          return {
-            label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet',
-            action: () => navigation.navigate(ACCOUNTS),
-          };
-        }
         return {
-          label: 'Upgrade',
-          action: () => navigation.navigate(UPGRADE_TO_SMART_WALLET_FLOW),
+          label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet',
+          action: () => navigation.navigate(ACCOUNTS),
+          screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
+          customHeaderProps: { background: baseColors.jellyBean, light: true },
+          customHeaderButtonProps: {},
         };
       default:
         return {
           label: activeBNetworkTitle,
           action: () => navigation.navigate(ACCOUNTS),
+          screenView: VIEWS.PPN_VIEW,
+          customHeaderProps: {},
+          customHeaderButtonProps: { isActive: true }, // TODO: pass in PPN activity status
         };
     }
   };
 
-  render() {
+  renderView = (viewType: string) => {
     const {
       assets,
       assetsState,
@@ -445,20 +453,6 @@ class AssetsScreen extends React.Component<Props, State> {
       smartWalletState,
     } = this.props;
     const { query, activeTab, forceHideRemoval } = this.state;
-
-    if (!Object.keys(assets).length && assetsState === FETCHED) {
-      return (
-        <Container center inset={{ bottom: 0 }}>
-          <BaseText style={{ marginBottom: 20 }}>Loading default assets</BaseText>
-          {assetsState !== FETCH_INITIAL_FAILED && (
-            <Spinner />
-          )}
-          {assetsState === FETCH_INITIAL_FAILED && (
-            <Button title="Try again" onPress={() => fetchInitialAssets()} />
-          )}
-        </Container>
-      );
-    }
 
     const isSearchOver = assetsSearchState === FETCHED;
     const isSearching = assetsSearchState === FETCHING && query.length >= MIN_QUERY_LENGTH;
@@ -490,28 +484,111 @@ class AssetsScreen extends React.Component<Props, State> {
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
 
-    const isSmartWallet = smartWalletStatus.hasAccount;
+    if (!Object.keys(assets).length && assetsState === FETCHED) {
+      return (
+        <Container center inset={{ bottom: 0 }}>
+          <BaseText style={{ marginBottom: 20 }}>Loading default assets</BaseText>
+          {assetsState !== FETCH_INITIAL_FAILED && (
+            <Spinner />
+          )}
+          {assetsState === FETCH_INITIAL_FAILED && (
+            <Button title="Try again" onPress={() => fetchInitialAssets()} />
+          )}
+        </Container>
+      );
+    }
 
+    switch (viewType) {
+      case VIEWS.PPN_VIEW:
+        return <PPNView />;
+      case VIEWS.SMART_WALLET_VIEW:
+        return <SmartWalletView />;
+      default:
+        return (
+          <React.Fragment>
+            {(blockAssetsView &&
+              <Wrapper flex={1} regularPadding center>
+                <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
+                <Message>{ sendingBlockedMessage.message }</Message>
+                <Wrapper style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
+                  <Spinner />
+                </Wrapper>
+              </Wrapper>
+            ) ||
+            <TokensWrapper>
+              {inSearchMode && isSearchOver &&
+              <Wrapper>
+                {this.renderFoundTokensList()}
+              </Wrapper>
+              }
+              {isSearching &&
+              <SearchSpinner center>
+                <Spinner />
+              </SearchSpinner>
+              }
+              {!inSearchMode &&
+              <ListWrapper>
+                {!isInCollectiblesSearchMode &&
+                <Tabs
+                  initialActiveTab={activeTab}
+                  tabs={assetsTabs}
+                  isFloating
+                />}
+                {activeTab === TOKENS && (
+                  <AssetsList
+                    navigation={navigation}
+                    onHideTokenFromWallet={this.handleAssetRemoval}
+                    horizontalPadding={horizontalPadding}
+                    forceHideRemoval={forceHideRemoval}
+                    updateHideRemoval={this.updateHideRemoval}
+                  />
+                )}
+                {activeTab === COLLECTIBLES && (
+                  <CollectiblesList
+                    collectibles={filteredCollectibles}
+                    badges={filteredBadges}
+                    searchQuery={query}
+                    navigation={navigation}
+                    horizontalPadding={horizontalPadding}
+                    updateHideRemoval={this.updateHideRemoval}
+                  />)}
+              </ListWrapper>}
+            </TokensWrapper>
+            }
+          </React.Fragment>
+        );
+    }
+  };
+
+  render() {
     // HEADER PROPS
-    const headerInfo = this.getHeaderActionInfo(isSmartWallet);
-    const { label: headerButtonLabel, action: headerButtonAction } = headerInfo;
+    const screenInfo = this.getScreenInfo();
+    const {
+      label: headerButtonLabel,
+      action: headerButtonAction,
+      screenView,
+      customHeaderProps,
+      customHeaderButtonProps,
+    } = screenInfo;
 
     return (
       <ContainerWithHeader
         color={baseColors.white}
         headerProps={{
-          backgroundColor: baseColors.jellyBean,
+          ...customHeaderProps,
           leftItems: [{ user: true }],
           rightItems: [{
             actionButton: {
               key: 'manageAccounts',
               label: headerButtonLabel,
-              hasChevron: isSmartWallet,
+              hasChevron: true,
               action: headerButtonAction,
+              ...customHeaderButtonProps,
             },
           }],
         }}
       >
+        {this.renderView(screenView)}
         { /* <SearchBlock
           headerProps={{
             title: 'assets',
@@ -529,59 +606,6 @@ class AssetsScreen extends React.Component<Props, State> {
           navigation={navigation}
           white
         /> */ }
-        <TankBar
-          maxValue={1000}
-          currentValue={678}
-        />
-        {(blockAssetsView &&
-          <Wrapper flex={1} regularPadding center>
-            <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
-            <Message>{ sendingBlockedMessage.message }</Message>
-            <Wrapper style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
-              <Spinner />
-            </Wrapper>
-          </Wrapper>
-        ) ||
-          <TokensWrapper>
-            {inSearchMode && isSearchOver &&
-            <Wrapper>
-              {this.renderFoundTokensList()}
-            </Wrapper>
-            }
-            {isSearching &&
-            <SearchSpinner center>
-              <Spinner />
-            </SearchSpinner>
-            }
-            {!inSearchMode &&
-            <ListWrapper>
-              {!isInCollectiblesSearchMode &&
-              <Tabs
-                initialActiveTab={activeTab}
-                tabs={assetsTabs}
-                isFloating
-              />}
-              {activeTab === TOKENS && (
-                <AssetsList
-                  navigation={navigation}
-                  onHideTokenFromWallet={this.handleAssetRemoval}
-                  horizontalPadding={horizontalPadding}
-                  forceHideRemoval={forceHideRemoval}
-                  updateHideRemoval={this.updateHideRemoval}
-                />
-              )}
-              {activeTab === COLLECTIBLES && (
-                <CollectiblesList
-                  collectibles={filteredCollectibles}
-                  badges={filteredBadges}
-                  searchQuery={query}
-                  navigation={navigation}
-                  horizontalPadding={horizontalPadding}
-                  updateHideRemoval={this.updateHideRemoval}
-                />)}
-            </ListWrapper>}
-          </TokensWrapper>
-        }
       </ContainerWithHeader>
     );
   }

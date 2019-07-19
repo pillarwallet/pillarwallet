@@ -330,7 +330,7 @@ class AssetScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          title: assetData.name,
+          centerItems: [{ title: assetData.name }],
           rightItems: [
             {
               icon: 'info-circle-inverse',

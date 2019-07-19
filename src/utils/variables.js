@@ -102,6 +102,8 @@ export const baseColors = {
   lavender: '#ebebfc',
   shipCove: '#8798c2',
   blueYonder: '#818eb3',
+  zircon: '#f3f7ff',
+  malibu: '#58a7ff',
 };
 
 export const brandColors = [
