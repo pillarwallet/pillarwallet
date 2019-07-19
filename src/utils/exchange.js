@@ -27,6 +27,8 @@ import {
   PROVIDER_SENDWYRE,
 } from 'constants/exchangeConstants';
 
+import fiatCurrenciesConfig from 'configs/fiatCurrenciesConfig';
+
 export const getProviderDisplayName = (provider?: string) => {
   switch (provider) {
     case PROVIDER_SHAPESHIFT:
@@ -70,4 +72,18 @@ export const getProviderLogo = (provider?: string) => {
     default:
       return '';
   }
+};
+
+export const checkFiatProvider = (provider: string) => {
+  switch (provider) {
+    case PROVIDER_MOONPAY:
+    case PROVIDER_SENDWYRE:
+      return true;
+    default:
+      return false;
+  }
+};
+
+export const checkFiatCurrency = (symbol: string) => {
+  return fiatCurrenciesConfig.find(currency => currency.symbol === symbol);
 };
