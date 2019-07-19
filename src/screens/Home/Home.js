@@ -756,12 +756,6 @@ class HomeScreen extends React.Component<Props, State> {
                 onPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
                 wrapperPaddingHorizontal={spacing.mediumLarge}
               />
-              {/* <SettingsListItem */}
-              {/* key="send_wyre" */}
-              {/* label="Send Wyre" */}
-              {/* onPress={() => navigation.navigate(FIAT_CRYPTO)} */}
-              {/* wrapperPaddingHorizontal={spacing.mediumLarge} */}
-              {/* /> */}
             </ItemWrapper>
           </SessionUIWrapper>
           {!!contacts.length &&
