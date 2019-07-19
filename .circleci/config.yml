@@ -147,6 +147,7 @@ aliases:
           sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
           sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
           sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
+          sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
           echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
 jobs:
@@ -218,6 +219,7 @@ jobs:
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Upload to Hockeyapp
@@ -294,6 +296,7 @@ jobs:
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Initial build
@@ -337,6 +340,7 @@ jobs:
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
@@ -465,6 +469,7 @@ jobs:
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: android-node-{{ checksum "./yarn.lock" }}
@@ -595,6 +600,7 @@ jobs:
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
@@ -723,6 +729,7 @@ jobs:
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: android-node-{{ checksum "./yarn.lock" }}
