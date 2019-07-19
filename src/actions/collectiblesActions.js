@@ -28,6 +28,10 @@ import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
 
+const safeImage = (url: string): string => {
+  return (/\.(jpg|png|gif)$/i).test(url) ? url : '';
+};
+
 export const fetchCollectiblesAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
@@ -48,13 +52,12 @@ export const fetchCollectiblesAction = () => {
         description,
         image_url: fullImage,
         image_preview_url: preview,
-        image_thumbnail_url: thumbnail,
       } = collectible;
       const { name: category, address: contractAddress } = assetContract;
       const collectibleName = name || `${category} ${id}`;
 
-      const image = (/\.(png|gif)$/i).test(fullImage) ? fullImage : '';
-      const previewImage = (/\.(png|gif)$/i).test(preview) ? preview : '';
+      const image = safeImage(fullImage);
+      const previewImage = safeImage(preview);
 
       return {
         id,
@@ -62,7 +65,7 @@ export const fetchCollectiblesAction = () => {
         image: image || previewImage,
         name: collectibleName,
         description,
-        icon: thumbnail || previewImage || image,
+        icon: previewImage || image,
         contractAddress,
         assetContract: category,
         tokenType: COLLECTIBLES,
