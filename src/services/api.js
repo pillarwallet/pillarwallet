@@ -753,15 +753,15 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
 
   return Promise.resolve()
     .then(() => fetch(url))
-    .then(async (data) => {
-      const resp = await data.json();
-      if (resp.totalAmount) {
+    .then(resp => resp.json())
+    .then(data => {
+      if (data.totalAmount) {
         const {
           totalAmount,
           feeAmount,
           extraFeeAmount,
           quoteCurrencyAmount,
-        } = resp;
+        } = data;
 
         return {
           provider: 'MoonPay',
@@ -783,11 +783,9 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
 
 SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset: string, amount: number) {
   return Promise.resolve()
-    .then(async () => {
-      return fetch(`${SENDWYRE_API_URL}/v3/rates?as=MULTIPLIER`);
-    })
-    .then(async (resp) => {
-      const data = await resp.json();
+    .then(() => fetch(`${SENDWYRE_API_URL}/v3/rates?as=MULTIPLIER`))
+    .then(resp => resp.json())
+    .then(data => {
       if (data[fromAsset + toAsset]) {
         return {
           provider: 'SendWyre',
