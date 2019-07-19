@@ -798,7 +798,7 @@ SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset:
           extraFeeAmount: '',
           quoteCurrencyAmount: amount * data[fromAsset + toAsset],
           _id: 'sendwyre',
-          minQuantity: 20,
+          minQuantity: 0.01,
           maxQuantity: 9999999,
         };
       }
