@@ -168,6 +168,7 @@ dependencies {
   implementation project(':react-native-svg')
   implementation project(':react-native-background-timer')
   implementation project(':react-native-sentry')
+  implementation project(':react-native-webview')
   implementation 'com.android.support:multidex:1.0.1'
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation project(':react-native-fabric')
