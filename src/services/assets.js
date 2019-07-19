@@ -287,6 +287,8 @@ export function waitForTransaction(hash: string) {
   return provider.waitForTransaction(hash);
 }
 
+export const DEFAULT_GAS_LIMIT = 500000;
+
 export async function calculateGasEstimate(transaction: Object) {
   const {
     from,
@@ -296,7 +298,6 @@ export async function calculateGasEstimate(transaction: Object) {
     decimals: defaultDecimals = 18,
   } = transaction;
   let { to, data } = transaction;
-  const DEFAULT_GAS_LIMIT = 500000;
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   const value = symbol === ETH
     ? utils.parseEther(amount.toString())
