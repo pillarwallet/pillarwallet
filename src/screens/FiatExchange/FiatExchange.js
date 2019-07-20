@@ -47,15 +47,20 @@ type Props = {
 
 type State = {
   error: string,
+  provider: string,
+  wyreTemplate: string,
+  moonPayURL: string,
 };
 
 class FiatExchange extends React.Component<Props, State> {
   state = {
     error: '',
+    provider: '',
+    wyreTemplate: '',
+    moonPayURL: '',
   };
 
-  render() {
-    const { error } = this.state;
+  componentDidMount = () => {
     const {
       user, accounts, navigation,
     } = this.props;
@@ -86,13 +91,29 @@ class FiatExchange extends React.Component<Props, State> {
     );
 
     const moonPayURL = `${MOONPAY_WIDGET_URL}`
-    + `?apiKey=${MOONPAY_KEY}`
-    + `&walletAddress=${destAddress}`
-    + `&email=${email}&currencyCode=${destCurrency}`
-    + `&baseCurrencyCode=${sourceCurrency}`
-    + `&baseCurrencyAmount=${sourceAmount}`
-    + '&feeBreakdown=true'
-    + `&externalCustomerId=${user.id}`;
+      + `?apiKey=${MOONPAY_KEY}`
+      + `&walletAddress=${destAddress}`
+      + `&email=${email}&currencyCode=${destCurrency}`
+      + `&baseCurrencyCode=${sourceCurrency}`
+      + `&baseCurrencyAmount=${sourceAmount}`
+      + '&feeBreakdown=true'
+      + `&externalCustomerId=${user.id}`;
+
+
+    this.setState({
+      provider,
+      wyreTemplate,
+      moonPayURL,
+    });
+  };
+
+  render() {
+    const {
+      error,
+      provider,
+      moonPayURL,
+      wyreTemplate,
+    } = this.state;
 
     return (
       <Container>

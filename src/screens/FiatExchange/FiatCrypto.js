@@ -117,6 +117,23 @@ class FiatCrypto extends React.Component<Props, State> {
     options: formOptions,
   };
 
+  componentDidMount = () => {
+    const { assets } = this.props;
+
+    const optionsFrom = this.generateAssetsOptions(assets);
+    const newOptions = t.update(this.state.options, {
+      fields: {
+        fromInput: {
+          config: {
+            options: { $set: optionsFrom },
+          },
+        },
+      },
+    });
+
+    this.setState({ options: newOptions });
+  };
+
   handleFormChange = (value: Object) => {
     this.setState({ value });
     this.updateOptions();
@@ -142,23 +159,6 @@ class FiatCrypto extends React.Component<Props, State> {
 
     const optionsFrom = this.generateAssetsOptions(assets);
 
-    const newOptions = t.update(this.state.options, {
-      fields: {
-        fromInput: {
-          config: {
-            options: { $set: optionsFrom },
-          },
-        },
-      },
-    });
-
-    this.setState({ options: newOptions });
-  };
-
-  componentDidMount = () => {
-    const { assets } = this.props;
-
-    const optionsFrom = this.generateAssetsOptions(assets);
     const newOptions = t.update(this.state.options, {
       fields: {
         fromInput: {
