@@ -107,6 +107,13 @@ class FiatExchange extends React.Component<Props, State> {
     });
   };
 
+  eventCallback = (event) => {
+    const data = JSON.parse(event.nativeEvent.data);
+    if (data) {
+      this.props.navigation.goBack(null);
+    }
+  };
+
   render() {
     const {
       error,
@@ -129,6 +136,7 @@ class FiatExchange extends React.Component<Props, State> {
             <WebView
               source={{ html: wyreTemplate }}
               originWhitelist={['*']}
+              onMessage={this.eventCallback}
             />
           }
           {

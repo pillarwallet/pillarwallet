@@ -32,7 +32,15 @@ export function sendWyreTemplate(
       primaryColor: "#000000"
     }
   });
-
+  
+  widget.on('complete', function(e) {
+    window.ReactNativeWebView.postMessage(JSON.stringify(e));
+  });
+  
+  widget.on('close', function(e) {
+    window.ReactNativeWebView.postMessage(JSON.stringify(e));
+  });
+  
   widget.open();
 </script>
 </body>
