@@ -690,7 +690,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       >
         <CardWrapper
           disabled={isTakeButtonDisabled}
-          onPress={() => this.onOfferPress(offer)}
+          onPress={() => { return isFiat ? this.onFiatOfferPress(offer) : this.onOfferPress(offer); }}
         >
           <CardRow withBorder alignTop>
             {!!isFiat &&
@@ -736,7 +736,9 @@ class ExchangeScreen extends React.Component<Props, State> {
             <CardColumn style={{ flex: 1 }}>
               <CardText label>Fees Total</CardText>
               <View style={{ flexDirection: 'row' }}>
-                <CardText>{feeAmount !== '' ? `${feeAmount + extraFeeAmount} ${fromAssetCode}` : 'Check'}</CardText>
+                <CardText>
+                  {feeAmount !== '' ? `${formatAmountDisplay(feeAmount + extraFeeAmount)} ${fromAssetCode}` : 'Check'}
+                </CardText>
               </View>
             </CardColumn>
             }
@@ -751,7 +753,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             {!!isFiat &&
             <CardColumn>
               <Button
-                title={isTakeOfferPressed ? '' : `${quoteCurrencyAmount} ${toAssetCode}`}
+                title={isTakeOfferPressed ? '' : `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`}
                 small
                 onPress={() => this.onFiatOfferPress(offer)}
               >
