@@ -57,7 +57,7 @@ import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from '
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH, EUR, USD } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
@@ -241,7 +241,7 @@ const generateFormStructure = (balances: Balances) => {
 
     const { symbol, decimals } = selector;
 
-    const isFiat = [ETH, USD, defaultFiatCurrency, EUR].includes(symbol);
+    const isFiat = checkFiatCurrency(symbol);
 
     amount = parseFloat(input);
     if (decimals === 0 && amount.toString().indexOf('.') > -1 && !isFiat) {
@@ -790,8 +790,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { balances, paymentNetworkBalances } = this.props;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
     const cryptoFiatAssets = assetsList.concat(fiatCurrencies);
-    const nonEmptyAssets = cryptoFiatAssets.filter((asset: any) => {
-      return getBalance(balances, asset.symbol) !== 0 || [ETH, USD, defaultFiatCurrency, EUR].includes(asset.symbol);
+    const nonEmptyAssets = cryptoFiatAssets.filter(({ symbol }): any => {
+      return getBalance(balances, symbol) !== 0 || symbol === ETH || checkFiatCurrency(symbol);
     });
     const alphabeticalAssets = nonEmptyAssets.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) => {
