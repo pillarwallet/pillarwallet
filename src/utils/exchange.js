@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import CookieManager from 'react-native-cookies';
+import { Platform } from 'react-native';
 import {
   PROVIDER_CHANGELLY,
   PROVIDER_SHAPESHIFT,
@@ -89,6 +90,10 @@ export const checkFiatCurrency = (symbol: string) => {
 };
 
 export const clearWebViewCookies = () => {
-  CookieManager.clearAll(true).then(() => {}).catch(() => null);
-  CookieManager.clearAll(false).then(() => {}).catch(() => null);
+  if (Platform.OS === 'ios') {
+    CookieManager.clearAll(true).then(() => {}).catch(() => null);
+    CookieManager.clearAll(false).then(() => {}).catch(() => null);
+  } else {
+    CookieManager.clearAll().then(() => {}).catch(() => null);
+  }
 };

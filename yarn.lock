@@ -12771,10 +12771,9 @@ react-native-communications@2.2.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
   integrity sha1-eIO1ayCgAu63kMET+GFuqGksp5U=
 
-react-native-cookies@^3.3.0:
+"react-native-cookies@https://github.com/joeferraro/react-native-cookies.git":
   version "3.3.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-cookies/-/react-native-cookies-3.3.0.tgz#527f65eb2d8a7a000107706bb11beb57f511e701"
-  integrity sha1-Un9l6y2KegABB3BrsRvrV/UR5wE=
+  resolved "https://github.com/joeferraro/react-native-cookies.git#48240c34cfd9dbfa0a590f0b740c74b2211cec93"
   dependencies:
     invariant "^2.1.0"
 
