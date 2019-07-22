@@ -7692,7 +7692,7 @@ interpret@^1.0.0, interpret@^1.1.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/interpret/-/interpret-1.2.0.tgz#d5061a6224be58e8083985f5014d844359576296"
   integrity sha1-1QYaYiS+WOgIOYX1AU2EQ1lXYpY=
 
-invariant@2.2.4, invariant@^2.2.0, invariant@^2.2.2, invariant@^2.2.4:
+invariant@2.2.4, invariant@^2.1.0, invariant@^2.2.0, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha1-YQ88ksk1nOHbYW5TgAjSP/NRWOY=
@@ -12770,6 +12770,13 @@ react-native-communications@2.2.1:
   version "2.2.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
   integrity sha1-eIO1ayCgAu63kMET+GFuqGksp5U=
+
+react-native-cookies@^3.3.0:
+  version "3.3.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-cookies/-/react-native-cookies-3.3.0.tgz#527f65eb2d8a7a000107706bb11beb57f511e701"
+  integrity sha1-Un9l6y2KegABB3BrsRvrV/UR5wE=
+  dependencies:
+    invariant "^2.1.0"
 
 react-native-crypto@^2.1.0:
   version "2.1.2"

@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
+import CookieManager from 'react-native-cookies';
 import {
   PROVIDER_CHANGELLY,
   PROVIDER_SHAPESHIFT,
@@ -86,4 +86,9 @@ export const checkFiatProvider = (provider: string) => {
 
 export const checkFiatCurrency = (symbol: string) => {
   return fiatCurrenciesConfig.find(currency => currency.symbol === symbol);
+};
+
+export const clearWebViewCookies = () => {
+  CookieManager.clearAll(true).then(() => {}).catch(() => null);
+  CookieManager.clearAll(false).then(() => {}).catch(() => null);
 };

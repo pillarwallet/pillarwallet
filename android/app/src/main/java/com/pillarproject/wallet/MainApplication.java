@@ -10,6 +10,7 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.Crashlytics;
 import com.crypho.scrypt.RNScryptPackage;
 import com.facebook.react.ReactApplication;
+import com.psykar.cookiemanager.CookieManagerPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.smixx.fabric.FabricPackage;
 import ca.jaysoo.extradimensions.ExtraDimensionsPackage;
@@ -67,6 +68,7 @@ public class MainApplication extends Application implements ShareApplication, Re
       return Arrays.<ReactPackage>asList(
         new ColorMatrixImageFiltersPackage(),
         new MainReactPackage(),
+        new CookieManagerPackage(),
         new RNCWebViewPackage(),
         new ExtraDimensionsPackage(),
         new FingerprintAuthPackage(),
