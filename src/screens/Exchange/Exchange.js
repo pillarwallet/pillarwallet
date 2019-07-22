@@ -33,7 +33,7 @@ import Intercom from 'react-native-intercom';
 
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
-import { getProviderLogo, checkFiatProvider, checkFiatCurrency } from 'utils/exchange';
+import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
 
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -57,13 +57,13 @@ import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from '
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH, EUR, USD } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 
-import fiatCurrencies from 'configs/fiatCurrenciesConfig';
+import { fiatCurrencies } from 'fixtures/assets';
 
 // partials
 import { ExchangeStatus } from './ExchangeStatus';
@@ -241,7 +241,7 @@ const generateFormStructure = (balances: Balances) => {
 
     const { symbol, decimals } = selector;
 
-    const isFiat = [ETH, USD, defaultFiatCurrency, EUR].includes(symbol);
+    const isFiat = isFiatCurrency(symbol);
 
     amount = parseFloat(input);
     if (decimals === 0 && amount.toString().indexOf('.') > -1 && !isFiat) {
@@ -258,7 +258,7 @@ const generateFormStructure = (balances: Balances) => {
   FromOption.getValidationErrorMessage = ({ selector, input }) => {
     const { symbol, decimals } = selector;
 
-    const isFiat = checkFiatCurrency(symbol);
+    const isFiat = isFiatCurrency(symbol);
 
     if (!isValidNumber(input.toString())) {
       return 'Incorrect number entered.';
@@ -463,9 +463,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
     const { assets, supportedAssets } = this.props;
-    const fromAsset = checkFiatCurrency(fromAssetCode) ?
-      fiatCurrencies.find(currency => currency.symbol === fromAssetCode) :
-      assets[fromAssetCode];
+    const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode) || assets[fromAssetCode];
     const assetsOptions = this.generateAssetsOptions({
       [fromAssetCode]: fromAsset,
     });
@@ -684,7 +682,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       || !allowanceSet
       || (isShapeShift && !shapeshiftAccessToken);
 
-    const isFiat = checkFiatProvider(offerProvider);
+    const isFiat = isFiatProvider(offerProvider);
 
     return (
       <ShadowedCard
@@ -790,14 +788,14 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { balances, paymentNetworkBalances } = this.props;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
     const cryptoFiatAssets = assetsList.concat(fiatCurrencies);
-    const nonEmptyAssets = cryptoFiatAssets.filter((asset: any) => {
-      return getBalance(balances, asset.symbol) !== 0 || [ETH, USD, defaultFiatCurrency, EUR].includes(asset.symbol);
+    const nonEmptyAssets = cryptoFiatAssets.filter(({ symbol }): any => {
+      return getBalance(balances, symbol) !== 0 || symbol === ETH || isFiatCurrency(symbol);
     });
     const alphabeticalAssets = nonEmptyAssets.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) => {
-      const assetBalance = checkFiatCurrency(symbol) ?
+      const assetBalance = isFiatCurrency(symbol) ?
         null : formatAmount(getBalance(balances, symbol));
-      const paymentNetworkBalance = checkFiatCurrency(symbol) ?
+      const paymentNetworkBalance = isFiatCurrency(symbol) ?
         null : getBalance(paymentNetworkBalances, symbol);
 
       return ({

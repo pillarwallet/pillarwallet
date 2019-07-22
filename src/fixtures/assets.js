@@ -53,3 +53,24 @@ export const initialAssets = [
     balance: 0,
   },
 ];
+
+export const fiatCurrencies = [
+  {
+    symbol: 'GBP',
+    decimals: 2,
+    iconUrl: 'asset/images/fiat/gbpColor.png',
+    iconMonoUrl: 'asset/images/fiat/gbpColor.png',
+  },
+  {
+    symbol: 'USD',
+    decimals: 2,
+    iconUrl: 'asset/images/fiat/usdColor.png',
+    iconMonoUrl: 'asset/images/fiat/usdColor.png',
+  },
+  {
+    symbol: 'EUR',
+    decimals: 2,
+    iconUrl: 'asset/images/fiat/eurColor.png',
+    iconMonoUrl: 'asset/images/fiat/eurColor.png',
+  },
+];

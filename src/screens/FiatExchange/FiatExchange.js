@@ -99,7 +99,6 @@ class FiatExchange extends React.Component<Props, State> {
       + '&feeBreakdown=true'
       + `&externalCustomerId=${user.id}`;
 
-
     this.setState({
       provider,
       wyreTemplate,
