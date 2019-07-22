@@ -28,7 +28,7 @@ import {
   REGISTERING,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
+import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
@@ -161,6 +161,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
+      { type: UPDATE_BALANCES, payload: {} },
       { type: UPDATE_COLLECTIBLES, payload: {} },
       { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
       { type: RESET_SMART_WALLET },
@@ -212,6 +213,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
+      { type: UPDATE_BALANCES, payload: {} },
       { type: UPDATE_COLLECTIBLES, payload: {} },
       { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
       { type: RESET_SMART_WALLET },
@@ -269,6 +271,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
+      { type: UPDATE_BALANCES, payload: {} },
       { type: UPDATE_COLLECTIBLES, payload: {} },
       { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
       { type: RESET_SMART_WALLET },

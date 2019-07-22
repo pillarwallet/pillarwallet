@@ -41,7 +41,7 @@ import {
   DECRYPTED,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
-import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
+import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import {
   TYPE_ACCEPTED,
@@ -211,6 +211,7 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
     dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
     dispatch({ type: SET_HISTORY, payload: {} });
+    dispatch({ type: UPDATE_BALANCES, payload: {} });
     dispatch({ type: UPDATE_COLLECTIBLES, payload: {} });
     dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} });
     dispatch({ type: RESET_SMART_WALLET });
