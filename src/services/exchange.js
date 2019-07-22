@@ -110,6 +110,11 @@ export default class ExchangeService {
     this.io.off('offers').on('offers', data => executeCallback(data, callback));
   }
 
+  resetOnOffers() {
+    if (!this.io) return;
+    this.io.off('offers');
+  }
+
   requestOffers(fromAssetCode: string, toAssetCode: string) {
     const urlPath = `offers?name=${fromAssetCode}-${toAssetCode}`;
     return fetch(buildApiUrl(urlPath), this.apiConfig)

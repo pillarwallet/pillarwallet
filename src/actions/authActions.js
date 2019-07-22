@@ -52,6 +52,7 @@ import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { userHasSmartWallet } from 'utils/smartWallet';
+import { clearWebViewCookies } from 'utils/exchange';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
@@ -305,6 +306,7 @@ export const logoutAction = () => {
     dispatch({ type: LOG_OUT });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
     chat.client.resetAccount().catch(() => null);
+    clearWebViewCookies();
     await firebase.iid().delete().catch(() => {});
     await storage.removeAll();
   };
