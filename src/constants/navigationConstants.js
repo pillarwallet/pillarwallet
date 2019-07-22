@@ -102,6 +102,8 @@ export const CONNECTION_REQUESTS = 'CONNECTION_REQUESTS';
 // HOME FLOW
 export const HOME = 'HOME';
 export const HOME_TAB = 'HOME_TAB';
+export const FIAT_EXCHANGE = 'FIAT_EXCHANGE';
+export const FIAT_CRYPTO = 'FIAT_CRYPTO';
 
 // EXCHANGE FLOW
 export const EXCHANGE = 'EXCHANGE';
