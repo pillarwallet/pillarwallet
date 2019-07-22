@@ -63,7 +63,7 @@ import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 
-import fiatCurrencies from 'configs/fiatCurrenciesConfig';
+import { fiatCurrencies } from 'fixtures/assets';
 
 // partials
 import { ExchangeStatus } from './ExchangeStatus';

@@ -28,7 +28,7 @@ import {
   PROVIDER_SENDWYRE,
 } from 'constants/exchangeConstants';
 
-import fiatCurrenciesConfig from 'configs/fiatCurrenciesConfig';
+import { fiatCurrencies } from 'fixtures/assets';
 
 export const getProviderDisplayName = (provider?: string) => {
   switch (provider) {
@@ -86,7 +86,7 @@ export const checkFiatProvider = (provider: string) => {
 };
 
 export const checkFiatCurrency = (symbol: string) => {
-  return fiatCurrenciesConfig.find(currency => currency.symbol === symbol);
+  return fiatCurrencies.find(currency => currency.symbol === symbol);
 };
 
 export const clearWebViewCookies = () => {
