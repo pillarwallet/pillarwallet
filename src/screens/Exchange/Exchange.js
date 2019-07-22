@@ -737,10 +737,14 @@ class ExchangeScreen extends React.Component<Props, State> {
           <CardRow>
             {!!isFiat &&
             <CardColumn style={{ flex: 1 }}>
-              <CardText label>Fees Total</CardText>
+              <CardText label>Fees total</CardText>
               <View style={{ flexDirection: 'row' }}>
                 <CardText>
-                  {feeAmount !== '' ? `${formatAmountDisplay(feeAmount + extraFeeAmount)} ${fromAssetCode}` : 'Check'}
+                  {
+                    feeAmount !== ''
+                      ? `${formatAmountDisplay(feeAmount + extraFeeAmount)} ${fromAssetCode}`
+                      : 'Will be calculated'
+                  }
                 </CardText>
               </View>
             </CardColumn>
