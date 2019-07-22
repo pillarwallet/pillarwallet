@@ -693,7 +693,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       >
         <CardWrapper
           disabled={isTakeButtonDisabled}
-          onPress={() => { return isFiat ? this.onFiatOfferPress(offer) : this.onOfferPress(offer); }}
+          onPress={() => isFiat ? this.onFiatOfferPress(offer) : this.onOfferPress(offer)}
         >
           <CardRow withBorder alignTop>
             {!!isFiat &&
