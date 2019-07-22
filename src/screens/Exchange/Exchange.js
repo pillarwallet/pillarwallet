@@ -463,9 +463,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
     const { assets, supportedAssets } = this.props;
-    const fromAsset = isFiatCurrency(fromAssetCode) ?
-      fiatCurrencies.find(currency => currency.symbol === fromAssetCode) :
-      assets[fromAssetCode];
+    const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode) || assets[fromAssetCode];
     const assetsOptions = this.generateAssetsOptions({
       [fromAssetCode]: fromAsset,
     });
