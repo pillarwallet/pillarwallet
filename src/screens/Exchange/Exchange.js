@@ -33,7 +33,7 @@ import Intercom from 'react-native-intercom';
 
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
-import { getProviderLogo, checkFiatProvider, checkFiatCurrency } from 'utils/exchange';
+import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
 
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -241,7 +241,7 @@ const generateFormStructure = (balances: Balances) => {
 
     const { symbol, decimals } = selector;
 
-    const isFiat = checkFiatCurrency(symbol);
+    const isFiat = isFiatCurrency(symbol);
 
     amount = parseFloat(input);
     if (decimals === 0 && amount.toString().indexOf('.') > -1 && !isFiat) {
@@ -258,7 +258,7 @@ const generateFormStructure = (balances: Balances) => {
   FromOption.getValidationErrorMessage = ({ selector, input }) => {
     const { symbol, decimals } = selector;
 
-    const isFiat = checkFiatCurrency(symbol);
+    const isFiat = isFiatCurrency(symbol);
 
     if (!isValidNumber(input.toString())) {
       return 'Incorrect number entered.';
@@ -463,7 +463,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
     const { assets, supportedAssets } = this.props;
-    const fromAsset = checkFiatCurrency(fromAssetCode) ?
+    const fromAsset = isFiatCurrency(fromAssetCode) ?
       fiatCurrencies.find(currency => currency.symbol === fromAssetCode) :
       assets[fromAssetCode];
     const assetsOptions = this.generateAssetsOptions({
@@ -684,7 +684,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       || !allowanceSet
       || (isShapeShift && !shapeshiftAccessToken);
 
-    const isFiat = checkFiatProvider(offerProvider);
+    const isFiat = isFiatProvider(offerProvider);
 
     return (
       <ShadowedCard
@@ -791,13 +791,13 @@ class ExchangeScreen extends React.Component<Props, State> {
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
     const cryptoFiatAssets = assetsList.concat(fiatCurrencies);
     const nonEmptyAssets = cryptoFiatAssets.filter(({ symbol }): any => {
-      return getBalance(balances, symbol) !== 0 || symbol === ETH || checkFiatCurrency(symbol);
+      return getBalance(balances, symbol) !== 0 || symbol === ETH || isFiatCurrency(symbol);
     });
     const alphabeticalAssets = nonEmptyAssets.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) => {
-      const assetBalance = checkFiatCurrency(symbol) ?
+      const assetBalance = isFiatCurrency(symbol) ?
         null : formatAmount(getBalance(balances, symbol));
-      const paymentNetworkBalance = checkFiatCurrency(symbol) ?
+      const paymentNetworkBalance = isFiatCurrency(symbol) ?
         null : getBalance(paymentNetworkBalances, symbol);
 
       return ({
