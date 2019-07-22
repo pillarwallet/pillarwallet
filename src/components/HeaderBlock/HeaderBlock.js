@@ -43,6 +43,7 @@ type Props = {
   floating?: boolean,
   transparent?: boolean,
   light?: boolean,
+  noBack?: boolean,
 }
 
 type State = {
@@ -222,8 +223,8 @@ class HeaderBlock extends React.Component<Props, State> {
   };
 
   renderSideItems = (side: string, items, theme) => {
-    const { navigation } = this.props;
-    if (side === 'LEFT' && !items.length) {
+    const { navigation, noBack } = this.props;
+    if (side === 'LEFT' && !items.length && !noBack) {
       return (
         <BackIcon
           icon="back"

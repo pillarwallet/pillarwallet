@@ -64,10 +64,9 @@ class ContainerWithHeader extends React.Component<Props> {
   }
 
   setStatusBarStyleForView = () => {
-    const { headerProps = {} } = this.props;
-    const { color } = headerProps;
+    const { backgroundColor } = this.props;
     let statusBarStyle = 'dark-content';
-    if (color && isColorDark(color)) {
+    if (backgroundColor && isColorDark(backgroundColor)) {
       statusBarStyle = 'light-content';
     }
     StatusBar.setBarStyle(statusBarStyle);

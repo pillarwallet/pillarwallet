@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { responsiveSize } from 'utils/ui';
+
 export const baseColors = {
   sunYellow: '#f8e71c',
   burningFire: '#F56C07',
@@ -87,6 +89,8 @@ export const baseColors = {
   hoki: '#647fa4',
   deepSkyBlue: '#01BFFF',
   blueViolet: '#b233e4',
+  ultramarine: '#0a0c78',
+  pomegranate: '#f33726',
 };
 
 export const brandColors = [
@@ -134,6 +138,8 @@ export const fontSizes = {
   iosIcons: 32,
   androidCloseIcon: 22,
   androidCheckmarkIcon: 26,
+  rJumbo: responsiveSize(64),
+  rMedium: responsiveSize(17),
 };
 
 export const spacing = {
