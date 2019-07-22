@@ -19,7 +19,8 @@
 */
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import type { Balances, Rates } from 'models/Asset';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import type { Asset, Balances, Rates } from 'models/Asset';
 import { ETH } from 'constants/assetsConstants';
 
 export function transformAssetsToObject(assetsArray: Object[] = []): Object {
@@ -79,4 +80,37 @@ export function checkIfEnoughForFee(balances: Balances, txFeeInWei: BigNumber): 
   const ethBalance = getBalance(balances, ETH);
   const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
   return balanceInWei.gte(txFeeInWei);
+}
+
+export function getPMTToken(): Asset {
+  let tokenAddress;
+  switch (NETWORK_PROVIDER) {
+    case 'ropsten':
+      tokenAddress = '0xF383e4C078b34Da69534A7B7F1F381d418315273';
+      break;
+    default:
+      tokenAddress = '';
+  }
+  return {
+    isPreferred: false,
+    socialMedia: [],
+    icos: [],
+    address: tokenAddress,
+    decimals: 0,
+    description: 'Pillar Meta Token',
+    email: 'info@pillarproject.io',
+    iconMonoUrl: 'asset/images/tokens/icons/plr.png',
+    iconUrl: 'asset/images/tokens/icons/plrColor.png',
+    isDefault: true,
+    name: 'Pillar Meta Token',
+    symbol: 'PMT',
+    telegram: 'https://t.me/pillarofficial',
+    twitter: 'https://twitter.com/PillarWallet',
+    wallpaperUrl: 'asset/images/tokens/wallpaper/plrBg.png',
+    website: 'https://pillarproject.io/',
+    whitepaper: 'https://pillarproject.io/documents/Pillar-Gray-Paper.pdf',
+    id: '5d25a47b36425c001165ff6111111',
+    updatedAt: '2019-07-22T12:43:23.541Z',
+    patternUrl: 'asset/images/patternIcons/plr.png',
+  };
 }

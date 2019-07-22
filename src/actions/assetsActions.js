@@ -35,6 +35,7 @@ import {
   UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
+  PMT,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION } from 'constants/historyConstants';
@@ -53,7 +54,7 @@ import type {
   TransactionPayload,
 } from 'models/Transaction';
 import type { Asset, Assets } from 'models/Asset';
-import { transformAssetsToObject } from 'utils/assets';
+import { getPMTToken, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -482,6 +483,7 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     const {
       user: { data: { walletId } },
       assets: { data: currentAssets, supportedAssets },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       wallet: { data: wallet },
     } = getState();
 
@@ -489,6 +491,9 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     let walletSupportedAssets = [...supportedAssets];
     if (!supportedAssets.length) {
       walletSupportedAssets = await api.fetchSupportedAssets(walletId);
+      if (smartWalletFeatureEnabled) {
+        walletSupportedAssets = [...walletSupportedAssets, getPMTToken()];
+      }
       dispatch({
         type: UPDATE_SUPPORTED_ASSETS,
         payload: walletSupportedAssets,
@@ -497,6 +502,10 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
 
       // HACK: Dirty fix for users who removed somehow Eth from their assets list
       if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
+
+      if (smartWalletFeatureEnabled && !currentAssetsTickers.includes(PMT)) {
+        currentAssetsTickers.push(PMT);
+      }
 
       if (walletSupportedAssets.length) {
         const updatedAssets = walletSupportedAssets
