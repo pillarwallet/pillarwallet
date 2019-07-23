@@ -24,6 +24,7 @@ import debounce from 'lodash.debounce';
 import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { UIColors, baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
+import { responsiveSize } from 'utils/ui';
 
 type Props = {
   children?: React.Node,
@@ -57,6 +58,11 @@ type Props = {
 
 type State = {
   shouldIgnoreTap: boolean,
+};
+
+type ButtonNextProps = {
+  onPress: Function,
+  disabled?: boolean,
 };
 
 const themes = {
@@ -249,6 +255,21 @@ const ButtonMiniText = styled(BoldText)`
   color: #fff;
 `;
 
+const ButtonNextWrapper = styled.TouchableOpacity`
+  width: ${responsiveSize(70)}px;
+  height: ${responsiveSize(70)}px;
+  border-radius: 4px;
+  background-color: ${props => props.disabled ? baseColors.lightGray : baseColors.electricBlue};
+  align-items: center;
+  justify-content: center;
+`;
+
+const NextIcon = styled(Icon)`
+  font-size: ${fontSizes.extraLarge}px;
+  color: ${baseColors.white};
+  transform: rotate(180deg);
+`;
+
 const getTheme = (props: Props) => {
   if (props.secondary && props.danger) {
     return themes.secondaryDanger;
@@ -349,3 +370,15 @@ export const ButtonMini = (props: ButtonMiniProps) => (
     <ButtonMiniText>{props.title}</ButtonMiniText>
   </ButtonMiniWrapper>
 );
+
+export const ButtonNext = (props: ButtonNextProps) => {
+  const { onPress, disabled } = props;
+  return (
+    <ButtonNextWrapper
+      onPress={onPress}
+      disabled={disabled}
+    >
+      <NextIcon name="back" />
+    </ButtonNextWrapper>
+  );
+};

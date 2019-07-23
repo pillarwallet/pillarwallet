@@ -92,6 +92,8 @@ export const baseColors = {
   ultramarine: '#0a0c78',
   pomegranate: '#f33726',
   aluminium: '#a9aeb8',
+  dell: '#467038',
+  stratos: '#000260',
 };
 
 export const brandColors = [

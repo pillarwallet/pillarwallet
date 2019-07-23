@@ -28,9 +28,19 @@ const getBorderColor = (props) => {
   if (props.rounded) {
     return baseColors.mediumGray;
   } else if (props.active) {
+    if (props.dark) return baseColors.stratos;
     return UIColors.primary;
   }
   return baseColors.mediumGray;
+};
+
+const getTickColor = (props) => {
+  if (props.rounded) {
+    return baseColors.eucalypus;
+  } else if (props.darkCheckbox) {
+    return baseColors.white;
+  }
+  return baseColors.brightBlue;
 };
 
 const CheckboxBox = styled.View`
@@ -44,6 +54,7 @@ const CheckboxBox = styled.View`
   justify-content: center;
   align-items: center;
   shadow-color: ${baseColors.pigeonPost};
+  background-color: ${props => props.dark && props.active ? baseColors.stratos : 'transparent'};
   ${props => props.rounded ? `background-color: ${baseColors.white}` : ''};
   ${props => props.rounded && props.active
     ? `
@@ -57,11 +68,13 @@ const CheckboxBox = styled.View`
 
 const CheckboxText = styled(BaseText)`
   flex: 1;
-  font-size: ${fontSizes.medium};
+  font-size: ${props => props.small ? fontSizes.extraSmall : fontSizes.medium}px;
+  color: ${props => props.light ? baseColors.darkGray : baseColors.slateBlack};
 `;
 
 const TextWrapper = styled.View`
   flex: 1;
+  margin-top: 2px;
 `;
 
 const CheckboxWrapper = styled.View`
@@ -79,6 +92,9 @@ type Props = {
   children?: React.Node,
   wrapperStyle?: Object,
   rounded?: boolean,
+  lightText?: boolean,
+  darkCheckbox?: boolean,
+  small?: boolean,
 };
 
 type State = {
@@ -156,6 +172,9 @@ export default class Checkbox extends React.Component<Props, State> {
       children,
       rounded,
       wrapperStyle,
+      small,
+      lightText,
+      darkCheckbox,
     } = this.props;
     return (
       <TouchableHighlight
@@ -164,19 +183,22 @@ export default class Checkbox extends React.Component<Props, State> {
         style={wrapperStyle}
       >
         <CheckboxWrapper disabled={disabled}>
-          <CheckboxBox active={disabled ? false : checked} rounded={rounded}>
+          <CheckboxBox active={disabled ? false : checked} rounded={rounded} dark={darkCheckbox}>
             {!!checked &&
             <Icon
               name="check"
               style={{
-                color: rounded ? baseColors.eucalypus : baseColors.brightBlue,
-                fontSize: rounded ? fontSizes.tiny : fontSizes.extraExtraSmall,
+                color: getTickColor(this.props),
+                fontSize: fontSizes.tiny,
               }}
             />
             }
           </CheckboxBox>
-          {!!text && <CheckboxText>{text}</CheckboxText>}
-          {!!children && <TextWrapper>{children}</TextWrapper>}
+          {!!text && <CheckboxText small={small} light={lightText}>{text}</CheckboxText>}
+          {!!children &&
+          <TextWrapper>
+            <CheckboxText small={small} light={lightText}>{children}</CheckboxText>
+          </TextWrapper>}
         </CheckboxWrapper>
       </TouchableHighlight>
     );
