@@ -26,3 +26,9 @@ export const activeAccountIdSelector = createSelector(
   activeAccountSelector,
   activeAccount => activeAccount ? activeAccount.id : null,
 );
+
+// account address is account ID
+export const activeAccountAddressSelector = createSelector(
+  activeAccountSelector,
+  activeAccount => activeAccount ? activeAccount.id : '',
+);

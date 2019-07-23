@@ -46,7 +46,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { GasInfo } from 'models/GasInfo';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Balances, Rates } from 'models/Asset';
-import type { Account } from 'models/Account';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
@@ -58,7 +57,7 @@ import { updateAppSettingsAction } from 'actions/appSettingsActions';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { activeAccountSelector } from 'selectors';
+import { activeAccountAddressSelector } from 'selectors';
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -118,7 +117,7 @@ type Props = {
   baseFiatCurrency: string,
   transactionSpeed: string,
   updateAppSettings: Function,
-  activeAccount: Account,
+  activeAccountAddress: string,
 };
 
 type State = {
@@ -245,10 +244,10 @@ class SendTokenAmount extends React.Component<Props, State> {
     // cannot be set if value is zero, fee select will be hidden
     if (amount === 0) return 0;
 
-    const { activeAccount: { id: from } } = this.props;
+    const { activeAccountAddress } = this.props;
 
     return calculateGasEstimate({
-      from,
+      from: activeAccountAddress,
       to: this.receiver,
       amount,
       symbol,
@@ -410,7 +409,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  activeAccount: activeAccountSelector,
+  activeAccountAddress: activeAccountAddressSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

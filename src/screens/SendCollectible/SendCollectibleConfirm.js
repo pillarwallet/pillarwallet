@@ -15,13 +15,12 @@ import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import type { CollectibleTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
-import type { Account } from 'models/Account';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { activeAccountSelector } from 'selectors';
+import { activeAccountAddressSelector } from 'selectors';
 
 const NORMAL = 'avg';
 
@@ -32,7 +31,7 @@ type Props = {
   fetchGasInfo: Function,
   gasInfo: GasInfo,
   wallet: Object,
-  activeAccount: Account,
+  activeAccountAddress: string,
 };
 
 type State = {
@@ -81,7 +80,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      activeAccount: { id: from },
+      activeAccountAddress,
       fetchGasInfo,
     } = this.props;
     fetchGasInfo();
@@ -91,7 +90,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       contractAddress,
     } = this.assetData;
     calculateGasEstimate({
-      from,
+      from: activeAccountAddress,
       to: this.receiver,
       contractAddress,
       tokenId,
@@ -253,7 +252,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  activeAccount: activeAccountSelector,
+  activeAccountAddress: activeAccountAddressSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
