@@ -78,7 +78,7 @@ class FiatExchange extends React.Component<Props, State> {
 
     const destAddress = getActiveAccountAddress(accounts);
 
-    const secretKey = CryptoJS.HmacSHA256(user.id, WIDGET_SIGNATURE).toString(CryptoJS.enc.Hex);
+    const secretKey = CryptoJS.HmacSHA256(user.secretId, WIDGET_SIGNATURE).toString(CryptoJS.enc.Hex);
 
     const wyreTemplate = sendWyreTemplate(
       SENDWYRE_ENVIRONMENT,
