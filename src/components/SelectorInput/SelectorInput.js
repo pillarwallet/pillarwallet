@@ -24,7 +24,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // COMPONENTS
-import { BoldText, BaseText, MediumText } from 'components/Typography';
+import { BoldText, BaseText, MediumText, SubHeading } from 'components/Typography';
 import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -32,9 +32,17 @@ import SearchBar from 'components/SearchBar';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Separator from 'components/Separator';
+import ProfileImage from 'components/ProfileImage';
 
 // UTILS
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import {
+  baseColors,
+  fontSizes,
+  fontWeights,
+  itemSizes,
+  spacing,
+  UIColors,
+} from 'utils/variables';
 import { formatMoney, noop } from 'utils/common';
 
 import { ETH } from 'constants/assetsConstants';
@@ -48,6 +56,7 @@ type Props = {
   wrapperStyle?: Object,
   inputProps: Object,
   options: Object[],
+  horizontalOptions?: Object[],
   hasInput?: boolean,
   errorMessage?: string,
   value: InputValue,
@@ -181,6 +190,46 @@ const SearchBarWrapper = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
 `;
 
+const HorizontalList = styled.View`
+  height: 145px;
+  background-color: ${baseColors.lighterGray};
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-style: solid;
+  border-color: ${baseColors.mediumLightGray};
+`;
+
+const HorizontalListHeader = styled(SubHeading)`
+  margin: 22px 16px 13px;
+  font-weight: ${fontWeights.medium};
+`;
+
+const HorizontalOptionItem = styled.TouchableOpacity`
+  align-items: center;
+  width: ${Platform.select({
+    ios: '60px',
+    android: '74px',
+  })};
+  margin: ${Platform.select({
+    ios: `0 ${spacing.rhythm / 2}px`,
+    android: `-6px ${spacing.rhythm / 2}px 0`,
+  })};
+  padding-top: ${Platform.select({
+    ios: '3px',
+    android: 0,
+  })};
+`;
+
+const HorizontalOptionItemName = styled(BaseText)`
+  font-size: ${fontSizes.extraExtraSmall};
+  color: ${baseColors.darkGray};
+  padding: 0 4px;
+  margin-top: ${Platform.select({
+    ios: '3px',
+    android: '-4px',
+  })};
+`;
+
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 const MIN_QUERY_LENGTH = 2;
@@ -270,6 +319,27 @@ export default class SelectorInput extends React.Component<Props, State> {
     if (onSelectorOpen) onSelectorOpen();
   };
 
+  renderHorizontalOptions = (options: any) => {
+    return options
+      .map(({ name, icon }) => {
+        const iconUri = `${SDK_PROVIDER}/${icon}?size=3`;
+        return (
+          <HorizontalOptionItem
+            key={name}
+            onPress={() => null}
+          >
+            <ProfileImage
+              uri={iconUri}
+              userName={name}
+              diameter={itemSizes.avatarCircleMedium}
+              textStyle={{ fontSize: fontSizes.medium }}
+            />
+            <HorizontalOptionItemName numberOfLines={1}>{name}</HorizontalOptionItemName>
+          </HorizontalOptionItem>
+        );
+      });
+  };
+
   render() {
     const { showOptionsSelector, query } = this.state;
     const {
@@ -281,6 +351,7 @@ export default class SelectorInput extends React.Component<Props, State> {
       errorMessage,
       inputAddonText,
       inputRef,
+      horizontalOptions = [],
     } = this.props;
     const {
       label,
@@ -392,6 +463,17 @@ export default class SelectorInput extends React.Component<Props, State> {
                 forceShowCloseButton
               />
             </SearchBarWrapper>
+            {horizontalOptions.length &&
+              <HorizontalList>
+                <HorizontalListHeader>MY CONTACTS</HorizontalListHeader>
+                <styled.ScrollView
+                  keyboardShouldPersistTaps="always"
+                  horizontal
+                >
+                  {this.renderHorizontalOptions(horizontalOptions)}
+                </styled.ScrollView>
+              </HorizontalList>
+            }
             <FlatList
               data={filteredListData}
               renderItem={this.renderOption}

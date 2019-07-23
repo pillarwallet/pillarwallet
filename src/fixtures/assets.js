@@ -56,18 +56,21 @@ export const initialAssets = [
 
 export const fiatCurrencies = [
   {
+    name: 'GBP',
     symbol: 'GBP',
     decimals: 2,
     iconUrl: 'asset/images/fiat/gbpColor.png',
     iconMonoUrl: 'asset/images/fiat/gbpColor.png',
   },
   {
+    name: 'USD',
     symbol: 'USD',
     decimals: 2,
     iconUrl: 'asset/images/fiat/usdColor.png',
     iconMonoUrl: 'asset/images/fiat/usdColor.png',
   },
   {
+    name: 'EUR',
     symbol: 'EUR',
     decimals: 2,
     iconUrl: 'asset/images/fiat/eurColor.png',

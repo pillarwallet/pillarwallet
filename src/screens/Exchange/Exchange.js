@@ -303,6 +303,7 @@ function SelectorInputTemplate(locals) {
       placeholderSelector,
       placeholderInput,
       options,
+      horizontalOptions,
       inputAddonText,
       inputRef,
       onSelectorOpen,
@@ -325,6 +326,7 @@ function SelectorInputTemplate(locals) {
     <SelectorInput
       inputProps={inputProps}
       options={options}
+      horizontalOptions={horizontalOptions}
       errorMessage={errorMessage}
       hasInput={hasInput}
       wrapperStyle={wrapperStyle}
@@ -380,6 +382,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               label: 'Selling',
               hasInput: true,
               options: [],
+              horizontalOptions: [],
               placeholderSelector: 'select',
               placeholderInput: '0',
               inputRef: (ref) => { this.fromInputRef = ref; },
@@ -449,11 +452,13 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   provideOptions = () => {
     const { assets, supportedAssets } = this.props;
+    const fiatOptionsFrom = this.generateFiatOptions();
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(supportedAssets);
     const initialAssetsOptionsBuying = assetsOptionsBuying.filter((option) => option.value !== ETH);
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
     thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
+    thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = fiatOptionsFrom;
     thisStateFormOptionsCopy.fields.toInput.config.options = initialAssetsOptionsBuying;
 
     this.setState({
@@ -787,9 +792,8 @@ class ExchangeScreen extends React.Component<Props, State> {
   generateAssetsOptions = (assets) => {
     const { balances, paymentNetworkBalances } = this.props;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-    const cryptoFiatAssets = assetsList.concat(fiatCurrencies);
-    const nonEmptyAssets = cryptoFiatAssets.filter(({ symbol }): any => {
-      return getBalance(balances, symbol) !== 0 || symbol === ETH || isFiatCurrency(symbol);
+    const nonEmptyAssets = assetsList.filter(({ symbol }): any => {
+      return getBalance(balances, symbol) !== 0 || symbol === ETH;
     });
     const alphabeticalAssets = nonEmptyAssets.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) => {
@@ -807,6 +811,21 @@ class ExchangeScreen extends React.Component<Props, State> {
         ...rest,
         assetBalance,
         paymentNetworkBalance,
+      });
+    });
+  };
+
+  generateFiatOptions = () => {
+    return fiatCurrencies.map(({ symbol, iconUrl, ...rest }) => {
+      return ({
+        key: symbol,
+        value: symbol,
+        icon: iconUrl,
+        iconUrl,
+        symbol,
+        ...rest,
+        assetBalance: null,
+        paymentNetworkBalance: null,
       });
     });
   };
