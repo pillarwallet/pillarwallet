@@ -5,6 +5,8 @@ import { Keyboard, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
+import { createStructuredSelector } from 'reselect';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
@@ -13,12 +15,13 @@ import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import type { CollectibleTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
+import type { Account } from 'models/Account';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { activeAccountSelector } from 'selectors';
 
 const NORMAL = 'avg';
 
@@ -29,6 +32,7 @@ type Props = {
   fetchGasInfo: Function,
   gasInfo: GasInfo,
   wallet: Object,
+  activeAccount: Account,
 };
 
 type State = {
@@ -77,7 +81,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      wallet: { address } = {},
+      activeAccount: { id: from },
       fetchGasInfo,
     } = this.props;
     fetchGasInfo();
@@ -87,7 +91,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       contractAddress,
     } = this.assetData;
     calculateGasEstimate({
-      from: address,
+      from,
       to: this.receiver,
       contractAddress,
       tokenId,
@@ -248,8 +252,18 @@ const mapStateToProps = ({
   wallet,
 });
 
+const structuredSelector = createStructuredSelector({
+  activeAccount: activeAccountSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SendCollectibleConfirm);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendCollectibleConfirm);

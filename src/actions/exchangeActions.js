@@ -36,6 +36,7 @@ import {
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 import { calculateGasEstimate } from 'services/assets';
+import { getActiveAccountAddress } from 'utils/accounts';
 
 import type { Offer, OfferOrder } from 'models/Offer';
 
@@ -100,12 +101,13 @@ export const takeOfferAction = (
       } = {},
     }: OfferOrder = offerOrderData;
     const {
-      wallet: { data: wallet },
+      accounts: { data: accounts },
       assets: { supportedAssets },
     } = getState();
     const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
+    const from = getActiveAccountAddress(accounts);
     const gasLimit = await calculateGasEstimate({
-      from: wallet.address, // TODO: get address from active account when it's possible
+      from,
       to: payToAddress,
       data: transactionObjData,
       amount: payAmount,
@@ -166,7 +168,6 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     if (error) {
       const message = error.message || 'Unable to connect';
       if (message.toString().toLowerCase().startsWith('access token')) {
-        console.log('searchOffersAction expired token');
         /**
          * access token is expired or malformed,
          * let's hit with user info endpoint to update access tokens
@@ -297,12 +298,13 @@ export const setTokenAllowanceAction = (
     }
     const { data: { to: payToAddress, data } } = response;
     const {
-      wallet: { data: wallet },
+      accounts: { data: accounts },
       assets: { supportedAssets },
     } = getState();
     const asset = supportedAssets.find(a => a.symbol === assetCode);
+    const from = getActiveAccountAddress(accounts);
     const gasLimit = await calculateGasEstimate({
-      from: wallet.address, // TODO: get address from active account when it's possible
+      from,
       to: payToAddress,
       data,
       symbol: assetCode,

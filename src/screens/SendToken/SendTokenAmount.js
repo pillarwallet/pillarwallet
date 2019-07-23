@@ -25,6 +25,7 @@ import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import debounce from 'lodash.debounce';
 
 // components
 import { Container, Footer, Wrapper } from 'components/Layout';
@@ -45,6 +46,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { GasInfo } from 'models/GasInfo';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Balances, Rates } from 'models/Asset';
+import type { Account } from 'models/Account';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
@@ -56,7 +58,7 @@ import { updateAppSettingsAction } from 'actions/appSettingsActions';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-
+import { activeAccountSelector } from 'selectors';
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -116,7 +118,7 @@ type Props = {
   baseFiatCurrency: string,
   transactionSpeed: string,
   updateAppSettings: Function,
-  fromAddress: string,
+  activeAccount: Account,
 };
 
 type State = {
@@ -155,6 +157,8 @@ class SendTokenAmount extends React.Component<Props, State> {
       showModal: false,
       gasLimit: 0,
     };
+
+    this.handleChange = debounce(this.handleChange, 500);
   }
 
   componentDidMount() {
@@ -241,8 +245,10 @@ class SendTokenAmount extends React.Component<Props, State> {
     // cannot be set if value is zero, fee select will be hidden
     if (amount === 0) return 0;
 
+    const { activeAccount: { id: from } } = this.props;
+
     return calculateGasEstimate({
-      from: this.props.fromAddress,
+      from,
       to: this.receiver,
       amount,
       symbol,
@@ -394,18 +400,17 @@ const mapStateToProps = ({
   rates: { data: rates },
   history: { gasInfo },
   appSettings: { data: { baseFiatCurrency, transactionSpeed } },
-  wallet: { data: { address: fromAddress } },
 }) => ({
   rates,
   session,
   gasInfo,
   baseFiatCurrency,
   transactionSpeed,
-  fromAddress,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

@@ -45,7 +45,9 @@ import type { Asset, Balances } from 'models/Asset';
 import type { JsonRpcRequest } from 'models/JsonRpc';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
+import type { Account } from 'models/Account';
 import { accountBalancesSelector } from 'selectors/balances';
+import { activeAccountSelector } from 'selectors';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -56,7 +58,7 @@ type Props = {
   balances: Balances,
   gasInfo: GasInfo,
   fetchGasInfo: Function,
-  fromAddress: string,
+  activeAccount: Account,
 };
 
 type State = {
@@ -103,10 +105,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     this.props.fetchGasInfo();
-    const { navigation, fromAddress } = this.props;
+    const { navigation, activeAccount: { id: from } } = this.props;
     const payload = navigation.getParam('payload', {});
     if (['eth_sendTransaction', 'eth_signTransaction'].includes(payload.method)) {
-      calculateGasEstimate({ ...this.parseTransaction(payload), from: fromAddress })
+      calculateGasEstimate({ ...this.parseTransaction(payload), from })
         .then(gasLimit => this.setState({ gasLimit }))
         .catch(() => null);
     }
@@ -441,17 +443,16 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   session: { data: session },
   history: { gasInfo },
-  wallet: { data: { address: fromAddress } },
 }) => ({
   contacts,
   session,
   supportedAssets,
   gasInfo,
-  fromAddress,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
