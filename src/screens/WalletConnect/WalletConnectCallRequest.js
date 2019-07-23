@@ -340,7 +340,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 however, normally it will be less
               </LabelSub>
               {
-                (gasLimit !== 0 && <Value>{txFee} ETH</Value>)
+                (!!gasLimit && <Value>{txFee} ETH</Value>)
                 || <Spinner style={{ marginTop: 5 }} width={20} height={20} />
               }
             </LabeledRow>
@@ -419,7 +419,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             <OptionButton
               primaryInverted
               onPress={this.handleFormSubmit}
-              disabled={!!errorMessage || (type === 'Transaction' && gasLimit === 0)}
+              disabled={!!errorMessage || (type === 'Transaction' && !gasLimit)}
               textStyle={{ fontWeight: 'normal' }}
               title={`Approve ${type}`}
             />

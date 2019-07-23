@@ -10,16 +10,16 @@ import { Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
+import Spinner from 'components/Spinner';
 import type { CollectibleTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
-import { fetchRinkebyETHBalance } from 'services/assets';
+import { calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 
-const GAS_LIMIT = 500000;
 const NORMAL = 'avg';
 
 type Props = {
@@ -35,6 +35,7 @@ type State = {
   note: ?string,
   rinkebyETH: string,
   scrollPos: number,
+  gasLimit: number,
 };
 
 const FooterWrapper = styled.View`
@@ -70,12 +71,29 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       note: null,
       rinkebyETH: '',
       scrollPos: 0,
+      gasLimit: 0,
     };
   }
 
   componentDidMount() {
-    this.props.fetchGasInfo();
+    const {
+      wallet: { address } = {},
+      fetchGasInfo,
+    } = this.props;
+    fetchGasInfo();
     this.fetchETHBalanceInRinkeby();
+    const {
+      id: tokenId,
+      contractAddress,
+    } = this.assetData;
+    calculateGasEstimate({
+      from: address,
+      to: this.receiver,
+      contractAddress,
+      tokenId,
+    })
+      .then(gasLimit => this.setState({ gasLimit }))
+      .catch(() => null);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -122,16 +140,16 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
   getTxFeeInWei = () => {
     const { gasInfo } = this.props;
+    const { gasLimit } = this.state;
     const gasPrice = gasInfo.gasPrice[NORMAL] || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-    return gasPriceWei.mul(GAS_LIMIT);
+    return gasPriceWei.mul(gasLimit);
   };
 
   render() {
     const { contacts, session, gasInfo } = this.props;
     const { name } = this.assetData;
-    const { rinkebyETH, scrollPos } = this.state;
-
+    const { rinkebyETH, scrollPos, gasLimit } = this.state;
     const to = this.receiver;
     const txFeeInWei = this.getTxFeeInWei();
     const txFee = utils.formatEther(txFeeInWei.toString());
@@ -173,7 +191,10 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
           </LabeledRow>
           <LabeledRow>
             <Label>Est. Network Fee</Label>
-            <Value>{txFee} ETH</Value>
+            {
+              (!!gasLimit && <Value>{txFee} ETH</Value>)
+              || <Spinner style={{ marginTop: 5 }} width={20} height={20} />
+            }
           </LabeledRow>
           {NETWORK_PROVIDER === 'ropsten' &&
           <LabeledRow>
@@ -204,7 +225,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
         <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
           <FooterWrapper>
             <Button
-              disabled={!session.isOnline || !gasInfo.isFetched || !canProceedTesting}
+              disabled={!gasLimit || !session.isOnline || !gasInfo.isFetched || !canProceedTesting}
               onPress={this.handleFormSubmit}
               title="Confirm Transaction"
             />

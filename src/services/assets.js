@@ -296,13 +296,34 @@ export async function calculateGasEstimate(transaction: Object) {
     symbol,
     contractAddress,
     decimals: defaultDecimals = 18,
+    tokenId,
   } = transaction;
   let { to, data } = transaction;
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   const value = symbol === ETH
     ? utils.parseEther(amount.toString())
     : '0x';
-  if (!data && contractAddress) {
+  if (tokenId) {
+    let contract;
+    const code = await provider.getCode(contractAddress);
+    const contractTransferMethod = getERC721ContractTransferMethod(code);
+    switch (contractTransferMethod) {
+      case 'safeTransferFrom':
+        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, provider);
+        ({ data } = await contract.interface.functions.safeTransferFrom.apply(null, [from, to, tokenId]));
+        break;
+      case 'transfer':
+        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, provider);
+        ({ data } = await contract.interface.functions.transfer.apply(null, [to, tokenId]));
+        break;
+      case 'transferFrom':
+        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, provider);
+        ({ data } = await contract.interface.functions.transferFrom.apply(null, [from, to, tokenId]));
+        break;
+      default:
+        return DEFAULT_GAS_LIMIT;
+    }
+  } else if (!data && contractAddress) {
     const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
     const contractAmount = defaultDecimals > 0
       ? utils.parseUnits(amount.toString(), defaultDecimals)
