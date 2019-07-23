@@ -132,7 +132,7 @@ platform :ios do
   lane :build_custom_changelog do
     changelog_notes = changelog_from_git_commits(
       merge_commit_filtering: "only_include_merges",
-      commits_count: "40"
+      commits_count: "500"
     )
     custom_changelog = ""
     pr_merges = changelog_notes.split(/Merge/)

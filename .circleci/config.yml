@@ -843,14 +843,14 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/hockeyapp_changelog
+                  - develop
       - hockeyapp_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - fix/hockeyapp_changelog
+                  - develop
       - stage_ios:
           requires:
             - build-and-test
