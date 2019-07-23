@@ -82,6 +82,8 @@ import SettleBalanceConfrimScreen from 'screens/Tank/SettleBalanceConfirm';
 import WalletsListScreen from 'screens/ManageWallets/WalletsList';
 import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
+import FiatExchangeScreen from 'screens/FiatExchange';
+import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -175,6 +177,8 @@ import {
   WALLET_SETTINGS,
   MANAGE_DETAILS_SESSIONS,
   CONTACT_INFO,
+  FIAT_EXCHANGE,
+  FIAT_CRYPTO,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -251,6 +255,8 @@ const exchangeFlow = createStackNavigator({
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [EXCHANGE_INFO]: ExchangeInfoScreen,
+  [FIAT_EXCHANGE]: FiatExchangeScreen,
+  [FIAT_CRYPTO]: FiatCryptoScreen,
 }, StackNavigatorConfig);
 
 // ME FLOW

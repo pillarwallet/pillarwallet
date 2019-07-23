@@ -150,6 +150,19 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     );
     // we're requesting although it will start delivering when connection is established
     const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
+
+    api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+      if (!offer.error) {
+        dispatch({ type: ADD_OFFER, payload: offer });
+      }
+    }).catch(() => null);
+
+    api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+      if (!offer.error) {
+        dispatch({ type: ADD_OFFER, payload: offer });
+      }
+    }).catch(() => null);
+
     if (error) {
       const message = error.message || 'Unable to connect';
       if (message.toString().toLowerCase().startsWith('access token')) {
