@@ -34,6 +34,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Header from 'components/Header';
+import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
@@ -45,6 +46,7 @@ type Props = {
   localContacts: Object[],
   wallet: Object,
   smartWalletFeatureEnabled: boolean,
+  navigateToSendTokenAmount: Function,
 };
 
 type State = {
@@ -203,8 +205,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       });
       return;
     }
-
-    this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
+    this.props.navigateToSendTokenAmount({
       assetData: this.assetData,
       receiver: ethAddress,
       source: 'Contact',
@@ -305,4 +306,8 @@ const mapStateToProps = ({
   smartWalletFeatureEnabled,
 });
 
-export default connect(mapStateToProps)(SendTokenContacts);
+const mapDispatchToProps = (dispatch) => ({
+  navigateToSendTokenAmount: (options) => dispatch(navigateToSendTokenAmountAction(options)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SendTokenContacts);

@@ -196,6 +196,10 @@ class SmartWallet {
     return this.sdk.submitAccountTransaction(estimatedTransaction);
   }
 
+  createAccountPayment(recipient: string, token: ?string, value: number | string) {
+    return this.sdk.createAccountPayment(recipient, token, value);
+  }
+
   getConnectedAccountTransaction(txHash: string) {
     return this.sdk.getConnectedAccountTransaction(txHash);
   }
@@ -214,6 +218,10 @@ class SmartWallet {
 
   withdrawAccountVirtualBalance(estimated: Object) {
     return this.sdk.submitAccountTransaction(estimated);
+  }
+
+  searchAccount(address: string) {
+    return this.sdk.searchAccount({ address });
   }
 
   getDeployEstimate(gasPrice: BigNumber) {

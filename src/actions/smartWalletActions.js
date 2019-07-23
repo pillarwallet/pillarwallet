@@ -58,7 +58,7 @@ import {
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
   UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
-import { SMART_WALLET_UNLOCK, ASSETS } from 'constants/navigationConstants';
+import { SMART_WALLET_UNLOCK, ASSETS, SEND_TOKEN_AMOUNT, PPN_SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -96,7 +96,7 @@ import type { SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 
 // utils
 import { buildHistoryTransaction } from 'utils/history';
-import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+import { getActiveAccountAddress, getActiveAccountId, getActiveAccountType } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { getBalance, getPPNTokenAddress } from 'utils/assets';
 import { formatAmount, getGasPriceWei } from 'utils/common';
@@ -939,5 +939,50 @@ export const cleanSmartWalletAccountsAction = () => {
       type: 'success',
       autoClose: false,
     });
+  };
+};
+
+export const navigateToSendTokenAmountAction = (navOptions: Object) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accounts: { data: accounts },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+    } = getState();
+    const activeAccountType = getActiveAccountType(accounts);
+
+    const standardSendFlow = NavigationActions.navigate({
+      routeName: SEND_TOKEN_AMOUNT,
+      params: navOptions,
+    });
+
+    const ppnSendFlow = NavigationActions.navigate({
+      routeName: PPN_SEND_TOKEN_AMOUNT,
+      params: navOptions,
+    });
+
+    if (!smartWalletFeatureEnabled
+      || activeAccountType !== ACCOUNT_TYPES.SMART_WALLET
+      || navOptions.assetData.token !== PPN_TOKEN
+    ) {
+      navigate(standardSendFlow);
+      return;
+    }
+
+    if (!smartWalletService || !smartWalletService.sdkInitialized) {
+      Toast.show({
+        message: 'Smart Account is not initialized',
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
+
+    const userInfo = await smartWalletService.searchAccount(navOptions.receiver).catch(null);
+    if (!userInfo) {
+      navigate(standardSendFlow);
+      return;
+    }
+
+    navigate(ppnSendFlow);
   };
 };

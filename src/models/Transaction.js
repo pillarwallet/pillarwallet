@@ -35,6 +35,7 @@ export type Transaction = {
   receipt: Object,
   note?: ?string,
   signOnly?: ?boolean,
+  isPPNTransaction: boolean,
 }
 
 export type TransactionsStore = {
@@ -58,6 +59,7 @@ export type TokenTransactionPayload = {
   signedHash?: ?string,
   data?: string,
   extra?: Object,
+  usePPN?: boolean,
 }
 
 export type CollectibleTransactionPayload = {
@@ -88,6 +90,7 @@ export type TransactionEthers = {
   note?: ?string,
   status?: string,
   createdAt?: number,
+  isPPNTransaction?: boolean,
 };
 
 export type SmartWalletTransferTransaction = {

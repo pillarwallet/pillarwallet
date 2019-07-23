@@ -38,7 +38,7 @@ import {
   PMT,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
-import { ADD_TRANSACTION } from 'constants/historyConstants';
+import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
@@ -181,6 +181,7 @@ export const sendAssetAction = (
     const tokenType = get(transaction, 'tokenType', '');
     const symbol = get(transaction, 'symbol', '');
     const allowancePayload = get(transaction, 'extra.allowance', {});
+    const usePPN = get(transaction, 'usePPN', false);
 
     if (tokenType === COLLECTIBLES) {
       await dispatch(fetchCollectiblesAction());
@@ -283,6 +284,8 @@ export const sendAssetAction = (
           value: parseFloat(amount) * (10 ** decimals),
           to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
           note,
+          isPPNTransaction: usePPN,
+          status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
         });
       }
     }

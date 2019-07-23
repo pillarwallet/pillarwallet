@@ -36,6 +36,7 @@ export const buildHistoryTransaction = ({
   note,
   status,
   createdAt,
+  isPPNTransaction,
 }: TransactionEthers): Transaction => ({
   status: status || TX_PENDING_STATUS,
   gasUsed: gasPrice && gasLimit ? parseFloat(utils.formatEther(gasPrice.mul(gasLimit))) : 0,
@@ -52,6 +53,7 @@ export const buildHistoryTransaction = ({
   __v: 0,
   receipt: {},
   note,
+  isPPNTransaction: !!isPPNTransaction,
 });
 
 export const isTransactionEvent = (eventType: string) => {
