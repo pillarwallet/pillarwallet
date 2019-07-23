@@ -24,12 +24,12 @@ import {
   UPDATE_CONTACTS_STATE,
   UPDATE_CONTACTS,
 } from 'constants/contactsConstants';
-import { Answers } from 'react-native-fabric';
 import type { ConnectionIdentityKey } from 'models/Connections';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { excludeLocalContacts } from 'utils/contacts';
 import { updateConnectionsAction } from 'actions/connectionsActions';
+import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 import { deleteChatAction, deleteContactAction } from './chatActions';
 
@@ -138,7 +138,7 @@ export const disconnectContactAction = (contactId: string) => {
       return;
     }
 
-    Answers.logCustom('Connection', { Action: 'Disconnect' });
+    dispatch(logEventAction('contact_disconnected'));
 
     const [contactToDisconnect, updatedContacts] = partition(contacts, (contact) =>
       contact.id === contactId);
@@ -201,7 +201,7 @@ export const muteContactAction = (contactId: string, mute: boolean) => {
       return;
     }
 
-    Answers.logCustom('Connection', { Action: mute ? 'Mute' : 'Unmute' });
+    dispatch(logEventAction(mute ? 'contact_muted' : 'contact_unmuted'));
 
     const updatedInvitations = invitations.filter(({ id }) => id !== contactId);
 
@@ -252,7 +252,7 @@ export const blockContactAction = (contactId: string, block: boolean) => {
       return;
     }
 
-    Answers.logCustom('Connection', { Action: block ? 'Block' : 'Unblock' });
+    dispatch(logEventAction(block ? 'contact_blocked' : 'contact_unblocked'));
 
     const [contactToBlock, updatedContacts] = partition(contacts, (contact) =>
       contact.id === contactId);

@@ -41,6 +41,7 @@ import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import { fetchContactBadgesAction } from 'actions/badgesActions';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
+import { logScreenViewAction } from 'actions/analyticsActions';
 import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
 import { BADGE, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
@@ -142,6 +143,7 @@ type Props = {
   contactsBadges: Badges,
   fetchContactBadges: Function,
   isFetchingBadges: boolean,
+  logScreenView: (view: string, screen: string) => void,
 };
 
 type State = {
@@ -192,7 +194,7 @@ class Contact extends React.Component<Props, State> {
       syncContact,
       session,
       navigation,
-      // fetchContactBadges,
+      logScreenView,
     } = this.props;
     this.isComponentMounted = true;
     const contactName = navigation.getParam('username', '');
@@ -219,6 +221,7 @@ class Contact extends React.Component<Props, State> {
       // fetchContactBadges(localContact);
       fetchContactTransactions(localContact.ethAddress);
     }
+    logScreenView('View contact', 'Contact');
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -310,6 +313,10 @@ class Contact extends React.Component<Props, State> {
   };
 
   setActiveTab = (activeTab) => {
+    const { logScreenView } = this.props;
+
+    logScreenView(`View tab Contact.${activeTab}`, 'Contact');
+
     this.setState({ activeTab });
   };
 
@@ -373,7 +380,9 @@ class Contact extends React.Component<Props, State> {
   };
 
   onSendPress(contact: Object): void {
-    this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
+    const { navigation } = this.props;
+
+    navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
   }
 
   toggleBadgesSection = () => {
@@ -622,6 +631,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
   fetchContactBadges: (contact) => dispatch(fetchContactBadgesAction(contact)),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(Contact);

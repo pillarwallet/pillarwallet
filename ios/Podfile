@@ -76,6 +76,8 @@ target 'pillarwallet' do
 
   pod 'ReactNativeFabric', :path => '../node_modules/react-native-fabric'
 
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
   post_install do |installer|
     installer.pods_project.main_group.tab_width = '2';
     installer.pods_project.main_group.indent_width = '2';

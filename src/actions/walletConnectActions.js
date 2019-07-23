@@ -48,6 +48,7 @@ import Storage from 'services/storage';
 import { WALLETCONNECT_SESSION_REQUEST_SCREEN, WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
 import { navigate } from 'services/navigation';
 import Toast from 'components/Toast';
+import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 
 const storage = Storage.getInstance('db');
@@ -155,6 +156,8 @@ export function killWalletConnectSession(peerId: string) {
           payload: newConnectors,
         });
 
+        dispatch(logEventAction('walletconnect_session_killed'));
+
         dispatch(updateSavedConnectors(newConnectors));
       } else {
         dispatch({
@@ -193,6 +196,8 @@ export function killWalletConnectSessionByUrl(url: string) {
           type: WALLETCONNECT_SESSION_KILLED,
           payload: newConnectors,
         });
+
+        dispatch(logEventAction('walletconnect_session_killed'));
 
         dispatch(updateSavedConnectors(newConnectors));
       } else {
@@ -250,6 +255,8 @@ export function onWalletConnectDisconnect(peerId: string) {
         type: WALLETCONNECT_SESSION_DISCONNECTED,
         payload: newConnectors,
       });
+
+      dispatch(logEventAction('walletconnect_disconnected'));
 
       dispatch(updateSavedConnectors(newConnectors));
     } catch (e) {
@@ -419,6 +426,7 @@ export function cancelWaitingRequest(clientId: string, timeout: boolean = false)
       return c.clientId === clientId;
     });
 
+    dispatch(logEventAction('walletconnect_rejected'));
     dispatch({ type: WALLETCONNECT_CANCEL_REQUEST, payload: filteredPending });
 
     if (timeout) {
@@ -457,9 +465,11 @@ export function onWalletConnectSessionRequest(uri: string) {
       });
 
       dispatch(onWalletConnectSubscribeToSessionRequestEvent(clientId));
+      dispatch(logEventAction('walletconnect_requested'));
 
       setTimeout(() => {
         dispatch(cancelWaitingRequest(connector.clientId, true));
+        dispatch(logEventAction('walletconnect_timed_oud'));
       }, WALLETCONNECT_TIMEOUT);
     } catch (e) {
       dispatch({
@@ -500,6 +510,8 @@ export function onWalletConnectSessionApproval(peerId: string) {
             connectors: newConnectors,
           },
         });
+
+        dispatch(logEventAction('walletconnect_connected'));
 
         dispatch(onWalletConnectSubscribeToEvents(peerId));
 

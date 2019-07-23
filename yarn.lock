@@ -4453,7 +4453,7 @@ crypto-browserify@^3.11.0:
     randombytes "^2.0.0"
     randomfill "^1.0.3"
 
-crypto-js@3.1.9-1:
+crypto-js@3.1.9-1, crypto-js@^3.1.9-1:
   version "3.1.9-1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/crypto-js/-/crypto-js-3.1.9-1.tgz#fda19e761fc077e01ffbfdc6e9fdfc59e8806cd8"
   integrity sha1-/aGedh/Ad+Af+/3G6f38WeiAbNg=
@@ -7692,7 +7692,7 @@ interpret@^1.0.0, interpret@^1.1.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/interpret/-/interpret-1.2.0.tgz#d5061a6224be58e8083985f5014d844359576296"
   integrity sha1-1QYaYiS+WOgIOYX1AU2EQ1lXYpY=
 
-invariant@2.2.4, invariant@^2.2.0, invariant@^2.2.2, invariant@^2.2.4:
+invariant@2.2.4, invariant@^2.1.0, invariant@^2.2.0, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha1-YQ88ksk1nOHbYW5TgAjSP/NRWOY=
@@ -12771,6 +12771,12 @@ react-native-communications@2.2.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
   integrity sha1-eIO1ayCgAu63kMET+GFuqGksp5U=
 
+"react-native-cookies@https://github.com/joeferraro/react-native-cookies.git":
+  version "3.3.0"
+  resolved "https://github.com/joeferraro/react-native-cookies.git#48240c34cfd9dbfa0a590f0b740c74b2211cec93"
+  dependencies:
+    invariant "^2.1.0"
+
 react-native-crypto@^2.1.0:
   version "2.1.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-crypto/-/react-native-crypto-2.1.2.tgz#cfe68cad51cd1f73a4202b7ac164f96c1144cb2a"
@@ -12973,9 +12979,9 @@ react-native-qrcode-svg@^5.1.2:
     qrcode "^1.2.0"
 
 react-native-randombytes@^3.5.2:
-  version "3.5.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-randombytes/-/react-native-randombytes-3.5.2.tgz#f23665b7cf1a3125d78d0d95df5d18c2ca9406a0"
-  integrity sha1-8jZlt88aMSXXjQ2V310YwsqUBqA=
+  version "3.5.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-randombytes/-/react-native-randombytes-3.5.3.tgz#b3bdcd11473cce106551a586244b98855e443cd1"
+  integrity sha1-s73NEUc8zhBlUaWGJEuYhV5EPNE=
   dependencies:
     buffer "^4.9.1"
     sjcl "^1.0.3"
@@ -13115,6 +13121,14 @@ react-native-video@^3.2.1:
   dependencies:
     keymirror "0.1.1"
     prop-types "^15.5.10"
+
+react-native-webview@^5.12.0:
+  version "5.12.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-webview/-/react-native-webview-5.12.0.tgz#e673f72a287829444ddcbc7ea2f28f2e5862f9fb"
+  integrity sha1-5nP3Kih4KURN3Lx+ovKPLlhi+fs=
+  dependencies:
+    escape-string-regexp "1.0.5"
+    invariant "2.2.4"
 
 react-native-webview@^5.4.0:
   version "5.8.1"

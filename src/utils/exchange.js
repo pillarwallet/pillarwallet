@@ -17,13 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
+import CookieManager from 'react-native-cookies';
+import { Platform } from 'react-native';
 import {
   PROVIDER_CHANGELLY,
   PROVIDER_SHAPESHIFT,
   PROVIDER_UNISWAP,
   PROVIDER_ZEROX,
+  PROVIDER_MOONPAY,
+  PROVIDER_SENDWYRE,
 } from 'constants/exchangeConstants';
+
+import { fiatCurrencies } from 'fixtures/assets';
 
 export const getProviderDisplayName = (provider?: string) => {
   switch (provider) {
@@ -35,6 +40,10 @@ export const getProviderDisplayName = (provider?: string) => {
       return '0x';
     case PROVIDER_CHANGELLY:
       return 'Changelly';
+    case PROVIDER_SENDWYRE:
+      return 'SendWyre';
+    case PROVIDER_MOONPAY:
+      return 'MoonPay';
     default:
       return 'Unknown';
   }
@@ -44,6 +53,8 @@ const zeroxLogo = require('assets/images/exchangeProviders/logo_0x.png');
 const shapeshiftLogo = require('assets/images/exchangeProviders/logo_shapeshift.png');
 const uniswapLogo = require('assets/images/exchangeProviders/logo_uniswap.png');
 const changellyLogo = require('assets/images/exchangeProviders/logo_changelly.png');
+const sendWyreLogo = require('assets/images/exchangeProviders/logo_sendwyre.png');
+const moonPayLogo = require('assets/images/exchangeProviders/logo_moonpay.png');
 
 export const getProviderLogo = (provider?: string) => {
   switch (provider) {
@@ -55,7 +66,34 @@ export const getProviderLogo = (provider?: string) => {
       return zeroxLogo;
     case PROVIDER_CHANGELLY:
       return changellyLogo;
+    case PROVIDER_MOONPAY:
+      return moonPayLogo;
+    case PROVIDER_SENDWYRE:
+      return sendWyreLogo;
     default:
       return '';
+  }
+};
+
+export const isFiatProvider = (provider: string) => {
+  switch (provider) {
+    case PROVIDER_MOONPAY:
+    case PROVIDER_SENDWYRE:
+      return true;
+    default:
+      return false;
+  }
+};
+
+export const isFiatCurrency = (symbol: string) => {
+  return fiatCurrencies.find(currency => currency.symbol === symbol);
+};
+
+export const clearWebViewCookies = () => {
+  if (Platform.OS === 'ios') {
+    CookieManager.clearAll(true).then(() => {}).catch(() => null);
+    CookieManager.clearAll(false).then(() => {}).catch(() => null);
+  } else {
+    CookieManager.clearAll().then(() => {}).catch(() => null);
   }
 };

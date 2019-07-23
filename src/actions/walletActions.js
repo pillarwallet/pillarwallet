@@ -40,8 +40,8 @@ import {
 } from 'constants/navigationConstants';
 import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
-import { Answers } from 'react-native-fabric';
 import { navigate } from 'services/navigation';
+import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
 
@@ -65,7 +65,7 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
       const payload = { importedWallet, apiUser };
       dispatch({ type: IMPORT_WALLET, payload });
 
-      Answers.logCustom('Import Wallet', { Method: 'Words Phrase' });
+      dispatch(logEventAction('wallet_imported', { method: 'Words Phrase' }));
 
       navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
     } catch (e) {
@@ -102,7 +102,7 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
       const payload = { importedWallet, apiUser };
       dispatch({ type: IMPORT_WALLET, payload });
 
-      Answers.logCustom('Import Wallet', { Method: 'Private key' });
+      dispatch(logEventAction('wallet_imported', { method: 'Private key' }));
 
       navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
     } catch (e) {
@@ -186,7 +186,7 @@ export const backupWalletAction = () => {
     dispatch({ type: BACKUP_WALLET });
     dispatch(selfAwardBadgeAction('wallet-backed-up'));
 
-    Answers.logCustom('Backup wallet phrase');
+    dispatch(logEventAction('phrase_backed_up'));
   };
 };
 
