@@ -160,7 +160,6 @@ const themes = (backgroundColor?: string = '') => ({
   },
   light: {
     color: baseColors.white,
-    borderBottomWidth: 0,
     iconColor: baseColors.white,
     rightActionIconColor: baseColors.white,
     rightActionLabelColor: baseColors.white,
@@ -170,6 +169,13 @@ const themes = (backgroundColor?: string = '') => ({
   background: {
     backgroundColor,
     borderBottomColor: backgroundColor,
+  },
+  darkBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: baseColors.slateBlack,
+  },
+  lighterHeader: {
+    color: baseColors.aluminium,
   },
   default: {
     backgroundColor: baseColors.white,

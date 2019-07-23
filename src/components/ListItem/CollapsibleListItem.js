@@ -49,6 +49,11 @@ const ItemLabelHolder = styled.View`
   align-items: center;
 `;
 
+const InnerWrapper = styled.View`
+  flex: 1;
+  flex-wrap: wrap;
+`;
+
 const ListItem = styled.View`
   flex-direction: column; 
   justify-content: space-between;
@@ -57,6 +62,8 @@ const ListItem = styled.View`
 const ListItemMainPart = styled.View`
   flex: 1;
   flex-direction: row; 
+  align-items: center;
+  justify-content: center;
 `;
 
 const ItemLabel = styled(BaseText)`
@@ -68,6 +75,7 @@ const ListAddon = styled.View`
   justify-content: center;
   align-items: center;
   margin-right: ${spacing.large}px;
+  margin-left: ${spacing.large}px;
 `;
 
 const CollapseWrapper = styled.View`
@@ -100,11 +108,13 @@ const ButtonWrapper = ({ onPress, children, collapseContent }) => {
 };
 
 type Props = {
-  label: string,
+  label?: string,
   onPress?: ?Function,
   open?: boolean,
   collapseContent?: React.Node,
   customToggle?: React.Node,
+  wrapperStyle?: Object,
+  toggleWrapperStyle?: Object,
 }
 
 export default class CollapsibleListItem extends React.Component<Props> {
@@ -160,12 +170,19 @@ export default class CollapsibleListItem extends React.Component<Props> {
   };
 
   renderSectionToggle = () => {
-    const { label, customToggle, collapseContent } = this.props;
+    const {
+      label = '',
+      customToggle,
+      collapseContent,
+      toggleWrapperStyle,
+    } = this.props;
     if (customToggle) {
       return (
-        <ListItemMainPart>
+        <ListItemMainPart style={toggleWrapperStyle}>
           <ItemLabelHolder>
-            {customToggle}
+            <InnerWrapper>
+              {customToggle}
+            </InnerWrapper>
           </ItemLabelHolder>
           {this.renderToggleArrow(!!collapseContent)}
         </ListItemMainPart>
@@ -173,9 +190,11 @@ export default class CollapsibleListItem extends React.Component<Props> {
     }
 
     return (
-      <ListItemMainPart>
+      <ListItemMainPart style={toggleWrapperStyle}>
         <ItemLabelHolder style={{ paddingVertical: 14, paddingLeft: spacing.mediumLarge }}>
-          <ItemLabel>{label}</ItemLabel>
+          <InnerWrapper>
+            <ItemLabel>{label}</ItemLabel>
+          </InnerWrapper>
           {this.renderToggleArrow(!!collapseContent)}
         </ItemLabelHolder>
       </ListItemMainPart>
@@ -187,10 +206,11 @@ export default class CollapsibleListItem extends React.Component<Props> {
       onPress,
       open,
       collapseContent,
+      wrapperStyle,
     } = this.props;
 
     return (
-      <ListItem>
+      <ListItem style={wrapperStyle}>
         <ButtonWrapper onPress={onPress} collapseContent={collapseContent}>
           {this.renderSectionToggle()}
         </ButtonWrapper>

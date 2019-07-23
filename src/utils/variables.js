@@ -91,6 +91,7 @@ export const baseColors = {
   blueViolet: '#b233e4',
   ultramarine: '#0a0c78',
   pomegranate: '#f33726',
+  aluminium: '#a9aeb8',
 };
 
 export const brandColors = [
