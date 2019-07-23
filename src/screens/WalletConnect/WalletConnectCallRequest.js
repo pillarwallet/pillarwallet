@@ -267,13 +267,13 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     switch (payload.method) {
       case 'eth_sendTransaction':
       case 'eth_signTransaction':
-        const { to, data } = payload.params[0];
-
         type = 'Transaction';
 
         const {
           unsupportedAction,
           transaction: {
+            to,
+            data = '',
             amount,
             symbol,
             txFeeInWei,
