@@ -49,10 +49,6 @@ type Props = {
   setDismissExchangeTransaction: Function,
 }
 
-type State = {
-  noteSent: boolean,
-}
-
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
 
@@ -75,30 +71,20 @@ const CancelText = styled(BoldText)`
   font-size: ${fontSizes.small};
 `;
 
-class SendTokenTransaction extends React.Component<Props, State> {
-  state = {
-    noteSent: false,
-  };
-
-  sendNote(cb, note, txHash, toUser) {
-    this.setState({
-      noteSent: true,
-    }, async () => {
-      await cb(toUser.username, { text: note, txHash });
-    });
-  }
-
-  componentDidUpdate() {
+class SendTokenTransaction extends React.Component<Props> {
+  componentDidMount() {
+    const { navigation, sendTxNoteByContact, contacts } = this.props;
     const {
-      navigation, sendTxNoteByContact, contacts,
-    } = this.props;
-    const {
-      isSuccess, note, to, txHash,
+      isSuccess,
+      note,
+      to,
+      txHash,
     } = navigation.state.params;
-    if (isSuccess && note && note !== '') {
-      const toUser = contacts.find(x => { return x.ethAddress === to; });
-      if (toUser && !this.state.noteSent) {
-        this.sendNote(sendTxNoteByContact, note, txHash, toUser);
+
+    if (isSuccess && note) {
+      const toUser = contacts.find(contact => contact.ethAddress.toLowerCase() === to.toLowerCase());
+      if (toUser) {
+        sendTxNoteByContact(toUser.username, { text: note, txHash });
       }
     }
   }
