@@ -183,7 +183,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.setState({ value, gasLimit });
   };
 
-  handleFormSubmit = async () => {
+  handleFormSubmit = () => {
     this.formSubmitted = true;
     const txFeeInWei = this.getTxFeeInWei();
     const value = this._form.getValue();
@@ -356,7 +356,7 @@ class SendTokenAmount extends React.Component<Props, State> {
         </BackgroundWrapper>
         <Footer keyboardVerticalOffset={35} backgroundColor={UIColors.defaultBackgroundColor}>
           <FooterInner>
-            {gasLimit !== 0 &&
+            {!!gasLimit &&
               <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
                 <SendTokenDetailsValue>
                   <Label small>Fee:</Label>
