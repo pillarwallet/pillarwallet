@@ -20,6 +20,7 @@
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import get from 'lodash.get';
 import type { Asset, Balances, Rates } from 'models/Asset';
 import { ETH } from 'constants/assetsConstants';
 
@@ -113,4 +114,9 @@ export function getPMTToken(): Asset {
     updatedAt: '2019-07-22T12:43:23.541Z',
     patternUrl: 'asset/images/patternIcons/plr.png',
   };
+}
+
+export function getPPNTokenAddress(token: string, assets: Asset[]) {
+  const asset = assets.find(({ symbol }) => symbol === token);
+  return get(asset, 'address', '');
 }

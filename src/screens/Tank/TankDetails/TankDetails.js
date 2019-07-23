@@ -37,6 +37,9 @@ import IconButton from 'components/IconButton';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 
+// configs
+import { PPN_TOKEN } from 'configs/assetsConfig';
+
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { FUND_TANK, SETTLE_BALANCE } from 'constants/navigationConstants';
@@ -276,30 +279,31 @@ class TankDetails extends React.Component<Props, State> {
       settleBalanceButtonSubmitted,
     } = this.state;
     const {
-      tankData,
+      // tankData,
       baseFiatCurrency,
       rates,
       navigation,
       assetsOnNetwork,
       availableStake,
     } = this.props;
-    const { totalStake } = tankData;
+    // const { totalStake } = tankData;
+    const totalStake = parseFloat(availableStake) + 10;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const fundButtonTitle = !topUpButtonSubmitted ? 'Fund' : 'Initializing..';
 
     // total
-    const totalInFiat = totalStake * getRate(rates, 'ETH', fiatCurrency);
+    const totalInFiat = totalStake * getRate(rates, 'PLR', fiatCurrency);
     const formattedTotalInFiat = formatMoney(totalInFiat);
-    const totalFormatedAmount = formatMoney(totalStake, 4);
+    const totalFormattedAmount = formatMoney(totalStake, 4);
 
     // available
-    const availableInFiat = availableStake * getRate(rates, 'ETH', fiatCurrency);
+    const availableInFiat = availableStake * getRate(rates, 'PLR', fiatCurrency);
     const formattedAvailableInFiat = formatMoney(availableInFiat);
-    const availableFormatedAmount = formatMoney(availableStake, 4);
+    const availableFormattedAmount = formatMoney(availableStake, 4);
 
     // used
     const usedAmount = totalStake - availableStake;
-    const usedFormatedAmount = formatMoney(usedAmount, 4);
+    const usedFormattedAmount = formatMoney(usedAmount, 4);
 
     const isActive = availableStake > 0;
     const currencySymbol = getCurrencySymbol(fiatCurrency);
@@ -337,7 +341,7 @@ class TankDetails extends React.Component<Props, State> {
               <ColumnInner>
                 <ValueLabel total light>Total stake</ValueLabel>
                 <ValueText total>
-                  {`${totalFormatedAmount} ETH`}
+                  {`${totalFormattedAmount} ${PPN_TOKEN}`}
                 </ValueText>
                 <ValueLabel total>
                   {`${currencySymbol}${formattedTotalInFiat}`}
@@ -377,7 +381,7 @@ class TankDetails extends React.Component<Props, State> {
             >
               <ValueLabel light>Available</ValueLabel>
               <ValueText>
-                {`${availableFormatedAmount} ETH`}
+                {`${availableFormattedAmount} ${PPN_TOKEN}`}
               </ValueText>
               <ValueLabel>
                 {`${currencySymbol}${formattedAvailableInFiat}`}
@@ -395,7 +399,7 @@ class TankDetails extends React.Component<Props, State> {
             }}
           >
             <ValueText style={{ color: baseColors.hoki }}>
-              {`${usedFormatedAmount} ETH`}
+              {`${usedFormattedAmount} ${PPN_TOKEN}`}
             </ValueText>
             <ValueLabel style={{ color: baseColors.hoki, fontSize: fontSizes.extraExtraSmall }}>Used</ValueLabel>
           </ColumnAnimated>

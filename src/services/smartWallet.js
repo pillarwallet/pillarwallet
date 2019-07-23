@@ -191,8 +191,8 @@ class SmartWallet {
     return this.sdk.getConnectedAccountTransaction(txHash);
   }
 
-  estimateTopUpAccountVirtualBalance(value: BigNumber) {
-    return this.sdk.estimateTopUpAccountVirtualBalance(value);
+  estimateTopUpAccountVirtualBalance(value: BigNumber, tokenAddress: ?string) {
+    return this.sdk.estimateTopUpAccountVirtualBalance(value, tokenAddress);
   }
 
   estimateWithdrawFromAccountVirtualBalance(value: BigNumber) {

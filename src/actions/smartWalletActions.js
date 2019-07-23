@@ -59,6 +59,9 @@ import {
 } from 'constants/paymentNetworkConstants';
 import { SMART_WALLET_UNLOCK, ASSETS } from 'constants/navigationConstants';
 
+// configs
+import { PPN_TOKEN } from 'configs/assetsConfig';
+
 // services
 import smartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
@@ -94,7 +97,7 @@ import type { SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 import { buildHistoryTransaction } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
-import { getBalance } from 'utils/assets';
+import { getBalance, getPPNTokenAddress } from 'utils/assets';
 import { formatAmount, getGasPriceWei } from 'utils/common';
 
 
@@ -513,12 +516,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
 
     const ACCOUNT_DEVICE_UPDATED = get(sdkModules, 'Api.EventNames.AccountDeviceUpdated', '');
     const ACCOUNT_TRANSACTION_UPDATED = get(sdkModules, 'Api.EventNames.AccountTransactionUpdated', '');
-    const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.completed', '');
+    const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
 
     if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !TRANSACTION_COMPLETED) {
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
       if (!ACCOUNT_TRANSACTION_UPDATED) path = 'sdkModules.Api.EventNames.AccountTransactionUpdated';
-      if (!TRANSACTION_COMPLETED) path = 'sdkConstants.AccountTransactionStates.completed';
+      if (!TRANSACTION_COMPLETED) path = 'sdkConstants.AccountTransactionStates.Completed';
       Sentry.captureMessage('Missing Smart Wallet SDK constant', { extra: { path } });
     }
 
@@ -637,12 +640,15 @@ export const ensureSmartAccountConnectedAction = (privateKey: string) => {
 };
 
 export const estimateTopUpVirtualAccountAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
-    const value = ethToWei(0.1);
+    const { assets: { supportedAssets } } = getState();
+    const value = PPN_TOKEN === ETH ? ethToWei(0.1) : 1;
+    const tokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, supportedAssets);
+
     const response = await smartWalletService
-      .estimateTopUpAccountVirtualBalance(value)
+      .estimateTopUpAccountVirtualBalance(value, tokenAddress)
       .catch((e) => {
         Toast.show({
           message: e.toString(),
@@ -677,13 +683,17 @@ export const topUpVirtualAccountAction = (amount: string) => {
   return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
-    const { accounts: { data: accounts } } = getState();
+    const {
+      accounts: { data: accounts },
+      assets: { supportedAssets },
+    } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
-    const value = ethToWei(parseFloat(amount));
+    const value = PPN_TOKEN === ETH ? ethToWei(parseFloat(amount)) : parseFloat(amount);
+    const tokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, supportedAssets);
 
     const estimated = await smartWalletService
-      .estimateTopUpAccountVirtualBalance(value)
+      .estimateTopUpAccountVirtualBalance(value, tokenAddress)
       .catch((e) => {
         Toast.show({
           message: e.toString(),
@@ -710,8 +720,8 @@ export const topUpVirtualAccountAction = (amount: string) => {
         from: accountAddress,
         hash: txHash,
         to: accountAddress,
-        value,
-        asset: ETH,
+        value: value.toString(),
+        asset: PPN_TOKEN,
         note: PAYMENT_NETWORK_ACCOUNT_TOPUP,
       });
 
