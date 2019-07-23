@@ -30,11 +30,13 @@ import { Label, BoldText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
+import Spinner from 'components/Spinner';
 import { onWalletConnectRejectCallRequest } from 'actions/walletConnectActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { spacing, fontSizes, baseColors, UIColors } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { getBalance } from 'utils/assets';
+import { calculateGasEstimate } from 'services/assets';
 import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -58,6 +60,7 @@ type Props = {
 
 type State = {
   note: ?string,
+  gasLimit: number,
 };
 
 const FooterWrapper = styled.View`
@@ -91,15 +94,21 @@ const OptionButton = styled(Button)`
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-const GAS_LIMIT = 500000;
-
 class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   state = {
     note: null,
+    gasLimit: 0,
   };
 
   componentDidMount() {
     this.props.fetchGasInfo();
+    const { navigation } = this.props;
+    const payload = navigation.getParam('payload', {});
+    if (['eth_sendTransaction', 'eth_signTransaction'].includes(payload.method)) {
+      calculateGasEstimate(this.parseTransaction(payload))
+        .then(gasLimit => this.setState({ gasLimit }))
+        .catch(() => null);
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -112,40 +121,46 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     }
   }
 
+  parseTransaction = (payload: JsonRpcRequest) => {
+    const { supportedAssets } = this.props;
+    const { value = 0, data } = payload.params[0];
+    let { to = '' } = payload.params[0];
+    let amount = utils.formatEther(utils.bigNumberify(value).toString());
+    const asset = supportedAssets.find(a => a.address.toLowerCase() === to.toLowerCase());
+    if (asset) {
+      const iface = new Interface(ERC20_CONTRACT_ABI);
+      const parsedTransaction = iface.parseTransaction({ data, value }) || {};
+      const {
+        args: [
+          methodToAddress,
+          methodValue = 0,
+        ],
+      } = parsedTransaction; // get method value and address input
+      // do not parse amount as number, last decimal numbers might change after converting
+      amount = utils.formatUnits(methodValue, asset.decimals);
+      to = methodToAddress;
+    }
+    return {
+      to,
+      amount,
+      data,
+      symbol: asset ? asset.symbol : ETH,
+      contractAddress: asset ? asset.address : '',
+      decimals: asset ? asset.decimals : 18,
+      note: this.state.note,
+    };
+  };
+
   getTokenTransactionPayload = (payload: JsonRpcRequest): {
     unsupportedAction: boolean,
     transaction: TokenTransactionPayload,
   } => {
-    const { supportedAssets, gasInfo } = this.props;
-
-    const { value = 0, data } = payload.params[0];
-
-    let { to = '' } = payload.params[0];
-
-    let symbol = 'ETH';
-    let asset = null;
-    let amount = utils.formatEther(utils.bigNumberify(value).toString());
+    const { gasInfo } = this.props;
+    const { gasLimit } = this.state;
+    const transaction = this.parseTransaction(payload);
+    const { data, contractAddress } = transaction;
 
     const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
-
-    if (isTokenTransfer) {
-      const matchingAssets = supportedAssets.filter(a => a.address.toLowerCase() === to.toLowerCase());
-      if (matchingAssets && matchingAssets.length) {
-        const iface = new Interface(ERC20_CONTRACT_ABI);
-        const parsedTransaction = iface.parseTransaction({ data, value }) || {};
-        asset = matchingAssets[0]; // eslint-disable-line
-        symbol = asset.symbol; // eslint-disable-line
-        const {
-          args: [
-            methodToAddress,
-            methodValue = 0,
-          ],
-        } = parsedTransaction; // get method value and address input
-        // do not parse amount as number, last decimal numbers might change after converting
-        amount = utils.formatUnits(methodValue, asset.decimals);
-        to = methodToAddress;
-      }
-    }
 
     /**
      *  we're using our wallet avg gas price and gas limit
@@ -161,21 +176,15 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
     const defaultGasPrice = gasInfo.gasPrice.avg || 0;
     const gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
-    const txFeeInWei = gasPrice.mul(GAS_LIMIT);
+    const txFeeInWei = gasPrice.mul(gasLimit);
 
     return {
-      unsupportedAction: isTokenTransfer && asset === null,
+      unsupportedAction: isTokenTransfer && contractAddress === '',
       transaction: {
-        gasLimit: GAS_LIMIT,
-        amount,
-        to,
+        ...transaction,
+        gasLimit,
         gasPrice,
         txFeeInWei,
-        symbol,
-        contractAddress: asset ? asset.address : '',
-        decimals: asset ? asset.decimals : 18,
-        note: this.state.note,
-        data,
       },
     };
   };
@@ -232,6 +241,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       navigation,
       balances,
     } = this.props;
+    const { gasLimit } = this.state;
 
     const payload = navigation.getParam('payload', {});
     const { icon, name } = navigation.getParam('peerMeta', {});
@@ -277,7 +287,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         const recipientUsername = getUserName(contact);
 
         body = (
-          <ScrollWrapper regularPadding>
+          <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
             <LabeledRow>
               <Label>Request From</Label>
               <Value>{name}</Value>
@@ -317,7 +327,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 Note: a fee below might be shown as higher than provided on the connected platform,
                 however, normally it will be less
               </LabelSub>
-              <Value>{txFee} ETH</Value>
+              {
+                (gasLimit !== 0 && <Value>{txFee} ETH</Value>)
+                || <Spinner style={{ marginTop: 5 }} width={20} height={20} />
+              }
             </LabeledRow>
             {data.toLowerCase() !== '0x' && !contractAddress && (
               <LabeledRow>
@@ -350,7 +363,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         address = payload.params[0]; // eslint-disable-line
         message = payload.params[1]; // eslint-disable-line
         body = (
-          <ScrollWrapper regularPadding>
+          <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
             <LabeledRow>
               <Label>Address</Label>
               <Value>{address}</Value>
@@ -394,7 +407,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             <OptionButton
               primaryInverted
               onPress={this.handleFormSubmit}
-              disabled={!!errorMessage}
+              disabled={!!errorMessage || (type === 'Transaction' && gasLimit === 0)}
               textStyle={{ fontWeight: 'normal' }}
               title={`Approve ${type}`}
             />
