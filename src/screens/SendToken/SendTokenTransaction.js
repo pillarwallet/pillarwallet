@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { View, TouchableOpacity } from 'react-native';
@@ -39,7 +40,6 @@ import { setDismissTransactionAction } from 'actions/exchangeActions';
 // constants
 import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
-import { connect } from 'react-redux';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
