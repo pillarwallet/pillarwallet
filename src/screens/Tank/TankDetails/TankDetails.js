@@ -59,9 +59,6 @@ import { delay, formatMoney, getCurrencySymbol } from 'utils/common';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  tankData: {
-    totalStake: number,
-  },
   baseFiatCurrency: ?string,
   rates: Object,
   assetsOnNetwork: Balances,
@@ -279,14 +276,12 @@ class TankDetails extends React.Component<Props, State> {
       settleBalanceButtonSubmitted,
     } = this.state;
     const {
-      // tankData,
       baseFiatCurrency,
       rates,
       navigation,
       assetsOnNetwork,
       availableStake,
     } = this.props;
-    // const { totalStake } = tankData;
     const totalStake = availableStake + 10;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const fundButtonTitle = !topUpButtonSubmitted ? 'Fund' : 'Initializing..';
@@ -448,11 +443,9 @@ class TankDetails extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  tank: { data: tankData },
   appSettings: { data: { baseFiatCurrency } },
   rates: { data: rates },
 }) => ({
-  tankData,
   baseFiatCurrency,
   rates,
 });
