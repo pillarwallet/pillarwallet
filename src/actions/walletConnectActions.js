@@ -113,7 +113,10 @@ export function onWalletConnectCallRequest(peerId: string, payload: Object) {
         navigate(
           NavigationActions.navigate({
             routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
-            params: request,
+            params: {
+              ...request,
+              goBackDismiss: true,
+            },
           }),
         );
       } else {
