@@ -14,6 +14,7 @@ const initialState = {
   },
 };
 
+// @deprecated - pls move to paymentNetworkReducer
 export default function tankReducer(
   state: TankReducerState = initialState,
   action: TankReducerAction,

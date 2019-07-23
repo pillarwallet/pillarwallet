@@ -88,13 +88,14 @@ class HeaderButtonsForSmartWallet extends React.Component<Props> {
     const {
       navigation,
       activeAccount,
-      tankData,
+      // tankData,
       availableStake,
     } = this.props;
     const { type: walletType } = activeAccount;
     const showChannelStatus = activeAccount.type === ACCOUNT_TYPES.SMART_WALLET;
     const tankValue = availableStake;
-    const tankTotalValue = tankData.totalStake;
+    const tankTotalValue = availableStake + 10;
+    // const tankTotalValue = tankData.totalStake;
     const tankLabel = tankValue > 0 ? tankValue : 'PLR Tank';
 
     return (

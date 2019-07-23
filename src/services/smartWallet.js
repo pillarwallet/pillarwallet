@@ -155,6 +155,15 @@ class SmartWallet {
     return get(this.sdk, 'state.account.balance.virtual', new BigNumber(0));
   }
 
+  getAccountStakedAmount(tokenAddress: ?string) {
+    return this.sdk.getConnectedAccountVirtualBalance(tokenAddress)
+      .then(({ value }) => value)
+      .catch((e) => {
+        this.handleError(e);
+        return new BigNumber(0);
+      });
+  }
+
   async fetchConnectedAccount() {
     const { state: { account } } = this.sdk;
     const devices = await this.sdk.getConnectedAccountDevices().catch(this.handleError);

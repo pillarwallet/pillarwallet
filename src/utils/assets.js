@@ -21,7 +21,7 @@ import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
-import type { Asset, Balances, Rates } from 'models/Asset';
+import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import { ETH } from 'constants/assetsConstants';
 
 export function transformAssetsToObject(assetsArray: Object[] = []): Object {
@@ -83,20 +83,20 @@ export function checkIfEnoughForFee(balances: Balances, txFeeInWei: BigNumber): 
   return balanceInWei.gte(txFeeInWei);
 }
 
-export function getPMTToken(): Asset {
-  let tokenAddress;
+function getPMTTokenAddress(): string {
   switch (NETWORK_PROVIDER) {
     case 'ropsten':
-      tokenAddress = '0xF383e4C078b34Da69534A7B7F1F381d418315273';
-      break;
+      return '0xF383e4C078b34Da69534A7B7F1F381d418315273';
     default:
-      tokenAddress = '';
+      return '';
   }
+}
+export function generatePMTToken(): Asset {
   return {
     isPreferred: false,
     socialMedia: [],
     icos: [],
-    address: tokenAddress,
+    address: getPMTTokenAddress(),
     decimals: 0,
     description: 'Pillar Meta Token',
     email: 'info@pillarproject.io',
@@ -116,7 +116,9 @@ export function getPMTToken(): Asset {
   };
 }
 
-export function getPPNTokenAddress(token: string, assets: Asset[]) {
-  const asset = assets.find(({ symbol }) => symbol === token);
+export function getPPNTokenAddress(token: string, assets: Assets) {
+  const asset = Object.keys(assets)
+    .map(key => assets[key])
+    .find(({ symbol }) => symbol === token);
   return get(asset, 'address', '');
 }

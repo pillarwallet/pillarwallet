@@ -54,7 +54,7 @@ import type {
   TransactionPayload,
 } from 'models/Transaction';
 import type { Asset, Assets } from 'models/Asset';
-import { getPMTToken, transformAssetsToObject } from 'utils/assets';
+import { generatePMTToken, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -66,7 +66,8 @@ import {
 } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
+import { fetchAvailableStakeAction } from './smartWalletActions';
+// import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
 
 type TransactionStatus = {
@@ -406,7 +407,8 @@ export const fetchAssetsBalancesAction = (assets: Assets) => {
     }
 
     if (smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
-      dispatch(fetchVirtualAccountBalanceAction());
+      // dispatch(fetchVirtualAccountBalanceAction());
+      dispatch(fetchAvailableStakeAction());
     }
   };
 };
@@ -492,7 +494,7 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     if (!supportedAssets.length) {
       walletSupportedAssets = await api.fetchSupportedAssets(walletId);
       if (smartWalletFeatureEnabled) {
-        walletSupportedAssets = [...walletSupportedAssets, getPMTToken()];
+        walletSupportedAssets = [...walletSupportedAssets, generatePMTToken()];
       }
       dispatch({
         type: UPDATE_SUPPORTED_ASSETS,

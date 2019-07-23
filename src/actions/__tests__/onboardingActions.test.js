@@ -47,6 +47,7 @@ import {
   RESET_SMART_WALLET,
 } from 'constants/smartWalletConstants';
 import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
+import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import * as connectionKeyActions from 'actions/connectionKeyPairActions';
@@ -165,6 +166,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_COLLECTIBLES, payload: {} },
       { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
       { type: RESET_SMART_WALLET },
+      { type: RESET_PAYMENT_NETWORK },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -217,6 +219,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_COLLECTIBLES, payload: {} },
       { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
       { type: RESET_SMART_WALLET },
+      { type: RESET_PAYMENT_NETWORK },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -275,6 +278,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_COLLECTIBLES, payload: {} },
       { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
       { type: RESET_SMART_WALLET },
+      { type: RESET_PAYMENT_NETWORK },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },

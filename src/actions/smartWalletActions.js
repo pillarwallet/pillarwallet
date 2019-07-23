@@ -56,6 +56,7 @@ import {
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+  UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
 import { SMART_WALLET_UNLOCK, ASSETS } from 'constants/navigationConstants';
 
@@ -643,9 +644,9 @@ export const estimateTopUpVirtualAccountAction = () => {
   return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
-    const { assets: { supportedAssets } } = getState();
+    const { assets: { data: assets } } = getState();
     const value = PPN_TOKEN === ETH ? ethToWei(0.1) : 1;
-    const tokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, supportedAssets);
+    const tokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
 
     const response = await smartWalletService
       .estimateTopUpAccountVirtualBalance(value, tokenAddress)
@@ -685,12 +686,12 @@ export const topUpVirtualAccountAction = (amount: string) => {
 
     const {
       accounts: { data: accounts },
-      assets: { supportedAssets },
+      assets: { data: assets },
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
     const value = PPN_TOKEN === ETH ? ethToWei(parseFloat(amount)) : parseFloat(amount);
-    const tokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, supportedAssets);
+    const tokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
 
     const estimated = await smartWalletService
       .estimateTopUpAccountVirtualBalance(value, tokenAddress)
@@ -797,6 +798,44 @@ export const fetchVirtualAccountBalanceAction = () => {
         accountId,
         balances: accountBalances,
       },
+    });
+  };
+};
+
+export const fetchAvailableStakeAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      assets: { data: assets },
+      session: { data: { isOnline } },
+      smartWallet: { connectedAccount, sdkInitialized },
+    } = getState();
+
+    if ((!smartWalletService.sdkInitialized || !sdkInitialized) && isOnline) {
+      navigate(NavigationActions.navigate({
+        routeName: SMART_WALLET_UNLOCK,
+        params: {
+          successNavigateScreen: ASSETS,
+        },
+      }));
+      return;
+    }
+
+    if (!isConnectedToSmartAccount(connectedAccount) || !isOnline) return;
+
+    const tokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
+    const staked = await smartWalletService.getAccountStakedAmount(tokenAddress);
+
+    let stakedAmountFormatted;
+    if (PPN_TOKEN === ETH) {
+      stakedAmountFormatted = !staked.eq(0) ? weiToEth(staked).toString() : '0';
+    } else {
+      stakedAmountFormatted = staked.toString();
+    }
+
+    dispatch(saveDbAction('paymentNetworkStaked', { paymentNetworkStaked: stakedAmountFormatted }, true));
+    dispatch({
+      type: UPDATE_PAYMENT_NETWORK_STAKED,
+      payload: stakedAmountFormatted,
     });
   };
 };

@@ -287,7 +287,7 @@ class TankDetails extends React.Component<Props, State> {
       availableStake,
     } = this.props;
     // const { totalStake } = tankData;
-    const totalStake = parseFloat(availableStake) + 10;
+    const totalStake = availableStake + 10;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const fundButtonTitle = !topUpButtonSubmitted ? 'Fund' : 'Initializing..';
 
