@@ -640,6 +640,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       feeAmount,
       extraFeeAmount,
       quoteCurrencyAmount,
+      isAllowed,
+      alpha2,
     } = offer;
     let { allowanceSet = true } = offer;
 
@@ -728,6 +730,11 @@ class ExchangeScreen extends React.Component<Props, State> {
                     : 'Enable'
                   }
                 </ButtonLabel>
+              </CardButton>
+              }
+              {!!isFiat && !isAllowed &&
+              <CardButton>
+                <ButtonLabel color={baseColors.electricBlue}>{`Unavailable in ${alpha2}`}</ButtonLabel>
               </CardButton>
               }
             </CardInnerRow>

@@ -153,15 +153,23 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     // we're requesting although it will start delivering when connection is established
     const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
 
+    const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
+
     api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
       if (!offer.error) {
-        dispatch({ type: ADD_OFFER, payload: offer });
+        const modoffer = { ...offer, isAllowed, alpha2 };
+        dispatch({ type: ADD_OFFER, payload: modoffer });
       }
     }).catch(() => null);
 
     api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
       if (!offer.error) {
-        dispatch({ type: ADD_OFFER, payload: offer });
+        const modoffer = {
+          ...offer,
+          isAllowed: alpha2 === 'US',
+          alpha2,
+        };
+        dispatch({ type: ADD_OFFER, payload: modoffer });
       }
     }).catch(() => null);
 
