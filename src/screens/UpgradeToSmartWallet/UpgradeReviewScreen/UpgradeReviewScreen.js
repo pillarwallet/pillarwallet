@@ -69,6 +69,7 @@ import type { Collectible } from 'models/Collectible';
 import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
+import { DEFAULT_GAS_LIMIT } from 'services/assets';
 
 
 type Props = {
@@ -82,6 +83,10 @@ type Props = {
   gasInfo: GasInfo,
   session: Object,
   collectibles: Collectible[],
+};
+
+type State = {
+  gasLimit: number,
 };
 
 const WhiteWrapper = styled.View`
@@ -116,7 +121,6 @@ const LabelWrapper = styled.View`
   justify-content: center;
 `;
 
-const GAS_LIMIT = 500000;
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 const WarningMessage = styled(Paragraph)`
@@ -126,7 +130,22 @@ const WarningMessage = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
 `;
 
-class UpgradeReviewScreen extends React.PureComponent<Props> {
+class UpgradeReviewScreen extends React.PureComponent<Props, State> {
+  constructor(props) {
+    super(props);
+    const { navigation } = this.props;
+    /**
+     * currently we need to use default gas limit as we're not capable of
+     * getting estimate gas limit of smart wallet deploy transaction
+     * adding gas limit here will lead it up to confirm screen
+     * TODO: add gas limit estimate calculation from smart wallet sdk when it's possible
+     */
+    const gasLimit = navigation.getParam('gasLimit', DEFAULT_GAS_LIMIT);
+    this.state = {
+      gasLimit,
+    };
+  }
+
   componentDidMount() {
     this.props.fetchGasInfo();
   }
@@ -207,13 +226,15 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 
   onNextClick = () => {
     const { navigation } = this.props;
-    navigation.navigate(UPGRADE_CONFIRM);
+    const { gasLimit } = this.state;
+    navigation.navigate(UPGRADE_CONFIRM, { gasLimit });
   };
 
   getGasPriceWei = () => {
     const { gasInfo } = this.props;
+    const { gasLimit } = this.state;
     const gasPrice = gasInfo.gasPrice.avg || 0;
-    return utils.parseUnits(gasPrice.toString(), 'gwei').mul(GAS_LIMIT);
+    return utils.parseUnits(gasPrice.toString(), 'gwei').mul(gasLimit);
   };
 
   render() {

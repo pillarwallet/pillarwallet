@@ -54,23 +54,27 @@ export const initialAssets = [
   },
 ];
 
+// keep this list order, unless it changes
 export const fiatCurrencies = [
   {
-    symbol: 'GBP',
-    decimals: 2,
-    iconUrl: 'asset/images/fiat/gbpColor.png',
-    iconMonoUrl: 'asset/images/fiat/gbpColor.png',
-  },
-  {
-    symbol: 'USD',
-    decimals: 2,
-    iconUrl: 'asset/images/fiat/usdColor.png',
-    iconMonoUrl: 'asset/images/fiat/usdColor.png',
-  },
-  {
+    name: 'EUR',
     symbol: 'EUR',
     decimals: 2,
-    iconUrl: 'asset/images/fiat/eurColor.png',
-    iconMonoUrl: 'asset/images/fiat/eurColor.png',
+    iconUrl: 'asset/images/fiat/ic_52_EUR.png',
+    iconMonoUrl: 'asset/images/fiat/ic_52_EUR.png',
+  },
+  {
+    name: 'GBP',
+    symbol: 'GBP',
+    decimals: 2,
+    iconUrl: 'asset/images/fiat/ic_52_GBP.png',
+    iconMonoUrl: 'asset/images/fiat/ic_52_GBP.png',
+  },
+  {
+    name: 'USD',
+    symbol: 'USD',
+    decimals: 2,
+    iconUrl: 'asset/images/fiat/ic_52_USD.png',
+    iconMonoUrl: 'asset/images/fiat/ic_52_USD.png',
   },
 ];
