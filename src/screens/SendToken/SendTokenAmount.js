@@ -26,6 +26,7 @@ import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
+import get from 'lodash.get';
 
 // components
 import { Container, Footer, Wrapper } from 'components/Layout';
@@ -157,7 +158,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       gasLimit: 0,
     };
 
-    this.handleChange = debounce(this.handleChange, 500);
+    this.getGasLimit = debounce(this.getGasLimit, 500);
   }
 
   componentDidMount() {
@@ -181,9 +182,11 @@ class SendTokenAmount extends React.Component<Props, State> {
     });
   };
 
-  handleChange = async (value: Object) => {
-    const gasLimit = await this.getGasLimit();
-    this.setState({ value, gasLimit });
+  handleChange = (value: Object) => {
+    this.setState({ value });
+    this.getGasLimit()
+      .then(gasLimit => this.setState({ gasLimit }))
+      .catch(() => null);
   };
 
   handleFormSubmit = () => {
@@ -233,7 +236,7 @@ class SendTokenAmount extends React.Component<Props, State> {
   getGasLimit = (amount?: number) => {
     // calculate either with amount in form or provided as param
     if (!amount) {
-      ({ amount = 0 } = this._form.getValue() || {});
+      amount = parseFloat(get(this._form.getValue(), 'amount', 0));
     }
     const {
       token: symbol,
@@ -241,8 +244,8 @@ class SendTokenAmount extends React.Component<Props, State> {
       decimals,
     } = this.assetData;
 
-    // cannot be set if value is zero, fee select will be hidden
-    if (amount === 0) return 0;
+    // cannot be set if value is zero or not present, fee select will be hidden
+    if (!amount) return Promise.resolve(0);
 
     const { activeAccountAddress } = this.props;
 
