@@ -23,7 +23,7 @@ import { Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-// import debounce from 'lodash.debounce';
+import debounce from 'lodash.debounce';
 
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -132,13 +132,21 @@ class NewProfile extends React.Component<Props, State> {
       formOptions: getDefaultFormOptions(inputDisabled),
       hasAgreedToTerms: false,
     };
+    this.validateUsername = debounce(this.validateUsername, 800);
   }
+
+  validateUsername = (username, hasError) => {
+    const { validateUserDetails } = this.props;
+
+    if (!hasError && username.length >= MIN_USERNAME_LENGTH) {
+      validateUserDetails({ username });
+    }
+  };
 
   handleChange = (value: Object) => {
     // Because the idea is to display the inputError label on proper circumstances
     // here we don't validate minimum length, that's done on
     // this.renderChooseUsernameScreen() const shouldNextButtonBeDisabled
-    const { validateUserDetails } = this.props;
     const validateUsername = t.validate(value, formStructure);
     const isValidUsername = validateUsername.isValid();
     const { message: errorMessage = '' } = validateUsername.firstError() || {};
@@ -157,9 +165,7 @@ class NewProfile extends React.Component<Props, State> {
       },
     });
     this.setState({ formOptions: options, value });
-    if (!hasError && value.username.length >= MIN_USERNAME_LENGTH) {
-      validateUserDetails({ username: value.username });
-    }
+    this.validateUsername(value.username, hasError);
   };
 
   handleSubmit = () => {
