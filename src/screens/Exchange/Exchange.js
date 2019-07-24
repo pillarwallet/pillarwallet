@@ -817,20 +817,16 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  generateFiatOptions = () => {
-    return fiatCurrencies.map(({ symbol, iconUrl, ...rest }) => {
-      return ({
-        key: symbol,
-        value: symbol,
-        icon: iconUrl,
-        iconUrl,
-        symbol,
-        ...rest,
-        assetBalance: null,
-        paymentNetworkBalance: null,
-      });
-    });
-  };
+  generateFiatOptions = () => fiatCurrencies.map(({ symbol, iconUrl, ...rest }) => ({
+    key: symbol,
+    value: symbol,
+    icon: iconUrl,
+    iconUrl,
+    symbol,
+    ...rest,
+    assetBalance: null,
+    paymentNetworkBalance: null,
+  }));
 
   generateSupportedAssetsOptions = (assets) => {
     const { balances, paymentNetworkBalances } = this.props;
