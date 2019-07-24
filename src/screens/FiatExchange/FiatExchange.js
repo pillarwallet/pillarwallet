@@ -34,7 +34,7 @@ import type { Accounts } from 'models/Account';
 import { Container, Wrapper } from 'components/Layout';
 import ErrorMessage from 'components/ErrorMessage';
 import Header from 'components/Header';
-import { handleBrowseWebViewAction } from 'actions/appSettingsActions';
+import { setBrowsingWebViewAction } from 'actions/appSettingsActions';
 import { getActiveAccountAddress } from 'utils/accounts';
 
 import { sendWyreTemplate } from './SendWyreTemplate';
@@ -45,7 +45,7 @@ type Props = {
   assets: Object,
   user: Object,
   accounts: Accounts,
-  handleBrowseWebView: Function,
+  setBrowsingWebView: Function,
 };
 
 type State = {
@@ -108,11 +108,11 @@ class FiatExchange extends React.Component<Props, State> {
       moonPayURL,
     });
 
-    this.props.handleBrowseWebView(true);
+    this.props.setBrowsingWebView(true);
   };
 
   componentWillUnmount() {
-    this.props.handleBrowseWebView(false);
+    this.props.setBrowsingWebView(false);
   }
 
   eventCallback = (event) => {
@@ -172,7 +172,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  handleBrowseWebView: (isBrowsing) => dispatch(handleBrowseWebViewAction(isBrowsing)),
+  setBrowsingWebView: (isBrowsing) => dispatch(setBrowsingWebViewAction(isBrowsing)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FiatExchange);

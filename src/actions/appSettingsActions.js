@@ -77,7 +77,7 @@ export const handleImagePickAction = (isPickingImage: boolean) => {
   };
 };
 
-export const handleBrowseWebViewAction = (isBrowsingWebView: boolean) => {
+export const setBrowsingWebViewAction = (isBrowsingWebView: boolean) => {
   return (dispatch: Function) => {
     dispatch({
       type: UPDATE_APP_SETTINGS,
