@@ -151,6 +151,15 @@ const ESWrapper = styled.View`
   align-items: center;
 `;
 
+const CardNote = styled(BaseText)`
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 0;
+  margin-left: 10px;
+  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  font-size: ${fontSizes.extraSmall}px;
+`;
+
 type Props = {
   rates: Rates,
   navigation: NavigationScreenProp<*>,
@@ -649,6 +658,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       feeAmount,
       extraFeeAmount,
       quoteCurrencyAmount,
+      offerRestricted,
     } = offer;
     let { allowanceSet = true } = offer;
 
@@ -738,6 +748,9 @@ class ExchangeScreen extends React.Component<Props, State> {
                   }
                 </ButtonLabel>
               </CardButton>
+              }
+              {!!isFiat && !!offerRestricted &&
+                <CardNote color={baseColors.electricBlue}>{offerRestricted}</CardNote>
               }
             </CardInnerRow>
           </CardRow>
