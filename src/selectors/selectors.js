@@ -5,6 +5,7 @@ import type { BalancesState } from 'reducers/balancesReducer';
 import type { CollectiblesState } from 'reducers/collectiblesReducer';
 import type { HistoryState } from 'reducers/historyReducer';
 import type { PaymentNetworkState } from 'reducers/paymentNetworkReducer';
+import { getAccountAddress } from 'utils/accounts';
 
 //
 // Global selectors here
@@ -25,4 +26,9 @@ export const activeAccountSelector =
 export const activeAccountIdSelector = createSelector(
   activeAccountSelector,
   activeAccount => activeAccount ? activeAccount.id : null,
+);
+
+export const activeAccountAddressSelector = createSelector(
+  activeAccountSelector,
+  activeAccount => activeAccount ? getAccountAddress(activeAccount) : '',
 );
