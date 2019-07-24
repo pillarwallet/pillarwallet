@@ -131,13 +131,11 @@ const SPEED_TYPES = {
   [FAST]: 'Fast',
 };
 
-const DEFAULT_GAS_LIMIT = 500000;
-
 class ExchangeConfirmScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const { navigation } = this.props;
-    const { gasLimit = DEFAULT_GAS_LIMIT }: OfferOrder = navigation.getParam('offerOrder', {});
+    const { gasLimit }: OfferOrder = navigation.getParam('offerOrder', {});
     this.state = {
       showFeeModal: false,
       transactionSpeed: NORMAL,
