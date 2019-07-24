@@ -158,7 +158,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       gasLimit: 0,
     };
 
-    this.getGasLimit = debounce(this.getGasLimit, 500);
+    this.updateGasLimit = debounce(this.updateGasLimit, 500);
   }
 
   componentDidMount() {
@@ -184,9 +184,7 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   handleChange = (value: Object) => {
     this.setState({ value });
-    this.getGasLimit()
-      .then(gasLimit => this.setState({ gasLimit }))
-      .catch(() => null);
+    this.updateGasLimit();
   };
 
   handleFormSubmit = () => {
@@ -231,6 +229,12 @@ class SendTokenAmount extends React.Component<Props, State> {
       gasLimit,
       value: { amount },
     });
+  };
+
+  updateGasLimit = () => {
+    this.getGasLimit()
+      .then(gasLimit => this.setState({ gasLimit }))
+      .catch(() => null);
   };
 
   getGasLimit = (amount?: number) => {
@@ -374,7 +378,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             }
             {!!value && !!parseFloat(value.amount) &&
               <Button
-                disabled={!session.isOnline || !gasInfo.isFetched}
+                disabled={!gasLimit || !session.isOnline || !gasInfo.isFetched}
                 small
                 flexRight
                 title="Next"
