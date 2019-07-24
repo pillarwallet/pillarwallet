@@ -244,6 +244,7 @@ const generateFormStructure = (balances: Balances) => {
     const isFiat = isFiatCurrency(symbol);
 
     amount = parseFloat(input);
+
     if (decimals === 0 && amount.toString().indexOf('.') > -1 && !isFiat) {
       return false;
     } else if (isFiat) {
@@ -800,10 +801,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
     const alphabeticalAssets = nonEmptyAssets.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) => {
-      const assetBalance = isFiatCurrency(symbol) ?
-        null : formatAmount(getBalance(balances, symbol));
-      const paymentNetworkBalance = isFiatCurrency(symbol) ?
-        null : getBalance(paymentNetworkBalances, symbol);
+      const assetBalance = formatAmount(getBalance(balances, symbol));
+      const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
 
       return ({
         key: symbol,

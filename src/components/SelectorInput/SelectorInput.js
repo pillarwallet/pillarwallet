@@ -249,9 +249,6 @@ const EmptyStateWrapper = styled(Wrapper)`
   align-items: center;
 `;
 
-const OptionsList = styled(FlatList)`
-`;
-
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 const MIN_QUERY_LENGTH = 2;
@@ -510,7 +507,7 @@ export default class SelectorInput extends React.Component<Props, State> {
               </HorizontalOptions>
             }
             {!!filteredListData.length &&
-              <OptionsList
+              <FlatList
                 data={filteredListData}
                 renderItem={this.renderOption}
                 keyExtractor={({ value: val }) => val}
