@@ -382,16 +382,23 @@ export default class SelectorInput extends React.Component<Props, State> {
         || (name && name.toUpperCase().includes(query.toUpperCase())))
       : options;
 
+    const filteredHorizontalListData = (query && query.length >= MIN_QUERY_LENGTH && horizontalOptions.length)
+      ? horizontalOptions.filter(({ value: val, name }) => (val && val.toUpperCase().includes(query.toUpperCase()))
+        || (name && name.toUpperCase().includes(query.toUpperCase())))
+      : horizontalOptions;
+
+    const selectorOptionsCount = options.length + horizontalOptions.length;
+
     return (
       <React.Fragment>
         <Wrapper style={wrapperStyle}>
           {!!label && <Label>{label}</Label>}
           <ItemHolder error={!!errorMessage}>
-            {!!options.length &&
+            {!!selectorOptionsCount &&
             <Selector
               fullWidth={!hasInput}
-              onPress={options.length > 1 ? this.openSelector : noop}
-              disabled={options.length < 1}
+              onPress={selectorOptionsCount > 1 ? this.openSelector : noop}
+              disabled={selectorOptionsCount < 1}
             >
               <ValueWrapper>
                 {Object.keys(selectedOption).length
@@ -409,7 +416,7 @@ export default class SelectorInput extends React.Component<Props, State> {
                   )}
                 <SlectorValue>{selectedValue}</SlectorValue>
               </ValueWrapper>
-              {options.length > 1 &&
+              {selectorOptionsCount > 1 &&
                 <ChevronWrapper>
                   <SelectorChevron
                     name="chevron-right"
@@ -479,7 +486,7 @@ export default class SelectorInput extends React.Component<Props, State> {
                 forceShowCloseButton
               />
             </SearchBarWrapper>
-            {!!horizontalOptions.length &&
+            {!!filteredHorizontalListData.length &&
               <HorizontalOptions>
                 {(showOptionsTitles && !!horizontalOptionsTitle) &&
                   <HorizontalOptionsHeader>{horizontalOptionsTitle}</HorizontalOptionsHeader>
@@ -488,37 +495,39 @@ export default class SelectorInput extends React.Component<Props, State> {
                   keyboardShouldPersistTaps="always"
                   horizontal
                 >
-                  {this.renderHorizontalOptions(horizontalOptions)}
+                  {this.renderHorizontalOptions(filteredHorizontalListData)}
                 </HorizontalOptionsScrollView>
               </HorizontalOptions>
             }
-            <FlatList
-              data={filteredListData}
-              renderItem={this.renderOption}
-              keyExtractor={({ value: val }) => val}
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={{ paddingBottom: 40 }}
-              ListEmptyComponent={
-                <Wrapper
-                  fullScreen
-                  style={{
-                    paddingTop: 90,
-                    paddingBottom: 90,
-                    alignItems: 'center',
-                  }}
-                >
-                  <EmptyStateParagraph title="Nothing found" />
-                </Wrapper>
-              }
-              ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-              initialNumToRender={10}
-              maxToRenderPerBatch={5}
-              removeClippedSubviews
-              viewabilityConfig={viewConfig}
-              ListHeaderComponent={
-                (showOptionsTitles && !!optionsTitle) && <OptionsHeader>{optionsTitle}</OptionsHeader>
-              }
-            />
+            {!!filteredListData.length &&
+              <FlatList
+                data={filteredListData}
+                renderItem={this.renderOption}
+                keyExtractor={({ value: val }) => val}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{ paddingBottom: 40 }}
+                ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+                initialNumToRender={10}
+                maxToRenderPerBatch={5}
+                removeClippedSubviews
+                viewabilityConfig={viewConfig}
+                ListHeaderComponent={
+                  (showOptionsTitles && !!optionsTitle) && <OptionsHeader>{optionsTitle}</OptionsHeader>
+                }
+              />
+            }
+            {(!filteredListData.length && !filteredHorizontalListData.length) &&
+              <Wrapper
+                fullScreen
+                style={{
+                  paddingTop: 90,
+                  paddingBottom: 90,
+                  alignItems: 'center',
+                }}
+              >
+                <EmptyStateParagraph title="Nothing found" />
+              </Wrapper>
+            }
           </Wrapper>
         </SlideModal>
       </React.Fragment>
