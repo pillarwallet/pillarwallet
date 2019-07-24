@@ -95,10 +95,10 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 
 // utils
-import { buildHistoryTransaction } from 'utils/history';
+import { buildHistoryTransaction, updateHistoryRecord } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId, getActiveAccountType } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
-import { getBalance, getPPNTokenAddress } from 'utils/assets';
+import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
 import { formatAmount, getGasPriceWei } from 'utils/common';
 
 
@@ -517,6 +517,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
 
     const ACCOUNT_DEVICE_UPDATED = get(sdkModules, 'Api.EventNames.AccountDeviceUpdated', '');
     const ACCOUNT_TRANSACTION_UPDATED = get(sdkModules, 'Api.EventNames.AccountTransactionUpdated', '');
+    const ACCOUNT_VIRTUAL_BALANCE_UPDATED = get(sdkModules, 'Api.EventNames.AccountVirtualBalanceUpdated', '');
     const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
 
     if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !TRANSACTION_COMPLETED) {
@@ -546,31 +547,28 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     if (event.name === ACCOUNT_TRANSACTION_UPDATED) {
       const {
         history: { data: currentHistory },
+        accounts: { data: accounts },
         assets: { data: assets },
         paymentNetwork: { txToListen },
       } = getState();
+      const activeAccountAddress = getActiveAccountAddress(accounts);
       const txHash = get(event, 'payload.hash', '').toLowerCase();
       const txStatus = get(event, 'payload.state', '');
       const txGasInfo = get(event, 'payload.gas', {});
+      const txSenderAddress = get(event, 'payload.from.account.address', '');
       const txFound = txToListen.find(hash => hash.toLowerCase() === txHash);
 
       if (txStatus === TRANSACTION_COMPLETED) {
         if (txFound) {
-          let txUpdated = null;
-          const accounts = Object.keys(currentHistory);
-          const updatedHistory = accounts.reduce((history, accountId) => {
-            const accountHistory = currentHistory[accountId].map(transaction => {
-              if (transaction.hash.toLowerCase() !== txHash) return transaction;
-              txUpdated = {
-                ...transaction,
-                gasPrice: txGasInfo.price ? txGasInfo.price.toString() : transaction.gasPrice,
-                gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
-                status: TX_CONFIRMED_STATUS,
-              };
-              return txUpdated;
-            });
-            return { ...history, [accountId]: accountHistory };
-          }, {});
+          const { txUpdated, updatedHistory } = updateHistoryRecord(
+            currentHistory,
+            txHash,
+            (transaction) => ({
+              ...transaction,
+              gasPrice: txGasInfo.price ? txGasInfo.price.toString() : transaction.gasPrice,
+              gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
+              status: TX_CONFIRMED_STATUS,
+            }));
 
           if (txUpdated) {
             if (txUpdated.note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
@@ -580,7 +578,15 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
                 title: 'Success',
                 autoClose: true,
               });
+            } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
+              Toast.show({
+                message: 'Transaction was successfully sent!',
+                type: 'success',
+                title: 'Success',
+                autoClose: true,
+              });
             }
+
             dispatch(saveDbAction('history', { history: updatedHistory }, true));
             dispatch({
               type: SET_HISTORY,
@@ -615,6 +621,21 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
         }
         dispatch(checkAssetTransferTransactionsAction());
+      }
+    }
+
+    if (event.name === ACCOUNT_VIRTUAL_BALANCE_UPDATED) {
+      const { assets: { data: assets } } = getState();
+      const tokenTransferred = get(event, 'payload.token.address', null);
+      const ppnTokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
+
+      if (addressesEqual(tokenTransferred, ppnTokenAddress)) {
+        // update the balance
+        const value = get(event, 'payload.value', '');
+        dispatch({
+          type: UPDATE_PAYMENT_NETWORK_STAKED,
+          payload: value.toString(),
+        });
       }
     }
     console.log(event);

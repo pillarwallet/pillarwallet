@@ -122,3 +122,9 @@ export function getPPNTokenAddress(token: string, assets: Assets) {
     .find(({ symbol }) => symbol === token);
   return get(asset, 'address', '');
 }
+
+export function addressesEqual(address1: ?string, address2: ?string) {
+  if (address1 === address2) return true;
+  if (!address1 || !address2) return false;
+  return address1.toLowerCase() === address2.toLowerCase();
+}

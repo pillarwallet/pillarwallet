@@ -73,3 +73,34 @@ export const updateAccountHistory = (
     [accountId]: accountHistory,
   };
 };
+
+type UpdateHistoryRecordResult = {
+  updatedHistory: TransactionsStore,
+  txUpdated: ?Transaction,
+};
+
+export function updateHistoryRecord(
+  allHistory: TransactionsStore,
+  hashToUpdate: string,
+  modifier: Function,
+): UpdateHistoryRecordResult {
+  hashToUpdate = hashToUpdate.toLowerCase();
+
+  let txUpdated = null;
+  const accounts = Object.keys(allHistory);
+  const updatedHistory = accounts.reduce((history, accountId) => {
+    const accountHistory = allHistory[accountId].map(transaction => {
+      if (transaction.hash.toLowerCase() !== hashToUpdate) {
+        return transaction;
+      }
+      txUpdated = modifier(transaction);
+      return txUpdated;
+    });
+    return { ...history, [accountId]: accountHistory };
+  }, {});
+
+  return {
+    updatedHistory,
+    txUpdated,
+  };
+}

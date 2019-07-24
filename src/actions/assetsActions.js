@@ -41,6 +41,7 @@ import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 
 import {
   getExchangeRates,
@@ -63,6 +64,7 @@ import {
   getActiveAccountId,
   getActiveAccountType,
   getAccountAddress,
+  isSmartAccount,
 } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
@@ -288,6 +290,13 @@ export const sendAssetAction = (
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
         });
       }
+    }
+
+    if (isSmartAccount(activeAccount) && !usePPN && tokenTx.hash) {
+      dispatch({
+        type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
+        payload: tokenTx.hash,
+      });
     }
 
     // update transaction history
