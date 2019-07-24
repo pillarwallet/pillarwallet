@@ -386,17 +386,19 @@ export default class SelectorInput extends React.Component<Props, State> {
     const { value: selectedValue, icon } = selectedOption;
     const iconUrl = `${SDK_PROVIDER}/${icon}?size=3`;
 
-    const isSearchQuery = query && query.length;
+    const isSearchQuery = query && query.length >= MIN_QUERY_LENGTH;
 
-    const filteredListData = options.filter(
-      ({ value: val, name }) => (isSearchQuery && (isMatchingSearch(query, val) || isMatchingSearch(query, name)))
-        || !isSearchQuery,
-    );
+    let filteredListData = options;
+    let filteredHorizontalListData = horizontalOptions;
 
-    const filteredHorizontalListData = horizontalOptions.filter(
-      ({ value: val, name }) => (isSearchQuery && (isMatchingSearch(query, val) || isMatchingSearch(query, name)))
-        || !isSearchQuery,
-    );
+    if (isSearchQuery) {
+      filteredListData = filteredListData.filter(
+        ({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name),
+      );
+      filteredHorizontalListData = filteredHorizontalListData.filter(
+        ({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name),
+      );
+    }
 
     const selectorOptionsCount = options.length + horizontalOptions.length;
 
