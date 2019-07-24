@@ -25,13 +25,13 @@ import styled from 'styled-components/native/index';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 import { Paragraph, TextLink, MediumText } from 'components/Typography';
-import { ButtonNext } from 'components/Button';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { handleUrlPress } from 'utils/common';
 import { NEW_WALLET, IMPORT_WALLET } from 'constants/navigationConstants';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Checkbox from 'components/Checkbox';
 import Icon from 'components/Icon';
+import { NextFooter } from 'components/Layout/NextFooter';
 import { navigateToNewWalletPageAction } from 'actions/walletActions';
 
 
@@ -86,19 +86,6 @@ const TickIcon = styled(Icon)`
   font-size: 8px;
   color: ${baseColors.white};
   margin-top: 1px;
-`;
-
-const FooterInner = styled.View`
-  padding: 30px;
-  flex-direction: row;
-  align-items: flex-end;
-  align-self: flex-end;
-`;
-
-const LeftSide = styled.View`
-  flex: 1;
-  padding-right: 40px;
-  padding-bottom: 14px;
 `;
 
 const toggleWrapperStyle = {
@@ -382,32 +369,28 @@ class Permissions extends React.Component<Props, State> {
               borderBottomColor: baseColors.mediumLightGray,
             }}
           />
-
-          <FooterInner>
-            <LeftSide>
-              <Checkbox
-                onPress={() => { this.setState({ checked1: !checked1 }); }}
-                small
-                lightText
-                darkCheckbox
-                wrapperStyle={{ marginBottom: 32 }}
-              >
-                I’m happy to know that Pillar doesn’t have access to my private key, funds or contacts
-              </Checkbox>
-              <Checkbox
-                onPress={() => { this.setState({ checked2: !checked2 }); }}
-                small
-                lightText
-                darkCheckbox
-              >
-                I have read, understand, and agree to the Terms of Use
-              </Checkbox>
-            </LeftSide>
-            <ButtonNext
-              disabled={!(checked1 && checked2)}
-              onPress={this.handleAgree}
-            />
-          </FooterInner>
+          <NextFooter
+            onNextPress={this.handleAgree}
+            nextDisabled={!(checked1 && checked2)}
+          >
+            <Checkbox
+              onPress={() => { this.setState({ checked1: !checked1 }); }}
+              small
+              lightText
+              darkCheckbox
+              wrapperStyle={{ marginBottom: 32 }}
+            >
+              I’m happy to know that Pillar doesn’t have access to my private key, funds or contacts
+            </Checkbox>
+            <Checkbox
+              onPress={() => { this.setState({ checked2: !checked2 }); }}
+              small
+              lightText
+              darkCheckbox
+            >
+              I have read, understand, and agree to the Terms of Use
+            </Checkbox>
+          </NextFooter>
         </ScrollView>
       </ContainerWithHeader>
     );

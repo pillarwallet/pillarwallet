@@ -23,23 +23,26 @@ import { Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, Footer, Wrapper } from 'components/Layout';
+// import debounce from 'lodash.debounce';
+
+import { Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BoldText, Paragraph } from 'components/Typography';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
-import Header from 'components/Header';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
-import { baseColors, fontSizes, fontWeights, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { InputTemplate, Form } from 'components/ProfileForm';
-import { Username, MAX_USERNAME_LENGTH } from 'components/ProfileForm/profileFormDefs';
+import { Username, MAX_USERNAME_LENGTH, MIN_USERNAME_LENGTH } from 'components/ProfileForm/profileFormDefs';
+import Checkbox from 'components/Checkbox';
+import { NextFooter } from 'components/Layout/NextFooter';
 
-const IntroParagraph = styled(Paragraph)`
-  margin: 10px 0 50px;
+const LoginForm = styled(Form)`
+  margin-top: 20px;
+  width: 100%;
 `;
-
-const LoginForm = styled(Form)``;
 
 const UsernameWrapper = styled(Wrapper)`
   margin: 36px 0 20px;
@@ -61,7 +64,12 @@ const Text = styled(BoldText)`
 
 const ContentWrapper = styled.View`
   flex: 1;
-  background-color: ${UIColors.defaultBackgroundColor};
+`;
+
+const StyledWrapper = styled.View`
+  flex-grow: 1;
+  padding: ${spacing.large}px;
+  padding-top: 15%;
 `;
 
 const formStructure = t.struct({
@@ -84,6 +92,9 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
           disabled: inputDisabled,
           autoFocus: true,
         },
+        statusIcon: null,
+        statusIconColor: null,
+        inputType: 'bigText',
       },
     },
   },
@@ -105,6 +116,7 @@ type State = {
     username: ?string,
   },
   formOptions: Object,
+  hasAgreedToTerms: boolean,
 };
 
 class NewProfile extends React.Component<Props, State> {
@@ -118,6 +130,7 @@ class NewProfile extends React.Component<Props, State> {
     this.state = {
       value,
       formOptions: getDefaultFormOptions(inputDisabled),
+      hasAgreedToTerms: false,
     };
   }
 
@@ -125,33 +138,49 @@ class NewProfile extends React.Component<Props, State> {
     // Because the idea is to display the inputError label on proper circumstances
     // here we don't validate minimum length, that's done on
     // this.renderChooseUsernameScreen() const shouldNextButtonBeDisabled
+    const { validateUserDetails } = this.props;
     const validateUsername = t.validate(value, formStructure);
     const isValidUsername = validateUsername.isValid();
     const { message: errorMessage = '' } = validateUsername.firstError() || {};
+    const hasError = !isValidUsername && value.username;
 
     const options = t.update(this.state.formOptions, {
       fields: {
         username: {
-          hasError: { $set: !isValidUsername && value.username },
+          hasError: { $set: hasError },
           error: { $set: errorMessage },
+          config: {
+            statusIcon: { $set: null },
+            statusIconColor: { $set: null },
+          },
         },
       },
     });
     this.setState({ formOptions: options, value });
+    if (!hasError && value.username.length >= MIN_USERNAME_LENGTH) {
+      validateUserDetails({ username: value.username });
+    }
   };
 
   handleSubmit = () => {
     Keyboard.dismiss();
-    const { validateUserDetails, apiUser } = this.props;
+    const { apiUser } = this.props;
 
     if (apiUser && apiUser.id) {
       this.goToNextScreen();
-      return;
+    } else {
+      this.proceedWithSignup();
     }
+  };
 
+  proceedWithSignup = async () => {
+    const { validateUserDetails, walletState } = this.props;
     const value = this._form.getValue();
     if (!value) return;
-    validateUserDetails({ username: value.username });
+    await validateUserDetails({ username: value.username });
+    if (walletState === USERNAME_OK) {
+      this.goToNextScreen();
+    }
   };
 
   componentDidUpdate(prevProps: Props) {
@@ -168,6 +197,8 @@ class NewProfile extends React.Component<Props, State> {
             error: { $set: errorMessage },
             config: {
               isLoading: { $set: false },
+              statusIcon: { $set: 'close' },
+              statusIconColor: { $set: baseColors.fireEngineRed },
             },
           },
         },
@@ -181,6 +212,7 @@ class NewProfile extends React.Component<Props, State> {
           username: {
             config: {
               isLoading: { $set: true },
+              statusIcon: { $set: null },
             },
           },
         },
@@ -194,12 +226,13 @@ class NewProfile extends React.Component<Props, State> {
           username: {
             config: {
               isLoading: { $set: false },
+              statusIcon: { $set: 'check' },
+              statusIconColor: { $set: baseColors.freshEucalyptus },
             },
           },
         },
       });
       this.setState({ formOptions: options }); // eslint-disable-line
-      this.goToNextScreen();
     }
   }
 
@@ -222,49 +255,16 @@ class NewProfile extends React.Component<Props, State> {
 
   renderChooseUsernameScreen() {
     const { value, formOptions } = this.state;
-    const {
-      walletState,
-      session,
-      retry,
-    } = this.props;
-    const {
-      fields: { username: { hasError: usernameHasErrors = false } },
-    } = formOptions;
-
-    const isUsernameValid = value && value.username && !usernameHasErrors;
-    const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
-    const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
     return (
-      <React.Fragment>
-        <Wrapper>
-          <Header
-            title="let's get started"
-            onBack={retry ? undefined : () => this.props.navigation.goBack()}
-            white
-          />
-          <Wrapper regularPadding>
-            <IntroParagraph light small>
-              Choose your unique username now. It cannot be changed in future.
-            </IntroParagraph>
-            <LoginForm
-              innerRef={node => { this._form = node; }}
-              type={formStructure}
-              options={formOptions}
-              value={value}
-              onChange={this.handleChange}
-            />
-          </Wrapper>
-        </Wrapper>
-        <Footer backgroundColor={UIColors.defaultBackgroundColor}>
-          {!!isUsernameValid &&
-          <Button
-            onPress={this.handleSubmit}
-            disabled={shouldNextButtonBeDisabled}
-            title="Next"
-          />
-          }
-        </Footer>
-      </React.Fragment>
+      <StyledWrapper>
+        <LoginForm
+          innerRef={node => { this._form = node; }}
+          type={formStructure}
+          options={formOptions}
+          value={value}
+          onChange={this.handleChange}
+        />
+      </StyledWrapper>
     );
   }
 
@@ -292,15 +292,62 @@ class NewProfile extends React.Component<Props, State> {
   }
 
   render() {
-    const { apiUser } = this.props;
+    const {
+      apiUser,
+      retry,
+      walletState,
+      session,
+    } = this.props;
+    const { hasAgreedToTerms, value, formOptions } = this.state;
+    const {
+      fields: { username: { hasError: usernameHasErrors = false } },
+    } = formOptions;
+
+
+    const isUsernameValid = value && value.username && !usernameHasErrors;
+    const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
+    const shouldNextButtonBeDisabled = ((!isUsernameValid || isCheckingUsernameAvailability || !session.isOnline)
+      || !hasAgreedToTerms);
+
+    const headerProps = !apiUser.walletId
+      ? {
+        default: true,
+        lighterHeader: true,
+        centerItems: [
+          {
+            title: 'Choose username',
+          },
+        ],
+      }
+      : {};
 
     return (
-      <Container color={!apiUser.walletId ? baseColors.white : UIColors.defaultBackgroundColor}>
+      <ContainerWithHeader
+        noBack={!!retry}
+        headerProps={headerProps}
+        backgroundColor={baseColors.white}
+        keyboardAvoidFooter={!apiUser.walletId && (
+          <NextFooter
+            onNextPress={this.handleSubmit}
+            nextDisabled={shouldNextButtonBeDisabled}
+            // nextDisabled={!hasAgreedToTerms}
+          >
+            <Checkbox
+              onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
+              small
+              lightText
+              darkCheckbox
+            >
+              I have read, understand, and agree to the Terms of Use
+            </Checkbox>
+          </NextFooter>
+        )}
+      >
         <ContentWrapper>
           {!apiUser.walletId && this.renderChooseUsernameScreen()}
           {apiUser.walletId && this.renderWelcomeBackScreen()}
         </ContentWrapper>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StatusBar, View } from 'react-native';
+import { Platform, StatusBar, View } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation, SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
@@ -27,24 +27,29 @@ import isEqual from 'lodash.isequal';
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { UIColors } from 'utils/variables';
+import { isIphoneX } from 'utils/common';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   children?: React.Node,
+  keyboardAvoidFooter?: React.Node,
   headerProps?: Object,
   inset?: Object,
   backgroundColor?: string,
 };
 
-export const StyledSafeAreaView = styled(SafeAreaView)`
+const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
   flex: 1;
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;
 
+const Footer = styled.KeyboardAvoidingView`
+  width: 100%;
+`;
+
 class ContainerWithHeader extends React.Component<Props> {
   focusSubscriptions: NavigationEventSubscription[];
-
   shouldComponentUpdate(nextProps: Props) {
     const isEq = isEqual(this.props, nextProps);
     return !isEq;
@@ -83,21 +88,36 @@ class ContainerWithHeader extends React.Component<Props> {
       navigation,
       inset,
       backgroundColor,
+      keyboardAvoidFooter,
     } = this.props;
 
     const topInset = headerProps.floating ? 'always' : 'never';
+    const bottomInset = keyboardAvoidFooter ? 'never' : 'always';
     const androidStatusBarSpacing = headerProps.floating ? StatusBar.currentHeight : 0;
 
     return (
       <View style={{ flex: 1 }}>
         <HeaderBlock {...headerProps} navigation={navigation} />
         <StyledSafeAreaView
-          forceInset={{ top: topInset, bottom: 'always', ...inset }}
+          forceInset={{ top: topInset, bottom: bottomInset, ...inset }}
           androidStatusbarHeight={androidStatusBarSpacing}
           color={backgroundColor}
         >
           {children}
         </StyledSafeAreaView>
+        {!!keyboardAvoidFooter &&
+        <Footer
+          enabled={Platform.OS === 'ios'}
+          behavior={Platform.OS === 'ios' ? 'padding' : null}
+          keyboardVerticalOffset={isIphoneX() ? -40 : 0}
+        >
+          <SafeAreaView
+            forceInset={{ top: 'never', bottom: 'always', ...inset }}
+            style={{ backgroundColor, width: '100%', flexWrap: 'wrap' }}
+          >
+            {keyboardAvoidFooter}
+          </SafeAreaView>
+        </Footer>}
       </View>
     );
   }

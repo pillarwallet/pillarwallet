@@ -67,14 +67,15 @@ const CheckboxBox = styled.View`
 `;
 
 const CheckboxText = styled(BaseText)`
-  flex: 1;
   font-size: ${props => props.small ? fontSizes.extraSmall : fontSizes.medium}px;
   color: ${props => props.light ? baseColors.darkGray : baseColors.slateBlack};
+  flex-wrap: wrap;
 `;
 
 const TextWrapper = styled.View`
   flex: 1;
   margin-top: 2px;
+  flex-direction: row;
 `;
 
 const CheckboxWrapper = styled.View`
