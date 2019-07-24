@@ -172,7 +172,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  setBrowsingWebView: (isBrowsing) => dispatch(setBrowsingWebViewAction(isBrowsing)),
+  setBrowsingWebView: isBrowsing => dispatch(setBrowsingWebViewAction(isBrowsing)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FiatExchange);

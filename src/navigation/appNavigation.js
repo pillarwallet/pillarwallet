@@ -676,8 +676,7 @@ class AppFlow extends React.Component<Props, State> {
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
-    if (isPickingImage) return;
-    if (isBrowsingWebView) return;
+    if (isPickingImage || isBrowsingWebView) return;
     // only checking if background state for logout or websocket channel close
     if (APP_LOGOUT_STATES.includes(nextAppState)) {
       // close websocket channel instantly to receive PN while in background
