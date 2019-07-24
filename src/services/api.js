@@ -747,6 +747,14 @@ SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: 
     .catch(() => []);
 };
 
+SDKWrapper.prototype.getLocationByIP = function () {
+  return Promise.resolve()
+    .then(() => fetch(`${MOONPAY_API_URL}/v2/ip_address`))
+    .then(resp => resp.json())
+    .then(data => data)
+    .catch(() => {});
+};
+
 SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: string, amount: number) {
   const url = `${MOONPAY_API_URL}/v2/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
   + `&baseCurrencyAmount=${amount}&baseCurrencyCode=${fromAsset.toLowerCase()}`;

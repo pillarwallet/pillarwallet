@@ -153,17 +153,23 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     // we're requesting although it will start delivering when connection is established
     const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
 
-    api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-      if (!offer.error) {
-        dispatch({ type: ADD_OFFER, payload: offer });
-      }
-    }).catch(() => null);
+    const ipInfo = await api.getLocationByIP();
 
-    api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-      if (!offer.error) {
-        dispatch({ type: ADD_OFFER, payload: offer });
-      }
-    }).catch(() => null);
+    if (ipInfo.isAllowed) {
+      api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+        if (!offer.error) {
+          dispatch({ type: ADD_OFFER, payload: offer });
+        }
+      }).catch(() => null);
+    }
+
+    if (ipInfo.alpha2 === 'US') {
+      api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+        if (!offer.error) {
+          dispatch({ type: ADD_OFFER, payload: offer });
+        }
+      }).catch(() => null);
+    }
 
     if (error) {
       const message = error.message || 'Unable to connect';
