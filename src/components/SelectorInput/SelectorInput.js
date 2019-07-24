@@ -191,12 +191,14 @@ const AddonText = styled(BaseText)`
 
 const SearchBarWrapper = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
+  border-bottom-width: 1px;
+  border-style: solid;
+  border-color: ${baseColors.mediumLightGray};
 `;
 
 const HorizontalOptions = styled.View`
   height: 145px;
-  background-color: ${baseColors.lighterGray};
-  border-top-width: 1px;
+  background-color: ${UIColors.defaultBackgroundColor};
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${baseColors.mediumLightGray};
@@ -237,10 +239,18 @@ const HorizontalOptionItemName = styled(BaseText)`
 `;
 
 const OptionsHeader = styled(SubHeading)`
-  margin: 6px ${spacing.mediumLarge}px 8px;
+  margin: 22px 16px 13px;
   font-weight: ${fontWeights.medium};
 `;
 
+const EmptyStateWrapper = styled(Wrapper)`
+  padding-top: 90px;
+  padding-bottom: 90px;
+  align-items: center;
+`;
+
+const OptionsList = styled(FlatList)`
+`;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
@@ -462,14 +472,14 @@ export default class SelectorInput extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalShow={this.focusInput}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.white}
           avoidKeyboard
           noSwipeToDismiss
           noClose
           title={label}
         >
-          <Wrapper flex={1}>
-            <SearchBarWrapper>
+          <Wrapper flex={1} backgroundColor={UIColors.defaultBackgroundColor}>
+            <SearchBarWrapper backgroundColor={baseColors.white}>
               <SearchBar
                 inputProps={{
                   onChange: this.handleSearch,
@@ -500,12 +510,17 @@ export default class SelectorInput extends React.Component<Props, State> {
               </HorizontalOptions>
             }
             {!!filteredListData.length &&
-              <FlatList
+              <OptionsList
                 data={filteredListData}
                 renderItem={this.renderOption}
                 keyExtractor={({ value: val }) => val}
                 keyboardShouldPersistTaps="handled"
-                contentContainerStyle={{ paddingBottom: 40 }}
+                contentContainerStyle={{
+                  paddingBottom: 40,
+                  backgroundColor: filteredHorizontalListData.length
+                    ? baseColors.white
+                    : UIColors.defaultBackgroundColor,
+                }}
                 ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
                 initialNumToRender={10}
                 maxToRenderPerBatch={5}
@@ -517,16 +532,9 @@ export default class SelectorInput extends React.Component<Props, State> {
               />
             }
             {(!filteredListData.length && !filteredHorizontalListData.length) &&
-              <Wrapper
-                fullScreen
-                style={{
-                  paddingTop: 90,
-                  paddingBottom: 90,
-                  alignItems: 'center',
-                }}
-              >
+              <EmptyStateWrapper fullScreen>
                 <EmptyStateParagraph title="Nothing found" />
-              </Wrapper>
+              </EmptyStateWrapper>
             }
           </Wrapper>
         </SlideModal>
