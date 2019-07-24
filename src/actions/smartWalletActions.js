@@ -517,8 +517,10 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
 
     const ACCOUNT_DEVICE_UPDATED = get(sdkModules, 'Api.EventNames.AccountDeviceUpdated', '');
     const ACCOUNT_TRANSACTION_UPDATED = get(sdkModules, 'Api.EventNames.AccountTransactionUpdated', '');
+    const ACCOUNT_PAYMENT_UPDATED = get(sdkModules, 'Api.EventNames.AccountPaymentUpdated', '');
     const ACCOUNT_VIRTUAL_BALANCE_UPDATED = get(sdkModules, 'Api.EventNames.AccountVirtualBalanceUpdated', '');
     const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
+    const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 
     if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !TRANSACTION_COMPLETED) {
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
@@ -634,8 +636,29 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         const value = get(event, 'payload.value', '');
         dispatch({
           type: UPDATE_PAYMENT_NETWORK_STAKED,
-          payload: value.toString(),
+          payload: PPN_TOKEN === ETH ? weiToEth(value).toString() : value.toString(),
         });
+      }
+    }
+
+    // for virtual payments
+    if (event.name === ACCOUNT_PAYMENT_UPDATED) {
+      const {
+        assets: { data: assets },
+        accounts: { data: accounts },
+      } = getState();
+      const txStatus = get(event, 'payload.state', '');
+      const activeAccountAddress = getActiveAccountAddress(accounts);
+      const txReceiverAddress = get(event, 'payload.recipient.account.address', '');
+
+      if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {
+        Toast.show({
+          message: 'Transaction received!',
+          type: 'success',
+          title: 'Success',
+          autoClose: true,
+        });
+        dispatch(fetchAssetsBalancesAction(assets));
       }
     }
     console.log(event);
