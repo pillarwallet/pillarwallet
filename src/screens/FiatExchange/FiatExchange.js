@@ -29,10 +29,12 @@ import {
   MOONPAY_KEY,
   WIDGET_SIGNATURE,
 } from 'react-native-dotenv';
+
 import type { Accounts } from 'models/Account';
 import { Container, Wrapper } from 'components/Layout';
 import ErrorMessage from 'components/ErrorMessage';
 import Header from 'components/Header';
+import { setBrowsingWebViewAction } from 'actions/appSettingsActions';
 import { getActiveAccountAddress } from 'utils/accounts';
 
 import { sendWyreTemplate } from './SendWyreTemplate';
@@ -43,6 +45,7 @@ type Props = {
   assets: Object,
   user: Object,
   accounts: Accounts,
+  setBrowsingWebView: Function,
 };
 
 type State = {
@@ -104,7 +107,13 @@ class FiatExchange extends React.Component<Props, State> {
       wyreTemplate,
       moonPayURL,
     });
+
+    this.props.setBrowsingWebView(true);
   };
+
+  componentWillUnmount() {
+    this.props.setBrowsingWebView(false);
+  }
 
   eventCallback = (event) => {
     const data = JSON.parse(event.nativeEvent.data);
@@ -162,4 +171,8 @@ const mapStateToProps = ({
   accounts,
 });
 
-export default connect(mapStateToProps)(FiatExchange);
+const mapDispatchToProps = (dispatch: Function) => ({
+  setBrowsingWebView: isBrowsing => dispatch(setBrowsingWebViewAction(isBrowsing)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FiatExchange);
