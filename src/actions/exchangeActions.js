@@ -157,21 +157,25 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
       if (!offer.error) {
-        const modoffer = {
-          ...offer,
-          offerRestricted: !isAllowed ? `Unavailable in ${alpha2}` : null,
-        };
-        dispatch({ type: ADD_OFFER, payload: modoffer });
+        dispatch({
+          type: ADD_OFFER,
+          payload: {
+            ...offer,
+            offerRestricted: (!isAllowed && `Unavailable in "${alpha2}"`) || null,
+          },
+        });
       }
     }).catch(() => null);
 
     api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
       if (!offer.error) {
-        const modoffer = {
-          ...offer,
-          offerRestricted: alpha2 !== 'US' ? `Unavailable in ${alpha2}` : null,
-        };
-        dispatch({ type: ADD_OFFER, payload: modoffer });
+        dispatch({
+          type: ADD_OFFER,
+          payload: {
+            ...offer,
+            offerRestricted: (alpha2 !== 'US' && `Unavailable in "${alpha2}"`) || null,
+          },
+        });
       }
     }).catch(() => null);
 

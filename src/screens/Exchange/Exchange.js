@@ -151,6 +151,15 @@ const ESWrapper = styled.View`
   align-items: center;
 `;
 
+const WarningMessage = styled(BaseText)`
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 0;
+  margin-left: 10px;
+  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  font-size: ${fontSizes.extraSmall}px;
+`;
+
 type Props = {
   rates: Rates,
   navigation: NavigationScreenProp<*>,
@@ -741,9 +750,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               </CardButton>
               }
               {!!isFiat && !!offerRestricted &&
-              <CardButton>
-                <ButtonLabel color={baseColors.electricBlue}>{offerRestricted}</ButtonLabel>
-              </CardButton>
+                <WarningMessage color={baseColors.burningFire}>{offerRestricted}</WarningMessage>
               }
             </CardInnerRow>
           </CardRow>
