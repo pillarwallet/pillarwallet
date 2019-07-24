@@ -161,7 +161,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
           type: ADD_OFFER,
           payload: {
             ...offer,
-            offerRestricted: (!isAllowed && `Unavailable in "${alpha2}"`) || null,
+            offerRestricted: (!isAllowed && `Unavailable in ${alpha2}`) || null,
           },
         });
       }
@@ -173,7 +173,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
           type: ADD_OFFER,
           payload: {
             ...offer,
-            offerRestricted: (alpha2 !== 'US' && `Unavailable in "${alpha2}"`) || null,
+            offerRestricted: (alpha2 !== 'US' && `Unavailable in ${alpha2}`) || null,
           },
         });
       }

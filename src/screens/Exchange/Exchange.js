@@ -151,7 +151,7 @@ const ESWrapper = styled.View`
   align-items: center;
 `;
 
-const WarningMessage = styled(BaseText)`
+const CardNote = styled(BaseText)`
   flex-direction: row;
   align-items: center;
   padding: 4px 0;
@@ -750,7 +750,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               </CardButton>
               }
               {!!isFiat && !!offerRestricted &&
-                <WarningMessage color={baseColors.burningFire}>{offerRestricted}</WarningMessage>
+                <CardNote color={baseColors.electricBlue}>{offerRestricted}</CardNote>
               }
             </CardInnerRow>
           </CardRow>
