@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import Separator from 'components/Separator';
-import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import t from 'tcomb-form-native';

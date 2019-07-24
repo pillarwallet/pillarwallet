@@ -176,6 +176,8 @@ import {
   WALLET_SETTINGS,
   MANAGE_DETAILS_SESSIONS,
   CONTACT_INFO,
+  PPN_SEND_TOKEN_AMOUNT,
+  PPN_SEND_TOKEN_FROM_ASSET_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -188,7 +190,6 @@ import type { Assets } from 'models/Asset';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { PPN_SEND_TOKEN_AMOUNT, PPN_SEND_TOKEN_FROM_ASSET_FLOW } from '../constants/navigationConstants';
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';

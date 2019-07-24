@@ -33,7 +33,7 @@ import Header from 'components/Header';
 // utils
 import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import { getBalance, getRate } from 'utils/assets';
+import { getRate } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
 // types
