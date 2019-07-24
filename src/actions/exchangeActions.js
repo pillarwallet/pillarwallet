@@ -157,7 +157,10 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
       if (!offer.error) {
-        const modoffer = { ...offer, isAllowed, alpha2 };
+        const modoffer = {
+          ...offer,
+          offerRestricted: !isAllowed ? `Unavailable in ${alpha2}` : null,
+        };
         dispatch({ type: ADD_OFFER, payload: modoffer });
       }
     }).catch(() => null);
@@ -166,8 +169,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       if (!offer.error) {
         const modoffer = {
           ...offer,
-          isAllowed: alpha2 === 'US',
-          alpha2,
+          offerRestricted: alpha2 !== 'US' ? `Unavailable in ${alpha2}` : null,
         };
         dispatch({ type: ADD_OFFER, payload: modoffer });
       }
