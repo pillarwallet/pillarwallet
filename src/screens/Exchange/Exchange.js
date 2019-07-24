@@ -244,6 +244,7 @@ const generateFormStructure = (balances: Balances) => {
     const isFiat = isFiatCurrency(symbol);
 
     amount = parseFloat(input);
+
     if (decimals === 0 && amount.toString().indexOf('.') > -1 && !isFiat) {
       return false;
     } else if (isFiat) {
@@ -303,6 +304,7 @@ function SelectorInputTemplate(locals) {
       placeholderSelector,
       placeholderInput,
       options,
+      horizontalOptions = [],
       inputAddonText,
       inputRef,
       onSelectorOpen,
@@ -325,6 +327,10 @@ function SelectorInputTemplate(locals) {
     <SelectorInput
       inputProps={inputProps}
       options={options}
+      horizontalOptions={horizontalOptions}
+      showOptionsTitles={!!horizontalOptions.length}
+      optionsTitle="CRYPTO"
+      horizontalOptionsTitle="FIAT"
       errorMessage={errorMessage}
       hasInput={hasInput}
       wrapperStyle={wrapperStyle}
@@ -380,6 +386,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               label: 'Selling',
               hasInput: true,
               options: [],
+              horizontalOptions: [],
               placeholderSelector: 'select',
               placeholderInput: '0',
               inputRef: (ref) => { this.fromInputRef = ref; },
@@ -449,11 +456,13 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   provideOptions = () => {
     const { assets, supportedAssets } = this.props;
+    const fiatOptionsFrom = this.generateFiatOptions();
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(supportedAssets);
     const initialAssetsOptionsBuying = assetsOptionsBuying.filter((option) => option.value !== ETH);
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
     thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
+    thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = fiatOptionsFrom;
     thisStateFormOptionsCopy.fields.toInput.config.options = initialAssetsOptionsBuying;
 
     this.setState({
@@ -793,16 +802,13 @@ class ExchangeScreen extends React.Component<Props, State> {
   generateAssetsOptions = (assets) => {
     const { balances, paymentNetworkBalances } = this.props;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-    const cryptoFiatAssets = assetsList.concat(fiatCurrencies);
-    const nonEmptyAssets = cryptoFiatAssets.filter(({ symbol }): any => {
-      return getBalance(balances, symbol) !== 0 || symbol === ETH || isFiatCurrency(symbol);
+    const nonEmptyAssets = assetsList.filter(({ symbol }): any => {
+      return getBalance(balances, symbol) !== 0 || symbol === ETH;
     });
     const alphabeticalAssets = nonEmptyAssets.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) => {
-      const assetBalance = isFiatCurrency(symbol) ?
-        null : formatAmount(getBalance(balances, symbol));
-      const paymentNetworkBalance = isFiatCurrency(symbol) ?
-        null : getBalance(paymentNetworkBalances, symbol);
+      const assetBalance = formatAmount(getBalance(balances, symbol));
+      const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
 
       return ({
         key: symbol,
@@ -816,6 +822,17 @@ class ExchangeScreen extends React.Component<Props, State> {
       });
     });
   };
+
+  generateFiatOptions = () => fiatCurrencies.map(({ symbol, iconUrl, ...rest }) => ({
+    key: symbol,
+    value: symbol,
+    icon: iconUrl,
+    iconUrl,
+    symbol,
+    ...rest,
+    assetBalance: null,
+    paymentNetworkBalance: null,
+  }));
 
   generateSupportedAssetsOptions = (assets) => {
     const { balances, paymentNetworkBalances } = this.props;
@@ -841,8 +858,9 @@ class ExchangeScreen extends React.Component<Props, State> {
   handleFormChange = (value: Object) => {
     this.props.resetOffers(); // reset all cards before they change according to input values
     this.setState({ value });
-    this.triggerSearch();
     this.updateOptions(value);
+    if (!this.exchangeForm.getValue()) return; // this validates form!
+    this.triggerSearch();
   };
 
   updateOptions = (value) => {
