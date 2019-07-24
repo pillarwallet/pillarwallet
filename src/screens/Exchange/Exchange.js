@@ -859,8 +859,9 @@ class ExchangeScreen extends React.Component<Props, State> {
   handleFormChange = (value: Object) => {
     this.props.resetOffers(); // reset all cards before they change according to input values
     this.setState({ value });
-    this.triggerSearch();
     this.updateOptions(value);
+    if (!this.exchangeForm.getValue()) return; // this validates form!
+    this.triggerSearch();
   };
 
   updateOptions = (value) => {
