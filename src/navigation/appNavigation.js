@@ -579,6 +579,7 @@ type Props = {
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
   smartWalletFeatureEnabled: boolean,
+  isBrowsingWebView: boolean,
 }
 
 type State = {
@@ -671,10 +672,12 @@ class AppFlow extends React.Component<Props, State> {
       updateSignalInitiatedState,
       navigation,
       isPickingImage,
+      isBrowsingWebView,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
     if (isPickingImage) return;
+    if (isBrowsingWebView) return;
     // only checking if background state for logout or websocket channel close
     if (APP_LOGOUT_STATES.includes(nextAppState)) {
       // close websocket channel instantly to receive PN while in background
@@ -741,7 +744,7 @@ const mapStateToProps = ({
   },
   assets: { data: assets },
   wallet: { data: wallet, backupStatus },
-  appSettings: { data: { isPickingImage } },
+  appSettings: { data: { isPickingImage, isBrowsingWebView } },
   featureFlags: {
     data: {
       SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
@@ -759,6 +762,7 @@ const mapStateToProps = ({
   intercomNotificationsCount,
   isPickingImage,
   smartWalletFeatureEnabled,
+  isBrowsingWebView,
 });
 
 const mapDispatchToProps = dispatch => ({

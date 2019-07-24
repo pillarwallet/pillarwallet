@@ -77,6 +77,17 @@ export const handleImagePickAction = (isPickingImage: boolean) => {
   };
 };
 
+export const handleBrowseWebViewAction = (isBrowsingWebView: boolean) => {
+  return (dispatch: Function) => {
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: {
+        isBrowsingWebView,
+      },
+    });
+  };
+};
+
 export const changeUseBiometricsAction = (value: boolean) => {
   return async (dispatch: Function) => {
     dispatch(saveDbAction('app_settings', { appSettings: { useBiometrics: value } }));
