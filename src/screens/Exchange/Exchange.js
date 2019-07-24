@@ -303,7 +303,7 @@ function SelectorInputTemplate(locals) {
       placeholderSelector,
       placeholderInput,
       options,
-      horizontalOptions,
+      horizontalOptions = [],
       inputAddonText,
       inputRef,
       onSelectorOpen,
@@ -327,6 +327,9 @@ function SelectorInputTemplate(locals) {
       inputProps={inputProps}
       options={options}
       horizontalOptions={horizontalOptions}
+      showOptionsTitles={!!horizontalOptions.length}
+      optionsTitle="CRYPTO"
+      horizontalOptionsTitle="FIAT"
       errorMessage={errorMessage}
       hasInput={hasInput}
       wrapperStyle={wrapperStyle}

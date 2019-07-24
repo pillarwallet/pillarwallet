@@ -62,6 +62,9 @@ type Props = {
   value: InputValue,
   inputAddonText?: string,
   inputRef?: Object,
+  optionsTitle?: string,
+  horizontalOptionsTitle?: string,
+  showOptionsTitles?: boolean,
 };
 
 type State = {
@@ -190,7 +193,7 @@ const SearchBarWrapper = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
 `;
 
-const HorizontalList = styled.View`
+const HorizontalOptions = styled.View`
   height: 145px;
   background-color: ${baseColors.lighterGray};
   border-top-width: 1px;
@@ -199,7 +202,10 @@ const HorizontalList = styled.View`
   border-color: ${baseColors.mediumLightGray};
 `;
 
-const HorizontalListHeader = styled(SubHeading)`
+const HorizontalOptionsScrollView = styled.ScrollView`
+`;
+
+const HorizontalOptionsHeader = styled(SubHeading)`
   margin: 22px 16px 13px;
   font-weight: ${fontWeights.medium};
 `;
@@ -229,6 +235,12 @@ const HorizontalOptionItemName = styled(BaseText)`
     android: '-4px',
   })};
 `;
+
+const OptionsHeader = styled(SubHeading)`
+  margin: 6px ${spacing.mediumLarge}px 8px;
+  font-weight: ${fontWeights.medium};
+`;
+
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
@@ -321,12 +333,13 @@ export default class SelectorInput extends React.Component<Props, State> {
 
   renderHorizontalOptions = (options: any) => {
     return options
-      .map(({ name, icon }) => {
+      .map(option => {
+        const { name, icon } = option;
         const iconUri = `${SDK_PROVIDER}/${icon}?size=3`;
         return (
           <HorizontalOptionItem
             key={name}
-            onPress={() => null}
+            onPress={() => this.selectValue(option)}
           >
             <ProfileImage
               uri={iconUri}
@@ -352,6 +365,9 @@ export default class SelectorInput extends React.Component<Props, State> {
       inputAddonText,
       inputRef,
       horizontalOptions = [],
+      showOptionsTitles,
+      optionsTitle,
+      horizontalOptionsTitle,
     } = this.props;
     const {
       label,
@@ -463,16 +479,18 @@ export default class SelectorInput extends React.Component<Props, State> {
                 forceShowCloseButton
               />
             </SearchBarWrapper>
-            {horizontalOptions.length &&
-              <HorizontalList>
-                <HorizontalListHeader>MY CONTACTS</HorizontalListHeader>
-                <styled.ScrollView
+            {!!horizontalOptions.length &&
+              <HorizontalOptions>
+                {(showOptionsTitles && !!horizontalOptionsTitle) &&
+                  <HorizontalOptionsHeader>{horizontalOptionsTitle}</HorizontalOptionsHeader>
+                }
+                <HorizontalOptionsScrollView
                   keyboardShouldPersistTaps="always"
                   horizontal
                 >
                   {this.renderHorizontalOptions(horizontalOptions)}
-                </styled.ScrollView>
-              </HorizontalList>
+                </HorizontalOptionsScrollView>
+              </HorizontalOptions>
             }
             <FlatList
               data={filteredListData}
@@ -497,6 +515,9 @@ export default class SelectorInput extends React.Component<Props, State> {
               maxToRenderPerBatch={5}
               removeClippedSubviews
               viewabilityConfig={viewConfig}
+              ListHeaderComponent={
+                (showOptionsTitles && !!optionsTitle) && <OptionsHeader>{optionsTitle}</OptionsHeader>
+              }
             />
           </Wrapper>
         </SlideModal>
