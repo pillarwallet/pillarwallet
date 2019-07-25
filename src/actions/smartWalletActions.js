@@ -658,7 +658,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
 
       if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {
         Toast.show({
-          message: `Received ${formatMoney(txAmount.toString(), 4)} ${txToken}!`,
+          message: `You received ${formatMoney(txAmount.toString(), 4)} ${txToken}`,
           type: 'success',
           title: 'Success',
           autoClose: true,
