@@ -68,8 +68,7 @@ import {
 } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import { fetchAvailableStakeAction } from './smartWalletActions';
-// import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
+import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
 
 type TransactionStatus = {
@@ -419,8 +418,7 @@ export const fetchAssetsBalancesAction = (assets: Assets) => {
     }
 
     if (smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
-      // dispatch(fetchVirtualAccountBalanceAction());
-      dispatch(fetchAvailableStakeAction());
+      dispatch(fetchVirtualAccountBalanceAction());
     }
   };
 };

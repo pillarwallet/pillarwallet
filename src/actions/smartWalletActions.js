@@ -803,9 +803,8 @@ export const topUpVirtualAccountAction = (amount: string) => {
 
 export const fetchVirtualAccountBalanceAction = () => {
   return async (dispatch: Function, getState: Function) => {
-    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
-
     const {
+      assets: { data: assets },
       accounts: { data: accounts },
       session: { data: { isOnline } },
       smartWallet: { connectedAccount, sdkInitialized },
@@ -824,16 +823,46 @@ export const fetchVirtualAccountBalanceAction = () => {
     if (!isConnectedToSmartAccount(connectedAccount) || !isOnline) return;
 
     const accountId = getActiveAccountId(accounts);
-    const virtualBalance = smartWalletService.getAccountVirtualBalance();
-    const balanceInEth = !virtualBalance.eq(0) ? weiToEth(virtualBalance).toString() : '0';
+    const ppnTokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
 
-    const accountBalances = {
-      [ETH]: {
-        balance: balanceInEth,
-        symbol: ETH,
-      },
-    };
+    const [staked, pendingBalances] = await Promise.all([
+      smartWalletService.getAccountStakedAmount(ppnTokenAddress),
+      smartWalletService.getAccountPendingBalances(),
+    ]);
 
+    // process staked amount
+    let stakedAmountFormatted;
+    if (PPN_TOKEN === ETH) {
+      stakedAmountFormatted = !staked.eq(0) ? weiToEth(staked).toString() : '0';
+    } else {
+      stakedAmountFormatted = staked.toString();
+    }
+
+    dispatch(saveDbAction('paymentNetworkStaked', { paymentNetworkStaked: stakedAmountFormatted }, true));
+    dispatch({
+      type: UPDATE_PAYMENT_NETWORK_STAKED,
+      payload: stakedAmountFormatted,
+    });
+
+    // process pending balances
+    const accountBalances = pendingBalances.reduce((memo, tokenBalance) => {
+      let symbol = get(tokenBalance, 'token.symbol', ETH);
+      let balance = get(tokenBalance, 'incoming', new BigNumber(0));
+      const tokenAddress = get(tokenBalance, 'token.address', '');
+
+      if (symbol !== ETH && tokenAddress === ppnTokenAddress) {
+        symbol = PPN_TOKEN; // NOTE: we can remove this once we move to PLR token in PPN
+      }
+      if (symbol === ETH) balance = weiToEth(balance);
+
+      return {
+        ...memo,
+        [symbol]: {
+          balance: balance.toString(),
+          symbol,
+        },
+      };
+    }, {});
     const { paymentNetwork: { balances } } = getState();
     const updatedBalances = {
       ...balances,
@@ -847,44 +876,6 @@ export const fetchVirtualAccountBalanceAction = () => {
         accountId,
         balances: accountBalances,
       },
-    });
-  };
-};
-
-export const fetchAvailableStakeAction = () => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      assets: { data: assets },
-      session: { data: { isOnline } },
-      smartWallet: { connectedAccount, sdkInitialized },
-    } = getState();
-
-    if ((!smartWalletService.sdkInitialized || !sdkInitialized) && isOnline) {
-      navigate(NavigationActions.navigate({
-        routeName: SMART_WALLET_UNLOCK,
-        params: {
-          successNavigateScreen: ASSETS,
-        },
-      }));
-      return;
-    }
-
-    if (!isConnectedToSmartAccount(connectedAccount) || !isOnline) return;
-
-    const tokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
-    const staked = await smartWalletService.getAccountStakedAmount(tokenAddress);
-
-    let stakedAmountFormatted;
-    if (PPN_TOKEN === ETH) {
-      stakedAmountFormatted = !staked.eq(0) ? weiToEth(staked).toString() : '0';
-    } else {
-      stakedAmountFormatted = staked.toString();
-    }
-
-    dispatch(saveDbAction('paymentNetworkStaked', { paymentNetworkStaked: stakedAmountFormatted }, true));
-    dispatch({
-      type: UPDATE_PAYMENT_NETWORK_STAKED,
-      payload: stakedAmountFormatted,
     });
   };
 };

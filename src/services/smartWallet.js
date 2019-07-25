@@ -164,6 +164,14 @@ class SmartWallet {
       });
   }
 
+  getAccountPendingBalances() {
+    return this.sdk.getConnectedAccountVirtualPendingBalances()
+      .catch((e) => {
+        this.handleError(e);
+        return [];
+      });
+  }
+
   async fetchConnectedAccount() {
     const { state: { account } } = this.sdk;
     const devices = await this.sdk.getConnectedAccountDevices().catch(this.handleError);
