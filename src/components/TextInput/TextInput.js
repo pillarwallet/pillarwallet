@@ -85,7 +85,7 @@ const inputTypes = {
     lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
     fontWeight: fontWeights.bold,
     padding: '0 20px',
-    inputHeight: Platform.OS === 'ios' ? 80 : 68,
+    inputHeight: Platform.OS === 'ios' ? 80 : 70,
   },
   amount: {
     fontSize: fontSizes.extraExtraLarge,
@@ -137,6 +137,7 @@ const InputField = styled(Input)`
 const Item = styled(NBItem)`
   border-bottom-color: ${props => props.isFocused ? baseColors.electricBlue : baseColors.mediumGray};
   ${props => props.noBorder ? 'border-bottom-width: 0;' : ''}
+  height: ${props => props.height}px;
 `;
 
 const InputFooter = styled(View)`
@@ -273,8 +274,13 @@ class TextInput extends React.Component<Props, State> {
     const additionalRightPadding = loading || statusIcon ? 36 : 0;
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
-    const defaultInputHeight = 40;
-    const inputHeight = inputType.inputHeight || defaultInputHeight;
+    const defaultInputHeight = Platform.OS === 'ios' ? 65 : 55;
+    let inputHeight = inputType.inputHeight || defaultInputHeight;
+
+    if (inputProps.multiline) {
+      inputHeight = Platform.OS === 'ios' ? 120 : 100;
+    }
+
     const customStyle = inputProps.multiline ? { paddingTop: 10 } : {};
     return (
       <View style={{ paddingBottom: 10 }}>
@@ -282,9 +288,9 @@ class TextInput extends React.Component<Props, State> {
           inlineLabel={inlineLabel}
           stackedLabel={!inlineLabel}
           error={!!errorMessage}
-          style={{ height: inputProps.multiline ? 140 : inputHeight }}
           isFocused={isFocused}
           noBorder={noBorder}
+          height={inputHeight}
         >
           {!!label && <CustomLabel labelBigger={labelBigger}>{lowerCase ? label : label.toUpperCase()}</CustomLabel>}
           <InputField
@@ -303,6 +309,7 @@ class TextInput extends React.Component<Props, State> {
               paddingRight: (inputProps.multiline ? 58 : 14) + additionalRightPadding,
               textAlignVertical: inputProps.multiline ? 'top' : 'center',
               marginBottom: 10,
+              height: inputHeight,
             }, customStyle]}
             onLayout={onLayout}
           />
