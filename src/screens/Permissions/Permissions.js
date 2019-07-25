@@ -23,7 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native/index';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
-import { Paragraph, TextLink, MediumText } from 'components/Typography';
+import { Paragraph, TextLink, MediumText, BaseText } from 'components/Typography';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { handleUrlPress } from 'utils/common';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
@@ -43,26 +43,30 @@ type State = {
 };
 
 const SectionToggle = styled.View`
-  margin: 16px;
+  margin: 30px;
   flex-direction: row;
   align-items: center;
 `;
 
 const SectionTitle = styled(MediumText)`
   font-size: ${fontSizes.medium}px;
-  margin: 16px;
+  margin-right: 12px;
   color: ${baseColors.slateBlack};
 `;
 
-const Separator = styled.View`
-  width: 100%;
-  height: 1px;
-  background-color: ${baseColors.mediumLightGray};
+const InnerSectionToggle = styled.View`
+  margin: 30px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const InnerSectionTitle = styled(BaseText)`
+  font-size: ${fontSizes.medium}px;
+  color: ${baseColors.electricBlue};
 `;
 
 const StyledFlatList = styled.FlatList`
-  border-top-width: 1px;
-  border-top-color: ${baseColors.mediumLightGray};  width: 100%;
+  width: 100%;
   padding-bottom: 30px;
   flex: 1;
 `;
@@ -82,10 +86,6 @@ const TickIcon = styled(Icon)`
   color: ${baseColors.white};
   margin-top: 1px;
 `;
-
-const toggleWrapperStyle = {
-  paddingHorizontal: 15,
-};
 
 const sections = [
   {
@@ -276,8 +276,19 @@ class Permissions extends React.Component<Props, State> {
         )}
         open={openCollapseKey === key}
         onPress={() => this.toggleCollapse(key)}
-        toggleWrapperStyle={toggleWrapperStyle}
+        toggleWrapperStyle={{
+          borderBottomColor: baseColors.mediumLightGray,
+          borderBottomWidth: 0.5,
+          borderTopColor: baseColors.mediumLightGray,
+          borderTopWidth: 0.5,
+          paddingRight: 15,
+        }}
+        wrapperStyle={{
+          borderTopColor: baseColors.mediumLightGray,
+          borderTopWidth: 0.5,
+        }}
         collapseContent={this.renderCollapseContent(key)}
+        noPadding
       />
     );
   };
@@ -296,11 +307,31 @@ class Permissions extends React.Component<Props, State> {
     if (paragraphs) {
       return (
         <CollapsibleListItem
-          label={title}
+          customToggle={(
+            <InnerSectionToggle>
+              <InnerSectionTitle>{title}</InnerSectionTitle>
+            </InnerSectionToggle>
+          )}
           open={openInnerCollapseKey === key}
           onPress={() => this.toggleInnerCollapse(key)}
+          toggleWrapperStyle={{
+            borderTopColor: baseColors.mediumLightGray,
+            borderTopWidth: 0.5,
+            paddingRight: 15,
+          }}
+          wrapperStyle={{
+            borderBottomColor: baseColors.mediumLightGray,
+            borderBottomWidth: 0.5,
+          }}
           collapseContent={
-            <View style={{ flexDirection: 'column', flexWrap: 'wrap', flex: 1 }}>
+            <View style={{
+              flexDirection: 'column',
+              flexWrap: 'wrap',
+              flex: 1,
+              marginRight: 30,
+              marginLeft: -6,
+            }}
+            >
               {collapseContent}
             </View>
           }
@@ -308,10 +339,14 @@ class Permissions extends React.Component<Props, State> {
       );
     }
     if (custom) {
-      return custom;
+      return (
+        <View style={{ marginHorizontal: 15 }}>
+          {custom}
+        </View>
+      );
     }
     return (
-      <SectionTitle key={key}>{title}</SectionTitle>
+      <SectionTitle key={key} style={{ margin: 30, fontSize: fontSizes.small }}>{title}</SectionTitle>
     );
   };
 
@@ -356,7 +391,6 @@ class Permissions extends React.Component<Props, State> {
             data={sections}
             extraData={this.state}
             renderItem={this.renderSection}
-            ItemSeparatorComponent={() => <Separator />}
             contentContainerStyle={{
               borderBottomWidth: 1,
               borderBottomColor: baseColors.mediumLightGray,

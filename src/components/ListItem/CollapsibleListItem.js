@@ -24,8 +24,20 @@ import Collapsible from 'react-native-collapsible';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
-
 import Icon from 'components/Icon';
+
+type Props = {
+  label?: string,
+  onPress?: ?Function,
+  open?: boolean,
+  collapseContent?: React.Node,
+  customToggle?: React.Node,
+  wrapperStyle?: Object,
+  toggleWrapperStyle?: Object,
+  collapsePadding?: Object,
+  noPadding?: boolean,
+}
+
 
 const StyledItemTouchable = styled.TouchableHighlight`
   display: flex;
@@ -79,8 +91,8 @@ const ListAddon = styled.View`
 `;
 
 const CollapseWrapper = styled.View`
-  padding: 4px 16px 10px 36px;
   width: 100%;
+  ${props => props.noPadding ? '' : 'padding: 4px 16px 10px 36px;'}
 `;
 
 const ButtonWrapper = ({ onPress, children, collapseContent }) => {
@@ -107,16 +119,6 @@ const ButtonWrapper = ({ onPress, children, collapseContent }) => {
     </StyledItemTouchable>
   );
 };
-
-type Props = {
-  label?: string,
-  onPress?: ?Function,
-  open?: boolean,
-  collapseContent?: React.Node,
-  customToggle?: React.Node,
-  wrapperStyle?: Object,
-  toggleWrapperStyle?: Object,
-}
 
 export default class CollapsibleListItem extends React.Component<Props> {
   spinValue = new Animated.Value(0);
@@ -208,6 +210,7 @@ export default class CollapsibleListItem extends React.Component<Props> {
       open,
       collapseContent,
       wrapperStyle,
+      noPadding,
     } = this.props;
 
     return (
@@ -216,7 +219,7 @@ export default class CollapsibleListItem extends React.Component<Props> {
           {this.renderSectionToggle()}
         </ButtonWrapper>
         <Collapsible collapsed={!open}>
-          <CollapseWrapper>
+          <CollapseWrapper noPadding={noPadding}>
             {collapseContent}
           </CollapseWrapper>
         </Collapsible>
