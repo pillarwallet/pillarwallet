@@ -648,12 +648,17 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         assets: { data: assets },
         accounts: { data: accounts },
       } = getState();
+      const ppnTokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
       let txAmount = get(event, 'payload.value', new BigNumber(0));
+      let txToken = get(event, 'payload.token.symbol', ETH);
       const txStatus = get(event, 'payload.state', '');
-      const txToken = get(event, 'payload.token.symbol', ETH);
+      const txTokenAddress = get(event, 'payload.token.address', '');
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txReceiverAddress = get(event, 'payload.recipient.account.address', '');
 
+      if (txToken !== ETH && txTokenAddress === ppnTokenAddress) {
+        txToken = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
+      }
       if (txToken === ETH) txAmount = weiToEth(txAmount);
 
       if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {
@@ -851,7 +856,7 @@ export const fetchVirtualAccountBalanceAction = () => {
       const tokenAddress = get(tokenBalance, 'token.address', '');
 
       if (symbol !== ETH && tokenAddress === ppnTokenAddress) {
-        symbol = PPN_TOKEN; // NOTE: we can remove this once we move to PLR token in PPN
+        symbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
       }
       if (symbol === ETH) balance = weiToEth(balance);
 
