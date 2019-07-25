@@ -630,7 +630,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     if (event.name === ACCOUNT_VIRTUAL_BALANCE_UPDATED) {
       const { assets: { data: assets } } = getState();
       const tokenTransferred = get(event, 'payload.token.address', null);
-      const ppnTokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
+      const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
 
       if (addressesEqual(tokenTransferred, ppnTokenAddress)) {
         // update the balance
@@ -648,7 +648,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         assets: { data: assets },
         accounts: { data: accounts },
       } = getState();
-      const ppnTokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
+      const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
       let txAmount = get(event, 'payload.value', new BigNumber(0));
       let txToken = get(event, 'payload.token.symbol', ETH);
       const txStatus = get(event, 'payload.state', '');
@@ -700,7 +700,7 @@ export const estimateTopUpVirtualAccountAction = () => {
 
     const { assets: { data: assets } } = getState();
     const value = PPN_TOKEN === ETH ? ethToWei(0.1) : 1;
-    const tokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
+    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
 
     const response = await smartWalletService
       .estimateTopUpAccountVirtualBalance(value, tokenAddress)
@@ -745,7 +745,7 @@ export const topUpVirtualAccountAction = (amount: string) => {
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
     const value = PPN_TOKEN === ETH ? ethToWei(parseFloat(amount)) : parseFloat(amount);
-    const tokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
+    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
 
     const estimated = await smartWalletService
       .estimateTopUpAccountVirtualBalance(value, tokenAddress)
@@ -828,7 +828,7 @@ export const fetchVirtualAccountBalanceAction = () => {
     if (!isConnectedToSmartAccount(connectedAccount) || !isOnline) return;
 
     const accountId = getActiveAccountId(accounts);
-    const ppnTokenAddress = PPN_TOKEN === ETH ? null : getPPNTokenAddress(PPN_TOKEN, assets);
+    const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
 
     const [staked, pendingBalances] = await Promise.all([
       smartWalletService.getAccountStakedAmount(ppnTokenAddress),

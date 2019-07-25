@@ -116,7 +116,8 @@ export function generatePMTToken(): Asset {
   };
 }
 
-export function getPPNTokenAddress(token: string, assets: Assets) {
+export function getPPNTokenAddress(token: string, assets: Assets): ?string {
+  if (token === ETH) return null;
   const asset = Object.keys(assets)
     .map(key => assets[key])
     .find(({ symbol }) => symbol === token);
