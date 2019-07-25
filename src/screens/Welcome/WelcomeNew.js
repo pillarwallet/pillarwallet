@@ -18,14 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import Swiper from 'react-native-swiper';
 import { IMPORT_WALLET } from 'constants/navigationConstants';
-import { Container, Footer, Wrapper } from 'components/Layout';
+import { Footer } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BoldText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
-import AnimatedBackground from 'components/AnimatedBackground';
 import ButtonText from 'components/ButtonText';
 import { fontSizes, baseColors } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
@@ -45,8 +45,8 @@ type State = {
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
 
 const PillarLogo = styled(CachedImage)`
-  height: 60px;
-  width: 120px;
+  height: 30px;
+  width: 60px;
 `;
 
 const Title = styled(BoldText)`
@@ -63,11 +63,17 @@ const BodyText = styled(MediumText)`
   margin-top: ${responsiveSize(26)}px;
 `;
 
+const Wrapper = styled.View`
+  flex: 1;
+  padding: 20px 0;
+`;
+
 const Slide = styled.View`
   width: 100%;
   padding: 0 55px 0 46px;
 `;
 
+// mockup data
 const features = [
   {
     key: 'PPN',
@@ -90,29 +96,6 @@ const features = [
 ];
 
 class Welcome extends React.Component<Props, State> {
-  listeners: Object[];
-
-  constructor(props: Props) {
-    super(props);
-    this.listeners = [];
-    this.state = {
-      shouldAnimate: true,
-    };
-  }
-
-  componentDidMount() {
-    const { navigation } = this.props;
-
-    this.listeners = [
-      navigation.addListener('willFocus', () => this.setState({ shouldAnimate: true })),
-      navigation.addListener('willBlur', () => this.setState({ shouldAnimate: false })),
-    ];
-  }
-
-  componentWillUnmount() {
-    this.listeners.forEach(listenerItem => listenerItem.remove());
-  }
-
   loginAction = () => {
     this.props.navigateToNewWalletPage();
   };
@@ -134,15 +117,30 @@ class Welcome extends React.Component<Props, State> {
   }
 
   render() {
-    const { shouldAnimate } = this.state;
     return (
-      <Container>
-        <AnimatedBackground
-          shouldAnimate={shouldAnimate}
-          disabledAnimation={Platform.OS === 'android' && Platform.Version < 24}
-        />
-        <Wrapper fullScreen center>
-          <PillarLogo source={pillarLogoSource} />
+      <ContainerWithHeader
+        backgroundColor={baseColors.ultramarine}
+        headerProps={{
+          floating: true,
+          transparent: true,
+          noBack: true,
+          rightItems: [
+            {
+              key: 'icon',
+              custom: (<PillarLogo source={pillarLogoSource} resizeMethod="resize" resizeMode="contain" />),
+            },
+          ],
+        }}
+      >
+        <Wrapper>
+          <Swiper
+            containerStyle={{ width: '100%' }}
+            paginationStyle={{ paddingLeft: 46, paddingRight: 55, justifyContent: 'flex-start' }}
+            dotColor={baseColors.white}
+            activeDotColor={baseColors.pomegranate}
+          >
+            {this.renderSlides()}
+          </Swiper>
         </Wrapper>
         <Footer
           style={{ paddingBottom: 30 }}
@@ -154,7 +152,7 @@ class Welcome extends React.Component<Props, State> {
             fontSize={fontSizes.medium}
           />
         </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }
