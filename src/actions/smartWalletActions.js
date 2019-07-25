@@ -23,6 +23,7 @@ import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
 import { Sentry } from 'react-native-sentry';
+import { BigNumber } from 'bignumber.js';
 
 // components
 import Toast from 'components/Toast';
@@ -99,7 +100,7 @@ import { buildHistoryTransaction, updateHistoryRecord } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId, getActiveAccountType } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
-import { formatAmount, getGasPriceWei } from 'utils/common';
+import { formatAmount, formatMoney, getGasPriceWei } from 'utils/common';
 
 
 const storage = Storage.getInstance('db');
@@ -647,13 +648,17 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         assets: { data: assets },
         accounts: { data: accounts },
       } = getState();
+      let txAmount = get(event, 'payload.value', new BigNumber(0));
       const txStatus = get(event, 'payload.state', '');
+      const txToken = get(event, 'payload.token.symbol', ETH);
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txReceiverAddress = get(event, 'payload.recipient.account.address', '');
 
+      if (txToken === ETH) txAmount = weiToEth(txAmount);
+
       if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {
         Toast.show({
-          message: 'Transaction received!',
+          message: `Received ${formatMoney(txAmount.toString(), 4)} ${txToken}!`,
           type: 'success',
           title: 'Success',
           autoClose: true,
