@@ -23,12 +23,10 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { IMPORT_WALLET } from 'constants/navigationConstants';
 import { Container, Footer, Wrapper } from 'components/Layout';
-import { BoldText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import AnimatedBackground from 'components/AnimatedBackground';
 import ButtonText from 'components/ButtonText';
-import { fontSizes, baseColors } from 'utils/variables';
-import { responsiveSize } from 'utils/ui';
+import { fontSizes } from 'utils/variables';
 import { navigateToNewWalletPageAction } from 'actions/walletActions';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
@@ -48,46 +46,6 @@ const PillarLogo = styled(CachedImage)`
   height: 60px;
   width: 120px;
 `;
-
-const Title = styled(BoldText)`
-  color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rJumbo}px;
-  line-height: ${fontSizes.rJumbo}px;
-  font-weight: 700;
-`;
-
-const BodyText = styled(MediumText)`
-  color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rMedium}px;
-  line-height: ${responsiveSize(19)}px;
-  margin-top: ${responsiveSize(26)}px;
-`;
-
-const Slide = styled.View`
-  width: 100%;
-  padding: 0 55px 0 46px;
-`;
-
-const features = [
-  {
-    key: 'PPN',
-    title: 'Pillar Network',
-    bodyText: 'Store your assets in a personal smart contract and ' +
-      'control access through an intuitive key management system.',
-  },
-  {
-    key: 'PPN2',
-    title: 'Pillar Network',
-    bodyText: 'Store your assets in a personal smart contract and ' +
-      'control access through an intuitive key management system.',
-  },
-  {
-    key: 'PPN3',
-    title: 'Pillar Network',
-    bodyText: 'Store your assets in a personal smart contract and ' +
-      'control access through an intuitive key management system.',
-  },
-];
 
 class Welcome extends React.Component<Props, State> {
   listeners: Object[];
@@ -121,17 +79,6 @@ class Welcome extends React.Component<Props, State> {
     const { navigation } = this.props;
     navigation.navigate(IMPORT_WALLET);
   };
-
-  renderSlides = () => {
-    return features.map((feature) => {
-      return (
-        <Slide key={feature.key}>
-          <Title>{feature.title}</Title>
-          <BodyText>{feature.bodyText}</BodyText>
-        </Slide>
-      );
-    });
-  }
 
   render() {
     const { shouldAnimate } = this.state;

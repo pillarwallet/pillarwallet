@@ -371,11 +371,7 @@ class Permissions extends React.Component<Props, State> {
         headerProps={{
           default: true,
           lighterHeader: true,
-          centerItems: [
-            {
-              title: 'Know how Pillar makes you safe',
-            },
-          ],
+          centerItems: [{ title: 'Know how Pillar makes you safe' }],
         }}
         backgroundColor={baseColors.white}
       >

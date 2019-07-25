@@ -22,8 +22,8 @@ import { Platform, StatusBar, View } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation, SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
-
 import isEqual from 'lodash.isequal';
+
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { UIColors } from 'utils/variables';

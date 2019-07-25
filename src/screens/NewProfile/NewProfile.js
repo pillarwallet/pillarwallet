@@ -31,12 +31,13 @@ import { BaseText, BoldText, Paragraph, TextLink } from 'components/Typography';
 import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
-import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { InputTemplate, Form } from 'components/ProfileForm';
 import { Username, MAX_USERNAME_LENGTH, MIN_USERNAME_LENGTH } from 'components/ProfileForm/profileFormDefs';
 import Checkbox from 'components/Checkbox';
 import { NextFooter } from 'components/Layout/NextFooter';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
+
+import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';

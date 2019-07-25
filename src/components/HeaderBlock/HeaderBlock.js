@@ -63,7 +63,6 @@ const Wrapper = styled.View`
       z-index: 1;`
     : ''}
 `;
-// const AnimatedWrapper = Animated.createAnimatedComponent(Wrapper);
 
 const HeaderContentWrapper = styled.View`
   padding: ${spacing.large}px ${spacing.large}px 0;
@@ -139,7 +138,7 @@ const TextButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  line-height: ${fontSizes.small};
+  line-height: ${fontSizes.small}px;
   font-size: ${fontSizes.extraSmall}px;
   color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
 `;
