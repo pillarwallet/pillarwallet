@@ -444,6 +444,7 @@ exports[`Contact info should render Contact info correctly 1`] = `
                           Array [
                             Object {
                               "color": "#8B939E",
+                              "flexWrap": "wrap",
                               "fontSize": 16,
                               "marginBottom": 5,
                               "textAlign": "center",
@@ -772,6 +773,7 @@ exports[`Contact info should render Contact info correctly 1`] = `
                                 Array [
                                   Object {
                                     "color": "#8B939E",
+                                    "flexWrap": "wrap",
                                     "fontSize": 16,
                                     "marginBottom": 5,
                                     "textAlign": "center",

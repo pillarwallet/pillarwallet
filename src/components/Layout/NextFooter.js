@@ -29,7 +29,7 @@ type Props = {
 }
 
 const FooterWrapper = styled.KeyboardAvoidingView`
-  padding: 0 30px 30px;
+  padding: 0 30px;
   flex-direction: column;
 `;
 
@@ -41,7 +41,7 @@ const InnerWrapper = styled.KeyboardAvoidingView`
 
 const LeftSide = styled.View`
   flex: 1;
-  padding-right: 40px;
+  padding-right: 20px;
   padding-bottom: 14px;
   flex-wrap: wrap;
 `;

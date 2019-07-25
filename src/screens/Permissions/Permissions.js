@@ -18,33 +18,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, ScrollView } from 'react-native';
+import { FlatList, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
 import styled from 'styled-components/native/index';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 import { Paragraph, TextLink, MediumText } from 'components/Typography';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { handleUrlPress } from 'utils/common';
-import { NEW_WALLET, IMPORT_WALLET } from 'constants/navigationConstants';
+import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Checkbox from 'components/Checkbox';
 import Icon from 'components/Icon';
 import { NextFooter } from 'components/Layout/NextFooter';
-import { navigateToNewWalletPageAction } from 'actions/walletActions';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  navigateToNewWalletPage: Function,
 };
 
 type State = {
   openCollapseKey: string,
   openInnerCollapseKey: string,
-  checked1: boolean,
-  checked2: boolean,
+  hasAgreedToTerms: boolean,
 };
 
 const SectionToggle = styled.View`
@@ -222,6 +217,7 @@ const sections = [
         ),
       },
       {
+        key: 'DISCLAIMER',
         custom: (
           <Paragraph light small style={{ padding: spacing.mediumLarge }} key="disclaimer">
             In order to receive a copy of your user data, request a removal and/or any other general inquiries,
@@ -238,8 +234,7 @@ class Permissions extends React.Component<Props, State> {
   state = {
     openCollapseKey: '',
     openInnerCollapseKey: '',
-    checked1: false,
-    checked2: false,
+    hasAgreedToTerms: false,
   };
 
   toggleCollapse = (key: string) => {
@@ -261,18 +256,12 @@ class Permissions extends React.Component<Props, State> {
   };
 
   handleAgree = () => {
-    const { navigation, navigateToNewWalletPage } = this.props;
-    const nextScreen = navigation.getParam('nextScreen', '');
-
-    if (nextScreen === NEW_WALLET) {
-      navigateToNewWalletPage();
-    } else if (nextScreen === IMPORT_WALLET) {
-      navigation.navigate(IMPORT_WALLET);
-    }
+    const { navigation } = this.props;
+    navigation.navigate(SET_WALLET_PIN_CODE);
     return null;
   };
 
-  renderSection = ({ item: section }) => {
+  renderSection = ({ item: section }: Object) => {
     const { openCollapseKey } = this.state;
     const { title, key } = section;
     return (
@@ -293,7 +282,7 @@ class Permissions extends React.Component<Props, State> {
     );
   };
 
-  renderSectionContent = ({ item: sectionContent }) => {
+  renderSectionContent = ({ item: sectionContent }: Object) => {
     const { openInnerCollapseKey } = this.state;
     const {
       key,
@@ -302,7 +291,7 @@ class Permissions extends React.Component<Props, State> {
       custom,
     } = sectionContent;
     const collapseContent = Array.isArray(paragraphs)
-      ? paragraphs.map((paragraph) => (<Paragraph light small>{paragraph}</Paragraph>))
+      ? paragraphs.map((paragraph, index) => (<Paragraph light small key={`${key}-${index}`}>{paragraph}</Paragraph>))
       : paragraphs;
     if (paragraphs) {
       return (
@@ -310,7 +299,11 @@ class Permissions extends React.Component<Props, State> {
           label={title}
           open={openInnerCollapseKey === key}
           onPress={() => this.toggleInnerCollapse(key)}
-          collapseContent={collapseContent}
+          collapseContent={
+            <View style={{ flexDirection: 'column', flexWrap: 'wrap', flex: 1 }}>
+              {collapseContent}
+            </View>
+          }
         />
       );
     }
@@ -322,7 +315,7 @@ class Permissions extends React.Component<Props, State> {
     );
   };
 
-  renderCollapseContent = (sectionKey) => {
+  renderCollapseContent = (sectionKey: string) => {
     const section = sections.find((thisSection) => thisSection.key === sectionKey) || {};
     const { content } = section;
     return (
@@ -336,7 +329,7 @@ class Permissions extends React.Component<Props, State> {
   };
 
   render() {
-    const { checked1, checked2 } = this.state;
+    const { hasAgreedToTerms } = this.state;
 
     return (
       <ContainerWithHeader
@@ -371,24 +364,15 @@ class Permissions extends React.Component<Props, State> {
           />
           <NextFooter
             onNextPress={this.handleAgree}
-            nextDisabled={!(checked1 && checked2)}
+            nextDisabled={!hasAgreedToTerms}
           >
             <Checkbox
-              onPress={() => { this.setState({ checked1: !checked1 }); }}
-              small
-              lightText
-              darkCheckbox
-              wrapperStyle={{ marginBottom: 32 }}
-            >
-              I’m happy to know that Pillar doesn’t have access to my private key, funds or contacts
-            </Checkbox>
-            <Checkbox
-              onPress={() => { this.setState({ checked2: !checked2 }); }}
+              onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
               small
               lightText
               darkCheckbox
             >
-              I have read, understand, and agree to the Terms of Use
+              I have read, understand, and agree to these Terms of Use
             </Checkbox>
           </NextFooter>
         </ScrollView>
@@ -397,11 +381,4 @@ class Permissions extends React.Component<Props, State> {
   }
 }
 
-
-const mapDispatchToProps = (dispatch: Function) => ({
-  navigateToNewWalletPage: () => {
-    dispatch(navigateToNewWalletPageAction());
-  },
-});
-
-export default connect(null, mapDispatchToProps)(Permissions);
+export default Permissions;

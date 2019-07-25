@@ -80,6 +80,7 @@ const ListAddon = styled.View`
 
 const CollapseWrapper = styled.View`
   padding: 4px 16px 10px 36px;
+  width: 100%;
 `;
 
 const ButtonWrapper = ({ onPress, children, collapseContent }) => {

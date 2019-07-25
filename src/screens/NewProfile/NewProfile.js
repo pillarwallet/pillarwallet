@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { Keyboard, Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -27,17 +27,19 @@ import debounce from 'lodash.debounce';
 
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BoldText, Paragraph } from 'components/Typography';
-import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import { BaseText, BoldText, Paragraph, TextLink } from 'components/Typography';
+import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
-import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
-import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
 import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { InputTemplate, Form } from 'components/ProfileForm';
 import { Username, MAX_USERNAME_LENGTH, MIN_USERNAME_LENGTH } from 'components/ProfileForm/profileFormDefs';
 import Checkbox from 'components/Checkbox';
 import { NextFooter } from 'components/Layout/NextFooter';
+import HTMLContentModal from 'components/Modals/HTMLContentModal';
+
+import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
+import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
 
 const LoginForm = styled(Form)`
   margin-top: 20px;
@@ -70,6 +72,18 @@ const StyledWrapper = styled.View`
   flex-grow: 1;
   padding: ${spacing.large}px;
   padding-top: 15%;
+`;
+
+const CheckboxText = styled(BaseText)`
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: 20px;
+  color: ${baseColors.coolGrey};
+`;
+
+const StyledTextLink = styled(TextLink)`
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: 20px;
+  color: ${baseColors.rockBlue};
 `;
 
 const formStructure = t.struct({
@@ -117,7 +131,13 @@ type State = {
   },
   formOptions: Object,
   hasAgreedToTerms: boolean,
+  hasAgreedToPolicy: boolean,
+  isPendingCheck: boolean,
+  visibleModal: string,
 };
+
+const TERMS_OF_USE_MODAL = 'TERMS_OF_USE_MODAL';
+const PRIVACY_POLICY_MODAL = 'PRIVACY_POLICY_MODAL';
 
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
@@ -131,6 +151,9 @@ class NewProfile extends React.Component<Props, State> {
       value,
       formOptions: getDefaultFormOptions(inputDisabled),
       hasAgreedToTerms: false,
+      hasAgreedToPolicy: false,
+      isPendingCheck: false,
+      visibleModal: '',
     };
     this.validateUsername = debounce(this.validateUsername, 800);
   }
@@ -141,6 +164,7 @@ class NewProfile extends React.Component<Props, State> {
     if (!hasError && username.length >= MIN_USERNAME_LENGTH) {
       validateUserDetails({ username });
     }
+    this.setState({ isPendingCheck: false });
   };
 
   handleChange = (value: Object) => {
@@ -164,7 +188,7 @@ class NewProfile extends React.Component<Props, State> {
         },
       },
     });
-    this.setState({ formOptions: options, value });
+    this.setState({ formOptions: options, value, isPendingCheck: true });
     this.validateUsername(value.username, hasError);
   };
 
@@ -247,16 +271,17 @@ class NewProfile extends React.Component<Props, State> {
       navigation,
       retry,
       registerOnBackend,
-      apiUser,
     } = this.props;
     Keyboard.dismiss();
     if (retry) {
       registerOnBackend();
       return;
     }
-    const navigationParams = {};
-    if (apiUser && apiUser.id) navigationParams.returningUser = true;
-    navigation.navigate(SET_WALLET_PIN_CODE, navigationParams);
+    if (Platform.OS === 'android') {
+      navigation.navigate(PERMISSIONS);
+    } else {
+      navigation.navigate(SET_WALLET_PIN_CODE);
+    }
   }
 
   renderChooseUsernameScreen() {
@@ -297,6 +322,11 @@ class NewProfile extends React.Component<Props, State> {
     );
   }
 
+  closeModals = () => {
+    this.setState({ visibleModal: '' });
+  };
+
+
   render() {
     const {
       apiUser,
@@ -304,16 +334,22 @@ class NewProfile extends React.Component<Props, State> {
       walletState,
       session,
     } = this.props;
-    const { hasAgreedToTerms, value, formOptions } = this.state;
+    const {
+      hasAgreedToTerms,
+      hasAgreedToPolicy,
+      value,
+      formOptions,
+      isPendingCheck,
+      visibleModal,
+    } = this.state;
     const {
       fields: { username: { hasError: usernameHasErrors = false } },
     } = formOptions;
 
-
     const isUsernameValid = value && value.username && !usernameHasErrors;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
-    const shouldNextButtonBeDisabled = ((!isUsernameValid || isCheckingUsernameAvailability || !session.isOnline)
-      || !hasAgreedToTerms);
+    const canGoNext = !!hasAgreedToTerms && !!hasAgreedToPolicy && !!isUsernameValid && !isCheckingUsernameAvailability
+      && !isPendingCheck && session.isOnline;
 
     const headerProps = !apiUser.walletId
       ? {
@@ -325,7 +361,11 @@ class NewProfile extends React.Component<Props, State> {
           },
         ],
       }
-      : {};
+      : {
+        default: true,
+        floating: true,
+        transparent: true,
+      };
 
     return (
       <ContainerWithHeader
@@ -335,16 +375,39 @@ class NewProfile extends React.Component<Props, State> {
         keyboardAvoidFooter={!apiUser.walletId && (
           <NextFooter
             onNextPress={this.handleSubmit}
-            nextDisabled={shouldNextButtonBeDisabled}
-            // nextDisabled={!hasAgreedToTerms}
+            nextDisabled={!canGoNext}
+            wrapperStyle={{ paddingBottom: 15 }}
           >
             <Checkbox
               onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
               small
               lightText
               darkCheckbox
+              wrapperStyle={{ marginBottom: 16 }}
             >
-              I have read, understand, and agree to the Terms of Use
+              <CheckboxText>
+                {'I have read, understand, and agree to the '}
+                <StyledTextLink
+                  onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
+                >
+                  Terms of Use
+                </StyledTextLink>
+              </CheckboxText>
+            </Checkbox>
+            <Checkbox
+              onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
+              small
+              lightText
+              darkCheckbox
+            >
+              <CheckboxText>
+                {'I have read, understand, and agree to the '}
+                <StyledTextLink
+                  onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
+                >
+                  Privacy policy
+                </StyledTextLink>
+              </CheckboxText>
             </Checkbox>
           </NextFooter>
         )}
@@ -353,6 +416,19 @@ class NewProfile extends React.Component<Props, State> {
           {!apiUser.walletId && this.renderChooseUsernameScreen()}
           {apiUser.walletId && this.renderWelcomeBackScreen()}
         </ContentWrapper>
+
+        <HTMLContentModal
+          isVisible={visibleModal === TERMS_OF_USE_MODAL}
+          modalHide={this.closeModals}
+          htmlEndpoint="terms_of_service"
+        />
+
+        <HTMLContentModal
+          isVisible={visibleModal === PRIVACY_POLICY_MODAL}
+          modalHide={this.closeModals}
+          htmlEndpoint="privacy_policy"
+        />
+
       </ContainerWithHeader>
     );
   }

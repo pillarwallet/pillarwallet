@@ -94,6 +94,7 @@ export const baseColors = {
   aluminium: '#a9aeb8',
   dell: '#467038',
   stratos: '#000260',
+  rockBlue: '#8e8fb8',
 };
 
 export const brandColors = [

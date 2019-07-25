@@ -18,11 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Swiper from 'react-native-swiper';
-import { IMPORT_WALLET, PERMISSIONS, NEW_WALLET } from 'constants/navigationConstants';
+import { IMPORT_WALLET } from 'constants/navigationConstants';
 import { Footer } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BoldText, MediumText } from 'components/Typography';
@@ -97,21 +96,12 @@ const features = [
 
 class Welcome extends React.Component<Props, State> {
   loginAction = () => {
-    if (Platform.OS === 'android') {
-      this.props.navigation.navigate(PERMISSIONS, { nextScreen: NEW_WALLET });
-    } else {
-      this.props.navigateToNewWalletPage();
-    }
+    this.props.navigateToNewWalletPage();
   };
 
   navigateToWalletImportPage = () => {
     const { navigation } = this.props;
-
-    if (Platform.OS === 'android') {
-      navigation.navigate(PERMISSIONS, { nextScreen: IMPORT_WALLET });
-    } else {
-      navigation.navigate(IMPORT_WALLET);
-    }
+    navigation.navigate(IMPORT_WALLET);
   };
 
   renderSlides = () => {
