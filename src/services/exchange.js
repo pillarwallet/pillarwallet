@@ -120,8 +120,8 @@ export default class ExchangeService {
     this.io.off('offers');
   }
 
-  requestOffers(fromAssetCode: string, toAssetCode: string) {
-    const urlPath = `offers?name=${fromAssetCode}-${toAssetCode}`;
+  requestOffers(fromAssetCode: string, toAssetCode: string, quantity: number) {
+    const urlPath = `offers?name=${fromAssetCode}-${toAssetCode}&quantity=${quantity}`;
     return fetch(buildApiUrl(urlPath), this.apiConfig)
       .then(response => response.text())
       .then(response => response.toLowerCase() === 'ok' ? {} : JSON.parse(response))
