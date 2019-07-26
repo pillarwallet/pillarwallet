@@ -151,7 +151,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
         .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
     );
     // we're requesting although it will start delivering when connection is established
-    const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
+    const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode, fromAmount);
 
     const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
 
