@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, StatusBar, View } from 'react-native';
+import { Platform, StatusBar, View, Dimensions } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation, SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
@@ -28,6 +28,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { UIColors } from 'utils/variables';
 import { isIphoneX } from 'utils/common';
+import { ScrollWrapper } from './Layout';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -44,9 +45,15 @@ const StyledSafeAreaView = styled(SafeAreaView)`
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;
 
+const ContentWrapper = styled.View`
+  flex-grow: 1;
+  flex: 1;
+`;
 const Footer = styled.KeyboardAvoidingView`
   width: 100%;
 `;
+
+const { height: screenHeight } = Dimensions.get('window');
 
 class ContainerWithHeader extends React.Component<Props> {
   focusSubscriptions: NavigationEventSubscription[];
@@ -81,9 +88,21 @@ class ContainerWithHeader extends React.Component<Props> {
     StatusBar.setBarStyle('dark-content');
   };
 
+  renderContent = (isShortScreenWithFooter) => {
+    const { children, keyboardAvoidFooter } = this.props;
+    if (!isShortScreenWithFooter) return children;
+    return (
+      <ScrollWrapper style={{ flex: 1 }} contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}>
+        <ContentWrapper>
+          {children}
+        </ContentWrapper>
+        {keyboardAvoidFooter}
+      </ScrollWrapper>
+    );
+  };
+
   render() {
     const {
-      children,
       headerProps = {},
       navigation,
       inset,
@@ -94,6 +113,8 @@ class ContainerWithHeader extends React.Component<Props> {
     const topInset = headerProps.floating ? 'always' : 'never';
     const bottomInset = keyboardAvoidFooter ? 'never' : 'always';
     const androidStatusBarSpacing = headerProps.floating ? StatusBar.currentHeight : 0;
+    const shouldFooterAvoidKeyboard = screenHeight > 600; // if not checked on smaller screens keyboard and footer
+    // covers entire content;
 
     return (
       <View style={{ flex: 1 }}>
@@ -103,9 +124,9 @@ class ContainerWithHeader extends React.Component<Props> {
           androidStatusbarHeight={androidStatusBarSpacing}
           color={backgroundColor}
         >
-          {children}
+          {this.renderContent(!shouldFooterAvoidKeyboard && keyboardAvoidFooter)}
         </StyledSafeAreaView>
-        {!!keyboardAvoidFooter &&
+        {!!keyboardAvoidFooter && shouldFooterAvoidKeyboard &&
         <Footer
           enabled={Platform.OS === 'ios'}
           behavior={Platform.OS === 'ios' ? 'padding' : null}

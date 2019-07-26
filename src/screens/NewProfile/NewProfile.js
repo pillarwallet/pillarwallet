@@ -377,7 +377,7 @@ class NewProfile extends React.Component<Props, State> {
           <NextFooter
             onNextPress={this.handleSubmit}
             nextDisabled={!canGoNext}
-            wrapperStyle={{ paddingBottom: 15 }}
+            wrapperStyle={{ paddingBottom: 15, paddingTop: 15 }}
           >
             <Checkbox
               onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
