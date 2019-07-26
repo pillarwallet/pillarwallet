@@ -33,7 +33,7 @@ import Intercom from 'react-native-intercom';
 
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
-import { getProviderLogo } from 'utils/exchange';
+import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
 
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -56,12 +56,14 @@ import {
 import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 
-import { EXCHANGE_CONFIRM, EXCHANGE_INFO } from 'constants/navigationConstants';
+import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+
+import { fiatCurrencies } from 'fixtures/assets';
 
 // partials
 import { ExchangeStatus } from './ExchangeStatus';
@@ -147,6 +149,15 @@ const ProviderIcon = styled(CachedImage)`
 const ESWrapper = styled.View`
   width: 100%;
   align-items: center;
+`;
+
+const CardNote = styled(BaseText)`
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 0;
+  margin-left: 10px;
+  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  font-size: ${fontSizes.extraSmall}px;
 `;
 
 type Props = {
@@ -239,9 +250,14 @@ const generateFormStructure = (balances: Balances) => {
 
     const { symbol, decimals } = selector;
 
+    const isFiat = isFiatCurrency(symbol);
+
     amount = parseFloat(input);
-    if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+
+    if (decimals === 0 && amount.toString().indexOf('.') > -1 && !isFiat) {
       return false;
+    } else if (isFiat) {
+      return true;
     }
     balance = getBalance(balances, symbol);
     maxAmount = calculateMaxAmount(symbol, balance);
@@ -251,6 +267,8 @@ const generateFormStructure = (balances: Balances) => {
 
   FromOption.getValidationErrorMessage = ({ selector, input }) => {
     const { symbol, decimals } = selector;
+
+    const isFiat = isFiatCurrency(symbol);
 
     if (!isValidNumber(input.toString())) {
       return 'Incorrect number entered.';
@@ -262,9 +280,9 @@ const generateFormStructure = (balances: Balances) => {
       return false; // should still validate (to not trigger search if empty), yet error should not be visible to user
     } else if (parseFloat(input) < 0) {
       return 'Amount should be bigger than 0.';
-    } else if (amount > maxAmount) {
+    } else if (amount > maxAmount && !isFiat) {
       return `Amount should not be bigger than your balance - ${balance} ${symbol}.`;
-    } else if (amount < MIN_TX_AMOUNT) {
+    } else if (amount < MIN_TX_AMOUNT && !isFiat) {
       return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH).';
     } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
       return 'Amount should not contain decimal places';
@@ -295,6 +313,7 @@ function SelectorInputTemplate(locals) {
       placeholderSelector,
       placeholderInput,
       options,
+      horizontalOptions = [],
       inputAddonText,
       inputRef,
       onSelectorOpen,
@@ -317,6 +336,10 @@ function SelectorInputTemplate(locals) {
     <SelectorInput
       inputProps={inputProps}
       options={options}
+      horizontalOptions={horizontalOptions}
+      showOptionsTitles={!!horizontalOptions.length}
+      optionsTitle="CRYPTO"
+      horizontalOptionsTitle="FIAT"
       errorMessage={errorMessage}
       hasInput={hasInput}
       wrapperStyle={wrapperStyle}
@@ -372,6 +395,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               label: 'Selling',
               hasInput: true,
               options: [],
+              horizontalOptions: [],
               placeholderSelector: 'select',
               placeholderInput: '0',
               inputRef: (ref) => { this.fromInputRef = ref; },
@@ -441,11 +465,13 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   provideOptions = () => {
     const { assets, supportedAssets } = this.props;
+    const fiatOptionsFrom = this.generateFiatOptions();
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(supportedAssets);
     const initialAssetsOptionsBuying = assetsOptionsBuying.filter((option) => option.value !== ETH);
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
     thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
+    thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = fiatOptionsFrom;
     thisStateFormOptionsCopy.fields.toInput.config.options = initialAssetsOptionsBuying;
 
     this.setState({
@@ -455,13 +481,14 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
     const { assets, supportedAssets } = this.props;
-    const assetsOptions = this.generateAssetsOptions({
-      [fromAssetCode]: assets[fromAssetCode],
-    });
+    const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode) || assets[fromAssetCode];
+    const selectedAssetOptions = isFiatCurrency(fromAssetCode)
+      ? this.generateFiatOptions().find(({ symbol }) => symbol === fromAssetCode)
+      : this.generateAssetsOptions({ [fromAssetCode]: fromAsset })[0];
     const initialFormState = {
       ...this.state.value,
       fromInput: {
-        selector: assetsOptions[0],
+        selector: selectedAssetOptions,
         input: fromAmount ? fromAmount.toString() : '',
       },
     };
@@ -504,6 +531,26 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setState({ shapeshiftAuthPressed: true }, async () => {
       await authorizeWithShapeshift();
       this.setState({ shapeshiftAuthPressed: false });
+    });
+  };
+
+  onFiatOfferPress = (offer: Offer) => {
+    const {
+      navigation,
+    } = this.props;
+    const {
+      value: {
+        fromInput: {
+          input: selectedSellAmount,
+        },
+      },
+    } = this.state;
+
+    navigation.navigate(FIAT_EXCHANGE, {
+      fiatOfferOrder: {
+        ...offer,
+        amount: selectedSellAmount,
+      },
     });
   };
 
@@ -608,6 +655,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAssetCode,
       toAssetCode,
       provider: offerProvider,
+      feeAmount,
+      extraFeeAmount,
+      quoteCurrencyAmount,
+      offerRestricted,
     } = offer;
     let { allowanceSet = true } = offer;
 
@@ -650,6 +701,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       || !allowanceSet
       || (isShapeShift && !shapeshiftAccessToken);
 
+    const isFiat = isFiatProvider(offerProvider);
+
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
@@ -657,13 +710,21 @@ class ExchangeScreen extends React.Component<Props, State> {
       >
         <CardWrapper
           disabled={isTakeButtonDisabled}
-          onPress={() => this.onOfferPress(offer)}
+          onPress={() => isFiat ? this.onFiatOfferPress(offer) : this.onOfferPress(offer)}
         >
           <CardRow withBorder alignTop>
+            {!!isFiat &&
+            <CardColumn>
+              <CardText label>Amount total</CardText>
+              <CardText>{`${askRate} ${fromAssetCode}`}</CardText>
+            </CardColumn>
+            }
+            {!isFiat &&
             <CardColumn>
               <CardText label>Exchange rate</CardText>
               <CardText>{`${askRateBn.toFixed()}`}</CardText>
             </CardColumn>
+            }
             <CardInnerRow style={{ flexShrink: 1 }}>
               {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
               {minOrMaxNeeded &&
@@ -688,15 +749,46 @@ class ExchangeScreen extends React.Component<Props, State> {
                 </ButtonLabel>
               </CardButton>
               }
+              {!!isFiat && !!offerRestricted &&
+                <CardNote color={baseColors.electricBlue}>{offerRestricted}</CardNote>
+              }
             </CardInnerRow>
           </CardRow>
           <CardRow>
+            {!!isFiat &&
+            <CardColumn style={{ flex: 1 }}>
+              <CardText label>Fees total</CardText>
+              <View style={{ flexDirection: 'row' }}>
+                <CardText>
+                  {
+                    feeAmount !== ''
+                      ? `${formatAmountDisplay(feeAmount + extraFeeAmount)} ${fromAssetCode}`
+                      : 'Will be calculated'
+                  }
+                </CardText>
+              </View>
+            </CardColumn>
+            }
+            {!isFiat &&
             <CardColumn style={{ flex: 1 }}>
               <CardText label>Available</CardText>
               <View style={{ flexDirection: 'row' }}>
                 <CardText>{available}</CardText>
               </View>
             </CardColumn>
+            }
+            {!!isFiat &&
+            <CardColumn>
+              <Button
+                title={isTakeOfferPressed ? '' : `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`}
+                small
+                onPress={() => this.onFiatOfferPress(offer)}
+              >
+                {isTakeOfferPressed && <Spinner width={20} height={20} />}
+              </Button>
+            </CardColumn>
+            }
+            {!isFiat &&
             <CardColumn>
               <Button
                 disabled={isTakeButtonDisabled}
@@ -707,6 +799,7 @@ class ExchangeScreen extends React.Component<Props, State> {
                 {isTakeOfferPressed && <Spinner width={20} height={20} />}
               </Button>
             </CardColumn>
+            }
           </CardRow>
         </CardWrapper>
       </ShadowedCard>
@@ -716,8 +809,8 @@ class ExchangeScreen extends React.Component<Props, State> {
   generateAssetsOptions = (assets) => {
     const { balances, paymentNetworkBalances } = this.props;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-    const nonEmptyAssets = assetsList.filter((asset: any) => {
-      return getBalance(balances, asset.symbol) !== 0 || asset.symbol === ETH;
+    const nonEmptyAssets = assetsList.filter(({ symbol }): any => {
+      return getBalance(balances, symbol) !== 0 || symbol === ETH;
     });
     const alphabeticalAssets = nonEmptyAssets.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) => {
@@ -736,6 +829,17 @@ class ExchangeScreen extends React.Component<Props, State> {
       });
     });
   };
+
+  generateFiatOptions = () => fiatCurrencies.map(({ symbol, iconUrl, ...rest }) => ({
+    key: symbol,
+    value: symbol,
+    icon: iconUrl,
+    iconUrl,
+    symbol,
+    ...rest,
+    assetBalance: null,
+    paymentNetworkBalance: null,
+  }));
 
   generateSupportedAssetsOptions = (assets) => {
     const { balances, paymentNetworkBalances } = this.props;
@@ -761,8 +865,9 @@ class ExchangeScreen extends React.Component<Props, State> {
   handleFormChange = (value: Object) => {
     this.props.resetOffers(); // reset all cards before they change according to input values
     this.setState({ value });
-    this.triggerSearch();
     this.updateOptions(value);
+    if (!this.exchangeForm.getValue()) return; // this validates form!
+    this.triggerSearch();
   };
 
   updateOptions = (value) => {

@@ -24,7 +24,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // COMPONENTS
-import { BoldText, BaseText, MediumText } from 'components/Typography';
+import { BoldText, BaseText, MediumText, SubHeading } from 'components/Typography';
 import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -32,9 +32,17 @@ import SearchBar from 'components/SearchBar';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Separator from 'components/Separator';
+import ProfileImage from 'components/ProfileImage';
 
 // UTILS
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import {
+  baseColors,
+  fontSizes,
+  fontWeights,
+  itemSizes,
+  spacing,
+  UIColors,
+} from 'utils/variables';
 import { formatMoney, noop } from 'utils/common';
 
 import { ETH } from 'constants/assetsConstants';
@@ -48,11 +56,15 @@ type Props = {
   wrapperStyle?: Object,
   inputProps: Object,
   options: Object[],
+  horizontalOptions?: Object[],
   hasInput?: boolean,
   errorMessage?: string,
   value: InputValue,
   inputAddonText?: string,
   inputRef?: Object,
+  optionsTitle?: string,
+  horizontalOptionsTitle?: string,
+  showOptionsTitles?: boolean,
 };
 
 type State = {
@@ -179,6 +191,62 @@ const AddonText = styled(BaseText)`
 
 const SearchBarWrapper = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
+  border-bottom-width: 1px;
+  border-style: solid;
+  border-color: ${baseColors.mediumLightGray};
+`;
+
+const HorizontalOptions = styled.View`
+  height: 145px;
+  background-color: ${UIColors.defaultBackgroundColor};
+  border-bottom-width: 1px;
+  border-style: solid;
+  border-color: ${baseColors.mediumLightGray};
+`;
+
+const HorizontalOptionsScrollView = styled.ScrollView`
+`;
+
+const HorizontalOptionsHeader = styled(SubHeading)`
+  margin: 22px 16px 13px;
+  font-weight: ${fontWeights.medium};
+`;
+
+const HorizontalOptionItem = styled.TouchableOpacity`
+  align-items: center;
+  width: ${Platform.select({
+    ios: '60px',
+    android: '74px',
+  })};
+  margin: ${Platform.select({
+    ios: `0 ${spacing.rhythm / 2}px`,
+    android: `-6px ${spacing.rhythm / 2}px 0`,
+  })};
+  padding-top: ${Platform.select({
+    ios: '3px',
+    android: 0,
+  })};
+`;
+
+const HorizontalOptionItemName = styled(BaseText)`
+  font-size: ${fontSizes.extraExtraSmall};
+  color: ${baseColors.darkGray};
+  padding: 0 4px;
+  margin-top: ${Platform.select({
+    ios: '3px',
+    android: '-4px',
+  })};
+`;
+
+const OptionsHeader = styled(SubHeading)`
+  margin: 22px 16px 13px;
+  font-weight: ${fontWeights.medium};
+`;
+
+const EmptyStateWrapper = styled(Wrapper)`
+  padding-top: 90px;
+  padding-bottom: 90px;
+  align-items: center;
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
@@ -190,6 +258,8 @@ const viewConfig = {
   viewAreaCoveragePercentThreshold: 100,
   waitForInteraction: true,
 };
+
+const isMatchingSearch = (query, text) => query && text && text.toUpperCase().includes(query.toUpperCase());
 
 export default class SelectorInput extends React.Component<Props, State> {
   searchInput: ?Object;
@@ -270,6 +340,28 @@ export default class SelectorInput extends React.Component<Props, State> {
     if (onSelectorOpen) onSelectorOpen();
   };
 
+  renderHorizontalOptions = (options: any) => {
+    return options
+      .map(option => {
+        const { name, icon } = option;
+        const iconUri = `${SDK_PROVIDER}/${icon}?size=3`;
+        return (
+          <HorizontalOptionItem
+            key={name}
+            onPress={() => this.selectValue(option)}
+          >
+            <ProfileImage
+              uri={iconUri}
+              userName={name}
+              diameter={itemSizes.avatarCircleMedium}
+              textStyle={{ fontSize: fontSizes.medium }}
+            />
+            <HorizontalOptionItemName numberOfLines={1}>{name}</HorizontalOptionItemName>
+          </HorizontalOptionItem>
+        );
+      });
+  };
+
   render() {
     const { showOptionsSelector, query } = this.state;
     const {
@@ -281,6 +373,10 @@ export default class SelectorInput extends React.Component<Props, State> {
       errorMessage,
       inputAddonText,
       inputRef,
+      horizontalOptions = [],
+      showOptionsTitles,
+      optionsTitle,
+      horizontalOptionsTitle,
     } = this.props;
     const {
       label,
@@ -290,21 +386,32 @@ export default class SelectorInput extends React.Component<Props, State> {
     const { value: selectedValue, icon } = selectedOption;
     const iconUrl = `${SDK_PROVIDER}/${icon}?size=3`;
 
-    const filteredListData = (query && query.length >= MIN_QUERY_LENGTH && options.length)
-      ? options.filter(({ value: val, name }) => val.toUpperCase().includes(query.toUpperCase())
-        || name.toUpperCase().includes(query.toUpperCase()))
-      : options;
+    const isSearchQuery = query && query.length >= MIN_QUERY_LENGTH;
+
+    let filteredListData = options;
+    let filteredHorizontalListData = horizontalOptions;
+
+    if (isSearchQuery) {
+      filteredListData = filteredListData.filter(
+        ({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name),
+      );
+      filteredHorizontalListData = filteredHorizontalListData.filter(
+        ({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name),
+      );
+    }
+
+    const selectorOptionsCount = options.length + horizontalOptions.length;
 
     return (
       <React.Fragment>
         <Wrapper style={wrapperStyle}>
           {!!label && <Label>{label}</Label>}
           <ItemHolder error={!!errorMessage}>
-            {!!options.length &&
+            {!!selectorOptionsCount &&
             <Selector
               fullWidth={!hasInput}
-              onPress={options.length > 1 ? this.openSelector : noop}
-              disabled={options.length < 1}
+              onPress={selectorOptionsCount > 1 ? this.openSelector : noop}
+              disabled={selectorOptionsCount < 1}
             >
               <ValueWrapper>
                 {Object.keys(selectedOption).length
@@ -322,7 +429,7 @@ export default class SelectorInput extends React.Component<Props, State> {
                   )}
                 <SlectorValue>{selectedValue}</SlectorValue>
               </ValueWrapper>
-              {options.length > 1 &&
+              {selectorOptionsCount > 1 &&
                 <ChevronWrapper>
                   <SelectorChevron
                     name="chevron-right"
@@ -368,14 +475,14 @@ export default class SelectorInput extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalShow={this.focusInput}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.white}
           avoidKeyboard
           noSwipeToDismiss
           noClose
           title={label}
         >
-          <Wrapper flex={1}>
-            <SearchBarWrapper>
+          <Wrapper flex={1} backgroundColor={UIColors.defaultBackgroundColor}>
+            <SearchBarWrapper backgroundColor={baseColors.white}>
               <SearchBar
                 inputProps={{
                   onChange: this.handleSearch,
@@ -392,30 +499,46 @@ export default class SelectorInput extends React.Component<Props, State> {
                 forceShowCloseButton
               />
             </SearchBarWrapper>
-            <FlatList
-              data={filteredListData}
-              renderItem={this.renderOption}
-              keyExtractor={({ value: val }) => val}
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={{ paddingBottom: 40 }}
-              ListEmptyComponent={
-                <Wrapper
-                  fullScreen
-                  style={{
-                    paddingTop: 90,
-                    paddingBottom: 90,
-                    alignItems: 'center',
-                  }}
+            {!!filteredHorizontalListData.length &&
+              <HorizontalOptions>
+                {(showOptionsTitles && !!horizontalOptionsTitle) &&
+                  <HorizontalOptionsHeader>{horizontalOptionsTitle}</HorizontalOptionsHeader>
+                }
+                <HorizontalOptionsScrollView
+                  keyboardShouldPersistTaps="always"
+                  horizontal
                 >
-                  <EmptyStateParagraph title="Nothing found" />
-                </Wrapper>
-              }
-              ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-              initialNumToRender={10}
-              maxToRenderPerBatch={5}
-              removeClippedSubviews
-              viewabilityConfig={viewConfig}
-            />
+                  {this.renderHorizontalOptions(filteredHorizontalListData)}
+                </HorizontalOptionsScrollView>
+              </HorizontalOptions>
+            }
+            {!!filteredListData.length &&
+              <FlatList
+                data={filteredListData}
+                renderItem={this.renderOption}
+                keyExtractor={({ value: val }) => val}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{
+                  paddingBottom: 40,
+                  backgroundColor: filteredHorizontalListData.length
+                    ? baseColors.white
+                    : UIColors.defaultBackgroundColor,
+                }}
+                ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+                initialNumToRender={10}
+                maxToRenderPerBatch={5}
+                removeClippedSubviews
+                viewabilityConfig={viewConfig}
+                ListHeaderComponent={
+                  (showOptionsTitles && !!optionsTitle) && <OptionsHeader>{optionsTitle}</OptionsHeader>
+                }
+              />
+            }
+            {(!filteredListData.length && !filteredHorizontalListData.length) &&
+              <EmptyStateWrapper fullScreen>
+                <EmptyStateParagraph title="Nothing found" />
+              </EmptyStateWrapper>
+            }
           </Wrapper>
         </SlideModal>
       </React.Fragment>

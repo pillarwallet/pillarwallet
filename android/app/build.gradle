@@ -113,7 +113,7 @@ android {
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       zipAlignEnabled true
-      matchingFallbacks = ['debug', 'release']
+      matchingFallbacks = ['release']
     }
     release {
       buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
@@ -155,6 +155,7 @@ android {
 
 
 dependencies {
+  implementation project(':react-native-cookies')
   // For animated GIF support
   compile 'com.facebook.fresco:animated-gif:1.10.0'
   // For WebP support, including animated WebP
@@ -168,6 +169,7 @@ dependencies {
   implementation project(':react-native-svg')
   implementation project(':react-native-background-timer')
   implementation project(':react-native-sentry')
+  implementation project(':react-native-webview')
   implementation 'com.android.support:multidex:1.0.1'
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation project(':react-native-fabric')
