@@ -190,7 +190,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
       <Container color={baseColors.white}>
         <Header
           onBack={() => this.props.navigation.goBack(null)}
-          title={`send ${this.assetData.token}`}
+          title={`send ${this.assetData.token} via PPN`}
           white
         />
         <BackgroundWrapper>

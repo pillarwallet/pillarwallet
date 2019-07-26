@@ -55,7 +55,7 @@ import { userHasSmartWallet } from 'utils/smartWallet';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
-import { initSmartWalletAccountAction } from 'actions/accountsActions';
+import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from './dbActions';
 import { fetchBadgesAction } from './badgesActions';
 
@@ -130,7 +130,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys));
 
         if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
-          await dispatch(initSmartWalletAccountAction(wallet.privateKey));
+          await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
         }
       } else {
         api.init();

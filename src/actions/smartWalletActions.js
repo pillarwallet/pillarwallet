@@ -42,6 +42,7 @@ import {
   ADD_SMART_WALLET_RECOVERY_AGENTS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   SMART_WALLET_DEPLOYMENT_ERRORS,
+  SET_SMART_WALLET_LAST_SYNCED_HASH,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -96,7 +97,7 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 
 // utils
-import { buildHistoryTransaction, updateHistoryRecord } from 'utils/history';
+import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId, getActiveAccountType } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
@@ -512,6 +513,77 @@ export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions:
   };
 };
 
+export const syncVirtualAccountTransactionsAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accounts: { data: accounts },
+      assets: { data: assets },
+      smartWallet: { lastSyncedHash },
+    } = getState();
+
+    const activeAccountAddress = getActiveAccountAddress(accounts);
+    const accountId = getActiveAccountId(accounts);
+    const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
+
+    const payments = await smartWalletService.getAccountPayments(lastSyncedHash);
+
+    // filter out sent payments
+    const incomingPayments = payments.filter(payment => {
+      const senderAddress = get(payment, 'sender.account.address', '');
+      const recipientAddress = get(payment, 'recipient.account.address', '');
+      return !addressesEqual(senderAddress, activeAccountAddress)
+        && addressesEqual(recipientAddress, activeAccountAddress);
+    });
+
+    // filter out already stored payments
+    const { history: { data: currentHistory } } = getState();
+    const accountHistory = currentHistory[accountId];
+    const newPayments = incomingPayments.filter(payment => {
+      const paymentExists = accountHistory.find(({ hash }) => hash === payment.hash);
+      return !paymentExists;
+    });
+
+    const transformedNewPayments = newPayments.map(payment => {
+      let value = get(payment, 'value', new BigNumber(0));
+      let tokenSymbol = get(payment, 'token.symbol', ETH);
+      const senderAddress = get(payment, 'sender.account.address');
+      const recipientAddress = get(payment, 'recipient.account.address');
+      const tokenAddress = get(payment, 'token.address', ETH);
+
+      if (tokenSymbol !== ETH && tokenAddress === ppnTokenAddress) {
+        tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
+      }
+      if (tokenSymbol === ETH) value = weiToEth(value);
+
+      return buildHistoryTransaction({
+        from: senderAddress,
+        hash: payment.hash,
+        to: recipientAddress,
+        value: value.toString(),
+        asset: tokenSymbol,
+        isPPNTransaction: true,
+        createdAt: +new Date(payment.updatedAt),
+        status: TX_CONFIRMED_STATUS,
+      });
+    });
+
+    if (transformedNewPayments.length) {
+      const newLastSyncedHash = transformedNewPayments[0].hash;
+      dispatch({
+        type: SET_SMART_WALLET_LAST_SYNCED_HASH,
+        payload: newLastSyncedHash,
+      });
+      await dispatch(saveDbAction('smartWallet', { lastSyncedHash: newLastSyncedHash }));
+    }
+
+    // combine with account history & save
+    const updatedAccountHistory = [...transformedNewPayments, ...accountHistory];
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+    dispatch({ type: SET_HISTORY, payload: updatedHistory });
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
+  };
+};
+
 export const onSmartWalletSdkEventAction = (event: Object) => {
   return async (dispatch: Function, getState: Function) => {
     if (!event) return;
@@ -669,6 +741,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           autoClose: true,
         });
         dispatch(fetchAssetsBalancesAction(assets));
+        dispatch(syncVirtualAccountTransactionsAction());
       }
     }
     console.log(event);

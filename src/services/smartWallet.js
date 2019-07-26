@@ -232,10 +232,28 @@ class SmartWallet {
     return this.sdk.searchAccount({ address });
   }
 
+  async getAccountPayments(lastSyncedHash: ?string, page?: number = 0) {
+    const data = await this.sdk.getConnectedAccountPayments(page)
+      .catch((e) => {
+        this.handleError(e);
+        return null;
+      });
+    if (!data) return [];
+
+    const foundLastSyncedTx = lastSyncedHash
+      ? data.items.find(({ hash }) => hash === lastSyncedHash)
+      : null;
+    if (data.nextPage && !foundLastSyncedTx) {
+      return [...data.items, ...(await this.getAccountPayments(lastSyncedHash, page + 1))];
+    }
+
+    return data.items;
+  }
+
   getDeployEstimate(gasPrice: BigNumber) {
     /**
      * can also call `this.sdk.estimateAccountDeployment(REGULAR);`,
-     * but it needs sdk init and when migrating we don't have SDK initated yet
+     * but it needs sdk init and when migrating we don't have SDK initiated yet
      * so we're using calculation method below that is provided by SDK creators
      */
     return utils.bigNumberify(650000).mul(gasPrice);

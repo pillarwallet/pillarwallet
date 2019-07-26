@@ -32,6 +32,7 @@ import {
   initSmartWalletSdkAction,
   setSmartWalletUpgradeStatusAction,
   fetchVirtualAccountBalanceAction,
+  syncVirtualAccountTransactionsAction,
 } from 'actions/smartWalletActions';
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -222,7 +223,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
   };
 };
 
-export const initSmartWalletAccountAction = (privateKey: string) => {
+export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
   return async (dispatch: Function, getState: Function) => {
     const {
       accounts: {
@@ -251,5 +252,6 @@ export const initSmartWalletAccountAction = (privateKey: string) => {
     await dispatch(initSmartWalletSdkAction(privateKey));
     await dispatch(connectSmartWalletAccountAction(activeAccountId));
     dispatch(fetchVirtualAccountBalanceAction());
+    dispatch(syncVirtualAccountTransactionsAction());
   };
 };

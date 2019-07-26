@@ -29,6 +29,7 @@ import {
   ADD_SMART_WALLET_RECOVERY_AGENTS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   RESET_SMART_WALLET,
+  SET_SMART_WALLET_LAST_SYNCED_HASH,
 } from 'constants/smartWalletConstants';
 import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 import type { AssetTransfer } from 'models/Asset';
@@ -53,7 +54,8 @@ export type WalletReducerState = {
       error: ?SmartWalletDeploymentError,
     },
     recoveryAgents: RecoveryAgent[],
-  }
+  },
+  lastSyncedHash: ?string,
 }
 
 export type WalletReducerAction = {
@@ -79,6 +81,7 @@ const initialState = {
       error: null,
     },
   },
+  lastSyncedHash: null,
 };
 
 export default function smartWalletReducer(
@@ -167,6 +170,11 @@ export default function smartWalletReducer(
             ...action.payload,
           },
         },
+      };
+    case SET_SMART_WALLET_LAST_SYNCED_HASH:
+      return {
+        ...state,
+        lastSyncedHash: action.payload || initialState.lastSyncedHash,
       };
     case RESET_SMART_WALLET:
       return { ...initialState };
