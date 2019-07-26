@@ -19,16 +19,12 @@
 */
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import styled from 'styled-components/native';
 import isEqual from 'lodash.isequal';
-import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 
 // components
-import { BaseText, BoldText } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import ShadowedCard from 'components/ShadowedCard';
-import { Note } from 'components/Note';
+import { ListCard } from 'components/ListItem/ListCard';
 
 // utils
 import { baseColors } from 'utils/variables';
@@ -47,81 +43,13 @@ type Props = {
   blockchainNetworks: Object[],
 }
 
-type CardProps = {
-  icon: string,
-  title: string,
-  subtitle?: string,
-  action?: Function,
-  note?: Object,
-}
-
-const CardRow = styled.View`
-   flex-direction: row;
-   width: 100%;
-   align-items: center;
-`;
-
-const CardImage = styled(CachedImage)`
-  width: 60px;
-  height: 60px;
-  border-radius: 30px;
-  background-color: ${baseColors.darkGray};
-  margin-right: 20px;
-`;
-
-const CardContent = styled.View`
-  flex-direction: column;
-`;
-
-const CardTitle = styled(BoldText)`
-  color: ${baseColors.slateBlack};
-  font-size: 17px;
-  width: 100%;
-`;
-
-const CardSubtitle = styled(BaseText)`
-  color: ${baseColors.coolGrey};
-  font-size: 13px;
-  line-height: 15px;
-  margin-top: 4px;
-`;
-
-const genericToken = require('assets/images/tokens/genericToken.png');
-
 const ppnInitButton = {
   id: 'INIT_PPN',
   title: 'Pillar Network',
   isNotConnected: true,
 };
 
-const Card = (props: CardProps) => {
-  const {
-    icon,
-    title,
-    subtitle,
-    action,
-    note,
-  } = props;
-
-  return (
-    <ShadowedCard
-      wrapperStyle={{ marginBottom: 10, width: '100%' }}
-      contentWrapperStyle={{ padding: 20 }}
-      onPress={action}
-    >
-      <CardRow>
-        <CardImage source={{ uri: icon }} fallbackSource={genericToken} />
-        <CardContent>
-          <CardTitle>{title}</CardTitle>
-          {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
-        </CardContent>
-      </CardRow>
-      {!!note &&
-      <Note {...note} containerStyle={{ marginTop: 14 }} />
-      }
-    </ShadowedCard>
-  );
-};
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 class AccountsScreen extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
@@ -151,27 +79,30 @@ class AccountsScreen extends React.Component<Props> {
     switch (id) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
         return (
-          <Card
+          <ListCard
             {...network}
             action={() => navigation.navigate(WALLETS_LIST)}
             subtitle="Balance: £130.17"
+            fallbackIcon={genericToken}
           />
         );
       case 'INIT_PPN':
         return (
-          <Card
+          <ListCard
             {...network}
             action={() => navigation.navigate(PILLAR_NETWORK_INTRO)}
             note={ppnNote}
+            fallbackIcon={genericToken}
           />
         );
       case BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK:
         return (
-          <Card
+          <ListCard
             {...network}
             subtitle="Balance: 0"
             action={() => this.setActiveNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK)}
             note={ppnNote}
+            fallbackIcon={genericToken}
           />
         );
       default:

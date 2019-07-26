@@ -50,6 +50,7 @@ type Props = {
   accounts: Accounts,
   switchAccount: Function,
   resetIncorrectPassword: Function,
+  user: Object,
 }
 
 type State = {
@@ -233,7 +234,7 @@ class WalletsList extends React.Component<Props, State> {
   };
 
   render() {
-    const { accounts } = this.props;
+    const { accounts, user } = this.props;
     const { showCheckPinModal } = this.state;
     return (
       <ContainerWithHeader
@@ -243,7 +244,7 @@ class WalletsList extends React.Component<Props, State> {
           light: true,
           centerItems: [
             { userIcon: true },
-            { title: 'byron Ethereum wallets' },
+            { title: `${user.username}'s Ethereum wallets` },
           ],
         }}
       >
@@ -287,8 +288,10 @@ class WalletsList extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   accounts: { data: accounts },
+  user: { data: user },
 }) => ({
   accounts,
+  user,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

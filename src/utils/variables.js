@@ -104,6 +104,8 @@ export const baseColors = {
   blueYonder: '#818eb3',
   zircon: '#f3f7ff',
   malibu: '#58a7ff',
+  redDamask: '#ca674c',
+  dodgerBlue: '#007aff',
 };
 
 export const brandColors = [
