@@ -150,64 +150,6 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
   };
 };
 
-export const importSmartWalletAccountsAction = (privateKey: string, createNewAccount: boolean) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
-
-    const { user = {} } = await storage.get('user');
-    const {
-      session: { data: session },
-      assets: { data: assets },
-    } = getState();
-
-    const smartAccounts = await smartWalletService.getAccounts();
-    if (!smartAccounts.length && createNewAccount) {
-      const newSmartAccount = await smartWalletService.createAccount();
-      await api.registerSmartWallet({
-        walletId: user.walletId,
-        privateKey,
-        ethAddress: newSmartAccount.address,
-        fcmToken: session.fcmToken,
-      });
-      if (newSmartAccount) smartAccounts.push(newSmartAccount);
-    }
-    dispatch({
-      type: SET_SMART_WALLET_ACCOUNTS,
-      payload: smartAccounts,
-    });
-    await dispatch(saveDbAction('smartWallet', { accounts: smartAccounts }));
-
-    // register on backend missed accounts
-    let backendAccounts = await api.listAccounts(user.walletId);
-    const registerOnBackendPromises = smartAccounts.map(async account => {
-      const accountAddress = account.address.toLowerCase();
-      const backendAccount = backendAccounts.find(({ ethAddress }) => ethAddress.toLowerCase() === accountAddress);
-      if (!backendAccount) {
-        return api.registerSmartWallet({
-          walletId: user.walletId,
-          privateKey,
-          ethAddress: account.address,
-          fcmToken: session.fcmToken,
-        });
-      }
-      return Promise.resolve();
-    });
-    await Promise.all(registerOnBackendPromises);
-    backendAccounts = await api.listAccounts(user.walletId);
-
-    const newAccountsPromises = smartAccounts.map(async account => {
-      return dispatch(addNewAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, backendAccounts));
-    });
-    await Promise.all(newAccountsPromises);
-
-    if (smartAccounts.length) {
-      await dispatch(setActiveAccountAction(smartAccounts[0].address));
-      dispatch(fetchAssetsBalancesAction(assets));
-      dispatch(fetchCollectiblesAction());
-    }
-  };
-};
-
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
   return async (dispatch: Function) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
@@ -522,31 +464,22 @@ export const syncVirtualAccountTransactionsAction = () => {
       smartWallet: { lastSyncedHash },
     } = getState();
 
-    const activeAccountAddress = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
     const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
 
     const payments = await smartWalletService.getAccountPayments(lastSyncedHash);
 
-    // filter out sent payments
-    const incomingPayments = payments.filter(payment => {
-      const senderAddress = get(payment, 'sender.account.address', '');
-      const recipientAddress = get(payment, 'recipient.account.address', '');
-      return !addressesEqual(senderAddress, activeAccountAddress)
-        && addressesEqual(recipientAddress, activeAccountAddress);
-    });
-
     // filter out already stored payments
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId];
-    const newPayments = incomingPayments.filter(payment => {
+    const newPayments = payments.filter(payment => {
       const paymentExists = accountHistory.find(({ hash }) => hash === payment.hash);
       return !paymentExists;
     });
 
     const transformedNewPayments = newPayments.map(payment => {
-      let value = get(payment, 'value', new BigNumber(0));
       let tokenSymbol = get(payment, 'token.symbol', ETH);
+      const value = get(payment, 'value', new BigNumber(0));
       const senderAddress = get(payment, 'sender.account.address');
       const recipientAddress = get(payment, 'recipient.account.address');
       const tokenAddress = get(payment, 'token.address', ETH);
@@ -554,7 +487,6 @@ export const syncVirtualAccountTransactionsAction = () => {
       if (tokenSymbol !== ETH && tokenAddress === ppnTokenAddress) {
         tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
       }
-      if (tokenSymbol === ETH) value = weiToEth(value);
 
       return buildHistoryTransaction({
         from: senderAddress,
@@ -1107,5 +1039,65 @@ export const navigateToSendTokenAmountAction = (navOptions: Object) => {
     }
 
     navigate(ppnSendFlow);
+  };
+};
+
+export const importSmartWalletAccountsAction = (privateKey: string, createNewAccount: boolean) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+
+    const { user = {} } = await storage.get('user');
+    const {
+      session: { data: session },
+      assets: { data: assets },
+    } = getState();
+
+    const smartAccounts = await smartWalletService.getAccounts();
+    if (!smartAccounts.length && createNewAccount) {
+      const newSmartAccount = await smartWalletService.createAccount();
+      await api.registerSmartWallet({
+        walletId: user.walletId,
+        privateKey,
+        ethAddress: newSmartAccount.address,
+        fcmToken: session.fcmToken,
+      });
+      if (newSmartAccount) smartAccounts.push(newSmartAccount);
+    }
+    dispatch({
+      type: SET_SMART_WALLET_ACCOUNTS,
+      payload: smartAccounts,
+    });
+    await dispatch(saveDbAction('smartWallet', { accounts: smartAccounts }));
+
+    // register on backend missed accounts
+    let backendAccounts = await api.listAccounts(user.walletId);
+    const registerOnBackendPromises = smartAccounts.map(async account => {
+      const accountAddress = account.address.toLowerCase();
+      const backendAccount = backendAccounts.find(({ ethAddress }) => ethAddress.toLowerCase() === accountAddress);
+      if (!backendAccount) {
+        return api.registerSmartWallet({
+          walletId: user.walletId,
+          privateKey,
+          ethAddress: account.address,
+          fcmToken: session.fcmToken,
+        });
+      }
+      return Promise.resolve();
+    });
+    await Promise.all(registerOnBackendPromises);
+    backendAccounts = await api.listAccounts(user.walletId);
+
+    const newAccountsPromises = smartAccounts.map(async account => {
+      return dispatch(addNewAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, backendAccounts));
+    });
+    await Promise.all(newAccountsPromises);
+
+    if (smartAccounts.length) {
+      await dispatch(connectSmartWalletAccountAction(smartAccounts[0].address));
+      await dispatch(setActiveAccountAction(smartAccounts[0].address));
+      dispatch(fetchAssetsBalancesAction(assets));
+      dispatch(fetchCollectiblesAction());
+      dispatch(syncVirtualAccountTransactionsAction());
+    }
   };
 };
