@@ -85,10 +85,6 @@ type Props = {
   collectibles: Collectible[],
 };
 
-type State = {
-  gasLimit: number,
-};
-
 const WhiteWrapper = styled.View`
   background-color: ${baseColors.white};
   padding-bottom: ${spacing.rhythm}px;
@@ -130,7 +126,9 @@ const WarningMessage = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
 `;
 
-class UpgradeReviewScreen extends React.PureComponent<Props, State> {
+class UpgradeReviewScreen extends React.PureComponent<Props> {
+  gasLimit: number = DEFAULT_GAS_LIMIT;
+
   constructor(props) {
     super(props);
     const { navigation } = this.props;
@@ -140,10 +138,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
      * adding gas limit here will lead it up to confirm screen
      * TODO: add gas limit estimate calculation from smart wallet sdk when it's possible
      */
-    const gasLimit = navigation.getParam('gasLimit', DEFAULT_GAS_LIMIT);
-    this.state = {
-      gasLimit,
-    };
+    this.gasLimit = navigation.getParam('gasLimit', DEFAULT_GAS_LIMIT);
   }
 
   componentDidMount() {
@@ -225,14 +220,12 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
 
   onNextClick = () => {
     const { navigation } = this.props;
-    const { gasLimit } = this.state;
-    navigation.navigate(UPGRADE_CONFIRM, { gasLimit });
+    navigation.navigate(UPGRADE_CONFIRM, { gasLimit: this.gasLimit });
   };
 
-  getTokenTransferPrice(gasPriceWei: BigNumber) {
-    const { gasLimit } = this.state;
-    return gasPriceWei.mul(gasLimit);
-  }
+  getTokenTransferPrice = (gasPriceWei: BigNumber) => {
+    return gasPriceWei.mul(this.gasLimit);
+  };
 
   render() {
     const {

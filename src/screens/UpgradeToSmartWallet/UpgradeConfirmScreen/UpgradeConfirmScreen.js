@@ -63,7 +63,6 @@ type Props = {
 
 type State = {
   upgradeStarted: boolean,
-  gasLimit: number,
 };
 
 const WhiteWrapper = styled.View`
@@ -99,14 +98,15 @@ const WarningMessage = styled(Paragraph)`
 `;
 
 class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
+  gasLimit: number = 0;
+  state = {
+    upgradeStarted: false,
+  };
+
   constructor(props) {
     super(props);
     const { navigation } = this.props;
-    const gasLimit = navigation.getParam('gasLimit', 0);
-    this.state = {
-      upgradeStarted: false,
-      gasLimit,
-    };
+    this.gasLimit = navigation.getParam('gasLimit', 0);
   }
 
   componentDidMount() {
@@ -140,7 +140,6 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       navigation,
       balances,
     } = this.props;
-    const { gasLimit } = this.state;
     this.setState({ upgradeStarted: true });
     const gasPrice = gasPriceWei.toNumber();
     const assetsArray = Object.values(assets);
@@ -165,7 +164,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           contractAddress,
           tokenType,
           tokenId,
-          gasLimit,
+          gasLimit: this.gasLimit,
           gasPrice,
         };
       }
@@ -177,7 +176,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       } = asset;
       return {
         amount,
-        gasLimit,
+        gasLimit: this.gasLimit,
         gasPrice,
         symbol,
         contractAddress,
@@ -203,10 +202,9 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     });
   };
 
-  getTokenTransferPrice(gasPriceWei: BigNumber): BigNumber {
-    const { gasLimit } = this.state;
-    return gasPriceWei.mul(gasLimit);
-  }
+  getTokenTransferPrice = (gasPriceWei: BigNumber): BigNumber => {
+    return gasPriceWei.mul(this.gasLimit);
+  };
 
   renderSpinner() {
     return <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>;
