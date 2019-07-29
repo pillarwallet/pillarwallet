@@ -155,29 +155,33 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
 
-    api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-      if (!offer.error) {
-        dispatch({
-          type: ADD_OFFER,
-          payload: {
-            ...offer,
-            offerRestricted: (!isAllowed && `Unavailable in ${alpha2}`) || null,
-          },
-        });
-      }
-    }).catch(() => null);
+    if (isAllowed) {
+      api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+        if (!offer.error) {
+          dispatch({
+            type: ADD_OFFER,
+            payload: {
+              ...offer,
+              offerRestricted: (!isAllowed && `Unavailable in ${alpha2}`) || null,
+            },
+          });
+        }
+      }).catch(() => null);
+    }
 
-    api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-      if (!offer.error) {
-        dispatch({
-          type: ADD_OFFER,
-          payload: {
-            ...offer,
-            offerRestricted: (alpha2 !== 'US' && `Unavailable in ${alpha2}`) || null,
-          },
-        });
-      }
-    }).catch(() => null);
+    if (alpha2 === 'US') {
+      api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+        if (!offer.error) {
+          dispatch({
+            type: ADD_OFFER,
+            payload: {
+              ...offer,
+              offerRestricted: (alpha2 !== 'US' && `Unavailable in ${alpha2}`) || null,
+            },
+          });
+        }
+      }).catch(() => null);
+    }
 
     if (error) {
       const message = error.message || 'Unable to connect';
