@@ -57,6 +57,7 @@ import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initSmartWalletAccountAction } from 'actions/accountsActions';
+import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { saveDbAction } from './dbActions';
 import { fetchBadgesAction } from './badgesActions';
 
@@ -189,6 +190,12 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       toastWalletBackup(isWalletBackedUp);
 
       dispatch(fetchBadgesAction());
+
+      /**
+       * this is used only to avoid BCX fetching issues,
+       * TODO: remove fetching from ethplorer when BCX is fixed or BCX2 is released
+       */
+      dispatch(restoreTransactionHistoryAction(wallet.address, user.walletId));
 
       navigate(navigateToAppAction);
     } catch (e) {

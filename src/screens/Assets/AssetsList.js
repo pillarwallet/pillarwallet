@@ -367,7 +367,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
+  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets, true)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsList);

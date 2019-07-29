@@ -40,6 +40,8 @@ import { ADD_TRANSACTION } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
+import Toast from 'components/Toast';
+
 import {
   getExchangeRates,
   transferSigned,
@@ -367,7 +369,7 @@ export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = 
   };
 };
 
-export const fetchAssetsBalancesAction = (assets: Assets) => {
+export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?: boolean) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
@@ -390,6 +392,19 @@ export const fetchAssetsBalancesAction = (assets: Assets) => {
         ...balances,
         [accountId]: transformedBalances,
       };
+      if (showToastIfIncreased) {
+        const increasedBalances = Object.values(transformedBalances)
+          // $FlowFixMe
+          .filter(({ balance: balanceUpd, symbol: symbolUpd }) =>
+            Object.values(balances[accountId] || {}).find(
+              // $FlowFixMe
+              ({ balance, symbol }) => symbol === symbolUpd && parseFloat(balanceUpd) > parseFloat(balance),
+            ),
+          );
+        if (increasedBalances.length) {
+          Toast.show({ message: 'Your assets balance increased', type: 'success', title: 'Success' });
+        }
+      }
       dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
       dispatch({
         type: UPDATE_BALANCES,
