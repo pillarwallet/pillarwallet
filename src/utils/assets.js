@@ -87,6 +87,8 @@ function getPMTTokenAddress(): string {
   switch (NETWORK_PROVIDER) {
     case 'ropsten':
       return '0xF383e4C078b34Da69534A7B7F1F381d418315273';
+    case 'rinkeby':
+      return '0x6b69d738aFfca7b1F548c5fB92E80581375Dc0E5';
     default:
       return '';
   }
