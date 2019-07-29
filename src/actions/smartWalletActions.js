@@ -43,6 +43,7 @@ import {
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   SMART_WALLET_DEPLOYMENT_ERRORS,
   SET_SMART_WALLET_LAST_SYNCED_HASH,
+  RESET_SMART_WALLET,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -1046,6 +1047,10 @@ export const cleanSmartWalletAccountsAction = () => {
     dispatch({
       type: SET_HISTORY,
       payload: updatedHistory,
+    });
+
+    dispatch({
+      type: RESET_SMART_WALLET,
     });
 
     if (activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
