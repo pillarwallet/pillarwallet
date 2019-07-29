@@ -19,7 +19,8 @@
 */
 import get from 'lodash.get';
 import orderBy from 'lodash.orderby';
-import { uniqBy } from 'utils/common';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { getEthereumProvider, uniqBy } from 'utils/common';
 import {
   SET_HISTORY,
   TRANSACTION_PENDING_EVENT,
@@ -30,16 +31,24 @@ import {
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { ETH } from 'constants/assetsConstants';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
-import { getActiveAccountAddress, getActiveAccountId, getActiveAccountWalletId } from 'utils/accounts';
+import {
+  getAccountAddress,
+  getActiveAccount,
+  getActiveAccountAddress,
+  getActiveAccountId,
+  getActiveAccountWalletId,
+} from 'utils/accounts';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
-import { ETH } from '../constants/assetsConstants';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
+
+const currentProvider = getEthereumProvider(NETWORK_PROVIDER);
 
 const afterHistoryUpdatedAction = () => {
   return async (dispatch: Function, getState: Function) => {
@@ -312,5 +321,33 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
       type: SET_HISTORY,
       payload: updatedHistory,
     });
+  };
+};
+
+export const startListeningForBalanceChangeAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      assets: { data: assets },
+      accounts: { data: accounts },
+    } = getState();
+    const activeAccount = getActiveAccount(accounts);
+    if (activeAccount) {
+      const walletAddress = getAccountAddress(activeAccount);
+      currentProvider.on(walletAddress, () => {
+        dispatch(fetchAssetsBalancesAction(assets, true));
+      });
+    }
+  };
+};
+
+export const stopListeningForBalanceChangeAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accounts: { data: accounts },
+    } = getState();
+    const walletAddress = getActiveAccountAddress(accounts);
+    if (walletAddress && currentProvider) {
+      currentProvider.removeListener(walletAddress);
+    }
   };
 };

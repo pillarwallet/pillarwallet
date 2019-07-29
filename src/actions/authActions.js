@@ -52,10 +52,12 @@ import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { userHasSmartWallet } from 'utils/smartWallet';
+import { clearWebViewCookies } from 'utils/exchange';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
+import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { saveDbAction } from './dbActions';
 import { fetchBadgesAction } from './badgesActions';
 
@@ -189,6 +191,12 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
 
       dispatch(fetchBadgesAction());
 
+      /**
+       * this is used only to avoid BCX fetching issues,
+       * TODO: remove fetching from ethplorer when BCX is fixed or BCX2 is released
+       */
+      dispatch(restoreTransactionHistoryAction(wallet.address, user.walletId));
+
       navigate(navigateToAppAction);
     } catch (e) {
       dispatch({
@@ -305,6 +313,7 @@ export const logoutAction = () => {
     dispatch({ type: LOG_OUT });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
     chat.client.resetAccount().catch(() => null);
+    clearWebViewCookies();
     await firebase.iid().delete().catch(() => {});
     await storage.removeAll();
   };

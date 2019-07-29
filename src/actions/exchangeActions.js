@@ -17,9 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import { Linking } from 'react-native';
-import { utils } from 'ethers';
 import ExchangeService from 'services/exchange';
 import Toast from 'components/Toast';
 import {
@@ -38,13 +36,13 @@ import {
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 import { calculateGasEstimate } from 'services/assets';
+import { getActiveAccountAddress } from 'utils/accounts';
 
 import type { Offer, OfferOrder } from 'models/Offer';
 
 import { saveDbAction } from './dbActions';
 
 const exchangeService = new ExchangeService();
-const DEFAULT_GAS_LIMIT = 500000;
 
 const connectExchangeService = (state: Object) => {
   const {
@@ -63,20 +61,6 @@ const connectExchangeService = (state: Object) => {
       && existingShapeshiftToken === shapeshiftAccessToken) return;
   }
   exchangeService.connect(oAuthTokens.accessToken, shapeshiftAccessToken);
-};
-
-const getGasEstimate = (transaction) => {
-  /**
-   * if there's no data transaction and we calculate token to token transfer
-   * data by `ethers.js` then the `gasLimit` always is too small,
-   * once this is sorted out we can remove default `DEFAULT_GAS_LIMIT`
-   * this happens to be only for `Shapeshift`
-   */
-  return calculateGasEstimate(transaction)
-    .then(calculatedGasLimit =>
-      Math.round(utils.bigNumberify(calculatedGasLimit).toNumber() * 1.5), // safe buffer multiplier
-    )
-    .catch(() => DEFAULT_GAS_LIMIT);
 };
 
 export const takeOfferAction = (
@@ -117,12 +101,13 @@ export const takeOfferAction = (
       } = {},
     }: OfferOrder = offerOrderData;
     const {
-      wallet: { data: wallet },
+      accounts: { data: accounts },
       assets: { supportedAssets },
     } = getState();
     const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
-    const gasLimit = await getGasEstimate({
-      from: wallet.address, // TODO: get address from active account when it's possible
+    const from = getActiveAccountAddress(accounts);
+    const gasLimit = await calculateGasEstimate({
+      from,
       to: payToAddress,
       data: transactionObjData,
       amount: payAmount,
@@ -137,12 +122,19 @@ export const takeOfferAction = (
   };
 };
 
-export const resetOffersAction = () => ({
-  type: RESET_OFFERS,
-});
+export const resetOffersAction = () => {
+  return async (dispatch: Function) => {
+    // reset websocket listener
+    exchangeService.resetOnOffers();
+    dispatch({ type: RESET_OFFERS });
+  };
+};
 
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId: userWalletId } },
+    } = getState();
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
       type: SET_EXCHANGE_SEARCH_REQUEST,
@@ -155,22 +147,56 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     connectExchangeService(getState());
     exchangeService.onOffers(offers =>
       offers
-        .filter(({ askRate = 0, minQuantity = 0, maxQuantity = 0 }) => {
-          if (!askRate) return false;
-          // maxQuantity might be 0, but offer is acceptable
-          return fromAmount >= parseFloat(minQuantity)
-            && (parseFloat(maxQuantity) === 0 || fromAmount <= parseFloat(maxQuantity));
-        })
+        .filter(({ askRate }) => !!askRate)
         .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
     );
     // we're requesting although it will start delivering when connection is established
-    const result = await exchangeService.requestOffers(fromAssetCode, toAssetCode);
-    if (result.error) {
-      Toast.show({
-        title: 'Exchange service failed',
-        type: 'warning',
-        message: 'Unable to connect',
-      });
+    const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode, fromAmount);
+
+    const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
+
+    api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+      if (!offer.error) {
+        dispatch({
+          type: ADD_OFFER,
+          payload: {
+            ...offer,
+            offerRestricted: (!isAllowed && `Unavailable in ${alpha2}`) || null,
+          },
+        });
+      }
+    }).catch(() => null);
+
+    api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+      if (!offer.error) {
+        dispatch({
+          type: ADD_OFFER,
+          payload: {
+            ...offer,
+            offerRestricted: (alpha2 !== 'US' && `Unavailable in ${alpha2}`) || null,
+          },
+        });
+      }
+    }).catch(() => null);
+
+    if (error) {
+      const message = error.message || 'Unable to connect';
+      if (message.toString().toLowerCase().startsWith('access token')) {
+        /**
+         * access token is expired or malformed,
+         * let's hit with user info endpoint to update access tokens
+         * or redirect to pin screen (logic being sdk init)
+         * after it's complete (access token's updated) let's dispatch same action again
+         * TODO: change SDK user info endpoint to simple SDK token refresh method when it is reachable within SDK
+         */
+        await api.userInfo(userWalletId).catch(() => null);
+      } else {
+        Toast.show({
+          title: 'Exchange service failed',
+          type: 'warning',
+          message,
+        });
+      }
     }
   };
 };
@@ -286,12 +312,13 @@ export const setTokenAllowanceAction = (
     }
     const { data: { to: payToAddress, data } } = response;
     const {
-      wallet: { data: wallet },
+      accounts: { data: accounts },
       assets: { supportedAssets },
     } = getState();
     const asset = supportedAssets.find(a => a.symbol === assetCode);
-    const gasLimit = await getGasEstimate({
-      from: wallet.address, // TODO: get address from active account when it's possible
+    const from = getActiveAccountAddress(accounts);
+    const gasLimit = await calculateGasEstimate({
+      from,
       to: payToAddress,
       data,
       symbol: assetCode,

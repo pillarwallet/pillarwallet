@@ -23,7 +23,6 @@ import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
-import { Answers } from 'react-native-fabric';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import Permissions from 'react-native-permissions';
@@ -56,7 +55,11 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 
 // actions
-import { fetchTransactionsHistoryAction, fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
+import {
+  fetchTransactionsHistoryAction,
+  fetchTransactionsHistoryNotificationsAction,
+  restoreTransactionHistoryAction,
+} from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { resetDeepLinkDataAction, approveLoginAttemptAction, executeDeepLinkAction } from 'actions/deepLinkActions';
@@ -70,14 +73,20 @@ import {
   onWalletConnectSessionRequest,
   cancelWaitingRequest,
 } from 'actions/walletConnectActions';
+import { logScreenViewAction } from 'actions/analyticsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
+import { activeAccountSelector } from 'selectors';
 
 // utils
 import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
+import { getAccountAddress } from 'utils/accounts';
+
+// types
+import type { Account } from 'models/Account';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -105,6 +114,9 @@ type Props = {
   onWalletLinkScan: Function,
   cancelWaitingRequest: Function,
   loginAttemptToken?: string,
+  logScreenView: (view: string, screen: string) => void,
+  restoreTransactionHistory: (walletAddress: string, walletId: string) => void,
+  activeAccount: Account,
 };
 
 type State = {
@@ -300,9 +312,9 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory } = this.props;
+    const { fetchTransactionsHistory, logScreenView } = this.props;
 
-    Answers.logContentView('Home screen');
+    logScreenView('View home', 'Home');
 
     if (Platform.OS === 'ios') {
       firebase.notifications().setBadge(0);
@@ -374,13 +386,24 @@ class HomeScreen extends React.Component<Props, State> {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
       fetchAllCollectiblesData,
+      restoreTransactionHistory,
+      activeAccount,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
     fetchAllCollectiblesData();
+
+    /**
+     * this is used only to avoid BCX fetching issues,
+     * TODO: remove fetching from ethplorer when BCX is fixed or BCX2 is released
+     */
+    restoreTransactionHistory(getAccountAddress(activeAccount), activeAccount.walletId);
   };
 
   setActiveTab = (activeTab) => {
+    const { logScreenView } = this.props;
+
+    logScreenView(`View tab Home.${activeTab}`, 'Home');
     this.setState({ activeTab });
   };
 
@@ -854,6 +877,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   openSeaTxHistory: accountCollectiblesHistorySelector,
+  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -875,6 +899,10 @@ const mapDispatchToProps = (dispatch) => ({
   onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
   onWalletLinkScan: uri => dispatch(executeDeepLinkAction(uri)),
   cancelWaitingRequest: clientId => dispatch(cancelWaitingRequest(clientId)),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+  restoreTransactionHistory: (walletAddress: string, walletId: string) => dispatch(
+    restoreTransactionHistoryAction(walletAddress, walletId),
+  ),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
