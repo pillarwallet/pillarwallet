@@ -106,6 +106,7 @@ export const baseColors = {
   malibu: '#58a7ff',
   redDamask: '#ca674c',
   dodgerBlue: '#007aff',
+  indianRed: '#cb6262',
 };
 
 export const brandColors = [

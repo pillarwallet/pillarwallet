@@ -19,25 +19,36 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, FlatList, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
+import { withNavigation } from 'react-navigation';
+import type { NavigationScreenProp } from 'react-navigation';
 
-import { Wrapper } from 'components/Layout';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import { MediumText } from 'components/Typography';
+import { BaseText, BoldText, MediumText } from 'components/Typography';
+import Tabs from 'components/Tabs';
+import { Insight } from 'components/Insight';
+import { Wrapper } from 'components/Layout';
 
 import { getBalance, getRate } from 'utils/assets';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { COLLECTIBLES, defaultFiatCurrency, TOKENS } from 'constants/assetsConstants';
 
 import { activeAccountSelector } from 'selectors';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountCollectiblesSelector } from 'selectors/collectibles';
+
 import type { Assets, Balances } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
+import type { Badges } from 'models/Badge';
+
+import CollectiblesList from './CollectiblesList';
+import Spinner from './Assets';
 
 type Props = {
   baseFiatCurrency: string,
@@ -45,6 +56,17 @@ type Props = {
   rates: Object,
   balances: Balances,
   paymentNetworkBalances: Balances,
+  collectibles: Collectible[],
+  badges: Badges,
+  navigation: NavigationScreenProp<*>,
+  tabs: Object[],
+  activeTab: string,
+  showInsight: boolean,
+  blockAssetsView?: boolean,
+  sendingBlockedMessage: Object,
+  hideInsight: Function,
+  insightList: Object[],
+  insightsTitle: string,
 }
 
 const ListHeaderWrapper = styled.View`
@@ -60,13 +82,19 @@ const HeaderTitle = styled(MediumText)`
   color: ${baseColors.blueYonder};
 `;
 
-const StyledFlatList = styled.FlatList`
-  background-color: ${baseColors.white};
-  border-top-color: ${baseColors.mediumLightGray};
-  border-top-width: 1px;
+const MessageTitle = styled(BoldText)`
+  font-size: ${fontSizes.large}px;
+  text-align: center;
 `;
 
-class SmartWalletView extends React.Component<Props> {
+const Message = styled(BaseText)`
+  padding-top: 20px;
+  font-size: ${fontSizes.extraSmall}px;
+  color: ${baseColors.darkGray};
+  text-align: center;
+`;
+
+class WalletView extends React.Component<Props> {
   renderAsset = ({ item: asset }) => {
     const { baseFiatCurrency } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -76,8 +104,8 @@ class SmartWalletView extends React.Component<Props> {
       name,
       symbol,
       iconUrl,
-      paymentNetworkBalance,
-      paymentNetworkBalanceInFiat,
+      balance,
+      balanceInFiat,
     } = asset;
 
     const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
@@ -88,8 +116,8 @@ class SmartWalletView extends React.Component<Props> {
         label={name}
         avatarUrl={fullIconUrl}
         balance={{
-          syntheticBalance: formatMoney(paymentNetworkBalance),
-          value: formatMoney(paymentNetworkBalanceInFiat, 4),
+          balance: formatMoney(balance),
+          value: formatMoney(balanceInFiat, 2),
           currency: currencySymbol,
           token: symbol,
         }}
@@ -111,7 +139,17 @@ class SmartWalletView extends React.Component<Props> {
       baseFiatCurrency,
       rates,
       balances,
-      paymentNetworkBalances,
+      collectibles,
+      badges,
+      navigation,
+      tabs,
+      activeTab,
+      showInsight,
+      blockAssetsView,
+      sendingBlockedMessage = {},
+      hideInsight,
+      insightList = [],
+      insightsTitle,
     } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
@@ -120,38 +158,68 @@ class SmartWalletView extends React.Component<Props> {
       .map(({ symbol, balance, ...rest }) => ({
         symbol,
         balance: getBalance(balances, symbol),
-        paymentNetworkBalance: getBalance(paymentNetworkBalances, symbol),
         ...rest,
       }))
       .map(({ balance, symbol, paymentNetworkBalance, ...rest }) => ({ // eslint-disable-line
         balance,
         symbol,
         balanceInFiat: balance * getRate(rates, symbol, fiatCurrency),
-        paymentNetworkBalance,
-        paymentNetworkBalanceInFiat: paymentNetworkBalance * getRate(rates, symbol, fiatCurrency),
         ...rest,
       }))
       .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
 
     return (
-      <Wrapper>
-        <StyledFlatList
-          data={sortedAssets}
-          keyExtractor={(item) => item.id}
-          renderItem={this.renderAsset}
-          initialNumToRender={5}
-          maxToRenderPerBatch={5}
-          onEndReachedThreshold={0.5}
-          style={{ width: '100%', height: '100%' }}
-          ListHeaderComponent={this.renderHeader}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => {}}
-            />
-          }
+      <ScrollView
+        stickyHeaderIndices={[1]}
+        style={{ backgroundColor: baseColors.white }}
+      >
+        <Insight
+          isVisible={showInsight}
+          title={insightsTitle}
+          insightList={insightList}
+          onClose={hideInsight}
         />
-      </Wrapper>
+        <Tabs
+          initialActiveTab={activeTab}
+          tabs={tabs}
+          style={{ marginTop: 10 }}
+        />
+        {(blockAssetsView &&
+          <Wrapper flex={1} regularPadding center>
+            <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
+            <Message>{ sendingBlockedMessage.message }</Message>
+            <Wrapper style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
+              <Spinner />
+            </Wrapper>
+          </Wrapper>
+        ) || (
+          <React.Fragment>
+            {activeTab === TOKENS && (
+              <FlatList
+                data={sortedAssets}
+                keyExtractor={(item) => item.id}
+                renderItem={this.renderAsset}
+                initialNumToRender={5}
+                maxToRenderPerBatch={5}
+                onEndReachedThreshold={0.5}
+                style={{ width: '100%', height: '100%' }}
+                ListHeaderComponent={this.renderHeader}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={false}
+                    onRefresh={() => {}}
+                  />
+                }
+              />
+            )}
+            {activeTab === COLLECTIBLES && (
+              <CollectiblesList
+                collectibles={collectibles}
+                badges={badges}
+                navigation={navigation}
+              />)}
+          </React.Fragment>)}
+      </ScrollView>
     );
   }
 }
@@ -160,15 +228,18 @@ const mapStateToProps = ({
   assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  badges: { data: badges },
 }) => ({
   assets,
   rates,
   baseFiatCurrency,
   assetsLayout,
+  badges,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  collectibles: accountCollectiblesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   activeAccount: activeAccountSelector,
 });
@@ -178,4 +249,4 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-export default connect(combinedMapStateToProps)(SmartWalletView);
+export default withNavigation(connect(combinedMapStateToProps)(WalletView));

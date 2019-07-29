@@ -188,7 +188,7 @@ class CollectiblesList extends React.Component<Props> {
             justifyContent: 'center',
             flex: 1,
           }
-        : { paddingTop: 40 }}
+        : {}}
         stickySectionHeadersEnabled={false}
         keyExtractor={(item) => item.key}
         refreshControl={
