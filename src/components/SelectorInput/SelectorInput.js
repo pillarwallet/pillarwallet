@@ -260,6 +260,7 @@ const viewConfig = {
 };
 
 const isMatchingSearch = (query, text) => query && text && text.toUpperCase().includes(query.toUpperCase());
+const isCaseInsesitveMatch = (query, text) => query && text && text.toLowerCase() === query.toLowerCase();
 
 export default class SelectorInput extends React.Component<Props, State> {
   searchInput: ?Object;
@@ -392,12 +393,13 @@ export default class SelectorInput extends React.Component<Props, State> {
     let filteredHorizontalListData = horizontalOptions;
 
     if (isSearchQuery) {
-      filteredListData = filteredListData.filter(
-        ({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name),
-      );
-      filteredHorizontalListData = filteredHorizontalListData.filter(
-        ({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name),
-      );
+      // filter by search query and sort exact matches (case insensitve) first (-1) or keep existing order (0)
+      filteredListData = filteredListData
+        .filter(({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name))
+        .sort(({ value: val, name }) => isCaseInsesitveMatch(query, val) || isCaseInsesitveMatch(query, name) ? -1 : 0);
+      filteredHorizontalListData = filteredHorizontalListData
+        .filter(({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name))
+        .sort(({ value: val, name }) => isCaseInsesitveMatch(query, val) || isCaseInsesitveMatch(query, name) ? -1 : 0);
     }
 
     const selectorOptionsCount = options.length + horizontalOptions.length;
