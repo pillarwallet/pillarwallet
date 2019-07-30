@@ -36,6 +36,7 @@ type Props = {
   titleStyle?: Object,
   label?: string,
   contentWrapperStyle?: Object,
+  disabled?: boolean,
 }
 
 const CardRow = styled.View`
@@ -100,6 +101,7 @@ export const ListCard = (props: Props) => {
     titleStyle,
     label,
     contentWrapperStyle,
+    disabled,
   } = props;
 
   const wrapperStyle = { padding: 20, justifyContent: 'center' };
@@ -109,6 +111,7 @@ export const ListCard = (props: Props) => {
       wrapperStyle={{ marginBottom: 10, width: '100%' }}
       contentWrapperStyle={{ ...wrapperStyle, ...contentWrapperStyle }}
       onPress={action}
+      disabled={disabled}
     >
       <CardRow>
         {(!!icon || !!fallbackIcon) && <CardImage source={{ uri: icon }} fallbackSource={fallbackIcon} />}

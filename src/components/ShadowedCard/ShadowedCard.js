@@ -34,6 +34,7 @@ const ContentWrapper = styled.View`
   border-radius: 6px;
   background: ${baseColors.white};
   width: 100%;
+  opacity: ${props => props.disabled ? 0.6 : 1};
 `;
 
 type Props = {
@@ -41,6 +42,7 @@ type Props = {
   wrapperStyle?: Object,
   contentWrapperStyle?: Object,
   onPress?: Function,
+  disabled?: boolean,
 }
 
 type State = {
@@ -62,6 +64,7 @@ export default class ShadowedCard extends React.PureComponent<Props, State> {
       contentWrapperStyle,
       children,
       onPress,
+      disabled,
     } = this.props;
     const { cardHeight, cardWidth } = this.state;
     return (
@@ -77,12 +80,12 @@ export default class ShadowedCard extends React.PureComponent<Props, State> {
             position: 'absolute',
             top: -(SHADOW_LENGTH / 2),
             left: -(SHADOW_LENGTH / 2),
-            opacity: 0.8,
+            opacity: disabled ? 0.4 : 0.8,
           }}
           shadowRadius={4}
         />}
         <TouchableWithoutFeedback onPress={onPress}>
-          <ContentWrapper>
+          <ContentWrapper disabled={disabled}>
             <View
               style={contentWrapperStyle}
               onLayout={(e) => {

@@ -24,13 +24,11 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native/index';
 
 // components
-import { spacing, baseColors, fontSizes } from 'utils/variables';
+import { spacing, baseColors } from 'utils/variables';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
-import ShadowedCard from 'components/ShadowedCard';
-import Icon from 'components/Icon';
-import { BaseText, BoldText } from 'components/Typography';
+import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
@@ -71,50 +69,9 @@ const Wrapper = styled.View`
   flex: 1;
 `;
 
-const ItemWrapper = styled.View`
-   flex-direction: row;
-   flex: 1;
-   margin-bottom: ${spacing.medium}px;
-`;
-
-const CardRow = styled.View`
-   flex-direction: row;
-   width: 100%;
-   align-items: center;
-`;
-
-const CardContent = styled.View`
-  flex-direction: column;
-  width: 0;
-  flexGrow: 1;
-`;
-
-const CardTitle = styled(BoldText)`
-  color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.small}px;
-`;
-
-const CardSubtitle = styled(BaseText)`
-  color: ${baseColors.coolGrey};
-  font-size: 13px;
-  line-height: 15px;
-  margin-top: 4px;
-`;
-
-const CheckIcon = styled(Icon)`
-  font-size: ${responsiveSize(14)};
-  color: ${baseColors.electricBlue};
-  align-self: flex-start;
-`;
-
-const SettingsIcon = styled(Icon)`
-  font-size: ${fontSizes.extraLarge};
-  color: ${baseColors.malibu};
-`;
 
 const iconRadius = responsiveSize(52);
-const WalletIconWrapper = styled.View`
+const IconWrapper = styled.View`
   height: ${iconRadius}px;
   width: ${iconRadius}px;
   border-radius: ${iconRadius / 2}px;
@@ -185,53 +142,23 @@ class WalletsList extends React.Component<Props, State> {
   renderWalletListItem = ({ item }) => {
     const { navigation, blockchainNetworks } = this.props;
     const isSmartWallet = item.type === ACCOUNT_TYPES.SMART_WALLET;
-    const buttonSideLength = responsiveSize(84);
     const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '' };
     const { id: activeBNetworkID } = activeBNetwork;
     const isActive = !!item.isActive && activeBNetworkID === BLOCKCHAIN_NETWORK_TYPES.ETHEREUM;
 
     return (
-      <ItemWrapper>
-        <ShadowedCard
-          wrapperStyle={{
-            flex: 1,
-          }}
-          contentWrapperStyle={{
-            paddingVertical: 6,
-            paddingHorizontal: responsiveSize(16),
-            minHeight: buttonSideLength,
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            borderWidth: 2,
-            borderColor: isActive ? baseColors.electricBlue : baseColors.white,
-            borderRadius: 6,
-          }}
-          onPress={() => this.switchAccount(item)}
-        >
-          <CardRow>
-            <WalletIconWrapper>
-              <WalletIcon isSmart={isSmartWallet} />
-            </WalletIconWrapper>
-            <CardContent>
-              <CardTitle>{isSmartWallet ? 'Smart Wallet' : 'Key Wallet'}</CardTitle>
-              <CardSubtitle>£236</CardSubtitle>
-            </CardContent>
-            {isActive && <CheckIcon name="check" />}
-          </CardRow>
-        </ShadowedCard>
-        <ShadowedCard
-          wrapperStyle={{ width: buttonSideLength, marginLeft: 8, height: '100%' }}
-          contentWrapperStyle={{
-            padding: 20,
-            height: '100%',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onPress={() => navigation.navigate(WALLET_SETTINGS, { wallet: item })}
-        >
-          <SettingsIcon name="settings" />
-        </ShadowedCard>
-      </ItemWrapper>
+      <SettingsItemCarded
+        title={isSmartWallet ? 'Smart Wallet' : 'Key Wallet'}
+        subtitle="£236"
+        onMainPress={() => this.switchAccount(item)}
+        onSettingsPress={() => navigation.navigate(WALLET_SETTINGS, { wallet: item })}
+        isActive={isActive}
+        customIcon={(
+          <IconWrapper>
+            <WalletIcon isSmart={isSmartWallet} />
+          </IconWrapper>
+        )}
+      />
     );
   };
 

@@ -130,7 +130,7 @@ class AccountsScreen extends React.Component<Props> {
               color: baseColors.aluminium,
             },
           ],
-          rightItems: [{ close: true }],
+          rightItems: [{ close: true, dismiss: true }],
         }}
       >
         <FlatList

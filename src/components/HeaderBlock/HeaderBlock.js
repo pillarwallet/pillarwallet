@@ -28,6 +28,7 @@ import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import { connect } from 'react-redux';
 import ProfileImage from 'components/ProfileImage';
+import { USERS } from 'constants/navigationConstants';
 
 // partials
 import { HeaderActionButton } from './HeaderActionButton';
@@ -66,6 +67,7 @@ const Wrapper = styled.View`
 
 const HeaderContentWrapper = styled.View`
   padding: ${spacing.large}px ${spacing.large}px 0;
+  width: 100%;
 `;
 
 const SafeArea = styled(SafeAreaView)`
@@ -76,7 +78,6 @@ const HeaderRow = styled.View`
   flex-direction: row;
   width: 100%;
   align-items: flex-end;
-  justify-content: space-between;
   padding-bottom: ${spacing.large}px;
   margin-top: 10px;
 `;
@@ -96,21 +97,30 @@ const UserButton = styled.TouchableOpacity`
   margin-right: ${spacing.medium}px;
 `;
 
+const SideWrapper = styled.View`
+  flex: ${props => props.sideFlex ? props.sideFlex : 1};
+`;
+
 const RightSide = styled.View`
   flex-direction: row;
   justify-content: flex-end;
-  flex: ${props => props.sideFlex ? props.sideFlex : 1};
 `;
 
 const LeftSide = styled.View`
   flex-direction: row;
-  flex: ${props => props.sideFlex ? props.sideFlex : 1};
   align-items: center;
+`;
+
+const CenterWrapper = styled.View`
+  flex: 4;
+  align-items: center;
+  justify-content: center;
+  padding: 0 ${spacing.medium}px;
 `;
 
 const MiddlePart = styled.View`
   flex-direction: row;
-  flex-grow: 1;
+  width: 100%;
   align-items: center;
   justify-content: center;
 `;
@@ -207,16 +217,22 @@ class HeaderBlock extends React.Component<Props, State> {
 
     return (
       <HeaderRow>
-        <LeftSide sideFlex={sideFlex}>
-          {this.renderSideItems('LEFT', leftItems, theme)}
-        </LeftSide>
+        <SideWrapper sideFlex={sideFlex}>
+          <LeftSide>
+            {this.renderSideItems('LEFT', leftItems, theme)}
+          </LeftSide>
+        </SideWrapper>
         {!!centerItems.length &&
-        <MiddlePart>
-          {this.renderSideItems('CENTER', centerItems, theme)}
-        </MiddlePart>}
-        <RightSide sideFlex={sideFlex}>
-          {this.renderSideItems('RIGHT', rightItems, theme)}
-        </RightSide>
+        <CenterWrapper>
+          <MiddlePart>
+            {this.renderSideItems('CENTER', centerItems, theme)}
+          </MiddlePart>
+        </CenterWrapper>}
+        <SideWrapper sideFlex={sideFlex}>
+          <RightSide>
+            {this.renderSideItems('RIGHT', rightItems, theme)}
+          </RightSide>
+        </SideWrapper>
       </HeaderRow>
     );
   };
@@ -274,7 +290,7 @@ class HeaderBlock extends React.Component<Props, State> {
             key="close"
             icon="close"
             color={baseColors.slateBlack}
-            onPress={() => navigation.goBack()}
+            onPress={item.dismiss ? () => navigation.dismiss() : () => navigation.goBack()}
             fontSize={fontSizes.extraSmall}
             horizontalAlign="flex-start"
             style={{ marginBottom: -2, marginRight: -4 }}
@@ -292,14 +308,13 @@ class HeaderBlock extends React.Component<Props, State> {
   };
 
   renderUser = (theme, showName: boolean) => {
-    const { user } = this.props;
+    const { user, navigation } = this.props;
     return (
-      <UserButton key="user">
+      <UserButton key="user" onPress={() => { navigation.navigate(USERS); }}>
         <HeaderProfileImage
           uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
           userName={user.username}
           diameter={profileImageWidth}
-          onPress={() => {}}
           containerStyle={{
             borderRadius: profileImageWidth / 2,
             backgroundColor: user.profileImage ? 'transparent' : baseColors.lightGray,

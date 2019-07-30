@@ -84,6 +84,9 @@ import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
+import UsersScreen from 'screens/Users';
+import UserSettingsScreen from 'screens/Users/UserSettings';
+import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -179,6 +182,10 @@ import {
   CONTACT_INFO,
   ACCOUNTS,
   PILLAR_NETWORK_INTRO,
+  MANAGE_USERS_FLOW,
+  USERS,
+  USER_SETTINGS,
+  ADD_EDIT_USER,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -240,7 +247,6 @@ const hideTabNavigatorOnChildView = ({ navigation }) => {
 const assetsFlow = createStackNavigator(
   {
     [ASSETS]: AssetsScreen,
-    [ACCOUNTS]: AccountsScreen,
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [BADGE]: BadgeScreen,
@@ -509,6 +515,7 @@ smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // MANAGE WALLETS FLOW
 const manageWalletsFlow = createStackNavigator({
+  [ACCOUNTS]: AccountsScreen,
   [WALLETS_LIST]: WalletsListScreen,
   [WALLET_SETTINGS]: WalletSettingsScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
@@ -517,6 +524,15 @@ const manageWalletsFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+// MANAGE USERS FLOW
+const manageUsersFlow = createStackNavigator({
+  [USERS]: UsersScreen,
+  [USER_SETTINGS]: UserSettingsScreen,
+  [ADD_EDIT_USER]: AddOrEditUserScreen,
+}, StackNavigatorConfig);
+
+manageUsersFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // TANK FLOW
 const manageTankFlow = createStackNavigator({
@@ -546,6 +562,7 @@ const AppFlowNavigation = createStackNavigator(
     [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
     [MANAGE_TANK_FLOW]: manageTankFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
+    [MANAGE_USERS_FLOW]: manageUsersFlow,
   },
   modalTransition,
 );
