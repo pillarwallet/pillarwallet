@@ -23,12 +23,14 @@ import {
   getSdkEnvironment,
   createSdk,
   Sdk,
+  sdkConstants,
   sdkModules,
 } from '@archanova/sdk';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
+import { addressesEqual } from 'utils/assets';
 
 const {
   Eth: {
@@ -45,6 +47,8 @@ const TransactionSpeeds = {
   [REGULAR]: REGULAR,
   [FAST]: FAST,
 };
+
+const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 
 type AccountTransaction = {
   recipient: string,
@@ -233,11 +237,7 @@ class SmartWallet {
   }
 
   async getAccountPayments(lastSyncedHash: ?string, page?: number = 0) {
-    const data = await this.sdk.getConnectedAccountPayments(page)
-      .catch((e) => {
-        this.handleError(e);
-        return null;
-      });
+    const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
     if (!data) return [];
 
     const foundLastSyncedTx = lastSyncedHash
@@ -248,6 +248,24 @@ class SmartWallet {
     }
 
     return data.items;
+  }
+
+  async getAccountPaymentsToSettle(accountAddress: string, page?: number = 0) {
+    const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
+    if (!data) return [];
+
+    const items = data.items
+      .filter(payment => payment.state === PAYMENT_COMPLETED)
+      .filter(payment => {
+        const recipientAddress = get(payment, 'recipient.account.address', '');
+        return addressesEqual(recipientAddress, accountAddress);
+      });
+
+    if (data.nextPage) {
+      return [...items, ...(await this.getAccountPaymentsToSettle(accountAddress, page + 1))];
+    }
+
+    return items;
   }
 
   getDeployEstimate(gasPrice: BigNumber) {

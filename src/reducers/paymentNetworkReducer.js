@@ -27,6 +27,8 @@ import {
   SET_ESTIMATED_SETTLE_BALANCE_FEE,
   UPDATE_PAYMENT_NETWORK_STAKED,
   RESET_PAYMENT_NETWORK,
+  SET_AVAILABLE_TO_SETTLE_TX,
+  START_FETCHING_AVAILABLE_TO_SETTLE_TX,
 } from 'constants/paymentNetworkConstants';
 import type { TopUpFee, SettleBalanceFee } from 'models/PaymentNetwork';
 import type { Balances } from 'models/Asset';
@@ -37,6 +39,10 @@ export type PaymentNetworkState = {
   topUpFee: TopUpFee,
   settleBalanceFee: SettleBalanceFee,
   txToListen: string[],
+  availableToSettleTx: {
+    data: Object[],
+    isFetched: boolean,
+  },
 };
 
 export type PaymentNetworkAction = {
@@ -56,6 +62,10 @@ const initialState = {
     feeInfo: null,
   },
   txToListen: [],
+  availableToSettleTx: {
+    data: [],
+    isFetched: false,
+  },
 };
 
 export default function paymentNetworkReducer(
@@ -82,6 +92,22 @@ export default function paymentNetworkReducer(
       };
     case RESET_PAYMENT_NETWORK:
       return { ...initialState };
+    case START_FETCHING_AVAILABLE_TO_SETTLE_TX:
+      return {
+        ...state,
+        availableToSettleTx: {
+          data: [],
+          isFetched: false,
+        },
+      };
+    case SET_AVAILABLE_TO_SETTLE_TX:
+      return {
+        ...state,
+        availableToSettleTx: {
+          data: action.payload,
+          isFetched: true,
+        },
+      };
     default:
       return state;
   }

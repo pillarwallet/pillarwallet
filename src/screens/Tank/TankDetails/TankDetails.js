@@ -76,7 +76,6 @@ type State = {
   leftColumnHeightHalf: number,
   rightColumnHeightHalf: number,
   topUpButtonSubmitted: boolean,
-  settleBalanceButtonSubmitted: boolean,
   showPinScreenForAction: string,
 };
 
@@ -208,7 +207,6 @@ class TankDetails extends React.Component<Props, State> {
       leftColumnHeightHalf: 0,
       rightColumnHeightHalf: 0,
       topUpButtonSubmitted: false,
-      settleBalanceButtonSubmitted: false,
       showPinScreenForAction: '',
     };
   }
@@ -238,7 +236,6 @@ class TankDetails extends React.Component<Props, State> {
     this.setState({
       showPinScreenForAction: '',
       topUpButtonSubmitted: false,
-      settleBalanceButtonSubmitted: false,
     });
   };
 
@@ -254,18 +251,6 @@ class TankDetails extends React.Component<Props, State> {
       .catch(() => null);
   };
 
-  navigateToSettleBalanceScreen = async (_: string, wallet: Object) => {
-    const { ensureSmartAccountConnected, navigation } = this.props;
-    this.setState({ showPinScreenForAction: '' });
-
-    await delay(500);
-    ensureSmartAccountConnected(wallet.privateKey)
-      .then(() => {
-        this.setState({ settleBalanceButtonSubmitted: false }, () => navigation.navigate(SETTLE_BALANCE));
-      })
-      .catch(() => null);
-  };
-
   render() {
     const {
       tankValueAnimated,
@@ -273,7 +258,6 @@ class TankDetails extends React.Component<Props, State> {
       leftColumnHeightHalf,
       showPinScreenForAction,
       topUpButtonSubmitted,
-      settleBalanceButtonSubmitted,
     } = this.state;
     const {
       baseFiatCurrency,
@@ -410,13 +394,10 @@ class TankDetails extends React.Component<Props, State> {
             <Button
               secondaryTransparent
               title="Settle"
-              disabled={settleBalanceButtonSubmitted || !Object.keys(assetsOnNetwork).length}
+              disabled={!Object.keys(assetsOnNetwork).length}
               noPadding
               width="197px"
-              onPress={() => this.setState({
-                showPinScreenForAction: SETTLE_BALANCE,
-                settleBalanceButtonSubmitted: true,
-              })}
+              onPress={() => { navigation.navigate(SETTLE_BALANCE); }}
             />
           </FooterWrapper>
         </ScrollWrapper>
@@ -430,10 +411,7 @@ class TankDetails extends React.Component<Props, State> {
         >
           <Wrapper flex={1}>
             <CheckPin
-              onPinValid={showPinScreenForAction === FUND_TANK
-                ? this.navigateToFundTankScreen
-                : this.navigateToSettleBalanceScreen
-              }
+              onPinValid={this.navigateToFundTankScreen}
             />
           </Wrapper>
         </SlideModal>

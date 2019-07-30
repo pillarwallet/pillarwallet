@@ -60,6 +60,8 @@ import {
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
   UPDATE_PAYMENT_NETWORK_STAKED,
+  SET_AVAILABLE_TO_SETTLE_TX,
+  START_FETCHING_AVAILABLE_TO_SETTLE_TX,
 } from 'constants/paymentNetworkConstants';
 import { SMART_WALLET_UNLOCK, ASSETS, SEND_TOKEN_AMOUNT, PPN_SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 
@@ -482,9 +484,9 @@ export const syncVirtualAccountTransactionsAction = () => {
       const value = get(payment, 'value', new BigNumber(0));
       const senderAddress = get(payment, 'sender.account.address');
       const recipientAddress = get(payment, 'recipient.account.address');
-      const tokenAddress = get(payment, 'token.address', ETH);
+      const tokenAddress = get(payment, 'token.address', '');
 
-      if (tokenSymbol !== ETH && tokenAddress === ppnTokenAddress) {
+      if (tokenSymbol !== ETH && addressesEqual(tokenAddress, ppnTokenAddress)) {
         tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
       }
 
@@ -661,7 +663,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txReceiverAddress = get(event, 'payload.recipient.account.address', '');
 
-      if (txToken !== ETH && txTokenAddress === ppnTokenAddress) {
+      if (txToken !== ETH && addressesEqual(txTokenAddress, ppnTokenAddress)) {
         txToken = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
       }
       if (txToken === ETH) txAmount = weiToEth(txAmount);
@@ -861,7 +863,7 @@ export const fetchVirtualAccountBalanceAction = () => {
       let balance = get(tokenBalance, 'incoming', new BigNumber(0));
       const tokenAddress = get(tokenBalance, 'token.address', '');
 
-      if (symbol !== ETH && tokenAddress === ppnTokenAddress) {
+      if (symbol !== ETH && addressesEqual(tokenAddress, ppnTokenAddress)) {
         symbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
       }
       if (symbol === ETH) balance = weiToEth(balance);
@@ -887,6 +889,40 @@ export const fetchVirtualAccountBalanceAction = () => {
         accountId,
         balances: accountBalances,
       },
+    });
+  };
+};
+
+export const fetchAvailableTxToSettleAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    if (!smartWalletService || !smartWalletService.sdkInitialized) {
+      Toast.show({
+        message: 'Smart Account is not initialized',
+        type: 'warning',
+        autoClose: false,
+      });
+      dispatch({
+        type: SET_AVAILABLE_TO_SETTLE_TX,
+        payload: [],
+      });
+      return;
+    }
+
+    const { accounts: { data: accounts } } = getState();
+    const activeAccountAddress = getActiveAccountAddress(accounts);
+
+    dispatch({ type: START_FETCHING_AVAILABLE_TO_SETTLE_TX });
+    const payments = await smartWalletService.getAccountPaymentsToSettle(activeAccountAddress);
+
+    const txToSettle = payments.map(item => ({
+      token: item.token,
+      hash: item.hash,
+      value: item.value,
+      createdAt: item.updatedAt,
+    }));
+    dispatch({
+      type: SET_AVAILABLE_TO_SETTLE_TX,
+      payload: txToSettle,
     });
   };
 };
