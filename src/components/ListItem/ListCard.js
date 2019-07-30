@@ -70,9 +70,10 @@ const CardTitle = styled(BoldText)`
 
 const CardSubtitle = styled(BaseText)`
   color: ${baseColors.coolGrey};
-  font-size: 13px;
-  line-height: 15px;
+  font-size: 15px;
+  line-height: 22px;
   margin-top: 4px;
+  padding-right: 10%;
 `;
 
 const TitleWrapper = styled.View`
@@ -88,7 +89,6 @@ const Label = styled(MediumText)`
   text-align: right;
   padding-left: ${spacing.medium}px;
 `;
-
 
 export const ListCard = (props: Props) => {
   const {

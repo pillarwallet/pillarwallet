@@ -39,6 +39,12 @@ type Props = {
 const getUserSettings = (that) => {
   return [
     {
+      key: 'userSettings',
+      title: 'User settings',
+      body: 'Update your profile information',
+      action: () => that.manageUserInformation(),
+    },
+    {
       key: 'spendingLimits',
       title: 'Spending limits',
       body: 'Secure your funds by restricting larger transactions',
@@ -62,12 +68,6 @@ const getUserSettings = (that) => {
       label: 'soon',
       disabled: true,
     },
-    {
-      key: 'userSettings',
-      title: 'User settings',
-      body: 'Update your profile information',
-      action: () => that.manageUserInformation(),
-    },
   ];
 };
 
@@ -78,7 +78,7 @@ class UserSettings extends React.PureComponent<Props> {
     navigation.navigate(ADD_EDIT_USER);
   };
 
-  renderSettingsItems = ({ item }, isSmartWallet) => {
+  renderSettingsItems = ({ item }) => {
     const {
       title,
       labelColor,
@@ -96,7 +96,7 @@ class UserSettings extends React.PureComponent<Props> {
         action={action}
         disabled={disabled}
         label={label}
-        contentWrapperStyle={isSmartWallet ? { minHeight: 86, padding: 16 } : { padding: 16 }}
+        contentWrapperStyle={{ minHeight: 96, padding: 16 }}
       />
     );
   };

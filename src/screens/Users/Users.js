@@ -18,8 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, RefreshControl } from 'react-native';
+import { SectionList } from 'react-native';
 import isEqual from 'lodash.isequal';
+import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 
 // components
@@ -38,12 +39,26 @@ import { HOME, USER_SETTINGS } from 'constants/navigationConstants';
 
 // actions
 import { setActiveBNetworkAction } from 'actions/blockchainNetworkActions';
-import { responsiveSize } from '../../utils/ui';
+import { responsiveSize } from 'utils/ui';
+import { MediumText, BaseText } from 'components/Typography';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   user: Object,
 }
+
+const SectionHeader = styled(MediumText)`
+  color: ${baseColors.blueYonder};
+  font-size: 14px;
+  line-height: 17px;
+  margin: ${spacing.mediumLarge}px 0;
+`;
+
+const EmptyState = styled(BaseText)`
+  color: ${baseColors.darkGray};
+  font-size: 15px;
+  line-height: 22px;
+`;
 
 class UsersScreen extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
@@ -86,6 +101,15 @@ class UsersScreen extends React.Component<Props> {
     const { user } = this.props;
 
     const users = [user]; // update when we have more users
+    const usersOnOtherDevices = []; // update when we have users on other devices
+    const sections = [];
+    sections.push({ title: 'This device', data: users, extraData: users });
+    sections.push({
+      title: 'Other devices',
+      data: usersOnOtherDevices,
+      extraData: usersOnOtherDevices,
+      emptyStateMessage: 'Log in an existing user on another device to manage their permissions here',
+    });
 
     return (
       <ContainerWithHeader
@@ -101,21 +125,23 @@ class UsersScreen extends React.Component<Props> {
           rightItems: [{ close: true, dismiss: true }],
         }}
       >
-        <FlatList
-          data={users}
-          keyExtractor={(item) => item.id.toString()}
+        <SectionList
           renderItem={this.renderUser}
-          initialNumToRender={8}
-          contentContainerStyle={{
-            padding: spacing.large,
+          sections={sections}
+          keyExtractor={(item) => item.id.toString()}
+          style={{ width: '100%' }}
+          renderSectionFooter={({ section: { emptyStateMessage } }) => {
+            if (emptyStateMessage) return (<EmptyState>{emptyStateMessage}</EmptyState>);
+            return null;
           }}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => {}}
-            />
-          }
-          style={{ flexGrow: 0 }}
+          renderSectionHeader={({ section: { title } }) => (
+            <SectionHeader>{title}</SectionHeader>
+          )}
+          contentContainerStyle={{
+            paddingHorizontal: spacing.large,
+            paddingVertical: spacing.medium,
+          }}
+          stickySectionHeadersEnabled={false}
         />
       </ContainerWithHeader>
     );

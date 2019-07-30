@@ -163,7 +163,7 @@ class WalletSettings extends React.PureComponent<Props> {
         subtitle={body}
         action={action}
         label={label}
-        contentWrapperStyle={isSmartWallet ? { minHeight: 86, padding: 16 } : { padding: 16 }}
+        contentWrapperStyle={isSmartWallet ? { minHeight: 96, padding: 16 } : { padding: 16 }}
       />
     );
   };
