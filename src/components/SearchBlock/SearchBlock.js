@@ -19,12 +19,13 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Animated, Keyboard } from 'react-native';
-import { Wrapper } from 'components/Layout';
-import Header from 'components/Header';
+import { Animated, Dimensions, Keyboard } from 'react-native';
 import SearchBar from 'components/SearchBar';
-import { baseColors } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
+import { withNavigation } from 'react-navigation';
+
+const { height: screenHeight } = Dimensions.get('window');
 
 type State = {
   query: string,
@@ -43,33 +44,27 @@ type Props = {
   white?: boolean,
 }
 
-const HeaderWrapper = styled(Wrapper)`
-  background-color: ${props => props.color ? props.color : baseColors.snowWhite};
-  z-index: 100;
-  ${props => props.white
-    ? `
-    background-color: ${baseColors.white};
-    border-bottom-width: 1px;
-    border-bottom-color: ${baseColors.mediumLightGray};
-    `
-    : ''}
+const SearchBarWrapper = styled.View`
+  width: 100%;
+  padding: ${spacing.large}px ${spacing.large}px 0 ;
+  position: relative;
+  z-index: 11;
 `;
 
 const FullScreenOverlayWrapper = styled.TouchableOpacity`
   z-index: 10;
   top: 0;
   left: 0;
+  bottom: 0;
+  right: 0;
   width: 100%;
-  height: 100%;
+  height: ${screenHeight};
   position: absolute;
 `;
 
 const FullScreenOverlay = styled.View`
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
+  height: ${screenHeight};
   background-color: rgba(0,0,0,.6);
 `;
 
@@ -150,12 +145,9 @@ class SearchBlock extends React.Component<Props, State> {
 
   render() {
     const {
-      headerProps,
       itemSearchState,
       searchInputPlaceholder,
-      backgroundColor,
       hideSearch,
-      white,
     } = this.props;
     const {
       query,
@@ -167,23 +159,6 @@ class SearchBlock extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <HeaderWrapper color={backgroundColor} white={white}>
-          <Header {...headerProps} />
-          {!hideSearch &&
-            <Wrapper regularPadding>
-              <SearchBar
-                inputProps={{
-                  onChange: this.handleSearchChange,
-                  onBlur: this.handleSearchBlur,
-                  onFocus: this.handleSearchFocus,
-                  value: query,
-                  autoCapitalize: 'none',
-                }}
-                placeholder={searchInputPlaceholder}
-              />
-            </Wrapper>
-          }
-        </HeaderWrapper>
         {!!searchIsFocused && !inSearchMode &&
         <FullScreenOverlayWrapper onPress={this.handleSearchBlur}>
           <AnimatedFullScreenOverlay
@@ -193,9 +168,23 @@ class SearchBlock extends React.Component<Props, State> {
           />
         </FullScreenOverlayWrapper>
         }
+        {!hideSearch &&
+          <SearchBarWrapper>
+            <SearchBar
+              inputProps={{
+                onChange: this.handleSearchChange,
+                onBlur: this.handleSearchBlur,
+                onFocus: this.handleSearchFocus,
+                value: query,
+                autoCapitalize: 'none',
+              }}
+              placeholder={searchInputPlaceholder}
+            />
+          </SearchBarWrapper>
+        }
       </React.Fragment>
     );
   }
 }
 
-export default SearchBlock;
+export default withNavigation(SearchBlock);

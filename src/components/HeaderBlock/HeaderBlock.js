@@ -327,10 +327,6 @@ class HeaderBlock extends React.Component<Props, State> {
           uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
           userName={user.username}
           diameter={profileImageWidth}
-          containerStyle={{
-            borderRadius: profileImageWidth / 2,
-            backgroundColor: user.profileImage ? 'transparent' : baseColors.lightGray,
-          }}
           noShadow
         />
         {showName &&

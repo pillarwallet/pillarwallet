@@ -23,9 +23,8 @@ import {
   FlatList,
   Keyboard,
   Image,
-  KeyboardAvoidingView,
-  Platform,
   RefreshControl,
+  View,
 } from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
@@ -49,8 +48,8 @@ import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
-import { Wrapper } from 'components/Layout';
-// import SearchBlock from 'components/SearchBlock';
+import { Wrapper, ScrollWrapper } from 'components/Layout';
+import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import Spinner from 'components/Spinner';
@@ -68,6 +67,7 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
   padding-left: 30px;
   border-bottom-width: 1px;
+  border-top-width: 1px;
   border-color: ${UIColors.defaultBorderColor};
   align-items: center;
   flex-direction: row;
@@ -153,56 +153,6 @@ type State = {
   forceHideRemoval: boolean,
 }
 
-// const RecentConnections = styled.View`
-//   height: 150px;
-//   border-bottom-width: 1px;
-//   border-style: solid;
-//   border-color: ${UIColors.defaultBorderColor};
-// `;
-//
-// const RecentConnectionsWrapper = styled.View`
-//   shadow-color: ${baseColors.pigeonPost};
-//   shadow-radius: 6px;
-//   shadow-opacity: 0.15;
-//   shadow-offset: 0px 6px;
-// `;
-//
-// const RecentConnectionsScrollView = styled.ScrollView`
-//   background-color: ${baseColors.snowWhite};
-//   padding-left: 6px;
-//   margin-top: -4px;
-//   padding-top: ${Platform.select({
-//   ios: '4px',
-//   android: 0,
-// })};
-// `;
-//
-// const RecentConnectionsItemProfileImage = styled(ProfileImage)`
-//   margin-bottom: ${spacing.rhythm / 2};
-// `;
-//
-// const RecentConnectionsItem = styled.TouchableOpacity`
-//   align-items: center;
-//   width: ${Platform.select({
-//   ios: '60px',
-//   android: '74px',
-// })};
-//   margin: ${Platform.select({
-//   ios: '4px 8px 24px',
-//   android: '0',
-// })};
-// `;
-//
-// const RecentConnectionsItemName = styled(BaseText)`
-//   font-size: ${fontSizes.extraExtraSmall};
-//   color: ${baseColors.darkGray};
-//   padding: 0 4px;
-//   margin-top: ${Platform.select({
-//   ios: '4px',
-//   android: '-4px',
-// })};
-// `;
-
 const ConnectionStatus = (props: ConnectionStatusProps) => {
   let iconName = '';
   switch (props.status) {
@@ -271,25 +221,6 @@ class PeopleScreen extends React.Component<Props, State> {
     this.setState({ query });
     this.handleContactsSearch(query);
   };
-
-  // renderRecentConnections = () => {
-  //   const { contacts, navigation } = this.props;
-  //   return contacts
-  //     .sort((a, b) => b.createdAt - a.createdAt)
-  //     .slice(0, 10)
-  //     .map(contact => {
-  //       const profileImage = contact.lastUpdateTime
-  //         ? `${contact.profileImage}?t=${contact.lastUpdateTime}`
-  //         : contact.profileImage;
-  //
-  //       return (
-  //         <RecentConnectionsItem key={contact.username} onPress={() => navigation.navigate(CONTACT, { contact })}>
-  //           <RecentConnectionsItemProfileImage uri={profileImage} userName={contact.username} diameter={52} />
-  //           <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
-  //         </RecentConnectionsItem>
-  //       );
-  //     });
-  // };
 
   handleContactsSearch = (query: string) => {
     if (!query || query.trim() === '' || query.length < MIN_QUERY_LENGTH) {
@@ -460,27 +391,22 @@ class PeopleScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         color={baseColors.white}
         headerProps={{
-          leftItems: [
-            { user: true },
-          ],
-          rightItems: [
-            {
-              label: 'Add contact',
-              action: () => {},
-            },
-          ],
+          leftItems: [{ user: true }],
           rightIconsSize: fontSizes.extraLarge,
         }}
       >
-        { /* <SearchBlock
-          headerProps={{ title: 'people' }}
-          searchInputPlaceholder="Search or add new contact"
-          onSearchChange={(q) => this.handleSearchChange(q)}
-          itemSearchState={!!contactState}
-          navigation={navigation}
-          white
-        /> */ }
-        {!inSearchMode && !!pendingConnectionRequests &&
+        <ScrollWrapper
+          keyboardShouldPersistTaps="always"
+          contentContainerStyle={{ flexGrow: 1 }}
+          enableOnAndroid={false}
+        >
+          <SearchBlock
+            headerProps={{ title: 'people' }}
+            searchInputPlaceholder="Search or add people"
+            onSearchChange={(q) => this.handleSearchChange(q)}
+            itemSearchState={!!contactState}
+          />
+          {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
             onPress={this.handleConnectionsRequestBannerPress}
             underlayColor={baseColors.lightGray}
@@ -495,81 +421,81 @@ class PeopleScreen extends React.Component<Props, State> {
               <ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
             </React.Fragment>
           </ConnectionRequestBanner>
-        }
-        <InnerWrapper>
-          {inSearchMode && contactState === FETCHED && usersFound &&
-          <PeopleSearchResults
-            searchResults={searchResults}
-            navigation={navigation}
-            invitations={invitations}
-            localContacts={sortedLocalContacts}
-          />
           }
+          <InnerWrapper>
+            {inSearchMode && contactState === FETCHED && usersFound &&
+            <PeopleSearchResults
+              searchResults={searchResults}
+              navigation={navigation}
+              invitations={invitations}
+              localContacts={sortedLocalContacts}
+            />
+            }
+            {!inSearchMode && !!sortedLocalContacts.length &&
+            <FlatList
+              data={sortedLocalContacts}
+              keyExtractor={(item) => item.id}
+              renderItem={this.renderContact}
+              initialNumToRender={8}
+              ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+              onScroll={() => Keyboard.dismiss()}
+              contentContainerStyle={{
+                paddingVertical: spacing.rhythm,
+                paddingTop: spacing.medium,
+              }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={false}
+                  onRefresh={() => {
+                    const { fetchInviteNotifications } = this.props;
+                    fetchInviteNotifications();
+                  }}
+                />
+              }
+            />
+            }
 
-          {!inSearchMode && !!sortedLocalContacts.length &&
-          <FlatList
-            data={sortedLocalContacts}
-            keyExtractor={(item) => item.id}
-            renderItem={this.renderContact}
-            initialNumToRender={8}
-            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-            onScroll={() => Keyboard.dismiss()}
-            contentContainerStyle={{
-              paddingVertical: spacing.rhythm,
-              paddingTop: spacing.medium,
+            {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
+            <View
+              style={{ flex: 1 }}
+            >
+              {!!query && contactState === FETCHING &&
+              <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>
+              }
+
+              {inSearchMode && contactState === FETCHED && !usersFound &&
+              <Wrapper center fullScreen>
+                <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
+              </Wrapper>
+              }
+
+              {!inSearchMode && !sortedLocalContacts.length &&
+              <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+                <EmptyStateBGWrapper>
+                  <Image source={esBackground} />
+                </EmptyStateBGWrapper>
+                <EmptyStateParagraph
+                  title="Nobody is here"
+                  bodyText="Start building your connection list by inviting friends or by searching for someone"
+                />
+              </Wrapper>
+              }
+            </View>
+            }
+          </InnerWrapper>
+          <ConnectionConfirmationModal
+            showConfirmationModal={showConfirmationModal}
+            manageContactType={manageContactType}
+            contact={contact}
+            onConfirm={this.confirmManageAction}
+            onModalHide={() => {
+              this.setState({
+                showConfirmationModal: false,
+                forceHideRemoval: true,
+              });
             }}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  const { fetchInviteNotifications } = this.props;
-                  fetchInviteNotifications();
-                }}
-              />
-            }
           />
-          }
-
-          {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
-          <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'} style={{ flex: 1 }}>
-            {!!query && contactState === FETCHING &&
-            <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>
-            }
-
-            {inSearchMode && contactState === FETCHED && !usersFound &&
-            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-              <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
-            </Wrapper>
-            }
-
-            {!inSearchMode && !sortedLocalContacts.length &&
-            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-              <EmptyStateBGWrapper>
-                <Image source={esBackground} />
-              </EmptyStateBGWrapper>
-              <EmptyStateParagraph
-                title="Nobody is here"
-                bodyText="Start building your connection list by inviting friends or by searching for someone"
-              />
-            </Wrapper>
-            }
-
-
-          </KeyboardAvoidingView>
-          }
-        </InnerWrapper>
-        <ConnectionConfirmationModal
-          showConfirmationModal={showConfirmationModal}
-          manageContactType={manageContactType}
-          contact={contact}
-          onConfirm={this.confirmManageAction}
-          onModalHide={() => {
-            this.setState({
-              showConfirmationModal: false,
-              forceHideRemoval: true,
-            });
-          }}
-        />
+        </ScrollWrapper>
       </ContainerWithHeader>
     );
   }

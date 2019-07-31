@@ -215,9 +215,6 @@ class PeopleSearchResults extends React.Component<Props> {
             onScroll={() => Keyboard.dismiss()}
             keyExtractor={({ username }) => username}
             keyboardShouldPersistTaps="always"
-            contentContainerStyle={{
-              paddingBottom: 40,
-            }}
             ListHeaderComponent={<ListSubHeading>ALL USERS</ListSubHeading>}
             ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
           />
