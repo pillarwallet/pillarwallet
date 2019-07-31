@@ -159,9 +159,17 @@ class SmartWallet {
     return get(this.sdk, 'state.account.balance.virtual', new BigNumber(0));
   }
 
-  getAccountStakedAmount(tokenAddress: ?string) {
+  getAccountStakedAmount(tokenAddress: ?string): BigNumber {
     return this.sdk.getConnectedAccountVirtualBalance(tokenAddress)
-      .then(({ value }) => value)
+      .then(data => {
+        let value;
+        if (data.items) { // NOTE: we're getting the data.items response when tokenAddress is null
+          value = get(data, 'items[0].value');
+        } else {
+          value = get(data, 'value');
+        }
+        return value || new BigNumber(0);
+      })
       .catch((e) => {
         this.handleError(e);
         return new BigNumber(0);
