@@ -1196,16 +1196,9 @@ exports[`Contact info should render Contact info correctly 1`] = `
         Array [
           Object {
             "alignItems": "center",
-            "backgroundColor": "#ffffff",
-            "borderBottomColor": "#f5f5f5",
-            "borderBottomWidth": 0.5,
-            "borderTopColor": "#f5f5f5",
-            "borderTopWidth": 0.5,
             "display": "flex",
             "flexDirection": "row",
             "justifyContent": "space-between",
-            "paddingHorizontal": 20,
-            "paddingVertical": 20,
           },
           undefined,
         ]
@@ -1216,12 +1209,13 @@ exports[`Contact info should render Contact info correctly 1`] = `
           Array [
             Object {
               "alignItems": "center",
-              "display": "flex",
-              "flexBasis": 0,
               "flexDirection": "row",
-              "flexGrow": 1,
-              "flexShrink": 1,
               "justifyContent": "space-between",
+              "paddingBottom": 24,
+              "paddingLeft": 16,
+              "paddingRight": 16,
+              "paddingTop": 22,
+              "width": "100%",
             },
             undefined,
           ]
@@ -1239,9 +1233,20 @@ exports[`Contact info should render Contact info correctly 1`] = `
               },
               Array [
                 Object {
-                  "fontSize": 18,
+                  "color": "#0A1427",
+                  "fontFamily": "Aktiv Grotesk App",
+                  "fontWeight": "500",
+                  "includeFontPadding": false,
+                  "textAlignVertical": "center",
                 },
-                undefined,
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 17,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                ],
               ],
             ]
           }
@@ -1275,16 +1280,9 @@ exports[`Contact info should render Contact info correctly 1`] = `
         Array [
           Object {
             "alignItems": "center",
-            "backgroundColor": "#ffffff",
-            "borderBottomColor": "#f5f5f5",
-            "borderBottomWidth": 0.5,
-            "borderTopColor": "#f5f5f5",
-            "borderTopWidth": 0.5,
             "display": "flex",
             "flexDirection": "row",
             "justifyContent": "space-between",
-            "paddingHorizontal": 20,
-            "paddingVertical": 20,
           },
           undefined,
         ]
@@ -1295,12 +1293,13 @@ exports[`Contact info should render Contact info correctly 1`] = `
           Array [
             Object {
               "alignItems": "center",
-              "display": "flex",
-              "flexBasis": 0,
               "flexDirection": "row",
-              "flexGrow": 1,
-              "flexShrink": 1,
               "justifyContent": "space-between",
+              "paddingBottom": 24,
+              "paddingLeft": 16,
+              "paddingRight": 16,
+              "paddingTop": 22,
+              "width": "100%",
             },
             undefined,
           ]
@@ -1318,9 +1317,20 @@ exports[`Contact info should render Contact info correctly 1`] = `
               },
               Array [
                 Object {
-                  "fontSize": 18,
+                  "color": "#0A1427",
+                  "fontFamily": "Aktiv Grotesk App",
+                  "fontWeight": "500",
+                  "includeFontPadding": false,
+                  "textAlignVertical": "center",
                 },
-                undefined,
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 17,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                ],
               ],
             ]
           }
@@ -1354,16 +1364,9 @@ exports[`Contact info should render Contact info correctly 1`] = `
         Array [
           Object {
             "alignItems": "center",
-            "backgroundColor": "#ffffff",
-            "borderBottomColor": "#f5f5f5",
-            "borderBottomWidth": 0.5,
-            "borderTopColor": "#f5f5f5",
-            "borderTopWidth": 0.5,
             "display": "flex",
             "flexDirection": "row",
             "justifyContent": "space-between",
-            "paddingHorizontal": 20,
-            "paddingVertical": 20,
           },
           undefined,
         ]
@@ -1374,12 +1377,13 @@ exports[`Contact info should render Contact info correctly 1`] = `
           Array [
             Object {
               "alignItems": "center",
-              "display": "flex",
-              "flexBasis": 0,
               "flexDirection": "row",
-              "flexGrow": 1,
-              "flexShrink": 1,
               "justifyContent": "space-between",
+              "paddingBottom": 24,
+              "paddingLeft": 16,
+              "paddingRight": 16,
+              "paddingTop": 22,
+              "width": "100%",
             },
             undefined,
           ]
@@ -1397,9 +1401,20 @@ exports[`Contact info should render Contact info correctly 1`] = `
               },
               Array [
                 Object {
-                  "fontSize": 18,
+                  "color": "#0A1427",
+                  "fontFamily": "Aktiv Grotesk App",
+                  "fontWeight": "500",
+                  "includeFontPadding": false,
+                  "textAlignVertical": "center",
                 },
-                undefined,
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 17,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                ],
               ],
             ]
           }
@@ -1433,16 +1448,9 @@ exports[`Contact info should render Contact info correctly 1`] = `
         Array [
           Object {
             "alignItems": "center",
-            "backgroundColor": "#ffffff",
-            "borderBottomColor": "#f5f5f5",
-            "borderBottomWidth": 0.5,
-            "borderTopColor": "#f5f5f5",
-            "borderTopWidth": 0.5,
             "display": "flex",
             "flexDirection": "row",
             "justifyContent": "space-between",
-            "paddingHorizontal": 20,
-            "paddingVertical": 20,
           },
           undefined,
         ]
@@ -1453,12 +1461,13 @@ exports[`Contact info should render Contact info correctly 1`] = `
           Array [
             Object {
               "alignItems": "center",
-              "display": "flex",
-              "flexBasis": 0,
               "flexDirection": "row",
-              "flexGrow": 1,
-              "flexShrink": 1,
               "justifyContent": "space-between",
+              "paddingBottom": 24,
+              "paddingLeft": 16,
+              "paddingRight": 16,
+              "paddingTop": 22,
+              "width": "100%",
             },
             undefined,
           ]
@@ -1476,9 +1485,20 @@ exports[`Contact info should render Contact info correctly 1`] = `
               },
               Array [
                 Object {
-                  "fontSize": 18,
+                  "color": "#0A1427",
+                  "fontFamily": "Aktiv Grotesk App",
+                  "fontWeight": "500",
+                  "includeFontPadding": false,
+                  "textAlignVertical": "center",
                 },
-                undefined,
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 17,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                ],
               ],
             ]
           }
@@ -1512,16 +1532,9 @@ exports[`Contact info should render Contact info correctly 1`] = `
         Array [
           Object {
             "alignItems": "center",
-            "backgroundColor": "#ffffff",
-            "borderBottomColor": "#f5f5f5",
-            "borderBottomWidth": 0.5,
-            "borderTopColor": "#f5f5f5",
-            "borderTopWidth": 0.5,
             "display": "flex",
             "flexDirection": "row",
             "justifyContent": "space-between",
-            "paddingHorizontal": 20,
-            "paddingVertical": 20,
           },
           undefined,
         ]
@@ -1532,12 +1545,13 @@ exports[`Contact info should render Contact info correctly 1`] = `
           Array [
             Object {
               "alignItems": "center",
-              "display": "flex",
-              "flexBasis": 0,
               "flexDirection": "row",
-              "flexGrow": 1,
-              "flexShrink": 1,
               "justifyContent": "space-between",
+              "paddingBottom": 24,
+              "paddingLeft": 16,
+              "paddingRight": 16,
+              "paddingTop": 22,
+              "width": "100%",
             },
             undefined,
           ]
@@ -1555,9 +1569,20 @@ exports[`Contact info should render Contact info correctly 1`] = `
               },
               Array [
                 Object {
-                  "fontSize": 18,
+                  "color": "#0A1427",
+                  "fontFamily": "Aktiv Grotesk App",
+                  "fontWeight": "500",
+                  "includeFontPadding": false,
+                  "textAlignVertical": "center",
                 },
-                undefined,
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 17,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                ],
               ],
             ]
           }

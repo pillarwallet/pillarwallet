@@ -21,22 +21,15 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { Switch, Badge as NBBadge } from 'native-base';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { Platform, StyleSheet, TouchableNativeFeedback } from 'react-native';
+import { Platform, TouchableNativeFeedback } from 'react-native';
 
 const StyledItemTouchable = styled.TouchableHighlight`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding-horizontal: ${props => props.wrapperPaddingHorizontal ? props.wrapperPaddingHorizontal : spacing.rhythm}px;
-  padding-vertical: ${spacing.rhythm}px;
-  background-color: #ffffff;
-  border-bottom-color: ${baseColors.lightGray};
-  border-top-color: ${baseColors.lightGray};
-  border-bottom-width: ${StyleSheet.hairlineWidth};
-  border-top-width: ${StyleSheet.hairlineWidth};
 `;
 
 const StyledItemView = styled.View`
@@ -44,21 +37,14 @@ const StyledItemView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding-horizontal: ${props => props.wrapperPaddingHorizontal ? props.wrapperPaddingHorizontal : spacing.rhythm}px;
-  padding-vertical: ${spacing.rhythm}px;
-  background-color: #ffffff;
-  border-bottom-color: ${baseColors.lightGray};
-  border-top-color: ${baseColors.lightGray};
-  border-bottom-width: ${StyleSheet.hairlineWidth};
-  border-top-width: ${StyleSheet.hairlineWidth};
 `;
 
 const ItemLabelHolder = styled.View`
-  display: flex;
-  flex: 1;
+  width: 100%;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding: 22px ${spacing.mediumLarge}px 24px;
 `;
 
 const ListItem = styled.View`
@@ -82,8 +68,10 @@ const BadgeText = styled(BaseText)`
   padding: 0 2px;
 `;
 
-const ItemLabel = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+const ItemLabel = styled(MediumText)`
+  color: ${baseColors.slateBlack};
+  font-size: 17px;
+  line-height: 24px;
 `;
 
 const ItemValue = styled(BaseText)`

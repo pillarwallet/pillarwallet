@@ -53,23 +53,23 @@ type Props = {
 const ACTIVE = 'ACTIVE';
 const REQUESTS = 'REQUESTS';
 
+export const filterSessionsByUrl = (connectors: any[]) => {
+  const urls = [];
+  const sessions = [];
+  connectors.forEach(({ session }) => {
+    if (session.peerMeta) {
+      if (!urls.includes(session.peerMeta.url)) {
+        urls.push(session.peerMeta.url);
+        sessions.push(session);
+      }
+    }
+  });
+  return sessions;
+};
+
 class MeScreen extends React.Component<Props, State> {
   state = {
     activeTab: ACTIVE,
-  };
-
-  filterSessionsByUrl = (connectors: any[]) => {
-    const urls = [];
-    const sessions = [];
-    connectors.forEach(({ session }) => {
-      if (session.peerMeta) {
-        if (!urls.includes(session.peerMeta.url)) {
-          urls.push(session.peerMeta.url);
-          sessions.push(session);
-        }
-      }
-    });
-    return sessions;
   };
 
   getRequestLabel = (payload: any) => {
@@ -142,11 +142,11 @@ class MeScreen extends React.Component<Props, State> {
 
     switch (activeTab) {
       case ACTIVE:
-        data = this.filterSessionsByUrl(connectors);
+        data = filterSessionsByUrl(connectors);
         emptyTitle = 'No Active Sessions';
         break;
       case REQUESTS:
-        data = this.filterSessionsByUrl(requests);
+        data = filterSessionsByUrl(requests);
         emptyTitle = 'No Pending Requests';
         break;
       default:

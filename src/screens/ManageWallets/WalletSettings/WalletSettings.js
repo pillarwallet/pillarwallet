@@ -93,7 +93,8 @@ const smartWalletSettings = (that) => {
       title: 'Spending limits',
       body: 'Secure your funds by restricting too large transactions',
       action: () => that.manageSpendingLimits(),
-      label: '$1,000/month',
+      label: 'soon',
+      disabled: true,
     },
   ];
 };
@@ -154,6 +155,7 @@ class WalletSettings extends React.PureComponent<Props> {
       body,
       action,
       label,
+      disabled,
     } = item;
 
     return (
@@ -164,6 +166,7 @@ class WalletSettings extends React.PureComponent<Props> {
         action={action}
         label={label}
         contentWrapperStyle={isSmartWallet ? { minHeight: 96, padding: 16 } : { padding: 16 }}
+        disabled={disabled}
       />
     );
   };

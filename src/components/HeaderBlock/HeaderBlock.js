@@ -145,6 +145,16 @@ const ActionIcon = styled(IconButton)`
 
 const TextButton = styled.TouchableOpacity`
   padding: 5px;
+  flex-direction: row;
+  align-items: center;
+  ${props => props.bordered
+    ? `
+      border-width: 1px;
+      border-color: ${props.theme.rightActionBorderColor || baseColors.electricBlue};
+      border-radius: 14px;
+      padding: 5px 16px;
+      `
+    : ''}
 `;
 
 const ButtonLabel = styled(BaseText)`
@@ -188,6 +198,7 @@ const themes = (backgroundColor?: string = '') => ({
     iconColor: baseColors.slateBlack,
     rightActionIconColor: baseColors.electricBlue,
     rightActionLabelColor: baseColors.electricBlue,
+    rightActionBorderColor: UIColors.headerButtonBorder,
     buttonBorderColor: baseColors.mediumLightGray,
     buttonLabelColor: baseColors.slateBlack,
   },
@@ -279,8 +290,9 @@ class HeaderBlock extends React.Component<Props, State> {
       }
       if (item.label) {
         return (
-          <TextButton onPress={item.onPress} key={item.label}>
+          <TextButton onPress={item.onPress} key={item.label} bordered={item.bordered} theme={theme}>
             <ButtonLabel theme={theme}>{item.label}</ButtonLabel>
+            {item.addon}
           </TextButton>
         );
       }

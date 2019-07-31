@@ -24,9 +24,11 @@ import { CachedImage } from 'react-native-cached-image';
 import { spacing, baseColors, fontSizes } from 'utils/variables';
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
-import { BaseText, BoldText } from 'components/Typography';
+import { BaseText, BoldText, MediumText } from 'components/Typography';
+import Spinner from 'components/Spinner';
 
 import { responsiveSize } from 'utils/ui';
+import { noop } from 'utils/common';
 
 type Props = {
   icon?: string,
@@ -42,6 +44,11 @@ type Props = {
   onSettingsPress?: Function,
   isActive?: boolean,
   customIcon?: React.Node,
+  settingsIcon?: string,
+  settingsLabel?: string,
+  isLoading?: boolean,
+  onSettingsLoadingPress?: Function,
+  settingsIconSource?: string,
 }
 
 const ItemWrapper = styled.View`
@@ -77,7 +84,7 @@ const CardSubtitle = styled(BaseText)`
 `;
 
 const CheckIcon = styled(Icon)`
-  font-size: ${responsiveSize(14)};
+  font-size: ${responsiveSize(14)}px;
   color: ${baseColors.electricBlue};
   align-self: flex-start;
 `;
@@ -100,6 +107,40 @@ const CardImage = styled(CachedImage)`
   border-radius: ${iconRadius / 2}px;
   background-color: ${baseColors.darkGray};
 `;
+const SettingsLabel = styled(MediumText)`
+  font-size: ${responsiveSize(13)}px;
+  color: ${baseColors.malibu};
+  margin-top: 4px;
+`;
+
+const ButtonIcon = styled(CachedImage)`
+  height: 24px;
+  width: 24px;
+  justify-content: center;
+  display: flex;
+`;
+
+export const LoadingSpinner = styled(Spinner)`
+  padding: 10px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const SettingsIconComponent = (props) => {
+  const { settingsIconSource, settingsIcon } = props;
+  if (settingsIconSource) {
+    return (
+      <ButtonIcon
+        source={settingsIconSource}
+        resizeMode="contain"
+        resizeMethod="resize"
+      />
+    );
+  }
+  return (
+    <SettingsIcon name={settingsIcon || 'settings'} />
+  );
+};
 
 export const SettingsItemCarded = (props: Props) => {
   const {
@@ -107,13 +148,21 @@ export const SettingsItemCarded = (props: Props) => {
     subtitle,
     onMainPress,
     onSettingsPress,
+    onSettingsLoadingPress,
     isActive,
     customIcon,
     icon,
     fallbackIcon,
+    settingsIconSource,
+    settingsIcon,
+    settingsLabel,
+    isLoading,
   } = props;
 
   const buttonSideLength = responsiveSize(84);
+  const settingsActionOnLoading = onSettingsLoadingPress || noop;
+  const settingsAction = isLoading ? settingsActionOnLoading : onSettingsPress;
+
   return (
     <ItemWrapper>
       <ShadowedCard
@@ -139,7 +188,7 @@ export const SettingsItemCarded = (props: Props) => {
           </IconWrapper>
           <CardContent>
             <CardTitle>{title}</CardTitle>
-            <CardSubtitle>{subtitle}</CardSubtitle>
+            {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
           </CardContent>
           {isActive && <CheckIcon name="check" />}
         </CardRow>
@@ -147,14 +196,22 @@ export const SettingsItemCarded = (props: Props) => {
       <ShadowedCard
         wrapperStyle={{ width: buttonSideLength, marginLeft: 8, height: '100%' }}
         contentWrapperStyle={{
-          padding: 20,
+          padding: spacing.small,
           height: '100%',
           alignItems: 'center',
           justifyContent: 'center',
         }}
-        onPress={onSettingsPress}
+        onPress={settingsAction}
       >
-        <SettingsIcon name="settings" />
+        {!!isLoading && <LoadingSpinner />}
+        {!isLoading &&
+        <React.Fragment>
+          <SettingsIconComponent
+            settingsIconSource={settingsIconSource}
+            settingsIcon={settingsIcon}
+          />
+          {!!settingsLabel && <SettingsLabel>{settingsLabel}</SettingsLabel>}
+        </React.Fragment>}
       </ShadowedCard>
     </ItemWrapper>
   );

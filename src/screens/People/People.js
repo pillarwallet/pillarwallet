@@ -153,6 +153,56 @@ type State = {
   forceHideRemoval: boolean,
 }
 
+// const RecentConnections = styled.View`
+//   height: 150px;
+//   border-bottom-width: 1px;
+//   border-style: solid;
+//   border-color: ${UIColors.defaultBorderColor};
+// `;
+//
+// const RecentConnectionsWrapper = styled.View`
+//   shadow-color: ${baseColors.pigeonPost};
+//   shadow-radius: 6px;
+//   shadow-opacity: 0.15;
+//   shadow-offset: 0px 6px;
+// `;
+//
+// const RecentConnectionsScrollView = styled.ScrollView`
+//   background-color: ${baseColors.snowWhite};
+//   padding-left: 6px;
+//   margin-top: -4px;
+//   padding-top: ${Platform.select({
+//   ios: '4px',
+//   android: 0,
+// })};
+// `;
+//
+// const RecentConnectionsItemProfileImage = styled(ProfileImage)`
+//   margin-bottom: ${spacing.rhythm / 2};
+// `;
+//
+// const RecentConnectionsItem = styled.TouchableOpacity`
+//   align-items: center;
+//   width: ${Platform.select({
+//   ios: '60px',
+//   android: '74px',
+// })};
+//   margin: ${Platform.select({
+//   ios: '4px 8px 24px',
+//   android: '0',
+// })};
+// `;
+//
+// const RecentConnectionsItemName = styled(BaseText)`
+//   font-size: ${fontSizes.extraExtraSmall};
+//   color: ${baseColors.darkGray};
+//   padding: 0 4px;
+//   margin-top: ${Platform.select({
+//   ios: '4px',
+//   android: '-4px',
+// })};
+// `;
+
 const ConnectionStatus = (props: ConnectionStatusProps) => {
   let iconName = '';
   switch (props.status) {
@@ -221,6 +271,25 @@ class PeopleScreen extends React.Component<Props, State> {
     this.setState({ query });
     this.handleContactsSearch(query);
   };
+
+  // renderRecentConnections = () => {
+  //   const { contacts, navigation } = this.props;
+  //   return contacts
+  //     .sort((a, b) => b.createdAt - a.createdAt)
+  //     .slice(0, 10)
+  //     .map(contact => {
+  //       const profileImage = contact.lastUpdateTime
+  //         ? `${contact.profileImage}?t=${contact.lastUpdateTime}`
+  //         : contact.profileImage;
+  //
+  //       return (
+  //         <RecentConnectionsItem key={contact.username} onPress={() => navigation.navigate(CONTACT, { contact })}>
+  //           <RecentConnectionsItemProfileImage uri={profileImage} userName={contact.username} diameter={52} />
+  //           <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
+  //         </RecentConnectionsItem>
+  //       );
+  //     });
+  // };
 
   handleContactsSearch = (query: string) => {
     if (!query || query.trim() === '' || query.length < MIN_QUERY_LENGTH) {

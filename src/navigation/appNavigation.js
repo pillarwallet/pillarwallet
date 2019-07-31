@@ -87,6 +87,7 @@ import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import UsersScreen from 'screens/Users';
 import UserSettingsScreen from 'screens/Users/UserSettings';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
+import SettingsScreen from 'screens/Settings';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -186,6 +187,7 @@ import {
   USERS,
   USER_SETTINGS,
   ADD_EDIT_USER,
+  SETTINGS,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -296,6 +298,7 @@ const walletConnectFlow = createStackNavigator(
 // HOME FLOW
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
+  [SETTINGS]: SettingsScreen,
   [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
   [CONTACT_INFO]: ConnectedContactInfo,
