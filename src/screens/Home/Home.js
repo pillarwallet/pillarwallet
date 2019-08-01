@@ -133,7 +133,6 @@ const WalletConnectWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.large}px 0;
   background-color: ${baseColors.snowWhite};
   width: 100%;
-  min-height: 102px;
 `;
 
 const ListHeader = styled(MediumText)`
