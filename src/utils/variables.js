@@ -107,6 +107,7 @@ export const baseColors = {
   redDamask: '#ca674c',
   dodgerBlue: '#007aff',
   indianRed: '#cb6262',
+  pinkishGrey: '#cacaca',
 };
 
 export const brandColors = [
@@ -141,6 +142,7 @@ export const UIColors = {
 };
 
 export const fontSizes = {
+  micro: 8,
   tiny: 10,
   extraExtraSmall: 12,
   extraSmall: 14,

@@ -189,7 +189,7 @@ const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
   border-radius: 10px;
-  background-color: ${baseColors.darkGray}
+  background-color: ${baseColors.pinkishGrey}
   align-self: flex-end;
   padding: 3px 0;
   margin-top: 2px;

@@ -127,7 +127,16 @@ const themes = {
     color: baseColors.white,
     opacity: 0.5,
   },
-  square: {
+  squarePrimary: {
+    background: 'transparent',
+    color: baseColors.electricBlue,
+    borderColor: 'transparent',
+    borderWidth: 0,
+    flexDirection: 'column',
+    borderRadius: 0,
+    iconHorizontalMargin: 0,
+  },
+  squareDanger: {
     background: 'transparent',
     color: baseColors.burningFire,
     borderColor: 'transparent',

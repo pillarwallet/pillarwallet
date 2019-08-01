@@ -51,7 +51,6 @@ import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Wrapper, ScrollWrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import Separator from 'components/Separator';
 import Spinner from 'components/Spinner';
 import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
@@ -102,7 +101,7 @@ const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
   border-radius: 10px;
-  background-color: ${baseColors.electricBlue}
+  background-color: ${props => props.backgroundColor || baseColors.electricBlue}
   padding: 3px 0;
   margin-top: 2px;
   margin-right: 1px;
@@ -111,14 +110,14 @@ const ItemBadge = styled.View`
 `;
 
 const BadgeIcon = styled(Icon)`
-  font-size: ${fontSizes.extraExtraSmall};
-  line-height: ${fontSizes.extraExtraSmall};
+  font-size: ${props => props.fontSize || fontSizes.extraExtraSmall};
+  line-height: ${props => props.fontSize || fontSizes.extraExtraSmall};
   color: ${baseColors.white};
 `;
 
 const InnerWrapper = styled.View`
   flex: 1;
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${baseColors.white};
 `;
 
 const MIN_QUERY_LENGTH = 2;
@@ -160,13 +159,13 @@ const ConnectionStatus = (props: ConnectionStatusProps) => {
       iconName = 'warning';
       break;
     case 'muted':
-      iconName = 'mute';
+      iconName = 'sound-off';
       break;
     default:
       break;
   }
   return (
-    <ItemBadge>
+    <ItemBadge backgroundColor={baseColors.pinkishGrey}>
       <BadgeIcon name={iconName} />
     </ItemBadge>
   );
@@ -250,9 +249,9 @@ class PeopleScreen extends React.Component<Props, State> {
 
   renderSwipeoutBtns = (data) => {
     const swipeButtons = [
-      { actionType: MUTE, icon: 'mute' },
-      { actionType: DISCONNECT, icon: 'remove' },
-      { actionType: BLOCK, icon: 'warning' },
+      { actionType: MUTE, icon: 'mute', squarePrimary: true },
+      { actionType: DISCONNECT, icon: 'remove', squarePrimary: true },
+      { actionType: BLOCK, icon: 'warning', squareDanger: true },
     ];
 
     return swipeButtons.map((buttonDefinition) => {
@@ -283,7 +282,7 @@ class PeopleScreen extends React.Component<Props, State> {
             }}
           />
         ),
-        backgroundColor: baseColors.lighterGray,
+        backgroundColor: baseColors.white,
       };
     });
   };
@@ -308,6 +307,7 @@ class PeopleScreen extends React.Component<Props, State> {
           unreadCount={unreadCount}
           customAddon={(status === 'muted' || status === 'blocked') ? <ConnectionStatus status={status} /> : null}
           rightColumnInnerStyle={{ flexDirection: 'row' }}
+          noSeparator
         />
       </Swipeout>
     );
@@ -399,12 +399,14 @@ class PeopleScreen extends React.Component<Props, State> {
           keyboardShouldPersistTaps="always"
           contentContainerStyle={{ flexGrow: 1 }}
           enableOnAndroid={false}
+          color={baseColors.white}
         >
           <SearchBlock
             headerProps={{ title: 'people' }}
             searchInputPlaceholder="Search or add people"
             onSearchChange={(q) => this.handleSearchChange(q)}
             itemSearchState={!!contactState}
+            white
           />
           {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
@@ -437,11 +439,10 @@ class PeopleScreen extends React.Component<Props, State> {
               keyExtractor={(item) => item.id}
               renderItem={this.renderContact}
               initialNumToRender={8}
-              ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
               onScroll={() => Keyboard.dismiss()}
               contentContainerStyle={{
                 paddingVertical: spacing.rhythm,
-                paddingTop: spacing.medium,
+                paddingTop: 0,
               }}
               refreshControl={
                 <RefreshControl
