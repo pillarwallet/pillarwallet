@@ -307,7 +307,7 @@ class PeopleScreen extends React.Component<Props, State> {
           imageUpdateTimeStamp={item.lastUpdateTime}
           unreadCount={unreadCount}
           customAddon={(status === 'muted' || status === 'blocked') ? <ConnectionStatus status={status} /> : null}
-          rightColumnInnerStyle={{ flexDirection: 'row-reverse' }}
+          rightColumnInnerStyle={{ flexDirection: 'row-reverse', paddingTop: spacing.small }}
           noSeparator
         />
       </Swipeout>

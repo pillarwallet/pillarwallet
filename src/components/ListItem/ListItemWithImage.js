@@ -181,10 +181,6 @@ const TimeSent = styled(BaseText)`
   text-align-vertical: bottom;
 `;
 
-const BadgePlacer = styled.View`
-  width: 30px;
-`;
-
 const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
@@ -391,7 +387,6 @@ const ImageAddon = (props: Props) => {
 
 const Addon = (props: Props) => {
   const {
-    type,
     unreadCount,
     itemValue,
     itemStatusIcon,
@@ -430,7 +425,7 @@ const Addon = (props: Props) => {
     );
   }
 
-  if (type !== CHAT_ITEM && unreadCount) {
+  if (unreadCount) {
     return (
       <IndicatorsRow>
         <ItemBadge>
@@ -530,7 +525,6 @@ class ListItemWithImage extends React.Component<Props, {}> {
       customAddon,
       onPress,
       timeSent,
-      unreadCount,
       children,
       imageAddonUrl,
       imageAddonIconName,
@@ -562,17 +556,6 @@ class ListItemWithImage extends React.Component<Props, {}> {
               {!!paragraph &&
               <Row>
                 <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
-                {type === CHAT_ITEM &&
-                <BadgePlacer>
-                  {!!unreadCount &&
-                  <ItemBadge>
-                    <UnreadNumber>
-                      {unreadCount}
-                    </UnreadNumber>
-                  </ItemBadge>
-                  }
-                </BadgePlacer>
-                }
               </Row>
               }
               {!!subtext &&
