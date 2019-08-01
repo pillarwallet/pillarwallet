@@ -385,6 +385,7 @@ export const checkAssetTransferTransactionsAction = () => {
         SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
       ));
       const { address } = accounts[0];
+      navigate(NavigationActions.navigate({ routeName: ASSETS }));
       await dispatch(connectSmartWalletAccountAction(address));
       await dispatch(fetchAssetsBalancesAction(assets));
       dispatch(fetchCollectiblesAction());
