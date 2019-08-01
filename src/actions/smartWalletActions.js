@@ -614,7 +614,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
 
     // check status for assets transfer during migration
     if (event.name === ACCOUNT_TRANSACTION_UPDATED) {
-      const transferTransactions = get(getState('smartWallet.upgrade.transfer.transactions'), '', []);
+      const transferTransactions = get(getState(), 'smartWallet.upgrade.transfer.transactions', []);
       const txHash = get(event, 'payload.hash', '').toLowerCase();
       const txStatus = get(event, 'payload.state', '');
       const txFound = transferTransactions.find(({ transactionHash }) => transactionHash === txHash);
