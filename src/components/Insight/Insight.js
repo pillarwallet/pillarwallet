@@ -34,6 +34,8 @@ type Props = {
   insightList: Object[],
   children?: React.Node,
   isVisible: boolean,
+  onLayout?: Function,
+  wrapperStyle?: Object,
 }
 
 const Wrapper = styled.View`
@@ -115,11 +117,13 @@ export const Insight = (props: Props) => {
     insightList,
     children,
     isVisible,
+    onLayout,
+    wrapperStyle,
   } = props;
 
   if (!isVisible) return null;
   return (
-    <Wrapper>
+    <Wrapper onLayout={onLayout} style={wrapperStyle}>
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10, width: '100%' }}
         contentWrapperStyle={{ paddingLeft: 20, paddingRight: 40, paddingVertical: 16 }}

@@ -108,6 +108,7 @@ export const baseColors = {
   dodgerBlue: '#007aff',
   indianRed: '#cb6262',
   pinkishGrey: '#cacaca',
+  solitude: '#ebeff2',
 };
 
 export const brandColors = [

@@ -25,6 +25,7 @@ import {
   Image,
   RefreshControl,
   View,
+  ScrollView,
 } from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
@@ -48,7 +49,7 @@ import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
-import { Wrapper, ScrollWrapper } from 'components/Layout';
+import { Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Spinner from 'components/Spinner';
@@ -378,24 +379,27 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        color={baseColors.white}
+        backgroundColor={baseColors.white}
         headerProps={{
           leftItems: [{ user: true }],
           rightIconsSize: fontSizes.extraLarge,
         }}
       >
-        <ScrollWrapper
+        <ScrollView
           keyboardShouldPersistTaps="always"
           contentContainerStyle={{ flexGrow: 1 }}
-          enableOnAndroid={false}
-          color={baseColors.white}
+          onScroll={() => {
+            if (inSearchMode) {
+              Keyboard.dismiss();
+            }
+          }}
         >
           <SearchBlock
             headerProps={{ title: 'people' }}
             searchInputPlaceholder="Search or add people"
             onSearchChange={(q) => this.handleSearchChange(q)}
             itemSearchState={!!contactState}
-            white
+            wrapperStyle={{ paddingHorizontal: spacing.large, paddingTop: spacing.mediumLarge }}
           />
           {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
@@ -485,7 +489,7 @@ class PeopleScreen extends React.Component<Props, State> {
               });
             }}
           />
-        </ScrollWrapper>
+        </ScrollView>
       </ContainerWithHeader>
     );
   }

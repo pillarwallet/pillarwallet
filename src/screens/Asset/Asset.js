@@ -97,7 +97,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
   contacts: Object[],
-  resetHideRemoval: Function,
+  resetHideRemoval?: Function,
   smartWalletState: Object,
   accounts: Accounts,
   paymentNetworkBalances: Balances,
@@ -192,7 +192,7 @@ class AssetScreen extends React.Component<Props, State> {
     const { fetchTransactionsHistory, navigation } = this.props;
     const { assetData, resetHideRemoval } = navigation.state.params;
     fetchTransactionsHistory(assetData.token);
-    resetHideRemoval();
+    if (resetHideRemoval) resetHideRemoval();
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -354,7 +354,7 @@ class AssetScreen extends React.Component<Props, State> {
         >
           <AssetPattern
             token={assetData.token}
-            icon={assetData.iconColor}
+            icon={assetData.patternIcon}
             contractAddress={assetData.contractAddress}
             isListed={isListed}
           />

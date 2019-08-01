@@ -21,7 +21,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Animated, Dimensions, Keyboard } from 'react-native';
 import SearchBar from 'components/SearchBar';
-import { spacing } from 'utils/variables';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation } from 'react-navigation';
 
@@ -36,23 +35,23 @@ type State = {
 type Props = {
   navigation: NavigationScreenProp<*>,
   onSearchChange: Function,
-  headerProps: Object,
   itemSearchState?: boolean,
   searchInputPlaceholder?: string,
   backgroundColor?: string,
   hideSearch?: boolean,
   white?: boolean,
+  onSearchFocus?: Function,
+  wrapperStyle?: Object,
 }
 
 const SearchBarWrapper = styled.View`
   width: 100%;
-  padding: ${spacing.large}px ${spacing.large}px 0 ;
   position: relative;
-  z-index: 11;
+  z-index: 101;
 `;
 
 const FullScreenOverlayWrapper = styled.TouchableOpacity`
-  z-index: 10;
+  z-index: 100;
   top: 0;
   left: 0;
   bottom: 0;
@@ -74,6 +73,7 @@ const MIN_QUERY_LENGTH = 2;
 
 class SearchBlock extends React.Component<Props, State> {
   _willBlur: NavigationEventSubscription;
+  _keyboardDidShow: NavigationEventSubscription;
 
   constructor(props: Props) {
     super(props);
@@ -87,15 +87,22 @@ class SearchBlock extends React.Component<Props, State> {
   componentDidMount() {
     const { navigation } = this.props;
     this._willBlur = navigation.addListener('willBlur', this.onScreenBlur);
+    this._keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.onKeyboardShown);
   }
 
   componentWillUnmount() {
     this._willBlur.remove();
+    this._keyboardDidShow.remove();
   }
 
   onScreenBlur = () => {
     Keyboard.dismiss();
     this.animateFullScreenOverlayOpacity(true);
+  };
+
+  onKeyboardShown = () => {
+    const { onSearchFocus } = this.props;
+    if (onSearchFocus) onSearchFocus();
   };
 
   animateFullScreenOverlayOpacity = (active: boolean, onEnd?: Function) => {
@@ -148,6 +155,7 @@ class SearchBlock extends React.Component<Props, State> {
       itemSearchState,
       searchInputPlaceholder,
       hideSearch,
+      wrapperStyle,
     } = this.props;
     const {
       query,
@@ -169,7 +177,7 @@ class SearchBlock extends React.Component<Props, State> {
         </FullScreenOverlayWrapper>
         }
         {!hideSearch &&
-          <SearchBarWrapper>
+          <SearchBarWrapper style={wrapperStyle}>
             <SearchBar
               inputProps={{
                 onChange: this.handleSearchChange,
@@ -179,6 +187,7 @@ class SearchBlock extends React.Component<Props, State> {
                 autoCapitalize: 'none',
               }}
               placeholder={searchInputPlaceholder}
+              marginBottom="0"
             />
           </SearchBarWrapper>
         }
