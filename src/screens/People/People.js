@@ -399,7 +399,7 @@ class PeopleScreen extends React.Component<Props, State> {
             searchInputPlaceholder="Search or add people"
             onSearchChange={(q) => this.handleSearchChange(q)}
             itemSearchState={!!contactState}
-            wrapperStyle={{ paddingHorizontal: spacing.large, paddingTop: spacing.mediumLarge }}
+            wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
           />
           {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner

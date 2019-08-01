@@ -21,15 +21,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { FlatList, RefreshControl } from 'react-native';
+import { FlatList, RefreshControl, View } from 'react-native';
 import styled from 'styled-components/native';
 import isEqualWith from 'lodash.isequalwith';
 import type { NavigationScreenProp } from 'react-navigation';
+import { CachedImage } from 'react-native-cached-image';
 
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
+import ShadowedCard from 'components/ShadowedCard';
 
 // actions
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -40,17 +41,35 @@ import { COLLECTIBLE, BADGE } from 'constants/navigationConstants';
 
 // utils
 import { smallScreen } from 'utils/common';
-import { spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontTrackings, spacing } from 'utils/variables';
 
 // types
 import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
+import { BaseText } from '../../components/Typography';
 
 const EmptyStateWrapper = styled.View`
   align-items: center;
   justify-content: center;
   padding: 20px;
   flex-grow: 1;
+`;
+
+const CardRow = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+`;
+
+const Name = styled(BaseText)`
+  font-size: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
+  letter-spacing: ${fontTrackings.small};
+  line-height: ${fontSizes.small}px;
+  color: ${baseColors.darkGray};
+  width: 100%; 
+  text-align: center;
 `;
 
 const viewConfig = {
@@ -68,6 +87,8 @@ type Props = {
   fetchAllCollectiblesData: Function,
   fetchBadges: Function,
 }
+
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 class CollectiblesList extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
@@ -88,17 +109,43 @@ class CollectiblesList extends React.Component<Props> {
   };
 
   renderCollectible = ({ item }) => {
+    const { name, thumbnail, icon: itemIcon } = item;
+    const icon = thumbnail || itemIcon;
     return (
-      <AssetCardMinimized
-        {...item}
-        icon={item.thumbnail || item.icon}
-        smallScreen={smallScreen()}
-        onPress={() => { this.handleCardTap(item); }}
-        isCollectible
-        columnCount={2}
-        useSVGShadow
-      />
+      <View style={{ width: '50%', paddingHorizontal: 8, paddingVertical: 3 }}>
+        <ShadowedCard
+          wrapperStyle={{ marginBottom: 10, width: '100%' }}
+          contentWrapperStyle={{ padding: spacing.medium, alignItems: 'center' }}
+          onPress={() => { this.handleCardTap(item); }}
+        >
+          <CachedImage
+            key={name}
+            style={{
+              height: 135,
+              width: 135,
+              marginBottom: spacing.mediumLarge,
+            }}
+            source={{ uri: icon }}
+            fallbackSource={genericToken}
+            resizeMode="contain"
+          />
+          <CardRow>
+            <Name center numberOfLines={1} ellipsizeMode="tail" smallScreen={smallScreen()}>{name}</Name>
+          </CardRow>
+        </ShadowedCard>
+      </View>
     );
+    // return (
+    //   <AssetCardMinimized
+    //     {...item}
+    //     icon={item.thumbnail || item.icon}
+    //     smallScreen={smallScreen()}
+    //     onPress={() => { this.handleCardTap(item); }}
+    //     isCollectible
+    //     columnCount={2}
+    //     useSVGShadow
+    //   />
+    // );
   };
 
   renderItem = (item) => {
@@ -135,7 +182,7 @@ class CollectiblesList extends React.Component<Props> {
         renderItem={this.renderCollectible}
         numColumns={2}
         style={[searchQuery ? { flexGrow: 1, paddingTop: spacing.mediumLarge } : { flexGrow: 1 }]}
-        contentContainerStyle={{ paddingHorizontal: spacing.large, paddingVertical: 10, flexGrow: 1 }}
+        contentContainerStyle={{ padding: 12, flexGrow: 1 }}
         ListEmptyComponent={
           <EmptyStateWrapper>
             <EmptyStateParagraph {...emptyStateInfo} />
