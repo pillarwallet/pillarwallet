@@ -336,7 +336,6 @@ class WalletView extends React.Component<Props, State> {
   };
 
   doAssetsSearch = (query: string) => {
-    console.log('searching ---->');
     const { searchAssets, resetSearchAssetsResult } = this.props;
     if (query.length < MIN_QUERY_LENGTH) {
       resetSearchAssetsResult();
