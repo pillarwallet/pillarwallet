@@ -133,6 +133,8 @@ const viewTransactionOnBlockchain = (hash: string) => {
 class EventDetails extends React.Component<Props, {}> {
   timer: ?IntervalID;
   timeout: ?TimeoutID;
+  // HACK: we need to cache the tx data for smart wallet migration process
+  cachedTxInfo = {};
 
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
@@ -246,7 +248,12 @@ class EventDetails extends React.Component<Props, {}> {
     } = this.props;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
-      const txInfo = history.find(tx => tx.hash === eventData.hash) || {};
+      let txInfo = history.find(tx => tx.hash === eventData.hash);
+      if (!txInfo) {
+        txInfo = this.cachedTxInfo || {};
+      } else {
+        this.cachedTxInfo = txInfo;
+      }
       const {
         to,
         from,
