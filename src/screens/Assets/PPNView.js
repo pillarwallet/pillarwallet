@@ -19,13 +19,13 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
+import { withNavigation } from 'react-navigation';
 
 import TankBar from 'components/TankBar';
-import { Wrapper } from 'components/Layout';
 import CircleButton from 'components/CircleButton';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { MediumText } from 'components/Typography';
@@ -33,13 +33,16 @@ import { MediumText } from 'components/Typography';
 import { getBalance, getRate } from 'utils/assets';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { getAccountAddress } from 'utils/accounts';
 
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { defaultFiatCurrency, TOKENS } from 'constants/assetsConstants';
+import { ASSET } from 'constants/navigationConstants';
 
 import { activeAccountSelector } from 'selectors';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountBalancesSelector } from 'selectors/balances';
 import type { Assets, Balances } from 'models/Asset';
+import type { NavigationScreenProp } from 'react-navigation';
 
 type Props = {
   baseFiatCurrency: string,
@@ -47,6 +50,8 @@ type Props = {
   rates: Object,
   balances: Balances,
   paymentNetworkBalances: Balances,
+  activeAccount: Object,
+  navigation: NavigationScreenProp<*>,
 }
 
 const AssetButtonsWrapper = styled.View`
@@ -91,7 +96,7 @@ const iconSend = require('assets/icons/icon_send.png');
 
 class PPNView extends React.Component<Props> {
   renderAsset = ({ item: asset }) => {
-    const { baseFiatCurrency } = this.props;
+    const { baseFiatCurrency, activeAccount, navigation } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const currencySymbol = getCurrencySymbol(fiatCurrency);
     const {
@@ -100,13 +105,46 @@ class PPNView extends React.Component<Props> {
       iconUrl,
       paymentNetworkBalance,
       paymentNetworkBalanceInFiat,
+      balance,
+      patternUrl,
+      iconMonoUrl,
+      balanceInFiat,
+      decimals,
     } = asset;
 
+    const fullIconMonoUrl = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
     const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const patternIcon = patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl;
+    const formattedBalanceInFiat = formatMoney(balanceInFiat);
+    const displayAmount = formatMoney(balance, 4);
+
+    const assetData = {
+      name: name || symbol,
+      token: symbol,
+      amount: displayAmount,
+      contractAddress: asset.address,
+      description: asset.description,
+      balance,
+      balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
+      address: getAccountAddress(activeAccount),
+      icon: fullIconMonoUrl,
+      iconColor: fullIconUrl,
+      decimals,
+      patternIcon,
+    };
 
     return (
       <ListItemWithImage
-        onPress={() => {}}
+        onPress={() => {
+          navigation.navigate(ASSET,
+            {
+              assetData: {
+                ...assetData,
+                tokenType: TOKENS,
+              },
+            },
+          );
+        }}
         label={name}
         avatarUrl={fullIconUrl}
         balance={{
@@ -159,7 +197,14 @@ class PPNView extends React.Component<Props> {
       .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
 
     return (
-      <Wrapper>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => {}}
+          />
+        }
+      >
         <TankBar
           maxValue={1000}
           currentValue={678}
@@ -185,14 +230,8 @@ class PPNView extends React.Component<Props> {
           onEndReachedThreshold={0.5}
           style={{ width: '100%', height: '100%' }}
           ListHeaderComponent={this.renderHeader}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => {}}
-            />
-          }
         />
-      </Wrapper>
+      </ScrollView>
     );
   }
 }
@@ -219,4 +258,4 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-export default connect(combinedMapStateToProps)(PPNView);
+export default withNavigation(connect(combinedMapStateToProps)(PPNView));

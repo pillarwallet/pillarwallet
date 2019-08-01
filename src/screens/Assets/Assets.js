@@ -18,19 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import {
-  SectionList,
-  Keyboard,
-  Switch,
-  Alert,
-} from 'react-native';
-import styled from 'styled-components/native';
 import isEqual from 'lodash.isequal';
-import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
+import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { Answers } from 'react-native-fabric';
-import debounce from 'lodash.debounce';
 import { createStructuredSelector } from 'reselect';
 
 // components
@@ -38,12 +29,7 @@ import { BaseText } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
-import Toast from 'components/Toast';
-import { Container, Wrapper } from 'components/Layout';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-// import SearchBlock from 'components/SearchBlock';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import Separator from 'components/Separator';
+import { Container } from 'components/Layout';
 
 // types
 import type { Assets, Asset } from 'models/Asset';
@@ -51,6 +37,7 @@ import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts, Account } from 'models/Account';
+
 // actions
 import {
   updateAssetsAction,
@@ -66,12 +53,7 @@ import {
 import {
   FETCH_INITIAL_FAILED,
   FETCHED,
-  // FETCHING,
-  ETH,
-  TOKENS,
-  COLLECTIBLES,
 } from 'constants/assetsConstants';
-import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
@@ -116,33 +98,9 @@ type Props = {
 }
 
 type State = {
-  forceHideRemoval: boolean,
-  query: string,
-  activeTab: string,
   showKeyWalletInsight: boolean,
   showSmartWalletInsight: boolean,
 }
-
-const genericToken = require('assets/images/tokens/genericToken.png');
-
-const MIN_QUERY_LENGTH = 2;
-
-// const TokensWrapper = styled(Wrapper)`
-//    flex: 1;
-//    height: 100%;
-//    padding-top: ${spacing.large}px;
-//    background-color: ${UIColors.defaultBackgroundColor};
-// `;
-//
-// const SearchSpinner = styled(Wrapper)`
-//   padding-top: 20;
-// `;
-
-const EmptyStateWrapper = styled(Wrapper)`
-  padding-top: 90px;
-  padding-bottom: 90px;
-  align-items: center;
-`;
 
 const VIEWS = {
   KEY_WALLET_VIEW: 'KEY_WALLET_VIEW',
@@ -151,24 +109,13 @@ const VIEWS = {
 };
 
 class AssetsScreen extends React.Component<Props, State> {
-  didBlur: NavigationEventSubscription;
-  willFocus: NavigationEventSubscription;
-
   constructor(props: Props) {
     super(props);
     this.state = {
-      forceHideRemoval: false,
-      query: '',
-      activeTab: TOKENS,
       showKeyWalletInsight: true,
-      showSmartWalletInsight: true,
+      showSmartWalletInsight: false,
     };
-    this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
-
-  static defaultProps = {
-    assetsLayout: SIMPLIFIED,
-  };
 
   componentDidMount() {
     const {
@@ -181,21 +128,6 @@ class AssetsScreen extends React.Component<Props, State> {
     if (!Object.keys(assets).length) {
       fetchInitialAssets();
     }
-
-    this.willFocus = this.props.navigation.addListener(
-      'willFocus',
-      () => { this.setState({ forceHideRemoval: false }); },
-    );
-
-    this.didBlur = this.props.navigation.addListener(
-      'didBlur',
-      () => { this.setState({ forceHideRemoval: true }); },
-    );
-  }
-
-  componentWillUnmount() {
-    this.didBlur.remove();
-    this.willFocus.remove();
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -206,172 +138,6 @@ class AssetsScreen extends React.Component<Props, State> {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
-
-  // updateHideRemoval = (value: boolean) => {
-  //   this.setState({ forceHideRemoval: value });
-  // };
-  //
-  // handleSearchChange = (query: string) => {
-  //   const formattedQuery = !query ? '' : query.trim();
-  //
-  //   this.setState({
-  //     query: formattedQuery,
-  //   });
-  //
-  //   if (this.state.activeTab === TOKENS) {
-  //     this.props.startAssetsSearch();
-  //     this.doAssetsSearch(formattedQuery);
-  //   }
-  // };
-
-  doAssetsSearch = (query: string) => {
-    const { searchAssets, resetSearchAssetsResult } = this.props;
-    if (query.length < MIN_QUERY_LENGTH) {
-      resetSearchAssetsResult();
-      return;
-    }
-    searchAssets(query);
-  };
-
-  handleAssetToggle = (asset: Asset, added: Boolean) => {
-    if (!added) {
-      this.addTokenToWallet(asset);
-    } else {
-      this.hideTokenFromWallet(asset);
-    }
-  };
-
-  handleAssetRemoval = (asset: Asset) => () => {
-    const { assets, updateAssets } = this.props;
-    const isETH = asset.symbol === ETH;
-
-    if (isETH) {
-      this.showETHRemovalNotification();
-      return;
-    }
-
-    Alert.alert(
-      'Are you sure?',
-      `This will hide ${asset.name} from your wallet`,
-      [
-        { text: 'Cancel', onPress: () => this.setState({ forceHideRemoval: true }), style: 'cancel' },
-        { text: 'Hide', onPress: () => { this.hideTokenFromWallet(asset); updateAssets(assets, [asset.symbol]); } },
-      ],
-    );
-  };
-
-  showETHRemovalNotification = () => {
-    Toast.show({
-      message: 'Ethereum is essential for Pillar',
-      type: 'info',
-      title: 'This asset cannot be switched off',
-    });
-  };
-
-  renderFoundTokensList() {
-    const {
-      assets,
-      assetsSearchResults,
-    } = this.props;
-    const addedAssets = [];
-    const foundAssets = [];
-
-    assetsSearchResults.forEach((result) => {
-      if (!assets[result.symbol]) {
-        foundAssets.push(result);
-      } else {
-        addedAssets.push(result);
-      }
-    });
-
-    const sections = [];
-    if (addedAssets.length) sections.push({ title: 'ADDED TOKENS', data: addedAssets, extraData: assets });
-    if (foundAssets.length) sections.push({ title: 'FOUND TOKENS', data: foundAssets, extraData: assets });
-
-    const renderItem = ({ item: asset }) => {
-      const {
-        symbol,
-        name,
-        iconUrl,
-      } = asset;
-
-      const isAdded = !!assets[symbol];
-      const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
-
-      return (
-        <ListItemWithImage
-          label={name}
-          subtext={symbol}
-          itemImageUrl={fullIconUrl}
-          fallbackSource={genericToken}
-          small
-        >
-          <Switch
-            onValueChange={() => this.handleAssetToggle(asset, isAdded)}
-            value={!!isAdded}
-          />
-        </ListItemWithImage>
-      );
-    };
-
-    return (
-      <SectionList
-        renderItem={renderItem}
-        sections={sections}
-        keyExtractor={(item) => item.symbol}
-        style={{ width: '100%' }}
-        contentContainerStyle={{
-          width: '100%',
-        }}
-        stickySectionHeadersEnabled={false}
-        ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-        ListEmptyComponent={
-          <EmptyStateWrapper fullScreen>
-            <EmptyStateParagraph
-              title="Token not found"
-              bodyText="Check if the name was entered correctly or add custom token"
-            />
-          </EmptyStateWrapper>
-        }
-        onScroll={() => Keyboard.dismiss()}
-      />
-    );
-  }
-
-  addTokenToWallet = (asset: Asset) => {
-    const { addAsset } = this.props;
-
-    addAsset(asset);
-    Toast.show({
-      title: null,
-      message: `${asset.name} (${asset.symbol}) has been added`,
-      type: 'info',
-      autoClose: true,
-    });
-  };
-
-  hideTokenFromWallet = (asset: Asset) => {
-    const {
-      removeAsset,
-    } = this.props;
-
-    if (asset.symbol === ETH) {
-      this.showETHRemovalNotification();
-      return;
-    }
-
-    removeAsset(asset);
-    Toast.show({
-      title: null,
-      message: `${asset.name} (${asset.symbol}) has been hidden`,
-      type: 'info',
-      autoClose: true,
-    });
-  };
-
-  setActiveTab = (activeTab) => {
-    this.setState({ activeTab });
-  };
 
   hideWalletInsight = (type: string) => {
     if (type === 'KEY') {
@@ -417,36 +183,13 @@ class AssetsScreen extends React.Component<Props, State> {
       assets,
       assetsState,
       fetchInitialAssets,
-      // assetsSearchState,
-      // collectibles,
-      // badges,
       accounts,
       smartWalletState,
     } = this.props;
     const {
-      // query,
-      activeTab,
       showKeyWalletInsight,
       showSmartWalletInsight,
     } = this.state;
-
-    // const isSearchOver = assetsSearchState === FETCHED;
-    // const isSearching = assetsSearchState === FETCHING && query.length >= MIN_QUERY_LENGTH;
-    // const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!assetsSearchState);
-    // const isInCollectiblesSearchMode = (query && query.length >= MIN_QUERY_LENGTH) && activeTab === COLLECTIBLES;
-
-    const assetsTabs = [
-      {
-        id: TOKENS,
-        name: 'Tokens',
-        onPress: () => this.setActiveTab(TOKENS),
-      },
-      {
-        id: COLLECTIBLES,
-        name: 'Collectibles',
-        onPress: () => this.setActiveTab(COLLECTIBLES),
-      },
-    ];
 
     const keyWalletInsights = [
       {
@@ -466,36 +209,29 @@ class AssetsScreen extends React.Component<Props, State> {
       },
     ];
 
-    const smartWalletInsights = [
-      {
-        key: 'install',
-        title: 'Install wallet',
-        status: true,
-      },
-      {
-        key: 'recoveryAgents',
-        title: 'Assign at least 2 recovery agents',
-        status: false,
-      },
-      {
-        key: 'dailyLimits',
-        title: 'Set daily spending limits',
-        status: false,
-      },
-      {
-        key: 'monthlyLimits',
-        title: 'Set monthly spending limits',
-        status: false,
-      },
-    ];
-
-    // const filteredCollectibles = isInCollectiblesSearchMode
-    //   ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
-    //   : collectibles;
-    //
-    // const filteredBadges = isInCollectiblesSearchMode
-    //   ? badges.filter(({ name = '' }) => name.toUpperCase().includes(query.toUpperCase()))
-    //   : badges;
+    // NOT YET RELEVANT
+    // const smartWalletInsights = [
+      // {
+      //   key: 'install',
+      //   title: 'Install wallet',
+      //   status: true,
+      // },
+      // {
+      //   key: 'recoveryAgents',
+      //   title: 'Assign at least 2 recovery agents',
+      //   status: false,
+      // },
+      // {
+      //   key: 'dailyLimits',
+      //   title: 'Set daily spending limits',
+      //   status: false,
+      // },
+      // {
+      //   key: 'monthlyLimits',
+      //   title: 'Set monthly spending limits',
+      //   status: false,
+      // },
+    // ];
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
@@ -522,20 +258,16 @@ class AssetsScreen extends React.Component<Props, State> {
       case VIEWS.SMART_WALLET_VIEW:
         return (
           <WalletView
-            activeTab={activeTab}
-            tabs={assetsTabs}
             blockAssetsView={blockAssetsView}
             sendingBlockedMessage={sendingBlockedMessage}
             showInsight={showSmartWalletInsight}
-            hideInsight={() => this.hideWalletInsight('KEY')}
-            insightList={smartWalletInsights}
-            insightsTitle="Get most of Pillar Smart wallet"
+            hideInsight={() => this.hideWalletInsight('SMART')}
+            // insightList={smartWalletInsights}
+            // insightsTitle="Get most of Pillar Smart wallet"
           />);
       case VIEWS.KEY_WALLET_VIEW:
         return (
           <WalletView
-            activeTab={activeTab}
-            tabs={assetsTabs}
             showInsight={showKeyWalletInsight}
             hideInsight={() => this.hideWalletInsight('KEY')}
             insightList={keyWalletInsights}
@@ -559,7 +291,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        color={baseColors.white}
+        backgroundColor={baseColors.white}
         headerProps={{
           ...customHeaderProps,
           leftItems: [{ user: true }],
@@ -575,23 +307,6 @@ class AssetsScreen extends React.Component<Props, State> {
         }}
       >
         {this.renderView(screenView)}
-        { /* <SearchBlock
-          headerProps={{
-            title: 'assets',
-            headerRightAddon: smartWalletFeatureEnabled && <ManageAccountsButton
-              isSmartWallet={isSmartWallet}
-              navigation={navigation}
-            />,
-            headerRightFlex: 2,
-          }}
-          headerRightFlex={4}
-          hideSearch={blockAssetsView}
-          searchInputPlaceholder={activeTab === TOKENS ? 'Search or add new asset' : 'Search'}
-          onSearchChange={(q) => this.handleSearchChange(q)}
-          itemSearchState={activeTab === TOKENS ? !!assetsSearchState : !!isInCollectiblesSearchMode}
-          navigation={navigation}
-          white
-        /> */ }
       </ContainerWithHeader>
     );
   }

@@ -25,8 +25,8 @@ import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 
 const SearchHolder = styled.View`
-  margin-bottom: 20px;
-  margin-top: ${props => props.marginTop || '0'}px;
+  margin-bottom: ${props => props.marginBottom || 20}px;
+  margin-top: ${props => props.marginTop || 0}px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -49,9 +49,10 @@ const animatedInputFieldStyles = {
 
 const InputField = styled.TextInput`
   flex: 1;
-  height: 40px;
+  height: 42px;
   padding-left: 14px;
   color: ${baseColors.slateBlack};
+  font-size: 15px;
 `;
 
 const InputIcon = styled(IconButton)`
@@ -76,6 +77,7 @@ type Props = {
   placeholder?: string,
   backgroundColor?: string,
   marginTop?: number,
+  marginBottom?: number | string, // if '0'
   inputRef?: Object,
   customCloseAction?: Function,
   forceShowCloseButton?: boolean,
@@ -166,6 +168,7 @@ class SearchBar extends React.Component<Props, State> {
       placeholder,
       backgroundColor,
       marginTop,
+      marginBottom,
       inputRef,
       customCloseAction,
       forceShowCloseButton,
@@ -177,11 +180,11 @@ class SearchBar extends React.Component<Props, State> {
     const { value = '' } = inputProps;
 
     return (
-      <SearchHolder marginTop={marginTop}>
+      <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
         <Animated.View
           style={{
             ...animatedInputFieldStyles,
-            borderColor: isFocused ? UIColors.focusedBorderColor : UIColors.defaultBorderColor,
+            borderColor: isFocused ? UIColors.focusedBorderColor : baseColors.solitude,
             width: animShrink.interpolate({
               inputRange: [0, 1],
               outputRange: ['0%', '1%'],

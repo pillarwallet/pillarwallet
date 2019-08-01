@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, View, ScrollView } from 'react-native';
+import { Keyboard, View, ScrollView, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import TouchID from 'react-native-touch-id';
 import Intercom from 'react-native-intercom';
@@ -42,6 +42,7 @@ import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import ReferralCodeModal from 'screens/Profile/ReferralCodeModal';
 import EditProfile from 'screens/Profile/EditProfile';
 import SystemInfoModal from 'components/SystemInfoModal';
+import SettingsListItem from 'components/ListItem/SettingsItem';
 
 // services
 import Storage from 'services/storage';
@@ -49,6 +50,7 @@ import ChatService from 'services/chat';
 
 // constants
 import { CONFIRM_CLAIM, CHANGE_PIN_FLOW } from 'constants/navigationConstants';
+import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
 import { delay } from 'utils/common';
@@ -78,7 +80,7 @@ type Props = {
   changeUseBiometrics: (value: boolean) => Function,
   resetIncorrectPassword: () => Function,
   saveBaseFiatCurrency: (currency: ?string) => Function,
-  // baseFiatCurrency: ?string,
+  baseFiatCurrency: ?string,
   smartWalletFeatureEnabled: boolean,
 }
 
@@ -206,6 +208,18 @@ const formReferralItems = (that) => {
   ];
 };
 
+const formCurrencyItems = (that) => {
+  const { baseFiatCurrency } = that.props;
+  return [
+    {
+      key: 'baseCurrency',
+      title: 'Base currency',
+      value: baseFiatCurrency || defaultFiatCurrency,
+      onPress: () => that.setState({ visibleModal: 'baseCurrency' }),
+    },
+  ];
+};
+
 const codeFormFields = [{
   label: 'Code',
   name: 'code',
@@ -216,6 +230,8 @@ const codeFormFields = [{
     error: 'Please enter valid code',
   },
 }];
+
+const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 
 class Settings extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -293,6 +309,16 @@ class Settings extends React.Component<Props, State> {
   //   });
   // }
 
+  renderListItem = (field: string, onSelect: Function) => ({ item: { name } }: Object) => {
+    return (
+      <SettingsListItem
+        key={name}
+        label={name}
+        onPress={() => onSelect({ [field]: name })}
+      />
+    );
+  };
+
   render() {
     const {
       user,
@@ -330,6 +356,11 @@ class Settings extends React.Component<Props, State> {
           <SettingsSection
             sectionTitle="Security"
             sectionItems={formSecurityItems(this)}
+          />
+
+          <SettingsSection
+            sectionTitle="Currency"
+            sectionItems={formCurrencyItems(this)}
           />
 
           {!isProdEnv &&
@@ -435,6 +466,24 @@ class Settings extends React.Component<Props, State> {
               />
             </View>
           </Wrapper>
+        </SlideModal>
+
+        {/* BASE CURRENCY */}
+        <SlideModal
+          isVisible={visibleModal === 'baseCurrency'}
+          fullScreen
+          showHeader
+          onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
+        >
+          <SettingsModalTitle extraHorizontalSpacing>
+            Choose your base currency
+          </SettingsModalTitle>
+          <FlatList
+            data={currencies}
+            renderItem={this.renderListItem('currency', this.handleCurrencyUpdate)}
+            keyExtractor={({ name }) => name}
+          />
         </SlideModal>
       </ContainerWithHeader>
     );

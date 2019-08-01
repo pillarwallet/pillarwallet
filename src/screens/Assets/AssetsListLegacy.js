@@ -28,26 +28,25 @@ import {
 import isEqualWith from 'lodash.isequalwith';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import Swipeout from 'react-native-swipeout';
 import { createStructuredSelector } from 'reselect';
-import { withNavigation } from 'react-navigation';
-import styled from 'styled-components/native';
 
 // components
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import { MediumText } from 'components/Typography';
+import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
+import AssetCardSimplified from 'components/AssetCard/AssetCardSimplified';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // constants
-import { defaultFiatCurrency, TOKENS } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, TOKENS } from 'constants/assetsConstants';
+import { EXPANDED, EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import { ASSET } from 'constants/navigationConstants';
 
 // utils
 import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
-import { formatMoney, getCurrencySymbol } from 'utils/common';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { formatMoney, smallScreen } from 'utils/common';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -60,6 +59,10 @@ import type { Account } from 'models/Account';
 import { accountBalancesSelector } from 'selectors/balances';
 import { activeAccountSelector } from 'selectors';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+
+// local components
+import HideAssetButton from './HideAssetButton';
+
 
 const IS_IOS = Platform.OS === 'ios';
 
@@ -79,20 +82,7 @@ type Props = {
   paymentNetworkBalances: Balances,
 }
 
-const ListHeaderWrapper = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: ${spacing.large}px;
-`;
-
-const HeaderTitle = styled(MediumText)`
-  font-size: ${fontSizes.extraSmall}px;
-  color: ${baseColors.blueYonder};
-`;
-
-class AssetsList extends React.Component<Props> {
+class AssetsListLegacy extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
     const isFocused = this.props.navigation.isFocused();
     if (!isFocused) {
@@ -105,11 +95,38 @@ class AssetsList extends React.Component<Props> {
     return !isEq;
   }
 
-  renderHeader = () => {
-    return (
-      <ListHeaderWrapper>
-        <HeaderTitle>Wallet balance £168.71</HeaderTitle>
-      </ListHeaderWrapper>
+  renderSwipeoutButtons = (asset) => {
+    // const { assetsLayout } = this.props;
+    // const isExpanded = assetsLayout === EXPANDED;
+    const { onHideTokenFromWallet } = this.props;
+    const isETH = asset.symbol === ETH;
+    return [{
+      component: (
+        <HideAssetButton
+          // expanded={isExpanded}
+          onPress={onHideTokenFromWallet(asset)}
+          disabled={isETH}
+        />),
+      backgroundColor: 'transparent',
+      disabled: true,
+    }];
+  };
+
+  resetHideRemoval = () => {
+    this.props.updateHideRemoval(false);
+  };
+
+  handleCardTap = (assetData: Object) => {
+    const { navigation, updateHideRemoval } = this.props;
+    updateHideRemoval(true);
+    navigation.navigate(ASSET,
+      {
+        assetData: {
+          ...assetData,
+          tokenType: TOKENS,
+        },
+        resetHideRemoval: this.resetHideRemoval,
+      },
     );
   };
 
@@ -117,7 +134,9 @@ class AssetsList extends React.Component<Props> {
     const {
       activeAccount,
       baseFiatCurrency,
-      navigation,
+      assetsLayout,
+      onHideTokenFromWallet,
+      forceHideRemoval,
     } = this.props;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -131,7 +150,6 @@ class AssetsList extends React.Component<Props> {
       wallpaperUrl,
       decimals,
       iconUrl,
-      patternUrl,
       paymentNetworkBalance,
       paymentNetworkBalanceInFiat,
     } = asset;
@@ -139,10 +157,8 @@ class AssetsList extends React.Component<Props> {
     const fullIconMonoUrl = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
     const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}${IS_IOS ? '?size=3' : ''}`;
     const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-    const patternIcon = patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl;
     const formattedBalanceInFiat = formatMoney(balanceInFiat);
     const displayAmount = formatMoney(balance, 4);
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     const assetData = {
       name: name || symbol,
@@ -169,6 +185,7 @@ class AssetsList extends React.Component<Props> {
       token: assetData.token,
       amount: assetData.amount,
       balanceInFiat: assetData.balanceInFiat,
+      onPress: this.handleCardTap,
       address: assetData.address,
       icon: assetData.iconColor,
       wallpaper: assetData.wallpaper,
@@ -178,30 +195,73 @@ class AssetsList extends React.Component<Props> {
       paymentNetworkBalance,
       paymentNetworkBalanceFormatted: formatMoney(paymentNetworkBalance, 4),
       paymentNetworkBalanceInFiat: formatMoney(paymentNetworkBalanceInFiat),
-      patternIcon,
     };
-    return (
-      <ListItemWithImage
-        onPress={() => {
-          navigation.navigate(ASSET,
-            {
-              assetData: {
-                ...props,
-                tokenType: TOKENS,
-              },
-            },
-          );
-        }}
-        label={name}
-        avatarUrl={fullIconUrl}
-        balance={{
-          balance: formatMoney(balance),
-          value: formatMoney(balanceInFiat, 2),
-          currency: currencySymbol,
-          token: symbol,
-        }}
-      />
-    );
+    const isETH = asset.symbol === ETH;
+
+    switch (assetsLayout) {
+      // case SIMPLIFIED: {
+      //   return (
+      //     <Swipeout
+      //       right={this.renderSwipeoutButtons(asset)}
+      //       sensitivity={10}
+      //       backgroundColor="transparent"
+      //       buttonWidth={80}
+      //       close={forceHideRemoval}
+      //     >
+      //       <AssetCardSimplified {...props} />
+      //     </Swipeout>
+      //   );
+      // }
+      case MINIMIZED: {
+        return (
+          <AssetCardMinimized
+            {...props}
+            smallScreen={smallScreen()}
+            disabledRemove={isETH}
+            onRemove={onHideTokenFromWallet(asset)}
+            forceHideRemoval={forceHideRemoval}
+            columnCount={3}
+          />
+        );
+      }
+      case EXTRASMALL: {
+        return (
+          <AssetCardMinimized
+            {...props}
+            smallScreen={smallScreen()}
+            disabledRemove={isETH}
+            onRemove={onHideTokenFromWallet(asset)}
+            forceHideRemoval={forceHideRemoval}
+            extraSmall
+            columnCount={3}
+          />
+        );
+      }
+      default: {
+        return (
+          <Swipeout
+            right={this.renderSwipeoutButtons(asset)}
+            sensitivity={10}
+            backgroundColor="transparent"
+            buttonWidth={80}
+            close={forceHideRemoval}
+          >
+            <AssetCardSimplified {...props} />
+          </Swipeout>
+        );
+        // return (
+        //   <Swipeout
+        //     right={this.renderSwipeoutButtons(asset)}
+        //     sensitivity={10}
+        //     backgroundColor="transparent"
+        //     buttonWidth={80}
+        //     close={forceHideRemoval}
+        //   >
+        //     <AssetCard {...props} icon={assetData.icon} horizontalPadding />
+        //   </Swipeout>
+        // );
+      }
+    }
   };
 
   renderSeparator = () => {
@@ -220,9 +280,11 @@ class AssetsList extends React.Component<Props> {
   render() {
     const {
       assets,
+      assetsLayout,
       baseFiatCurrency,
       rates,
       balances,
+      horizontalPadding,
       paymentNetworkBalances,
     } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -245,17 +307,29 @@ class AssetsList extends React.Component<Props> {
       }))
       .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
 
+    const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
+
     return (
       <FlatList
+        key={assetsLayout}
         data={sortedAssets}
         keyExtractor={(item) => item.id}
         renderItem={this.renderToken}
         initialNumToRender={5}
         maxToRenderPerBatch={5}
         onEndReachedThreshold={0.5}
-        style={{ width: '100%', height: '100%', flexGrow: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListHeaderComponent={this.renderHeader}
+        style={{ width: '100%' }}
+        contentContainerStyle={{
+          paddingTop: 45,
+          paddingBottom: 6,
+          paddingLeft: horizontalPadding(assetsLayout, 'left'),
+          paddingRight: horizontalPadding(assetsLayout, 'right'),
+          width: '100%',
+        }}
+        numColumns={columnAmount}
+        ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
+          ? this.renderSeparator
+          : null}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -296,4 +370,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
 });
 
-export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(AssetsList));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsListLegacy);

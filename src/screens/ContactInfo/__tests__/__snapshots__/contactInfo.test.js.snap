@@ -1192,13 +1192,21 @@ exports[`Contact info should render Contact info correctly 1`] = `
       </View>
     </View>
     <View
+      accessible={true}
+      isTVSelectable={true}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
         Array [
           Object {
             "alignItems": "center",
             "display": "flex",
             "flexDirection": "row",
-            "justifyContent": "space-between",
+            "justifyContent": "flex-start",
           },
           undefined,
         ]
@@ -1209,15 +1217,17 @@ exports[`Contact info should render Contact info correctly 1`] = `
           Array [
             Object {
               "alignItems": "center",
+              "flexBasis": 0,
               "flexDirection": "row",
+              "flexGrow": 1,
+              "flexShrink": 1,
               "justifyContent": "space-between",
               "paddingBottom": 24,
-              "paddingLeft": 16,
-              "paddingRight": 16,
+              "paddingLeft": 20,
+              "paddingRight": 20,
               "paddingTop": 22,
-              "width": "100%",
             },
-            undefined,
+            null,
           ]
         }
       >
@@ -1253,36 +1263,60 @@ exports[`Contact info should render Contact info correctly 1`] = `
         >
           Name: testtest
         </Text>
-        <RCTSwitch
-          accessibilityRole="button"
-          disabled={false}
-          onChange={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
+        <View
           style={
             Array [
               Object {
-                "height": 31,
-                "width": 51,
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "marginLeft": 12,
+                "marginTop": 2,
+                "minWidth": 70,
               },
-              Object {
-                "marginBottom": -5,
-                "marginTop": -5,
-              },
+              undefined,
             ]
           }
-          value={true}
-        />
+        >
+          <RCTSwitch
+            accessibilityRole="button"
+            disabled={false}
+            onChange={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Array [
+                Object {
+                  "height": 31,
+                  "width": 51,
+                },
+                Object {
+                  "marginBottom": -5,
+                  "marginTop": -5,
+                },
+              ]
+            }
+            value={true}
+          />
+        </View>
       </View>
     </View>
     <View
+      accessible={true}
+      isTVSelectable={true}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
         Array [
           Object {
             "alignItems": "center",
             "display": "flex",
             "flexDirection": "row",
-            "justifyContent": "space-between",
+            "justifyContent": "flex-start",
           },
           undefined,
         ]
@@ -1293,15 +1327,17 @@ exports[`Contact info should render Contact info correctly 1`] = `
           Array [
             Object {
               "alignItems": "center",
+              "flexBasis": 0,
               "flexDirection": "row",
+              "flexGrow": 1,
+              "flexShrink": 1,
               "justifyContent": "space-between",
               "paddingBottom": 24,
-              "paddingLeft": 16,
-              "paddingRight": 16,
+              "paddingLeft": 20,
+              "paddingRight": 20,
               "paddingTop": 22,
-              "width": "100%",
             },
-            undefined,
+            null,
           ]
         }
       >
@@ -1337,36 +1373,60 @@ exports[`Contact info should render Contact info correctly 1`] = `
         >
           Username: testUser
         </Text>
-        <RCTSwitch
-          accessibilityRole="button"
-          disabled={false}
-          onChange={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
+        <View
           style={
             Array [
               Object {
-                "height": 31,
-                "width": 51,
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "marginLeft": 12,
+                "marginTop": 2,
+                "minWidth": 70,
               },
-              Object {
-                "marginBottom": -5,
-                "marginTop": -5,
-              },
+              undefined,
             ]
           }
-          value={false}
-        />
+        >
+          <RCTSwitch
+            accessibilityRole="button"
+            disabled={false}
+            onChange={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Array [
+                Object {
+                  "height": 31,
+                  "width": 51,
+                },
+                Object {
+                  "marginBottom": -5,
+                  "marginTop": -5,
+                },
+              ]
+            }
+            value={false}
+          />
+        </View>
       </View>
     </View>
     <View
+      accessible={true}
+      isTVSelectable={true}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
         Array [
           Object {
             "alignItems": "center",
             "display": "flex",
             "flexDirection": "row",
-            "justifyContent": "space-between",
+            "justifyContent": "flex-start",
           },
           undefined,
         ]
@@ -1377,15 +1437,17 @@ exports[`Contact info should render Contact info correctly 1`] = `
           Array [
             Object {
               "alignItems": "center",
+              "flexBasis": 0,
               "flexDirection": "row",
+              "flexGrow": 1,
+              "flexShrink": 1,
               "justifyContent": "space-between",
               "paddingBottom": 24,
-              "paddingLeft": 16,
-              "paddingRight": 16,
+              "paddingLeft": 20,
+              "paddingRight": 20,
               "paddingTop": 22,
-              "width": "100%",
             },
-            undefined,
+            null,
           ]
         }
       >
@@ -1421,36 +1483,60 @@ exports[`Contact info should render Contact info correctly 1`] = `
         >
           Email: test@test.com
         </Text>
-        <RCTSwitch
-          accessibilityRole="button"
-          disabled={false}
-          onChange={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
+        <View
           style={
             Array [
               Object {
-                "height": 31,
-                "width": 51,
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "marginLeft": 12,
+                "marginTop": 2,
+                "minWidth": 70,
               },
-              Object {
-                "marginBottom": -5,
-                "marginTop": -5,
-              },
+              undefined,
             ]
           }
-          value={true}
-        />
+        >
+          <RCTSwitch
+            accessibilityRole="button"
+            disabled={false}
+            onChange={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Array [
+                Object {
+                  "height": 31,
+                  "width": 51,
+                },
+                Object {
+                  "marginBottom": -5,
+                  "marginTop": -5,
+                },
+              ]
+            }
+            value={true}
+          />
+        </View>
       </View>
     </View>
     <View
+      accessible={true}
+      isTVSelectable={true}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
         Array [
           Object {
             "alignItems": "center",
             "display": "flex",
             "flexDirection": "row",
-            "justifyContent": "space-between",
+            "justifyContent": "flex-start",
           },
           undefined,
         ]
@@ -1461,15 +1547,17 @@ exports[`Contact info should render Contact info correctly 1`] = `
           Array [
             Object {
               "alignItems": "center",
+              "flexBasis": 0,
               "flexDirection": "row",
+              "flexGrow": 1,
+              "flexShrink": 1,
               "justifyContent": "space-between",
               "paddingBottom": 24,
-              "paddingLeft": 16,
-              "paddingRight": 16,
+              "paddingLeft": 20,
+              "paddingRight": 20,
               "paddingTop": 22,
-              "width": "100%",
             },
-            undefined,
+            null,
           ]
         }
       >
@@ -1505,36 +1593,60 @@ exports[`Contact info should render Contact info correctly 1`] = `
         >
           City: testCity
         </Text>
-        <RCTSwitch
-          accessibilityRole="button"
-          disabled={false}
-          onChange={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
+        <View
           style={
             Array [
               Object {
-                "height": 31,
-                "width": 51,
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "marginLeft": 12,
+                "marginTop": 2,
+                "minWidth": 70,
               },
-              Object {
-                "marginBottom": -5,
-                "marginTop": -5,
-              },
+              undefined,
             ]
           }
-          value={false}
-        />
+        >
+          <RCTSwitch
+            accessibilityRole="button"
+            disabled={false}
+            onChange={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Array [
+                Object {
+                  "height": 31,
+                  "width": 51,
+                },
+                Object {
+                  "marginBottom": -5,
+                  "marginTop": -5,
+                },
+              ]
+            }
+            value={false}
+          />
+        </View>
       </View>
     </View>
     <View
+      accessible={true}
+      isTVSelectable={true}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
         Array [
           Object {
             "alignItems": "center",
             "display": "flex",
             "flexDirection": "row",
-            "justifyContent": "space-between",
+            "justifyContent": "flex-start",
           },
           undefined,
         ]
@@ -1545,15 +1657,17 @@ exports[`Contact info should render Contact info correctly 1`] = `
           Array [
             Object {
               "alignItems": "center",
+              "flexBasis": 0,
               "flexDirection": "row",
+              "flexGrow": 1,
+              "flexShrink": 1,
               "justifyContent": "space-between",
               "paddingBottom": 24,
-              "paddingLeft": 16,
-              "paddingRight": 16,
+              "paddingLeft": 20,
+              "paddingRight": 20,
               "paddingTop": 22,
-              "width": "100%",
             },
-            undefined,
+            null,
           ]
         }
       >
@@ -1589,26 +1703,42 @@ exports[`Contact info should render Contact info correctly 1`] = `
         >
           Country: testCountry
         </Text>
-        <RCTSwitch
-          accessibilityRole="button"
-          disabled={false}
-          onChange={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
+        <View
           style={
             Array [
               Object {
-                "height": 31,
-                "width": 51,
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "marginLeft": 12,
+                "marginTop": 2,
+                "minWidth": 70,
               },
-              Object {
-                "marginBottom": -5,
-                "marginTop": -5,
-              },
+              undefined,
             ]
           }
-          value={false}
-        />
+        >
+          <RCTSwitch
+            accessibilityRole="button"
+            disabled={false}
+            onChange={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Array [
+                Object {
+                  "height": 31,
+                  "width": 51,
+                },
+                Object {
+                  "marginBottom": -5,
+                  "marginTop": -5,
+                },
+              ]
+            }
+            value={false}
+          />
+        </View>
       </View>
     </View>
     <View

@@ -21,12 +21,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import {
-  RefreshControl,
-  FlatList,
-  Keyboard,
-  SectionList,
-} from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import styled from 'styled-components/native';
 import isEqualWith from 'lodash.isequalwith';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -34,7 +29,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
-import Title from 'components/Title';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 
 // actions
@@ -43,7 +37,6 @@ import { fetchBadgesAction } from 'actions/badgesActions';
 
 // constants
 import { COLLECTIBLE, BADGE } from 'constants/navigationConstants';
-import { COLLECTIBLES, BADGES } from 'constants/assetsConstants';
 
 // utils
 import { smallScreen } from 'utils/common';
@@ -57,10 +50,7 @@ const EmptyStateWrapper = styled.View`
   align-items: center;
   justify-content: center;
   padding: 20px;
-`;
-
-const StyledTitle = styled(Title)`
-  margin: ${spacing.medium}px 2px;
+  flex-grow: 1;
 `;
 
 const viewConfig = {
@@ -76,7 +66,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   horizontalPadding: Function,
   fetchAllCollectiblesData: Function,
-  updateHideRemoval: Function,
   fetchBadges: Function,
 }
 
@@ -94,8 +83,7 @@ class CollectiblesList extends React.Component<Props> {
   }
 
   handleCardTap = (assetData: Object) => {
-    const { navigation, updateHideRemoval } = this.props;
-    updateHideRemoval(true);
+    const { navigation } = this.props;
     navigation.navigate(COLLECTIBLE, { assetData });
   };
 
@@ -113,16 +101,6 @@ class CollectiblesList extends React.Component<Props> {
     );
   };
 
-  renderBadge = ({ item }) => {
-    const { navigation } = this.props;
-    return (
-      <BadgeTouchableItem
-        data={item}
-        onPress={() => navigation.navigate(BADGE, { id: item.id })}
-      />
-    );
-  };
-
   renderItem = (item) => {
     const { navigation } = this.props;
     return (
@@ -136,9 +114,7 @@ class CollectiblesList extends React.Component<Props> {
   render() {
     const {
       searchQuery,
-      badges,
       fetchAllCollectiblesData,
-      fetchBadges,
       collectibles,
     } = this.props;
 
@@ -152,79 +128,30 @@ class CollectiblesList extends React.Component<Props> {
       emptyStateInfo.bodyText = 'Check if the name was entered correctly';
     }
 
-    const sectionData = [
-      {
-        key: COLLECTIBLES,
-        title: 'all collectibles.',
-        data: [collectibles],
-        emptyStateInfo: {
-          title: 'No collectibles',
-          bodyText: 'There are no collectibles in this wallet',
-        },
-      },
-    ];
-
-    if (badges.length) {
-      sectionData.unshift({
-        key: BADGES,
-        title: 'game of badges.',
-        data: [badges],
-      });
-    }
-
     return (
-      <SectionList
-        sections={sectionData}
-        renderSectionHeader={({ section }) => {
-          if (sectionData.length > 1 && section.title) { // no need to show SectionList title if there's only 1 section
-            return (
-              <StyledTitle noMargin style={{ marginLeft: spacing.mediumLarge }} subtitle title={section.title} />
-            );
-          }
-          return null;
-        }}
-        contentContainerStyle={sectionData.length === 1 && !collectibles.length
-        ? {
-            justifyContent: 'center',
-            flex: 1,
-          }
-        : {}}
-        stickySectionHeadersEnabled={false}
-        keyExtractor={(item) => item.key}
+      <FlatList
+        data={collectibles}
+        keyExtractor={(it) => { return `${it.assetContract}${it.id}`; }}
+        renderItem={this.renderCollectible}
+        numColumns={2}
+        style={[searchQuery ? { flexGrow: 1, paddingTop: spacing.mediumLarge } : { flexGrow: 1 }]}
+        contentContainerStyle={{ paddingHorizontal: spacing.large, paddingVertical: 10, flexGrow: 1 }}
+        ListEmptyComponent={
+          <EmptyStateWrapper>
+            <EmptyStateParagraph {...emptyStateInfo} />
+          </EmptyStateWrapper>
+        }
+        initialNumToRender={4}
+        removeClippedSubviews
+        viewabilityConfig={viewConfig}
         refreshControl={
           <RefreshControl
             refreshing={false}
             onRefresh={() => {
               fetchAllCollectiblesData();
-              fetchBadges();
             }}
           />
         }
-        onScroll={() => Keyboard.dismiss()}
-        renderItem={({ item, section }) => (
-          <FlatList
-            data={item}
-            horizontal={section.key === BADGES}
-            keyExtractor={(it) => {
-              return section.key === COLLECTIBLE ? `${it.assetContract}${it.id}` : it.id.toString();
-            }}
-            renderItem={section.key === COLLECTIBLES ? this.renderCollectible : this.renderBadge}
-            numColumns={section.key === COLLECTIBLES ? 2 : 1}
-            style={[
-              { width: '100%' },
-              section.key === COLLECTIBLES ? { paddingHorizontal: 10 } : {},
-              ]}
-            contentContainerStyle={section.key === BADGES ? { paddingHorizontal: 10 } : {}}
-            ListEmptyComponent={
-              <EmptyStateWrapper fullScreen>
-                <EmptyStateParagraph {...section.emptyStateInfo} />
-              </EmptyStateWrapper>
-            }
-            initialNumToRender={section.key === BADGES ? 5 : 4}
-            removeClippedSubviews={section.key === COLLECTIBLES}
-            viewabilityConfig={viewConfig}
-          />
-        )}
       />
     );
   }

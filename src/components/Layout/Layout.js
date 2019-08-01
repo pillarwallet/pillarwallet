@@ -52,6 +52,8 @@ type ScrollWrapperProps = {
   innerRef?: Object,
   contentContainerStyle?: Object,
   keyboardShouldPersistTaps?: string,
+  onScroll?: Function,
+  stickyHeaderIndices?: number[],
 };
 
 export const Center = styled.View`
@@ -133,6 +135,8 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
     contentContainerStyle,
     children,
     keyboardShouldPersistTaps,
+    onScroll,
+    stickyHeaderIndices,
   } = props;
 
   return (
@@ -145,6 +149,8 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
       onKeyboardWillShow={onKeyboardWillShow}
       contentContainerStyle={contentContainerStyle}
       keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+      onScroll={onScroll}
+      stickyHeaderIndices={Platform.OS === 'ios' ? stickyHeaderIndices : null}
     >
       {children}
     </KAScrollView>
