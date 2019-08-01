@@ -39,7 +39,9 @@ export const buildHistoryTransaction = ({
   isPPNTransaction,
 }: TransactionEthers): Transaction => ({
   status: status || TX_PENDING_STATUS,
-  gasUsed: gasPrice && gasLimit ? parseFloat(utils.formatEther(gasPrice.mul(gasLimit))) : 0,
+  gasUsed: gasPrice && gasLimit
+    ? parseFloat(utils.formatEther(utils.bigNumberify(gasPrice.toString()).mul(gasLimit)))
+    : 0,
   gasPrice: gasPrice ? Number(gasPrice) : 0,
   value: typeof value === 'object' ? value.toString() : value,
   from,
