@@ -300,13 +300,14 @@ class PeopleScreen extends React.Component<Props, State> {
       >
         <ListItemWithImage
           label={item.username}
+          paragraph={(item.lastMessage && item.lastMessage.content) || ''}
           onPress={this.handleContactCardPress(item)}
           avatarUrl={item.profileImage}
           navigateToProfile={this.handleContactCardPress(item)}
           imageUpdateTimeStamp={item.lastUpdateTime}
           unreadCount={unreadCount}
           customAddon={(status === 'muted' || status === 'blocked') ? <ConnectionStatus status={status} /> : null}
-          rightColumnInnerStyle={{ flexDirection: 'row' }}
+          rightColumnInnerStyle={{ flexDirection: 'row-reverse' }}
           noSeparator
         />
       </Swipeout>
@@ -358,29 +359,17 @@ class PeopleScreen extends React.Component<Props, State> {
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
     const localContactsWithUnreads = localContacts.map((contact) => {
       const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
-      if (Object.keys(chatWithUserInfo).length) {
-        if (chatWithUserInfo.unread) {
-          return {
-            ...contact,
-            unread: chatWithUserInfo.unread,
-            serverTimestamp: chatWithUserInfo.lastMessage ? chatWithUserInfo.lastMessage.serverTimestamp : null,
-          };
-        }
-        return {
-          ...contact,
-          serverTimestamp: chatWithUserInfo.lastMessage ? chatWithUserInfo.lastMessage.serverTimestamp : null,
-        };
-      }
       return {
         ...contact,
-        serverTimestamp: null,
+        unread: chatWithUserInfo.unread || 0,
+        lastMessage: chatWithUserInfo.lastMessage || null,
       };
     });
     const sortedLocalContacts = orderBy(
       localContactsWithUnreads,
       [(user) => {
-        if (user.serverTimestamp) {
-          return user.serverTimestamp;
+        if (user.lastMessage) {
+          return user.lastMessage.serverTimestamp;
         }
         return user.createdAt * 1000;
       }],

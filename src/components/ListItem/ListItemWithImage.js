@@ -126,10 +126,10 @@ const ItemTitle = styled(BoldText)`
 
 const ItemParagraph = styled(BaseText)`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.extraSmall}px;
   line-height: ${fontSizes.mediumLarge}px;
   letter-spacing: ${fontTrackings.tiny}px;
-  margin-top: 2px;
+  margin-top: 4px;
   flex: 1;
 `;
 
