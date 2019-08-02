@@ -63,6 +63,7 @@ import {
   SET_AVAILABLE_TO_SETTLE_TX,
   START_FETCHING_AVAILABLE_TO_SETTLE_TX,
   SET_ESTIMATED_SETTLE_TX_FEE,
+  PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { SMART_WALLET_UNLOCK, ASSETS, SEND_TOKEN_AMOUNT, PPN_SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 
@@ -589,6 +590,13 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
                 title: 'Success',
                 autoClose: true,
               });
+            } else if (txUpdated.note === PAYMENT_NETWORK_TX_SETTLEMENT) {
+              Toast.show({
+                message: 'Settlement process completed!',
+                type: 'success',
+                title: 'Success',
+                autoClose: true,
+              });
             } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
               Toast.show({
                 message: 'Transaction was successfully sent!',
@@ -973,7 +981,7 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
 };
 
 export const settleTransactionsAction = (txToSettle: Object[]) => {
-  return async () => {
+  return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
       Toast.show({
         message: 'Smart Account is not initialized',
@@ -1008,7 +1016,35 @@ export const settleTransactionsAction = (txToSettle: Object[]) => {
       });
 
     if (txHash) {
-      // TODO: create tx history record
+      const { accounts: { data: accounts } } = getState();
+      const accountId = getActiveAccountId(accounts);
+      const accountAddress = getActiveAccountAddress(accounts);
+
+      const historyTx = buildHistoryTransaction({
+        from: accountAddress,
+        hash: txHash,
+        to: accountAddress,
+        value: '0',
+        asset: PPN_TOKEN,
+        note: PAYMENT_NETWORK_TX_SETTLEMENT,
+      });
+
+      dispatch({
+        type: ADD_TRANSACTION,
+        payload: {
+          accountId,
+          historyTx,
+        },
+      });
+
+      dispatch({
+        type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
+        payload: txHash,
+      });
+
+      const { history: { data: currentHistory } } = getState();
+      dispatch(saveDbAction('history', { history: currentHistory }, true));
+
       Toast.show({
         message: 'Settlement was successful. Please wait for the transaction to be mined',
         type: 'success',
