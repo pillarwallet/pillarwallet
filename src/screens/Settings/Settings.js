@@ -26,14 +26,18 @@ import Intercom from 'react-native-intercom';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
-import { saveBaseFiatCurrencyAction, changeUseBiometricsAction } from 'actions/appSettingsActions';
+import {
+  saveBaseFiatCurrencyAction,
+  changeUseBiometricsAction,
+  saveOptOutTrackingAction,
+} from 'actions/appSettingsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { repairStorageAction } from 'actions/appActions';
 import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
 
 // components
 import { Wrapper } from 'components/Layout';
-import { BoldText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import Toast from 'components/Toast';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
@@ -43,6 +47,7 @@ import ReferralCodeModal from 'screens/Profile/ReferralCodeModal';
 import EditProfile from 'screens/Profile/EditProfile';
 import SystemInfoModal from 'components/SystemInfoModal';
 import SettingsListItem from 'components/ListItem/SettingsItem';
+import Checkbox from 'components/Checkbox';
 
 // services
 import Storage from 'services/storage';
@@ -55,18 +60,13 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 // utils
 import { delay } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
-import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontTrackings, fontWeights, spacing } from 'utils/variables';
 
 // partials
 import { SettingsSection } from './SettingsSection';
 
 type State = {
   visibleModal: ?string,
-  showTermsConditionsModal: boolean,
-  showPrivacyPolicyModal: boolean,
-  showSystemInfoModal: boolean,
-  showCheckPinModal: boolean,
-  showBiometricsSelector: boolean,
 }
 
 type Props = {
@@ -82,6 +82,8 @@ type Props = {
   saveBaseFiatCurrency: (currency: ?string) => Function,
   baseFiatCurrency: ?string,
   smartWalletFeatureEnabled: boolean,
+  saveOptOutTracking: (status: boolean) => void,
+  optOutTracking: boolean,
 }
 
 const storage = new Storage('db');
@@ -94,9 +96,29 @@ const SettingsModalTitle = styled(BoldText)`
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 
+const StyledWrapper = styled(Wrapper)`
+  justify-content: space-between;
+  padding-bottom: ${spacing.rhythm}px;
+  margin-top: 25px;
+`;
+
+const CheckboxText = styled(BaseText)`
+  font-size: ${fontSizes.small}px;
+  margin-top: 2px;
+  letter-spacing: ${fontTrackings.small}px;
+  line-height: 20px;
+  margin-bottom: ${spacing.medium}px;
+`;
+
+const SmallText = styled(BaseText)`
+  font-size: ${fontSizes.extraSmall}px;
+  margin-top: 2px;
+  letter-spacing: ${fontTrackings.small}px;
+`;
+
 const formSecurityItems = (that) => {
   const { navigation, useBiometrics } = that.props;
-  const { showBiometricsSelector } = that.state;
+  const { visibleModal } = that.state;
   const generalSecurityItems = [
     {
       key: 'changePin',
@@ -105,11 +127,11 @@ const formSecurityItems = (that) => {
     },
   ];
 
-  if (showBiometricsSelector) {
+  if (visibleModal === 'biometrics') {
     generalSecurityItems.push({
       key: 'biometricLogin',
       title: 'Biometric Login',
-      onPress: () => that.setState({ showCheckPinModal: true }),
+      onPress: () => that.setState({ visibleModal: 'checkPin' }),
       toggle: true,
       value: useBiometrics,
     });
@@ -162,12 +184,12 @@ const formLegalItems = (that) => {
     {
       key: 'termsOfUse',
       title: 'Terms of Use',
-      onPress: that.toggleTermsConditionsModal,
+      onPress: () => that.setState({ visibleModal: 'termsOfService' }),
     },
     {
       key: 'privacyPolicy',
       title: 'Privacy Policy',
-      onPress: that.togglePrivacyPolicyModal,
+      onPress: () => that.setState({ visibleModal: 'privacyPolicy' }),
     },
   ];
 };
@@ -177,7 +199,12 @@ const formSystemItems = (that) => {
     {
       key: 'systemInfo',
       title: 'System Info',
-      onPress: () => that.setState({ showSystemInfoModal: true }),
+      onPress: () => that.setState({ visibleModal: 'systemInfo' }),
+    },
+    {
+      key: 'analytics',
+      title: 'Usage analytics',
+      onPress: () => that.setState({ visibleModal: 'analytics' }),
     },
   ];
 };
@@ -240,17 +267,12 @@ class Settings extends React.Component<Props, State> {
     const visibleModal = navigation.getParam('visibleModal', null);
     this.state = {
       visibleModal,
-      showTermsConditionsModal: false,
-      showPrivacyPolicyModal: false,
-      showSystemInfoModal: false,
-      showCheckPinModal: false,
-      showBiometricsSelector: false, // eslint-disable-line
     };
   }
 
   componentDidMount() {
     TouchID.isSupported({})
-      .then(() => this.setState({ showBiometricsSelector: true })) // eslint-disable-line
+      .then(() => this.setState({ visibleModal: 'biometrics' }))
       .catch(() => null);
   }
 
@@ -264,18 +286,10 @@ class Settings extends React.Component<Props, State> {
     this.setState({ visibleModal });
   };
 
-  toggleTermsConditionsModal = () => {
-    this.setState({ showTermsConditionsModal: !this.state.showTermsConditionsModal });
-  };
-
-  togglePrivacyPolicyModal = () => {
-    this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
-  };
-
   handleChangeUseBiometrics = (value) => {
     const { changeUseBiometrics } = this.props;
     changeUseBiometrics(value);
-    this.setState({ showCheckPinModal: false }, () => {
+    this.setState({ visibleModal: null }, () => {
       const message = value ? 'Biometric login enabled' : 'Biometric login disabled';
       delay(500)
         .then(() => Toast.show({ title: 'Success', type: 'success', message }))
@@ -286,7 +300,7 @@ class Settings extends React.Component<Props, State> {
   handleCheckPinModalClose = () => {
     const { resetIncorrectPassword } = this.props;
     resetIncorrectPassword();
-    this.setState({ showCheckPinModal: false });
+    this.setState({ visibleModal: null });
   }
 
   handleCodeClaim = (field: Object) => {
@@ -319,19 +333,22 @@ class Settings extends React.Component<Props, State> {
     );
   };
 
+  handleToggleOptOutTracking = () => {
+    const { saveOptOutTracking, optOutTracking } = this.props;
+
+    saveOptOutTracking(!optOutTracking);
+  };
+
   render() {
     const {
       user,
       // appSettings: { appearanceSettings },
       useBiometrics,
       smartWalletFeatureEnabled,
+      optOutTracking,
     } = this.props;
 
     const {
-      showTermsConditionsModal,
-      showPrivacyPolicyModal,
-      showSystemInfoModal,
-      showCheckPinModal,
       visibleModal,
     } = this.state;
 
@@ -400,7 +417,7 @@ class Settings extends React.Component<Props, State> {
 
         {/* BIOMETRIC LOGIN */}
         <SlideModal
-          isVisible={showCheckPinModal}
+          isVisible={visibleModal === 'checkPin'}
           onModalHide={this.handleCheckPinModalClose}
           title="enter pincode"
           centerTitle
@@ -414,26 +431,26 @@ class Settings extends React.Component<Props, State> {
 
         {/* LEGAL MODALS */}
         <HTMLContentModal
-          isVisible={showTermsConditionsModal}
-          modalHide={this.toggleTermsConditionsModal}
+          isVisible={visibleModal === 'termsOfService'}
+          modalHide={() => this.setState({ visibleModal: null })}
           htmlEndpoint="terms_of_service"
         />
 
         <HTMLContentModal
-          isVisible={showPrivacyPolicyModal}
-          modalHide={this.togglePrivacyPolicyModal}
+          isVisible={visibleModal === 'privacyPolicy'}
+          modalHide={() => this.setState({ visibleModal: null })}
           htmlEndpoint="privacy_policy"
         />
 
         {/* SYSTEM INFO MODAL */}
         <SlideModal
-          isVisible={showSystemInfoModal}
+          isVisible={visibleModal === 'systemInfo'}
           fullScreen
           showHeader
           title="system info"
-          onModalHide={() => this.setState({ showSystemInfoModal: false })}
+          onModalHide={() => this.setState({ visibleModal: null })}
         >
-          <SystemInfoModal headerOnClose={() => this.setState({ showSystemInfoModal: false })} />
+          <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
         </SlideModal>
 
         {/* REFERRAL */}
@@ -446,7 +463,7 @@ class Settings extends React.Component<Props, State> {
         </SlideModal>
 
         <SlideModal
-          isVisible={this.state.visibleModal === 'claimTokens'}
+          isVisible={visibleModal === 'claimTokens'}
           fullScreen
           title="Claim tokens"
           showHeader
@@ -485,6 +502,39 @@ class Settings extends React.Component<Props, State> {
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
+
+        {/* ANALYTICS */}
+        <SlideModal
+          isVisible={visibleModal === 'analytics'}
+          fullScreen
+          showHeader
+          onModalHide={() => this.setState({ visibleModal: null })}
+          backgroundColor={baseColors.lightGray}
+          avoidKeyboard
+        >
+          <Wrapper regularPadding flex={1}>
+            <SettingsModalTitle>
+              Usage analytics
+            </SettingsModalTitle>
+
+            <StyledWrapper>
+              <Checkbox
+                checked={!optOutTracking}
+                onPress={() => this.handleToggleOptOutTracking()}
+              >
+                <CheckboxText>
+                  I&apos;m happy to share anonymous application usage statistics
+                </CheckboxText>
+              </Checkbox>
+              <SmallText>
+                By sharing application usage statistics you are helping Pillar build a better wallet.
+              </SmallText>
+              <SmallText>
+                Usage statistics do not include any personal information from you or your contacts.
+              </SmallText>
+            </StyledWrapper>
+          </Wrapper>
+        </SlideModal>
       </ContainerWithHeader>
     );
   }
@@ -492,7 +542,7 @@ class Settings extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-  appSettings: { data: { useBiometrics = false, baseFiatCurrency }, data: appSettings },
+  appSettings: { data: { useBiometrics = false, baseFiatCurrency }, data: appSettings, optOutTracking = false },
   notifications: { intercomNotificationsCount },
   session: { data: { hasDBConflicts } },
   wallet: { backupStatus },
@@ -502,6 +552,7 @@ const mapStateToProps = ({
   baseFiatCurrency,
   intercomNotificationsCount,
   appSettings,
+  optOutTracking,
   hasDBConflicts,
   backupStatus,
   useBiometrics,
@@ -514,6 +565,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   changeUseBiometrics: (value) => dispatch(changeUseBiometricsAction(value)),
   repairStorage: () => dispatch(repairStorageAction()),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
+  saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

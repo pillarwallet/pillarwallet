@@ -121,7 +121,7 @@ class CollectibleScreen extends React.Component<Props> {
       id,
       name,
       description,
-      icon,
+      image,
     } = assetData;
 
     const isOwned = collectibles.find(collectible => {
@@ -144,7 +144,7 @@ class CollectibleScreen extends React.Component<Props> {
         <ScrollWrapper>
           <CollectibleImage
             key={id.toString()}
-            source={{ uri: icon }}
+            source={{ uri: image }}
             fallbackSource={genericCollectible}
             resizeMode="contain"
           />

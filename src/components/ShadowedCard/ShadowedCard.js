@@ -41,6 +41,7 @@ type Props = {
   children: React.Node,
   wrapperStyle?: Object,
   contentWrapperStyle?: Object,
+  upperContentWrapperStyle?: Object,
   onPress?: Function,
   disabled?: boolean,
 }
@@ -48,6 +49,7 @@ type Props = {
 type State = {
   cardHeight: ?number,
   cardWidth: ?number,
+  allowRerenderShadow: boolean,
 }
 
 const SHADOW_LENGTH = 3;
@@ -56,6 +58,16 @@ export default class ShadowedCard extends React.PureComponent<Props, State> {
   state = {
     cardHeight: null,
     cardWidth: null,
+    allowRerenderShadow: false,
+  };
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.children !== this.props.children) {
+      this.allowToRerenderShadow();
+    }
+  }
+  allowToRerenderShadow = () => {
+    this.setState({ allowRerenderShadow: true });
   };
 
   render() {
@@ -65,8 +77,9 @@ export default class ShadowedCard extends React.PureComponent<Props, State> {
       children,
       onPress,
       disabled,
+      upperContentWrapperStyle,
     } = this.props;
-    const { cardHeight, cardWidth } = this.state;
+    const { cardHeight, cardWidth, allowRerenderShadow } = this.state;
     return (
       <CardOutter style={wrapperStyle}>
         {!!(cardHeight && cardWidth) &&
@@ -85,14 +98,17 @@ export default class ShadowedCard extends React.PureComponent<Props, State> {
           shadowRadius={4}
         />}
         <TouchableWithoutFeedback onPress={onPress}>
-          <ContentWrapper disabled={disabled}>
+          <ContentWrapper disabled={disabled} style={upperContentWrapperStyle}>
             <View
               style={contentWrapperStyle}
               onLayout={(e) => {
-                this.setState({
-                  cardHeight: e.nativeEvent.layout.height + SHADOW_LENGTH,
-                  cardWidth: e.nativeEvent.layout.width + SHADOW_LENGTH,
-                });
+                if ((!cardHeight && !cardWidth) || allowRerenderShadow) {
+                  this.setState({
+                    cardHeight: e.nativeEvent.layout.height + SHADOW_LENGTH,
+                    cardWidth: e.nativeEvent.layout.width + SHADOW_LENGTH,
+                    allowRerenderShadow: false,
+                  });
+                }
               }}
             >
               {children}

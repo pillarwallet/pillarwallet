@@ -28,6 +28,7 @@ export type Offer = {
   minQuantity: number,
   maxQuantity: number,
   allowanceSet?: boolean,
+  offerRestricted?: ?string,
 }
 
 export type OfferRequest = {

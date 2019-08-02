@@ -53,8 +53,8 @@ type Props = {
 
 const ItemWrapper = styled.View`
    flex-direction: row;
-   flex: 1;
    margin-bottom: ${spacing.medium}px;
+   align-items: stretch;
 `;
 
 const CardRow = styled.View`
@@ -167,7 +167,7 @@ export const SettingsItemCarded = (props: Props) => {
     <ItemWrapper>
       <ShadowedCard
         wrapperStyle={{
-          flex: 1,
+          flexGrow: 1,
         }}
         contentWrapperStyle={{
           paddingVertical: 6,
@@ -194,12 +194,23 @@ export const SettingsItemCarded = (props: Props) => {
         </CardRow>
       </ShadowedCard>
       <ShadowedCard
-        wrapperStyle={{ width: buttonSideLength, marginLeft: 8, height: '100%' }}
+        wrapperStyle={{
+          width: buttonSideLength,
+          marginLeft: 8,
+          flexDirection: 'column',
+          height: '100%',
+        }}
         contentWrapperStyle={{
           padding: spacing.small,
-          height: '100%',
           alignItems: 'center',
           justifyContent: 'center',
+          alignSelf: 'stretch',
+          height: '100%',
+        }}
+        upperContentWrapperStyle={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1,
         }}
         onPress={settingsAction}
       >

@@ -89,6 +89,8 @@ import UserSettingsScreen from 'screens/Users/UserSettings';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import SettingsScreen from 'screens/Settings';
 import ChatScreen from 'screens/Chat';
+import FiatExchangeScreen from 'screens/FiatExchange';
+import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -106,7 +108,11 @@ import {
 } from 'actions/notificationsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
+import {
+  fetchTransactionsHistoryNotificationsAction,
+  startListeningForBalanceChangeAction,
+  stopListeningForBalanceChangeAction,
+} from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { fetchICOsAction } from 'actions/icosActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
@@ -190,6 +196,8 @@ import {
   ADD_EDIT_USER,
   SETTINGS,
   CHAT,
+  FIAT_EXCHANGE,
+  FIAT_CRYPTO,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -266,6 +274,8 @@ const exchangeFlow = createStackNavigator({
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [EXCHANGE_INFO]: ExchangeInfoScreen,
+  [FIAT_EXCHANGE]: FiatExchangeScreen,
+  [FIAT_CRYPTO]: FiatCryptoScreen,
 }, StackNavigatorConfig);
 
 // ME FLOW
@@ -603,6 +613,9 @@ type Props = {
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
   smartWalletFeatureEnabled: boolean,
+  isBrowsingWebView: boolean,
+  startListeningForBalanceChange: Function,
+  stopListeningForBalanceChange: Function,
 }
 
 type State = {
@@ -629,6 +642,7 @@ class AppFlow extends React.Component<Props, State> {
       assets,
       fetchAllCollectiblesData,
       initWalletConnect,
+      startListeningForBalanceChange,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
@@ -640,6 +654,7 @@ class AppFlow extends React.Component<Props, State> {
     fetchAllCollectiblesData();
     startListeningChatWebSocket();
     initWalletConnect();
+    startListeningForBalanceChange();
     addAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -695,10 +710,12 @@ class AppFlow extends React.Component<Props, State> {
       updateSignalInitiatedState,
       navigation,
       isPickingImage,
+      isBrowsingWebView,
+      stopListeningForBalanceChange,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
-    if (isPickingImage) return;
+    if (isPickingImage || isBrowsingWebView) return;
     // only checking if background state for logout or websocket channel close
     if (APP_LOGOUT_STATES.includes(nextAppState)) {
       // close websocket channel instantly to receive PN while in background
@@ -712,6 +729,7 @@ class AppFlow extends React.Component<Props, State> {
         stopListeningNotifications();
         stopListeningIntercomNotifications();
         updateSignalInitiatedState(false);
+        stopListeningForBalanceChange();
       }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
@@ -765,7 +783,7 @@ const mapStateToProps = ({
   },
   assets: { data: assets },
   wallet: { data: wallet, backupStatus },
-  appSettings: { data: { isPickingImage } },
+  appSettings: { data: { isPickingImage, isBrowsingWebView } },
   featureFlags: {
     data: {
       SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
@@ -783,6 +801,7 @@ const mapStateToProps = ({
   intercomNotificationsCount,
   isPickingImage,
   smartWalletFeatureEnabled,
+  isBrowsingWebView,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -805,6 +824,8 @@ const mapDispatchToProps = dispatch => ({
   updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
+  startListeningForBalanceChange: () => dispatch(startListeningForBalanceChangeAction()),
+  stopListeningForBalanceChange: () => dispatch(stopListeningForBalanceChangeAction()),
 });
 
 const ConnectedAppFlow = connect(

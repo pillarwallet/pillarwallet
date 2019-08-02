@@ -53,7 +53,7 @@ export const SettingsSection = (props: Props) => {
   return (
     <React.Fragment>
       <SectionHeader>{sectionTitle}</SectionHeader>
-      <ShadowedCard wrapperStyle={{ marginBottom: 10, width: '100%' }} >
+      <ShadowedCard wrapperStyle={{ marginBottom: 10, width: '100%' }}>
         <FlatList
           keyExtractor={item => item.key}
           data={sectionItems}

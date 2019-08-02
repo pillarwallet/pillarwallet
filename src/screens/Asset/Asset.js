@@ -41,6 +41,7 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
+import { logScreenViewAction } from 'actions/analyticsActions';
 
 // models
 import type { Transaction } from 'models/Transaction';
@@ -104,6 +105,7 @@ type Props = {
   smartWalletFeatureEnabled: boolean,
   history: Array<*>,
   deploySmartWallet: Function,
+  logScreenView: (contentName: string, contentType: string, contentId: string) => void,
 };
 
 type State = {
@@ -189,10 +191,11 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, navigation } = this.props;
-    const { assetData, resetHideRemoval } = navigation.state.params;
-    fetchTransactionsHistory(assetData.token);
+    const { fetchTransactionsHistory, navigation, logScreenView } = this.props;
+    const { assetData: { token }, resetHideRemoval } = navigation.state.params;
+    fetchTransactionsHistory(token);
     if (resetHideRemoval) resetHideRemoval();
+    logScreenView('View asset', 'Asset', `asset-${token}`);
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -417,6 +420,7 @@ class AssetScreen extends React.Component<Props, State> {
             feedTitle="transactions."
             navigation={navigation}
             backgroundColor={baseColors.white}
+            showArrowsOnly
             noBorder
             wrapperStyle={{ marginTop: 10 }}
             tabs={transactionsTabs}
@@ -487,6 +491,9 @@ const mapDispatchToProps = (dispatch: Function) => ({
     dispatch(fetchTransactionsHistoryAction(asset, indexFrom));
   },
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+  logScreenView: (contentName: string, contentType: string, contentId: string) => {
+    dispatch(logScreenViewAction(contentName, contentType, contentId));
+  },
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);
