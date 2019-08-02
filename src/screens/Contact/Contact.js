@@ -60,6 +60,7 @@ import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'uti
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 // import { CollapsibleSection } from 'components/CollapsibleSection';
 import Spinner from 'components/Spinner';
+import IconButton from 'components/IconButton';
 import type { ApiUser } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
@@ -113,6 +114,32 @@ const ProfileImageWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin: 0px 20px;
+`;
+
+const IconWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const HeaderRightIcon = styled(IconButton)`
+  height: 44px;
+  width: 44px;
+  padding-right: 12px;
+  margin-right: -10px;
+  align-items: flex-end;
+`;
+
+const ChatUnreadBubble = styled.View`
+  width: 8px;
+  height: 8px;
+  background-color: ${baseColors.sunYellow};
+  border-radius: 4px;
+  border-width: 1px;
+  border-color: ${baseColors.coolGrey};
+  position: absolute;
+  top: 8px;
+  right: 0px;
 `;
 
 type Props = {
@@ -330,12 +357,27 @@ class Contact extends React.Component<Props, State> {
     );
   };
 
+  renderChatButton = (username, hasUnread) => {
+    return (
+      <IconWrapper>
+        {hasUnread && <ChatUnreadBubble />}
+        <HeaderRightIcon
+          icon="chat"
+          color={baseColors.coolGrey}
+          onPress={() => this.props.navigation.navigate(CHAT, { username, backTo: CONTACT })}
+          fontSize={fontSizes.mediumLarge}
+          horizontalAlign="flex-end"
+        />
+      </IconWrapper>
+    );
+  };
+
   render() {
     const {
       navigation,
       contacts,
       fetchContactTransactions,
-      // chats,
+      chats,
       smartWalletState,
       accounts,
       deploySmartWallet,
@@ -378,6 +420,7 @@ class Contact extends React.Component<Props, State> {
     }
 
     const { username: contactUsername } = contact;
+    const unreadChats = chats.filter(chat => chat.username === contactUsername && !!chat.unread);
 
     return (
       <Container color={isAccepted ? baseColors.white : UIColors.defaultBackgroundColor} inset={{ bottom: 0 }}>
@@ -386,8 +429,7 @@ class Contact extends React.Component<Props, State> {
           title={contactUsername}
           onBack={() => navigation.goBack(null)}
           showRight
-          onNextPress={() => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT })}
-          nextIcon={displayContact.status ? 'more' : null}
+          headerRightAddon={this.renderChatButton(contactUsername, !!unreadChats.length)}
         />
         <ScrollWrapper
           refreshControl={
