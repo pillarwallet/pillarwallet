@@ -5,7 +5,6 @@
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-flow": "^7.0.0",
-    "babel-bridge": "^1.12.11",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^23.4.2",
