@@ -88,6 +88,7 @@ import UsersScreen from 'screens/Users';
 import UserSettingsScreen from 'screens/Users/UserSettings';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import SettingsScreen from 'screens/Settings';
+import ChatScreen from 'screens/Chat';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -188,6 +189,7 @@ import {
   USER_SETTINGS,
   ADD_EDIT_USER,
   SETTINGS,
+  CHAT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -281,6 +283,7 @@ const peopleFlow = createStackNavigator({
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
+  [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -307,6 +310,7 @@ const homeFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
+  [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

@@ -41,7 +41,7 @@ import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import { fetchContactBadgesAction } from 'actions/badgesActions';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
-import { BADGE, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
+import { BADGE, CHAT, CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
@@ -371,14 +371,16 @@ class Contact extends React.Component<Props, State> {
       activityFeedData = [...activityFeedData, { ...localContact, type: TYPE_ACCEPTED }];
     }
 
+    const { username: contactUsername } = contact;
+
     return (
       <Container color={isAccepted ? baseColors.white : UIColors.defaultBackgroundColor} inset={{ bottom: 0 }}>
         <Header
           white
-          title={displayContact.username}
+          title={contactUsername}
           onBack={() => navigation.goBack(null)}
           showRight
-          onNextPress={this.showManageContactModalTrigger}
+          onNextPress={() => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT })}
           nextIcon={displayContact.status ? 'more' : null}
         />
         <ScrollWrapper
@@ -396,7 +398,7 @@ class Contact extends React.Component<Props, State> {
             <ProfileImageWrapper>
               <ProfileImage
                 uri={userAvatar}
-                userName={displayContact.username}
+                userName={contactUsername}
                 borderWidth={4}
                 initialsSize={fontSizes.extraGiant}
                 diameter={164}

@@ -32,6 +32,7 @@ import {
   CHAT_DECRYPTING_FINISHED,
   ADD_CHAT_DRAFT,
   CLEAR_CHAT_DRAFT,
+  RESET_UNREAD_MESSAGE,
 } from 'constants/chatConstants';
 import merge from 'lodash.merge';
 
@@ -278,6 +279,26 @@ export default function chatReducer(
       return {
         ...state,
         draft: null,
+      };
+    case RESET_UNREAD_MESSAGE:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          chats: state.data.chats
+            .map(_chat => {
+              const { username: contactUsername } = _chat;
+              if (contactUsername === action.payload.username && state.data.messages[contactUsername].length) {
+                const { lastMessage } = action.payload;
+                return {
+                  ..._chat,
+                  lastMessage,
+                  unread: 0,
+                };
+              }
+              return _chat;
+            }),
+        },
       };
     default:
       return state;

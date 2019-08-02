@@ -291,6 +291,10 @@ class PeopleScreen extends React.Component<Props, State> {
   renderContact = ({ item }) => {
     const { unread = 0, status = '' } = item;
     const unreadCount = unread > 9 ? '9+' : unread;
+    const newMessageText = unread > 1 ? 'New Messages' : 'New Message';
+    const lastMessage = unread
+      ? newMessageText
+      : (item.lastMessage && item.lastMessage.content) || '';
     return (
       <Swipeout
         right={this.renderSwipeoutBtns(item)}
@@ -301,7 +305,7 @@ class PeopleScreen extends React.Component<Props, State> {
       >
         <ListItemWithImage
           label={item.username}
-          paragraph={(item.lastMessage && item.lastMessage.content) || ''}
+          paragraph={lastMessage}
           onPress={this.handleContactCardPress(item)}
           avatarUrl={item.profileImage}
           navigateToProfile={this.handleContactCardPress(item)}

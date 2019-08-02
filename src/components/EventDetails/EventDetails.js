@@ -61,6 +61,7 @@ import {
   CONTACT,
   SEND_TOKEN_FROM_CONTACT_FLOW,
   COLLECTIBLE,
+  CHAT,
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
 
@@ -231,7 +232,7 @@ class EventDetails extends React.Component<Props, {}> {
       onClose,
     } = this.props;
     onClose();
-    navigation.navigate(CONTACT, { contact, chatTabOpen: true });
+    navigation.navigate(CHAT, { username: contact.username });
   };
 
   renderEventBody = (eventType, eventStatus) => {

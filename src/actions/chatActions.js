@@ -32,12 +32,14 @@ import {
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
   ADD_CHAT_DRAFT,
   CLEAR_CHAT_DRAFT,
+  RESET_UNREAD_MESSAGE,
 } from 'constants/chatConstants';
 import Storage from 'services/storage';
 import {
   getConnectionStateCheckParamsByUsername,
   getConnectionStateCheckParamsByUserId,
 } from 'utils/chat';
+import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
 import { saveDbAction } from './dbActions';
 
 const chat = new ChatService();
@@ -238,7 +240,7 @@ export const getChatByContactAction = (
     }
 
     const {
-      chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
+      chat: { data: { chats: existingChats, webSocketMessages: { received: webSocketMessagesReceived } } },
     } = getState();
 
     if (webSocketMessagesReceived !== undefined && webSocketMessagesReceived.length) {
@@ -267,24 +269,57 @@ export const getChatByContactAction = (
       .then(JSON.parse)
       .catch(() => []);
 
-    const updatedMessages = await receivedMessages.map((message, index) => ({
-      _id: `${message.serverTimestamp}_${index}`,
-      text: message.content,
-      createdAt: new Date(message.serverTimestamp),
-      status: message.status,
-      type: message.type,
-      user: {
-        _id: message.username,
-        name: message.username,
-        avatar,
-      },
-    }))
+    const updatedMessages = receivedMessages
+      .map((message, index) => ({
+        _id: `${message.serverTimestamp}_${index}`,
+        text: message.content,
+        createdAt: new Date(message.serverTimestamp),
+        status: message.status,
+        type: message.type,
+        user: {
+          _id: message.username,
+          name: message.username,
+          avatar,
+        },
+      }))
       .sort((a, b) => b.createdAt - a.createdAt);
 
     dispatch({
       type: UPDATE_MESSAGES,
       payload: { messages: updatedMessages, username },
     });
+
+    if (updatedMessages.length) {
+      const {
+        user: { name: lastMessageSenderUsername },
+        text,
+        createdAt,
+      } = updatedMessages[0];
+
+      if (lastMessageSenderUsername) {
+        dispatch({
+          type: RESET_UNREAD_MESSAGE,
+          payload: {
+            username,
+            lastMessage: {
+              content: text,
+              username: lastMessageSenderUsername,
+              device: 1,
+              serverTimestamp: createdAt,
+              savedTimestamp: 0,
+            },
+          },
+        });
+      }
+    }
+
+    const otherUnreadMessages = existingChats.filter(
+      ({ username: messageUsername, unread }) => messageUsername !== username && !!unread,
+    );
+
+    if (!otherUnreadMessages.length) {
+      dispatch(setUnreadChatNotificationsStatusAction(false));
+    }
   };
 };
 
