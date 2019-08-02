@@ -24,20 +24,20 @@ import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
-  SET_ESTIMATED_SETTLE_BALANCE_FEE,
+  SET_ESTIMATED_SETTLE_TX_FEE,
   UPDATE_PAYMENT_NETWORK_STAKED,
   RESET_PAYMENT_NETWORK,
   SET_AVAILABLE_TO_SETTLE_TX,
   START_FETCHING_AVAILABLE_TO_SETTLE_TX,
 } from 'constants/paymentNetworkConstants';
-import type { TopUpFee, SettleBalanceFee } from 'models/PaymentNetwork';
+import type { TopUpFee, SettleTxFee } from 'models/PaymentNetwork';
 import type { Balances } from 'models/Asset';
 
 export type PaymentNetworkState = {
   availableStake: string,
   balances: Balances,
   topUpFee: TopUpFee,
-  settleBalanceFee: SettleBalanceFee,
+  settleTxFee: SettleTxFee,
   txToListen: string[],
   availableToSettleTx: {
     data: Object[],
@@ -57,7 +57,7 @@ const initialState = {
     isFetched: false,
     feeInfo: null,
   },
-  settleBalanceFee: {
+  settleTxFee: {
     isFetched: false,
     feeInfo: null,
   },
@@ -81,8 +81,8 @@ export default function paymentNetworkReducer(
       return merge({}, state, { availableStake: action.payload || initialState.availableStake });
     case SET_ESTIMATED_TOPUP_FEE:
       return merge({}, state, { topUpFee: { feeInfo: action.payload, isFetched: true } });
-    case SET_ESTIMATED_SETTLE_BALANCE_FEE:
-      return merge({}, state, { settleBalanceFee: { feeInfo: action.payload, isFetched: true } });
+    case SET_ESTIMATED_SETTLE_TX_FEE:
+      return merge({}, state, { settleTxFee: { feeInfo: action.payload, isFetched: true } });
     case PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS:
       return merge({}, state, { txToListen: [...state.txToListen, action.payload] });
     case PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS:

@@ -62,6 +62,7 @@ import {
   UPDATE_PAYMENT_NETWORK_STAKED,
   SET_AVAILABLE_TO_SETTLE_TX,
   START_FETCHING_AVAILABLE_TO_SETTLE_TX,
+  SET_ESTIMATED_SETTLE_TX_FEE,
 } from 'constants/paymentNetworkConstants';
 import { SMART_WALLET_UNLOCK, ASSETS, SEND_TOKEN_AMOUNT, PPN_SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 
@@ -74,7 +75,6 @@ import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 
 // selectors
-import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // actions
@@ -928,25 +928,67 @@ export const fetchAvailableTxToSettleAction = () => {
   };
 };
 
-export const settleBalancesAction = (assetsToSettle: Object[]) => {
-  return async (dispatch: Function, getState: Function) => {
-    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
-    // NOTE: while we support only the ETH settlement we can ignore the assetsToSettle array
-    console.log({ assetsToSettle });
+export const estimateSettleBalanceAction = (txToSettle: Object) => {
+  return async (dispatch: Function) => {
+    if (!smartWalletService || !smartWalletService.sdkInitialized) {
+      Toast.show({
+        message: 'Smart Account is not initialized',
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
 
-    const balances = paymentNetworkAccountBalancesSelector(getState());
-    const ethBalance = getBalance(balances, ETH);
-    const balanceInWei = ethToWei(parseFloat(ethBalance));
-
-    const estimated = await smartWalletService
-      .estimateWithdrawFromAccountVirtualBalance(balanceInWei)
+    const hashes = txToSettle.map(({ hash }) => hash);
+    const response = await smartWalletService
+      .estimateWithdrawAccountPayment(hashes)
       .catch((e) => {
-        let errorMessage = 'You need to deposit ETH to cover the withdrawal';
-        if (typeof e === 'object' && get(e, 'errors.value') === 'tooHigh') {
-          errorMessage = 'You\'re trying to withdraw more funds then you have';
-        }
         Toast.show({
-          message: errorMessage,
+          message: e.toString() || 'You need to deposit ETH to cover the withdrawal',
+          type: 'warning',
+          autoClose: false,
+        });
+        return {};
+      });
+
+    if (!response || !Object.keys(response).length) return;
+
+    const {
+      fixedGas,
+      totalGas,
+      totalCost,
+      gasPrice,
+    } = response;
+
+    dispatch({
+      type: SET_ESTIMATED_SETTLE_TX_FEE,
+      payload: {
+        fixedGas,
+        totalGas,
+        totalCost,
+        gasPrice,
+      },
+    });
+  };
+};
+
+export const settleTransactionsAction = (txToSettle: Object[]) => {
+  return async () => {
+    if (!smartWalletService || !smartWalletService.sdkInitialized) {
+      Toast.show({
+        message: 'Smart Account is not initialized',
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
+
+    const hashes = txToSettle.map(({ hash }) => hash);
+    const estimated = await smartWalletService
+      .estimateWithdrawAccountPayment(hashes)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString() || 'You need to deposit ETH to cover the withdrawal',
           type: 'warning',
           autoClose: false,
         });
@@ -955,10 +997,10 @@ export const settleBalancesAction = (assetsToSettle: Object[]) => {
 
     if (!estimated || !Object.keys(estimated).length) return;
 
-    const txHash = await smartWalletService.withdrawAccountVirtualBalance(estimated)
+    const txHash = await smartWalletService.withdrawAccountPayment(estimated)
       .catch((e) => {
         Toast.show({
-          message: e.toString() || 'Failed to withdraw the balance',
+          message: e.toString() || 'Failed to settle the transactions',
           type: 'warning',
           autoClose: false,
         });
@@ -968,7 +1010,7 @@ export const settleBalancesAction = (assetsToSettle: Object[]) => {
     if (txHash) {
       // TODO: create tx history record
       Toast.show({
-        message: 'Settlement was successful. Please wait for transaction to be mined',
+        message: 'Settlement was successful. Please wait for the transaction to be mined',
         type: 'success',
         title: 'Success',
         autoClose: true,

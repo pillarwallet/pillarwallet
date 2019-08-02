@@ -232,11 +232,20 @@ class SmartWallet {
     return this.sdk.estimateWithdrawFromAccountVirtualBalance(value);
   }
 
+  estimateWithdrawAccountPayment(hashes: string[] = []) {
+    const items = hashes.length === 1 ? hashes[0] : hashes;
+    return this.sdk.estimateWithdrawAccountPayment(items);
+  }
+
   topUpAccountVirtualBalance(estimated: Object) {
     return this.sdk.submitAccountTransaction(estimated);
   }
 
   withdrawAccountVirtualBalance(estimated: Object) {
+    return this.sdk.submitAccountTransaction(estimated);
+  }
+
+  withdrawAccountPayment(estimated: Object) {
     return this.sdk.submitAccountTransaction(estimated);
   }
 

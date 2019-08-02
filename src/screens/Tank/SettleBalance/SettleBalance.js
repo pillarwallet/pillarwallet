@@ -120,7 +120,7 @@ class SettleBalance extends React.Component<Props, State> {
     this.props.fetchAvailableTxToSettle();
   }
 
-  renderAsset = ({ item }) => {
+  renderItem = ({ item }) => {
     const { txToSettle } = this.state;
     const { baseFiatCurrency, assets, rates } = this.props;
 
@@ -232,7 +232,7 @@ class SettleBalance extends React.Component<Props, State> {
             <FlatList
               keyExtractor={item => item.hash}
               data={availableToSettleTx}
-              renderItem={this.renderAsset}
+              renderItem={this.renderItem}
               ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
               contentContainerStyle={{
                 flexGrow: 1,
@@ -254,7 +254,7 @@ class SettleBalance extends React.Component<Props, State> {
             {!!txToSettle.length && (
               <Button
                 small
-                disabled={!session.isOnline || true}
+                disabled={!session.isOnline}
                 title="Next"
                 onPress={this.goToConfirm}
               />
