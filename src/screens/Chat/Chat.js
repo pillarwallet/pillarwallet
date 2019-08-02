@@ -35,7 +35,6 @@ import {
   LoadEarlier,
   Message,
 } from 'react-native-gifted-chat';
-import { Answers } from 'react-native-fabric';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
@@ -50,6 +49,7 @@ import {
   getChatDraftByContactAction,
   saveDraftAction,
 } from 'actions/chatActions';
+import { logEventAction, logScreenViewAction } from 'actions/analyticsActions';
 import { isIphoneX, handleUrlPress } from 'utils/common';
 import { getUserName } from 'utils/contacts';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
@@ -70,6 +70,8 @@ type Props = {
   contacts: Object,
   currentMessage: Object,
   draft: ?string,
+  logScreenView: Function,
+  logEvent: Function,
 }
 
 type State = {
@@ -236,7 +238,7 @@ class Chat extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
-    const username = props.navigation.getParam('username', '');
+    const username = this.props.navigation.getParam('username', '');
     const contact = props.contacts.find(c => c.username === username) || {};
     this.state = {
       contact,
@@ -253,9 +255,10 @@ class Chat extends React.Component<Props, State> {
     const {
       getChatByContact,
       getChatDraftByContact,
+      logScreenView,
     } = this.props;
     getChatByContact(contact.username, contact.id, contact.profileImage);
-    Answers.logContentView('Chat screen');
+    logScreenView('View chat list', 'Chat');
     AppState.addEventListener('change', this.shouldPersistDraft);
     getChatDraftByContact(contact.id);
     if (Platform.OS === 'android') {
@@ -320,12 +323,13 @@ class Chat extends React.Component<Props, State> {
       sendMessageByContact,
       clearChatDraftState,
       messages: chatMessages,
+      logEvent,
     } = this.props;
     const { contact } = this.state;
     const contactMessages = chatMessages[contact.username];
 
     if (!contactMessages || !contactMessages.length) {
-      Answers.logCustom('Start Chat');
+      logEvent('first_chat_message_sent');
     }
 
     sendMessageByContact(contact.username, messages[0]);
@@ -588,6 +592,8 @@ const mapDispatchToProps = (dispatch) => ({
   clearChatDraftState: () => dispatch(clearChatDraftStateAction()),
   getChatDraftByContact: (contactId: string) => dispatch(getChatDraftByContactAction(contactId)),
   saveDraft: (contactId: string, draftText: string) => dispatch(saveDraftAction(contactId, draftText)),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+  logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);

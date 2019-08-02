@@ -54,7 +54,7 @@ import {
   BCX,
   COLLECTIBLE,
 } from 'constants/notificationConstants';
-import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CONTACT } from 'constants/navigationConstants';
+import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT } from 'constants/navigationConstants';
 import {
   ADD_WEBSOCKET_RECEIVED_MESSAGE,
   REMOVE_WEBSOCKET_SENT_MESSAGE,
@@ -84,7 +84,7 @@ const chat = new ChatService();
 const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
   [BCX]: HOME,
-  [SIGNAL]: CONTACT,
+  [SIGNAL]: CHAT,
   [COLLECTIBLE]: HOME,
 };
 
@@ -275,9 +275,6 @@ export const stopListeningNotificationsAction = () => {
 export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Function, getState: Function) => { // eslint-disable-line
     await SOCKET.init();
-    const {
-      contacts: { data: contacts },
-    } = getState();
     const notificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
       checkForSupportAlert(notificationOpen.notification._data);
@@ -300,11 +297,10 @@ export const startListeningOnOpenNotificationAction = () => {
       if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
       const { type, asset, navigationParams = {} } = processNotification(message.notification._data) || {};
-      let navParams = navigationParams;
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
-        lastActiveScreenParams: navParams,
+        lastActiveScreenParams: navigationParams,
       });
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
@@ -323,8 +319,6 @@ export const startListeningOnOpenNotificationAction = () => {
         }
         if (type === SIGNAL) {
           dispatch(getExistingChatsAction());
-          const contact = contacts.find(c => c.username === navigationParams.username) || {};
-          navParams = { contact };
         }
         const routeName = notificationRoute || HOME;
         const navigateToAppAction = NavigationActions.navigate({
@@ -332,7 +326,7 @@ export const startListeningOnOpenNotificationAction = () => {
           params: {},
           action: NavigationActions.navigate({
             routeName,
-            params: navParams,
+            params: navigationParams,
           }),
         });
         navigate(navigateToAppAction);
@@ -351,14 +345,13 @@ export const stopListeningOnOpenNotificationAction = () => {
 
 export const startListeningChatWebSocketAction = () => {
   return async (dispatch: Function, getState: Function) => {
-    const {
-      contacts: { data: contacts },
-    } = getState();
-
     const chatWebSocket = chat.getWebSocketInstance();
     await chatWebSocket.listen();
     chatWebSocket.onOpen();
     chatWebSocket.onMessage(async webSocketMessage => {
+      const {
+        contacts: { data: contacts },
+      } = getState();
       const {
         type: messageType,
         response: messageResponse,
