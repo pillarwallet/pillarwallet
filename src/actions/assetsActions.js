@@ -19,7 +19,6 @@
 */
 import get from 'lodash.get';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { Answers } from 'react-native-fabric';
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
@@ -40,6 +39,8 @@ import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+
+import Toast from 'components/Toast';
 
 import {
   getExchangeRates,
@@ -63,6 +64,7 @@ import {
   getActiveAccountType,
   getAccountAddress,
 } from 'utils/accounts';
+import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
@@ -367,7 +369,7 @@ export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = 
   };
 };
 
-export const fetchAssetsBalancesAction = (assets: Assets) => {
+export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?: boolean) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
@@ -390,6 +392,19 @@ export const fetchAssetsBalancesAction = (assets: Assets) => {
         ...balances,
         [accountId]: transformedBalances,
       };
+      if (showToastIfIncreased) {
+        const increasedBalances = Object.values(transformedBalances)
+          // $FlowFixMe
+          .filter(({ balance: balanceUpd, symbol: symbolUpd }) =>
+            Object.values(balances[accountId] || {}).find(
+              // $FlowFixMe
+              ({ balance, symbol }) => symbol === symbolUpd && parseFloat(balanceUpd) > parseFloat(balance),
+            ),
+          );
+        if (increasedBalances.length) {
+          Toast.show({ message: 'Your assets balance increased', type: 'success', title: 'Success' });
+        }
+      }
       dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
       dispatch({
         type: UPDATE_BALANCES,
@@ -443,11 +458,12 @@ export const addAssetAction = (asset: Asset) => {
       assets: { data: assets },
     } = getState();
     const updatedAssets = { ...assets, [asset.symbol]: { ...asset } };
+
     dispatch(saveDbAction('assets', { assets: updatedAssets }));
     dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
     dispatch(fetchAssetsBalancesAction(assets));
 
-    Answers.logCustom('Token Assets Added', { Symbol: asset.symbol });
+    dispatch(logEventAction('asset_token_added', { symbol: asset.symbol }));
   };
 };
 

@@ -135,17 +135,6 @@ class CollectiblesList extends React.Component<Props> {
         </ShadowedCard>
       </View>
     );
-    // return (
-    //   <AssetCardMinimized
-    //     {...item}
-    //     icon={item.thumbnail || item.icon}
-    //     smallScreen={smallScreen()}
-    //     onPress={() => { this.handleCardTap(item); }}
-    //     isCollectible
-    //     columnCount={2}
-    //     useSVGShadow
-    //   />
-    // );
   };
 
   renderItem = (item) => {

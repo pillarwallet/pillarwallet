@@ -17,9 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Answers } from 'react-native-fabric';
 import { UPDATE_USER, REGISTERED, USER_PHONE_VERIFIED } from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 
 export const updateUserAction = (walletId: string, field: Object, callback?: Function) => {
@@ -29,12 +29,14 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
 
     if (responseStatus === 200) {
       const updatedUser = { ...user, lastUpdateTime: +new Date() };
+
       dispatch(saveDbAction('user', { user: updatedUser }, true));
       dispatch({
         type: UPDATE_USER,
         payload: { user: updatedUser, state: REGISTERED },
       });
-      Answers.logCustom('Update User Profile');
+
+      dispatch(logEventAction('user_profile_updated'));
       if (callback) callback();
     } else {
       dispatch({
@@ -55,6 +57,8 @@ export const createOneTimePasswordAction = (walletId: string, field: Object, cal
     const { responseStatus } = response;
 
     if (responseStatus === 200) {
+      dispatch(logEventAction('one_time_password_created'));
+
       if (callback) callback();
     } else {
       dispatch({
@@ -79,7 +83,10 @@ export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Fun
   return async (dispatch: Function, getState: Function, api: Object) => {
     const response = await api.verifyPhone(props);
     const { responseStatus } = response;
+
     if (responseStatus === 200) {
+      dispatch(logEventAction('phone_verified'));
+
       dispatch({ type: USER_PHONE_VERIFIED });
       dispatch({
         type: ADD_NOTIFICATION,
@@ -122,6 +129,8 @@ export const updateUserAvatarAction = (walletId: string, formData: any) => {
       type: UPDATE_USER,
       payload: { user: updatedUser, state: REGISTERED },
     });
+
+    dispatch(logEventAction('avatar_updated'));
   };
 };
 

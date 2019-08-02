@@ -21,7 +21,6 @@ import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { Answers } from 'react-native-fabric';
 import { createStructuredSelector } from 'reselect';
 
 // components
@@ -48,6 +47,7 @@ import {
   addAssetAction,
   removeAssetAction,
 } from 'actions/assetsActions';
+import { logScreenViewAction } from 'actions/analyticsActions';
 
 // constants
 import {
@@ -95,6 +95,7 @@ type Props = {
   smartWalletFeatureEnabled: boolean,
   blockchainNetworks: Object[],
   activeAccount: Account,
+  logScreenView: (view: string, screen: string) => void,
 }
 
 type State = {
@@ -121,9 +122,10 @@ class AssetsScreen extends React.Component<Props, State> {
     const {
       fetchInitialAssets,
       assets,
+      logScreenView,
     } = this.props;
 
-    Answers.logContentView('Assets screen');
+    logScreenView('View assets list', 'Assets');
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets();
@@ -361,6 +363,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);

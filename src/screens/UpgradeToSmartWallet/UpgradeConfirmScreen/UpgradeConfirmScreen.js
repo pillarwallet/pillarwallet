@@ -63,6 +63,7 @@ type Props = {
 
 type State = {
   upgradeStarted: boolean,
+  gasLimit: number,
 };
 
 const WhiteWrapper = styled.View`
@@ -97,12 +98,16 @@ const WarningMessage = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
 `;
 
-const GAS_LIMIT = 500000;
-
 class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
-  state = {
-    upgradeStarted: false,
-  };
+  constructor(props) {
+    super(props);
+    const { navigation } = this.props;
+    const gasLimit = navigation.getParam('gasLimit', 0);
+    this.state = {
+      upgradeStarted: false,
+      gasLimit,
+    };
+  }
 
   componentDidMount() {
     const {
@@ -135,8 +140,9 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       navigation,
       balances,
     } = this.props;
+    const { gasLimit } = this.state;
     this.setState({ upgradeStarted: true });
-    const gasPrice = gasPriceWei.div(GAS_LIMIT).toNumber();
+    const gasPrice = gasPriceWei.div(gasLimit).toNumber();
     const assetsArray = Object.values(assets);
     const transferTransactionsCombined = [
       ...transferCollectibles,
@@ -159,7 +165,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           contractAddress,
           tokenType,
           tokenId,
-          gasLimit: GAS_LIMIT,
+          gasLimit,
           gasPrice,
         };
       }
@@ -171,7 +177,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       } = asset;
       return {
         amount,
-        gasLimit: GAS_LIMIT,
+        gasLimit,
         gasPrice,
         symbol,
         contractAddress,
@@ -198,10 +204,11 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
   };
 
   getGasPriceWei = () => {
+    const { gasLimit } = this.state;
     const { gasInfo } = this.props;
     const gasPrice = gasInfo.gasPrice.avg || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-    return gasPriceWei.mul(GAS_LIMIT);
+    return gasPriceWei.mul(gasLimit);
   };
 
   render() {
@@ -221,6 +228,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const gasPriceWei = this.getGasPriceWei();
     const fiatSymbol = getCurrencySymbol(fiatCurrency);
 
+    // TODO: calculate separate gas price per asset transaction
     const feeTokensTransferEth = formatAmount(utils.formatEther(
       BigNumber(gasPriceWei * transferAssets.length).toFixed(),
     ));

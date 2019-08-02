@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { EXCHANGE_URL } from 'react-native-dotenv';
+import { EXCHANGE_URL, MOONPAY_API_URL } from 'react-native-dotenv';
 import SocketIO from 'socket.io-client';
 
 import type { OfferRequest, TokenAllowanceRequest } from 'models/Offer';
@@ -36,6 +36,7 @@ export default class ExchangeService {
   isConnected: boolean;
   apiConfig: Object;
   tokens: Object;
+  ipInfo: Object;
 
   connect(accessToken: string, shapeshiftAccessToken?: string) {
     this.stop();
@@ -91,6 +92,10 @@ export default class ExchangeService {
     }
   }
 
+  setIPInfo(value: Object) {
+    this.ipInfo = value;
+  }
+
   setConnected(value: boolean) {
     this.isConnected = value;
   }
@@ -115,8 +120,8 @@ export default class ExchangeService {
     this.io.off('offers');
   }
 
-  requestOffers(fromAssetCode: string, toAssetCode: string) {
-    const urlPath = `offers?name=${fromAssetCode}-${toAssetCode}`;
+  requestOffers(fromAssetCode: string, toAssetCode: string, quantity: number) {
+    const urlPath = `offers?name=${fromAssetCode}-${toAssetCode}&quantity=${quantity}`;
     return fetch(buildApiUrl(urlPath), this.apiConfig)
       .then(response => response.text())
       .then(response => response.toLowerCase() === 'ok' ? {} : JSON.parse(response))
@@ -155,5 +160,18 @@ export default class ExchangeService {
     return fetch(buildApiUrl(urlPath), this.apiConfig)
       .then(response => response.json())
       .catch(error => ({ error }));
+  }
+
+  getIPInformation() {
+    if (!this.ipInfo) {
+      return fetch(`${MOONPAY_API_URL}/v2/ip_address`)
+        .then(resp => resp.json())
+        .then(data => {
+          this.setIPInfo(data);
+          return data;
+        })
+        .catch(() => {});
+    }
+    return Promise.resolve(this.ipInfo);
   }
 }

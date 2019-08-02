@@ -25,6 +25,7 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
+import debounce from 'lodash.debounce';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText, BoldText } from 'components/Typography';
@@ -68,8 +69,9 @@ import {
   addAssetAction,
   removeAssetAction,
 } from 'actions/assetsActions';
-import debounce from 'lodash.debounce';
+import { logScreenViewAction } from 'actions/analyticsActions';
 
+// partials
 import CollectiblesList from './CollectiblesList';
 import AssetsList from './AssetsList';
 
@@ -96,6 +98,7 @@ type Props = {
   removeAsset: Function,
   updateAssets: Function,
   assetsSearchState: string,
+  logScreenView: Function,
 }
 
 type State = {
@@ -345,7 +348,9 @@ class WalletView extends React.Component<Props, State> {
   };
 
   setActiveTab = (activeTab) => {
+    const { logScreenView } = this.props;
     this.setState({ activeTab });
+    logScreenView(`View tab Assets.${activeTab}`, 'Assets');
   };
 
   handleAssetToggle = (asset: Asset, added: Boolean) => {
@@ -555,6 +560,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
 
 
