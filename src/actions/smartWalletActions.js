@@ -498,7 +498,7 @@ export const syncVirtualAccountTransactionsAction = () => {
         value: value.toString(),
         asset: tokenSymbol,
         isPPNTransaction: true,
-        createdAt: +new Date(payment.updatedAt),
+        createdAt: +new Date(payment.updatedAt) / 1000,
         status: TX_CONFIRMED_STATUS,
       });
     });
