@@ -331,6 +331,11 @@ class AssetScreen extends React.Component<Props, State> {
 
     if (isSmartWallet) transactionsTabs.push(pillarNetworkTab);
 
+    const { upgrade: { deploymentStarted } } = smartWalletState;
+
+    const isDeploymentButtonDisabled = deploymentStarted
+      || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING;
+
     return (
       <Container color={baseColors.white} inset={{ bottom: 0 }}>
         <Header
@@ -406,7 +411,7 @@ class AssetScreen extends React.Component<Props, State> {
                 marginTop="20px"
                 height={52}
                 title="Deploy Smart Wallet"
-                disabled={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
+                disabled={isDeploymentButtonDisabled}
                 onPress={() => deploySmartWallet()}
               />
               }

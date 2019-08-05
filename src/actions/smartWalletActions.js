@@ -44,6 +44,7 @@ import {
   SMART_WALLET_DEPLOYMENT_ERRORS,
   SET_SMART_WALLET_LAST_SYNCED_HASH,
   RESET_SMART_WALLET,
+  SET_SMART_WALLET_DEPLOYMENT_STARTED,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -156,6 +157,12 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
   return async (dispatch: Function) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
+    if (upgradeStatus === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
+      dispatch({
+        type: SET_SMART_WALLET_DEPLOYMENT_STARTED,
+        payload: false,
+      });
+    }
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
       payload: upgradeStatus,
@@ -215,6 +222,14 @@ export const deploySmartWalletAction = () => {
       },
     } = getState();
 
+    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYING) {
+      // used for disabling UI "deploy" buttons
+      dispatch({
+        type: SET_SMART_WALLET_DEPLOYMENT_STARTED,
+        payload: true,
+      });
+    }
+
     await dispatch(resetSmartWalletDeploymentDataAction());
     await dispatch(setActiveAccountAction(accountAddress));
 
@@ -245,6 +260,13 @@ export const deploySmartWalletAction = () => {
         null,
         SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS,
       ));
+
+      // enable disabled UI "deploy" buttons
+      dispatch({
+        type: SET_SMART_WALLET_DEPLOYMENT_STARTED,
+        payload: false,
+      });
+
       return;
     }
 
