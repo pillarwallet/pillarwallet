@@ -246,8 +246,10 @@ const generateFormStructure = (balances: Balances) => {
   let amount;
 
   const FromOption = t.refinement(t.Object, ({ selector, input }) => {
-    if (!Object.keys(selector).length || !input) return false;
-    if (!isValidNumber(input)) return false;
+    if (!selector
+      || !Object.keys(selector).length
+      || !input
+      || !isValidNumber(input)) return false;
 
     const { symbol, decimals } = selector;
 
