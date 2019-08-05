@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import get from 'lodash.get';
 import {
   SectionList,
   Keyboard,
@@ -62,6 +63,7 @@ import {
   removeAssetAction,
 } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // constants
 import {
@@ -73,7 +75,7 @@ import {
   COLLECTIBLES,
 } from 'constants/assetsConstants';
 import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { SMART_WALLET_UPGRADE_STATUSES, SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 
 // utils
 import { baseColors, spacing, fontSizes, UIColors } from 'utils/variables';
@@ -105,6 +107,7 @@ type Props = {
   assetsSearchState: string,
   addAsset: Function,
   removeAsset: Function,
+  deploySmartWallet: Function,
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
@@ -400,6 +403,38 @@ class AssetsScreen extends React.Component<Props, State> {
     this.setState({ activeTab });
   };
 
+  renderBlockedScreen({ title, message }) {
+    const { smartWalletState, deploySmartWallet } = this.props;
+    let showSpinner = true;
+    let showRetryDeploymentButton = false;
+
+    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
+    if (deploymentData.error) {
+      showSpinner = false;
+      showRetryDeploymentButton = true;
+      title = 'Smart Wallet deployment failed';
+      message = deploymentData.error === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
+        ? 'You need to top up your Smart Account first'
+        : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow';
+    }
+
+    return (
+      <Wrapper flex={1} regularPadding center>
+        <MessageTitle>{ title }</MessageTitle>
+        <Message>{ message }</Message>
+        <Wrapper style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
+          {showSpinner && <Spinner />}
+          {showRetryDeploymentButton && <Button
+            marginTop="20px"
+            height={52}
+            title="Retry"
+            onPress={() => deploySmartWallet()}
+          />}
+        </Wrapper>
+      </Wrapper>
+    );
+  }
+
   render() {
     const {
       assets,
@@ -454,6 +489,7 @@ class AssetsScreen extends React.Component<Props, State> {
     const filteredBadges = isInCollectiblesSearchMode
       ? badges.filter(({ name = '' }) => name.toUpperCase().includes(query.toUpperCase()))
       : badges;
+
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
@@ -480,15 +516,8 @@ class AssetsScreen extends React.Component<Props, State> {
           navigation={navigation}
           white
         />
-        {(blockAssetsView &&
-          <Wrapper flex={1} regularPadding center>
-            <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
-            <Message>{ sendingBlockedMessage.message }</Message>
-            <Wrapper style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
-              <Spinner />
-            </Wrapper>
-          </Wrapper>
-        ) ||
+        {blockAssetsView && this.renderBlockedScreen(sendingBlockedMessage)}
+        {!blockAssetsView && (
           <TokensWrapper>
             {inSearchMode && isSearchOver &&
             <Wrapper>
@@ -528,7 +557,7 @@ class AssetsScreen extends React.Component<Props, State> {
                 />)}
             </ListWrapper>}
           </TokensWrapper>
-        }
+        )}
       </Container>
     );
   }
@@ -581,6 +610,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);

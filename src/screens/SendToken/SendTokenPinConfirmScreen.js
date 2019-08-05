@@ -97,7 +97,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       isChecking: true,
     }, async () => {
       if (isSmartWallet && !smartWalletSdkInitialized) {
-        // make sure sdk is inited before next step
+        // make sure sdk is initialized before next step
         await initSmartWalletSdk(wallet.privateKey);
       }
       logEvent('transaction_sent', { source: this.source });

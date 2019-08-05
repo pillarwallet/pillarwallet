@@ -19,7 +19,7 @@
 */
 import { BigNumber } from 'bignumber.js';
 
-export type FeeInfo = ?{
+export type FeeInfo = {
   fixedGas: BigNumber,
   gasPrice: BigNumber,
   totalCost: BigNumber,
@@ -28,10 +28,10 @@ export type FeeInfo = ?{
 
 export type TopUpFee = {
   isFetched: boolean,
-  feeInfo: FeeInfo,
+  feeInfo: ?FeeInfo,
 };
 
-export type SettleBalanceFee = {
+export type SettleTxFee = {
   isFetched: boolean,
-  feeInfo: FeeInfo,
+  feeInfo: ?FeeInfo,
 };

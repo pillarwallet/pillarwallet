@@ -24,16 +24,25 @@ import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
-  SET_ESTIMATED_SETTLE_BALANCE_FEE,
+  SET_ESTIMATED_SETTLE_TX_FEE,
+  UPDATE_PAYMENT_NETWORK_STAKED,
+  RESET_PAYMENT_NETWORK,
+  SET_AVAILABLE_TO_SETTLE_TX,
+  START_FETCHING_AVAILABLE_TO_SETTLE_TX,
 } from 'constants/paymentNetworkConstants';
-import type { TopUpFee, SettleBalanceFee } from 'models/PaymentNetwork';
+import type { TopUpFee, SettleTxFee } from 'models/PaymentNetwork';
 import type { Balances } from 'models/Asset';
 
 export type PaymentNetworkState = {
+  availableStake: string,
   balances: Balances,
   topUpFee: TopUpFee,
-  settleBalanceFee: SettleBalanceFee,
+  settleTxFee: SettleTxFee,
   txToListen: string[],
+  availableToSettleTx: {
+    data: Object[],
+    isFetched: boolean,
+  },
 };
 
 export type PaymentNetworkAction = {
@@ -42,16 +51,21 @@ export type PaymentNetworkAction = {
 };
 
 const initialState = {
+  availableStake: '0',
   balances: {},
   topUpFee: {
     isFetched: false,
     feeInfo: null,
   },
-  settleBalanceFee: {
+  settleTxFee: {
     isFetched: false,
     feeInfo: null,
   },
   txToListen: [],
+  availableToSettleTx: {
+    data: [],
+    isFetched: false,
+  },
 };
 
 export default function paymentNetworkReducer(
@@ -63,16 +77,36 @@ export default function paymentNetworkReducer(
       return merge({}, state, { balances: action.payload });
     case UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES:
       return merge({}, state, { balances: { [action.payload.accountId]: action.payload.balances } });
+    case UPDATE_PAYMENT_NETWORK_STAKED:
+      return merge({}, state, { availableStake: action.payload || initialState.availableStake });
     case SET_ESTIMATED_TOPUP_FEE:
       return merge({}, state, { topUpFee: { feeInfo: action.payload, isFetched: true } });
-    case SET_ESTIMATED_SETTLE_BALANCE_FEE:
-      return merge({}, state, { settleBalanceFee: { feeInfo: action.payload, isFetched: true } });
+    case SET_ESTIMATED_SETTLE_TX_FEE:
+      return merge({}, state, { settleTxFee: { feeInfo: action.payload, isFetched: true } });
     case PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS:
       return merge({}, state, { txToListen: [...state.txToListen, action.payload] });
     case PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS:
       return {
         ...state,
         txToListen: state.txToListen.filter(hash => hash.toLowerCase() !== action.payload.toLowerCase()),
+      };
+    case RESET_PAYMENT_NETWORK:
+      return { ...initialState };
+    case START_FETCHING_AVAILABLE_TO_SETTLE_TX:
+      return {
+        ...state,
+        availableToSettleTx: {
+          data: [],
+          isFetched: false,
+        },
+      };
+    case SET_AVAILABLE_TO_SETTLE_TX:
+      return {
+        ...state,
+        availableToSettleTx: {
+          data: action.payload,
+          isFetched: true,
+        },
       };
     default:
       return state;

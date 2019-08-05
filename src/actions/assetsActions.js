@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
+import { BigNumber } from 'bignumber.js';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   UPDATE_ASSETS_STATE,
@@ -34,11 +35,14 @@ import {
   UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
+  PMT,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
-import { ADD_TRANSACTION } from 'constants/historyConstants';
+import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
+import { SMART_ACCOUNT_ASSET_TRANSFER } from 'constants/smartWalletConstants';
 
 import Toast from 'components/Toast';
 
@@ -54,7 +58,7 @@ import type {
   TransactionPayload,
 } from 'models/Transaction';
 import type { Asset, Assets } from 'models/Asset';
-import { transformAssetsToObject } from 'utils/assets';
+import { generatePMTToken, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -63,6 +67,7 @@ import {
   getActiveAccountId,
   getActiveAccountType,
   getAccountAddress,
+  isSmartAccount,
 } from 'utils/accounts';
 import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
@@ -75,18 +80,98 @@ type TransactionStatus = {
   error: ?string,
 };
 
-export const sendSignedAssetTransactionAction = (
-  transaction: any,
-) => {
-  return async () => {
+export const sendSignedAssetTransactionAction = (transaction: any) => {
+  return async (dispatch: Function, getState: Function) => {
     const {
       signedTransaction: { signedHash },
+      transaction: transactionDetails,
     } = transaction;
     if (!signedHash) return null;
+
     const transactionHash = await transferSigned(signedHash).catch(e => ({ error: e }));
-    if (transactionHash.error) {
+    if (transactionHash && transactionHash.error) {
       return null;
     }
+
+    // add tx to tx history
+    try {
+      const {
+        collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
+        history: { data: currentHistory },
+        accounts: { data: accounts },
+      } = getState();
+      const accountId = getActiveAccountId(accounts);
+      const accountAddress = getActiveAccountAddress(accounts);
+      const accountCollectibles = collectibles[accountId] || [];
+      const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
+
+      let historyTx;
+      if (transactionDetails.tokenType === COLLECTIBLES) {
+        const collectibleInfo = accountCollectibles.find(item => item.id === transactionDetails.tokenId) || {};
+        historyTx = {
+          ...buildHistoryTransaction({
+            from: accountAddress,
+            to: transactionDetails.to,
+            hash: transactionHash,
+            asset: transactionDetails.name,
+            value: '1',
+            gasPrice: new BigNumber(transactionDetails.gasPrice),
+            gasLimit: transactionDetails.gasLimit,
+            note: SMART_ACCOUNT_ASSET_TRANSFER,
+          }),
+          assetData: { ...collectibleInfo },
+          type: COLLECTIBLE_TRANSACTION,
+          icon: collectibleInfo.icon,
+        };
+
+        dispatch({
+          type: ADD_COLLECTIBLE_TRANSACTION,
+          payload: {
+            transactionData: { ...historyTx },
+            tokenId: transaction.tokenId,
+            accountId,
+          },
+        });
+        const updatedCollectiblesHistory = {
+          ...collectiblesHistory,
+          [accountId]: [...accountCollectiblesHistory, historyTx],
+        };
+        await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
+        const updatedAccountCollectibles = accountCollectibles.filter(item => item.id !== transaction.tokenId);
+        const updatedCollectibles = {
+          ...collectibles,
+          [accountId]: updatedAccountCollectibles,
+        };
+        dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
+      } else {
+        const value = parseFloat(transactionDetails.amount) * (10 ** transactionDetails.decimals);
+        historyTx = buildHistoryTransaction({
+          from: accountAddress,
+          to: transactionDetails.to,
+          hash: transactionHash,
+          value: value.toString(),
+          asset: transactionDetails.symbol,
+          gasPrice: new BigNumber(transactionDetails.gasPrice),
+          gasLimit: transactionDetails.gasLimit,
+          note: SMART_ACCOUNT_ASSET_TRANSFER,
+        });
+
+        dispatch({
+          type: ADD_TRANSACTION,
+          payload: {
+            accountId,
+            historyTx,
+          },
+        });
+        const accountHistory = currentHistory[accountId] || [];
+        const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
+        const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+        dispatch(saveDbAction('history', { history: updatedHistory }, true));
+      }
+    } catch (e) {
+      console.log({ e });
+    }
+
     return transactionHash;
   };
 };
@@ -181,13 +266,13 @@ export const sendAssetAction = (
     const tokenType = get(transaction, 'tokenType', '');
     const symbol = get(transaction, 'symbol', '');
     const allowancePayload = get(transaction, 'extra.allowance', {});
+    const usePPN = get(transaction, 'usePPN', false);
 
     if (tokenType === COLLECTIBLES) {
       await dispatch(fetchCollectiblesAction());
     }
 
     const {
-      history: { data: currentHistory },
       accounts: { data: accounts },
       collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
     } = getState();
@@ -283,8 +368,17 @@ export const sendAssetAction = (
           value: parseFloat(amount) * (10 ** decimals),
           to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
           note,
+          isPPNTransaction: usePPN,
+          status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
         });
       }
+    }
+
+    if (isSmartAccount(activeAccount) && !usePPN && tokenTx.hash) {
+      dispatch({
+        type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
+        payload: tokenTx.hash,
+      });
     }
 
     // update transaction history
@@ -317,6 +411,7 @@ export const sendAssetAction = (
             historyTx,
           },
         });
+        const { history: { data: currentHistory } } = getState();
         const accountHistory = currentHistory[accountId] || [];
         const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
         const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
@@ -498,6 +593,7 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     const {
       user: { data: { walletId } },
       assets: { data: currentAssets, supportedAssets },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       wallet: { data: wallet },
     } = getState();
 
@@ -505,6 +601,9 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     let walletSupportedAssets = [...supportedAssets];
     if (!supportedAssets.length) {
       walletSupportedAssets = await api.fetchSupportedAssets(walletId);
+      if (smartWalletFeatureEnabled) {
+        walletSupportedAssets = [...walletSupportedAssets, generatePMTToken()];
+      }
       dispatch({
         type: UPDATE_SUPPORTED_ASSETS,
         payload: walletSupportedAssets,
@@ -513,6 +612,10 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
 
       // HACK: Dirty fix for users who removed somehow Eth from their assets list
       if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
+
+      if (smartWalletFeatureEnabled && !currentAssetsTickers.includes(PMT)) {
+        currentAssetsTickers.push(PMT);
+      }
 
       if (walletSupportedAssets.length) {
         const updatedAssets = walletSupportedAssets
