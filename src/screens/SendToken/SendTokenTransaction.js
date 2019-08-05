@@ -29,12 +29,12 @@ import { Paragraph, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Animation from 'components/Animation';
+import Toast from 'components/Toast';
 
 // utils
 import { baseColors, fontSizes } from 'utils/variables';
 
 // actions
-import { sendTxNoteByContactAction } from 'actions/txNoteActions';
 import { setDismissTransactionAction } from 'actions/exchangeActions';
 
 // constants
@@ -43,8 +43,6 @@ import { COLLECTIBLES } from 'constants/assetsConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  contacts: Object,
-  sendTxNoteByContact: Function,
   executingExchangeTransaction: boolean,
   setDismissExchangeTransaction: Function,
 }
@@ -72,23 +70,6 @@ const CancelText = styled(BoldText)`
 `;
 
 class SendTokenTransaction extends React.Component<Props> {
-  componentDidMount() {
-    const { navigation, sendTxNoteByContact, contacts } = this.props;
-    const {
-      isSuccess,
-      note,
-      to,
-      txHash,
-    } = navigation.state.params;
-
-    if (isSuccess && note) {
-      const toUser = contacts.find(contact => contact.ethAddress.toLowerCase() === to.toLowerCase());
-      if (toUser) {
-        sendTxNoteByContact(toUser.username, { text: note, txHash });
-      }
-    }
-  }
-
   handleDismissal = () => {
     const {
       navigation,
@@ -99,6 +80,16 @@ class SendTokenTransaction extends React.Component<Props> {
       setDismissExchangeTransaction();
     }
     navigation.dismiss();
+
+    const { transactionPayload } = navigation.state.params;
+    if (transactionPayload.usePPN) {
+      Toast.show({
+        message: 'Transaction was successfully sent!',
+        type: 'success',
+        title: 'Success',
+        autoClose: true,
+      });
+    }
   };
 
   handleNavigationBack = () => {
@@ -168,17 +159,12 @@ class SendTokenTransaction extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
   exchange: { data: { executingTransaction: executingExchangeTransaction } },
 }) => ({
-  contacts,
   executingExchangeTransaction,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  sendTxNoteByContact: (username: string, message: Object) => {
-    dispatch(sendTxNoteByContactAction(username, message));
-  },
   setDismissExchangeTransaction: () => dispatch(setDismissTransactionAction()),
 });
 
