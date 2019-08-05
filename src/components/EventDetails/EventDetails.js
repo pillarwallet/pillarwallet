@@ -64,6 +64,7 @@ import {
   COLLECTIBLE,
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
+import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -301,6 +302,17 @@ class EventDetails extends React.Component<Props, {}> {
       }
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
+      let showAmountReceived = true;
+      let showNote = true;
+      let showAmountTxType = false;
+      let txType = '';
+
+      if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
+        showAmountReceived = false;
+        showNote = false;
+        showAmountTxType = true;
+        txType = 'TX SETTLEMENT';
+      }
 
       return (
         <React.Fragment>
@@ -311,11 +323,19 @@ class EventDetails extends React.Component<Props, {}> {
             onClose={onClose}
           />
           <EventBody>
+            {showAmountReceived &&
             <ListItemUnderlined
               label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
               value={formatFullAmount(value)}
               valueAdditionalText={asset}
             />
+            }
+            {showAmountTxType &&
+            <ListItemUnderlined
+              label="TRANSACTION TYPE"
+              value={txType}
+            />
+            }
             <ListItemUnderlined
               label={isReceived ? 'SENDER' : 'RECIPIENT'}
               value={relatedUserTitle}
@@ -337,7 +357,7 @@ class EventDetails extends React.Component<Props, {}> {
               valueAdditionalText="ETH"
             />
             }
-            {!!hasNote &&
+            {!!hasNote && showNote &&
             <ListItemParagraph
               label="NOTE"
               value={transactionNote}

@@ -27,6 +27,7 @@ import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import get from 'lodash.get';
 
 // models
 import type { Transaction } from 'models/Transaction';
@@ -58,6 +59,7 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
+import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
@@ -229,7 +231,7 @@ class ActivityFeed extends React.Component<Props, State> {
       } = assets.find(({ symbol }) => symbol === notification.asset) || {};
       const value = utils.formatUnits(new BigNumber(notification.value.toString()).toFixed(), decimals);
       const formattedValue = formatAmount(value);
-      const nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
+      let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'received' : 'sent';
       let directionSymbol = isReceived ? '+' : '-';
 
@@ -243,6 +245,13 @@ class ActivityFeed extends React.Component<Props, State> {
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
       const isContact = Object.keys(contact).length !== 0;
       const itemImage = contact.profileImage || fullIconUrl;
+      let itemValue = `${directionSymbol} ${formattedValue} ${notification.asset}`;
+
+      const note = get(notification, 'note', '');
+      if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
+        nameOrAddress = 'TX SETTLEMENT';
+        itemValue = '';
+      }
 
       return (
         <ListItemWithImage
@@ -253,7 +262,7 @@ class ActivityFeed extends React.Component<Props, State> {
           iconName={(showArrowsOnly || !itemImage) ? directionIcon : null}
           imageAddonIconName={(itemImage && !showArrowsOnly) ? directionIcon : undefined}
           subtext={dateTime}
-          itemValue={`${directionSymbol} ${formattedValue} ${notification.asset}`}
+          itemValue={itemValue}
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
           valueColor={isReceived ? baseColors.jadeGreen : null}
           imageUpdateTimeStamp={contact.lastUpdateTime}
