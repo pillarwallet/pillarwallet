@@ -29,6 +29,7 @@ import { Paragraph, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Animation from 'components/Animation';
+import Toast from 'components/Toast';
 
 // utils
 import { baseColors, fontSizes } from 'utils/variables';
@@ -79,6 +80,16 @@ class SendTokenTransaction extends React.Component<Props> {
       setDismissExchangeTransaction();
     }
     navigation.dismiss();
+
+    const { transactionPayload } = navigation.state.params;
+    if (transactionPayload.usePPN) {
+      Toast.show({
+        message: 'Transaction was successfully sent!',
+        type: 'success',
+        title: 'Success',
+        autoClose: true,
+      });
+    }
   };
 
   handleNavigationBack = () => {
