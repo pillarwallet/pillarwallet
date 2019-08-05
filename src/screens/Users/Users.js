@@ -79,7 +79,6 @@ class UsersScreen extends React.Component<Props> {
     return (
       <SettingsItemCarded
         title={username}
-        subtitle="No limits"
         onMainPress={() => navigation.navigate(HOME)}
         onSettingsPress={() => navigation.navigate(USER_SETTINGS, { user })}
         isActive

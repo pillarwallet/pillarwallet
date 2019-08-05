@@ -69,6 +69,7 @@ type Props = {
   horizontalPadding: Function,
   assets: Assets,
   balances: Balances,
+  balance: number,
   rates: Object,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
@@ -106,9 +107,14 @@ class AssetsList extends React.Component<Props> {
   }
 
   renderHeader = () => {
+    const { balance, baseFiatCurrency } = this.props;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const walletBalance = formatMoney(balance || 0);
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
+
     return (
       <ListHeaderWrapper>
-        <HeaderTitle>Wallet balance £168.71</HeaderTitle>
+        <HeaderTitle>{`Wallet balance ${currencySymbol} ${walletBalance}`}</HeaderTitle>
       </ListHeaderWrapper>
     );
   };

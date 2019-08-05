@@ -18,12 +18,23 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Platform, TouchableNativeFeedback, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { Switch, Badge as NBBadge } from 'native-base';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { Platform, TouchableNativeFeedback } from 'react-native';
+
+type Props = {
+  label: string,
+  notificationsCount?: number,
+  warningNotification?: ?boolean,
+  onPress?: ?Function,
+  toggle?: ?boolean,
+  value?: ?string | ?boolean,
+  disabled?: ?boolean,
+  bordered?: ?boolean,
+}
 
 const StyledItemTouchable = styled.TouchableHighlight`
   display: flex;
@@ -45,6 +56,13 @@ const ItemLabelHolder = styled.View`
   justify-content: space-between;
   align-items: center;
   padding: 22px ${spacing.large}px 24px;
+ ${props => props.bordered
+    ? `
+    border-bottom-width: ${StyleSheet.hairlineWidth}px;
+    border-top-width: ${StyleSheet.hairlineWidth}px;
+    border-color: ${baseColors.mediumLightGray};
+    `
+    : ''}
 `;
 
 const ListItemInnerWrapper = styled.View`
@@ -121,16 +139,6 @@ const ButtonWrapper = ({ onPress, children }) => {
   );
 };
 
-type Props = {
-  label: string,
-  notificationsCount?: number,
-  warningNotification?: ?boolean,
-  onPress?: ?Function,
-  toggle?: ?boolean,
-  value?: ?string | ?boolean,
-  disabled?: ?boolean,
-}
-
 export default class SettingsListItem extends React.Component<Props> {
   renderContent(processedValue: ?string | ?boolean) {
     const {
@@ -140,11 +148,12 @@ export default class SettingsListItem extends React.Component<Props> {
       notificationsCount,
       warningNotification,
       disabled,
+      bordered,
     } = this.props;
 
     if (!toggle) {
       return (
-        <ItemLabelHolder>
+        <ItemLabelHolder bordered={bordered}>
           <ListItemInnerWrapper>
             <ItemLabel>{label}</ItemLabel>
             {!!processedValue && <ItemValue>{processedValue}</ItemValue>}
@@ -159,7 +168,7 @@ export default class SettingsListItem extends React.Component<Props> {
     }
 
     return (
-      <ItemLabelHolder>
+      <ItemLabelHolder bordered={bordered}>
         <ItemLabel>{label}</ItemLabel>
         <ListAddon>
           <Switch

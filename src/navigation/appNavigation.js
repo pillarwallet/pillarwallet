@@ -35,6 +35,7 @@ import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
+import PeopleSearchScreen from 'screens/People/PeopleSearch';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
@@ -91,6 +92,7 @@ import SettingsScreen from 'screens/Settings';
 import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
+import SmartWalletIntroScreen from 'screens/UpgradeToSmartWallet/SmartWalletIntro';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -198,6 +200,8 @@ import {
   CHAT,
   FIAT_EXCHANGE,
   FIAT_CRYPTO,
+  SMART_WALLET_INTRO,
+  PEOPLE_SEARCH,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -294,6 +298,7 @@ const peopleFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [CHAT]: ChatScreen,
+  [PEOPLE_SEARCH]: PeopleSearchScreen,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -314,7 +319,6 @@ const homeFlow = createStackNavigator({
   [SETTINGS]: SettingsScreen,
   [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
-  [CONTACT_INFO]: ConnectedContactInfo,
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [CONTACT]: ContactScreen,
   [COLLECTIBLE]: CollectibleScreen,
@@ -518,10 +522,12 @@ const backupWalletFlow = createStackNavigator({
 
 // UPGRADE TO SMART WALLET FLOW
 const smartWalletUpgradeFlow = createStackNavigator({
+  [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
+  [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
+
   [UPGRADE_INTRO]: UpgradeIntroScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
-  [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
   [UPGRADE_REVIEW]: UpgradeReviewScreen,
   [UPGRADE_CONFIRM]: UpgradeConfirmScreen,
@@ -580,6 +586,7 @@ const AppFlowNavigation = createStackNavigator(
     [MANAGE_TANK_FLOW]: manageTankFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
     [MANAGE_USERS_FLOW]: manageUsersFlow,
+    [CONTACT_INFO]: ConnectedContactInfo,
   },
   modalTransition,
 );

@@ -101,6 +101,7 @@ type Props = {
   rejectInvitation: Function,
   invitations: Object[],
   localContacts: Object[],
+  noLocals?: boolean,
 };
 
 class PeopleSearchResults extends React.Component<Props> {
@@ -201,13 +202,13 @@ class PeopleSearchResults extends React.Component<Props> {
   };
 
   render() {
-    const { localContacts, searchResults: { apiUsers } } = this.props;
+    const { localContacts, searchResults: { apiUsers }, noLocals } = this.props;
     const localContactsIds = localContacts.map(({ id }) => id);
     const filteredApiUsers = apiUsers.filter((user) => !localContactsIds.includes(user.id));
 
     return (
       <React.Fragment>
-        {this.renderLocalContactsList()}
+        {!noLocals && this.renderLocalContactsList()}
         {!!filteredApiUsers.length && (
           <ContactCardList
             data={filteredApiUsers}

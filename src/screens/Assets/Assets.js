@@ -48,6 +48,7 @@ import {
   removeAssetAction,
 } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // constants
 import {
@@ -96,6 +97,7 @@ type Props = {
   blockchainNetworks: Object[],
   activeAccount: Account,
   logScreenView: (view: string, screen: string) => void,
+  fetchAllCollectiblesData: Function,
 }
 
 type State = {
@@ -121,6 +123,7 @@ class AssetsScreen extends React.Component<Props, State> {
   componentDidMount() {
     const {
       fetchInitialAssets,
+      fetchAllCollectiblesData,
       assets,
       logScreenView,
     } = this.props;
@@ -130,6 +133,8 @@ class AssetsScreen extends React.Component<Props, State> {
     if (!Object.keys(assets).length) {
       fetchInitialAssets();
     }
+
+    fetchAllCollectiblesData();
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -264,8 +269,6 @@ class AssetsScreen extends React.Component<Props, State> {
             sendingBlockedMessage={sendingBlockedMessage}
             showInsight={showSmartWalletInsight}
             hideInsight={() => this.hideWalletInsight('SMART')}
-            // insightList={smartWalletInsights}
-            // insightsTitle="Get most of Pillar Smart wallet"
           />);
       case VIEWS.KEY_WALLET_VIEW:
         return (
@@ -364,6 +367,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);

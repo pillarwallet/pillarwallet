@@ -24,8 +24,9 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import { Container, Wrapper } from 'components/Layout';
-import Header from 'components/Header';
+
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import {
@@ -66,11 +67,6 @@ type State = {
   gasLimit: number,
 };
 
-const WhiteWrapper = styled.View`
-  background-color: ${baseColors.white};
-  padding-bottom: ${spacing.rhythm}px;
-`;
-
 const DetailsTitle = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
   padding-bottom: 5px;
@@ -88,7 +84,13 @@ const DetailsLine = styled.View`
 `;
 
 const DetailsWrapper = styled.View`
-  padding: 30px 20px 0px 20px;
+  padding: 30px ${spacing.large}px 0px ${spacing.large}px;
+`;
+
+const Footer = styled.View`
+  padding: ${spacing.large};
+  flex-grow: 1;
+  justify-content: flex-end;
 `;
 
 const WarningMessage = styled(Paragraph)`
@@ -213,7 +215,6 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
   render() {
     const {
-      navigation,
       transferAssets,
       transferCollectibles,
       assets,
@@ -274,19 +275,17 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       || (etherTransfer.amount - parseFloat(feeSmartContractDeployEth) < parseFloat(feeTokensTransferEth));
 
     return (
-      <Container>
-        <WhiteWrapper>
-          <Header
-            title="confirm"
-            centerTitle
-            onBack={() => navigation.goBack(null)}
-          />
-          <Wrapper regularPadding>
-            <Paragraph small>
-              Please confirm that the details below are correct before deploying your Smart Wallet.
-            </Paragraph>
-          </Wrapper>
-        </WhiteWrapper>
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Confirm' }],
+        }}
+        backgroundColor={baseColors.white}
+      >
+        <Wrapper regularPadding>
+          <Paragraph small style={{ marginVertical: spacing.large }}>
+            Please confirm that the details below are correct before deploying your Smart Wallet.
+          </Paragraph>
+        </Wrapper>
         <DetailsWrapper>
           <DetailsLine>
             <DetailsTitle>Assets to transfer</DetailsTitle>
@@ -299,15 +298,17 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
             <DetailsValue>{assetsTransferFee}</DetailsValue>
           </DetailsLine>
           {!!transferCollectibles.length &&
-            <DetailsLine>
-              <DetailsTitle>Est. fee for collectibles transfer</DetailsTitle>
-              <DetailsValue>{collectiblesTransferFee}</DetailsValue>
-            </DetailsLine>
+          <DetailsLine>
+            <DetailsTitle>Est. fee for collectibles transfer</DetailsTitle>
+            <DetailsValue>{collectiblesTransferFee}</DetailsValue>
+          </DetailsLine>
           }
           <DetailsLine>
             <DetailsTitle>Est. fee for smart contract deployment</DetailsTitle>
             <DetailsValue>{smartContractDeployFee}</DetailsValue>
-          </DetailsLine>
+          </DetailsLine>`
+        </DetailsWrapper>
+        <Footer>
           {!!notEnoughEther &&
           <WarningMessage>
             There is not enough ether for contract deployment and asset transfer transactions estimated fees.
@@ -320,8 +321,8 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
             onPress={() => this.onNextClick(gasPriceWei)}
           />}
           {upgradeStarted && <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>}
-        </DetailsWrapper>
-      </Container>
+        </Footer>
+      </ContainerWithHeader>
     );
   }
 }

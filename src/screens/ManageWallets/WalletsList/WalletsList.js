@@ -38,12 +38,17 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { ASSETS, WALLET_SETTINGS } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // models
 import type { Accounts, Account } from 'models/Account';
 
+// utils
 import { responsiveSize } from 'utils/ui';
 import { getActiveAccount } from 'utils/accounts';
+import { calculatePortfolioBalance } from 'utils/assets';
+import { formatMoney, getCurrencySymbol } from 'utils/common';
+import type { Assets, Balances, Rates } from 'models/Asset';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -52,6 +57,11 @@ type Props = {
   resetIncorrectPassword: Function,
   user: Object,
   blockchainNetworks: Object[],
+  smartWalletFeatureEnabled?: boolean,
+  balances: Balances,
+  rates: Rates,
+  assets: Assets,
+  baseFiatCurrency: string,
 }
 
 type State = {
@@ -140,16 +150,21 @@ class WalletsList extends React.Component<Props, State> {
   };
 
   renderWalletListItem = ({ item }) => {
-    const { navigation, blockchainNetworks } = this.props;
-    const isSmartWallet = item.type === ACCOUNT_TYPES.SMART_WALLET;
+    const { type, balance } = item;
+    const { navigation, blockchainNetworks, baseFiatCurrency } = this.props;
+    const isSmartWallet = type === ACCOUNT_TYPES.SMART_WALLET;
     const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '' };
     const { id: activeBNetworkID } = activeBNetwork;
     const isActive = !!item.isActive && activeBNetworkID === BLOCKCHAIN_NETWORK_TYPES.ETHEREUM;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const balanceInFiat = Object.keys(balance).length ? balance[fiatCurrency] : 0;
+    const walletBalance = formatMoney(balanceInFiat || 0);
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     return (
       <SettingsItemCarded
         title={isSmartWallet ? 'Smart Wallet' : 'Key Wallet'}
-        subtitle="£236"
+        subtitle={`${currencySymbol} ${walletBalance}`}
         onMainPress={() => this.switchAccount(item)}
         onSettingsPress={() => navigation.navigate(WALLET_SETTINGS, { wallet: item })}
         isActive={isActive}
@@ -163,8 +178,25 @@ class WalletsList extends React.Component<Props, State> {
   };
 
   render() {
-    const { accounts, user } = this.props;
+    const {
+      accounts,
+      user,
+      smartWalletFeatureEnabled,
+      balances,
+      assets,
+      rates,
+    } = this.props;
     const { showCheckPinModal } = this.state;
+    const accountsList = smartWalletFeatureEnabled
+      ? accounts
+      : accounts.filter((acc) => { return acc.type === 'KEY_BASED'; });
+
+    const accountsWithBalance = accountsList.map((acc) => {
+      const accountBalances = balances[acc.id] || {};
+      const balance = calculatePortfolioBalance(assets, rates, accountBalances);
+      return { ...acc, balance };
+    });
+
     return (
       <ContainerWithHeader
         color={baseColors.white}
@@ -178,7 +210,7 @@ class WalletsList extends React.Component<Props, State> {
         }}
       >
         <FlatList
-          data={accounts}
+          data={accountsWithBalance}
           keyExtractor={(item) => item.id.toString()}
           renderItem={this.renderWalletListItem}
           initialNumToRender={8}
@@ -214,10 +246,20 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   user: { data: user },
   blockchainNetwork: { data: blockchainNetworks },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  balances: { data: balances },
+  assets: { data: assets },
+  rates: { data: rates },
+  appSettings: { data: { baseFiatCurrency } },
 }) => ({
   accounts,
   user,
   blockchainNetworks,
+  smartWalletFeatureEnabled,
+  balances,
+  assets,
+  rates,
+  baseFiatCurrency,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

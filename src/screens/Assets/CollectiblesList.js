@@ -34,7 +34,6 @@ import ShadowedCard from 'components/ShadowedCard';
 
 // actions
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { fetchBadgesAction } from 'actions/badgesActions';
 
 // constants
 import { COLLECTIBLE, BADGE } from 'constants/navigationConstants';
@@ -85,7 +84,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   horizontalPadding: Function,
   fetchAllCollectiblesData: Function,
-  fetchBadges: Function,
 }
 
 const genericToken = require('assets/images/tokens/genericToken.png');
@@ -195,7 +193,6 @@ class CollectiblesList extends React.Component<Props> {
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  fetchBadges: () => dispatch(fetchBadgesAction()),
 });
 
 export default connect(null, mapDispatchToProps)(CollectiblesList);

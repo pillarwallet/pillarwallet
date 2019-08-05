@@ -109,6 +109,8 @@ export const baseColors = {
   indianRed: '#cb6262',
   pinkishGrey: '#cacaca',
   solitude: '#ebeff2',
+  persianBlue: '#1D24D8',
+  pastelGreen: '#77D16D',
 };
 
 export const brandColors = [

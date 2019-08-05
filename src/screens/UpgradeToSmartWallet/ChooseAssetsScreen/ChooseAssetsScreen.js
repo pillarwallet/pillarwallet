@@ -26,7 +26,8 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 
-import { Container, Footer, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Footer, Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -36,7 +37,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import { BaseText } from 'components/Typography';
 import Toast from 'components/Toast';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { EDIT_ASSET_AMOUNT_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
@@ -83,13 +84,6 @@ const FooterInner = styled.View`
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-`;
-
-const TopWrapper = styled.View`
-  padding-bottom: 10px;
-  border-bottom-width: 1px;
-  border-bottom-color: #ededed;
-  background-color: ${baseColors.white};
 `;
 
 const Label = styled(BaseText)`
@@ -372,23 +366,20 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     const { isSeparateFund } = options;
 
     return (
-      <Container>
-        <TopWrapper>
-          <SearchBlock
-            headerProps={{
-              title: 'choose assets',
-              onBack: () => navigation.goBack(null),
-              nextText: !hasAssetsSelected || 'Edit',
-              onNextPress: this.onEditPress,
-            }}
-            searchInputPlaceholder="Search asset"
-            onSearchChange={this.handleSearchChange}
-            itemSearchState={query.length >= 2}
-            navigation={navigation}
-            backgroundColor={baseColors.white}
-          />
-          <Tabs initialActiveTab={activeTab} tabs={assetsTabs} bgColor={baseColors.white} />
-        </TopWrapper>
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Choose assets to transfer' }],
+        }}
+        backgroundColor={baseColors.white}
+      >
+        <SearchBlock
+          searchInputPlaceholder="Search asset"
+          onSearchChange={this.handleSearchChange}
+          itemSearchState={query.length >= 2}
+          navigation={navigation}
+          wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+        />
+        <Tabs initialActiveTab={activeTab} tabs={assetsTabs} bgColor={baseColors.white} />
         {activeTab === TOKENS && this.renderAssets(nonEmptyAssets)}
         {activeTab === COLLECTIBLES && this.renderCollectibles()}
         <Footer>
@@ -412,7 +403,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
           </FooterInner>
           }
         </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

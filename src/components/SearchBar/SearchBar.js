@@ -94,6 +94,7 @@ type EventLike = {
 
 class SearchBar extends React.Component<Props, State> {
   value = '';
+
   state = {
     animShrink: new Animated.Value(100),
     isFocused: false,

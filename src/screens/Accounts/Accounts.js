@@ -31,16 +31,26 @@ import { baseColors } from 'utils/variables';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
+import type { Assets, Balances, Rates } from 'models/Asset';
 
 // constants
 import { PILLAR_NETWORK_INTRO, ASSETS, WALLETS_LIST } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
+
 import { setActiveBNetworkAction } from 'actions/blockchainNetworkActions';
+
+import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { calculatePortfolioBalance } from 'utils/assets';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   setActiveBNetwork: Function,
   blockchainNetworks: Object[],
+  balances: Balances,
+  rates: Rates,
+  assets: Assets,
+  baseFiatCurrency: string,
 }
 
 const ppnInitButton = {
@@ -68,7 +78,13 @@ class AccountsScreen extends React.Component<Props> {
   };
 
   renderNetworks = ({ item: network }: Object) => {
-    const { navigation } = this.props;
+    const {
+      navigation,
+      baseFiatCurrency,
+      balances,
+      rates,
+      assets,
+    } = this.props;
     const { id } = network;
 
     const ppnNote = {
@@ -76,13 +92,24 @@ class AccountsScreen extends React.Component<Props> {
       emoji: 'sunglasses',
     };
 
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const allBalances = Object.keys(balances).map((account) => {
+      const portfolioBalance = calculatePortfolioBalance(assets, rates, balances[account]);
+      return Object.keys(portfolioBalance).length ? portfolioBalance[fiatCurrency] : 0;
+    });
+
+    const combinedBalance = allBalances.reduce((a, b) => a + b, 0);
+    const combinedFormattedBalance = formatMoney(combinedBalance || 0);
+
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
+
     switch (id) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
         return (
           <ListCard
             {...network}
             action={() => navigation.navigate(WALLETS_LIST)}
-            subtitle="Balance: £130.17"
+            subtitle={`Balance: ${currencySymbol} ${combinedFormattedBalance}`}
             fallbackIcon={genericToken}
           />
         );
@@ -147,8 +174,14 @@ class AccountsScreen extends React.Component<Props> {
 
 const mapStateToProps = ({
   blockchainNetwork: { data: blockchainNetworks },
+  balances: { data: balances },
+  assets: { data: assets },
+  rates: { data: rates },
 }) => ({
   blockchainNetworks,
+  balances,
+  assets,
+  rates,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

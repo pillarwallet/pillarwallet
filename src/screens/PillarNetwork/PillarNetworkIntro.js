@@ -20,6 +20,8 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
+import { CachedImage } from 'react-native-cached-image';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import { BoldText, MediumText } from 'components/Typography';
@@ -78,6 +80,12 @@ const Subtext = styled(BoldText)`
   margin-top: ${responsiveSize(10)}px;
 `;
 
+const FeatureIcon = styled(CachedImage)`
+  height: 124px;
+  width: 124px;
+  margin-bottom: 24px;
+`;
+
 const features = [
   {
     key: 'instant',
@@ -95,6 +103,8 @@ const features = [
     subtext: 'It’s in Pillar DNA.',
   },
 ];
+
+const PPNIcon = require('assets/images/logo_PPN.png');
 
 class PillarNetworkIntro extends React.Component<Props> {
   createPLRTank = () => {
@@ -120,6 +130,7 @@ class PillarNetworkIntro extends React.Component<Props> {
       >
         <ScrollWrapper contentContainerStyle={{ paddingTop: 80 }}>
           <CustomWrapper>
+            <FeatureIcon source={PPNIcon} />
             <Title>
               Pillar Network
             </Title>

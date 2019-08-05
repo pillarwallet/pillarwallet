@@ -453,11 +453,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (assets !== prevProps.assets || supportedAssets !== prevProps.supportedAssets) {
       this.provideOptions();
     }
-    const fromAssetCode = navigation.getParam('fromAssetCode');
-    if (fromAssetCode) {
-      this.setInitialSelection(fromAssetCode);
+    const fromAssetCode = navigation.getParam('fromAssetCode') || '';
+    const toAssetCode = navigation.getParam('toAssetCode') || '';
+    if (fromAssetCode || toAssetCode) {
+      this.setInitialSelection(fromAssetCode, toAssetCode);
       // reset to prevent nav value change over newly selected
-      navigation.setParams({ fromAssetCode: null });
+      navigation.setParams({ fromAssetCode: null, toAssetCode: null });
     }
     if (prevProps.oAuthAccessToken !== oAuthAccessToken) {
       // access token has changed, init search again

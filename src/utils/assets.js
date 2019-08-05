@@ -19,7 +19,7 @@
 */
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import type { Balances, Rates } from 'models/Asset';
+import type { Assets, Balances, Rates } from 'models/Asset';
 import { ETH } from 'constants/assetsConstants';
 
 export function transformAssetsToObject(assetsArray: Object[] = []): Object {
@@ -79,4 +79,29 @@ export function checkIfEnoughForFee(balances: Balances, txFeeInWei: BigNumber): 
   const ethBalance = getBalance(balances, ETH);
   const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
   return balanceInWei.gte(txFeeInWei);
+}
+
+export function calculatePortfolioBalance(assets: Assets, rates: Rates, balances: Object) {
+  // CLEANUP REQUIRED
+  return Object
+    .keys(assets)
+    .map(key => assets[key])
+    .map(({ symbol }) => {
+      const assetRates = rates[symbol] || {};
+      const balance = getBalance(balances, symbol);
+      const assetFiatBalance = Object
+        .keys(assetRates)
+        .map(key => ({
+          currency: key,
+          total: assetRates[key] * (balance || 0),
+        }));
+      return assetFiatBalance;
+    })
+    .reduce((memo, item) => {
+      return memo.concat(item);
+    }, [])
+    .reduce((memo, item) => {
+      memo[item.currency] = (memo[item.currency] || 0) + item.total;
+      return memo;
+    }, { GBP: 0 });
 }

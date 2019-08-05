@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, Switch, SectionList, Platform, ScrollView } from 'react-native';
+import { Keyboard, Switch, SectionList, Platform, ScrollView, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
@@ -34,10 +34,10 @@ import { Insight } from 'components/Insight';
 import { Wrapper, ScrollWrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import Toast from 'components/Toast';
+import { ListItemChevron } from 'components/ListItem/ListItemChevron';
+import { LabelBadge } from 'components/LabelBadge';
 
-import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { getAccountAddress } from 'utils/accounts';
 
 import {
   FETCHED,
@@ -47,22 +47,23 @@ import {
   defaultFiatCurrency,
   ETH,
 } from 'constants/assetsConstants';
-import { ASSET } from 'constants/navigationConstants';
+import { EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 
 import { activeAccountSelector } from 'selectors';
-import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import Spinner from 'components/Spinner';
 import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
-import type { Asset, Assets, Balances } from 'models/Asset';
+import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
 
 // actions
 import {
   updateAssetsAction,
-  fetchInitialAssetsAction,
   startAssetsSearchAction,
   searchAssetsAction,
   resetSearchAssetsResultAction,
@@ -71,6 +72,10 @@ import {
 } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
+// utils
+import { calculatePortfolioBalance } from 'utils/assets';
+import { getSmartWalletStatus } from 'utils/smartWallet';
+
 // partials
 import CollectiblesList from './CollectiblesList';
 import AssetsList from './AssetsList';
@@ -78,7 +83,6 @@ import AssetsList from './AssetsList';
 type Props = {
   baseFiatCurrency: string,
   assets: Assets,
-  paymentNetworkBalances: Balances,
   collectibles: Collectible[],
   navigation: NavigationScreenProp<*>,
   tabs: Object[],
@@ -99,6 +103,11 @@ type Props = {
   updateAssets: Function,
   assetsSearchState: string,
   logScreenView: Function,
+  balances: Balances,
+  rates: Rates,
+  accounts: Accounts,
+  smartWalletState: Object,
+  smartWalletFeatureEnabled: boolean,
 }
 
 type State = {
@@ -135,6 +144,13 @@ const EmptyStateWrapper = styled(Wrapper)`
   padding-top: 90px;
   padding-bottom: 90px;
   align-items: center;
+`;
+
+const ActionsWrapper = styled(Wrapper)`
+  margin: 30px 0;
+  border-bottom-width: ${StyleSheet.hairlineWidth}px;
+  border-top-width: ${StyleSheet.hairlineWidth}px;
+  border-color: ${baseColors.mediumLightGray};
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
@@ -262,67 +278,6 @@ class WalletView extends React.Component<Props, State> {
     );
   }
 
-  renderAsset = ({ item: asset }) => {
-    const { baseFiatCurrency, navigation, activeAccount } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
-
-    const {
-      name,
-      symbol,
-      iconUrl,
-      balance,
-      balanceInFiat,
-      iconMonoUrl,
-      decimals,
-      patternUrl,
-    } = asset;
-
-    const fullIconMonoUrl = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
-    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-    const patternIcon = patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl;
-    const formattedBalanceInFiat = formatMoney(balanceInFiat);
-    const displayAmount = formatMoney(balance, 4);
-
-    const assetData = {
-      name: name || symbol,
-      token: symbol,
-      amount: displayAmount,
-      contractAddress: asset.address,
-      description: asset.description,
-      balance,
-      balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
-      address: getAccountAddress(activeAccount),
-      icon: fullIconMonoUrl,
-      iconColor: fullIconUrl,
-      decimals,
-      patternIcon,
-    };
-
-    return (
-      <ListItemWithImage
-        onPress={() => {
-          navigation.navigate(ASSET,
-            {
-              assetData: {
-                ...assetData,
-                tokenType: TOKENS,
-              },
-            },
-          );
-        }}
-        label={name}
-        avatarUrl={fullIconUrl}
-        balance={{
-          balance: formatMoney(balance),
-          value: formatMoney(balanceInFiat, 2),
-          currency: currencySymbol,
-          token: symbol,
-        }}
-      />
-    );
-  };
-
   handleSearchChange = (query: string) => {
     const { activeTab } = this.state;
     const { startAssetsSearch } = this.props;
@@ -420,6 +375,13 @@ class WalletView extends React.Component<Props, State> {
       insightList = [],
       insightsTitle,
       assetsSearchState,
+      assets,
+      rates,
+      balances,
+      baseFiatCurrency,
+      accounts,
+      smartWalletState,
+      smartWalletFeatureEnabled,
     } = this.props;
 
     // SEARCH
@@ -445,6 +407,12 @@ class WalletView extends React.Component<Props, State> {
         onPress: () => this.setActiveTab(COLLECTIBLES),
       },
     ];
+
+    const walletBalances = calculatePortfolioBalance(assets, rates, balances);
+    const balance = Object.keys(walletBalances).length ? walletBalances[baseFiatCurrency || defaultFiatCurrency] : 0;
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const hasSmartWallet = smartWalletStatus.hasAccount;
+    const showFinishSmartWalletActivation = !!smartWalletFeatureEnabled && !hasSmartWallet;
 
     return (
       <CustomKAWrapper
@@ -489,9 +457,8 @@ class WalletView extends React.Component<Props, State> {
           }}
           itemSearchState={!!isInSearchMode}
           navigation={navigation}
-          white
         />}
-        {!isInSearchMode && !blockAssetsView &&
+        {!isInSearchMode && !blockAssetsView && !!collectibles.length &&
         <Tabs
           initialActiveTab={activeTab}
           tabs={assetsTabs}
@@ -509,16 +476,30 @@ class WalletView extends React.Component<Props, State> {
           </Wrapper>
           }
           {activeTab === TOKENS && !inAssetSearchMode && (
-            <AssetsList />
+            <AssetsList balance={balance} />
           )}
           {activeTab === COLLECTIBLES && (
             <CollectiblesList
               collectibles={filteredCollectibles}
               searchQuery={query}
               navigation={navigation}
-              // horizontalPadding={horizontalPadding}
-              // updateHideRemoval={this.updateHideRemoval}
             />)}
+          {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
+          <ActionsWrapper>
+            {!!showFinishSmartWalletActivation &&
+            <ListItemChevron
+              label="Finish Smart Wallet activation"
+              onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
+              bordered
+            />}
+            {!balance &&
+            <ListItemChevron
+              label="Buy tokens with credit card"
+              onPress={() => navigation.navigate(EXCHANGE, { fromAssetCode: baseFiatCurrency || defaultFiatCurrency })}
+              bordered
+              addon={(<LabelBadge label="NEW" />)}
+            />}
+          </ActionsWrapper>}
         </ListWrapper>}
       </CustomKAWrapper>
     );
@@ -533,18 +514,26 @@ const mapStateToProps = ({
     assetsSearchResults,
   },
   appSettings: { data: { baseFiatCurrency } },
+  rates: { data: rates },
+  accounts: { data: accounts },
+  smartWallet: smartWalletState,
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   assets,
   assetsState,
   assetsSearchState,
   assetsSearchResults,
   baseFiatCurrency,
+  rates,
+  accounts,
+  smartWalletState,
+  smartWalletFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   activeAccount: activeAccountSelector,
+  balances: accountBalancesSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -553,7 +542,6 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
   updateAssets: (assets: Assets, assetsToExclude: string[]) => dispatch(updateAssetsAction(assets, assetsToExclude)),
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),

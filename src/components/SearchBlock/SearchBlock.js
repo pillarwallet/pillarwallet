@@ -39,8 +39,8 @@ type Props = {
   searchInputPlaceholder?: string,
   backgroundColor?: string,
   hideSearch?: boolean,
-  white?: boolean,
   onSearchFocus?: Function,
+  inputRef?: Function,
   wrapperStyle?: Object,
 }
 
@@ -156,6 +156,7 @@ class SearchBlock extends React.Component<Props, State> {
       searchInputPlaceholder,
       hideSearch,
       wrapperStyle,
+      inputRef,
     } = this.props;
     const {
       query,
@@ -188,6 +189,7 @@ class SearchBlock extends React.Component<Props, State> {
               }}
               placeholder={searchInputPlaceholder}
               marginBottom="0"
+              inputRef={inputRef}
             />
           </SearchBarWrapper>
         }

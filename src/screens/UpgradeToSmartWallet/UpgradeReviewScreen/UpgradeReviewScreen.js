@@ -31,8 +31,8 @@ import { BigNumber } from 'bignumber.js';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
-import { Container, Wrapper, Footer } from 'components/Layout';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -89,22 +89,15 @@ type State = {
   gasLimit: number,
 };
 
-const WhiteWrapper = styled.View`
-  background-color: ${baseColors.white};
-  padding-bottom: ${spacing.rhythm}px;
-`;
-
 const FooterInner = styled.View`
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-  background-color: ${baseColors.snowWhite};
 `;
 
 const ListSeparator = styled.View`
   padding: 20px ${spacing.rhythm}px;
-  background-color: ${baseColors.lighterGray};
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -300,19 +293,17 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
     // there should be enough to transfer selected assets from primary wallet
     const notEnoughEther = !etherBalance || etherBalance < parseFloat(assetsTransferFeeEth);
     return (
-      <Container>
-        <WhiteWrapper>
-          <Header
-            title="review"
-            centerTitle
-            onBack={() => navigation.goBack(null)}
-          />
-          <Wrapper regularPadding>
-            <Paragraph small>
-              Please confirm that the details below are correct before deploying your Smart Wallet.
-            </Paragraph>
-          </Wrapper>
-        </WhiteWrapper>
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Review' }],
+        }}
+        backgroundColor={baseColors.white}
+      >
+        <Wrapper regularPadding>
+          <Paragraph small style={{ marginVertical: spacing.large }}>
+            Please confirm that the details below are correct before deploying your Smart Wallet.
+          </Paragraph>
+        </Wrapper>
         <SectionList
           sections={sections}
           renderSectionHeader={({ section }) => (
@@ -324,20 +315,21 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
           renderItem={this.renderItem}
           keyExtractor={(item) => item.id}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+          stickySectionHeadersEnabled={false}
         />
         <Footer>
           {!!notEnoughEther &&
           <WarningMessage>
             There is not enough ether for asset transfer transactions estimated fee.
           </WarningMessage>}
-          <FooterInner style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+          <FooterInner>
             <LabelWrapper>
               <Label style={{ textAlign: 'center' }}>{`Total estimated fee ${assetsTransferFeeEth} ETH`}</Label>
             </LabelWrapper>
             <Button disabled={!!notEnoughEther} block title="Continue" onPress={this.onNextClick} />
           </FooterInner>
         </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

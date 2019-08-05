@@ -25,7 +25,7 @@ import {
   Image,
   RefreshControl,
   View,
-  ScrollView,
+  ScrollView, StyleSheet,
 } from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
@@ -45,7 +45,7 @@ import {
 } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
+import { CONTACT, CONNECTION_REQUESTS, PEOPLE_SEARCH, CONTACT_INFO } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
@@ -62,6 +62,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -119,6 +120,17 @@ const BadgeIcon = styled(Icon)`
 const InnerWrapper = styled.View`
   flex: 1;
   background-color: ${baseColors.white};
+`;
+
+const ActionsWrapper = styled.View`
+  border-bottom-width: ${StyleSheet.hairlineWidth}px;
+  border-top-width: ${StyleSheet.hairlineWidth}px;
+  border-color: ${baseColors.mediumLightGray};
+`;
+
+const IntroWrapper = styled.View`
+  margin: 40px 0;
+  align-items: center;
 `;
 
 const MIN_QUERY_LENGTH = 2;
@@ -346,60 +358,21 @@ class PeopleScreen extends React.Component<Props, State> {
     }, 1000);
   };
 
-  render() {
-    const {
-      query,
-      showConfirmationModal,
-      manageContactType,
-      manageContactId,
-    } = this.state;
+  renderContent = (sortedLocalContacts: Object[], inSearchMode: boolean) => {
+    const { query } = this.state;
     const {
       searchResults,
       contactState,
       navigation,
       invitations,
-      localContacts,
-      chats,
     } = this.props;
-    const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
+
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
-    const localContactsWithUnreads = localContacts.map((contact) => {
-      const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
-      return {
-        ...contact,
-        unread: chatWithUserInfo.unread || 0,
-        lastMessage: chatWithUserInfo.lastMessage || null,
-      };
-    });
-    const sortedLocalContacts = orderBy(
-      localContactsWithUnreads,
-      [(user) => {
-        if (user.lastMessage) {
-          return user.lastMessage.serverTimestamp;
-        }
-        return user.createdAt * 1000;
-      }],
-      'desc');
-    const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
 
-    return (
-      <ContainerWithHeader
-        backgroundColor={baseColors.white}
-        headerProps={{
-          leftItems: [{ user: true }],
-          rightIconsSize: fontSizes.extraLarge,
-        }}
-      >
-        <ScrollView
-          keyboardShouldPersistTaps="always"
-          contentContainerStyle={{ flexGrow: 1 }}
-          onScroll={() => {
-            if (inSearchMode) {
-              Keyboard.dismiss();
-            }
-          }}
-        >
+    if (sortedLocalContacts.length) {
+      return (
+        <React.Fragment>
           <SearchBlock
             headerProps={{ title: 'people' }}
             searchInputPlaceholder="Search or add people"
@@ -454,7 +427,6 @@ class PeopleScreen extends React.Component<Props, State> {
               }
             />
             }
-
             {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
             <View
               style={{ flex: 1 }}
@@ -483,6 +455,87 @@ class PeopleScreen extends React.Component<Props, State> {
             </View>
             }
           </InnerWrapper>
+        </React.Fragment>
+      );
+    }
+
+    return (
+      <React.Fragment>
+        <IntroWrapper>
+          <EmptyStateParagraph title="Start making friends" bodyText="Build your connection list" />
+        </IntroWrapper>
+        <ActionsWrapper>
+          <ListItemChevron
+            label="Scan friend's QR code"
+            onPress={() => {}}
+            bordered
+          />
+          <ListItemChevron
+            label="Show my QR code"
+            onPress={() => navigation.navigate(CONTACT_INFO)}
+            bordered
+          />
+          <ListItemChevron
+            label="Search for someone"
+            onPress={() => navigation.navigate(PEOPLE_SEARCH)}
+            bordered
+          />
+        </ActionsWrapper>
+      </React.Fragment>
+    );
+  };
+
+  render() {
+    const {
+      query,
+      showConfirmationModal,
+      manageContactType,
+      manageContactId,
+    } = this.state;
+    const {
+      contactState,
+      localContacts,
+      chats,
+    } = this.props;
+    const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
+
+    const localContactsWithUnreads = localContacts.map((contact) => {
+      const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
+      return {
+        ...contact,
+        unread: chatWithUserInfo.unread || 0,
+        lastMessage: chatWithUserInfo.lastMessage || null,
+      };
+    });
+    const sortedLocalContacts = orderBy(
+      localContactsWithUnreads,
+      [(user) => {
+        if (user.lastMessage) {
+          return user.lastMessage.serverTimestamp;
+        }
+        return user.createdAt * 1000;
+      }],
+      'desc');
+    const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
+
+    return (
+      <ContainerWithHeader
+        backgroundColor={baseColors.white}
+        headerProps={{
+          leftItems: [{ user: true }],
+          rightIconsSize: fontSizes.extraLarge,
+        }}
+      >
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          contentContainerStyle={{ flexGrow: 1 }}
+          onScroll={() => {
+            if (inSearchMode) {
+              Keyboard.dismiss();
+            }
+          }}
+        >
+          {this.renderContent(sortedLocalContacts, inSearchMode)}
           <ConnectionConfirmationModal
             showConfirmationModal={showConfirmationModal}
             manageContactType={manageContactType}
