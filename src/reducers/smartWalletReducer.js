@@ -30,7 +30,8 @@ import {
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   RESET_SMART_WALLET,
   SET_SMART_WALLET_LAST_SYNCED_HASH,
-  SET_SMART_WALLET_DEPLOYMENT_STARTED,
+  START_SMART_WALLET_DEPLOYMENT,
+  RESET_SMART_WALLET_DEPLOYMENT,
 } from 'constants/smartWalletConstants';
 import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 import type { AssetTransfer } from 'models/Asset';
@@ -181,12 +182,20 @@ export default function smartWalletReducer(
       };
     case RESET_SMART_WALLET:
       return { ...initialState };
-    case SET_SMART_WALLET_DEPLOYMENT_STARTED:
+    case START_SMART_WALLET_DEPLOYMENT:
       return {
         ...state,
         upgrade: {
           ...state.upgrade,
-          deploymentStarted: action.payload,
+          deploymentStarted: true,
+        },
+      };
+    case RESET_SMART_WALLET_DEPLOYMENT:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          deploymentStarted: false,
         },
       };
     default:
