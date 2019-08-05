@@ -25,11 +25,14 @@ import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
+import { createStructuredSelector } from 'reselect';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
-import { baseColors, spacing } from 'utils/variables';
+// models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 
+// components
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Separator from 'components/Separator';
 import SlideModal from 'components/Modals/SlideModal';
@@ -38,8 +41,13 @@ import EventDetails from 'components/EventDetails';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Tabs from 'components/Tabs';
 
-import { partial, formatAmount } from 'utils/common';
+// utils
 import { createAlert } from 'utils/alerts';
+import { addressesEqual } from 'utils/assets';
+import { partial, formatAmount } from 'utils/common';
+import { baseColors, spacing } from 'utils/variables';
+
+// constants
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -50,7 +58,10 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+
+// selectors
+import { activeAccountAddressSelector } from 'selectors';
+
 
 const ActivityFeedList = styled.FlatList`
   width: 100%;
@@ -86,11 +97,11 @@ type Tab = {
 }
 
 type Props = {
+  activeAccountAddress: string,
   assets: Asset[],
   onAcceptInvitation: Function,
   onCancelInvitation: Function,
   onRejectInvitation: Function,
-  wallet: Object,
   navigation: NavigationScreenProp<*>,
   esData?: Object,
   contacts: Object,
@@ -196,7 +207,7 @@ class ActivityFeed extends React.Component<Props, State> {
   renderActivityFeedItem = ({ item: notification }: Object) => {
     const { type } = notification;
     const {
-      wallet,
+      activeAccountAddress,
       navigation,
       assets,
       contacts,
@@ -206,12 +217,11 @@ class ActivityFeed extends React.Component<Props, State> {
       invertAddon,
     } = this.props;
 
-    const walletAddress = wallet.address;
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM D');
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
 
     if (type === TRANSACTION_EVENT) {
-      const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
+      const isReceived = addressesEqual(notification.to, activeAccountAddress);
       const address = isReceived ? notification.from : notification.to;
       const {
         decimals = 18,
@@ -252,7 +262,7 @@ class ActivityFeed extends React.Component<Props, State> {
     }
 
     if (type === COLLECTIBLE_TRANSACTION) {
-      const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
+      const isReceived = addressesEqual(notification.to, activeAccountAddress);
       const address = isReceived ? notification.from : notification.to;
       const nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'Received' : 'Sent';
@@ -423,12 +433,18 @@ class ActivityFeed extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   assets: { data: assets },
-  wallet: { data: wallet },
 }) => ({
   contacts,
   assets: Object.values(assets),
-  wallet,
 });
 
+const structuredSelector = createStructuredSelector({
+  activeAccountAddress: activeAccountAddressSelector,
+});
 
-export default connect(mapStateToProps)(ActivityFeed);
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default connect(combinedMapStateToProps)(ActivityFeed);
