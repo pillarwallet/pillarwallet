@@ -323,7 +323,11 @@ export async function calculateGasEstimate(transaction: Object) {
       default:
         return DEFAULT_GAS_LIMIT;
     }
-  } else if (!data && contractAddress) {
+  } else if (!data && contractAddress && symbol !== ETH) {
+    /**
+     * we check `symbol !== ETH` because our assets list also includes ETH contract address
+     * so want to check if it's also not ETH send flow
+     */
     const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
     const contractAmount = defaultDecimals > 0
       ? utils.parseUnits(amount.toString(), defaultDecimals)
