@@ -114,6 +114,7 @@ type State = {
   query: string,
   searchScrollTop: number,
   activeTab: string,
+  disableScroll: boolean,
 }
 
 const MIN_QUERY_LENGTH = 2;
@@ -136,7 +137,6 @@ const SearchSpinner = styled(Wrapper)`
 
 const ListWrapper = styled.View`
   position: relative;
-  flex: 1;
   margin-top: -10px;
 `;
 
@@ -161,12 +161,16 @@ const genericToken = require('assets/images/tokens/genericToken.png');
  * (Android natively supports keyboard aware view due to windowSoftInputMode set in AndroidManifest.xml)
  */
 const CustomKAWrapper = (props) => {
-  const { onScroll, children, innerRef } = props;
+  const {
+    onScroll,
+    children,
+    innerRef,
+    disableScroll,
+  } = props;
   const scrollWrapperProps = {
     stickyHeaderIndices: [2],
     style: { backgroundColor: baseColors.white },
     contentContainerStyle: {
-      flexGrow: 1,
       backgroundColor: baseColors.white,
     },
     onScroll,
@@ -177,6 +181,7 @@ const CustomKAWrapper = (props) => {
       <ScrollWrapper
         innerRef={innerRef}
         {...scrollWrapperProps}
+        scrollEnabled={!disableScroll}
       >
         {children}
       </ScrollWrapper>
@@ -187,6 +192,9 @@ const CustomKAWrapper = (props) => {
     <ScrollView
       ref={innerRef}
       {...scrollWrapperProps}
+      scrollEnabled={!disableScroll}
+      style={{ height: '100%' }}
+      contentContainerStyle={{ width: '100%' }}
     >
       {children}
     </ScrollView>
@@ -202,6 +210,7 @@ class WalletView extends React.Component<Props, State> {
       query: '',
       searchScrollTop: 0,
       activeTab: TOKENS,
+      disableScroll: false,
       // forceHideRemoval: false,
     };
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
@@ -364,6 +373,7 @@ class WalletView extends React.Component<Props, State> {
       query,
       searchScrollTop,
       activeTab,
+      disableScroll,
     } = this.state;
     const {
       collectibles,
@@ -418,6 +428,7 @@ class WalletView extends React.Component<Props, State> {
       <CustomKAWrapper
         onScroll={() => this.onWrapperScroll()}
         innerRef={ref => { this.scrollWrapperRef = ref; }}
+        disableScroll={disableScroll}
       >
         <Insight
           isVisible={showInsight}
@@ -454,7 +465,9 @@ class WalletView extends React.Component<Props, State> {
                 this.scrollWrapperRef.scrollTo({ x: 0, y: searchScrollTop, animated: true });
               }
             }
+            this.setState({ disableScroll: true });
           }}
+          onSearchBlur={() => this.setState({ disableScroll: false })}
           itemSearchState={!!isInSearchMode}
           navigation={navigation}
         />}
@@ -471,9 +484,7 @@ class WalletView extends React.Component<Props, State> {
         {!blockAssetsView &&
         <ListWrapper>
           {inAssetSearchMode && isSearchOver &&
-          <Wrapper>
-            {this.renderFoundTokensList()}
-          </Wrapper>
+            this.renderFoundTokensList()
           }
           {activeTab === TOKENS && !inAssetSearchMode && (
             <AssetsList balance={balance} />

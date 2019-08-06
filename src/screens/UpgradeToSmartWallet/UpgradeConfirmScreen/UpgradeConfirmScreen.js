@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { ScrollView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
@@ -29,10 +30,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
-import {
-  Paragraph,
-  BaseText,
-} from 'components/Typography';
+import { Paragraph, BaseText } from 'components/Typography';
 import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
@@ -88,9 +86,7 @@ const DetailsWrapper = styled.View`
 `;
 
 const Footer = styled.View`
-  padding: ${spacing.large};
-  flex-grow: 1;
-  justify-content: flex-end;
+  padding: ${spacing.large}px;
 `;
 
 const WarningMessage = styled(Paragraph)`
@@ -281,33 +277,33 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
         }}
         backgroundColor={baseColors.white}
       >
-        <Wrapper regularPadding>
-          <Paragraph small style={{ marginVertical: spacing.large }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flexGrow: 1 }}>
+          <Paragraph small style={{ margin: spacing.large }}>
             Please confirm that the details below are correct before deploying your Smart Wallet.
           </Paragraph>
-        </Wrapper>
-        <DetailsWrapper>
-          <DetailsLine>
-            <DetailsTitle>Assets to transfer</DetailsTitle>
-            {nonEmptyAssets.map((asset: any, index: number) =>
-              <DetailsValue key={index}>{`${asset.amount} ${asset.symbol}`}</DetailsValue>)
+          <DetailsWrapper>
+            <DetailsLine>
+              <DetailsTitle>Assets to transfer</DetailsTitle>
+              {nonEmptyAssets.map((asset: any, index: number) =>
+                <DetailsValue key={index}>{`${asset.amount} ${asset.symbol}`}</DetailsValue>)
+              }
+            </DetailsLine>
+            <DetailsLine>
+              <DetailsTitle>Est. fee for assets transfer</DetailsTitle>
+              <DetailsValue>{assetsTransferFee}</DetailsValue>
+            </DetailsLine>
+            {!!transferCollectibles.length &&
+            <DetailsLine>
+              <DetailsTitle>Est. fee for collectibles transfer</DetailsTitle>
+              <DetailsValue>{collectiblesTransferFee}</DetailsValue>
+            </DetailsLine>
             }
-          </DetailsLine>
-          <DetailsLine>
-            <DetailsTitle>Est. fee for assets transfer</DetailsTitle>
-            <DetailsValue>{assetsTransferFee}</DetailsValue>
-          </DetailsLine>
-          {!!transferCollectibles.length &&
-          <DetailsLine>
-            <DetailsTitle>Est. fee for collectibles transfer</DetailsTitle>
-            <DetailsValue>{collectiblesTransferFee}</DetailsValue>
-          </DetailsLine>
-          }
-          <DetailsLine>
-            <DetailsTitle>Est. fee for smart contract deployment</DetailsTitle>
-            <DetailsValue>{smartContractDeployFee}</DetailsValue>
-          </DetailsLine>`
-        </DetailsWrapper>
+            <DetailsLine>
+              <DetailsTitle>Est. fee for smart contract deployment</DetailsTitle>
+              <DetailsValue>{smartContractDeployFee}</DetailsValue>
+            </DetailsLine>
+          </DetailsWrapper>
+        </ScrollView>
         <Footer>
           {!!notEnoughEther &&
           <WarningMessage>

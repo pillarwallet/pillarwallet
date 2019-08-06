@@ -40,7 +40,6 @@ const HeaderButtonRounded = styled.TouchableOpacity`
   border: 1px solid;
   border-color: ${props => props.theme.buttonBorderColor || UIColors.defaultBorderColor};
   border-radius: 20px;
-  margin-right: 6px;
 `;
 
 const RoundedButtonLabel = styled(BaseText)`

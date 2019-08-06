@@ -148,7 +148,6 @@ class AccountsScreen extends React.Component<Props> {
 
     return (
       <ContainerWithHeader
-        color={baseColors.white}
         headerProps={{
           leftItems: [
             { userIcon: true },

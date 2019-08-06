@@ -58,7 +58,7 @@ import {
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS } from 'constants/navigationConstants';
+import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { baseColors } from 'utils/variables';
@@ -98,6 +98,8 @@ type Props = {
   activeAccount: Account,
   logScreenView: (view: string, screen: string) => void,
   fetchAllCollectiblesData: Function,
+  useBiometrics: boolean,
+  backupStatus: Object,
 }
 
 type State = {
@@ -192,17 +194,25 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchInitialAssets,
       accounts,
       smartWalletState,
+      backupStatus,
+      navigation,
+      useBiometrics,
     } = this.props;
     const {
       showKeyWalletInsight,
       showSmartWalletInsight,
     } = this.state;
+    const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
+    const keyBasedWallet = accounts.find((item) => item.type === ACCOUNT_TYPES.KEY_BASED);
 
     const keyWalletInsights = [
       {
         key: 'backup',
         title: 'Backup wallet',
-        status: true,
+        status: isBackedUp,
+        onPress: !isBackedUp
+          ? () => navigation.navigate(WALLET_SETTINGS, { wallet: keyBasedWallet })
+          : null,
       },
       {
         key: 'pinCode',
@@ -212,7 +222,10 @@ class AssetsScreen extends React.Component<Props, State> {
       {
         key: 'biometric',
         title: 'Enable biometric login',
-        status: false,
+        status: useBiometrics,
+        onPress: !useBiometrics
+          ? () => navigation.navigate(SETTINGS)
+          : null,
       },
     ];
 
@@ -309,6 +322,7 @@ class AssetsScreen extends React.Component<Props, State> {
               ...customHeaderButtonProps,
             },
           }],
+          sideFlex: 0,
         }}
       >
         {this.renderView(screenView)}
@@ -319,7 +333,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   accounts: { data: accounts },
-  wallet: { data: wallet },
+  wallet: { data: wallet, backupStatus },
   assets: {
     data: assets,
     assetsState,
@@ -327,13 +341,14 @@ const mapStateToProps = ({
     assetsSearchResults,
   },
   rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout }, useBiometrics = false } },
   badges: { data: badges },
   smartWallet: smartWalletState,
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
   blockchainNetwork: { data: blockchainNetworks },
 }) => ({
   wallet,
+  backupStatus,
   accounts,
   assets,
   assetsState,
@@ -342,6 +357,7 @@ const mapStateToProps = ({
   rates,
   baseFiatCurrency,
   assetsLayout,
+  useBiometrics,
   badges,
   smartWalletState,
   smartWalletFeatureEnabled,

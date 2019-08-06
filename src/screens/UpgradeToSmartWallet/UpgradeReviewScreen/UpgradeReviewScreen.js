@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { SectionList } from 'react-native';
+import { SectionList, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
@@ -32,7 +32,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Wrapper, Footer } from 'components/Layout';
+import { Footer } from 'components/Layout';
 import Button from 'components/Button';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -299,24 +299,24 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
         }}
         backgroundColor={baseColors.white}
       >
-        <Wrapper regularPadding>
-          <Paragraph small style={{ marginVertical: spacing.large }}>
+        <ScrollView>
+          <Paragraph small style={{ margin: spacing.large }}>
             Please confirm that the details below are correct before deploying your Smart Wallet.
           </Paragraph>
-        </Wrapper>
-        <SectionList
-          sections={sections}
-          renderSectionHeader={({ section }) => (
-            <ListSeparator>
-              <SubHeading>{section.title}</SubHeading>
-              <TextLink onPress={() => navigation.navigate(section.toEdit, { isEditing: true })}>Edit</TextLink>
-            </ListSeparator>
-          )}
-          renderItem={this.renderItem}
-          keyExtractor={(item) => item.id}
-          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-          stickySectionHeadersEnabled={false}
-        />
+          <SectionList
+            sections={sections}
+            renderSectionHeader={({ section }) => (
+              <ListSeparator>
+                <SubHeading>{section.title}</SubHeading>
+                <TextLink onPress={() => navigation.navigate(section.toEdit, { isEditing: true })}>Edit</TextLink>
+              </ListSeparator>
+            )}
+            renderItem={this.renderItem}
+            keyExtractor={(item) => item.id}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+            stickySectionHeadersEnabled={false}
+          />
+        </ScrollView>
         <Footer>
           {!!notEnoughEther &&
           <WarningMessage>

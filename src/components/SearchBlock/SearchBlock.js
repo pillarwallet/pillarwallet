@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Animated, Dimensions, Keyboard } from 'react-native';
+import { Animated, Dimensions, Keyboard, PanResponder } from 'react-native';
 import SearchBar from 'components/SearchBar';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation } from 'react-navigation';
@@ -42,6 +42,7 @@ type Props = {
   onSearchFocus?: Function,
   inputRef?: Function,
   wrapperStyle?: Object,
+  onSearchBlur?: Function,
 }
 
 const SearchBarWrapper = styled.View`
@@ -50,7 +51,7 @@ const SearchBarWrapper = styled.View`
   z-index: 101;
 `;
 
-const FullScreenOverlayWrapper = styled.TouchableOpacity`
+const FullScreenOverlayWrapper = styled.View`
   z-index: 100;
   top: 0;
   left: 0;
@@ -73,7 +74,9 @@ const MIN_QUERY_LENGTH = 2;
 
 class SearchBlock extends React.Component<Props, State> {
   _willBlur: NavigationEventSubscription;
+  _willFocus: NavigationEventSubscription;
   _keyboardDidShow: NavigationEventSubscription;
+  _panResponder: Object;
 
   constructor(props: Props) {
     super(props);
@@ -82,22 +85,36 @@ class SearchBlock extends React.Component<Props, State> {
       searchIsFocused: false,
       fullScreenOverlayOpacity: new Animated.Value(0),
     };
+    this._panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponderCapture: () => true,
+      onPanResponderGrant: () => { if (this.state.searchIsFocused) this.handleSearchBlur(); },
+      onPanResponderMove: () => { if (this.state.searchIsFocused) this.handleSearchBlur(); },
+      onPanResponderTerminationRequest: () => false,
+    });
   }
 
   componentDidMount() {
     const { navigation } = this.props;
     this._willBlur = navigation.addListener('willBlur', this.onScreenBlur);
-    this._keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.onKeyboardShown);
+    this._willFocus = navigation.addListener('willFocus', this.onScreenFocus);
   }
 
   componentWillUnmount() {
     this._willBlur.remove();
-    this._keyboardDidShow.remove();
+    this._willFocus.remove();
   }
 
   onScreenBlur = () => {
     Keyboard.dismiss();
     this.animateFullScreenOverlayOpacity(true);
+    if (this._keyboardDidShow) this._keyboardDidShow.remove();
+  };
+
+  onScreenFocus = () => {
+    if (!this._keyboardDidShow) this._keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.onKeyboardShown);
   };
 
   onKeyboardShown = () => {
@@ -130,6 +147,8 @@ class SearchBlock extends React.Component<Props, State> {
   };
 
   handleSearchBlur = () => {
+    const { onSearchBlur } = this.props;
+    if (onSearchBlur) onSearchBlur();
     this.setState({
       searchIsFocused: false,
     });
@@ -169,7 +188,7 @@ class SearchBlock extends React.Component<Props, State> {
     return (
       <React.Fragment>
         {!!searchIsFocused && !inSearchMode &&
-        <FullScreenOverlayWrapper onPress={this.handleSearchBlur}>
+        <FullScreenOverlayWrapper {...this._panResponder.panHandlers}>
           <AnimatedFullScreenOverlay
             style={{
               opacity: fullScreenOverlayOpacity,

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Keyboard } from 'react-native';
+import { FlatList, Keyboard, ScrollView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { utils } from 'ethers';
 import styled from 'styled-components/native';
@@ -77,6 +77,7 @@ type State = {
   assetsToTransfer: AssetTransfer[],
   collectiblesToTransfer: CollectibleTransfer[],
   activeTab: string,
+  disableScroll: boolean,
 };
 
 const FooterInner = styled.View`
@@ -100,6 +101,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     assetsToTransfer: [],
     collectiblesToTransfer: [],
     activeTab: TOKENS,
+    disableScroll: false,
   };
 
   componentDidMount() {
@@ -327,6 +329,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       activeTab,
       assetsToTransfer = [],
       collectiblesToTransfer = [],
+      disableScroll,
     } = this.state;
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = assetsArray
@@ -369,21 +372,30 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{
           centerItems: [{ title: 'Choose assets to transfer' }],
+          rightItems: [hasAssetsSelected ? { label: 'Edit', onPress: this.onEditPress } : {}],
         }}
         backgroundColor={baseColors.white}
       >
-        <SearchBlock
-          searchInputPlaceholder="Search asset"
-          onSearchChange={this.handleSearchChange}
-          itemSearchState={query.length >= 2}
-          navigation={navigation}
-          wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
-        />
-        <Tabs initialActiveTab={activeTab} tabs={assetsTabs} bgColor={baseColors.white} />
-        {activeTab === TOKENS && this.renderAssets(nonEmptyAssets)}
-        {activeTab === COLLECTIBLES && this.renderCollectibles()}
+        <ScrollView
+          stickyHeaderIndices={[1]}
+          scrollEnabled={!disableScroll}
+        >
+          <SearchBlock
+            searchInputPlaceholder="Search asset"
+            onSearchChange={this.handleSearchChange}
+            itemSearchState={query.length >= 2}
+            navigation={navigation}
+            wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+            onSearchFocus={() => this.setState({ disableScroll: true })}
+            onSearchBlur={() => this.setState({ disableScroll: false })}
+          />
+          <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />
+          {activeTab === TOKENS && this.renderAssets(nonEmptyAssets)}
+          {activeTab === COLLECTIBLES && this.renderCollectibles()}
+        </ScrollView>
+        {!!hasAssetsSelected &&
         <Footer>
-          {!isSeparateFund && hasAssetsSelected &&
+          {!isSeparateFund &&
           <FooterInner style={{ alignItems: 'center' }}>
             <Label>{`Est. fee ${assetsTransferFee} ETH`}</Label>
             <Button
@@ -392,7 +404,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
               onPress={() => this.onNextPress()}
             />
           </FooterInner>}
-          {!!isSeparateFund && hasAssetsSelected &&
+          {!!isSeparateFund &&
           <FooterInner style={{ alignItems: 'center', flexDirection: 'column', justifyContent: 'center' }}>
             <Button
               title="Fund wallet"
@@ -402,7 +414,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
             <Label>{`Est. fee ${assetsTransferFee} ETH`}</Label>
           </FooterInner>
           }
-        </Footer>
+        </Footer>}
       </ContainerWithHeader>
     );
   }

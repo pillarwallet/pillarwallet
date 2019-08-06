@@ -267,6 +267,8 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [BADGE]: BadgeScreen,
     [CONTACT]: ContactScreen,
+    [WALLET_SETTINGS]: WalletSettingsScreen,
+    [SETTINGS]: SettingsScreen,
   },
   StackNavigatorConfig,
 );
@@ -544,7 +546,7 @@ const manageWalletsFlow = createStackNavigator({
   [FUND_CONFIRM]: FundConfirmScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
-}, StackNavigatorConfig);
+}, StackNavigatorModalConfig);
 
 manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
 

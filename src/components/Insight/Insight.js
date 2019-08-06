@@ -50,10 +50,11 @@ const CardRow = styled.View`
 `;
 
 const ContentWrapper = styled.View`
+  width: 100%;
   flex: 1;
 `;
 
-const ListItem = styled.View`
+const ListItem = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   padding: 2px 0;
@@ -143,9 +144,9 @@ export const Insight = (props: Props) => {
               extraData={props}
               keyExtractor={(item) => item.key}
               renderItem={({ item }) => {
-                const { status, title: listItem } = item;
+                const { status, title: listItem, onPress } = item;
                 return (
-                  <ListItem>
+                  <ListItem onPress={onPress} disabled={!onPress}>
                     <StatusIconWrapper>
                       <StatusIcon isDone={!!status} />
                     </StatusIconWrapper>

@@ -41,8 +41,6 @@ const StyledItemView = styled.View`
 `;
 
 const ItemRow = styled.View`
-  display: flex;
-  flex: 1;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

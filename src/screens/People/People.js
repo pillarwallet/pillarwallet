@@ -164,6 +164,7 @@ type State = {
   manageContactType: string,
   manageContactId: string,
   forceHideRemoval: boolean,
+  disableScroll: boolean,
 }
 
 const ConnectionStatus = (props: ConnectionStatusProps) => {
@@ -195,6 +196,7 @@ class PeopleScreen extends React.Component<Props, State> {
     manageContactType: '',
     manageContactId: '',
     forceHideRemoval: false,
+    disableScroll: false,
   };
 
   constructor(props: Props) {
@@ -379,6 +381,8 @@ class PeopleScreen extends React.Component<Props, State> {
             onSearchChange={(q) => this.handleSearchChange(q)}
             itemSearchState={!!contactState}
             wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+            onSearchFocus={() => this.setState({ disableScroll: true })}
+            onSearchBlur={() => this.setState({ disableScroll: false })}
           />
           {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
@@ -491,6 +495,7 @@ class PeopleScreen extends React.Component<Props, State> {
       showConfirmationModal,
       manageContactType,
       manageContactId,
+      disableScroll,
     } = this.state;
     const {
       contactState,
@@ -534,6 +539,7 @@ class PeopleScreen extends React.Component<Props, State> {
               Keyboard.dismiss();
             }
           }}
+          scrollEnabled={!disableScroll}
         >
           {this.renderContent(sortedLocalContacts, inSearchMode)}
           <ConnectionConfirmationModal

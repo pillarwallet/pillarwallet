@@ -259,8 +259,7 @@ class AssetsList extends React.Component<Props> {
         initialNumToRender={5}
         maxToRenderPerBatch={5}
         onEndReachedThreshold={0.5}
-        style={{ width: '100%', height: '100%', flexGrow: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}
+        style={{ width: '100%', height: '100%', flex: 1 }}
         ListHeaderComponent={this.renderHeader}
         refreshControl={
           <RefreshControl
