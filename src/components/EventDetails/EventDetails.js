@@ -64,7 +64,7 @@ import {
   COLLECTIBLE,
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
-import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -303,15 +303,22 @@ class EventDetails extends React.Component<Props, {}> {
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       let showAmountReceived = true;
+      let showSender = true;
       let showNote = true;
       let showAmountTxType = false;
       let txType = '';
 
       if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
         showAmountReceived = false;
+        showSender = false;
         showNote = false;
         showAmountTxType = true;
         txType = 'TX SETTLEMENT';
+      } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+        showSender = false;
+        showNote = false;
+        showAmountTxType = true;
+        txType = 'TANK TOP UP';
       }
 
       return (
@@ -336,6 +343,7 @@ class EventDetails extends React.Component<Props, {}> {
               value={txType}
             />
             }
+            {showSender &&
             <ListItemUnderlined
               label={isReceived ? 'SENDER' : 'RECIPIENT'}
               value={relatedUserTitle}
@@ -350,6 +358,7 @@ class EventDetails extends React.Component<Props, {}> {
                 borderWidth={0}
               />)}
             />
+            }
             {(toMyself || !isReceived) && !isPending &&
             <ListItemUnderlined
               label="TRANSACTION FEE"
