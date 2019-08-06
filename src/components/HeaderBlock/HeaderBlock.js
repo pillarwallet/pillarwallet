@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StatusBar, View, FlatList } from 'react-native';
+import { StatusBar, View, FlatList, TouchableOpacity } from 'react-native';
+import { CachedImage } from 'react-native-cached-image';
 
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
@@ -29,10 +30,10 @@ import IconButton from 'components/IconButton';
 import { connect } from 'react-redux';
 import ProfileImage from 'components/ProfileImage';
 import { USERS } from 'constants/navigationConstants';
+import { responsiveSize } from 'utils/ui';
 
 // partials
 import { HeaderActionButton } from './HeaderActionButton';
-import { responsiveSize } from '../../utils/ui';
 
 type Props = {
   rightItems?: Object[],
@@ -46,6 +47,7 @@ type Props = {
   transparent?: boolean,
   light?: boolean,
   noBack?: boolean,
+  customOnback?: Function,
 }
 
 type State = {
@@ -152,6 +154,21 @@ const Separator = styled.View`
   width: ${spacing.small}px;
 `;
 
+const Indicator = styled.View`
+  width: 8px;
+  height: 8px;
+  background-color: ${baseColors.sunYellow};
+  border-radius: 4px;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
+const IconImage = styled(CachedImage)`
+  width: 24px;
+  height: 24px;
+`;
+
 const profileImageWidth = 24;
 
 const themes = (backgroundColor?: string = '') => ({
@@ -215,6 +232,7 @@ class HeaderBlock extends React.Component<Props, State> {
       centerItems = [],
       navigation,
       noBack,
+      customOnback,
     } = this.props;
 
     return (
@@ -226,9 +244,7 @@ class HeaderBlock extends React.Component<Props, State> {
               <BackIcon
                 icon="back"
                 color={theme.iconColor || UIColors.defaultNavigationColor}
-                onPress={() => {
-                  navigation.goBack(null);
-                }}
+                onPress={customOnback ? () => customOnback() : () => { navigation.goBack(null); }}
                 fontSize={fontSizes.extraLarge}
                 horizontalAlign="flex-start"
               />)
@@ -267,14 +283,25 @@ class HeaderBlock extends React.Component<Props, State> {
     }
     if (item.icon) {
       return (
-        <ActionIcon
-          key={item.icon}
-          icon={item.icon}
-          color={theme.rightActionIconColor || UIColors.defaultNavigationColor}
-          onPress={item.action}
-          fontSize={fontSizes.extraLarge}
-          horizontalAlign="flex-start"
-        />
+        <View>
+          <ActionIcon
+            key={item.icon}
+            icon={item.icon}
+            color={theme.rightActionIconColor || UIColors.defaultNavigationColor}
+            onPress={item.action}
+            fontSize={fontSizes.extraLarge}
+            horizontalAlign="flex-start"
+          />
+          {!!item.indicator && <Indicator />}
+        </View>
+      );
+    }
+    if (item.iconSource) {
+      return (
+        <TouchableOpacity onPress={item.onPress}>
+          <IconImage source={item.iconSource} />
+          {!!item.indicator && <Indicator />}
+        </TouchableOpacity>
       );
     }
     if (item.label) {

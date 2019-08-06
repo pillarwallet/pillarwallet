@@ -322,7 +322,6 @@ class AssetsScreen extends React.Component<Props, State> {
               ...customHeaderButtonProps,
             },
           }],
-          sideFlex: 0,
         }}
       >
         {this.renderView(screenView)}

@@ -35,8 +35,8 @@ import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
 
-import { Container, ScrollWrapper } from 'components/Layout';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ScrollWrapper } from 'components/Layout';
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText, Paragraph } from 'components/Typography';
 import SelectorInput from 'components/SelectorInput';
@@ -127,18 +127,6 @@ const ButtonLabel = styled(BaseText)`
 const FormWrapper = styled.View`
   padding: 0 ${spacing.large}px;
   margin-top: ${spacing.large}px;
-`;
-
-const SettingsButton = styled.TouchableOpacity`
-  padding: 8px 10px;
-  padding-right: -10px;
-  margin-bottom: -10px;
-  margin-left: 6px;
-`;
-
-const SettingsIcon = styled(CachedImage)`
-  width: 24px;
-  height: 24px;
 `;
 
 const ProviderIcon = styled(CachedImage)`
@@ -944,41 +932,29 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const formStructure = generateFormStructure(balances);
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
+    const rightItems = [{ label: 'Get help', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
+    if ((!!exchangeAllowances.length || !!connectedProviders.length)
+      && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
+      rightItems.push({
+        iconSource: settingsIcon,
+        indicator: !!hasUnreadExchangeNotification,
+        key: 'exchangeSettings',
+        onPress: () => {
+          navigation.navigate(EXCHANGE_INFO);
+          if (hasUnreadExchangeNotification) markNotificationAsSeen();
+        },
+      });
+    }
 
     return (
-      <Container color={baseColors.white} inset={{ bottom: 0 }}>
-        <Header
-          white
-          title="exchange"
-          headerRightAddon={
-            (!!exchangeAllowances.length || !!connectedProviders.length) &&
-            <SettingsButton
-              onPress={() => {
-                navigation.navigate(EXCHANGE_INFO);
-                if (hasUnreadExchangeNotification) markNotificationAsSeen();
-              }}
-            >
-              <SettingsIcon
-                source={settingsIcon}
-              />
-              {!!hasUnreadExchangeNotification &&
-              <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  backgroundColor: baseColors.sunYellow,
-                  borderRadius: 4,
-                  position: 'absolute',
-                  top: 7,
-                  right: 0,
-                }}
-              />}
-            </SettingsButton>
-          }
-          nextText="Get help"
-          onNextPress={() => Intercom.displayMessenger()}
-          pushRightAddonToTheSide
-        />
+      <ContainerWithHeader
+        backgroundColor={baseColors.white}
+        headerProps={{
+          leftItems: [{ user: true }],
+          rightItems,
+        }}
+        inset={{ bottom: 'never' }}
+      >
         <ScrollWrapper
           keyboardShouldPersistTaps="handled"
           color={UIColors.defaultBackgroundColor}
@@ -1015,7 +991,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             )}
           />
         </ScrollWrapper>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

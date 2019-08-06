@@ -284,6 +284,8 @@ const exchangeFlow = createStackNavigator({
   [FIAT_CRYPTO]: FiatCryptoScreen,
 }, StackNavigatorConfig);
 
+exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // ME FLOW
 const meFlow = createStackNavigator({
   [ME]: MeScreen,
@@ -423,10 +425,7 @@ const tabNavigation = createBottomTabNavigator(
         tabBarIcon: tabBarIcon(
           iconHomeActive,
           iconHome,
-          !screenProps.isWalletBackedUp ||
-            (!navigation.isFocused() &&
-              (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount)),
-          !screenProps.isWalletBackedUp,
+          !navigation.isFocused() && (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount),
         ),
         tabBarLabel: tabBarLabel('Home'),
       }),
