@@ -28,7 +28,7 @@ import Animation from 'components/Animation';
 type Props = {
   theme: Object,
   label: string,
-  action: Function,
+  onPress: Function,
   hasChevron?: boolean,
   isActive?: boolean,
 }
@@ -105,13 +105,13 @@ export const HeaderActionButton = (props: Props) => {
   const {
     theme,
     label,
-    action,
+    onPress,
     hasChevron,
     isActive,
   } = props;
 
   return (
-    <HeaderButtonRounded onPress={action} theme={theme}>
+    <HeaderButtonRounded onPress={onPress} theme={theme}>
       {isActive !== undefined && <Status isActive={isActive} />}
       <RoundedButtonLabel theme={theme}>{label}</RoundedButtonLabel>
       {!!hasChevron && <ChevronIcon name="chevron-right" theme={theme} />}

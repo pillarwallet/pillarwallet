@@ -337,7 +337,7 @@ class AssetScreen extends React.Component<Props, State> {
           rightItems: [
             {
               icon: 'info-circle-inverse',
-              action: () => { this.setState({ showDescriptionModal: true }); },
+              onPress: () => { this.setState({ showDescriptionModal: true }); },
             },
           ],
           rightIconsSize: fontSizes.extraLarge,

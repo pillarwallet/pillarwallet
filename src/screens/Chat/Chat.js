@@ -35,13 +35,13 @@ import {
   LoadEarlier,
   Message,
 } from 'react-native-gifted-chat';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Spinner from 'components/Spinner';
-import { Container, Wrapper } from 'components/Layout';
-import Header from 'components/Header';
+import { Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import {
   sendMessageByContactAction,
   clearChatDraftStateAction,
@@ -506,7 +506,7 @@ class Chat extends React.Component<Props, State> {
       isFetching,
     } = this.state;
 
-    const title = getUserName(contact).toLowerCase();
+    const title = getUserName(contact);
 
     let messagesToShow = [];
     if (!messages[contact.username] || !messages[contact.username].length) {
@@ -523,13 +523,11 @@ class Chat extends React.Component<Props, State> {
     }
 
     return (
-      <Container color={UIColors.defaultBackgroundColor} inset={{ bottom: 0 }}>
-        <Header
-          white
-          title={title}
-          onBack={this.handleChatDismissal}
-          onTitlePress={this.handleOnContactPress}
-        />
+      <ContainerWithHeader
+        inset={{ bottom: 'never' }}
+        headerProps={{ centerItems: [{ title, onPress: this.handleOnContactPress }] }}
+        customOnBack={this.handleChatDismissal}
+      >
         <Wrapper fullScreen flex={1}>
           {!!isFetching &&
             <View style={{ flex: 1, paddingTop: spacing.rhythm, alignItems: 'center' }}>
@@ -561,7 +559,7 @@ class Chat extends React.Component<Props, State> {
             />
           }
         </Wrapper>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

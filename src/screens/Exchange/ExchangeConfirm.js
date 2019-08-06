@@ -302,7 +302,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{
           centerItems: [{ title: 'Confirm exchange' }],
-          customOnback: this.handleBack,
+          customOnBack: this.handleBack,
         }}
         inset={{ bottom: 'never' }}
       >

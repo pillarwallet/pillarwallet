@@ -47,7 +47,7 @@ type Props = {
   transparent?: boolean,
   light?: boolean,
   noBack?: boolean,
-  customOnback?: Function,
+  customOnBack?: Function,
 }
 
 type State = {
@@ -232,7 +232,7 @@ class HeaderBlock extends React.Component<Props, State> {
       centerItems = [],
       navigation,
       noBack,
-      customOnback,
+      customOnBack,
     } = this.props;
 
     return (
@@ -244,7 +244,7 @@ class HeaderBlock extends React.Component<Props, State> {
               <BackIcon
                 icon="back"
                 color={theme.iconColor || UIColors.defaultNavigationColor}
-                onPress={customOnback ? () => customOnback() : () => { navigation.goBack(null); }}
+                onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
                 fontSize={fontSizes.extraLarge}
                 horizontalAlign="flex-start"
               />)
@@ -276,7 +276,12 @@ class HeaderBlock extends React.Component<Props, State> {
     }
     if (item.title) {
       return (
-        <HeaderTitle theme={theme} key={item.title} style={item.color ? { color: item.color } : {}}>
+        <HeaderTitle
+          theme={theme}
+          key={item.title}
+          style={item.color ? { color: item.color } : {}}
+          onPress={item.onPress}
+        >
           {item.title}
         </HeaderTitle>
       );
@@ -287,9 +292,9 @@ class HeaderBlock extends React.Component<Props, State> {
           <ActionIcon
             key={item.icon}
             icon={item.icon}
-            color={theme.rightActionIconColor || UIColors.defaultNavigationColor}
-            onPress={item.action}
-            fontSize={fontSizes.extraLarge}
+            color={item.color || theme.rightActionIconColor || UIColors.defaultNavigationColor}
+            onPress={item.onPress}
+            fontSize={item.fontSize || fontSizes.extraLarge}
             horizontalAlign="flex-start"
           />
           {!!item.indicator && <Indicator />}

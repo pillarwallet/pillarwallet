@@ -25,7 +25,7 @@ import {
   Image,
   RefreshControl,
   View,
-  ScrollView, StyleSheet,
+  ScrollView,
 } from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
@@ -45,7 +45,7 @@ import {
 } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { CONTACT, CONNECTION_REQUESTS, PEOPLE_SEARCH, CONTACT_INFO } from 'constants/navigationConstants';
+import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
@@ -62,7 +62,6 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -120,17 +119,6 @@ const BadgeIcon = styled(Icon)`
 const InnerWrapper = styled.View`
   flex: 1;
   background-color: ${baseColors.white};
-`;
-
-const ActionsWrapper = styled.View`
-  border-bottom-width: ${StyleSheet.hairlineWidth}px;
-  border-top-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${baseColors.mediumLightGray};
-`;
-
-const IntroWrapper = styled.View`
-  margin: 40px 0;
-  align-items: center;
 `;
 
 const MIN_QUERY_LENGTH = 2;
@@ -372,119 +360,92 @@ class PeopleScreen extends React.Component<Props, State> {
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
 
-    if (sortedLocalContacts.length) {
-      return (
-        <React.Fragment>
-          <SearchBlock
-            headerProps={{ title: 'people' }}
-            searchInputPlaceholder="Search or add people"
-            onSearchChange={(q) => this.handleSearchChange(q)}
-            itemSearchState={!!contactState}
-            wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
-            onSearchFocus={() => this.setState({ disableScroll: true })}
-            onSearchBlur={() => this.setState({ disableScroll: false })}
-          />
-          {!inSearchMode && !!pendingConnectionRequests &&
-          <ConnectionRequestBanner
-            onPress={this.handleConnectionsRequestBannerPress}
-            underlayColor={baseColors.lightGray}
-          >
-            <React.Fragment>
-              <ConnectionRequestBannerText>
-                Connection requests
-              </ConnectionRequestBannerText>
-              <ConnectionRequestNotificationCircle>
-                {pendingConnectionRequests}
-              </ConnectionRequestNotificationCircle>
-              <ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
-            </React.Fragment>
-          </ConnectionRequestBanner>
-          }
-          <InnerWrapper>
-            {inSearchMode && contactState === FETCHED && usersFound &&
-            <PeopleSearchResults
-              searchResults={searchResults}
-              navigation={navigation}
-              invitations={invitations}
-              localContacts={sortedLocalContacts}
-            />
-            }
-            {!inSearchMode && !!sortedLocalContacts.length &&
-            <FlatList
-              data={sortedLocalContacts}
-              keyExtractor={(item) => item.id}
-              renderItem={this.renderContact}
-              initialNumToRender={8}
-              onScroll={() => Keyboard.dismiss()}
-              contentContainerStyle={{
-                paddingVertical: spacing.rhythm,
-                paddingTop: 0,
-              }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={false}
-                  onRefresh={() => {
-                    const { fetchInviteNotifications } = this.props;
-                    fetchInviteNotifications();
-                  }}
-                />
-              }
-            />
-            }
-            {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
-            <View
-              style={{ flex: 1 }}
-            >
-              {!!query && contactState === FETCHING &&
-              <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>
-              }
-
-              {inSearchMode && contactState === FETCHED && !usersFound &&
-              <Wrapper center fullScreen>
-                <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
-              </Wrapper>
-              }
-
-              {!inSearchMode && !sortedLocalContacts.length &&
-              <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-                <EmptyStateBGWrapper>
-                  <Image source={esBackground} />
-                </EmptyStateBGWrapper>
-                <EmptyStateParagraph
-                  title="Nobody is here"
-                  bodyText="Start building your connection list by inviting friends or by searching for someone"
-                />
-              </Wrapper>
-              }
-            </View>
-            }
-          </InnerWrapper>
-        </React.Fragment>
-      );
-    }
-
     return (
       <React.Fragment>
-        <IntroWrapper>
-          <EmptyStateParagraph title="Start making friends" bodyText="Build your connection list" />
-        </IntroWrapper>
-        <ActionsWrapper>
-          <ListItemChevron
-            label="Scan friend's QR code"
-            onPress={() => {}}
-            bordered
+        <SearchBlock
+          headerProps={{ title: 'people' }}
+          searchInputPlaceholder="Search or add people"
+          onSearchChange={(q) => this.handleSearchChange(q)}
+          itemSearchState={!!contactState}
+          wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+          onSearchFocus={() => this.setState({ disableScroll: true })}
+          onSearchBlur={() => this.setState({ disableScroll: false })}
+        />
+        {!inSearchMode && !!pendingConnectionRequests &&
+        <ConnectionRequestBanner
+          onPress={this.handleConnectionsRequestBannerPress}
+          underlayColor={baseColors.lightGray}
+        >
+          <React.Fragment>
+            <ConnectionRequestBannerText>
+              Connection requests
+            </ConnectionRequestBannerText>
+            <ConnectionRequestNotificationCircle>
+              {pendingConnectionRequests}
+            </ConnectionRequestNotificationCircle>
+            <ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
+          </React.Fragment>
+        </ConnectionRequestBanner>
+        }
+        <InnerWrapper>
+          {inSearchMode && contactState === FETCHED && usersFound &&
+          <PeopleSearchResults
+            searchResults={searchResults}
+            navigation={navigation}
+            invitations={invitations}
+            localContacts={sortedLocalContacts}
           />
-          <ListItemChevron
-            label="Show my QR code"
-            onPress={() => navigation.navigate(CONTACT_INFO)}
-            bordered
+          }
+          {!inSearchMode && !!sortedLocalContacts.length &&
+          <FlatList
+            data={sortedLocalContacts}
+            keyExtractor={(item) => item.id}
+            renderItem={this.renderContact}
+            initialNumToRender={8}
+            onScroll={() => Keyboard.dismiss()}
+            contentContainerStyle={{
+              paddingVertical: spacing.rhythm,
+              paddingTop: 0,
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() => {
+                  const { fetchInviteNotifications } = this.props;
+                  fetchInviteNotifications();
+                }}
+              />
+            }
           />
-          <ListItemChevron
-            label="Search for someone"
-            onPress={() => navigation.navigate(PEOPLE_SEARCH)}
-            bordered
-          />
-        </ActionsWrapper>
+          }
+          {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
+          <View
+            style={{ flex: 1 }}
+          >
+            {!!query && contactState === FETCHING &&
+            <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>
+            }
+
+            {inSearchMode && contactState === FETCHED && !usersFound &&
+            <Wrapper center fullScreen>
+              <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
+            </Wrapper>
+            }
+
+            {!inSearchMode && !sortedLocalContacts.length &&
+            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+              <EmptyStateBGWrapper>
+                <Image source={esBackground} />
+              </EmptyStateBGWrapper>
+              <EmptyStateParagraph
+                title="Nobody is here"
+                bodyText="Start building your connection list by inviting friends or by searching for someone"
+              />
+            </Wrapper>
+            }
+          </View>
+          }
+        </InnerWrapper>
       </React.Fragment>
     );
   };
@@ -528,7 +489,6 @@ class PeopleScreen extends React.Component<Props, State> {
         backgroundColor={baseColors.white}
         headerProps={{
           leftItems: [{ user: true }],
-          rightIconsSize: fontSizes.extraLarge,
         }}
       >
         <ScrollView

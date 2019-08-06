@@ -318,7 +318,7 @@ class AssetsScreen extends React.Component<Props, State> {
               key: 'manageAccounts',
               label: headerButtonLabel,
               hasChevron: true,
-              action: headerButtonAction,
+              onPress: headerButtonAction,
               ...customHeaderButtonProps,
             },
           }],
