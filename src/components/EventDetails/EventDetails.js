@@ -266,6 +266,7 @@ class EventDetails extends React.Component<Props, {}> {
         gasPrice,
         status,
         note,
+        isPPNTransaction,
       } = txInfo;
 
       const isReceived = addressesEqual(to, activeAccountAddress);
@@ -302,9 +303,11 @@ class EventDetails extends React.Component<Props, {}> {
       }
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
+      const freeTx = isPPNTransaction;
       let showAmountReceived = true;
       let showSender = true;
       let showNote = true;
+      let showViewOnBlockchain = true;
       let showAmountTxType = false;
       let txType = '';
 
@@ -319,6 +322,10 @@ class EventDetails extends React.Component<Props, {}> {
         showNote = false;
         showAmountTxType = true;
         txType = 'TANK TOP UP';
+      }
+
+      if (isPPNTransaction) {
+        showViewOnBlockchain = false;
       }
 
       return (
@@ -362,8 +369,8 @@ class EventDetails extends React.Component<Props, {}> {
             {(toMyself || !isReceived) && !isPending &&
             <ListItemUnderlined
               label="TRANSACTION FEE"
-              value={utils.formatEther(fee.toString())}
-              valueAdditionalText="ETH"
+              value={freeTx ? 'free' : utils.formatEther(fee.toString())}
+              valueAdditionalText={freeTx ? '' : 'ETH'}
             />
             }
             {!!hasNote && showNote &&
@@ -372,6 +379,7 @@ class EventDetails extends React.Component<Props, {}> {
               value={transactionNote}
             />
             }
+            {showViewOnBlockchain &&
             <ButtonsWrapper>
               <EventButton
                 block
@@ -380,6 +388,7 @@ class EventDetails extends React.Component<Props, {}> {
                 onPress={() => viewTransactionOnBlockchain(hash)}
               />
             </ButtonsWrapper>
+            }
           </EventBody>
         </React.Fragment>
       );
