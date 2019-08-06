@@ -51,9 +51,6 @@ export const buildHistoryTransaction = ({
   asset,
   createdAt: createdAt || Math.round(+new Date() / 1000), // seconds
   nbConfirmations: 0,
-  transaction: {},
-  __v: 0,
-  receipt: {},
   note,
   isPPNTransaction: !!isPPNTransaction,
 });

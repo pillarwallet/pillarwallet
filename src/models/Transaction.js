@@ -20,7 +20,6 @@
 
 export type Transaction = {
   _id: string,
-  transaction: Object,
   hash: string,
   to: string,
   from: string,
@@ -31,8 +30,6 @@ export type Transaction = {
   gasPrice: number,
   status: string,
   value: string,
-  __v: number,
-  receipt: Object,
   note?: ?string,
   signOnly?: ?boolean,
   isPPNTransaction: boolean,
