@@ -1037,7 +1037,7 @@ export const settleTransactionsAction = (txToSettle: Object[]) => {
         hash: txHash,
         to: accountAddress,
         value: '0',
-        asset: PPN_TOKEN,
+        asset: PAYMENT_NETWORK_TX_SETTLEMENT,
         note: PAYMENT_NETWORK_TX_SETTLEMENT,
       });
 
