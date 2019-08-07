@@ -126,19 +126,22 @@ export const LoadingSpinner = styled(Spinner)`
   justify-content: center;
 `;
 
+const defaultSettingsIcon = require('assets/icons/icon_settings.png');
+
 const SettingsIconComponent = (props) => {
   const { settingsIconSource, settingsIcon } = props;
-  if (settingsIconSource) {
+  if (settingsIcon) {
     return (
-      <ButtonIcon
-        source={settingsIconSource}
-        resizeMode="contain"
-        resizeMethod="resize"
-      />
+      <SettingsIcon name={settingsIcon} />
     );
   }
+
   return (
-    <SettingsIcon name={settingsIcon || 'settings'} />
+    <ButtonIcon
+      source={settingsIconSource || defaultSettingsIcon}
+      resizeMode="contain"
+      resizeMethod="resize"
+    />
   );
 };
 

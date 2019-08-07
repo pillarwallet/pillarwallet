@@ -416,16 +416,16 @@ class AssetScreen extends React.Component<Props, State> {
             </Wrapper>
             }
           </AssetCardWrapper>
+          {!!tokenTransactionsOnMainNetwork.length &&
           <ActivityFeed
             feedTitle="transactions."
             navigation={navigation}
             backgroundColor={baseColors.white}
             showArrowsOnly
             noBorder
-            wrapperStyle={{ marginTop: 10 }}
             tabs={transactionsTabs}
             activeTab={activeTab}
-          />
+          />}
         </ScrollWrapper>
 
         <ReceiveModal

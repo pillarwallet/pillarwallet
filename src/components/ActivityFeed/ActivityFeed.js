@@ -30,7 +30,6 @@ import { baseColors, spacing } from 'utils/variables';
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 
-import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Separator from 'components/Separator';
 import SlideModal from 'components/Modals/SlideModal';
 import Title from 'components/Title';
@@ -125,22 +124,6 @@ function getSortedFeedData(tabs, activeTab, feedData) {
     return feedData.sort((a, b) => b.createdAt - a.createdAt);
   }
   return [];
-}
-
-function getEmptyStateData(tabs, activeTab, esData = {}) {
-  if (tabs.length) {
-    const aTab = tabs.find(tab => tab.id === activeTab) || {};
-    const { emptyState = {} } = aTab;
-    if (Object.keys(emptyState).length) {
-      const { title, body } = emptyState;
-      return { title, bodyText: body };
-    }
-    return null;
-  } else if (Object.keys(esData).length) {
-    const { title, body } = esData;
-    return { title, bodyText: body };
-  }
-  return null;
 }
 
 class ActivityFeed extends React.Component<Props, State> {
@@ -343,10 +326,8 @@ class ActivityFeed extends React.Component<Props, State> {
       initialNumToRender,
       tabs = [],
       activeTab,
-      esData,
       feedData = [],
       extraFeedData,
-      esComponent,
       hideTabs,
     } = this.props;
 
@@ -392,8 +373,6 @@ class ActivityFeed extends React.Component<Props, State> {
           onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
           keyExtractor={this.getActivityFeedListKeyExtractor}
-          ListEmptyComponent={esComponent
-          || <EmptyTransactions {...getEmptyStateData(tabs, activeTab, esData)} />}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
           removeClippedSubviews
         />

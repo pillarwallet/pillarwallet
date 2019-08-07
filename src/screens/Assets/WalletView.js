@@ -137,7 +137,6 @@ const SearchSpinner = styled(Wrapper)`
 
 const ListWrapper = styled.View`
   position: relative;
-  margin-top: -10px;
 `;
 
 const EmptyStateWrapper = styled(Wrapper)`
@@ -441,7 +440,7 @@ class WalletView extends React.Component<Props, State> {
           onLayout={(e) => {
             this.setState({ searchScrollTop: e.nativeEvent.layout.height });
           }}
-          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.mediumLightGray }}
+          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.mediumLightGray, height: 160 }}
         />
         {blockAssetsView &&
         <Wrapper flex={1} regularPadding center>
@@ -456,7 +455,7 @@ class WalletView extends React.Component<Props, State> {
           hideSearch={blockAssetsView}
           searchInputPlaceholder={activeTab === TOKENS ? 'Search asset' : 'Search collectible'}
           onSearchChange={this.handleSearchChange}
-          wrapperStyle={{ paddingHorizontal: spacing.large, paddingTop: spacing.mediumLarge }}
+          wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge, marginBottom: -16 }}
           onSearchFocus={() => {
             if (this.scrollWrapperRef) {
               if (Platform.OS === 'ios') {
@@ -475,6 +474,7 @@ class WalletView extends React.Component<Props, State> {
         <Tabs
           initialActiveTab={activeTab}
           tabs={assetsTabs}
+          wrapperStyle={{ paddingBottom: 0 }}
         />}
         {isSearching &&
         <SearchSpinner center>

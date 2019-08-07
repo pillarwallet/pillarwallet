@@ -91,6 +91,7 @@ const HeaderTitle = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
   color: ${props => props.theme.color || UIColors.defaultTextColor};
   font-weight: 500;
+  text-align: ${props => props.centerText ? 'center' : 'left'};
 `;
 
 const UserButton = styled.TouchableOpacity`
@@ -252,7 +253,7 @@ class HeaderBlock extends React.Component<Props, State> {
         </LeftItems>
         {!!centerItems.length &&
         <CenterItems>
-          {centerItems.map((item) => this.renderSideItems(item, theme))}
+          {centerItems.map((item) => this.renderSideItems(item, theme, 'CENTER'))}
         </CenterItems>
         }
         {(!!centerItems.length || !!rightItems.length) &&
@@ -269,7 +270,7 @@ class HeaderBlock extends React.Component<Props, State> {
     );
   };
 
-  renderSideItems = (item, theme) => {
+  renderSideItems = (item, theme, type = '') => {
     const { navigation } = this.props;
     if (item.user || item.userIcon) {
       return this.renderUser(theme, !item.userIcon);
@@ -281,6 +282,7 @@ class HeaderBlock extends React.Component<Props, State> {
           key={item.title}
           style={item.color ? { color: item.color } : {}}
           onPress={item.onPress}
+          centerText={type === 'CENTER'}
         >
           {item.title}
         </HeaderTitle>

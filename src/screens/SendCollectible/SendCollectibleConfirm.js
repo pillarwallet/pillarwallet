@@ -1,22 +1,22 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard, Platform } from 'react-native';
+import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
-import { Container, Footer, ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import type { CollectibleTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, UIColors, spacing } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -37,7 +37,6 @@ type Props = {
 type State = {
   note: ?string,
   rinkebyETH: string,
-  scrollPos: number,
   gasLimit: number,
 };
 
@@ -45,8 +44,9 @@ const FooterWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 0 20px;
+  padding: ${spacing.large}px;
   width: 100%;
+  background-color: ${baseColors.snowWhite};
 `;
 
 const LabeledRow = styled.View`
@@ -60,12 +60,10 @@ const Value = styled(BoldText)`
 class SendCollectibleConfirm extends React.Component<Props, State> {
   assetData: Object;
   receiver: string;
-  scroll: Object;
   source: string;
 
   constructor(props) {
     super(props);
-    this.scroll = React.createRef();
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.source = this.props.navigation.getParam('source', '');
@@ -73,7 +71,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.state = {
       note: null,
       rinkebyETH: '',
-      scrollPos: 0,
       gasLimit: 0,
     };
   }
@@ -152,7 +149,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   render() {
     const { contacts, session, gasInfo } = this.props;
     const { name } = this.assetData;
-    const { rinkebyETH, scrollPos, gasLimit } = this.state;
+    const { rinkebyETH, gasLimit } = this.state;
     const to = this.receiver;
     const txFeeInWei = this.getTxFeeInWei();
     const txFee = utils.formatEther(txFeeInWei.toString());
@@ -161,21 +158,21 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const canProceedTesting = parseFloat(rinkebyETH) > parseFloat(txFee) || NETWORK_PROVIDER !== 'ropsten';
 
     return (
-      <Container color={baseColors.white}>
-        <Header
-          onBack={() => this.props.navigation.goBack(null)}
-          title="review and confirm"
-          white
-        />
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
+        keyboardAvoidFooter={(
+          <FooterWrapper>
+            <Button
+              disabled={!gasLimit || !session.isOnline || !gasInfo.isFetched || !canProceedTesting}
+              onPress={this.handleFormSubmit}
+              title="Confirm Transaction"
+            />
+          </FooterWrapper>
+        )}
+      >
         <ScrollWrapper
           regularPadding
-          disableAutomaticScroll={Platform.OS === 'android'}
-          innerRef={ref => { this.scroll = ref; }}
-          onKeyboardWillShow={() => {
-            if (Platform.OS === 'android') {
-              this.scroll.scrollToPosition(0, scrollPos);
-            }
-          }}
+          disableAutomaticScroll
           color={UIColors.defaultBackgroundColor}
         >
           <LabeledRow>
@@ -218,23 +215,10 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
             labelBigger
             noBorder
             keyboardAvoidance
-            onLayout={(e) => {
-              const scrollPosition = e.nativeEvent.layout.y + 180;
-              this.setState({ scrollPos: scrollPosition });
-            }}
           />
           }
         </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
-          <FooterWrapper>
-            <Button
-              disabled={!gasLimit || !session.isOnline || !gasInfo.isFetched || !canProceedTesting}
-              onPress={this.handleFormSubmit}
-              title="Confirm Transaction"
-            />
-          </FooterWrapper>
-        </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

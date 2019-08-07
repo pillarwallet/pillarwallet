@@ -65,7 +65,9 @@ export const SettingsSection = (props: Props) => {
               toggle,
               onPress,
               notificationsCount,
+              hidden,
             } = item;
+            if (hidden) return null;
             return (
               <SettingsListItem
                 label={title}

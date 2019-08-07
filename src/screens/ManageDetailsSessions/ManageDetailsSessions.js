@@ -24,11 +24,9 @@ import styled from 'styled-components/native';
 import { NavigationActions } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { Container } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
-import { baseColors } from 'utils/variables';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import Header from 'components/Header';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import { killWalletConnectSessionByUrl } from 'actions/walletConnectActions';
@@ -177,7 +175,6 @@ class MeScreen extends React.Component<Props, State> {
   setActiveTab = activeTab => this.setState({ activeTab });
 
   render() {
-    const { navigation } = this.props;
     const { activeTab } = this.state;
     const sessionTabs = [
       {
@@ -193,18 +190,16 @@ class MeScreen extends React.Component<Props, State> {
     ];
 
     return (
-      <Container inset={{ bottom: 0 }} color={baseColors.white}>
-        <Header
-          onBack={() => navigation.goBack()}
-          title="sessions"
-          nextText="Get help"
-          onNextPress={() => Intercom.displayMessenger()}
-          headerRightFlex={2}
-          white
-        />
+      <ContainerWithHeader
+        inset={{ bottom: 'never' }}
+        headerProps={{
+          centerItems: [{ title: 'Wallet Connect' }],
+          rightItems: [{ label: 'Help', onPress: () => Intercom.displayMessenger() }],
+        }}
+      >
         <Tabs initialActiveTab={activeTab} tabs={sessionTabs} />
         <SheetContentWrapper>{this.renderSheetContent()}</SheetContentWrapper>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

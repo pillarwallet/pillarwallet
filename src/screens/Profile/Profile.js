@@ -651,7 +651,7 @@ class Profile extends React.Component<Props, State> {
             <SlideModal
               isVisible={showCheckPinModal}
               onModalHide={this.handleCheckPinModalClose}
-              title="enter pincode"
+              title="Enter pincode"
               centerTitle
               fullScreen
               showHeader

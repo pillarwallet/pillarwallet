@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { fontSizes, spacing, baseColors, UIColors } from 'utils/variables';
-import { Container, ScrollWrapper } from 'components/Layout';
-import Header from 'components/Header';
+import { ScrollWrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeImage from 'components/BadgeImage';
 import { BaseText, BoldText } from 'components/Typography';
 import type { Badges } from 'models/Badge';
@@ -58,12 +58,7 @@ class Badge extends React.Component<Props, {}> {
     const hideDescription = navigation.getParam('hideDescription', false);
     const badge = passedBadge || badges.find(({ id }) => id === badgeId) || {};
     return (
-      <Container inset={{ bottom: 0 }} color={baseColors.white}>
-        <Header
-          title={badge.name || 'Unknown badge'}
-          onBack={() => navigation.goBack(null)}
-          white
-        />
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: badge.name || 'Unknown badge' }] }}>
         <ScrollWrapper color={UIColors.defaultBackgroundColor}>
           <BadgeWrapper>
             <Image data={badge} size="150" />
@@ -79,7 +74,7 @@ class Badge extends React.Component<Props, {}> {
             )}
           </BadgeWrapper>
         </ScrollWrapper>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

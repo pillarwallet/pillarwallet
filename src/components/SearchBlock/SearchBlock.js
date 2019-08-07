@@ -19,10 +19,11 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Animated, Dimensions, Keyboard, PanResponder } from 'react-native';
+import { Animated, Dimensions, Keyboard, PanResponder, Platform } from 'react-native';
 import SearchBar from 'components/SearchBar';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation } from 'react-navigation';
+import { baseColors } from 'utils/variables';
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -49,6 +50,7 @@ const SearchBarWrapper = styled.View`
   width: 100%;
   position: relative;
   z-index: 101;
+  background-color: ${props => props.isFocused ? baseColors.white : 'transparent'};
 `;
 
 const FullScreenOverlayWrapper = styled.View`
@@ -76,6 +78,7 @@ class SearchBlock extends React.Component<Props, State> {
   _willBlur: NavigationEventSubscription;
   _willFocus: NavigationEventSubscription;
   _keyboardDidShow: NavigationEventSubscription;
+  _keyboardWillShow: NavigationEventSubscription;
   _panResponder: Object;
 
   constructor(props: Props) {
@@ -110,11 +113,21 @@ class SearchBlock extends React.Component<Props, State> {
   onScreenBlur = () => {
     Keyboard.dismiss();
     this.animateFullScreenOverlayOpacity(true);
-    if (this._keyboardDidShow) this._keyboardDidShow.remove();
+    if (Platform.OS === 'android') {
+      if (this._keyboardDidShow) this._keyboardDidShow.remove();
+    } else if (this._keyboardWillShow) {
+      this._keyboardWillShow.remove();
+    }
   };
 
   onScreenFocus = () => {
-    if (!this._keyboardDidShow) this._keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.onKeyboardShown);
+    if (Platform.OS === 'android') {
+      if (!this._keyboardDidShow) {
+        this._keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.onKeyboardShown);
+      }
+    } else if (!this._keyboardWillShow) {
+      this._keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.onKeyboardShown);
+    }
   };
 
   onKeyboardShown = () => {
@@ -197,7 +210,7 @@ class SearchBlock extends React.Component<Props, State> {
         </FullScreenOverlayWrapper>
         }
         {!hideSearch &&
-          <SearchBarWrapper style={wrapperStyle}>
+          <SearchBarWrapper style={wrapperStyle} isFocused={!!searchIsFocused && !inSearchMode}>
             <SearchBar
               inputProps={{
                 onChange: this.handleSearchChange,

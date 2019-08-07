@@ -128,7 +128,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       <Container>
         <Header
           onBack={this.handleBack}
-          title="enter pincode"
+          title="Enter pincode"
         />
         {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         <CheckPin

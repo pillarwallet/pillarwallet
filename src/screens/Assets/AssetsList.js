@@ -85,7 +85,8 @@ const ListHeaderWrapper = styled.View`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: ${spacing.large}px;
+  padding: ${spacing.large}px ${spacing.large}px 0;
+  margin-top: 4px;
 `;
 
 const HeaderTitle = styled(MediumText)`
@@ -150,41 +151,31 @@ class AssetsList extends React.Component<Props> {
     const displayAmount = formatMoney(balance, 4);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
-    const assetData = {
-      name: name || symbol,
-      token: symbol,
-      amount: displayAmount,
-      contractAddress: asset.address,
-      description: asset.description,
-      balance,
-      balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
-      address: getAccountAddress(activeAccount),
-      icon: fullIconMonoUrl,
-      iconColor: fullIconUrl,
-      wallpaper: fullIconWallpaperUrl,
-      decimals,
-    };
     const {
       listed: isListed = true,
       disclaimer,
-    } = assetsConfig[assetData.token] || {};
+    } = assetsConfig[symbol] || {};
 
     const props = {
-      id: assetData.token,
-      name: assetData.name,
-      token: assetData.token,
-      amount: assetData.amount,
-      balanceInFiat: assetData.balanceInFiat,
-      address: assetData.address,
-      icon: assetData.iconColor,
-      wallpaper: assetData.wallpaper,
+      id: symbol,
+      name: name || symbol,
+      token: symbol,
+      amount: displayAmount,
+      balance,
+      balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
+      address: getAccountAddress(activeAccount),
+      contractAddress: asset.address,
+      icon: fullIconMonoUrl,
+      wallpaper: fullIconWallpaperUrl,
+      iconColor: fullIconUrl,
       isListed,
       disclaimer,
-      assetData,
       paymentNetworkBalance,
       paymentNetworkBalanceFormatted: formatMoney(paymentNetworkBalance, 4),
       paymentNetworkBalanceInFiat: formatMoney(paymentNetworkBalanceInFiat),
       patternIcon,
+      description: asset.description,
+      decimals,
     };
     return (
       <ListItemWithImage
@@ -261,6 +252,7 @@ class AssetsList extends React.Component<Props> {
         onEndReachedThreshold={0.5}
         style={{ width: '100%', height: '100%', flex: 1 }}
         ListHeaderComponent={this.renderHeader}
+        conentContainerStyle={{ paddingTop: 4 }}
         refreshControl={
           <RefreshControl
             refreshing={false}

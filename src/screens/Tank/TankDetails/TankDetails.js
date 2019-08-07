@@ -424,7 +424,7 @@ class TankDetails extends React.Component<Props, State> {
         <SlideModal
           isVisible={!!showPinScreenForAction}
           onModalHide={this.handleCheckPinModalClose}
-          title="enter pincode"
+          title="Enter pincode"
           centerTitle
           fullScreen
           showHeader

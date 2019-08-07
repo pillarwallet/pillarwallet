@@ -355,6 +355,7 @@ class PeopleScreen extends React.Component<Props, State> {
       contactState,
       navigation,
       invitations,
+      chats,
     } = this.props;
 
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
@@ -399,6 +400,7 @@ class PeopleScreen extends React.Component<Props, State> {
           {!inSearchMode && !!sortedLocalContacts.length &&
           <FlatList
             data={sortedLocalContacts}
+            extraData={chats}
             keyExtractor={(item) => item.id}
             renderItem={this.renderContact}
             initialNumToRender={8}

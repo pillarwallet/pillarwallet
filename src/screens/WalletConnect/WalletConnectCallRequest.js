@@ -25,10 +25,10 @@ import { connect } from 'react-redux';
 import { utils, Interface } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
-import { Container, Footer, ScrollWrapper } from 'components/Layout';
+import { Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import { onWalletConnectRejectCallRequest } from 'actions/walletConnectActions';
@@ -412,8 +412,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     }
 
     return (
-      <Container color={baseColors.white}>
-        <Header onBack={this.handleBack} title={`${type} Request`} white />
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: `${type} Request` }],
+          customOnBack: this.handleBack,
+        }}
+      >
         {body}
         <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
           {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
@@ -433,7 +437,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             />
           </FooterWrapper>
         </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

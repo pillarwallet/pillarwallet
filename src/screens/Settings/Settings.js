@@ -67,6 +67,7 @@ import { SettingsSection } from './SettingsSection';
 
 type State = {
   visibleModal: ?string,
+  showBiometricsSelector: boolean,
 }
 
 type Props = {
@@ -116,28 +117,23 @@ const SmallText = styled(BaseText)`
   letter-spacing: ${fontTrackings.small}px;
 `;
 
-const formSecurityItems = (that) => {
+const formSecurityItems = (that, showBiometricsSelector) => {
   const { navigation, useBiometrics } = that.props;
-  const { visibleModal } = that.state;
-  const generalSecurityItems = [
+  return [
     {
       key: 'changePin',
       title: 'Change PIN',
       onPress: () => navigation.navigate(CHANGE_PIN_FLOW),
     },
-  ];
-
-  if (visibleModal === 'biometrics') {
-    generalSecurityItems.push({
+    {
       key: 'biometricLogin',
       title: 'Biometric Login',
       onPress: () => that.setState({ visibleModal: 'checkPin' }),
       toggle: true,
       value: useBiometrics,
-    });
-  }
-
-  return generalSecurityItems;
+      hidden: !showBiometricsSelector,
+    },
+  ];
 };
 
 const formSupportItems = (that) => {
@@ -267,12 +263,13 @@ class Settings extends React.Component<Props, State> {
     const visibleModal = navigation.getParam('visibleModal', null);
     this.state = {
       visibleModal,
+      showBiometricsSelector: false,
     };
   }
 
   componentDidMount() {
     TouchID.isSupported({})
-      .then(() => this.setState({ visibleModal: 'biometrics' }))
+      .then(() => this.setState({ showBiometricsSelector: true }))
       .catch(() => null);
   }
 
@@ -342,7 +339,6 @@ class Settings extends React.Component<Props, State> {
   render() {
     const {
       user,
-      // appSettings: { appearanceSettings },
       useBiometrics,
       smartWalletFeatureEnabled,
       optOutTracking,
@@ -350,6 +346,7 @@ class Settings extends React.Component<Props, State> {
 
     const {
       visibleModal,
+      showBiometricsSelector,
     } = this.state;
 
     const debugItems = formDebbugItems(this);
@@ -372,7 +369,7 @@ class Settings extends React.Component<Props, State> {
 
           <SettingsSection
             sectionTitle="Security"
-            sectionItems={formSecurityItems(this)}
+            sectionItems={formSecurityItems(this, showBiometricsSelector)}
           />
 
           <SettingsSection
@@ -419,7 +416,7 @@ class Settings extends React.Component<Props, State> {
         <SlideModal
           isVisible={visibleModal === 'checkPin'}
           onModalHide={this.handleCheckPinModalClose}
-          title="enter pincode"
+          title="Enter pincode"
           centerTitle
           fullScreen
           showHeader

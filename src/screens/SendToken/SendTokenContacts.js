@@ -27,13 +27,13 @@ import { COLLECTIBLES } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import t from 'tcomb-form-native';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import { Container, Footer } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Footer } from 'components/Layout';
 import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
-import Header from 'components/Header';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
@@ -58,12 +58,7 @@ type State = {
 const qrCode = require('assets/images/qr.png');
 
 const FormWrapper = styled.View`
-  padding: 0 ${spacing.rhythm}px;
-  margin-bottom: ${spacing.medium}px;
-  margin-top: -20px;
-`;
-
-const HeaderWrapper = styled.View`
+  padding: ${spacing.mediumLarge}px ${spacing.large}px 6px;
   background-color: ${baseColors.white};
   border-bottom-color: ${baseColors.mediumLightGray};
   border-bottom-width: 1px;
@@ -101,7 +96,6 @@ function AddressInputTemplate(locals) {
       onPress={onIconPress}
       inputProps={inputProps}
       fontSize={fontSizes.small}
-      marginTop={30}
     />
   );
 }
@@ -251,29 +245,26 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;
     return (
-      <Container inset={{ bottom: 0 }} color={baseColors.white}>
-        <HeaderWrapper>
-          <Header onBack={this.props.navigation.dismiss} title={`send ${tokenName}`} centerTitle />
-          <FormWrapper>
-            <Form
-              ref={node => {
-                this._form = node;
-              }}
-              type={formStructure}
-              options={formOptions}
-              onChange={this.handleChange}
-              onBlur={this.handleChange}
-              value={value}
-            />
-          </FormWrapper>
-        </HeaderWrapper>
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: `Send ${tokenName}` }] }}>
+        <FormWrapper>
+          <Form
+            ref={node => {
+              this._form = node;
+            }}
+            type={formStructure}
+            options={formOptions}
+            onChange={this.handleChange}
+            onBlur={this.handleChange}
+            value={value}
+          />
+        </FormWrapper>
         {!!contactsToRender.length &&
           <ContactCardList
             data={contactsToRender}
             renderItem={this.renderContact}
             keyExtractor={({ username }) => username}
             ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-            contentContainerStyle={{ paddingTop: 10, paddingBottom: 40 }}
+            contentContainerStyle={{ paddingTop: spacing.mediumLarge, paddingBottom: 40 }}
           />
         }
         <QRCodeScanner
@@ -288,7 +279,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
           </Footer>
         }
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

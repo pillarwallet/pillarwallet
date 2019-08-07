@@ -30,8 +30,8 @@ import type { Collectible } from 'models/Collectible';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
-import Header from 'components/Header';
-import { Container, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/Layout';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -40,7 +40,7 @@ import TankAssetBalance from 'components/TankAssetBalance';
 
 import { formatAmount, formatMoney } from 'utils/common';
 import { getBalance } from 'utils/assets';
-import { baseColors, spacing, UIColors } from 'utils/variables';
+import { spacing, UIColors } from 'utils/variables';
 
 import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { ETH, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
@@ -279,8 +279,10 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 
 
     return (
-      <Container inset={{ bottom: 0 }} color={baseColors.white}>
-        <Header title={`send to ${contactUsername}`} centerTitle onBack={navigation.dismiss} white />
+      <ContainerWithHeader
+        inset={{ bottom: 0 }}
+        headerProps={{ centerItems: [{ title: `Send to ${contactUsername}` }] }}
+      >
         <ContentBackground>
           <InnerWrapper>
             <Tabs initialActiveTab={activeTab} tabs={assetsTabs} isFloating />
@@ -288,7 +290,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
             {activeTab === COLLECTIBLES && this.renderCollectibles()}
           </InnerWrapper>
         </ContentBackground>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

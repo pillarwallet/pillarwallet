@@ -79,11 +79,11 @@ const StatusIndicatorHolder = styled.View`
 const StyledAnimation = styled(Animation)`
   position: absolute;
   top: ${Platform.select({
-    ios: '-0.8px',
+    ios: '-0.5px',
     android: '-1px',
   })};
   left: ${Platform.select({
-    ios: '-0.8px',
+    ios: '-0.6px',
     android: '-1px',
   })};
   width: 22px;

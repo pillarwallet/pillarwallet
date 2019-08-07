@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { TouchableOpacity, Platform } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { fontSizes, fontWeights } from 'utils/variables';
 import { BoldText } from 'components/Typography';
 
 
@@ -64,12 +64,6 @@ const Text = styled(BoldText)`
   `}
 `;
 
-const BlueDot = styled(BoldText)`
-  color: ${baseColors.brightSkyBlue};
-  font-size: ${Platform.OS === 'ios' ? 30 : 26}px;
-`;
-
-
 /**
  *  this separate definition has to stay here as it affects font rendering
  *  otherwise if it's taken then once font is being shorten with ellipsis
@@ -95,12 +89,8 @@ const Title = (props: Props) => {
     onTitlePress,
     titleStyles,
     title,
-    noBlueDot,
-    dotColor,
     onLayout,
   } = props;
-
-  const noBlueDotNeeded = noBlueDot || !title;
 
   return (
     <Wrapper
@@ -121,7 +111,6 @@ const Title = (props: Props) => {
             fullWidth={fullWidth}
           >
             {title}
-            {!subtitle && !noBlueDotNeeded && <BlueDot dotColor={dotColor}>.</BlueDot>}
           </AktivTextTitle>
         </TouchableOpacity>
         :
@@ -133,7 +122,6 @@ const Title = (props: Props) => {
           fullWidth={fullWidth}
         >
           {title}
-          {!subtitle && !noBlueDotNeeded && <BlueDot dotColor={dotColor}>.</BlueDot>}
         </AktivTextTitle>
       }
     </Wrapper>

@@ -162,7 +162,7 @@ class PPNView extends React.Component<Props> {
       <ListHeaderWrapper>
         <HeaderTitle>Wallet balance £168.71</HeaderTitle>
         <HeaderButton onPress={() => {}}>
-          <ButtonText>Settle all</ButtonText>
+          <ButtonText>Settle</ButtonText>
         </HeaderButton>
       </ListHeaderWrapper>
     );

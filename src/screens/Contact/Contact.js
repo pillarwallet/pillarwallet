@@ -389,7 +389,7 @@ class Contact extends React.Component<Props, State> {
           rightItems: [{
             icon: 'chat',
             onPress: () => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT }),
-            indicator: !!unreadChats,
+            indicator: !!unreadChats.length,
             color: baseColors.coolGrey,
             fontSize: fontSizes.mediumLarge,
           }],
