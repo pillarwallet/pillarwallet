@@ -28,13 +28,14 @@ import { BigNumber } from 'bignumber.js';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
+import isEmpty from 'lodash.isempty';
 
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 
 // components
-import { BaseText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
@@ -267,6 +268,7 @@ class EventDetails extends React.Component<Props, {}> {
         status,
         note,
         isPPNTransaction,
+        extra,
       } = txInfo;
 
       const isReceived = addressesEqual(to, activeAccountAddress);
@@ -310,6 +312,7 @@ class EventDetails extends React.Component<Props, {}> {
       let showViewOnBlockchain = true;
       let showAmountTxType = false;
       let txType = '';
+      const listSettledAssets = (note === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
 
       if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
         showAmountReceived = false;
@@ -364,6 +367,12 @@ class EventDetails extends React.Component<Props, {}> {
                 noShadow
                 borderWidth={0}
               />)}
+            />
+            }
+            {listSettledAssets &&
+            <ListItemUnderlined
+              label="ASSETS"
+              value={extra.map(item => <BoldText key={item.hash}> {item.value} {item.symbol}</BoldText>)}
             />
             }
             {(toMyself || !isReceived) && !isPending &&
