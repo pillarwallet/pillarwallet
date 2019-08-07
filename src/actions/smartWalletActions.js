@@ -39,7 +39,6 @@ import {
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SMART_WALLET_UPGRADE_STATUSES,
-  ADD_SMART_WALLET_RECOVERY_AGENTS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   SMART_WALLET_DEPLOYMENT_ERRORS,
   SET_SMART_WALLET_LAST_SYNCED_HASH,
@@ -99,7 +98,6 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 // types
 import type { AssetTransfer } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
-import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 
 // utils
@@ -108,7 +106,6 @@ import { getActiveAccountAddress, getActiveAccountId, getActiveAccountType } fro
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
 import { formatAmount, formatMoney, getGasPriceWei } from 'utils/common';
-
 
 const storage = Storage.getInstance('db');
 
@@ -294,10 +291,6 @@ export const addCollectiblesToSmartWalletUpgradeAction = (collectibles: Collecti
   payload: collectibles,
 });
 
-export const addRecoveryAgentsToSmartWalletUpgradeAction = (recoveryAgents: RecoveryAgent[]) => ({
-  type: ADD_SMART_WALLET_RECOVERY_AGENTS,
-  payload: recoveryAgents,
-});
 
 export const dismissSmartWalletUpgradeAction = () => {
   return async (dispatch: Function) => {

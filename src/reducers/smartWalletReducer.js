@@ -26,7 +26,6 @@ import {
   DISMISS_SMART_WALLET_UPGRADE,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
-  ADD_SMART_WALLET_RECOVERY_AGENTS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   RESET_SMART_WALLET,
   SET_SMART_WALLET_LAST_SYNCED_HASH,
@@ -37,7 +36,6 @@ import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/Smar
 import type { AssetTransfer } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
 import type { SmartWalletTransferTransaction } from 'models/Transaction';
-import type { RecoveryAgent } from 'models/RecoveryAgents';
 
 export type WalletReducerState = {
   upgradeDismissed: boolean,
@@ -56,7 +54,6 @@ export type WalletReducerState = {
       hash: ?string,
       error: ?SmartWalletDeploymentError,
     },
-    recoveryAgents: RecoveryAgent[],
   },
   lastSyncedHash: ?string,
 }
@@ -79,7 +76,6 @@ const initialState = {
       assets: [],
       collectibles: [],
     },
-    recoveryAgents: [],
     deploymentData: {
       hash: null,
       error: null,
@@ -128,17 +124,6 @@ export default function smartWalletReducer(
             ...state.upgrade.transfer,
             collectibles: action.payload,
           },
-        },
-      };
-    case ADD_SMART_WALLET_RECOVERY_AGENTS:
-      return {
-        ...state,
-        upgrade: {
-          ...state.upgrade,
-          transfer: {
-            ...state.upgrade.transfer,
-          },
-          recoveryAgents: action.payload,
         },
       };
     case DISMISS_SMART_WALLET_UPGRADE:
