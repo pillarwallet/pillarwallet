@@ -34,13 +34,13 @@ import { baseColors, spacing } from 'utils/variables';
 import { CONTACT, CHOOSE_ASSETS_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
 // import orderBy from 'lodash.orderby';
-import { setRecoveryAgentsAction } from 'actions/accountRecoveryActions';
+import { setAccountRecoveryAgentsAction } from 'actions/accountRecoveryActions';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
-  setRecoveryAgents: Function,
+  setAccountRecoveryAgents: Function,
 };
 
 type State = {
@@ -112,11 +112,11 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
   };
 
   onNextPress = async () => {
-    const { navigation, setRecoveryAgents } = this.props;
+    const { navigation, setAccountRecoveryAgents } = this.props;
     const isEditing = navigation.getParam('isEditing', false);
     const { selectedAgents = [] } = this.state;
     if (!selectedAgents.length) return;
-    setRecoveryAgents(selectedAgents, selectedAgents.length); // TODO: add required count input for user
+    setAccountRecoveryAgents(selectedAgents, selectedAgents.length); // TODO: add required count input for user
     if (isEditing) {
       navigation.navigate(UPGRADE_REVIEW);
     } else {
@@ -232,8 +232,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setRecoveryAgents: (agents: RecoveryAgent[], requiredCount: number) => dispatch(
-    setRecoveryAgentsAction(agents, requiredCount),
+  setAccountRecoveryAgents: (agents: RecoveryAgent[], requiredCount: number) => dispatch(
+    setAccountRecoveryAgentsAction(agents, requiredCount),
   ),
 });
 
