@@ -32,7 +32,8 @@ export function transformAssetsToObject(assetsArray: Object[] = []): Object {
 }
 
 export function getBalance(balances: Balances = {}, asset: string = ''): number {
-  return balances[asset] ? Number(balances[asset].balance) : 0;
+  const number = balances[asset] ? new BigNumber(balances[asset].balance) : 0;
+  return +(number && number.toFixed(8, BigNumber.ROUND_DOWN)) || 0;
 }
 
 export function getRate(rates: Rates = {}, token: string, fiatCurrency: string): number {
