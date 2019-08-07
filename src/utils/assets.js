@@ -23,6 +23,7 @@ import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import { ETH } from 'constants/assetsConstants';
+import { formatAmount } from 'utils/common';
 
 export function transformAssetsToObject(assetsArray: Object[] = []): Object {
   return assetsArray.reduce((memo, asset) => {
@@ -32,7 +33,8 @@ export function transformAssetsToObject(assetsArray: Object[] = []): Object {
 }
 
 export function getBalance(balances: Balances = {}, asset: string = ''): number {
-  return balances[asset] ? Number(balances[asset].balance) : 0;
+  const number = balances[asset] ? new BigNumber(balances[asset].balance) : 0;
+  return +formatAmount(number.toString());
 }
 
 export function getRate(rates: Rates = {}, token: string, fiatCurrency: string): number {
