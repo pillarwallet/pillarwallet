@@ -37,6 +37,7 @@ export const buildHistoryTransaction = ({
   status,
   createdAt,
   isPPNTransaction,
+  extra,
 }: TransactionEthers): Transaction => ({
   status: status || TX_PENDING_STATUS,
   gasUsed: gasPrice && gasLimit
@@ -51,11 +52,9 @@ export const buildHistoryTransaction = ({
   asset,
   createdAt: createdAt || Math.round(+new Date() / 1000), // seconds
   nbConfirmations: 0,
-  transaction: {},
-  __v: 0,
-  receipt: {},
   note,
   isPPNTransaction: !!isPPNTransaction,
+  extra,
 });
 
 export const isTransactionEvent = (eventType: string) => {

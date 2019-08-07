@@ -18,9 +18,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+export type TxSettlementItem = {
+  symbol: string,
+  value: string,
+  hash: string,
+};
+
+export type TransactionExtra = TxSettlementItem[];
+
 export type Transaction = {
   _id: string,
-  transaction: Object,
   hash: string,
   to: string,
   from: string,
@@ -31,11 +38,10 @@ export type Transaction = {
   gasPrice: number,
   status: string,
   value: string,
-  __v: number,
-  receipt: Object,
   note?: ?string,
   signOnly?: ?boolean,
   isPPNTransaction: boolean,
+  extra?: TransactionExtra,
 }
 
 export type TransactionsStore = {
@@ -91,6 +97,7 @@ export type TransactionEthers = {
   status?: string,
   createdAt?: number,
   isPPNTransaction?: boolean,
+  extra?: TransactionExtra,
 };
 
 export type SmartWalletTransferTransaction = {

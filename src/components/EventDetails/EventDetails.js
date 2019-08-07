@@ -28,13 +28,14 @@ import { BigNumber } from 'bignumber.js';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
+import isEmpty from 'lodash.isempty';
 
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 
 // components
-import { BaseText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
@@ -64,7 +65,7 @@ import {
   COLLECTIBLE,
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
-import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -266,6 +267,8 @@ class EventDetails extends React.Component<Props, {}> {
         gasPrice,
         status,
         note,
+        isPPNTransaction,
+        extra,
       } = txInfo;
 
       const isReceived = addressesEqual(to, activeAccountAddress);
@@ -302,16 +305,30 @@ class EventDetails extends React.Component<Props, {}> {
       }
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
+      const freeTx = isPPNTransaction;
       let showAmountReceived = true;
+      let showSender = true;
       let showNote = true;
+      let showViewOnBlockchain = true;
       let showAmountTxType = false;
       let txType = '';
+      const listSettledAssets = (note === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
 
       if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
         showAmountReceived = false;
+        showSender = false;
         showNote = false;
         showAmountTxType = true;
         txType = 'TX SETTLEMENT';
+      } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+        showSender = false;
+        showNote = false;
+        showAmountTxType = true;
+        txType = 'TANK TOP UP';
+      }
+
+      if (isPPNTransaction) {
+        showViewOnBlockchain = false;
       }
 
       return (
@@ -336,6 +353,7 @@ class EventDetails extends React.Component<Props, {}> {
               value={txType}
             />
             }
+            {showSender &&
             <ListItemUnderlined
               label={isReceived ? 'SENDER' : 'RECIPIENT'}
               value={relatedUserTitle}
@@ -350,11 +368,18 @@ class EventDetails extends React.Component<Props, {}> {
                 borderWidth={0}
               />)}
             />
+            }
+            {listSettledAssets &&
+            <ListItemUnderlined
+              label="ASSETS"
+              value={extra.map(item => <BoldText key={item.hash}> {item.value} {item.symbol}</BoldText>)}
+            />
+            }
             {(toMyself || !isReceived) && !isPending &&
             <ListItemUnderlined
               label="TRANSACTION FEE"
-              value={utils.formatEther(fee.toString())}
-              valueAdditionalText="ETH"
+              value={freeTx ? 'free' : utils.formatEther(fee.toString())}
+              valueAdditionalText={freeTx ? '' : 'ETH'}
             />
             }
             {!!hasNote && showNote &&
@@ -363,6 +388,7 @@ class EventDetails extends React.Component<Props, {}> {
               value={transactionNote}
             />
             }
+            {showViewOnBlockchain &&
             <ButtonsWrapper>
               <EventButton
                 block
@@ -371,6 +397,7 @@ class EventDetails extends React.Component<Props, {}> {
                 onPress={() => viewTransactionOnBlockchain(hash)}
               />
             </ButtonsWrapper>
+            }
           </EventBody>
         </React.Fragment>
       );
