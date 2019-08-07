@@ -66,10 +66,7 @@ const afterHistoryUpdatedAction = () => {
 
 export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const {
-      accounts: { data: accounts },
-      history: { data: currentHistory },
-    } = getState();
+    const { accounts: { data: accounts } } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
 
@@ -81,6 +78,7 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
     });
     if (!history.length) return;
 
+    const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
     const updatedAccountHistory = uniqBy([...history, ...accountHistory], 'hash');
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
@@ -99,10 +97,7 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
 
 export const fetchContactTransactionsAction = (contactAddress: string, asset?: string = 'ALL') => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const {
-      accounts: { data: accounts },
-      history: { data: currentHistory },
-    } = getState();
+    const { accounts: { data: accounts } } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
 
@@ -115,6 +110,7 @@ export const fetchContactTransactionsAction = (contactAddress: string, asset?: s
     });
     if (!history.length) return;
 
+    const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
     const updatedAccountHistory = uniqBy([...history, ...accountHistory], 'hash');
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
@@ -133,7 +129,6 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
-      history: { data: currentHistory },
       appSettings: { data: { lastTxSyncDatetimes = {} } },
     } = getState();
     const accountId = getActiveAccountId(accounts);
@@ -162,6 +157,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       .filter(tx => tx.status === TX_PENDING_STATUS);
 
     // add new records & update data for mined transactions
+    const { history: { data: currentHistory } } = getState();
     const accountHistory = (currentHistory[accountId] || []).filter(tx => !!tx.createdAt);
     const updatedAccountHistory = uniqBy([...accountHistory, ...pendingTransactions], 'hash')
       .map(tx => {
@@ -209,8 +205,8 @@ export const updateTransactionStatusAction = (hash: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
+      assets: { data: assets },
       session: { data: { isOnline } },
-      history: { data: currentHistory },
     } = getState();
     const accountId = getActiveAccountId(accounts);
 
@@ -224,6 +220,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     const nbConfirmations = lastBlockNumber - txReceipt.blockNumber;
     const status = txReceipt.status ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS;
 
+    const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
     const updatedAccountHistory = accountHistory.map(tx => {
       if (tx.hash !== hash) return tx;
@@ -241,17 +238,15 @@ export const updateTransactionStatusAction = (hash: string) => {
     });
 
     dispatch(afterHistoryUpdatedAction());
-
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
+
+    dispatch(fetchAssetsBalancesAction(assets));
   };
 };
 
 export const restoreTransactionHistoryAction = (walletAddress: string, walletId: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const {
-      accounts: { data: accounts },
-      history: { data: currentHistory },
-    } = getState();
+    const { accounts: { data: accounts } } = getState();
 
     const [allAssets, _erc20History, ethHistory] = await Promise.all([
       api.fetchSupportedAssets(walletId),
@@ -265,6 +260,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
       return !hashExists;
     });
 
+    const { history: { data: currentHistory } } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountHistory = currentHistory[accountId] || [];
 

@@ -48,7 +48,6 @@ import deepLinkReducer from './deepLinkReducer';
 import connectionIdentityKeysReducer from './connectionIdentityKeysReducer';
 import badgesReducer from './badgesReducer';
 import exchangeReducer from './exchangeReducer';
-import tankReducer from './tankReducer';
 import accountsReducer from './accountsReducer';
 import balancesReducer from './balancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
@@ -81,7 +80,6 @@ const appReducer = combineReducers({
   connectionIdentityKeys: connectionIdentityKeysReducer,
   badges: badgesReducer,
   exchange: exchangeReducer,
-  tank: tankReducer,
   accounts: accountsReducer,
   balances: balancesReducer,
   paymentNetwork: paymentNetworkReducer,

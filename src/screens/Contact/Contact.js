@@ -379,6 +379,10 @@ class Contact extends React.Component<Props, State> {
 
     const { username: contactUsername } = contact;
     const unreadChats = chats.filter(chat => chat.username === contactUsername && !!chat.unread);
+    const { upgrade: { deploymentStarted } } = smartWalletState;
+
+    const isDeploymentButtonDisabled = deploymentStarted
+    || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING;
 
     return (
       <ContainerWithHeader
@@ -438,7 +442,7 @@ class Contact extends React.Component<Props, State> {
                       marginTop="20px"
                       height={52}
                       title="Deploy Smart Wallet"
-                      disabled={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
+                      disabled={isDeploymentButtonDisabled}
                       onPress={() => deploySmartWallet()}
                     />
                     }

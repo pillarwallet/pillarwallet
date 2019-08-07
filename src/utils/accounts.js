@@ -53,3 +53,7 @@ export function getActiveAccountWalletId(accounts: Accounts = []): string {
   const activeAccount = getActiveAccount(accounts) || {};
   return activeAccount.walletId || '';
 }
+
+export function isSmartAccount(account: Account): boolean {
+  return account.type === ACCOUNT_TYPES.SMART_WALLET;
+}

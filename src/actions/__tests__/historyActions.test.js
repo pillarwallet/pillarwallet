@@ -81,7 +81,6 @@ const mockEthTransaction = {
   status: 'confirmed',
   to: bobAddress,
   value: 10000000000000000,
-  __v: 0,
 };
 
 const mockPlrTransactions = {
@@ -98,7 +97,6 @@ const mockPlrTransactions = {
   status: 'confirmed',
   to: bobAddress,
   value: 10000000000000000,
-  __v: 0,
 };
 
 const mockImportedEthTransaction = {

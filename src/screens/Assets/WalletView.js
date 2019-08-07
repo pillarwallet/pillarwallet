@@ -26,6 +26,7 @@ import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
+import get from 'lodash.get';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText, BoldText } from 'components/Typography';
@@ -48,6 +49,7 @@ import {
   ETH,
 } from 'constants/assetsConstants';
 import { EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 
 import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -73,6 +75,7 @@ import {
 } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // utils
 import { calculatePortfolioBalance } from 'utils/assets';
@@ -81,6 +84,7 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 // partials
 import CollectiblesList from './CollectiblesList';
 import AssetsList from './AssetsList';
+import Button from './Assets';
 
 type Props = {
   baseFiatCurrency: string,
@@ -112,6 +116,7 @@ type Props = {
   smartWalletFeatureEnabled: boolean,
   fetchAssetsBalances: Function,
   fetchAllCollectiblesData: Function,
+  deploySmartWallet: Function,
 }
 
 type State = {
@@ -165,7 +170,6 @@ const genericToken = require('assets/images/tokens/genericToken.png');
  */
 const CustomKAWrapper = (props) => {
   const {
-    onScroll,
     children,
     innerRef,
     disableScroll,
@@ -177,7 +181,6 @@ const CustomKAWrapper = (props) => {
     contentContainerStyle: {
       backgroundColor: baseColors.white,
     },
-    onScroll,
     refreshControl,
   };
 
@@ -369,9 +372,37 @@ class WalletView extends React.Component<Props, State> {
     });
   };
 
-  // TODO: revisit keyboard dismiss on search results scroll
-  onWrapperScroll = () => {
-  };
+  renderBlockedScreen({ title, message }) {
+    const { smartWalletState, deploySmartWallet } = this.props;
+    let showSpinner = true;
+    let showRetryDeploymentButton = false;
+
+    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
+    if (deploymentData.error) {
+      showSpinner = false;
+      showRetryDeploymentButton = true;
+      title = 'Smart Wallet deployment failed';
+      message = deploymentData.error === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
+        ? 'You need to top up your Smart Account first'
+        : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow';
+    }
+
+    return (
+      <Wrapper flex={1} regularPadding center>
+        <MessageTitle>{ title }</MessageTitle>
+        <Message>{ message }</Message>
+        <Wrapper style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
+          {showSpinner && <Spinner />}
+          {showRetryDeploymentButton && <Button
+            marginTop="20px"
+            height={52}
+            title="Retry"
+            onPress={() => deploySmartWallet()}
+          />}
+        </Wrapper>
+      </Wrapper>
+    );
+  }
 
   render() {
     const {
@@ -429,12 +460,8 @@ class WalletView extends React.Component<Props, State> {
     const hasSmartWallet = smartWalletStatus.hasAccount;
     const showFinishSmartWalletActivation = !!smartWalletFeatureEnabled && !hasSmartWallet;
 
-    console.log('activeTab ---->', activeTab);
-    console.log('inAssetSearchMode ---->', inAssetSearchMode);
-
     return (
       <CustomKAWrapper
-        onScroll={() => this.onWrapperScroll()}
         innerRef={ref => { this.scrollWrapperRef = ref; }}
         disableScroll={disableScroll}
         refreshControl={
@@ -461,14 +488,7 @@ class WalletView extends React.Component<Props, State> {
           }}
           wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.mediumLightGray, height: 160 }}
         />
-        {blockAssetsView &&
-        <Wrapper flex={1} regularPadding center>
-          <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
-          <Message>{ sendingBlockedMessage.message }</Message>
-          <Wrapper style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
-            <Spinner />
-          </Wrapper>
-        </Wrapper>}
+        {blockAssetsView && this.renderBlockedScreen(sendingBlockedMessage)}
         {!blockAssetsView &&
         <SearchBlock
           hideSearch={blockAssetsView}
@@ -581,6 +601,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets, true)),
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
 

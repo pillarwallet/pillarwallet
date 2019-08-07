@@ -290,7 +290,7 @@ class AssetScreen extends React.Component<Props, State> {
       send: isAssetConfigSendActive = true,
       receive: isReceiveActive = true,
       disclaimer,
-    } = assetsConfig[assetData.token] || {};
+    } = assetsConfig[token] || {};
 
     const activeAccountType = getActiveAccountType(accounts);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
@@ -300,7 +300,7 @@ class AssetScreen extends React.Component<Props, State> {
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const mainNetworkTransactions = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
-    const tokenTransactionsOnMainNetwork = mainNetworkTransactions.filter(({ asset }) => asset === assetData.token);
+    const tokenTransactionsOnMainNetwork = mainNetworkTransactions.filter(({ asset }) => asset === token);
 
     const transactionsTabs = [
       {
@@ -330,6 +330,11 @@ class AssetScreen extends React.Component<Props, State> {
 
     if (isSmartWallet) transactionsTabs.push(pillarNetworkTab);
 
+    const { upgrade: { deploymentStarted } } = smartWalletState;
+
+    const isDeploymentButtonDisabled = deploymentStarted
+      || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING;
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -350,7 +355,7 @@ class AssetScreen extends React.Component<Props, State> {
               refreshing={false}
               onRefresh={() => {
                 fetchAssetsBalances(assets);
-                fetchTransactionsHistory(assetData.token);
+                fetchTransactionsHistory(token);
               }}
             />
           }
@@ -395,7 +400,7 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
-              onPressExchange={() => this.goToExchangeFlow(assetData.token)}
+              onPressExchange={() => this.goToExchangeFlow(token)}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
@@ -409,7 +414,7 @@ class AssetScreen extends React.Component<Props, State> {
                 marginTop="20px"
                 height={52}
                 title="Deploy Smart Wallet"
-                disabled={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
+                disabled={isDeploymentButtonDisabled}
                 onPress={() => deploySmartWallet()}
               />
               }

@@ -20,38 +20,43 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { FlatList } from 'react-native';
-import { createStructuredSelector } from 'reselect';
+import { FlatList, RefreshControl } from 'react-native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
+import get from 'lodash.get';
+import { BigNumber } from 'bignumber.js';
+import { weiToEth } from '@netgum/utils';
+
+// actions
+import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
 
 // config
-import assetsConfig from 'configs/assetsConfig';
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // components
 import { Container, Footer } from 'components/Layout';
-import { Label, BaseText } from 'components/Typography';
+import { Label, BaseText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import Checkbox from 'components/Checkbox';
+import Spinner from 'components/Spinner';
+import Toast from 'components/Toast';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { SETTLE_BALANCE_CONFIRM } from 'constants/navigationConstants';
 
-// selectors
-import { paymentNetworkNonZeroBalancesSelector } from 'selectors/paymentNetwork';
-
 // types
 import type { Assets, Balances, Rates } from 'models/Asset';
+import type { TxToSettle } from 'models/PaymentNetwork';
 
 // utils
 import { baseColors, fontSizes } from 'utils/variables';
 import { formatMoney, getCurrencySymbol, formatAmount } from 'utils/common';
-import { getRate } from 'utils/assets';
+import { addressesEqual, getPPNTokenAddress, getRate } from 'utils/assets';
 
 
 type Props = {
@@ -63,11 +68,22 @@ type Props = {
   assets: Assets,
   session: Object,
   estimateSettleBalance: Function,
+  availableToSettleTx: Object[],
+  isFetched: boolean,
+  fetchAvailableTxToSettle: Function,
 };
 
 type State = {
-  assetsToSettle: Object[],
+  txToSettle: TxToSettle[],
 };
+
+const MAX_TX_TO_SETTLE = 5;
+
+export const LoadingSpinner = styled(Spinner)`
+  padding-top: 20px;
+  align-items: center;
+  justify-content: center;
+`;
 
 const FooterInner = styled.View`
   flex-direction: row;
@@ -98,32 +114,54 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 class SettleBalance extends React.Component<Props, State> {
   state = {
-    assetsToSettle: [],
+    txToSettle: [],
   };
 
-  renderAsset = ({ item }) => {
-    const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
-    if (assetShouldRender) return null;
-    const { assetsToSettle } = this.state;
+  componentDidMount() {
+    this.props.fetchAvailableTxToSettle();
+  }
+
+  renderItem = ({ item }) => {
+    const { txToSettle } = this.state;
     const { baseFiatCurrency, assets, rates } = this.props;
+
+    let tokenSymbol = get(item, 'token.symbol', ETH);
+    let value = get(item, 'value', new BigNumber(0));
+    const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
+    const tokenAddress = get(item, 'token.address', '');
+
+    if (tokenSymbol !== ETH && addressesEqual(tokenAddress, ppnTokenAddress)) {
+      tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
+    }
+
+    if (tokenSymbol === ETH) value = new BigNumber(weiToEth(value));
+
     const assetInfo = {
-      ...(assets[item.symbol] || {}),
-      ...item,
+      ...(assets[tokenSymbol] || {}),
+      symbol: tokenSymbol,
+      value,
+      hash: item.hash,
+      createdAt: item.createdAt,
     };
 
     const fullIconUrl = `${SDK_PROVIDER}/${assetInfo.iconUrl}?size=3`;
-    const formattedAmount = formatAmount(assetInfo.balance);
+    const formattedAmount = formatAmount(assetInfo.value.toString());
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const totalInFiat = assetInfo.balance * getRate(rates, assetInfo.symbol, fiatCurrency);
+    const totalInFiat = assetInfo.value.toNumber() * getRate(rates, assetInfo.symbol, fiatCurrency);
     const formattedAmountInFiat = formatMoney(totalInFiat);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const isToday = new Date().toDateString() === item.createdAt.toDateString();
+    const time = isToday
+      ? `${item.createdAt.getHours()}:${item.createdAt.getMinutes()}`
+      : item.createdAt.toDateString();
 
     return (
       <ListItemWithImage
         label={assetInfo.name}
+        subtext={time}
         itemImageUrl={fullIconUrl || genericToken}
         fallbackSource={genericToken}
-        onPress={() => this.toggleAssetInTransferList(assetInfo)}
+        onPress={() => this.toggleItemToTransfer(assetInfo)}
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
@@ -133,8 +171,8 @@ class SettleBalance extends React.Component<Props, State> {
               </ValueInFiat>
             </BalanceWrapper>
             <Checkbox
-              onPress={() => this.toggleAssetInTransferList(assetInfo)}
-              checked={!!assetsToSettle.find(asset => asset.name === assetInfo.name)}
+              onPress={() => this.toggleItemToTransfer(assetInfo)}
+              checked={!!txToSettle.find(({ hash }) => hash === assetInfo.hash)}
               rounded
               wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
             />
@@ -145,47 +183,76 @@ class SettleBalance extends React.Component<Props, State> {
     );
   };
 
-  toggleAssetInTransferList = (asset: Object) => {
-    const { assetsToSettle } = this.state;
-    let updatedAssetsToSettle;
-    if (assetsToSettle.find(thisAsset => thisAsset.name === asset.name)) {
-      updatedAssetsToSettle = assetsToSettle.filter(_asset => _asset.name !== asset.name);
+  toggleItemToTransfer = (tx: Object) => {
+    const { txToSettle } = this.state;
+    let updatedTxToSettle;
+    if (txToSettle.find(({ hash }) => hash === tx.hash)) {
+      updatedTxToSettle = txToSettle.filter(({ hash }) => hash !== tx.hash);
+    } else if (txToSettle.length === MAX_TX_TO_SETTLE) {
+      Toast.show({
+        message: `You can settle only ${MAX_TX_TO_SETTLE} transactions at once`,
+        type: 'info',
+        title: 'Error',
+      });
+      return;
     } else {
-      updatedAssetsToSettle = [...assetsToSettle, asset];
+      updatedTxToSettle = [...txToSettle, tx];
     }
-    this.setState({ assetsToSettle: updatedAssetsToSettle });
+    this.setState({ txToSettle: updatedTxToSettle });
   };
 
   goToConfirm = () => {
     const { navigation } = this.props;
-    const { assetsToSettle } = this.state;
-    navigation.navigate(SETTLE_BALANCE_CONFIRM, { assetsToSettle });
+    const { txToSettle } = this.state;
+    navigation.navigate(SETTLE_BALANCE_CONFIRM, { txToSettle });
   };
 
   render() {
-    const { navigation, assetsOnNetwork, session } = this.props;
-    const { assetsToSettle } = this.state;
+    const {
+      navigation,
+      session,
+      availableToSettleTx,
+      isFetched,
+    } = this.props;
+    const { txToSettle } = this.state;
+    const showSpinner = !isFetched;
+
     return (
       <Container>
         <Header
           onBack={() => navigation.goBack(null)}
-          title="settle balance"
+          title="settle balances"
           white
         />
-        <FlatList
-          keyExtractor={item => item.symbol}
-          data={Object.values(assetsOnNetwork)}
-          renderItem={this.renderAsset}
-          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingTop: 10,
-          }}
-        />
+        {showSpinner && <LoadingSpinner />}
+        {!showSpinner && (
+          <React.Fragment>
+            <Paragraph light small center style={{ paddingTop: 15 }}>
+              You can settle up to {MAX_TX_TO_SETTLE} transactions at once
+            </Paragraph>
+            <FlatList
+              keyExtractor={item => item.hash}
+              data={availableToSettleTx}
+              renderItem={this.renderItem}
+              ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+              contentContainerStyle={{
+                flexGrow: 1,
+                paddingTop: 10,
+              }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={false}
+                  onRefresh={() => {
+                    this.props.fetchAvailableTxToSettle();
+                  }}
+                />
+              }
+            />
+          </React.Fragment>)}
         <Footer>
           <FooterInner style={{ alignItems: 'center' }}>
             <Label>&nbsp;</Label>
-            {!!assetsToSettle.length && (
+            {!!txToSettle.length && (
               <Button
                 small
                 disabled={!session.isOnline}
@@ -205,20 +272,18 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
+  paymentNetwork: { availableToSettleTx: { data: availableToSettleTx, isFetched } },
 }) => ({
   assets,
   rates,
   baseFiatCurrency,
   session,
+  availableToSettleTx,
+  isFetched,
 });
 
-const structuredSelector = createStructuredSelector({
-  assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
+const mapDispatchToProps = (dispatch) => ({
+  fetchAvailableTxToSettle: () => dispatch(fetchAvailableTxToSettleAction()),
 });
 
-const combinedMapStateToProps = (state) => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
-export default connect(combinedMapStateToProps)(SettleBalance);
+export default connect(mapStateToProps, mapDispatchToProps)(SettleBalance);

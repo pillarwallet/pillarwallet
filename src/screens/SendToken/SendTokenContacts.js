@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import Separator from 'components/Separator';
-import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import t from 'tcomb-form-native';
@@ -34,6 +34,7 @@ import SingleInput from 'components/TextInput/SingleInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
+import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
@@ -45,6 +46,7 @@ type Props = {
   localContacts: Object[],
   wallet: Object,
   smartWalletFeatureEnabled: boolean,
+  navigateToSendTokenAmount: Function,
 };
 
 type State = {
@@ -197,8 +199,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       });
       return;
     }
-
-    this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
+    this.props.navigateToSendTokenAmount({
       assetData: this.assetData,
       receiver: ethAddress,
       source: 'Contact',
@@ -296,4 +297,8 @@ const mapStateToProps = ({
   smartWalletFeatureEnabled,
 });
 
-export default connect(mapStateToProps)(SendTokenContacts);
+const mapDispatchToProps = (dispatch) => ({
+  navigateToSendTokenAmount: (options) => dispatch(navigateToSendTokenAmountAction(options)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SendTokenContacts);

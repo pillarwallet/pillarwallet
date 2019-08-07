@@ -71,8 +71,7 @@ class SmartWalletUnlock extends React.Component<Props, State> {
       await initSmartWalletSdk(wallet.privateKey);
       // perform upgrade step if transferTransactions is given
       if (transferTransactions.length) {
-        const upgradeComplete = await upgradeToSmartWallet(wallet, transferTransactions)
-          .catch(() => null);
+        const upgradeComplete = await upgradeToSmartWallet(wallet, transferTransactions).catch(() => null);
         if (!upgradeComplete) {
           navigation.goBack();
           return;

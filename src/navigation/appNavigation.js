@@ -52,6 +52,7 @@ import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScre
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
+import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
 import HomeScreen from 'screens/Home';
 import MeScreen from 'screens/Me';
 import ParticipateScreen from 'screens/Participate';
@@ -202,6 +203,8 @@ import {
   FIAT_CRYPTO,
   SMART_WALLET_INTRO,
   PEOPLE_SEARCH,
+  PPN_SEND_TOKEN_AMOUNT,
+  PPN_SEND_TOKEN_FROM_ASSET_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -536,6 +539,14 @@ const smartWalletUpgradeFlow = createStackNavigator({
 
 smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// PPN SEND TOKEN FROM ASSET FLOW
+const ppnSendTokenFromAssetFlow = createStackNavigator(
+  {
+    [PPN_SEND_TOKEN_AMOUNT]: PPNSendTokenAmountScreen,
+  },
+  StackNavigatorModalConfig,
+);
+
 // MANAGE WALLETS FLOW
 const manageWalletsFlow = createStackNavigator({
   [ACCOUNTS]: AccountsScreen,
@@ -575,6 +586,7 @@ const AppFlowNavigation = createStackNavigator(
     [TAB_NAVIGATION]: tabNavigation,
     [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
+    [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
     [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
     [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
