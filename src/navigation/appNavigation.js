@@ -221,13 +221,13 @@ const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_new.png');
-const iconExchange = require('assets/icons/icon_exchange_new.png');
-const iconPeople = require('assets/icons/icon_people.png');
-const iconHome = require('assets/icons/icon_home_new.png');
-const iconWalletActive = require('assets/icons/icon_wallet_active.png');
-const iconExchangeActive = require('assets/icons/icon_exchange_active.png');
-const iconPeopleActive = require('assets/icons/icon_people_active.png');
-const iconHomeActive = require('assets/icons/icon_home_active.png');
+const iconExchange = require('assets/icons/icon_services.png');
+const iconPeople = require('assets/icons/icon_people_smrt.png');
+const iconHome = require('assets/icons/icon_home_smrt.png');
+const iconWalletActive = require('assets/icons/icon_wallet_active_smrt.png');
+const iconExchangeActive = require('assets/icons/icon_services_active.png');
+const iconPeopleActive = require('assets/icons/icon_people_active_smrt.png');
+const iconHomeActive = require('assets/icons/icon_home_active_smrt.png');
 
 const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
 
@@ -265,7 +265,6 @@ const assetsFlow = createStackNavigator(
     [ASSETS]: AssetsScreen,
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
-    [BADGE]: BadgeScreen,
     [CONTACT]: ContactScreen,
     [WALLET_SETTINGS]: WalletSettingsScreen,
     [SETTINGS]: SettingsScreen,
@@ -395,18 +394,22 @@ const tabBarLabel = labelText => ({ focused, tintColor }) => (
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
+    [HOME_TAB]: {
+      screen: homeFlow,
+      navigationOptions: ({ navigation, screenProps }) => ({
+        tabBarIcon: tabBarIcon(
+          iconHomeActive,
+          iconHome,
+          !navigation.isFocused() && (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount),
+        ),
+        tabBarLabel: tabBarLabel('Home'),
+      }),
+    },
     [ASSETS]: {
       screen: assetsFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
         tabBarLabel: tabBarLabel('Assets'),
-      }),
-    },
-    [EXCHANGE_TAB]: {
-      screen: exchangeFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconExchangeActive, iconExchange),
-        tabBarLabel: tabBarLabel('Exchange'),
       }),
     },
     [PEOPLE]: {
@@ -419,15 +422,11 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('People'),
       }),
     },
-    [HOME_TAB]: {
-      screen: homeFlow,
-      navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon(
-          iconHomeActive,
-          iconHome,
-          !navigation.isFocused() && (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount),
-        ),
-        tabBarLabel: tabBarLabel('Home'),
+    [EXCHANGE_TAB]: {
+      screen: exchangeFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconExchangeActive, iconExchange),
+        tabBarLabel: tabBarLabel('Exchange'),
       }),
     },
     // [ME_TAB]: {

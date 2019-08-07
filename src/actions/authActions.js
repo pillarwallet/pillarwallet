@@ -33,7 +33,7 @@ import {
   APP_FLOW,
   AUTH_FLOW,
   ONBOARDING_FLOW,
-  ASSETS,
+  HOME,
   CHAT,
   PIN_CODE_UNLOCK,
   PEOPLE,
@@ -164,7 +164,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
 
       const navigateToLastActiveScreen = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
-        routeName: lastActiveScreen || ASSETS,
+        routeName: lastActiveScreen || HOME,
         params: lastActiveScreenParams,
       });
 

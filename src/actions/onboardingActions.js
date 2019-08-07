@@ -39,7 +39,7 @@ import {
   INVALID_USERNAME,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
+import { APP_FLOW, NEW_WALLET, HOME } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import {
@@ -181,7 +181,7 @@ const navigateToAppFlow = (isWalletBackedUp: boolean) => {
   const navigateToAssetsAction = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
-    action: NavigationActions.navigate({ routeName: ASSETS }),
+    action: NavigationActions.navigate({ routeName: HOME }),
   });
 
   toastWalletBackup(isWalletBackedUp);
