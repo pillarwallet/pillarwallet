@@ -51,6 +51,7 @@ import { SETTLE_BALANCE_CONFIRM } from 'constants/navigationConstants';
 
 // types
 import type { Assets, Balances, Rates } from 'models/Asset';
+import type { TxToSettle } from 'models/PaymentNetwork';
 
 // utils
 import { baseColors, fontSizes } from 'utils/variables';
@@ -73,7 +74,7 @@ type Props = {
 };
 
 type State = {
-  txToSettle: Object[],
+  txToSettle: TxToSettle[],
 };
 
 const MAX_TX_TO_SETTLE = 5;

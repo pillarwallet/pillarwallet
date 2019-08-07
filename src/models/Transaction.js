@@ -18,6 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+export type TxSettlementItem = {
+  symbol: string,
+  value: string,
+  hash: string,
+};
+
 export type Transaction = {
   _id: string,
   hash: string,
