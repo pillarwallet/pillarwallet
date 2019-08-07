@@ -34,13 +34,13 @@ import { baseColors, spacing } from 'utils/variables';
 import { CONTACT, CHOOSE_ASSETS_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
 // import orderBy from 'lodash.orderby';
-import { addRecoveryAgentsToSmartWalletUpgradeAction } from 'actions/smartWalletActions';
+import { setRecoveryAgentsAction } from 'actions/accountRecoveryActions';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
-  addRecoveryAgentsToSmartWalletUpgrade: Function,
+  setRecoveryAgents: Function,
 };
 
 type State = {
@@ -112,10 +112,11 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
   };
 
   onNextPress = async () => {
-    const { navigation, addRecoveryAgentsToSmartWalletUpgrade } = this.props;
+    const { navigation, setRecoveryAgents } = this.props;
     const isEditing = navigation.getParam('isEditing', false);
-    const { selectedAgents } = this.state;
-    await addRecoveryAgentsToSmartWalletUpgrade(selectedAgents);
+    const { selectedAgents = [] } = this.state;
+    if (!selectedAgents.length) return;
+    setRecoveryAgents(selectedAgents, selectedAgents.length); // TODO: add required count input for user
     if (isEditing) {
       navigation.navigate(UPGRADE_REVIEW);
     } else {
@@ -231,9 +232,9 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addRecoveryAgentsToSmartWalletUpgrade: (recoveryAgents: RecoveryAgent[]) => {
-    return dispatch(addRecoveryAgentsToSmartWalletUpgradeAction(recoveryAgents));
-  },
+  setRecoveryAgents: (agents: RecoveryAgent[], requiredCount: number) => dispatch(
+    setRecoveryAgentsAction(agents, requiredCount),
+  ),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecoveryAgentsScreen);

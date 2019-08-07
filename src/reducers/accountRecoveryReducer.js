@@ -19,7 +19,6 @@
 */
 import {
   SET_ACCOUNT_RECOVERY_AGENTS,
-  SET_ACCOUNT_RECOVERY_AGENTS_REQUIRED_COUNT,
   SET_ACCOUNT_RECOVERY_ENABLED,
   SET_ACCOUNT_RECOVERY_DISABLED,
   SET_ACCOUNT_RECOVERY_ENABLE_TRANSACTION,
@@ -56,14 +55,12 @@ export default function accountRecoveryReducer(
 ) {
   switch (action.type) {
     case SET_ACCOUNT_RECOVERY_AGENTS:
+      if (!action.payload) return state;
+      const { payload: { agents, requiredCount } } = action;
       return {
         ...state,
-        agents: action.payload,
-      };
-    case SET_ACCOUNT_RECOVERY_AGENTS_REQUIRED_COUNT:
-      return {
-        ...state,
-        requiredAgentsCount: action.payload,
+        agents,
+        requiredAgentsCount: requiredCount,
       };
     case SET_ACCOUNT_RECOVERY_ENABLED:
       return {

@@ -57,6 +57,13 @@ import {
   SET_SMART_WALLET_LAST_SYNCED_HASH,
 } from 'constants/smartWalletConstants';
 import { UPDATE_PAYMENT_NETWORK_BALANCES, UPDATE_PAYMENT_NETWORK_STAKED } from 'constants/paymentNetworkConstants';
+import {
+  SET_ACCOUNT_RECOVERY_AGENTS,
+  SET_ACCOUNT_RECOVERY_ENABLE_TRANSACTION,
+  SET_ACCOUNT_RECOVERY_SETUP_TRANSACTION,
+  SET_ACCOUNT_RECOVERY_ENABLED,
+  SET_ACCOUNT_RECOVERY_DISABLED,
+} from 'constants/accountRecoveryConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -137,6 +144,18 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { connectedProviders = [] } = await storage.get('exchangeProviders');
       dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
+
+      const {
+        agents = [],
+        requiredAgentsCount = 0,
+        enableTransaction = null,
+        setupTransaction = null,
+        enabled: accountRecoveryEnabled,
+      } = await storage.get('accountRecovery');
+      dispatch({ type: SET_ACCOUNT_RECOVERY_AGENTS, payload: { agents, requiredCount: requiredAgentsCount } });
+      dispatch({ type: SET_ACCOUNT_RECOVERY_ENABLE_TRANSACTION, payload: enableTransaction });
+      dispatch({ type: SET_ACCOUNT_RECOVERY_SETUP_TRANSACTION, payload: setupTransaction });
+      dispatch({ type: accountRecoveryEnabled ? SET_ACCOUNT_RECOVERY_ENABLED : SET_ACCOUNT_RECOVERY_DISABLED });
 
       await loadAndMigrate('history', dispatch, getState);
 

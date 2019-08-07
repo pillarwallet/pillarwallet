@@ -52,6 +52,7 @@ import accountsReducer from './accountsReducer';
 import balancesReducer from './balancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
 import featureFlagsReducer from './featureFlagsReducer';
+import accountRecoveryReducer from './accountRecoveryReducer';
 
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
@@ -83,6 +84,7 @@ const appReducer = combineReducers({
   balances: balancesReducer,
   paymentNetwork: paymentNetworkReducer,
   featureFlags: featureFlagsReducer,
+  accountRecovery: accountRecoveryReducer,
 });
 
 const initialState = appReducer(undefined, {});
