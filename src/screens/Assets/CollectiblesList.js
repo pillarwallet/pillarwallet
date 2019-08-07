@@ -19,11 +19,9 @@
 */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
 
-import { FlatList, RefreshControl, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import styled from 'styled-components/native';
-import isEqualWith from 'lodash.isequalwith';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 
@@ -31,9 +29,7 @@ import { CachedImage } from 'react-native-cached-image';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import ShadowedCard from 'components/ShadowedCard';
-
-// actions
-import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import { BaseText } from 'components/Typography';
 
 // constants
 import { COLLECTIBLE, BADGE } from 'constants/navigationConstants';
@@ -44,8 +40,6 @@ import { baseColors, fontSizes, fontTrackings, spacing } from 'utils/variables';
 
 // types
 import type { Collectible } from 'models/Collectible';
-import type { Badges } from 'models/Badge';
-import { BaseText } from '../../components/Typography';
 
 const EmptyStateWrapper = styled.View`
   align-items: center;
@@ -79,34 +73,19 @@ const viewConfig = {
 
 type Props = {
   collectibles: Collectible[],
-  badges: Badges,
   searchQuery: string,
   navigation: NavigationScreenProp<*>,
-  horizontalPadding: Function,
-  fetchAllCollectiblesData: Function,
 }
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-class CollectiblesList extends React.Component<Props> {
-  shouldComponentUpdate(nextProps: Props) {
-    const isFocused = this.props.navigation.isFocused();
-    if (!isFocused) {
-      return false;
-    }
-    const isEq = isEqualWith(this.props, nextProps, (val1, val2) => {
-      if (typeof val1 === 'function' && typeof val2 === 'function') return true;
-      return undefined;
-    });
-    return !isEq;
-  }
-
+export default class CollectiblesList extends React.PureComponent<Props> {
   handleCardTap = (assetData: Object) => {
     const { navigation } = this.props;
     navigation.navigate(COLLECTIBLE, { assetData });
   };
 
-  renderCollectible = ({ item }) => {
+  renderCollectible = ({ item }: Object) => {
     const { name, thumbnail, icon: itemIcon } = item;
     const icon = thumbnail || itemIcon;
     return (
@@ -135,7 +114,7 @@ class CollectiblesList extends React.Component<Props> {
     );
   };
 
-  renderItem = (item) => {
+  renderItem = (item: Object) => {
     const { navigation } = this.props;
     return (
       <BadgeTouchableItem
@@ -148,7 +127,6 @@ class CollectiblesList extends React.Component<Props> {
   render() {
     const {
       searchQuery,
-      fetchAllCollectiblesData,
       collectibles,
     } = this.props;
 
@@ -169,7 +147,12 @@ class CollectiblesList extends React.Component<Props> {
         renderItem={this.renderCollectible}
         numColumns={2}
         style={[searchQuery ? { flexGrow: 1, paddingTop: spacing.mediumLarge } : { flexGrow: 1 }]}
-        contentContainerStyle={{ padding: 12, flexGrow: 1 }}
+        contentContainerStyle={{
+          paddingHorizontal: 12,
+          paddingTop: 24,
+          paddingBottom: 12,
+          flexGrow: 1,
+        }}
         ListEmptyComponent={
           <EmptyStateWrapper>
             <EmptyStateParagraph {...emptyStateInfo} />
@@ -178,21 +161,7 @@ class CollectiblesList extends React.Component<Props> {
         initialNumToRender={4}
         removeClippedSubviews
         viewabilityConfig={viewConfig}
-        refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={() => {
-              fetchAllCollectiblesData();
-            }}
-          />
-        }
       />
     );
   }
 }
-
-const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-});
-
-export default connect(null, mapDispatchToProps)(CollectiblesList);

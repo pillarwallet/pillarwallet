@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, Switch, SectionList, Platform, ScrollView, StyleSheet } from 'react-native';
+import { Keyboard, Switch, SectionList, Platform, ScrollView, StyleSheet, RefreshControl } from 'react-native';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
@@ -69,8 +69,10 @@ import {
   resetSearchAssetsResultAction,
   addAssetAction,
   removeAssetAction,
+  fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // utils
 import { calculatePortfolioBalance } from 'utils/assets';
@@ -108,6 +110,8 @@ type Props = {
   accounts: Accounts,
   smartWalletState: Object,
   smartWalletFeatureEnabled: boolean,
+  fetchAssetsBalances: Function,
+  fetchAllCollectiblesData: Function,
 }
 
 type State = {
@@ -136,7 +140,7 @@ const SearchSpinner = styled(Wrapper)`
 `;
 
 const ListWrapper = styled.View`
-  position: relative;
+  flexGrow: 1;
 `;
 
 const EmptyStateWrapper = styled(Wrapper)`
@@ -165,6 +169,7 @@ const CustomKAWrapper = (props) => {
     children,
     innerRef,
     disableScroll,
+    refreshControl,
   } = props;
   const scrollWrapperProps = {
     stickyHeaderIndices: [2],
@@ -173,6 +178,7 @@ const CustomKAWrapper = (props) => {
       backgroundColor: baseColors.white,
     },
     onScroll,
+    refreshControl,
   };
 
   if (Platform.OS === 'ios') {
@@ -423,11 +429,24 @@ class WalletView extends React.Component<Props, State> {
     const hasSmartWallet = smartWalletStatus.hasAccount;
     const showFinishSmartWalletActivation = !!smartWalletFeatureEnabled && !hasSmartWallet;
 
+    console.log('activeTab ---->', activeTab);
+    console.log('inAssetSearchMode ---->', inAssetSearchMode);
+
     return (
       <CustomKAWrapper
         onScroll={() => this.onWrapperScroll()}
         innerRef={ref => { this.scrollWrapperRef = ref; }}
         disableScroll={disableScroll}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => {
+              const { fetchAssetsBalances, fetchAllCollectiblesData } = this.props;
+              if (activeTab === TOKENS) fetchAssetsBalances(assets);
+              if (activeTab === COLLECTIBLES) fetchAllCollectiblesData();
+            }}
+          />
+        }
       >
         <Insight
           isVisible={showInsight}
@@ -560,6 +579,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
+  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets, true)),
 });
 
 

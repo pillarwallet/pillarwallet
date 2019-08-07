@@ -55,6 +55,7 @@ type ScrollWrapperProps = {
   onScroll?: Function,
   stickyHeaderIndices?: number[],
   scrollEnabled?: boolean,
+  refreshControl?: React.Node,
 };
 
 export const Center = styled.View`
@@ -138,6 +139,7 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
     onScroll,
     stickyHeaderIndices,
     scrollEnabled,
+    refreshControl,
   } = props;
 
   return (
@@ -155,6 +157,7 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
       extraHeight={0}
       extraScrollHeight={0}
       scrollEnabled={scrollEnabled}
+      refreshControl={refreshControl}
     >
       {children}
     </KAScrollView>

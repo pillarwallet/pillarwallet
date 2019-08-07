@@ -386,13 +386,15 @@ class Contact extends React.Component<Props, State> {
         inset={{ bottom: 'never' }}
         headerProps={{
           centerItems: [{ title: contactUsername }],
-          rightItems: [{
-            icon: 'chat',
-            onPress: () => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT }),
-            indicator: !!unreadChats.length,
-            color: baseColors.coolGrey,
-            fontSize: fontSizes.mediumLarge,
-          }],
+          rightItems: [displayContact.status
+            ? {
+                icon: 'chat',
+                onPress: () => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT }),
+                indicator: !!unreadChats.length,
+                color: baseColors.coolGrey,
+                fontSize: fontSizes.mediumLarge,
+              }
+            : {}],
         }}
       >
         <ScrollWrapper

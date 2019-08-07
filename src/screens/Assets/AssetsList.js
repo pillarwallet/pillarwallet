@@ -19,12 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import {
-  RefreshControl,
-  FlatList,
-  Platform,
-  View,
-} from 'react-native';
+import { FlatList, Platform, View } from 'react-native';
 import isEqualWith from 'lodash.isequalwith';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -35,9 +30,6 @@ import styled from 'styled-components/native';
 // components
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { MediumText } from 'components/Typography';
-
-// actions
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // constants
 import { defaultFiatCurrency, TOKENS } from 'constants/assetsConstants';
@@ -64,7 +56,6 @@ import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork'
 const IS_IOS = Platform.OS === 'ios';
 
 type Props = {
-  fetchAssetsBalances: (assets: Assets) => Function,
   onHideTokenFromWallet: Function,
   horizontalPadding: Function,
   assets: Assets,
@@ -253,15 +244,6 @@ class AssetsList extends React.Component<Props> {
         style={{ width: '100%', height: '100%', flex: 1 }}
         ListHeaderComponent={this.renderHeader}
         conentContainerStyle={{ paddingTop: 4 }}
-        refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={() => {
-              const { fetchAssetsBalances } = this.props;
-              fetchAssetsBalances(assets);
-            }}
-          />
-        }
       />
     );
   }
@@ -289,8 +271,4 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets, true)),
-});
-
-export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(AssetsList));
+export default withNavigation(connect(combinedMapStateToProps)(AssetsList));
