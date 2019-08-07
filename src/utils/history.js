@@ -37,6 +37,7 @@ export const buildHistoryTransaction = ({
   status,
   createdAt,
   isPPNTransaction,
+  extra,
 }: TransactionEthers): Transaction => ({
   status: status || TX_PENDING_STATUS,
   gasUsed: gasPrice && gasLimit
@@ -53,6 +54,7 @@ export const buildHistoryTransaction = ({
   nbConfirmations: 0,
   note,
   isPPNTransaction: !!isPPNTransaction,
+  extra,
 });
 
 export const isTransactionEvent = (eventType: string) => {

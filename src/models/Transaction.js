@@ -24,6 +24,8 @@ export type TxSettlementItem = {
   hash: string,
 };
 
+export type TransactionExtra = TxSettlementItem[];
+
 export type Transaction = {
   _id: string,
   hash: string,
@@ -39,6 +41,7 @@ export type Transaction = {
   note?: ?string,
   signOnly?: ?boolean,
   isPPNTransaction: boolean,
+  extra?: TransactionExtra,
 }
 
 export type TransactionsStore = {
@@ -94,6 +97,7 @@ export type TransactionEthers = {
   status?: string,
   createdAt?: number,
   isPPNTransaction?: boolean,
+  extra?: TransactionExtra,
 };
 
 export type SmartWalletTransferTransaction = {

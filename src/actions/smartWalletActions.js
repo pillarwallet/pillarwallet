@@ -1032,6 +1032,11 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
       const { accounts: { data: accounts } } = getState();
       const accountId = getActiveAccountId(accounts);
       const accountAddress = getActiveAccountAddress(accounts);
+      const settlementData = txToSettle.map(({ symbol, value, hash }) => ({
+        symbol,
+        value: value.toString(),
+        hash,
+      }));
 
       const historyTx = buildHistoryTransaction({
         from: accountAddress,
@@ -1040,6 +1045,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
         value: '0',
         asset: PAYMENT_NETWORK_TX_SETTLEMENT,
         note: PAYMENT_NETWORK_TX_SETTLEMENT,
+        extra: settlementData,
       });
 
       dispatch({
