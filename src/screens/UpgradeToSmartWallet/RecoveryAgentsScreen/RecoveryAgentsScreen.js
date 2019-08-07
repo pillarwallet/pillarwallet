@@ -22,8 +22,7 @@ import { FlatList, Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { Container, Footer } from 'components/Layout';
-// import SearchBlock from 'components/SearchBlock';
-import Header from 'components/Header';
+import SearchBlock from 'components/SearchBlock';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Checkbox from 'components/Checkbox';
@@ -33,7 +32,7 @@ import Toast from 'components/Toast';
 import { baseColors, spacing } from 'utils/variables';
 import { CONTACT, CHOOSE_ASSETS_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
-// import orderBy from 'lodash.orderby';
+import orderBy from 'lodash.orderby';
 import { setAccountRecoveryAgentsAction } from 'actions/accountRecoveryActions';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 
@@ -44,7 +43,7 @@ type Props = {
 };
 
 type State = {
-  // query: string,
+  query: string,
   selectedAgents: Object[],
 };
 
@@ -63,13 +62,13 @@ const EmptyStateWrapper = styled.View`
 
 class RecoveryAgentsScreen extends React.Component<Props, State> {
   state = {
-    // query: '',
+    query: '',
     selectedAgents: [],
   };
 
-  // handleSearchChange = (query: any) => {
-  //   this.setState({ query });
-  // };
+  handleSearchChange = (query: any) => {
+    this.setState({ query });
+  };
 
   navigateToContactScreen = (contact: Object) => () => {
     this.props.navigation.navigate(CONTACT, { contact });
@@ -114,7 +113,7 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
   onNextPress = async () => {
     const { navigation, setAccountRecoveryAgents } = this.props;
     const isEditing = navigation.getParam('isEditing', false);
-    const { selectedAgents = [] } = this.state;
+    const { selectedAgents } = this.state;
     if (!selectedAgents.length) return;
     setAccountRecoveryAgents(selectedAgents, selectedAgents.length); // TODO: add required count input for user
     if (isEditing) {
@@ -137,21 +136,18 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      navigation,
-      // contacts,
-    } = this.props;
-    // const sortedLocalContacts = orderBy(contacts, [user => user.username.toLowerCase()], 'asc');
-    // const filteredContacts = (!query || query.trim() === '' || query.length < 2)
-    //   ? sortedLocalContacts
-    //   : sortedLocalContacts.filter(({ username }) => username.toUpperCase().includes(query.toUpperCase()));
-    // const proceedStepEnabled = true || !!selectedAgents.length; // TODO: remove `true ||`
+    const { navigation, contacts } = this.props;
+    const { query, selectedAgents } = this.state;
+    const sortedLocalContacts = orderBy(contacts, [user => user.username.toLowerCase()], 'asc');
+    const filteredContacts = (!query || query.trim() === '' || query.length < 2)
+      ? sortedLocalContacts
+      : sortedLocalContacts.filter(({ username }) => username.toUpperCase().includes(query.toUpperCase()));
     const options = navigation.getParam('options', { isSeparateRecovery: false });
     const { isSeparateRecovery } = options;
 
     return (
       <Container>
-        { /* <SearchBlock
+        <SearchBlock
           headerProps={{
             title: 'recovery agents',
             onBack: () => navigation.goBack(null),
@@ -161,22 +157,9 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
           itemSearchState={query.length >= 2}
           navigation={navigation}
           backgroundColor={baseColors.white}
-        /> */ }
-        <Header
-          title="recovery agents"
-          centerTitle
-          onBack={() => navigation.goBack(null)}
-          white
         />
         <FlatList
-          // data={filteredContacts}
-          data={[
-            {
-              id: 'Pillar',
-              serviceName: 'Pillar Wallet',
-              icon: 'https://api-qa-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3',
-            },
-          ]}
+          data={filteredContacts}
           keyExtractor={(item) => item.id}
           renderItem={this.renderContact}
           initialNumToRender={8}
@@ -201,14 +184,10 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
         >
           {!isSeparateRecovery &&
           <FooterInner>
-            {
-              // TODO: add right amount of contacts selected to activate this button
-            }
             <Button
               small
-              title="Next"
+              title={selectedAgents.length ? 'Next' : 'Skip Account Recovery setup'}
               onPress={this.onNextPress}
-              // disabled={!proceedStepEnabled}
             />
           </FooterInner>
           }
@@ -216,7 +195,6 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
           <Button
             title="Setup recovery"
             onPress={this.setupRecovery}
-            // disabled={!proceedStepEnabled}
           />
           }
         </Footer>
