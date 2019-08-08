@@ -59,7 +59,7 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
-import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
@@ -251,6 +251,8 @@ class ActivityFeed extends React.Component<Props, State> {
       if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
         nameOrAddress = 'TX SETTLEMENT';
         itemValue = '';
+      } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+        nameOrAddress = 'TANK TOP UP';
       }
 
       return (

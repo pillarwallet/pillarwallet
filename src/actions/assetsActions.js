@@ -58,7 +58,7 @@ import type {
   TransactionPayload,
 } from 'models/Transaction';
 import type { Asset, Assets } from 'models/Asset';
-import { generatePMTToken, transformAssetsToObject } from 'utils/assets';
+import { addressesEqual, generatePMTToken, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -72,8 +72,9 @@ import {
 import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
+import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
+import { sendTxNoteByContactAction } from './txNoteActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -260,7 +261,7 @@ export const signAssetTransactionAction = (
 export const sendAssetAction = (
   transaction: TransactionPayload,
   wallet: Object,
-  navigateToNextScreen: Function = noop,
+  callback: Function = noop,
 ) => {
   return async (dispatch: Function, getState: Function) => {
     const tokenType = get(transaction, 'tokenType', '');
@@ -280,7 +281,12 @@ export const sendAssetAction = (
     const accountId = getActiveAccountId(accounts);
     const activeAccount = getActiveAccount(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
+    const activeAccountType = getActiveAccountType(accounts);
     if (!activeAccount) return;
+
+    if (activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
+      await dispatch(ensureSmartAccountConnectedAction(wallet.privateKey));
+    }
 
     let tokenTx = {};
     let historyTx;
@@ -442,7 +448,19 @@ export const sendAssetAction = (
       dispatch(addExchangeAllowanceAction(provider, assetCode, tokenTx.hash));
     }
 
-    navigateToNextScreen(txStatus);
+    // send note
+    if (tokenTx.hash && note) {
+      const { contacts: { data: contacts } } = getState();
+      const toUser = contacts.find(contact => addressesEqual(contact.ethAddress, to));
+      if (toUser) {
+        dispatch(sendTxNoteByContactAction(toUser.username, {
+          text: note,
+          txHash: tokenTx.hash,
+        }));
+      }
+    }
+
+    callback(txStatus);
   };
 };
 

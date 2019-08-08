@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
+import type { Asset } from './Asset';
+import type { TxSettlementItem } from './Transaction';
 
 export type FeeInfo = {
   fixedGas: BigNumber,
@@ -34,4 +36,9 @@ export type TopUpFee = {
 export type SettleTxFee = {
   isFetched: boolean,
   feeInfo: ?FeeInfo,
+};
+
+export type TxToSettle = {
+  ...$Exact<Asset>,
+  ...$Exact<TxSettlementItem>,
 };
