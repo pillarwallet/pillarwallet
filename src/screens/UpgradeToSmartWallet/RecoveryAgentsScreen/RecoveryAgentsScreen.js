@@ -28,18 +28,18 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Checkbox from 'components/Checkbox';
 import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import Toast from 'components/Toast';
 import { baseColors, spacing } from 'utils/variables';
 import { CONTACT, CHOOSE_ASSETS_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
 import orderBy from 'lodash.orderby';
-import { setAccountRecoveryAgentsAction } from 'actions/accountRecoveryActions';
+import { setAccountRecoveryAgentsAction, setupAccountRecoveryAction } from 'actions/accountRecoveryActions';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
   setAccountRecoveryAgents: Function,
+  setupAccountRecovery: Function,
 };
 
 type State = {
@@ -114,8 +114,9 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
     const { navigation, setAccountRecoveryAgents } = this.props;
     const isEditing = navigation.getParam('isEditing', false);
     const { selectedAgents } = this.state;
-    if (!selectedAgents.length) return;
-    setAccountRecoveryAgents(selectedAgents, selectedAgents.length); // TODO: add required count input for user
+    if (selectedAgents.length) {
+      setAccountRecoveryAgents(selectedAgents, selectedAgents.length); // TODO: add required count input for user
+    }
     if (isEditing) {
       navigation.navigate(UPGRADE_REVIEW);
     } else {
@@ -123,16 +124,12 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
     }
   };
 
-  // MOCK
   setupRecovery = () => {
-    const { navigation } = this.props;
-    navigation.goBack(null);
-    Toast.show({
-      message: 'Recovery agents have been selected',
-      type: 'success',
-      title: 'Success',
-      autoClose: true,
-    });
+    const { setupAccountRecovery } = this.props;
+    const { selectedAgents } = this.state;
+    if (selectedAgents.length) {
+      setupAccountRecovery(selectedAgents, selectedAgents.length); // TODO: add required count input for user
+    }
   };
 
   render() {
@@ -193,7 +190,8 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
           }
           {!!isSeparateRecovery &&
           <Button
-            title="Setup recovery"
+            title="Setup Account Recovery"
+            disabled={!selectedAgents.length}
             onPress={this.setupRecovery}
           />
           }
@@ -212,6 +210,9 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch) => ({
   setAccountRecoveryAgents: (agents: RecoveryAgent[], requiredCount: number) => dispatch(
     setAccountRecoveryAgentsAction(agents, requiredCount),
+  ),
+  setupAccountRecovery: (agents: RecoveryAgent[], requiredCount: number) => dispatch(
+    setupAccountRecoveryAction(agents, requiredCount),
   ),
 });
 

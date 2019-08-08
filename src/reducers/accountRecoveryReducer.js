@@ -20,20 +20,18 @@
 import {
   SET_ACCOUNT_RECOVERY_AGENTS,
   SET_ACCOUNT_RECOVERY_ENABLED,
-  SET_ACCOUNT_RECOVERY_DISABLED,
-  SET_ACCOUNT_RECOVERY_ENABLE_TRANSACTION,
-  SET_ACCOUNT_RECOVERY_SETUP_TRANSACTION,
+  ADD_ACCOUNT_RECOVERY_TRANSACTION,
+  SET_ACCOUNT_RECOVERY_TRANSACTIONS,
 } from 'constants/accountRecoveryConstants';
 
 import type { RecoveryAgent } from 'models/RecoveryAgents';
-import type { Transaction } from 'models/Transaction';
+import type { AccountRecoveryTransaction } from 'models/Transaction';
 
 export type AccountRecoveryReducerState = {
   enabled: boolean,
   agents: RecoveryAgent[],
   requiredAgentsCount: number,
-  enableTransaction: ?Transaction,
-  setupTransaction: ?Transaction,
+  transactions: AccountRecoveryTransaction[],
 }
 
 export type AccountRecoveryReducerAction = {
@@ -45,8 +43,7 @@ const initialState = {
   enabled: false,
   agents: [],
   requiredAgentsCount: 0,
-  enableTransaction: null,
-  setupTransaction: null,
+  transactions: [],
 };
 
 export default function accountRecoveryReducer(
@@ -67,20 +64,18 @@ export default function accountRecoveryReducer(
         ...state,
         enabled: true,
       };
-    case SET_ACCOUNT_RECOVERY_DISABLED:
+    case ADD_ACCOUNT_RECOVERY_TRANSACTION:
       return {
         ...state,
-        enabled: false,
+        transactions: [
+          ...state.transactions,
+          action.payload,
+        ],
       };
-    case SET_ACCOUNT_RECOVERY_ENABLE_TRANSACTION:
+    case SET_ACCOUNT_RECOVERY_TRANSACTIONS:
       return {
         ...state,
-        enableTransaction: action.payload,
-      };
-    case SET_ACCOUNT_RECOVERY_SETUP_TRANSACTION:
-      return {
-        ...state,
-        setupTransaction: action.payload,
+        transactions: action.payload,
       };
     default:
       return state;

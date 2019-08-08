@@ -59,10 +59,8 @@ import {
 import { UPDATE_PAYMENT_NETWORK_BALANCES, UPDATE_PAYMENT_NETWORK_STAKED } from 'constants/paymentNetworkConstants';
 import {
   SET_ACCOUNT_RECOVERY_AGENTS,
-  SET_ACCOUNT_RECOVERY_ENABLE_TRANSACTION,
-  SET_ACCOUNT_RECOVERY_SETUP_TRANSACTION,
+  SET_ACCOUNT_RECOVERY_TRANSACTIONS,
   SET_ACCOUNT_RECOVERY_ENABLED,
-  SET_ACCOUNT_RECOVERY_DISABLED,
 } from 'constants/accountRecoveryConstants';
 
 const storage = Storage.getInstance('db');
@@ -148,14 +146,12 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const {
         agents = [],
         requiredAgentsCount = 0,
-        enableTransaction = null,
-        setupTransaction = null,
+        transactions = [],
         enabled: accountRecoveryEnabled,
       } = await storage.get('accountRecovery');
       dispatch({ type: SET_ACCOUNT_RECOVERY_AGENTS, payload: { agents, requiredCount: requiredAgentsCount } });
-      dispatch({ type: SET_ACCOUNT_RECOVERY_ENABLE_TRANSACTION, payload: enableTransaction });
-      dispatch({ type: SET_ACCOUNT_RECOVERY_SETUP_TRANSACTION, payload: setupTransaction });
-      dispatch({ type: accountRecoveryEnabled ? SET_ACCOUNT_RECOVERY_ENABLED : SET_ACCOUNT_RECOVERY_DISABLED });
+      dispatch({ type: SET_ACCOUNT_RECOVERY_TRANSACTIONS, payload: transactions });
+      if (accountRecoveryEnabled) dispatch({ type: SET_ACCOUNT_RECOVERY_ENABLED });
 
       await loadAndMigrate('history', dispatch, getState);
 

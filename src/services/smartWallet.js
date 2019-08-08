@@ -285,6 +285,26 @@ class SmartWallet {
     return items;
   }
 
+  estimateAddAccountFriendRecoveryExtension() {
+    return this.sdk.estimateAddAccountFriendRecoveryExtension();
+  }
+
+  estimateSetupAccountFriendRecoveryExtension(requiredFriends: number, friendAddresses: []) {
+    return this.sdk.estimateSetupAccountFriendRecoveryExtension(requiredFriends, friendAddresses);
+  }
+
+  getAccountFriendRecovery(address: string) {
+    return this.sdk.getAccountFriendRecovery(address);
+  }
+
+  addAccountFriendRecoveryExtension(estimated: Object) {
+    return this.sdk.submitAccountTransaction(estimated);
+  }
+
+  setupAccountFriendRecoveryExtension(estimated: Object) {
+    return this.sdk.submitAccountTransaction(estimated);
+  }
+
   getDeployEstimate(gasPrice: BigNumber) {
     /**
      * can also call `this.sdk.estimateAccountDeployment(REGULAR);`,
