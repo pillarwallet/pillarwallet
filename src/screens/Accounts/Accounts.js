@@ -42,6 +42,9 @@ import { setActiveBNetworkAction } from 'actions/blockchainNetworkActions';
 
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { calculatePortfolioBalance } from 'utils/assets';
+import { PPN_TOKEN } from 'configs/assetsConfig';
+import { createStructuredSelector } from 'reselect';
+import { availableStakeSelector } from 'selectors/paymentNetwork';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -51,13 +54,10 @@ type Props = {
   rates: Rates,
   assets: Assets,
   baseFiatCurrency: string,
+  smartWalletFeatureEnabled: boolean,
+  availableStake: number,
+  isTankInitialised: boolean,
 }
-
-const ppnInitButton = {
-  id: 'INIT_PPN',
-  title: 'Pillar Network',
-  isNotConnected: true,
-};
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
@@ -84,6 +84,8 @@ class AccountsScreen extends React.Component<Props> {
       balances,
       rates,
       assets,
+      availableStake,
+      isTankInitialised,
     } = this.props;
     const { id } = network;
 
@@ -102,6 +104,7 @@ class AccountsScreen extends React.Component<Props> {
     const combinedFormattedBalance = formatMoney(combinedBalance || 0);
 
     const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const availableStakeFormattedAmount = formatMoney(availableStake, 4);
 
     switch (id) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
@@ -113,21 +116,14 @@ class AccountsScreen extends React.Component<Props> {
             fallbackIcon={genericToken}
           />
         );
-      case 'INIT_PPN':
-        return (
-          <ListCard
-            {...network}
-            action={() => navigation.navigate(PILLAR_NETWORK_INTRO)}
-            note={ppnNote}
-            fallbackIcon={genericToken}
-          />
-        );
       case BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK:
         return (
           <ListCard
             {...network}
-            subtitle="Balance: 0"
-            action={() => this.setActiveNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK)}
+            subtitle={`Balance: ${availableStakeFormattedAmount} ${PPN_TOKEN}`}
+            action={isTankInitialised
+              ? () => this.setActiveNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK)
+              : () => navigation.navigate(PILLAR_NETWORK_INTRO)}
             note={ppnNote}
             fallbackIcon={genericToken}
           />
@@ -138,13 +134,7 @@ class AccountsScreen extends React.Component<Props> {
   };
 
   render() {
-    const { blockchainNetworks } = this.props;
-    const PillarNetwork = blockchainNetworks
-      .find(({ id: bnetworkId }) => bnetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) || {};
-
-    const networksListData = Object.keys(PillarNetwork).length
-      ? blockchainNetworks
-      : [...blockchainNetworks, ppnInitButton];
+    const { blockchainNetworks, smartWalletFeatureEnabled } = this.props;
 
     return (
       <ContainerWithHeader
@@ -160,7 +150,9 @@ class AccountsScreen extends React.Component<Props> {
         }}
       >
         <FlatList
-          data={networksListData}
+          data={smartWalletFeatureEnabled
+            ? blockchainNetworks
+            : blockchainNetworks.filter((network) => network.type !== BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK)}
           keyExtractor={(item) => item.id}
           style={{ width: '100%' }}
           contentContainerStyle={{ width: '100%', padding: 20 }}
@@ -176,15 +168,28 @@ const mapStateToProps = ({
   balances: { data: balances },
   assets: { data: assets },
   rates: { data: rates },
+  paymentNetwork: { isTankInitialised },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   blockchainNetworks,
   balances,
   assets,
   rates,
+  isTankInitialised,
+  smartWalletFeatureEnabled,
+});
+
+const structuredSelector = createStructuredSelector({
+  availableStake: availableStakeSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   setActiveBNetwork: (id: string) => dispatch(setActiveBNetworkAction(id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountsScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen);

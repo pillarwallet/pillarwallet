@@ -507,6 +507,7 @@ class HomeScreen extends React.Component<Props, State> {
               settingsLabel="Connect"
             />
           </WalletConnectWrapper>
+          {!!badges.length &&
           <BadgesWrapper>
             <ListHeader>Game of badges</ListHeader>
             <FlatList
@@ -518,7 +519,7 @@ class HomeScreen extends React.Component<Props, State> {
               contentContainerStyle={{ paddingHorizontal: 10 }}
               initialNumToRender={5}
             />
-          </BadgesWrapper>
+          </BadgesWrapper>}
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}

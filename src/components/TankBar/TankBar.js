@@ -22,11 +22,18 @@ import { Animated } from 'react-native';
 import styled from 'styled-components/native/index';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { MediumText } from 'components/Typography';
-import Icon from 'components/Icon';
+// import Icon from 'components/Icon';
+import Spinner from 'components/Spinner';
+
+// configs
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 type Props = {
   maxValue: number,
   currentValue: number,
+  currentValueFormatted: string,
+  topupAction: Function,
+  topUpLoading: boolean,
 };
 
 type State = {
@@ -123,7 +130,7 @@ const LabelText = styled(MediumText)`
 `;
 
 const LabelButton = styled.TouchableOpacity`
-  background-color: ${baseColors.electricBlue};
+  background-color: ${props => props.disabled ? baseColors.lightGray : baseColors.electricBlue};
   border-radius: 12px;
   height: 24px;
   align-items: center;
@@ -142,18 +149,18 @@ const Value = styled(MediumText)`
   color: ${props => props.color ? props.color : baseColors.slateBlack};
 `;
 
-const ChevronWrapper = styled.View`
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-left: 4px;
-  margin-top: -2px;
-`;
-
-const SelectorChevron = styled(Icon)`
-  font-size: 5px;
-  color: ${baseColors.slateBlack};
-`;
+// const ChevronWrapper = styled.View`
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   margin-left: 4px;
+//   margin-top: -2px;
+// `;
+//
+// const SelectorChevron = styled(Icon)`
+//   font-size: 5px;
+//   color: ${baseColors.slateBlack};
+// `;
 
 export default class TankBar extends React.Component<Props, State> {
   static defaultProps = {
@@ -207,6 +214,7 @@ export default class TankBar extends React.Component<Props, State> {
       this.handleStatusValue(maxValue, currentValue);
     }
   }
+
   animateProgress = (newProgress: number) => {
     Animated.spring(this.state.progressAnimated, {
       toValue: newProgress,
@@ -223,7 +231,13 @@ export default class TankBar extends React.Component<Props, State> {
       labelTransform,
       didFirstAnimation,
     } = this.state;
-    const { maxValue, currentValue } = this.props;
+    const {
+      maxValue,
+      currentValue,
+      currentValueFormatted,
+      topupAction,
+      topUpLoading,
+    } = this.props;
 
     return (
       <Wrapper>
@@ -256,7 +270,8 @@ export default class TankBar extends React.Component<Props, State> {
             }}
           >
             <Value color={baseColors.darkGray}>{maxValue}</Value>
-            <Value style={{ marginLeft: 4 }}>PLR</Value>
+            <Value style={{ marginLeft: 4 }}>{PPN_TOKEN}</Value>
+            { /* Uncomment when needed
             <ChevronWrapper>
               <SelectorChevron
                 name="chevron-right"
@@ -268,7 +283,7 @@ export default class TankBar extends React.Component<Props, State> {
                   transform: [{ rotate: '90deg' }],
                 }}
               />
-            </ChevronWrapper>
+            </ChevronWrapper> */}
           </SideButton>
         </Row>
         {!!barWidth && !!sideButtonWidth &&
@@ -281,7 +296,7 @@ export default class TankBar extends React.Component<Props, State> {
                   outputRange: [0, barWidth],
                 }),
               }],
-              marginLeft: -2,
+              marginLeft: -1,
             }}
           />
           <AnimatedProgressLabel
@@ -298,9 +313,10 @@ export default class TankBar extends React.Component<Props, State> {
               }),
             }}
           >
-            <LabelText>{`${currentValue} PLR`}</LabelText>
-            <LabelButton onPress={() => {}}>
-              <ButtonText>Top up</ButtonText>
+            <LabelText>{`${currentValueFormatted} ${PPN_TOKEN}`}</LabelText>
+            <LabelButton onPress={!topUpLoading ? () => { topupAction(); } : null} disabled={topUpLoading}>
+              {!topUpLoading && <ButtonText>Top up</ButtonText>}
+              {topUpLoading && <Spinner width={20} height={20} />}
             </LabelButton>
           </AnimatedProgressLabel>
         </Row>}

@@ -56,7 +56,7 @@ const Wrapper = styled.View`
 
 const Text = styled(BoldText)`
   line-height: ${fontSizes.extraLarger};
-  font-size: ${props => props.subtitle ? fontSizes.medium : fontSizes.large};
+  font-size: ${props => props.subtitle ? fontSizes.extraExtraSmall : fontSizes.extraSmall};
   font-weight: ${fontWeights.bold};
   ${({ align }) => align === 'center' && `
     line-height: 25px;

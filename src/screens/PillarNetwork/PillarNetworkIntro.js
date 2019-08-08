@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { FlatList } from 'react-native';
+import { FlatList, Platform } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -27,18 +27,39 @@ import { ScrollWrapper } from 'components/Layout';
 import { BoldText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
+import SlideModal from 'components/Modals/SlideModal';
+import CheckPin from 'components/CheckPin';
+
 import { baseColors, fontSizes } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
-import { ASSETS } from 'constants/navigationConstants';
+import { FUND_TANK } from 'constants/navigationConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { addNetworkAction } from 'actions/blockchainNetworkActions';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+
+import { delay } from 'utils/common';
+import { getActiveAccount } from 'utils/accounts';
+
+import { ensureSmartAccountConnectedAction } from 'actions/smartWalletActions';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { switchAccountAction } from 'actions/accountsActions';
+
+import type { Accounts } from 'models/Account';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   addNetwork: Function,
+  resetIncorrectPassword: Function,
+  ensureSmartAccountConnected: Function,
+  switchAccount: Function,
+  accounts: Accounts,
 }
+type State = {
+  showPinScreenForAction: boolean,
+  processingCreate: boolean,
+}
+
 const CustomWrapper = styled.View`
   flex: 1;
   padding: 20px 55px 20px 46px;
@@ -86,6 +107,15 @@ const FeatureIcon = styled(CachedImage)`
   margin-bottom: 24px;
 `;
 
+const Wrapper = styled.View`
+  position: relative;
+  margin: 5px 20px 20px;
+  padding-top: ${Platform.select({
+    ios: '20px',
+    android: '14px',
+  })};
+`;
+
 const features = [
   {
     key: 'instant',
@@ -106,18 +136,46 @@ const features = [
 
 const PPNIcon = require('assets/images/logo_PPN.png');
 
-class PillarNetworkIntro extends React.Component<Props> {
-  createPLRTank = () => {
-    const { navigation, addNetwork } = this.props;
-    addNetwork({
-      id: BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK,
-      title: 'Pillar network',
-      isActive: false,
+class PillarNetworkIntro extends React.Component<Props, State> {
+  state = {
+    showPinScreenForAction: false,
+    processingCreate: false,
+  };
+
+  handleCheckPinModalClose = () => {
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
+    this.setState({
+      showPinScreenForAction: false,
+      processingCreate: false,
     });
-    navigation.navigate(ASSETS);
+  };
+
+  initPLRTank = async (_: string, wallet: Object) => {
+    const {
+      ensureSmartAccountConnected,
+      navigation,
+      accounts,
+      switchAccount,
+    } = this.props;
+    this.setState({ showPinScreenForAction: false });
+    const activeAccount = getActiveAccount(accounts) || { type: '' };
+    if (activeAccount.type === ACCOUNT_TYPES.KEY_BASED) {
+      const smartAccount = (accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || { id: '' });
+      const { id: smartAccountId } = smartAccount;
+      await switchAccount(smartAccountId, wallet.privateKey);
+    }
+    await delay(500);
+    ensureSmartAccountConnected(wallet.privateKey)
+      .then(() => {
+        this.setState({ processingCreate: false },
+          () => navigation.navigate(FUND_TANK, { isInitFlow: true }));
+      })
+      .catch(() => null);
   };
 
   render() {
+    const { showPinScreenForAction, processingCreate } = this.state;
     return (
       <ContainerWithHeader
         headerProps={{
@@ -162,20 +220,43 @@ class PillarNetworkIntro extends React.Component<Props> {
             <Button
               block
               title="Create PLR Tank"
-              onPress={this.createPLRTank}
+              onPress={() => this.setState({ showPinScreenForAction: true, processingCreate: true })}
               roundedCorners
               style={{ backgroundColor: baseColors.pomegranate, marginTop: 40, marginBottom: 20 }}
               textStyle={{ color: baseColors.ultramarine }}
+              isLoading={processingCreate}
             />
           </CustomWrapper>
         </ScrollWrapper>
+        <SlideModal
+          isVisible={!!showPinScreenForAction}
+          onModalHide={this.handleCheckPinModalClose}
+          title="Enter pincode"
+          centerTitle
+          fullScreen
+          showHeader
+        >
+          <Wrapper flex={1}>
+            <CheckPin
+              onPinValid={this.initPLRTank}
+            />
+          </Wrapper>
+        </SlideModal>
       </ContainerWithHeader>
     );
   }
 }
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  addNetwork: (network: Object) => dispatch(addNetworkAction(network)),
+const mapStateToProps = ({
+  accounts: { data: accounts },
+}) => ({
+  accounts,
 });
 
-export default connect(null, mapDispatchToProps)(PillarNetworkIntro);
+const mapDispatchToProps = (dispatch: Function) => ({
+  switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+  ensureSmartAccountConnected: (privateKey: string) => dispatch(ensureSmartAccountConnectedAction(privateKey)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PillarNetworkIntro);

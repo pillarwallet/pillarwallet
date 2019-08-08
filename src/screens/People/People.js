@@ -409,15 +409,6 @@ class PeopleScreen extends React.Component<Props, State> {
               paddingVertical: spacing.rhythm,
               paddingTop: 0,
             }}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  const { fetchInviteNotifications } = this.props;
-                  fetchInviteNotifications();
-                }}
-              />
-            }
           />
           }
           {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
@@ -464,6 +455,7 @@ class PeopleScreen extends React.Component<Props, State> {
       contactState,
       localContacts,
       chats,
+      fetchInviteNotifications,
     } = this.props;
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
 
@@ -492,6 +484,7 @@ class PeopleScreen extends React.Component<Props, State> {
         headerProps={{
           leftItems: [{ user: true }],
         }}
+        inset={{ bottom: 0 }}
       >
         <ScrollView
           keyboardShouldPersistTaps="always"
@@ -502,6 +495,12 @@ class PeopleScreen extends React.Component<Props, State> {
             }
           }}
           scrollEnabled={!disableScroll}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => { fetchInviteNotifications(); }}
+            />
+          }
         >
           {this.renderContent(sortedLocalContacts, inSearchMode)}
           <ConnectionConfirmationModal

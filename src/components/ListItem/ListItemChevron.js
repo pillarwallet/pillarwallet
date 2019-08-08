@@ -47,6 +47,9 @@ const ItemRow = styled.View`
   padding: 36px 20px 36px 30px;
 `;
 
+const TextWrapper = styled.View`
+`;
+
 const ContentWrapper = styled.View`
   display: flex;
   flex: 1;
@@ -69,6 +72,14 @@ const ItemLabel = styled(BaseText)`
   line-height: ${fontSizes.small};
   color: ${props => props.color ? props.color : baseColors.electricBlue};
 `;
+
+const SubText = styled(BaseText)`
+  font-size: ${fontSizes.extraExtraSmall};
+  line-height: ${fontSizes.extraExtraSmall};
+  color: ${props => props.color ? props.color : baseColors.darkGray};
+  margin-top: 4px;
+`;
+
 
 const ItemAddon = styled.View`
   flex-direction: row;
@@ -109,6 +120,7 @@ type Props = {
   addon?: React.Node,
   bordered?: boolean,
   color?: string,
+  subtext?: string,
 }
 
 export const ListItemChevron = (props: Props) => {
@@ -118,13 +130,17 @@ export const ListItemChevron = (props: Props) => {
     addon,
     bordered,
     color,
+    subtext,
   } = props;
   return (
     <ListItem bordered={bordered}>
       <ButtonWrapper onPress={onPress}>
         <ItemRow>
           <ContentWrapper>
-            <ItemLabel color={color}>{label}</ItemLabel>
+            <TextWrapper>
+              <ItemLabel color={color}>{label}</ItemLabel>
+              {!!subtext && <SubText>{subtext}</SubText>}
+            </TextWrapper>
             {!!addon && <ItemAddon>{addon}</ItemAddon>}
           </ContentWrapper>
           <Icon

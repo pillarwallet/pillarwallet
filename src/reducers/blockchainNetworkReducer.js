@@ -15,11 +15,18 @@ export type NetworkAction = {
 };
 
 const initialState = {
-  data: [{
-    id: BLOCKCHAIN_NETWORK_TYPES.ETHEREUM,
-    title: 'Ethereum',
-    isActive: true,
-  }],
+  data: [
+    {
+      id: BLOCKCHAIN_NETWORK_TYPES.ETHEREUM,
+      title: 'Ethereum',
+      isActive: true,
+    },
+    {
+      id: BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK,
+      title: 'Pillar network',
+      isActive: false,
+    },
+  ],
 };
 
 export default function blockchainNetworkReducer(

@@ -56,7 +56,11 @@ import {
   SET_SMART_WALLET_UPGRADE_STATUS,
   SET_SMART_WALLET_LAST_SYNCED_HASH,
 } from 'constants/smartWalletConstants';
-import { UPDATE_PAYMENT_NETWORK_BALANCES, UPDATE_PAYMENT_NETWORK_STAKED } from 'constants/paymentNetworkConstants';
+import {
+  UPDATE_PAYMENT_NETWORK_BALANCES,
+  UPDATE_PAYMENT_NETWORK_STAKED,
+  MARK_PLR_TANK_INITIALISED,
+} from 'constants/paymentNetworkConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -127,6 +131,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { paymentNetworkStaked = '' } = await storage.get('paymentNetworkStaked');
       dispatch({ type: UPDATE_PAYMENT_NETWORK_STAKED, payload: paymentNetworkStaked });
+
+      const { isPLRTankInitialised = false } = await storage.get('isPLRTankInitialised');
+      console.log('isPLRTankInitialised ---->', isPLRTankInitialised);
+      if (isPLRTankInitialised) dispatch({ type: MARK_PLR_TANK_INITIALISED });
 
       const { offlineQueue = [] } = await storage.get('offlineQueue');
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });

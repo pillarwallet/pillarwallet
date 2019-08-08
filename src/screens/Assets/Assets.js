@@ -22,6 +22,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { availableStakeSelector } from 'selectors/paymentNetwork';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -93,13 +94,13 @@ type Props = {
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
-  smartWalletFeatureEnabled: boolean,
   blockchainNetworks: Object[],
   activeAccount: Account,
   logScreenView: (view: string, screen: string) => void,
   fetchAllCollectiblesData: Function,
   useBiometrics: boolean,
   backupStatus: Object,
+  availableStake: number,
 }
 
 type State = {
@@ -161,6 +162,7 @@ class AssetsScreen extends React.Component<Props, State> {
       navigation,
       blockchainNetworks,
       activeAccount,
+      availableStake,
     } = this.props;
 
     const { type: walletType } = activeAccount;
@@ -182,7 +184,7 @@ class AssetsScreen extends React.Component<Props, State> {
           action: () => navigation.navigate(ACCOUNTS),
           screenView: VIEWS.PPN_VIEW,
           customHeaderProps: {},
-          customHeaderButtonProps: { isActive: true }, // TODO: pass in PPN activity status
+          customHeaderButtonProps: { isActive: availableStake > 0 },
         };
     }
   };
@@ -282,6 +284,7 @@ class AssetsScreen extends React.Component<Props, State> {
             sendingBlockedMessage={sendingBlockedMessage}
             showInsight={showSmartWalletInsight}
             hideInsight={() => this.hideWalletInsight('SMART')}
+            showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
           />);
       case VIEWS.KEY_WALLET_VIEW:
         return (
@@ -323,6 +326,7 @@ class AssetsScreen extends React.Component<Props, State> {
             },
           }],
         }}
+        inset={{ bottom: 0 }}
       >
         {this.renderView(screenView)}
       </ContainerWithHeader>
@@ -343,7 +347,6 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout }, useBiometrics = false } },
   badges: { data: badges },
   smartWallet: smartWalletState,
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
   blockchainNetwork: { data: blockchainNetworks },
 }) => ({
   wallet,
@@ -359,13 +362,13 @@ const mapStateToProps = ({
   useBiometrics,
   badges,
   smartWalletState,
-  smartWalletFeatureEnabled,
   blockchainNetworks,
 });
 
 const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
   activeAccount: activeAccountSelector,
+  availableStake: availableStakeSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

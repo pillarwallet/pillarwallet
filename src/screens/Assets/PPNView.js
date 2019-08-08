@@ -19,30 +19,43 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RefreshControl, ScrollView } from 'react-native';
+import { Platform, RefreshControl, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
+import { weiToEth } from '@netgum/utils';
+import get from 'lodash.get';
+import { BigNumber } from 'bignumber.js';
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 import TankBar from 'components/TankBar';
 import CircleButton from 'components/CircleButton';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import { MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
+import SlideModal from 'components/Modals/SlideModal';
+import CheckPin from 'components/CheckPin';
+import TankAssetBalance from 'components/TankAssetBalance';
 
-import { getBalance, getRate } from 'utils/assets';
-import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { addressesEqual, generatePMTToken, getPPNTokenAddress, getRate } from 'utils/assets';
+import { delay, formatAmount, formatMoney, getCurrencySymbol } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { getAccountAddress } from 'utils/accounts';
 
-import { defaultFiatCurrency, TOKENS } from 'constants/assetsConstants';
-import { ASSET } from 'constants/navigationConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { FUND_TANK, SETTLE_BALANCE } from 'constants/navigationConstants';
 
 import { activeAccountSelector } from 'selectors';
-import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+import {
+  availableStakeSelector,
+  paymentNetworkAccountBalancesSelector,
+  paymentNetworkNonZeroBalancesSelector,
+} from 'selectors/paymentNetwork';
 import { accountBalancesSelector } from 'selectors/balances';
-import type { Assets, Balances } from 'models/Asset';
+import type { Asset, Assets, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
+
+import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { ensureSmartAccountConnectedAction } from 'actions/smartWalletActions';
 
 type Props = {
   baseFiatCurrency: string,
@@ -52,7 +65,17 @@ type Props = {
   paymentNetworkBalances: Balances,
   activeAccount: Object,
   navigation: NavigationScreenProp<*>,
+  availableStake: number,
+  supportedAssets: Asset[],
+  assetsOnNetwork: Object,
+  ensureSmartAccountConnected: Function,
+  resetIncorrectPassword: Function,
 }
+
+type State = {
+  topUpButtonSubmitted: boolean,
+  showPinScreenForAction: string,
+};
 
 const AssetButtonsWrapper = styled.View`
   flex-direction: row;
@@ -75,14 +98,14 @@ const HeaderTitle = styled(MediumText)`
 `;
 
 const HeaderButton = styled.TouchableOpacity`
-  background-color: ${baseColors.electricBlue};
+  background-color: ${props => props.disabled ? baseColors.lightGray : baseColors.electricBlue};
   border-radius: 3px;
   padding: 6px 12px;
 `;
 
 const ButtonText = styled(MediumText)`
   font-size: ${fontSizes.extraExtraSmall}px;
-  color: ${baseColors.white};
+  color: ${props => props.disabled ? baseColors.darkGray : baseColors.white};
 `;
 
 const StyledFlatList = styled.FlatList`
@@ -91,113 +114,228 @@ const StyledFlatList = styled.FlatList`
   border-top-width: 1px;
 `;
 
+const Wrapper = styled.View`
+  position: relative;
+  margin: 5px 20px 20px;
+  padding-top: ${Platform.select({
+    ios: '20px',
+    android: '14px',
+  })};
+`;
+
+const AddonWrapper = styled.View`
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
+const BalanceWrapper = styled.View`
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  height: 100%;
+`;
+
+const ValueInFiat = styled(BaseText)`
+  color: ${baseColors.coolGrey};
+  font-size: ${fontSizes.extraExtraSmall}px;
+`;
+
 const iconRequest = require('assets/icons/icon_receive.png');
 const iconSend = require('assets/icons/icon_send.png');
+const genericToken = require('assets/images/tokens/genericToken.png');
 
-class PPNView extends React.Component<Props> {
-  renderAsset = ({ item: asset }) => {
-    const { baseFiatCurrency, activeAccount, navigation } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
-    const {
-      name,
-      symbol,
-      iconUrl,
-      paymentNetworkBalance,
-      paymentNetworkBalanceInFiat,
-      balance,
-      patternUrl,
-      iconMonoUrl,
-      balanceInFiat,
-      decimals,
-    } = asset;
+class PPNView extends React.Component<Props, State> {
+  initialAssets: Object[];
 
-    const fullIconMonoUrl = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
-    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-    const patternIcon = patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl;
-    const formattedBalanceInFiat = formatMoney(balanceInFiat);
-    const displayAmount = formatMoney(balance, 4);
-
-    const assetData = {
-      name: name || symbol,
-      token: symbol,
-      amount: displayAmount,
-      contractAddress: asset.address,
-      description: asset.description,
-      balance,
-      balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
-      address: getAccountAddress(activeAccount),
-      icon: fullIconMonoUrl,
-      iconColor: fullIconUrl,
-      decimals,
-      patternIcon,
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      topUpButtonSubmitted: false,
+      showPinScreenForAction: '',
     };
+    this.initialAssets = [];
+  }
+
+
+  componentDidMount() {
+    this.getDefaultAssets();
+  }
+
+  getDefaultAssets = async () => {
+    const { supportedAssets = {} } = this.props;
+    this.initialAssets = [supportedAssets.find((asset) => asset.symbol === ETH) || {}, generatePMTToken()]
+      .map(({ symbol, address }) => {
+        return {
+          token: { symbol, address },
+        };
+      });
+  };
+
+  // renderAsset = ({ item: asset }) => {
+  //   const { baseFiatCurrency, activeAccount, navigation } = this.props;
+  //   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  //   const currencySymbol = getCurrencySymbol(fiatCurrency);
+  //   const {
+  //     name,
+  //     symbol,
+  //     iconUrl,
+  //     paymentNetworkBalance,
+  //     paymentNetworkBalanceInFiat,
+  //     balance,
+  //     patternUrl,
+  //     iconMonoUrl,
+  //     balanceInFiat,
+  //     decimals,
+  //   } = asset;
+  //
+  //   const fullIconMonoUrl = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
+  //   const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+  //   const patternIcon = patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl;
+  //   const formattedBalanceInFiat = formatMoney(balanceInFiat);
+  //   const displayAmount = formatMoney(balance, 4);
+  //
+  //   const assetData = {
+  //     name: name || symbol,
+  //     token: symbol,
+  //     amount: displayAmount,
+  //     contractAddress: asset.address,
+  //     description: asset.description,
+  //     balance,
+  //     balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
+  //     address: getAccountAddress(activeAccount),
+  //     icon: fullIconMonoUrl,
+  //     iconColor: fullIconUrl,
+  //     decimals,
+  //     patternIcon,
+  //   };
+  //
+  //   return (
+  //     <ListItemWithImage
+  //       onPress={() => {
+  //         navigation.navigate(ASSET,
+  //           {
+  //             assetData: {
+  //               ...assetData,
+  //               tokenType: TOKENS,
+  //             },
+  //           },
+  //         );
+  //       }}
+  //       label={name}
+  //       avatarUrl={fullIconUrl}
+  //       balance={{
+  //         syntheticBalance: formatMoney(paymentNetworkBalance),
+  //         value: formatMoney(paymentNetworkBalanceInFiat, 4),
+  //         currency: currencySymbol,
+  //         token: symbol,
+  //       }}
+  //     />
+  //   );
+  // };
+
+  renderAsset = ({ item }) => {
+    // const { txToSettle } = this.state;
+    const { baseFiatCurrency, assets, rates } = this.props;
+
+    let tokenSymbol = get(item, 'token.symbol', get(item, 'token.symbol', ETH));
+    let value = get(item, 'value', new BigNumber(0));
+    const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
+    const tokenAddress = get(item, 'token.address', '');
+
+    if (tokenSymbol !== ETH && addressesEqual(tokenAddress, ppnTokenAddress)) {
+      tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
+    }
+
+    if (tokenSymbol === ETH) value = new BigNumber(weiToEth(value));
+
+    const assetInfo = {
+      ...(assets[tokenSymbol] || {}),
+      symbol: tokenSymbol,
+      value,
+      hash: item.hash,
+      createdAt: item.createdAt,
+    };
+
+    const fullIconUrl = `${SDK_PROVIDER}/${assetInfo.iconUrl}?size=3`;
+    const formattedAmount = formatAmount(assetInfo.value.toString());
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const totalInFiat = assetInfo.value.toNumber() * getRate(rates, assetInfo.symbol, fiatCurrency);
+    const formattedAmountInFiat = formatMoney(totalInFiat);
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     return (
       <ListItemWithImage
-        onPress={() => {
-          navigation.navigate(ASSET,
-            {
-              assetData: {
-                ...assetData,
-                tokenType: TOKENS,
-              },
-            },
-          );
-        }}
-        label={name}
-        avatarUrl={fullIconUrl}
-        balance={{
-          syntheticBalance: formatMoney(paymentNetworkBalance),
-          value: formatMoney(paymentNetworkBalanceInFiat, 4),
-          currency: currencySymbol,
-          token: symbol,
-        }}
+        label={assetInfo.name}
+        itemImageUrl={fullIconUrl || genericToken}
+        fallbackSource={genericToken}
+        // onPress={() => this.toggleItemToTransfer(assetInfo)}
+        customAddon={
+          <AddonWrapper>
+            <BalanceWrapper>
+              <TankAssetBalance amount={formattedAmount} isSynthetic={assetInfo.symbol !== ETH} />
+              <ValueInFiat>
+                {`${currencySymbol}${formattedAmountInFiat}`}
+              </ValueInFiat>
+            </BalanceWrapper>
+          </AddonWrapper>
+        }
+        rightColumnInnerStyle={{ flexDirection: 'row' }}
       />
     );
   };
 
   renderHeader = () => {
+    const { assetsOnNetwork, navigation } = this.props;
     return (
       <ListHeaderWrapper>
         <HeaderTitle>Wallet balance £168.71</HeaderTitle>
-        <HeaderButton onPress={() => {}}>
-          <ButtonText>Settle</ButtonText>
+        <HeaderButton
+          onPress={() => navigation.navigate(SETTLE_BALANCE)}
+          disabled={!Object.keys(assetsOnNetwork).length}
+        >
+          <ButtonText disabled={!Object.keys(assetsOnNetwork).length}>Settle</ButtonText>
         </HeaderButton>
       </ListHeaderWrapper>
     );
   };
 
-  render() {
-    const {
-      assets,
-      baseFiatCurrency,
-      rates,
-      balances,
-      paymentNetworkBalances,
-    } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  navigateToFundTankScreen = async (_: string, wallet: Object) => {
+    const { ensureSmartAccountConnected, navigation } = this.props;
+    this.setState({ showPinScreenForAction: '' });
 
-    const sortedAssets = Object.keys(assets)
-      .map(id => assets[id])
-      .map(({ symbol, balance, ...rest }) => ({
-        symbol,
-        balance: getBalance(balances, symbol),
-        paymentNetworkBalance: getBalance(paymentNetworkBalances, symbol),
-        ...rest,
-      }))
-      .map(({ balance, symbol, paymentNetworkBalance, ...rest }) => ({ // eslint-disable-line
-        balance,
-        symbol,
-        balanceInFiat: balance * getRate(rates, symbol, fiatCurrency),
-        paymentNetworkBalance,
-        paymentNetworkBalanceInFiat: paymentNetworkBalance * getRate(rates, symbol, fiatCurrency),
-        ...rest,
-      }))
-      .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
+    await delay(500);
+    ensureSmartAccountConnected(wallet.privateKey)
+      .then(() => {
+        this.setState({ topUpButtonSubmitted: false }, () => navigation.navigate(FUND_TANK));
+      })
+      .catch(() => null);
+  };
+
+  handleCheckPinModalClose = () => {
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
+    this.setState({
+      showPinScreenForAction: '',
+      topUpButtonSubmitted: false,
+    });
+  };
+
+  render() {
+    const { showPinScreenForAction, topUpButtonSubmitted } = this.state;
+    const {
+      availableStake,
+      assetsOnNetwork,
+    } = this.props;
+
+    const assetsOnNetworkArray = Object.keys(assetsOnNetwork);
+    const totalStake = availableStake + 10;
+    const availableFormattedAmount = formatMoney(availableStake, 4);
 
     return (
       <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ flexGrow: 1 }}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -206,8 +344,11 @@ class PPNView extends React.Component<Props> {
         }
       >
         <TankBar
-          maxValue={1000}
-          currentValue={678}
+          maxValue={totalStake}
+          currentValue={availableStake}
+          currentValueFormatted={availableFormattedAmount}
+          topupAction={() => this.setState({ showPinScreenForAction: FUND_TANK, topUpButtonSubmitted: true })}
+          topUpLoading={topUpButtonSubmitted}
         />
         <AssetButtonsWrapper>
           <CircleButton
@@ -222,7 +363,7 @@ class PPNView extends React.Component<Props> {
           />
         </AssetButtonsWrapper>
         <StyledFlatList
-          data={sortedAssets}
+          data={[...this.initialAssets, ...assetsOnNetworkArray]}
           keyExtractor={(item) => item.id}
           renderItem={this.renderAsset}
           initialNumToRender={5}
@@ -231,13 +372,27 @@ class PPNView extends React.Component<Props> {
           style={{ width: '100%', height: '100%' }}
           ListHeaderComponent={this.renderHeader}
         />
+        <SlideModal
+          isVisible={!!showPinScreenForAction}
+          onModalHide={this.handleCheckPinModalClose}
+          title="Enter pincode"
+          centerTitle
+          fullScreen
+          showHeader
+        >
+          <Wrapper flex={1}>
+            <CheckPin
+              onPinValid={this.navigateToFundTankScreen}
+            />
+          </Wrapper>
+        </SlideModal>
       </ScrollView>
     );
   }
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
+  assets: { data: assets, supportedAssets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
 }) => ({
@@ -245,11 +400,14 @@ const mapStateToProps = ({
   rates,
   baseFiatCurrency,
   assetsLayout,
+  supportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
+  assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
+  availableStake: availableStakeSelector,
   activeAccount: activeAccountSelector,
 });
 
@@ -258,4 +416,9 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-export default withNavigation(connect(combinedMapStateToProps)(PPNView));
+const mapDispatchToProps = (dispatch) => ({
+  ensureSmartAccountConnected: (privateKey: string) => dispatch(ensureSmartAccountConnectedAction(privateKey)),
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+});
+
+export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView));

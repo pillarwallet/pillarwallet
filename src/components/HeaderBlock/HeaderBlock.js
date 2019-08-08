@@ -265,6 +265,7 @@ class HeaderBlock extends React.Component<Props, State> {
           horizontal
           contentContainerStyle={{ justifyContent: 'flex-end', flexGrow: 1 }}
           style={{ flex: sideFlex || 1 }}
+          scrollEnabled={false}
         />}
       </HeaderRow>
     );

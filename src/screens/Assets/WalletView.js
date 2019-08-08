@@ -117,6 +117,7 @@ type Props = {
   fetchAssetsBalances: Function,
   fetchAllCollectiblesData: Function,
   deploySmartWallet: Function,
+  showDeploySmartWallet?: boolean,
 }
 
 type State = {
@@ -388,7 +389,7 @@ class WalletView extends React.Component<Props, State> {
     }
 
     return (
-      <Wrapper flex={1} regularPadding center>
+      <Wrapper flex={1} regularPadding center style={{ marginTop: 20 }}>
         <MessageTitle>{ title }</MessageTitle>
         <Message>{ message }</Message>
         <Wrapper style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
@@ -428,6 +429,8 @@ class WalletView extends React.Component<Props, State> {
       accounts,
       smartWalletState,
       smartWalletFeatureEnabled,
+      showDeploySmartWallet,
+      deploySmartWallet,
     } = this.props;
 
     // SEARCH
@@ -458,7 +461,7 @@ class WalletView extends React.Component<Props, State> {
     const balance = Object.keys(walletBalances).length ? walletBalances[baseFiatCurrency || defaultFiatCurrency] : 0;
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const hasSmartWallet = smartWalletStatus.hasAccount;
-    const showFinishSmartWalletActivation = !!smartWalletFeatureEnabled && !hasSmartWallet;
+    const showFinishSmartWalletActivation = (!!smartWalletFeatureEnabled && !hasSmartWallet) || showDeploySmartWallet;
 
     return (
       <CustomKAWrapper
@@ -469,8 +472,8 @@ class WalletView extends React.Component<Props, State> {
             refreshing={false}
             onRefresh={() => {
               const { fetchAssetsBalances, fetchAllCollectiblesData } = this.props;
-              if (activeTab === TOKENS) fetchAssetsBalances(assets);
-              if (activeTab === COLLECTIBLES) fetchAllCollectiblesData();
+              fetchAssetsBalances(assets);
+              fetchAllCollectiblesData();
             }}
           />
         }
@@ -525,10 +528,10 @@ class WalletView extends React.Component<Props, State> {
           {inAssetSearchMode && isSearchOver &&
             this.renderFoundTokensList()
           }
-          {activeTab === TOKENS && !inAssetSearchMode && (
+          {((activeTab === TOKENS || !filteredCollectibles.length) && !inAssetSearchMode) && (
             <AssetsList balance={balance} />
           )}
-          {activeTab === COLLECTIBLES && (
+          {activeTab === COLLECTIBLES && !!filteredCollectibles.length && (
             <CollectiblesList
               collectibles={filteredCollectibles}
               searchQuery={query}
@@ -538,8 +541,11 @@ class WalletView extends React.Component<Props, State> {
           <ActionsWrapper>
             {!!showFinishSmartWalletActivation &&
             <ListItemChevron
-              label="Finish Smart Wallet activation"
-              onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
+              label={showDeploySmartWallet ? 'Deploy Smart Wallet' : 'Finish Smart Wallet activation'}
+              subtext={showDeploySmartWallet ? 'Includes small fee' : ''}
+              onPress={showDeploySmartWallet
+                ? () => deploySmartWallet()
+                : () => navigation.navigate(SMART_WALLET_INTRO)}
               bordered
             />}
             {!balance &&

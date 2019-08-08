@@ -141,7 +141,11 @@ class ContainerWithHeader extends React.Component<Props> {
         >
           <SafeAreaView
             forceInset={{ top: 'never', bottom: 'always', ...inset }}
-            style={{ backgroundColor, width: '100%', flexWrap: 'wrap' }}
+            style={{
+              backgroundColor: backgroundColor || UIColors.defaultBackgroundColor,
+              width: '100%',
+              flexWrap: 'wrap',
+            }}
           >
             {keyboardAvoidFooter}
           </SafeAreaView>

@@ -347,6 +347,7 @@ class AssetScreen extends React.Component<Props, State> {
           ],
           rightIconsSize: fontSizes.extraLarge,
         }}
+        backgroundColor={baseColors.snowWhite}
       >
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
