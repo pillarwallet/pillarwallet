@@ -101,6 +101,7 @@ import type { AssetTransfer } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { SmartWalletDeploymentError } from 'models/SmartWalletAccount';
+import type { TxToSettle } from 'models/PaymentNetwork';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
@@ -992,7 +993,7 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
   };
 };
 
-export const settleTransactionsAction = (txToSettle: Object[]) => {
+export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
   return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
       Toast.show({
@@ -1031,14 +1032,20 @@ export const settleTransactionsAction = (txToSettle: Object[]) => {
       const { accounts: { data: accounts } } = getState();
       const accountId = getActiveAccountId(accounts);
       const accountAddress = getActiveAccountAddress(accounts);
+      const settlementData = txToSettle.map(({ symbol, value, hash }) => ({
+        symbol,
+        value: value.toString(),
+        hash,
+      }));
 
       const historyTx = buildHistoryTransaction({
         from: accountAddress,
         hash: txHash,
         to: accountAddress,
         value: '0',
-        asset: PPN_TOKEN,
+        asset: PAYMENT_NETWORK_TX_SETTLEMENT,
         note: PAYMENT_NETWORK_TX_SETTLEMENT,
+        extra: settlementData,
       });
 
       dispatch({

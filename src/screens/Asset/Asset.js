@@ -291,7 +291,7 @@ class AssetScreen extends React.Component<Props, State> {
       send: isAssetConfigSendActive = true,
       receive: isReceiveActive = true,
       disclaimer,
-    } = assetsConfig[assetData.token] || {};
+    } = assetsConfig[token] || {};
 
     const activeAccountType = getActiveAccountType(accounts);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
@@ -301,7 +301,7 @@ class AssetScreen extends React.Component<Props, State> {
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const mainNetworkTransactions = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
-    const tokenTransactionsOnMainNetwork = mainNetworkTransactions.filter(({ asset }) => asset === assetData.token);
+    const tokenTransactionsOnMainNetwork = mainNetworkTransactions.filter(({ asset }) => asset === token);
 
     const transactionsTabs = [
       {
@@ -352,13 +352,13 @@ class AssetScreen extends React.Component<Props, State> {
               refreshing={false}
               onRefresh={() => {
                 fetchAssetsBalances(assets);
-                fetchTransactionsHistory(assetData.token);
+                fetchTransactionsHistory(token);
               }}
             />
           }
         >
           <AssetPattern
-            token={assetData.token}
+            token={token}
             icon={assetData.iconColor}
             contractAddress={assetData.contractAddress}
             isListed={isListed}
@@ -397,7 +397,7 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
-              onPressExchange={() => this.goToExchangeFlow(assetData.token)}
+              onPressExchange={() => this.goToExchangeFlow(token)}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}

@@ -127,7 +127,7 @@ class SmartWallet {
       .then(({ items = [] }) => items)
       .catch(this.handleError);
 
-    if (!account.ensName) {
+    if (!account.ensName && account.state === sdkConstants.AccountStates.Created) {
       account = await this.sdk.updateAccount(account.address).catch(this.handleError);
     }
 

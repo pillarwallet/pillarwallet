@@ -94,9 +94,7 @@ class SendTokenTransaction extends React.Component<Props> {
 
   handleNavigationBack = () => {
     const { navigation } = this.props;
-    const {
-      transactionPayload,
-    } = navigation.state.params;
+    const { transactionPayload } = navigation.state.params;
 
     if (transactionPayload.tokenType === COLLECTIBLES) {
       navigation.navigate(SEND_COLLECTIBLE_CONFIRM, { transactionPayload });
@@ -118,8 +116,10 @@ class SendTokenTransaction extends React.Component<Props> {
       },
       noRetry,
     } = navigation.state.params;
+
     const animationSource = isSuccess ? animationSuccess : animationFailure;
     const transactionStatusText = isSuccess ? transactionSuccessText : getTransactionErrorMessage(error);
+
     let successText;
     const isAllowanceTransaction = Object.keys(allowance).length;
     if (transactionTokenType === COLLECTIBLES) {
@@ -130,6 +130,7 @@ class SendTokenTransaction extends React.Component<Props> {
         : 'Tokens are on their way';
     }
     const transactionStatusTitle = isSuccess ? successText : 'Transaction failed';
+
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>

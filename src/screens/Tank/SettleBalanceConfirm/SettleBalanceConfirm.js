@@ -41,7 +41,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 
 // types
 import type { Balances } from 'models/Asset';
-import type { SettleTxFee } from 'models/PaymentNetwork';
+import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
 
 // utils
 import { checkIfEnoughForFee } from 'utils/assets';
@@ -92,7 +92,7 @@ const ButtonText = styled(MediumText)`
 */
 
 class SettleBalanceConfirm extends React.Component<Props, State> {
-  txToSettle = [];
+  txToSettle: TxToSettle[] = [];
   state = {
     settleButtonSubmitted: false,
   };
