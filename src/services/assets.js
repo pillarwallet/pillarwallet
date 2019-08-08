@@ -71,6 +71,13 @@ function contractHasMethod(contractCode, encodedMethodName) {
   return contractCode.includes(encodedMethodName);
 }
 
+function parseContractAmount(amount: number | string, decimals: number) {
+  const formatted = amount.toString();
+  return decimals > 0
+    ? utils.parseUnits(formatted, decimals)
+    : utils.bigNumberify(formatted);
+}
+
 export async function transferERC20(options: ERC20TransferOptions) {
   const {
     contractAddress,
@@ -87,9 +94,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
 
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
-  const contractAmount = defaultDecimals > 0
-    ? utils.parseUnits(amount.toString(), defaultDecimals)
-    : utils.bigNumberify(amount.toString());
+  const contractAmount = parseContractAmount(amount, defaultDecimals);
 
   if (!data) {
     ({ data } = await contract.interface.functions.transfer.apply(null, [to, contractAmount]) || {});
@@ -329,9 +334,8 @@ export async function calculateGasEstimate(transaction: Object) {
      * so want to check if it's also not ETH send flow
      */
     const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
-    const contractAmount = defaultDecimals > 0
-      ? utils.parseUnits(amount.toString(), defaultDecimals)
-      : utils.bigNumberify(amount.toString());
+    const contractAmount = parseContractAmount(amount, defaultDecimals);
+
     ({ data } = await contract.interface.functions.transfer.apply(null, [to, contractAmount]) || {});
     to = contractAddress;
   }
