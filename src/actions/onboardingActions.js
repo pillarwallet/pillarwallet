@@ -63,10 +63,7 @@ import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
 import { signalInitAction } from 'actions/signalClientActions';
-import {
-  initSmartWalletSdkAction,
-  importSmartWalletAccountsAction,
-} from 'actions/smartWalletActions';
+import { initSmartWalletSdkAction, importSmartWalletAccountsAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
