@@ -20,6 +20,7 @@
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
+import get from 'lodash.get';
 import {
   DECRYPT_WALLET,
   UPDATE_WALLET_STATE,
@@ -46,6 +47,7 @@ import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import ChatService from 'services/chat';
+import smartWalletService from 'services/smartWallet';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { toastWalletBackup } from 'utils/toasts';
@@ -307,12 +309,17 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 };
 
 export const logoutAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
+    const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
     Intercom.logout();
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
     dispatch({ type: LOG_OUT });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
     chat.client.resetAccount().catch(() => null);
+    if (smartWalletFeatureEnabled) {
+      // TODO: check smart wallet import RIGHT AFTER reset (no reload) as it seems to be failing
+      await smartWalletService.reset();
+    }
     clearWebViewCookies();
     await firebase.iid().delete().catch(() => {});
     await storage.removeAll();

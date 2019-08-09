@@ -74,6 +74,17 @@ class SmartWallet {
     }
   }
 
+  async reset() {
+    this.sdkInitialized = false;
+    if (!this.sdk) return;
+    this.sdk.event$.unsubscribe();
+    subscribedToEvents = false;
+    await this.sdk.reset({
+      device: true,
+      session: true,
+    });
+  }
+
   getEnvironmentNetwork(networkName: string) {
     // TODO: add support for the mainnet
     switch (networkName) {
@@ -94,6 +105,7 @@ class SmartWallet {
     if (this.sdkInitialized) {
       this.subscribeToEvents(dispatch);
     }
+
     // TODO: remove private key from smart wallet sdk
   }
 

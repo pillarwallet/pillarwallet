@@ -71,17 +71,20 @@ export const submitAccountRecoverySetupAction = () => {
     } = getState();
     const activeAccountType = getActiveAccountType(accounts);
     if (!agents.length || activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
+    const friendsAddresses = agents.map(({ ethAddress }) => ethAddress);
     const setupEstimate = await smartWalletService
-      .estimateSetupAccountFriendRecoveryExtension(requiredAgentsCount, agents.map(({ address }) => address));
-    const setupTransaction = await smartWalletService.setupAccountFriendRecoveryExtension(setupEstimate);
-    if (setupTransaction) {
-      console.log('setupTransaction: ', setupTransaction);
-      const { hash } = setupTransaction;
+      .estimateSetupAccountFriendRecoveryExtension(requiredAgentsCount, friendsAddresses)
+      .catch(() => null);
+    const setupTransactionHash = await smartWalletService
+      .setupAccountFriendRecoveryExtension(setupEstimate)
+      .catch(() => null);
+    if (setupTransactionHash) {
       dispatch(addAccountRecoveryTransactionAction({
         type: ACCOUNT_RECOVERY_TRANSACTION_TYPES.SETUP,
-        hash,
+        hash: setupTransactionHash,
       }));
     }
+    // TODO: submit setup transaction failed?
   };
 };
 
@@ -92,16 +95,19 @@ export const submitAccountRecoveryEnableAction = () => {
     } = getState();
     const activeAccountType = getActiveAccountType(accounts);
     if (!activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
-    const enableEstimate = await smartWalletService.estimateAddAccountFriendRecoveryExtension();
-    const enableTransaction = await smartWalletService.addAccountFriendRecoveryExtension(enableEstimate);
-    if (enableTransaction) {
-      console.log('estimateTransaction: ', enableTransaction);
-      const { hash } = enableTransaction;
+    const enableEstimate = await smartWalletService
+      .estimateAddAccountFriendRecoveryExtension()
+      .catch(() => null);
+    const enableTransactionHash = await smartWalletService
+      .addAccountFriendRecoveryExtension(enableEstimate)
+      .catch(() => null);
+    if (enableTransactionHash) {
       dispatch(addAccountRecoveryTransactionAction({
         type: ACCOUNT_RECOVERY_TRANSACTION_TYPES.ENABLE,
-        hash,
+        hash: enableTransactionHash,
       }));
     }
+    // TODO: submit enable transaction failed?
   };
 };
 
