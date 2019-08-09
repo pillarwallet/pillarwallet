@@ -133,7 +133,6 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: UPDATE_PAYMENT_NETWORK_STAKED, payload: paymentNetworkStaked });
 
       const { isPLRTankInitialised = false } = await storage.get('isPLRTankInitialised');
-      console.log('isPLRTankInitialised ---->', isPLRTankInitialised);
       if (isPLRTankInitialised) dispatch({ type: MARK_PLR_TANK_INITIALISED });
 
       const { offlineQueue = [] } = await storage.get('offlineQueue');

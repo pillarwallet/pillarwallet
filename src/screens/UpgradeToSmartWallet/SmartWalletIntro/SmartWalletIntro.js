@@ -23,23 +23,31 @@ import { StyleSheet } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
+// import { utils } from 'ethers';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
+import { LabelBadge } from 'components/LabelBadge';
 
 import { baseColors, fontSizes } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
-import { CHOOSE_ASSETS_TO_TRANSFER, EXCHANGE } from 'constants/navigationConstants';
+// import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
+// import { getRate } from 'utils/assets';
 
+import { CHOOSE_ASSETS_TO_TRANSFER, EXCHANGE } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { LabelBadge } from 'components/LabelBadge';
+
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
+// import smartWalletService from 'services/smartWallet';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   addNetwork: Function,
   baseFiatCurrency: ?string,
+  deploySmartWallet: Function,
 }
 const CustomWrapper = styled.View`
   flex: 1;
@@ -59,6 +67,13 @@ const BodyText = styled(BoldText)`
   margin-top: ${responsiveSize(26)}px;
 `;
 
+// const FeeText = styled(MediumText)`
+//   color: ${baseColors.darkGray};
+//   font-size: ${fontSizes.rMedium}px;
+//   line-height: ${responsiveSize(22)}px;
+//   margin-top: ${responsiveSize(16)}px;
+// `;
+
 const ActionsWrapper = styled(Wrapper)`
   margin: 30px 0 50px;
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
@@ -76,7 +91,25 @@ const smartWalletIcon = require('assets/images/logo_smart_wallet.png');
 
 class SmartWalletIntro extends React.PureComponent<Props> {
   render() {
-    const { navigation, baseFiatCurrency } = this.props;
+    const {
+      navigation,
+      baseFiatCurrency,
+      deploySmartWallet,
+      // gasInfo,
+      // rates,
+    } = this.props;
+    const isDeploy = navigation.getParam('deploy', false);
+
+    // const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    // const gasPriceWei = getGasPriceWei(gasInfo);
+    // const deployEstimate = smartWalletService.getDeployEstimate(gasPriceWei);
+    // const feeSmartContractDeployEth = formatAmount(utils.formatEther(deployEstimate));
+    // const feeSmartContractDeployFiat = parseFloat(feeSmartContractDeployEth) * getRate(rates, ETH, fiatCurrency);
+    // const fiatSymbol = getCurrencySymbol(fiatCurrency);
+    //
+    // const smartContractDeployFee =
+    //   `~${feeSmartContractDeployEth} ETH (${fiatSymbol}${feeSmartContractDeployFiat.toFixed(2)})`;
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -96,6 +129,7 @@ class SmartWalletIntro extends React.PureComponent<Props> {
               In order to enable sending assets from your Smart Wallet, it’s needed to deploy smart contract first.
               There is a small fee for that
             </BodyText>
+            { /* <FeeText>{smartContractDeployFee}</FeeText> */ }
           </CustomWrapper>
           <ActionsWrapper>
             <ListItemChevron
@@ -112,16 +146,19 @@ class SmartWalletIntro extends React.PureComponent<Props> {
             />
             <ListItemChevron
               label="Enable with ETH available"
-              onPress={() => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)}
+              onPress={isDeploy
+                ? () => deploySmartWallet()
+                : () => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)
+              }
               color={baseColors.persianBlue}
               bordered
             />
-            <ListItemChevron
+            { /* <ListItemChevron
               label="Enable with PLR available"
               onPress={() => () => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)}
               color={baseColors.persianBlue}
               bordered
-            />
+            /> */ }
           </ActionsWrapper>
         </ScrollWrapper>
       </ContainerWithHeader>
@@ -131,8 +168,17 @@ class SmartWalletIntro extends React.PureComponent<Props> {
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
+  // history: { gasInfo },
+  // rates: { data: rates },
 }) => ({
   baseFiatCurrency,
+  // gasInfo,
+  // rates,
 });
 
-export default connect(mapStateToProps)(SmartWalletIntro);
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SmartWalletIntro);

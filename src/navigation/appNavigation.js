@@ -180,7 +180,8 @@ import {
   UPGRADE_REVIEW,
   UPGRADE_CONFIRM,
   SMART_WALLET_UNLOCK,
-  MANAGE_TANK_FLOW,
+  TANK_SETTLE_FLOW,
+  TANK_FUND_FLOW,
   // TANK_DETAILS,
   FUND_TANK,
   FUND_CONFIRM,
@@ -567,16 +568,20 @@ const manageUsersFlow = createStackNavigator({
 
 manageUsersFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// TANK FLOW
-const manageTankFlow = createStackNavigator({
-  // [TANK_DETAILS]: TankDetailsScreen,
-  [FUND_TANK]: FundTankScreen,
-  [FUND_CONFIRM]: FundConfirmScreen,
+// TANK FLOWS
+const tankSettleFlow = createStackNavigator({
   [SETTLE_BALANCE]: SettleBalanceScreen,
   [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfrimScreen,
 }, StackNavigatorConfig);
 
-manageTankFlow.navigationOptions = hideTabNavigatorOnChildView;
+tankSettleFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const tankFundFlow = createStackNavigator({
+  [FUND_TANK]: FundTankScreen,
+  [FUND_CONFIRM]: FundConfirmScreen,
+}, StackNavigatorConfig);
+
+tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -593,7 +598,8 @@ const AppFlowNavigation = createStackNavigator(
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
     [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletUpgradeFlow,
     [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
-    [MANAGE_TANK_FLOW]: manageTankFlow,
+    [TANK_SETTLE_FLOW]: tankSettleFlow,
+    [TANK_FUND_FLOW]: tankFundFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
     [MANAGE_USERS_FLOW]: manageUsersFlow,
     [CONTACT_INFO]: ConnectedContactInfo,

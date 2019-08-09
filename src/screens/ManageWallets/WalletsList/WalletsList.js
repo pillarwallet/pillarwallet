@@ -29,6 +29,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
+import Spinner from 'components/Spinner';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
@@ -66,6 +67,7 @@ type Props = {
 
 type State = {
   showCheckPinModal: boolean,
+  changingAccount: boolean,
 }
 
 const Wrapper = styled.View`
@@ -77,6 +79,8 @@ const Wrapper = styled.View`
   })};
   background-color: transparent;
   flex: 1;
+  justify-content: center;
+  align-items: center;
 `;
 
 
@@ -108,6 +112,7 @@ class WalletsList extends React.Component<Props, State> {
 
   state = {
     showCheckPinModal: false,
+    changingAccount: false,
   };
 
   switchAccount = (account) => {
@@ -140,12 +145,13 @@ class WalletsList extends React.Component<Props, State> {
     this.setState({ showCheckPinModal: false });
   };
 
-  switchToSmartWalletAccount = (_: string, wallet: Object) => {
-    const { navigation } = this.props;
+  switchToSmartWalletAccount = async (_: string, wallet: Object) => {
+    this.setState({ showCheckPinModal: false, changingAccount: true });
+    const { navigation, switchAccount } = this.props;
     if (!this.switchToAccount) return;
-    this.props.switchAccount(this.switchToAccount.id, wallet.privateKey);
+    await switchAccount(this.switchToAccount.id, wallet.privateKey);
     this.switchToAccount = null;
-    this.setState({ showCheckPinModal: false });
+    this.setState({ changingAccount: false });
     navigation.navigate(ASSETS);
   };
 
@@ -186,7 +192,7 @@ class WalletsList extends React.Component<Props, State> {
       assets,
       rates,
     } = this.props;
-    const { showCheckPinModal } = this.state;
+    const { showCheckPinModal, changingAccount } = this.state;
     const accountsList = smartWalletFeatureEnabled
       ? accounts
       : accounts.filter((acc) => { return acc.type === 'KEY_BASED'; });
@@ -209,6 +215,7 @@ class WalletsList extends React.Component<Props, State> {
           ],
         }}
       >
+        {!changingAccount &&
         <FlatList
           data={accountsWithBalance}
           keyExtractor={(item) => item.id.toString()}
@@ -224,7 +231,11 @@ class WalletsList extends React.Component<Props, State> {
             />
           }
           style={{ flexGrow: 0 }}
-        />
+        />}
+        {changingAccount &&
+        <Wrapper>
+          <Spinner />
+        </Wrapper>}
         <SlideModal
           isVisible={showCheckPinModal}
           onModalHide={this.handleCheckPinModalClose}

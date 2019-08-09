@@ -430,7 +430,6 @@ class WalletView extends React.Component<Props, State> {
       smartWalletState,
       smartWalletFeatureEnabled,
       showDeploySmartWallet,
-      deploySmartWallet,
     } = this.props;
 
     // SEARCH
@@ -542,10 +541,7 @@ class WalletView extends React.Component<Props, State> {
             {!!showFinishSmartWalletActivation &&
             <ListItemChevron
               label={showDeploySmartWallet ? 'Deploy Smart Wallet' : 'Finish Smart Wallet activation'}
-              subtext={showDeploySmartWallet ? 'Includes small fee' : ''}
-              onPress={showDeploySmartWallet
-                ? () => deploySmartWallet()
-                : () => navigation.navigate(SMART_WALLET_INTRO)}
+              onPress={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: showDeploySmartWallet })}
               bordered
             />}
             {!balance &&

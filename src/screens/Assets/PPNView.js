@@ -24,9 +24,9 @@ import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
-import { weiToEth } from '@netgum/utils';
 import get from 'lodash.get';
-import { BigNumber } from 'bignumber.js';
+import unionBy from 'lodash.unionby';
+
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 import TankBar from 'components/TankBar';
@@ -37,8 +37,14 @@ import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import TankAssetBalance from 'components/TankAssetBalance';
 
-import { addressesEqual, generatePMTToken, getPPNTokenAddress, getRate } from 'utils/assets';
-import { delay, formatAmount, formatMoney, getCurrencySymbol } from 'utils/common';
+import {
+  addressesEqual,
+  calculatePortfolioBalance,
+  generatePMTToken,
+  getPPNTokenAddress,
+  getRate,
+} from 'utils/assets';
+import { delay, formatMoney, getCurrencySymbol } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -154,113 +160,33 @@ class PPNView extends React.Component<Props, State> {
       topUpButtonSubmitted: false,
       showPinScreenForAction: '',
     };
-    this.initialAssets = [];
+    this.initialAssets = [{ balance: '0', symbol: ETH }, generatePMTToken()];
   }
-
-
-  componentDidMount() {
-    this.getDefaultAssets();
-  }
-
-  getDefaultAssets = async () => {
-    const { supportedAssets = {} } = this.props;
-    this.initialAssets = [supportedAssets.find((asset) => asset.symbol === ETH) || {}, generatePMTToken()]
-      .map(({ symbol, address }) => {
-        return {
-          token: { symbol, address },
-        };
-      });
-  };
-
-  // renderAsset = ({ item: asset }) => {
-  //   const { baseFiatCurrency, activeAccount, navigation } = this.props;
-  //   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  //   const currencySymbol = getCurrencySymbol(fiatCurrency);
-  //   const {
-  //     name,
-  //     symbol,
-  //     iconUrl,
-  //     paymentNetworkBalance,
-  //     paymentNetworkBalanceInFiat,
-  //     balance,
-  //     patternUrl,
-  //     iconMonoUrl,
-  //     balanceInFiat,
-  //     decimals,
-  //   } = asset;
-  //
-  //   const fullIconMonoUrl = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
-  //   const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-  //   const patternIcon = patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl;
-  //   const formattedBalanceInFiat = formatMoney(balanceInFiat);
-  //   const displayAmount = formatMoney(balance, 4);
-  //
-  //   const assetData = {
-  //     name: name || symbol,
-  //     token: symbol,
-  //     amount: displayAmount,
-  //     contractAddress: asset.address,
-  //     description: asset.description,
-  //     balance,
-  //     balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
-  //     address: getAccountAddress(activeAccount),
-  //     icon: fullIconMonoUrl,
-  //     iconColor: fullIconUrl,
-  //     decimals,
-  //     patternIcon,
-  //   };
-  //
-  //   return (
-  //     <ListItemWithImage
-  //       onPress={() => {
-  //         navigation.navigate(ASSET,
-  //           {
-  //             assetData: {
-  //               ...assetData,
-  //               tokenType: TOKENS,
-  //             },
-  //           },
-  //         );
-  //       }}
-  //       label={name}
-  //       avatarUrl={fullIconUrl}
-  //       balance={{
-  //         syntheticBalance: formatMoney(paymentNetworkBalance),
-  //         value: formatMoney(paymentNetworkBalanceInFiat, 4),
-  //         currency: currencySymbol,
-  //         token: symbol,
-  //       }}
-  //     />
-  //   );
-  // };
 
   renderAsset = ({ item }) => {
-    // const { txToSettle } = this.state;
     const { baseFiatCurrency, assets, rates } = this.props;
 
-    let tokenSymbol = get(item, 'token.symbol', get(item, 'token.symbol', ETH));
-    let value = get(item, 'value', new BigNumber(0));
+    let tokenSymbol = get(item, 'symbol', ETH);
+    const tokenBalance = get(item, 'balance', '0');
+    const tokenAddress = get(assets, `${tokenSymbol}.address`, '0');
     const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
-    const tokenAddress = get(item, 'token.address', '');
-
+    const paymentNetworkBalanceFormatted = formatMoney(tokenBalance, 4);
     if (tokenSymbol !== ETH && addressesEqual(tokenAddress, ppnTokenAddress)) {
       tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
     }
 
-    if (tokenSymbol === ETH) value = new BigNumber(weiToEth(value));
-
     const assetInfo = {
       ...(assets[tokenSymbol] || {}),
       symbol: tokenSymbol,
-      value,
+      balance: tokenBalance,
+      balanceFormatted: paymentNetworkBalanceFormatted,
       hash: item.hash,
       createdAt: item.createdAt,
     };
 
     const fullIconUrl = `${SDK_PROVIDER}/${assetInfo.iconUrl}?size=3`;
-    const formattedAmount = formatAmount(assetInfo.value.toString());
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const totalInFiat = assetInfo.value.toNumber() * getRate(rates, assetInfo.symbol, fiatCurrency);
+    const totalInFiat = tokenBalance * getRate(rates, assetInfo.symbol, fiatCurrency);
     const formattedAmountInFiat = formatMoney(totalInFiat);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
@@ -269,13 +195,12 @@ class PPNView extends React.Component<Props, State> {
         label={assetInfo.name}
         itemImageUrl={fullIconUrl || genericToken}
         fallbackSource={genericToken}
-        // onPress={() => this.toggleItemToTransfer(assetInfo)}
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
-              <TankAssetBalance amount={formattedAmount} isSynthetic={assetInfo.symbol !== ETH} />
+              <TankAssetBalance amount={paymentNetworkBalanceFormatted} isSynthetic={assetInfo.symbol !== ETH} />
               <ValueInFiat>
-                {`${currencySymbol}${formattedAmountInFiat}`}
+                {`${currencySymbol} ${formattedAmountInFiat}`}
               </ValueInFiat>
             </BalanceWrapper>
           </AddonWrapper>
@@ -286,10 +211,21 @@ class PPNView extends React.Component<Props, State> {
   };
 
   renderHeader = () => {
-    const { assetsOnNetwork, navigation } = this.props;
+    const {
+      assetsOnNetwork,
+      navigation,
+      rates,
+      baseFiatCurrency,
+      balances,
+    } = this.props;
+    const portfolioBalances = calculatePortfolioBalance(assetsOnNetwork, rates, balances);
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const PPNBalance = formatMoney(portfolioBalances[fiatCurrency] || 0);
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
+
     return (
       <ListHeaderWrapper>
-        <HeaderTitle>Wallet balance £168.71</HeaderTitle>
+        <HeaderTitle>{`Balance ${currencySymbol} ${PPNBalance}`}</HeaderTitle>
         <HeaderButton
           onPress={() => navigation.navigate(SETTLE_BALANCE)}
           disabled={!Object.keys(assetsOnNetwork).length}
@@ -328,9 +264,10 @@ class PPNView extends React.Component<Props, State> {
       assetsOnNetwork,
     } = this.props;
 
-    const assetsOnNetworkArray = Object.keys(assetsOnNetwork);
+    const assetsOnNetworkArray = Object.keys(assetsOnNetwork).map((asset) => assetsOnNetwork[asset]);
     const totalStake = availableStake + 10;
     const availableFormattedAmount = formatMoney(availableStake, 4);
+    const assetsOnNetworkToShow = unionBy(assetsOnNetworkArray, this.initialAssets, 'symbol');
 
     return (
       <ScrollView
@@ -363,8 +300,8 @@ class PPNView extends React.Component<Props, State> {
           />
         </AssetButtonsWrapper>
         <StyledFlatList
-          data={[...this.initialAssets, ...assetsOnNetworkArray]}
-          keyExtractor={(item) => item.id}
+          data={assetsOnNetworkToShow}
+          keyExtractor={(item) => item.symbol}
           renderItem={this.renderAsset}
           initialNumToRender={5}
           maxToRenderPerBatch={5}

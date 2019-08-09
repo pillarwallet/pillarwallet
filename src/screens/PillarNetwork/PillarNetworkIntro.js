@@ -32,7 +32,7 @@ import CheckPin from 'components/CheckPin';
 
 import { baseColors, fontSizes } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
-import { FUND_TANK } from 'constants/navigationConstants';
+import { FUND_TANK, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 import type { NavigationScreenProp } from 'react-navigation';
@@ -46,6 +46,10 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { switchAccountAction } from 'actions/accountsActions';
 
 import type { Accounts } from 'models/Account';
+import { ListItemChevron } from 'components/ListItem/ListItemChevron';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -54,6 +58,7 @@ type Props = {
   ensureSmartAccountConnected: Function,
   switchAccount: Function,
   accounts: Accounts,
+  smartWalletState: Object,
 }
 type State = {
   showPinScreenForAction: boolean,
@@ -62,7 +67,7 @@ type State = {
 
 const CustomWrapper = styled.View`
   flex: 1;
-  padding: 20px 55px 20px 46px;
+  padding: 20px 55px 40px 46px;
 `;
 
 const Title = styled(BoldText)`
@@ -114,6 +119,10 @@ const Wrapper = styled.View`
     ios: '20px',
     android: '14px',
   })};
+`;
+
+const ButtonWrapper = styled(Wrapper)`
+  padding: 0 46px 20px;
 `;
 
 const features = [
@@ -176,6 +185,12 @@ class PillarNetworkIntro extends React.Component<Props, State> {
 
   render() {
     const { showPinScreenForAction, processingCreate } = this.state;
+    const { smartWalletState, accounts, navigation } = this.props;
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const needsToDeploy = smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
+    const needsSmartWallet = !smartWalletStatus.hasAccount;
+    const disableCreate = needsToDeploy || needsSmartWallet;
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -217,16 +232,39 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               )}
               style={{ marginTop: 20 }}
             />
+          </CustomWrapper>
+          {!!needsSmartWallet &&
+          <ListItemChevron
+            label="Enable Smart wallet to create Tank"
+            onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
+            color={baseColors.pomegranate}
+            bordered
+          />}
+          {!!needsToDeploy &&
+          <ListItemChevron
+            label="Deploy Smart wallet to create Tank"
+            onPress={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
+            color={baseColors.pomegranate}
+            bordered
+          />}
+          <ButtonWrapper>
             <Button
               block
               title="Create PLR Tank"
               onPress={() => this.setState({ showPinScreenForAction: true, processingCreate: true })}
               roundedCorners
-              style={{ backgroundColor: baseColors.pomegranate, marginTop: 40, marginBottom: 20 }}
+              style={{
+                backgroundColor: baseColors.pomegranate,
+                marginTop: 40,
+                marginBottom: 20,
+                opacity: disableCreate ? 0.3 : 1,
+                borderRadius: 6,
+              }}
               textStyle={{ color: baseColors.ultramarine }}
               isLoading={processingCreate}
+              disabled={disableCreate}
             />
-          </CustomWrapper>
+          </ButtonWrapper>
         </ScrollWrapper>
         <SlideModal
           isVisible={!!showPinScreenForAction}
@@ -249,8 +287,10 @@ class PillarNetworkIntro extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   accounts: { data: accounts },
+  smartWallet: smartWalletState,
 }) => ({
   accounts,
+  smartWalletState,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
