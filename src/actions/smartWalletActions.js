@@ -586,7 +586,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             txHash,
             (transaction) => ({
               ...transaction,
-              gasPrice: txGasInfo.price ? txGasInfo.price.toString() : transaction.gasPrice,
+              gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
               gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
               status: TX_CONFIRMED_STATUS,
             }));

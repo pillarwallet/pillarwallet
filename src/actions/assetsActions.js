@@ -350,6 +350,10 @@ export const sendAssetAction = (
           ...tokenTx,
           asset: symbol,
           note,
+          gasPrice: transaction.gasPrice,
+          gasLimit: transaction.gasLimit,
+          isPPNTransaction: usePPN,
+          status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
         });
       }
     // send ERC20 token
@@ -375,6 +379,8 @@ export const sendAssetAction = (
           value: parseFloat(amount) * (10 ** decimals),
           to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
           note,
+          gasPrice: transaction.gasPrice,
+          gasLimit: transaction.gasLimit,
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
         });
