@@ -57,7 +57,7 @@ import type {
   CollectibleTransactionPayload,
   TransactionPayload,
 } from 'models/Transaction';
-import type { Asset, Assets, Balances } from 'models/Asset';
+import type { Asset, Assets, Balance, Balances } from 'models/Asset';
 import { addressesEqual, generatePMTToken, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
@@ -483,7 +483,7 @@ export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = 
   };
 };
 
-function notifyAboutIncreasedBalance(newBalances, oldBalances: Balances) {
+function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balances) {
   const increasedBalances = newBalances
     .filter(({ balance, symbol }) => {
       const oldTokenBalance = get(oldBalances, [symbol, 'balance'], 0);
