@@ -67,7 +67,7 @@ import {
   getActiveAccountId,
   getActiveAccountType,
   getAccountAddress,
-  checkIfSmartAccount,
+  checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { accountBalancesSelector } from 'selectors/balances';
 import { logEventAction } from 'actions/analyticsActions';
@@ -381,7 +381,7 @@ export const sendAssetAction = (
       }
     }
 
-    if (checkIfSmartAccount(activeAccount) && !usePPN && tokenTx.hash) {
+    if (checkIfSmartWalletAccount(activeAccount) && !usePPN && tokenTx.hash) {
       dispatch({
         type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
         payload: tokenTx.hash,
@@ -507,7 +507,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
 
     const walletAddress = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
-    const isSmartAccount = checkIfSmartAccount(activeAccount);
+    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
 
     dispatch({
       type: UPDATE_ASSETS_STATE,
@@ -521,7 +521,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
         ...balances,
         [accountId]: transformedBalances,
       };
-      if (showToastIfIncreased && !isSmartAccount) {
+      if (showToastIfIncreased && !isSmartWalletAccount) {
         const currentBalances = accountBalancesSelector(getState());
         notifyAboutIncreasedBalance(newBalances, currentBalances);
       }
@@ -539,7 +539,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
       dispatch({ type: UPDATE_RATES, payload: rates });
     }
 
-    if (smartWalletFeatureEnabled && isSmartAccount) {
+    if (smartWalletFeatureEnabled && isSmartWalletAccount) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
   };
