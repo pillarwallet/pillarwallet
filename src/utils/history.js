@@ -36,9 +36,13 @@ export const buildHistoryTransaction = ({
   note,
   status,
   createdAt,
+  isPPNTransaction,
+  extra,
 }: TransactionEthers): Transaction => ({
   status: status || TX_PENDING_STATUS,
-  gasUsed: gasPrice && gasLimit ? parseFloat(utils.formatEther(gasPrice.mul(gasLimit))) : 0,
+  gasUsed: gasPrice && gasLimit
+    ? parseFloat(utils.formatEther(utils.bigNumberify(gasPrice.toString()).mul(gasLimit)))
+    : 0,
   gasPrice: gasPrice ? Number(gasPrice) : 0,
   value: typeof value === 'object' ? value.toString() : value,
   from,
@@ -48,10 +52,9 @@ export const buildHistoryTransaction = ({
   asset,
   createdAt: createdAt || Math.round(+new Date() / 1000), // seconds
   nbConfirmations: 0,
-  transaction: {},
-  __v: 0,
-  receipt: {},
   note,
+  isPPNTransaction: !!isPPNTransaction,
+  extra,
 });
 
 export const isTransactionEvent = (eventType: string) => {
@@ -71,3 +74,34 @@ export const updateAccountHistory = (
     [accountId]: accountHistory,
   };
 };
+
+type UpdateHistoryRecordResult = {
+  updatedHistory: TransactionsStore,
+  txUpdated: ?Transaction,
+};
+
+export function updateHistoryRecord(
+  allHistory: TransactionsStore,
+  hashToUpdate: string,
+  modifier: Function,
+): UpdateHistoryRecordResult {
+  hashToUpdate = hashToUpdate.toLowerCase();
+
+  let txUpdated = null;
+  const accounts = Object.keys(allHistory);
+  const updatedHistory = accounts.reduce((history, accountId) => {
+    const accountHistory = allHistory[accountId].map(transaction => {
+      if (transaction.hash.toLowerCase() !== hashToUpdate) {
+        return transaction;
+      }
+      txUpdated = modifier(transaction);
+      return txUpdated;
+    });
+    return { ...history, [accountId]: accountHistory };
+  }, {});
+
+  return {
+    updatedHistory,
+    txUpdated,
+  };
+}

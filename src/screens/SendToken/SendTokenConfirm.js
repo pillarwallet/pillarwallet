@@ -134,7 +134,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           </LabeledRow>
           <LabeledRow>
             <Label>Est. Network Fee</Label>
-            <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
+            <Value>{txFeeInWei === 0 ? 'free' : `${utils.formatEther(txFeeInWei.toString())} ETH`}</Value>
           </LabeledRow>
           {!!recipientUsername &&
           <TextInput

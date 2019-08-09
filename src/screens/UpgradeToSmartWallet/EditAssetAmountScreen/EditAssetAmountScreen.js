@@ -122,11 +122,12 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
         [assetName]: amountFormatted,
       },
     });
-  }
+  };
 
   renderAsset = ({ item }) => {
     const { balances } = this.props;
-    const assetBalance = formatAmount(getBalance(balances, item.symbol));
+    const assetBalance = getBalance(balances, item.symbol);
+    const formattedAssetBalance = formatAmount(assetBalance);
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
     if (assetShouldRender) {
@@ -144,9 +145,9 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
           <View style={{ height: 70, justifyContent: 'center', minWidth: 180 }}>
             <TextInput
               style={{ fontSize: fontSizes.medium, textAlign: 'right', maxWidth: 200 }}
-              onChangeText={text => this.handleAmountChange(text, item.name, parseNumber(assetBalance), item.decimals)}
+              onChangeText={text => this.handleAmountChange(text, item.name, assetBalance, item.decimals)}
               value={amount ? amount.toString() : ''}
-              placeholder={assetBalance}
+              placeholder={formattedAssetBalance}
               keyboardType="decimal-pad"
             />
           </View>

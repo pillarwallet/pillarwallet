@@ -50,10 +50,13 @@ import {
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   DISMISS_SMART_WALLET_UPGRADE,
+  SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
+  SET_SMART_WALLET_DEPLOYMENT_DATA,
   SET_SMART_WALLET_UPGRADE_STATUS,
+  SET_SMART_WALLET_LAST_SYNCED_HASH,
 } from 'constants/smartWalletConstants';
-import { UPDATE_PAYMENT_NETWORK_BALANCES } from 'constants/paymentNetworkConstants';
+import { UPDATE_PAYMENT_NETWORK_BALANCES, UPDATE_PAYMENT_NETWORK_STAKED } from 'constants/paymentNetworkConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -122,6 +125,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { paymentNetworkBalances = {} } = await storage.get('paymentNetworkBalances');
       dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });
 
+      const { paymentNetworkStaked = '' } = await storage.get('paymentNetworkStaked');
+      dispatch({ type: UPDATE_PAYMENT_NETWORK_STAKED, payload: paymentNetworkStaked });
+
       const { offlineQueue = [] } = await storage.get('offlineQueue');
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
@@ -141,9 +147,15 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const {
         upgradeTransferTransactions = [],
         upgradeStatus = null,
+        accounts: smartAccounts = [],
+        deploymentData = {},
+        lastSyncedHash = null,
       } = await storage.get('smartWallet');
       dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
       dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
+      dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: smartAccounts });
+      dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
+      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_HASH, payload: lastSyncedHash });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 

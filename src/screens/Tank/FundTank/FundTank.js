@@ -34,6 +34,9 @@ import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
 import Header from 'components/Header';
 
+// configs
+import { PPN_TOKEN } from 'configs/assetsConfig';
+
 // utils
 import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
@@ -47,7 +50,7 @@ import type { Assets, Balances, Rates } from 'models/Asset';
 
 // constants
 import { FUND_CONFIRM } from 'constants/navigationConstants';
-import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // actions
 import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
@@ -138,7 +141,7 @@ class FundTank extends React.Component<Props, State> {
   useMaxValue = () => {
     const { balances } = this.props;
     const txFeeInWei = this.getTxFeeInWei();
-    const token = ETH;
+    const token = PPN_TOKEN;
     const balance = getBalance(balances, token);
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
     this.enoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
@@ -164,7 +167,7 @@ class FundTank extends React.Component<Props, State> {
       baseFiatCurrency,
     } = this.props;
 
-    const { symbol: token, iconUrl, decimals } = assets[ETH] || {};
+    const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
     const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const currencySymbol = getCurrencySymbol(fiatCurrency);
@@ -174,7 +177,7 @@ class FundTank extends React.Component<Props, State> {
     const formattedBalance = formatAmount(balance);
 
     // balance in fiat
-    const totalInFiat = balance * getRate(rates, token, fiatCurrency);
+    const totalInFiat = balance * getRate(rates, 'PLR', fiatCurrency);
     const formattedBalanceInFiat = formatMoney(totalInFiat);
 
     // fee
@@ -189,7 +192,7 @@ class FundTank extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);
+    const valueInFiat = currentValue * getRate(rates, 'PLR', fiatCurrency);
     const formattedValueInFiat = formatMoney(valueInFiat);
     const valueInFiatOutput = `${currencySymbol}${formattedValueInFiat}`;
 

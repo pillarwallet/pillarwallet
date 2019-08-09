@@ -59,6 +59,7 @@ const persistConfig = {
   stateReconciler: autoMergeLevel2,
   whitelist: ['history'],
   // migrate: createMigrate(migrations, { debug: true }),
+  timeout: 0, // HACK: wait until the storage responds
 };
 const pReducer = persistReducer(persistConfig, rootReducer);
 

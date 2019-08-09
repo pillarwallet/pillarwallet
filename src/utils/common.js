@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import * as ethUtil from 'ethereumjs-util';
 import {
@@ -31,6 +32,7 @@ import {
 } from 'react-native';
 import { providers, utils } from 'ethers';
 import { INFURA_PROJECT_ID } from 'react-native-dotenv';
+import type { GasInfo } from 'models/GasInfo';
 
 export function delay(ms: number): Promise<void> {
   return new Promise(resolve => {
@@ -285,4 +287,10 @@ export function extractJwtPayload(jwtToken: string): Object {
   const [, encodedPayload] = jwtToken.split('.');
   // do not use Buffer.toJSON
   return JSON.parse(Buffer.from(encodedPayload, 'base64').toString());
+}
+
+export function getGasPriceWei(gasInfo: GasInfo): BigNumber {
+  const gasPrice = get(gasInfo, 'gasPrice.avg', 0);
+  const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+  return gasPriceWei;
 }
