@@ -609,11 +609,12 @@ export const resetSearchAssetsResultAction = () => ({
 export const checkForMissedAssetsAction = (transactionNotifications: Object[]) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
+      accounts: { data: accounts },
       user: { data: { walletId } },
       assets: { data: currentAssets, supportedAssets },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-      wallet: { data: wallet },
     } = getState();
+    const activeAccountAddress = getActiveAccountAddress(accounts);
 
     // load supported assets
     let walletSupportedAssets = [...supportedAssets];
@@ -648,9 +649,8 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     }
 
     // check if some assets are not enabled
-    const myAddress = wallet.address.toUpperCase();
     const missedAssets = transactionNotifications
-      .filter(tx => tx.from.toUpperCase() !== myAddress)
+      .filter(tx => addressesEqual(tx.to, activeAccountAddress))
       .reduce((memo, { asset: ticker }) => {
         if (!ticker) return memo;
         if (memo[ticker] !== undefined || currentAssets[ticker] !== undefined) return memo;
