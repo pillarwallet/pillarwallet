@@ -657,7 +657,7 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
 
     // check if some assets are not enabled
     const missedAssets = transactionNotifications
-      .filter(tx => addressesEqual(tx.to, activeAccountAddress))
+      .filter(tx => !addressesEqual(tx.from, activeAccountAddress))
       .reduce((memo, { asset: ticker }) => {
         if (!ticker) return memo;
         if (memo[ticker] !== undefined || currentAssets[ticker] !== undefined) return memo;
