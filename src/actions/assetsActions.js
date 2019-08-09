@@ -57,7 +57,7 @@ import type {
   CollectibleTransactionPayload,
   TransactionPayload,
 } from 'models/Transaction';
-import type { Asset, Assets } from 'models/Asset';
+import type { Asset, Assets, Balances } from 'models/Asset';
 import { addressesEqual, generatePMTToken, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
@@ -67,8 +67,9 @@ import {
   getActiveAccountId,
   getActiveAccountType,
   getAccountAddress,
-  isSmartAccount,
+  checkIfSmartAccount,
 } from 'utils/accounts';
+import { accountBalancesSelector } from 'selectors/balances';
 import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
@@ -380,7 +381,7 @@ export const sendAssetAction = (
       }
     }
 
-    if (isSmartAccount(activeAccount) && !usePPN && tokenTx.hash) {
+    if (checkIfSmartAccount(activeAccount) && !usePPN && tokenTx.hash) {
       dispatch({
         type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
         payload: tokenTx.hash,
@@ -482,6 +483,17 @@ export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = 
   };
 };
 
+function notifyAboutIncreasedBalance(newBalances, oldBalances: Balances) {
+  const increasedBalances = newBalances
+    .filter(({ balance, symbol }) => {
+      const oldTokenBalance = get(oldBalances, [symbol, 'balance'], 0);
+      return oldTokenBalance && parseFloat(balance) > parseFloat(oldTokenBalance);
+    });
+  if (increasedBalances.length) {
+    Toast.show({ message: 'Your assets balance increased', type: 'success', title: 'Success' });
+  }
+}
+
 export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?: boolean) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
@@ -490,9 +502,13 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
 
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) return;
+
     const walletAddress = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
-    const activeAccountType = getActiveAccountType(accounts);
+    const isSmartAccount = checkIfSmartAccount(activeAccount);
+
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
@@ -505,18 +521,9 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
         ...balances,
         [accountId]: transformedBalances,
       };
-      if (showToastIfIncreased) {
-        const increasedBalances = Object.values(transformedBalances)
-          // $FlowFixMe
-          .filter(({ balance: balanceUpd, symbol: symbolUpd }) =>
-            Object.values(balances[accountId] || {}).find(
-              // $FlowFixMe
-              ({ balance, symbol }) => symbol === symbolUpd && parseFloat(balanceUpd) > parseFloat(balance),
-            ),
-          );
-        if (increasedBalances.length) {
-          Toast.show({ message: 'Your assets balance increased', type: 'success', title: 'Success' });
-        }
+      if (showToastIfIncreased && !isSmartAccount) {
+        const currentBalances = accountBalancesSelector(getState());
+        notifyAboutIncreasedBalance(newBalances, currentBalances);
       }
       dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
       dispatch({
@@ -532,7 +539,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
       dispatch({ type: UPDATE_RATES, payload: rates });
     }
 
-    if (smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
+    if (smartWalletFeatureEnabled && isSmartAccount) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
   };
