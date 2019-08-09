@@ -36,7 +36,7 @@ import { responsiveSize } from 'utils/ui';
 // import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
 // import { getRate } from 'utils/assets';
 
-import { CHOOSE_ASSETS_TO_TRANSFER, EXCHANGE } from 'constants/navigationConstants';
+import { CHOOSE_ASSETS_TO_TRANSFER, EXCHANGE, ASSETS } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
@@ -147,7 +147,10 @@ class SmartWalletIntro extends React.PureComponent<Props> {
             <ListItemChevron
               label="Enable with ETH available"
               onPress={isDeploy
-                ? () => deploySmartWallet()
+                ? () => {
+                  deploySmartWallet();
+                  navigation.navigate(ASSETS);
+                }
                 : () => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)
               }
               color={baseColors.persianBlue}

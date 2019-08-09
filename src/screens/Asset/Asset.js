@@ -29,18 +29,16 @@ import { createStructuredSelector } from 'reselect';
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 import SlideModal from 'components/Modals/SlideModal';
-// import Header from 'components/Header';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BoldText, BaseText, Paragraph } from 'components/Typography';
-import Button from 'components/Button';
 import TankAssetBalance from 'components/TankAssetBalance';
+import { DeploymentView } from 'components/DeploymentView';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
 // models
@@ -50,7 +48,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 
 // constants
-import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { MAIN_NETWORK, PILLAR_NETWORK } from 'constants/tabsConstants';
@@ -104,7 +102,6 @@ type Props = {
   paymentNetworkBalances: Balances,
   smartWalletFeatureEnabled: boolean,
   history: Array<*>,
-  deploySmartWallet: Function,
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
 };
 
@@ -163,20 +160,6 @@ const Disclaimer = styled(BaseText)`
 const Description = styled(Paragraph)`
   padding-bottom: 80px;
   line-height: ${fontSizes.mediumLarge};
-`;
-
-const MessageTitle = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  text-align: center;
-  letter-spacing: 0.03px;
-  color: #3f3d56;
-`;
-
-const Message = styled(BaseText)`
-  padding-top: 6px;
-  font-size: ${fontSizes.extraExtraSmall}px;
-  color: ${baseColors.darkGray};
-  text-align: center;
 `;
 
 const ValuesWrapper = styled.View`
@@ -266,7 +249,6 @@ class AssetScreen extends React.Component<Props, State> {
       history,
       contacts,
       smartWalletFeatureEnabled,
-      deploySmartWallet,
     } = this.props;
 
     const { showDescriptionModal, activeTab } = this.state;
@@ -301,6 +283,7 @@ class AssetScreen extends React.Component<Props, State> {
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const mainNetworkTransactions = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
     const tokenTransactionsOnMainNetwork = mainNetworkTransactions.filter(({ asset }) => asset === token);
+    const { upgrade: { deploymentStarted } } = smartWalletState;
 
     const transactionsTabs = [
       {
@@ -329,11 +312,6 @@ class AssetScreen extends React.Component<Props, State> {
     };
 
     if (isSmartWallet) transactionsTabs.push(pillarNetworkTab);
-
-    const { upgrade: { deploymentStarted } } = smartWalletState;
-
-    const isDeploymentButtonDisabled = deploymentStarted
-      || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING;
 
     return (
       <ContainerWithHeader
@@ -393,11 +371,6 @@ class AssetScreen extends React.Component<Props, State> {
             }
           </DataWrapper>
           <AssetCardWrapper>
-            { /*
-            <View style={{ paddingHorizontal: spacing.mediumLarge, paddingTop: 10 }}>
-              <TruncatedText lines={1} text={assetData.description} />
-           </View
-           > */}
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
@@ -407,19 +380,12 @@ class AssetScreen extends React.Component<Props, State> {
               isReceiveDisabled={!isReceiveActive}
             />
             {!isSendActive &&
-            <Wrapper regularPadding style={{ marginTop: 30, alignItems: 'center' }}>
-              <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
-              <Message>{ sendingBlockedMessage.message }</Message>
-              {smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED &&
-              <Button
-                marginTop="20px"
-                height={52}
-                title="Deploy Smart Wallet"
-                disabled={isDeploymentButtonDisabled}
-                onPress={() => deploySmartWallet()}
-              />
-              }
-            </Wrapper>
+            <DeploymentView
+              message={sendingBlockedMessage}
+              buttonLabel="Deploy Smart Wallet"
+              buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
+              isDeploying={deploymentStarted || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
+            />
             }
           </AssetCardWrapper>
           {!!tokenTransactionsOnMainNetwork.length &&
@@ -496,7 +462,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchTransactionsHistory: (asset, indexFrom) => {
     dispatch(fetchTransactionsHistoryAction(asset, indexFrom));
   },
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
   logScreenView: (contentName: string, contentType: string, contentId: string) => {
     dispatch(logScreenViewAction(contentName, contentType, contentId));
   },

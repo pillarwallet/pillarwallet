@@ -30,10 +30,12 @@ import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
+import get from 'lodash.get';
 
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
@@ -42,6 +44,7 @@ import { BaseText, Paragraph } from 'components/Typography';
 import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
+import { DeploymentView, getDeployErrorMessage } from 'components/DeploymentView';
 
 import {
   searchOffersAction,
@@ -52,13 +55,17 @@ import {
   setTokenAllowanceAction,
   markNotificationAsSeenAction,
 } from 'actions/exchangeActions';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
 
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
@@ -171,6 +178,9 @@ type Props = {
   markNotificationAsSeen: Function,
   oAuthAccessToken: string,
   exchangeWithFiatEnabled: boolean,
+  accounts: Accounts,
+  smartWalletState: Object,
+  deploySmartWallet: Function,
 };
 
 type State = {
@@ -924,6 +934,9 @@ class ExchangeScreen extends React.Component<Props, State> {
       connectedProviders,
       hasUnreadExchangeNotification,
       markNotificationAsSeen,
+      accounts,
+      smartWalletState,
+      deploySmartWallet,
     } = this.props;
     const {
       value,
@@ -946,6 +959,12 @@ class ExchangeScreen extends React.Component<Props, State> {
       });
     }
 
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const blockView = !!Object.keys(sendingBlockedMessage).length
+      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
+    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
+
     return (
       <ContainerWithHeader
         backgroundColor={baseColors.white}
@@ -955,6 +974,13 @@ class ExchangeScreen extends React.Component<Props, State> {
         }}
         inset={{ bottom: 'never' }}
       >
+        {!!blockView &&
+        <DeploymentView
+          isDeploying={!deploymentData.error}
+          message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
+          buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
+        />}
+        {!blockView &&
         <ScrollWrapper
           keyboardShouldPersistTaps="handled"
           color={UIColors.defaultBackgroundColor}
@@ -990,7 +1016,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               </ESWrapper>
             )}
           />
-        </ScrollWrapper>
+        </ScrollWrapper>}
       </ContainerWithHeader>
     );
   }
@@ -1011,6 +1037,8 @@ const mapStateToProps = ({
   assets: { data: assets, supportedAssets },
   rates: { data: rates },
   featureFlags: { data: { EXCHANGE_WITH_FIAT_ENABLED: exchangeWithFiatEnabled } },
+  accounts: { data: accounts },
+  smartWallet: smartWalletState,
 }) => ({
   baseFiatCurrency,
   offers,
@@ -1023,6 +1051,8 @@ const mapStateToProps = ({
   hasUnreadExchangeNotification,
   oAuthAccessToken,
   exchangeWithFiatEnabled,
+  accounts,
+  smartWalletState,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1049,6 +1079,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
     setTokenAllowanceAction(assetCode, provider, callback),
   ),
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);

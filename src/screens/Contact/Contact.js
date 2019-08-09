@@ -29,7 +29,6 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
-// import get from 'lodash.get';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import {
   syncContactAction,
@@ -38,10 +37,9 @@ import {
   blockContactAction,
 } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import { fetchContactBadgesAction } from 'actions/badgesActions';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
-import { BADGE, CHAT, CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
+import { ScrollWrapper } from 'components/Layout';
+import { BADGE, CHAT, CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
@@ -53,8 +51,8 @@ import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
-import { BaseText, BoldText } from 'components/Typography';
-import Button from 'components/Button';
+import { DeploymentView } from 'components/DeploymentView';
+
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -82,18 +80,6 @@ const CircleButtonsWrapper = styled.View`
   border-color: ${baseColors.mediumLightGray};
   justify-content: center;
   align-items: center;
-`;
-
-const MessageTitle = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  text-align: center;
-`;
-
-const Message = styled(BaseText)`
-  padding-top: 10px;
-  font-size: ${fontSizes.tiny}px;
-  color: ${baseColors.darkGray};
-  text-align: center;
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -129,7 +115,6 @@ type Props = {
   smartWalletState: Object,
   accounts: Accounts,
   history: Array<*>,
-  deploySmartWallet: Function,
   openSeaTxHistory: Object[],
   contactsBadges: Badges,
   fetchContactBadges: Function,
@@ -338,7 +323,6 @@ class Contact extends React.Component<Props, State> {
       chats,
       smartWalletState,
       accounts,
-      deploySmartWallet,
       // contactsBadges,
     } = this.props;
     const {
@@ -434,19 +418,12 @@ class Contact extends React.Component<Props, State> {
                     onPress={() => this.onSendPress(displayContact)}
                   />
                   {disableSend &&
-                  <Wrapper regularPadding style={{ marginTop: 30, alignItems: 'center' }}>
-                    <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
-                    <Message>{ sendingBlockedMessage.message }</Message>
-                    {smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED &&
-                    <Button
-                      marginTop="20px"
-                      height={52}
-                      title="Deploy Smart Wallet"
-                      disabled={isDeploymentButtonDisabled}
-                      onPress={() => deploySmartWallet()}
-                    />
-                    }
-                  </Wrapper>
+                  <DeploymentView
+                    message={sendingBlockedMessage}
+                    buttonLabel="Deploy Smart Wallet"
+                    buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
+                    isDeploying={isDeploymentButtonDisabled}
+                  />
                   }
                 </CircleButtonsWrapper>
                 <ActivityFeed
@@ -558,7 +535,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
   fetchContactBadges: (contact) => dispatch(fetchContactBadgesAction(contact)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });

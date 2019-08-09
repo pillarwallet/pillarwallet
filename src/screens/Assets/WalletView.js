@@ -57,6 +57,7 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 import Spinner from 'components/Spinner';
 import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import { DeploymentView, getDeployErrorMessage } from 'components/DeploymentView';
 
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
@@ -430,6 +431,7 @@ class WalletView extends React.Component<Props, State> {
       smartWalletState,
       smartWalletFeatureEnabled,
       showDeploySmartWallet,
+      deploySmartWallet,
     } = this.props;
 
     // SEARCH
@@ -461,6 +463,7 @@ class WalletView extends React.Component<Props, State> {
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const hasSmartWallet = smartWalletStatus.hasAccount;
     const showFinishSmartWalletActivation = (!!smartWalletFeatureEnabled && !hasSmartWallet) || showDeploySmartWallet;
+    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
 
     return (
       <CustomKAWrapper
@@ -490,7 +493,12 @@ class WalletView extends React.Component<Props, State> {
           }}
           wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.mediumLightGray, height: 160 }}
         />
-        {blockAssetsView && this.renderBlockedScreen(sendingBlockedMessage)}
+        {blockAssetsView &&
+        <DeploymentView
+          isDeploying={!deploymentData.error}
+          message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
+          buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
+        />}
         {!blockAssetsView &&
         <SearchBlock
           hideSearch={blockAssetsView}
