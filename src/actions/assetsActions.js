@@ -58,6 +58,7 @@ import type {
   TransactionPayload,
 } from 'models/Transaction';
 import type { Asset, Assets } from 'models/Asset';
+import type { Account } from 'models/Account';
 import { addressesEqual, generatePMTToken, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
@@ -482,7 +483,7 @@ export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = 
   };
 };
 
-export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?: boolean) => {
+export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?: boolean, account?: Account) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
@@ -490,9 +491,17 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
 
-    const walletAddress = getActiveAccountAddress(accounts);
-    const accountId = getActiveAccountId(accounts);
-    const activeAccountType = getActiveAccountType(accounts);
+    let walletAddress = getActiveAccountAddress(accounts);
+    let accountId = getActiveAccountId(accounts);
+    let activeAccountType = getActiveAccountType(accounts);
+
+    if (account) {
+      const { id, type } = account;
+      walletAddress = id;
+      accountId = id;
+      activeAccountType = type;
+    }
+
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,

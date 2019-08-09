@@ -20,14 +20,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
-import { createStructuredSelector } from 'reselect';
 import type { Assets, Balances, Rates } from 'models/Asset';
 import { BaseText } from 'components/Typography';
 import { calculatePortfolioBalance } from 'utils/assets';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { accountBalancesSelector } from 'selectors/balances';
 
 type Props = {
   assets: Assets,
@@ -49,9 +47,15 @@ class PortfolioBalance extends React.PureComponent<Props, {}> {
       label,
     } = this.props;
 
-    const portfolioBalances = calculatePortfolioBalance(assets, rates, balances);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const portfolioBalance = formatMoney(portfolioBalances[fiatCurrency] || 0);
+    const allBalances = Object.keys(balances).map((account) => {
+      const portfolioBalance = calculatePortfolioBalance(assets, rates, balances[account]);
+      return Object.keys(portfolioBalance).length ? portfolioBalance[fiatCurrency] : 0;
+    });
+
+    const combinedBalance = allBalances.reduce((a, b) => a + b, 0);
+
+    const portfolioBalance = formatMoney(combinedBalance || 0);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     return (
@@ -81,19 +85,12 @@ const mapStateToProps = ({
   assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
+  balances: { data: balances },
 }) => ({
   rates,
   assets,
   baseFiatCurrency,
+  balances,
 });
 
-const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
-});
-
-const combinedMapStateToProps = (state) => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
-export default connect(combinedMapStateToProps)(PortfolioBalance);
+export default connect(mapStateToProps)(PortfolioBalance);

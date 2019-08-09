@@ -73,6 +73,7 @@ import {
 import { onWalletConnectSessionRequest, cancelWaitingRequest } from 'actions/walletConnectActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -85,7 +86,8 @@ import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'uti
 import { getAccountAddress } from 'utils/accounts';
 
 // types
-import type { Account } from 'models/Account';
+import type { Account, Accounts } from 'models/Account';
+import type { Assets } from 'models/Asset';
 
 import type { Badges } from 'models/Badge';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -120,6 +122,9 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
   restoreTransactionHistory: (walletAddress: string, walletId: string) => void,
   activeAccount: Account,
+  fetchAssetsBalances: Function,
+  accounts: Accounts,
+  assets: Assets,
 };
 
 type State = {
@@ -206,7 +211,13 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, logScreenView } = this.props;
+    const {
+      fetchTransactionsHistory,
+      logScreenView,
+      fetchAssetsBalances,
+      accounts,
+      assets,
+    } = this.props;
 
     logScreenView('View home', 'Home');
 
@@ -220,6 +231,8 @@ class HomeScreen extends React.Component<Props, State> {
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
     });
+
+    accounts.forEach((acc) => { fetchAssetsBalances(assets, acc); });
   }
 
   componentWillUnmount() {
@@ -593,6 +606,8 @@ const mapStateToProps = ({
   deepLink: { data: { loginAttemptToken } = {} },
   badges: { data: badges },
   walletConnect: { connectors },
+  accounts: { data: accounts },
+  assets: { data: assets },
 }) => ({
   contacts,
   user,
@@ -601,6 +616,8 @@ const mapStateToProps = ({
   loginAttemptToken,
   badges,
   connectors,
+  accounts,
+  assets,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -633,6 +650,7 @@ const mapDispatchToProps = (dispatch) => ({
   restoreTransactionHistory: (walletAddress: string, walletId: string) => dispatch(
     restoreTransactionHistoryAction(walletAddress, walletId),
   ),
+  fetchAssetsBalances: (assets, account) => dispatch(fetchAssetsBalancesAction(assets, false, account)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
