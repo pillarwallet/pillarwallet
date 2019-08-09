@@ -620,7 +620,7 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     let walletSupportedAssets = [...supportedAssets];
     if (!supportedAssets.length) {
       walletSupportedAssets = await api.fetchSupportedAssets(walletId);
-      if (smartWalletFeatureEnabled) {
+      if (smartWalletFeatureEnabled && walletSupportedAssets.length) {
         walletSupportedAssets = [...walletSupportedAssets, generatePMTToken()];
       }
       dispatch({
