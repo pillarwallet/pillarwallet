@@ -443,7 +443,7 @@ export function cancelWaitingRequest(clientId: string, timeout: boolean = false)
   };
 }
 
-export function onWalletConnectSessionRequest(uri: string) {
+export function requestWalletConnectSessionAction(uri: string) {
   return async (dispatch: Function, getState: () => Object) => {
     try {
       const { pending } = getState().walletConnect;

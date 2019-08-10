@@ -22,10 +22,45 @@ import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
 import url from 'url';
 import Toast from 'components/Toast';
-import { updateNavigationLastScreenState, navigate, getNavigationPathAndParamsState } from 'services/navigation';
+import {
+  updateNavigationLastScreenState,
+  navigate,
+  getNavigationPathAndParamsState,
+} from 'services/navigation';
 import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
-import { HOME, APP_FLOW, AUTH_FLOW, CONFIRM_CLAIM } from 'constants/navigationConstants';
-import { ADD_DEEP_LINK_DATA, RESET_DEEP_LINK_DATA } from 'constants/deepLinkConstants';
+import {
+  HOME_TAB,
+  LOGIN,
+  CONFIRM_CLAIM,
+} from 'constants/navigationConstants';
+
+type ApproveLoginQuery = {
+  loginToken: string,
+};
+
+const beginApproveLogin = (query: ApproveLoginQuery) => {
+  const { loginToken: loginAttemptToken } = query;
+
+  const pathAndParams = getNavigationPathAndParamsState();
+  if (!pathAndParams) {
+    updateNavigationLastScreenState({
+      lastActiveScreen: LOGIN,
+      lastActiveScreenParams: { loginAttemptToken },
+    });
+
+    return;
+  }
+
+  navigate(NavigationActions.navigate({
+    routeName: HOME_TAB,
+    action: NavigationActions.navigate({
+      routeName: LOGIN,
+      params: {
+        loginAttemptToken,
+      },
+    }),
+  }));
+};
 
 export const executeDeepLinkAction = (deepLink: string) => {
   return async (dispatch: Function) => {
@@ -43,45 +78,12 @@ export const executeDeepLinkAction = (deepLink: string) => {
         }
         break;
       case 'approve':
-        const { query: { loginToken: loginAttemptToken } } = params;
-        dispatch({
-          type: ADD_DEEP_LINK_DATA,
-          payload: { loginAttemptToken },
-        });
-        const pathAndParams = getNavigationPathAndParamsState();
-        if (!pathAndParams) {
-          updateNavigationLastScreenState({
-            lastActiveScreen: HOME,
-            lastActiveScreenParams: {
-              showLoginApproveModal: true,
-            },
-          });
-          break;
-        }
-        const pathParts = pathAndParams.path.split('/');
-        const currentFlow = pathParts[0];
-        const currentScreen = pathParts[pathAndParams.path.length - 1];
-        if (currentScreen !== HOME) {
-          updateNavigationLastScreenState({
-            lastActiveScreen: HOME,
-            lastActiveScreenParams: {
-              showLoginApproveModal: true,
-            },
-          });
-          if (currentFlow !== AUTH_FLOW) {
-            const navigateToAppAction = NavigationActions.navigate({
-              routeName: APP_FLOW,
-              params: {},
-              action: NavigationActions.navigate({
-                routeName: HOME,
-                params: {
-                  showLoginApproveModal: true,
-                },
-              }),
-            });
-            navigate(navigateToAppAction);
-          }
-        }
+        const {
+          query = { loginToken: '' },
+        } = params;
+
+        beginApproveLogin(query);
+
         break;
       case 'shapeshift':
         const { query: { status: authStatus, auth: shapeshiftTokenHash } } = params;
@@ -94,18 +96,11 @@ export const executeDeepLinkAction = (deepLink: string) => {
   };
 };
 
-export const resetDeepLinkDataAction = () => {
-  return async (dispatch: Function) => {
-    dispatch({ type: RESET_DEEP_LINK_DATA });
-  };
-};
-
 export const approveLoginAttemptAction = (loginAttemptToken: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     try {
       const result = await api.approveLoginToExternalResource(loginAttemptToken);
       if (!result || result.error) throw new Error();
-      dispatch({ type: RESET_DEEP_LINK_DATA });
     } catch (e) {
       Toast.show({
         message: 'Failed to approve your login, please try again.',
