@@ -336,9 +336,11 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = ({
+  accountRecovery: {
+    agents: recoveryAgents,
+  },
   smartWallet: {
     upgrade: {
-      recoveryAgents,
       transfer: {
         assets: transferAssets,
         collectibles: transferCollectibles,
