@@ -228,6 +228,7 @@ export const updateTransactionStatusAction = (hash: string) => {
         ...tx,
         nbConfirmations,
         status,
+        gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : tx.gasUsed,
       };
     });
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);

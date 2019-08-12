@@ -164,7 +164,7 @@ class EventDetails extends React.Component<Props, {}> {
     const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
     if (txInfo.status !== TX_PENDING_STATUS) return;
 
-    this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 1000);
+    this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 500);
     this.timer = setInterval(() => updateTransactionStatus(eventData.hash), 10000);
   }
 
