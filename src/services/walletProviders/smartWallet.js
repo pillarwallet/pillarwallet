@@ -15,11 +15,10 @@ import type { Account } from 'models/Account';
 import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
 import { getERC721ContractTransferMethod } from 'services/assets';
 import { smartWalletService } from 'services/smartWallet';
-import { getEthereumProvider } from 'utils/common';
+import { formatAmount, getEthereumProvider } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 import { PPN_TOKEN } from 'configs/assetsConfig';
-
 
 const {
   Eth: {
@@ -93,7 +92,7 @@ export default class SmartWalletProvider {
     const from = getAccountAddress(account);
 
     if (usePPN) {
-      const sendValue = PPN_TOKEN === ETH ? ethToWei(amount) : amount;
+      const sendValue = PPN_TOKEN === ETH ? ethToWei(amount) : +formatAmount(amount);
       return smartWalletService
         .createAccountPayment(recipient, contractAddress, sendValue)
         .then(({ hash }) => ({
