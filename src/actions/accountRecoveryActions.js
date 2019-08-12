@@ -81,7 +81,6 @@ export const submitAccountRecoverySetupAction = () => {
     const setupTransactionHash = await smartWalletService
       .setupAccountFriendRecoveryExtension(setupEstimate)
       .catch(() => null);
-    console.log('setupTransactionHash: ', setupTransactionHash);
     if (setupTransactionHash) {
       dispatch(addAccountRecoveryTransactionAction({
         type: ACCOUNT_RECOVERY_TRANSACTION_TYPES.SETUP,
@@ -110,7 +109,6 @@ export const submitAccountRecoveryEnableAction = () => {
     const enableTransactionHash = await smartWalletService
       .addAccountFriendRecoveryExtension(enableEstimate)
       .catch(() => null);
-    console.log('enableTransactionHash: ', enableTransactionHash);
     if (enableTransactionHash) {
       dispatch(addAccountRecoveryTransactionAction({
         type: ACCOUNT_RECOVERY_TRANSACTION_TYPES.ENABLE,
@@ -145,8 +143,6 @@ export const checkAccountRecoverySetupAction = (newSetup?: boolean) => {
       },
     } = getState();
     const activeAccountType = getActiveAccountType(accounts);
-    console.log('enabled: ', enabled);
-    console.log('accountRecoveryTransactions: ', accountRecoveryTransactions);
     if (!agents.length || activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
     // if enabled we can submit setup from stored agents or ignore action
     if (enabled) {
@@ -155,7 +151,6 @@ export const checkAccountRecoverySetupAction = (newSetup?: boolean) => {
       );
       // we need to check whether to submit initial setup or new setup if requested
       if (!setupTransaction || newSetup) {
-        console.log('submitAccountRecoverySetupAction1');
         dispatch(submitAccountRecoverySetupAction());
       }
       return;
@@ -172,7 +167,6 @@ export const checkAccountRecoverySetupAction = (newSetup?: boolean) => {
       if (state === ACCOUNT_TRANSACTION_COMPLETED
         || allHistory.find(({ hash: _hash, status }) => _hash === hash && status === TX_CONFIRMED_STATUS)) {
         // completed transaction found, lets update enable state and submit initial setup
-        console.log('submitAccountRecoverySetupAction2');
         dispatch(enableAccountRecoveryAction());
         dispatch(submitAccountRecoverySetupAction());
       }
@@ -184,13 +178,11 @@ export const checkAccountRecoverySetupAction = (newSetup?: boolean) => {
     const existingRecoverySetup = await smartWalletService.getAccountFriendRecovery(accountAddress).catch(() => null);
     if (existingRecoverySetup) {
       // a setup already exists, enable was already submitted before, let's save this and submit initial setup
-      console.log('submitAccountRecoverySetupAction3');
       dispatch(enableAccountRecoveryAction());
       dispatch(submitAccountRecoverySetupAction());
       return;
     }
     // enable transaction nor exists nor was submitted, lets start by submitting it
-    console.log('submitAccountRecoveryEnableAction');
     dispatch(submitAccountRecoveryEnableAction());
   };
 };
