@@ -38,6 +38,7 @@ export const PLR = 'PLR';
 export const EUR = 'EUR';
 export const GBP = 'GBP';
 export const USD = 'USD';
+export const PMT = 'PMT';
 
 export const supportedFiatCurrencies = [GBP, EUR, USD];
 export const defaultFiatCurrency = GBP;

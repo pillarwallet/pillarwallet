@@ -33,6 +33,7 @@ import { fontSizes } from 'utils/variables';
 import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'actions/smartWalletActions';
 import { formatAmount } from 'utils/common';
 import type { TopUpFee } from 'models/PaymentNetwork';
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 
 type Props = {
@@ -110,7 +111,7 @@ class FundConfirm extends React.Component<Props, State> {
         >
           <LabeledRow>
             <Label>Amount</Label>
-            <Value>{amount} ETH</Value>
+            <Value>{amount} {PPN_TOKEN}</Value>
           </LabeledRow>
           <LabeledRow>
             <Label>Recipient username</Label>

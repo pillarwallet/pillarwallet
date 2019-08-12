@@ -467,6 +467,11 @@ class Contact extends React.Component<Props, State> {
 
     // const contactBadges = get(contactsBadges, contact.username, []);
 
+    const { upgrade: { deploymentStarted } } = smartWalletState;
+
+    const isDeploymentButtonDisabled = deploymentStarted
+      || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING;
+
     return (
       <ContainerWithBottomSheet
         inset={{ bottom: 0 }}
@@ -537,7 +542,7 @@ class Contact extends React.Component<Props, State> {
                     marginTop="20px"
                     height={52}
                     title="Deploy Smart Wallet"
-                    disabled={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
+                    disabled={isDeploymentButtonDisabled}
                     onPress={() => deploySmartWallet()}
                   />
                   }

@@ -2,11 +2,14 @@
 import { ethToWei } from '@netgum/utils';
 import { utils } from 'ethers';
 import abi from 'ethjs-abi';
+import { sdkModules } from '@archanova/sdk';
 import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
+
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
+
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 import type { Account } from 'models/Account';
 import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
@@ -15,7 +18,7 @@ import smartWalletService from 'services/smartWallet';
 import { getEthereumProvider } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
-import { sdkModules } from '@archanova/sdk';
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 
 const {
@@ -84,10 +87,28 @@ export default class SmartWalletProvider {
       amount,
       contractAddress,
       decimals = 18,
+      usePPN,
     } = transaction;
     let { data, to: recipient } = transaction;
     const from = getAccountAddress(account);
 
+    if (usePPN) {
+      const sendValue = PPN_TOKEN === ETH ? ethToWei(amount) : amount;
+      return smartWalletService
+        .createAccountPayment(recipient, contractAddress, sendValue)
+        .then(({ hash }) => ({
+          from,
+          hash,
+          to: recipient,
+          value: sendValue.toString(),
+        }))
+        .catch((e) => catchTransactionError(e, 'ERC20 PPN', {
+          decimals,
+          contractAddress,
+          to: recipient,
+          value: sendValue,
+        }));
+    }
     const value = decimals > 0
       ? utils.parseUnits(amount.toString(), decimals)
       : utils.bigNumberify(amount.toString());

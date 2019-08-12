@@ -28,13 +28,14 @@ import { BigNumber } from 'bignumber.js';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
+import isEmpty from 'lodash.isempty';
 
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 
 // components
-import { BaseText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
@@ -44,6 +45,7 @@ import ProfileImage from 'components/ProfileImage';
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { formatFullAmount, noop } from 'utils/common';
 import { createAlert } from 'utils/alerts';
+import { addressesEqual } from 'utils/assets';
 
 // actions
 import { updateTransactionStatusAction } from 'actions/historyActions';
@@ -63,9 +65,11 @@ import {
   COLLECTIBLE,
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
+import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
+import { activeAccountAddressSelector } from 'selectors';
 
 // local components
 import EventHeader from './EventHeader';
@@ -73,7 +77,6 @@ import EventHeader from './EventHeader';
 type Props = {
   transaction: Transaction,
   contacts: Object[],
-  wallet: Object,
   history: Object[],
   assets: Asset[],
   onClose: Function,
@@ -87,6 +90,7 @@ type Props = {
   eventStatus: string,
   txNotes: Object[],
   getTxNoteByContact: Function,
+  activeAccountAddress: string,
 }
 
 const ContentWrapper = styled.View`
@@ -133,6 +137,8 @@ const viewTransactionOnBlockchain = (hash: string) => {
 class EventDetails extends React.Component<Props, {}> {
   timer: ?IntervalID;
   timeout: ?TimeoutID;
+  // HACK: we need to cache the tx data for smart wallet migration process
+  cachedTxInfo = {};
 
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
@@ -157,7 +163,7 @@ class EventDetails extends React.Component<Props, {}> {
     const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
     if (txInfo.status !== TX_PENDING_STATUS) return;
 
-    this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 1000);
+    this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 500);
     this.timer = setInterval(() => updateTransactionStatus(eventData.hash), 10000);
   }
 
@@ -238,7 +244,7 @@ class EventDetails extends React.Component<Props, {}> {
     const {
       eventData,
       contacts,
-      wallet: { address: myAddress },
+      activeAccountAddress,
       onClose,
       history,
       txNotes,
@@ -246,7 +252,12 @@ class EventDetails extends React.Component<Props, {}> {
     } = this.props;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
-      const txInfo = history.find(tx => tx.hash === eventData.hash) || {};
+      let txInfo = history.find(tx => tx.hash === eventData.hash);
+      if (!txInfo) {
+        txInfo = this.cachedTxInfo || {};
+      } else {
+        this.cachedTxInfo = txInfo;
+      }
       const {
         to,
         from,
@@ -256,9 +267,12 @@ class EventDetails extends React.Component<Props, {}> {
         gasPrice,
         status,
         note,
+        isPPNTransaction,
+        extra,
       } = txInfo;
 
-      const isReceived = to.toUpperCase() === myAddress.toUpperCase();
+      const isReceived = addressesEqual(to, activeAccountAddress);
+      const toMyself = isReceived && addressesEqual(from, to);
       let transactionNote = note;
       if (txNotes && txNotes.length > 0) {
         const txNote = txNotes.find(txn => txn.txHash === eventData.hash);
@@ -270,8 +284,8 @@ class EventDetails extends React.Component<Props, {}> {
       const isPending = status === TX_PENDING_STATUS;
       const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
       const value = utils.formatUnits(new BigNumber(txInfo.value.toString()).toFixed(), decimals);
-      const recipientContact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase()) || {};
-      const senderContact = contacts.find(({ ethAddress }) => from.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const recipientContact = contacts.find(({ ethAddress }) => addressesEqual(to, ethAddress)) || {};
+      const senderContact = contacts.find(({ ethAddress }) => addressesEqual(from, ethAddress)) || {};
       const relatedUser = isReceived ? senderContact : recipientContact;
       const relatedUserTitle = relatedUser.username || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
@@ -291,6 +305,31 @@ class EventDetails extends React.Component<Props, {}> {
       }
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
+      const freeTx = isPPNTransaction;
+      let showAmountReceived = true;
+      let showSender = true;
+      let showNote = true;
+      let showViewOnBlockchain = true;
+      let showAmountTxType = false;
+      let txType = '';
+      const listSettledAssets = (note === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
+
+      if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
+        showAmountReceived = false;
+        showSender = false;
+        showNote = false;
+        showAmountTxType = true;
+        txType = 'TX SETTLEMENT';
+      } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+        showSender = false;
+        showNote = false;
+        showAmountTxType = true;
+        txType = 'TANK TOP UP';
+      }
+
+      if (isPPNTransaction) {
+        showViewOnBlockchain = false;
+      }
 
       return (
         <React.Fragment>
@@ -301,11 +340,20 @@ class EventDetails extends React.Component<Props, {}> {
             onClose={onClose}
           />
           <EventBody>
+            {showAmountReceived &&
             <ListItemUnderlined
               label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
               value={formatFullAmount(value)}
               valueAdditionalText={asset}
             />
+            }
+            {showAmountTxType &&
+            <ListItemUnderlined
+              label="TRANSACTION TYPE"
+              value={txType}
+            />
+            }
+            {showSender &&
             <ListItemUnderlined
               label={isReceived ? 'SENDER' : 'RECIPIENT'}
               value={relatedUserTitle}
@@ -320,19 +368,27 @@ class EventDetails extends React.Component<Props, {}> {
                 borderWidth={0}
               />)}
             />
-            {!isReceived && !isPending &&
+            }
+            {listSettledAssets &&
             <ListItemUnderlined
-              label="TRANSACTION FEE"
-              value={utils.formatEther(fee.toString())}
-              valueAdditionalText="ETH"
+              label="ASSETS"
+              value={extra.map(item => <BoldText key={item.hash}> {item.value} {item.symbol}</BoldText>)}
             />
             }
-            {!!hasNote &&
+            {(toMyself || !isReceived) && !isPending &&
+            <ListItemUnderlined
+              label="TRANSACTION FEE"
+              value={freeTx ? 'free' : utils.formatEther(fee.toString())}
+              valueAdditionalText={freeTx ? '' : 'ETH'}
+            />
+            }
+            {!!hasNote && showNote &&
             <ListItemParagraph
               label="NOTE"
               value={transactionNote}
             />
             }
+            {showViewOnBlockchain &&
             <ButtonsWrapper>
               <EventButton
                 block
@@ -341,6 +397,7 @@ class EventDetails extends React.Component<Props, {}> {
                 onPress={() => viewTransactionOnBlockchain(hash)}
               />
             </ButtonsWrapper>
+            }
           </EventBody>
         </React.Fragment>
       );
@@ -360,7 +417,8 @@ class EventDetails extends React.Component<Props, {}> {
 
       const { name = '' } = assetData;
 
-      const isReceived = to.toUpperCase() === myAddress.toUpperCase();
+      const isReceived = addressesEqual(to, activeAccountAddress);
+      const toMyself = isReceived && addressesEqual(from, to);
       const status = isReceived ? COLLECTIBLE_RECEIVED : COLLECTIBLE_SENT;
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       let transactionNote = note;
@@ -406,7 +464,7 @@ class EventDetails extends React.Component<Props, {}> {
                 borderWidth={0}
               />)}
             />
-            {!isReceived && !!fee &&
+            {(toMyself || !isReceived) && !!fee &&
             <ListItemUnderlined
               label="TRANSACTION FEE"
               value={utils.formatEther(fee.toString())}
@@ -515,18 +573,17 @@ class EventDetails extends React.Component<Props, {}> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  wallet: { data: wallet },
   txNotes: { data: txNotes },
   assets: { data: assets },
 }) => ({
   contacts,
-  wallet,
   txNotes,
   assets: Object.values(assets),
 });
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
+  activeAccountAddress: activeAccountAddressSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
