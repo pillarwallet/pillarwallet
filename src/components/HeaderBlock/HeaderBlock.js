@@ -194,7 +194,7 @@ const getTheme = (props: Props) => {
   const combinedThemes = [];
 
   Object.keys(props).forEach((prop: string) => {
-    if (themes(background)[prop]) combinedThemes.push(themes(background)[prop]);
+    if (!!props[prop] && themes(background)[prop]) combinedThemes.push(themes(background)[prop]);
   });
 
   if (combinedThemes.length) return Object.assign({}, ...combinedThemes);
