@@ -44,7 +44,8 @@ const ItemRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 36px 20px 36px 30px;
+  padding: ${spacing.large}px;
+  min-height: 90px;
 `;
 
 const TextWrapper = styled.View`
@@ -80,13 +81,16 @@ const SubText = styled(BaseText)`
   margin-top: 4px;
 `;
 
-
 const ItemAddon = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
   margin-left: ${spacing.medium}px;
   padding-bottom: 2px;
+  
+`;const Row = styled.View`
+  flex-direction: row;
+  align-items: center;
 `;
 
 const ButtonWrapper = ({ onPress, children }) => {
@@ -121,6 +125,7 @@ type Props = {
   bordered?: boolean,
   color?: string,
   subtext?: string,
+  subtextAddon?: React.Node,
 }
 
 export const ListItemChevron = (props: Props) => {
@@ -128,6 +133,7 @@ export const ListItemChevron = (props: Props) => {
     onPress,
     label,
     addon,
+    subtextAddon,
     bordered,
     color,
     subtext,
@@ -138,10 +144,16 @@ export const ListItemChevron = (props: Props) => {
         <ItemRow>
           <ContentWrapper>
             <TextWrapper>
-              <ItemLabel color={color}>{label}</ItemLabel>
-              {!!subtext && <SubText>{subtext}</SubText>}
+              <Row>
+                <ItemLabel color={color}>{label}</ItemLabel>
+                {!!addon && <ItemAddon>{addon}</ItemAddon>}
+              </Row>
+              {!!subtext &&
+              <Row>
+                <SubText>{subtext}</SubText>
+                {!!subtextAddon && <ItemAddon>{subtextAddon}</ItemAddon>}
+              </Row>}
             </TextWrapper>
-            {!!addon && <ItemAddon>{addon}</ItemAddon>}
           </ContentWrapper>
           <Icon
             name="chevron-right"

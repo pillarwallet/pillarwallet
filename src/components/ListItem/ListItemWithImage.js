@@ -404,7 +404,7 @@ const Addon = (props: Props) => {
 
   if (itemValue) {
     return (
-      <Wrapper horizontal center style={{ flexWrap: 'wrap' }}>
+      <Wrapper horizontal style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
         <ItemValue color={valueColor} numberOfLines={2} ellipsizeMode="tail">
           {itemValue}
         </ItemValue>

@@ -46,6 +46,7 @@ type Props = {
   value?: Object,
   buttonTitle?: string,
   getFormRef: Function,
+  onChange?: Function,
 }
 
 type State = {
@@ -145,7 +146,9 @@ export default class ProfileForm extends React.Component<Props, State> {
   }
 
   handleChange = (value: Object) => {
+    const { onChange } = this.props;
     this.setState({ value });
+    if (onChange) onChange(value);
   };
 
   render() {

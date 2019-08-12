@@ -56,51 +56,6 @@ type State = {
 
 const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
 
-const fields = (that) => {
-  const fieldsList = [{
-    label: 'Name',
-    name: 'firstName',
-    type: 'firstName',
-    onBlur: that.handleUserFieldUpdate,
-  },
-  {
-    label: 'Surname',
-    name: 'lastName',
-    type: 'lastName',
-    onBlur: that.handleUserFieldUpdate,
-  },
-  {
-    label: 'Email',
-    name: 'email',
-    type: 'email',
-    onBlur: that.handleUserFieldUpdate,
-  },
-  {
-    label: 'Country',
-    name: 'country',
-    type: 'country',
-    onSelect: that.selectCountry,
-    options: sortedCountries,
-    optionsTitle: 'Choose your country',
-  },
-  {
-    label: 'City',
-    name: 'city',
-    type: 'city',
-    onBlur: that.handleUserFieldUpdate,
-  }];
-
-  if (!isProdEnv) {
-    fieldsList.push({
-      label: 'Phone',
-      name: 'phone',
-      type: 'phone',
-      onBlur: that.handleUserPhoneFieldUpdate,
-    });
-  }
-
-  return fieldsList;
-};
 
 const ImageWrapper = styled.View`
   width: 100%;
@@ -132,7 +87,12 @@ const BlankAvatar = styled(CachedImage)`
 const blankAvatar = require('assets/icons/icon_blank_avatar.png');
 
 class AddOrEditUser extends React.PureComponent<Props, State> {
-  _form: t.form;
+  _nameForm: t.form;
+  _surnameForm: t.form;
+  _emailForm: t.form;
+  _countryForm: t.form;
+  _cityForm: t.form;
+  _phoneForm: t.form;
 
   constructor(props: Props) {
     super(props);
@@ -151,16 +111,19 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     updateUser(user.walletId, value);
   };
 
-  handleUserFieldUpdate = (value: Object) => {
+  handleUserFieldChange = (value, formRef) => {
+    formRef.getComponent(Object.keys(value)[0]).validate();
+  };
+
+  handleUserFieldUpdate = (value: Object, formRef) => {
     const {
       updateUser,
       user,
     } = this.props;
-    const valdation = this._form.getComponent(Object.keys(value)[0]).validate() || {};
-    const { errors } = valdation;
-
-    if (!errors || errors.length) return;
-    updateUser(user.walletId, value);
+    const valueKey = Object.keys(value)[0];
+    const validation = formRef.getComponent(valueKey).validate() || {};
+    const { errors = [] } = validation;
+    if (!value[valueKey] || !errors.length) updateUser(user.walletId, value);
   };
 
   handleUserPhoneFieldUpdate = (value: Object) => {
@@ -170,8 +133,8 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       navigation,
       createOneTimePassword,
     } = this.props;
-    const valdation = this._form.getComponent(Object.keys(value)[0]).validate() || {};
-    const { errors } = valdation;
+    const validation = this._phoneForm.getComponent(Object.keys(value)[0]).validate() || {};
+    const { errors } = validation;
     if (!errors || errors.length) return;
 
     const createOTP = () => {
@@ -202,21 +165,14 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     const { profileImage, lastUpdateTime = 0, username } = user;
     const cameraButtonLabel = profileImage ? 'Change profile picture' : 'Set profile picture';
 
-    const formedFields = fields(this);
     const {
       firstName,
       lastName,
+      email,
       phone,
       country,
       city,
     } = user;
-    const value = {
-      firstName,
-      lastName,
-      phone,
-      country,
-      city,
-    };
 
     return (
       <ContainerWithHeader
@@ -246,10 +202,78 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
           </ImageWrapper>
           <ProfileForm
-            fields={formedFields}
-            value={value}
-            getFormRef={node => { this._form = node; }}
+            fields={[{
+              label: 'Name',
+              name: 'firstName',
+              type: 'firstName',
+              onBlur: (val) => this.handleUserFieldUpdate(val, this._nameForm),
+            }]}
+            onChange={(val) => this.handleUserFieldChange(val, this._nameForm)}
+            value={{ firstName }}
+            getFormRef={node => { this._nameForm = node; }}
           />
+
+          <ProfileForm
+            fields={[{
+              label: 'Surname',
+              name: 'lastName',
+              type: 'lastName',
+              onBlur: (val) => this.handleUserFieldUpdate(val, this._surnameForm),
+            }]}
+            onChange={(val) => this.handleUserFieldChange(val, this._surnameForm)}
+            value={{ lastName }}
+            getFormRef={node => { this._surnameForm = node; }}
+          />
+
+          <ProfileForm
+            fields={[{
+              label: 'Email',
+              name: 'email',
+              type: 'email',
+              onBlur: (val) => this.handleUserFieldUpdate(val, this._emailForm),
+            }]}
+            onChange={(val) => this.handleUserFieldChange(val, this._emailForm)}
+            value={{ email }}
+            getFormRef={node => { this._emailForm = node; }}
+          />
+
+          <ProfileForm
+            fields={[{
+              label: 'Country',
+              name: 'country',
+              type: 'country',
+              onSelect: this.selectCountry,
+              options: sortedCountries,
+              optionsTitle: 'Choose your country',
+            }]}
+            value={{ country }}
+            getFormRef={node => { this._countryForm = node; }}
+          />
+
+          <ProfileForm
+            fields={[{
+              label: 'City',
+              name: 'city',
+              type: 'city',
+              onBlur: (val) => this.handleUserFieldUpdate(val, this._cityForm),
+            }]}
+            onChange={(val) => this.handleUserFieldChange(val, this._cityForm)}
+            value={{ city }}
+            getFormRef={node => { this._cityForm = node; }}
+          />
+
+          {!isProdEnv &&
+          <ProfileForm
+            fields={[{
+              label: 'Phone',
+              name: 'phone',
+              type: 'phone',
+              onBlur: this.handleUserPhoneFieldUpdate,
+            }]}
+            onChange={(val) => this.handleUserFieldChange(val, this._phoneForm)}
+            value={{ phone }}
+            getFormRef={node => { this._phoneForm = node; }}
+          />}
         </KAScrollView>
 
         <Camera

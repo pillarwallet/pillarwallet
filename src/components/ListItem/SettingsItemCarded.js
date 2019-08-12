@@ -196,6 +196,7 @@ export const SettingsItemCarded = (props: Props) => {
           {isActive && <CheckIcon name="check" />}
         </CardRow>
       </ShadowedCard>
+      {!!onSettingsPress &&
       <ShadowedCard
         wrapperStyle={{
           width: buttonSideLength,
@@ -226,7 +227,7 @@ export const SettingsItemCarded = (props: Props) => {
           />
           {!!settingsLabel && <SettingsLabel>{settingsLabel}</SettingsLabel>}
         </React.Fragment>}
-      </ShadowedCard>
+      </ShadowedCard>}
     </ItemWrapper>
   );
 };

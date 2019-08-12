@@ -36,20 +36,22 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // constants
-import { ASSETS, WALLET_SETTINGS } from 'constants/navigationConstants';
+import { ASSETS, SMART_WALLET_INTRO, WALLET_SETTINGS } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // models
 import type { Accounts, Account } from 'models/Account';
+import type { Assets, Balances, Rates } from 'models/Asset';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 
 // utils
 import { responsiveSize } from 'utils/ui';
 import { getActiveAccount } from 'utils/accounts';
 import { calculatePortfolioBalance } from 'utils/assets';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
-import type { Assets, Balances, Rates } from 'models/Asset';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -63,6 +65,7 @@ type Props = {
   rates: Rates,
   assets: Assets,
   baseFiatCurrency: string,
+  smartWalletState: Object,
 }
 
 type State = {
@@ -191,6 +194,9 @@ class WalletsList extends React.Component<Props, State> {
       balances,
       assets,
       rates,
+      baseFiatCurrency,
+      smartWalletState,
+      navigation,
     } = this.props;
     const { showCheckPinModal, changingAccount } = this.state;
     const accountsList = smartWalletFeatureEnabled
@@ -202,6 +208,11 @@ class WalletsList extends React.Component<Props, State> {
       const balance = calculatePortfolioBalance(assets, rates, accountBalances);
       return { ...acc, balance };
     });
+
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const showSmartWalletInitButton = !smartWalletStatus.hasAccount && smartWalletFeatureEnabled;
 
     return (
       <ContainerWithHeader
@@ -231,6 +242,20 @@ class WalletsList extends React.Component<Props, State> {
             />
           }
           style={{ flexGrow: 0 }}
+          ListFooterComponent={showSmartWalletInitButton
+            ? (
+              <SettingsItemCarded
+                title="Smart Wallet"
+                subtitle={`${currencySymbol} 0`}
+                onMainPress={() => navigation.navigate(SMART_WALLET_INTRO)}
+                customIcon={(
+                  <IconWrapper>
+                    <WalletIcon isSmart />
+                  </IconWrapper>
+                )}
+              />
+            )
+          : null}
         />}
         {changingAccount &&
         <Wrapper>
@@ -262,6 +287,7 @@ const mapStateToProps = ({
   assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
+  smartWallet: smartWalletState,
 }) => ({
   accounts,
   user,
@@ -271,6 +297,7 @@ const mapStateToProps = ({
   assets,
   rates,
   baseFiatCurrency,
+  smartWalletState,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

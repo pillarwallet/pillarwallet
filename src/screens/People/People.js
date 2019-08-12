@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import {
   FlatList,
   Keyboard,
-  Image,
   RefreshControl,
   View,
   ScrollView,
@@ -88,16 +87,6 @@ const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
   margin-left: 10px;
 `;
 
-const EmptyStateBGWrapper = styled.View`
-  flex-direction: row;
-  justify-content: flex-start;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 0 20px 20px;
-`;
-
 const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
@@ -122,8 +111,6 @@ const InnerWrapper = styled.View`
 `;
 
 const MIN_QUERY_LENGTH = 2;
-
-const esBackground = require('assets/images/esLeftLong.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -427,12 +414,9 @@ class PeopleScreen extends React.Component<Props, State> {
 
             {!inSearchMode && !sortedLocalContacts.length &&
             <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-              <EmptyStateBGWrapper>
-                <Image source={esBackground} />
-              </EmptyStateBGWrapper>
               <EmptyStateParagraph
-                title="Nobody is here"
-                bodyText="Start building your connection list by inviting friends or by searching for someone"
+                title="Start making friends"
+                bodyText="Build your connection list by searching for someone"
               />
             </Wrapper>
             }

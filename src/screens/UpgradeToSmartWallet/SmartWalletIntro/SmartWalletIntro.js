@@ -133,7 +133,8 @@ class SmartWalletIntro extends React.PureComponent<Props> {
           </CustomWrapper>
           <ActionsWrapper>
             <ListItemChevron
-              label="Buy ETH with credit card"
+              label="I don't have tokens"
+              subtext="Buy ETH with credit card"
               onPress={() => {
                 navigation.navigate(EXCHANGE, {
                   fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
@@ -142,10 +143,11 @@ class SmartWalletIntro extends React.PureComponent<Props> {
               }}
               color={baseColors.persianBlue}
               bordered
-              addon={(<LabelBadge label="NEW" />)}
+              subtextAddon={(<LabelBadge label="NEW" />)}
             />
             <ListItemChevron
-              label="Enable with ETH available"
+              label="I have tokens"
+              subtext="Use ETH to deploy contract"
               onPress={isDeploy
                 ? () => {
                   deploySmartWallet();

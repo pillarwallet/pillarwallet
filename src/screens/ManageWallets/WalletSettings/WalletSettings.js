@@ -73,26 +73,25 @@ const keyWalletSettings = (that) => {
 };
 
 const smartWalletSettings = (that) => {
-  const recoveryAgentsCount = 0;
   return [
     {
       key: 'recoveryAgents',
       title: 'Recovery agents',
       body: 'Assign your contacts as recovery agents for restoring the wallet',
-      action: () => that.manageRecoveryAgents(),
-      label: `${recoveryAgentsCount} out of 5`,
+      // action: () => that.manageRecoveryAgents(),
+      label: 'soon',
+      disabled: true,
     },
     {
       key: 'topUp',
       title: 'Top up Smart Wallet',
-      body: 'Assign your contacts as recovery agents for restoring the wallet',
+      body: 'Transfer assets from your other wallet',
       action: () => that.topUpSmartWallet(),
     },
     {
       key: 'spendingLimits',
       title: 'Spending limits',
       body: 'Secure your funds by restricting too large transactions',
-      action: () => that.manageSpendingLimits(),
       label: 'soon',
       disabled: true,
     },
@@ -142,10 +141,6 @@ class WalletSettings extends React.PureComponent<Props> {
   topUpSmartWallet = () => {
     const { navigation } = this.props;
     navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER, { options: { isSeparateFund: true } });
-  };
-
-  manageSpendingLimits = () => {
-    // TODO
   };
 
   renderSettingsItems = ({ item }, isSmartWallet) => {

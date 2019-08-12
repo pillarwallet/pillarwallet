@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Keyboard, ScrollView } from 'react-native';
+import { FlatList, Keyboard, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { utils } from 'ethers';
 import styled from 'styled-components/native';
@@ -154,14 +154,23 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
         fallbackSource={genericToken}
         onPress={() => this.toggleAssetInTransferList(item.name, item.amount)}
         customAddon={
-          <Checkbox
-            onPress={() => this.toggleAssetInTransferList(item.name, item.amount)}
-            checked={!!assetsToTransfer.find(asset => asset.name === item.name)}
-            rounded
-            wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
-          />
+          <View style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            height: '100%',
+            justifyContent: 'center',
+          }}
+          >
+            <Checkbox
+              onPress={() => this.toggleAssetInTransferList(item.name, item.amount)}
+              checked={!!assetsToTransfer.find(asset => asset.name === item.name)}
+              rounded
+              wrapperStyle={{ width: 24, marginLeft: 12 }}
+            />
+          </View>
         }
-        rightColumnInnerStyle={{ flexDirection: 'row' }}
+        rightColumnInnerStyle={{ flexDirection: 'row', paddingRight: 40 }}
       />
     );
   };

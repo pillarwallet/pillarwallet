@@ -41,6 +41,7 @@ import { HOME, USER_SETTINGS } from 'constants/navigationConstants';
 import { setActiveBNetworkAction } from 'actions/blockchainNetworkActions';
 import { responsiveSize } from 'utils/ui';
 import { MediumText, BaseText } from 'components/Typography';
+import { ListCard } from 'components/ListItem/ListCard';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -58,6 +59,11 @@ const EmptyState = styled(BaseText)`
   color: ${baseColors.darkGray};
   font-size: 15px;
   line-height: 22px;
+`;
+
+const CardWrapper = styled.View`
+  padding: ${spacing.large}px;
+  flex: 1;
 `;
 
 class UsersScreen extends React.Component<Props> {
@@ -128,7 +134,7 @@ class UsersScreen extends React.Component<Props> {
           renderItem={this.renderUser}
           sections={sections}
           keyExtractor={(item) => item.id.toString()}
-          style={{ width: '100%' }}
+          style={{ width: '100%', flexGrow: 0 }}
           renderSectionFooter={({ section: { emptyStateMessage } }) => {
             if (emptyStateMessage) return (<EmptyState>{emptyStateMessage}</EmptyState>);
             return null;
@@ -142,6 +148,16 @@ class UsersScreen extends React.Component<Props> {
           }}
           stickySectionHeadersEnabled={false}
         />
+        <CardWrapper>
+          <ListCard
+            title="Link to another device"
+            titleStyle={{ color: baseColors.slateBlack }}
+            subtitle="Manage this user on different devices simultaneously"
+            disabled
+            label="soon"
+            contentWrapperStyle={{ minHeight: 96, padding: 16 }}
+          />
+        </CardWrapper>
       </ContainerWithHeader>
     );
   }

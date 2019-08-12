@@ -29,7 +29,6 @@ import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import { BaseText, BoldText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import { Insight } from 'components/Insight';
 import { Wrapper, ScrollWrapper } from 'components/Layout';
@@ -38,7 +37,7 @@ import Toast from 'components/Toast';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 
 import {
   FETCHED,
@@ -49,7 +48,6 @@ import {
   ETH,
 } from 'constants/assetsConstants';
 import { EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
-import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 
 import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -85,7 +83,6 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 // partials
 import CollectiblesList from './CollectiblesList';
 import AssetsList from './AssetsList';
-import Button from './Assets';
 
 type Props = {
   baseFiatCurrency: string,
@@ -129,18 +126,6 @@ type State = {
 }
 
 const MIN_QUERY_LENGTH = 2;
-
-const MessageTitle = styled(BoldText)`
-  font-size: ${fontSizes.large}px;
-  text-align: center;
-`;
-
-const Message = styled(BaseText)`
-  padding-top: 20px;
-  font-size: ${fontSizes.extraSmall}px;
-  color: ${baseColors.darkGray};
-  text-align: center;
-`;
 
 const SearchSpinner = styled(Wrapper)`
   padding-top: 20;
@@ -373,38 +358,6 @@ class WalletView extends React.Component<Props, State> {
       title: 'This asset cannot be switched off',
     });
   };
-
-  renderBlockedScreen({ title, message }) {
-    const { smartWalletState, deploySmartWallet } = this.props;
-    let showSpinner = true;
-    let showRetryDeploymentButton = false;
-
-    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
-    if (deploymentData.error) {
-      showSpinner = false;
-      showRetryDeploymentButton = true;
-      title = 'Smart Wallet deployment failed';
-      message = deploymentData.error === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
-        ? 'You need to top up your Smart Account first'
-        : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow';
-    }
-
-    return (
-      <Wrapper flex={1} regularPadding center style={{ marginTop: 20 }}>
-        <MessageTitle>{ title }</MessageTitle>
-        <Message>{ message }</Message>
-        <Wrapper style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
-          {showSpinner && <Spinner />}
-          {showRetryDeploymentButton && <Button
-            marginTop="20px"
-            height={52}
-            title="Retry"
-            onPress={() => deploySmartWallet()}
-          />}
-        </Wrapper>
-      </Wrapper>
-    );
-  }
 
   render() {
     const {

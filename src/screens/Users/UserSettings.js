@@ -60,14 +60,6 @@ const getUserSettings = (that) => {
       label: 'soon',
       disabled: true,
     },
-    {
-      key: 'linkDevice',
-      title: 'Link to another device',
-      body: 'Manage this user on different devices simultaneously',
-      action: null,
-      label: 'soon',
-      disabled: true,
-    },
   ];
 };
 

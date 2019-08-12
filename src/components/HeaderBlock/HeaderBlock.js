@@ -92,6 +92,7 @@ const HeaderTitle = styled(BaseText)`
   color: ${props => props.theme.color || UIColors.defaultTextColor};
   font-weight: 500;
   text-align: ${props => props.centerText ? 'center' : 'left'};
+  padding: 5px 0;
 `;
 
 const UserButton = styled.TouchableOpacity`

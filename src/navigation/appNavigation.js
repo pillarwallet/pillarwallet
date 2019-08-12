@@ -527,7 +527,6 @@ const backupWalletFlow = createStackNavigator({
 // UPGRADE TO SMART WALLET FLOW
 const smartWalletUpgradeFlow = createStackNavigator({
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
-
   [UPGRADE_INTRO]: UpgradeIntroScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
