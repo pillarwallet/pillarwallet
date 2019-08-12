@@ -72,7 +72,7 @@ import { SMART_WALLET_UNLOCK, ASSETS, SEND_TOKEN_AMOUNT, PPN_SEND_TOKEN_AMOUNT }
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // services
-import smartWalletService from 'services/smartWallet';
+import smartWalletService, { ACCOUNT_TRANSACTION_COMPLETED } from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 
@@ -94,6 +94,7 @@ import {
 } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
+import { checkAccountRecoverySetupAction } from 'actions/accountRecoveryActions';
 
 // types
 import type { AssetTransfer } from 'models/Asset';
@@ -102,7 +103,7 @@ import type { SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 
 // utils
-import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
+import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord, getCombinedHistory } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId, getActiveAccountType } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
@@ -336,10 +337,6 @@ export const checkAssetTransferTransactionsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
       assets: { data: assets },
-      history: {
-        data: transactionsHistory,
-      },
-      collectibles: { transactionHistory: collectiblesHistory = {} },
       smartWallet: {
         upgrade: {
           status: upgradeStatus,
@@ -354,20 +351,7 @@ export const checkAssetTransferTransactionsAction = () => {
       // TODO: no transactions at all?
       return;
     }
-
-    // update with statuses from history
-    // TODO: visit current workaround to get history from all wallets
-    const accountIds = Object.keys(transactionsHistory);
-    const allHistory = accountIds.reduce(
-      // $FlowFixMe
-      (existing = [], accountId) => {
-        const walletCollectiblesHistory = collectiblesHistory[accountId] || [];
-        const walletAssetsHistory = transactionsHistory[accountId] || [];
-        return [...existing, ...walletAssetsHistory, ...walletCollectiblesHistory];
-      },
-      [],
-    );
-
+    const allHistory = getCombinedHistory(getState());
     let updatedTransactions = transferTransactions.map(transaction => {
       const { transactionHash } = transaction;
       if (!transactionHash || transaction.status === TX_CONFIRMED_STATUS) {
@@ -535,13 +519,13 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     const ACCOUNT_TRANSACTION_UPDATED = get(sdkModules, 'Api.EventNames.AccountTransactionUpdated', '');
     const ACCOUNT_PAYMENT_UPDATED = get(sdkModules, 'Api.EventNames.AccountPaymentUpdated', '');
     const ACCOUNT_VIRTUAL_BALANCE_UPDATED = get(sdkModules, 'Api.EventNames.AccountVirtualBalanceUpdated', '');
-    const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
+    const ACCOUNT_FRIEND_RECOVERY_UPDATED = get(sdkModules, 'Api.EventNames.AccountFriendRecoveryUpdated', '');
     const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 
-    if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !TRANSACTION_COMPLETED) {
+    if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !ACCOUNT_TRANSACTION_COMPLETED) {
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
       if (!ACCOUNT_TRANSACTION_UPDATED) path = 'sdkModules.Api.EventNames.AccountTransactionUpdated';
-      if (!TRANSACTION_COMPLETED) path = 'sdkConstants.AccountTransactionStates.Completed';
+      if (!ACCOUNT_TRANSACTION_COMPLETED) path = 'sdkConstants.AccountTransactionStates.Completed';
       Sentry.captureMessage('Missing Smart Wallet SDK constant', { extra: { path } });
     }
 
@@ -552,6 +536,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const deployedAccountState = sdkConstants.AccountStates.Deployed;
       if (newAccountState === deployedAccountState && accountState !== deployedAccountState) {
         dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+        dispatch(checkAccountRecoverySetupAction());
         Toast.show({
           message: 'Your Smart wallet has been deployed',
           type: 'success',
@@ -559,6 +544,16 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           autoClose: true,
         });
       }
+    }
+
+    // friends recovery setup complete
+    if (event.name === ACCOUNT_FRIEND_RECOVERY_UPDATED) {
+      Toast.show({
+        message: 'Your Smart wallet Account Recovery setup is complete',
+        type: 'success',
+        title: 'Success',
+        autoClose: true,
+      });
     }
 
     // manual transactions tracker
@@ -576,7 +571,9 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txSenderAddress = get(event, 'payload.from.account.address', '');
       const txFound = txToListen.find(hash => hash.toLowerCase() === txHash);
 
-      if (txStatus === TRANSACTION_COMPLETED) {
+      if (txStatus === ACCOUNT_TRANSACTION_COMPLETED) {
+        // let's run account recovery setup flow transaction checks
+        dispatch(checkAccountRecoverySetupAction());
         if (txFound) {
           const { txUpdated, updatedHistory } = updateHistoryRecord(
             currentHistory,
@@ -634,7 +631,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txStatus = get(event, 'payload.state', '');
       const txFound = transferTransactions.find(({ transactionHash }) => transactionHash === txHash);
 
-      if (txStatus === TRANSACTION_COMPLETED) {
+      if (txStatus === ACCOUNT_TRANSACTION_COMPLETED) {
         if (txFound) {
           const updatedTransactions = transferTransactions.filter(
             _tx => _tx.transactionHash !== txFound.transactionHash,

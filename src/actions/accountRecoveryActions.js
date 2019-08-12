@@ -24,12 +24,15 @@ import {
   ACCOUNT_RECOVERY_TRANSACTION_TYPES,
 } from 'constants/accountRecoveryConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import smartWalletService from 'services/smartWallet';
+import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
+import smartWalletService, { ACCOUNT_TRANSACTION_COMPLETED } from 'services/smartWallet';
 import { saveDbAction } from 'actions/dbActions';
 import { getActiveAccountAddress, getActiveAccountType } from 'utils/accounts';
+import { getCombinedHistory } from 'utils/history';
 
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { AccountRecoveryTransaction } from 'models/Transaction';
+import Toast from 'components/Toast';
 
 export const setAccountRecoveryAgentsAction = (agents: RecoveryAgent[], requiredCount: number) => {
   return async (dispatch: Function) => {
@@ -78,13 +81,19 @@ export const submitAccountRecoverySetupAction = () => {
     const setupTransactionHash = await smartWalletService
       .setupAccountFriendRecoveryExtension(setupEstimate)
       .catch(() => null);
+    console.log('setupTransactionHash: ', setupTransactionHash);
     if (setupTransactionHash) {
       dispatch(addAccountRecoveryTransactionAction({
         type: ACCOUNT_RECOVERY_TRANSACTION_TYPES.SETUP,
         hash: setupTransactionHash,
       }));
     }
-    // TODO: submit setup transaction failed?
+    Toast.show({
+      message: 'Not enough ETH for Account Recovery setup',
+      type: 'warning',
+      title: 'Unable to setup Account Recovery',
+      autoClose: true,
+    });
   };
 };
 
@@ -94,20 +103,27 @@ export const submitAccountRecoveryEnableAction = () => {
       accounts: { data: accounts },
     } = getState();
     const activeAccountType = getActiveAccountType(accounts);
-    if (!activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
+    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
     const enableEstimate = await smartWalletService
       .estimateAddAccountFriendRecoveryExtension()
       .catch(() => null);
     const enableTransactionHash = await smartWalletService
       .addAccountFriendRecoveryExtension(enableEstimate)
       .catch(() => null);
+    console.log('enableTransactionHash: ', enableTransactionHash);
     if (enableTransactionHash) {
       dispatch(addAccountRecoveryTransactionAction({
         type: ACCOUNT_RECOVERY_TRANSACTION_TYPES.ENABLE,
         hash: enableTransactionHash,
       }));
+      return;
     }
-    // TODO: submit enable transaction failed?
+    Toast.show({
+      message: 'Not enough ETH for enabling Account Recovery extension',
+      type: 'warning',
+      title: 'Unable to setup Account Recovery',
+      autoClose: true,
+    });
   };
 };
 
@@ -118,7 +134,7 @@ export const enableAccountRecoveryAction = () => {
   };
 };
 
-export const checkAccountRecoverySetupAction = () => {
+export const checkAccountRecoverySetupAction = (newSetup?: boolean) => {
   return async (dispatch: Function, getState: Function) => {
     const {
       accounts: { data: accounts },
@@ -129,37 +145,59 @@ export const checkAccountRecoverySetupAction = () => {
       },
     } = getState();
     const activeAccountType = getActiveAccountType(accounts);
+    console.log('enabled: ', enabled);
+    console.log('accountRecoveryTransactions: ', accountRecoveryTransactions);
     if (!agents.length || activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
-    const setupTransaction = accountRecoveryTransactions.find(
-      ({ type }) => type === ACCOUNT_RECOVERY_TRANSACTION_TYPES.SETUP,
-    );
-    // if enabled and no initial setup let's submit initial setup from stored agents
-    if (enabled && !setupTransaction) {
-      dispatch(submitAccountRecoverySetupAction());
+    // if enabled we can submit setup from stored agents or ignore action
+    if (enabled) {
+      const setupTransaction = accountRecoveryTransactions.find(
+        ({ type }) => type === ACCOUNT_RECOVERY_TRANSACTION_TYPES.SETUP,
+      );
+      // we need to check whether to submit initial setup or new setup if requested
+      if (!setupTransaction || newSetup) {
+        console.log('submitAccountRecoverySetupAction1');
+        dispatch(submitAccountRecoverySetupAction());
+      }
       return;
     }
-    // not enabled, let's check if we need to submit enable
+    // not enabled, let's check if we need to submit enable transaction or update enable state
     const enableTransaction = accountRecoveryTransactions.find(
       ({ type }) => type === ACCOUNT_RECOVERY_TRANSACTION_TYPES.ENABLE,
     );
-    // no enableTransaction means no enable transaction were submitted
-    if (!enableTransaction) {
-      const accountAddress = getActiveAccountAddress(accounts);
-      const existingRecoverySetup = await smartWalletService.getAccountFriendRecovery(accountAddress).catch(() => null);
-      if (existingRecoverySetup) {
-        // a setup already exists, enable was already submitted before, let's save this and submit setup
+    if (enableTransaction) {
+      // enable transaction was submitted, let's check if it's completed
+      const { hash } = enableTransaction;
+      const allHistory = getCombinedHistory(getState());
+      const { state } = await smartWalletService.getConnectedAccountTransaction(hash).catch(() => {});
+      if (state === ACCOUNT_TRANSACTION_COMPLETED
+        || allHistory.find(({ hash: _hash, status }) => _hash === hash && status === TX_CONFIRMED_STATUS)) {
+        // completed transaction found, lets update enable state and submit initial setup
+        console.log('submitAccountRecoverySetupAction2');
         dispatch(enableAccountRecoveryAction());
         dispatch(submitAccountRecoverySetupAction());
-        return;
       }
-      dispatch(submitAccountRecoveryEnableAction());
+      return;
     }
+    // no enableTransaction means no enable transaction were submitted
+    const accountAddress = getActiveAccountAddress(accounts);
+    // check for existing setup, if it exists then recovery was enabled previously (wallet imported case)
+    const existingRecoverySetup = await smartWalletService.getAccountFriendRecovery(accountAddress).catch(() => null);
+    if (existingRecoverySetup) {
+      // a setup already exists, enable was already submitted before, let's save this and submit initial setup
+      console.log('submitAccountRecoverySetupAction3');
+      dispatch(enableAccountRecoveryAction());
+      dispatch(submitAccountRecoverySetupAction());
+      return;
+    }
+    // enable transaction nor exists nor was submitted, lets start by submitting it
+    console.log('submitAccountRecoveryEnableAction');
+    dispatch(submitAccountRecoveryEnableAction());
   };
 };
 
 export const setupAccountRecoveryAction = (agents: RecoveryAgent[], requiredCount: number) => {
   return async (dispatch: Function) => {
     dispatch(setAccountRecoveryAgentsAction(agents, requiredCount));
-    dispatch(checkAccountRecoverySetupAction());
+    dispatch(checkAccountRecoverySetupAction(true)); // true for new setup
   };
 };

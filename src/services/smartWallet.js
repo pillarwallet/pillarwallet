@@ -49,6 +49,7 @@ const TransactionSpeeds = {
 };
 
 const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
+export const ACCOUNT_TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
 
 type AccountTransaction = {
   recipient: string,

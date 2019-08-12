@@ -37,6 +37,7 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 import { calculateGasEstimate } from 'services/assets';
 import { getActiveAccountAddress } from 'utils/accounts';
+import { getCombinedHistory } from 'utils/history';
 
 import type { Offer, OfferOrder } from 'models/Offer';
 
@@ -398,24 +399,13 @@ export const enableExchangeAllowanceByHashAction = (transactionHash: string) => 
 export const checkEnableExchangeAllowanceTransactionsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
-      history: {
-        data: transactionsHistory,
-      },
       exchange: {
         data: {
           allowances: exchangeAllowances,
         },
       },
     } = getState();
-    const accountIds = Object.keys(transactionsHistory);
-    const allHistory = accountIds.reduce(
-      // $FlowFixMe
-      (existing = [], accountId) => {
-        const walletAssetsHistory = transactionsHistory[accountId] || [];
-        return [...existing, ...walletAssetsHistory];
-      },
-      [],
-    );
+    const allHistory = getCombinedHistory(getState());
     exchangeAllowances
       .filter(({ enabled }) => !enabled)
       .map(({ transactionHash, assetCode }) => {  // eslint-disable-line

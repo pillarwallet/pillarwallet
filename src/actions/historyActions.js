@@ -45,6 +45,7 @@ import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
+import { checkAccountRecoverySetupAction } from './accountRecoveryActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
@@ -59,7 +60,11 @@ const afterHistoryUpdatedAction = () => {
         },
       },
     } = getState();
-    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
+    if (smartWalletFeatureEnabled) {
+      dispatch(checkAssetTransferTransactionsAction());
+      // let's run account recovery setup flow transaction checks
+      dispatch(checkAccountRecoverySetupAction());
+    }
     dispatch(checkEnableExchangeAllowanceTransactionsAction());
   };
 };

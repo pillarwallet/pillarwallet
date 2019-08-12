@@ -105,3 +105,22 @@ export function updateHistoryRecord(
     txUpdated,
   };
 }
+
+export function getCombinedHistory(state: Object) {
+  const {
+    history: {
+      data: transactionsHistory,
+    },
+    collectibles: { transactionHistory: collectiblesHistory = {} },
+  } = state;
+  const accountIds = Object.keys(transactionsHistory);
+  return accountIds.reduce(
+    // $FlowFixMe
+    (existing = [], accountId) => {
+      const walletCollectiblesHistory = collectiblesHistory[accountId] || [];
+      const walletAssetsHistory = transactionsHistory[accountId] || [];
+      return [...existing, ...walletAssetsHistory, ...walletCollectiblesHistory];
+    },
+    [],
+  );
+}
