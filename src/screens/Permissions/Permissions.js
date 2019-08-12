@@ -49,7 +49,7 @@ const SectionToggle = styled.View`
 `;
 
 const SectionTitle = styled(MediumText)`
-  font-size: ${fontSizes.medium}px;
+  font-size: 17px;
   margin-right: 12px;
   color: ${baseColors.slateBlack};
 `;
@@ -61,7 +61,7 @@ const InnerSectionToggle = styled.View`
 `;
 
 const InnerSectionTitle = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  font-size: 15px;
   color: ${baseColors.electricBlue};
 `;
 
@@ -166,10 +166,6 @@ const sections = [
     title: 'Collected data',
     content: [
       {
-        key: 'BY_APP',
-        title: 'Data collected by the app:',
-      },
-      {
         key: 'DEBUG_DATA',
         title: 'Debug data',
         paragraphs: [
@@ -182,10 +178,6 @@ const sections = [
         paragraphs: [
           'phone number for verification, full name, country of origin, profile picture.',
         ],
-      },
-      {
-        key: 'THIRD_PARTIES',
-        title: 'Data collected by third parties:',
       },
       {
         key: 'FABRIC',
@@ -395,6 +387,7 @@ class Permissions extends React.Component<Props, State> {
           <NextFooter
             onNextPress={this.handleAgree}
             nextDisabled={!hasAgreedToTerms}
+            contentAlign="center"
           >
             <Checkbox
               onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}

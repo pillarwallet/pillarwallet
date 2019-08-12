@@ -26,6 +26,7 @@ type Props = {
   nextDisabled?: boolean,
   onNextPress: Function,
   wrapperStyle?: Object,
+  contentAlign?: string,
 }
 
 const FooterWrapper = styled.KeyboardAvoidingView`
@@ -35,14 +36,13 @@ const FooterWrapper = styled.KeyboardAvoidingView`
 
 const InnerWrapper = styled.KeyboardAvoidingView`
   flex-direction: row;
-  align-items: flex-end;
+  align-items: ${props => props.contentAlign || 'flex-end'};
   width: 100%;
 `;
 
 const LeftSide = styled.View`
   flex: 1;
-  padding-right: 20px;
-  padding-bottom: 14px;
+  padding: 14px 20px 14px 0;
   flex-wrap: wrap;
 `;
 
@@ -52,10 +52,11 @@ export const NextFooter = (props: Props) => {
     nextDisabled,
     onNextPress,
     wrapperStyle,
+    contentAlign,
   } = props;
   return (
     <FooterWrapper style={wrapperStyle}>
-      <InnerWrapper>
+      <InnerWrapper contentAlign={contentAlign}>
         <LeftSide>
           {children}
         </LeftSide>
