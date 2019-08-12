@@ -913,7 +913,7 @@ exports[`Contact info should render Contact info correctly 1`] = `
                     ]
                   }
                 >
-
+                  
                 </Text>
               </View>
               <View
