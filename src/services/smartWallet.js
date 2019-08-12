@@ -48,8 +48,15 @@ const TransactionSpeeds = {
   [FAST]: FAST,
 };
 
-const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
+export const ACCOUNT_PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 export const ACCOUNT_TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
+export const ACCOUNT_DEVICE_UPDATED = get(sdkModules, 'Api.EventNames.AccountDeviceUpdated', '');
+export const ACCOUNT_TRANSACTION_UPDATED = get(sdkModules, 'Api.EventNames.AccountTransactionUpdated', '');
+export const ACCOUNT_PAYMENT_UPDATED = get(sdkModules, 'Api.EventNames.AccountPaymentUpdated', '');
+export const ACCOUNT_VIRTUAL_BALANCE_UPDATED = get(sdkModules, 'Api.EventNames.AccountVirtualBalanceUpdated', '');
+export const ACCOUNT_FRIEND_RECOVERY_UPDATED = get(sdkModules, 'Api.EventNames.AccountFriendRecoveryUpdated', '');
+export const ACCOUNT_STATE_DEPLOYED = get(sdkConstants, 'AccountStates.Deployed', '');
+export const ACCOUNT_STATE_CREATED = get(sdkConstants, 'AccountStates.Created', '');
 
 type AccountTransaction = {
   recipient: string,
@@ -140,7 +147,7 @@ class SmartWallet {
       .then(({ items = [] }) => items)
       .catch(this.handleError);
 
-    if (!account.ensName && account.state === sdkConstants.AccountStates.Created) {
+    if (!account.ensName && account.state === ACCOUNT_STATE_CREATED) {
       account = await this.sdk.updateAccount(account.address).catch(this.handleError);
     }
 
@@ -285,7 +292,7 @@ class SmartWallet {
     if (!data) return [];
 
     const items = data.items
-      .filter(payment => payment.state === PAYMENT_COMPLETED)
+      .filter(payment => payment.state === ACCOUNT_PAYMENT_COMPLETED)
       .filter(payment => {
         const recipientAddress = get(payment, 'recipient.account.address', '');
         return addressesEqual(recipientAddress, accountAddress);
@@ -332,5 +339,4 @@ class SmartWallet {
   }
 }
 
-const smartWalletInstance = new SmartWallet();
-export default smartWalletInstance;
+export const smartWalletService = new SmartWallet();

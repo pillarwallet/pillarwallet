@@ -47,7 +47,7 @@ import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import ChatService from 'services/chat';
-import smartWalletService from 'services/smartWallet';
+import { smartWalletService } from 'services/smartWallet';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { toastWalletBackup } from 'utils/toasts';

@@ -17,13 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { sdkModules, sdkConstants } from '@archanova/sdk';
 import { ethToWei, weiToEth } from '@netgum/utils';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
-import { Sentry } from 'react-native-sentry';
 import { BigNumber } from 'bignumber.js';
+import { Sentry } from 'react-native-sentry';
 
 // components
 import Toast from 'components/Toast';
@@ -72,7 +71,17 @@ import { SMART_WALLET_UNLOCK, ASSETS, SEND_TOKEN_AMOUNT, PPN_SEND_TOKEN_AMOUNT }
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // services
-import smartWalletService, { ACCOUNT_TRANSACTION_COMPLETED } from 'services/smartWallet';
+import {
+  smartWalletService,
+  ACCOUNT_PAYMENT_COMPLETED,
+  ACCOUNT_STATE_DEPLOYED,
+  ACCOUNT_TRANSACTION_COMPLETED,
+  ACCOUNT_PAYMENT_UPDATED,
+  ACCOUNT_DEVICE_UPDATED,
+  ACCOUNT_FRIEND_RECOVERY_UPDATED,
+  ACCOUNT_TRANSACTION_UPDATED,
+  ACCOUNT_VIRTUAL_BALANCE_UPDATED,
+} from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 
@@ -226,7 +235,7 @@ export const deploySmartWalletAction = () => {
     await dispatch(resetSmartWalletDeploymentDataAction());
     await dispatch(setActiveAccountAction(accountAddress));
 
-    if (accountState === sdkConstants.AccountStates.Deployed) {
+    if (accountState === ACCOUNT_STATE_DEPLOYED) {
       dispatch(setSmartWalletUpgradeStatusAction(
         SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
       ));
@@ -515,14 +524,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
   return async (dispatch: Function, getState: Function) => {
     if (!event) return;
 
-    const ACCOUNT_DEVICE_UPDATED = get(sdkModules, 'Api.EventNames.AccountDeviceUpdated', '');
-    const ACCOUNT_TRANSACTION_UPDATED = get(sdkModules, 'Api.EventNames.AccountTransactionUpdated', '');
-    const ACCOUNT_PAYMENT_UPDATED = get(sdkModules, 'Api.EventNames.AccountPaymentUpdated', '');
-    const ACCOUNT_VIRTUAL_BALANCE_UPDATED = get(sdkModules, 'Api.EventNames.AccountVirtualBalanceUpdated', '');
-    const ACCOUNT_FRIEND_RECOVERY_UPDATED = get(sdkModules, 'Api.EventNames.AccountFriendRecoveryUpdated', '');
-    const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
-
-    if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !ACCOUNT_TRANSACTION_COMPLETED) {
+    // check sdk constants if they're set, might be default value of empty string
+    if ([
+      ACCOUNT_DEVICE_UPDATED,
+      ACCOUNT_TRANSACTION_UPDATED,
+      ACCOUNT_TRANSACTION_COMPLETED,
+    ].includes('')) {
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
       if (!ACCOUNT_TRANSACTION_UPDATED) path = 'sdkModules.Api.EventNames.AccountTransactionUpdated';
       if (!ACCOUNT_TRANSACTION_COMPLETED) path = 'sdkConstants.AccountTransactionStates.Completed';
@@ -533,8 +540,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     const accountState = get(getState(), 'smartWallet.upgrade.status', '');
     if (event.name === ACCOUNT_DEVICE_UPDATED) {
       const newAccountState = get(event, 'payload.state', '');
-      const deployedAccountState = sdkConstants.AccountStates.Deployed;
-      if (newAccountState === deployedAccountState && accountState !== deployedAccountState) {
+      if (newAccountState === ACCOUNT_STATE_DEPLOYED && accountState !== ACCOUNT_STATE_DEPLOYED) {
         dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
         dispatch(checkAccountRecoverySetupAction());
         Toast.show({
@@ -680,7 +686,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       }
       if (txToken === ETH) txAmount = weiToEth(txAmount);
 
-      if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {
+      if (txStatus === ACCOUNT_PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {
         Toast.show({
           message: `You received ${formatMoney(txAmount.toString(), 4)} ${txToken}`,
           type: 'success',

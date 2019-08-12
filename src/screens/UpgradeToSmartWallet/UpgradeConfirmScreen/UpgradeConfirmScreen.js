@@ -42,7 +42,7 @@ import { getRate, getBalance } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
-import smartWalletService from 'services/smartWallet';
+import { smartWalletService } from 'services/smartWallet';
 import type { GasInfo } from 'models/GasInfo';
 import type { Collectible } from 'models/Collectible';
 

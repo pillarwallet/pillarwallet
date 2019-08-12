@@ -42,8 +42,8 @@ import { migrateBalancesToAccountsFormat } from 'services/dataMigration/balances
 import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history';
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
+import { ACCOUNT_STATE_DEPLOYED } from 'services/smartWallet';
 import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
-import { sdkConstants } from '@archanova/sdk';
 
 const storage = Storage.getInstance('db');
 
@@ -188,7 +188,7 @@ export const setActiveAccountAction = (accountId: string) => {
     if (account.type !== ACCOUNT_TYPES.SMART_WALLET || !account.extra) return;
 
     const { state = '' } = connectedAccount;
-    if (state === sdkConstants.AccountStates.Deployed) {
+    if (state === ACCOUNT_STATE_DEPLOYED) {
       dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
       return;
     }

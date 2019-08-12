@@ -25,7 +25,7 @@ import {
 } from 'constants/accountRecoveryConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
-import smartWalletService, { ACCOUNT_TRANSACTION_COMPLETED } from 'services/smartWallet';
+import { smartWalletService, ACCOUNT_TRANSACTION_COMPLETED } from 'services/smartWallet';
 import { saveDbAction } from 'actions/dbActions';
 import { getActiveAccountAddress, getActiveAccountType } from 'utils/accounts';
 import { getCombinedHistory } from 'utils/history';

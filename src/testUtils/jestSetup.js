@@ -212,6 +212,7 @@ jest.setMock('@archanova/sdk', {
     AccountStates: {
       Created: 'Created',
       Updated: 'Updated',
+      Deployed: 'Deployed',
     },
   },
   sdkModules: {

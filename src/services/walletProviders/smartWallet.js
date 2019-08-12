@@ -14,7 +14,7 @@ import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 import type { Account } from 'models/Account';
 import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
 import { getERC721ContractTransferMethod } from 'services/assets';
-import smartWalletService from 'services/smartWallet';
+import { smartWalletService } from 'services/smartWallet';
 import { getEthereumProvider } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
