@@ -25,7 +25,11 @@ import {
 } from 'constants/accountRecoveryConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
-import { smartWalletService, ACCOUNT_TRANSACTION_COMPLETED } from 'services/smartWallet';
+import {
+  smartWalletService,
+  ACCOUNT_TRANSACTION_COMPLETED,
+  ACCOUNT_STATE_DEPLOYED,
+} from 'services/smartWallet';
 import { saveDbAction } from 'actions/dbActions';
 import { getActiveAccountAddress, getActiveAccountType } from 'utils/accounts';
 import { getCombinedHistory } from 'utils/history';
@@ -66,14 +70,11 @@ export const addAccountRecoveryTransactionAction = (transaction: AccountRecovery
 export const submitAccountRecoverySetupAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
-      accounts: { data: accounts },
       accountRecovery: {
         agents,
         requiredAgentsCount,
       },
     } = getState();
-    const activeAccountType = getActiveAccountType(accounts);
-    if (!agents.length || activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
     const friendsAddresses = agents.map(({ ethAddress }) => ethAddress);
     const setupEstimate = await smartWalletService
       .estimateSetupAccountFriendRecoveryExtension(requiredAgentsCount, friendsAddresses)
@@ -97,12 +98,7 @@ export const submitAccountRecoverySetupAction = () => {
 };
 
 export const submitAccountRecoveryEnableAction = () => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      accounts: { data: accounts },
-    } = getState();
-    const activeAccountType = getActiveAccountType(accounts);
-    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
+  return async (dispatch: Function) => {
     const enableEstimate = await smartWalletService
       .estimateAddAccountFriendRecoveryExtension()
       .catch(() => null);
@@ -136,6 +132,11 @@ export const checkAccountRecoverySetupAction = (newSetup?: boolean) => {
   return async (dispatch: Function, getState: Function) => {
     const {
       accounts: { data: accounts },
+      smartWallet: {
+        connectedAccount: {
+          state: accountState,
+        },
+      },
       accountRecovery: {
         enabled,
         agents,
@@ -143,7 +144,10 @@ export const checkAccountRecoverySetupAction = (newSetup?: boolean) => {
       },
     } = getState();
     const activeAccountType = getActiveAccountType(accounts);
+    // we can only proceed if agents set and active account is smart wallet
     if (!agents.length || activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
+    // we can only proceed if smart wallet state is deployed
+    if (accountState !== ACCOUNT_STATE_DEPLOYED) return;
     // if enabled we can submit setup from stored agents or ignore action
     if (enabled) {
       const setupTransaction = accountRecoveryTransactions.find(
