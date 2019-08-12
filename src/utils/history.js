@@ -22,7 +22,6 @@ import {
   TRANSACTION_PENDING_EVENT,
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
-import { utils } from 'ethers';
 import type { Transaction, TransactionEthers, TransactionsStore } from 'models/Transaction';
 
 export const buildHistoryTransaction = ({
@@ -40,9 +39,7 @@ export const buildHistoryTransaction = ({
   extra,
 }: TransactionEthers): Transaction => ({
   status: status || TX_PENDING_STATUS,
-  gasUsed: gasPrice && gasLimit
-    ? parseFloat(utils.formatEther(utils.bigNumberify(gasPrice.toString()).mul(gasLimit)))
-    : 0,
+  gasUsed: gasLimit ? Number(gasLimit) : 0,
   gasPrice: gasPrice ? Number(gasPrice) : 0,
   value: typeof value === 'object' ? value.toString() : value,
   from,

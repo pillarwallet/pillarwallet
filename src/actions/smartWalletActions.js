@@ -463,13 +463,10 @@ export const syncVirtualAccountTransactionsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
       accounts: { data: accounts },
-      assets: { data: assets },
       smartWallet: { lastSyncedHash },
     } = getState();
 
     const accountId = getActiveAccountId(accounts);
-    const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
-
     const payments = await smartWalletService.getAccountPayments(lastSyncedHash);
 
     // filter out already stored payments
@@ -485,9 +482,8 @@ export const syncVirtualAccountTransactionsAction = () => {
       const value = get(payment, 'value', new BigNumber(0));
       const senderAddress = get(payment, 'sender.account.address');
       const recipientAddress = get(payment, 'recipient.account.address');
-      const tokenAddress = get(payment, 'token.address', '');
 
-      if (tokenSymbol !== ETH && addressesEqual(tokenAddress, ppnTokenAddress)) {
+      if (tokenSymbol !== ETH && tokenSymbol === 'ETK') {
         tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
       }
 
@@ -586,7 +582,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             txHash,
             (transaction) => ({
               ...transaction,
-              gasPrice: txGasInfo.price ? txGasInfo.price.toString() : transaction.gasPrice,
+              gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
               gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
               status: TX_CONFIRMED_STATUS,
             }));
