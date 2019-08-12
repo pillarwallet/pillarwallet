@@ -18,10 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {
-  ADD_BLOCKCHAIN_NETWORK,
-  SET_ACTIVE_NETWORK,
-} from 'constants/blockchainNetworkConstants';
+import { SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 
 // temp actions
 export const setActiveBNetworkAction = (id: string) => {
@@ -32,14 +29,3 @@ export const setActiveBNetworkAction = (id: string) => {
     });
   };
 };
-
-export const addNetworkAction = (network: Object) => {
-  return async (dispatch: Function) => {
-    dispatch({
-      type: ADD_BLOCKCHAIN_NETWORK,
-      payload: network,
-    });
-    dispatch(setActiveBNetworkAction(network.id));
-  };
-};
-

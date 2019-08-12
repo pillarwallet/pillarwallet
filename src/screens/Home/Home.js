@@ -45,7 +45,7 @@ import PortfolioBalance from 'components/PortfolioBalance';
 
 // constants
 import {
-  PROFILE,
+  ADD_EDIT_USER,
   MANAGE_DETAILS_SESSIONS,
   BADGE,
   SETTINGS,
@@ -308,7 +308,7 @@ class HomeScreen extends React.Component<Props, State> {
       * login approve modal cannot be open while navigating
       */
       this.setState({ showLoginModal: true });
-      navigation.navigate(PROFILE, { visibleModal: 'email' });
+      navigation.navigate(ADD_EDIT_USER);
     });
   };
 

@@ -120,9 +120,8 @@ type Props = {
 
 type State = {
   query: string,
-  searchScrollTop: number,
   activeTab: string,
-  disableScroll: boolean,
+  hideInsightForSearch: boolean,
 }
 
 const MIN_QUERY_LENGTH = 2;
@@ -158,8 +157,6 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 const CustomKAWrapper = (props) => {
   const {
     children,
-    innerRef,
-    disableScroll,
     refreshControl,
   } = props;
   const scrollWrapperProps = {
@@ -169,14 +166,13 @@ const CustomKAWrapper = (props) => {
       backgroundColor: baseColors.white,
     },
     refreshControl,
+    onScroll: () => Keyboard.dismiss(),
   };
 
   if (Platform.OS === 'ios') {
     return (
       <ScrollWrapper
-        innerRef={innerRef}
         {...scrollWrapperProps}
-        scrollEnabled={!disableScroll}
       >
         {children}
       </ScrollWrapper>
@@ -185,9 +181,7 @@ const CustomKAWrapper = (props) => {
 
   return (
     <ScrollView
-      ref={innerRef}
       {...scrollWrapperProps}
-      scrollEnabled={!disableScroll}
       style={{ height: '100%' }}
       contentContainerStyle={{ width: '100%' }}
     >
@@ -197,16 +191,12 @@ const CustomKAWrapper = (props) => {
 };
 
 class WalletView extends React.Component<Props, State> {
-  scrollWrapperRef: ?Object;
-
   constructor(props: Props) {
     super(props);
     this.state = {
       query: '',
-      searchScrollTop: 0,
       activeTab: TOKENS,
-      disableScroll: false,
-      // forceHideRemoval: false,
+      hideInsightForSearch: false,
     };
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
@@ -362,9 +352,8 @@ class WalletView extends React.Component<Props, State> {
   render() {
     const {
       query,
-      searchScrollTop,
       activeTab,
-      disableScroll,
+      hideInsightForSearch,
     } = this.state;
     const {
       collectibles,
@@ -418,10 +407,13 @@ class WalletView extends React.Component<Props, State> {
     const showFinishSmartWalletActivation = (!!smartWalletFeatureEnabled && !hasSmartWallet) || showDeploySmartWallet;
     const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
 
+    const isAllInsightListDone = !Object.keys(insightList.find((insight) => !insight.status) || {}).length;
+    const isInSearchAndFocus = hideInsightForSearch || isInSearchMode;
+    const isInsightVisible = showInsight && !isAllInsightListDone && !isInSearchAndFocus;
+    const searchMarginBottom = isInSearchAndFocus ? 0 : -16;
+
     return (
       <CustomKAWrapper
-        innerRef={ref => { this.scrollWrapperRef = ref; }}
-        disableScroll={disableScroll}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -434,16 +426,10 @@ class WalletView extends React.Component<Props, State> {
         }
       >
         <Insight
-          isVisible={showInsight}
+          isVisible={isInsightVisible}
           title={insightsTitle}
           insightList={insightList}
-          onClose={() => {
-            this.setState({ searchScrollTop: 0 });
-            hideInsight();
-          }}
-          onLayout={(e) => {
-            this.setState({ searchScrollTop: e.nativeEvent.layout.height });
-          }}
+          onClose={() => { hideInsight(); }}
           wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.mediumLightGray, height: 160 }}
         />
         {blockAssetsView &&
@@ -457,18 +443,15 @@ class WalletView extends React.Component<Props, State> {
           hideSearch={blockAssetsView}
           searchInputPlaceholder={activeTab === TOKENS ? 'Search asset' : 'Search collectible'}
           onSearchChange={this.handleSearchChange}
-          wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge, marginBottom: -16 }}
-          onSearchFocus={() => {
-            if (this.scrollWrapperRef) {
-              if (Platform.OS === 'ios') {
-                this.scrollWrapperRef.scrollToPosition(0, searchScrollTop, true);
-              } else {
-                this.scrollWrapperRef.scrollTo({ x: 0, y: searchScrollTop, animated: true });
-              }
-            }
-            this.setState({ disableScroll: true });
+          wrapperStyle={{
+            paddingHorizontal: spacing.large,
+            paddingVertical: spacing.mediumLarge,
+            marginBottom: searchMarginBottom,
           }}
-          onSearchBlur={() => this.setState({ disableScroll: false })}
+          onSearchFocus={() => {
+            this.setState({ hideInsightForSearch: true });
+          }}
+          onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
           itemSearchState={!!isInSearchMode}
           navigation={navigation}
         />}

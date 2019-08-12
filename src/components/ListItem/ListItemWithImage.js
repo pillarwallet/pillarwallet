@@ -487,7 +487,6 @@ const Addon = (props: Props) => {
           monoColor
           amount={syntheticBalance}
           token={token}
-          // wrapperStyle={{ marginTop: -2 }}
         />}
         <ItemSubText style={{ marginTop: -2 }}>{`${currency} ${value}`}</ItemSubText>
       </Wrapper>

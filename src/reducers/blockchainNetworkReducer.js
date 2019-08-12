@@ -1,7 +1,6 @@
 // @flow
 import {
   BLOCKCHAIN_NETWORK_TYPES,
-  ADD_BLOCKCHAIN_NETWORK,
   SET_ACTIVE_NETWORK,
 } from 'constants/blockchainNetworkConstants';
 
@@ -34,8 +33,6 @@ export default function blockchainNetworkReducer(
   action: NetworkAction,
 ): NetworkState {
   switch (action.type) {
-    case ADD_BLOCKCHAIN_NETWORK:
-      return { ...state, data: [...state.data, action.payload] };
     case SET_ACTIVE_NETWORK:
       return {
         ...state,

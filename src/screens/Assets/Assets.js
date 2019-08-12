@@ -23,6 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
+import TouchID from 'react-native-touch-id';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -106,6 +107,7 @@ type Props = {
 type State = {
   showKeyWalletInsight: boolean,
   showSmartWalletInsight: boolean,
+  supportsBiometrics: boolean,
 }
 
 const VIEWS = {
@@ -120,6 +122,7 @@ class AssetsScreen extends React.Component<Props, State> {
     this.state = {
       showKeyWalletInsight: true,
       showSmartWalletInsight: false,
+      supportsBiometrics: false,
     };
   }
 
@@ -138,6 +141,10 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     fetchAllCollectiblesData();
+
+    TouchID.isSupported({})
+      .then(() => this.setState({ supportsBiometrics: true }))
+      .catch(() => null);
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -203,7 +210,9 @@ class AssetsScreen extends React.Component<Props, State> {
     const {
       showKeyWalletInsight,
       showSmartWalletInsight,
+      supportsBiometrics,
     } = this.state;
+
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
     const keyBasedWallet = accounts.find((item) => item.type === ACCOUNT_TYPES.KEY_BASED);
 
@@ -221,39 +230,18 @@ class AssetsScreen extends React.Component<Props, State> {
         title: 'Set PIN code',
         status: true,
       },
-      {
+    ];
+
+    const visibleKeyWalletInsights = supportsBiometrics
+      ? [...keyWalletInsights, {
         key: 'biometric',
         title: 'Enable biometric login',
         status: useBiometrics,
         onPress: !useBiometrics
           ? () => navigation.navigate(SETTINGS)
           : null,
-      },
-    ];
-
-    // NOT YET RELEVANT
-    // const smartWalletInsights = [
-      // {
-      //   key: 'install',
-      //   title: 'Install wallet',
-      //   status: true,
-      // },
-      // {
-      //   key: 'recoveryAgents',
-      //   title: 'Assign at least 2 recovery agents',
-      //   status: false,
-      // },
-      // {
-      //   key: 'dailyLimits',
-      //   title: 'Set daily spending limits',
-      //   status: false,
-      // },
-      // {
-      //   key: 'monthlyLimits',
-      //   title: 'Set monthly spending limits',
-      //   status: false,
-      // },
-    // ];
+      }]
+      : keyWalletInsights;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
@@ -291,7 +279,7 @@ class AssetsScreen extends React.Component<Props, State> {
           <WalletView
             showInsight={showKeyWalletInsight}
             hideInsight={() => this.hideWalletInsight('KEY')}
-            insightList={keyWalletInsights}
+            insightList={visibleKeyWalletInsights}
             insightsTitle="Never lose your funds"
           />);
       default:

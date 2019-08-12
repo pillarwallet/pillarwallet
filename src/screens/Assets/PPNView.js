@@ -30,7 +30,6 @@ import unionBy from 'lodash.unionby';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 import TankBar from 'components/TankBar';
-import CircleButton from 'components/CircleButton';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText, MediumText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
@@ -83,12 +82,13 @@ type State = {
   showPinScreenForAction: string,
 };
 
-const AssetButtonsWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  padding: 20px 20px 40px;
-  margin: 0;
-`;
+// const AssetButtonsWrapper = styled.View`
+//   flex-direction: row;
+//   justify-content: center;
+//   padding: 20px 20px 40px;
+//   border-bottom-color: ${baseColors.mediumLightGray};
+//   border-bottom-width: 1px;
+// `;
 
 const ListHeaderWrapper = styled.View`
   flex-direction: row;
@@ -116,8 +116,6 @@ const ButtonText = styled(MediumText)`
 
 const StyledFlatList = styled.FlatList`
   background-color: ${baseColors.white};
-  border-top-color: ${baseColors.mediumLightGray};
-  border-top-width: 1px;
 `;
 
 const Wrapper = styled.View`
@@ -147,8 +145,8 @@ const ValueInFiat = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall}px;
 `;
 
-const iconRequest = require('assets/icons/icon_receive.png');
-const iconSend = require('assets/icons/icon_send.png');
+// const iconRequest = require('assets/icons/icon_receive.png');
+// const iconSend = require('assets/icons/icon_send.png');
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 class PPNView extends React.Component<Props, State> {
@@ -287,7 +285,7 @@ class PPNView extends React.Component<Props, State> {
           topupAction={() => this.setState({ showPinScreenForAction: FUND_TANK, topUpButtonSubmitted: true })}
           topUpLoading={topUpButtonSubmitted}
         />
-        <AssetButtonsWrapper>
+        { /* <AssetButtonsWrapper>
           <CircleButton
             label="Request"
             icon={iconRequest}
@@ -298,7 +296,7 @@ class PPNView extends React.Component<Props, State> {
             icon={iconSend}
             onPress={() => {}}
           />
-        </AssetButtonsWrapper>
+        </AssetButtonsWrapper> */ }
         <StyledFlatList
           data={assetsOnNetworkToShow}
           keyExtractor={(item) => item.symbol}

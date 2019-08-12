@@ -111,7 +111,7 @@ const ListAddon = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin-left: ${spacing.medium}px
+  margin-left: ${spacing.medium}px;
   margin-top: 2px;
   min-width: 70px;
 `;

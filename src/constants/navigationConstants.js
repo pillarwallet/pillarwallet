@@ -106,7 +106,6 @@ export const ICO_LINKS = 'ICO_LINKS';
 // PEOPLE FLOW
 export const CONTACT = 'CONTACT';
 export const CONNECTION_REQUESTS = 'CONNECTION_REQUESTS';
-export const PEOPLE_SEARCH = 'PEOPLE_SEARCH';
 
 // HOME FLOW
 export const HOME = 'HOME';

@@ -35,7 +35,6 @@ import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
-import PeopleSearchScreen from 'screens/People/PeopleSearch';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
@@ -76,7 +75,6 @@ import EditAssetAmountScreen from 'screens/UpgradeToSmartWallet/EditAssetAmountS
 import UpgradeReviewScreen from 'screens/UpgradeToSmartWallet/UpgradeReviewScreen';
 import UpgradeConfirmScreen from 'screens/UpgradeToSmartWallet/UpgradeConfirmScreen';
 import SmartWalletUnlockScreen from 'screens/UpgradeToSmartWallet/SmartWalletUnlock';
-// import TankDetailsScreen from 'screens/Tank/TankDetails';
 import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
@@ -182,7 +180,6 @@ import {
   SMART_WALLET_UNLOCK,
   TANK_SETTLE_FLOW,
   TANK_FUND_FLOW,
-  // TANK_DETAILS,
   FUND_TANK,
   FUND_CONFIRM,
   SETTLE_BALANCE,
@@ -203,7 +200,6 @@ import {
   FIAT_EXCHANGE,
   FIAT_CRYPTO,
   SMART_WALLET_INTRO,
-  PEOPLE_SEARCH,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
 } from 'constants/navigationConstants';
@@ -305,7 +301,6 @@ const peopleFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [CHAT]: ChatScreen,
-  [PEOPLE_SEARCH]: PeopleSearchScreen,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
