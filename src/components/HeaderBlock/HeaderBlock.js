@@ -46,10 +46,6 @@ type Props = {
   noBack?: boolean,
 }
 
-type State = {
-  isMoreContentVisible: boolean,
-}
-
 const Wrapper = styled.View`
   width: 100%;
   background-color: ${props => props.theme.backgroundColor || 'transparent'};
@@ -202,7 +198,7 @@ const getTheme = (props: Props) => {
 };
 
 
-class HeaderBlock extends React.Component<Props, State> {
+class HeaderBlock extends React.Component<Props> {
   renderHeaderContent = (theme: Object) => {
     const {
       rightItems = [],

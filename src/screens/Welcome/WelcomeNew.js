@@ -38,10 +38,6 @@ type Props = {
   navigateToNewWalletPage: Function,
 }
 
-type State = {
-  shouldAnimate: boolean,
-}
-
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
 
 const PillarLogo = styled(CachedImage)`
@@ -95,7 +91,7 @@ const features = [
   },
 ];
 
-class Welcome extends React.Component<Props, State> {
+class Welcome extends React.Component<Props> {
   loginAction = () => {
     this.props.navigateToNewWalletPage();
   };
