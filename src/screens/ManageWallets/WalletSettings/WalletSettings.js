@@ -25,11 +25,7 @@ import { connect } from 'react-redux';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import {
-  RECOVERY_AGENTS,
-  REVEAL_BACKUP_PHRASE,
-  CHOOSE_ASSETS_TO_TRANSFER, BACKUP_WALLET_IN_SETTINGS_FLOW,
-} from 'constants/navigationConstants';
+import { REVEAL_BACKUP_PHRASE, BACKUP_WALLET_IN_SETTINGS_FLOW } from 'constants/navigationConstants';
 import { ListCard } from 'components/ListItem/ListCard';
 import { baseColors } from 'utils/variables';
 import { lockScreenAction, logoutAction } from 'actions/authActions';
@@ -72,31 +68,23 @@ const keyWalletSettings = (that) => {
   ];
 };
 
-const smartWalletSettings = (that) => {
-  return [
-    {
-      key: 'recoveryAgents',
-      title: 'Recovery agents',
-      body: 'Assign your contacts as recovery agents for restoring the wallet',
-      // action: () => that.manageRecoveryAgents(),
-      label: 'soon',
-      disabled: true,
-    },
-    {
-      key: 'topUp',
-      title: 'Top up Smart Wallet',
-      body: 'Transfer assets from your other wallet',
-      action: () => that.topUpSmartWallet(),
-    },
-    {
-      key: 'spendingLimits',
-      title: 'Spending limits',
-      body: 'Secure your funds by restricting too large transactions',
-      label: 'soon',
-      disabled: true,
-    },
-  ];
-};
+const smartWalletSettings = [
+  {
+    key: 'recoveryAgents',
+    title: 'Recovery agents',
+    body: 'Assign your contacts as recovery agents for restoring the wallet',
+    label: 'soon',
+    disabled: true,
+  },
+  {
+    key: 'spendingLimits',
+    title: 'Spending limits',
+    body: 'Secure your funds by restricting too large transactions',
+    label: 'soon',
+    disabled: true,
+  },
+];
+
 
 class WalletSettings extends React.PureComponent<Props> {
   // settings actions
@@ -133,16 +121,6 @@ class WalletSettings extends React.PureComponent<Props> {
     );
   };
 
-  manageRecoveryAgents = () => {
-    const { navigation } = this.props;
-    navigation.navigate(RECOVERY_AGENTS, { options: { isSeparateRecovery: true } });
-  };
-
-  topUpSmartWallet = () => {
-    const { navigation } = this.props;
-    navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER, { options: { isSeparateFund: true } });
-  };
-
   renderSettingsItems = ({ item }, isSmartWallet) => {
     const {
       title,
@@ -172,7 +150,7 @@ class WalletSettings extends React.PureComponent<Props> {
     const isSmartWallet = selectedWallet.type === ACCOUNT_TYPES.SMART_WALLET;
     const walletType = isSmartWallet ? 'Smart' : 'Key';
     const settings = isSmartWallet
-      ? [...smartWalletSettings(this), ...defaultSettings(this)]
+      ? [...smartWalletSettings, ...defaultSettings(this)]
       : [...keyWalletSettings(this), ...defaultSettings(this)];
 
     return (
