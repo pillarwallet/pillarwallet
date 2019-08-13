@@ -501,7 +501,7 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
   }
 }
 
-export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?: boolean, account?: Account) => {
+export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?: boolean) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       accounts: { data: accounts },
@@ -509,7 +509,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
 
-    const activeAccount = account || getActiveAccount(accounts);
+    const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
 
     const walletAddress = getActiveAccountAddress(accounts);
