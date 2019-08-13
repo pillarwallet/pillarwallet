@@ -87,6 +87,7 @@ export const submitAccountRecoverySetupAction = () => {
         type: ACCOUNT_RECOVERY_TRANSACTION_TYPES.SETUP,
         hash: setupTransactionHash,
       }));
+      return;
     }
     Toast.show({
       message: 'Not enough ETH for Account Recovery setup',
