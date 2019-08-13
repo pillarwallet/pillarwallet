@@ -33,17 +33,14 @@ import {
   BACKUP_WALLET,
   REMOVE_PRIVATE_KEY,
 } from 'constants/walletConstants';
-import {
-  LEGAL_TERMS,
-  PIN_CODE_CONFIRMATION,
-  NEW_PROFILE,
-} from 'constants/navigationConstants';
+import { PIN_CODE_CONFIRMATION, NEW_PROFILE } from 'constants/navigationConstants';
 import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
 import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
+import { registerWalletAction } from './onboardingActions';
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
@@ -172,7 +169,7 @@ export const confirmPinForNewWalletAction = (pin: string) => {
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
-    navigate(NavigationActions.navigate({ routeName: LEGAL_TERMS }));
+    dispatch(registerWalletAction());
   };
 };
 

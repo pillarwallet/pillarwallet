@@ -20,7 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StatusBar, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { UIColors, spacing } from 'utils/variables';
 import { isIphoneX } from 'utils/common';
@@ -60,6 +60,7 @@ export const Center = styled.View`
 
 export const ContainerOuter = styled(SafeAreaView)`
   background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
+  ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;
 
 export const ContainerInner = styled.View`
@@ -80,7 +81,12 @@ export const Container = (props: ContainerProps) => {
   } = props;
 
   return (
-    <ContainerOuter color={color} style={style} forceInset={{ top: 'always', ...inset }}>
+    <ContainerOuter
+      color={color}
+      style={style}
+      forceInset={{ top: 'always', ...inset }}
+      androidStatusbarHeight={StatusBar.currentHeight}
+    >
       <ContainerInner
         center={center}
         onLayout={onLayout}

@@ -24,6 +24,7 @@ import { View, TouchableOpacity, Platform, TextInput as RNInput } from 'react-na
 import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
+import Icon from 'components/Icon';
 import { fontSizes, fontWeights, baseColors, UIColors, spacing } from 'utils/variables';
 
 type inputPropsType = {
@@ -57,6 +58,8 @@ type Props = {
   keyboardAvoidance?: boolean,
   loading?: boolean,
   onLayout?: Function,
+  statusIcon?: string,
+  statusIconColor?: string,
 }
 
 type State = {
@@ -72,6 +75,17 @@ const inputTypes = {
     fontSize: fontSizes.medium,
     fontWeight: fontWeights.bold,
     textAlign: 'left',
+  },
+  bigText: {
+    backgroundColor: baseColors.lightGray,
+    borderBottomWidth: 0,
+    borderRadius: 6,
+    color: baseColors.slateBlack,
+    fontSize: fontSizes.extraLarger,
+    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
+    fontWeight: fontWeights.bold,
+    padding: '0 20px',
+    inputHeight: Platform.OS === 'ios' ? 80 : 70,
   },
   amount: {
     fontSize: fontSizes.extraExtraLarge,
@@ -116,12 +130,14 @@ const InputField = styled(Input)`
   ${props => props.inputType.backgroundColor ? `background-color: ${props.inputType.backgroundColor};` : ''}
   ${props => props.inputType.borderRadius ? `border-radius: ${props.inputType.borderRadius};` : ''}
   ${props => props.inputType.color ? `color: ${props.inputType.color};` : ''}
+  ${props => props.inputType.lineHeight ? `line-height: ${props.inputType.lineHeight};` : ''}
   padding: ${props => props.inputType.padding || 0};
 `;
 
 const Item = styled(NBItem)`
   border-bottom-color: ${props => props.isFocused ? baseColors.electricBlue : baseColors.mediumGray};
   ${props => props.noBorder ? 'border-bottom-width: 0;' : ''}
+  height: ${props => props.height}px;
 `;
 
 const InputFooter = styled(View)`
@@ -152,10 +168,17 @@ const CustomLabel = styled(Label)`
 const AbsoluteSpinner = styled(Spinner)`
   position: absolute;
   right: ${spacing.mediumLarge}px;
-  top: ${Platform.select({
-    ios: '11px',
-    android: '12px',
-  })};
+  top: 50%;
+  margin-top: -20px;
+`;
+
+const AbsoluteIcon = styled(Icon)`
+  position: absolute;
+  right: ${spacing.mediumLarge}px;
+  top: 50%;
+  margin-top: -13px;
+  font-size: ${fontSizes.extraSmall}px;
+  color: ${props => props.color || baseColors.electricBlue};
 `;
 
 class TextInput extends React.Component<Props, State> {
@@ -242,22 +265,32 @@ class TextInput extends React.Component<Props, State> {
       labelBigger,
       loading,
       onLayout,
+      statusIcon,
+      statusIconColor,
     } = this.props;
     const { value = '' } = inputProps;
     const { isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
-    const additionalRightPadding = loading ? 36 : 0;
+    const additionalRightPadding = loading || statusIcon ? 36 : 0;
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
+    const defaultInputHeight = Platform.OS === 'ios' ? 65 : 55;
+    let inputHeight = inputType.inputHeight || defaultInputHeight;
+
+    if (inputProps.multiline) {
+      inputHeight = Platform.OS === 'ios' ? 120 : 100;
+    }
+
+    const customStyle = inputProps.multiline ? { paddingTop: 10 } : {};
     return (
       <View style={{ paddingBottom: 10 }}>
         <Item
           inlineLabel={inlineLabel}
           stackedLabel={!inlineLabel}
           error={!!errorMessage}
-          style={inputProps.multiline && { height: 140 }}
           isFocused={isFocused}
           noBorder={noBorder}
+          height={inputHeight}
         >
           {!!label && <CustomLabel labelBigger={labelBigger}>{lowerCase ? label : label.toUpperCase()}</CustomLabel>}
           <InputField
@@ -270,14 +303,14 @@ class TextInput extends React.Component<Props, State> {
             value={value}
             inputType={inputType}
             autoCorrect={autoCorrect}
-            style={{
+            style={[{
               fontSize: inputType.fontSize,
               width: viewWidth,
               paddingRight: (inputProps.multiline ? 58 : 14) + additionalRightPadding,
-              paddingTop: inputProps.multiline ? 10 : 0,
               textAlignVertical: inputProps.multiline ? 'top' : 'center',
               marginBottom: 10,
-            }}
+              height: inputHeight,
+            }, customStyle]}
             onLayout={onLayout}
           />
           {Platform.OS === 'ios' && <RNInput
@@ -288,6 +321,7 @@ class TextInput extends React.Component<Props, State> {
             style={{ marginTop: -10 }}
           />}
           {!!loading && <AbsoluteSpinner width={30} height={30} />}
+          {!!statusIcon && <AbsoluteIcon name={statusIcon} color={statusIconColor} />}
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
         </Item>
