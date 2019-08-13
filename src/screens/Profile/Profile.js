@@ -36,7 +36,7 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
-import { SubHeading, BaseText } from 'components/Typography';
+import { SubHeading, BaseText, Paragraph } from 'components/Typography';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
@@ -61,6 +61,7 @@ import ChatService from 'services/chat';
 import { fontSizes, fontTrackings, baseColors, spacing } from 'utils/variables';
 import { delay } from 'utils/common';
 import ProfileSettingsItem from 'components/ListItem/SettingsItem';
+import Button from 'components/Button';
 import EditProfile from './EditProfile';
 import SettingsModalTitle from './SettingsModalTitle';
 import ReferralCodeModal from './ReferralCodeModal';
@@ -103,6 +104,11 @@ const StyledWrapper = styled(Wrapper)`
   justify-content: space-between;
   padding-bottom: ${spacing.rhythm}px;
   margin-top: 25px;
+`;
+
+const Description = styled(Paragraph)`
+  padding-bottom: ${spacing.rhythm}px;
+  line-height: ${fontSizes.mediumLarge};
 `;
 
 const cityFormFields = [{
@@ -190,6 +196,7 @@ type State = {
   showCheckPinModal: boolean,
   showBiometricsSelector: boolean,
   showTrackingModal: boolean,
+  showJoinBetaModal: boolean,
 }
 
 class Profile extends React.Component<Props, State> {
@@ -209,6 +216,7 @@ class Profile extends React.Component<Props, State> {
       showCheckPinModal: false,
       showBiometricsSelector: false,
       showTrackingModal: false,
+      showJoinBetaModal: false,
     };
   }
 
@@ -392,6 +400,7 @@ class Profile extends React.Component<Props, State> {
       showCheckPinModal,
       showBiometricsSelector,
       showTrackingModal,
+      showJoinBetaModal,
     } = this.state;
 
     const isWalletBackedUp = isImported || isBackedUp;
@@ -787,13 +796,18 @@ class Profile extends React.Component<Props, State> {
             <ProfileSettingsItem
               key="joinBeta"
               label={userJoinedBeta ? 'Leave Beta Testing' : 'Join Beta Testing'}
-              onPress={() => setUserJoinedBeta(!userJoinedBeta)}
+              onPress={() => userJoinedBeta
+                ? setUserJoinedBeta(false)
+                : this.setState({ showJoinBetaModal: true })
+              }
             />
+
             <ProfileSettingsItem
               key="systemInfo"
               label="System Info"
               onPress={() => this.setState({ showSystemInfoModal: true })}
             />
+
             <ProfileSettingsItem
               key="lockScreen"
               label="Lock Screen"
@@ -814,6 +828,38 @@ class Profile extends React.Component<Props, State> {
               onModalHide={() => this.setState({ showSystemInfoModal: false })}
             >
               <SystemInfoModal headerOnClose={() => this.setState({ showSystemInfoModal: false })} />
+            </SlideModal>
+
+            <SlideModal
+              isVisible={showJoinBetaModal}
+              fullScreen
+              showHeader
+              backgroundColor={baseColors.snowWhite}
+              avoidKeyboard
+              title="join beta"
+              onModalHide={() => this.setState({ showJoinBetaModal: false })}
+            >
+              <StyledWrapper regularPadding flex={1}>
+                <Description>
+                  {
+                    'By joining the beta program, you will be added to our Firebase Analytics data collection.' +
+                    'Through this, Pillar will collect your username in order to enable beta features and monitor ' +
+                    'your wallet experience for any bugs and/or crashes while testing the new functionality. ' +
+                    'You can opt out of the beta program and Firebase Analytics collection at any time ' +
+                    'via the "System" under Settings.'
+                  }
+                </Description>
+                <Button
+                  title="Join Beta Testing"
+                  onPress={() => {
+                    setUserJoinedBeta(true);
+                    this.setState({ showJoinBetaModal: false });
+                  }}
+                  style={{
+                    marginBottom: 13,
+                  }}
+                />
+              </StyledWrapper>
             </SlideModal>
           </ListWrapper>
 
