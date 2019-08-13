@@ -10,7 +10,7 @@ exports[`Contact info should render Contact info correctly 1`] = `
       "paddingBottom": 0,
       "paddingLeft": 0,
       "paddingRight": 0,
-      "paddingTop": 20,
+      "paddingTop": 42,
     }
   }
 >
@@ -444,6 +444,7 @@ exports[`Contact info should render Contact info correctly 1`] = `
                           Array [
                             Object {
                               "color": "#8B939E",
+                              "flexWrap": "wrap",
                               "fontSize": 16,
                               "marginBottom": 5,
                               "textAlign": "center",
@@ -772,6 +773,7 @@ exports[`Contact info should render Contact info correctly 1`] = `
                                 Array [
                                   Object {
                                     "color": "#8B939E",
+                                    "flexWrap": "wrap",
                                     "fontSize": 16,
                                     "marginBottom": 5,
                                     "textAlign": "center",
@@ -851,6 +853,7 @@ exports[`Contact info should render Contact info correctly 1`] = `
                     "display": "flex",
                     "flexDirection": "row",
                     "justifyContent": "center",
+                    "paddingTop": 8,
                   },
                   undefined,
                 ]

@@ -18,36 +18,53 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { ButtonNext } from 'components/Button';
 import styled from 'styled-components/native';
-import { BoldText } from 'components/Typography';
 
 type Props = {
   children: React.Node,
+  nextDisabled?: boolean,
+  onNextPress: Function,
   wrapperStyle?: Object,
+  contentAlign?: string,
 }
 
-const ErrorMessageBackground = styled.View`
+const FooterWrapper = styled.KeyboardAvoidingView`
+  padding: 0 30px;
+  flex-direction: column;
+`;
+
+const InnerWrapper = styled.KeyboardAvoidingView`
+  flex-direction: row;
+  align-items: ${props => props.contentAlign || 'flex-end'};
   width: 100%;
-  padding: 20px;
-  margin: 20px 0 0;
-  background-color: #ff0005;
 `;
 
-const ErrorMessageText = styled(BoldText)`
-  color: #ffffff;
-  font-size: 16px;
+const LeftSide = styled.View`
+  flex: 1;
+  padding: 14px 20px 14px 0;
+  flex-wrap: wrap;
 `;
 
-const ErrorMessage = (props: Props) => {
-  const { wrapperStyle } = props;
+export const NextFooter = (props: Props) => {
+  const {
+    children,
+    nextDisabled,
+    onNextPress,
+    wrapperStyle,
+    contentAlign,
+  } = props;
   return (
-    <ErrorMessageBackground style={wrapperStyle}>
-      <ErrorMessageText>
-        {props.children}
-      </ErrorMessageText>
-    </ErrorMessageBackground>
-
+    <FooterWrapper style={wrapperStyle}>
+      <InnerWrapper contentAlign={contentAlign}>
+        <LeftSide>
+          {children}
+        </LeftSide>
+        <ButtonNext
+          disabled={nextDisabled}
+          onPress={onNextPress}
+        />
+      </InnerWrapper>
+    </FooterWrapper>
   );
 };
-
-export default ErrorMessage;

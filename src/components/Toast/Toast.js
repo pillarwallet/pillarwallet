@@ -63,6 +63,7 @@ const ToastHolder = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
+  padding-top: 8px;
 `;
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
