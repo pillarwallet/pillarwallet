@@ -261,11 +261,13 @@ class SmartWallet {
   }
 
   async getAccountPaymentsToSettle(accountAddress: string, page?: number = 0) {
-    const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
+    const filters = {
+      state: PAYMENT_COMPLETED,
+    };
+    const data = await this.sdk.getConnectedAccountPayments(page, filters).catch(this.handleError);
     if (!data) return [];
 
     const items = data.items
-      .filter(payment => payment.state === PAYMENT_COMPLETED)
       .filter(payment => {
         const recipientAddress = get(payment, 'recipient.account.address', '');
         return addressesEqual(recipientAddress, accountAddress);
