@@ -556,6 +556,8 @@ export const fetchVirtualAccountBalanceAction = () => {
 
 export const managePPNInitFlag = (payments: Object[]) => {
   return async (dispatch: Function, getState: Function) => {
+    if (!payments.length) return;
+
     await dispatch(fetchVirtualAccountBalanceAction());
     const {
       paymentNetwork: { availableStake },
