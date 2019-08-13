@@ -18,270 +18,390 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { FlatList, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
 import styled from 'styled-components/native/index';
-import Header from 'components/Header';
-import { Paragraph, TextLink, BoldText } from 'components/Typography';
-import Button from 'components/Button';
-import MultiButtonWrapper from 'components/MultiButtonWrapper';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import { handleUrlPress } from 'utils/common';
-import ButtonText from 'components/ButtonText';
-import { NEW_WALLET, IMPORT_WALLET } from 'constants/navigationConstants';
-import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
-import { navigateToNewWalletPageAction } from 'actions/walletActions';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
+import { Paragraph, TextLink, MediumText, BaseText } from 'components/Typography';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { handleUrlPress } from 'utils/common';
+import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
+import Checkbox from 'components/Checkbox';
+import Icon from 'components/Icon';
+import { NextFooter } from 'components/Layout/NextFooter';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  navigateToNewWalletPage: Function,
 };
 
 type State = {
   openCollapseKey: string,
+  openInnerCollapseKey: string,
+  hasAgreedToTerms: boolean,
 };
 
-const SectionTitle = styled(BoldText)`
-  font-size: ${fontSizes.medium}px;
-  margin: 16px;
-  margin-bottom: 10px;
+const SectionToggle = styled.View`
+  margin: 30px;
+  flex-direction: row;
+  align-items: center;
 `;
+
+const SectionTitle = styled(MediumText)`
+  font-size: 17px;
+  margin-right: 12px;
+  color: ${baseColors.slateBlack};
+`;
+
+const InnerSectionToggle = styled.View`
+  margin: 30px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const InnerSectionTitle = styled(BaseText)`
+  font-size: 15px;
+  color: ${baseColors.electricBlue};
+`;
+
+const StyledFlatList = styled.FlatList`
+  width: 100%;
+  padding-bottom: 30px;
+  flex: 1;
+`;
+
+const IconHolder = styled.View`
+  height: 14px;
+  width: 14px;
+  border-radius: 7px;
+  background-color: ${baseColors.dell};
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+`;
+
+const TickIcon = styled(Icon)`
+  font-size: 8px;
+  color: ${baseColors.white};
+  margin-top: 1px;
+`;
+
+const sections = [
+  {
+    key: 'ACCESS_PERMISSIONS',
+    title: 'Access permissions',
+    content: [
+      {
+        key: 'INTERNET',
+        title: 'Internet Access, Phone and Network State',
+        paragraphs: [
+          'INTERNET - used for internet access since application can only run on device with active internet ' +
+          'connection.',
+          'ACCESS_NETWORK_STATE - used to check if current device has active internet connection.',
+          'READ_PHONE_STATE - used to check current cellular network information.',
+          'WAKE_LOCK - used to keep processor from sleeping to process background tasks.',
+        ],
+      },
+      {
+        key: 'STORAGE_STATE',
+        title: 'Phone Storage',
+        paragraphs: [
+          'READ_INTERNAL_STORAGE and/or READ_EXTERNAL_STORAGE - allows an application to read from device' +
+          'storage in order to show you your app data - settings, asset info and messages.',
+          'WRITE_EXTERNAL_STORAGE - allows an application to write to external storage in order to store your' +
+          'app data - settings, asset info and messages.',
+        ],
+      },
+      {
+        key: 'PUSH_NOTIFICATIONS',
+        title: 'Push notifications and alerts',
+        paragraphs: [
+          'C2D_MESSAGE - used to get device ID for remote "Push Notifications"',
+          'RECEIVE - used for "Push Notifications" delivery.',
+          'SYSTEM_ALERT_WINDOW - used to show notifications on top of the app.',
+        ],
+      },
+    ],
+  },
+  {
+    key: 'FEATURE_PERMISSIONS',
+    title: 'Feature permissions',
+    content: [
+      {
+        key: 'LAUNCHER',
+        title: 'Launcher Permissions',
+        paragraphs: [
+          'INSTALL_SHORTCUT / UPDATE_SHORTCUT - allows application to install / update shortcut in Launcher.',
+          'READ, WRITE, BROADCAST_BADGE, PROVIDER_INSERT_BADGE, UPDATE_COUNT, UPDATE_BADGE, CHANGE_BADGE, ' +
+          'READ_SETTINGS, WRITE_SETTINGS, READ_APP_BADGE, BADGE_COUNT_READ, BADGE_COUNT_WRITE - ' +
+          'badges related permissions (varies with the device) to manage notification badges.',
+        ],
+      },
+      {
+        key: 'VIBRATION',
+        title: 'Vibration',
+        paragraphs: [
+          'VIBRATION - allows application to vibrate on QR code scan.',
+        ],
+      },
+      {
+        key: 'CAMERA',
+        title: 'Camera',
+        paragraphs: [
+          'CAMERA - allows application to open camera in order to scan QR codes or take profile picture.',
+        ],
+      },
+      {
+        key: 'BIOMETRICS',
+        title: 'Biometric Capture',
+        paragraphs: [
+          'USE_FINGERPRINT - used to allow users to log in using fingerprint.',
+        ],
+      },
+    ],
+  },
+  {
+    key: 'COLLECTED_DATA',
+    title: 'Collected data',
+    content: [
+      {
+        key: 'DEBUG_DATA',
+        title: 'Debug data',
+        paragraphs: [
+          'IP address, package and error info, username, public wallet address, device model and OS version.',
+        ],
+      },
+      {
+        key: 'USER_DATA',
+        title: 'User provided data (optional)',
+        paragraphs: [
+          'phone number for verification, full name, country of origin, profile picture.',
+        ],
+      },
+      {
+        key: 'FABRIC',
+        title: 'Fabric',
+        paragraphs: (
+          <Paragraph light small>
+            used to track application issues and errors. More on their privacy policy –
+            <TextLink onPress={() => handleUrlPress('https://docs.fabric.io/android/fabric/data-privacy.html')}> https://docs.fabric.io/android/fabric/data-privacy.html</TextLink>
+          </Paragraph>
+        ),
+      },
+      {
+        key: 'INTERCOM',
+        title: 'Intercom',
+        paragraphs: (
+          <Paragraph light small>
+            used for application support. More on the privacy policy -
+            <TextLink onPress={() => handleUrlPress('https://www.intercom.com/terms-and-policies#privacy')}> https://www.intercom.com/terms-and-policies#privacy</TextLink>
+          </Paragraph>
+        ),
+      },
+      {
+        key: 'SENTRY',
+        title: 'Sentry',
+        paragraphs: (
+          <Paragraph light small>
+            used for application error tracking – <TextLink onPress={() => handleUrlPress('https://sentry.io/privacy/')}>https://sentry.io/privacy/</TextLink>.
+          </Paragraph>
+        ),
+      },
+      {
+        key: 'DISCLAIMER',
+        custom: (
+          <Paragraph light small style={{ padding: spacing.mediumLarge }} key="disclaimer">
+            In order to receive a copy of your user data, request a removal and/or any other general inquiries,
+            please email
+            <TextLink onPress={() => handleUrlPress('mailto:dpo@pillarproject.io.')}> dpo@pillarproject.io.</TextLink>
+          </Paragraph>
+        ),
+      },
+    ],
+  },
+];
 
 class Permissions extends React.Component<Props, State> {
   state = {
     openCollapseKey: '',
+    openInnerCollapseKey: '',
+    hasAgreedToTerms: false,
   };
 
   toggleCollapse = (key: string) => {
     const { openCollapseKey } = this.state;
     if (openCollapseKey === key) {
-      this.setState({ openCollapseKey: '' });
+      this.setState({ openCollapseKey: '', openInnerCollapseKey: '' });
     } else {
-      this.setState({ openCollapseKey: key });
+      this.setState({ openCollapseKey: key, openInnerCollapseKey: '' });
+    }
+  };
+
+  toggleInnerCollapse = (key: string) => {
+    const { openInnerCollapseKey } = this.state;
+    if (openInnerCollapseKey === key) {
+      this.setState({ openInnerCollapseKey: '' });
+    } else {
+      this.setState({ openInnerCollapseKey: key });
     }
   };
 
   handleAgree = () => {
-    const { navigation, navigateToNewWalletPage } = this.props;
-    const nextScreen = navigation.getParam('nextScreen', '');
-
-    if (nextScreen === NEW_WALLET) {
-      navigateToNewWalletPage();
-    } else if (nextScreen === IMPORT_WALLET) {
-      navigation.navigate(IMPORT_WALLET);
-    }
+    const { navigation } = this.props;
+    navigation.navigate(SET_WALLET_PIN_CODE);
     return null;
   };
 
-  render() {
+  renderSection = ({ item: section }: Object) => {
     const { openCollapseKey } = this.state;
-    const { navigation } = this.props;
+    const { title, key } = section;
+    return (
+      <CollapsibleListItem
+        customToggle={(
+          <SectionToggle>
+            <SectionTitle>{title}</SectionTitle>
+            <IconHolder>
+              <TickIcon name="check" />
+            </IconHolder>
+          </SectionToggle>
+        )}
+        open={openCollapseKey === key}
+        onPress={() => this.toggleCollapse(key)}
+        toggleWrapperStyle={{
+          borderBottomColor: baseColors.mediumLightGray,
+          borderBottomWidth: 0.5,
+          borderTopColor: baseColors.mediumLightGray,
+          borderTopWidth: 0.5,
+          paddingRight: 15,
+        }}
+        wrapperStyle={{
+          borderTopColor: baseColors.mediumLightGray,
+          borderTopWidth: 0.5,
+        }}
+        collapseContent={this.renderCollapseContent(key)}
+        noPadding
+      />
+    );
+  };
+
+  renderSectionContent = ({ item: sectionContent }: Object) => {
+    const { openInnerCollapseKey } = this.state;
+    const {
+      key,
+      title,
+      paragraphs,
+      custom,
+    } = sectionContent;
+    const collapseContent = Array.isArray(paragraphs)
+      ? paragraphs.map((paragraph, index) => (<Paragraph light small key={`${key}-${index}`}>{paragraph}</Paragraph>))
+      : paragraphs;
+    if (paragraphs) {
+      return (
+        <CollapsibleListItem
+          customToggle={(
+            <InnerSectionToggle>
+              <InnerSectionTitle>{title}</InnerSectionTitle>
+            </InnerSectionToggle>
+          )}
+          open={openInnerCollapseKey === key}
+          onPress={() => this.toggleInnerCollapse(key)}
+          toggleWrapperStyle={{
+            borderTopColor: baseColors.mediumLightGray,
+            borderTopWidth: 0.5,
+            paddingRight: 15,
+          }}
+          wrapperStyle={{
+            borderBottomColor: baseColors.mediumLightGray,
+            borderBottomWidth: 0.5,
+          }}
+          collapseContent={
+            <View style={{
+              flexDirection: 'column',
+              flexWrap: 'wrap',
+              flex: 1,
+              marginRight: 30,
+              marginLeft: -6,
+            }}
+            >
+              {collapseContent}
+            </View>
+          }
+        />
+      );
+    }
+    if (custom) {
+      return (
+        <View style={{ marginHorizontal: 15 }}>
+          {custom}
+        </View>
+      );
+    }
+    return (
+      <SectionTitle key={key} style={{ margin: 30, fontSize: fontSizes.small }}>{title}</SectionTitle>
+    );
+  };
+
+  renderCollapseContent = (sectionKey: string) => {
+    const section = sections.find((thisSection) => thisSection.key === sectionKey) || {};
+    const { content } = section;
+    return (
+      <FlatList
+        keyExtractor={item => item.key}
+        data={content}
+        extraData={this.state}
+        renderItem={this.renderSectionContent}
+      />
+    );
+  };
+
+  render() {
+    const { hasAgreedToTerms } = this.state;
 
     return (
-      <Container color={baseColors.white}>
-        <Header title="before we start" onBack={() => navigation.goBack(null)} white />
-        <ScrollWrapper color={UIColors.defaultBackgroundColor}>
-          <Paragraph light small style={{ paddingHorizontal: spacing.mediumLarge, marginVertical: spacing.medium }}>
-            In order to work properly, Pillar Wallet requires your permission to collect, store and use certain
-            information.
-          </Paragraph>
-          <SectionTitle>Required device access permissions:</SectionTitle>
-          <CollapsibleListItem
-            label="Internet Access, Phone and Network State"
-            open={openCollapseKey === 'INTERNET'}
-            onPress={() => this.toggleCollapse('INTERNET')}
-            collapseContent={
-              <React.Fragment>
-                <Paragraph light small>
-                  INTERNET - used for internet access since application can only run on device with active internet
-                  connection.
-                </Paragraph>
-                <Paragraph light small>
-                  ACCESS_NETWORK_STATE - used to check if current device has active internet connection.
-                </Paragraph>
-                <Paragraph light small>
-                  READ_PHONE_STATE - used to check current cellular network information.
-                </Paragraph>
-                <Paragraph light small>
-                  WAKE_LOCK - used to keep processor from sleeping to process background tasks.
-                </Paragraph>
-              </React.Fragment>
-            }
+      <ContainerWithHeader
+        headerProps={{
+          default: true,
+          lighterHeader: true,
+          centerItems: [{ title: 'Know how Pillar makes you safe' }],
+        }}
+        backgroundColor={baseColors.white}
+      >
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'space-between',
+            paddingTop: '10%',
+          }}
+        >
+          <StyledFlatList
+            keyExtractor={item => item.key}
+            data={sections}
+            extraData={this.state}
+            renderItem={this.renderSection}
+            contentContainerStyle={{
+              borderBottomWidth: 1,
+              borderBottomColor: baseColors.mediumLightGray,
+            }}
           />
-          <CollapsibleListItem
-            label="Phone Storage"
-            open={openCollapseKey === 'STORAGE_STATE'}
-            onPress={() => this.toggleCollapse('STORAGE_STATE')}
-            collapseContent={
-              <React.Fragment>
-                <Paragraph light small>
-                  READ_INTERNAL_STORAGE and/or READ_EXTERNAL_STORAGE - allows an application to read from device storage
-                  in order to show you your app data - settings, asset info and messages.
-                </Paragraph>
-                <Paragraph light small>
-                  WRITE_EXTERNAL_STORAGE - allows an application to write to external storage in order to store your app
-                  data - settings, asset info and messages.
-                </Paragraph>
-              </React.Fragment>
-            }
-          />
-          <CollapsibleListItem
-            label="Push notifications and alerts"
-            open={openCollapseKey === 'PUSH_NOTIFICATIONS'}
-            onPress={() => this.toggleCollapse('PUSH_NOTIFICATIONS')}
-            collapseContent={
-              <React.Fragment>
-                <Paragraph light small>
-                  C2D_MESSAGE - used to get device ID for remote &ldquo;Push Notifications&rdquo;.
-                </Paragraph>
-                <Paragraph light small>
-                  RECEIVE - used for &ldquo;Push Notifications&rdquo; delivery.
-                </Paragraph>
-                <Paragraph light small>
-                  SYSTEM_ALERT_WINDOW - used to show notifications on top of the app.
-                </Paragraph>
-              </React.Fragment>
-            }
-          />
-
-          <SectionTitle>Required device feature permissions:</SectionTitle>
-          <CollapsibleListItem
-            label="Launcher Permissions"
-            open={openCollapseKey === 'LAUNCHER'}
-            onPress={() => this.toggleCollapse('LAUNCHER')}
-            collapseContent={
-              <React.Fragment>
-                <Paragraph light small>
-                  INSTALL_SHORTCUT / UPDATE_SHORTCUT - allows application to install / update shortcut in Launcher.
-                </Paragraph>
-                <Paragraph light small>
-                  READ, WRITE, BROADCAST_BADGE, PROVIDER_INSERT_BADGE, UPDATE_COUNT, UPDATE_BADGE, CHANGE_BADGE,
-                  READ_SETTINGS, WRITE_SETTINGS, READ_APP_BADGE, BADGE_COUNT_READ, BADGE_COUNT_WRITE -
-                  badges related permissions (varies with the device) to manage notification badges.
-                </Paragraph>
-              </React.Fragment>
-            }
-          />
-          <CollapsibleListItem
-            label="Vibration"
-            open={openCollapseKey === 'VIBRATION'}
-            onPress={() => this.toggleCollapse('VIBRATION')}
-            collapseContent={
-              <Paragraph light small>
-                VIBRATION - allows application to vibrate on QR code scan.
-              </Paragraph>
-            }
-          />
-          <CollapsibleListItem
-            label="Camera"
-            open={openCollapseKey === 'CAMERA'}
-            onPress={() => this.toggleCollapse('CAMERA')}
-            collapseContent={
-              <Paragraph light small>
-                CAMERA - allows application to open camera in order to scan QR codes or take profile picture.
-              </Paragraph>
-            }
-          />
-          <CollapsibleListItem
-            label="Biometric Capture"
-            open={openCollapseKey === 'BIOMETRICS'}
-            onPress={() => this.toggleCollapse('BIOMETRICS')}
-            collapseContent={
-              <Paragraph light small>
-                USE_FINGERPRINT - used to allow users to log in using fingerprint.
-              </Paragraph>
-            }
-          />
-
-          <SectionTitle>Data collected by the app:</SectionTitle>
-          <CollapsibleListItem
-            label="Debug data"
-            open={openCollapseKey === 'DEBUG_DATA'}
-            onPress={() => this.toggleCollapse('DEBUG_DATA')}
-            collapseContent={
-              <Paragraph light small>
-                IP address, package and error info, username, public wallet address, device model and OS version
-              </Paragraph>
-            }
-          />
-          <CollapsibleListItem
-            label="User provided data (optional)"
-            open={openCollapseKey === 'USER_DATA'}
-            onPress={() => this.toggleCollapse('USER_DATA')}
-            collapseContent={
-              <Paragraph light small>
-                phone number for verification, full name, country of origin, profile picture
-              </Paragraph>
-            }
-          />
-
-          <SectionTitle>Data collected by third parties:</SectionTitle>
-          <CollapsibleListItem
-            label="Fabric"
-            open={openCollapseKey === 'FABRIC'}
-            onPress={() => this.toggleCollapse('FABRIC')}
-            collapseContent={
-              <Paragraph light small>
-                used to track application issues and errors. More on their privacy policy –
-                <TextLink onPress={() => handleUrlPress('https://docs.fabric.io/android/fabric/data-privacy.html')}> https://docs.fabric.io/android/fabric/data-privacy.html</TextLink>
-              </Paragraph>
-            }
-          />
-          <CollapsibleListItem
-            label="Intercom"
-            open={openCollapseKey === 'INTERCOM'}
-            onPress={() => this.toggleCollapse('INTERCOM')}
-            collapseContent={
-              <Paragraph light small>
-                used for application support. More on the privacy policy -
-                <TextLink onPress={() => handleUrlPress('https://www.intercom.com/terms-and-policies#privacy')}> https://www.intercom.com/terms-and-policies#privacy</TextLink>
-              </Paragraph>
-            }
-          />
-          <CollapsibleListItem
-            label="Sentry"
-            open={openCollapseKey === 'SENTRY'}
-            onPress={() => this.toggleCollapse('SENTRY')}
-            collapseContent={
-              <Paragraph light small>
-                used for application error tracking – <TextLink onPress={() => handleUrlPress('https://sentry.io/privacy/')}>https://sentry.io/privacy/</TextLink>.
-              </Paragraph>
-            }
-          />
-
-          <Paragraph light small style={{ padding: spacing.mediumLarge }}>
-            By pressing &ldquo;I agree&rdquo; button below, you agree to the described application usage policy and can
-            proceed with creating your new Pillar user account. In order to receive a copy of your user data, request a
-            removal and/or any other general inquiries, please email
-            <TextLink onPress={() => handleUrlPress('mailto:dpo@pillarproject.io.')}> dpo@pillarproject.io.</TextLink>
-          </Paragraph>
-
-          <MultiButtonWrapper style={{ padding: 16 }}>
-            <Button
-              block
-              title="I agree"
-              onPress={this.handleAgree}
-            />
-            <ButtonText
-              buttonText="Disagree"
-              onPress={() => navigation.goBack()}
-              fontSize={fontSizes.medium}
-              wrapperStyle={{ marginTop: 20 }}
-            />
-          </MultiButtonWrapper>
-        </ScrollWrapper>
-      </Container>
+          <NextFooter
+            onNextPress={this.handleAgree}
+            nextDisabled={!hasAgreedToTerms}
+            contentAlign="center"
+          >
+            <Checkbox
+              onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
+              small
+              lightText
+              darkCheckbox
+            >
+              I have read, understand, and agree to these Terms of Use
+            </Checkbox>
+          </NextFooter>
+        </ScrollView>
+      </ContainerWithHeader>
     );
   }
 }
 
-
-const mapDispatchToProps = (dispatch: Function) => ({
-  navigateToNewWalletPage: () => {
-    dispatch(navigateToNewWalletPageAction());
-  },
-});
-
-export default connect(null, mapDispatchToProps)(Permissions);
+export default Permissions;

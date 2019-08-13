@@ -22,13 +22,12 @@ import { Platform, StatusBar, View, Dimensions } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation, SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
-
 import isEqual from 'lodash.isequal';
+
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { UIColors } from 'utils/variables';
 import { isIphoneX } from 'utils/common';
-
 
 import { ScrollWrapper } from './Layout';
 
@@ -59,10 +58,8 @@ const Footer = styled.KeyboardAvoidingView`
 
 const { height: screenHeight } = Dimensions.get('window');
 
-
 class ContainerWithHeader extends React.Component<Props> {
   focusSubscriptions: NavigationEventSubscription[];
-
   shouldComponentUpdate(nextProps: Props) {
     const isEq = isEqual(this.props, nextProps);
     return !isEq;
@@ -119,6 +116,7 @@ class ContainerWithHeader extends React.Component<Props> {
     } = this.props;
 
     const topInset = headerProps.floating ? 'always' : 'never';
+    const bottomInset = keyboardAvoidFooter ? 'never' : 'always';
     const androidStatusBarSpacing = headerProps.floating ? StatusBar.currentHeight : 0;
     const shouldFooterAvoidKeyboard = screenHeight > minAvoidHeight || 600; // if not checked on smaller screens
     // keyboard and footer covers entire content;
@@ -127,7 +125,7 @@ class ContainerWithHeader extends React.Component<Props> {
       <View style={{ flex: 1 }}>
         <HeaderBlock {...headerProps} navigation={navigation} />
         <StyledSafeAreaView
-          forceInset={{ top: topInset, bottom: 'always', ...inset }}
+          forceInset={{ top: topInset, bottom: bottomInset, ...inset }}
           androidStatusbarHeight={androidStatusBarSpacing}
           color={backgroundColor}
         >

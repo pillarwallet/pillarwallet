@@ -406,6 +406,7 @@ class Profile extends React.Component<Props, State> {
               <Checkbox
                 checked={!optOutTracking}
                 onPress={() => this.handleToggleOptOutTracking()}
+                wrapperStyle={{ marginBottom: 20 }}
               >
                 <CheckboxText>
                   I&apos;m happy to share anonymous application usage statistics

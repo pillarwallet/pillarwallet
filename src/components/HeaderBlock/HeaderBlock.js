@@ -50,10 +50,6 @@ type Props = {
   customOnBack?: Function,
 }
 
-type State = {
-  isMoreContentVisible: boolean,
-}
-
 const Wrapper = styled.View`
   width: 100%;
   background-color: ${props => props.theme.backgroundColor || 'transparent'};
@@ -198,6 +194,13 @@ const themes = (backgroundColor?: string = '') => ({
     backgroundColor,
     borderBottomColor: backgroundColor,
   },
+  darkBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: baseColors.slateBlack,
+  },
+  lighterHeader: {
+    color: baseColors.aluminium,
+  },
   default: {
     backgroundColor: baseColors.white,
     color: baseColors.slateBlack,
@@ -217,15 +220,14 @@ const getTheme = (props: Props) => {
   const combinedThemes = [];
 
   Object.keys(props).forEach((prop: string) => {
-    if (themes(background)[prop]) combinedThemes.push(themes(background)[prop]);
+    if (!!props[prop] && themes(background)[prop]) combinedThemes.push(themes(background)[prop]);
   });
 
   if (combinedThemes.length) return Object.assign({}, ...combinedThemes);
   return themes().default;
 };
 
-
-class HeaderBlock extends React.Component<Props, State> {
+class HeaderBlock extends React.Component<Props> {
   renderHeaderContent = (theme: Object) => {
     const {
       rightItems = [],

@@ -65,6 +65,7 @@ const ToastHolder = styled(SafeAreaView)`
   align-items: flex-start;
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : '8px'};
 `;
+
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
   background-color: ${baseColors.white};

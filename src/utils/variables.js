@@ -111,6 +111,9 @@ export const baseColors = {
   solitude: '#ebeff2',
   persianBlue: '#1D24D8',
   pastelGreen: '#77D16D',
+  dell: '#467038',
+  stratos: '#000260',
+  rockBlue: '#8e8fb8',
 };
 
 export const brandColors = [

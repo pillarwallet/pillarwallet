@@ -19,6 +19,11 @@
 */
 import { Dimensions, Platform, PixelRatio } from 'react-native';
 
+const {
+  width: SCREEN_WIDTH,
+} = Dimensions.get('window');
+const scale = SCREEN_WIDTH / 375;
+
 export const isColorDark = (color: string) => {
   let r;
   let g;
@@ -49,13 +54,6 @@ export const isColorDark = (color: string) => {
 
   return hsp < 127.5;
 };
-
-
-const {
-  width: SCREEN_WIDTH,
-} = Dimensions.get('window');
-
-const scale = SCREEN_WIDTH / 375; // based on iPhoneX (used to showcase deigns)
 
 export function responsiveSize(size: number) {
   const newSize = size * scale;

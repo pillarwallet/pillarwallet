@@ -118,5 +118,3 @@ export const HeaderActionButton = (props: Props) => {
     </HeaderButtonRounded>
   );
 };
-
-// {isActive !== undefined && <Status isActive={isActive} />} { /* value might be TRUE or FALSE */ }
