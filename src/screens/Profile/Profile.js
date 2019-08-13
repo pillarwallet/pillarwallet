@@ -609,6 +609,7 @@ class Profile extends React.Component<Props, State> {
               <ProfileSettingsItem
                 key="phone"
                 label="Phone"
+                value={user.isPhoneVerified ? `${user.phone}` : null}
                 warningNotification={!user.isPhoneVerified}
                 onPress={() => this.toggleSlideModalOpen('phone')}
               />)
