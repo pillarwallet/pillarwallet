@@ -76,7 +76,6 @@ const MIN_QUERY_LENGTH = 2;
 
 class SearchBlock extends React.Component<Props, State> {
   _willBlur: NavigationEventSubscription;
-  _willFocus: NavigationEventSubscription;
   _panResponder: Object;
 
   constructor(props: Props) {
@@ -104,7 +103,6 @@ class SearchBlock extends React.Component<Props, State> {
 
   componentWillUnmount() {
     this._willBlur.remove();
-    this._willFocus.remove();
   }
 
   onScreenBlur = () => {
