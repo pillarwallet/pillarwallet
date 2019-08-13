@@ -313,13 +313,13 @@ export const getChatByContactAction = (
       }
     }
 
-    const otherUnreadMessages = existingChats.filter(
+    // check if there are any other unread messages left
+    if (existingChats.find(
       ({ username: messageUsername, unread }) => messageUsername !== username && !!unread,
-    );
+    )) return;
 
-    if (!otherUnreadMessages.length) {
-      dispatch(setUnreadChatNotificationsStatusAction(false));
-    }
+    // no more unread messages left, set unread to false
+    dispatch(setUnreadChatNotificationsStatusAction(false));
   };
 };
 
