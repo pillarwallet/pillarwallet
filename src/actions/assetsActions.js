@@ -58,7 +58,6 @@ import type {
   TransactionPayload,
 } from 'models/Transaction';
 import type { Asset, Assets, Balance, Balances } from 'models/Asset';
-import type { Account } from 'models/Account';
 import { addressesEqual, generatePMTToken, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
