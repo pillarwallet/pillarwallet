@@ -2,7 +2,7 @@
 import { ethToWei } from '@netgum/utils';
 import { utils } from 'ethers';
 import abi from 'ethjs-abi';
-import { sdkModules } from '@archanova/sdk';
+import { sdkConstants } from '@archanova/sdk';
 import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -21,14 +21,11 @@ import { catchTransactionError } from 'utils/wallet';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 const {
-  Eth: {
-    TransactionSpeeds: {
-      Slow: SLOW,
-      Regular: REGULAR,
-      Fast: FAST,
-    },
+  GasPriceStrategies: {
+    Avg: AVG,
+    Fast: FAST,
   },
-} = sdkModules;
+} = sdkConstants;
 
 export default class SmartWalletProvider {
   wallet: Object;
@@ -210,9 +207,9 @@ export default class SmartWalletProvider {
   mapTransactionSpeed(txSpeed?: string) {
     switch (txSpeed) {
       case SPEED_TYPES.FAST: return FAST;
-      case SPEED_TYPES.NORMAL: return REGULAR;
-      case SPEED_TYPES.SLOW: return SLOW;
-      default: return REGULAR;
+      case SPEED_TYPES.NORMAL: return AVG;
+      case SPEED_TYPES.SLOW: return AVG;
+      default: return AVG;
     }
   }
 }

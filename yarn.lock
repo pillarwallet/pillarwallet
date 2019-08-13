@@ -11,10 +11,10 @@
     openzeppelin-solidity "2.1.2"
     solidity-bytes-utils "0.0.8"
 
-"@archanova/sdk@^1.0.0":
-  version "1.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.0.0.tgz#c334a4ac7e802ffbc9336a60498b57b866203a7e"
-  integrity sha1-wzSkrH6AL/vJM2pgSYtXuGYgOn4=
+"@archanova/sdk@^1.1.0":
+  version "1.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.1.0.tgz#2b7b6e3c5d7a67e194404db48492d3dd3fa5b5cf"
+  integrity sha1-K3tuPF16Z+GUQE20hJLT3T+ltc8=
   dependencies:
     "@archanova/contracts" "^1.0.0"
     "@babel/runtime" "^7.4.4"

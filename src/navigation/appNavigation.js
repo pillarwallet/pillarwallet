@@ -115,7 +115,6 @@ import {
   stopListeningForBalanceChangeAction,
 } from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
-import { fetchICOsAction } from 'actions/icosActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
@@ -614,7 +613,6 @@ type Props = {
   startListeningChatWebSocket: Function,
   stopListeningChatWebSocket: Function,
   initWalletConnect: Function,
-  fetchICOs: Function,
   fetchAssetsBalances: (assets: Assets) => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
@@ -656,7 +654,6 @@ class AppFlow extends React.Component<Props, State> {
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
-      fetchICOs,
       getExistingChats,
       assets,
       fetchAllCollectiblesData,
@@ -668,7 +665,6 @@ class AppFlow extends React.Component<Props, State> {
     fetchAssetsBalances(assets);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
-    fetchICOs();
     getExistingChats();
     fetchAllCollectiblesData();
     startListeningChatWebSocket();
@@ -839,7 +835,6 @@ const mapDispatchToProps = dispatch => ({
     dispatch(fetchInviteNotificationsAction());
   },
   getExistingChats: () => dispatch(getExistingChatsAction()),
-  fetchICOs: () => dispatch(fetchICOsAction()),
   updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
