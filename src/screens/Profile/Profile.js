@@ -48,6 +48,7 @@ import {
   changeUseBiometricsAction,
   updateAssetsLayoutAction,
   saveOptOutTrackingAction,
+  setUserJoinedBetaAction,
 } from 'actions/appSettingsActions';
 import { updateUserAction, createOneTimePasswordAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
@@ -177,6 +178,8 @@ type Props = {
   logEvent: (name: string) => void,
   saveOptOutTracking: (status: boolean) => void,
   optOutTracking: boolean,
+  setUserJoinedBeta: Function,
+  userJoinedBeta: boolean,
 }
 
 type State = {
@@ -373,6 +376,8 @@ class Profile extends React.Component<Props, State> {
       useBiometrics,
       smartWalletFeatureEnabled,
       optOutTracking,
+      setUserJoinedBeta,
+      userJoinedBeta,
     } = this.props;
 
     const {
@@ -780,6 +785,11 @@ class Profile extends React.Component<Props, State> {
             </ListSeparator>
 
             <ProfileSettingsItem
+              key="joinBeta"
+              label={userJoinedBeta ? 'Leave Beta Testing' : 'Join Beta Testing'}
+              onPress={() => setUserJoinedBeta(!userJoinedBeta)}
+            />
+            <ProfileSettingsItem
               key="systemInfo"
               label="System Info"
               onPress={() => this.setState({ showSystemInfoModal: true })}
@@ -816,7 +826,12 @@ class Profile extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   appSettings: {
-    data: { useBiometrics = false, baseFiatCurrency, optOutTracking = false },
+    data: {
+      useBiometrics = false,
+      baseFiatCurrency,
+      optOutTracking = false,
+      userJoinedBeta = false,
+    },
     data: appSettings,
   },
   notifications: { intercomNotificationsCount },
@@ -833,6 +848,7 @@ const mapStateToProps = ({
   useBiometrics,
   smartWalletFeatureEnabled,
   optOutTracking,
+  userJoinedBeta,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -851,6 +867,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   logEvent: (name: string) => dispatch(logEventAction(name)),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
+  setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

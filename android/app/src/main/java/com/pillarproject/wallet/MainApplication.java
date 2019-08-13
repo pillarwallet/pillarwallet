@@ -39,6 +39,7 @@ import io.fabric.sdk.android.Fabric;
 import com.robinpowered.react.Intercom.IntercomPackage;
 import io.intercom.android.sdk.Intercom;
 import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import io.invertase.firebase.config.RNFirebaseRemoteConfigPackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.functions.RNFirebaseFunctionsPackage;
@@ -99,7 +100,8 @@ public class MainApplication extends Application implements ShareApplication, Re
         new PickerPackage(),
         new NativeShadowPackage(),
         new RNThreadPackage(mReactNativeHost),
-        new RNFirebaseRemoteConfigPackage()
+        new RNFirebaseRemoteConfigPackage(),
+        new RNFirebaseAnalyticsPackage()
       );
     }
 
