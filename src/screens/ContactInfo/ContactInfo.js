@@ -140,7 +140,7 @@ export class ContactInfo extends React.Component<Props, State> {
     const {
       user,
     } = this.props;
-    const nameLabel = user.firstName ? `Name: ${user.firstName}${user.lastName}` : 'Name';
+    const nameLabel = user.firstName ? `Name: ${user.firstName} ${user.lastName}` : 'Name';
     const userNameLabel = user.username ? `Username: ${user.username}` : 'Username';
     const emailLabel = user.email ? `Email: ${user.email}` : 'Email';
     const cityLabel = user.city ? `City: ${user.city}` : 'City';
