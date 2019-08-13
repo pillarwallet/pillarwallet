@@ -1248,7 +1248,7 @@ exports[`Contact info should render Contact info correctly 1`] = `
             ]
           }
         >
-          Name: testtest
+          Name: test test
         </Text>
         <RCTSwitch
           accessibilityRole="button"
