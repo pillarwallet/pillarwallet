@@ -23,28 +23,33 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 import type { Assets, Balances } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
-
+import type { Accounts } from 'models/Account';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
-import Header from 'components/Header';
-import { Container, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/Layout';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import TankAssetBalance from 'components/TankAssetBalance';
+import { DeploymentView } from 'components/DeploymentView';
 
 import { formatAmount, formatMoney } from 'utils/common';
 import { getBalance } from 'utils/assets';
-import { baseColors, spacing, UIColors } from 'utils/variables';
+import { spacing, UIColors } from 'utils/variables';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
-import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { ETH, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+
 import assetsConfig from 'configs/assetsConfig';
 
 import { accountBalancesSelector } from 'selectors/balances';
@@ -59,6 +64,8 @@ type Props = {
   fetchAllCollectiblesData: Function,
   collectibles: Collectible[],
   paymentNetworkBalances: Balances,
+  accounts: Accounts,
+  smartWalletState: Object,
 };
 
 type State = {
@@ -259,7 +266,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, accounts, smartWalletState } = this.props;
     const { activeTab } = this.state;
     const contact = navigation.getParam('contact', {});
     const contactUsername = contact.username;
@@ -277,26 +284,47 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       },
     ];
 
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const disableSend = !!Object.keys(sendingBlockedMessage).length;
+    const { upgrade: { deploymentStarted } } = smartWalletState;
+    const isDeploymentButtonDisabled = deploymentStarted
+      || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING;
 
     return (
-      <Container inset={{ bottom: 0 }} color={baseColors.white}>
-        <Header title={`send to ${contactUsername}`} centerTitle onBack={navigation.dismiss} white />
+      <ContainerWithHeader
+        inset={{ bottom: 0 }}
+        headerProps={{ centerItems: [{ title: `Send to ${contactUsername}` }] }}
+      >
+        {disableSend &&
+        <DeploymentView
+          message={sendingBlockedMessage}
+          buttonLabel="Deploy Smart Wallet"
+          buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
+          isDeploying={isDeploymentButtonDisabled}
+        />
+        }
+        {!disableSend &&
         <ContentBackground>
           <InnerWrapper>
             <Tabs initialActiveTab={activeTab} tabs={assetsTabs} isFloating />
             {activeTab === TOKENS && this.renderAssets()}
             {activeTab === COLLECTIBLES && this.renderCollectibles()}
           </InnerWrapper>
-        </ContentBackground>
-      </Container>
+        </ContentBackground>}
+      </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
   assets: { data: assets },
+  accounts: { data: accounts },
+  smartWallet: smartWalletState,
 }) => ({
   assets,
+  accounts,
+  smartWalletState,
 });
 
 const structuredSelector = createStructuredSelector({

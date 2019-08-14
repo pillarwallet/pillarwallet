@@ -263,7 +263,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                             },
                             Array [
                               Object {
-                                "fontSize": 22,
+                                "fontSize": 18,
                                 "fontWeight": "700",
                                 "lineHeight": 28,
                               },
@@ -279,37 +279,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                       }
                     >
                       title
-                      <Text
-                        style={
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "400",
-                              "includeFontPadding": false,
-                              "textAlignVertical": "center",
-                            },
-                            Array [
-                              Object {
-                                "color": "#0A1427",
-                                "fontFamily": "Aktiv Grotesk App",
-                                "fontWeight": "600",
-                                "includeFontPadding": false,
-                                "textAlignVertical": "center",
-                              },
-                              Array [
-                                Object {
-                                  "color": "#00bfff",
-                                  "fontSize": 30,
-                                },
-                                undefined,
-                              ],
-                            ],
-                          ]
-                        }
-                      >
-                        .
-                      </Text>
                     </Text>
                   </View>
                 </View>
@@ -432,7 +401,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               "left": 0,
               "opacity": 0,
               "paddingBottom": 10,
-              "paddingTop": 30,
               "position": "absolute",
               "shadowColor": "#333",
               "shadowOffset": Object {
@@ -456,17 +424,19 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         }
       >
         <View
+          onLayout={[Function]}
+          pointerEvents="box-none"
           style={
-            Array [
-              Object {
-                "alignItems": "flex-start",
-                "display": "flex",
-                "flexDirection": "row",
-                "justifyContent": "center",
-                "paddingTop": 8,
-              },
-              undefined,
-            ]
+            Object {
+              "alignItems": "flex-start",
+              "display": "flex",
+              "flexDirection": "row",
+              "justifyContent": "center",
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 42,
+            }
           }
         >
           <View

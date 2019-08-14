@@ -1,0 +1,6 @@
+{
+  "name": "PillarNetwork",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./PillarNetworkIntro.js"
+}

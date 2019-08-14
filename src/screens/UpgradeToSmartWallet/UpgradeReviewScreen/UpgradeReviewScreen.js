@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { SectionList } from 'react-native';
+import { SectionList, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
@@ -31,8 +31,8 @@ import { BigNumber } from 'bignumber.js';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
-import { Container, Wrapper, Footer } from 'components/Layout';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Footer } from 'components/Layout';
 import Button from 'components/Button';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -85,22 +85,15 @@ type Props = {
   collectibles: Collectible[],
 };
 
-const WhiteWrapper = styled.View`
-  background-color: ${baseColors.white};
-  padding-bottom: ${spacing.rhythm}px;
-`;
-
 const FooterInner = styled.View`
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-  background-color: ${baseColors.snowWhite};
 `;
 
 const ListSeparator = styled.View`
   padding: 20px ${spacing.rhythm}px;
-  background-color: ${baseColors.lighterGray};
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -293,44 +286,43 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     // there should be enough eth to transfer selected assets from primary wallet
     const notEnoughEther = !etherBalance || etherBalance < parseFloat(assetsTransferFeeEth);
     return (
-      <Container>
-        <WhiteWrapper>
-          <Header
-            title="review"
-            centerTitle
-            onBack={() => navigation.goBack(null)}
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Review' }],
+        }}
+        backgroundColor={baseColors.white}
+      >
+        <ScrollView>
+          <Paragraph small style={{ margin: spacing.large }}>
+            Please confirm that the details below are correct before deploying your Smart Wallet.
+          </Paragraph>
+          <SectionList
+            sections={sections}
+            renderSectionHeader={({ section }) => (
+              <ListSeparator>
+                <SubHeading>{section.title}</SubHeading>
+                <TextLink onPress={() => navigation.navigate(section.toEdit, { isEditing: true })}>Edit</TextLink>
+              </ListSeparator>
+            )}
+            renderItem={this.renderItem}
+            keyExtractor={(item) => item.id}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+            stickySectionHeadersEnabled={false}
           />
-          <Wrapper regularPadding>
-            <Paragraph small>
-              Please confirm that the details below are correct before deploying your Smart Wallet.
-            </Paragraph>
-          </Wrapper>
-        </WhiteWrapper>
-        <SectionList
-          sections={sections}
-          renderSectionHeader={({ section }) => (
-            <ListSeparator>
-              <SubHeading>{section.title}</SubHeading>
-              <TextLink onPress={() => navigation.navigate(section.toEdit, { isEditing: true })}>Edit</TextLink>
-            </ListSeparator>
-          )}
-          renderItem={this.renderItem}
-          keyExtractor={(item) => item.id}
-          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-        />
+        </ScrollView>
         <Footer>
           {!!notEnoughEther &&
           <WarningMessage>
             There is not enough ether for asset transfer transactions estimated fee.
           </WarningMessage>}
-          <FooterInner style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+          <FooterInner>
             <LabelWrapper>
               <Label style={{ textAlign: 'center' }}>{`Total estimated fee ${assetsTransferFeeEth} ETH`}</Label>
             </LabelWrapper>
             <Button disabled={!!notEnoughEther} block title="Continue" onPress={this.onNextClick} />
           </FooterInner>
         </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

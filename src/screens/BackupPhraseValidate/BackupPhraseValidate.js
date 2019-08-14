@@ -22,12 +22,11 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { UIColors, fontSizes, baseColors, spacing } from 'utils/variables';
 import styled from 'styled-components/native';
-import { Container, Wrapper, Footer } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ScrollWrapper } from 'components/Layout';
 import { Paragraph, Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
-import Header from 'components/Header';
 import IconButton from 'components/IconButton';
-import { LEGAL_TERMS, PROFILE } from 'constants/navigationConstants';
 import { backupWalletAction } from 'actions/walletActions';
 
 type State = {
@@ -103,15 +102,17 @@ const ShuffledWordWrapper = styled.View`
   margin-bottom: 20px;
 `;
 
-const BackgroundWrapper = styled.View`
-  flex: 1;
-  background-color: ${UIColors.defaultBackgroundColor};
-  padding-top: ${spacing.medium}px;
-`;
-
 const ErrorParagraph = styled(Paragraph)`
   color: ${baseColors.fireEngineRed};
   font-size: ${fontSizes.extraSmall}px;
+`;
+
+const FooterWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.large}px;
+  width: 100%;
+  background-color: ${baseColors.snowWhite};
 `;
 
 class BackupPhraseValidate extends React.Component<Props, State> {
@@ -221,11 +222,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   handlePassedValidation = () => {
     const { navigation, backupWallet } = this.props;
     backupWallet();
-    if (navigation.getParam('backupViaSettings', false)) {
-      navigation.navigate(PROFILE);
-    } else {
-      navigation.navigate(LEGAL_TERMS);
-    }
+    navigation.dismiss();
   };
 
   render() {
@@ -234,42 +231,46 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     if (!wallet.mnemonic.original) return null;
 
     return (
-      <Container color={baseColors.white}>
-        <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} fullWidthTitle white />
-        <BackgroundWrapper>
-          <Wrapper regularPadding>
-            <Paragraph>
-              Please select the correct words.
-            </Paragraph>
-            <WordInputFields>
-              {this.renderInputFields()}
-            </WordInputFields>
-            {enteredWords.length === 3 && !isFormValid &&
-            <ErrorParagraph>
-              Incorrect words selected
-            </ErrorParagraph>
-            }
-          </Wrapper>
-        </BackgroundWrapper>
-        <Footer style={{ paddingTop: 20 }} backgroundColor={UIColors.defaultBackgroundColor}>
-          <ShuffledWordWrapper>
-            {this.renderShuffledWordList()}
-            {!!__DEV__ && (
-            <MnemonicPhraseWord
-              key="automagical"
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: 'Verify backup phrase' }] }}
+        keyboardAvoidFooter={(
+          <FooterWrapper>
+            <ShuffledWordWrapper>
+              {this.renderShuffledWordList()}
+              {!!__DEV__ && (
+                <MnemonicPhraseWord
+                  key="automagical"
+                  onPress={this.handlePassedValidation}
+                >
+                  <MnemonicPhraseWordText>debugskip</MnemonicPhraseWordText>
+                </MnemonicPhraseWord>
+              )}
+            </ShuffledWordWrapper>
+            <Button
               onPress={this.handlePassedValidation}
-            >
-              <MnemonicPhraseWordText>debugskip</MnemonicPhraseWordText>
-            </MnemonicPhraseWord>
-            )}
-          </ShuffledWordWrapper>
-          <Button
-            onPress={this.handlePassedValidation}
-            title="Next"
-            disabled={!isFormValid}
-          />
-        </Footer>
-      </Container>
+              title="Next"
+              disabled={!isFormValid}
+            />
+          </FooterWrapper>
+        )}
+      >
+        <ScrollWrapper
+          regularPadding
+          contentContainerStyle={{ paddingTop: spacing.mediumLarge }}
+        >
+          <Paragraph>
+            Please select the correct words.
+          </Paragraph>
+          <WordInputFields>
+            {this.renderInputFields()}
+          </WordInputFields>
+          {enteredWords.length === 3 && !isFormValid &&
+          <ErrorParagraph>
+            Incorrect words selected
+          </ErrorParagraph>
+          }
+        </ScrollWrapper>
+      </ContainerWithHeader>
     );
   }
 }
