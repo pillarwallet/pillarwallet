@@ -41,6 +41,7 @@ import EventDetails from 'components/EventDetails';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Tabs from 'components/Tabs';
 import { PPNSettleList } from 'components/PPNSettleList';
+import TankAssetBalance from 'components/TankAssetBalance';
 
 // utils
 import { createAlert } from 'utils/alerts';
@@ -140,6 +141,8 @@ function getSortedFeedData(tabs, activeTab, feedData) {
   return [];
 }
 
+const PPNIcon = require('assets/icons/icon_PPN.png');
+
 class ActivityFeed extends React.Component<Props, State> {
   feedData: Object[];
 
@@ -216,7 +219,7 @@ class ActivityFeed extends React.Component<Props, State> {
       const value = utils.formatUnits(new BigNumber(notification.value.toString()).toFixed(), decimals);
       const formattedValue = formatAmount(value);
       let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
-      const directionIcon = isReceived ? 'received' : 'sent';
+      let directionIcon = isReceived ? 'received' : 'sent';
       let directionSymbol = isReceived ? '+' : '-';
 
       if (formattedValue === '0') {
@@ -231,14 +234,29 @@ class ActivityFeed extends React.Component<Props, State> {
       const itemImage = contact.profileImage || fullIconUrl;
       let itemValue = `${directionSymbol} ${formattedValue} ${notification.asset}`;
       let customAddon = null;
+      let innerWrapperHorizontalAlign = '';
+      let itemImageSource = '';
 
       const note = get(notification, 'note', '');
       if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
         nameOrAddress = 'PLR Network Settle';
         itemValue = '';
+        innerWrapperHorizontalAlign = 'flex-start';
         customAddon = (<PPNSettleList settleData={notification.extra} />);
+        itemImageSource = PPNIcon;
       } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
         nameOrAddress = 'PLR Network Top Up';
+        itemImageSource = PPNIcon;
+        directionIcon = '';
+      }
+
+      const isPPNTransaction = get(notification, 'isPPNTransaction', false);
+      if (isPPNTransaction) {
+        itemValue = '';
+        customAddon = (<TankAssetBalance
+          amount={`${directionSymbol}${formattedValue} ${notification.asset}`}
+          monoColor
+        />);
       }
 
       return (
@@ -247,7 +265,7 @@ class ActivityFeed extends React.Component<Props, State> {
           label={nameOrAddress}
           avatarUrl={itemImage}
           navigateToProfile={isContact ? navigateToContact : null}
-          iconName={(showArrowsOnly || !itemImage) ? directionIcon : null}
+          iconName={showArrowsOnly || !(itemImage || itemImageSource) ? directionIcon : ''}
           imageAddonIconName={(itemImage && !showArrowsOnly) ? directionIcon : undefined}
           subtext={dateTime}
           itemValue={itemValue}
@@ -255,6 +273,9 @@ class ActivityFeed extends React.Component<Props, State> {
           valueColor={isReceived ? baseColors.jadeGreen : null}
           imageUpdateTimeStamp={contact.lastUpdateTime}
           customAddon={customAddon}
+          innerWrapperHorizontalAlign={innerWrapperHorizontalAlign}
+          itemImageSource={itemImageSource}
+          noImageBorder
         />
       );
     }

@@ -71,6 +71,9 @@ type Props = {
   customImage?: React.Node,
   imageDiameter?: number,
   balance?: Object,
+  innerWrapperHorizontalAlign?: string,
+  noImageBorder?: boolean,
+  itemImageSource?: string,
 }
 
 const ItemWrapper = styled.View`
@@ -80,10 +83,10 @@ const ItemWrapper = styled.View`
 
 const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
-  align-items: center;
+  align-items: ${props => props.horizontalAlign || 'center'};
   justify-content: center;
   padding: ${spacing.small}px ${spacing.large}px;
-  height: ${props => props.type === DEFAULT ? 70 : 84}px;
+  min-height: ${props => props.type === DEFAULT ? 70 : 84}px;
   width: 100%;
 `;
 
@@ -103,9 +106,9 @@ const ImageWrapper = styled.View`
 
 const InfoWrapper = styled.View`
   flex-direction: row;
-  align-items: ${props => props.type === CHAT_ITEM ? 'flex-start' : 'center'};
+  align-items: ${props => props.horizontalAlign || 'center'};
   justify-content: space-between;
-  flex: 1;
+  width: 100%;
 `;
 
 const Column = styled.View`
@@ -114,6 +117,7 @@ const Column = styled.View`
   justify-content: ${props => props.type === CHAT_ITEM ? 'flex-start' : 'center'};
   margin-top: ${props => props.type === CHAT_ITEM ? '-2px' : 0};
   ${props => props.rightColumn ? 'margin-left: 10px;' : 'flex: 1;'}
+  min-height: 54px;
 `;
 
 const ItemTitle = styled(BoldText)`
@@ -121,7 +125,6 @@ const ItemTitle = styled(BoldText)`
   font-size: ${fontSizes.small}px;
   letter-spacing: ${fontTrackings.small}px;
   width: 100%;
-  flex: 1;
 `;
 
 const ItemParagraph = styled(BaseText)`
@@ -160,13 +163,13 @@ const TokenImageWrapper = styled.View`
   width: 54px;
   height: 54px;
   border-radius: 27px;
-  border: 2px solid ${baseColors.white};
+  ${props => props.noImageBorder ? '' : `border: 2px solid ${baseColors.white};`}
 `;
 
 const TokenImage = styled(CachedImage)`
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
+  width: ${props => props.noImageBorder ? 54 : 50}px;
+  height: ${props => props.noImageBorder ? 54 : 50}px;
+  border-radius: ${props => props.noImageBorder ? 27 : 25}px;
 `;
 
 const TimeWrapper = styled.View`
@@ -275,6 +278,8 @@ const ItemImage = (props: Props) => {
     imageColorFill,
     customImage,
     imageDiameter,
+    itemImageSource,
+    noImageBorder,
   } = props;
 
   if (iconName) {
@@ -311,12 +316,21 @@ const ItemImage = (props: Props) => {
         widthIOS={54}
         shadowRadius={24}
       >
-        <TokenImageWrapper>
-          <TokenImage source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
+        <TokenImageWrapper noImageBorder={noImageBorder}>
+          <TokenImage noImageBorder={noImageBorder} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
         </TokenImageWrapper>
       </Shadow>
     );
   }
+
+  if (itemImageSource) {
+    return (
+      <TokenImageWrapper noImageBorder={noImageBorder}>
+        <TokenImage noImageBorder={noImageBorder} source={itemImageSource} fallbackSource={fallbackSource} />
+      </TokenImageWrapper>
+    );
+  }
+
   if (imageColorFill) {
     return (
       <Shadow
@@ -530,45 +544,48 @@ class ListItemWithImage extends React.Component<Props, {}> {
       imageAddonName,
       rightColumnInnerStyle,
       customAddonFullWidth,
+      innerWrapperHorizontalAlign,
     } = this.props;
 
     const type = getType(this.props);
     return (
       <ItemWrapper>
-        <InnerWrapper type={type} onPress={onPress} disabled={!onPress}>
+        <InnerWrapper type={type} onPress={onPress} disabled={!onPress} horizontalAlign={innerWrapperHorizontalAlign}>
           <ImageWrapper>
             <ItemImage {...this.props} type={type} />
             {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
           </ImageWrapper>
-          <InfoWrapper type={type}>
-            <Column type={type} style={{ flexGrow: 1 }}>
-              {!!label &&
-              <Row>
-                <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>
-                {(type === CHAT_ITEM && !!timeSent) &&
-                <TimeWrapper>
-                  <TimeSent>{timeSent}</TimeSent>
-                </TimeWrapper>
+          <View style={{ flex: 1 }}>
+            <InfoWrapper type={type} horizontalAlign={innerWrapperHorizontalAlign}>
+              <Column type={type} style={{ flexGrow: 1 }}>
+                {!!label &&
+                <Row>
+                  <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>
+                  {(type === CHAT_ITEM && !!timeSent) &&
+                  <TimeWrapper>
+                    <TimeSent>{timeSent}</TimeSent>
+                  </TimeWrapper>
+                  }
+                </Row>
                 }
-              </Row>
-              }
-              {!!paragraph &&
-              <Row>
-                <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
-              </Row>
-              }
-              {!!subtext &&
-              <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
-              }
-            </Column>
-            <Column rightColumn type={type} style={{ maxWidth: '50%' }}>
-              <View style={[rightColumnInnerStyle, { flexWrap: 'wrap' }]}>
-                <Addon {...this.props} type={type} />
-                {customAddon}
-                {children}
-              </View>
-            </Column>
-          </InfoWrapper>
+                {!!paragraph &&
+                <Row>
+                  <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
+                </Row>
+                }
+                {!!subtext &&
+                <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
+                }
+              </Column>
+              <Column rightColumn type={type} style={{ maxWidth: '50%' }}>
+                <View style={[rightColumnInnerStyle, { flexWrap: 'wrap' }]}>
+                  <Addon {...this.props} type={type} />
+                  {customAddon}
+                  {children}
+                </View>
+              </Column>
+            </InfoWrapper>
+          </View>
         </InnerWrapper>
         {customAddonFullWidth}
       </ItemWrapper>
