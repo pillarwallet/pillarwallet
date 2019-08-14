@@ -13,6 +13,8 @@ type SettlementItem = {
 
 type Props = {
   settleData: SettlementItem[],
+  deposit?: boolean,
+  withdrawal?: boolean,
 };
 
 const ListsWrapper = styled.View`
@@ -26,7 +28,7 @@ const ItemValue = styled(BaseText)`
   text-align: right;
 `;
 
-export const PPNSettleList = ({ settleData: ppnTransactions }: Props) => {
+export const PPNSettleList = ({ settleData: ppnTransactions, withdrawal, deposit }: Props) => {
   const valueByAsset: Object = {};
   ppnTransactions.forEach((trx) => {
     const key = trx.symbol;
@@ -42,9 +44,9 @@ export const PPNSettleList = ({ settleData: ppnTransactions }: Props) => {
 
   return (
     <ListsWrapper>
-      {valuesArray.length &&
+      {deposit && valuesArray.length &&
       valuesArray.map(({ symbol, value }) => <ItemValue key={symbol}>{`${value} ${symbol}`}</ItemValue>)}
-      {ppnTransactions.map((trx) => (
+      {withdrawal && ppnTransactions.map((trx) => (
         <TankAssetBalance
           key={trx.hash}
           amount={`-${trx.value} ${trx.symbol}`}
