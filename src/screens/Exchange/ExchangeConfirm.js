@@ -26,8 +26,8 @@ import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
 
-import { Container, Footer, ScrollWrapper } from 'components/Layout';
-import Header from 'components/Header';
+import { Footer, ScrollWrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { BoldText, Label, Paragraph, TextLink } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
@@ -299,8 +299,13 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const providerName = getProviderDisplayName(provider);
 
     return (
-      <Container color={baseColors.white} inset={{ bottom: 0 }}>
-        <Header title="exchange" onBack={this.handleBack} white />
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Confirm exchange' }],
+          customOnBack: this.handleBack,
+        }}
+        inset={{ bottom: 'never' }}
+      >
         <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
           <Paragraph style={{ marginBottom: 30, paddingTop: spacing.medium }}>
             {setTokenAllowance
@@ -367,7 +372,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           <Label>Faster transaction requires more fee.</Label>
           <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
         </SlideModal>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

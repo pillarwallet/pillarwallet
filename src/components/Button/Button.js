@@ -23,6 +23,7 @@ import { Button as NBButton } from 'native-base';
 import debounce from 'lodash.debounce';
 import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
+import Spinner from 'components/Spinner';
 import { UIColors, baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 
@@ -54,6 +55,8 @@ type Props = {
   height?: number,
   debounceTime?: number,
   textStyle?: ?Object,
+  style?: Object,
+  isLoading?: boolean,
 };
 
 type State = {
@@ -133,7 +136,16 @@ const themes = {
     color: baseColors.white,
     opacity: 0.5,
   },
-  square: {
+  squarePrimary: {
+    background: 'transparent',
+    color: baseColors.electricBlue,
+    borderColor: 'transparent',
+    borderWidth: 0,
+    flexDirection: 'column',
+    borderRadius: 0,
+    iconHorizontalMargin: 0,
+  },
+  squareDanger: {
     background: 'transparent',
     color: baseColors.burningFire,
     borderColor: 'transparent',
@@ -325,6 +337,8 @@ class Button extends React.Component<Props, State> {
       disabled,
       disabledTransparent,
       children,
+      isLoading,
+      style = {},
     } = this.props;
 
     return (
@@ -332,9 +346,12 @@ class Button extends React.Component<Props, State> {
         {...this.props}
         theme={theme}
         onPress={debounce(this.handlePress, this.props.debounceTime, { leading: true, trailing: false })}
-        disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap}
+        disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap || isLoading}
+        style={isLoading ? { ...style, backgroundColor: 'transparent' } : style}
+
       >
-        {!!this.props.icon &&
+        {!!isLoading && <Spinner width={20} height={20} />}
+        {!!this.props.icon && !isLoading &&
           <ButtonIcon
             marginRight={this.props.marginRight}
             iconSize={this.props.iconSize}
@@ -342,7 +359,7 @@ class Button extends React.Component<Props, State> {
             theme={theme}
           />
         }
-        {!!this.props.title &&
+        {!!this.props.title && !isLoading &&
         <ButtonText
           theme={theme}
           small={this.props.small}

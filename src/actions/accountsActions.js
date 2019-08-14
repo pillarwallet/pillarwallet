@@ -43,7 +43,9 @@ import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
 import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { sdkConstants } from '@archanova/sdk';
+import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 
 const storage = Storage.getInstance('db');
 
@@ -218,6 +220,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
       await dispatch(setActiveAccountAction(accountId));
     }
 
+    dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
     dispatch(fetchAssetsBalancesAction(assets));
     dispatch(fetchCollectiblesAction());
   };

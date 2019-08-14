@@ -52,6 +52,10 @@ type ScrollWrapperProps = {
   innerRef?: Object,
   contentContainerStyle?: Object,
   keyboardShouldPersistTaps?: string,
+  onScroll?: Function,
+  stickyHeaderIndices?: number[],
+  scrollEnabled?: boolean,
+  refreshControl?: React.Node,
 };
 
 export const Center = styled.View`
@@ -99,13 +103,12 @@ export const Container = (props: ContainerProps) => {
 };
 
 export const Wrapper = styled.View`
-  margin: ${props => (props.regularPadding ? '0 16px' : '0')};
+  margin: ${props => (props.regularPadding ? `0 ${spacing.large}px` : '0')};
   ${({ center }) => center && 'align-items: center; justify-content: center;'}
   ${({ fullScreen }) => fullScreen && 'height: 100%; width: 100%;'}
   ${({ flex }) => flex && `flex: ${flex};`}
   ${({ horizontal }) => horizontal && 'flex-direction: row;'}
   ${({ zIndex }) => zIndex && `z-index: ${zIndex};`}
-
 `;
 
 export const KAScrollView = styled(KeyboardAwareScrollView)`
@@ -133,6 +136,10 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
     contentContainerStyle,
     children,
     keyboardShouldPersistTaps,
+    onScroll,
+    stickyHeaderIndices,
+    scrollEnabled,
+    refreshControl,
   } = props;
 
   return (
@@ -145,6 +152,12 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
       onKeyboardWillShow={onKeyboardWillShow}
       contentContainerStyle={contentContainerStyle}
       keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+      onScroll={onScroll}
+      stickyHeaderIndices={Platform.OS === 'ios' ? stickyHeaderIndices : null}
+      extraHeight={0}
+      extraScrollHeight={0}
+      scrollEnabled={scrollEnabled}
+      refreshControl={refreshControl}
     >
       {children}
     </KAScrollView>

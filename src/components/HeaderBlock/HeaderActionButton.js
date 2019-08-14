@@ -28,7 +28,7 @@ import Animation from 'components/Animation';
 type Props = {
   theme: Object,
   label: string,
-  action: Function,
+  onPress: Function,
   hasChevron?: boolean,
   isActive?: boolean,
 }
@@ -40,7 +40,6 @@ const HeaderButtonRounded = styled.TouchableOpacity`
   border: 1px solid;
   border-color: ${props => props.theme.buttonBorderColor || UIColors.defaultBorderColor};
   border-radius: 20px;
-  margin-right: 6px;
 `;
 
 const RoundedButtonLabel = styled(BaseText)`
@@ -80,11 +79,11 @@ const StatusIndicatorHolder = styled.View`
 const StyledAnimation = styled(Animation)`
   position: absolute;
   top: ${Platform.select({
-    ios: '-0.8px',
+    ios: '-0.5px',
     android: '-1px',
   })};
   left: ${Platform.select({
-    ios: '-0.8px',
+    ios: '-0.6px',
     android: '-1px',
   })};
   width: 22px;
@@ -106,13 +105,13 @@ export const HeaderActionButton = (props: Props) => {
   const {
     theme,
     label,
-    action,
+    onPress,
     hasChevron,
     isActive,
   } = props;
 
   return (
-    <HeaderButtonRounded onPress={action} theme={theme}>
+    <HeaderButtonRounded onPress={onPress} theme={theme}>
       {isActive !== undefined && <Status isActive={isActive} />}
       <RoundedButtonLabel theme={theme}>{label}</RoundedButtonLabel>
       {!!hasChevron && <ChevronIcon name="chevron-right" theme={theme} />}

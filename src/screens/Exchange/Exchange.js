@@ -30,18 +30,21 @@ import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
+import get from 'lodash.get';
 
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
-import { Container, ScrollWrapper } from 'components/Layout';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ScrollWrapper } from 'components/Layout';
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText, Paragraph } from 'components/Typography';
 import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
+import { DeploymentView, getDeployErrorMessage } from 'components/DeploymentView';
 
 import {
   searchOffersAction,
@@ -52,18 +55,24 @@ import {
   setTokenAllowanceAction,
   markNotificationAsSeenAction,
 } from 'actions/exchangeActions';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
 
-import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
+import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 
 import { fiatCurrencies } from 'fixtures/assets';
+import { getActiveAccountType } from 'utils/accounts';
 
 // partials
 import { ExchangeStatus } from './ExchangeStatus';
@@ -129,18 +138,6 @@ const FormWrapper = styled.View`
   margin-top: ${spacing.large}px;
 `;
 
-const SettingsButton = styled.TouchableOpacity`
-  padding: 8px 10px;
-  padding-right: -10px;
-  margin-bottom: -10px;
-  margin-left: 6px;
-`;
-
-const SettingsIcon = styled(CachedImage)`
-  width: 24px;
-  height: 24px;
-`;
-
 const ProviderIcon = styled(CachedImage)`
   width: 24px;
   height: 24px;
@@ -183,6 +180,10 @@ type Props = {
   markNotificationAsSeen: Function,
   oAuthAccessToken: string,
   exchangeWithFiatEnabled: boolean,
+  accounts: Accounts,
+  smartWalletState: Object,
+  deploySmartWallet: Function,
+  smartWalletFeatureEnabled: boolean,
 };
 
 type State = {
@@ -436,9 +437,12 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { exchangeSearchRequest = {} } = this.props;
+    const { exchangeSearchRequest = {}, baseFiatCurrency } = this.props;
     this.provideOptions();
-    const { fromAssetCode = ETH, toAssetCode, fromAmount } = exchangeSearchRequest;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+
+    const defaultFrom = this.checkIfAssetsExchangeIsAllowed() ? ETH : fiatCurrency;
+    const { fromAssetCode = defaultFrom, toAssetCode, fromAmount } = exchangeSearchRequest;
     this.setInitialSelection(fromAssetCode, toAssetCode, fromAmount);
   }
 
@@ -453,11 +457,13 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (assets !== prevProps.assets || supportedAssets !== prevProps.supportedAssets) {
       this.provideOptions();
     }
-    const fromAssetCode = navigation.getParam('fromAssetCode');
-    if (fromAssetCode) {
-      this.setInitialSelection(fromAssetCode);
+
+    const fromAssetCode = navigation.getParam('fromAssetCode') || '';
+    const toAssetCode = navigation.getParam('toAssetCode') || '';
+    if (fromAssetCode || toAssetCode) {
+      this.setInitialSelection(fromAssetCode, toAssetCode);
       // reset to prevent nav value change over newly selected
-      navigation.setParams({ fromAssetCode: null });
+      navigation.setParams({ fromAssetCode: null, toAssetCode: null });
     }
     if (prevProps.oAuthAccessToken !== oAuthAccessToken) {
       // access token has changed, init search again
@@ -465,6 +471,15 @@ class ExchangeScreen extends React.Component<Props, State> {
       this.triggerSearch();
     }
   }
+
+  checkIfAssetsExchangeIsAllowed = () => {
+    const { accounts, smartWalletState, smartWalletFeatureEnabled } = this.props;
+    const activeAccountType = getActiveAccountType(accounts);
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const isSmartWallet = smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET;
+    return !isSmartWallet
+      || (isSmartWallet && smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
+  };
 
   provideOptions = () => {
     const { assets, supportedAssets, exchangeWithFiatEnabled } = this.props;
@@ -643,7 +658,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  renderOffers = ({ item: offer }) => {
+  renderOffers = ({ item: offer }, disableNonFiatExchange: boolean) => {
     const {
       value: { fromInput },
       pressedOfferId,
@@ -714,7 +729,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
       >
         <CardWrapper
-          disabled={isTakeButtonDisabled}
+          disabled={isTakeButtonDisabled || disableNonFiatExchange}
           onPress={() => isFiat ? this.onFiatOfferPress(offer) : this.onOfferPress(offer)}
         >
           <CardRow withBorder alignTop>
@@ -796,7 +811,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             {!isFiat &&
             <CardColumn>
               <Button
-                disabled={isTakeButtonDisabled}
+                disabled={isTakeButtonDisabled || disableNonFiatExchange}
                 title={isTakeOfferPressed ? '' : `${amountToBuyString} ${toAssetCode}`}
                 small
                 onPress={() => this.onOfferPress(offer)}
@@ -935,49 +950,60 @@ class ExchangeScreen extends React.Component<Props, State> {
       connectedProviders,
       hasUnreadExchangeNotification,
       markNotificationAsSeen,
+      accounts,
+      smartWalletState,
+      deploySmartWallet,
     } = this.props;
     const {
       value,
       formOptions,
     } = this.state;
 
+    const { fromInput } = value;
+    const { selector: selectedFromOption } = fromInput;
+
     const formStructure = generateFormStructure(balances);
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
+    const rightItems = [{ label: 'Get help', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
+    if ((!!exchangeAllowances.length || !!connectedProviders.length)
+      && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
+      rightItems.push({
+        iconSource: settingsIcon,
+        indicator: !!hasUnreadExchangeNotification,
+        key: 'exchangeSettings',
+        onPress: () => {
+          navigation.navigate(EXCHANGE_INFO);
+          if (hasUnreadExchangeNotification) markNotificationAsSeen();
+        },
+      });
+    }
+
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const blockView = !!Object.keys(sendingBlockedMessage).length
+      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
+    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
+    const isSelectedFiat = !!(Object.keys(fiatCurrencies.find(
+      (currency) => currency.symbol === selectedFromOption.symbol) || {}).length);
+
+    const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed() && !isSelectedFiat;
 
     return (
-      <Container color={baseColors.white} inset={{ bottom: 0 }}>
-        <Header
-          white
-          title="exchange"
-          headerRightAddon={
-            (!!exchangeAllowances.length || !!connectedProviders.length) &&
-            <SettingsButton
-              onPress={() => {
-                navigation.navigate(EXCHANGE_INFO);
-                if (hasUnreadExchangeNotification) markNotificationAsSeen();
-              }}
-            >
-              <SettingsIcon
-                source={settingsIcon}
-              />
-              {!!hasUnreadExchangeNotification &&
-              <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  backgroundColor: baseColors.sunYellow,
-                  borderRadius: 4,
-                  position: 'absolute',
-                  top: 7,
-                  right: 0,
-                }}
-              />}
-            </SettingsButton>
-          }
-          nextText="Get help"
-          onNextPress={() => Intercom.displayMessenger()}
-          pushRightAddonToTheSide
-        />
+      <ContainerWithHeader
+        backgroundColor={baseColors.white}
+        headerProps={{
+          leftItems: [{ user: true }],
+          rightItems,
+        }}
+        inset={{ bottom: 'never' }}
+      >
+        {!!blockView &&
+        <DeploymentView
+          isDeploying={!deploymentData.error}
+          message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
+          buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
+        />}
+        {!blockView &&
         <ScrollWrapper
           keyboardShouldPersistTaps="handled"
           color={UIColors.defaultBackgroundColor}
@@ -991,12 +1017,22 @@ class ExchangeScreen extends React.Component<Props, State> {
               onChange={this.handleFormChange}
             />
           </FormWrapper>
+          {!!disableNonFiatExchange &&
+          <DeploymentView
+            message={{
+              title: 'To exchange assets, deploy Smart Wallet first',
+              message: 'You will have to pay a small fee',
+            }}
+            buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
+            buttonLabel="Deploy Smart Wallet"
+          />
+          }
           <FlatList
             data={reorderedOffers}
             keyExtractor={(item) => item._id}
             style={{ width: '100%' }}
             contentContainerStyle={{ width: '100%', paddingHorizontal: 20, paddingVertical: 10 }}
-            renderItem={this.renderOffers}
+            renderItem={(props) => this.renderOffers(props, disableNonFiatExchange)}
             ListHeaderComponent={reorderedOffers.length
               ? (
                 <ListHeader>
@@ -1013,8 +1049,8 @@ class ExchangeScreen extends React.Component<Props, State> {
               </ESWrapper>
             )}
           />
-        </ScrollWrapper>
-      </Container>
+        </ScrollWrapper>}
+      </ContainerWithHeader>
     );
   }
 }
@@ -1033,7 +1069,14 @@ const mapStateToProps = ({
   },
   assets: { data: assets, supportedAssets },
   rates: { data: rates },
-  featureFlags: { data: { EXCHANGE_WITH_FIAT_ENABLED: exchangeWithFiatEnabled } },
+  featureFlags: {
+    data: {
+      EXCHANGE_WITH_FIAT_ENABLED: exchangeWithFiatEnabled,
+      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
+    },
+  },
+  accounts: { data: accounts },
+  smartWallet: smartWalletState,
 }) => ({
   baseFiatCurrency,
   offers,
@@ -1046,6 +1089,9 @@ const mapStateToProps = ({
   hasUnreadExchangeNotification,
   oAuthAccessToken,
   exchangeWithFiatEnabled,
+  smartWalletFeatureEnabled,
+  accounts,
+  smartWalletState,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1072,6 +1118,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
     setTokenAllowanceAction(assetCode, provider, callback),
   ),
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);

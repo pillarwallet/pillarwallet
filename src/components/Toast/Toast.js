@@ -19,13 +19,13 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Animated } from 'react-native';
+import { Animated, StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import merge from 'lodash.merge';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { BoldText, BaseText } from 'components/Typography';
-import { isIphoneX } from 'utils/common';
 
 type ToastOptions = {
   autoClose?: boolean,
@@ -58,13 +58,14 @@ const typeIcons = {
   success: 'tick-circle',
 };
 
-const ToastHolder = styled.View`
+const ToastHolder = styled(SafeAreaView)`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 8px;
+  padding-top: ${props => props.androidStatusbarHeight || 8}px;
 `;
+
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
   background-color: ${baseColors.white};
@@ -72,7 +73,6 @@ const ToastWrapper = styled.View`
   left: 0;
   top: 0;
   width: 100%;
-  padding-top: ${isIphoneX() ? '50px' : '30px'};
   padding-bottom: ${spacing.rhythm / 2}px;
   border-left-width: ${spacing.rhythm / 2}px;
   border-style: solid;
@@ -184,7 +184,7 @@ export default class Toast extends React.Component<{}, State> {
         opacity={+!!this.state.toastOptions.message}
         borderColor={typeColors[toastOptions.type]}
       >
-        <ToastHolder>
+        <ToastHolder androidStatusbarHeight={StatusBar.currentHeight} forceInset={{ top: 'always', bottom: 'never' }}>
           <IconHolder>
             <Icon
               name={typeIcons[toastOptions.type]}

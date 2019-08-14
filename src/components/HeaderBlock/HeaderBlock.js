@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StatusBar, View } from 'react-native';
+import { StatusBar, View, FlatList, TouchableOpacity } from 'react-native';
+import { CachedImage } from 'react-native-cached-image';
 
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
@@ -28,6 +29,8 @@ import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import { connect } from 'react-redux';
 import ProfileImage from 'components/ProfileImage';
+import { USERS } from 'constants/navigationConstants';
+import { responsiveSize } from 'utils/ui';
 
 // partials
 import { HeaderActionButton } from './HeaderActionButton';
@@ -44,6 +47,7 @@ type Props = {
   transparent?: boolean,
   light?: boolean,
   noBack?: boolean,
+  customOnBack?: Function,
 }
 
 const Wrapper = styled.View`
@@ -61,7 +65,8 @@ const Wrapper = styled.View`
 `;
 
 const HeaderContentWrapper = styled.View`
-  padding: ${spacing.large}px ${spacing.large}px 0;
+  padding: ${spacing.large}px;
+  width: 100%;
 `;
 
 const SafeArea = styled(SafeAreaView)`
@@ -71,10 +76,8 @@ const SafeArea = styled(SafeAreaView)`
 const HeaderRow = styled.View`
   flex-direction: row;
   width: 100%;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  padding-bottom: ${spacing.large}px;
-  margin-top: 10px;
 `;
 
 const HeaderProfileImage = styled(ProfileImage)``;
@@ -84,6 +87,8 @@ const HeaderTitle = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
   color: ${props => props.theme.color || UIColors.defaultTextColor};
   font-weight: 500;
+  text-align: ${props => props.centerText ? 'center' : 'left'};
+  padding: 5px 0;
 `;
 
 const UserButton = styled.TouchableOpacity`
@@ -92,33 +97,28 @@ const UserButton = styled.TouchableOpacity`
   margin-right: ${spacing.medium}px;
 `;
 
-const RightSide = styled.View`
-  flex-direction: row;
-  justify-content: flex-end;
-  flex: ${props => props.sideFlex ? props.sideFlex : 1};
-`;
-
-const LeftSide = styled.View`
-  flex-direction: row;
-  flex: ${props => props.sideFlex ? props.sideFlex : 1};
-  align-items: center;
-`;
-
-const MiddlePart = styled.View`
-  flex-direction: row;
-  flex-grow: 1;
+const CenterItems = styled.View`
+  flex: 4;
+  padding: 0 ${spacing.medium}px;
   align-items: center;
   justify-content: center;
+  flex-direction: row;
+`;
+
+const LeftItems = styled.View`
+  flex: ${props => props.sideFlex || 1};
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
 `;
 
 const BackIcon = styled(IconButton)`
   position: relative;
-  align-self: flex-start;
-  height: 44px;
+  height: 24px;
   width: 44px;
   padding-left: 10px;
   margin-left: -12px;
-  margin-bottom: -12px;
 `;
 
 const ActionIcon = styled(IconButton)`
@@ -126,17 +126,45 @@ const ActionIcon = styled(IconButton)`
   align-self: center;
   height: 24px;
   width: 24px;
-  margin: 0 3px -6px;
 `;
 
 const TextButton = styled.TouchableOpacity`
-  padding: 5px;
+  padding: 5px 0;
+  flex-direction: row;
+  align-items: center;
+  ${props => props.bordered
+    ? `
+      border-width: 1px;
+      border-color: ${props.theme.rightActionBorderColor || baseColors.electricBlue};
+      border-radius: 14px;
+      padding: 5px ${responsiveSize(spacing.mediumLarge)}px;
+      `
+    : ''}
 `;
 
 const ButtonLabel = styled(BaseText)`
-  line-height: ${fontSizes.small}px;
+  line-height: ${fontSizes.small};
   font-size: ${fontSizes.extraSmall}px;
   color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
+`;
+
+const Separator = styled.View`
+  width: ${spacing.small}px;
+`;
+
+const Indicator = styled.View`
+  width: 8px;
+  height: 8px;
+  background-color: ${baseColors.sunYellow};
+  border-radius: 4px;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
+const IconImage = styled(CachedImage)`
+  width: 24px;
+  height: 24px;
 `;
 
 const profileImageWidth = 24;
@@ -155,6 +183,7 @@ const themes = (backgroundColor?: string = '') => ({
   },
   light: {
     color: baseColors.white,
+    borderBottomWidth: 0,
     iconColor: baseColors.white,
     rightActionIconColor: baseColors.white,
     rightActionLabelColor: baseColors.white,
@@ -180,6 +209,7 @@ const themes = (backgroundColor?: string = '') => ({
     iconColor: baseColors.slateBlack,
     rightActionIconColor: baseColors.electricBlue,
     rightActionLabelColor: baseColors.electricBlue,
+    rightActionBorderColor: UIColors.headerButtonBorder,
     buttonBorderColor: baseColors.mediumLightGray,
     buttonLabelColor: baseColors.slateBlack,
   },
@@ -197,7 +227,6 @@ const getTheme = (props: Props) => {
   return themes().default;
 };
 
-
 class HeaderBlock extends React.Component<Props> {
   renderHeaderContent = (theme: Object) => {
     const {
@@ -205,111 +234,131 @@ class HeaderBlock extends React.Component<Props> {
       sideFlex,
       leftItems = [],
       centerItems = [],
+      navigation,
+      noBack,
+      customOnBack,
     } = this.props;
 
     return (
       <HeaderRow>
-        <LeftSide sideFlex={sideFlex}>
-          {this.renderSideItems('LEFT', leftItems, theme)}
-        </LeftSide>
+        <LeftItems sideFlex={sideFlex} style={!centerItems.length && !rightItems.length ? { flexGrow: 2 } : {}}>
+          {(leftItems.length || !!noBack)
+            ? leftItems.map((item) => this.renderSideItems(item, theme))
+            : (
+              <BackIcon
+                icon="back"
+                color={theme.iconColor || UIColors.defaultNavigationColor}
+                onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
+                fontSize={fontSizes.extraLarge}
+                horizontalAlign="flex-start"
+              />)
+          }
+        </LeftItems>
         {!!centerItems.length &&
-        <MiddlePart>
-          {this.renderSideItems('CENTER', centerItems, theme)}
-        </MiddlePart>}
-        <RightSide sideFlex={sideFlex}>
-          {this.renderSideItems('RIGHT', rightItems, theme)}
-        </RightSide>
+        <CenterItems>
+          {centerItems.map((item) => this.renderSideItems(item, theme, 'CENTER'))}
+        </CenterItems>
+        }
+        {(!!centerItems.length || !!rightItems.length) &&
+        <FlatList
+          keyExtractor={(item) => item.key || item.label || item.title || item.icon || 'close'}
+          data={rightItems}
+          renderItem={({ item }) => this.renderSideItems(item, theme)}
+          ItemSeparatorComponent={() => <Separator />}
+          horizontal
+          contentContainerStyle={{ justifyContent: 'flex-end', flexGrow: 1 }}
+          style={{ flex: sideFlex || 1 }}
+          scrollEnabled={false}
+        />}
       </HeaderRow>
     );
   };
 
-  renderSideItems = (side: string, items, theme) => {
-    const { navigation, noBack } = this.props;
-    if (side === 'LEFT' && !items.length && !noBack) {
+  renderSideItems = (item, theme, type = '') => {
+    const { navigation } = this.props;
+    if (item.user || item.userIcon) {
+      return this.renderUser(theme, !item.userIcon);
+    }
+    if (item.title) {
       return (
-        <BackIcon
-          icon="back"
-          color={theme.iconColor || UIColors.defaultNavigationColor}
-          onPress={() => {
-            navigation.goBack(null);
-          }}
-          fontSize={fontSizes.extraLarge}
-          horizontalAlign="flex-start"
-        />
+        <HeaderTitle
+          theme={theme}
+          key={item.title}
+          style={item.color ? { color: item.color } : {}}
+          onPress={item.onPress}
+          centerText={type === 'CENTER'}
+        >
+          {item.title}
+        </HeaderTitle>
       );
     }
-
-    return items.map((item) => {
-      if (item.user || item.userIcon) {
-        return this.renderUser(theme, !item.userIcon);
-      }
-      if (item.title) {
-        return (
-          <HeaderTitle theme={theme} key={item.title} style={item.color ? { color: item.color } : {}}>
-            {item.title}
-          </HeaderTitle>
-        );
-      }
-
-      if (item.icon) {
-        return (
+    if (item.icon) {
+      return (
+        <View>
           <ActionIcon
             key={item.icon}
             icon={item.icon}
-            color={theme.rightActionIconColor || UIColors.defaultNavigationColor}
-            onPress={item.action}
-            fontSize={fontSizes.extraLarge}
+            color={item.color || theme.rightActionIconColor || UIColors.defaultNavigationColor}
+            onPress={item.onPress}
+            fontSize={item.fontSize || fontSizes.extraLarge}
             horizontalAlign="flex-start"
           />
-        );
-      }
-      if (item.label) {
-        return (
-          <TextButton onPress={item.onPress} key={item.label}>
-            <ButtonLabel theme={theme}>{item.label}</ButtonLabel>
-          </TextButton>
-        );
-      }
-      if (item.close) {
-        return (
-          <ActionIcon
-            key="close"
-            icon="close"
-            color={baseColors.slateBlack}
-            onPress={() => navigation.goBack()}
-            fontSize={fontSizes.extraSmall}
-            horizontalAlign="flex-start"
-            style={{ marginBottom: -2, marginRight: -4 }}
-          />
-        );
-      }
-      if (item.actionButton) {
-        return (<HeaderActionButton {...item.actionButton} theme={theme} />);
-      }
-      if (item.custom) {
-        return <View key={item.key || 'custom'}>{item.custom}</View>;
-      }
-      return null;
-    });
+          {!!item.indicator && <Indicator />}
+        </View>
+      );
+    }
+    if (item.iconSource) {
+      return (
+        <TouchableOpacity onPress={item.onPress}>
+          <IconImage source={item.iconSource} />
+          {!!item.indicator && <Indicator />}
+        </TouchableOpacity>
+      );
+    }
+    if (item.label) {
+      return (
+        <TextButton onPress={item.onPress} key={item.label} bordered={item.bordered} theme={theme}>
+          <ButtonLabel theme={theme}>{item.label}</ButtonLabel>
+          {item.addon}
+        </TextButton>
+      );
+    }
+    if (item.close) {
+      return (
+        <ActionIcon
+          key="close"
+          icon="close"
+          color={baseColors.slateBlack}
+          onPress={item.dismiss ? () => navigation.dismiss() : () => navigation.goBack()}
+          fontSize={fontSizes.extraSmall}
+          horizontalAlign="flex-start"
+          style={{ alignSelf: 'flex-end', width: fontSizes.extraSmall }}
+        />
+      );
+    }
+    if (item.actionButton) {
+      return (<HeaderActionButton {...item.actionButton} theme={theme} />);
+    }
+    if (item.custom) {
+      return <View key={item.key || 'custom'}>{item.custom}</View>;
+    }
+    return null;
   };
 
   renderUser = (theme, showName: boolean) => {
-    const { user } = this.props;
+    const { user, navigation } = this.props;
     return (
-      <UserButton key="user">
+      <UserButton key="user" onPress={() => { navigation.navigate(USERS); }}>
         <HeaderProfileImage
           uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
           userName={user.username}
           diameter={profileImageWidth}
-          onPress={() => {}}
-          containerStyle={{
-            borderRadius: profileImageWidth / 2,
-            backgroundColor: user.profileImage ? 'transparent' : baseColors.lightGray,
-          }}
           noShadow
         />
         {showName &&
-        <HeaderTitle theme={theme} style={{ marginLeft: spacing.medium }}>{user.username}</HeaderTitle>}
+        <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
+          <HeaderTitle theme={theme} style={{ marginLeft: spacing.medium }}>{user.username}</HeaderTitle>
+        </View>}
       </UserButton>
     );
   };
@@ -320,7 +369,7 @@ class HeaderBlock extends React.Component<Props> {
 
     return (
       <Wrapper theme={theme} floating={floating}>
-        <SafeArea forceInset={{ bottom: 'never' }} androidStatusbarHeight={StatusBar.currentHeight}>
+        <SafeArea forceInset={{ bottom: 'never', top: 'always' }} androidStatusbarHeight={StatusBar.currentHeight}>
           <HeaderContentWrapper>
             {this.renderHeaderContent(theme)}
           </HeaderContentWrapper>

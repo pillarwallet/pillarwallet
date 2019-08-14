@@ -33,10 +33,10 @@ import {
   APP_FLOW,
   AUTH_FLOW,
   ONBOARDING_FLOW,
-  ASSETS,
+  HOME,
   CHAT,
-  CHAT_LIST,
   PIN_CODE_UNLOCK,
+  PEOPLE,
 } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
@@ -164,14 +164,14 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
 
       const navigateToLastActiveScreen = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
-        routeName: lastActiveScreen || ASSETS,
+        routeName: lastActiveScreen || HOME,
         params: lastActiveScreenParams,
       });
 
       const isOpeningAChatNotification = lastActiveScreen === CHAT && currentFlow === AUTH_FLOW;
       const navigateToRoute = isOpeningAChatNotification ?
         NavigationActions.navigate({
-          routeName: CHAT_LIST,
+          routeName: PEOPLE,
           params: {},
           action: navigateToLastActiveScreen,
         }) : navigateToLastActiveScreen;

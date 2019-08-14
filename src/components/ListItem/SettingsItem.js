@@ -18,25 +18,29 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Platform, TouchableNativeFeedback, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { Switch, Badge as NBBadge } from 'native-base';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { Platform, StyleSheet, TouchableNativeFeedback } from 'react-native';
+
+type Props = {
+  label: string,
+  notificationsCount?: number,
+  warningNotification?: ?boolean,
+  onPress?: ?Function,
+  toggle?: ?boolean,
+  value?: ?string | ?boolean,
+  disabled?: ?boolean,
+  bordered?: ?boolean,
+}
 
 const StyledItemTouchable = styled.TouchableHighlight`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding-horizontal: ${props => props.wrapperPaddingHorizontal ? props.wrapperPaddingHorizontal : spacing.rhythm}px;
-  padding-vertical: ${spacing.rhythm}px;
-  background-color: #ffffff;
-  border-bottom-color: ${baseColors.lightGray};
-  border-top-color: ${baseColors.lightGray};
-  border-bottom-width: ${StyleSheet.hairlineWidth};
-  border-top-width: ${StyleSheet.hairlineWidth};
 `;
 
 const StyledItemView = styled.View`
@@ -44,24 +48,24 @@ const StyledItemView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding-horizontal: ${props => props.wrapperPaddingHorizontal ? props.wrapperPaddingHorizontal : spacing.rhythm}px;
-  padding-vertical: ${spacing.rhythm}px;
-  background-color: #ffffff;
-  border-bottom-color: ${baseColors.lightGray};
-  border-top-color: ${baseColors.lightGray};
-  border-bottom-width: ${StyleSheet.hairlineWidth};
-  border-top-width: ${StyleSheet.hairlineWidth};
 `;
 
 const ItemLabelHolder = styled.View`
-  display: flex;
   flex: 1;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding: 22px ${spacing.large}px 24px;
+ ${props => props.bordered
+    ? `
+    border-bottom-width: ${StyleSheet.hairlineWidth}px;
+    border-top-width: ${StyleSheet.hairlineWidth}px;
+    border-color: ${baseColors.mediumLightGray};
+    `
+    : ''}
 `;
 
-const ListItem = styled.View`
+const ListItemInnerWrapper = styled.View`
   flex: 1;
   flex-direction: row; 
   justify-content: space-between;
@@ -71,7 +75,6 @@ const ListItem = styled.View`
 const Badge = styled(NBBadge)`
   height: 24px;
   justify-content: center;
-  margin-right: 10px;
 `;
 
 const BadgeText = styled(BaseText)`
@@ -82,18 +85,20 @@ const BadgeText = styled(BaseText)`
   padding: 0 2px;
 `;
 
-const ItemLabel = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+const ItemLabel = styled(MediumText)`
+  color: ${baseColors.slateBlack};
+  font-size: 17px;
+  line-height: 24px;
 `;
 
 const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${baseColors.coolGrey};
   flex-wrap: wrap;
-  text-align: right;
-  flex: 1;
-  padding: 0 ${spacing.rhythm / 2}px
-  align-self: stretch;
+  text-align: center;
+  margin-left: ${spacing.medium}px
+  min-width: 70px;
+  align-items: center;
 `;
 
 const WarningIcon = styled(Icon)`
@@ -106,16 +111,19 @@ const ListAddon = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin-left: ${spacing.medium}px;
+  margin-top: 2px;
+  min-width: 70px;
 `;
 
-const ButtonWrapper = ({ onPress, children, wrapperPaddingHorizontal }) => {
+const ButtonWrapper = ({ onPress, children }) => {
   if (Platform.OS === 'android') {
     return (
       <TouchableNativeFeedback
         onPress={onPress}
         background={TouchableNativeFeedback.Ripple()}
       >
-        <StyledItemView wrapperPaddingHorizontal={wrapperPaddingHorizontal}>
+        <StyledItemView>
           {children}
         </StyledItemView>
       </TouchableNativeFeedback>
@@ -125,23 +133,11 @@ const ButtonWrapper = ({ onPress, children, wrapperPaddingHorizontal }) => {
     <StyledItemTouchable
       onPress={onPress}
       underlayColor={baseColors.lightGray}
-      wrapperPaddingHorizontal={wrapperPaddingHorizontal}
     >
       {children}
     </StyledItemTouchable>
   );
 };
-
-type Props = {
-  label: string,
-  notificationsCount?: number,
-  warningNotification?: ?boolean,
-  onPress?: ?Function,
-  toggle?: ?boolean,
-  value?: ?string | ?boolean,
-  disabled?: ?boolean,
-  wrapperPaddingHorizontal?: number,
-}
 
 export default class SettingsListItem extends React.Component<Props> {
   renderContent(processedValue: ?string | ?boolean) {
@@ -152,37 +148,35 @@ export default class SettingsListItem extends React.Component<Props> {
       notificationsCount,
       warningNotification,
       disabled,
+      bordered,
     } = this.props;
+
     if (!toggle) {
       return (
-        <ListItem>
-          <ItemLabelHolder>
+        <ItemLabelHolder bordered={bordered}>
+          <ListItemInnerWrapper>
             <ItemLabel>{label}</ItemLabel>
-            <ItemValue>{processedValue}</ItemValue>
-          </ItemLabelHolder>
+            {!!processedValue && <ItemValue>{processedValue}</ItemValue>}
+          </ListItemInnerWrapper>
+          {!!(notificationsCount || warningNotification) &&
           <ListAddon>
             {!!notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
             {!!warningNotification && <WarningIcon name="warning-circle" />}
-            <Icon
-              name="chevron-right"
-              style={{
-                fontSize: fontSizes.tiny,
-                color: baseColors.coolGrey,
-              }}
-            />
-          </ListAddon>
-        </ListItem>
+          </ListAddon>}
+        </ItemLabelHolder>
       );
     }
 
     return (
-      <ItemLabelHolder>
+      <ItemLabelHolder bordered={bordered}>
         <ItemLabel>{label}</ItemLabel>
-        <Switch
-          disabled={disabled}
-          onValueChange={onPress}
-          value={processedValue}
-        />
+        <ListAddon>
+          <Switch
+            disabled={disabled}
+            onValueChange={onPress}
+            value={processedValue}
+          />
+        </ListAddon>
       </ItemLabelHolder>
     );
   }
@@ -191,7 +185,6 @@ export default class SettingsListItem extends React.Component<Props> {
       onPress,
       toggle,
       value,
-      wrapperPaddingHorizontal,
     } = this.props;
 
     let processedValue;
@@ -208,18 +201,10 @@ export default class SettingsListItem extends React.Component<Props> {
       processedValue = value;
     }
 
-    if (!toggle) {
-      return (
-        <ButtonWrapper onPress={onPress} wrapperPaddingHorizontal={wrapperPaddingHorizontal}>
-          {this.renderContent(processedValue)}
-        </ButtonWrapper>
-      );
-    }
-
     return (
-      <StyledItemView wrapperPaddingHorizontal={wrapperPaddingHorizontal}>
+      <ButtonWrapper onPress={onPress}>
         {this.renderContent(processedValue)}
-      </StyledItemView>
+      </ButtonWrapper>
     );
   }
 }

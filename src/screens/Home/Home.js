@@ -18,37 +18,38 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Animated, RefreshControl, Platform, View } from 'react-native';
+import { Animated, RefreshControl, Platform, View, ScrollView, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
-import Permissions from 'react-native-permissions';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
-import { Container, Wrapper } from 'components/Layout';
-import { BaseText, BoldText, Paragraph } from 'components/Typography';
-import Title from 'components/Title';
-import PortfolioBalance from 'components/PortfolioBalance';
-import IconButton from 'components/IconButton';
-import Icon from 'components/Icon';
+import { Wrapper } from 'components/Layout';
+import { BoldText, MediumText, Paragraph } from 'components/Typography';
 import Tabs from 'components/Tabs';
-import ProfileImage from 'components/ProfileImage';
-import Camera from 'components/Camera';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import CircleButton from 'components/CircleButton';
 import QRCodeScanner from 'components/QRCodeScanner';
 import ButtonText from 'components/ButtonText';
 import Spinner from 'components/Spinner';
-import SettingsListItem from 'components/ListItem/SettingsItem';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
+import BadgeTouchableItem from 'components/BadgeTouchableItem';
+import PortfolioBalance from 'components/PortfolioBalance';
 
 // constants
-import { PROFILE, CONTACT, MANAGE_DETAILS_SESSIONS } from 'constants/navigationConstants';
+import {
+  ADD_EDIT_USER,
+  MANAGE_DETAILS_SESSIONS,
+  BADGE,
+  SETTINGS,
+} from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -69,10 +70,8 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import {
-  onWalletConnectSessionRequest,
-  cancelWaitingRequest,
-} from 'actions/walletConnectActions';
+import { onWalletConnectSessionRequest, cancelWaitingRequest } from 'actions/walletConnectActions';
+import { fetchBadgesAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
 // selectors
@@ -81,12 +80,15 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { activeAccountSelector } from 'selectors';
 
 // utils
-import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { getAccountAddress } from 'utils/accounts';
 
 // types
 import type { Account } from 'models/Account';
+
+import type { Badges } from 'models/Badge';
+import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -103,7 +105,6 @@ type Props = {
   setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
   intercomNotificationsCount: number,
-  backupStatus: Object,
   fetchAllCollectiblesData: Function,
   resetDeepLinkData: Function,
   approveLoginAttempt: Function,
@@ -114,6 +115,8 @@ type Props = {
   onWalletLinkScan: Function,
   cancelWaitingRequest: Function,
   loginAttemptToken?: string,
+  badges: Badges,
+  connectors: any[],
   logScreenView: (view: string, screen: string) => void,
   restoreTransactionHistory: (walletAddress: string, walletId: string) => void,
   activeAccount: Account,
@@ -130,124 +133,31 @@ type State = {
   showLoginModal: boolean,
 };
 
-const profileImageWidth = 96;
-
-const HomeHeader = styled.View`
-  padding: 0 ${spacing.rhythm}px;
-  margin-top: ${spacing.rhythm}px;
-`;
-
-const AnimatedHomeHeader = Animated.createAnimatedComponent(HomeHeader);
-
-const HomeHeaderRow = styled.View`
-  flex-direction: row;
-`;
-
-const HomeHeaderLeft = styled.View`
-  flex: 0 0 40px;
-  align-items: flex-start;
-`;
-
-const HomeHeaderRight = styled.View`
-  flex: 0 0 40px;
-  align-items: flex-end;
-`;
-
-const HomeHeaderBody = styled.View`
-  flex: 1;
-  align-items: center;
-`;
-
-const HomeHeaderImageUsername = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: -20px;
-`;
-
-const HomeHeaderUsername = styled(BaseText)`
-  font-size: ${fontSizes.mediumLarge}px;
-  line-height: ${fontSizes.mediumLarge}px;
-  margin-top: 30px;
-  max-width: 200px;
-`;
-const AnimatedHomeHeaderUsername = Animated.createAnimatedComponent(HomeHeaderUsername);
-
-const HomeHeaderButton = styled(IconButton)`
-  align-items: ${props => (props.flexEnd ? 'flex-end' : 'flex-start')};
-  margin: ${props => (props.flexEnd ? `0 -${spacing.rhythm}px 0 0` : `0 0 0 -${spacing.rhythm}px`)};
-  padding: ${props => (props.flexEnd ? `0 ${spacing.rhythm}px 0 0` : `0 0 0 ${spacing.rhythm}px`)};
-  width: 64px;
-  height: 44px;
-`;
-
-const HomeHeaderProfileImage = styled(ProfileImage)`
-  margin-bottom: -24px;
-`;
-const AnimatedHomeHeaderProfileImage = Animated.createAnimatedComponent(HomeHeaderProfileImage);
-
-const HomeHeaderPortfolioBalance = styled(PortfolioBalance)`
-  margin-bottom: 10px;
-`;
-const AnimatedHomeHeaderPortfolioBalance = Animated.createAnimatedComponent(HomeHeaderPortfolioBalance);
-
-const RecentConnections = styled.View`
-  height: 150px;
+const BalanceWrapper = styled.View`
+  padding: ${spacing.medium}px ${spacing.large}px;
+  width: 100%;
   border-bottom-width: 1px;
-  border-style: solid;
-  border-color: ${UIColors.defaultBorderColor};
+  border-color: ${baseColors.mediumLightGray};
 `;
 
-const RecentConnectionsWrapper = styled.View`
-  shadow-color: ${baseColors.pigeonPost};
-  shadow-radius: 6px;
-  shadow-opacity: 0.15;
-  shadow-offset: 0px 6px;
-`;
-
-const RecentConnectionsScrollView = styled.ScrollView`
+const WalletConnectWrapper = styled.View`
+  padding: ${spacing.medium}px ${spacing.large}px 0;
   background-color: ${baseColors.snowWhite};
-  padding-left: 6px;
-  margin-top: -4px;
-  padding-top: ${Platform.select({
-    ios: '4px',
-    android: 0,
-  })};
+  width: 100%;
 `;
 
-const RecentConnectionsItemProfileImage = styled(ProfileImage)`
-  margin-bottom: ${spacing.rhythm / 2};
+const ListHeader = styled(MediumText)`
+  color: ${baseColors.blueYonder};
+  font-size: 14px;
+  line-height: 17px;
+  margin: ${spacing.mediumLarge}px ${spacing.large}px;
 `;
 
-const StyledSubtitle = styled(Title)`
-  margin: ${spacing.medium}px ${spacing.mediumLarge}px;
-`;
-
-const RecentConnectionsItem = styled.TouchableOpacity`
-  align-items: center;
-  width: ${Platform.select({
-    ios: '60px',
-    android: '74px',
-  })};
-  margin: ${Platform.select({
-    ios: '4px 8px 24px',
-    android: '0',
-  })};
-`;
-
-const CameraIcon = styled(Icon)`
-  font-size: ${fontSizes.extraLarge};
-  color: ${baseColors.electricBlue};
-`;
-
-const RecentConnectionsItemName = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall};
-  color: ${baseColors.darkGray};
-  padding: 0 4px;
-  margin-top: ${Platform.select({
-    ios: '4px',
-    android: '-4px',
-  })};
+const BadgesWrapper = styled.View`
+  padding: ${spacing.medium}px 0;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-color: ${baseColors.mediumLightGray};
 `;
 
 const Description = styled(Paragraph)`
@@ -262,11 +172,6 @@ const DescriptionWarning = styled(Description)`
   color: ${baseColors.burningFire};
 `;
 
-const SessionUIWrapper = styled.View`
-  padding-top: 110px;
-
-`;
-
 export const StatusMessage = styled(BoldText)`
   padding-top: 10px;
 `;
@@ -277,18 +182,6 @@ export const LoadingSpinner = styled(Spinner)`
   justify-content: center;
 `;
 
-export const ItemWrapper = styled.View`
-  margin-top: ${spacing.large}px;
-  border-bottom-width: 1px;
-  border-top-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
-`;
-
-const TabsHeader = styled.View`
-  padding: ${spacing.medium}px ${spacing.mediumLarge}px;
-  background-color: ${baseColors.white};
-`;
-
 const allIconNormal = require('assets/icons/all_normal.png');
 const allIconActive = require('assets/icons/all_active.png');
 const socialIconNormal = require('assets/icons/social_normal.png');
@@ -296,6 +189,7 @@ const socialIconActive = require('assets/icons/social_active.png');
 const transactionsIconNormal = require('assets/icons/transactions_normal.png');
 const transactionsIconActive = require('assets/icons/transactions_active.png');
 const iconReceive = require('assets/icons/icon_receive.png');
+const iconConnect = require('assets/icons/icon_receive.png');
 
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
@@ -342,45 +236,6 @@ class HomeScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
-  goToProfile = () => {
-    const { navigation } = this.props;
-    navigation.navigate(PROFILE);
-  };
-
-  openCamera = async () => {
-    const statusPhoto = await Permissions.request('photo');
-    const statusCamera = await Permissions.request('camera');
-    this.setState({
-      permissionsGranted: statusPhoto === 'authorized' && statusCamera === 'authorized',
-      showCamera: true,
-    });
-  };
-
-  closeCamera = () => {
-    this.setState({
-      showCamera: false,
-    });
-  };
-
-  renderRecentConnections = () => {
-    const { contacts, navigation } = this.props;
-    return contacts
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .slice(0, 10)
-      .map(contact => {
-        const profileImage = contact.lastUpdateTime
-          ? `${contact.profileImage}?t=${contact.lastUpdateTime}`
-          : contact.profileImage;
-
-        return (
-          <RecentConnectionsItem key={contact.username} onPress={() => navigation.navigate(CONTACT, { contact })}>
-            <RecentConnectionsItemProfileImage uri={profileImage} userName={contact.username} diameter={52} />
-            <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
-          </RecentConnectionsItem>
-        );
-      });
-  };
-
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
@@ -405,10 +260,6 @@ class HomeScreen extends React.Component<Props, State> {
 
     logScreenView(`View tab Home.${activeTab}`, 'Home');
     this.setState({ activeTab });
-  };
-
-  goToProfileEmailSettings = () => {
-    this.setState({ showLoginModal: false });
   };
 
   /**
@@ -444,7 +295,7 @@ class HomeScreen extends React.Component<Props, State> {
       * login approve modal cannot be open while navigating
       */
       this.setState({ showLoginModal: true });
-      navigation.navigate(PROFILE, { visibleModal: 'email' });
+      navigation.navigate(ADD_EDIT_USER);
     });
   };
 
@@ -508,6 +359,16 @@ class HomeScreen extends React.Component<Props, State> {
   }
   // END OF Wallet connect related methods
 
+  renderBadge = ({ item }) => {
+    const { navigation } = this.props;
+    return (
+      <BadgeTouchableItem
+        data={item}
+        onPress={() => navigation.navigate(BADGE, { id: item.id })}
+      />
+    );
+  };
+
   render() {
     const {
       user,
@@ -516,80 +377,22 @@ class HomeScreen extends React.Component<Props, State> {
       rejectInvitation,
       intercomNotificationsCount,
       navigation,
-      backupStatus,
       loginAttemptToken,
       approveLoginAttempt,
       history,
       openSeaTxHistory,
       contacts,
       invitations,
+      waitingRequest,
+      badges,
+      connectors,
     } = this.props;
 
     const {
-      showCamera,
-      permissionsGranted,
-      scrollY,
-      usernameWidth,
       activeTab,
       isScanning,
       showLoginModal,
     } = this.state;
-
-    const { isImported, isBackedUp } = backupStatus;
-
-    const profileUsernameTranslateX = scrollY.interpolate({
-      inputRange: [0, 100],
-      outputRange: [-profileImageWidth / 2, -30],
-      extrapolate: 'clamp',
-    });
-
-    const profileUsernameTranslateY = scrollY.interpolate({
-      inputRange: [0, 100],
-      outputRange: [12, -94],
-      extrapolate: 'clamp',
-    });
-
-    const profileImagePositionX = scrollY.interpolate({
-      inputRange: [0, 100],
-      outputRange: [(usernameWidth / 2), 10],
-      extrapolate: 'clamp',
-    });
-
-    const profileImagePositionY = scrollY.interpolate({
-      inputRange: [0, 100],
-      outputRange: [-60, -72],
-      extrapolate: 'clamp',
-    });
-
-    const profileImageScale = scrollY.interpolate({
-      inputRange: [0, 100],
-      outputRange: [1, 0.375],
-      extrapolate: 'clamp',
-    });
-
-    const profileBalanceScale = scrollY.interpolate({
-      inputRange: [0, 100],
-      outputRange: [1, 0.8],
-      extrapolate: 'clamp',
-    });
-
-    const usernameScale = scrollY.interpolate({
-      inputRange: [0, 100],
-      outputRange: [1, 0.8],
-      extrapolate: 'clamp',
-    });
-
-    const profileBalancePositionY = scrollY.interpolate({
-      inputRange: [0, 100],
-      outputRange: [24, -120],
-      extrapolate: 'clamp',
-    });
-
-    const profileBalanceOpacity = scrollY.interpolate({
-      inputRange: [0, 20, 100],
-      outputRange: [1, 0, 0],
-      extrapolate: 'clamp',
-    });
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -640,159 +443,87 @@ class HomeScreen extends React.Component<Props, State> {
     ];
 
     const hasIntercomNotifications = !!intercomNotificationsCount;
-    const isWalletBackedUp = isImported || isBackedUp;
 
     // getting from navigation params solves case when forum login approve modal should appear after PIN screen
     const isLoginModalVisible = showLoginModal || navigation.getParam('showLoginApproveModal');
 
+    const sessionsCount = filterSessionsByUrl(connectors).length;
+    const sessionsLabelPart = sessionsCount < 2 ? 'session' : 'sessions';
+    const sessionsLabel = sessionsCount ? `${sessionsCount} ${sessionsLabelPart}` : '';
+
     return (
-      <Container color={baseColors.white} inset={{ bottom: 0 }}>
-        <AnimatedHomeHeader>
-          <HomeHeaderRow>
-            <HomeHeaderLeft>
-              <HomeHeaderButton
-                icon="help"
-                color={baseColors.darkGray}
-                fontSize={24}
-                onPress={() => Intercom.displayMessenger()}
-              />
-              {hasIntercomNotifications && (
+      <ContainerWithHeader
+        backgroundColor={baseColors.white}
+        headerProps={{
+          leftItems: [
+            { user: true },
+          ],
+          rightItems: [
+            {
+              label: 'Settings',
+              onPress: () => { navigation.navigate(SETTINGS); },
+            },
+            {
+              label: 'Support',
+              onPress: () => Intercom.displayMessenger(),
+              bordered: true,
+              addon: hasIntercomNotifications && (
                 <View
                   style={{
                     width: 8,
                     height: 8,
                     backgroundColor: baseColors.sunYellow,
                     borderRadius: 4,
-                    position: 'absolute',
-                    top: 6,
-                    right: 8,
+                    marginLeft: 4,
+                    marginRight: -6,
                   }}
                 />
-              )}
-            </HomeHeaderLeft>
-            <HomeHeaderBody />
-            <HomeHeaderRight>
-              {!isWalletBackedUp && (
-                <View
-                  style={{
-                    width: 8,
-                    height: 8,
-                    backgroundColor: baseColors.burningFire,
-                    borderRadius: 4,
-                    position: 'absolute',
-                    top: 6,
-                    right: -6,
-                  }}
-                />
-              )}
-              <HomeHeaderButton
-                flexEnd
-                icon="settings"
-                color={baseColors.darkGray}
-                fontSize={24}
-                onPress={() => this.goToProfile()}
-              />
-            </HomeHeaderRight>
-          </HomeHeaderRow>
-          <HomeHeaderRow>
-            <HomeHeaderBody>
-              <HomeHeaderImageUsername>
-                <AnimatedHomeHeaderProfileImage
-                  uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
-                  userName={user.username}
-                  diameter={profileImageWidth}
-                  onPress={this.openCamera}
-                  style={{
-                    transform: [
-                      { translateY: profileImagePositionY },
-                      { translateX: profileImagePositionX },
-                      { scale: profileImageScale },
-                      { perspective: 1000 },
-                    ],
-                  }}
-                  borderWidth={user.profileImage ? 0 : 2}
-                  containerStyle={{
-                    borderRadius: user.profileImage ? 0 : profileImageWidth / 2,
-                    backgroundColor: user.profileImage ? 'transparent' : baseColors.lightGray,
-                  }}
-                  noShadow
-                >
-                  <CameraIcon name="camera" />
-                </AnimatedHomeHeaderProfileImage>
-                <AnimatedHomeHeaderUsername
-                  ellipsizeMode="tail"
-                  numberOfLines={2}
-                  onLayout={event => {
-                    const { width } = event.nativeEvent.layout;
-                    this.setState({
-                      usernameWidth: width,
-                    });
-                  }}
-                  style={{
-                    transform: [
-                      { scale: usernameScale },
-                      { translateX: profileUsernameTranslateX },
-                      { translateY: profileUsernameTranslateY },
-                    ],
-                  }}
-                >
-                  {user.username}
-                </AnimatedHomeHeaderUsername>
-              </HomeHeaderImageUsername>
-              <AnimatedHomeHeaderPortfolioBalance
-                style={{
-                  transform: [{ scale: profileBalanceScale }, { translateY: profileBalancePositionY }],
-                  opacity: profileBalanceOpacity,
-                }}
-              />
-            </HomeHeaderBody>
-          </HomeHeaderRow>
-        </AnimatedHomeHeader>
-        <Animated.ScrollView
-          stickyHeaderIndices={contacts.length ? [3] : [2]}
-          style={{
-            marginTop: contacts.length ? -100 : -76,
-          }}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: { y: scrollY },
-                },
-              },
-            ],
-            { useNativeDriver: true },
-          )}
-          scrollEventThrottle={16}
-          refreshControl={<RefreshControl refreshing={false} onRefresh={this.refreshScreenData} />}
+              ),
+            },
+          ],
+        }}
+      >
+        <ScrollView
+          style={{ width: '100%' }}
+          stickyHeaderIndices={[3]}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={this.refreshScreenData}
+            />}
         >
-          <SessionUIWrapper>
-            {this.renderNewSession()}
-            <ItemWrapper>
-              <SettingsListItem
-                key="manage_sessions"
-                label="Manage sessions"
-                onPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
-                wrapperPaddingHorizontal={spacing.mediumLarge}
-              />
-            </ItemWrapper>
-          </SessionUIWrapper>
-          {!!contacts.length &&
-            <RecentConnectionsWrapper>
-              <RecentConnections>
-                <View style={{ backgroundColor: baseColors.snowWhite }}>
-                  <StyledSubtitle noMargin subtitle title="recent connections." />
-                </View>
-                <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
-                  {this.renderRecentConnections()}
-                </RecentConnectionsScrollView>
-              </RecentConnections>
-            </RecentConnectionsWrapper>
-          }
-          <TabsHeader>
-            <Title subtitle noMargin title="your activity." />
-          </TabsHeader>
-          <Tabs tabs={activityFeedTabs} coverColor={baseColors.white} />
+          <BalanceWrapper>
+            <PortfolioBalance />
+          </BalanceWrapper>
+          <WalletConnectWrapper>
+            <SettingsItemCarded
+              title="Wallet Connect"
+              subtitle={sessionsLabel}
+              onMainPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
+              onSettingsPress={this.toggleQRScanner}
+              onSettingsLoadingPress={this.cancelWaiting}
+              isLoading={!!waitingRequest}
+              settingsIconSource={iconConnect}
+              settingsLabel="Connect"
+            />
+          </WalletConnectWrapper>
+          {!!badges.length &&
+          <BadgesWrapper>
+            <ListHeader>Game of badges</ListHeader>
+            <FlatList
+              data={badges}
+              horizontal
+              keyExtractor={(item) => (item.id.toString())}
+              renderItem={this.renderBadge}
+              style={{ width: '100%' }}
+              contentContainerStyle={{ paddingHorizontal: 10 }}
+              initialNumToRender={5}
+            />
+          </BadgesWrapper>}
+          <Tabs
+            tabs={activityFeedTabs}
+            wrapperStyle={{ paddingTop: 16 }}
+          />
           <ActivityFeed
             backgroundColor={baseColors.white}
             onCancelInvitation={cancelInvitation}
@@ -803,8 +534,17 @@ class HomeScreen extends React.Component<Props, State> {
             activeTab={activeTab}
             hideTabs
             initialNumToRender={6}
+            wrapperStyle={{ flexGrow: 1 }}
+            contentContainerStyle={{ flexGrow: 1 }}
           />
-        </Animated.ScrollView>
+        </ScrollView>
+        <QRCodeScanner
+          validator={this.validateWalletConnectQRCode}
+          isActive={isScanning}
+          onDismiss={this.handleQRScannerClose}
+          onRead={this.handleQRRead}
+          onModalHide={this.checkLoginModalVisibility}
+        />
 
         <SlideModal
           isVisible={!!loginAttemptToken && isLoginModalVisible}
@@ -830,8 +570,8 @@ class HomeScreen extends React.Component<Props, State> {
               <Button
                 title={!user.email ? 'Add your email' : 'Confirm login'}
                 onPress={() => (user.email
-                  ? approveLoginAttempt(loginAttemptToken)
-                  : this.setState({ showLoginModal: false, addEmailRedirect: true })
+                    ? approveLoginAttempt(loginAttemptToken)
+                    : this.setState({ showLoginModal: false, addEmailRedirect: true })
                 )}
                 style={{
                   marginBottom: 13,
@@ -840,20 +580,7 @@ class HomeScreen extends React.Component<Props, State> {
             </View>
           </Wrapper>
         </SlideModal>
-        <Camera
-          isVisible={showCamera}
-          modalHide={this.closeCamera}
-          permissionsGranted={permissionsGranted}
-          navigation={navigation}
-        />
-        <QRCodeScanner
-          validator={this.validateWalletConnectQRCode}
-          isActive={isScanning}
-          onDismiss={this.handleQRScannerClose}
-          onRead={this.handleQRRead}
-          onModalHide={this.checkLoginModalVisibility}
-        />
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }
@@ -862,16 +589,18 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   user: { data: user },
   invitations: { data: invitations },
-  wallet: { backupStatus },
   notifications: { intercomNotificationsCount },
   deepLink: { data: { loginAttemptToken } = {} },
+  badges: { data: badges },
+  walletConnect: { connectors },
 }) => ({
   contacts,
   user,
   invitations,
   intercomNotificationsCount,
-  backupStatus,
   loginAttemptToken,
+  badges,
+  connectors,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -899,6 +628,7 @@ const mapDispatchToProps = (dispatch) => ({
   onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
   onWalletLinkScan: uri => dispatch(executeDeepLinkAction(uri)),
   cancelWaitingRequest: clientId => dispatch(cancelWaitingRequest(clientId)),
+  fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   restoreTransactionHistory: (walletAddress: string, walletId: string) => dispatch(
     restoreTransactionHistoryAction(walletAddress, walletId),
