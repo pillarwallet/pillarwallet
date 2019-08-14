@@ -30,10 +30,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { settleTransactionsAction, estimateSettleBalanceAction } from 'actions/smartWalletActions';
 
 // components
-import { Container, Footer, ScrollWrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
-import Header from 'components/Header';
 import Toast from 'components/Toast';
 
 // selectors
@@ -45,7 +45,7 @@ import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
 
 // utils
 import { checkIfEnoughForFee } from 'utils/assets';
-import { fontSizes } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { formatAmount } from 'utils/common';
 
 
@@ -66,7 +66,7 @@ const FooterWrapper = styled.View`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0 20px;
+  padding: ${spacing.large}px;
   width: 100%;
 `;
 
@@ -140,7 +140,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
   render() {
     const { settleButtonSubmitted } = this.state;
-    const { session, navigation, settleTxFee } = this.props;
+    const { session, settleTxFee } = this.props;
 
     const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
     let submitButtonTitle = 'Release Funds';
@@ -151,12 +151,21 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     }
 
     return (
-      <Container>
-        <Header
-          onBack={() => navigation.goBack(null)}
-          title="review"
-          white
-        />
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: 'Review' }] }}
+        keyboardAvoidFooter={(
+          <FooterWrapper>
+            <Button
+              disabled={!session.isOnline || !settleTxFee.isFetched || settleButtonSubmitted}
+              onPress={this.handleFormSubmit}
+              title={submitButtonTitle}
+            />
+            {/* <TextButton onPress={() => {}}>
+              <ButtonText>Open dispute</ButtonText>
+            </TextButton> */}
+          </FooterWrapper>
+        )}
+      >
         <ScrollWrapper
           regularPadding
           contentContainerStyle={{ marginTop: 40 }}
@@ -172,19 +181,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
             <Value>{settleTxFee.isFetched ? `${feeInEth} ETH` : 'loading..'}</Value>
           </LabeledRow>
         </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40}>
-          <FooterWrapper>
-            <Button
-              disabled={!session.isOnline || !settleTxFee.isFetched || settleButtonSubmitted}
-              onPress={this.handleFormSubmit}
-              title={submitButtonTitle}
-            />
-            {/* <TextButton onPress={() => {}}>
-              <ButtonText>Open dispute</ButtonText>
-            </TextButton> */}
-          </FooterWrapper>
-        </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

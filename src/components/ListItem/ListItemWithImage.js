@@ -30,6 +30,7 @@ import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
 import { Shadow } from 'components/Shadow';
 import { Wrapper } from 'components/Layout';
+import TankAssetBalance from 'components/TankAssetBalance';
 import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
 
 type Props = {
@@ -69,6 +70,7 @@ type Props = {
   imageColorFill?: string,
   customImage?: React.Node,
   imageDiameter?: number,
+  balance?: Object,
 }
 
 const ItemWrapper = styled.View`
@@ -80,7 +82,7 @@ const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: ${spacing.small}px ${spacing.mediumLarge}px;
+  padding: ${spacing.small}px ${spacing.large}px;
   height: ${props => props.type === DEFAULT ? 70 : 84}px;
   width: 100%;
 `;
@@ -124,10 +126,10 @@ const ItemTitle = styled(BoldText)`
 
 const ItemParagraph = styled(BaseText)`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.extraSmall}px;
   line-height: ${fontSizes.mediumLarge}px;
   letter-spacing: ${fontTrackings.tiny}px;
-  margin-top: 2px;
+  margin-top: 4px;
   flex: 1;
 `;
 
@@ -179,15 +181,11 @@ const TimeSent = styled(BaseText)`
   text-align-vertical: bottom;
 `;
 
-const BadgePlacer = styled.View`
-  width: 30px;
-`;
-
 const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
   border-radius: 10px;
-  background-color: ${baseColors.darkGray}
+  background-color: ${baseColors.pinkishGrey}
   align-self: flex-end;
   padding: 3px 0;
   margin-top: 2px;
@@ -203,6 +201,12 @@ const UnreadNumber = styled(BaseText)`
 `;
 
 const ItemValue = styled(BaseText)`
+  font-size: ${fontSizes.medium};
+  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  text-align: right;
+`;
+
+const ItemValueBold = styled(BoldText)`
   font-size: ${fontSizes.medium};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   text-align: right;
@@ -383,7 +387,6 @@ const ImageAddon = (props: Props) => {
 
 const Addon = (props: Props) => {
   const {
-    type,
     unreadCount,
     itemValue,
     itemStatusIcon,
@@ -396,11 +399,12 @@ const Addon = (props: Props) => {
     actionLabelColor,
     rejectInvitation,
     acceptInvitation,
+    balance,
   } = props;
 
   if (itemValue) {
     return (
-      <Wrapper horizontal center style={{ flexWrap: 'wrap' }}>
+      <Wrapper horizontal style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
         <ItemValue color={valueColor} numberOfLines={2} ellipsizeMode="tail">
           {itemValue}
         </ItemValue>
@@ -421,7 +425,7 @@ const Addon = (props: Props) => {
     );
   }
 
-  if (type !== CHAT_ITEM && unreadCount) {
+  if (unreadCount) {
     return (
       <IndicatorsRow>
         <ItemBadge>
@@ -467,6 +471,28 @@ const Addon = (props: Props) => {
     );
   }
 
+  if (balance) {
+    const {
+      syntheticBalance = '',
+      balance: tokenBalance = '',
+      token = '',
+      currency = '',
+      value = '',
+    } = balance;
+    return (
+      <Wrapper style={{ alignItems: 'flex-end' }}>
+        {!!tokenBalance.toString() && <ItemValueBold>{`${tokenBalance} ${token}`}</ItemValueBold>}
+        {!!syntheticBalance.toString() &&
+        <TankAssetBalance
+          monoColor
+          amount={syntheticBalance}
+          token={token}
+        />}
+        <ItemSubText style={{ marginTop: -2 }}>{`${currency} ${value}`}</ItemSubText>
+      </Wrapper>
+    );
+  }
+
   return null;
 };
 
@@ -498,7 +524,6 @@ class ListItemWithImage extends React.Component<Props, {}> {
       customAddon,
       onPress,
       timeSent,
-      unreadCount,
       children,
       imageAddonUrl,
       imageAddonIconName,
@@ -530,17 +555,6 @@ class ListItemWithImage extends React.Component<Props, {}> {
               {!!paragraph &&
               <Row>
                 <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
-                {type === CHAT_ITEM &&
-                <BadgePlacer>
-                  {!!unreadCount &&
-                  <ItemBadge>
-                    <UnreadNumber>
-                      {unreadCount}
-                    </UnreadNumber>
-                  </ItemBadge>
-                  }
-                </BadgePlacer>
-                }
               </Row>
               }
               {!!subtext &&

@@ -18,20 +18,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { ScrollView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import { Container, Wrapper } from 'components/Layout';
-import Header from 'components/Header';
+
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
-import {
-  Paragraph,
-  BaseText,
-} from 'components/Typography';
+import { Paragraph, BaseText } from 'components/Typography';
 import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
@@ -65,11 +64,6 @@ type State = {
   upgradeStarted: boolean,
 };
 
-const WhiteWrapper = styled.View`
-  background-color: ${baseColors.white};
-  padding-bottom: ${spacing.rhythm}px;
-`;
-
 const DetailsTitle = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
   padding-bottom: 5px;
@@ -87,7 +81,7 @@ const DetailsLine = styled.View`
 `;
 
 const DetailsWrapper = styled.View`
-  padding: 30px 20px 0px 20px;
+  padding: 30px ${spacing.large}px 0px ${spacing.large}px;
 `;
 
 const WarningMessage = styled(Paragraph)`
@@ -321,28 +315,26 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const { navigation, gasInfo } = this.props;
+    const { gasInfo } = this.props;
     const { upgradeStarted } = this.state;
     const showSpinner = !gasInfo.isFetched || upgradeStarted;
     return (
-      <Container>
-        <WhiteWrapper>
-          <Header
-            title="confirm"
-            centerTitle
-            onBack={() => navigation.goBack(null)}
-          />
-          <Wrapper regularPadding>
-            <Paragraph small>
-              Please confirm that the details below are correct before deploying your Smart Wallet.
-            </Paragraph>
-          </Wrapper>
-        </WhiteWrapper>
-        <DetailsWrapper>
-          {showSpinner && this.renderSpinner()}
-          {!showSpinner && this.renderDetails()}
-        </DetailsWrapper>
-      </Container>
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Confirm' }],
+        }}
+        backgroundColor={baseColors.white}
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flexGrow: 1 }}>
+          <Paragraph small style={{ margin: spacing.large }}>
+            Please confirm that the details below are correct before deploying your Smart Wallet.
+          </Paragraph>
+          <DetailsWrapper>
+            {showSpinner && this.renderSpinner()}
+            {!showSpinner && this.renderDetails()}
+          </DetailsWrapper>
+        </ScrollView>
+      </ContainerWithHeader>
     );
   }
 }

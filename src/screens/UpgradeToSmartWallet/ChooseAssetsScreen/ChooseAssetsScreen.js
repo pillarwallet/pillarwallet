@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Keyboard } from 'react-native';
+import { FlatList, Keyboard, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { utils } from 'ethers';
 import styled from 'styled-components/native';
@@ -26,7 +26,8 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 
-import { Container, Footer, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Footer, Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -36,7 +37,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import { BaseText } from 'components/Typography';
 import Toast from 'components/Toast';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { EDIT_ASSET_AMOUNT_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
@@ -76,6 +77,7 @@ type State = {
   assetsToTransfer: AssetTransfer[],
   collectiblesToTransfer: CollectibleTransfer[],
   activeTab: string,
+  disableScroll: boolean,
 };
 
 const FooterInner = styled.View`
@@ -83,13 +85,6 @@ const FooterInner = styled.View`
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-`;
-
-const TopWrapper = styled.View`
-  padding-bottom: 10px;
-  border-bottom-width: 1px;
-  border-bottom-color: #ededed;
-  background-color: ${baseColors.white};
 `;
 
 const Label = styled(BaseText)`
@@ -106,6 +101,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     assetsToTransfer: [],
     collectiblesToTransfer: [],
     activeTab: TOKENS,
+    disableScroll: false,
   };
 
   componentDidMount() {
@@ -149,7 +145,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     }
     const { assetsToTransfer } = this.state;
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
-    const formattedAmount = formatAmount(item.amount);
+    const formattedAmount = formatAmount(item.amount, 2);
     return (
       <ListItemWithImage
         label={item.name}
@@ -158,14 +154,23 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
         fallbackSource={genericToken}
         onPress={() => this.toggleAssetInTransferList(item.name, item.amount)}
         customAddon={
-          <Checkbox
-            onPress={() => this.toggleAssetInTransferList(item.name, item.amount)}
-            checked={!!assetsToTransfer.find(asset => asset.name === item.name)}
-            rounded
-            wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
-          />
+          <View style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            height: '100%',
+            justifyContent: 'center',
+          }}
+          >
+            <Checkbox
+              onPress={() => this.toggleAssetInTransferList(item.name, item.amount)}
+              checked={!!assetsToTransfer.find(asset => asset.name === item.name)}
+              rounded
+              wrapperStyle={{ width: 24, marginLeft: 12 }}
+            />
+          </View>
         }
-        rightColumnInnerStyle={{ flexDirection: 'row' }}
+        rightColumnInnerStyle={{ flexDirection: 'row', paddingRight: 40 }}
       />
     );
   };
@@ -333,6 +338,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       activeTab,
       assetsToTransfer = [],
       collectiblesToTransfer = [],
+      disableScroll,
     } = this.state;
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = assetsArray
@@ -372,27 +378,33 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     const { isSeparateFund } = options;
 
     return (
-      <Container>
-        <TopWrapper>
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Choose assets to transfer' }],
+          rightItems: [hasAssetsSelected ? { label: 'Edit', onPress: this.onEditPress } : {}],
+        }}
+        backgroundColor={baseColors.white}
+      >
+        <ScrollView
+          stickyHeaderIndices={[1]}
+          scrollEnabled={!disableScroll}
+        >
           <SearchBlock
-            headerProps={{
-              title: 'choose assets',
-              onBack: () => navigation.goBack(null),
-              nextText: !hasAssetsSelected || 'Edit',
-              onNextPress: this.onEditPress,
-            }}
             searchInputPlaceholder="Search asset"
             onSearchChange={this.handleSearchChange}
             itemSearchState={query.length >= 2}
             navigation={navigation}
-            backgroundColor={baseColors.white}
+            wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+            onSearchFocus={() => this.setState({ disableScroll: true })}
+            onSearchBlur={() => this.setState({ disableScroll: false })}
           />
-          <Tabs initialActiveTab={activeTab} tabs={assetsTabs} bgColor={baseColors.white} />
-        </TopWrapper>
-        {activeTab === TOKENS && this.renderAssets(nonEmptyAssets)}
-        {activeTab === COLLECTIBLES && this.renderCollectibles()}
+          <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />
+          {activeTab === TOKENS && this.renderAssets(nonEmptyAssets)}
+          {activeTab === COLLECTIBLES && this.renderCollectibles()}
+        </ScrollView>
+        {!!hasAssetsSelected &&
         <Footer>
-          {!isSeparateFund && hasAssetsSelected &&
+          {!isSeparateFund &&
           <FooterInner style={{ alignItems: 'center' }}>
             <Label>{`Est. fee ${assetsTransferFee} ETH`}</Label>
             <Button
@@ -401,7 +413,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
               onPress={() => this.onNextPress()}
             />
           </FooterInner>}
-          {!!isSeparateFund && hasAssetsSelected &&
+          {!!isSeparateFund &&
           <FooterInner style={{ alignItems: 'center', flexDirection: 'column', justifyContent: 'center' }}>
             <Button
               title="Fund wallet"
@@ -411,8 +423,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
             <Label>{`Est. fee ${assetsTransferFee} ETH`}</Label>
           </FooterInner>
           }
-        </Footer>
-      </Container>
+        </Footer>}
+      </ContainerWithHeader>
     );
   }
 }

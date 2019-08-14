@@ -18,12 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Keyboard, TextInput, View } from 'react-native';
+import { FlatList, Keyboard, TextInput, View, ScrollView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
-import { Container, Wrapper } from 'components/Layout';
+
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -53,14 +55,8 @@ type State = {
   query: string,
   amounts: Object,
   errors: Object,
+  disableScroll: boolean,
 };
-
-const TopWrapper = styled.View`
-  padding-bottom: 10px;
-  border-bottom-width: 1px;
-  border-bottom-color: #ededed;
-  background-color: ${baseColors.white};
-`;
 
 const ErrorHolder = styled.View`
   width: 100%;
@@ -83,6 +79,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
     query: '',
     amounts: {},
     errors: {},
+    disableScroll: false,
   };
 
   constructor(props) {
@@ -177,7 +174,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
 
   render() {
     const { navigation, allAssets, addedAssets } = this.props;
-    const { query, errors } = this.state;
+    const { query, errors, disableScroll } = this.state;
     const assetsArray = Object.values(allAssets);
     const assets = assetsArray
       .filter((asset: any) => addedAssets.find((addedAsset: any) => asset.name === addedAsset.name));
@@ -186,50 +183,53 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
       : assets.filter((asset: any) => asset.name.toUpperCase().includes(query.toUpperCase()));
     const saveAvailable = Object.values(errors).filter(error => !!error).length === 0;
     return (
-      <Container>
-        <TopWrapper>
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Edit amount' }],
+          rightItems: [saveAvailable ? { label: 'Save', onPress: this.onNextPress } : {}],
+        }}
+      >
+        <ScrollView scrollEnabled={!disableScroll}>
           <SearchBlock
-            headerProps={{
-              title: 'edit amount',
-              onBack: () => navigation.goBack(null),
-              nextText: saveAvailable && 'Save',
-              onNextPress: saveAvailable ? this.onNextPress : () => {},
-            }}
             searchInputPlaceholder="Search asset"
             onSearchChange={this.handleSearchChange}
             itemSearchState={query.length >= 2}
             navigation={navigation}
             backgroundColor={baseColors.white}
+            wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+            onSearchFocus={() => this.setState({ disableScroll: true })}
+            onSearchBlur={() => this.setState({ disableScroll: false })}
           />
-        </TopWrapper>
-        <FlatList
-          keyExtractor={item => item.symbol}
-          data={filteredAssets}
-          renderItem={this.renderAsset}
-          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-          contentContainerStyle={{
-            flexGrow: 1,
-          }}
-          refreshing={false}
-          onRefresh={this.refreshAssetsList}
-          onScroll={() => Keyboard.dismiss()}
-          ListEmptyComponent={
-            <Wrapper
-              fullScreen
-              style={{
-                paddingTop: 90,
-                paddingBottom: 90,
-                alignItems: 'center',
-              }}
-            >
-              <EmptyStateParagraph
-                title="No assets found"
-                bodyText="Check if the name was entered correctly"
-              />
-            </Wrapper>
-          }
-        />
-      </Container>
+          <FlatList
+            keyExtractor={item => item.symbol}
+            data={filteredAssets}
+            renderItem={this.renderAsset}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+            contentContainerStyle={{
+              flexGrow: 1,
+            }}
+            refreshing={false}
+            onRefresh={this.refreshAssetsList}
+            onScroll={() => Keyboard.dismiss()}
+            scrollEnabled={!disableScroll}
+            ListEmptyComponent={
+              <Wrapper
+                fullScreen
+                style={{
+                  paddingTop: 90,
+                  paddingBottom: 90,
+                  alignItems: 'center',
+                }}
+              >
+                <EmptyStateParagraph
+                  title="No assets found"
+                  bodyText="Check if the name was entered correctly"
+                />
+              </Wrapper>
+            }
+          />
+        </ScrollView>
+      </ContainerWithHeader>
     );
   }
 }

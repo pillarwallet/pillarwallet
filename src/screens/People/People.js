@@ -22,10 +22,9 @@ import { connect } from 'react-redux';
 import {
   FlatList,
   Keyboard,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
   RefreshControl,
+  View,
+  ScrollView,
 } from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
@@ -50,10 +49,9 @@ import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
-import { Container, Wrapper } from 'components/Layout';
+import { Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import Separator from 'components/Separator';
 import Spinner from 'components/Spinner';
 import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
@@ -62,11 +60,13 @@ import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
   padding-left: 30px;
   border-bottom-width: 1px;
+  border-top-width: 1px;
   border-color: ${UIColors.defaultBorderColor};
   align-items: center;
   flex-direction: row;
@@ -87,21 +87,11 @@ const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
   margin-left: 10px;
 `;
 
-const EmptyStateBGWrapper = styled.View`
-  flex-direction: row;
-  justify-content: flex-start;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 0 20px 20px;
-`;
-
 const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
   border-radius: 10px;
-  background-color: ${baseColors.electricBlue}
+  background-color: ${props => props.backgroundColor || baseColors.electricBlue}
   padding: 3px 0;
   margin-top: 2px;
   margin-right: 1px;
@@ -110,19 +100,17 @@ const ItemBadge = styled.View`
 `;
 
 const BadgeIcon = styled(Icon)`
-  font-size: ${fontSizes.extraExtraSmall};
-  line-height: ${fontSizes.extraExtraSmall};
+  font-size: ${props => props.fontSize || fontSizes.extraExtraSmall};
+  line-height: ${props => props.fontSize || fontSizes.extraExtraSmall};
   color: ${baseColors.white};
 `;
 
 const InnerWrapper = styled.View`
   flex: 1;
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${baseColors.white};
 `;
 
 const MIN_QUERY_LENGTH = 2;
-
-const esBackground = require('assets/images/esLeftLong.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -160,13 +148,13 @@ const ConnectionStatus = (props: ConnectionStatusProps) => {
       iconName = 'warning';
       break;
     case 'muted':
-      iconName = 'mute';
+      iconName = 'sound-off';
       break;
     default:
       break;
   }
   return (
-    <ItemBadge>
+    <ItemBadge backgroundColor={baseColors.pinkishGrey}>
       <BadgeIcon name={iconName} />
     </ItemBadge>
   );
@@ -251,9 +239,9 @@ class PeopleScreen extends React.Component<Props, State> {
 
   renderSwipeoutBtns = (data) => {
     const swipeButtons = [
-      { actionType: MUTE, icon: 'mute' },
-      { actionType: DISCONNECT, icon: 'remove' },
-      { actionType: BLOCK, icon: 'warning' },
+      { actionType: MUTE, icon: 'mute', squarePrimary: true },
+      { actionType: DISCONNECT, icon: 'remove', squarePrimary: true },
+      { actionType: BLOCK, icon: 'warning', squareDanger: true },
     ];
 
     return swipeButtons.map((buttonDefinition) => {
@@ -284,7 +272,7 @@ class PeopleScreen extends React.Component<Props, State> {
             }}
           />
         ),
-        backgroundColor: baseColors.lighterGray,
+        backgroundColor: baseColors.white,
       };
     });
   };
@@ -292,6 +280,10 @@ class PeopleScreen extends React.Component<Props, State> {
   renderContact = ({ item }) => {
     const { unread = 0, status = '' } = item;
     const unreadCount = unread > 9 ? '9+' : unread;
+    const newMessageText = unread > 1 ? 'New Messages' : 'New Message';
+    const lastMessage = unread
+      ? newMessageText
+      : (item.lastMessage && item.lastMessage.content) || '';
     return (
       <Swipeout
         right={this.renderSwipeoutBtns(item)}
@@ -302,13 +294,15 @@ class PeopleScreen extends React.Component<Props, State> {
       >
         <ListItemWithImage
           label={item.username}
+          paragraph={lastMessage}
           onPress={this.handleContactCardPress(item)}
           avatarUrl={item.profileImage}
           navigateToProfile={this.handleContactCardPress(item)}
           imageUpdateTimeStamp={item.lastUpdateTime}
           unreadCount={unreadCount}
           customAddon={(status === 'muted' || status === 'blocked') ? <ConnectionStatus status={status} /> : null}
-          rightColumnInnerStyle={{ flexDirection: 'row' }}
+          rightColumnInnerStyle={{ flexDirection: 'row-reverse', paddingTop: spacing.small }}
+          noSeparator
         />
       </Swipeout>
     );
@@ -339,80 +333,43 @@ class PeopleScreen extends React.Component<Props, State> {
     }, 1000);
   };
 
-  render() {
-    const {
-      query,
-      showConfirmationModal,
-      manageContactType,
-      manageContactId,
-    } = this.state;
+  renderContent = (sortedLocalContacts: Object[], inSearchMode: boolean) => {
+    const { query } = this.state;
     const {
       searchResults,
       contactState,
       navigation,
       invitations,
-      localContacts,
       chats,
     } = this.props;
-    const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
+
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
-    const localContactsWithUnreads = localContacts.map((contact) => {
-      const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
-      if (Object.keys(chatWithUserInfo).length) {
-        if (chatWithUserInfo.unread) {
-          return {
-            ...contact,
-            unread: chatWithUserInfo.unread,
-            serverTimestamp: chatWithUserInfo.lastMessage ? chatWithUserInfo.lastMessage.serverTimestamp : null,
-          };
-        }
-        return {
-          ...contact,
-          serverTimestamp: chatWithUserInfo.lastMessage ? chatWithUserInfo.lastMessage.serverTimestamp : null,
-        };
-      }
-      return {
-        ...contact,
-        serverTimestamp: null,
-      };
-    });
-    const sortedLocalContacts = orderBy(
-      localContactsWithUnreads,
-      [(user) => {
-        if (user.serverTimestamp) {
-          return user.serverTimestamp;
-        }
-        return user.createdAt * 1000;
-      }],
-      'desc');
-    const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
 
     return (
-      <Container inset={{ bottom: 0 }} color={baseColors.white}>
+      <React.Fragment>
         <SearchBlock
           headerProps={{ title: 'people' }}
-          searchInputPlaceholder="Search or add new contact"
+          searchInputPlaceholder="Search or add people"
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={!!contactState}
-          navigation={navigation}
-          white
+          wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
         />
         {!inSearchMode && !!pendingConnectionRequests &&
-          <ConnectionRequestBanner
-            onPress={this.handleConnectionsRequestBannerPress}
-            underlayColor={baseColors.lightGray}
-          >
-            <React.Fragment>
-              <ConnectionRequestBannerText>
-                Connection requests
-              </ConnectionRequestBannerText>
-              <ConnectionRequestNotificationCircle>
-                {pendingConnectionRequests}
-              </ConnectionRequestNotificationCircle>
-              <ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
-            </React.Fragment>
-          </ConnectionRequestBanner>
+        <ConnectionRequestBanner
+          onPress={this.handleConnectionsRequestBannerPress}
+          underlayColor={baseColors.lightGray}
+        >
+          <React.Fragment>
+            <ConnectionRequestBannerText>
+              Connection requests
+            </ConnectionRequestBannerText>
+            <ConnectionRequestNotificationCircle>
+              {pendingConnectionRequests}
+            </ConnectionRequestNotificationCircle>
+            <ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
+          </React.Fragment>
+        </ConnectionRequestBanner>
         }
         <InnerWrapper>
           {inSearchMode && contactState === FETCHED && usersFound &&
@@ -423,72 +380,121 @@ class PeopleScreen extends React.Component<Props, State> {
             localContacts={sortedLocalContacts}
           />
           }
-
           {!inSearchMode && !!sortedLocalContacts.length &&
           <FlatList
             data={sortedLocalContacts}
+            extraData={chats}
             keyExtractor={(item) => item.id}
             renderItem={this.renderContact}
             initialNumToRender={8}
-            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
               paddingVertical: spacing.rhythm,
-              paddingTop: spacing.medium,
+              paddingTop: 0,
             }}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  const { fetchInviteNotifications } = this.props;
-                  fetchInviteNotifications();
-                }}
-              />
-            }
           />
           }
-
           {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
-          <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'} style={{ flex: 1 }}>
+          <View
+            style={{ flex: 1 }}
+          >
             {!!query && contactState === FETCHING &&
             <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>
             }
 
             {inSearchMode && contactState === FETCHED && !usersFound &&
-            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+            <Wrapper center fullScreen>
               <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
             </Wrapper>
             }
 
             {!inSearchMode && !sortedLocalContacts.length &&
             <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-              <EmptyStateBGWrapper>
-                <Image source={esBackground} />
-              </EmptyStateBGWrapper>
               <EmptyStateParagraph
-                title="Nobody is here"
-                bodyText="Start building your connection list by inviting friends or by searching for someone"
+                title="Start making friends"
+                bodyText="Build your connection list by searching for someone"
               />
             </Wrapper>
             }
-
-
-          </KeyboardAvoidingView>
+          </View>
           }
         </InnerWrapper>
-        <ConnectionConfirmationModal
-          showConfirmationModal={showConfirmationModal}
-          manageContactType={manageContactType}
-          contact={contact}
-          onConfirm={this.confirmManageAction}
-          onModalHide={() => {
-            this.setState({
-              showConfirmationModal: false,
-              forceHideRemoval: true,
-            });
+      </React.Fragment>
+    );
+  };
+
+  render() {
+    const {
+      query,
+      showConfirmationModal,
+      manageContactType,
+      manageContactId,
+    } = this.state;
+    const {
+      contactState,
+      localContacts,
+      chats,
+      fetchInviteNotifications,
+    } = this.props;
+    const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
+
+    const localContactsWithUnreads = localContacts.map((contact) => {
+      const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
+      return {
+        ...contact,
+        unread: chatWithUserInfo.unread || 0,
+        lastMessage: chatWithUserInfo.lastMessage || null,
+      };
+    });
+    const sortedLocalContacts = orderBy(
+      localContactsWithUnreads,
+      [(user) => {
+        if (user.lastMessage) {
+          return user.lastMessage.serverTimestamp;
+        }
+        return user.createdAt * 1000;
+      }],
+      'desc');
+    const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
+
+    return (
+      <ContainerWithHeader
+        backgroundColor={baseColors.white}
+        headerProps={{
+          leftItems: [{ user: true }],
+        }}
+        inset={{ bottom: 0 }}
+      >
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          contentContainerStyle={{ flexGrow: 1 }}
+          onScroll={() => {
+            if (inSearchMode) {
+              Keyboard.dismiss();
+            }
           }}
-        />
-      </Container>
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => { fetchInviteNotifications(); }}
+            />
+          }
+        >
+          {this.renderContent(sortedLocalContacts, inSearchMode)}
+          <ConnectionConfirmationModal
+            showConfirmationModal={showConfirmationModal}
+            manageContactType={manageContactType}
+            contact={contact}
+            onConfirm={this.confirmManageAction}
+            onModalHide={() => {
+              this.setState({
+                showConfirmationModal: false,
+                forceHideRemoval: true,
+              });
+            }}
+          />
+        </ScrollView>
+      </ContainerWithHeader>
     );
   }
 }

@@ -343,10 +343,6 @@ class Profile extends React.Component<Props, State> {
   };
 
   navigateToContactInfo = () => {
-    const { logScreenView } = this.props;
-
-    logScreenView('View contact info', 'Profile');
-
     requestAnimationFrame(() => {
       const { navigation } = this.props;
       navigation.navigate(CONTACT_INFO);
@@ -657,7 +653,7 @@ class Profile extends React.Component<Props, State> {
             <SlideModal
               isVisible={showCheckPinModal}
               onModalHide={this.handleCheckPinModalClose}
-              title="enter pincode"
+              title="Enter pincode"
               centerTitle
               fullScreen
               showHeader

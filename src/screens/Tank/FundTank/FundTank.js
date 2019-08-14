@@ -29,17 +29,17 @@ import get from 'lodash.get';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
-import { Container, Footer, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
-import Header from 'components/Header';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
-import { fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
@@ -83,6 +83,7 @@ const FooterInner = styled.View`
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
+  padding: ${spacing.large}px;
 `;
 
 type Props = {
@@ -127,7 +128,7 @@ class FundTank extends React.Component<Props, State> {
     this.setState({ value });
   };
 
-  handleFormSubmit = () => {
+  handleFormSubmit = (isInitFlow: boolean) => {
     this.formSubmitted = true;
     const { navigation } = this.props;
     const formValues = this._form.getValue();
@@ -135,7 +136,7 @@ class FundTank extends React.Component<Props, State> {
     if (!formValues) return;
 
     Keyboard.dismiss();
-    navigation.navigate(FUND_CONFIRM, { amount: formValues.amount });
+    navigation.navigate(FUND_CONFIRM, { amount: formValues.amount, isInitFlow });
   };
 
   useMaxValue = () => {
@@ -165,12 +166,14 @@ class FundTank extends React.Component<Props, State> {
       topUpFee,
       rates,
       baseFiatCurrency,
+      navigation,
     } = this.props;
 
     const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
     const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const isInitFlow = navigation.getParam('isInitFlow', false);
 
     // balance
     const balance = getBalance(balances, token);
@@ -210,12 +213,25 @@ class FundTank extends React.Component<Props, State> {
     });
 
     return (
-      <Container>
-        <Header
-          onBack={() => this.props.navigation.goBack(null)}
-          title="fund plr tank"
-          white
-        />
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: isInitFlow ? 'Stake initial PLR' : 'Fund PLR tank' }] }}
+        backgroundColor={baseColors.white}
+        keyboardAvoidFooter={(
+          <FooterInner>
+            <Label>Estimated fee {feeInEth} ETH</Label>
+            {!!value && !!parseFloat(value.amount) &&
+            <Button
+              disabled={!session.isOnline || !topUpFee.isFetched}
+              small
+              flexRight
+              title="Next"
+              onPress={() => this.handleFormSubmit(isInitFlow)}
+            />
+            }
+          </FooterInner>
+        )}
+        minAvoidHeight={200}
+      >
         <Wrapper regularPadding>
           <Form
             ref={node => { this._form = node; }}
@@ -237,21 +253,7 @@ class FundTank extends React.Component<Props, State> {
             </TouchableOpacity>
           </ActionsWrapper>
         </Wrapper>
-        <Footer keyboardVerticalOffset={35}>
-          <FooterInner>
-            <Label>Estimated fee {feeInEth} ETH</Label>
-            {!!value && !!parseFloat(value.amount) &&
-              <Button
-                disabled={!session.isOnline || !topUpFee.isFetched}
-                small
-                flexRight
-                title="Next"
-                onPress={this.handleFormSubmit}
-              />
-            }
-          </FooterInner>
-        </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

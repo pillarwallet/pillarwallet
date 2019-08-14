@@ -26,8 +26,8 @@ import styled from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
 import { CachedImage } from 'react-native-cached-image';
 
-import { Container, ScrollWrapper } from 'components/Layout';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ScrollWrapper } from 'components/Layout';
 import { BoldText, BaseText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
@@ -213,7 +213,6 @@ class ExchangeInfo extends React.Component<Props, State> {
 
   render() {
     const {
-      navigation,
       assets,
       exchangeAllowances,
       fetchTransactionsHistory,
@@ -224,15 +223,13 @@ class ExchangeInfo extends React.Component<Props, State> {
       .filter(({ symbol }) => exchangeAllowances.find(({ assetCode }) => assetCode === symbol));
 
     return (
-      <Container color={baseColors.white}>
-        <Header
-          title="settings"
-          onBack={() => navigation.goBack(null)}
-          nextText="Get help"
-          onNextPress={() => Intercom.displayMessenger()}
-          headerRightFlex={2}
-          white
-        />
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Settings' }],
+          rightItems: [{ label: 'Get help', onPress: () => Intercom.displayMessenger() }],
+        }}
+        inset={{ bottom: 'never' }}
+      >
         <ScrollWrapper color={UIColors.defaultBackgroundColor}>
           {!!connectedProviders.length &&
           <React.Fragment>
@@ -267,7 +264,7 @@ class ExchangeInfo extends React.Component<Props, State> {
             </React.Fragment>
           }
         </ScrollWrapper>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

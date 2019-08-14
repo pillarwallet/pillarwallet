@@ -28,18 +28,20 @@ import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { UIColors } from 'utils/variables';
 import { isIphoneX } from 'utils/common';
+
 import { ScrollWrapper } from './Layout';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   children?: React.Node,
-  keyboardAvoidFooter?: React.Node,
   headerProps?: Object,
   inset?: Object,
   backgroundColor?: string,
+  keyboardAvoidFooter?: React.Node,
+  minAvoidHeight?: number,
 };
 
-const StyledSafeAreaView = styled(SafeAreaView)`
+export const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
   flex: 1;
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
@@ -49,6 +51,7 @@ const ContentWrapper = styled.View`
   flex-grow: 1;
   flex: 1;
 `;
+
 const Footer = styled.KeyboardAvoidingView`
   width: 100%;
 `;
@@ -76,9 +79,10 @@ class ContainerWithHeader extends React.Component<Props> {
   }
 
   setStatusBarStyleForView = () => {
-    const { backgroundColor } = this.props;
+    const { headerProps = {} } = this.props;
+    const { color } = headerProps;
     let statusBarStyle = 'dark-content';
-    if (backgroundColor && isColorDark(backgroundColor)) {
+    if (color && isColorDark(color)) {
       statusBarStyle = 'light-content';
     }
     StatusBar.setBarStyle(statusBarStyle);
@@ -108,13 +112,14 @@ class ContainerWithHeader extends React.Component<Props> {
       inset,
       backgroundColor,
       keyboardAvoidFooter,
+      minAvoidHeight,
     } = this.props;
 
     const topInset = headerProps.floating ? 'always' : 'never';
     const bottomInset = keyboardAvoidFooter ? 'never' : 'always';
     const androidStatusBarSpacing = headerProps.floating ? StatusBar.currentHeight : 0;
-    const shouldFooterAvoidKeyboard = screenHeight > 600; // if not checked on smaller screens keyboard and footer
-    // covers entire content;
+    const shouldFooterAvoidKeyboard = screenHeight > minAvoidHeight || 600; // if not checked on smaller screens
+    // keyboard and footer covers entire content;
 
     return (
       <View style={{ flex: 1 }}>
@@ -134,7 +139,11 @@ class ContainerWithHeader extends React.Component<Props> {
         >
           <SafeAreaView
             forceInset={{ top: 'never', bottom: 'always', ...inset }}
-            style={{ backgroundColor, width: '100%', flexWrap: 'wrap' }}
+            style={{
+              backgroundColor: backgroundColor || UIColors.defaultBackgroundColor,
+              width: '100%',
+              flexWrap: 'wrap',
+            }}
           >
             {keyboardAvoidFooter}
           </SafeAreaView>

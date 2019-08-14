@@ -1,0 +1,6 @@
+{
+  "name": "SmartWalletIntro",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./SmartWalletIntro.js"
+}

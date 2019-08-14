@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import { responsiveSize } from 'utils/ui';
 
 export const baseColors = {
@@ -76,7 +77,7 @@ export const baseColors = {
   pattensBlue: '#F0F5FA',
   shark: '#292c33',
   caribbeanGreen: '#4cf18b',
-  royalBlue: '#4588de',
+  royalBlue: '#3b7af2',
   blumine: '#275692',
   emerald: '#3dd276',
   greyser: '#d1d9e4',
@@ -88,10 +89,28 @@ export const baseColors = {
   lavenderBlue: '#c3e0ff',
   hoki: '#647fa4',
   deepSkyBlue: '#01BFFF',
-  blueViolet: '#b233e4',
   ultramarine: '#0a0c78',
-  pomegranate: '#f33726',
+  toryBlue: '#2f3195',
+  blueViolet: '#b233e4',
+  jellyBean: '#497391',
   aluminium: '#a9aeb8',
+  danube: '#5e8fcc',
+  patternsBlue: '#f4f7fb',
+  spindle: '#b5d0ee',
+  pomegranate: '#f33726',
+  quartz: '#d9e3f5',
+  lavender: '#ebebfc',
+  shipCove: '#8798c2',
+  blueYonder: '#818eb3',
+  zircon: '#f3f7ff',
+  malibu: '#58a7ff',
+  redDamask: '#ca674c',
+  dodgerBlue: '#007aff',
+  indianRed: '#cb6262',
+  pinkishGrey: '#cacaca',
+  solitude: '#ebeff2',
+  persianBlue: '#1D24D8',
+  pastelGreen: '#77D16D',
   dell: '#467038',
   stratos: '#000260',
   rockBlue: '#8e8fb8',
@@ -123,9 +142,13 @@ export const UIColors = {
   actionButtonShadowColor: 'rgba(18, 63, 111, 0.1)',
   defaultDividerColor: baseColors.mediumLightGray,
   actionButtonBorderColor: 'rgba(255, 255, 255, 0.37)',
+  headerContentBorder: 'rgba(255, 255, 255, 0.1)',
+  listDivider: 'rgba(25, 16, 91, 0.05)',
+  headerButtonBorder: 'rgba(0, 122, 255, 0.05)',
 };
 
 export const fontSizes = {
+  micro: 8,
   tiny: 10,
   extraExtraSmall: 12,
   extraSmall: 14,
@@ -144,6 +167,8 @@ export const fontSizes = {
   androidCheckmarkIcon: 26,
   rJumbo: responsiveSize(64),
   rMedium: responsiveSize(17),
+  rLarge: responsiveSize(25),
+  rExtraLarge: responsiveSize(40),
 };
 
 export const spacing = {

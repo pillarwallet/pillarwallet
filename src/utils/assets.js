@@ -19,9 +19,9 @@
 */
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
+import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
-import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import { ETH } from 'constants/assetsConstants';
 import { formatAmount } from 'utils/common';
 
@@ -85,6 +85,31 @@ export function checkIfEnoughForFee(balances: Balances, txFeeInWei: BigNumber): 
   return balanceInWei.gte(txFeeInWei);
 }
 
+export function calculatePortfolioBalance(assets: Assets, rates: Rates, balances: Object) {
+  // CLEANUP REQUIRED
+  return Object
+    .keys(assets)
+    .map(key => assets[key])
+    .map(({ symbol }) => {
+      const assetRates = rates[symbol] || {};
+      const balance = getBalance(balances, symbol);
+      const assetFiatBalance = Object
+        .keys(assetRates)
+        .map(key => ({
+          currency: key,
+          total: assetRates[key] * (balance || 0),
+        }));
+      return assetFiatBalance;
+    })
+    .reduce((memo, item) => {
+      return memo.concat(item);
+    }, [])
+    .reduce((memo, item) => {
+      memo[item.currency] = (memo[item.currency] || 0) + item.total;
+      return memo;
+    }, { GBP: 0 });
+}
+
 function getPMTTokenAddress(): string {
   switch (NETWORK_PROVIDER) {
     case 'ropsten':
@@ -95,6 +120,7 @@ function getPMTTokenAddress(): string {
       return '';
   }
 }
+
 export function generatePMTToken(): Asset {
   return {
     isPreferred: false,
