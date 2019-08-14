@@ -89,6 +89,13 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
     const saltedPin = await getSaltedPin(pin, dispatch);
     try {
       let wallet;
+
+      /**
+       * we want Firebase Analytics data collection to be off by default,
+       * this check is used for existing users to turn off firebase Analytics
+       * data collection after app update if the `firebaseAnalyticsConnectionEnabled`
+       * was not set before (we set it during onboarding so unset value means existing user)
+       */
       if (!userJoinedBeta && firebaseAnalyticsConnectionEnabled) {
         dispatch(setFirebaseAnalyticsCollectionEnabled(false));
       }
