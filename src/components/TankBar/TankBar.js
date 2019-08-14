@@ -22,7 +22,6 @@ import { Animated } from 'react-native';
 import styled from 'styled-components/native/index';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { MediumText } from 'components/Typography';
-// import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 
 // configs
@@ -149,19 +148,6 @@ const Value = styled(MediumText)`
   color: ${props => props.color ? props.color : baseColors.slateBlack};
 `;
 
-// const ChevronWrapper = styled.View`
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   margin-left: 4px;
-//   margin-top: -2px;
-// `;
-//
-// const SelectorChevron = styled(Icon)`
-//   font-size: 5px;
-//   color: ${baseColors.slateBlack};
-// `;
-
 export default class TankBar extends React.Component<Props, State> {
   static defaultProps = {
     circle: false,
@@ -271,19 +257,6 @@ export default class TankBar extends React.Component<Props, State> {
           >
             <Value color={baseColors.darkGray}>{maxValue}</Value>
             <Value style={{ marginLeft: 4 }}>{PPN_TOKEN}</Value>
-            { /* Uncomment when needed
-            <ChevronWrapper>
-              <SelectorChevron
-                name="chevron-right"
-                style={{ transform: [{ rotate: '-90deg' }] }}
-              />
-              <SelectorChevron
-                name="chevron-right"
-                style={{
-                  transform: [{ rotate: '90deg' }],
-                }}
-              />
-            </ChevronWrapper> */}
           </SideButton>
         </Row>
         {!!barWidth && !!sideButtonWidth &&
