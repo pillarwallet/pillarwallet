@@ -112,7 +112,7 @@ export const setFirebaseAnalyticsCollectionEnabled = (enabled: boolean) => {
   };
 };
 
-export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
+export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessToast: boolean = false) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { user: { data: { username, walletId } } } = getState();
     let message;
@@ -134,6 +134,7 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
         userJoinedBeta,
       },
     });
+    if (ignoreSuccessToast) return;
     Toast.show({ message, type: 'success', title: 'Success' });
   };
 };
