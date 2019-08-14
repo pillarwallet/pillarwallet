@@ -21,12 +21,12 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { IMPORT_WALLET, PERMISSIONS, NEW_WALLET } from 'constants/navigationConstants';
-import { Wrapper, Container, Footer } from 'components/Layout';
-import { fontSizes } from 'utils/variables';
+import { IMPORT_WALLET } from 'constants/navigationConstants';
+import { Container, Footer, Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import AnimatedBackground from 'components/AnimatedBackground';
 import ButtonText from 'components/ButtonText';
+import { fontSizes } from 'utils/variables';
 import { navigateToNewWalletPageAction } from 'actions/walletActions';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
@@ -43,8 +43,8 @@ type State = {
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
 
 const PillarLogo = styled(CachedImage)`
-  height: 60;
-  width: 120;
+  height: 60px;
+  width: 120px;
 `;
 
 class Welcome extends React.Component<Props, State> {
@@ -53,29 +53,10 @@ class Welcome extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.listeners = [];
+    this.state = {
+      shouldAnimate: true,
+    };
   }
-
-  state = {
-    shouldAnimate: true,
-  };
-
-  loginAction = () => {
-    if (Platform.OS === 'android') {
-      this.props.navigation.navigate(PERMISSIONS, { nextScreen: NEW_WALLET });
-    } else {
-      this.props.navigateToNewWalletPage();
-    }
-  };
-
-  navigateToWalletImportPage = () => {
-    const { navigation } = this.props;
-
-    if (Platform.OS === 'android') {
-      navigation.navigate(PERMISSIONS, { nextScreen: IMPORT_WALLET });
-    } else {
-      navigation.navigate(IMPORT_WALLET);
-    }
-  };
 
   componentDidMount() {
     const { navigation } = this.props;
@@ -90,18 +71,30 @@ class Welcome extends React.Component<Props, State> {
     this.listeners.forEach(listenerItem => listenerItem.remove());
   }
 
+  loginAction = () => {
+    this.props.navigateToNewWalletPage();
+  };
+
+  navigateToWalletImportPage = () => {
+    const { navigation } = this.props;
+    navigation.navigate(IMPORT_WALLET);
+  };
+
   render() {
+    const { shouldAnimate } = this.state;
     return (
       <Container>
         <AnimatedBackground
-          shouldAnimate={this.state.shouldAnimate}
+          shouldAnimate={shouldAnimate}
           disabledAnimation={Platform.OS === 'android' && Platform.Version < 24}
         />
         <Wrapper fullScreen center>
           <PillarLogo source={pillarLogoSource} />
         </Wrapper>
-        <Footer>
-          <Button block marginBottom="20px" onPress={this.loginAction} title="New wallet" />
+        <Footer
+          style={{ paddingBottom: 30 }}
+        >
+          <Button roundedCorners marginBottom="20px" onPress={this.loginAction} title="Create account" width="auto" />
           <ButtonText
             buttonText="Restore wallet"
             onPress={this.navigateToWalletImportPage}

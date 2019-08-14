@@ -10597,6 +10597,13 @@ react-native-swipeout@^2.3.6:
     prop-types "^15.5.10"
     react-tween-state "^0.1.5"
 
+react-native-swiper@^1.5.14:
+  version "1.5.14"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-swiper/-/react-native-swiper-1.5.14.tgz#1c6f949ca377186300f972bb0f30d24062c899aa"
+  integrity sha1-HG+UnKN3GGMA+XK7DzDSQGLImao=
+  dependencies:
+    prop-types "^15.5.10"
+
 react-native-tab-view@^0.0.77:
   version "0.0.77"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-tab-view/-/react-native-tab-view-0.0.77.tgz#11ceb8e7c23100d07e628dc151b57797524d00d4"
