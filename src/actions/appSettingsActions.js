@@ -113,8 +113,8 @@ export const setFirebaseAnalyticsCollectionEnabled = (enabled: boolean) => {
 };
 
 export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
-  return async (dispatch: Function, getState: Function) => {
-    const { user: { data: { username } } } = getState();
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const { user: { data: { username, walletId } } } = getState();
     let message;
     if (userJoinedBeta) {
       dispatch(setFirebaseAnalyticsCollectionEnabled(true));
@@ -126,7 +126,7 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
       dispatch(setFirebaseAnalyticsCollectionEnabled(false));
       message = 'You have successfully left Beta Testing.';
     }
-    Toast.show({ message, type: 'success', title: 'Success' });
+    await api.updateUser({ walletId, betaProgramParticipant: userJoinedBeta });
     dispatch(saveDbAction('app_settings', { appSettings: { userJoinedBeta } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
@@ -134,5 +134,6 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
         userJoinedBeta,
       },
     });
+    Toast.show({ message, type: 'success', title: 'Success' });
   };
 };

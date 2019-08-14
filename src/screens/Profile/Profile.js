@@ -197,6 +197,7 @@ type State = {
   showBiometricsSelector: boolean,
   showTrackingModal: boolean,
   showJoinBetaModal: boolean,
+  joinBetaPressed: boolean,
 }
 
 class Profile extends React.Component<Props, State> {
@@ -217,6 +218,7 @@ class Profile extends React.Component<Props, State> {
       showBiometricsSelector: false,
       showTrackingModal: false,
       showJoinBetaModal: false,
+      joinBetaPressed: false,
     };
   }
 
@@ -362,13 +364,20 @@ class Profile extends React.Component<Props, State> {
       const { navigation } = this.props;
       navigation.navigate(CONTACT_INFO);
     });
-  }
+  };
 
   handleUpdateAppearance = (layoutId: string) => {
     const { updateAssetsLayout } = this.props;
-
     updateAssetsLayout(layoutId);
-  }
+  };
+
+  onJoinBetaModalHidden = () => {
+    // this is needed so that toast message can be shown in settings instead of slide modal that closes
+    if (this.state.joinBetaPressed) {
+      this.setState({ joinBetaPressed: false });
+      this.props.setUserJoinedBeta(true);
+    }
+  };
 
   render() {
     const {
@@ -793,14 +802,21 @@ class Profile extends React.Component<Props, State> {
               <SubHeading>SYSTEM</SubHeading>
             </ListSeparator>
 
-            <ProfileSettingsItem
-              key="joinBeta"
-              label={userJoinedBeta ? 'Leave Beta Testing' : 'Join Beta Testing'}
-              onPress={() => userJoinedBeta
-                ? setUserJoinedBeta(false)
-                : this.setState({ showJoinBetaModal: true })
-              }
-            />
+            {userJoinedBeta &&
+              <ProfileSettingsItem
+                key="joinBeta"
+                label="Leave Beta Testing"
+                onPress={() => setUserJoinedBeta(false)}
+              />
+            }
+
+            {!userJoinedBeta &&
+              <ProfileSettingsItem
+                key="joinBeta"
+                label="Join Beta Testing"
+                onPress={() => this.setState({ showJoinBetaModal: true })}
+              />
+            }
 
             <ProfileSettingsItem
               key="systemInfo"
@@ -835,6 +851,7 @@ class Profile extends React.Component<Props, State> {
               fullScreen
               showHeader
               backgroundColor={baseColors.snowWhite}
+              onModalHidden={this.onJoinBetaModalHidden}
               avoidKeyboard
               title="join beta"
               onModalHide={() => this.setState({ showJoinBetaModal: false })}
@@ -851,10 +868,7 @@ class Profile extends React.Component<Props, State> {
                 </Description>
                 <Button
                   title="Join Beta Testing"
-                  onPress={() => {
-                    setUserJoinedBeta(true);
-                    this.setState({ showJoinBetaModal: false });
-                  }}
+                  onPress={() => this.setState({ showJoinBetaModal: false, joinBetaPressed: true })}
                   style={{
                     marginBottom: 13,
                   }}

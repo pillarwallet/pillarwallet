@@ -307,7 +307,7 @@ export const registerWalletAction = () => {
       isImported,
     });
 
-    // we don't want to track by default, we will user this only when user applies for beta
+    // we don't want to track by default, we will use this only when user applies for beta
     dispatch(setFirebaseAnalyticsCollectionEnabled(false));
 
     // STEP 6: all done, navigate to the assets screen
