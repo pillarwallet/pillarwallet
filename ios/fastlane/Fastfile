@@ -72,8 +72,8 @@ platform :ios do
 
     # get our provisioning profile
     match(type: "appstore",
-      readonly: false,
-      git_branch: "fix/staging-dist-cert",
+      readonly: true,
+      git_branch: "develop,
       app_identifier: "com.pillarproject.wallet.staging",
       team_id: "J9DEY3FGPD",
     )
@@ -197,7 +197,7 @@ platform :ios do
       workspace: "pillarwallet.xcworkspace",
       configuration: "Staging.Release",
       scheme: "Staging",
-      xcargs: "-UseModernBuildSystem='NO' BUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AdHoc com.pillarproject.wallet.staging 1563899180' DEVELOPMENT_TEAM='J9DEY3FGPD'",
+      xcargs: "-UseModernBuildSystem='NO' BUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AdHoc com.pillarproject.wallet.staging' DEVELOPMENT_TEAM='J9DEY3FGPD'",
       export_method: "ad-hoc",
       export_options: {
         provisioningProfiles: { 
