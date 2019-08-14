@@ -20,8 +20,7 @@
 
 import { SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 
-// temp actions
-export const setActiveBNetworkAction = (id: string) => {
+export const setActiveBlockchainNetworkAction = (id: string) => {
   return async (dispatch: Function) => {
     dispatch({
       type: SET_ACTIVE_NETWORK,

@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { Animated } from 'react-native';
 import styled from 'styled-components/native/index';
+import get from 'lodash.get';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
@@ -82,7 +83,6 @@ const ProgressLabel = styled.View`
   shadow-opacity: 0.3;
   shadow-offset: 0px 2px;
 `;
-
 
 const AnimatedProgressLabel = Animated.createAnimatedComponent(ProgressLabel);
 
@@ -234,7 +234,7 @@ export default class TankBar extends React.Component<Props, State> {
           <ProgressBarSide>
             <ProgressBarWrapper
               onLayout={(e) => {
-                const { width } = e.nativeEvent.layout;
+                const width = get(e, 'nativeEvent.layout.width', 200);
                 this.setState({ barWidth: width });
               }}
             >
@@ -251,7 +251,7 @@ export default class TankBar extends React.Component<Props, State> {
           </ProgressBarSide>
           <SideButton
             onLayout={(e) => {
-              const { width } = e.nativeEvent.layout;
+              const width = get(e, 'nativeEvent.layout.width', 80);
               this.setState({ sideButtonWidth: width });
             }}
           >

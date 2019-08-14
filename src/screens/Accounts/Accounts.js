@@ -47,7 +47,7 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
-import { setActiveBNetworkAction } from 'actions/blockchainNetworkActions';
+import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
@@ -57,7 +57,7 @@ import styled from 'styled-components/native';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  setActiveBNetwork: Function,
+  setActiveBlockchainNetwork: Function,
   blockchainNetworks: Object[],
   balances: Balances,
   rates: Rates,
@@ -115,11 +115,11 @@ class AccountsScreen extends React.Component<Props, State> {
   };
 
   setPPNAsActiveNetwork = () => {
-    const { setActiveBNetwork, navigation, accounts } = this.props;
+    const { setActiveBlockchainNetwork, navigation, accounts } = this.props;
     const activeAccount = getActiveAccount(accounts) || { type: '' };
 
     if (activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
-      setActiveBNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
+      setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
       navigation.navigate(ASSETS);
     } else {
       this.setState({ showPinModal: true });
@@ -129,7 +129,7 @@ class AccountsScreen extends React.Component<Props, State> {
   switchToSmartWalletAndGoToPPN = async (_: string, wallet: Object) => {
     const {
       accounts,
-      setActiveBNetwork,
+      setActiveBlockchainNetwork,
       switchAccount,
       navigation,
     } = this.props;
@@ -137,7 +137,7 @@ class AccountsScreen extends React.Component<Props, State> {
     const smartAccount = (accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || { id: '' });
     await switchAccount(smartAccount.id, wallet.privateKey);
 
-    setActiveBNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
+    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
     this.setState({ changingNetwork: false });
     navigation.navigate(ASSETS);
   };
@@ -276,7 +276,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  setActiveBNetwork: (id: string) => dispatch(setActiveBNetworkAction(id)),
+  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
 });

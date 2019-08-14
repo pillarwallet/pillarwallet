@@ -86,7 +86,7 @@ export default class SelectList extends React.Component<Props, State> {
           />
         </SearchBarWrapper>
         <FlatList
-          data={filteredOptions || options}
+          data={filteredOptions}
           extraData={filteredOptions}
           renderItem={this.renderListItem}
           keyExtractor={({ name }) => name}
