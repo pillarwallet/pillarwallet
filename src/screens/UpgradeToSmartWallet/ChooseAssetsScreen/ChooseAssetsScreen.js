@@ -20,10 +20,8 @@
 import * as React from 'react';
 import { FlatList, Keyboard, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { utils } from 'ethers';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -35,9 +33,8 @@ import Checkbox from 'components/Checkbox';
 import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
-import { BaseText } from 'components/Typography';
 import Toast from 'components/Toast';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { EDIT_ASSET_AMOUNT_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
@@ -47,7 +44,6 @@ import {
   addAssetsToSmartWalletUpgradeAction,
   addCollectiblesToSmartWalletUpgradeAction,
 } from 'actions/smartWalletActions';
-import { fetchGasInfoAction } from 'actions/historyActions';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
@@ -55,7 +51,6 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import type { AssetTransfer, Assets, Balances } from 'models/Asset';
 import type { Collectible, CollectibleTransfer } from 'models/Collectible';
-import type { GasInfo } from 'models/GasInfo';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -67,8 +62,6 @@ type Props = {
   addAssetsToSmartWallet: Function,
   addCollectiblesToSmartWallet: Function,
   addedAssets: AssetTransfer[],
-  fetchGasInfo: Function,
-  gasInfo: GasInfo,
   session: Object,
 };
 
@@ -87,12 +80,6 @@ const FooterInner = styled.View`
   width: 100%;
 `;
 
-const Label = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  color: #999999;
-`;
-
-const GAS_LIMIT = 500000;
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 class ChooseAssetsScreen extends React.Component<Props, State> {
@@ -103,16 +90,6 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     activeTab: TOKENS,
     disableScroll: false,
   };
-
-  componentDidMount() {
-    this.props.fetchGasInfo();
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
-      this.props.fetchGasInfo();
-    }
-  }
 
   handleSearchChange = (query: any) => {
     this.setState({ query });
@@ -331,7 +308,6 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       assets,
       balances,
       addedAssets,
-      gasInfo,
     } = this.props;
     const {
       query,
@@ -367,12 +343,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       },
     ];
 
-    const hasAssetsSelected = !!assetsToTransfer.length;
-    const gasPrice = gasInfo.gasPrice.avg || 0;
-    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei').mul(GAS_LIMIT);
-    const assetsTransferFee = formatAmount(utils.formatEther(
-      BigNumber(gasPriceWei * (assetsToTransfer.length + collectiblesToTransfer.length)).toFixed(),
-    ));
+    const hasAssetsSelected = !!assetsToTransfer.length || !!collectiblesToTransfer.length;
     const options = navigation.getParam('options', { isSeparateRecovery: false });
     // NOTE: we can come to this page later when we decide to transfer assets to the existing smart wallet
     const { isSeparateFund } = options;
@@ -405,9 +376,9 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
         {!!hasAssetsSelected &&
         <Footer>
           {!isSeparateFund &&
-          <FooterInner style={{ alignItems: 'center' }}>
-            <Label>{`Est. fee ${assetsTransferFee} ETH`}</Label>
+          <FooterInner>
             <Button
+              style={{ marginLeft: 'auto' }}
               small
               title="Next"
               onPress={() => this.onNextPress()}
@@ -420,7 +391,6 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
               onPress={() => this.onNextPress(true)}
               style={{ marginBottom: 10 }}
             />
-            <Label>{`Est. fee ${assetsTransferFee} ETH`}</Label>
           </FooterInner>
           }
         </Footer>}
@@ -433,12 +403,10 @@ const mapStateToProps = ({
   assets: { data: assets },
   smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
   session: { data: session },
-  history: { gasInfo },
 }) => ({
   assets,
   addedAssets,
   session,
-  gasInfo,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -460,7 +428,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   addCollectiblesToSmartWallet: collectibles => dispatch(
     addCollectiblesToSmartWalletUpgradeAction(collectibles),
   ),
-  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ChooseAssetsScreen);
