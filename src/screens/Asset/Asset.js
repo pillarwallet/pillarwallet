@@ -33,7 +33,6 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BoldText, BaseText, Paragraph } from 'components/Typography';
-import TankAssetBalance from 'components/TankAssetBalance';
 import { DeploymentView } from 'components/DeploymentView';
 
 // actions
@@ -51,9 +50,8 @@ import type { Accounts } from 'models/Account';
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { MAIN_NETWORK, PILLAR_NETWORK } from 'constants/tabsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
@@ -61,7 +59,6 @@ import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapTransactionsHistory } from 'utils/feedData';
-import { getActiveAccountType } from 'utils/accounts';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -116,7 +113,6 @@ type State = {
     },
   },
   showDescriptionModal: boolean,
-  activeTab: string,
 };
 
 const AssetCardWrapper = styled.View`
@@ -170,7 +166,6 @@ class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
     showDescriptionModal: false,
-    activeTab: MAIN_NETWORK,
   };
 
   componentDidMount() {
@@ -189,10 +184,6 @@ class AssetScreen extends React.Component<Props, State> {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
-
-  handleCardTap = () => {
-    this.props.navigation.goBack();
-  };
 
   handleOpenShareDialog = (address: string) => {
     Share.share({ title: 'Public address', message: address });
@@ -230,10 +221,6 @@ class AssetScreen extends React.Component<Props, State> {
     }
   };
 
-  setActiveTab = (activeTab) => {
-    this.setState({ activeTab });
-  };
-
   render() {
     const {
       assets,
@@ -248,23 +235,19 @@ class AssetScreen extends React.Component<Props, State> {
       accounts,
       history,
       contacts,
-      smartWalletFeatureEnabled,
     } = this.props;
 
-    const { showDescriptionModal, activeTab } = this.state;
+    const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
-    const { token } = assetData;
+    const { token, isSynthetic = false } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const tokenRate = getRate(rates, token, fiatCurrency);
     const balance = getBalance(balances, token);
-    const isWalletEmpty = balance <= 0;
-    const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
-    const formattedBalanceInFiat = formatMoney(totalInFiat);
     const paymentNetworkBalance = getBalance(paymentNetworkBalances, token);
-    const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
-    const paymentNetworkBalanceInFiat = paymentNetworkBalance * tokenRate;
-    const formattedPaymentNetworkBalanceInFiat = formatMoney(paymentNetworkBalanceInFiat);
-    const displayAmount = formatMoney(balance, 4);
+    const isWalletEmpty = !isSynthetic ? balance <= 0 : paymentNetworkBalance <= 0;
+    const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
+    const displayAmount = !isSynthetic ? formatMoney(balance, 4) : formatMoney(paymentNetworkBalance, 4);
+    const fiatAmount = !isSynthetic ? formatMoney(totalInFiat) : paymentNetworkBalance * tokenRate;
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     const {
@@ -274,44 +257,19 @@ class AssetScreen extends React.Component<Props, State> {
       disclaimer,
     } = assetsConfig[token] || {};
 
-    const activeAccountType = getActiveAccountType(accounts);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
-    const isSmartWallet = smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-    const mainNetworkTransactions = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
-    const tokenTransactionsOnMainNetwork = mainNetworkTransactions.filter(({ asset }) => asset === token);
+    const mappedTransactions = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const tokenMappedTransactions = mappedTransactions.filter(({ asset }) => asset === token);
+    const tokenMainnetTransactions = tokenMappedTransactions.filter(({ isPPNTransaction = false, note = '' }) => {
+      return !isPPNTransaction && note !== PAYMENT_NETWORK_TX_SETTLEMENT && note !== PAYMENT_NETWORK_ACCOUNT_TOPUP;
+    });
+    const tokenPPNTransactions = tokenMappedTransactions.filter(({ isPPNTransaction = false }) => isPPNTransaction);
+    const relatedTransactions = isSynthetic ? tokenPPNTransactions : tokenMainnetTransactions;
     const { upgrade: { deploymentStarted } } = smartWalletState;
-
-    const transactionsTabs = [
-      {
-        id: MAIN_NETWORK,
-        name: 'Main network',
-        onPress: () => this.setActiveTab(MAIN_NETWORK),
-        data: tokenTransactionsOnMainNetwork,
-        emptyState: {
-          title: 'Make your first step',
-          body: isSmartWallet
-            ? 'Your transactions on Main network will appear here.'
-            : 'Your transactions will appear here.',
-        },
-      },
-    ];
-
-    const pillarNetworkTab = {
-      id: PILLAR_NETWORK,
-      name: 'Pillar network',
-      onPress: () => this.setActiveTab(PILLAR_NETWORK),
-      data: [],
-      emptyState: {
-        title: 'Make your first step',
-        body: 'Your transactions on Pillar network will appear here.',
-      },
-    };
-
-    if (isSmartWallet) transactionsTabs.push(pillarNetworkTab);
 
     return (
       <ContainerWithHeader
@@ -350,19 +308,11 @@ class AssetScreen extends React.Component<Props, State> {
             <TokenValue>
               {`${displayAmount} ${token}`}
             </TokenValue>
-            {!!paymentNetworkBalance &&
-            <TankAssetBalance amount={paymentNetworkBalanceFormatted} monoColor wrapperStyle={{ marginBottom: 18 }} />
-            }
             {!!isListed &&
               <ValuesWrapper>
                 <ValueInFiat>
-                  {`${currencySymbol}${formattedBalanceInFiat}`}
+                  {`${currencySymbol}${fiatAmount}`}
                 </ValueInFiat>
-                {!!paymentNetworkBalance && (
-                  <ValueInFiat>
-                    {` + ${currencySymbol}${formattedPaymentNetworkBalanceInFiat}`}
-                  </ValueInFiat>
-                )}
               </ValuesWrapper>
             }
             {!isListed &&
@@ -375,7 +325,7 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
-              onPressExchange={() => this.goToExchangeFlow(token)}
+              onPressExchange={!isSynthetic ? () => this.goToExchangeFlow(token) : null}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
@@ -389,15 +339,14 @@ class AssetScreen extends React.Component<Props, State> {
             />
             }
           </AssetCardWrapper>
-          {!!tokenTransactionsOnMainNetwork.length &&
+          {!!relatedTransactions.length &&
           <ActivityFeed
             feedTitle="transactions."
             navigation={navigation}
             backgroundColor={baseColors.white}
             showArrowsOnly
             noBorder
-            tabs={transactionsTabs}
-            activeTab={activeTab}
+            feedData={relatedTransactions}
           />}
         </ScrollWrapper>
 
