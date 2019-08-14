@@ -40,6 +40,7 @@ import Title from 'components/Title';
 import EventDetails from 'components/EventDetails';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Tabs from 'components/Tabs';
+import { PPNSettleList } from 'components/PPNSettleList';
 
 // utils
 import { createAlert } from 'utils/alerts';
@@ -229,13 +230,15 @@ class ActivityFeed extends React.Component<Props, State> {
       const isContact = Object.keys(contact).length !== 0;
       const itemImage = contact.profileImage || fullIconUrl;
       let itemValue = `${directionSymbol} ${formattedValue} ${notification.asset}`;
+      let customAddon = null;
 
       const note = get(notification, 'note', '');
       if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
-        nameOrAddress = 'TX SETTLEMENT';
+        nameOrAddress = 'PLR Network Settle';
         itemValue = '';
+        customAddon = (<PPNSettleList settleData={notification.extra} />);
       } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-        nameOrAddress = 'TANK TOP UP';
+        nameOrAddress = 'PLR Network Top Up';
       }
 
       return (
@@ -251,6 +254,7 @@ class ActivityFeed extends React.Component<Props, State> {
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
           valueColor={isReceived ? baseColors.jadeGreen : null}
           imageUpdateTimeStamp={contact.lastUpdateTime}
+          customAddon={customAddon}
         />
       );
     }

@@ -114,6 +114,7 @@ export const baseColors = {
   dell: '#467038',
   stratos: '#000260',
   rockBlue: '#8e8fb8',
+  scarlet: '#FD3300',
 };
 
 export const brandColors = [

@@ -482,6 +482,7 @@ class HomeScreen extends React.Component<Props, State> {
             },
           ],
         }}
+        inset={{ bottom: 0 }}
       >
         <ScrollView
           style={{ width: '100%' }}
