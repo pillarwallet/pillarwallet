@@ -838,29 +838,29 @@ workflows:
     jobs:
       #- build-and-test
       - hockeyapp_ios:
-          requires:
-            #- build-and-test
+          # requires:
+          #   - build-and-test
           filters:
             branches:
               only:
                   - develop
       - hockeyapp_android:
-          requires:
-            #- build-and-test
+          # requires:
+          #   - build-and-test
           filters:
             branches:
               only:
                   - develop
       - stage_ios:
-          requires:
-            #- build-and-test
+          # requires:
+          #   - build-and-test
           filters:
             branches:
               only:
                   - feature/change-staging-ios
       - stage_android:
-          requires:
-           # - build-and-test
+          # requires:
+          #   - build-and-test
           filters:
             branches:
               only:
