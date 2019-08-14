@@ -19,6 +19,9 @@
 */
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import set from 'lodash.set';
+import firebase from 'react-native-firebase';
+
+import Toast from 'components/Toast';
 import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 
@@ -93,5 +96,45 @@ export const changeUseBiometricsAction = (value: boolean) => {
         useBiometrics: value,
       },
     });
+  };
+};
+
+export const setFirebaseAnalyticsCollectionEnabled = (enabled: boolean) => {
+  return (dispatch: Function) => {
+    firebase.analytics().setAnalyticsCollectionEnabled(enabled);
+    dispatch(saveDbAction('app_settings', { appSettings: { firebaseAnalyticsConnectionEnabled: enabled } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: {
+        firebaseAnalyticsConnectionEnabled: enabled,
+      },
+    });
+  };
+};
+
+export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessToast: boolean = false) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const { user: { data: { username, walletId } } } = getState();
+    let message;
+    if (userJoinedBeta) {
+      dispatch(setFirebaseAnalyticsCollectionEnabled(true));
+      firebase.analytics().setUserProperty('username', username);
+      message = 'You have successfully applied for Beta Testing.' +
+        'We will let you know once your application is approved.';
+    } else {
+      firebase.analytics().setUserProperty('username', null);
+      dispatch(setFirebaseAnalyticsCollectionEnabled(false));
+      message = 'You have successfully left Beta Testing.';
+    }
+    await api.updateUser({ walletId, betaProgramParticipant: userJoinedBeta });
+    dispatch(saveDbAction('app_settings', { appSettings: { userJoinedBeta } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: {
+        userJoinedBeta,
+      },
+    });
+    if (ignoreSuccessToast) return;
+    Toast.show({ message, type: 'success', title: 'Success' });
   };
 };

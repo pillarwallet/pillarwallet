@@ -70,6 +70,10 @@ import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
+import {
+  setFirebaseAnalyticsCollectionEnabled,
+  setUserJoinedBetaAction,
+} from 'actions/appSettingsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -302,6 +306,14 @@ export const registerWalletAction = () => {
       privateKey: wallet.privateKey,
       isImported,
     });
+
+    // user might be already joined to beta program before
+    if (userInfo.betaProgramParticipant) {
+      dispatch(setUserJoinedBetaAction(true, true)); // 2nd true value sets to ignore toast success message
+    } else {
+      // we don't want to track by default, we will use this only when user applies for beta
+      dispatch(setFirebaseAnalyticsCollectionEnabled(false));
+    }
 
     // STEP 6: all done, navigate to the assets screen
     const isWalletBackedUp = isImported || isBackedUp;
