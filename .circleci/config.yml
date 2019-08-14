@@ -857,7 +857,7 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                  - feature/change-staging-ios
       - stage_android:
           requires:
             - build-and-test
