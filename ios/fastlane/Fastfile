@@ -161,7 +161,7 @@ platform :ios do
   lane :deploy_ios_hockeyapp do |options|
 
     MY_APP_ID = "com.pillarproject.wallet.staging"
-    MY_PROFILE = "match AdHoc com.pillarproject.wallet.staging 1563899180"
+    MY_PROFILE = "match AdHoc com.pillarproject.wallet.staging"
 
     # insert circleCI's build number as our build number
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"

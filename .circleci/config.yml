@@ -843,7 +843,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/change-staging-ios
+                  - develop
       - hockeyapp_android:
           requires:
             - build-and-test
@@ -857,7 +857,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/change-staging-ios
+                  - master
       - stage_android:
           requires:
             - build-and-test
