@@ -61,7 +61,8 @@ import type { Asset, Assets, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { ensureSmartAccountConnectedAction } from 'actions/smartWalletActions';
+import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
+
 
 type Props = {
   baseFiatCurrency: string,
@@ -76,6 +77,7 @@ type Props = {
   assetsOnNetwork: Object,
   ensureSmartAccountConnected: Function,
   resetIncorrectPassword: Function,
+  fetchVirtualAccountBalance: Function,
 }
 
 type State = {
@@ -297,6 +299,7 @@ class PPNView extends React.Component<Props, State> {
     const {
       availableStake,
       assetsOnNetwork,
+      fetchVirtualAccountBalance,
     } = this.props;
 
     const assetsOnNetworkArray = Object.keys(assetsOnNetwork).map((asset) => assetsOnNetwork[asset]);
@@ -311,7 +314,9 @@ class PPNView extends React.Component<Props, State> {
         refreshControl={
           <RefreshControl
             refreshing={false}
-            onRefresh={() => {}}
+            onRefresh={() => {
+              fetchVirtualAccountBalance();
+            }}
           />
         }
       >
@@ -391,6 +396,7 @@ const combinedMapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   ensureSmartAccountConnected: (privateKey: string) => dispatch(ensureSmartAccountConnectedAction(privateKey)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+  fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
 });
 
 export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView));
