@@ -40,8 +40,10 @@ import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
 import { getRate, getBalance } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
-import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
 import smartWalletService from 'services/smartWallet';
+import { DEFAULT_GAS_LIMIT } from 'services/assets';
+
+import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { Collectible } from 'models/Collectible';
 
@@ -62,6 +64,7 @@ type Props = {
 
 type State = {
   upgradeStarted: boolean,
+  deployEstimateFee: BigNumber,
 };
 
 const DetailsTitle = styled(BaseText)`
@@ -95,13 +98,8 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
   gasLimit: number = 0;
   state = {
     upgradeStarted: false,
+    deployEstimateFee: 0,
   };
-
-  constructor(props) {
-    super(props);
-    const { navigation } = this.props;
-    this.gasLimit = navigation.getParam('gasLimit', 0);
-  }
 
   componentDidMount() {
     const {
@@ -111,6 +109,9 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     } = this.props;
     fetchGasInfo();
     fetchAssetsBalances(assets);
+    smartWalletService.sdk.estimateAccountDeployment()
+      .then(({ totalCost }) => this.setState({ deployEstimateFee: totalCost }))
+      .catch(this.setDefaultDeployEstimate);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -125,7 +126,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     }
   }
 
-  onNextClick = (gasPriceWei: BigNumber) => {
+  onNextClick = () => {
     const {
       assets,
       collectibles,
@@ -133,14 +134,22 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       transferCollectibles,
       navigation,
       balances,
+      gasInfo,
     } = this.props;
     this.setState({ upgradeStarted: true });
+    const gasPriceWei = getGasPriceWei(gasInfo);
     const gasPrice = gasPriceWei.toNumber();
     const assetsArray = Object.values(assets);
     const transferTransactionsCombined = [
       ...transferCollectibles,
       ...transferAssets,
-    ].map(({ name: assetName, key: collectibleKey, amount }: any) => {
+    ].map((transferTransaction: any) => {
+      const {
+        name: assetName,
+        key: collectibleKey,
+        amount,
+        gasLimit,
+      } = transferTransaction;
       // receiver address is added on last upgrade step, account address is yet to be received
       // no amount means collectible
       if (!amount) {
@@ -158,7 +167,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           contractAddress,
           tokenType,
           tokenId,
-          gasLimit: this.gasLimit,
+          gasLimit,
           gasPrice,
         };
       }
@@ -170,7 +179,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       } = asset;
       return {
         amount,
-        gasLimit: this.gasLimit,
+        gasLimit,
         gasPrice,
         symbol,
         contractAddress,
@@ -196,8 +205,16 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     });
   };
 
-  getTokenTransferPrice = (gasPriceWei: BigNumber): BigNumber => {
-    return gasPriceWei.mul(this.gasLimit);
+  calculateTransferFee = (gasLimit) => {
+    const { gasInfo } = this.props;
+    const gasPriceWei = getGasPriceWei(gasInfo);
+    return gasLimit && gasPriceWei.mul(gasLimit).toNumber();
+  };
+
+  setDefaultDeployEstimate = () => {
+    this.setState({
+      deployEstimateFee: this.calculateTransferFee(DEFAULT_GAS_LIMIT),
+    });
   };
 
   renderSpinner() {
@@ -212,34 +229,36 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       balances,
       baseFiatCurrency,
       rates,
-      gasInfo,
     } = this.props;
-    const { upgradeStarted } = this.state;
+    const {
+      upgradeStarted,
+      deployEstimateFee,
+    } = this.state;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const gasPriceWei = getGasPriceWei(gasInfo);
-    const tokenTransferPrice = this.getTokenTransferPrice(gasPriceWei);
     const fiatSymbol = getCurrencySymbol(fiatCurrency);
 
-    // TODO: calculate separate gas price per asset transaction
+    const assetsTransferFeeTotal = transferAssets
+      .reduce((a, b: any) => a + this.calculateTransferFee(b.gasLimit), 0);
     const feeTokensTransferEth = formatAmount(utils.formatEther(
-      new BigNumber(tokenTransferPrice * transferAssets.length).toFixed(),
+      new BigNumber(assetsTransferFeeTotal).toFixed(),
     ));
     const feeTokensTransferFiat = parseFloat(feeTokensTransferEth) * getRate(rates, ETH, fiatCurrency);
     const assetsTransferFee = `${feeTokensTransferEth} ETH (${fiatSymbol}${feeTokensTransferFiat.toFixed(2)})`;
 
     let collectiblesTransferFee;
     if (transferCollectibles.length) {
+      const collectiblesTransferFeeTotal = transferCollectibles
+        .reduce((a, b: any) => a + this.calculateTransferFee(b.gasLimit), 0);
       const feeCollectiblesTransferEth = formatAmount(utils.formatEther(
-        new BigNumber(tokenTransferPrice * transferCollectibles.length).toFixed(),
+        new BigNumber(collectiblesTransferFeeTotal).toFixed(),
       ));
       const feeCollectiblesTransferFiat = parseFloat(feeCollectiblesTransferEth) * getRate(rates, ETH, fiatCurrency);
       collectiblesTransferFee =
         `${feeCollectiblesTransferEth} ETH (${fiatSymbol}${feeCollectiblesTransferFiat.toFixed(2)})`;
     }
 
-    const deployEstimate = smartWalletService.getDeployEstimate(gasPriceWei);
-    const feeSmartContractDeployEth = formatAmount(utils.formatEther(deployEstimate));
+    const feeSmartContractDeployEth = formatAmount(utils.formatEther(deployEstimateFee));
     const feeSmartContractDeployFiat = parseFloat(feeSmartContractDeployEth) * getRate(rates, ETH, fiatCurrency);
     const smartContractDeployFee =
       `${feeSmartContractDeployEth} ETH (${fiatSymbol}${feeSmartContractDeployFiat.toFixed(2)})`;
@@ -308,7 +327,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           block
           disabled={!!notEnoughEther}
           title="Create Smart Wallet"
-          onPress={() => this.onNextClick(gasPriceWei)}
+          onPress={this.onNextClick}
         />}
       </React.Fragment>
     );
