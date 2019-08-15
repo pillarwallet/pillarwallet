@@ -122,7 +122,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     }
     const { assetsToTransfer } = this.state;
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
-    const formattedAmount = formatAmount(item.amount, 2);
+    const formattedAmount = formatAmount(item.amount);
     return (
       <ListItemWithImage
         label={item.name}

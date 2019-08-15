@@ -126,14 +126,13 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     }
   }
 
-  onNextClick = () => {
+  onNextClick = (ethTransferAmount) => {
     const {
       assets,
       collectibles,
+      navigation,
       transferAssets,
       transferCollectibles,
-      navigation,
-      balances,
       gasInfo,
     } = this.props;
     this.setState({ upgradeStarted: true });
@@ -186,20 +185,11 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
         decimals,
       };
     });
-    const feeTokensTransferEth = parseFloat(formatAmount(utils.formatEther(
-      new BigNumber(gasPriceWei * transferTransactionsCombined.length).toFixed(),
-    )));
-    const etherTransaction: any = transferTransactionsCombined.find((asset: any) => asset.symbol === ETH);
-    const { amount: etherTransactionAmount } = etherTransaction;
-    const etherBalance = getBalance(balances, ETH);
-    const balanceAfterTransfer = etherBalance - etherTransactionAmount - feeTokensTransferEth;
-    const updateEtherTransactionAmount = balanceAfterTransfer < 0
-      // `balanceAfterTransfer` will be negative
-      ? balanceAfterTransfer + etherTransactionAmount
-      : etherTransactionAmount;
-    const transferTransactions = transferTransactionsCombined.filter((asset: any) => asset.symbol !== ETH);
-    // make sure ether transaction is the last one
-    transferTransactions.push({ ...etherTransaction, amount: updateEtherTransactionAmount });
+    const ethTransaction = transferTransactionsCombined.find(({ symbol }: any) => symbol === ETH);
+    // make sure ether transaction is the last one, very important!
+    const transferTransactions = transferTransactionsCombined
+      .filter(({ symbol }: any) => symbol !== ETH)
+      .concat({ ...ethTransaction, amount: ethTransferAmount });
     this.setState({ upgradeStarted: false }, () => {
       navigation.navigate(SMART_WALLET_UNLOCK, { transferTransactions });
     });
@@ -276,34 +266,49 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
     const etherTransfer = nonEmptyAssets.find(asset => asset.symbol === ETH);
     const etherBalance = getBalance(balances, ETH);
+    const { amount: etherTransferAmount } = etherTransfer || {};
+    const etherBalanceAfterTransfer = etherBalance - etherTransferAmount - parseFloat(feeTokensTransferEth);
+    const etherTransferAmountUpdated = etherBalanceAfterTransfer < 0
+      ? etherTransferAmount - parseFloat(feeTokensTransferEth)
+      : etherTransferAmount;
+
+    const updatedTransferAssets = nonEmptyAssets
+      .filter(asset => asset.symbol !== ETH)
+      .concat({ ...etherTransfer, amount: etherTransferAmountUpdated });
 
     /**
      * there should be selected enough ether for contract deployment
      * and there should be enough ether in primary wallet for assets transfer
+     ***
+     * feeSmartContractDeployEth is formatted float with 6 decimals, when comparing
+     * we want to make sure that compared values also are with 6 decimals as comparison
+     * might fail due rounding
      */
+
     const notEnoughEtherForTokensTransfer = !etherTransfer
-      || (etherBalance - etherTransfer.amount < parseFloat(feeTokensTransferEth));
+      || (parseFloat((etherBalance - etherTransferAmountUpdated).toFixed(6)) < parseFloat(feeTokensTransferEth));
 
     const notEnoughEtherForContractDeployment = !etherTransfer
-      || (etherTransfer.amount < parseFloat(feeSmartContractDeployEth));
+      || (parseFloat(etherTransferAmountUpdated) < parseFloat(feeSmartContractDeployEth));
 
     const notEnoughEther = notEnoughEtherForTokensTransfer || notEnoughEtherForContractDeployment;
 
     let errorMessage = '';
-    if (notEnoughEther && !etherTransfer) {
+    if (!etherTransfer) {
       errorMessage = 'You need to select to transfer ETH in order to cover the contract deployment fee.';
     } else if (notEnoughEtherForTokensTransfer) {
       errorMessage = `There is not enough ether left in order to cover the assets transfer fee.
         Please reduce the amount of ETH you would like to transfer`;
     } else if (notEnoughEtherForContractDeployment) {
-      errorMessage = 'There is not enough ether in order to cover the contract deployment fee.';
+      errorMessage = 'There is not enough ether being sent to smart contract ' +
+        'in order to cover the contract deployment fee.';
     }
 
     return (
       <React.Fragment>
         <DetailsLine>
           <DetailsTitle>Assets to transfer</DetailsTitle>
-          {nonEmptyAssets.map((asset: any, index: number) =>
+          {updatedTransferAssets.map((asset: any, index: number) =>
             <DetailsValue key={index}>{`${asset.amount} ${asset.symbol}`}</DetailsValue>)
           }
         </DetailsLine>
@@ -327,7 +332,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           block
           disabled={!!notEnoughEther}
           title="Create Smart Wallet"
-          onPress={this.onNextClick}
+          onPress={() => this.onNextClick(etherTransferAmountUpdated)}
         />}
       </React.Fragment>
     );
