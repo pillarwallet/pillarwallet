@@ -35,6 +35,7 @@ const initialState = {
     hasDBConflicts: false,
     isSignalInitiated: false,
     fcmToken: '',
+    contactsSmartAddressesSynced: false,
   },
 };
 

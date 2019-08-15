@@ -32,3 +32,9 @@ export type SearchResults = {
   apiUsers: ApiUser[],
   localContacts: Object[],
 };
+
+export type ContactsSmartAddressesList = string[];
+
+export type ContactSmartAddresses = {
+  [contactUsername: string]: ContactsSmartAddressesList,
+};

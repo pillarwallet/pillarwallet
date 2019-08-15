@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
+import isEmpty from 'lodash.isempty';
 import Separator from 'components/Separator';
 import { SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
@@ -28,17 +29,20 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import t from 'tcomb-form-native';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Footer } from 'components/Layout';
+import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
+import Spinner from 'components/Spinner';
 import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
+import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
 import type { Accounts, AccountTypes } from 'models/Account';
+import type { ContactSmartAddresses } from 'models/Contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -47,6 +51,10 @@ type Props = {
   wallet: Object,
   smartWalletFeatureEnabled: boolean,
   navigateToSendTokenAmount: Function,
+  contactsSmartAddressesSynced: boolean,
+  syncContactsSmartAddresses: Function,
+  contactsSmartAddresses: ContactSmartAddresses[],
+  isOnline: boolean,
 };
 
 type State = {
@@ -142,6 +150,13 @@ class SendTokenContacts extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    const { smartWalletFeatureEnabled, isOnline, syncContactsSmartAddresses } = this.props;
+    if (smartWalletFeatureEnabled && isOnline) {
+      syncContactsSmartAddresses();
+    }
+  }
+
   handleChange = (value: Object) => {
     this.setState({ value });
   };
@@ -228,7 +243,13 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 
   render() {
-    const { localContacts = [] } = this.props;
+    const {
+      localContacts = [],
+      // contactsSmartAddresses,
+      contactsSmartAddressesSynced,
+      smartWalletFeatureEnabled,
+      isOnline,
+    } = this.props;
     const { isScanning, formStructure, value } = this.state;
 
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
@@ -245,6 +266,11 @@ class SendTokenContacts extends React.Component<Props, State> {
     }
 
     const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;
+    const showSpinner = smartWalletFeatureEnabled
+      && isOnline
+      && !contactsSmartAddressesSynced
+      && !isEmpty(localContacts);
+    // TODO: disable contacts if they have no smart accounts
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: `Send ${tokenName}` }] }}>
         <FormWrapper>
@@ -259,6 +285,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             value={value}
           />
         </FormWrapper>
+        {showSpinner && <Container center><Spinner /></Container>}
         {!!contactsToRender.length &&
           <ContactCardList
             data={contactsToRender}
@@ -287,18 +314,23 @@ class SendTokenContacts extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   accounts: { data: accounts },
-  contacts: { data: localContacts },
+  contacts: { data: localContacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   wallet: { data: wallet },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  session: { data: { contactsSmartAddressesSynced, isOnline } },
 }) => ({
   accounts,
   localContacts,
   wallet,
   smartWalletFeatureEnabled,
+  contactsSmartAddresses,
+  contactsSmartAddressesSynced,
+  isOnline,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   navigateToSendTokenAmount: (options) => dispatch(navigateToSendTokenAmountAction(options)),
+  syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenContacts);
