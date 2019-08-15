@@ -263,14 +263,15 @@ class AssetScreen extends React.Component<Props, State> {
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const mappedTransactions = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
-    const tokenMappedTransactions = mappedTransactions.filter(({ asset, note = '', extra = [] }) =>
+    const tokenTransactions = mappedTransactions.filter(({ asset, note = '', extra = [] }) =>
       asset === token || (note === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
-    const tokenMainnetTransactions = tokenMappedTransactions.filter(({ isPPNTransaction = false, note = '' }) => {
+    const mainnetTransactions = tokenTransactions.filter(({ isPPNTransaction = false, note = '' }) => {
       return (!isPPNTransaction && note !== PAYMENT_NETWORK_ACCOUNT_TOPUP) || note === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
-    const tokenPPNTransactions = tokenMappedTransactions.filter(({ isPPNTransaction = false, note = '' }) =>
-      isPPNTransaction || note === PAYMENT_NETWORK_TX_SETTLEMENT);
-    const relatedTransactions = isSynthetic ? tokenPPNTransactions : tokenMainnetTransactions;
+    const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, note = '' }) => {
+      return isPPNTransaction || note === PAYMENT_NETWORK_TX_SETTLEMENT;
+    });
+    const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
     const { upgrade: { deploymentStarted } } = smartWalletState;
 
     return (
