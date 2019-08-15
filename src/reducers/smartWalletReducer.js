@@ -207,16 +207,15 @@ export default function smartWalletReducer(
           ...state.upgrade,
           transfer: {
             ...state.upgrade.transfer,
-            assets: [
+            assets: state.upgrade.transfer.assets.reduce((updated, asset) => {
               // $FlowFixMe
-              ...state.upgrade.transfer.assets.filter(({ name }) => name !== action.payload.key),
-              {
+              if (action.payload.key === asset.name) {
                 // $FlowFixMe
-                ...state.upgrade.transfer.assets.find(({ name }) => name === action.payload.key),
-                // $FlowFixMe
-                gasLimit: action.payload.gasLimit,
-              },
-            ],
+                asset = { ...asset, gasLimit: action.payload.gasLimit };
+              }
+              updated.push(asset);
+              return updated;
+            }, []),
           },
         },
       };
@@ -227,16 +226,15 @@ export default function smartWalletReducer(
           ...state.upgrade,
           transfer: {
             ...state.upgrade.transfer,
-            collectibles: [
+            collectibles: state.upgrade.transfer.collectibles.reduce((updated, collectible) => {
               // $FlowFixMe
-              ...state.upgrade.transfer.collectibles.filter(({ key }) => key !== action.payload.key),
-              {
+              if (action.payload.key === collectible.key) {
                 // $FlowFixMe
-                ...state.upgrade.transfer.collectibles.find(({ key }) => key === action.payload.key),
-                // $FlowFixMe
-                gasLimit: action.payload.gasLimit,
-              },
-            ],
+                collectible = { ...collectible, gasLimit: action.payload.gasLimit };
+              }
+              updated.push(collectible);
+              return updated;
+            }, state.upgrade.transfer.collectibles),
           },
         },
       };
