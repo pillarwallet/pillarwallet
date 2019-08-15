@@ -46,6 +46,8 @@ import {
   RESET_SMART_WALLET,
   START_SMART_WALLET_DEPLOYMENT,
   RESET_SMART_WALLET_DEPLOYMENT,
+  SET_ASSET_TRANSFER_GAS_LIMIT,
+  SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
 } from 'constants/smartWalletConstants';
 import { SET_ACTIVE_NETWORK, BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
@@ -78,6 +80,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import smartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
+import { calculateGasEstimate } from 'services/assets';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -1261,5 +1264,71 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
       dispatch(fetchCollectiblesAction());
       dispatch(syncVirtualAccountTransactionsAction(true));
     }
+  };
+};
+
+export const getAssetTransferGasLimitsAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accounts: { data: accounts },
+      assets: { supportedAssets },
+      collectibles: { data: collectiblesByAccount },
+      smartWallet: {
+        upgrade: {
+          transfer: {
+            assets: transferAssets,
+            collectibles: transferCollectibles,
+          },
+        },
+      },
+    } = getState();
+    const from = getActiveAccountAddress(accounts);
+    const accountId = getActiveAccountId(accounts);
+    const collectibles = collectiblesByAccount[accountId];
+    // temporary smart wallet account address used only for gas limit calculation
+    await smartWalletService.sdk.initialize().catch(() => null);
+    const tempAccount = await smartWalletService.sdk.createAccount().catch(() => null);
+    if (!tempAccount) {
+      return;
+    }
+    const { address: to } = tempAccount;
+    let estimateTransaction = {
+      from,
+      to,
+    };
+    [...transferAssets, ...transferCollectibles].map(({ name, key, amount }) => {
+      let dispatchType;
+      if (key) {
+        const {
+          id: tokenId,
+          contractAddress,
+        } = collectibles.find(({ assetContract, name: contractName }) =>
+          `${assetContract}${contractName}` === key,
+        ) || {};
+        // collectible
+        estimateTransaction = { ...estimateTransaction, tokenId, contractAddress };
+        dispatchType = SET_COLLECTIBLE_TRANSFER_GAS_LIMIT;
+      } else {
+        const asset = supportedAssets.find(a => a.name === name);
+        estimateTransaction = {
+          ...estimateTransaction,
+          symbol: name,
+          contractAddress: asset ? asset.address : '',
+          decimals: asset ? asset.decimals : 18,
+          amount,
+        };
+        dispatchType = SET_ASSET_TRANSFER_GAS_LIMIT;
+      }
+      return calculateGasEstimate(estimateTransaction)
+        .then(gasLimit =>
+          dispatch({
+            type: dispatchType,
+            payload: {
+              gasLimit,
+              key: name || key,
+            },
+          }),
+        );
+    });
   };
 };

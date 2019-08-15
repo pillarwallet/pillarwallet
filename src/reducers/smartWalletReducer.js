@@ -32,6 +32,8 @@ import {
   SET_SMART_WALLET_LAST_SYNCED_HASH,
   START_SMART_WALLET_DEPLOYMENT,
   RESET_SMART_WALLET_DEPLOYMENT,
+  SET_ASSET_TRANSFER_GAS_LIMIT,
+  SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
 } from 'constants/smartWalletConstants';
 import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 import type { AssetTransfer } from 'models/Asset';
@@ -196,6 +198,46 @@ export default function smartWalletReducer(
         upgrade: {
           ...state.upgrade,
           deploymentStarted: false,
+        },
+      };
+    case SET_ASSET_TRANSFER_GAS_LIMIT:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          transfer: {
+            ...state.upgrade.transfer,
+            assets: [
+              // $FlowFixMe
+              ...state.upgrade.transfer.assets.filter(({ name }) => name !== action.payload.key),
+              {
+                // $FlowFixMe
+                ...state.upgrade.transfer.assets.find(({ name }) => name === action.payload.key),
+                // $FlowFixMe
+                gasLimit: action.payload.gasLimit,
+              },
+            ],
+          },
+        },
+      };
+    case SET_COLLECTIBLE_TRANSFER_GAS_LIMIT:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          transfer: {
+            ...state.upgrade.transfer,
+            collectibles: [
+              // $FlowFixMe
+              ...state.upgrade.transfer.collectibles.filter(({ key }) => key !== action.payload.key),
+              {
+                // $FlowFixMe
+                ...state.upgrade.transfer.collectibles.find(({ key }) => key === action.payload.key),
+                // $FlowFixMe
+                gasLimit: action.payload.gasLimit,
+              },
+            ],
+          },
         },
       };
     default:
