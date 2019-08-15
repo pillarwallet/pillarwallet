@@ -179,6 +179,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
+      { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
     ];
 
     // $FlowFixMe
@@ -237,6 +238,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, isActive: true }] },
       { type: SET_SMART_WALLET_UPGRADE_STATUS, payload: SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
+      { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
     ];
 
     // $FlowFixMe
@@ -290,6 +292,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
+      { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
     ];
 
     // $FlowFixMe

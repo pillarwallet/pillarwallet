@@ -20,9 +20,9 @@
 import * as React from 'react';
 import { Animated } from 'react-native';
 import styled from 'styled-components/native/index';
+import get from 'lodash.get';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { MediumText } from 'components/Typography';
-// import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 
 // configs
@@ -83,7 +83,6 @@ const ProgressLabel = styled.View`
   shadow-opacity: 0.3;
   shadow-offset: 0px 2px;
 `;
-
 
 const AnimatedProgressLabel = Animated.createAnimatedComponent(ProgressLabel);
 
@@ -148,19 +147,6 @@ const Value = styled(MediumText)`
   line-height: ${fontSizes.tiny}px;
   color: ${props => props.color ? props.color : baseColors.slateBlack};
 `;
-
-// const ChevronWrapper = styled.View`
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   margin-left: 4px;
-//   margin-top: -2px;
-// `;
-//
-// const SelectorChevron = styled(Icon)`
-//   font-size: 5px;
-//   color: ${baseColors.slateBlack};
-// `;
 
 export default class TankBar extends React.Component<Props, State> {
   static defaultProps = {
@@ -248,7 +234,7 @@ export default class TankBar extends React.Component<Props, State> {
           <ProgressBarSide>
             <ProgressBarWrapper
               onLayout={(e) => {
-                const { width } = e.nativeEvent.layout;
+                const width = get(e, 'nativeEvent.layout.width', 200);
                 this.setState({ barWidth: width });
               }}
             >
@@ -265,25 +251,12 @@ export default class TankBar extends React.Component<Props, State> {
           </ProgressBarSide>
           <SideButton
             onLayout={(e) => {
-              const { width } = e.nativeEvent.layout;
+              const width = get(e, 'nativeEvent.layout.width', 80);
               this.setState({ sideButtonWidth: width });
             }}
           >
             <Value color={baseColors.darkGray}>{maxValue}</Value>
             <Value style={{ marginLeft: 4 }}>{PPN_TOKEN}</Value>
-            { /* Uncomment when needed
-            <ChevronWrapper>
-              <SelectorChevron
-                name="chevron-right"
-                style={{ transform: [{ rotate: '-90deg' }] }}
-              />
-              <SelectorChevron
-                name="chevron-right"
-                style={{
-                  transform: [{ rotate: '90deg' }],
-                }}
-              />
-            </ChevronWrapper> */}
           </SideButton>
         </Row>
         {!!barWidth && !!sideButtonWidth &&

@@ -38,7 +38,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { HOME, USER_SETTINGS } from 'constants/navigationConstants';
 
 // actions
-import { setActiveBNetworkAction } from 'actions/blockchainNetworkActions';
+import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { responsiveSize } from 'utils/ui';
 import { MediumText, BaseText } from 'components/Typography';
 import { ListCard } from 'components/ListItem/ListCard';
@@ -170,7 +170,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  setActiveBNetwork: (id: string) => dispatch(setActiveBNetworkAction(id)),
+  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UsersScreen);

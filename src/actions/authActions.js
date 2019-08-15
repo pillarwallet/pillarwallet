@@ -58,6 +58,7 @@ import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
 import { restoreTransactionHistoryAction } from 'actions/historyActions';
+import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { saveDbAction } from './dbActions';
 import { fetchBadgesAction } from './badgesActions';
 
@@ -72,6 +73,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       accounts: { data: accounts },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
+      appSettings: { data: { userJoinedBeta = false, firebaseAnalyticsConnectionEnabled = true } },
     } = getState();
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -87,6 +89,16 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
     const saltedPin = await getSaltedPin(pin, dispatch);
     try {
       let wallet;
+
+      /**
+       * we want Firebase Analytics data collection to be off by default,
+       * this check is used for existing users to turn off firebase Analytics
+       * data collection after app update if the `firebaseAnalyticsConnectionEnabled`
+       * was not set before (we set it during onboarding so unset value means existing user)
+       */
+      if (!userJoinedBeta && firebaseAnalyticsConnectionEnabled) {
+        dispatch(setFirebaseAnalyticsCollectionEnabled(false));
+      }
       if (!touchID) {
         const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
         wallet = await ethers.Wallet.RNfromEncryptedWallet(

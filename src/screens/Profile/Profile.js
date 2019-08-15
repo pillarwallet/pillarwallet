@@ -36,7 +36,7 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
-import { SubHeading, BaseText } from 'components/Typography';
+import { SubHeading, BaseText, Paragraph } from 'components/Typography';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
@@ -48,6 +48,7 @@ import {
   changeUseBiometricsAction,
   updateAssetsLayoutAction,
   saveOptOutTrackingAction,
+  setUserJoinedBetaAction,
 } from 'actions/appSettingsActions';
 import { updateUserAction, createOneTimePasswordAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
@@ -60,6 +61,7 @@ import ChatService from 'services/chat';
 import { fontSizes, fontTrackings, baseColors, spacing } from 'utils/variables';
 import { delay } from 'utils/common';
 import ProfileSettingsItem from 'components/ListItem/SettingsItem';
+import Button from 'components/Button';
 import EditProfile from './EditProfile';
 import SettingsModalTitle from './SettingsModalTitle';
 import ReferralCodeModal from './ReferralCodeModal';
@@ -102,6 +104,11 @@ const StyledWrapper = styled(Wrapper)`
   justify-content: space-between;
   padding-bottom: ${spacing.rhythm}px;
   margin-top: 25px;
+`;
+
+const Description = styled(Paragraph)`
+  padding-bottom: ${spacing.rhythm}px;
+  line-height: ${fontSizes.mediumLarge};
 `;
 
 const cityFormFields = [{
@@ -177,6 +184,8 @@ type Props = {
   logEvent: (name: string) => void,
   saveOptOutTracking: (status: boolean) => void,
   optOutTracking: boolean,
+  setUserJoinedBeta: Function,
+  userJoinedBeta: boolean,
 }
 
 type State = {
@@ -187,6 +196,8 @@ type State = {
   showCheckPinModal: boolean,
   showBiometricsSelector: boolean,
   showTrackingModal: boolean,
+  showJoinBetaModal: boolean,
+  joinBetaPressed: boolean,
 }
 
 class Profile extends React.Component<Props, State> {
@@ -206,6 +217,8 @@ class Profile extends React.Component<Props, State> {
       showCheckPinModal: false,
       showBiometricsSelector: false,
       showTrackingModal: false,
+      showJoinBetaModal: false,
+      joinBetaPressed: false,
     };
   }
 
@@ -347,13 +360,20 @@ class Profile extends React.Component<Props, State> {
       const { navigation } = this.props;
       navigation.navigate(CONTACT_INFO);
     });
-  }
+  };
 
   handleUpdateAppearance = (layoutId: string) => {
     const { updateAssetsLayout } = this.props;
-
     updateAssetsLayout(layoutId);
-  }
+  };
+
+  onJoinBetaModalHidden = () => {
+    // this is needed so that toast message can be shown in settings instead of slide modal that closes
+    if (this.state.joinBetaPressed) {
+      this.setState({ joinBetaPressed: false });
+      this.props.setUserJoinedBeta(true);
+    }
+  };
 
   render() {
     const {
@@ -369,6 +389,8 @@ class Profile extends React.Component<Props, State> {
       useBiometrics,
       smartWalletFeatureEnabled,
       optOutTracking,
+      setUserJoinedBeta,
+      userJoinedBeta,
     } = this.props;
 
     const {
@@ -383,6 +405,7 @@ class Profile extends React.Component<Props, State> {
       showCheckPinModal,
       showBiometricsSelector,
       showTrackingModal,
+      showJoinBetaModal,
     } = this.state;
 
     const isWalletBackedUp = isImported || isBackedUp;
@@ -605,6 +628,7 @@ class Profile extends React.Component<Props, State> {
               <ProfileSettingsItem
                 key="phone"
                 label="Phone"
+                value={user.isPhoneVerified ? `${user.phone}` : null}
                 warningNotification={!user.isPhoneVerified}
                 onPress={() => this.toggleSlideModalOpen('phone')}
               />)
@@ -776,11 +800,28 @@ class Profile extends React.Component<Props, State> {
               <SubHeading>SYSTEM</SubHeading>
             </ListSeparator>
 
+            {userJoinedBeta &&
+              <ProfileSettingsItem
+                key="joinBeta"
+                label="Leave Beta Testing"
+                onPress={() => setUserJoinedBeta(false)}
+              />
+            }
+
+            {!userJoinedBeta &&
+              <ProfileSettingsItem
+                key="joinBeta"
+                label="Join Beta Testing"
+                onPress={() => this.setState({ showJoinBetaModal: true })}
+              />
+            }
+
             <ProfileSettingsItem
               key="systemInfo"
               label="System Info"
               onPress={() => this.setState({ showSystemInfoModal: true })}
             />
+
             <ProfileSettingsItem
               key="lockScreen"
               label="Lock Screen"
@@ -802,6 +843,36 @@ class Profile extends React.Component<Props, State> {
             >
               <SystemInfoModal headerOnClose={() => this.setState({ showSystemInfoModal: false })} />
             </SlideModal>
+
+            <SlideModal
+              isVisible={showJoinBetaModal}
+              fullScreen
+              showHeader
+              backgroundColor={baseColors.snowWhite}
+              onModalHidden={this.onJoinBetaModalHidden}
+              avoidKeyboard
+              title="join beta"
+              onModalHide={() => this.setState({ showJoinBetaModal: false })}
+            >
+              <StyledWrapper regularPadding flex={1}>
+                <Description>
+                  {
+                    'By joining the beta program, you will be added to our Firebase Analytics data collection.' +
+                    'Through this, Pillar will collect your username in order to enable beta features and monitor ' +
+                    'your wallet experience for any bugs and/or crashes while testing the new functionality. ' +
+                    'You can opt out of the beta program and Firebase Analytics collection at any time ' +
+                    'via the "System" under Settings.'
+                  }
+                </Description>
+                <Button
+                  title="Join Beta Testing"
+                  onPress={() => this.setState({ showJoinBetaModal: false, joinBetaPressed: true })}
+                  style={{
+                    marginBottom: 13,
+                  }}
+                />
+              </StyledWrapper>
+            </SlideModal>
           </ListWrapper>
 
         </ScrollWrapper>
@@ -813,7 +884,12 @@ class Profile extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   appSettings: {
-    data: { useBiometrics = false, baseFiatCurrency, optOutTracking = false },
+    data: {
+      useBiometrics = false,
+      baseFiatCurrency,
+      optOutTracking = false,
+      userJoinedBeta = false,
+    },
     data: appSettings,
   },
   notifications: { intercomNotificationsCount },
@@ -830,6 +906,7 @@ const mapStateToProps = ({
   useBiometrics,
   smartWalletFeatureEnabled,
   optOutTracking,
+  userJoinedBeta,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -848,6 +925,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   logEvent: (name: string) => dispatch(logEventAction(name)),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
+  setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
