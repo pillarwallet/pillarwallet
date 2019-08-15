@@ -102,7 +102,6 @@ const BalanceWrapper = styled.View`
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
-  height: 100%;
 `;
 
 const ValueInFiat = styled(BaseText)`
@@ -165,7 +164,7 @@ class SettleBalance extends React.Component<Props, State> {
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
-              <TankAssetBalance amount={formattedAmount} isSynthetic={assetInfo.symbol !== ETH} />
+              <TankAssetBalance amount={formattedAmount} monoColor />
               <ValueInFiat>
                 {`${currencySymbol}${formattedAmountInFiat}`}
               </ValueInFiat>

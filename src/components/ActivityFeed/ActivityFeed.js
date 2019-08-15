@@ -131,6 +131,8 @@ type Props = {
   extraFeedData?: Object[],
   esComponent?: React.Node,
   hideTabs: boolean,
+  asset?: string,
+  feedType?: string,
 }
 
 type State = {
@@ -213,6 +215,8 @@ class ActivityFeed extends React.Component<Props, State> {
       onRejectInvitation,
       showArrowsOnly,
       invertAddon,
+      feedType,
+      asset,
     } = this.props;
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
@@ -247,7 +251,7 @@ class ActivityFeed extends React.Component<Props, State> {
       const note = get(notification, 'note', '');
       if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
         return (
-          <SettlementItem settleData={notification.extra} />
+          <SettlementItem settleData={notification.extra} type={feedType} asset={asset} />
         );
       } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
         nameOrAddress = 'PLR Network Top Up';

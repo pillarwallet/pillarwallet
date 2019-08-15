@@ -18,35 +18,88 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import styled from 'styled-components/native';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import { PPNSettleList } from 'components/PPNSettleList';
+import { BaseText } from 'components/Typography';
+import TankAssetBalance from 'components/TankAssetBalance';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
 
 const ppnIcon = require('assets/icons/icon_PPN.png');
 
-type Props = {
-  settleData: Object[]
+type SettlementItemType = {
+  hash: string,
+  symbol: string,
+  value: string | number,
 }
 
+type Props = {
+  settleData: SettlementItemType[],
+  type?: string,
+  asset?: string,
+}
+
+const ListWrapper = styled.View`
+  align-items: flex-end;
+  padding-left: ${spacing.mediumLarge}px;
+`;
+
+const ItemValue = styled(BaseText)`
+  font-size: ${fontSizes.medium};
+  color: ${baseColors.jadeGreen};
+  text-align: right;
+`;
+
 export const SettlementItem = (props: Props) => {
-  const { settleData } = props;
+  const { settleData, type, asset } = props;
+  const ppnTransactions = asset
+    ? settleData.filter(({ symbol }) => symbol === asset)
+    : settleData;
+
+  const valueByAsset: Object = {};
+  ppnTransactions.forEach((trx) => {
+    const key = trx.symbol;
+    const value = +trx.value;
+    if (!valueByAsset[key]) {
+      valueByAsset[key] = { ...trx, value };
+    } else {
+      valueByAsset[key].value += value;
+    }
+  });
+
+  const valuesArray = Object.keys(valueByAsset).map((key) => valueByAsset[key]);
+
   return (
     <React.Fragment>
-      <ListItemWithImage
+      {(!type || type === NONSYNTHETIC) && <ListItemWithImage
         label="Deposit"
         itemImageSource={ppnIcon}
         subtext="to Smart Wallet"
-        customAddon={(<PPNSettleList settleData={settleData} deposit />)}
+        customAddon={(
+          <ListWrapper>
+            {valuesArray.map(({ symbol, value }) => <ItemValue key={symbol}>{`${value} ${symbol}`}</ItemValue>)}
+          </ListWrapper>)}
         innerWrapperHorizontalAlign="flex-start"
         noImageBorder
-      />
-      <ListItemWithImage
+      />}
+      {(!type || type === SYNTHETIC) && <ListItemWithImage
         label="Withdrawal"
         itemImageSource={ppnIcon}
         subtext="from PLR Network"
-        customAddon={(<PPNSettleList settleData={settleData} withdrawal />)}
+        customAddon={(
+          <ListWrapper>
+            {ppnTransactions.map(({ symbol, value, hash }) => (
+              <TankAssetBalance
+                key={hash}
+                amount={`-${value} ${symbol}`}
+                monoColor
+                textStyle={{ color: baseColors.scarlet }}
+              />
+            ))}
+          </ListWrapper>)}
         innerWrapperHorizontalAlign="flex-start"
         noImageBorder
-      />
+      />}
     </React.Fragment>
   );
 };

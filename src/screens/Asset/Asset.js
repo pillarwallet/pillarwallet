@@ -48,7 +48,7 @@ import type { Accounts } from 'models/Account';
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
@@ -263,11 +263,13 @@ class AssetScreen extends React.Component<Props, State> {
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const mappedTransactions = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
-    const tokenMappedTransactions = mappedTransactions.filter(({ asset }) => asset === token);
+    const tokenMappedTransactions = mappedTransactions.filter(({ asset, note = '', extra = [] }) =>
+      asset === token || (note === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
     const tokenMainnetTransactions = tokenMappedTransactions.filter(({ isPPNTransaction = false, note = '' }) => {
-      return !isPPNTransaction && note !== PAYMENT_NETWORK_TX_SETTLEMENT && note !== PAYMENT_NETWORK_ACCOUNT_TOPUP;
+      return (!isPPNTransaction && note !== PAYMENT_NETWORK_ACCOUNT_TOPUP) || note === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
-    const tokenPPNTransactions = tokenMappedTransactions.filter(({ isPPNTransaction = false }) => isPPNTransaction);
+    const tokenPPNTransactions = tokenMappedTransactions.filter(({ isPPNTransaction = false, note = '' }) =>
+      isPPNTransaction || note === PAYMENT_NETWORK_TX_SETTLEMENT);
     const relatedTransactions = isSynthetic ? tokenPPNTransactions : tokenMainnetTransactions;
     const { upgrade: { deploymentStarted } } = smartWalletState;
 
@@ -347,6 +349,8 @@ class AssetScreen extends React.Component<Props, State> {
             showArrowsOnly
             noBorder
             feedData={relatedTransactions}
+            feedType={isSynthetic ? SYNTHETIC : NONSYNTHETIC}
+            asset={token}
           />}
         </ScrollWrapper>
 
