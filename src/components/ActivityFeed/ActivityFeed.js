@@ -125,7 +125,7 @@ type Props = {
   invertAddon?: boolean,
   contentContainerStyle?: Object,
   initialNumToRender: number,
-  tabs?: Array<Tab>,
+  tabs?: Tab[],
   activeTab?: string,
   feedData?: Object[],
   extraFeedData?: Object[],
@@ -392,13 +392,13 @@ class ActivityFeed extends React.Component<Props, State> {
     const feedList = getSortedFeedData(tabs, activeTab, feedData);
     const feedSections = [];
 
-    feedList.forEach((listItem) => {
+    feedList.forEach(listItem => {
       const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D');
-      const existingSection = feedSections.find(({ title }) => title === formattedDate) || {};
-      if (!Object.keys(existingSection).length) {
+      const existingSection = feedSections.find(({ title }) => title === formattedDate);
+      if (!existingSection) {
         feedSections.push({ title: formattedDate, data: [{ ...listItem }] });
       } else {
-        existingSection.data.push(listItem);
+        existingSection.data.push({ ...listItem });
       }
     });
 
@@ -406,11 +406,7 @@ class ActivityFeed extends React.Component<Props, State> {
       ? { justifyContent: 'center', flex: 1 }
       : {};
 
-    const tabsProps = [];
-    tabs.forEach((tab) => {
-      const { data, emptyState, ...necessaryTabProps } = tab;
-      tabsProps.push(necessaryTabProps);
-    });
+    const tabsProps = tabs.map(({ data, emptyState, ...necessaryTabProps }) => necessaryTabProps);
 
     return (
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>

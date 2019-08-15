@@ -258,10 +258,10 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     dispatch(fetchVirtualAccountBalanceAction());
     dispatch(syncVirtualAccountTransactionsAction());
 
-    if (blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
+    if (blockchainNetwork) {
       dispatch({
         type: SET_ACTIVE_NETWORK,
-        payload: BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK,
+        payload: blockchainNetwork,
       });
     }
   };
