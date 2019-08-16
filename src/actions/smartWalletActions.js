@@ -1289,6 +1289,12 @@ export const getAssetTransferGasLimitsAction = () => {
     await smartWalletService.sdk.initialize().catch(() => null);
     const tempAccount = await smartWalletService.sdk.createAccount().catch(() => null);
     if (!tempAccount) {
+      Toast.show({
+        message: 'Failed to create Smart Wallet account',
+        type: 'warning',
+        title: 'Unable to calculate fees',
+        autoClose: false,
+      });
       return;
     }
     const { address: to } = tempAccount;
