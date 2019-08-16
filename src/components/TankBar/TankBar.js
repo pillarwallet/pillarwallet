@@ -34,6 +34,7 @@ type Props = {
   currentValueFormatted: string,
   topupAction: Function,
   topUpLoading: boolean,
+  disabled: boolean,
 };
 
 type State = {
@@ -139,7 +140,7 @@ const LabelButton = styled.TouchableOpacity`
 
 const ButtonText = styled(MediumText)`
   font-size: ${fontSizes.extraExtraSmall}px;
-  color: ${baseColors.white};
+  color: ${props => props.dark ? baseColors.darkGray : baseColors.white};
 `;
 
 const Value = styled(MediumText)`
@@ -223,6 +224,7 @@ export default class TankBar extends React.Component<Props, State> {
       currentValueFormatted,
       topupAction,
       topUpLoading,
+      disabled,
     } = this.props;
 
     return (
@@ -287,8 +289,11 @@ export default class TankBar extends React.Component<Props, State> {
             }}
           >
             <LabelText>{`${currentValueFormatted} ${PPN_TOKEN}`}</LabelText>
-            <LabelButton onPress={!topUpLoading ? () => { topupAction(); } : null} disabled={topUpLoading}>
-              {!topUpLoading && <ButtonText>Top up</ButtonText>}
+            <LabelButton
+              onPress={!topUpLoading || disabled ? () => { topupAction(); } : null}
+              disabled={topUpLoading || disabled}
+            >
+              {!topUpLoading && <ButtonText dark={disabled}>Top up</ButtonText>}
               {topUpLoading && <Spinner width={20} height={20} />}
             </LabelButton>
           </AnimatedProgressLabel>

@@ -32,8 +32,9 @@ import CheckPin from 'components/CheckPin';
 
 import { baseColors, fontSizes } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
-import { FUND_TANK, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { ASSETS, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -41,13 +42,13 @@ import { connect } from 'react-redux';
 import { delay } from 'utils/common';
 import { getActiveAccount } from 'utils/accounts';
 
-import { ensureSmartAccountConnectedAction } from 'actions/smartWalletActions';
+import { ensureSmartAccountConnectedAction, setPLRTankAsInitAction } from 'actions/smartWalletActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { switchAccountAction } from 'actions/accountsActions';
+import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 
 import type { Accounts } from 'models/Account';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -59,6 +60,8 @@ type Props = {
   switchAccount: Function,
   accounts: Accounts,
   smartWalletState: Object,
+  setPLRTankAsInit: Function,
+  setActiveBlockchainNetwork: Function,
 }
 type State = {
   showPinScreenForAction: boolean,
@@ -160,12 +163,14 @@ class PillarNetworkIntro extends React.Component<Props, State> {
     });
   };
 
-  initPLRTank = async (_: string, wallet: Object) => {
+  goToPLRTank = async (_: string, wallet: Object) => {
     const {
       ensureSmartAccountConnected,
       navigation,
       accounts,
       switchAccount,
+      setPLRTankAsInit,
+      setActiveBlockchainNetwork,
     } = this.props;
     this.setState({ showPinScreenForAction: false });
     const activeAccount = getActiveAccount(accounts) || { type: '' };
@@ -174,11 +179,15 @@ class PillarNetworkIntro extends React.Component<Props, State> {
       const { id: smartAccountId } = smartAccount;
       await switchAccount(smartAccountId, wallet.privateKey);
     }
+    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
     await delay(500);
     ensureSmartAccountConnected(wallet.privateKey)
       .then(() => {
         this.setState({ processingCreate: false },
-          () => navigation.navigate(FUND_TANK, { isInitFlow: true }));
+          () => {
+            navigation.navigate(ASSETS);
+            setPLRTankAsInit();
+          });
       })
       .catch(() => null);
   };
@@ -187,10 +196,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
     const { showPinScreenForAction, processingCreate } = this.state;
     const { smartWalletState, accounts, navigation } = this.props;
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const needsToDeploy = smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
-    const stillDeploying = smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING;
     const needsSmartWallet = !smartWalletStatus.hasAccount;
-    const disableCreate = needsToDeploy || needsSmartWallet || stillDeploying;
 
     return (
       <ContainerWithHeader
@@ -241,29 +247,22 @@ class PillarNetworkIntro extends React.Component<Props, State> {
             color={baseColors.pomegranate}
             bordered
           />}
-          {!!needsToDeploy &&
-          <ListItemChevron
-            label="Deploy Smart wallet to create Tank"
-            onPress={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-            color={baseColors.pomegranate}
-            bordered
-          />}
           <ButtonWrapper>
             <Button
               block
-              title="Create PLR Tank"
+              title="Go to PLR Tank"
               onPress={() => this.setState({ showPinScreenForAction: true, processingCreate: true })}
               roundedCorners
               style={{
                 backgroundColor: baseColors.pomegranate,
                 marginTop: 40,
                 marginBottom: 20,
-                opacity: disableCreate ? 0.3 : 1,
+                opacity: needsSmartWallet ? 0.3 : 1,
                 borderRadius: 6,
               }}
               textStyle={{ color: baseColors.ultramarine }}
               isLoading={processingCreate}
-              disabled={disableCreate}
+              disabled={needsSmartWallet}
             />
           </ButtonWrapper>
         </ScrollWrapper>
@@ -277,7 +276,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
         >
           <Wrapper flex={1}>
             <CheckPin
-              onPinValid={this.initPLRTank}
+              onPinValid={this.goToPLRTank}
             />
           </Wrapper>
         </SlideModal>
@@ -298,6 +297,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   ensureSmartAccountConnected: (privateKey: string) => dispatch(ensureSmartAccountConnectedAction(privateKey)),
+  setPLRTankAsInit: () => dispatch(setPLRTankAsInitAction()),
+  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PillarNetworkIntro);

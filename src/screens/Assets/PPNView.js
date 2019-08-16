@@ -35,6 +35,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import TankAssetBalance from 'components/TankAssetBalance';
+import { DeploymentView } from 'components/DeploymentView';
 
 import {
   addressesEqual,
@@ -46,9 +47,11 @@ import {
 import { delay, formatMoney, getCurrencySymbol } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress } from 'utils/accounts';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 import { defaultFiatCurrency, ETH, TOKENS } from 'constants/assetsConstants';
-import { ASSET, FUND_TANK, SETTLE_BALANCE } from 'constants/navigationConstants';
+import { ASSET, FUND_TANK, SETTLE_BALANCE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import { activeAccountSelector } from 'selectors';
 import {
@@ -58,7 +61,9 @@ import {
 } from 'selectors/paymentNetwork';
 import { accountBalancesSelector } from 'selectors/balances';
 import type { Asset, Assets, Balances } from 'models/Asset';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { NavigationScreenProp } from 'react-navigation';
+import type { Accounts } from 'models/Account';
 
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
@@ -78,6 +83,8 @@ type Props = {
   ensureSmartAccountConnected: Function,
   resetIncorrectPassword: Function,
   fetchVirtualAccountBalance: Function,
+  accounts: Accounts,
+  smartWalletState: Object,
 }
 
 type State = {
@@ -247,7 +254,7 @@ class PPNView extends React.Component<Props, State> {
     );
   };
 
-  renderHeader = () => {
+  renderHeader = (disableSettle: boolean) => {
     const {
       assetsOnNetwork,
       navigation,
@@ -259,15 +266,16 @@ class PPNView extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const PPNBalance = formatMoney(portfolioBalances[fiatCurrency] || 0);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const disabled = !Object.keys(assetsOnNetwork).length || disableSettle;
 
     return (
       <ListHeaderWrapper>
         <HeaderTitle>{`Balance ${currencySymbol} ${PPNBalance}`}</HeaderTitle>
         <HeaderButton
           onPress={() => navigation.navigate(SETTLE_BALANCE)}
-          disabled={!Object.keys(assetsOnNetwork).length}
+          disabled={disabled}
         >
-          <ButtonText disabled={!Object.keys(assetsOnNetwork).length}>Settle</ButtonText>
+          <ButtonText disabled={disabled}>Settle</ButtonText>
         </HeaderButton>
       </ListHeaderWrapper>
     );
@@ -300,12 +308,24 @@ class PPNView extends React.Component<Props, State> {
       availableStake,
       assetsOnNetwork,
       fetchVirtualAccountBalance,
+      navigation,
+      accounts,
+      smartWalletState,
     } = this.props;
 
     const assetsOnNetworkArray = Object.keys(assetsOnNetwork).map((asset) => assetsOnNetwork[asset]);
     const totalStake = availableStake + 10;
     const availableFormattedAmount = formatMoney(availableStake, 4);
     const assetsOnNetworkToShow = unionBy(assetsOnNetworkArray, this.initialAssets, 'symbol');
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const { upgrade: { deploymentStarted, status } } = smartWalletState;
+    const sendingBlockedMessage = status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+      ? {
+        title: 'To top up PLR Tank or Settle transactions, deploy Smart Wallet first',
+        message: 'You will have to pay a small fee',
+      }
+      : smartWalletStatus.sendingBlockedMessage || {};
+    const disableTopUpAndSettle = Object.keys(sendingBlockedMessage).length;
 
     return (
       <ScrollView
@@ -320,12 +340,20 @@ class PPNView extends React.Component<Props, State> {
           />
         }
       >
+        {!!disableTopUpAndSettle &&
+        <DeploymentView
+          message={sendingBlockedMessage}
+          buttonLabel="Deploy Smart Wallet"
+          buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
+          isDeploying={deploymentStarted || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
+        />}
         <TankBar
           maxValue={totalStake}
           currentValue={availableStake}
           currentValueFormatted={availableFormattedAmount}
           topupAction={() => this.setState({ showPinScreenForAction: FUND_TANK, topUpButtonSubmitted: true })}
           topUpLoading={topUpButtonSubmitted}
+          disabled={!!disableTopUpAndSettle}
         />
         { /* <AssetButtonsWrapper>
           <CircleButton
@@ -347,7 +375,7 @@ class PPNView extends React.Component<Props, State> {
           maxToRenderPerBatch={5}
           onEndReachedThreshold={0.5}
           style={{ width: '100%', height: '100%' }}
-          ListHeaderComponent={this.renderHeader}
+          ListHeaderComponent={() => this.renderHeader(!!disableTopUpAndSettle)}
         />
         <SlideModal
           isVisible={!!showPinScreenForAction}
@@ -372,12 +400,16 @@ const mapStateToProps = ({
   assets: { data: assets, supportedAssets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  smartWallet: smartWalletState,
+  accounts: { data: accounts },
 }) => ({
   assets,
   rates,
   baseFiatCurrency,
   assetsLayout,
   supportedAssets,
+  smartWalletState,
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({

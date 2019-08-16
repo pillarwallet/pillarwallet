@@ -49,7 +49,6 @@ import {
   SET_ASSET_TRANSFER_GAS_LIMIT,
   SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
 } from 'constants/smartWalletConstants';
-import { SET_ACTIVE_NETWORK, BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, UPDATE_BALANCES } from 'constants/assetsConstants';
 
@@ -863,7 +862,7 @@ export const estimateTopUpVirtualAccountAction = () => {
   };
 };
 
-export const topUpVirtualAccountAction = (amount: string, isInit?: boolean) => {
+export const topUpVirtualAccountAction = (amount: string) => {
   return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
@@ -922,17 +921,6 @@ export const topUpVirtualAccountAction = (amount: string, isInit?: boolean) => {
         payload: txHash,
       });
 
-      if (isInit) {
-        dispatch({
-          type: MARK_PLR_TANK_INITIALISED,
-        });
-        dispatch({
-          type: SET_ACTIVE_NETWORK,
-          payload: BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK,
-        });
-        dispatch(saveDbAction('isPLRTankInitialised', { isPLRTankInitialised: true }, true));
-      }
-
       const { history: { data: currentHistory } } = getState();
       dispatch(saveDbAction('history', { history: currentHistory }, true));
 
@@ -943,6 +931,15 @@ export const topUpVirtualAccountAction = (amount: string, isInit?: boolean) => {
         autoClose: true,
       });
     }
+  };
+};
+
+export const setPLRTankAsInitAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: MARK_PLR_TANK_INITIALISED,
+    });
+    dispatch(saveDbAction('isPLRTankInitialised', { isPLRTankInitialised: true }, true));
   };
 };
 
