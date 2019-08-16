@@ -188,8 +188,9 @@ class PillarNetworkIntro extends React.Component<Props, State> {
     const { smartWalletState, accounts, navigation } = this.props;
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const needsToDeploy = smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
+    const stillDeploying = smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING;
     const needsSmartWallet = !smartWalletStatus.hasAccount;
-    const disableCreate = needsToDeploy || needsSmartWallet;
+    const disableCreate = needsToDeploy || needsSmartWallet || stillDeploying;
 
     return (
       <ContainerWithHeader
