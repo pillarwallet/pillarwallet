@@ -59,7 +59,7 @@ const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
 
 const ImageWrapper = styled.View`
   width: 100%;
-  padding: ${spacing.large}px ${spacing.large}px;
+  padding: ${spacing.large}px;
   align-items: center;
   justify-content: center;
 `;
