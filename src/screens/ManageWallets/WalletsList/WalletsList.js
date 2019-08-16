@@ -213,6 +213,7 @@ class WalletsList extends React.Component<Props, State> {
     const currencySymbol = getCurrencySymbol(fiatCurrency);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const showSmartWalletInitButton = !smartWalletStatus.hasAccount && smartWalletFeatureEnabled;
+    const titlePart = smartWalletFeatureEnabled ? 'Ethereum wallets' : 'Ethereum wallet';
 
     return (
       <ContainerWithHeader
@@ -222,7 +223,7 @@ class WalletsList extends React.Component<Props, State> {
           light: true,
           centerItems: [
             { userIcon: true },
-            { title: `${user.username}'s Ethereum wallets` },
+            { title: `${user.username}'s ${titlePart}` },
           ],
         }}
       >
