@@ -17,24 +17,33 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import merge from 'lodash.merge';
 import {
   UPDATE_CONTACTS,
   UPDATE_SEARCH_RESULTS,
   UPDATE_CONTACTS_STATE,
   FETCHED,
   DISCONNECT_CONTACT,
+  START_SYNC_CONTACTS_SMART_ADDRESSES,
+  UPDATE_CONTACTS_SMART_ADDRESSES,
+  SET_CONTACTS_SMART_ADDRESSES,
 } from 'constants/contactsConstants';
-import type { SearchResults } from 'models/Contacts';
+import type { SearchResults, ContactSmartAddresses } from 'models/Contacts';
+
 
 export type ContactsReducerState = {
   data: any,
   contactState: ?string,
   searchResults: SearchResults,
+  contactsSmartAddresses: {
+    addresses: ContactSmartAddresses[],
+    isFetched: boolean,
+  },
 }
 
 export type ContactsReducerAction = {
   type: string,
-  payload: any
+  payload: any,
 }
 
 const initialState = {
@@ -43,6 +52,10 @@ const initialState = {
   searchResults: {
     apiUsers: [],
     localContacts: [],
+  },
+  contactsSmartAddresses: {
+    addresses: [],
+    isFetched: false,
   },
 };
 
@@ -62,6 +75,12 @@ export default function contactsReducer(
       };
     case UPDATE_SEARCH_RESULTS:
       return { ...state, searchResults: action.payload, contactState: FETCHED };
+    case START_SYNC_CONTACTS_SMART_ADDRESSES:
+      return merge({}, state, { contactsSmartAddresses: { isFetched: false } });
+    case UPDATE_CONTACTS_SMART_ADDRESSES:
+      return { ...state, contactsSmartAddresses: { addresses: action.payload, isFetched: true } };
+    case SET_CONTACTS_SMART_ADDRESSES: // NOTE: we call this on app load
+      return merge({}, state, { contactsSmartAddresses: { addresses: action.payload } });
     default:
       return state;
   }

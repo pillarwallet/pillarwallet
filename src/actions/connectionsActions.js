@@ -24,6 +24,7 @@ import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import type { ConnectionIdentityKey } from 'models/Connections';
 import { uniqBy } from 'utils/common';
 import { saveDbAction } from './dbActions';
+import { syncContactsSmartAddressesAction } from './contactsActions';
 
 export const updateConnectionsAction = (theWalletId?: ?string = null) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -32,6 +33,7 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
       connectionIdentityKeys: { data: connectionIdentityKeys },
       contacts: { data: allContacts },
       invitations: { data: allInvitations },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
 
     if (!walletId) {
@@ -137,6 +139,10 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
         { connectionIdentityKeys: updatedConnectionIdentityKeys },
         true),
     );
+
+    if (smartWalletFeatureEnabled) {
+      dispatch(syncContactsSmartAddressesAction());
+    }
   };
 };
 

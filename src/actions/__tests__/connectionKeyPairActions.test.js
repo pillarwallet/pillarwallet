@@ -301,6 +301,11 @@ describe('ConnectionKeyPair actions', () => {
       user: {
         data: { walletId },
       },
+      featureFlags: {
+        data: {
+          SMART_WALLET_ENABLED: false,
+        },
+      },
       connectionIdentityKeys: {
         data: connectionIdentityKeysMock,
       },

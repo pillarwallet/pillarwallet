@@ -470,6 +470,7 @@ const sendTokenFromAssetFlow = createStackNavigator(
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+    [CHAT]: ChatScreen,
   },
   StackNavigatorModalConfig,
 );
