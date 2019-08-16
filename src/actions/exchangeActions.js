@@ -135,7 +135,6 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       user: { data: { walletId: userWalletId } },
-      featureFlags: { data: { EXCHANGE_WITH_FIAT_ENABLED: exchangeWithFiatEnabled } },
     } = getState();
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
@@ -157,34 +156,32 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     const isTest = SENDWYRE_ENVIRONMENT === 'test';
 
-    if (exchangeWithFiatEnabled) {
-      const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
-      if (isAllowed || isTest) {
-        api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-          if (!offer.error) {
-            dispatch({
-              type: ADD_OFFER,
-              payload: {
-                ...offer,
-                offerRestricted: (!isAllowed && `Unavailable in ${alpha2}`) || null,
-              },
-            });
-          }
-        }).catch(() => null);
-      }
-      if (alpha2 === 'US' || isTest) {
-        api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-          if (!offer.error) {
-            dispatch({
-              type: ADD_OFFER,
-              payload: {
-                ...offer,
-                offerRestricted: (alpha2 !== 'US' && `Unavailable in ${alpha2}`) || null,
-              },
-            });
-          }
-        }).catch(() => null);
-      }
+    const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
+    if (isAllowed || isTest) {
+      api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+        if (!offer.error) {
+          dispatch({
+            type: ADD_OFFER,
+            payload: {
+              ...offer,
+              offerRestricted: (!isAllowed && `Unavailable in ${alpha2}`) || null,
+            },
+          });
+        }
+      }).catch(() => null);
+    }
+    if (alpha2 === 'US' || isTest) {
+      api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+        if (!offer.error) {
+          dispatch({
+            type: ADD_OFFER,
+            payload: {
+              ...offer,
+              offerRestricted: (alpha2 !== 'US' && `Unavailable in ${alpha2}`) || null,
+            },
+          });
+        }
+      }).catch(() => null);
     }
 
     if (error) {

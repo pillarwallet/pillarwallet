@@ -178,7 +178,6 @@ type Props = {
   hasUnreadExchangeNotification: boolean,
   markNotificationAsSeen: Function,
   oAuthAccessToken: string,
-  exchangeWithFiatEnabled: boolean,
   accounts: Accounts,
   smartWalletState: Object,
   deploySmartWallet: Function,
@@ -481,16 +480,14 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   provideOptions = () => {
-    const { assets, supportedAssets, exchangeWithFiatEnabled } = this.props;
+    const { assets, supportedAssets } = this.props;
     const fiatOptionsFrom = this.generateFiatOptions();
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(supportedAssets);
     const initialAssetsOptionsBuying = assetsOptionsBuying.filter((option) => option.value !== ETH);
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
     thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
-    if (exchangeWithFiatEnabled) {
-      thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = fiatOptionsFrom;
-    }
+    thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = fiatOptionsFrom;
     thisStateFormOptionsCopy.fields.toInput.config.options = initialAssetsOptionsBuying;
 
     this.setState({
@@ -1069,7 +1066,6 @@ const mapStateToProps = ({
   rates: { data: rates },
   featureFlags: {
     data: {
-      EXCHANGE_WITH_FIAT_ENABLED: exchangeWithFiatEnabled,
       SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
     },
   },
@@ -1086,7 +1082,6 @@ const mapStateToProps = ({
   connectedProviders,
   hasUnreadExchangeNotification,
   oAuthAccessToken,
-  exchangeWithFiatEnabled,
   smartWalletFeatureEnabled,
   accounts,
   smartWalletState,
