@@ -20,13 +20,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { Keyboard, Alert } from 'react-native';
 import isEmpty from 'lodash.isempty';
+import t from 'tcomb-form-native';
+import { createStructuredSelector } from 'reselect';
 import Separator from 'components/Separator';
-import { SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { ACCOUNTS, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import t from 'tcomb-form-native';
+import { CHAT } from 'constants/chatConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Container, Footer } from 'components/Layout';
@@ -41,8 +44,9 @@ import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
-import type { Accounts, AccountTypes } from 'models/Account';
+import type { Account, Accounts, AccountTypes } from 'models/Account';
 import type { ContactSmartAddresses } from 'models/Contacts';
+import { activeAccountSelector } from 'selectors';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -55,6 +59,8 @@ type Props = {
   syncContactsSmartAddresses: Function,
   contactsSmartAddresses: ContactSmartAddresses[],
   isOnline: boolean,
+  blockchainNetworks: Object[],
+  activeAccount: Account,
 };
 
 type State = {
@@ -136,6 +142,8 @@ const generateFormOptions = (config: Object): Object => ({
   },
 });
 
+const isCaseInsensitiveMatch = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
+
 class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
   assetData: Object;
@@ -189,20 +197,43 @@ class SendTokenContacts extends React.Component<Props, State> {
     });
   };
 
-  renderContact = ({ item: user }) => {
-    return (
-      <ListItemWithImage
-        onPress={() => this.setUsersEthAddress(user.ethAddress)}
-        label={user.username}
-        avatarUrl={user.profileImage}
-      />
-    );
-  };
-
   setUsersEthAddress = (ethAddress: string) => {
     this.setState({ value: { ...this.state.value, address: ethAddress } }, () => {
       this.navigateToNextScreen(ethAddress);
     });
+  };
+
+  onContactPress = (user) => {
+    const { navigation } = this.props;
+    const isDisabled = user.isPPNTransaction
+      && (!user.smartWallets || !user.smartWallets.length);
+    if (isDisabled) {
+      Alert.alert(
+        'This user is not on Pillar Network',
+        'You both should be connected to Pillar Network in order to be able to send instant transactions for free',
+        [
+          { text: 'Open Chat', onPress: () => navigation.navigate(CHAT, { username: user.username }) },
+          { text: 'Switch to Ethereum Mainnet', onPress: () => navigation.navigate(ACCOUNTS) },
+          { text: 'Cancel', style: 'cancel' },
+        ],
+        { cancelable: true },
+      );
+      return;
+    }
+    const address = user.isPPNTransaction
+      ? user.smartWallets[0]
+      : user.ethAddress;
+    this.setUsersEthAddress(address);
+  };
+
+  renderContact = ({ item: user }) => {
+    return (
+      <ListItemWithImage
+        onPress={() => this.onContactPress(user)}
+        label={user.username}
+        avatarUrl={user.profileImage}
+      />
+    );
   };
 
   navigateToNextScreen(ethAddress) {
@@ -245,10 +276,11 @@ class SendTokenContacts extends React.Component<Props, State> {
   render() {
     const {
       localContacts = [],
-      // contactsSmartAddresses,
+      contactsSmartAddresses,
       contactsSmartAddressesSynced,
       smartWalletFeatureEnabled,
       isOnline,
+      blockchainNetworks,
     } = this.props;
     const { isScanning, formStructure, value } = this.state;
 
@@ -265,12 +297,29 @@ class SendTokenContacts extends React.Component<Props, State> {
       });
     }
 
+    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
+    const { id: activeBNetworkId } = activeBNetwork;
+    if (smartWalletFeatureEnabled
+      && activeBNetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK
+      && contactsSmartAddresses) {
+      contactsToRender = contactsToRender.map(contact => {
+        const { smartWallets = [] } = contactsSmartAddresses.find(
+          ({ userId }) => contact.id && isCaseInsensitiveMatch(userId, contact.id),
+        ) || {};
+        return {
+          ...contact,
+          isPPNTransaction: true,
+          smartWallets,
+        };
+      });
+    }
+
     const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;
     const showSpinner = smartWalletFeatureEnabled
       && isOnline
       && !contactsSmartAddressesSynced
       && !isEmpty(localContacts);
-    // TODO: disable contacts if they have no smart accounts
+
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: `Send ${tokenName}` }] }}>
         <FormWrapper>
@@ -318,6 +367,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
   session: { data: { contactsSmartAddressesSynced, isOnline } },
+  blockchainNetwork: { data: blockchainNetworks },
 }) => ({
   accounts,
   localContacts,
@@ -326,6 +376,16 @@ const mapStateToProps = ({
   contactsSmartAddresses,
   contactsSmartAddressesSynced,
   isOnline,
+  blockchainNetworks,
+});
+
+const structuredSelector = createStructuredSelector({
+  activeAccount: activeAccountSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -333,4 +393,4 @@ const mapDispatchToProps = (dispatch) => ({
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SendTokenContacts);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenContacts);

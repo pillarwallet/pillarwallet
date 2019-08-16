@@ -332,15 +332,18 @@ export const syncContactsSmartAddressesAction = () => {
       .filter(Boolean);
 
     // call the api
-    const addresses = await api.getContactsSmartAddresses(walletId, connections);
-    console.log({ addresses });
+    const {
+      smartWallets: contactsSmartAddresses,
+    } = await api.getContactsSmartAddresses(walletId, connections).catch(() => null) || {};
+
+    if (!contactsSmartAddresses) return;
 
     // store the result
     dispatch({
       type: UPDATE_CONTACTS_SMART_ADDRESSES,
-      payload: addresses,
+      payload: contactsSmartAddresses,
     });
-    dispatch(saveDbAction('contactsSmartAddresses', { contactsSmartAddresses: addresses }, true));
+    dispatch(saveDbAction('contactsSmartAddresses', { contactsSmartAddresses }, true));
 
     // update session
     dispatch({
