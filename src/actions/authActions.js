@@ -42,6 +42,7 @@ import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
@@ -61,6 +62,7 @@ import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { saveDbAction } from './dbActions';
 import { fetchBadgesAction } from './badgesActions';
+import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 
 const Crashlytics = firebase.crashlytics();
 
@@ -73,7 +75,9 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       accounts: { data: accounts },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
-      appSettings: { data: { userJoinedBeta = false, firebaseAnalyticsConnectionEnabled = true } },
+      appSettings: {
+        data: { userJoinedBeta = false, firebaseAnalyticsConnectionEnabled = true, blockchainNetwork = '' },
+      },
     } = getState();
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -145,6 +149,12 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
 
         if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
           await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
+        }
+
+        // set ETHEREUM network as active
+        // if we disable feature flag or end beta testing program while user has set PPN as active network
+        if (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
+          dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
       } else {
         api.init();
