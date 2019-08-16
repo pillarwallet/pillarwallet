@@ -29,6 +29,7 @@ import {
   RESET_PAYMENT_NETWORK,
   SET_AVAILABLE_TO_SETTLE_TX,
   START_FETCHING_AVAILABLE_TO_SETTLE_TX,
+  MARK_PLR_TANK_INITIALISED,
 } from 'constants/paymentNetworkConstants';
 import type { TopUpFee, SettleTxFee } from 'models/PaymentNetwork';
 import type { Balances } from 'models/Asset';
@@ -43,6 +44,7 @@ export type PaymentNetworkState = {
     data: Object[],
     isFetched: boolean,
   },
+  isTankInitialised: boolean,
 };
 
 export type PaymentNetworkAction = {
@@ -66,6 +68,7 @@ const initialState = {
     data: [],
     isFetched: false,
   },
+  isTankInitialised: false,
 };
 
 export default function paymentNetworkReducer(
@@ -85,6 +88,8 @@ export default function paymentNetworkReducer(
       return merge({}, state, { settleTxFee: { feeInfo: action.payload, isFetched: true } });
     case PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS:
       return merge({}, state, { txToListen: [...state.txToListen, action.payload] });
+    case MARK_PLR_TANK_INITIALISED:
+      return merge({}, state, { isTankInitialised: true });
     case PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS:
       return {
         ...state,

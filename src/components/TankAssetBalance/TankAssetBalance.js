@@ -20,7 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
-import { MediumText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 type Props = {
@@ -28,13 +28,17 @@ type Props = {
   amount: string,
   wrapperStyle?: Object,
   monoColor?: boolean,
+  fillColor?: string,
+  textStyle?: ?Object,
+  token?: string,
 };
 
 const Wrapper = styled.View`
   flex-direction: row;
+  align-items: center;
 `;
 
-const BalanceInTank = styled(MediumText)`
+const BalanceInTank = styled(BaseText)`
   color: ${baseColors.electricBlueIntense};
   font-size: ${fontSizes.medium}px;
 `;
@@ -44,6 +48,8 @@ const getIconFill = (props) => {
     return 'url(#gradSynthetic)';
   } else if (props.monoColor) {
     return baseColors.electricBlueIntense;
+  } else if (props.fillColor) {
+    return props.fillColor;
   }
   return 'url(#grad)';
 };
@@ -52,6 +58,8 @@ const TankAssetBalance = (props: Props) => {
   const {
     amount,
     wrapperStyle,
+    textStyle,
+    token,
   } = props;
 
   const iconFill = getIconFill(props);
@@ -85,7 +93,8 @@ const TankAssetBalance = (props: Props) => {
           strokeWidth="32"
         />
       </Svg>
-      <BalanceInTank>{amount}</BalanceInTank>
+      <BalanceInTank style={textStyle}>{amount}</BalanceInTank>
+      {!!token && <BalanceInTank style={textStyle}> {token}</BalanceInTank>}
     </Wrapper>
   );
 };

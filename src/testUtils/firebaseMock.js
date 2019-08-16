@@ -42,6 +42,10 @@ class FirebaseMock {
   crashlytics = () => ({
     setUserIdentifier: () => {},
   })
+
+  analytics = () => ({
+    setAnalyticsCollectionEnabled: () => {},
+  })
 }
 
 export default new FirebaseMock();

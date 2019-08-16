@@ -25,14 +25,14 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 
 // components
-import { Container, Footer, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
-import Header from 'components/Header';
 
 // utils
 import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { fontSizes, spacing, UIColors } from 'utils/variables';
 import { getRate } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
@@ -71,6 +71,11 @@ const HelperText = styled(BaseText)`
 const BackgroundWrapper = styled.View`
   background-color: ${UIColors.defaultBackgroundColor};
   flex: 1;
+`;
+
+const FooterWrapper = styled.View`
+  width: 100%;
+  padding: ${spacing.large}px;
 `;
 
 type Props = {
@@ -187,12 +192,21 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
 
     return (
-      <Container color={baseColors.white}>
-        <Header
-          onBack={() => this.props.navigation.goBack(null)}
-          title={`send ${this.assetData.token} via PPN`}
-          white
-        />
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: `Send ${this.assetData.token} via PPN` }] }}
+        keyboardAvoidFooter={!!value && !!parseFloat(value.amount) && (
+          <FooterWrapper>
+            <Button
+              disabled={!session.isOnline}
+              small
+              flexRight
+              title="Next"
+              onPress={this.handleFormSubmit}
+            />
+          </FooterWrapper>
+          )
+        }
+      >
         <BackgroundWrapper>
           <Wrapper regularPadding>
             <Form
@@ -216,18 +230,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
             </ActionsWrapper>
           </Wrapper>
         </BackgroundWrapper>
-        <Footer keyboardVerticalOffset={35} backgroundColor={UIColors.defaultBackgroundColor}>
-          {!!value && !!parseFloat(value.amount) &&
-            <Button
-              disabled={!session.isOnline}
-              small
-              flexRight
-              title="Next"
-              onPress={this.handleFormSubmit}
-            />
-          }
-        </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

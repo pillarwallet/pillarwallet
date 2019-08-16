@@ -19,7 +19,6 @@
 */
 
 import debounce from 'lodash.debounce';
-import get from 'lodash.get';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
@@ -55,7 +54,7 @@ import {
   BCX,
   COLLECTIBLE,
 } from 'constants/notificationConstants';
-import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CONTACT } from 'constants/navigationConstants';
+import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT } from 'constants/navigationConstants';
 import {
   ADD_WEBSOCKET_RECEIVED_MESSAGE,
   REMOVE_WEBSOCKET_SENT_MESSAGE,
@@ -85,7 +84,7 @@ const chat = new ChatService();
 const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
   [BCX]: HOME,
-  [SIGNAL]: CONTACT,
+  [SIGNAL]: CHAT,
   [COLLECTIBLE]: HOME,
 };
 
@@ -151,6 +150,7 @@ export const startListeningNotificationsAction = () => {
       wallet: { data: wallet },
       assets: { data: assets },
       invitations: { data: invitations },
+      contacts: { data: contacts },
     } = getState();
     if (SOCKET && SOCKET.socket && SOCKET.socket.readyState === 1) {
       SOCKET.onMessage(async response => {
@@ -231,19 +231,22 @@ export const startListeningNotificationsAction = () => {
         const { params: navParams = null } = getNavigationPathAndParamsState() || {};
         if (!navParams) return;
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
-        if (get(navParams, 'contact.username', '') === notification.navigationParams.username
-          && navParams.chatTabOpen) {
-          const { contact } = navParams;
-          dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
-          return;
+        const contact = contacts.find(c => c.username === notification.navigationParams.username);
+        if (contact) {
+          if (!!navParams.username && navParams.username === contact.username) {
+            dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
+            return;
+          }
+          if (contact.status !== 'muted') {
+            dispatch({
+              type: ADD_NOTIFICATION,
+              payload: {
+                ...notification,
+                message: `${notification.message} from ${contact.username}`,
+              },
+            });
+          }
         }
-        dispatch({
-          type: ADD_NOTIFICATION,
-          payload: {
-            ...notification,
-            message: `${notification.message} from ${notification.navigationParams.username}`,
-          },
-        });
       }
       if (notification.type === CONNECTION) {
         if (notification.message === MESSAGE_DISCONNECTED) {
@@ -272,25 +275,17 @@ export const stopListeningNotificationsAction = () => {
 export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Function, getState: Function) => { // eslint-disable-line
     await SOCKET.init();
-    const {
-      contacts: { data: contacts },
-    } = getState();
     const notificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
       checkForSupportAlert(notificationOpen.notification._data);
       const { type, navigationParams } = processNotification(notificationOpen.notification._data) || {};
-      let chatTabOpen = false;
       if (type === SIGNAL) {
         dispatch(getExistingChatsAction());
-        chatTabOpen = true;
       }
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
-        lastActiveScreenParams: {
-          ...navigationParams,
-          chatTabOpen,
-        },
+        lastActiveScreenParams: navigationParams,
       });
       firebase.notifications().setBadge(0);
     }
@@ -302,11 +297,10 @@ export const startListeningOnOpenNotificationAction = () => {
       if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
       const { type, asset, navigationParams = {} } = processNotification(message.notification._data) || {};
-      let navParams = navigationParams;
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
-        lastActiveScreenParams: navParams,
+        lastActiveScreenParams: navigationParams,
       });
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
@@ -325,8 +319,6 @@ export const startListeningOnOpenNotificationAction = () => {
         }
         if (type === SIGNAL) {
           dispatch(getExistingChatsAction());
-          const contact = contacts.find(c => c.username === navigationParams.username) || {};
-          navParams = { contact };
         }
         const routeName = notificationRoute || HOME;
         const navigateToAppAction = NavigationActions.navigate({
@@ -334,7 +326,7 @@ export const startListeningOnOpenNotificationAction = () => {
           params: {},
           action: NavigationActions.navigate({
             routeName,
-            params: navParams,
+            params: navigationParams,
           }),
         });
         navigate(navigateToAppAction);
@@ -353,14 +345,13 @@ export const stopListeningOnOpenNotificationAction = () => {
 
 export const startListeningChatWebSocketAction = () => {
   return async (dispatch: Function, getState: Function) => {
-    const {
-      contacts: { data: contacts },
-    } = getState();
-
     const chatWebSocket = chat.getWebSocketInstance();
     await chatWebSocket.listen();
     chatWebSocket.onOpen();
     chatWebSocket.onMessage(async webSocketMessage => {
+      const {
+        contacts: { data: contacts },
+      } = getState();
       const {
         type: messageType,
         response: messageResponse,
@@ -417,28 +408,28 @@ export const startListeningChatWebSocketAction = () => {
               payload: true,
             });
 
-            const senderNameInNavParams = get(navParams, 'contact.username', '')
-              || (get(navParams, 'username', ''));
-            const relatedContact = get(navParams, 'contact', null)
-              || contacts.find(c => c.username === senderNameInNavParams) || {};
-
-            if (senderNameInNavParams === senderUsername && !!navParams.chatTabOpen
-              && !!Object.keys(relatedContact).length) {
-              const { username, id, profileImage } = relatedContact;
-              dispatch(getChatByContactAction(username, id, profileImage));
-              return;
-            }
-
             dispatch(getExistingChatsAction());
-            const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
-            if (notification == null) return;
-            dispatch({
-              type: ADD_NOTIFICATION,
-              payload: {
-                ...notification,
-                message: `${notification.message} from ${senderUsername}`,
-              },
-            });
+
+            const contact = contacts.find(c => c.username === senderUsername) || {};
+
+            if (contact) {
+              if (!!navParams.username && navParams.username === contact.username) {
+                dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
+                return;
+              }
+
+              const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
+
+              if (notification == null || contact.status === 'muted') return;
+
+              dispatch({
+                type: ADD_NOTIFICATION,
+                payload: {
+                  ...notification,
+                  message: `${notification.message} from ${senderUsername}`,
+                },
+              });
+            }
             break;
           case 'tx-note':
             dispatch(decryptReceivedWebSocketTxNoteMessageAction(receivedSignalMessage));

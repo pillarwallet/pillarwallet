@@ -23,11 +23,11 @@ import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
-import { Container, Footer, ScrollWrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
-import Header from 'components/Header';
 import { spacing, fontSizes } from 'utils/variables';
 import { onWalletConnectSessionApproval, onWalletConnectSessionRejection } from 'actions/walletConnectActions';
 
@@ -86,59 +86,61 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
     const icon = icons && icons.length ? icons[0] : null;
 
     return (
-      <React.Fragment>
-        <Container>
-          <Header onBack={this.handleSessionRejection} title="walletconnect" />
-          <ScrollWrapper regularPadding>
-            <Title subtitle title="WalletConnect Request" />
-            {!!icon && (
-              <CachedImage
-                key={name}
-                style={{
-                  height: 55,
-                  width: 55,
-                  marginBottom: spacing.mediumLarge,
-                }}
-                source={{ uri: icon }}
-                fallbackSource={genericToken}
-                resizeMode="contain"
-              />
-            )}
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Wallet Connect' }],
+          customOnBack: this.handleSessionRejection,
+        }}
+      >
+        <ScrollWrapper regularPadding>
+          <Title subtitle title="WalletConnect Request" />
+          {!!icon && (
+            <CachedImage
+              key={name}
+              style={{
+                height: 55,
+                width: 55,
+                marginBottom: spacing.mediumLarge,
+              }}
+              source={{ uri: icon }}
+              fallbackSource={genericToken}
+              resizeMode="contain"
+            />
+          )}
+          <LabeledRow>
+            <Label>Name</Label>
+            <Value>{name || 'Unknown'}</Value>
+          </LabeledRow>
+          {!!description && (
             <LabeledRow>
-              <Label>Name</Label>
-              <Value>{name || 'Unknown'}</Value>
+              <Label>Description</Label>
+              <Value>{description}</Value>
             </LabeledRow>
-            {!!description && (
-              <LabeledRow>
-                <Label>Description</Label>
-                <Value>{description}</Value>
-              </LabeledRow>
-            )}
-            {!!url && (
-              <LabeledRow>
-                <Label>Url</Label>
-                <Value>{url}</Value>
-              </LabeledRow>
-            )}
-          </ScrollWrapper>
-          <Footer keyboardVerticalOffset={40}>
-            <FooterWrapper>
-              <OptionButton
-                primaryInverted
-                onPress={this.handleSessionApproval}
-                textStyle={{ fontWeight: 'normal' }}
-                title="Approve"
-              />
-              <OptionButton
-                dangerInverted
-                onPress={this.handleSessionRejection}
-                textStyle={{ fontWeight: 'normal' }}
-                title="Reject"
-              />
-            </FooterWrapper>
-          </Footer>
-        </Container>
-      </React.Fragment>
+          )}
+          {!!url && (
+            <LabeledRow>
+              <Label>Url</Label>
+              <Value>{url}</Value>
+            </LabeledRow>
+          )}
+        </ScrollWrapper>
+        <Footer keyboardVerticalOffset={40}>
+          <FooterWrapper>
+            <OptionButton
+              primaryInverted
+              onPress={this.handleSessionApproval}
+              textStyle={{ fontWeight: 'normal' }}
+              title="Approve"
+            />
+            <OptionButton
+              dangerInverted
+              onPress={this.handleSessionRejection}
+              textStyle={{ fontWeight: 'normal' }}
+              title="Reject"
+            />
+          </FooterWrapper>
+        </Footer>
+      </ContainerWithHeader>
     );
   }
 }

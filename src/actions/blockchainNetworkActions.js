@@ -17,36 +17,21 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import { Wrapper } from 'components/Layout';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
-type Props = {
-  title: string,
-  bodyText: string,
-}
+import { SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { saveDbAction } from './dbActions';
 
-const EmptyChat = (props: Props) => {
-  const {
-    title,
-    bodyText,
-  } = props;
-
-  return (
-    <Wrapper
-      fullScreen
-      style={{
-        paddingTop: 90,
-        paddingBottom: 90,
-        alignItems: 'center',
-      }}
-    >
-      <EmptyStateParagraph
-        title={title}
-        bodyText={bodyText}
-      />
-    </Wrapper>
-  );
+export const setActiveBlockchainNetworkAction = (id: string) => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: SET_ACTIVE_NETWORK,
+      payload: id,
+    });
+    dispatch(saveDbAction('app_settings', { appSettings: { blockchainNetwork: id } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { blockchainNetwork: id },
+    });
+  };
 };
-
-export default EmptyChat;

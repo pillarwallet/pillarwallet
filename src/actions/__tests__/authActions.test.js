@@ -28,6 +28,7 @@ import {
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
+import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
 import * as connectionKeyActions from 'actions/connectionKeyPairActions';
@@ -73,12 +74,14 @@ describe('Wallet actions', () => {
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
       accounts: { data: [] },
       featureFlags: { data: INITIAL_FEATURE_FLAGS },
+      appSettings: { data: {} },
     });
   });
 
   it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
       { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
       {
         type: DECRYPT_WALLET,
@@ -103,6 +106,7 @@ describe('Wallet actions', () => {
     storage.save('user', { user: registeredMockUser });
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: DECRYPT_WALLET, payload: mockWallet },

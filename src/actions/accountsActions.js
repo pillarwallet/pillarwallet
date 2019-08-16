@@ -44,6 +44,8 @@ import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/coll
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
 import { ACCOUNT_STATE_DEPLOYED } from 'services/smartWallet';
 import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
+import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 
 const storage = Storage.getInstance('db');
 
@@ -218,6 +220,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
       await dispatch(setActiveAccountAction(accountId));
     }
 
+    dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
     dispatch(fetchAssetsBalancesAction(assets));
     dispatch(fetchCollectiblesAction());
   };
@@ -226,6 +229,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
 export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
   return async (dispatch: Function, getState: Function) => {
     const {
+      appSettings: { data: { blockchainNetwork } },
       accounts: {
         data: accounts,
       },
@@ -253,5 +257,12 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     await dispatch(connectSmartWalletAccountAction(activeAccountId));
     dispatch(fetchVirtualAccountBalanceAction());
     dispatch(syncVirtualAccountTransactionsAction());
+
+    if (blockchainNetwork) {
+      dispatch({
+        type: SET_ACTIVE_NETWORK,
+        payload: blockchainNetwork,
+      });
+    }
   };
 };

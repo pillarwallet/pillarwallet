@@ -39,7 +39,7 @@ import {
   INVALID_USERNAME,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
+import { APP_FLOW, NEW_WALLET, HOME } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import {
@@ -57,22 +57,25 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
 import { RESET_SMART_WALLET } from 'constants/smartWalletConstants';
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
+import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
 import { signalInitAction } from 'actions/signalClientActions';
-import {
-  initSmartWalletSdkAction,
-  importSmartWalletAccountsAction,
-} from 'actions/smartWalletActions';
+import { initSmartWalletSdkAction, importSmartWalletAccountsAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
+import {
+  setFirebaseAnalyticsCollectionEnabled,
+  setUserJoinedBetaAction,
+} from 'actions/appSettingsActions';
+import { fetchBadgesAction } from 'actions/badgesActions';
 
 const storage = Storage.getInstance('db');
 
@@ -168,6 +171,8 @@ const finishRegistration = async ({
   // restore transactions history
   await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
 
+  dispatch(fetchBadgesAction());
+
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
   // restore access tokens
@@ -183,7 +188,7 @@ const navigateToAppFlow = (isWalletBackedUp: boolean) => {
   const navigateToAssetsAction = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
-    action: NavigationActions.navigate({ routeName: ASSETS }),
+    action: NavigationActions.navigate({ routeName: HOME }),
   });
 
   toastWalletBackup(isWalletBackedUp);
@@ -215,6 +220,7 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_BALANCES, payload: {} });
     dispatch({ type: UPDATE_COLLECTIBLES, payload: {} });
     dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} });
+    dispatch({ type: UPDATE_BADGES, payload: [] });
     dispatch({ type: RESET_SMART_WALLET });
     dispatch({ type: RESET_PAYMENT_NETWORK });
 
@@ -305,6 +311,14 @@ export const registerWalletAction = () => {
       privateKey: wallet.privateKey,
       isImported,
     });
+
+    // user might be already joined to beta program before
+    if (userInfo.betaProgramParticipant) {
+      dispatch(setUserJoinedBetaAction(true, true)); // 2nd true value sets to ignore toast success message
+    } else {
+      // we don't want to track by default, we will use this only when user applies for beta
+      dispatch(setFirebaseAnalyticsCollectionEnabled(false));
+    }
 
     // STEP 6: all done, navigate to the assets screen
     const isWalletBackedUp = isImported || isBackedUp;

@@ -33,18 +33,14 @@ import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
 
 const {
-  Eth: {
-    TransactionSpeeds: {
-      Slow: SLOW,
-      Regular: REGULAR,
-      Fast: FAST,
-    },
+  GasPriceStrategies: {
+    Avg: AVG,
+    Fast: FAST,
   },
-} = sdkModules;
+} = sdkConstants;
 
 const TransactionSpeeds = {
-  [SLOW]: SLOW,
-  [REGULAR]: REGULAR,
+  [AVG]: AVG,
   [FAST]: FAST,
 };
 
@@ -158,16 +154,14 @@ class SmartWallet {
   }
 
   async deploy() {
-    const deployEstimate = await this.sdk.estimateAccountDeployment()
-      .then(({ totalCost }) => totalCost)
-      .catch(this.handleError);
+    const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
 
     const accountBalance = this.getAccountRealBalance();
-    if (deployEstimate && accountBalance.gte(deployEstimate)) {
-      return this.sdk.deployAccount();
+    if (get(deployEstimate, 'totalCost') && accountBalance.gte(deployEstimate.totalCost)) {
+      return this.sdk.deployAccount(deployEstimate);
     }
 
-    console.log('insufficient balance, lack: ', deployEstimate.sub(accountBalance).toString());
+    console.log('insufficient balance: ', deployEstimate, accountBalance);
     return null;
   }
 
@@ -219,7 +213,7 @@ class SmartWallet {
       recipient,
       value,
       data,
-      transactionSpeed = null,
+      transactionSpeed,
     } = transaction;
 
     const estimatedTransaction = await this.sdk.estimateAccountTransaction(
@@ -288,11 +282,13 @@ class SmartWallet {
   }
 
   async getAccountPaymentsToSettle(accountAddress: string, page?: number = 0) {
-    const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
+    const filters = {
+      state: ACCOUNT_PAYMENT_COMPLETED,
+    };
+    const data = await this.sdk.getConnectedAccountPayments(page, filters).catch(this.handleError);
     if (!data) return [];
 
     const items = data.items
-      .filter(payment => payment.state === ACCOUNT_PAYMENT_COMPLETED)
       .filter(payment => {
         const recipientAddress = get(payment, 'recipient.account.address', '');
         return addressesEqual(recipientAddress, accountAddress);

@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { TouchableOpacity, Platform } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { fontSizes, fontWeights } from 'utils/variables';
 import { BoldText } from 'components/Typography';
 
 
@@ -56,19 +56,13 @@ const Wrapper = styled.View`
 
 const Text = styled(BoldText)`
   line-height: ${fontSizes.extraLarger};
-  font-size: ${props => props.subtitle ? fontSizes.medium : fontSizes.large};
+  font-size: ${props => props.subtitle ? fontSizes.extraSmall : fontSizes.medium};
   font-weight: ${fontWeights.bold};
   ${({ align }) => align === 'center' && `
     line-height: 25px;
     text-align: center;
   `}
 `;
-
-const BlueDot = styled(BoldText)`
-  color: ${baseColors.brightSkyBlue};
-  font-size: ${Platform.OS === 'ios' ? 30 : 26}px;
-`;
-
 
 /**
  *  this separate definition has to stay here as it affects font rendering
@@ -95,12 +89,8 @@ const Title = (props: Props) => {
     onTitlePress,
     titleStyles,
     title,
-    noBlueDot,
-    dotColor,
     onLayout,
   } = props;
-
-  const noBlueDotNeeded = noBlueDot || !title;
 
   return (
     <Wrapper
@@ -121,7 +111,6 @@ const Title = (props: Props) => {
             fullWidth={fullWidth}
           >
             {title}
-            {!subtitle && !noBlueDotNeeded && <BlueDot dotColor={dotColor}>.</BlueDot>}
           </AktivTextTitle>
         </TouchableOpacity>
         :
@@ -133,7 +122,6 @@ const Title = (props: Props) => {
           fullWidth={fullWidth}
         >
           {title}
-          {!subtitle && !noBlueDotNeeded && <BlueDot dotColor={dotColor}>.</BlueDot>}
         </AktivTextTitle>
       }
     </Wrapper>

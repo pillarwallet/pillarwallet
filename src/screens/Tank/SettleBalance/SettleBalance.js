@@ -34,10 +34,9 @@ import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // components
-import { Container, Footer } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Label, BaseText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
-import Header from 'components/Header';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -54,7 +53,7 @@ import type { Assets, Balances, Rates } from 'models/Asset';
 import type { TxToSettle } from 'models/PaymentNetwork';
 
 // utils
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { formatMoney, getCurrencySymbol, formatAmount } from 'utils/common';
 import { addressesEqual, getPPNTokenAddress, getRate } from 'utils/assets';
 
@@ -90,6 +89,7 @@ const FooterInner = styled.View`
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
+  padding: ${spacing.large}px;
 `;
 
 const AddonWrapper = styled.View`
@@ -100,9 +100,8 @@ const AddonWrapper = styled.View`
 
 const BalanceWrapper = styled.View`
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: flex-end;
-  height: 100%;
 `;
 
 const ValueInFiat = styled(BaseText)`
@@ -165,7 +164,7 @@ class SettleBalance extends React.Component<Props, State> {
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
-              <TankAssetBalance amount={formattedAmount} isSynthetic={assetInfo.symbol !== ETH} />
+              <TankAssetBalance amount={formattedAmount} monoColor />
               <ValueInFiat>
                 {`${currencySymbol}${formattedAmountInFiat}`}
               </ValueInFiat>
@@ -209,7 +208,6 @@ class SettleBalance extends React.Component<Props, State> {
 
   render() {
     const {
-      navigation,
       session,
       availableToSettleTx,
       isFetched,
@@ -218,12 +216,22 @@ class SettleBalance extends React.Component<Props, State> {
     const showSpinner = !isFetched;
 
     return (
-      <Container>
-        <Header
-          onBack={() => navigation.goBack(null)}
-          title="settle balances"
-          white
-        />
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: 'Settle balances' }] }}
+        keyboardAvoidFooter={(
+          <FooterInner style={{ alignItems: 'center' }}>
+            <Label>&nbsp;</Label>
+            {!!txToSettle.length && (
+              <Button
+                small
+                disabled={!session.isOnline}
+                title="Next"
+                onPress={this.goToConfirm}
+              />
+            )}
+          </FooterInner>
+        )}
+      >
         {showSpinner && <LoadingSpinner />}
         {!showSpinner && (
           <React.Fragment>
@@ -249,20 +257,7 @@ class SettleBalance extends React.Component<Props, State> {
               }
             />
           </React.Fragment>)}
-        <Footer>
-          <FooterInner style={{ alignItems: 'center' }}>
-            <Label>&nbsp;</Label>
-            {!!txToSettle.length && (
-              <Button
-                small
-                disabled={!session.isOnline}
-                title="Next"
-                onPress={this.goToConfirm}
-              />
-            )}
-          </FooterInner>
-        </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

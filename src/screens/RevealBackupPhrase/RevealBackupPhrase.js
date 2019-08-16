@@ -70,7 +70,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     if (!pinIsValid) {
       return (
         <Container>
-          <Header title="enter pincode" centerTitle onClose={this.handleScreenDismissal} />
+          <Header title="Enter pincode" centerTitle onClose={this.handleScreenDismissal} />
           <CheckPin revealMnemonic onPinValid={(pin, walletObj) => this.onPinValid(walletObj)} />
         </Container>
       );
@@ -79,7 +79,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     if (wallet.mnemonic) {
       return (
         <Container>
-          <Header title="backup phrase" onClose={this.handleScreenDismissal} />
+          <Header title="Backup phrase" onClose={this.handleScreenDismissal} />
           <ScrollWrapper regularPadding>
             <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
             <Paragraph light>

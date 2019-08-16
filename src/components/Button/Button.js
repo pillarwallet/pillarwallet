@@ -23,7 +23,9 @@ import { Button as NBButton } from 'native-base';
 import debounce from 'lodash.debounce';
 import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
+import Spinner from 'components/Spinner';
 import { UIColors, baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
+import { responsiveSize } from 'utils/ui';
 
 type Props = {
   children?: React.Node,
@@ -53,10 +55,17 @@ type Props = {
   height?: number,
   debounceTime?: number,
   textStyle?: ?Object,
+  style?: Object,
+  isLoading?: boolean,
 };
 
 type State = {
   shouldIgnoreTap: boolean,
+};
+
+type ButtonNextProps = {
+  onPress: Function,
+  disabled?: boolean,
 };
 
 const themes = {
@@ -127,13 +136,31 @@ const themes = {
     color: baseColors.white,
     opacity: 0.5,
   },
-  square: {
+  squarePrimary: {
+    background: 'transparent',
+    color: baseColors.electricBlue,
+    borderColor: 'transparent',
+    borderWidth: 0,
+    flexDirection: 'column',
+    borderRadius: 0,
+    iconHorizontalMargin: 0,
+  },
+  squareDanger: {
     background: 'transparent',
     color: baseColors.burningFire,
     borderColor: 'transparent',
     borderWidth: 0,
     flexDirection: 'column',
     borderRadius: 0,
+    iconHorizontalMargin: 0,
+  },
+  roundedCorners: {
+    background: baseColors.electricBlue,
+    color: baseColors.white,
+    borderColor: 'transparent',
+    borderWidth: 0,
+    flexDirection: 'row',
+    borderRadius: 6,
     iconHorizontalMargin: 0,
   },
 };
@@ -240,6 +267,21 @@ const ButtonMiniText = styled(BoldText)`
   color: #fff;
 `;
 
+const ButtonNextWrapper = styled.TouchableOpacity`
+  width: ${responsiveSize(70)}px;
+  height: ${responsiveSize(70)}px;
+  border-radius: 4px;
+  background-color: ${props => props.disabled ? baseColors.lightGray : baseColors.electricBlue};
+  align-items: center;
+  justify-content: center;
+`;
+
+const NextIcon = styled(Icon)`
+  font-size: ${fontSizes.extraLarge}px;
+  color: ${baseColors.white};
+  transform: rotate(180deg);
+`;
+
 const getTheme = (props: Props) => {
   if (props.secondary && props.danger) {
     return themes.secondaryDanger;
@@ -295,6 +337,8 @@ class Button extends React.Component<Props, State> {
       disabled,
       disabledTransparent,
       children,
+      isLoading,
+      style = {},
     } = this.props;
 
     return (
@@ -302,9 +346,12 @@ class Button extends React.Component<Props, State> {
         {...this.props}
         theme={theme}
         onPress={debounce(this.handlePress, this.props.debounceTime, { leading: true, trailing: false })}
-        disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap}
+        disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap || isLoading}
+        style={isLoading ? { ...style, backgroundColor: 'transparent' } : style}
+
       >
-        {!!this.props.icon &&
+        {!!isLoading && <Spinner width={20} height={20} />}
+        {!!this.props.icon && !isLoading &&
           <ButtonIcon
             marginRight={this.props.marginRight}
             iconSize={this.props.iconSize}
@@ -312,7 +359,7 @@ class Button extends React.Component<Props, State> {
             theme={theme}
           />
         }
-        {!!this.props.title &&
+        {!!this.props.title && !isLoading &&
         <ButtonText
           theme={theme}
           small={this.props.small}
@@ -340,3 +387,15 @@ export const ButtonMini = (props: ButtonMiniProps) => (
     <ButtonMiniText>{props.title}</ButtonMiniText>
   </ButtonMiniWrapper>
 );
+
+export const ButtonNext = (props: ButtonNextProps) => {
+  const { onPress, disabled } = props;
+  return (
+    <ButtonNextWrapper
+      onPress={onPress}
+      disabled={disabled}
+    >
+      <NextIcon name="back" />
+    </ButtonNextWrapper>
+  );
+};

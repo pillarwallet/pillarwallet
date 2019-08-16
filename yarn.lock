@@ -11,10 +11,10 @@
     openzeppelin-solidity "2.1.2"
     solidity-bytes-utils "0.0.8"
 
-"@archanova/sdk@^1.0.0":
-  version "1.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.0.0.tgz#c334a4ac7e802ffbc9336a60498b57b866203a7e"
-  integrity sha1-wzSkrH6AL/vJM2pgSYtXuGYgOn4=
+"@archanova/sdk@^1.1.0":
+  version "1.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.1.0.tgz#2b7b6e3c5d7a67e194404db48492d3dd3fa5b5cf"
+  integrity sha1-K3tuPF16Z+GUQE20hJLT3T+ltc8=
   dependencies:
     "@archanova/contracts" "^1.0.0"
     "@babel/runtime" "^7.4.4"
@@ -898,10 +898,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.30.1558":
-  version "1.30.1558"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.30.1558.tgz#a55f77af0ea52d1ec8e4bbfbc79903dcef2253fb"
-  integrity sha1-pV93rw6lLR7I5Lv7x5kD3O8iU/s=
+"@pillarwallet/pillarwallet-nodejs-sdk@1.32.1596":
+  version "1.32.1596"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.32.1596.tgz#0232dbd5438e85903abf02ea12070cb294af68ef"
+  integrity sha1-AjLb1UOOhZA6vwLqEgcMspSvaO8=
   dependencies:
     "@pillarwallet/common-formatters" "0.2.29"
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
@@ -10597,6 +10597,13 @@ react-native-swipeout@^2.3.6:
     prop-types "^15.5.10"
     react-tween-state "^0.1.5"
 
+react-native-swiper@^1.5.14:
+  version "1.5.14"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-swiper/-/react-native-swiper-1.5.14.tgz#1c6f949ca377186300f972bb0f30d24062c899aa"
+  integrity sha1-HG+UnKN3GGMA+XK7DzDSQGLImao=
+  dependencies:
+    prop-types "^15.5.10"
+
 react-native-tab-view@^0.0.77:
   version "0.0.77"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-tab-view/-/react-native-tab-view-0.0.77.tgz#11ceb8e7c23100d07e628dc151b57797524d00d4"
@@ -11450,7 +11457,7 @@ right-align@^0.1.1:
   dependencies:
     align-text "^0.1.1"
 
-rimraf@2, rimraf@^2.2.8, rimraf@^2.5.4, rimraf@^2.6.1, rimraf@^2.6.2, rimraf@~2.6.2:
+rimraf@2, rimraf@^2.2.8, rimraf@^2.5.4, rimraf@^2.6.1, rimraf@^2.6.2, rimraf@^2.6.3, rimraf@~2.6.2:
   version "2.6.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rimraf/-/rimraf-2.6.3.tgz#b2d104fe0d8fb27cf9e0a1cda8262dd3833c6cab"
   integrity sha1-stEE/g2Psnz54KHNqCYt04M8bKs=

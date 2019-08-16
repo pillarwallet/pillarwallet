@@ -214,15 +214,12 @@ jest.setMock('@archanova/sdk', {
       Updated: 'Updated',
       Deployed: 'Deployed',
     },
+    GasPriceStrategies: {
+      Avg: 'Avg',
+      Fast: 'Fast',
+    },
   },
   sdkModules: {
-    Eth: {
-      TransactionSpeeds: {
-        Slow: 'Slow',
-        Regular: 'Regular',
-        Fast: 'Fast',
-      },
-    },
     Device: {
       StorageKeys: {
         PrivateKey: 'PrivateKey',
