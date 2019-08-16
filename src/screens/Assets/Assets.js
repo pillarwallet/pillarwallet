@@ -244,9 +244,6 @@ class AssetsScreen extends React.Component<Props, State> {
       : keyWalletInsights;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
-    const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
-      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
@@ -268,8 +265,6 @@ class AssetsScreen extends React.Component<Props, State> {
       case VIEWS.SMART_WALLET_VIEW:
         return (
           <WalletView
-            blockAssetsView={blockAssetsView}
-            sendingBlockedMessage={sendingBlockedMessage}
             showInsight={showSmartWalletInsight}
             hideInsight={() => this.hideWalletInsight('SMART')}
             showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}

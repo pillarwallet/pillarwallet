@@ -44,7 +44,7 @@ import { BaseText, Paragraph } from 'components/Typography';
 import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
-import { DeploymentView, getDeployErrorMessage } from 'components/DeploymentView';
+import DeploymentView, { getDeployErrorMessage } from 'components/DeploymentView';
 
 import {
   searchOffersAction,
@@ -999,7 +999,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       >
         {!!blockView &&
         <DeploymentView
-          isDeploying={!deploymentData.error}
           message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
           buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
         />}

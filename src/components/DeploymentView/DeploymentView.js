@@ -18,7 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
+
+import {
+  SMART_WALLET_DEPLOYMENT_ERRORS,
+  SMART_WALLET_UPGRADE_STATUSES,
+} from 'constants/smartWalletConstants';
 
 import { BaseText, BoldText } from 'components/Typography';
 import { Wrapper } from 'components/Layout';
@@ -26,14 +32,18 @@ import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
-import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
+
 
 type Props = {
   buttonLabel?: string,
   message: Object,
   buttonAction?: ?Function,
-  isDeploying?: boolean,
+  smartWalletState: Object,
+  accounts: Accounts,
 }
 
 const MessageTitle = styled(BoldText)`
@@ -61,31 +71,51 @@ export const getDeployErrorMessage = (errorType: string) => {
   };
 };
 
-export const DeploymentView = (props: Props) => {
-  const {
-    isDeploying,
-    message = {},
-    buttonLabel,
-    buttonAction,
-  } = props;
-  const { title, message: bodyText } = message;
+class DeploymentView extends React.PureComponent<Props> {
+  render() {
+    const {
+      message = {},
+      buttonLabel,
+      buttonAction,
+      smartWalletState,
+      accounts,
+    } = this.props;
+    const { title, message: bodyText } = message;
 
-  return (
-    <Wrapper regularPadding center style={{ marginTop: 40, marginBottom: spacing.large }}>
-      <MessageTitle>{ title }</MessageTitle>
-      <Message>{ bodyText }</Message>
-      <Wrapper style={{ margin: spacing.small, width: '100%', alignItems: 'center' }}>
-        {isDeploying &&
-        <SpinnerWrapper>
-          <Spinner />
-        </SpinnerWrapper>}
-        {!isDeploying && buttonAction && buttonLabel && <Button
-          marginTop={spacing.mediumLarge.toString()}
-          height={52}
-          title={buttonLabel}
-          onPress={buttonAction}
-        />}
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const { upgrade: { deploymentStarted } } = smartWalletState;
+    const isDeploying = deploymentStarted || [
+      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+    ].includes(smartWalletStatus.status);
+
+    return (
+      <Wrapper regularPadding center style={{ marginTop: 40, marginBottom: spacing.large }}>
+        <MessageTitle>{title}</MessageTitle>
+        <Message>{bodyText}</Message>
+        <Wrapper style={{ margin: spacing.small, width: '100%', alignItems: 'center' }}>
+          {isDeploying &&
+          <SpinnerWrapper>
+            <Spinner />
+          </SpinnerWrapper>}
+          {!isDeploying && buttonAction && buttonLabel && <Button
+            marginTop={spacing.mediumLarge.toString()}
+            height={52}
+            title={buttonLabel}
+            onPress={buttonAction}
+          />}
+        </Wrapper>
       </Wrapper>
-    </Wrapper>
-  );
-};
+    );
+  }
+}
+
+const mapStateToProps = ({
+  accounts: { data: accounts },
+  smartWallet: smartWalletState,
+}) => ({
+  smartWalletState,
+  accounts,
+});
+
+export default connect(mapStateToProps)(DeploymentView);

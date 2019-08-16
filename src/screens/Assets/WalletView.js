@@ -48,6 +48,7 @@ import {
   ETH,
 } from 'constants/assetsConstants';
 import { EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -55,7 +56,7 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 import Spinner from 'components/Spinner';
 import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import { DeploymentView, getDeployErrorMessage } from 'components/DeploymentView';
+import DeploymentView, { getDeployErrorMessage } from 'components/DeploymentView';
 
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
@@ -92,8 +93,6 @@ type Props = {
   tabs: Object[],
   activeTab: string,
   showInsight: boolean,
-  blockAssetsView?: boolean,
-  sendingBlockedMessage: Object,
   hideInsight: Function,
   insightList: Object[],
   insightsTitle: string,
@@ -359,8 +358,6 @@ class WalletView extends React.Component<Props, State> {
       collectibles,
       navigation,
       showInsight,
-      blockAssetsView,
-      sendingBlockedMessage = {},
       hideInsight,
       insightList = [],
       insightsTitle,
@@ -402,10 +399,16 @@ class WalletView extends React.Component<Props, State> {
 
     const walletBalances = calculatePortfolioBalance(assets, rates, balances);
     const balance = Object.keys(walletBalances).length ? walletBalances[baseFiatCurrency || defaultFiatCurrency] : 0;
+
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+
     const hasSmartWallet = smartWalletStatus.hasAccount;
     const showFinishSmartWalletActivation = !hasSmartWallet || showDeploySmartWallet;
     const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
+
+    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
+      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
 
     const isAllInsightListDone = !Object.keys(insightList.find((insight) => !insight.status) || {}).length;
     const isInSearchAndFocus = hideInsightForSearch || isInSearchMode;
@@ -434,7 +437,6 @@ class WalletView extends React.Component<Props, State> {
         />
         {blockAssetsView &&
         <DeploymentView
-          isDeploying={!deploymentData.error}
           message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
           buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
         />}
