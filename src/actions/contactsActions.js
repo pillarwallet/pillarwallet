@@ -23,10 +23,13 @@ import {
   FETCHING,
   UPDATE_CONTACTS_STATE,
   UPDATE_CONTACTS,
+  START_SYNC_CONTACTS_SMART_ADDRESSES,
+  UPDATE_CONTACTS_SMART_ADDRESSES,
 } from 'constants/contactsConstants';
 import type { ConnectionIdentityKey } from 'models/Connections';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { excludeLocalContacts } from 'utils/contacts';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { logEventAction } from 'actions/analyticsActions';
@@ -282,5 +285,70 @@ export const blockContactAction = (contactId: string, block: boolean) => {
       type: ADD_NOTIFICATION,
       payload: { message: `${block ? 'Block' : 'Unblock'} Successful` },
     }));
+  };
+};
+
+export const syncContactsSmartAddressesAction = () => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      contacts: { data: contacts },
+      connectionIdentityKeys: { data: connectionIdentityKeys },
+      accessTokens: { data: accessTokens },
+    } = getState();
+
+
+    dispatch({ type: START_SYNC_CONTACTS_SMART_ADDRESSES });
+
+    // get all connections keys
+    const connections = contacts
+      .map(({ id: contactId }) => {
+        const accessToken = accessTokens.find(token => token.userId === contactId);
+        if (accessToken) {
+          return {
+            contactId,
+            accessKeys: {
+              userAccessKey: accessToken.myAccessToken,
+              contactAccessKey: accessToken.userAccessToken,
+            },
+          };
+        }
+        const connectionKeys = connectionIdentityKeys.find((cik: ConnectionIdentityKey) => {
+          return cik.targetUserId === contactId;
+        });
+
+        if (connectionKeys) {
+          return {
+            contactId,
+            connectionKeys: {
+              sourceIdentityKey: connectionKeys.sourceIdentityKey,
+              targetIdentityKey: connectionKeys.targetIdentityKey,
+            },
+          };
+        }
+
+        return null;
+      })
+      .filter(Boolean);
+
+    // call the api
+    const {
+      smartWallets: contactsSmartAddresses,
+    } = await api.getContactsSmartAddresses(walletId, connections).catch(() => null) || {};
+
+    if (!contactsSmartAddresses) return;
+
+    // store the result
+    dispatch({
+      type: UPDATE_CONTACTS_SMART_ADDRESSES,
+      payload: contactsSmartAddresses,
+    });
+    dispatch(saveDbAction('contactsSmartAddresses', { contactsSmartAddresses }, true));
+
+    // update session
+    dispatch({
+      type: UPDATE_SESSION,
+      payload: { contactsSmartAddressesSynced: true },
+    });
   };
 };

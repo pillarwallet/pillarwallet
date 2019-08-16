@@ -66,7 +66,10 @@ import assetsConfig from 'configs/assetsConfig';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
-import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+import {
+  availableStakeSelector,
+  paymentNetworkAccountBalancesSelector,
+} from 'selectors/paymentNetwork';
 
 // local components
 import ReceiveModal from './ReceiveModal';
@@ -100,6 +103,7 @@ type Props = {
   smartWalletFeatureEnabled: boolean,
   history: Array<*>,
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
+  availableStake: number,
 };
 
 type State = {
@@ -235,8 +239,8 @@ class AssetScreen extends React.Component<Props, State> {
       accounts,
       history,
       contacts,
+      availableStake,
     } = this.props;
-
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { token, isSynthetic = false } = assetData;
@@ -244,7 +248,9 @@ class AssetScreen extends React.Component<Props, State> {
     const tokenRate = getRate(rates, token, fiatCurrency);
     const balance = getBalance(balances, token);
     const paymentNetworkBalance = getBalance(paymentNetworkBalances, token);
-    const isWalletEmpty = !isSynthetic ? balance <= 0 : paymentNetworkBalance <= 0;
+    const isWalletEmpty = !isSynthetic
+      ? balance <= 0
+      : (paymentNetworkBalance <= 0 && availableStake < 0);
     const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
     const displayAmount = !isSynthetic ? formatMoney(balance, 4) : formatMoney(paymentNetworkBalance, 4);
     const fiatAmount = !isSynthetic ? formatMoney(totalInFiat) : paymentNetworkBalance * tokenRate;
@@ -403,6 +409,7 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   history: accountHistorySelector,
+  availableStake: availableStakeSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
