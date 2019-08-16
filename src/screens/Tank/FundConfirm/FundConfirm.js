@@ -80,11 +80,11 @@ class FundConfirm extends React.Component<Props, State> {
     }
   }
 
-  handleFormSubmit = async (isInitFlow?: boolean) => {
+  handleFormSubmit = async () => {
     const { navigation, topUpVirtualAccount } = this.props;
     this.setState({ topUpButtonSubmitted: true });
     const amount = navigation.getParam('amount', '0');
-    await topUpVirtualAccount(amount, isInitFlow);
+    await topUpVirtualAccount(amount);
     this.setState({ topUpButtonSubmitted: false }, () => navigation.navigate(ASSETS));
   };
 
@@ -95,11 +95,9 @@ class FundConfirm extends React.Component<Props, State> {
   render() {
     const { session, navigation, topUpFee } = this.props;
     const { topUpButtonSubmitted } = this.state;
-    const isInitFlow = navigation.getParam('isInitFlow', false);
     const amount = navigation.getParam('amount', '0');
     const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
-    const buttonActionTitle = isInitFlow ? 'Init PLR Tank' : 'Fund Pillar Tank';
-    const submitButtonTitle = !topUpButtonSubmitted ? buttonActionTitle : 'Processing...';
+    const submitButtonTitle = !topUpButtonSubmitted ? 'Fund Pillar Tank' : 'Processing...';
 
     return (
       <ContainerWithHeader
@@ -108,7 +106,7 @@ class FundConfirm extends React.Component<Props, State> {
           <FooterWrapper>
             <Button
               disabled={!session.isOnline || !topUpFee.isFetched || topUpButtonSubmitted}
-              onPress={() => this.handleFormSubmit(isInitFlow)}
+              onPress={this.handleFormSubmit}
               title={submitButtonTitle}
             />
           </FooterWrapper>
@@ -145,7 +143,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  topUpVirtualAccount: (amount: string, isInit?: boolean) => dispatch(topUpVirtualAccountAction(amount, isInit)),
+  topUpVirtualAccount: (amount: string) => dispatch(topUpVirtualAccountAction(amount)),
   estimateTopUpVirtualAccount: () => dispatch(estimateTopUpVirtualAccountAction()),
 });
 
