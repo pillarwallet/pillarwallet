@@ -36,7 +36,7 @@ export type AccountRecoveryReducerState = {
 
 export type AccountRecoveryReducerAction = {
   type: string,
-  payload?: any,
+  payload: any,
 };
 
 const initialState = {
@@ -49,7 +49,7 @@ const initialState = {
 export default function accountRecoveryReducer(
   state: AccountRecoveryReducerState = initialState,
   action: AccountRecoveryReducerAction,
-) {
+): AccountRecoveryReducerState {
   switch (action.type) {
     case SET_ACCOUNT_RECOVERY_AGENTS:
       if (!action.payload) return state;
