@@ -30,7 +30,7 @@ export type UserReducerAction = {
   payload: any
 }
 
-const initialState = {
+export const initialState = {
   data: {
     icoService: {},
   },

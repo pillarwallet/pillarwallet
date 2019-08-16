@@ -23,10 +23,15 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 
 import { getActiveAccount } from './accounts';
 
-function getMessage(status: string, activeAccountType: string, smartWalletState: Object) {
+const getMessage = (
+  status: string,
+  activeAccountType: string,
+  smartWalletState: SmartWalletReducerState,
+) => {
   switch (status) {
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
       if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return {};
@@ -55,7 +60,7 @@ function getMessage(status: string, activeAccountType: string, smartWalletState:
     default:
       return {};
   }
-}
+};
 
 export function getSmartWalletStatus(accounts: Accounts, smartWalletState: Object): SmartWalletStatus {
   const account = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);

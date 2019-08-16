@@ -52,7 +52,7 @@ export type PaymentNetworkAction = {
   payload: any,
 };
 
-const initialState = {
+export const initialState = {
   availableStake: '0',
   balances: {},
   topUpFee: {

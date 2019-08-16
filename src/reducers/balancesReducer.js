@@ -29,7 +29,7 @@ export type BalancesAction = {
   payload: any,
 };
 
-const initialState = {
+export const initialState = {
   data: {},
 };
 

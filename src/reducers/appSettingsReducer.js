@@ -31,7 +31,7 @@ export type AppSettingsReducerAction = {
   payload: any
 }
 
-const initialState = {
+export const initialState = {
   data: {
     lastTxSyncDatetimes: {},
     appearanceSettings: {
