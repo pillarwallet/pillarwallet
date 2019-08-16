@@ -59,12 +59,18 @@ const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
 
 const ImageWrapper = styled.View`
   width: 100%;
-  padding: ${spacing.large}px ${spacing.large}px 60px;
+  padding: ${spacing.large}px ${spacing.large}px;
   align-items: center;
   justify-content: center;
 `;
 
 const CameraButton = styled.TouchableOpacity`
+  padding: 10px
+  margin-top: 6px;
+  margin-bottom: 60px;
+`;
+
+const CameraButtonLabel = styled(TextLink)`
   padding: 10px
   margin-top: 6px;
 `;
@@ -184,23 +190,22 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
         }}
       >
         <KAScrollView>
-          <ImageWrapper>
-            {!!profileImage && <ProfileImage
-              uri={`${profileImage}?t=${lastUpdateTime}`}
-              userName={username}
-              diameter={96}
-              borderWidth={0}
-              noShadow
-            />}
-            {!profileImage &&
-            <ProfileImagePlaceholder>
-              <BlankAvatar source={blankAvatar} />
-            </ProfileImagePlaceholder>}
-            <CameraButton onPress={this.openCamera}>
-              <TextLink>{cameraButtonLabel}</TextLink>
-            </CameraButton>
-
-          </ImageWrapper>
+          <CameraButton onPress={this.openCamera}>
+            <ImageWrapper>
+              {!!profileImage && <ProfileImage
+                uri={`${profileImage}?t=${lastUpdateTime}`}
+                userName={username}
+                diameter={96}
+                borderWidth={0}
+                noShadow
+              />}
+              {!profileImage &&
+              <ProfileImagePlaceholder>
+                <BlankAvatar source={blankAvatar} />
+              </ProfileImagePlaceholder>}
+              <CameraButtonLabel>{cameraButtonLabel}</CameraButtonLabel>
+            </ImageWrapper>
+          </CameraButton>
           <ProfileForm
             fields={[{
               label: 'Name',
