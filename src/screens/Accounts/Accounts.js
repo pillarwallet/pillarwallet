@@ -151,6 +151,7 @@ class AccountsScreen extends React.Component<Props, State> {
       assets,
       availableStake,
       isTankInitialised,
+      smartWalletFeatureEnabled,
     } = this.props;
     const { id } = network;
 
@@ -182,6 +183,7 @@ class AccountsScreen extends React.Component<Props, State> {
           />
         );
       case BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK:
+        if (!smartWalletFeatureEnabled) return null;
         return (
           <ListCard
             {...network}
@@ -256,6 +258,7 @@ const mapStateToProps = ({
   rates: { data: rates },
   paymentNetwork: { isTankInitialised },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  appSettings: { data: { baseFiatCurrency } },
 }) => ({
   accounts,
   blockchainNetworks,
@@ -264,6 +267,7 @@ const mapStateToProps = ({
   rates,
   isTankInitialised,
   smartWalletFeatureEnabled,
+  baseFiatCurrency,
 });
 
 const structuredSelector = createStructuredSelector({

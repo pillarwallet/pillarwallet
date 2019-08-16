@@ -292,7 +292,7 @@ class AssetScreen extends React.Component<Props, State> {
           ],
           rightIconsSize: fontSizes.extraLarge,
         }}
-        backgroundColor={baseColors.snowWhite}
+        backgroundColor={baseColors.white}
         inset={{ bottom: 0 }}
       >
         <ScrollWrapper
