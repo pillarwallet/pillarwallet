@@ -57,7 +57,7 @@ const CustomWrapper = styled.View`
 const Title = styled(BoldText)`
   color: ${baseColors.persianBlue};
   font-size: ${fontSizes.rJumbo}px;
-  line-height: ${responsiveSize(62)}px;
+  line-height: ${fontSizes.rJumbo}px;
 `;
 
 const BodyText = styled(BoldText)`

@@ -81,8 +81,6 @@ class PinCodeConfirmation extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          default: true,
-          lighterHeader: true,
           centerItems: [{ title: 'Confirm PiN code' }],
         }}
         backgroundColor={baseColors.white}

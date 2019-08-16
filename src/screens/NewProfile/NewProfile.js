@@ -354,8 +354,6 @@ class NewProfile extends React.Component<Props, State> {
 
     const headerProps = !apiUser.walletId
       ? {
-        default: true,
-        lighterHeader: true,
         centerItems: [
           {
             title: 'Choose username',

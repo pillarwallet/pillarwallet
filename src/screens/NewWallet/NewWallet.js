@@ -43,7 +43,7 @@ type State = {
 
 const messages = [
   'Yes, it takes time to load.',
-  'There’re so many things going on.',
+  'There are many things going on.',
   'Decentralization isn’t easy.',
 ];
 

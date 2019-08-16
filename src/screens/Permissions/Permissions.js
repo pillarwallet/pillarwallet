@@ -361,8 +361,6 @@ class Permissions extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          default: true,
-          lighterHeader: true,
           centerItems: [{ title: 'Know how Pillar makes you safe' }],
         }}
         backgroundColor={baseColors.white}

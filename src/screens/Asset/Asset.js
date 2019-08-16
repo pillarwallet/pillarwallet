@@ -24,6 +24,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import { CachedImage } from 'react-native-cached-image';
 
 // components
 import AssetButtons from 'components/AssetButtons';
@@ -137,9 +138,16 @@ const DataWrapper = styled.View`
   padding-bottom: 8px;
 `;
 
+const ValueWrapper = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
 const TokenValue = styled(BoldText)`
   font-size: ${fontSizes.semiGiant}px;
   text-align: center;
+  color: ${props => props.isSynthetic ? baseColors.electricBlueIntense : baseColors.slateBlack};
 `;
 
 const ValueInFiat = styled(BaseText)`
@@ -164,6 +172,15 @@ const Description = styled(Paragraph)`
 const ValuesWrapper = styled.View`
   flex-direction: row;
 `;
+
+const SyntheticAssetIcon = styled(CachedImage)`
+  width: 12px;
+  height: 24px;
+  margin-right: 4px;
+  margin-top: 1px;
+`;
+
+const lightningIcon = require('assets/icons/icon_lightning.png');
 
 class AssetScreen extends React.Component<Props, State> {
   state = {
@@ -312,9 +329,14 @@ class AssetScreen extends React.Component<Props, State> {
             isListed={isListed}
           />
           <DataWrapper>
-            <TokenValue>
-              {`${displayAmount} ${token}`}
-            </TokenValue>
+            <ValueWrapper>
+              {!!isSynthetic &&
+                <SyntheticAssetIcon source={lightningIcon} />
+              }
+              <TokenValue isSynthetic={isSynthetic}>
+                {`${displayAmount} ${token}`}
+              </TokenValue>
+            </ValueWrapper>
             {!!isListed &&
               <ValuesWrapper>
                 <ValueInFiat>
