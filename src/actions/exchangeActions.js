@@ -38,6 +38,7 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 import { calculateGasEstimate } from 'services/assets';
 import { getActiveAccountAddress } from 'utils/accounts';
+import { isFiatCurrency } from 'utils/exchange';
 
 import type { Offer, OfferOrder } from 'models/Offer';
 
@@ -156,32 +157,34 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     const isTest = SENDWYRE_ENVIRONMENT === 'test';
 
-    const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
-    if (isAllowed || isTest) {
-      api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-        if (!offer.error) {
-          dispatch({
-            type: ADD_OFFER,
-            payload: {
-              ...offer,
-              offerRestricted: (!isAllowed && `Unavailable in ${alpha2}`) || null,
-            },
-          });
-        }
-      }).catch(() => null);
-    }
-    if (alpha2 === 'US' || isTest) {
-      api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-        if (!offer.error) {
-          dispatch({
-            type: ADD_OFFER,
-            payload: {
-              ...offer,
-              offerRestricted: (alpha2 !== 'US' && `Unavailable in ${alpha2}`) || null,
-            },
-          });
-        }
-      }).catch(() => null);
+    if (isFiatCurrency(fromAssetCode)) {
+      const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
+      if (isAllowed || isTest) {
+        api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+          if (!offer.error) {
+            dispatch({
+              type: ADD_OFFER,
+              payload: {
+                ...offer,
+                offerRestricted: (!isAllowed && `Unavailable in ${alpha2}`) || null,
+              },
+            });
+          }
+        }).catch(() => null);
+      }
+      if (alpha2 === 'US' || isTest) {
+        api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+          if (!offer.error) {
+            dispatch({
+              type: ADD_OFFER,
+              payload: {
+                ...offer,
+                offerRestricted: (alpha2 !== 'US' && `Unavailable in ${alpha2}`) || null,
+              },
+            });
+          }
+        }).catch(() => null);
+      }
     }
 
     if (error) {
