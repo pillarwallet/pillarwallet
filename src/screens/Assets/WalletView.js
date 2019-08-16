@@ -404,7 +404,7 @@ class WalletView extends React.Component<Props, State> {
     const balance = Object.keys(walletBalances).length ? walletBalances[baseFiatCurrency || defaultFiatCurrency] : 0;
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const hasSmartWallet = smartWalletStatus.hasAccount;
-    const showFinishSmartWalletActivation = (!!smartWalletFeatureEnabled && !hasSmartWallet) || showDeploySmartWallet;
+    const showFinishSmartWalletActivation = !hasSmartWallet || showDeploySmartWallet;
     const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
 
     const isAllInsightListDone = !Object.keys(insightList.find((insight) => !insight.status) || {}).length;
@@ -482,7 +482,7 @@ class WalletView extends React.Component<Props, State> {
             />)}
           {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
           <ActionsWrapper>
-            {!!showFinishSmartWalletActivation &&
+            {!!showFinishSmartWalletActivation && smartWalletFeatureEnabled &&
             <ListItemChevron
               label={showDeploySmartWallet ? 'Deploy Smart Wallet' : 'Finish Smart Wallet activation'}
               onPress={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: showDeploySmartWallet })}

@@ -418,7 +418,7 @@ class Settings extends React.Component<Props, State> {
             sectionItems={formLegalItems(this)}
           />
 
-          {smartWalletFeatureEnabled &&
+          {smartWalletFeatureEnabled && __DEV__ &&
           <SettingsSection
             sectionTitle="Smart wallet"
             sectionItems={formSmartWalletItems(this)}
