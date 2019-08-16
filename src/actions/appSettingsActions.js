@@ -23,7 +23,11 @@ import firebase from 'react-native-firebase';
 
 import Toast from 'components/Toast';
 import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { saveDbAction } from './dbActions';
+import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
+import { switchAccountAction } from './accountsActions';
 
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Function) => {
@@ -114,7 +118,10 @@ export const setFirebaseAnalyticsCollectionEnabled = (enabled: boolean) => {
 
 export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessToast: boolean = false) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const { user: { data: { username, walletId } } } = getState();
+    const {
+      user: { data: { username, walletId } },
+      accounts: { data: accounts },
+    } = getState();
     let message;
     if (userJoinedBeta) {
       dispatch(setFirebaseAnalyticsCollectionEnabled(true));
@@ -124,6 +131,11 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
     } else {
       firebase.analytics().setUserProperty('username', null);
       dispatch(setFirebaseAnalyticsCollectionEnabled(false));
+      // in case user opts out when PPN is set as active
+      dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
+      // in case user opts out when Smart wallet account is active
+      const keyBasedAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
+      dispatch(switchAccountAction(keyBasedAccount.id));
       message = 'You have successfully left Beta Testing.';
     }
     await api.updateUser({ walletId, betaProgramParticipant: userJoinedBeta });
