@@ -320,7 +320,7 @@ class EventDetails extends React.Component<Props, {}> {
         showSender = false;
         showNote = false;
         showAmountTxType = true;
-        txType = 'TX SETTLEMENT';
+        txType = 'PLR Network settle';
       } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
         showSender = false;
         showNote = false;

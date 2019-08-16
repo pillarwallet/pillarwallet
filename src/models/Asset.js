@@ -25,6 +25,7 @@ export type Asset = {
   iconUrl: string,
   iconMonoUrl: string,
   wallpaperUrl: string,
+  patternUrl?: string,
   decimals: number,
   amount?: number,
 };

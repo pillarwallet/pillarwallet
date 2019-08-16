@@ -43,7 +43,7 @@ import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
 import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 import { sdkConstants } from '@archanova/sdk';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 
@@ -229,6 +229,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
 export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
   return async (dispatch: Function, getState: Function) => {
     const {
+      appSettings: { data: { blockchainNetwork } },
       accounts: {
         data: accounts,
       },
@@ -256,5 +257,12 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     await dispatch(connectSmartWalletAccountAction(activeAccountId));
     dispatch(fetchVirtualAccountBalanceAction());
     dispatch(syncVirtualAccountTransactionsAction());
+
+    if (blockchainNetwork) {
+      dispatch({
+        type: SET_ACTIVE_NETWORK,
+        payload: blockchainNetwork,
+      });
+    }
   };
 };

@@ -19,12 +19,19 @@
 */
 
 import { SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { saveDbAction } from './dbActions';
 
 export const setActiveBlockchainNetworkAction = (id: string) => {
   return async (dispatch: Function) => {
     dispatch({
       type: SET_ACTIVE_NETWORK,
       payload: id,
+    });
+    dispatch(saveDbAction('app_settings', { appSettings: { blockchainNetwork: id } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { blockchainNetwork: id },
     });
   };
 };
