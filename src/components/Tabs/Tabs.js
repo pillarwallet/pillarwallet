@@ -68,7 +68,7 @@ type State = {
 
 const TabOuterWrapper = styled.View`
   background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
-  padding: 12px 16px;
+  padding: 12px ${spacing.large}px;
 `;
 
 const TabsWrapper = styled.View`

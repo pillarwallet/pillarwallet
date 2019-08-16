@@ -18,31 +18,32 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { ScrollView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import { Container, Wrapper } from 'components/Layout';
-import Header from 'components/Header';
+
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
-import {
-  Paragraph,
-  BaseText,
-} from 'components/Typography';
+import { Paragraph, BaseText } from 'components/Typography';
 import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { formatAmount, getCurrencySymbol } from 'utils/common';
+import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
 import { getRate, getBalance } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
-import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
 import smartWalletService from 'services/smartWallet';
+import { DEFAULT_GAS_LIMIT } from 'services/assets';
+
+import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { Collectible } from 'models/Collectible';
 
@@ -63,13 +64,8 @@ type Props = {
 
 type State = {
   upgradeStarted: boolean,
-  gasLimit: number,
+  deployEstimateFee: BigNumber,
 };
-
-const WhiteWrapper = styled.View`
-  background-color: ${baseColors.white};
-  padding-bottom: ${spacing.rhythm}px;
-`;
 
 const DetailsTitle = styled(BaseText)`
   font-size: ${fontSizes.extraSmall}px;
@@ -88,7 +84,7 @@ const DetailsLine = styled.View`
 `;
 
 const DetailsWrapper = styled.View`
-  padding: 30px 20px 0px 20px;
+  padding: 30px ${spacing.large}px 0px ${spacing.large}px;
 `;
 
 const WarningMessage = styled(Paragraph)`
@@ -99,15 +95,11 @@ const WarningMessage = styled(Paragraph)`
 `;
 
 class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
-  constructor(props) {
-    super(props);
-    const { navigation } = this.props;
-    const gasLimit = navigation.getParam('gasLimit', 0);
-    this.state = {
-      upgradeStarted: false,
-      gasLimit,
-    };
-  }
+  gasLimit: number = 0;
+  state = {
+    upgradeStarted: false,
+    deployEstimateFee: 0,
+  };
 
   componentDidMount() {
     const {
@@ -117,6 +109,9 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     } = this.props;
     fetchGasInfo();
     fetchAssetsBalances(assets);
+    smartWalletService.sdk.estimateAccountDeployment()
+      .then(({ totalCost }) => this.setState({ deployEstimateFee: totalCost }))
+      .catch(this.setDefaultDeployEstimate);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -131,23 +126,29 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     }
   }
 
-  onNextClick = (gasPriceWei) => {
+  onNextClick = (ethTransferAmount) => {
     const {
       assets,
       collectibles,
+      navigation,
       transferAssets,
       transferCollectibles,
-      navigation,
-      balances,
+      gasInfo,
     } = this.props;
-    const { gasLimit } = this.state;
     this.setState({ upgradeStarted: true });
-    const gasPrice = gasPriceWei.div(gasLimit).toNumber();
+    const gasPriceWei = getGasPriceWei(gasInfo);
+    const gasPrice = gasPriceWei.toNumber();
     const assetsArray = Object.values(assets);
     const transferTransactionsCombined = [
       ...transferCollectibles,
       ...transferAssets,
-    ].map(({ name: assetName, key: collectibleKey, amount }: any) => {
+    ].map((transferTransaction: any) => {
+      const {
+        name: assetName,
+        key: collectibleKey,
+        amount,
+        gasLimit,
+      } = transferTransaction;
       // receiver address is added on last upgrade step, account address is yet to be received
       // no amount means collectible
       if (!amount) {
@@ -184,78 +185,77 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
         decimals,
       };
     });
-    const feeTokensTransferEth = parseFloat(formatAmount(utils.formatEther(
-      BigNumber(gasPriceWei * transferTransactionsCombined.length).toFixed(),
-    )));
-    const etherTransaction: any = transferTransactionsCombined.find((asset: any) => asset.symbol === ETH);
-    const { amount: etherTransactionAmount } = etherTransaction;
-    const etherBalance = getBalance(balances, ETH);
-    const balanceAfterTransfer = etherBalance - etherTransactionAmount - feeTokensTransferEth;
-    const updateEtherTransactionAmount = balanceAfterTransfer < 0
-      // `balanceAfterTransfer` will be negative
-      ? balanceAfterTransfer + etherTransactionAmount
-      : etherTransactionAmount;
-    const transferTransactions = transferTransactionsCombined.filter((asset: any) => asset.symbol !== ETH);
-    // make sure ether transaction is the last one
-    transferTransactions.push({ ...etherTransaction, amount: updateEtherTransactionAmount });
+    const ethTransaction = transferTransactionsCombined.find(({ symbol }: any) => symbol === ETH);
+    // make sure ether transaction is the last one, very important!
+    const transferTransactions = transferTransactionsCombined
+      .filter(({ symbol }: any) => symbol !== ETH)
+      .concat({ ...ethTransaction, amount: ethTransferAmount });
     this.setState({ upgradeStarted: false }, () => {
       navigation.navigate(SMART_WALLET_UNLOCK, { transferTransactions });
     });
   };
 
-  getGasPriceWei = () => {
-    const { gasLimit } = this.state;
+  calculateTransferFee = (gasLimit) => {
     const { gasInfo } = this.props;
-    const gasPrice = gasInfo.gasPrice.avg || 0;
-    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-    return gasPriceWei.mul(gasLimit);
+    const gasPriceWei = getGasPriceWei(gasInfo);
+    return gasLimit && gasPriceWei.mul(gasLimit).toNumber();
   };
 
-  render() {
+  setDefaultDeployEstimate = () => {
+    this.setState({
+      deployEstimateFee: this.calculateTransferFee(DEFAULT_GAS_LIMIT),
+    });
+  };
+
+  renderSpinner() {
+    return <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>;
+  }
+
+  renderDetails = () => {
     const {
-      navigation,
       transferAssets,
       transferCollectibles,
       assets,
+      balances,
       baseFiatCurrency,
       rates,
     } = this.props;
     const {
       upgradeStarted,
+      deployEstimateFee,
     } = this.state;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const gasPriceWei = this.getGasPriceWei();
     const fiatSymbol = getCurrencySymbol(fiatCurrency);
 
-    // TODO: calculate separate gas price per asset transaction
+    const assetsTransferFeeTotal = transferAssets
+      .reduce((a, b: any) => a + this.calculateTransferFee(b.gasLimit), 0);
     const feeTokensTransferEth = formatAmount(utils.formatEther(
-      BigNumber(gasPriceWei * transferAssets.length).toFixed(),
+      new BigNumber(assetsTransferFeeTotal).toFixed(),
     ));
     const feeTokensTransferFiat = parseFloat(feeTokensTransferEth) * getRate(rates, ETH, fiatCurrency);
-    const assetsTransferFee =
-      `${feeTokensTransferEth} ETH (${fiatSymbol}${feeTokensTransferFiat.toFixed(2)})`;
+    const assetsTransferFee = `${feeTokensTransferEth} ETH (${fiatSymbol}${feeTokensTransferFiat.toFixed(2)})`;
 
     let collectiblesTransferFee;
     if (transferCollectibles.length) {
+      const collectiblesTransferFeeTotal = transferCollectibles
+        .reduce((a, b: any) => a + this.calculateTransferFee(b.gasLimit), 0);
       const feeCollectiblesTransferEth = formatAmount(utils.formatEther(
-        BigNumber(gasPriceWei * transferCollectibles.length)
-          .toFixed(),
+        new BigNumber(collectiblesTransferFeeTotal).toFixed(),
       ));
       const feeCollectiblesTransferFiat = parseFloat(feeCollectiblesTransferEth) * getRate(rates, ETH, fiatCurrency);
       collectiblesTransferFee =
         `${feeCollectiblesTransferEth} ETH (${fiatSymbol}${feeCollectiblesTransferFiat.toFixed(2)})`;
     }
 
-    const deployEstimate = smartWalletService.getDeployEstimate();
-    const feeSmartContractDeployEth = formatAmount(utils.formatEther(deployEstimate));
+    const feeSmartContractDeployEth = formatAmount(utils.formatEther(deployEstimateFee));
     const feeSmartContractDeployFiat = parseFloat(feeSmartContractDeployEth) * getRate(rates, ETH, fiatCurrency);
     const smartContractDeployFee =
       `${feeSmartContractDeployEth} ETH (${fiatSymbol}${feeSmartContractDeployFiat.toFixed(2)})`;
 
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = transferAssets.map((transferAsset: any) => {
-      const asset: any = assetsArray.find((_asset: any) => _asset.name === transferAsset.name);
+      const asset: any = assetsArray.find((_asset: any) => _asset.name === transferAsset.name) || {};
       const { amount } = transferAsset;
       const { symbol } = asset;
       return {
@@ -265,63 +265,100 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     });
 
     const etherTransfer = nonEmptyAssets.find(asset => asset.symbol === ETH);
+    const etherBalance = getBalance(balances, ETH);
+    const { amount: etherTransferAmount } = etherTransfer || {};
+    const etherBalanceAfterTransfer = etherBalance - etherTransferAmount - parseFloat(feeTokensTransferEth);
+    const etherTransferAmountUpdated = etherBalanceAfterTransfer < 0
+      ? etherTransferAmount - parseFloat(feeTokensTransferEth)
+      : etherTransferAmount;
+
+    const updatedTransferAssets = nonEmptyAssets
+      .filter(asset => asset.symbol !== ETH)
+      .concat({ ...etherTransfer, amount: etherTransferAmountUpdated });
 
     /**
-     * there should be enough ether at least for deployment when tokens are transferred
-     * and there should be enough ether in primary wallet for asset transfer transactions
-    */
-    const notEnoughEther = !etherTransfer
-      || (etherTransfer.amount - parseFloat(feeSmartContractDeployEth) < parseFloat(feeTokensTransferEth));
+     * there should be selected enough ether for contract deployment
+     * and there should be enough ether in primary wallet for assets transfer
+     ***
+     * feeSmartContractDeployEth is formatted float with 6 decimals, when comparing
+     * we want to make sure that compared values also are with 6 decimals as comparison
+     * might fail due rounding
+     */
+
+    const notEnoughEtherForTokensTransfer = !etherTransfer
+      || (parseFloat((etherBalance - etherTransferAmountUpdated).toFixed(6)) < parseFloat(feeTokensTransferEth));
+
+    const notEnoughEtherForContractDeployment = !etherTransfer
+      || (parseFloat(etherTransferAmountUpdated) < parseFloat(feeSmartContractDeployEth));
+
+    const notEnoughEther = notEnoughEtherForTokensTransfer || notEnoughEtherForContractDeployment;
+
+    let errorMessage = '';
+    if (!etherTransfer) {
+      errorMessage = 'You need to select to transfer ETH in order to cover the contract deployment fee.';
+    } else if (notEnoughEtherForTokensTransfer) {
+      errorMessage = `There is not enough ether left in order to cover the assets transfer fee.
+        Please reduce the amount of ETH you would like to transfer`;
+    } else if (notEnoughEtherForContractDeployment) {
+      errorMessage = 'There is not enough ether being sent to smart contract ' +
+        'in order to cover the contract deployment fee.';
+    }
 
     return (
-      <Container>
-        <WhiteWrapper>
-          <Header
-            title="confirm"
-            centerTitle
-            onBack={() => navigation.goBack(null)}
-          />
-          <Wrapper regularPadding>
-            <Paragraph small>
-              Please confirm that the details below are correct before deploying your Smart Wallet.
-            </Paragraph>
-          </Wrapper>
-        </WhiteWrapper>
-        <DetailsWrapper>
-          <DetailsLine>
-            <DetailsTitle>Assets to transfer</DetailsTitle>
-            {nonEmptyAssets.map((asset: any, index: number) =>
-              <DetailsValue key={index}>{`${asset.amount} ${asset.symbol}`}</DetailsValue>)
-            }
-          </DetailsLine>
-          <DetailsLine>
-            <DetailsTitle>Est. fee for assets transfer</DetailsTitle>
-            <DetailsValue>{assetsTransferFee}</DetailsValue>
-          </DetailsLine>
-          {!!transferCollectibles.length &&
-            <DetailsLine>
-              <DetailsTitle>Est. fee for collectibles transfer</DetailsTitle>
-              <DetailsValue>{collectiblesTransferFee}</DetailsValue>
-            </DetailsLine>
+      <React.Fragment>
+        <DetailsLine>
+          <DetailsTitle>Assets to transfer</DetailsTitle>
+          {updatedTransferAssets.map((asset: any, index: number) =>
+            <DetailsValue key={index}>{`${asset.amount} ${asset.symbol}`}</DetailsValue>)
           }
-          <DetailsLine>
-            <DetailsTitle>Est. fee for smart contract deployment</DetailsTitle>
-            <DetailsValue>{smartContractDeployFee}</DetailsValue>
-          </DetailsLine>
-          {!!notEnoughEther &&
-          <WarningMessage>
-            There is not enough ether for contract deployment and asset transfer transactions estimated fees.
-          </WarningMessage>}
-          {!upgradeStarted &&
-          <Button
-            block
-            disabled={!!notEnoughEther}
-            title="Create Smart Wallet"
-            onPress={() => this.onNextClick(gasPriceWei)}
-          />}
-          {upgradeStarted && <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>}
-        </DetailsWrapper>
-      </Container>
+        </DetailsLine>
+        <DetailsLine>
+          <DetailsTitle>Est. fee for assets transfer</DetailsTitle>
+          <DetailsValue>{assetsTransferFee}</DetailsValue>
+        </DetailsLine>
+        {!!transferCollectibles.length &&
+        <DetailsLine>
+          <DetailsTitle>Est. fee for collectibles transfer</DetailsTitle>
+          <DetailsValue>{collectiblesTransferFee}</DetailsValue>
+        </DetailsLine>
+        }
+        <DetailsLine>
+          <DetailsTitle>Est. fee for smart contract deployment</DetailsTitle>
+          <DetailsValue>{smartContractDeployFee}</DetailsValue>
+        </DetailsLine>
+        {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
+        {!upgradeStarted &&
+        <Button
+          block
+          disabled={!!notEnoughEther}
+          title="Create Smart Wallet"
+          onPress={() => this.onNextClick(etherTransferAmountUpdated)}
+        />}
+      </React.Fragment>
+    );
+  };
+
+  render() {
+    const { gasInfo } = this.props;
+    const { upgradeStarted } = this.state;
+    const showSpinner = !gasInfo.isFetched || upgradeStarted;
+    return (
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Confirm' }],
+        }}
+        backgroundColor={baseColors.white}
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flexGrow: 1 }}>
+          <Paragraph small style={{ margin: spacing.large }}>
+            Please confirm that the details below are correct before deploying your Smart Wallet.
+          </Paragraph>
+          <DetailsWrapper>
+            {showSpinner && this.renderSpinner()}
+            {!showSpinner && this.renderDetails()}
+          </DetailsWrapper>
+        </ScrollView>
+      </ContainerWithHeader>
     );
   }
 }

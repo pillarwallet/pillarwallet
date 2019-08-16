@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { SectionList } from 'react-native';
+import { SectionList, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
@@ -29,10 +29,11 @@ import { BigNumber } from 'bignumber.js';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
+import { getAssetTransferGasLimitsAction } from 'actions/smartWalletActions';
 
 // components
-import { Container, Wrapper, Footer } from 'components/Layout';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Footer } from 'components/Layout';
 import Button from 'components/Button';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -67,9 +68,8 @@ import type { Collectible } from 'models/Collectible';
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
-import { formatAmount } from 'utils/common';
+import { formatAmount, getGasPriceWei } from 'utils/common';
 import { getBalance } from 'utils/assets';
-import { DEFAULT_GAS_LIMIT } from 'services/assets';
 
 
 type Props = {
@@ -83,28 +83,18 @@ type Props = {
   gasInfo: GasInfo,
   session: Object,
   collectibles: Collectible[],
+  getAssetTransferGasLimits: Function,
 };
-
-type State = {
-  gasLimit: number,
-};
-
-const WhiteWrapper = styled.View`
-  background-color: ${baseColors.white};
-  padding-bottom: ${spacing.rhythm}px;
-`;
 
 const FooterInner = styled.View`
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-  background-color: ${baseColors.snowWhite};
 `;
 
 const ListSeparator = styled.View`
   padding: 20px ${spacing.rhythm}px;
-  background-color: ${baseColors.lighterGray};
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -130,24 +120,10 @@ const WarningMessage = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
 `;
 
-class UpgradeReviewScreen extends React.PureComponent<Props, State> {
-  constructor(props) {
-    super(props);
-    const { navigation } = this.props;
-    /**
-     * currently we need to use default gas limit as we're not capable of
-     * getting estimate gas limit of smart wallet deploy transaction
-     * adding gas limit here will lead it up to confirm screen
-     * TODO: add gas limit estimate calculation from smart wallet sdk when it's possible
-     */
-    const gasLimit = navigation.getParam('gasLimit', DEFAULT_GAS_LIMIT);
-    this.state = {
-      gasLimit,
-    };
-  }
-
+class UpgradeReviewScreen extends React.PureComponent<Props> {
   componentDidMount() {
     this.props.fetchGasInfo();
+    this.props.getAssetTransferGasLimits();
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -175,8 +151,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
     }
 
     // any asset transaction fee
-    const gasPriceWei = this.getGasPriceWei();
-    const transferFee = formatAmount(utils.formatEther(gasPriceWei));
+    const transferFee = item.transferFee && formatAmount(utils.formatEther(item.transferFee));
 
     // collectible item
     if (item.collectibleKey) {
@@ -191,7 +166,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
             justifyContent: 'center',
           }}
           customAddon={
-            <Label style={{ textAlign: 'right' }}>{`Est. fee ${transferFee} ETH`}</Label>
+            <Label style={{ textAlign: 'right' }}>{(transferFee && `Est. fee ${transferFee} ETH`) || ''}</Label>
           }
         />
       );
@@ -218,7 +193,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
           justifyContent: 'flex-end',
         }}
         customAddon={
-          <Label style={{ textAlign: 'right' }}>{`Est. fee ${transferFee} ETH`}</Label>
+          <Label style={{ textAlign: 'right' }}>{(transferFee && `Est. fee ${transferFee} ETH`) || ''}</Label>
         }
       />
     );
@@ -226,15 +201,13 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
 
   onNextClick = () => {
     const { navigation } = this.props;
-    const { gasLimit } = this.state;
-    navigation.navigate(UPGRADE_CONFIRM, { gasLimit });
+    navigation.navigate(UPGRADE_CONFIRM, { gasLimit: 0 });
   };
 
-  getGasPriceWei = () => {
+  calculateTransferFee = (gasLimit) => {
     const { gasInfo } = this.props;
-    const { gasLimit } = this.state;
-    const gasPrice = gasInfo.gasPrice.avg || 0;
-    return utils.parseUnits(gasPrice.toString(), 'gwei').mul(gasLimit);
+    const gasPriceWei = getGasPriceWei(gasInfo);
+    return gasLimit && gasPriceWei.mul(gasLimit).toNumber();
   };
 
   render() {
@@ -247,29 +220,27 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
       collectibles,
       recoveryAgents,
     } = this.props;
-
-    const gasPriceWei = this.getGasPriceWei();
-    const assetsTransferFeeEth = formatAmount(utils.formatEther(
-      BigNumber(gasPriceWei * (transferAssets.length + transferCollectibles.length)).toFixed(),
-    ));
-
     const assetsArray = Object.values(assets);
-    const nonEmptyAssets = transferAssets.map((transferAsset: any) => {
+    const detailedAssets = transferAssets.map((transferAsset: any) => {
       const asset = assetsArray.find((_asset: any) => _asset.name === transferAsset.name);
+      const transferFee = this.calculateTransferFee(transferAsset.gasLimit);
       return {
         ...asset,
         amount: transferAsset.amount,
+        transferFee,
       };
     });
 
     const detailedCollectibles: any[] = transferCollectibles.map((transferCollectible: any) => {
       const asset: any = collectibles.find(
-        (_asset: any) => `${_asset.assetContract}${_asset.name}` === transferCollectible.key,
+        ({ assetContract, name }) => `${assetContract}${name}` === transferCollectible.key,
       );
       const collectibleKey = `${asset.assetContract}${asset.name}`;
+      const transferFee = this.calculateTransferFee(transferCollectible.gasLimit);
       return {
         ...asset,
         collectibleKey,
+        transferFee,
       };
     });
 
@@ -281,10 +252,10 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
         toEdit: RECOVERY_AGENTS,
       });
     }
-    if (nonEmptyAssets.length) {
+    if (detailedAssets.length) {
       sections.push({
         title: 'TOKENS',
-        data: nonEmptyAssets,
+        data: detailedAssets,
         toEdit: CHOOSE_ASSETS_TO_TRANSFER,
       });
     }
@@ -295,49 +266,74 @@ class UpgradeReviewScreen extends React.PureComponent<Props, State> {
         toEdit: CHOOSE_ASSETS_TO_TRANSFER,
       });
     }
-    const etherBalance = getBalance(balances, ETH);
 
-    // there should be enough to transfer selected assets from primary wallet
-    const notEnoughEther = !etherBalance || etherBalance < parseFloat(assetsTransferFeeEth);
+    // check if any asset transfer left without gas limit
+    const gettingGasLimits = !![...transferAssets, ...transferCollectibles].find(({ gasLimit }) => !gasLimit);
+
+    const assetsTransferFeeTotal = [
+      ...detailedAssets,
+      ...detailedCollectibles,
+    ].reduce((a, b: any) => a + b.transferFee, 0);
+
+    const assetsTransferFeeTotalEth = assetsTransferFeeTotal
+      ? formatAmount(utils.formatEther(
+        new BigNumber(assetsTransferFeeTotal).toFixed(),
+      ))
+      : 0;
+
+    // there should be enough eth to transfer selected assets from primary wallet
+    const etherBalance = getBalance(balances, ETH);
+    const notEnoughEther = !gettingGasLimits && (!etherBalance || etherBalance < parseFloat(assetsTransferFeeTotalEth));
+
+    const nextButtonTitle = gettingGasLimits
+      ? 'Getting the fees..'
+      : 'Continue';
+
     return (
-      <Container>
-        <WhiteWrapper>
-          <Header
-            title="review"
-            centerTitle
-            onBack={() => navigation.goBack(null)}
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Review' }],
+        }}
+        backgroundColor={baseColors.white}
+      >
+        <ScrollView>
+          <Paragraph small style={{ margin: spacing.large }}>
+            Please confirm that the details below are correct before deploying your Smart Wallet.
+          </Paragraph>
+          <SectionList
+            sections={sections}
+            renderSectionHeader={({ section }) => (
+              <ListSeparator>
+                <SubHeading>{section.title}</SubHeading>
+                <TextLink onPress={() => navigation.navigate(section.toEdit, { isEditing: true })}>Edit</TextLink>
+              </ListSeparator>
+            )}
+            renderItem={this.renderItem}
+            keyExtractor={(item) => item.id}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+            stickySectionHeadersEnabled={false}
           />
-          <Wrapper regularPadding>
-            <Paragraph small>
-              Please confirm that the details below are correct before deploying your Smart Wallet.
-            </Paragraph>
-          </Wrapper>
-        </WhiteWrapper>
-        <SectionList
-          sections={sections}
-          renderSectionHeader={({ section }) => (
-            <ListSeparator>
-              <SubHeading>{section.title}</SubHeading>
-              <TextLink onPress={() => navigation.navigate(section.toEdit, { isEditing: true })}>Edit</TextLink>
-            </ListSeparator>
-          )}
-          renderItem={this.renderItem}
-          keyExtractor={(item) => item.id}
-          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-        />
+        </ScrollView>
         <Footer>
           {!!notEnoughEther &&
           <WarningMessage>
             There is not enough ether for asset transfer transactions estimated fee.
           </WarningMessage>}
-          <FooterInner style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+          <FooterInner>
             <LabelWrapper>
-              <Label style={{ textAlign: 'center' }}>{`Total estimated fee ${assetsTransferFeeEth} ETH`}</Label>
+              {!gettingGasLimits &&
+                <Label style={{ textAlign: 'center' }}>{`Total estimated fee ${assetsTransferFeeTotalEth} ETH`}</Label>
+              }
             </LabelWrapper>
-            <Button disabled={!!notEnoughEther} block title="Continue" onPress={this.onNextClick} />
+            <Button
+              block
+              disabled={!!notEnoughEther || gettingGasLimits}
+              title={nextButtonTitle}
+              onPress={this.onNextClick}
+            />
           </FooterInner>
         </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }
@@ -376,6 +372,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
+  getAssetTransferGasLimits: () => dispatch(getAssetTransferGasLimitsAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(UpgradeReviewScreen);

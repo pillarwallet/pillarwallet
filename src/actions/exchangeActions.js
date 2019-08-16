@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Linking } from 'react-native';
+import { SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
 import ExchangeService from 'services/exchange';
 import Toast from 'components/Toast';
 import {
@@ -154,9 +155,11 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     // we're requesting although it will start delivering when connection is established
     const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode, fromAmount);
 
+    const isTest = SENDWYRE_ENVIRONMENT === 'test';
+
     if (exchangeWithFiatEnabled) {
       const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
-      if (isAllowed) {
+      if (isAllowed || isTest) {
         api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
           if (!offer.error) {
             dispatch({
@@ -169,7 +172,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
           }
         }).catch(() => null);
       }
-      if (alpha2 === 'US') {
+      if (alpha2 === 'US' || isTest) {
         api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
           if (!offer.error) {
             dispatch({

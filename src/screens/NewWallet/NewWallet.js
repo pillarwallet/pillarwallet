@@ -20,13 +20,15 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import styled from 'styled-components/native';
 
-import { Container } from 'components/Layout';
-import { BaseText } from 'components/Typography';
+import { Container, Wrapper } from 'components/Layout';
+import { BaseText, BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import { REGISTRATION_FAILED, USERNAME_EXISTS } from 'constants/walletConstants';
 import { APP_FLOW } from 'constants/navigationConstants';
+import { baseColors, fontSizes } from 'utils/variables';
 
 const API_FAILURES = [USERNAME_EXISTS, REGISTRATION_FAILED];
 
@@ -35,32 +37,77 @@ type Props = {
   wallet: Object,
 };
 
-const NewWallet = (props: Props) => {
-  const { walletState } = props.wallet;
-  let statusMessage = walletState || '';
-  let showSpinner = true;
-  let note = null;
+type State = {
+  visibleMessageId: number,
+}
 
-  const tryToReRegister = () => {
-    props.navigation.navigate(APP_FLOW);
+const messages = [
+  'Yes, it takes time to load.',
+  'There are many things going on.',
+  'Decentralization isn’t easy.',
+];
+
+const MessageText = styled(BoldText)`
+  font-size: ${fontSizes.extraLarge}px;
+  line-height: 40px;
+  color: ${baseColors.slateBlack};
+  margin-top: 42px;
+  margin-right: 34px;
+`;
+
+class NewWallet extends React.Component<Props, State> {
+  timer: ?IntervalID;
+  state = {
+    visibleMessageId: 0,
   };
 
-  if (API_FAILURES.includes(walletState)) {
-    statusMessage = 'REGISTRATION FAILED';
-    showSpinner = false;
-    note = <Button title="Try again" onPress={tryToReRegister} />;
+  componentDidMount() {
+    this.timer = setInterval(() => this.changeMessages(), 6000);
   }
 
-  return (
-    <Container center>
-      <BaseText style={{ marginBottom: 20 }}>{statusMessage}</BaseText>
-      {!!showSpinner && (
-        <Spinner />
-      )}
-      {note}
-    </Container>
-  );
-};
+  componentWillUnmount() {
+    if (this.timer) clearInterval(this.timer);
+  }
+
+  changeMessages = () => {
+    const { visibleMessageId } = this.state;
+    const lastMessageId = messages.length - 1;
+    const nextMessageId = visibleMessageId === lastMessageId ? 0 : visibleMessageId + 1;
+    this.setState({ visibleMessageId: nextMessageId });
+  };
+
+  render() {
+    const { wallet, navigation } = this.props;
+    const { visibleMessageId } = this.state;
+    const { walletState } = wallet;
+    const message = messages[visibleMessageId] || '';
+
+    const tryToReRegister = () => {
+      navigation.navigate(APP_FLOW);
+    };
+
+    const failedToRegister = API_FAILURES.includes(walletState);
+
+    return (
+      <Container center={failedToRegister}>
+        {!failedToRegister && (
+          <Wrapper fullscreen style={{ justifyContent: 'center', padding: 56, flex: 1 }}>
+            <Spinner />
+            <MessageText>{message}</MessageText>
+          </Wrapper>
+        )}
+        {failedToRegister && (
+          <Wrapper fullScreen center flex={1}>
+            <BaseText style={{ marginBottom: 20 }} bigText={!failedToRegister}>
+              Registration failed
+            </BaseText>
+            <Button title="Try again" onPress={tryToReRegister} />
+          </Wrapper>
+        )}
+      </Container>
+    );
+  }
+}
 
 const mapStateToProps = ({ wallet }) => ({ wallet });
 export default connect(mapStateToProps)(NewWallet);

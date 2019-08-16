@@ -46,6 +46,7 @@ type State = {
 
 const PinDotsWrapper = styled(Wrapper)`
   justify-content: center;
+  flex-grow: 1;
 `;
 
 const PinDotsWrapperAnimated = Animated.createAnimatedComponent(PinDotsWrapper);

@@ -118,7 +118,7 @@ class PinCodeUnlock extends React.Component<Props> {
 
     return (
       <Container>
-        <Header centerTitle title="enter pincode" />
+        <Header centerTitle title="Enter pincode" />
         {showError}
         <PinCode
           onPinEntered={this.handlePinSubmit}

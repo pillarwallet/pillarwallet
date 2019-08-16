@@ -37,6 +37,7 @@ const initialState = {
     appearanceSettings: {
       assetsLayout: SIMPLIFIED,
     },
+    blockchainNetwork: null,
   },
   isFetched: false,
 };

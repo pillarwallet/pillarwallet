@@ -23,6 +23,7 @@ import { BoldText } from 'components/Typography';
 
 type Props = {
   children: React.Node,
+  wrapperStyle?: Object,
 }
 
 const ErrorMessageBackground = styled.View`
@@ -38,8 +39,9 @@ const ErrorMessageText = styled(BoldText)`
 `;
 
 const ErrorMessage = (props: Props) => {
+  const { wrapperStyle } = props;
   return (
-    <ErrorMessageBackground>
+    <ErrorMessageBackground style={wrapperStyle}>
       <ErrorMessageText>
         {props.children}
       </ErrorMessageText>

@@ -29,15 +29,15 @@ import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 
 // components
-import { Container, Footer, Wrapper } from 'components/Layout';
+import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
 
 // utils
 import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { calculateGasEstimate } from 'services/assets';
@@ -95,11 +95,13 @@ const FooterInner = styled.View`
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
+  padding: ${spacing.large}px;
+  background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 const BackgroundWrapper = styled.View`
   background-color: ${UIColors.defaultBackgroundColor};
-  flex: 1;
+  flexGrow: 1;
 `;
 
 type Props = {
@@ -127,6 +129,7 @@ type State = {
   },
   showModal: boolean,
   gasLimit: number,
+  gettingGasLimit: boolean,
 };
 
 const { Form } = t.form;
@@ -156,6 +159,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       value: null,
       showModal: false,
       gasLimit: 0,
+      gettingGasLimit: true,
     };
 
     this.updateGasLimit = debounce(this.updateGasLimit, 500);
@@ -228,10 +232,12 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.setState({
       gasLimit,
       value: { amount },
+      gettingGasLimit: false,
     });
   };
 
   getGasLimit = (amount?: number) => {
+    this.setState({ gettingGasLimit: true });
     // calculate either with amount in form or provided as param
     if (!amount) {
       amount = parseFloat(get(this._form.getValue(), 'amount', 0));
@@ -259,7 +265,7 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   updateGasLimit = () => {
     this.getGasLimit()
-      .then(gasLimit => this.setState({ gasLimit }))
+      .then(gasLimit => this.setState({ gasLimit, gettingGasLimit: false }))
       .catch(() => null);
   };
 
@@ -295,7 +301,12 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   render() {
-    const { value, showModal, gasLimit } = this.state;
+    const {
+      value,
+      showModal,
+      gasLimit,
+      gettingGasLimit,
+    } = this.state;
     const {
       session,
       balances,
@@ -336,13 +347,37 @@ class SendTokenAmount extends React.Component<Props, State> {
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
     const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
 
+    const nextButtonTitle = gettingGasLimit
+      ? 'Getting the fee..'
+      : 'Next';
+
     return (
-      <Container color={baseColors.white}>
-        <Header
-          onBack={() => this.props.navigation.goBack(null)}
-          title={`send ${this.assetData.token}`}
-          white
-        />
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: `Send ${this.assetData.token}` }] }}
+        keyboardAvoidFooter={(
+          <FooterInner>
+            {!!gasLimit &&
+            <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
+              <SendTokenDetailsValue>
+                <Label small>Fee:</Label>
+                <TextLink> {SPEED_TYPE_LABELS[transactionSpeed]}</TextLink>
+              </SendTokenDetailsValue>
+            </TouchableOpacity>
+            }
+            {!gasLimit && <Label>&nbsp;</Label>}
+            {!!value && !!parseFloat(value.amount) &&
+            <Button
+              disabled={gettingGasLimit || !session.isOnline || !gasInfo.isFetched}
+              small
+              flexRight
+              title={nextButtonTitle}
+              onPress={this.handleFormSubmit}
+            />
+            }
+          </FooterInner>
+        )}
+        minAvoidHeight={200}
+      >
         <BackgroundWrapper>
           <Wrapper regularPadding>
             <Form
@@ -366,27 +401,6 @@ class SendTokenAmount extends React.Component<Props, State> {
             </ActionsWrapper>
           </Wrapper>
         </BackgroundWrapper>
-        <Footer keyboardVerticalOffset={35} backgroundColor={UIColors.defaultBackgroundColor}>
-          <FooterInner>
-            {!!gasLimit &&
-              <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
-                <SendTokenDetailsValue>
-                  <Label small>Fee:</Label>
-                  <TextLink> {SPEED_TYPE_LABELS[transactionSpeed]}</TextLink>
-                </SendTokenDetailsValue>
-              </TouchableOpacity>
-            }
-            {!!value && !!parseFloat(value.amount) &&
-              <Button
-                disabled={!gasLimit || !session.isOnline || !gasInfo.isFetched}
-                small
-                flexRight
-                title="Next"
-                onPress={this.handleFormSubmit}
-              />
-            }
-          </FooterInner>
-        </Footer>
         <SlideModal
           isVisible={showModal}
           title="transaction speed"
@@ -396,7 +410,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           <Label>Faster transaction requires more fee.</Label>
           <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
         </SlideModal>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

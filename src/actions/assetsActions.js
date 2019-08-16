@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
+import { BigNumber } from 'bignumber.js';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   UPDATE_ASSETS_STATE,
@@ -34,11 +35,14 @@ import {
   UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
+  PMT,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
-import { ADD_TRANSACTION } from 'constants/historyConstants';
+import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
+import { SMART_ACCOUNT_ASSET_TRANSFER } from 'constants/smartWalletConstants';
 
 import Toast from 'components/Toast';
 
@@ -53,8 +57,8 @@ import type {
   CollectibleTransactionPayload,
   TransactionPayload,
 } from 'models/Transaction';
-import type { Asset, Assets } from 'models/Asset';
-import { transformAssetsToObject } from 'utils/assets';
+import type { Asset, Assets, Balance, Balances } from 'models/Asset';
+import { addressesEqual, generatePMTToken, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -63,30 +67,113 @@ import {
   getActiveAccountId,
   getActiveAccountType,
   getAccountAddress,
+  checkIfSmartWalletAccount,
 } from 'utils/accounts';
+import { accountBalancesSelector } from 'selectors/balances';
 import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
+import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
+import { sendTxNoteByContactAction } from './txNoteActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
   error: ?string,
 };
 
-export const sendSignedAssetTransactionAction = (
-  transaction: any,
-) => {
-  return async () => {
+export const sendSignedAssetTransactionAction = (transaction: any) => {
+  return async (dispatch: Function, getState: Function) => {
     const {
       signedTransaction: { signedHash },
+      transaction: transactionDetails,
     } = transaction;
     if (!signedHash) return null;
+
     const transactionHash = await transferSigned(signedHash).catch(e => ({ error: e }));
-    if (transactionHash.error) {
+    if (transactionHash && transactionHash.error) {
       return null;
     }
+
+    // add tx to tx history
+    try {
+      const {
+        collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
+        history: { data: currentHistory },
+        accounts: { data: accounts },
+      } = getState();
+      const accountId = getActiveAccountId(accounts);
+      const accountAddress = getActiveAccountAddress(accounts);
+      const accountCollectibles = collectibles[accountId] || [];
+      const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
+
+      let historyTx;
+      if (transactionDetails.tokenType === COLLECTIBLES) {
+        const collectibleInfo = accountCollectibles.find(item => item.id === transactionDetails.tokenId) || {};
+        historyTx = {
+          ...buildHistoryTransaction({
+            from: accountAddress,
+            to: transactionDetails.to,
+            hash: transactionHash,
+            asset: transactionDetails.name,
+            value: '1',
+            gasPrice: new BigNumber(transactionDetails.gasPrice),
+            gasLimit: transactionDetails.gasLimit,
+            note: SMART_ACCOUNT_ASSET_TRANSFER,
+          }),
+          assetData: { ...collectibleInfo },
+          type: COLLECTIBLE_TRANSACTION,
+          icon: collectibleInfo.icon,
+        };
+
+        dispatch({
+          type: ADD_COLLECTIBLE_TRANSACTION,
+          payload: {
+            transactionData: { ...historyTx },
+            tokenId: transaction.tokenId,
+            accountId,
+          },
+        });
+        const updatedCollectiblesHistory = {
+          ...collectiblesHistory,
+          [accountId]: [...accountCollectiblesHistory, historyTx],
+        };
+        await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
+        const updatedAccountCollectibles = accountCollectibles.filter(item => item.id !== transaction.tokenId);
+        const updatedCollectibles = {
+          ...collectibles,
+          [accountId]: updatedAccountCollectibles,
+        };
+        dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
+      } else {
+        const value = parseFloat(transactionDetails.amount) * (10 ** transactionDetails.decimals);
+        historyTx = buildHistoryTransaction({
+          from: accountAddress,
+          to: transactionDetails.to,
+          hash: transactionHash,
+          value: value.toString(),
+          asset: transactionDetails.symbol,
+          gasPrice: new BigNumber(transactionDetails.gasPrice),
+          gasLimit: transactionDetails.gasLimit,
+          note: SMART_ACCOUNT_ASSET_TRANSFER,
+        });
+
+        dispatch({
+          type: ADD_TRANSACTION,
+          payload: {
+            accountId,
+            historyTx,
+          },
+        });
+        const accountHistory = currentHistory[accountId] || [];
+        const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
+        const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+        dispatch(saveDbAction('history', { history: updatedHistory }, true));
+      }
+    } catch (e) {
+      console.log({ e });
+    }
+
     return transactionHash;
   };
 };
@@ -175,19 +262,19 @@ export const signAssetTransactionAction = (
 export const sendAssetAction = (
   transaction: TransactionPayload,
   wallet: Object,
-  navigateToNextScreen: Function = noop,
+  callback: Function = noop,
 ) => {
   return async (dispatch: Function, getState: Function) => {
     const tokenType = get(transaction, 'tokenType', '');
     const symbol = get(transaction, 'symbol', '');
     const allowancePayload = get(transaction, 'extra.allowance', {});
+    const usePPN = get(transaction, 'usePPN', false);
 
     if (tokenType === COLLECTIBLES) {
       await dispatch(fetchCollectiblesAction());
     }
 
     const {
-      history: { data: currentHistory },
       accounts: { data: accounts },
       collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
     } = getState();
@@ -195,7 +282,12 @@ export const sendAssetAction = (
     const accountId = getActiveAccountId(accounts);
     const activeAccount = getActiveAccount(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
+    const activeAccountType = getActiveAccountType(accounts);
     if (!activeAccount) return;
+
+    if (activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
+      await dispatch(ensureSmartAccountConnectedAction(wallet.privateKey));
+    }
 
     let tokenTx = {};
     let historyTx;
@@ -258,6 +350,10 @@ export const sendAssetAction = (
           ...tokenTx,
           asset: symbol,
           note,
+          gasPrice: transaction.gasPrice,
+          gasLimit: transaction.gasLimit,
+          isPPNTransaction: usePPN,
+          status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
         });
       }
     // send ERC20 token
@@ -283,8 +379,19 @@ export const sendAssetAction = (
           value: parseFloat(amount) * (10 ** decimals),
           to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
           note,
+          gasPrice: transaction.gasPrice,
+          gasLimit: transaction.gasLimit,
+          isPPNTransaction: usePPN,
+          status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
         });
       }
+    }
+
+    if (checkIfSmartWalletAccount(activeAccount) && !usePPN && tokenTx.hash) {
+      dispatch({
+        type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
+        payload: tokenTx.hash,
+      });
     }
 
     // update transaction history
@@ -317,6 +424,7 @@ export const sendAssetAction = (
             historyTx,
           },
         });
+        const { history: { data: currentHistory } } = getState();
         const accountHistory = currentHistory[accountId] || [];
         const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
         const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
@@ -347,7 +455,19 @@ export const sendAssetAction = (
       dispatch(addExchangeAllowanceAction(provider, assetCode, tokenTx.hash));
     }
 
-    navigateToNextScreen(txStatus);
+    // send note
+    if (tokenTx.hash && note) {
+      const { contacts: { data: contacts } } = getState();
+      const toUser = contacts.find(contact => addressesEqual(contact.ethAddress, to));
+      if (toUser) {
+        dispatch(sendTxNoteByContactAction(toUser.username, {
+          text: note,
+          txHash: tokenTx.hash,
+        }));
+      }
+    }
+
+    callback(txStatus);
   };
 };
 
@@ -369,6 +489,17 @@ export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = 
   };
 };
 
+function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balances) {
+  const increasedBalances = newBalances
+    .filter(({ balance, symbol }) => {
+      const oldTokenBalance = get(oldBalances, [symbol, 'balance'], 0);
+      return oldTokenBalance && parseFloat(balance) > parseFloat(oldTokenBalance);
+    });
+  if (increasedBalances.length) {
+    Toast.show({ message: 'Your assets balance increased', type: 'success', title: 'Success' });
+  }
+}
+
 export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?: boolean) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
@@ -377,9 +508,13 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
 
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) return;
+
     const walletAddress = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
-    const activeAccountType = getActiveAccountType(accounts);
+    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
+
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
@@ -392,18 +527,9 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
         ...balances,
         [accountId]: transformedBalances,
       };
-      if (showToastIfIncreased) {
-        const increasedBalances = Object.values(transformedBalances)
-          // $FlowFixMe
-          .filter(({ balance: balanceUpd, symbol: symbolUpd }) =>
-            Object.values(balances[accountId] || {}).find(
-              // $FlowFixMe
-              ({ balance, symbol }) => symbol === symbolUpd && parseFloat(balanceUpd) > parseFloat(balance),
-            ),
-          );
-        if (increasedBalances.length) {
-          Toast.show({ message: 'Your assets balance increased', type: 'success', title: 'Success' });
-        }
+      if (showToastIfIncreased && !isSmartWalletAccount) {
+        const currentBalances = accountBalancesSelector(getState());
+        notifyAboutIncreasedBalance(newBalances, currentBalances);
       }
       dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
       dispatch({
@@ -419,7 +545,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
       dispatch({ type: UPDATE_RATES, payload: rates });
     }
 
-    if (smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
+    if (smartWalletFeatureEnabled && isSmartWalletAccount) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
   };
@@ -496,15 +622,20 @@ export const resetSearchAssetsResultAction = () => ({
 export const checkForMissedAssetsAction = (transactionNotifications: Object[]) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
+      accounts: { data: accounts },
       user: { data: { walletId } },
       assets: { data: currentAssets, supportedAssets },
-      wallet: { data: wallet },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
+    const activeAccountAddress = getActiveAccountAddress(accounts);
 
     // load supported assets
     let walletSupportedAssets = [...supportedAssets];
     if (!supportedAssets.length) {
       walletSupportedAssets = await api.fetchSupportedAssets(walletId);
+      if (smartWalletFeatureEnabled && walletSupportedAssets.length) {
+        walletSupportedAssets = [...walletSupportedAssets, generatePMTToken()];
+      }
       dispatch({
         type: UPDATE_SUPPORTED_ASSETS,
         payload: walletSupportedAssets,
@@ -513,6 +644,10 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
 
       // HACK: Dirty fix for users who removed somehow Eth from their assets list
       if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
+
+      if (smartWalletFeatureEnabled && !currentAssetsTickers.includes(PMT)) {
+        currentAssetsTickers.push(PMT);
+      }
 
       if (walletSupportedAssets.length) {
         const updatedAssets = walletSupportedAssets
@@ -527,9 +662,8 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     }
 
     // check if some assets are not enabled
-    const myAddress = wallet.address.toUpperCase();
     const missedAssets = transactionNotifications
-      .filter(tx => tx.from.toUpperCase() !== myAddress)
+      .filter(tx => !addressesEqual(tx.from, activeAccountAddress))
       .reduce((memo, { asset: ticker }) => {
         if (!ticker) return memo;
         if (memo[ticker] !== undefined || currentAssets[ticker] !== undefined) return memo;

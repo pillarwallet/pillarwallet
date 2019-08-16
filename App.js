@@ -38,6 +38,7 @@ import {
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
+import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
@@ -100,6 +101,10 @@ class App extends React.Component<Props, *> {
     SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
+    if (Platform.OS === 'android') {
+      StatusBar.setTranslucent(true);
+      StatusBar.setBackgroundColor('transparent');
+    }
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     Linking.getInitialURL()
       .then(url => {
@@ -168,7 +173,7 @@ const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App)
 const AppRoot = () => (
   <Root>
     <Provider store={store}>
-      <PersistGate loading={<LoadingSpinner />} persistor={persistor}>
+      <PersistGate loading={<Container><LoadingSpinner /></Container>} persistor={persistor}>
         <AppWithNavigationState />
       </PersistGate>
     </Provider>

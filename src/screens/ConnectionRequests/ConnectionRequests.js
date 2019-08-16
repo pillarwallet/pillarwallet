@@ -22,7 +22,7 @@ import { FlatList, RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { TYPE_RECEIVED, TYPE_REJECTED } from 'constants/invitationsConstants';
-import { baseColors, spacing, UIColors } from 'utils/variables';
+import { spacing, UIColors } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -30,8 +30,7 @@ import {
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
 import { PEOPLE, CONTACT } from 'constants/navigationConstants';
-import { Container } from 'components/Layout';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import { createAlert } from 'utils/alerts';
@@ -87,12 +86,9 @@ class ConnectionRequests extends React.Component<Props> {
     } = this.props;
 
     return (
-      <Container color={baseColors.white}>
-        <Header
-          title="connection requests"
-          onBack={() => this.props.navigation.goBack(null)}
-          white
-        />
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: 'Connection requests' }] }}
+      >
         <FlatList
           data={invitations.filter(({ type }) => type === TYPE_RECEIVED)}
           extraData={invitations}
@@ -111,7 +107,7 @@ class ConnectionRequests extends React.Component<Props> {
             />
           }
         />
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

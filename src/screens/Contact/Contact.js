@@ -29,8 +29,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
-// import get from 'lodash.get';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import {
   syncContactAction,
   disconnectContactAction,
@@ -38,25 +37,21 @@ import {
   blockContactAction,
 } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import { fetchContactBadgesAction } from 'actions/badgesActions';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
+import { BADGE, CHAT, CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
-import { BADGE, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
-import { CHAT, ACTIVITY } from 'constants/tabsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import Header from 'components/Header';
+import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
-import ChatTab from 'components/ChatTab';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
-import { BaseText, BoldText } from 'components/Typography';
-import Button from 'components/Button';
+import DeploymentView from 'components/DeploymentView';
+
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -73,47 +68,17 @@ import ManageContactModal from './ManageContactModal';
 
 const iconSend = require('assets/icons/icon_send.png');
 
-const ContactWrapper = styled.View`
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  margin: 5px 20px 20px;
-  padding-top: ${Platform.select({
-    ios: '15px',
-    android: '9px',
-  })};
-`;
-
 const CircleButtonsWrapper = styled.View`
   margin-top: ${Platform.select({
-    ios: '30px',
-    android: '15px',
+    ios: '5px',
+    android: '0px',
   })};
-  padding-top: 20px;
   padding-bottom: 30px;
   background-color: ${baseColors.snowWhite};
-  border-top-width: 1px;
   border-bottom-width: 1px;
   border-color: ${baseColors.mediumLightGray};
   justify-content: center;
   align-items: center;
-`;
-
-const SheetContentWrapper = styled.View`
-  flex: 1;
-  padding-top: 30px;
-`;
-
-const MessageTitle = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  text-align: center;
-`;
-
-const Message = styled(BaseText)`
-  padding-top: 10px;
-  font-size: ${fontSizes.tiny}px;
-  color: ${baseColors.darkGray};
-  text-align: center;
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -121,7 +86,18 @@ const EmptyStateWrapper = styled.View`
 `;
 
 const ContentWrapper = styled.View`
-  margin-bottom: 25px;
+  background-color: ${UIColors.defaultBackgroundColor};
+  padding-top: ${Platform.select({
+    ios: '25px',
+    android: '19px',
+  })};
+`;
+
+const ProfileImageWrapper = styled.View`
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 20px;
 `;
 
 type Props = {
@@ -138,7 +114,6 @@ type Props = {
   smartWalletState: Object,
   accounts: Accounts,
   history: Array<*>,
-  deploySmartWallet: Function,
   openSeaTxHistory: Object[],
   contactsBadges: Badges,
   fetchContactBadges: Function,
@@ -150,11 +125,6 @@ type State = {
   showManageContactModal: boolean,
   showConfirmationModal: boolean,
   manageContactType: string,
-  activeTab: string,
-  isSheetOpen: boolean,
-  forceOpen: boolean,
-  collapsedActivityHeight: ?number,
-  collapsedChatHeight: ?number,
   isBadgesSectionOpen: boolean,
   relatedTransactions: Object[],
 };
@@ -170,7 +140,6 @@ class Contact extends React.Component<Props, State> {
     const { navigation, contacts } = this.props;
     this.activityFeedRef = React.createRef();
     const contactName = navigation.getParam('username', '');
-    const shouldOpenSheet = navigation.getParam('chatTabOpen', false);
     const contact = navigation.getParam('contact', { username: contactName });
     this.localContact = contacts.find(({ username }) => username === contact.username);
     this.scroll = React.createRef();
@@ -178,11 +147,6 @@ class Contact extends React.Component<Props, State> {
       showManageContactModal: false,
       showConfirmationModal: false,
       manageContactType: '',
-      activeTab: CHAT,
-      isSheetOpen: shouldOpenSheet,
-      forceOpen: shouldOpenSheet,
-      collapsedChatHeight: null,
-      collapsedActivityHeight: null,
       isBadgesSectionOpen: true,
       relatedTransactions: [],
     };
@@ -194,6 +158,7 @@ class Contact extends React.Component<Props, State> {
       syncContact,
       session,
       navigation,
+      // fetchContactBadges,
       logScreenView,
     } = this.props;
     this.isComponentMounted = true;
@@ -255,7 +220,6 @@ class Contact extends React.Component<Props, State> {
 
     const relatedTransactions = [...transactionsOnMainnet, ...mappedCTransactions]
       .filter(({ username }) => username === displayContact.username);
-    this.manageFeedCollapseHeight(relatedTransactions.length);
     this.setState({ relatedTransactions });
   };
 
@@ -312,69 +276,12 @@ class Contact extends React.Component<Props, State> {
     }, 1000);
   };
 
-  setActiveTab = (activeTab) => {
-    const { logScreenView } = this.props;
-
-    logScreenView(`View tab Contact.${activeTab}`, 'Contact');
-
-    this.setState({ activeTab });
-  };
-
-  handleSheetOpen = () => {
-    this.setState({ isSheetOpen: true });
-  };
-
-  manageFeedCollapseHeight = (length: number) => {
-    const { collapsedActivityHeight } = this.state;
-    const TWO_ITEMS_HEIGHT = 245;
-    const EMPTY_STATE_HEIGHT = 160;
-    if (length && collapsedActivityHeight !== TWO_ITEMS_HEIGHT) {
-      this.setState({ collapsedActivityHeight: TWO_ITEMS_HEIGHT });
-    } else if (!length && collapsedActivityHeight !== EMPTY_STATE_HEIGHT) {
-      this.setState({ collapsedActivityHeight: EMPTY_STATE_HEIGHT });
-    }
-  };
-
   renderBadge = ({ item }) => {
     const { navigation } = this.props;
     return (
       <BadgeTouchableItem
         data={item}
         onPress={() => navigation.navigate(BADGE, { badge: item, hideDescription: true })}
-      />
-    );
-  };
-
-  renderSheetContent = (displayContact, unreadCount) => {
-    const { activeTab, isSheetOpen, relatedTransactions } = this.state;
-    const { navigation } = this.props;
-
-    if (activeTab === ACTIVITY) {
-      return (
-        <ActivityFeed
-          ref={(ref) => { this.activityFeedRef = ref; }}
-          navigation={navigation}
-          feedData={relatedTransactions}
-          showArrowsOnly
-          contentContainerStyle={{ paddingTop: 10 }}
-          esComponent={(
-            <View style={{ width: '100%', alignItems: 'center' }}>
-              <EmptyStateParagraph
-                title="Make your first step"
-                bodyText="Your activity will appear here."
-              />
-            </View>
-          )}
-        />
-      );
-    }
-    return (
-      <ChatTab
-        contact={displayContact}
-        isOpen={activeTab === CHAT && isSheetOpen}
-        navigation={navigation}
-        hasUnreads={!!unreadCount}
-        getCollapseHeight={(cHeight) => { this.setState({ collapsedChatHeight: cHeight }); }}
       />
     );
   };
@@ -415,19 +322,14 @@ class Contact extends React.Component<Props, State> {
       chats,
       smartWalletState,
       accounts,
-      deploySmartWallet,
       // contactsBadges,
     } = this.props;
     const {
       showManageContactModal,
       showConfirmationModal,
       manageContactType,
-      activeTab,
-      forceOpen,
-      collapsedActivityHeight,
-      collapsedChatHeight,
-      isSheetOpen,
       // isBadgesSectionOpen,
+      relatedTransactions = [],
     } = this.state;
 
     const contactName = navigation.getParam('username', '');
@@ -444,22 +346,8 @@ class Contact extends React.Component<Props, State> {
       ? this.getUserAvatar(isAccepted, existingProfileImage, displayContact.lastUpdateTime)
       : undefined;
 
-    const chatInfo = chats.find(chat => chat.username === displayContact.username) || { unread: 0 };
-    const unreadCount = chatInfo.unread;
-
-    const contactTabs = [
-      {
-        id: CHAT,
-        name: 'Chat',
-        onPress: () => this.setActiveTab(CHAT),
-        unread: activeTab === CHAT && isSheetOpen ? null : unreadCount,
-      },
-      {
-        id: ACTIVITY,
-        name: 'Activity',
-        onPress: () => this.setActiveTab(ACTIVITY),
-      },
-    ];
+    // const chatInfo = chats.find(chat => chat.username === displayContact.username) || { unread: 0 };
+    // const unreadCount = chatInfo.unread;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
@@ -467,36 +355,31 @@ class Contact extends React.Component<Props, State> {
 
     // const contactBadges = get(contactsBadges, contact.username, []);
 
+    let activityFeedData = relatedTransactions;
+    if (isAccepted) {
+      activityFeedData = [...activityFeedData, { ...localContact, type: TYPE_ACCEPTED }];
+    }
+
+    const { username: contactUsername } = contact;
+    const unreadChats = chats.filter(chat => chat.username === contactUsername && !!chat.unread);
+
     return (
-      <ContainerWithBottomSheet
-        inset={{ bottom: 0 }}
-        color={baseColors.white}
-        hideSheet={!isAccepted}
-        bottomSheetProps={{
-          forceOpen,
-          sheetHeight: activeTab === CHAT ? collapsedChatHeight + 140 : collapsedActivityHeight,
-          swipeToCloseHeight: 62,
-          onSheetOpen: this.handleSheetOpen,
-          onSheetClose: () => { this.setState({ isSheetOpen: false }); },
-          tabs: contactTabs,
-          activeTab,
-          inverse: activeTab === CHAT,
+      <ContainerWithHeader
+        backgroundColor={isAccepted ? baseColors.white : UIColors.defaultBackgroundColor}
+        inset={{ bottom: 'never' }}
+        headerProps={{
+          centerItems: [{ title: contactUsername }],
+          rightItems: [displayContact.status
+            ? {
+                icon: 'chat',
+                onPress: () => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT }),
+                indicator: !!unreadChats.length,
+                color: baseColors.coolGrey,
+                fontSize: fontSizes.mediumLarge,
+              }
+            : {}],
         }}
-        bottomSheetChildren={
-          (
-            <SheetContentWrapper>
-              {this.renderSheetContent(displayContact, unreadCount)}
-            </SheetContentWrapper>
-          )
-        }
       >
-        <Header
-          title={displayContact.username}
-          onBack={() => navigation.goBack(null)}
-          showRight
-          onNextPress={this.showManageContactModalTrigger}
-          nextIcon={displayContact.status ? 'more' : null}
-        />
         <ScrollWrapper
           refreshControl={
             <RefreshControl
@@ -508,70 +391,87 @@ class Contact extends React.Component<Props, State> {
           }
           innerRef={ref => { this.scroll = ref; }}
         >
-          <ContactWrapper>
-            <ProfileImage
-              uri={userAvatar}
-              userName={displayContact.username}
-              borderWidth={4}
-              initialsSize={fontSizes.extraGiant}
-              diameter={172}
-              style={{ backgroundColor: baseColors.geyser }}
-              imageUpdateTimeStamp={displayContact.lastUpdateTime}
-            />
-          </ContactWrapper>
-          {isAccepted &&
-            <ContentWrapper>
-              <CircleButtonsWrapper>
-                <CircleButton
-                  disabled={disableSend}
-                  label="Send"
-                  icon={iconSend}
-                  onPress={() => this.onSendPress(displayContact)}
-                />
-                {disableSend &&
-                <Wrapper regularPadding style={{ marginTop: 30, alignItems: 'center' }}>
-                  <MessageTitle>{ sendingBlockedMessage.title }</MessageTitle>
-                  <Message>{ sendingBlockedMessage.message }</Message>
-                  {smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED &&
-                  <Button
-                    marginTop="20px"
-                    height={52}
-                    title="Deploy Smart Wallet"
-                    disabled={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
-                    onPress={() => deploySmartWallet()}
+          <ContentWrapper>
+            <ProfileImageWrapper>
+              <ProfileImage
+                uri={userAvatar}
+                userName={contactUsername}
+                borderWidth={4}
+                initialsSize={fontSizes.extraGiant}
+                diameter={164}
+                style={{ backgroundColor: baseColors.geyser }}
+                imageUpdateTimeStamp={displayContact.lastUpdateTime}
+              />
+            </ProfileImageWrapper>
+            {isAccepted &&
+              <View>
+                <CircleButtonsWrapper>
+                  <CircleButton
+                    disabled={disableSend}
+                    label="Send"
+                    icon={iconSend}
+                    onPress={() => this.onSendPress(displayContact)}
+                  />
+                  {disableSend &&
+                  <DeploymentView
+                    message={sendingBlockedMessage}
+                    buttonLabel="Deploy Smart Wallet"
+                    buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
                   />
                   }
-                </Wrapper>
-                }
-              </CircleButtonsWrapper>
-              { /* <CollapsibleSection
-                label="game of badges."
-                collapseContent={
-                  <FlatList
-                    data={contactBadges}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={this.renderBadge}
-                    style={{ width: '100%' }}
-                    contentContainerStyle={[
-                      { paddingHorizontal: 10 },
-                      !contactBadges.length ? { width: '100%', justifyContent: 'center' } : {},
-                      ]}
-                    horizontal
-                    initialNumToRender={5}
-                    removeClippedSubviews
-                    ListEmptyComponent={this.renderEmptyBadgesState}
-                  />
-                }
-                onPress={this.toggleBadgesSection}
-                open={isBadgesSectionOpen}
-                onAnimationEnd={
-                  isBadgesSectionOpen
-                  ? () => { this.scroll.scrollToEnd(); }
-                  : () => {}
-                }
-              /> */}
-            </ContentWrapper>
-          }
+                </CircleButtonsWrapper>
+                <ActivityFeed
+                  feedTitle="activity."
+                  noBorder
+                  ref={(ref) => { this.activityFeedRef = ref; }}
+                  navigation={navigation}
+                  feedData={activityFeedData}
+                  showArrowsOnly
+                  contentContainerStyle={{ paddingBottom: 10 }}
+                  esComponent={(
+                    <View style={{
+                        width: '100%',
+                        alignItems: 'center',
+                        paddingTop: 10,
+                        paddingBottom: 35,
+                      }}
+                    >
+                      <EmptyStateParagraph
+                        title="Make your first step"
+                        bodyText="Your activity will appear here."
+                      />
+                    </View>
+                  )}
+                />
+                { /* <CollapsibleSection
+                  label="game of badges."
+                  collapseContent={
+                    <FlatList
+                      data={contactBadges}
+                      keyExtractor={(item) => item.id.toString()}
+                      renderItem={this.renderBadge}
+                      style={{ width: '100%' }}
+                      contentContainerStyle={[
+                        { paddingHorizontal: 10 },
+                        !contactBadges.length ? { width: '100%', justifyContent: 'center' } : {},
+                        ]}
+                      horizontal
+                      initialNumToRender={5}
+                      removeClippedSubviews
+                      ListEmptyComponent={this.renderEmptyBadgesState}
+                    />
+                  }
+                  onPress={this.toggleBadgesSection}
+                  open={isBadgesSectionOpen}
+                  onAnimationEnd={
+                    isBadgesSectionOpen
+                    ? () => { this.scroll.scrollToEnd(); }
+                    : () => {}
+                  }
+                /> */}
+              </View>
+            }
+          </ContentWrapper>
         </ScrollWrapper>
         <ManageContactModal
           showManageContactModal={showManageContactModal}
@@ -590,7 +490,7 @@ class Contact extends React.Component<Props, State> {
             this.setState({ showConfirmationModal: false });
           }}
         />
-      </ContainerWithBottomSheet>
+      </ContainerWithHeader>
     );
   }
 }
@@ -622,14 +522,12 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-
 const mapDispatchToProps = (dispatch: Function) => ({
   syncContact: userId => dispatch(syncContactAction(userId)),
   fetchContactTransactions: (contactAddress) => dispatch(fetchContactTransactionsAction(contactAddress)),
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
   fetchContactBadges: (contact) => dispatch(fetchContactBadgesAction(contact)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });

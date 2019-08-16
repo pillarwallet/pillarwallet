@@ -19,73 +19,49 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { CachedImage } from 'react-native-cached-image';
+
 import { baseColors, fontSizes } from 'utils/variables';
-import { MediumText } from 'components/Typography';
-import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { BaseText } from 'components/Typography';
 
 type Props = {
-  isSynthetic?: boolean,
   amount: string,
   wrapperStyle?: Object,
-  monoColor?: boolean,
+  textStyle?: ?Object,
+  token?: string,
 };
 
 const Wrapper = styled.View`
   flex-direction: row;
+  align-items: center;
 `;
 
-const BalanceInTank = styled(MediumText)`
+const BalanceInTank = styled(BaseText)`
   color: ${baseColors.electricBlueIntense};
   font-size: ${fontSizes.medium}px;
 `;
 
-const getIconFill = (props) => {
-  if (props.isSynthetic) {
-    return 'url(#gradSynthetic)';
-  } else if (props.monoColor) {
-    return baseColors.electricBlueIntense;
-  }
-  return 'url(#grad)';
-};
+const Icon = styled(CachedImage)`
+  width: 6px;
+  height: 12px;
+  margin-right: 4px;
+`;
+
+const lightningIcon = require('assets/icons/icon_lightning_sm.png');
 
 const TankAssetBalance = (props: Props) => {
   const {
     amount,
     wrapperStyle,
+    textStyle,
+    token,
   } = props;
-
-  const iconFill = getIconFill(props);
 
   return (
     <Wrapper style={wrapperStyle}>
-      <Svg
-        width="20"
-        height="24"
-        fill={iconFill}
-        color="green"
-        viewBox="0 0 400 600"
-      >
-        <Defs>
-          <LinearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor={baseColors.electricBlueIntense} stopOpacity="1" />
-            <Stop offset="100%" stopColor="#3ac694" stopOpacity="1" />
-          </LinearGradient>
-          <LinearGradient id="gradSynthetic" x1="0%" y1="42%" x2="100%" y2="58%">
-            <Stop offset="0%" stopColor={baseColors.electricBlueIntense} stopOpacity="1" />
-            <Stop offset="30%" stopColor={baseColors.electricBlueIntense} stopOpacity="1" />
-            <Stop offset="70%" stopColor="#c62222" stopOpacity="1" />
-            <Stop offset="100%" stopColor="#c62222" stopOpacity="1" />
-          </LinearGradient>
-        </Defs>
-        <Path
-          d="M159.838 230.378 C 110.362 345.801,109.701 340.000,172.332 340.000 C 223.910 340.000,230.027
-          366.488,197.734 450.000 C 180.347 494.964,231.738 485.113,252.835 439.438 C 306.547 323.150,306.301
-          300.000,251.348 300.000 C 195.040 300.000,190.506 287.576,219.236 212.010 C 255.111 117.651,200.984
-          134.389,159.838 230.378"
-          strokeWidth="32"
-        />
-      </Svg>
-      <BalanceInTank>{amount}</BalanceInTank>
+      <Icon source={lightningIcon} />
+      <BalanceInTank style={textStyle}>{amount}</BalanceInTank>
+      {!!token && <BalanceInTank style={textStyle}> {token}</BalanceInTank>}
     </Wrapper>
   );
 };

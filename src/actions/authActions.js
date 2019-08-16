@@ -33,15 +33,16 @@ import {
   APP_FLOW,
   AUTH_FLOW,
   ONBOARDING_FLOW,
-  ASSETS,
+  HOME,
   CHAT,
-  CHAT_LIST,
   PIN_CODE_UNLOCK,
+  PEOPLE,
 } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
@@ -56,10 +57,12 @@ import { clearWebViewCookies } from 'utils/exchange';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
-import { initSmartWalletAccountAction } from 'actions/accountsActions';
+import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
 import { restoreTransactionHistoryAction } from 'actions/historyActions';
+import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { saveDbAction } from './dbActions';
 import { fetchBadgesAction } from './badgesActions';
+import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 
 const Crashlytics = firebase.crashlytics();
 
@@ -72,6 +75,9 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       accounts: { data: accounts },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
+      appSettings: {
+        data: { userJoinedBeta = false, firebaseAnalyticsConnectionEnabled = true, blockchainNetwork = '' },
+      },
     } = getState();
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -87,6 +93,16 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
     const saltedPin = await getSaltedPin(pin, dispatch);
     try {
       let wallet;
+
+      /**
+       * we want Firebase Analytics data collection to be off by default,
+       * this check is used for existing users to turn off firebase Analytics
+       * data collection after app update if the `firebaseAnalyticsConnectionEnabled`
+       * was not set before (we set it during onboarding so unset value means existing user)
+       */
+      if (!userJoinedBeta && firebaseAnalyticsConnectionEnabled) {
+        dispatch(setFirebaseAnalyticsCollectionEnabled(false));
+      }
       if (!touchID) {
         const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
         wallet = await ethers.Wallet.RNfromEncryptedWallet(
@@ -132,7 +148,13 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys));
 
         if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
-          await dispatch(initSmartWalletAccountAction(wallet.privateKey));
+          await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
+        }
+
+        // set ETHEREUM network as active
+        // if we disable feature flag or end beta testing program while user has set PPN as active network
+        if (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
+          dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
       } else {
         api.init();
@@ -164,14 +186,14 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
 
       const navigateToLastActiveScreen = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
-        routeName: lastActiveScreen || ASSETS,
+        routeName: lastActiveScreen || HOME,
         params: lastActiveScreenParams,
       });
 
       const isOpeningAChatNotification = lastActiveScreen === CHAT && currentFlow === AUTH_FLOW;
       const navigateToRoute = isOpeningAChatNotification ?
         NavigationActions.navigate({
-          routeName: CHAT_LIST,
+          routeName: PEOPLE,
           params: {},
           action: navigateToLastActiveScreen,
         }) : navigateToLastActiveScreen;

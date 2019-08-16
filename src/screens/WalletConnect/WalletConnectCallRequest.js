@@ -25,10 +25,10 @@ import { connect } from 'react-redux';
 import { utils, Interface } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
-import { Container, Footer, ScrollWrapper } from 'components/Layout';
+import { Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import { onWalletConnectRejectCallRequest } from 'actions/walletConnectActions';
@@ -141,7 +141,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const asset = supportedAssets.find(
       ({ address: assetAddress = '' }) => assetAddress.toLowerCase() === to.toLowerCase(),
     );
-    if (asset) {
+    const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
+    if (asset && isTokenTransfer) {
       const iface = new Interface(ERC20_CONTRACT_ABI);
       const parsedTransaction = iface.parseTransaction({ data, value }) || {};
       const {
@@ -162,6 +163,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       contractAddress: asset ? asset.address : '',
       decimals: asset ? asset.decimals : 18,
       note: this.state.note,
+      isTokenTransfer,
     };
   };
 
@@ -172,9 +174,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const { gasInfo } = this.props;
     const { gasLimit } = this.state;
     const transaction = this.parseTransaction(payload);
-    const { data, contractAddress } = transaction;
-
-    const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
+    const { contractAddress, isTokenTransfer } = transaction;
 
     /**
      *  we're using our wallet avg gas price and gas limit
@@ -279,7 +279,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             amount,
             symbol,
             txFeeInWei,
-            contractAddress,
           },
         } = this.getTokenTransactionPayload(payload);
 
@@ -346,7 +345,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 || <Spinner style={{ marginTop: 5 }} width={20} height={20} />
               }
             </LabeledRow>
-            {data.toLowerCase() !== '0x' && !contractAddress && (
+            {data.toLowerCase() !== '0x' && (
               <LabeledRow>
                 <Label>Data</Label>
                 <Value>{data}</Value>
@@ -412,8 +411,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     }
 
     return (
-      <Container color={baseColors.white}>
-        <Header onBack={this.handleBack} title={`${type} Request`} white />
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: `${type} Request` }],
+          customOnBack: this.handleBack,
+        }}
+      >
         {body}
         <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
           {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
@@ -433,7 +436,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             />
           </FooterWrapper>
         </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

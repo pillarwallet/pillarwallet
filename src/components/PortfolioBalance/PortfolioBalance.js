@@ -23,7 +23,7 @@ import { View } from 'react-native';
 import { createStructuredSelector } from 'reselect';
 import type { Assets, Balances, Rates } from 'models/Asset';
 import { BaseText } from 'components/Typography';
-import { getBalance } from 'utils/assets';
+import { calculatePortfolioBalance } from 'utils/assets';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -38,32 +38,7 @@ type Props = {
   style: Object,
 };
 
-class PortfolioBalance extends React.Component<Props, {}> {
-  calculatePortfolioBalance(assets: Assets, rates: Rates, balances: Object) {
-    // CLEANUP REQUIRED
-    return Object
-      .keys(assets)
-      .map(key => assets[key])
-      .map(({ symbol }) => {
-        const assetRates = rates[symbol] || {};
-        const balance = getBalance(balances, symbol);
-        const assetFiatBalance = Object
-          .keys(assetRates)
-          .map(key => ({
-            currency: key,
-            total: assetRates[key] * (balance || 0),
-          }));
-        return assetFiatBalance;
-      })
-      .reduce((memo, item) => {
-        return memo.concat(item);
-      }, [])
-      .reduce((memo, item) => {
-        memo[item.currency] = (memo[item.currency] || 0) + item.total;
-        return memo;
-      }, {});
-  }
-
+class PortfolioBalance extends React.PureComponent<Props, {}> {
   render() {
     const {
       style,
@@ -74,7 +49,7 @@ class PortfolioBalance extends React.Component<Props, {}> {
       label,
     } = this.props;
 
-    const portfolioBalances = this.calculatePortfolioBalance(assets, rates, balances);
+    const portfolioBalances = calculatePortfolioBalance(assets, rates, balances);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const portfolioBalance = formatMoney(portfolioBalances[fiatCurrency] || 0);
     const currencySymbol = getCurrencySymbol(fiatCurrency);

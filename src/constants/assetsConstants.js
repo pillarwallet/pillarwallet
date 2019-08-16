@@ -38,6 +38,7 @@ export const PLR = 'PLR';
 export const EUR = 'EUR';
 export const GBP = 'GBP';
 export const USD = 'USD';
+export const PMT = 'PMT';
 
 export const supportedFiatCurrencies = [GBP, EUR, USD];
 export const defaultFiatCurrency = GBP;
@@ -45,6 +46,9 @@ export const defaultFiatCurrency = GBP;
 export const TOKENS = 'TOKENS';
 export const COLLECTIBLES = 'COLLECTIBLES';
 export const BADGES = 'BADGES';
+
+export const SYNTHETIC = 'SYNTHETIC';
+export const NONSYNTHETIC = 'NONSYNTHETIC';
 
 export const SPEED_TYPES = {
   SLOW: 'min',

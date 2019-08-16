@@ -29,7 +29,7 @@ import { loadAndMigrate } from 'services/dataMigration';
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
-import { UPDATE_CONTACTS } from 'constants/contactsConstants';
+import { SET_CONTACTS_SMART_ADDRESSES, UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
@@ -50,10 +50,17 @@ import {
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   DISMISS_SMART_WALLET_UPGRADE,
+  SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
+  SET_SMART_WALLET_DEPLOYMENT_DATA,
   SET_SMART_WALLET_UPGRADE_STATUS,
+  SET_SMART_WALLET_LAST_SYNCED_HASH,
 } from 'constants/smartWalletConstants';
-import { UPDATE_PAYMENT_NETWORK_BALANCES } from 'constants/paymentNetworkConstants';
+import {
+  UPDATE_PAYMENT_NETWORK_BALANCES,
+  UPDATE_PAYMENT_NETWORK_STAKED,
+  MARK_PLR_TANK_INITIALISED,
+} from 'constants/paymentNetworkConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -89,6 +96,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { contacts = [] } = await storage.get('contacts');
       dispatch({ type: UPDATE_CONTACTS, payload: contacts });
 
+      const { contactsSmartAddresses = [] } = await storage.get('contactsSmartAddresses');
+      dispatch({ type: SET_CONTACTS_SMART_ADDRESSES, payload: contactsSmartAddresses });
+
       const { invitations = [] } = await storage.get('invitations');
       dispatch({ type: UPDATE_INVITATIONS, payload: invitations });
 
@@ -122,6 +132,12 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { paymentNetworkBalances = {} } = await storage.get('paymentNetworkBalances');
       dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });
 
+      const { paymentNetworkStaked = '' } = await storage.get('paymentNetworkStaked');
+      dispatch({ type: UPDATE_PAYMENT_NETWORK_STAKED, payload: paymentNetworkStaked });
+
+      const { isPLRTankInitialised = false } = await storage.get('isPLRTankInitialised');
+      if (isPLRTankInitialised) dispatch({ type: MARK_PLR_TANK_INITIALISED });
+
       const { offlineQueue = [] } = await storage.get('offlineQueue');
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
@@ -141,9 +157,15 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const {
         upgradeTransferTransactions = [],
         upgradeStatus = null,
+        accounts: smartAccounts = [],
+        deploymentData = {},
+        lastSyncedHash = null,
       } = await storage.get('smartWallet');
       dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
       dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
+      dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: smartAccounts });
+      dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
+      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_HASH, payload: lastSyncedHash });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 

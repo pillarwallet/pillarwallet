@@ -25,14 +25,16 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 
-import { Container, Footer, ScrollWrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
-import Header from 'components/Header';
-import { fontSizes } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'actions/smartWalletActions';
 import { formatAmount } from 'utils/common';
 import type { TopUpFee } from 'models/PaymentNetwork';
+import { PPN_TOKEN } from 'configs/assetsConfig';
+import { ASSETS } from 'constants/navigationConstants';
 
 
 type Props = {
@@ -51,7 +53,7 @@ const FooterWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 0 20px;
+  padding: ${spacing.large}px;
   width: 100%;
 `;
 
@@ -83,7 +85,7 @@ class FundConfirm extends React.Component<Props, State> {
     this.setState({ topUpButtonSubmitted: true });
     const amount = navigation.getParam('amount', '0');
     await topUpVirtualAccount(amount);
-    this.setState({ topUpButtonSubmitted: false }, () => navigation.dismiss());
+    this.setState({ topUpButtonSubmitted: false }, () => navigation.navigate(ASSETS));
   };
 
   getTxFeeInWei = (): BigNumber => {
@@ -95,22 +97,28 @@ class FundConfirm extends React.Component<Props, State> {
     const { topUpButtonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
     const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
-    const submitButtonTitle = !topUpButtonSubmitted ? 'Fund Pillar Tank' : 'Processing..';
+    const submitButtonTitle = !topUpButtonSubmitted ? 'Fund Pillar Tank' : 'Processing...';
 
     return (
-      <Container>
-        <Header
-          onBack={() => navigation.goBack(null)}
-          title="review"
-          white
-        />
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
+        keyboardAvoidFooter={(
+          <FooterWrapper>
+            <Button
+              disabled={!session.isOnline || !topUpFee.isFetched || topUpButtonSubmitted}
+              onPress={this.handleFormSubmit}
+              title={submitButtonTitle}
+            />
+          </FooterWrapper>
+        )}
+      >
         <ScrollWrapper
           regularPadding
           contentContainerStyle={{ marginTop: 40 }}
         >
           <LabeledRow>
             <Label>Amount</Label>
-            <Value>{amount} ETH</Value>
+            <Value>{amount} {PPN_TOKEN}</Value>
           </LabeledRow>
           <LabeledRow>
             <Label>Recipient username</Label>
@@ -121,16 +129,7 @@ class FundConfirm extends React.Component<Props, State> {
             <Value>{feeInEth} ETH</Value>
           </LabeledRow>
         </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40}>
-          <FooterWrapper>
-            <Button
-              disabled={!session.isOnline || !topUpFee.isFetched || topUpButtonSubmitted}
-              onPress={this.handleFormSubmit}
-              title={submitButtonTitle}
-            />
-          </FooterWrapper>
-        </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

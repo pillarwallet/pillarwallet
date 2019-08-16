@@ -20,10 +20,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
+import styled from 'styled-components/native';
 
 import { Paragraph } from 'components/Typography';
 import Header from 'components/Header';
-import { Container, ScrollWrapper, Footer } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Container, ScrollWrapper } from 'components/Layout';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import Button from 'components/Button';
 import CheckPin from 'components/CheckPin';
@@ -32,7 +34,15 @@ import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
-import { baseColors, UIColors, spacing } from 'utils/variables';
+import { UIColors, spacing, baseColors } from 'utils/variables';
+
+const FooterWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.large}px;
+  width: 100%;
+  background-color: ${baseColors.snowWhite};
+`;
 
 type Props = {
   wallet: Object,
@@ -99,7 +109,7 @@ class BackupPhrase extends React.Component<Props, State> {
     if (!pinIsValid) {
       return (
         <Container>
-          <Header title="enter pincode" centerTitle onClose={this.handleScreenDismissal} />
+          <Header title="Enter pincode" centerTitle onClose={this.handleScreenDismissal} />
           <CheckPin revealMnemonic onPinValid={(pin, walletObj) => this.onPinValid(walletObj)} />
         </Container>
       );
@@ -107,22 +117,25 @@ class BackupPhrase extends React.Component<Props, State> {
 
     if (!mnemonic) return null;
     return (
-      <Container color={baseColors.white}>
-        <Header title="backup phrase" onBack={() => navigation.goBack(null)} white />
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: 'Backup phrase' }] }}
+        keyboardAvoidFooter={(
+          <FooterWrapper>
+            <Button
+              onPress={() => navigation.navigate(BACKUP_PHRASE_VALIDATE,
+                { backupViaSettings: this._isBackingupViaSettings })}
+              title="Next"
+            />
+          </FooterWrapper>
+        )}
+      >
         <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
           <Paragraph style={{ marginTop: spacing.medium }}>
             Write down your 12 word backup phrase in the correct order.
           </Paragraph>
           <MnemonicPhrase phrase={mnemonic} />
         </ScrollWrapper>
-        <Footer backgroundColor={UIColors.defaultBackgroundColor}>
-          <Button
-            onPress={() => navigation.navigate(BACKUP_PHRASE_VALIDATE,
-              { backupViaSettings: this._isBackingupViaSettings })}
-            title="Next"
-          />
-        </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

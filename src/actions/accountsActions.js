@@ -32,6 +32,7 @@ import {
   initSmartWalletSdkAction,
   setSmartWalletUpgradeStatusAction,
   fetchVirtualAccountBalanceAction,
+  syncVirtualAccountTransactionsAction,
 } from 'actions/smartWalletActions';
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -42,7 +43,9 @@ import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
 import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
+import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 import { sdkConstants } from '@archanova/sdk';
+import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 
 const storage = Storage.getInstance('db');
 
@@ -217,21 +220,49 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
       await dispatch(setActiveAccountAction(accountId));
     }
 
+    dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
     dispatch(fetchAssetsBalancesAction(assets));
     dispatch(fetchCollectiblesAction());
   };
 };
 
-export const initSmartWalletAccountAction = (privateKey: string) => {
+export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
   return async (dispatch: Function, getState: Function) => {
-    const { accounts: { data: accounts } } = getState();
+    const {
+      appSettings: { data: { blockchainNetwork } },
+      accounts: {
+        data: accounts,
+      },
+      smartWallet: {
+        upgrade: {
+          status: upgradeStatus,
+        },
+      },
+    } = getState();
+
     const activeAccountId = getActiveAccountId(accounts);
     const activeAccountType = getActiveAccountType(accounts);
 
-    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
+    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) {
+      if ([
+        SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+      ].includes(upgradeStatus)) {
+        await dispatch(initSmartWalletSdkAction(privateKey));
+      }
+      return;
+    }
 
     await dispatch(initSmartWalletSdkAction(privateKey));
     await dispatch(connectSmartWalletAccountAction(activeAccountId));
-    await dispatch(fetchVirtualAccountBalanceAction());
+    dispatch(fetchVirtualAccountBalanceAction());
+    dispatch(syncVirtualAccountTransactionsAction());
+
+    if (blockchainNetwork) {
+      dispatch({
+        type: SET_ACTIVE_NETWORK,
+        payload: blockchainNetwork,
+      });
+    }
   };
 };

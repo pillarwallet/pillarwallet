@@ -31,9 +31,9 @@ import {
 } from 'react-native-dotenv';
 
 import type { Accounts } from 'models/Account';
-import { Container, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/Layout';
 import ErrorMessage from 'components/ErrorMessage';
-import Header from 'components/Header';
 import { setBrowsingWebViewAction } from 'actions/appSettingsActions';
 import { getActiveAccountAddress } from 'utils/accounts';
 
@@ -131,12 +131,8 @@ class FiatExchange extends React.Component<Props, State> {
     } = this.state;
 
     return (
-      <Container>
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: `${provider} Payment` }] }} >
         {!!error && <ErrorMessage>{error}</ErrorMessage>}
-        <Header
-          title={`${provider} Payment`}
-          onBack={() => this.props.navigation.goBack(null)}
-        />
         <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
           {
             provider === 'SendWyre'
@@ -156,7 +152,7 @@ class FiatExchange extends React.Component<Props, State> {
             />
           }
         </Wrapper>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

@@ -18,40 +18,59 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { RefreshControl, FlatList, Switch, Platform } from 'react-native';
+import { RefreshControl, FlatList, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native/index';
 
 // components
-import Header from 'components/Header';
-import { Container } from 'components/Layout';
 import { spacing, baseColors } from 'utils/variables';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-// import Button from 'components/Button';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
+import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
+import Spinner from 'components/Spinner';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // constants
-import { WALLET_SETTINGS } from 'constants/navigationConstants';
+import { ASSETS, SMART_WALLET_INTRO, WALLET_SETTINGS } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // models
 import type { Accounts, Account } from 'models/Account';
+import type { Assets, Balances, Rates } from 'models/Asset';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+
+// utils
+import { responsiveSize } from 'utils/ui';
+import { getActiveAccount } from 'utils/accounts';
+import { calculatePortfolioBalance } from 'utils/assets';
+import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   accounts: Accounts,
   switchAccount: Function,
   resetIncorrectPassword: Function,
+  user: Object,
+  blockchainNetworks: Object[],
+  smartWalletFeatureEnabled?: boolean,
+  balances: Balances,
+  rates: Rates,
+  assets: Assets,
+  baseFiatCurrency: string,
+  smartWalletState: Object,
 }
 
 type State = {
   showCheckPinModal: boolean,
+  changingAccount: boolean,
 }
 
 const Wrapper = styled.View`
@@ -63,24 +82,63 @@ const Wrapper = styled.View`
   })};
   background-color: transparent;
   flex: 1;
+  justify-content: center;
+  align-items: center;
 `;
 
+
+const iconRadius = responsiveSize(52);
+const IconWrapper = styled.View`
+  height: ${iconRadius}px;
+  width: ${iconRadius}px;
+  border-radius: ${iconRadius / 2}px;
+  background-color: ${baseColors.zircon};
+  margin-right: ${spacing.medium}px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const iconSide = responsiveSize(20);
+const WalletIcon = styled.View`
+  background-color: ${baseColors.electricBlueIntense};
+  ${props => props.isSmart
+    ? `height: ${iconSide}px;
+      width: ${iconSide}px;
+      border-top-right-radius: 6px;
+      border-bottom-left-radius: 6px;`
+    : `height: ${iconSide}px;
+      width: ${iconSide}px;`}
+`;
 
 class WalletsList extends React.Component<Props, State> {
   switchToAccount: ?Account = null;
 
   state = {
     showCheckPinModal: false,
+    changingAccount: false,
   };
 
   switchAccount = (account) => {
-    const { switchAccount } = this.props;
+    const {
+      switchAccount,
+      navigation,
+      blockchainNetworks,
+      accounts,
+    } = this.props;
+    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '' };
+    const { id: activeBNetworkID } = activeBNetwork;
+    const activeAccount = getActiveAccount(accounts) || { type: '' };
 
     if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
-      this.switchToAccount = account;
-      this.setState({ showCheckPinModal: true });
+      if (activeBNetworkID === BLOCKCHAIN_NETWORK_TYPES.ETHEREUM && activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
+        navigation.navigate(ASSETS);
+      } else {
+        this.switchToAccount = account;
+        this.setState({ showCheckPinModal: true });
+      }
     } else if (account.type === ACCOUNT_TYPES.KEY_BASED) {
       switchAccount(account.id);
+      navigation.navigate(ASSETS);
     }
   };
 
@@ -90,50 +148,93 @@ class WalletsList extends React.Component<Props, State> {
     this.setState({ showCheckPinModal: false });
   };
 
-  switchToSmartWalletAccount = (_: string, wallet: Object) => {
+  switchToSmartWalletAccount = async (_: string, wallet: Object) => {
+    this.setState({ showCheckPinModal: false, changingAccount: true });
+    const { navigation, switchAccount } = this.props;
     if (!this.switchToAccount) return;
-    this.props.switchAccount(this.switchToAccount.id, wallet.privateKey);
+    await switchAccount(this.switchToAccount.id, wallet.privateKey);
     this.switchToAccount = null;
-    this.setState({ showCheckPinModal: false });
+    this.setState({ changingAccount: false });
+    navigation.navigate(ASSETS);
   };
 
   renderWalletListItem = ({ item }) => {
-    const { navigation } = this.props;
+    const { type, balance } = item;
+    const { navigation, blockchainNetworks, baseFiatCurrency } = this.props;
+    const isSmartWallet = type === ACCOUNT_TYPES.SMART_WALLET;
+    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '' };
+    const { id: activeBNetworkID } = activeBNetwork;
+    const isActive = !!item.isActive && activeBNetworkID === BLOCKCHAIN_NETWORK_TYPES.ETHEREUM;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const balanceInFiat = Object.keys(balance).length ? balance[fiatCurrency] : 0;
+    const walletBalance = formatMoney(balanceInFiat || 0);
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
+
     return (
-      <ListItemWithImage
-        label={item.type === ACCOUNT_TYPES.SMART_WALLET ? 'Smart Wallet' : 'Key Based Wallet'}
-        imageColorFill={item.type === ACCOUNT_TYPES.SMART_WALLET ? baseColors.fireEngineRed : baseColors.deepSkyBlue}
-        onPress={() => navigation.navigate(WALLET_SETTINGS, { wallet: item })}
-        customAddon={
-          <Switch
-            onValueChange={() => this.switchAccount(item)}
-            value={item.isActive}
-            thumbColor={baseColors.white}
-            trackColor={{ false: '#E5E5E5', true: '#4cd964' }}
-            ios_backgroundColor="#f4f4f4"
-          />
-        }
+      <SettingsItemCarded
+        title={isSmartWallet ? 'Smart Wallet' : 'Key Wallet'}
+        subtitle={`${currencySymbol} ${walletBalance}`}
+        onMainPress={() => this.switchAccount(item)}
+        onSettingsPress={() => navigation.navigate(WALLET_SETTINGS, { wallet: item })}
+        isActive={isActive}
+        customIcon={(
+          <IconWrapper>
+            <WalletIcon isSmart={isSmartWallet} />
+          </IconWrapper>
+        )}
       />
     );
   };
 
   render() {
-    const { navigation, accounts } = this.props;
-    const { showCheckPinModal } = this.state;
+    const {
+      accounts,
+      user,
+      smartWalletFeatureEnabled,
+      balances,
+      assets,
+      rates,
+      baseFiatCurrency,
+      smartWalletState,
+      navigation,
+    } = this.props;
+    const { showCheckPinModal, changingAccount } = this.state;
+    const accountsList = smartWalletFeatureEnabled
+      ? accounts
+      : accounts.filter((acc) => { return acc.type === 'KEY_BASED'; });
+
+    const accountsWithBalance = accountsList.map((acc) => {
+      const accountBalances = balances[acc.id] || {};
+      const balance = calculatePortfolioBalance(assets, rates, accountBalances);
+      return { ...acc, balance };
+    });
+
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const showSmartWalletInitButton = !smartWalletStatus.hasAccount && smartWalletFeatureEnabled;
+    const titlePart = smartWalletFeatureEnabled ? 'Ethereum wallets' : 'Ethereum wallet';
+
     return (
-      <Container inset={{ bottom: 0 }}>
-        <Header
-          title="your wallets"
-          onBack={() => navigation.goBack(null)}
-        />
+      <ContainerWithHeader
+        color={baseColors.white}
+        headerProps={{
+          background: baseColors.jellyBean,
+          light: true,
+          centerItems: [
+            { userIcon: true },
+            { title: `${user.username}'s ${titlePart}` },
+          ],
+        }}
+      >
+        {!changingAccount &&
         <FlatList
-          data={accounts}
+          data={accountsWithBalance}
           keyExtractor={(item) => item.id.toString()}
           renderItem={this.renderWalletListItem}
           initialNumToRender={8}
           contentContainerStyle={{
-            paddingVertical: spacing.rhythm,
-            paddingTop: 0,
+            padding: spacing.large,
           }}
           refreshControl={
             <RefreshControl
@@ -142,16 +243,29 @@ class WalletsList extends React.Component<Props, State> {
             />
           }
           style={{ flexGrow: 0 }}
-        />
-        {/*
-        <ButtonWrapper>
-          <Button title="Add Smart Wallet" onPress={() => {}} />
-        </ButtonWrapper>
-        */}
+          ListFooterComponent={showSmartWalletInitButton
+            ? (
+              <SettingsItemCarded
+                title="Smart Wallet"
+                subtitle={`${currencySymbol} 0`}
+                onMainPress={() => navigation.navigate(SMART_WALLET_INTRO)}
+                customIcon={(
+                  <IconWrapper>
+                    <WalletIcon isSmart />
+                  </IconWrapper>
+                )}
+              />
+            )
+          : null}
+        />}
+        {changingAccount &&
+        <Wrapper>
+          <Spinner />
+        </Wrapper>}
         <SlideModal
           isVisible={showCheckPinModal}
           onModalHide={this.handleCheckPinModalClose}
-          title="enter pincode"
+          title="Enter pincode"
           centerTitle
           fullScreen
           showHeader
@@ -160,15 +274,31 @@ class WalletsList extends React.Component<Props, State> {
             <CheckPin onPinValid={this.switchToSmartWalletAccount} />
           </Wrapper>
         </SlideModal>
-      </Container >
+      </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
   accounts: { data: accounts },
+  user: { data: user },
+  blockchainNetwork: { data: blockchainNetworks },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  balances: { data: balances },
+  assets: { data: assets },
+  rates: { data: rates },
+  appSettings: { data: { baseFiatCurrency } },
+  smartWallet: smartWalletState,
 }) => ({
   accounts,
+  user,
+  blockchainNetworks,
+  smartWalletFeatureEnabled,
+  balances,
+  assets,
+  rates,
+  baseFiatCurrency,
+  smartWalletState,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

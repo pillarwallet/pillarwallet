@@ -17,28 +17,22 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { utils } from 'ethers';
-
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { SMART_WALLET_DEPLOYMENT_ERRORS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
-import smartWalletService from 'services/smartWallet';
 
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 
 import { getActiveAccount } from './accounts';
-import { formatAmount } from './common';
 
 function getMessage(status: string, activeAccountType: string, smartWalletState: Object) {
   switch (status) {
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
       if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return {};
-      const deployEstimate = smartWalletService.getDeployEstimate();
-      const feeSmartContractDeployEth = formatAmount(utils.formatEther(deployEstimate));
       return {
         title: 'To send assets, deploy Smart Wallet first',
-        message: `You will have to pay a small fee ~${feeSmartContractDeployEth} ETH`,
+        message: 'You will have to pay a small fee',
       };
     case SMART_WALLET_UPGRADE_STATUSES.DEPLOYING:
       if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return {};
@@ -82,4 +76,13 @@ export function isConnectedToSmartAccount(connectedAccountRecord: ?Object) {
 export function userHasSmartWallet(accounts: Accounts = []) {
   const smartAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
   return !!smartAccount;
+}
+
+export function getDeployErrorMessage(errorType: string) {
+  return {
+    title: 'Smart Wallet deployment failed',
+    message: errorType === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
+      ? 'You need to top up your Smart Account first'
+      : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow',
+  };
 }

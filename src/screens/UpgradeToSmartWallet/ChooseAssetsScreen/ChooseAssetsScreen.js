@@ -18,15 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Keyboard } from 'react-native';
+import { FlatList, Keyboard, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { utils } from 'ethers';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 
-import { Container, Footer, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Footer, Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -34,9 +33,8 @@ import Checkbox from 'components/Checkbox';
 import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
-import { BaseText } from 'components/Typography';
 import Toast from 'components/Toast';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { EDIT_ASSET_AMOUNT_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
@@ -46,7 +44,6 @@ import {
   addAssetsToSmartWalletUpgradeAction,
   addCollectiblesToSmartWalletUpgradeAction,
 } from 'actions/smartWalletActions';
-import { fetchGasInfoAction } from 'actions/historyActions';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
@@ -54,7 +51,6 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import type { AssetTransfer, Assets, Balances } from 'models/Asset';
 import type { Collectible, CollectibleTransfer } from 'models/Collectible';
-import type { GasInfo } from 'models/GasInfo';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -66,8 +62,6 @@ type Props = {
   addAssetsToSmartWallet: Function,
   addCollectiblesToSmartWallet: Function,
   addedAssets: AssetTransfer[],
-  fetchGasInfo: Function,
-  gasInfo: GasInfo,
   session: Object,
 };
 
@@ -76,6 +70,7 @@ type State = {
   assetsToTransfer: AssetTransfer[],
   collectiblesToTransfer: CollectibleTransfer[],
   activeTab: string,
+  disableScroll: boolean,
 };
 
 const FooterInner = styled.View`
@@ -85,19 +80,6 @@ const FooterInner = styled.View`
   width: 100%;
 `;
 
-const TopWrapper = styled.View`
-  padding-bottom: 10px;
-  border-bottom-width: 1px;
-  border-bottom-color: #ededed;
-  background-color: ${baseColors.white};
-`;
-
-const Label = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  color: #999999;
-`;
-
-const GAS_LIMIT = 500000;
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 class ChooseAssetsScreen extends React.Component<Props, State> {
@@ -106,17 +88,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     assetsToTransfer: [],
     collectiblesToTransfer: [],
     activeTab: TOKENS,
+    disableScroll: false,
   };
-
-  componentDidMount() {
-    this.props.fetchGasInfo();
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
-      this.props.fetchGasInfo();
-    }
-  }
 
   handleSearchChange = (query: any) => {
     this.setState({ query });
@@ -158,14 +131,23 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
         fallbackSource={genericToken}
         onPress={() => this.toggleAssetInTransferList(item.name, item.amount)}
         customAddon={
-          <Checkbox
-            onPress={() => this.toggleAssetInTransferList(item.name, item.amount)}
-            checked={!!assetsToTransfer.find(asset => asset.name === item.name)}
-            rounded
-            wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
-          />
+          <View style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            height: '100%',
+            justifyContent: 'center',
+          }}
+          >
+            <Checkbox
+              onPress={() => this.toggleAssetInTransferList(item.name, item.amount)}
+              checked={!!assetsToTransfer.find(asset => asset.name === item.name)}
+              rounded
+              wrapperStyle={{ width: 24, marginLeft: 12 }}
+            />
+          </View>
         }
-        rightColumnInnerStyle={{ flexDirection: 'row' }}
+        rightColumnInnerStyle={{ flexDirection: 'row', paddingRight: 40 }}
       />
     );
   };
@@ -326,13 +308,13 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       assets,
       balances,
       addedAssets,
-      gasInfo,
     } = this.props;
     const {
       query,
       activeTab,
       assetsToTransfer = [],
       collectiblesToTransfer = [],
+      disableScroll,
     } = this.state;
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = assetsArray
@@ -361,58 +343,58 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       },
     ];
 
-    const hasAssetsSelected = !!assetsToTransfer.length;
-    const gasPrice = gasInfo.gasPrice.avg || 0;
-    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei').mul(GAS_LIMIT);
-    const assetsTransferFee = formatAmount(utils.formatEther(
-      BigNumber(gasPriceWei * (assetsToTransfer.length + collectiblesToTransfer.length)).toFixed(),
-    ));
+    const hasAssetsSelected = !!assetsToTransfer.length || !!collectiblesToTransfer.length;
     const options = navigation.getParam('options', { isSeparateRecovery: false });
     // NOTE: we can come to this page later when we decide to transfer assets to the existing smart wallet
     const { isSeparateFund } = options;
 
     return (
-      <Container>
-        <TopWrapper>
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Choose assets to transfer' }],
+          rightItems: [hasAssetsSelected ? { label: 'Edit', onPress: this.onEditPress } : {}],
+        }}
+        backgroundColor={baseColors.white}
+      >
+        <ScrollView
+          stickyHeaderIndices={[1]}
+          scrollEnabled={!disableScroll}
+        >
           <SearchBlock
-            headerProps={{
-              title: 'choose assets',
-              onBack: () => navigation.goBack(null),
-              nextText: !hasAssetsSelected || 'Edit',
-              onNextPress: this.onEditPress,
-            }}
             searchInputPlaceholder="Search asset"
             onSearchChange={this.handleSearchChange}
             itemSearchState={query.length >= 2}
             navigation={navigation}
-            backgroundColor={baseColors.white}
+            wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+            onSearchFocus={() => this.setState({ disableScroll: true })}
+            onSearchBlur={() => this.setState({ disableScroll: false })}
           />
-          <Tabs initialActiveTab={activeTab} tabs={assetsTabs} bgColor={baseColors.white} />
-        </TopWrapper>
-        {activeTab === TOKENS && this.renderAssets(nonEmptyAssets)}
-        {activeTab === COLLECTIBLES && this.renderCollectibles()}
+          <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />
+          {activeTab === TOKENS && this.renderAssets(nonEmptyAssets)}
+          {activeTab === COLLECTIBLES && this.renderCollectibles()}
+        </ScrollView>
+        {!!hasAssetsSelected &&
         <Footer>
-          {!isSeparateFund && hasAssetsSelected &&
-          <FooterInner style={{ alignItems: 'center' }}>
-            <Label>{`Est. fee ${assetsTransferFee} ETH`}</Label>
+          {!isSeparateFund &&
+          <FooterInner>
             <Button
+              style={{ marginLeft: 'auto' }}
               small
               title="Next"
               onPress={() => this.onNextPress()}
             />
           </FooterInner>}
-          {!!isSeparateFund && hasAssetsSelected &&
+          {!!isSeparateFund &&
           <FooterInner style={{ alignItems: 'center', flexDirection: 'column', justifyContent: 'center' }}>
             <Button
               title="Fund wallet"
               onPress={() => this.onNextPress(true)}
               style={{ marginBottom: 10 }}
             />
-            <Label>{`Est. fee ${assetsTransferFee} ETH`}</Label>
           </FooterInner>
           }
-        </Footer>
-      </Container>
+        </Footer>}
+      </ContainerWithHeader>
     );
   }
 }
@@ -421,12 +403,10 @@ const mapStateToProps = ({
   assets: { data: assets },
   smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
   session: { data: session },
-  history: { gasInfo },
 }) => ({
   assets,
   addedAssets,
   session,
-  gasInfo,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -448,7 +428,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   addCollectiblesToSmartWallet: collectibles => dispatch(
     addCollectiblesToSmartWalletUpgradeAction(collectibles),
   ),
-  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ChooseAssetsScreen);

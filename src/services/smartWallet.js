@@ -23,28 +23,27 @@ import {
   getSdkEnvironment,
   createSdk,
   Sdk,
-  sdkModules,
+  sdkConstants,
 } from '@archanova/sdk';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
+import { addressesEqual } from 'utils/assets';
 
 const {
-  Eth: {
-    TransactionSpeeds: {
-      Slow: SLOW,
-      Regular: REGULAR,
-      Fast: FAST,
-    },
+  GasPriceStrategies: {
+    Avg: AVG,
+    Fast: FAST,
   },
-} = sdkModules;
+} = sdkConstants;
 
 const TransactionSpeeds = {
-  [SLOW]: SLOW,
-  [REGULAR]: REGULAR,
+  [AVG]: AVG,
   [FAST]: FAST,
 };
+
+const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 
 type AccountTransaction = {
   recipient: string,
@@ -61,10 +60,10 @@ class SmartWallet {
 
   constructor() {
     const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
-    const config = getSdkEnvironment(environmentNetwork);
+    const environment = getSdkEnvironment(environmentNetwork);
 
     try {
-      this.sdk = createSdk(config);
+      this.sdk = createSdk(environment);
     } catch (err) {
       this.handleError(err);
     }
@@ -123,7 +122,7 @@ class SmartWallet {
       .then(({ items = [] }) => items)
       .catch(this.handleError);
 
-    if (!account.ensName) {
+    if (!account.ensName && account.state === sdkConstants.AccountStates.Created) {
       account = await this.sdk.updateAccount(account.address).catch(this.handleError);
     }
 
@@ -134,17 +133,15 @@ class SmartWallet {
   }
 
   async deploy() {
-    const deployEstimate = await this.sdk.estimateAccountDeployment()
-      .then(({ totalCost }) => totalCost)
-      .catch(this.handleError);
+    const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
 
     const accountBalance = this.getAccountRealBalance();
-    if (deployEstimate && accountBalance.gte(deployEstimate)) {
-      return this.sdk.deployAccount();
+    if (get(deployEstimate, 'totalCost') && accountBalance.gte(deployEstimate.totalCost)) {
+      return this.sdk.deployAccount(deployEstimate);
     }
 
-    console.log('insufficient balance, lack: ', deployEstimate.sub(accountBalance).toString());
-    return {};
+    console.log('insufficient balance: ', deployEstimate, accountBalance);
+    return null;
   }
 
   getAccountRealBalance() {
@@ -153,6 +150,31 @@ class SmartWallet {
 
   getAccountVirtualBalance() {
     return get(this.sdk, 'state.account.balance.virtual', new BigNumber(0));
+  }
+
+  getAccountStakedAmount(tokenAddress: ?string): BigNumber {
+    return this.sdk.getConnectedAccountVirtualBalance(tokenAddress)
+      .then(data => {
+        let value;
+        if (data.items) { // NOTE: we're getting the data.items response when tokenAddress is null
+          value = get(data, 'items[0].value');
+        } else {
+          value = get(data, 'value');
+        }
+        return value || new BigNumber(0);
+      })
+      .catch((e) => {
+        this.handleError(e);
+        return new BigNumber(0);
+      });
+  }
+
+  getAccountPendingBalances() {
+    return this.sdk.getConnectedAccountVirtualPendingBalances()
+      .catch((e) => {
+        this.handleError(e);
+        return [];
+      });
   }
 
   async fetchConnectedAccount() {
@@ -170,7 +192,7 @@ class SmartWallet {
       recipient,
       value,
       data,
-      transactionSpeed = null,
+      transactionSpeed,
     } = transaction;
 
     const estimatedTransaction = await this.sdk.estimateAccountTransaction(
@@ -187,16 +209,25 @@ class SmartWallet {
     return this.sdk.submitAccountTransaction(estimatedTransaction);
   }
 
+  createAccountPayment(recipient: string, token: ?string, value: number | string) {
+    return this.sdk.createAccountPayment(recipient, token, value);
+  }
+
   getConnectedAccountTransaction(txHash: string) {
     return this.sdk.getConnectedAccountTransaction(txHash);
   }
 
-  estimateTopUpAccountVirtualBalance(value: BigNumber) {
-    return this.sdk.estimateTopUpAccountVirtualBalance(value);
+  estimateTopUpAccountVirtualBalance(value: BigNumber, tokenAddress: ?string) {
+    return this.sdk.estimateTopUpAccountVirtualBalance(value, tokenAddress);
   }
 
   estimateWithdrawFromAccountVirtualBalance(value: BigNumber) {
     return this.sdk.estimateWithdrawFromAccountVirtualBalance(value);
+  }
+
+  estimateWithdrawAccountPayment(hashes: string[] = []) {
+    const items = hashes.length === 1 ? hashes[0] : hashes;
+    return this.sdk.estimateWithdrawAccountPayment(items);
   }
 
   topUpAccountVirtualBalance(estimated: Object) {
@@ -207,18 +238,59 @@ class SmartWallet {
     return this.sdk.submitAccountTransaction(estimated);
   }
 
-  getDeployEstimate() {
+  withdrawAccountPayment(estimated: Object) {
+    return this.sdk.submitAccountTransaction(estimated);
+  }
+
+  searchAccount(address: string) {
+    return this.sdk.searchAccount({ address });
+  }
+
+  async getAccountPayments(lastSyncedHash: ?string, page?: number = 0) {
+    const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
+    if (!data) return [];
+
+    const foundLastSyncedTx = lastSyncedHash
+      ? data.items.find(({ hash }) => hash === lastSyncedHash)
+      : null;
+    if (data.nextPage && !foundLastSyncedTx) {
+      return [...data.items, ...(await this.getAccountPayments(lastSyncedHash, page + 1))];
+    }
+
+    return data.items;
+  }
+
+  async getAccountPaymentsToSettle(accountAddress: string, page?: number = 0) {
+    const filters = {
+      state: PAYMENT_COMPLETED,
+    };
+    const data = await this.sdk.getConnectedAccountPayments(page, filters).catch(this.handleError);
+    if (!data) return [];
+
+    const items = data.items
+      .filter(payment => {
+        const recipientAddress = get(payment, 'recipient.account.address', '');
+        return addressesEqual(recipientAddress, accountAddress);
+      });
+
+    if (data.nextPage) {
+      return [...items, ...(await this.getAccountPaymentsToSettle(accountAddress, page + 1))];
+    }
+
+    return items;
+  }
+
+  getDeployEstimate(gasPrice: BigNumber) {
     /**
      * can also call `this.sdk.estimateAccountDeployment(REGULAR);`,
-     * but it needs sdk init and when migrating we don't have SDK initated yet
+     * but it needs sdk init and when migrating we don't have SDK initiated yet
      * so we're using calculation method below that is provided by SDK creators
      */
-    const { gasPrice } = this.sdk.state.eth;
     return utils.bigNumberify(650000).mul(gasPrice);
   }
 
   handleError(error: any) {
-    console.log('SmartWallet handleError: ', error);
+    console.error('SmartWallet handleError: ', error);
   }
 }
 

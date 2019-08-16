@@ -20,20 +20,24 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { View } from 'react-native';
-import { spacing } from 'utils/variables';
+import { View, StyleSheet } from 'react-native';
+import { baseColors, spacing } from 'utils/variables';
 import { connect } from 'react-redux';
-import { Container } from 'components/Layout';
+
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import type { NavigationScreenProp } from 'react-navigation';
-import Header from 'components/Header';
 import ListItem from 'components/ListItem/SettingsItem';
 import SlideModal from 'components/Modals/SlideModal';
+
+import { logScreenViewAction } from 'actions/analyticsActions';
+
 import ModalQRCode from './ModalQRCode.js';
 
 type Props = {
   user: Object,
   navigation: NavigationScreenProp<*>,
+  logScreenView: Function,
 };
 
 type State = {
@@ -45,14 +49,15 @@ type State = {
   showQRModal: boolean,
 }
 
-const ContainerButtons = styled.View`
-  flexDirection: row;
-  justifyContent: center;
-  paddingTop: ${spacing.rhythm}px;
+const Footer = styled.View`
+  padding: ${spacing.large}px;
+  flex-grow: 1;
+  justify-content: flex-end;
 `;
 
-const ItemButton = styled.View`
-  marginLeft: ${spacing.rhythm}px;
+const ListItems = styled.View`
+  border-bottom-width: ${StyleSheet.hairlineWidth}px;
+  border-color: ${baseColors.mediumLightGray};
 `;
 
 export class ContactInfo extends React.Component<Props, State> {
@@ -65,12 +70,11 @@ export class ContactInfo extends React.Component<Props, State> {
     showQRModal: false,
   };
 
-  navigationBack = () => {
-    requestAnimationFrame(() => {
-      const { navigation } = this.props;
-      navigation.goBack(null);
-    });
-  };
+  componentDidMount() {
+    const { logScreenView } = this.props;
+    logScreenView('View contact info', 'Profile');
+  }
+
   getDataQR = () => {
     const {
       name,
@@ -140,14 +144,23 @@ export class ContactInfo extends React.Component<Props, State> {
     const {
       user,
     } = this.props;
-    const nameLabel = user.firstName ? `Name: ${user.firstName}${user.lastName}` : 'Name';
+    const nameLabel = user.firstName ? `Name: ${user.firstName} ${user.lastName}` : 'Name';
     const userNameLabel = user.username ? `Username: ${user.username}` : 'Username';
     const emailLabel = user.email ? `Email: ${user.email}` : 'Email';
     const cityLabel = user.city ? `City: ${user.city}` : 'City';
     const countryLabel = user.country ? `Country: ${user.country}` : 'Country';
     const dataQR = this.getDataQR();
     return (
-      <Container>
+      <ContainerWithHeader
+        backgroundColor={baseColors.white}
+        headerProps={{
+          leftItems: [
+            { userIcon: true },
+            { title: 'User info' },
+          ],
+          rightItems: [{ close: true }],
+        }}
+      >
         <SlideModal
           isVisible={showQRModal}
           title="Your contact info"
@@ -160,67 +173,60 @@ export class ContactInfo extends React.Component<Props, State> {
             />
           </View>
         </SlideModal>
-        <Header
-          gray
-          title="contact info"
-        />
-        <ListItem
-          toggle
-          key="name"
-          onPress={this.onToggleValue('name')}
-          value={name}
-          label={nameLabel}
-          disabled={!user.firstName}
-        />
-        <ListItem
-          toggle
-          key="username"
-          onPress={this.onToggleValue('username')}
-          value={username}
-          label={userNameLabel}
-          disabled={!user.username}
-        />
-        <ListItem
-          toggle
-          key="email"
-          onPress={this.onToggleValue('email')}
-          value={email}
-          label={emailLabel}
-          disabled={!user.email}
-        />
-        <ListItem
-          toggle
-          key="city"
-          onPress={this.onToggleValue('city')}
-          value={city}
-          label={cityLabel}
-          disabled={!user.city}
-        />
-        <ListItem
-          toggle
-          key="country"
-          onPress={this.onToggleValue('country')}
-          value={country}
-          label={countryLabel}
-          disabled={!user.country}
-        />
-        <ContainerButtons>
-          <ItemButton>
-            <Button
-              small
-              title="Cancel"
-              onPress={this.navigationBack}
-            />
-          </ItemButton>
-          <ItemButton>
-            <Button
-              small
-              title="Generate QR code"
-              onPress={this.toggleOpenModal}
-            />
-          </ItemButton>
-        </ContainerButtons>
-      </Container>
+        <ListItems>
+          <ListItem
+            toggle
+            key="name"
+            onPress={this.onToggleValue('name')}
+            value={name}
+            label={nameLabel}
+            disabled={!user.firstName}
+            bordered
+          />
+          <ListItem
+            toggle
+            key="username"
+            onPress={this.onToggleValue('username')}
+            value={username}
+            label={userNameLabel}
+            disabled={!user.username}
+            bordered
+          />
+          <ListItem
+            toggle
+            key="email"
+            onPress={this.onToggleValue('email')}
+            value={email}
+            label={emailLabel}
+            disabled={!user.email}
+            bordered
+          />
+          <ListItem
+            toggle
+            key="city"
+            onPress={this.onToggleValue('city')}
+            value={city}
+            label={cityLabel}
+            disabled={!user.city}
+            bordered
+          />
+          <ListItem
+            toggle
+            key="country"
+            onPress={this.onToggleValue('country')}
+            value={country}
+            label={countryLabel}
+            disabled={!user.country}
+            bordered
+          />
+        </ListItems>
+        <Footer>
+          <Button
+            title="Generate QR code"
+            onPress={this.toggleOpenModal}
+          />
+        </Footer>
+      </ContainerWithHeader>
     );
   }
 }
@@ -231,4 +237,9 @@ const mapStateToProps = ({
   user,
 });
 
-export default connect(mapStateToProps, null)(ContactInfo);
+const mapDispatchToProps = (dispatch: Function) => ({
+  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactInfo);
