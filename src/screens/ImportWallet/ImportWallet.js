@@ -320,8 +320,6 @@ class ImportWallet extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={({
-          default: true,
-          lighterHeader: true,
           centerItems: [{ title: 'Restore wallet' }],
         })}
         backgroundColor={baseColors.white}

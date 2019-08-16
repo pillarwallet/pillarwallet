@@ -31,7 +31,6 @@ import CheckPin from 'components/CheckPin';
 import Spinner from 'components/Spinner';
 
 // utils
-import { baseColors } from 'utils/variables';
 import { getActiveAccount } from 'utils/accounts';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { calculatePortfolioBalance } from 'utils/assets';
@@ -209,10 +208,7 @@ class AccountsScreen extends React.Component<Props, State> {
         headerProps={{
           leftItems: [
             { userIcon: true },
-            {
-              title: 'Accounts',
-              color: baseColors.aluminium,
-            },
+            { title: 'Accounts' },
           ],
           rightItems: [{ close: true, dismiss: true }],
         }}

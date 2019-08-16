@@ -156,10 +156,7 @@ export class ContactInfo extends React.Component<Props, State> {
         headerProps={{
           leftItems: [
             { userIcon: true },
-            {
-              title: 'User info',
-              color: baseColors.aluminium,
-            },
+            { title: 'User info' },
           ],
           rightItems: [{ close: true }],
         }}

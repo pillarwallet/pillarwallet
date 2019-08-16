@@ -198,9 +198,6 @@ const themes = (backgroundColor?: string = '') => ({
     borderBottomWidth: 1,
     borderBottomColor: baseColors.slateBlack,
   },
-  lighterHeader: {
-    color: baseColors.aluminium,
-  },
   default: {
     backgroundColor: baseColors.white,
     color: baseColors.slateBlack,
