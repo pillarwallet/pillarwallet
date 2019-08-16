@@ -74,11 +74,13 @@ type Props = {
   innerWrapperHorizontalAlign?: string,
   noImageBorder?: boolean,
   itemImageSource?: string,
+  wrapperOpacity?: number,
 }
 
 const ItemWrapper = styled.View`
   flex-direction: column;
   width: 100%;
+  ${({ wrapperOpacity }) => wrapperOpacity && `opacity: ${wrapperOpacity};`}
 `;
 
 const InnerWrapper = styled.TouchableOpacity`
@@ -545,11 +547,12 @@ class ListItemWithImage extends React.Component<Props, {}> {
       rightColumnInnerStyle,
       customAddonFullWidth,
       innerWrapperHorizontalAlign,
+      wrapperOpacity,
     } = this.props;
 
     const type = getType(this.props);
     return (
-      <ItemWrapper>
+      <ItemWrapper wrapperOpacity={wrapperOpacity}>
         <InnerWrapper type={type} onPress={onPress} disabled={!onPress} horizontalAlign={innerWrapperHorizontalAlign}>
           <ImageWrapper>
             <ItemImage {...this.props} type={type} />
