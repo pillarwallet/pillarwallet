@@ -39,7 +39,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import TankAssetBalance from 'components/TankAssetBalance';
-import { DeploymentView } from 'components/DeploymentView';
+import DeploymentView from 'components/DeploymentView';
 
 import { formatAmount, formatMoney } from 'utils/common';
 import { getBalance } from 'utils/assets';
@@ -48,7 +48,6 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 
 import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { ETH, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import assetsConfig from 'configs/assetsConfig';
 
@@ -287,9 +286,6 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const disableSend = !!Object.keys(sendingBlockedMessage).length;
-    const { upgrade: { deploymentStarted } } = smartWalletState;
-    const isDeploymentButtonDisabled = deploymentStarted
-      || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING;
 
     return (
       <ContainerWithHeader
@@ -301,7 +297,6 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
           message={sendingBlockedMessage}
           buttonLabel="Deploy Smart Wallet"
           buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-          isDeploying={isDeploymentButtonDisabled}
         />
         }
         {!disableSend &&

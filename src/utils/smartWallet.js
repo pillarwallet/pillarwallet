@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { SMART_WALLET_DEPLOYMENT_ERRORS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -76,4 +76,13 @@ export function isConnectedToSmartAccount(connectedAccountRecord: ?Object) {
 export function userHasSmartWallet(accounts: Accounts = []) {
   const smartAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
   return !!smartAccount;
+}
+
+export function getDeployErrorMessage(errorType: string) {
+  return {
+    title: 'Smart Wallet deployment failed',
+    message: errorType === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
+      ? 'You need to top up your Smart Account first'
+      : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow',
+  };
 }

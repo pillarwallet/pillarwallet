@@ -35,7 +35,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import TankAssetBalance from 'components/TankAssetBalance';
-import { DeploymentView } from 'components/DeploymentView';
+import DeploymentView from 'components/DeploymentView';
 
 import {
   addressesEqual,
@@ -318,7 +318,7 @@ class PPNView extends React.Component<Props, State> {
     const availableFormattedAmount = formatMoney(availableStake, 4);
     const assetsOnNetworkToShow = unionBy(assetsOnNetworkArray, this.initialAssets, 'symbol');
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const { upgrade: { deploymentStarted, status } } = smartWalletState;
+    const { upgrade: { status } } = smartWalletState;
     const sendingBlockedMessage = status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       ? {
         title: 'To top up PLR Tank or Settle transactions, deploy Smart Wallet first',
@@ -345,7 +345,6 @@ class PPNView extends React.Component<Props, State> {
           message={sendingBlockedMessage}
           buttonLabel="Deploy Smart Wallet"
           buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-          isDeploying={deploymentStarted || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
         />}
         <TankBar
           maxValue={totalStake}

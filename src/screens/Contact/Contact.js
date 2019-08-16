@@ -42,7 +42,6 @@ import { ScrollWrapper } from 'components/Layout';
 import { BADGE, CHAT, CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
@@ -51,7 +50,7 @@ import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
-import { DeploymentView } from 'components/DeploymentView';
+import DeploymentView from 'components/DeploymentView';
 
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
@@ -363,10 +362,6 @@ class Contact extends React.Component<Props, State> {
 
     const { username: contactUsername } = contact;
     const unreadChats = chats.filter(chat => chat.username === contactUsername && !!chat.unread);
-    const { upgrade: { deploymentStarted } } = smartWalletState;
-
-    const isDeploymentButtonDisabled = deploymentStarted
-    || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING;
 
     return (
       <ContainerWithHeader
@@ -422,7 +417,6 @@ class Contact extends React.Component<Props, State> {
                     message={sendingBlockedMessage}
                     buttonLabel="Deploy Smart Wallet"
                     buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-                    isDeploying={isDeploymentButtonDisabled}
                   />
                   }
                 </CircleButtonsWrapper>
@@ -527,7 +521,6 @@ const combinedMapStateToProps = (state) => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
-
 
 const mapDispatchToProps = (dispatch: Function) => ({
   syncContact: userId => dispatch(syncContactAction(userId)),
