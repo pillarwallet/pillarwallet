@@ -56,7 +56,7 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 import Spinner from 'components/Spinner';
 import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import DeploymentView, { getDeployErrorMessage } from 'components/DeploymentView';
+import DeploymentView from 'components/DeploymentView';
 
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
@@ -79,7 +79,7 @@ import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // utils
 import { calculatePortfolioBalance } from 'utils/assets';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 
 // partials
 import CollectiblesList from './CollectiblesList';

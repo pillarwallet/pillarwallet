@@ -21,10 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 
-import {
-  SMART_WALLET_DEPLOYMENT_ERRORS,
-  SMART_WALLET_UPGRADE_STATUSES,
-} from 'constants/smartWalletConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import { BaseText, BoldText } from 'components/Typography';
 import { Wrapper } from 'components/Layout';
@@ -61,15 +58,6 @@ const Message = styled(BaseText)`
 const SpinnerWrapper = styled.View`
   margin-top: ${spacing.mediumLarge}px;
 `;
-
-export const getDeployErrorMessage = (errorType: string) => {
-  return {
-    title: 'Smart Wallet deployment failed',
-    message: errorType === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
-      ? 'You need to top up your Smart Account first'
-      : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow',
-  };
-};
 
 class DeploymentView extends React.PureComponent<Props> {
   render() {

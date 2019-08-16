@@ -32,10 +32,12 @@ import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import get from 'lodash.get';
 
+import { fiatCurrencies } from 'fixtures/assets';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
+import { getActiveAccountType } from 'utils/accounts';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
@@ -44,7 +46,7 @@ import { BaseText, Paragraph } from 'components/Typography';
 import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
-import DeploymentView, { getDeployErrorMessage } from 'components/DeploymentView';
+import DeploymentView from 'components/DeploymentView';
 
 import {
   searchOffersAction,
@@ -70,9 +72,6 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
-
-import { fiatCurrencies } from 'fixtures/assets';
-import { getActiveAccountType } from 'utils/accounts';
 
 // partials
 import { ExchangeStatus } from './ExchangeStatus';
