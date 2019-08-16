@@ -85,6 +85,18 @@ type RegisterSmartWalletPayload = {
   fcmToken: string,
 };
 
+type MapContactsAddresses = Array<{
+  contactId: string,
+  accessKeys?: {
+    userAccessKey: string,
+    contactAccessKey: string,
+  },
+  connectionKeys?: {
+    sourceIdentityKey: string,
+    targetIdentityKey: string,
+  },
+}>;
+
 const BCXSdk = new BCX({ apiUrl: BCX_URL });
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
@@ -727,6 +739,13 @@ SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: Conne
 SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: ConnectionUpdateIdentityKeys) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.updateIdentityKeys(updatedIdentityKeys))
+    .then(({ data }) => data)
+    .catch(() => false);
+};
+
+SDKWrapper.prototype.getContactsSmartAddresses = function (walletId: string, contacts: MapContactsAddresses) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.mapContactsAddresses({ walletId, contacts }))
     .then(({ data }) => data)
     .catch(() => false);
 };

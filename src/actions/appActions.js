@@ -29,7 +29,7 @@ import { loadAndMigrate } from 'services/dataMigration';
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
-import { UPDATE_CONTACTS } from 'constants/contactsConstants';
+import { SET_CONTACTS_SMART_ADDRESSES, UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
@@ -95,6 +95,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { contacts = [] } = await storage.get('contacts');
       dispatch({ type: UPDATE_CONTACTS, payload: contacts });
+
+      const { contactsSmartAddresses = [] } = await storage.get('contactsSmartAddresses');
+      dispatch({ type: SET_CONTACTS_SMART_ADDRESSES, payload: contactsSmartAddresses });
 
       const { invitations = [] } = await storage.get('invitations');
       dispatch({ type: UPDATE_INVITATIONS, payload: invitations });
