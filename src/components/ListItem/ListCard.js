@@ -27,7 +27,7 @@ import { baseColors, spacing } from 'utils/variables';
 import { BaseText, BoldText, MediumText } from 'components/Typography';
 
 type Props = {
-  icon?: string,
+  iconSource?: string,
   fallbackIcon?: string,
   title: string,
   subtitle?: string,
@@ -92,7 +92,7 @@ const Label = styled(MediumText)`
 
 export const ListCard = (props: Props) => {
   const {
-    icon,
+    iconSource,
     title,
     subtitle,
     action,
@@ -114,7 +114,7 @@ export const ListCard = (props: Props) => {
       disabled={disabled}
     >
       <CardRow>
-        {(!!icon || !!fallbackIcon) && <CardImage source={{ uri: icon }} fallbackSource={fallbackIcon} />}
+        {(!!iconSource || !!fallbackIcon) && <CardImage source={iconSource} fallbackSource={fallbackIcon} />}
         <ContentWrapper>
           <CardContent>
             <TitleWrapper>

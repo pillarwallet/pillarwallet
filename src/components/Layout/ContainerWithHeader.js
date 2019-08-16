@@ -112,13 +112,13 @@ class ContainerWithHeader extends React.Component<Props> {
       inset,
       backgroundColor,
       keyboardAvoidFooter,
-      minAvoidHeight,
+      minAvoidHeight = 600,
     } = this.props;
 
     const topInset = headerProps.floating ? 'always' : 'never';
     const bottomInset = keyboardAvoidFooter ? 'never' : 'always';
     const androidStatusBarSpacing = headerProps.floating ? StatusBar.currentHeight : 0;
-    const shouldFooterAvoidKeyboard = screenHeight > minAvoidHeight || 600; // if not checked on smaller screens
+    const shouldFooterAvoidKeyboard = screenHeight > minAvoidHeight; // if not checked on smaller screens
     // keyboard and footer covers entire content;
 
     return (

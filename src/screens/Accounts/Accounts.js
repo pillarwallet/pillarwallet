@@ -88,8 +88,8 @@ const Wrapper = styled.View`
   align-items: center;
 `;
 
-
-const genericToken = require('assets/images/tokens/genericToken.png');
+const pillarNetworkIcon = require('assets/icons/icon_PPN.png');
+const ethereumNetworkIcon = require('assets/icons/icon_ethereum_network.png');
 
 class AccountsScreen extends React.Component<Props, State> {
   state = {
@@ -179,7 +179,7 @@ class AccountsScreen extends React.Component<Props, State> {
             {...network}
             action={() => navigation.navigate(WALLETS_LIST)}
             subtitle={`Balance: ${currencySymbol} ${combinedFormattedBalance}`}
-            fallbackIcon={genericToken}
+            iconSource={ethereumNetworkIcon}
           />
         );
       case BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK:
@@ -192,7 +192,7 @@ class AccountsScreen extends React.Component<Props, State> {
               ? this.setPPNAsActiveNetwork
               : () => navigation.navigate(PILLAR_NETWORK_INTRO)}
             note={ppnNote}
-            fallbackIcon={genericToken}
+            iconSource={pillarNetworkIcon}
           />
         );
       default:
@@ -217,7 +217,8 @@ class AccountsScreen extends React.Component<Props, State> {
           rightItems: [{ close: true, dismiss: true }],
         }}
       >
-        {!changingNetwork && <FlatList
+        {!changingNetwork &&
+        <FlatList
           data={smartWalletFeatureEnabled
             ? blockchainNetworks
             : blockchainNetworks.filter((network) => network.type !== BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK)}
