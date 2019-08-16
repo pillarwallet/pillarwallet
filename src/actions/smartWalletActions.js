@@ -1282,19 +1282,35 @@ export const getAssetTransferGasLimitsAction = () => {
     const from = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
     const collectibles = collectiblesByAccount[accountId];
-    // temporary smart wallet account address used only for gas limit calculation
-    await smartWalletService.sdk.initialize().catch(() => null);
-    const tempAccount = await smartWalletService.sdk.createAccount().catch(() => null);
-    if (!tempAccount) {
-      Toast.show({
-        message: 'Failed to create Smart Wallet account',
-        type: 'warning',
-        title: 'Unable to calculate fees',
-        autoClose: false,
-      });
-      return;
+    let to;
+    /**
+     * if sdk was initialized then it was initialized with wallet PK
+     * and if not, let's make temporary init and re-init will happen later
+     */
+    if (!smartWalletService.sdkInitialized) {
+      await smartWalletService.sdk.initialize().catch(() => null);
     }
-    const { address: to } = tempAccount;
+    const smartAccounts = await smartWalletService.getAccounts().catch(() => null);
+    if (!smartAccounts || !smartAccounts.length) {
+      /**
+       * let's create account, it will be later fetched or new will be created if re-init happens
+       * we need smart wallet account address for precise gas limit calculation
+       */
+      const tempAccount = await smartWalletService.sdk.createAccount().catch(() => null);
+      if (!tempAccount) {
+        Toast.show({
+          message: 'Failed to create Smart Wallet account',
+          type: 'warning',
+          title: 'Unable to calculate fees',
+          autoClose: false,
+        });
+        return;
+      }
+      ({ address: to } = tempAccount);
+    } else {
+      // init already contains smart accounts, let's grab address from first one
+      ([{ address: to }] = smartAccounts); // first account address
+    }
     let estimateTransaction = {
       from,
       to,

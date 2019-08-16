@@ -34,7 +34,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BoldText, BaseText, Paragraph } from 'components/Typography';
-import { DeploymentView } from 'components/DeploymentView';
+import DeploymentView from 'components/DeploymentView';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -50,7 +50,6 @@ import type { Accounts } from 'models/Account';
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
@@ -295,7 +294,6 @@ class AssetScreen extends React.Component<Props, State> {
       return isPPNTransaction || note === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
-    const { upgrade: { deploymentStarted } } = smartWalletState;
 
     return (
       <ContainerWithHeader
@@ -366,7 +364,6 @@ class AssetScreen extends React.Component<Props, State> {
               message={sendingBlockedMessage}
               buttonLabel="Deploy Smart Wallet"
               buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-              isDeploying={deploymentStarted || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING}
             />
             }
           </AssetCardWrapper>
