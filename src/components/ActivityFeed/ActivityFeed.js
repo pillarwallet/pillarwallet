@@ -34,18 +34,19 @@ import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 
 // components
-import Separator from 'components/Separator';
 import SlideModal from 'components/Modals/SlideModal';
 import Title from 'components/Title';
 import EventDetails from 'components/EventDetails';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Tabs from 'components/Tabs';
+import TankAssetBalance from 'components/TankAssetBalance';
+import { BaseText } from 'components/Typography';
 
 // utils
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
 import { partial, formatAmount } from 'utils/common';
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 
 // constants
 import {
@@ -62,9 +63,9 @@ import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'co
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
+import { SettlementItem } from './SettlementItem';
 
-
-const ActivityFeedList = styled.FlatList`
+const ActivityFeedList = styled.SectionList`
   width: 100%;
   flex: 1;
 `;
@@ -78,6 +79,16 @@ const ActivityFeedHeader = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
   border-top-width: ${props => props.noBorder ? 0 : '1px'};
   border-top-color: ${baseColors.mediumLightGray};
+`;
+
+const SectionHeaderWrapper = styled.View`
+  width: 100%;
+  padding: ${spacing.small}px ${spacing.large}px;
+`;
+
+const SectionHeader = styled(BaseText)`
+  font-size: ${fontSizes.extraSmall}px;
+  color: ${baseColors.darkGray};
 `;
 
 type esState = {
@@ -114,12 +125,14 @@ type Props = {
   invertAddon?: boolean,
   contentContainerStyle?: Object,
   initialNumToRender: number,
-  tabs?: Array<Tab>,
+  tabs?: Tab[],
   activeTab?: string,
   feedData?: Object[],
   extraFeedData?: Object[],
   esComponent?: React.Node,
   hideTabs: boolean,
+  asset?: string,
+  feedType?: string,
 }
 
 type State = {
@@ -138,6 +151,8 @@ function getSortedFeedData(tabs, activeTab, feedData) {
   }
   return [];
 }
+
+const PPNIcon = require('assets/icons/icon_PPN.png');
 
 class ActivityFeed extends React.Component<Props, State> {
   feedData: Object[];
@@ -200,9 +215,10 @@ class ActivityFeed extends React.Component<Props, State> {
       onRejectInvitation,
       showArrowsOnly,
       invertAddon,
+      feedType,
+      asset,
     } = this.props;
 
-    const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM D');
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
 
     if (type === TRANSACTION_EVENT) {
@@ -215,8 +231,8 @@ class ActivityFeed extends React.Component<Props, State> {
       const value = utils.formatUnits(new BigNumber(notification.value.toString()).toFixed(), decimals);
       const formattedValue = formatAmount(value);
       let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
-      const directionIcon = isReceived ? 'received' : 'sent';
-      let directionSymbol = isReceived ? '+' : '-';
+      let directionIcon = isReceived ? 'received' : 'sent';
+      let directionSymbol = isReceived ? '' : '-';
 
       if (formattedValue === '0') {
         directionSymbol = '';
@@ -229,13 +245,28 @@ class ActivityFeed extends React.Component<Props, State> {
       const isContact = Object.keys(contact).length !== 0;
       const itemImage = contact.profileImage || fullIconUrl;
       let itemValue = `${directionSymbol} ${formattedValue} ${notification.asset}`;
+      let customAddon = null;
+      let itemImageSource = '';
 
       const note = get(notification, 'note', '');
       if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
-        nameOrAddress = 'TX SETTLEMENT';
-        itemValue = '';
+        return (
+          <SettlementItem settleData={notification.extra} type={feedType} asset={asset} />
+        );
       } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-        nameOrAddress = 'TANK TOP UP';
+        nameOrAddress = 'PLR Network Top Up';
+        itemImageSource = PPNIcon;
+        directionIcon = '';
+      }
+
+      const isPPNTransaction = get(notification, 'isPPNTransaction', false);
+      if (isPPNTransaction) {
+        itemValue = '';
+        customAddon = (<TankAssetBalance
+          amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
+          textStyle={!isReceived ? { color: baseColors.scarlet } : null}
+          monoColor
+        />);
       }
 
       return (
@@ -244,13 +275,14 @@ class ActivityFeed extends React.Component<Props, State> {
           label={nameOrAddress}
           avatarUrl={itemImage}
           navigateToProfile={isContact ? navigateToContact : null}
-          iconName={(showArrowsOnly || !itemImage) ? directionIcon : null}
-          imageAddonIconName={(itemImage && !showArrowsOnly) ? directionIcon : undefined}
-          subtext={dateTime}
+          iconName={showArrowsOnly || !(itemImage || itemImageSource) ? directionIcon : ''}
           itemValue={itemValue}
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
-          valueColor={isReceived ? baseColors.jadeGreen : null}
+          valueColor={isReceived ? baseColors.jadeGreen : baseColors.scarlet}
           imageUpdateTimeStamp={contact.lastUpdateTime}
+          customAddon={customAddon}
+          itemImageSource={itemImageSource}
+          noImageBorder
         />
       );
     }
@@ -275,7 +307,6 @@ class ActivityFeed extends React.Component<Props, State> {
             ? directionIcon.toLowerCase()
             : undefined}
           iconName={invertAddon ? directionIcon.toLowerCase() : null}
-          subtext={dateTime}
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
           actionLabel={directionIcon}
           actionLabelColor={isReceived ? baseColors.jadeGreen : null}
@@ -299,7 +330,6 @@ class ActivityFeed extends React.Component<Props, State> {
         label={notification.username}
         avatarUrl={notification.profileImage}
         navigateToProfile={navigateToContact}
-        subtext={dateTime}
         rejectInvitation={notification.type === TYPE_RECEIVED
           ? () => createAlert(TYPE_REJECTED, notification, () => onRejectInvitation(notification))
           : null
@@ -360,15 +390,23 @@ class ActivityFeed extends React.Component<Props, State> {
     } = this.state;
 
     const feedList = getSortedFeedData(tabs, activeTab, feedData);
+    const feedSections = [];
+
+    feedList.forEach(listItem => {
+      const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D');
+      const existingSection = feedSections.find(({ title }) => title === formattedDate);
+      if (!existingSection) {
+        feedSections.push({ title: formattedDate, data: [{ ...listItem }] });
+      } else {
+        existingSection.data.push({ ...listItem });
+      }
+    });
+
     const additionalContentContainerStyle = !feedList.length
       ? { justifyContent: 'center', flex: 1 }
       : {};
 
-    const tabsProps = [];
-    tabs.forEach((tab) => {
-      const { data, emptyState, ...necessaryTabProps } = tab;
-      tabsProps.push(necessaryTabProps);
-    });
+    const tabsProps = tabs.map(({ data, emptyState, ...necessaryTabProps }) => necessaryTabProps);
 
     return (
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
@@ -381,9 +419,14 @@ class ActivityFeed extends React.Component<Props, State> {
         }
 
         <ActivityFeedList
-          data={feedList}
+          sections={feedSections}
           initialNumToRender={initialNumToRender}
           extraData={extraFeedData}
+          renderSectionHeader={({ section }) => (
+            <SectionHeaderWrapper>
+              <SectionHeader>{section.title}</SectionHeader>
+            </SectionHeaderWrapper>
+          )}
           renderItem={this.renderActivityFeedItem}
           getItemLayout={(data, index) => ({
             length: 70,
@@ -392,10 +435,10 @@ class ActivityFeed extends React.Component<Props, State> {
           })}
           maxToRenderPerBatch={initialNumToRender}
           onEndReachedThreshold={0.5}
-          ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
           keyExtractor={this.getActivityFeedListKeyExtractor}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
           removeClippedSubviews
+          stickySectionHeadersEnabled={false}
         />
 
         <SlideModal

@@ -116,6 +116,7 @@ type Props = {
   cancelWaitingRequest: Function,
   loginAttemptToken?: string,
   badges: Badges,
+  fetchBadges: Function,
   connectors: any[],
   logScreenView: (view: string, screen: string) => void,
   restoreTransactionHistory: (walletAddress: string, walletId: string) => void,
@@ -243,10 +244,12 @@ class HomeScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       restoreTransactionHistory,
       activeAccount,
+      fetchBadges,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
     fetchAllCollectiblesData();
+    fetchBadges();
 
     /**
      * this is used only to avoid BCX fetching issues,
@@ -482,10 +485,11 @@ class HomeScreen extends React.Component<Props, State> {
             },
           ],
         }}
+        inset={{ bottom: 0 }}
       >
         <ScrollView
-          style={{ width: '100%' }}
-          stickyHeaderIndices={[3]}
+          style={{ width: '100%', flex: 1 }}
+          stickyHeaderIndices={badges.length ? [3] : [2]}
           refreshControl={
             <RefreshControl
               refreshing={false}

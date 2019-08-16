@@ -25,6 +25,7 @@ export type Asset = {
   iconUrl: string,
   iconMonoUrl: string,
   wallpaperUrl: string,
+  patternUrl?: string,
   decimals: number,
   amount?: number,
 };
@@ -55,4 +56,5 @@ export type Rates = {
 export type AssetTransfer = {
   name: string,
   amount: number,
+  gasLimit?: number,
 };

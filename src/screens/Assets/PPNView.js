@@ -45,9 +45,10 @@ import {
 } from 'utils/assets';
 import { delay, formatMoney, getCurrencySymbol } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { getAccountAddress } from 'utils/accounts';
 
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-import { FUND_TANK, SETTLE_BALANCE } from 'constants/navigationConstants';
+import { defaultFiatCurrency, ETH, TOKENS } from 'constants/assetsConstants';
+import { ASSET, FUND_TANK, SETTLE_BALANCE } from 'constants/navigationConstants';
 
 import { activeAccountSelector } from 'selectors';
 import {
@@ -60,7 +61,8 @@ import type { Asset, Assets, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { ensureSmartAccountConnectedAction } from 'actions/smartWalletActions';
+import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
+
 
 type Props = {
   baseFiatCurrency: string,
@@ -75,6 +77,7 @@ type Props = {
   assetsOnNetwork: Object,
   ensureSmartAccountConnected: Function,
   resetIncorrectPassword: Function,
+  fetchVirtualAccountBalance: Function,
 }
 
 type State = {
@@ -137,7 +140,6 @@ const BalanceWrapper = styled.View`
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  height: 100%;
 `;
 
 const ValueInFiat = styled(BaseText)`
@@ -162,7 +164,13 @@ class PPNView extends React.Component<Props, State> {
   }
 
   renderAsset = ({ item }) => {
-    const { baseFiatCurrency, assets, rates } = this.props;
+    const {
+      baseFiatCurrency,
+      assets,
+      rates,
+      navigation,
+      activeAccount,
+    } = this.props;
 
     let tokenSymbol = get(item, 'symbol', ETH);
     const tokenBalance = get(item, 'balance', '0');
@@ -172,31 +180,62 @@ class PPNView extends React.Component<Props, State> {
     if (tokenSymbol !== ETH && addressesEqual(tokenAddress, ppnTokenAddress)) {
       tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
     }
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const totalInFiat = tokenBalance * getRate(rates, tokenSymbol, fiatCurrency);
+    const formattedAmountInFiat = formatMoney(totalInFiat);
+    const thisAsset = assets[tokenSymbol] || {};
+
+    const {
+      name,
+      symbol,
+      iconMonoUrl,
+      decimals,
+      iconUrl,
+      patternUrl,
+      address,
+      description,
+    } = thisAsset;
+
+    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
     const assetInfo = {
-      ...(assets[tokenSymbol] || {}),
-      symbol: tokenSymbol,
-      balance: tokenBalance,
-      balanceFormatted: paymentNetworkBalanceFormatted,
-      hash: item.hash,
-      createdAt: item.createdAt,
+      id: tokenSymbol,
+      name: name || symbol,
+      token: symbol,
+      amount: paymentNetworkBalanceFormatted,
+      balanceInFiat: { amount: formattedAmountInFiat, currency: fiatCurrency },
+      address: getAccountAddress(activeAccount),
+      contractAddress: address,
+      icon: iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '',
+      iconColor: fullIconUrl,
+      patternIcon: patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl,
+      description,
+      decimals,
+      isSynthetic: true,
+      isListed: true,
     };
 
-    const fullIconUrl = `${SDK_PROVIDER}/${assetInfo.iconUrl}?size=3`;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const totalInFiat = tokenBalance * getRate(rates, assetInfo.symbol, fiatCurrency);
-    const formattedAmountInFiat = formatMoney(totalInFiat);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     return (
       <ListItemWithImage
+        onPress={() => {
+          navigation.navigate(ASSET,
+            {
+              assetData: {
+                ...assetInfo,
+                tokenType: TOKENS,
+              },
+            },
+          );
+        }}
         label={assetInfo.name}
         itemImageUrl={fullIconUrl || genericToken}
         fallbackSource={genericToken}
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
-              <TankAssetBalance amount={paymentNetworkBalanceFormatted} isSynthetic={assetInfo.symbol !== ETH} />
+              <TankAssetBalance amount={paymentNetworkBalanceFormatted} monoColor />
               <ValueInFiat>
                 {`${currencySymbol} ${formattedAmountInFiat}`}
               </ValueInFiat>
@@ -260,6 +299,7 @@ class PPNView extends React.Component<Props, State> {
     const {
       availableStake,
       assetsOnNetwork,
+      fetchVirtualAccountBalance,
     } = this.props;
 
     const assetsOnNetworkArray = Object.keys(assetsOnNetwork).map((asset) => assetsOnNetwork[asset]);
@@ -274,7 +314,9 @@ class PPNView extends React.Component<Props, State> {
         refreshControl={
           <RefreshControl
             refreshing={false}
-            onRefresh={() => {}}
+            onRefresh={() => {
+              fetchVirtualAccountBalance();
+            }}
           />
         }
       >
@@ -354,6 +396,7 @@ const combinedMapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   ensureSmartAccountConnected: (privateKey: string) => dispatch(ensureSmartAccountConnectedAction(privateKey)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+  fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
 });
 
 export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView));

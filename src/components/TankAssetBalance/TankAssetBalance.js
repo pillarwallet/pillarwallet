@@ -29,7 +29,7 @@ type Props = {
   wrapperStyle?: Object,
   monoColor?: boolean,
   fillColor?: string,
-  textStyle?: Object,
+  textStyle?: ?Object,
   token?: string,
 };
 
@@ -41,7 +41,6 @@ const Wrapper = styled.View`
 const BalanceInTank = styled(BaseText)`
   color: ${baseColors.electricBlueIntense};
   font-size: ${fontSizes.medium}px;
-  font-weight: 500;
 `;
 
 const getIconFill = (props) => {
