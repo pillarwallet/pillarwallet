@@ -56,4 +56,5 @@ export type Rates = {
 export type AssetTransfer = {
   name: string,
   amount: number,
+  gasLimit?: number,
 };

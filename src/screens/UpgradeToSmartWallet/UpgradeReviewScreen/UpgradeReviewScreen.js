@@ -29,6 +29,7 @@ import { BigNumber } from 'bignumber.js';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
+import { getAssetTransferGasLimitsAction } from 'actions/smartWalletActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -69,7 +70,6 @@ import type { Collectible } from 'models/Collectible';
 import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { formatAmount, getGasPriceWei } from 'utils/common';
 import { getBalance } from 'utils/assets';
-import { DEFAULT_GAS_LIMIT } from 'services/assets';
 
 
 type Props = {
@@ -83,6 +83,7 @@ type Props = {
   gasInfo: GasInfo,
   session: Object,
   collectibles: Collectible[],
+  getAssetTransferGasLimits: Function,
 };
 
 const FooterInner = styled.View`
@@ -120,22 +121,9 @@ const WarningMessage = styled(Paragraph)`
 `;
 
 class UpgradeReviewScreen extends React.PureComponent<Props> {
-  gasLimit: number = DEFAULT_GAS_LIMIT;
-
-  constructor(props) {
-    super(props);
-    const { navigation } = this.props;
-    /**
-     * currently we need to use default gas limit as we're not capable of
-     * getting estimate gas limit of smart wallet deploy transaction
-     * adding gas limit here will lead it up to confirm screen
-     * TODO: add gas limit estimate calculation from smart wallet sdk when it's possible
-     */
-    this.gasLimit = navigation.getParam('gasLimit', DEFAULT_GAS_LIMIT);
-  }
-
   componentDidMount() {
     this.props.fetchGasInfo();
+    this.props.getAssetTransferGasLimits();
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -163,7 +151,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     }
 
     // any asset transaction fee
-    const transferFee = formatAmount(utils.formatEther(item.tokenTransferPrice));
+    const transferFee = item.transferFee && formatAmount(utils.formatEther(item.transferFee));
 
     // collectible item
     if (item.collectibleKey) {
@@ -178,7 +166,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
             justifyContent: 'center',
           }}
           customAddon={
-            <Label style={{ textAlign: 'right' }}>{`Est. fee ${transferFee} ETH`}</Label>
+            <Label style={{ textAlign: 'right' }}>{(transferFee && `Est. fee ${transferFee} ETH`) || ''}</Label>
           }
         />
       );
@@ -205,7 +193,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
           justifyContent: 'flex-end',
         }}
         customAddon={
-          <Label style={{ textAlign: 'right' }}>{`Est. fee ${transferFee} ETH`}</Label>
+          <Label style={{ textAlign: 'right' }}>{(transferFee && `Est. fee ${transferFee} ETH`) || ''}</Label>
         }
       />
     );
@@ -213,11 +201,13 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 
   onNextClick = () => {
     const { navigation } = this.props;
-    navigation.navigate(UPGRADE_CONFIRM, { gasLimit: this.gasLimit });
+    navigation.navigate(UPGRADE_CONFIRM, { gasLimit: 0 });
   };
 
-  getTokenTransferPrice = (gasPriceWei: BigNumber) => {
-    return gasPriceWei.mul(this.gasLimit);
+  calculateTransferFee = (gasLimit) => {
+    const { gasInfo } = this.props;
+    const gasPriceWei = getGasPriceWei(gasInfo);
+    return gasLimit && gasPriceWei.mul(gasLimit).toNumber();
   };
 
   render() {
@@ -229,33 +219,28 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       assets,
       collectibles,
       recoveryAgents,
-      gasInfo,
     } = this.props;
-
-    const gasPriceWei = getGasPriceWei(gasInfo);
-    const tokenTransferPrice = this.getTokenTransferPrice(gasPriceWei);
-    const assetsTransferFeeEth = formatAmount(utils.formatEther(
-      new BigNumber(tokenTransferPrice * (transferAssets.length + transferCollectibles.length)).toFixed(),
-    ));
-
     const assetsArray = Object.values(assets);
-    const nonEmptyAssets = transferAssets.map((transferAsset: any) => {
+    const detailedAssets = transferAssets.map((transferAsset: any) => {
       const asset = assetsArray.find((_asset: any) => _asset.name === transferAsset.name);
+      const transferFee = this.calculateTransferFee(transferAsset.gasLimit);
       return {
         ...asset,
         amount: transferAsset.amount,
-        tokenTransferPrice,
+        transferFee,
       };
     });
 
     const detailedCollectibles: any[] = transferCollectibles.map((transferCollectible: any) => {
       const asset: any = collectibles.find(
-        (_asset: any) => `${_asset.assetContract}${_asset.name}` === transferCollectible.key,
+        ({ assetContract, name }) => `${assetContract}${name}` === transferCollectible.key,
       );
       const collectibleKey = `${asset.assetContract}${asset.name}`;
+      const transferFee = this.calculateTransferFee(transferCollectible.gasLimit);
       return {
         ...asset,
         collectibleKey,
+        transferFee,
       };
     });
 
@@ -267,10 +252,10 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
         toEdit: RECOVERY_AGENTS,
       });
     }
-    if (nonEmptyAssets.length) {
+    if (detailedAssets.length) {
       sections.push({
         title: 'TOKENS',
-        data: nonEmptyAssets,
+        data: detailedAssets,
         toEdit: CHOOSE_ASSETS_TO_TRANSFER,
       });
     }
@@ -281,10 +266,29 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
         toEdit: CHOOSE_ASSETS_TO_TRANSFER,
       });
     }
-    const etherBalance = getBalance(balances, ETH);
+
+    // check if any asset transfer left without gas limit
+    const gettingGasLimits = !![...transferAssets, ...transferCollectibles].find(({ gasLimit }) => !gasLimit);
+
+    const assetsTransferFeeTotal = [
+      ...detailedAssets,
+      ...detailedCollectibles,
+    ].reduce((a, b: any) => a + b.transferFee, 0);
+
+    const assetsTransferFeeTotalEth = assetsTransferFeeTotal
+      ? formatAmount(utils.formatEther(
+        new BigNumber(assetsTransferFeeTotal).toFixed(),
+      ))
+      : 0;
 
     // there should be enough eth to transfer selected assets from primary wallet
-    const notEnoughEther = !etherBalance || etherBalance < parseFloat(assetsTransferFeeEth);
+    const etherBalance = getBalance(balances, ETH);
+    const notEnoughEther = !gettingGasLimits && (!etherBalance || etherBalance < parseFloat(assetsTransferFeeTotalEth));
+
+    const nextButtonTitle = gettingGasLimits
+      ? 'Getting the fees..'
+      : 'Continue';
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -317,9 +321,16 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
           </WarningMessage>}
           <FooterInner>
             <LabelWrapper>
-              <Label style={{ textAlign: 'center' }}>{`Total estimated fee ${assetsTransferFeeEth} ETH`}</Label>
+              {!gettingGasLimits &&
+                <Label style={{ textAlign: 'center' }}>{`Total estimated fee ${assetsTransferFeeTotalEth} ETH`}</Label>
+              }
             </LabelWrapper>
-            <Button disabled={!!notEnoughEther} block title="Continue" onPress={this.onNextClick} />
+            <Button
+              block
+              disabled={!!notEnoughEther || gettingGasLimits}
+              title={nextButtonTitle}
+              onPress={this.onNextClick}
+            />
           </FooterInner>
         </Footer>
       </ContainerWithHeader>
@@ -361,6 +372,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
+  getAssetTransferGasLimits: () => dispatch(getAssetTransferGasLimitsAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(UpgradeReviewScreen);

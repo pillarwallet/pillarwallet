@@ -129,6 +129,7 @@ type State = {
   },
   showModal: boolean,
   gasLimit: number,
+  gettingGasLimit: boolean,
 };
 
 const { Form } = t.form;
@@ -158,6 +159,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       value: null,
       showModal: false,
       gasLimit: 0,
+      gettingGasLimit: true,
     };
 
     this.updateGasLimit = debounce(this.updateGasLimit, 500);
@@ -230,10 +232,12 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.setState({
       gasLimit,
       value: { amount },
+      gettingGasLimit: false,
     });
   };
 
   getGasLimit = (amount?: number) => {
+    this.setState({ gettingGasLimit: true });
     // calculate either with amount in form or provided as param
     if (!amount) {
       amount = parseFloat(get(this._form.getValue(), 'amount', 0));
@@ -261,7 +265,7 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   updateGasLimit = () => {
     this.getGasLimit()
-      .then(gasLimit => this.setState({ gasLimit }))
+      .then(gasLimit => this.setState({ gasLimit, gettingGasLimit: false }))
       .catch(() => null);
   };
 
@@ -297,7 +301,12 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   render() {
-    const { value, showModal, gasLimit } = this.state;
+    const {
+      value,
+      showModal,
+      gasLimit,
+      gettingGasLimit,
+    } = this.state;
     const {
       session,
       balances,
@@ -338,6 +347,10 @@ class SendTokenAmount extends React.Component<Props, State> {
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
     const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
 
+    const nextButtonTitle = gettingGasLimit
+      ? 'Getting the fee..'
+      : 'Next';
+
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: `Send ${this.assetData.token}` }] }}
@@ -351,12 +364,13 @@ class SendTokenAmount extends React.Component<Props, State> {
               </SendTokenDetailsValue>
             </TouchableOpacity>
             }
+            {!gasLimit && <Label>&nbsp;</Label>}
             {!!value && !!parseFloat(value.amount) &&
             <Button
-              disabled={!gasLimit || !session.isOnline || !gasInfo.isFetched}
+              disabled={gettingGasLimit || !session.isOnline || !gasInfo.isFetched}
               small
               flexRight
-              title="Next"
+              title={nextButtonTitle}
               onPress={this.handleFormSubmit}
             />
             }
