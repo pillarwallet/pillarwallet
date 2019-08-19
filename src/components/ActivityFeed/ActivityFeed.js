@@ -228,7 +228,13 @@ class ActivityFeed extends React.Component<Props, State> {
         decimals = 18,
         iconUrl,
       } = assets.find(({ symbol }) => symbol === notification.asset) || {};
-      const value = BigNumber.isBigNumber(notification.value.toString()) ? utils.formatUnits(new BigNumber(notification.value.toString()).toFixed(), decimals) : 0;
+      let bigNumber;
+      try {
+        bigNumber = new BigNumber(notification.value.toString());
+      } catch (e) {
+        bigNumber = new BigNumber('0');
+      }
+      const value = utils.formatUnits(bigNumber.toFixed(), decimals);
       const formattedValue = formatAmount(value);
       let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       let directionIcon = isReceived ? 'received' : 'sent';
