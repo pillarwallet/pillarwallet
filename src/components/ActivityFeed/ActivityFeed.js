@@ -229,7 +229,7 @@ class ActivityFeed extends React.Component<Props, State> {
         iconUrl,
       } = assets.find(({ symbol }) => symbol === notification.asset) || {};
       const value = BigNumber.isBigNumber(notification.value.toString()) ? utils.formatUnits(new BigNumber(notification.value.toString()).toFixed(), decimals) : null;
-      const formattedValue = formatAmount(value);
+      const formattedValue = value ? formatAmount(value) : '';
       let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       let directionIcon = isReceived ? 'received' : 'sent';
       let directionSymbol = isReceived ? '' : '-';
