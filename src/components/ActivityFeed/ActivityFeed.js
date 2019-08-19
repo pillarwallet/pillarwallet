@@ -447,6 +447,7 @@ class ActivityFeed extends React.Component<Props, State> {
           stickySectionHeadersEnabled={false}
         />
 
+        {selectedEventData &&
         <SlideModal
           isVisible={showModal}
           title="transaction details"
@@ -464,6 +465,7 @@ class ActivityFeed extends React.Component<Props, State> {
             navigation={navigation}
           />
         </SlideModal>
+        }
       </ActivityFeedWrapper>
     );
   }
