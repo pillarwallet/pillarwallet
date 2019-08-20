@@ -20,7 +20,6 @@
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import type { Assets, Balances, Rates } from 'models/Asset';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
 import { ETH } from 'constants/assetsConstants';
 import { formatAmount } from 'utils/common';
