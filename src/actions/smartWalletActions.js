@@ -79,7 +79,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import smartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
-import { calculateGasEstimate } from 'services/assets';
+import { calculateGasEstimate, waitForTransaction } from 'services/assets';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -426,14 +426,31 @@ export const checkAssetTransferTransactionsAction = () => {
       }
       console.log('sent new asset transfer transaction: ', transactionHash);
       const { signedTransaction: { signedHash } } = unsentTransaction;
-      updatedTransactions = updatedTransactions.filter(
-        transaction => transaction.signedTransaction.signedHash !== signedHash,
-      );
-      updatedTransactions.push({
+      const assetTransferTransaction = {
         ...unsentTransaction,
         transactionHash,
-        status: TX_PENDING_STATUS,
-      });
+      };
+      updatedTransactions = updatedTransactions
+        .filter(
+          transaction => transaction.signedTransaction.signedHash !== signedHash,
+        )
+        .concat({
+          ...assetTransferTransaction,
+          status: TX_PENDING_STATUS,
+        });
+      waitForTransaction(transactionHash)
+        .then(async () => {
+          const _updatedTransactions = updatedTransactions
+            .filter(
+              _transaction => _transaction.transactionHash !== transactionHash,
+            ).concat({
+              ...assetTransferTransaction,
+              status: TX_CONFIRMED_STATUS,
+            });
+          await dispatch(setAssetsTransferTransactionsAction(_updatedTransactions));
+          dispatch(checkAssetTransferTransactionsAction());
+        })
+        .catch(() => null);
     }
     dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
   };
