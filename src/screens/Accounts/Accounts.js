@@ -34,6 +34,7 @@ import Spinner from 'components/Spinner';
 import { getActiveAccount } from 'utils/accounts';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { calculatePortfolioBalance } from 'utils/assets';
+import { userHasSmartWallet } from 'utils/smartWallet';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -201,7 +202,8 @@ class AccountsScreen extends React.Component<Props, State> {
 
   render() {
     const { showPinModal, changingNetwork } = this.state;
-    const { blockchainNetworks, smartWalletFeatureEnabled } = this.props;
+    const { accounts, blockchainNetworks, smartWalletFeatureEnabled } = this.props;
+    const hasSmartWallet = userHasSmartWallet(accounts);
 
     return (
       <ContainerWithHeader
@@ -215,9 +217,9 @@ class AccountsScreen extends React.Component<Props, State> {
       >
         {!changingNetwork &&
         <FlatList
-          data={smartWalletFeatureEnabled
+          data={smartWalletFeatureEnabled && hasSmartWallet
             ? blockchainNetworks
-            : blockchainNetworks.filter((network) => network.type !== BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK)}
+            : blockchainNetworks.filter((network) => network.id !== BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK)}
           keyExtractor={(item) => item.id}
           style={{ width: '100%' }}
           contentContainerStyle={{ width: '100%', padding: 20 }}
