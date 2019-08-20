@@ -75,6 +75,7 @@ jest.setMock('ethers', {
     bigNumberify: x => x,
     id: utils.id,
     getAddress: utils.getAddress,
+    formatUnits: utils.formatUnits,
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
@@ -205,6 +206,7 @@ const mockSmartWalletAccount = {
 
 const mockArchanovaSdkInstance = {
   setConfig: () => mockArchanovaSdkInstance,
+  extendConfig: () => mockArchanovaSdkInstance,
 };
 
 jest.setMock('@archanova/sdk', {

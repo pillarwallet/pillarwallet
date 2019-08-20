@@ -415,7 +415,12 @@ class WalletView extends React.Component<Props, State> {
     const isInSearchAndFocus = hideInsightForSearch || isInSearchMode;
     const isInsightVisible = showInsight && !isAllInsightListDone && !isInSearchAndFocus;
     const searchMarginBottom = isInSearchAndFocus ? 0 : -16;
-
+    let smartWalletDeployLabel = '';
+    if (!hasSmartWallet) {
+      smartWalletDeployLabel = 'Create Smart Wallet';
+    } else {
+      smartWalletDeployLabel = (showDeploySmartWallet) ? 'Deploy Smart Wallet' : 'Finish Smart Wallet activation';
+    }
     return (
       <CustomKAWrapper
         hasStickyTabs={!isInSearchMode && !blockAssetsView && !!collectibles.length}
@@ -488,7 +493,7 @@ class WalletView extends React.Component<Props, State> {
           <ActionsWrapper>
             {!!showFinishSmartWalletActivation && smartWalletFeatureEnabled &&
             <ListItemChevron
-              label={showDeploySmartWallet ? 'Deploy Smart Wallet' : 'Finish Smart Wallet activation'}
+              label={smartWalletDeployLabel}
               onPress={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: showDeploySmartWallet })}
               bordered
             />}

@@ -22,9 +22,7 @@ import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
-import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
@@ -45,7 +43,7 @@ import { BaseText } from 'components/Typography';
 // utils
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
-import { partial, formatAmount } from 'utils/common';
+import { partial, formatAmount, formatUnits } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 
 // constants
@@ -228,7 +226,7 @@ class ActivityFeed extends React.Component<Props, State> {
         decimals = 18,
         iconUrl,
       } = assets.find(({ symbol }) => symbol === notification.asset) || {};
-      const value = utils.formatUnits(new BigNumber(notification.value.toString()).toFixed(), decimals);
+      const value = formatUnits(notification.value, decimals);
       const formattedValue = formatAmount(value);
       let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       let directionIcon = isReceived ? 'received' : 'sent';

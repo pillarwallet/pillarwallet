@@ -35,7 +35,7 @@ import {
   UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
-  PMT,
+  PLR,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -58,7 +58,7 @@ import type {
   TransactionPayload,
 } from 'models/Transaction';
 import type { Asset, Assets, Balance, Balances } from 'models/Asset';
-import { addressesEqual, generatePMTToken, transformAssetsToObject } from 'utils/assets';
+import { addressesEqual, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -593,10 +593,23 @@ export const addAssetAction = (asset: Asset) => {
   };
 };
 
-export const removeAssetAction = (asset: Object) => ({
-  type: REMOVE_ASSET,
-  payload: asset,
-});
+export const removeAssetAction = (asset: Asset) => {
+  return async (dispatch: Function, getState: () => Object) => {
+    const {
+      assets: { data: assets },
+    } = getState();
+
+    const updatedAssets = Object.keys(assets).reduce((object, key) => {
+      if (key !== asset.symbol) {
+        object[key] = assets[key];
+      }
+      return object;
+    }, {});
+
+    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+    dispatch({ type: REMOVE_ASSET, payload: asset });
+  };
+};
 
 export const startAssetsSearchAction = () => ({
   type: START_ASSETS_SEARCH,
@@ -625,7 +638,6 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
       accounts: { data: accounts },
       user: { data: { walletId } },
       assets: { data: currentAssets, supportedAssets },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
     const activeAccountAddress = getActiveAccountAddress(accounts);
 
@@ -633,21 +645,15 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     let walletSupportedAssets = [...supportedAssets];
     if (!supportedAssets.length) {
       walletSupportedAssets = await api.fetchSupportedAssets(walletId);
-      if (smartWalletFeatureEnabled && walletSupportedAssets.length) {
-        walletSupportedAssets = [...walletSupportedAssets, generatePMTToken()];
-      }
       dispatch({
         type: UPDATE_SUPPORTED_ASSETS,
         payload: walletSupportedAssets,
       });
       const currentAssetsTickers = Object.keys(currentAssets);
 
-      // HACK: Dirty fix for users who removed somehow Eth from their assets list
+      // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
       if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
-
-      if (smartWalletFeatureEnabled && !currentAssetsTickers.includes(PMT)) {
-        currentAssetsTickers.push(PMT);
-      }
+      if (!currentAssetsTickers.includes(PLR)) currentAssetsTickers.push(PLR);
 
       if (walletSupportedAssets.length) {
         const updatedAssets = walletSupportedAssets
