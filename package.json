@@ -106,7 +106,7 @@
     "includeFailureMsg": true
   },
   "dependencies": {
-    "@archanova/sdk": "^1.1.0",
+    "@archanova/sdk": "^1.1.2",
     "@netgum/utils": "^0.1.3",
     "@pillarwallet/pillarwallet-nodejs-sdk": "1.32.1596",
     "@tradle/react-native-http": "^2.0.0",
