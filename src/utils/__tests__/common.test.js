@@ -26,6 +26,7 @@ import {
   isValidNumber,
   formatMoney,
   uniqBy,
+  formatUnits,
 } from '../common';
 
 describe('Common utils', () => {
@@ -119,6 +120,37 @@ describe('Common utils', () => {
       const expected = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }];
       const input = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }, { id: 2, name: 'Snow' }];
       expect(uniqBy(input, 'id')).toEqual(expected);
+    });
+  });
+
+  describe('formatUnits', () => {
+    it('should format 0 correctly', () => {
+      const result = formatUnits('0', 18);
+      expect(result).toEqual('0.0');
+    });
+    it('should format 40000000000 correctly', () => {
+      const result = formatUnits('40000000000', 18);
+      expect(result).toEqual('0.00000004');
+    });
+    it('should format error input 0.0001 correctly', () => {
+      const result = formatUnits('0.0001', 18);
+      expect(result).toEqual('0.0');
+    });
+    it('should format 0xc420d9d8e4003a8000 correctly', () => {
+      const result = formatUnits('0xc420d9d8e4003a8000', 18);
+      expect(result).toEqual('3617.929');
+    });
+    it('should format error input undefined correctly', () => {
+      const result = formatUnits(undefined, 18);
+      expect(result).toEqual('0.0');
+    });
+    it('should format error input "" correctly', () => {
+      const result = formatUnits('', 18);
+      expect(result).toEqual('0.0');
+    });
+    it('should format 40000000 correctly with 0 decimals', () => {
+      const result = formatUnits('40000000', 0);
+      expect(result).toEqual('40000000.0');
     });
   });
 });
