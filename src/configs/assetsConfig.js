@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { PMT } from 'constants/assetsConstants';
+import { PLR } from 'constants/assetsConstants';
 
 export default {
   ICX: {
@@ -28,4 +28,4 @@ export default {
   },
 };
 
-export const PPN_TOKEN = PMT;
+export const PPN_TOKEN = PLR;

@@ -25,6 +25,7 @@ import {
   Sdk,
   sdkConstants,
 } from '@archanova/sdk';
+import { ContractNames } from '@archanova/contracts';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
@@ -60,20 +61,42 @@ class SmartWallet {
 
   constructor() {
     const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
-    const environment = getSdkEnvironment(environmentNetwork);
+    const sdkOptions = getSdkEnvironment(environmentNetwork)
+      .extendConfig('apiOptions', {
+        host: 'archanova.pillarproject.io',
+      })
+      .extendConfig('ensOptions', {
+        supportedRootNames: [
+          'pillarnetwork.eth',
+        ],
+      })
+      .extendConfig('ethOptions', {
+        networkName: 'Pillar',
+        contractAddresses: {
+          [ContractNames.AccountProvider]: '0xb2743F5f6CB3e7A78607dDD5b5A7a41C49B7AAFD',
+          [ContractNames.AccountProxy]: '0x9EE73425D7F76AB9b9247A4E4c12CD0f1f661153',
+          [ContractNames.AccountFriendRecovery]: '0x26cE3eb9eFf5F2a9970810f5eaf2EA45eeeEB52a',
+          [ContractNames.ENSRegistry]: '0x314159265dD8dbb310642f98f50C066173C1259b',
+          [ContractNames.Guardian]: '0xb221E91CcE019E40f9013832CbCC2Fe69E862cd0',
+          [ContractNames.VirtualPaymentManager]: '0x3a7f053e1E8314eeE4b86E5d2F2465391f46552c',
+        },
+      })
+      .extendConfig('storageOptions', {
+        namespace: '@pillar',
+      });
 
     try {
-      this.sdk = createSdk(environment);
+      this.sdk = createSdk(sdkOptions);
     } catch (err) {
       this.handleError(err);
     }
   }
 
   getEnvironmentNetwork(networkName: string) {
-    // TODO: add support for the mainnet
     switch (networkName) {
       case 'rinkeby': return SdkEnvironmentNames.Rinkeby;
       case 'ropsten': return SdkEnvironmentNames.Ropsten;
+      case 'homestead': return SdkEnvironmentNames.Main;
       default: return SdkEnvironmentNames.Ropsten;
     }
   }
@@ -117,14 +140,14 @@ class SmartWallet {
   }
 
   async connectAccount(address: string) {
-    let account = this.sdk.state.account || await this.sdk.connectAccount(address).catch(this.handleError);
+    const account = this.sdk.state.account || await this.sdk.connectAccount(address).catch(this.handleError);
     const devices = await this.sdk.getConnectedAccountDevices()
       .then(({ items = [] }) => items)
       .catch(this.handleError);
 
-    if (!account.ensName && account.state === sdkConstants.AccountStates.Created) {
+    /* if (!account.ensName && account.state === sdkConstants.AccountStates.Created) {
       account = await this.sdk.updateAccount(account.address).catch(this.handleError);
-    }
+    } */
 
     return {
       ...account,
