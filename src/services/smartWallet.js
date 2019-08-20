@@ -70,10 +70,10 @@ class SmartWallet {
   }
 
   getEnvironmentNetwork(networkName: string) {
-    // TODO: add support for the mainnet
     switch (networkName) {
       case 'rinkeby': return SdkEnvironmentNames.Rinkeby;
       case 'ropsten': return SdkEnvironmentNames.Ropsten;
+      case 'homestead': return SdkEnvironmentNames.Main;
       default: return SdkEnvironmentNames.Ropsten;
     }
   }
