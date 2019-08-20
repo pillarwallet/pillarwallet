@@ -73,7 +73,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const {
       accounts: { data: accounts },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled, PPN_ENABLED: ppnFeatureEnabled } },
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
       appSettings: {
         data: { userJoinedBeta = false, firebaseAnalyticsConnectionEnabled = true, blockchainNetwork = '' },
@@ -153,7 +153,8 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
 
         // set ETHEREUM network as active
         // if we disable feature flag or end beta testing program while user has set PPN as active network
-        if (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
+        if ((!smartWalletFeatureEnabled || !ppnFeatureEnabled) &&
+          blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
       } else {
