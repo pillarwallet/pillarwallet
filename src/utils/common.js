@@ -304,6 +304,7 @@ export function formatUnits(val: string = '0', decimals: number) {
     Sentry.captureMessage(e.message, {
       level: 'info',
       extra: {
+        sourceFunction: 'formatUnits(value,decimals)',
         inputValue: val,
         decimals,
       },
