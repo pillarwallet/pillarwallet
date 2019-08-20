@@ -60,7 +60,7 @@ import {
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
+import { ACCOUNTS, SETTINGS, WALLET_SETTINGS, WALLETS_LIST } from 'constants/navigationConstants';
 
 // utils
 import { baseColors } from 'utils/variables';
@@ -102,6 +102,7 @@ type Props = {
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
+  ppnFeatureEnabled: boolean,
 }
 
 type State = {
@@ -170,6 +171,7 @@ class AssetsScreen extends React.Component<Props, State> {
       blockchainNetworks,
       activeAccount,
       availableStake,
+      ppnFeatureEnabled,
     } = this.props;
 
     const { type: walletType } = activeAccount;
@@ -180,12 +182,13 @@ class AssetsScreen extends React.Component<Props, State> {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
         return {
           label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet',
-          action: () => navigation.navigate(ACCOUNTS),
+          action: ppnFeatureEnabled ? () => navigation.navigate(ACCOUNTS) : () => navigation.navigate(WALLETS_LIST),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
           customHeaderProps: { background: baseColors.jellyBean, light: true },
           customHeaderButtonProps: {},
         };
       default:
+        if (!ppnFeatureEnabled) return {};
         return {
           label: activeBNetworkTitle,
           action: () => navigation.navigate(ACCOUNTS),
@@ -331,6 +334,7 @@ const mapStateToProps = ({
   badges: { data: badges },
   smartWallet: smartWalletState,
   blockchainNetwork: { data: blockchainNetworks },
+  featureFlags: { data: { PPN_ENABLED: ppnFeatureEnabled } },
 }) => ({
   wallet,
   backupStatus,
@@ -346,6 +350,7 @@ const mapStateToProps = ({
   badges,
   smartWalletState,
   blockchainNetworks,
+  ppnFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({

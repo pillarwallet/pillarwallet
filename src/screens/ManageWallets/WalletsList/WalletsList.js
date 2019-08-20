@@ -66,6 +66,7 @@ type Props = {
   assets: Assets,
   baseFiatCurrency: string,
   smartWalletState: Object,
+  ppnFeatureEnabled: boolean,
 }
 
 type State = {
@@ -197,6 +198,7 @@ class WalletsList extends React.Component<Props, State> {
       baseFiatCurrency,
       smartWalletState,
       navigation,
+      ppnFeatureEnabled,
     } = this.props;
     const { showCheckPinModal, changingAccount } = this.state;
     const accountsList = smartWalletFeatureEnabled
@@ -225,6 +227,7 @@ class WalletsList extends React.Component<Props, State> {
             { userIcon: true },
             { title: `${user.username}'s ${titlePart}` },
           ],
+          customOnBack: ppnFeatureEnabled ? null : () => navigation.navigate(ASSETS),
         }}
       >
         {!changingAccount &&
@@ -283,7 +286,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   user: { data: user },
   blockchainNetwork: { data: blockchainNetworks },
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled, PPN_ENABLED: ppnFeatureEnabled } },
   balances: { data: balances },
   assets: { data: assets },
   rates: { data: rates },
@@ -294,6 +297,7 @@ const mapStateToProps = ({
   user,
   blockchainNetworks,
   smartWalletFeatureEnabled,
+  ppnFeatureEnabled,
   balances,
   assets,
   rates,
