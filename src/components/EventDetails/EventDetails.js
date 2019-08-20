@@ -24,7 +24,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Linking } from 'react-native';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { BigNumber } from 'bignumber.js';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
@@ -43,7 +42,7 @@ import ProfileImage from 'components/ProfileImage';
 
 // utils
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
-import { formatFullAmount, noop } from 'utils/common';
+import { formatFullAmount, noop, formatUnits } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
 
@@ -284,7 +283,7 @@ class EventDetails extends React.Component<Props, {}> {
       const hasNote = transactionNote && transactionNote !== '';
       const isPending = status === TX_PENDING_STATUS;
       const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
-      const value = utils.formatUnits(new BigNumber(txInfo.value.toString()).toFixed(), decimals);
+      const value = formatUnits(txInfo.value, decimals);
       const recipientContact = contacts.find(({ ethAddress }) => addressesEqual(to, ethAddress)) || {};
       const senderContact = contacts.find(({ ethAddress }) => addressesEqual(from, ethAddress)) || {};
       const relatedUser = isReceived ? senderContact : recipientContact;
