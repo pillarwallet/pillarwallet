@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, View, ScrollView, FlatList } from 'react-native';
+import { Keyboard, View, ScrollView, FlatList, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import TouchID from 'react-native-touch-id';
 import Intercom from 'react-native-intercom';
@@ -201,12 +201,12 @@ const formLegalItems = (that) => {
 };
 
 const formSystemItems = (that) => {
-  const { userJoinedBeta, setUserJoinedBeta } = that.props;
+  const { userJoinedBeta } = that.props;
   return [
     {
       key: 'joinBeta',
       title: userJoinedBeta ? 'Leave Beta Testing' : 'Join Beta Testing',
-      onPress: () => userJoinedBeta ? setUserJoinedBeta(false) : that.setState({ visibleModal: 'joinBeta' }),
+      onPress: () => userJoinedBeta ? that.handleLeaveBetaAttempt() : that.setState({ visibleModal: 'joinBeta' }),
     },
     {
       key: 'systemInfo',
@@ -336,6 +336,19 @@ class Settings extends React.Component<Props, State> {
       this.setState({ joinBetaPressed: false });
       this.props.setUserJoinedBeta(true);
     }
+  };
+
+  handleLeaveBetaAttempt = () => {
+    const { setUserJoinedBeta } = this.props;
+    Alert.alert(
+      'Are you sure?',
+      'By confirming, you will be removed from the Beta Testing program. ' +
+      'If you wish to re-join, you will need to apply again.',
+      [
+        { text: 'Cancel' },
+        { text: 'Leave Beta Testing', onPress: () => setUserJoinedBeta(false) },
+      ],
+    );
   };
 
   // navigateToContactInfo = () => {
@@ -566,7 +579,7 @@ class Settings extends React.Component<Props, State> {
           backgroundColor={baseColors.snowWhite}
           onModalHidden={this.handleJoinBetaModalClose}
           avoidKeyboard
-          title="join beta"
+          title="Join Beta"
           onModalHide={() => this.setState({ visibleModal: null })}
         >
           <StyledWrapper regularPadding flex={1}>
