@@ -19,7 +19,10 @@
 */
 
 import { getRemoteFeatureFlags } from 'services/featureFlags';
-import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import {
+  SET_FEATURE_FLAGS,
+  DISABLE_FEATURE_FLAG,
+} from 'constants/featureFlagsConstants';
 
 export const fetchFeatureFlagsAction = () => {
   return async (dispatch: Function) => {
@@ -30,3 +33,8 @@ export const fetchFeatureFlagsAction = () => {
     });
   };
 };
+
+export const disableFeatureFlagAction = (featureFlag: string) => ({
+  type: DISABLE_FEATURE_FLAG,
+  payload: featureFlag,
+});
