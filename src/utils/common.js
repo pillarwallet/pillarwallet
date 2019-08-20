@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Sentry } from 'react-native-sentry';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import * as ethUtil from 'ethereumjs-util';
@@ -293,4 +294,21 @@ export function getGasPriceWei(gasInfo: GasInfo): BigNumber {
   const gasPrice = get(gasInfo, 'gasPrice.avg', 0);
   const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
   return gasPriceWei;
+}
+
+export function formatUnits(val: string = '0', decimals: number) {
+  let formattedUnits = '0.0';
+  try {
+    formattedUnits = utils.formatUnits(new BigNumber(val.toString()).toFixed(), decimals);
+  } catch (e) {
+    Sentry.captureMessage(e.message, {
+      level: 'info',
+      extra: {
+        sourceFunction: 'formatUnits(value,decimals)',
+        inputValue: val,
+        decimals,
+      },
+    });
+  }
+  return formattedUnits;
 }
