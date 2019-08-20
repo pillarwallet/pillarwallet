@@ -522,13 +522,9 @@ export const fetchVirtualAccountBalanceAction = () => {
 
     // process pending balances
     const accountBalances = pendingBalances.reduce((memo, tokenBalance) => {
-      let symbol = get(tokenBalance, 'token.symbol', ETH);
+      const symbol = get(tokenBalance, 'token.symbol', ETH);
       let balance = get(tokenBalance, 'incoming', new BigNumber(0));
-      const tokenAddress = get(tokenBalance, 'token.address', '');
 
-      if (symbol !== ETH && addressesEqual(tokenAddress, ppnTokenAddress)) {
-        symbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
-      }
       if (symbol === ETH) balance = weiToEth(balance);
 
       return {
@@ -591,14 +587,10 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
     });
 
     const transformedNewPayments = newPayments.map(payment => {
-      let tokenSymbol = get(payment, 'token.symbol', ETH);
+      const tokenSymbol = get(payment, 'token.symbol', ETH);
       const value = get(payment, 'value', new BigNumber(0));
       const senderAddress = get(payment, 'sender.account.address');
       const recipientAddress = get(payment, 'recipient.account.address');
-
-      if (tokenSymbol !== ETH && tokenSymbol === 'ETK') {
-        tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
-      }
 
       return buildHistoryTransaction({
         from: senderAddress,
@@ -775,17 +767,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         assets: { data: assets },
         accounts: { data: accounts },
       } = getState();
-      const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
       let txAmount = get(event, 'payload.value', new BigNumber(0));
-      let txToken = get(event, 'payload.token.symbol', ETH);
+      const txToken = get(event, 'payload.token.symbol', ETH);
       const txStatus = get(event, 'payload.state', '');
-      const txTokenAddress = get(event, 'payload.token.address', '');
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txReceiverAddress = get(event, 'payload.recipient.account.address', '');
 
-      if (txToken !== ETH && addressesEqual(txTokenAddress, ppnTokenAddress)) {
-        txToken = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
-      }
       if (txToken === ETH) txAmount = weiToEth(txAmount);
 
       if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {

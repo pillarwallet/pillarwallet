@@ -27,8 +27,6 @@ import { withNavigation } from 'react-navigation';
 import get from 'lodash.get';
 import unionBy from 'lodash.unionby';
 
-import { PPN_TOKEN } from 'configs/assetsConfig';
-
 import TankBar from 'components/TankBar';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText, MediumText } from 'components/Typography';
@@ -37,19 +35,13 @@ import CheckPin from 'components/CheckPin';
 import TankAssetBalance from 'components/TankAssetBalance';
 import DeploymentView from 'components/DeploymentView';
 
-import {
-  addressesEqual,
-  calculatePortfolioBalance,
-  generatePMTToken,
-  getPPNTokenAddress,
-  getRate,
-} from 'utils/assets';
+import { calculatePortfolioBalance, getRate } from 'utils/assets';
 import { delay, formatMoney, getCurrencySymbol } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
-import { defaultFiatCurrency, ETH, TOKENS } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, PLR, TOKENS } from 'constants/assetsConstants';
 import { ASSET, FUND_TANK, SETTLE_BALANCE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
@@ -167,7 +159,7 @@ class PPNView extends React.Component<Props, State> {
       topUpButtonSubmitted: false,
       showPinScreenForAction: '',
     };
-    this.initialAssets = [{ balance: '0', symbol: ETH }, generatePMTToken()];
+    this.initialAssets = [{ balance: '0', symbol: ETH }, { balance: '0', symbol: PLR }];
   }
 
   renderAsset = ({ item }) => {
@@ -179,14 +171,9 @@ class PPNView extends React.Component<Props, State> {
       activeAccount,
     } = this.props;
 
-    let tokenSymbol = get(item, 'symbol', ETH);
+    const tokenSymbol = get(item, 'symbol', ETH);
     const tokenBalance = get(item, 'balance', '0');
-    const tokenAddress = get(assets, `${tokenSymbol}.address`, '0');
-    const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
     const paymentNetworkBalanceFormatted = formatMoney(tokenBalance, 4);
-    if (tokenSymbol !== ETH && addressesEqual(tokenAddress, ppnTokenAddress)) {
-      tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
-    }
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const totalInFiat = tokenBalance * getRate(rates, tokenSymbol, fiatCurrency);
     const formattedAmountInFiat = formatMoney(totalInFiat);

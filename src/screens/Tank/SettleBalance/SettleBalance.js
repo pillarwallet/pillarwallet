@@ -30,9 +30,6 @@ import { weiToEth } from '@netgum/utils';
 // actions
 import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
 
-// config
-import { PPN_TOKEN } from 'configs/assetsConfig';
-
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Label, BaseText, Paragraph } from 'components/Typography';
@@ -55,7 +52,7 @@ import type { TxToSettle } from 'models/PaymentNetwork';
 // utils
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { formatMoney, getCurrencySymbol, formatAmount } from 'utils/common';
-import { addressesEqual, getPPNTokenAddress, getRate } from 'utils/assets';
+import { getRate } from 'utils/assets';
 
 
 type Props = {
@@ -124,14 +121,8 @@ class SettleBalance extends React.Component<Props, State> {
     const { txToSettle } = this.state;
     const { baseFiatCurrency, assets, rates } = this.props;
 
-    let tokenSymbol = get(item, 'token.symbol', ETH);
+    const tokenSymbol = get(item, 'token.symbol', ETH);
     let value = get(item, 'value', new BigNumber(0));
-    const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
-    const tokenAddress = get(item, 'token.address', '');
-
-    if (tokenSymbol !== ETH && addressesEqual(tokenAddress, ppnTokenAddress)) {
-      tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
-    }
 
     if (tokenSymbol === ETH) value = new BigNumber(weiToEth(value));
 
