@@ -26,11 +26,13 @@ import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions'
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { generatePMTToken } from 'utils/assets';
 
 import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { switchAccountAction } from './accountsActions';
 import { disableFeatureFlagAction } from './featureFlagsActions';
+import { removeAssetAction } from './assetsActions';
 
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Function) => {
@@ -140,6 +142,9 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
       const keyBasedAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
       dispatch(switchAccountAction(keyBasedAccount.id));
       message = 'You have successfully left Beta Testing.';
+      const pmtToken = generatePMTToken();
+      dispatch(removeAssetAction(pmtToken));
+
       dispatch(disableFeatureFlagAction(FEATURE_FLAGS.PPN_ENABLED));
       dispatch(disableFeatureFlagAction(FEATURE_FLAGS.SMART_WALLET_ENABLED));
     }
