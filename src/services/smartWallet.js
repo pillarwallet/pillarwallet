@@ -140,14 +140,14 @@ class SmartWallet {
   }
 
   async connectAccount(address: string) {
-    let account = this.sdk.state.account || await this.sdk.connectAccount(address).catch(this.handleError);
+    const account = this.sdk.state.account || await this.sdk.connectAccount(address).catch(this.handleError);
     const devices = await this.sdk.getConnectedAccountDevices()
       .then(({ items = [] }) => items)
       .catch(this.handleError);
 
-    if (!account.ensName && account.state === sdkConstants.AccountStates.Created) {
+    /* if (!account.ensName && account.state === sdkConstants.AccountStates.Created) {
       account = await this.sdk.updateAccount(account.address).catch(this.handleError);
-    }
+    } */
 
     return {
       ...account,
