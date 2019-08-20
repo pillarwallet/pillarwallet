@@ -157,9 +157,10 @@ const CustomKAWrapper = (props) => {
   const {
     children,
     refreshControl,
+    hasStickyTabs,
   } = props;
   const scrollWrapperProps = {
-    stickyHeaderIndices: [2],
+    stickyHeaderIndices: hasStickyTabs ? [2] : null,
     style: { backgroundColor: baseColors.white },
     contentContainerStyle: {
       backgroundColor: baseColors.white,
@@ -417,6 +418,7 @@ class WalletView extends React.Component<Props, State> {
 
     return (
       <CustomKAWrapper
+        hasStickyTabs={!isInSearchMode && !blockAssetsView && !!collectibles.length}
         refreshControl={
           <RefreshControl
             refreshing={false}

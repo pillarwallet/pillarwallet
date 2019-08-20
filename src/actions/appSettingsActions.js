@@ -123,11 +123,13 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
       accounts: { data: accounts },
     } = getState();
     let message;
+    let autoClose = true;
     if (userJoinedBeta) {
       dispatch(setFirebaseAnalyticsCollectionEnabled(true));
       firebase.analytics().setUserProperty('username', username);
-      message = 'You have successfully applied for Beta Testing.' +
+      message = 'You have successfully applied for Beta Testing. ' +
         'We will let you know once your application is approved.';
+      autoClose = false;
     } else {
       firebase.analytics().setUserProperty('username', null);
       dispatch(setFirebaseAnalyticsCollectionEnabled(false));
@@ -147,6 +149,11 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
       },
     });
     if (ignoreSuccessToast) return;
-    Toast.show({ message, type: 'success', title: 'Success' });
+    Toast.show({
+      message,
+      type: 'success',
+      title: 'Success',
+      autoClose,
+    });
   };
 };
