@@ -27,12 +27,11 @@ import { CachedImage } from 'react-native-cached-image';
 
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
 
 // constants
-import { COLLECTIBLE, BADGE } from 'constants/navigationConstants';
+import { COLLECTIBLE } from 'constants/navigationConstants';
 
 // utils
 import { smallScreen } from 'utils/common';
@@ -75,28 +74,33 @@ type Props = {
   collectibles: Collectible[],
   searchQuery: string,
   navigation: NavigationScreenProp<*>,
-}
+};
+
+type CollectibleItem = {
+  item: Collectible,
+};
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 export default class CollectiblesList extends React.PureComponent<Props> {
-  handleCardTap = (assetData: Object) => {
+  handleCardTap = (assetData: Collectible) => {
     const { navigation } = this.props;
+
     navigation.navigate(COLLECTIBLE, { assetData });
   };
 
-  renderCollectible = ({ item }: Object) => {
-    const { name, thumbnail, icon: itemIcon } = item;
-    const icon = thumbnail || itemIcon;
+  renderCollectible = ({ item }: CollectibleItem) => {
+    const { name, image, icon: itemIcon } = item;
+    const icon = itemIcon || image;
+
     return (
       <View style={{ width: '50%', paddingHorizontal: 8, paddingVertical: 3 }}>
         <ShadowedCard
           wrapperStyle={{ marginBottom: 10, width: '100%' }}
           contentWrapperStyle={{ padding: spacing.medium, alignItems: 'center' }}
-          onPress={() => { this.handleCardTap(item); }}
+          onPress={() => this.handleCardTap(item)}
         >
           <CachedImage
-            key={name}
             style={{
               height: 135,
               width: 135,
@@ -111,16 +115,6 @@ export default class CollectiblesList extends React.PureComponent<Props> {
           </CardRow>
         </ShadowedCard>
       </View>
-    );
-  };
-
-  renderItem = (item: Object) => {
-    const { navigation } = this.props;
-    return (
-      <BadgeTouchableItem
-        data={item}
-        onPress={() => navigation.navigate(BADGE, { id: item.id })}
-      />
     );
   };
 
