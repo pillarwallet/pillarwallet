@@ -67,7 +67,7 @@ class SmartWallet {
       })
       .extendConfig('ensOptions', {
         supportedRootNames: [
-          'pillatnetwork.eth',
+          'pillarnetwork.eth',
         ],
       })
       .extendConfig('ethOptions', {
