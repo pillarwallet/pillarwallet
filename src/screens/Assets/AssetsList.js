@@ -88,10 +88,6 @@ const HeaderTitle = styled(MediumText)`
 
 class AssetsList extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
-    const isFocused = this.props.navigation.isFocused();
-    if (!isFocused) {
-      return false;
-    }
     const isEq = isEqualWith(this.props, nextProps, (val1, val2) => {
       if (typeof val1 === 'function' && typeof val2 === 'function') return true;
       return undefined;

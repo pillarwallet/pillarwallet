@@ -593,10 +593,23 @@ export const addAssetAction = (asset: Asset) => {
   };
 };
 
-export const removeAssetAction = (asset: Object) => ({
-  type: REMOVE_ASSET,
-  payload: asset,
-});
+export const removeAssetAction = (asset: Asset) => {
+  return async (dispatch: Function, getState: () => Object) => {
+    const {
+      assets: { data: assets },
+    } = getState();
+
+    const updatedAssets = Object.keys(assets).reduce((object, key) => {
+      if (key !== asset.symbol) {
+        object[key] = assets[key];
+      }
+      return object;
+    }, {});
+
+    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+    dispatch({ type: REMOVE_ASSET, payload: asset });
+  };
+};
 
 export const startAssetsSearchAction = () => ({
   type: START_ASSETS_SEARCH,
