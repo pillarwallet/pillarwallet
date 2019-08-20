@@ -625,7 +625,7 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
       accounts: { data: accounts },
       user: { data: { walletId } },
       assets: { data: currentAssets, supportedAssets },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled, PPN_ENABLED: ppnFeatureEnabled } },
     } = getState();
     const activeAccountAddress = getActiveAccountAddress(accounts);
 
@@ -633,7 +633,7 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     let walletSupportedAssets = [...supportedAssets];
     if (!supportedAssets.length) {
       walletSupportedAssets = await api.fetchSupportedAssets(walletId);
-      if (smartWalletFeatureEnabled && walletSupportedAssets.length) {
+      if (smartWalletFeatureEnabled && ppnFeatureEnabled && walletSupportedAssets.length) {
         walletSupportedAssets = [...walletSupportedAssets, generatePMTToken()];
       }
       dispatch({
@@ -645,7 +645,7 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
       // HACK: Dirty fix for users who removed somehow Eth from their assets list
       if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
 
-      if (smartWalletFeatureEnabled && !currentAssetsTickers.includes(PMT)) {
+      if (smartWalletFeatureEnabled && ppnFeatureEnabled && !currentAssetsTickers.includes(PMT)) {
         currentAssetsTickers.push(PMT);
       }
 
