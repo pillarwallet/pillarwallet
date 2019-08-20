@@ -228,13 +228,8 @@ class ActivityFeed extends React.Component<Props, State> {
         decimals = 18,
         iconUrl,
       } = assets.find(({ symbol }) => symbol === notification.asset) || {};
-      let bigNumber;
-      try {
-        bigNumber = new BigNumber(notification.value.toString());
-      } catch (e) {
-        bigNumber = new BigNumber('0');
-      }
-      const value = utils.formatUnits(bigNumber.toFixed(), decimals);
+      const notificationValueBigNumber = new BigNumber(get(notification, 'value', 0).toString());
+      const value = utils.formatUnits(notificationValueBigNumber.toFixed(), decimals);
       const formattedValue = formatAmount(value);
       let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       let directionIcon = isReceived ? 'received' : 'sent';
@@ -447,7 +442,7 @@ class ActivityFeed extends React.Component<Props, State> {
           stickySectionHeadersEnabled={false}
         />
 
-        {selectedEventData &&
+        {!!selectedEventData &&
         <SlideModal
           isVisible={showModal}
           title="transaction details"
