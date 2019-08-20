@@ -79,7 +79,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import smartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
-import { calculateGasEstimate } from 'services/assets';
+import { calculateGasEstimate, waitForTransaction } from 'services/assets';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -426,14 +426,31 @@ export const checkAssetTransferTransactionsAction = () => {
       }
       console.log('sent new asset transfer transaction: ', transactionHash);
       const { signedTransaction: { signedHash } } = unsentTransaction;
-      updatedTransactions = updatedTransactions.filter(
-        transaction => transaction.signedTransaction.signedHash !== signedHash,
-      );
-      updatedTransactions.push({
+      const assetTransferTransaction = {
         ...unsentTransaction,
         transactionHash,
-        status: TX_PENDING_STATUS,
-      });
+      };
+      updatedTransactions = updatedTransactions
+        .filter(
+          transaction => transaction.signedTransaction.signedHash !== signedHash,
+        )
+        .concat({
+          ...assetTransferTransaction,
+          status: TX_PENDING_STATUS,
+        });
+      waitForTransaction(transactionHash)
+        .then(async () => {
+          const _updatedTransactions = updatedTransactions
+            .filter(
+              _transaction => _transaction.transactionHash !== transactionHash,
+            ).concat({
+              ...assetTransferTransaction,
+              status: TX_CONFIRMED_STATUS,
+            });
+          await dispatch(setAssetsTransferTransactionsAction(_updatedTransactions));
+          dispatch(checkAssetTransferTransactionsAction());
+        })
+        .catch(() => null);
     }
     dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
   };
@@ -522,13 +539,9 @@ export const fetchVirtualAccountBalanceAction = () => {
 
     // process pending balances
     const accountBalances = pendingBalances.reduce((memo, tokenBalance) => {
-      let symbol = get(tokenBalance, 'token.symbol', ETH);
+      const symbol = get(tokenBalance, 'token.symbol', ETH);
       let balance = get(tokenBalance, 'incoming', new BigNumber(0));
-      const tokenAddress = get(tokenBalance, 'token.address', '');
 
-      if (symbol !== ETH && addressesEqual(tokenAddress, ppnTokenAddress)) {
-        symbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
-      }
       if (symbol === ETH) balance = weiToEth(balance);
 
       return {
@@ -591,14 +604,10 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
     });
 
     const transformedNewPayments = newPayments.map(payment => {
-      let tokenSymbol = get(payment, 'token.symbol', ETH);
+      const tokenSymbol = get(payment, 'token.symbol', ETH);
       const value = get(payment, 'value', new BigNumber(0));
       const senderAddress = get(payment, 'sender.account.address');
       const recipientAddress = get(payment, 'recipient.account.address');
-
-      if (tokenSymbol !== ETH && tokenSymbol === 'ETK') {
-        tokenSymbol = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
-      }
 
       return buildHistoryTransaction({
         from: senderAddress,
@@ -775,17 +784,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         assets: { data: assets },
         accounts: { data: accounts },
       } = getState();
-      const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
       let txAmount = get(event, 'payload.value', new BigNumber(0));
-      let txToken = get(event, 'payload.token.symbol', ETH);
+      const txToken = get(event, 'payload.token.symbol', ETH);
       const txStatus = get(event, 'payload.state', '');
-      const txTokenAddress = get(event, 'payload.token.address', '');
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txReceiverAddress = get(event, 'payload.recipient.account.address', '');
 
-      if (txToken !== ETH && addressesEqual(txTokenAddress, ppnTokenAddress)) {
-        txToken = PPN_TOKEN; // TODO: remove this once we move to PLR token in PPN
-      }
       if (txToken === ETH) txAmount = weiToEth(txAmount);
 
       if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {

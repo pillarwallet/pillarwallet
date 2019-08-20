@@ -206,6 +206,7 @@ const mockSmartWalletAccount = {
 
 const mockArchanovaSdkInstance = {
   setConfig: () => mockArchanovaSdkInstance,
+  extendConfig: () => mockArchanovaSdkInstance,
 };
 
 jest.setMock('@archanova/sdk', {
