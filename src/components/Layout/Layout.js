@@ -53,7 +53,7 @@ type ScrollWrapperProps = {
   contentContainerStyle?: Object,
   keyboardShouldPersistTaps?: string,
   onScroll?: Function,
-  stickyHeaderIndices?: number[],
+  stickyHeaderIndices?: ?number[],
   scrollEnabled?: boolean,
   refreshControl?: React.Node,
 };

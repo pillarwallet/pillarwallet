@@ -38,6 +38,7 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 import { calculateGasEstimate } from 'services/assets';
 import { getActiveAccountAddress } from 'utils/accounts';
+import { isFiatCurrency } from 'utils/exchange';
 
 import type { Offer, OfferOrder } from 'models/Offer';
 
@@ -135,7 +136,6 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       user: { data: { walletId: userWalletId } },
-      featureFlags: { data: { EXCHANGE_WITH_FIAT_ENABLED: exchangeWithFiatEnabled } },
     } = getState();
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
@@ -157,7 +157,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     const isTest = SENDWYRE_ENVIRONMENT === 'test';
 
-    if (exchangeWithFiatEnabled) {
+    if (isFiatCurrency(fromAssetCode)) {
       const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
       if (isAllowed || isTest) {
         api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {

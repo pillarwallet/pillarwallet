@@ -94,7 +94,6 @@ describe('Exchange Actions tests', () => {
       user: { data: { walletId } },
       oAuthTokens: { data: { oAuthTokens: oAuthTokensMock } },
       exchange: { data: { connectedProviders: connectedProvidersMock } },
-      featureFlags: { data: { EXCHANGE_WITH_FIAT_ENABLED: true } },
     };
     store = mockStore({ ...exchangeStoreMock });
   });
