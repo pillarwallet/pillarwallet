@@ -71,7 +71,9 @@ class FundConfirm extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.props.estimateTopUpVirtualAccount();
+    const { navigation, estimateTopUpVirtualAccount } = this.props;
+    const amount = navigation.getParam('amount', '0');
+    estimateTopUpVirtualAccount(amount);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -144,7 +146,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   topUpVirtualAccount: (amount: string) => dispatch(topUpVirtualAccountAction(amount)),
-  estimateTopUpVirtualAccount: () => dispatch(estimateTopUpVirtualAccountAction()),
+  estimateTopUpVirtualAccount: (amount: string) => dispatch(estimateTopUpVirtualAccountAction(amount)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FundConfirm);
