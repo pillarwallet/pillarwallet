@@ -782,17 +782,18 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         assets: { data: assets },
         accounts: { data: accounts },
       } = getState();
-      let txAmount = get(event, 'payload.value', new BigNumber(0));
+      const txAmount = get(event, 'payload.value', new BigNumber(0));
       const txToken = get(event, 'payload.token.symbol', ETH);
       const txStatus = get(event, 'payload.state', '');
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txReceiverAddress = get(event, 'payload.recipient.account.address', '');
 
-      if (txToken === ETH) txAmount = weiToEth(txAmount);
+      const { decimals = 18 } = assets[PPN_TOKEN] || {};
+      const txAmountFormatted = formatUnits(txAmount, decimals);
 
       if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {
         Toast.show({
-          message: `You received ${formatMoney(txAmount.toString(), 4)} ${txToken}`,
+          message: `You received ${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`,
           type: 'success',
           title: 'Success',
           autoClose: true,
