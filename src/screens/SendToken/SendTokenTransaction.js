@@ -81,8 +81,8 @@ class SendTokenTransaction extends React.Component<Props> {
     }
     navigation.dismiss();
 
-    const { transactionPayload } = navigation.state.params;
-    if (transactionPayload.usePPN) {
+    const { isSuccess, transactionPayload } = navigation.state.params;
+    if (transactionPayload.usePPN && isSuccess) {
       Toast.show({
         message: 'Transaction was successfully sent!',
         type: 'success',
