@@ -111,10 +111,7 @@ export function calculatePortfolioBalance(assets: Assets, rates: Rates, balances
 
 export function getPPNTokenAddress(token: string, assets: Assets): ?string {
   if (token === ETH) return null;
-  const asset = Object.keys(assets)
-    .map(key => assets[key])
-    .find(({ symbol }) => symbol === token);
-  return get(asset, 'address', '');
+  return get(assets[token], 'address', '');
 }
 
 export function addressesEqual(address1: ?string, address2: ?string) {

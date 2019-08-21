@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Platform, RefreshControl, ScrollView } from 'react-native';
+import { RefreshControl, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
@@ -30,19 +30,24 @@ import unionBy from 'lodash.unionby';
 import TankBar from 'components/TankBar';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText, MediumText } from 'components/Typography';
-import SlideModal from 'components/Modals/SlideModal';
-import CheckPin from 'components/CheckPin';
 import TankAssetBalance from 'components/TankAssetBalance';
 import DeploymentView from 'components/DeploymentView';
+import CircleButton from 'components/CircleButton';
 
 import { calculatePortfolioBalance, getRate } from 'utils/assets';
-import { delay, formatMoney, getCurrencySymbol } from 'utils/common';
+import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
 import { defaultFiatCurrency, ETH, PLR, TOKENS } from 'constants/assetsConstants';
-import { ASSET, FUND_TANK, SETTLE_BALANCE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import {
+  ASSET,
+  FUND_TANK,
+  SEND_TOKEN_FROM_ASSET_FLOW,
+  SETTLE_BALANCE,
+  SMART_WALLET_INTRO,
+} from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import { activeAccountSelector } from 'selectors';
@@ -57,8 +62,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Accounts } from 'models/Account';
 
-import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
+import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
 
 
 type Props = {
@@ -72,25 +76,18 @@ type Props = {
   availableStake: number,
   supportedAssets: Asset[],
   assetsOnNetwork: Object,
-  ensureSmartAccountConnected: Function,
-  resetIncorrectPassword: Function,
   fetchVirtualAccountBalance: Function,
   accounts: Accounts,
   smartWalletState: Object,
 }
 
-type State = {
-  topUpButtonSubmitted: boolean,
-  showPinScreenForAction: string,
-};
-
-// const AssetButtonsWrapper = styled.View`
-//   flex-direction: row;
-//   justify-content: center;
-//   padding: 20px 20px 40px;
-//   border-bottom-color: ${baseColors.mediumLightGray};
-//   border-bottom-width: 1px;
-// `;
+const AssetButtonsWrapper = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  padding: 20px 20px 40px;
+  border-bottom-color: ${baseColors.mediumLightGray};
+  border-bottom-width: 1px;
+`;
 
 const ListHeaderWrapper = styled.View`
   flex-direction: row;
@@ -120,15 +117,6 @@ const StyledFlatList = styled.FlatList`
   background-color: ${baseColors.white};
 `;
 
-const Wrapper = styled.View`
-  position: relative;
-  margin: 5px 20px 20px;
-  padding-top: ${Platform.select({
-    ios: '20px',
-    android: '14px',
-  })};
-`;
-
 const AddonWrapper = styled.View`
   flex-direction: row;
   justify-content: flex-end;
@@ -147,20 +135,11 @@ const ValueInFiat = styled(BaseText)`
 `;
 
 // const iconRequest = require('assets/icons/icon_receive.png');
-// const iconSend = require('assets/icons/icon_send.png');
+const iconSend = require('assets/icons/icon_send.png');
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-class PPNView extends React.Component<Props, State> {
-  initialAssets: Object[];
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      topUpButtonSubmitted: false,
-      showPinScreenForAction: '',
-    };
-    this.initialAssets = [{ balance: '0', symbol: ETH }, { balance: '0', symbol: PLR }];
-  }
+class PPNView extends React.Component<Props> {
+  initialAssets = [{ balance: '0', symbol: ETH }, { balance: '0', symbol: PLR }];
 
   renderAsset = ({ item }) => {
     const {
@@ -268,29 +247,52 @@ class PPNView extends React.Component<Props, State> {
     );
   };
 
-  navigateToFundTankScreen = async (_: string, wallet: Object) => {
-    const { ensureSmartAccountConnected, navigation } = this.props;
-    this.setState({ showPinScreenForAction: '' });
+  goToSendPLRViaPPN = () => {
+    const {
+      navigation,
+      assets,
+      activeAccount,
+      baseFiatCurrency,
+      rates,
+      availableStake,
+    } = this.props;
+    const thisAsset = assets[PLR] || {};
 
-    await delay(500);
-    ensureSmartAccountConnected(wallet.privateKey)
-      .then(() => {
-        this.setState({ topUpButtonSubmitted: false }, () => navigation.navigate(FUND_TANK));
-      })
-      .catch(() => null);
-  };
-
-  handleCheckPinModalClose = () => {
-    const { resetIncorrectPassword } = this.props;
-    resetIncorrectPassword();
-    this.setState({
-      showPinScreenForAction: '',
-      topUpButtonSubmitted: false,
-    });
+    const {
+      name,
+      symbol,
+      iconMonoUrl,
+      decimals,
+      iconUrl,
+      patternUrl,
+      address,
+      description,
+    } = thisAsset;
+    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const paymentNetworkBalanceFormatted = formatMoney(availableStake, 4);
+    const totalInFiat = availableStake * getRate(rates, PLR, fiatCurrency);
+    const formattedAmountInFiat = formatMoney(totalInFiat);
+    const assetData = {
+      id: PLR,
+      name: name || symbol,
+      token: symbol,
+      amount: paymentNetworkBalanceFormatted,
+      balanceInFiat: { amount: formattedAmountInFiat, currency: fiatCurrency },
+      address: getAccountAddress(activeAccount),
+      contractAddress: address,
+      icon: iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '',
+      iconColor: fullIconUrl,
+      patternIcon: patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl,
+      description,
+      decimals,
+      isSynthetic: true,
+      isListed: true,
+    };
+    navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
   render() {
-    const { showPinScreenForAction, topUpButtonSubmitted } = this.state;
     const {
       availableStake,
       assetsOnNetwork,
@@ -337,22 +339,18 @@ class PPNView extends React.Component<Props, State> {
           maxValue={totalStake}
           currentValue={availableStake}
           currentValueFormatted={availableFormattedAmount}
-          topupAction={() => this.setState({ showPinScreenForAction: FUND_TANK, topUpButtonSubmitted: true })}
-          topUpLoading={topUpButtonSubmitted}
+          topupAction={() => navigation.navigate(FUND_TANK)}
+          topUpLoading={false}
           disabled={!!disableTopUpAndSettle}
         />
-        { /* <AssetButtonsWrapper>
-          <CircleButton
-            label="Request"
-            icon={iconRequest}
-            onPress={() => {}}
-          />
+        <AssetButtonsWrapper>
           <CircleButton
             label="Send"
             icon={iconSend}
-            onPress={() => {}}
+            onPress={this.goToSendPLRViaPPN}
+            disabled={availableStake <= 0}
           />
-        </AssetButtonsWrapper> */ }
+        </AssetButtonsWrapper>
         <StyledFlatList
           data={assetsOnNetworkToShow}
           keyExtractor={(item) => item.symbol}
@@ -363,20 +361,6 @@ class PPNView extends React.Component<Props, State> {
           style={{ width: '100%', height: '100%' }}
           ListHeaderComponent={() => this.renderHeader(!!disableTopUpAndSettle)}
         />
-        <SlideModal
-          isVisible={!!showPinScreenForAction}
-          onModalHide={this.handleCheckPinModalClose}
-          title="Enter pincode"
-          centerTitle
-          fullScreen
-          showHeader
-        >
-          <Wrapper flex={1}>
-            <CheckPin
-              onPinValid={this.navigateToFundTankScreen}
-            />
-          </Wrapper>
-        </SlideModal>
       </ScrollView>
     );
   }
@@ -412,8 +396,6 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  ensureSmartAccountConnected: (privateKey: string) => dispatch(ensureSmartAccountConnectedAction(privateKey)),
-  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
 });
 

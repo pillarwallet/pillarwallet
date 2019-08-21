@@ -160,6 +160,11 @@ const finishRegistration = async ({
   });
   dispatch(saveDbAction('assets', { assets: initialAssets }));
 
+  // restore transactions history
+  await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
+
+  dispatch(fetchBadgesAction(false));
+
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
   if (smartWalletFeatureEnabled) {
     // create smart wallet account only for new wallets
@@ -167,11 +172,6 @@ const finishRegistration = async ({
     await dispatch(initSmartWalletSdkAction(privateKey));
     await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount));
   }
-
-  // restore transactions history
-  await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
-
-  dispatch(fetchBadgesAction());
 
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
