@@ -826,12 +826,13 @@ export const ensureSmartAccountConnectedAction = (privateKey: string) => {
   };
 };
 
-export const estimateTopUpVirtualAccountAction = () => {
+export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
   return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const { assets: { data: assets } } = getState();
-    const value = PPN_TOKEN === ETH ? ethToWei(0.1) : 1;
+    const { decimals = 18 } = assets[PPN_TOKEN] || {};
+    const value = utils.parseUnits(amount, decimals);
     const tokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
 
     const response = await smartWalletService
