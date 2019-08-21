@@ -41,7 +41,7 @@ type Props = {
   label?: string,
   contentWrapperStyle?: Object,
   onMainPress?: Function,
-  onSettingsPress?: Function,
+  onSettingsPress?: ?Function,
   isActive?: boolean,
   customIcon?: React.Node,
   settingsIcon?: string,

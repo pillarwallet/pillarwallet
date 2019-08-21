@@ -33,14 +33,15 @@ import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
 
 // utils
 import { getActiveAccount } from 'utils/accounts';
-import { formatMoney, getCurrencySymbol, noop } from 'utils/common';
+import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { responsiveSize } from 'utils/ui';
 import { baseColors, spacing } from 'utils/variables';
+import { calculatePortfolioBalance } from 'utils/assets';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Assets } from 'models/Asset';
+import type { Assets, Balances, Rates } from 'models/Asset';
 import type { Accounts, Account } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 
@@ -77,6 +78,8 @@ type Props = {
   resetIncorrectPassword: Function,
   switchAccount: Function,
   smartWalletState: Object,
+  balances: Balances,
+  rates: Rates,
 }
 
 type State = {
@@ -276,7 +279,7 @@ class AccountsScreen extends React.Component<Props, State> {
         subtitle={`${currencySymbol} ${walletBalance}`}
         onMainPress={action ? () => action() : () => this.switchWallet(item)}
         onSettingsPress={type === 'SMART_WALLET_INIT'
-          ? noop
+          ? null
           : () => navigation.navigate(WALLET_SETTINGS, { wallet: item })}
         isActive={isActiveWallet}
         customIcon={(
@@ -296,6 +299,9 @@ class AccountsScreen extends React.Component<Props, State> {
       smartWalletFeatureEnabled,
       smartWalletState,
       navigation,
+      balances,
+      assets,
+      rates,
     } = this.props;
     const ppnNetwork = blockchainNetworks.find((network) => network.id === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK)
       || null;
@@ -304,9 +310,19 @@ class AccountsScreen extends React.Component<Props, State> {
     const visibleAccounts = smartWalletFeatureEnabled
       ? accounts
       : accounts.filter(({ type }) => type !== ACCOUNT_TYPES.SMART_WALLET);
+
+    const visibleAccountsWithBalance = visibleAccounts.map((acc) => {
+      const accountBalances = balances[acc.id] || {};
+      const balance = calculatePortfolioBalance(assets, rates, accountBalances);
+      return { ...acc, balance };
+    });
+
     const walletsToShow = showSmartWalletInitButton
-      ? [...visibleAccounts, { type: 'SMART_WALLET_INIT', action: () => navigation.navigate(SMART_WALLET_INTRO) }]
-      : visibleAccounts;
+      ? [
+        ...visibleAccountsWithBalance,
+        { type: 'SMART_WALLET_INIT', action: () => navigation.navigate(SMART_WALLET_INTRO) },
+      ]
+      : visibleAccountsWithBalance;
 
     return (
       <ContainerWithHeader
@@ -360,6 +376,8 @@ const mapStateToProps = ({
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
+  balances: { data: balances },
+  rates: { data: rates },
 }) => ({
   accounts,
   blockchainNetworks,
@@ -368,6 +386,8 @@ const mapStateToProps = ({
   smartWalletFeatureEnabled,
   baseFiatCurrency,
   smartWalletState,
+  balances,
+  rates,
 });
 
 const structuredSelector = createStructuredSelector({
