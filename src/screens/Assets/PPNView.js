@@ -32,6 +32,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText, MediumText } from 'components/Typography';
 import TankAssetBalance from 'components/TankAssetBalance';
 import DeploymentView from 'components/DeploymentView';
+import CircleButton from 'components/CircleButton';
 
 import { calculatePortfolioBalance, getRate } from 'utils/assets';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
@@ -40,7 +41,13 @@ import { getAccountAddress } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
 import { defaultFiatCurrency, ETH, PLR, TOKENS } from 'constants/assetsConstants';
-import { ASSET, FUND_TANK, SETTLE_BALANCE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import {
+  ASSET,
+  FUND_TANK,
+  SEND_TOKEN_FROM_ASSET_FLOW,
+  SETTLE_BALANCE,
+  SMART_WALLET_INTRO,
+} from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import { activeAccountSelector } from 'selectors';
@@ -74,13 +81,13 @@ type Props = {
   smartWalletState: Object,
 }
 
-// const AssetButtonsWrapper = styled.View`
-//   flex-direction: row;
-//   justify-content: center;
-//   padding: 20px 20px 40px;
-//   border-bottom-color: ${baseColors.mediumLightGray};
-//   border-bottom-width: 1px;
-// `;
+const AssetButtonsWrapper = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  padding: 20px 20px 40px;
+  border-bottom-color: ${baseColors.mediumLightGray};
+  border-bottom-width: 1px;
+`;
 
 const ListHeaderWrapper = styled.View`
   flex-direction: row;
@@ -128,7 +135,7 @@ const ValueInFiat = styled(BaseText)`
 `;
 
 // const iconRequest = require('assets/icons/icon_receive.png');
-// const iconSend = require('assets/icons/icon_send.png');
+const iconSend = require('assets/icons/icon_send.png');
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 class PPNView extends React.Component<Props> {
@@ -240,6 +247,51 @@ class PPNView extends React.Component<Props> {
     );
   };
 
+  goToSendPLRViaPPN = () => {
+    const {
+      navigation,
+      assets,
+      activeAccount,
+      baseFiatCurrency,
+      rates,
+      availableStake,
+    } = this.props;
+    const thisAsset = assets[PLR] || {};
+
+    const {
+      name,
+      symbol,
+      iconMonoUrl,
+      decimals,
+      iconUrl,
+      patternUrl,
+      address,
+      description,
+    } = thisAsset;
+    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const paymentNetworkBalanceFormatted = formatMoney(availableStake, 4);
+    const totalInFiat = availableStake * getRate(rates, PLR, fiatCurrency);
+    const formattedAmountInFiat = formatMoney(totalInFiat);
+    const assetData = {
+      id: PLR,
+      name: name || symbol,
+      token: symbol,
+      amount: paymentNetworkBalanceFormatted,
+      balanceInFiat: { amount: formattedAmountInFiat, currency: fiatCurrency },
+      address: getAccountAddress(activeAccount),
+      contractAddress: address,
+      icon: iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '',
+      iconColor: fullIconUrl,
+      patternIcon: patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl,
+      description,
+      decimals,
+      isSynthetic: true,
+      isListed: true,
+    };
+    navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
+  };
+
   render() {
     const {
       availableStake,
@@ -291,18 +343,14 @@ class PPNView extends React.Component<Props> {
           topUpLoading={false}
           disabled={!!disableTopUpAndSettle}
         />
-        { /* <AssetButtonsWrapper>
-          <CircleButton
-            label="Request"
-            icon={iconRequest}
-            onPress={() => {}}
-          />
+        <AssetButtonsWrapper>
           <CircleButton
             label="Send"
             icon={iconSend}
-            onPress={() => {}}
+            onPress={this.goToSendPLRViaPPN}
+            disabled={availableStake <= 0}
           />
-        </AssetButtonsWrapper> */ }
+        </AssetButtonsWrapper>
         <StyledFlatList
           data={assetsOnNetworkToShow}
           keyExtractor={(item) => item.symbol}

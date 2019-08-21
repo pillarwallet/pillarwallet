@@ -96,11 +96,11 @@ const LabelLine = styled.View`
 
 const AnimatedLabelLine = Animated.createAnimatedComponent(LabelLine);
 
-const SideButton = styled.TouchableOpacity`
-  flex-direction: row;
-  padding-left: 12px;
-  margin-bottom: -2px;
-`;
+// const SideButton = styled.TouchableOpacity`
+//   flex-direction: row;
+//   padding-left: 12px;
+//   margin-bottom: -2px;
+// `;
 
 const ProgressBarWrapper = styled.View`
   flex-direction: row;
@@ -143,11 +143,11 @@ const ButtonText = styled(MediumText)`
   color: ${props => props.dark ? baseColors.darkGray : baseColors.white};
 `;
 
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.tiny}px;
-  line-height: ${fontSizes.tiny}px;
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
-`;
+// const Value = styled(MediumText)`
+//   font-size: ${fontSizes.tiny}px;
+//   line-height: ${fontSizes.tiny}px;
+//   color: ${props => props.color ? props.color : baseColors.slateBlack};
+// `;
 
 export default class TankBar extends React.Component<Props, State> {
   static defaultProps = {
@@ -214,7 +214,6 @@ export default class TankBar extends React.Component<Props, State> {
     const {
       progressAnimated,
       barWidth,
-      sideButtonWidth,
       labelTransform,
       didFirstAnimation,
     } = this.state;
@@ -251,7 +250,7 @@ export default class TankBar extends React.Component<Props, State> {
               />
             </ProgressBarWrapper>
           </ProgressBarSide>
-          <SideButton
+          {/* <SideButton
             onLayout={(e) => {
               const width = get(e, 'nativeEvent.layout.width', 80);
               this.setState({ sideButtonWidth: width });
@@ -259,9 +258,9 @@ export default class TankBar extends React.Component<Props, State> {
           >
             <Value color={baseColors.darkGray}>{maxValue}</Value>
             <Value style={{ marginLeft: 4 }}>{PPN_TOKEN}</Value>
-          </SideButton>
+          </SideButton> */ }
         </Row>
-        {!!barWidth && !!sideButtonWidth &&
+        {!!barWidth && /* add !!sideButtonWidth if SideButton is present! */
         <Row style={{ height: 40 }}>
           <AnimatedLabelLine
             style={{
