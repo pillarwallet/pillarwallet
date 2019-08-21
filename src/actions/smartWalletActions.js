@@ -597,7 +597,7 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
 
     // filter out already stored payments
     const { history: { data: currentHistory } } = getState();
-    const accountHistory = currentHistory[accountId];
+    const accountHistory = currentHistory[accountId] || [];
     const newPayments = payments.filter(payment => {
       const paymentExists = accountHistory.find(({ hash }) => hash === payment.hash);
       return !paymentExists;

@@ -30,13 +30,11 @@ import Intercom from 'react-native-intercom';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
-import { BoldText, MediumText, Paragraph } from 'components/Typography';
+import { MediumText, Paragraph } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
-import CircleButton from 'components/CircleButton';
 import QRCodeScanner from 'components/QRCodeScanner';
-import ButtonText from 'components/ButtonText';
 import Spinner from 'components/Spinner';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
@@ -173,10 +171,6 @@ const DescriptionWarning = styled(Description)`
   color: ${baseColors.burningFire};
 `;
 
-export const StatusMessage = styled(BoldText)`
-  padding-top: 10px;
-`;
-
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
   align-items: center;
@@ -189,7 +183,6 @@ const socialIconNormal = require('assets/icons/social_normal.png');
 const socialIconActive = require('assets/icons/social_active.png');
 const transactionsIconNormal = require('assets/icons/transactions_normal.png');
 const transactionsIconActive = require('assets/icons/transactions_active.png');
-const iconReceive = require('assets/icons/icon_receive.png');
 const iconConnect = require('assets/icons/icon_receive.png');
 
 class HomeScreen extends React.Component<Props, State> {
@@ -337,29 +330,6 @@ class HomeScreen extends React.Component<Props, State> {
       this.props.cancelWaitingRequest(waitingRequest);
     }
   };
-
-  renderNewSession() {
-    const { waitingRequest } = this.props;
-
-    if (waitingRequest) {
-      return (
-        <View>
-          <StatusMessage>
-            Adding session...
-          </StatusMessage>
-          <LoadingSpinner />
-          <ButtonText
-            buttonText="Cancel"
-            onPress={this.cancelWaiting}
-          />
-        </View>
-      );
-    }
-
-    return (
-      <CircleButton label="New Session" icon={iconReceive} onPress={this.toggleQRScanner} />
-    );
-  }
   // END OF Wallet connect related methods
 
   renderBadge = ({ item }) => {
