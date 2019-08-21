@@ -10,7 +10,7 @@ import Toast from 'components/Toast';
 import { saveDbAction } from './dbActions';
 import { offlineApiCall } from './offlineApiActions';
 
-export const fetchBadgesAction = () => {
+export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       user: { data: { walletId } },
@@ -39,7 +39,7 @@ export const fetchBadgesAction = () => {
       dispatch({ type: UPDATE_BADGES, payload: updatedBadges });
     }
 
-    if (newBadgeReceived) {
+    if (newBadgeReceived && notifyOnNewBadge) {
       Toast.show({
         message: 'New badge received!',
         type: 'success',
