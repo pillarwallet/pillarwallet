@@ -41,7 +41,7 @@ import type { CollectibleTransfer } from 'models/Collectible';
 import type { SmartWalletTransferTransaction } from 'models/Transaction';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 
-export type WalletReducerState = {
+export type SmartWalletReducerState = {
   upgradeDismissed: boolean,
   sdkInitialized: boolean,
   connectedAccount: Object,
@@ -63,7 +63,7 @@ export type WalletReducerState = {
   lastSyncedHash: ?string,
 }
 
-export type WalletReducerAction = {
+export type SmartWalletReducerAction = {
   type: string,
   payload?: any,
 };
@@ -91,8 +91,8 @@ const initialState = {
 };
 
 export default function smartWalletReducer(
-  state: WalletReducerState = initialState,
-  action: WalletReducerAction,
+  state: SmartWalletReducerState = initialState,
+  action: SmartWalletReducerAction,
 ) {
   switch (action.type) {
     case SET_SMART_WALLET_SDK_INIT:

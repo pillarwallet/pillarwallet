@@ -351,14 +351,15 @@ class AssetScreen extends React.Component<Props, State> {
             }
           </DataWrapper>
           <AssetCardWrapper>
+            {!isSynthetic &&
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
-              onPressExchange={!isSynthetic ? () => this.goToExchangeFlow(token) : null}
+              onPressExchange={() => this.goToExchangeFlow(token)}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
-            />
+            />}
             {!isSendActive &&
             <DeploymentView
               message={sendingBlockedMessage}
