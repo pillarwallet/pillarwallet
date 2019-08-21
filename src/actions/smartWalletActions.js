@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { sdkModules, sdkConstants } from '@archanova/sdk';
-import { ethToWei, weiToEth } from '@netgum/utils';
+import { weiToEth } from '@netgum/utils';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
@@ -112,7 +112,7 @@ import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } fr
 import { getActiveAccountAddress, getActiveAccountId, getActiveAccountType } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
-import { formatAmount, formatMoney, getGasPriceWei } from 'utils/common';
+import { formatAmount, formatMoney, formatUnits, getGasPriceWei } from 'utils/common';
 
 
 const storage = Storage.getInstance('db');
@@ -517,6 +517,7 @@ export const fetchVirtualAccountBalanceAction = () => {
 
     const accountId = getActiveAccountId(accounts);
     const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
+    const { decimals = 18 } = assets[PPN_TOKEN] || {};
 
     const [staked, pendingBalances] = await Promise.all([
       smartWalletService.getAccountStakedAmount(ppnTokenAddress),
@@ -524,12 +525,7 @@ export const fetchVirtualAccountBalanceAction = () => {
     ]);
 
     // process staked amount
-    let stakedAmountFormatted;
-    if (PPN_TOKEN === ETH) {
-      stakedAmountFormatted = !staked.eq(0) ? weiToEth(staked).toString() : '0';
-    } else {
-      stakedAmountFormatted = staked.toString();
-    }
+    const stakedAmountFormatted = formatUnits(staked, decimals);
 
     dispatch(saveDbAction('paymentNetworkStaked', { paymentNetworkStaked: stakedAmountFormatted }, true));
     dispatch({
@@ -767,13 +763,15 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const { assets: { data: assets } } = getState();
       const tokenTransferred = get(event, 'payload.token.address', null);
       const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
+      const { decimals = 18 } = assets[PPN_TOKEN] || {};
 
       if (addressesEqual(tokenTransferred, ppnTokenAddress)) {
         // update the balance
         const value = get(event, 'payload.value', '');
+        const formattedValue = formatUnits(value, decimals);
         dispatch({
           type: UPDATE_PAYMENT_NETWORK_STAKED,
-          payload: PPN_TOKEN === ETH ? weiToEth(value).toString() : value.toString(),
+          payload: formattedValue,
         });
       }
     }
@@ -877,7 +875,8 @@ export const topUpVirtualAccountAction = (amount: string) => {
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
-    const value = PPN_TOKEN === ETH ? ethToWei(parseFloat(amount)) : parseFloat(amount);
+    const { decimals = 18 } = assets[PPN_TOKEN] || {};
+    const value = utils.parseUnits(amount.toString(), decimals);
     const tokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
 
     const estimated = await smartWalletService
