@@ -32,7 +32,7 @@ import {
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ETH } from 'constants/assetsConstants';
-import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
+import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
   getAccountAddress,
   getActiveAccount,
@@ -204,11 +204,9 @@ export const fetchGasInfoAction = () => {
 export const updateTransactionStatusAction = (hash: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      accounts: { data: accounts },
       assets: { data: assets },
       session: { data: { isOnline } },
     } = getState();
-    const accountId = getActiveAccountId(accounts);
 
     if (!isOnline) return;
 
@@ -221,17 +219,15 @@ export const updateTransactionStatusAction = (hash: string) => {
     const status = txReceipt.status ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS;
 
     const { history: { data: currentHistory } } = getState();
-    const accountHistory = currentHistory[accountId] || [];
-    const updatedAccountHistory = accountHistory.map(tx => {
-      if (tx.hash !== hash) return tx;
-      return {
-        ...tx,
+    const { updatedHistory } = updateHistoryRecord(
+      currentHistory,
+      hash,
+      (transaction) => ({
+        ...transaction,
         nbConfirmations,
         status,
-        gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : tx.gasUsed,
-      };
-    });
-    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+        gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
+      }));
 
     dispatch({
       type: SET_HISTORY,
