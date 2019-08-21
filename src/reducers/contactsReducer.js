@@ -46,7 +46,7 @@ export type ContactsReducerAction = {
   payload: any,
 }
 
-const initialState = {
+export const initialState = {
   data: [],
   contactState: null,
   searchResults: {

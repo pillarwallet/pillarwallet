@@ -46,7 +46,7 @@ export type AssetsReducerAction = {
   payload: any,
 };
 
-const initialState = {
+export const initialState = {
   data: {},
   supportedAssets: [],
   assetsState: null,
