@@ -291,7 +291,7 @@ export function extractJwtPayload(jwtToken: string): Object {
 }
 
 export function getGasPriceWei(gasInfo: GasInfo): BigNumber {
-  const gasPrice = get(gasInfo, 'gasPrice.avg', 0);
+  const gasPrice = get(gasInfo, 'gasPrice.max', 0);
   const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
   return gasPriceWei;
 }
