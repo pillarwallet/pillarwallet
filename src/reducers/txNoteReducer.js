@@ -40,7 +40,7 @@ export type TxNoteReducerAction = {
   payload: any,
 }
 
-const initialState = {
+export const initialState = {
   data: [],
   isDecrypting: false,
 };
