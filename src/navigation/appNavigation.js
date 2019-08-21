@@ -79,7 +79,6 @@ import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
 import SettleBalanceConfrimScreen from 'screens/Tank/SettleBalanceConfirm';
-import WalletsListScreen from 'screens/ManageWallets/WalletsList';
 import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
@@ -184,7 +183,6 @@ import {
   SETTLE_BALANCE,
   SETTLE_BALANCE_CONFIRM,
   MANAGE_WALLETS_FLOW,
-  WALLETS_LIST,
   WALLET_SETTINGS,
   MANAGE_DETAILS_SESSIONS,
   CONTACT_INFO,
@@ -544,7 +542,6 @@ const ppnSendTokenFromAssetFlow = createStackNavigator(
 // MANAGE WALLETS FLOW
 const manageWalletsFlow = createStackNavigator({
   [ACCOUNTS]: AccountsScreen,
-  [WALLETS_LIST]: WalletsListScreen,
   [WALLET_SETTINGS]: WalletSettingsScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
