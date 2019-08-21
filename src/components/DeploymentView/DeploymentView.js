@@ -20,20 +20,33 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
+import { createStructuredSelector } from 'reselect';
 
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 import { BaseText, BoldText } from 'components/Typography';
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
+import EventDetails from 'components/EventDetails';
+import SlideModal from 'components/Modals/SlideModal';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import {
+  mapOpenSeaAndBCXTransactionsHistory,
+  mapTransactionsHistory,
+} from 'utils/feedData';
+import { formatUnits } from 'utils/common';
 
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
+import type { Asset } from 'models/Asset';
 
+import { accountHistorySelector } from 'selectors/history';
+import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 type Props = {
   buttonLabel?: string,
@@ -41,6 +54,14 @@ type Props = {
   buttonAction?: ?Function,
   smartWalletState: Object,
   accounts: Accounts,
+  history: Object[],
+  contacts: Object[],
+  openSeaTxHistory: Object[],
+  assets: Asset[],
+}
+
+type State = {
+  showTransactionDetails: boolean,
 }
 
 const MessageTitle = styled(BoldText)`
@@ -59,7 +80,15 @@ const SpinnerWrapper = styled.View`
   margin-top: ${spacing.mediumLarge}px;
 `;
 
-class DeploymentView extends React.PureComponent<Props> {
+class DeploymentView extends React.PureComponent<Props, State> {
+  state = {
+    showTransactionDetails: false,
+  };
+
+  handleTransactionDetailsClose = () => {
+    this.setState({ showTransactionDetails: false });
+  };
+
   render() {
     const {
       message = {},
@@ -67,7 +96,12 @@ class DeploymentView extends React.PureComponent<Props> {
       buttonAction,
       smartWalletState,
       accounts,
+      history,
+      contacts,
+      openSeaTxHistory,
+      assets,
     } = this.props;
+    const { showTransactionDetails } = this.state;
     const { title, message: bodyText } = message;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
@@ -76,6 +110,37 @@ class DeploymentView extends React.PureComponent<Props> {
       SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
       SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
     ].includes(smartWalletStatus.status);
+
+    let detailedTransaction;
+    const matchingTransaction = history.find(({ hash }) => hash === 'x');
+
+    if (matchingTransaction) {
+      if (matchingTransaction.tranType === 'collectible') {
+        [detailedTransaction] = mapTransactionsHistory(
+          mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, [matchingTransaction]),
+          contacts,
+          COLLECTIBLE_TRANSACTION,
+        );
+      } else {
+        [detailedTransaction] = mapTransactionsHistory(
+          [matchingTransaction],
+          contacts,
+          TRANSACTION_EVENT,
+        );
+      }
+    }
+
+    if (detailedTransaction) {
+      // $FlowFixMe
+      const { decimals = 18 } = assets.find(({ symbol }) => symbol === detailedTransaction.asset) || {};
+      const value = formatUnits(detailedTransaction.value, decimals);
+      detailedTransaction = {
+        ...detailedTransaction,
+        value,
+      };
+    }
+
+    const showDeployButton = !isDeploying && buttonAction && buttonLabel;
 
     return (
       <Wrapper regularPadding center style={{ marginTop: 40, marginBottom: spacing.large }}>
@@ -86,24 +151,62 @@ class DeploymentView extends React.PureComponent<Props> {
           <SpinnerWrapper>
             <Spinner />
           </SpinnerWrapper>}
-          {!isDeploying && buttonAction && buttonLabel && <Button
-            marginTop={spacing.mediumLarge.toString()}
+          {!showDeployButton && !!detailedTransaction && <Button
+            marginTop="30"
+            height={52}
+            title="View ongoing transaction"
+            onPress={() => this.setState({ showTransactionDetails: true })}
+          />}
+          {showDeployButton && buttonAction && buttonLabel &&
+          <Button
+            marginTop="30"
             height={52}
             title={buttonLabel}
             onPress={buttonAction}
           />}
         </Wrapper>
+        {!!detailedTransaction &&
+        <SlideModal
+          isVisible={showTransactionDetails}
+          title="transaction details"
+          onModalHide={this.handleTransactionDetailsClose}
+          eventDetail
+        >
+          <EventDetails
+            eventData={detailedTransaction}
+            eventType={detailedTransaction.type}
+            eventStatus={detailedTransaction.status}
+            onClose={this.handleTransactionDetailsClose}
+            // navigation={navigation}
+          />
+        </SlideModal>
+        }
       </Wrapper>
     );
   }
 }
 
 const mapStateToProps = ({
+  contacts: { data: contacts },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
+  assets: { data: assets },
 }) => ({
   smartWalletState,
   accounts,
+  contacts,
+  assets: Object.values(assets),
 });
 
-export default connect(mapStateToProps)(DeploymentView);
+const structuredSelector = createStructuredSelector({
+  history: accountHistorySelector,
+  openSeaTxHistory: accountCollectiblesHistorySelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+
+export default connect(combinedMapStateToProps)(DeploymentView);

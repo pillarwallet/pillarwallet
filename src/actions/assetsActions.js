@@ -711,3 +711,10 @@ export const resetLocalNonceToTransactionCountAction = (wallet: Object) => {
     dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
   };
 };
+
+export const speedUpTransactionAction = (transactionHash: string, gasPrice: number) => {
+  return async () => {
+    console.log('transactionHash: ', transactionHash);
+    console.log('gasPrice: ', gasPrice);
+  };
+};

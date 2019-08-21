@@ -25,7 +25,7 @@ import Spinner from 'components/Spinner';
 
 type Props = {
   label: string,
-  value: any,
+  value?: any,
   valueAdditionalText?: string,
   spacedOut?: boolean,
   valueAddon?: React.Node,
@@ -82,6 +82,7 @@ const ListItemUnderlined = (props: Props) => {
       <ItemLabel>{label}</ItemLabel>
       <ItemValueHolder>
         {valueAddon}
+        {!!value &&
         <ItemValue
           spacedOut={spacedOut}
           additionalMargin={valueAddon}
@@ -90,6 +91,7 @@ const ListItemUnderlined = (props: Props) => {
         >
           {value}
         </ItemValue>
+        }
         {!!valueAdditionalText && <ItemValue style={{ marginLeft: 4 }}>{valueAdditionalText}</ItemValue>}
         {!!showSpinner &&
         <Spinner width={20} height={20} style={{ marginBottom: 16, marginLeft: 10 }} />}

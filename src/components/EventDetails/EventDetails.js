@@ -32,6 +32,7 @@ import isEmpty from 'lodash.isempty';
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
+import type { GasInfo } from 'models/GasInfo';
 
 // components
 import { BaseText, BoldText } from 'components/Typography';
@@ -39,16 +40,18 @@ import Button from 'components/Button';
 import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
 import ProfileImage from 'components/ProfileImage';
+import { Wrapper } from 'components/Layout';
 
 // utils
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
-import { formatFullAmount, noop, formatUnits } from 'utils/common';
+import { formatFullAmount, noop, formatUnits, formatAmount } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
 
 // actions
-import { updateTransactionStatusAction } from 'actions/historyActions';
+import { fetchGasInfoAction, updateTransactionStatusAction } from 'actions/historyActions';
 import { getTxNoteByContactAction } from 'actions/txNoteActions';
+import { speedUpTransactionAction } from 'actions/assetsActions';
 
 // constants
 import { TRANSACTION_EVENT, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -66,6 +69,7 @@ import {
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import { SPEED_TYPES } from 'constants/assetsConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -91,6 +95,10 @@ type Props = {
   txNotes: Object[],
   getTxNoteByContact: Function,
   activeAccountAddress: string,
+  speedUpTransaction: Function,
+  gasInfo: GasInfo,
+  fetchGasInfo: Function,
+  session: Object,
 }
 
 const ContentWrapper = styled.View`
@@ -151,6 +159,7 @@ class EventDetails extends React.Component<Props, {}> {
       updateTransactionStatus,
       getTxNoteByContact,
       contacts,
+      fetchGasInfo,
     } = this.props;
 
     if (eventType !== TRANSACTION_EVENT) return;
@@ -163,6 +172,7 @@ class EventDetails extends React.Component<Props, {}> {
     const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
     if (txInfo.status !== TX_PENDING_STATUS) return;
 
+    fetchGasInfo();
     this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 500);
     this.timer = setInterval(() => updateTransactionStatus(eventData.hash), 10000);
   }
@@ -172,11 +182,24 @@ class EventDetails extends React.Component<Props, {}> {
     if (this.timeout) clearTimeout(this.timeout);
   }
 
-  componentDidUpdate() {
-    const { eventType, eventData, history } = this.props;
-    if (eventType !== TRANSACTION_EVENT || !this.timer) return;
+  componentDidUpdate(prevProps: Props) {
+    const {
+      eventType,
+      eventData,
+      history,
+      fetchGasInfo,
+      session,
+    } = this.props;
+    if (eventType !== TRANSACTION_EVENT) return;
 
     const txInfo = history.find(tx => tx.hash === eventData.hash) || {};
+
+    if (!this.timer && txInfo.status !== TX_PENDING_STATUS) return;
+
+    if (prevProps.session.isOnline !== session.isOnline && session.isOnline) {
+      fetchGasInfo();
+    }
+
     if (txInfo.status !== TX_PENDING_STATUS && this.timer) {
       clearInterval(this.timer);
       this.timer = null;
@@ -240,6 +263,14 @@ class EventDetails extends React.Component<Props, {}> {
     navigation.navigate(CHAT, { username: contact.username });
   };
 
+  onSelectSpeedPress = (gasPrice) => {
+    const {
+      eventData: { hash },
+      speedUpTransaction,
+    } = this.props;
+    speedUpTransaction(hash, gasPrice);
+  };
+
   renderEventBody = (eventType, eventStatus) => {
     const {
       eventData,
@@ -249,6 +280,7 @@ class EventDetails extends React.Component<Props, {}> {
       history,
       txNotes,
       assets,
+      gasInfo,
     } = this.props;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
@@ -331,6 +363,8 @@ class EventDetails extends React.Component<Props, {}> {
         showViewOnBlockchain = false;
       }
 
+      const fastSpeedGasPrice = (gasInfo && gasInfo.gasPrice[SPEED_TYPES.FAST]) || 0;
+
       return (
         <React.Fragment>
           <EventHeader
@@ -380,6 +414,42 @@ class EventDetails extends React.Component<Props, {}> {
               label="TRANSACTION FEE"
               value={freeTx ? 'free' : utils.formatEther(fee.toString())}
               valueAdditionalText={freeTx ? '' : 'ETH'}
+            />
+            }
+            {isPending &&
+            <ListItemUnderlined
+              label="SPEED UP TRANSACTION"
+              valueAddon={
+                <Wrapper
+                  center
+                  horizontal
+                  style={{
+                    marginBottom: 16,
+                  }}
+                >
+                  {
+                    [1, 3, 5].map(multiplier => {
+                      const newGasPrice = fastSpeedGasPrice * multiplier;
+                      const gasPriceWei = utils.parseUnits(newGasPrice.toString(), 'gwei');
+                      const gasPriceEth = formatAmount(utils.formatEther(gasPriceWei));
+                      console.log('gasPriceWei: ', gasPriceWei);
+                      console.log('gasPriceEth: ', gasPriceEth);
+                      console.log('fastSpeedGasPrice: ', fastSpeedGasPrice);
+                      console.log('newGasPrice: ', newGasPrice);
+                      // const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
+                      return (
+                        <Button
+                          key={multiplier}
+                          title={`${gasPriceEth} ETH`}
+                          onPress={() => this.onSelectSpeedPress(newGasPrice)}
+                          small
+                          primaryInverted
+                        />
+                      );
+                    })
+                  }
+                </Wrapper>
+              }
             />
             }
             {!!hasNote && showNote &&
@@ -575,10 +645,14 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   txNotes: { data: txNotes },
   assets: { data: assets },
+  session: { data: session },
+  history: { gasInfo },
 }) => ({
   contacts,
   txNotes,
   assets: Object.values(assets),
+  session,
+  gasInfo,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -594,6 +668,8 @@ const combinedMapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
+  speedUpTransaction: (hash, gasPrice) => dispatch(speedUpTransactionAction(hash, gasPrice)),
+  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(EventDetails);
