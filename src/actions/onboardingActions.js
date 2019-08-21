@@ -163,7 +163,7 @@ const finishRegistration = async ({
   // restore transactions history
   await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
 
-  dispatch(fetchBadgesAction());
+  dispatch(fetchBadgesAction(false));
 
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
   if (smartWalletFeatureEnabled) {
