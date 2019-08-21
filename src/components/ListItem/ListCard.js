@@ -37,6 +37,7 @@ type Props = {
   label?: string,
   contentWrapperStyle?: Object,
   disabled?: boolean,
+  children?: React.Node,
 }
 
 const CardRow = styled.View`
@@ -102,6 +103,7 @@ export const ListCard = (props: Props) => {
     label,
     contentWrapperStyle,
     disabled,
+    children,
   } = props;
 
   const wrapperStyle = { padding: 20, justifyContent: 'center' };
@@ -128,6 +130,7 @@ export const ListCard = (props: Props) => {
       {!!note &&
       <Note {...note} containerStyle={{ marginTop: 14 }} />
       }
+      {children}
     </ShadowedCard>
   );
 };

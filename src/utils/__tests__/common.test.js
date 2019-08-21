@@ -109,6 +109,10 @@ describe('Common utils', () => {
       const expectedValue = '12.03';
       expect(formatMoney('12.0300')).toBe(expectedValue);
     });
+    it('should add trailing zeros to number 12.3', () => {
+      const expectedValue = '12.30';
+      expect(formatMoney('12.3', 2, 3, ',', '.', false)).toBe(expectedValue);
+    });
     it('should strip trailing zeros and a dot from number 12.00', () => {
       const expectedValue = '12';
       expect(formatMoney('12.00')).toBe(expectedValue);

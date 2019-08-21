@@ -203,14 +203,21 @@ class SendTokenContacts extends React.Component<Props, State> {
     });
   };
 
-  onContactPress = (user, isDisabled) => {
+  onContactPress = (user) => {
     const { navigation } = this.props;
-    if (isDisabled) {
+    const {
+      username,
+      hasSmartWallet,
+      smartWallets,
+      isPPNTransaction,
+      ethAddress,
+    } = user;
+    if (!hasSmartWallet) {
       Alert.alert(
         'This user is not on Pillar Network',
         'You both should be connected to Pillar Network in order to be able to send instant transactions for free',
         [
-          { text: 'Open Chat', onPress: () => navigation.navigate(CHAT, { username: user.username }) },
+          { text: 'Open Chat', onPress: () => navigation.navigate(CHAT, { username }) },
           { text: 'Switch to Ethereum Mainnet', onPress: () => navigation.navigate(ACCOUNTS) },
           { text: 'Cancel', style: 'cancel' },
         ],
@@ -218,21 +225,20 @@ class SendTokenContacts extends React.Component<Props, State> {
       );
       return;
     }
-    const address = user.isPPNTransaction
-      ? user.smartWallets[0]
-      : user.ethAddress;
+    const address = isPPNTransaction
+      ? smartWallets[0]
+      : ethAddress;
     this.setUsersEthAddress(address);
   };
 
   renderContact = ({ item: user }) => {
-    const isDisabled = user.isPPNTransaction
-      && (!user.smartWallets || !user.smartWallets.length);
+    const { username, hasSmartWallet, profileImage } = user;
     return (
       <ListItemWithImage
-        onPress={() => this.onContactPress(user, isDisabled)}
-        wrapperOpacity={isDisabled ? 0.3 : 1}
-        label={user.username}
-        avatarUrl={user.profileImage}
+        onPress={() => this.onContactPress(user)}
+        wrapperOpacity={hasSmartWallet ? 1 : 0.3}
+        label={username}
+        avatarUrl={profileImage}
       />
     );
   };
@@ -303,16 +309,22 @@ class SendTokenContacts extends React.Component<Props, State> {
     if (smartWalletFeatureEnabled
       && activeBNetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK
       && contactsSmartAddresses) {
-      contactsToRender = contactsToRender.map(contact => {
-        const { smartWallets = [] } = contactsSmartAddresses.find(
-          ({ userId }) => contact.id && isCaseInsensitiveMatch(userId, contact.id),
-        ) || {};
-        return {
-          ...contact,
-          isPPNTransaction: true,
-          smartWallets,
-        };
-      });
+      contactsToRender = contactsToRender
+        .map(contact => {
+          const { smartWallets = [] } = contactsSmartAddresses.find(
+            ({ userId }) => contact.id && isCaseInsensitiveMatch(userId, contact.id),
+          ) || {};
+          return {
+            ...contact,
+            isPPNTransaction: true,
+            hasSmartWallet: !!smartWallets.length,
+            smartWallets,
+          };
+        })
+        .sort((a, b) => {
+          if (a.hasSmartWallet === b.hasSmartWallet) return 0;
+          return a.hasSmartWallet ? -1 : 1;
+        });
     }
 
     const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;

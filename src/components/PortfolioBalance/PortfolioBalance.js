@@ -51,7 +51,7 @@ class PortfolioBalance extends React.PureComponent<Props, {}> {
 
     const portfolioBalances = calculatePortfolioBalance(assets, rates, balances);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const portfolioBalance = formatMoney(portfolioBalances[fiatCurrency] || 0);
+    const portfolioBalance = formatMoney(portfolioBalances[fiatCurrency] || 0, 2, 3, ',', '.', false);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     return (
