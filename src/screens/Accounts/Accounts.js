@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import styled from 'styled-components/native';
 import { FlatList, Platform } from 'react-native';
 import isEqual from 'lodash.isequal';
 import { connect } from 'react-redux';
@@ -30,6 +31,10 @@ import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Spinner from 'components/Spinner';
 import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
+import Icon from 'components/Icon';
+
+// configs
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { getActiveAccount } from 'utils/accounts';
@@ -44,6 +49,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { Assets, Balances, Rates } from 'models/Asset';
 import type { Accounts, Account } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 
 // constants
 import {
@@ -56,14 +62,14 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
+// actions
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
-import { PPN_TOKEN } from 'configs/assetsConfig';
+// selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
-import styled from 'styled-components/native';
-import Icon from 'components/Icon';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -77,7 +83,7 @@ type Props = {
   accounts: Accounts,
   resetIncorrectPassword: Function,
   switchAccount: Function,
-  smartWalletState: Object,
+  smartWalletState: SmartWalletReducerState,
   balances: Balances,
   rates: Rates,
 }
@@ -303,8 +309,7 @@ class AccountsScreen extends React.Component<Props, State> {
       assets,
       rates,
     } = this.props;
-    const ppnNetwork = blockchainNetworks.find((network) => network.id === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK)
-      || null;
+    const ppnNetwork = blockchainNetworks.find((network) => network.id === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const showSmartWalletInitButton = !smartWalletStatus.hasAccount && smartWalletFeatureEnabled;
     const visibleAccounts = smartWalletFeatureEnabled
@@ -336,7 +341,7 @@ class AccountsScreen extends React.Component<Props, State> {
       >
         {!changingAccount &&
         <FlatList
-          data={smartWalletFeatureEnabled
+          data={smartWalletFeatureEnabled && ppnNetwork
             ? [...walletsToShow, ppnNetwork]
             : walletsToShow}
           keyExtractor={(item) => item.id || item.type}
