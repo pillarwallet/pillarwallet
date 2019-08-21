@@ -207,12 +207,12 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { navigation } = this.props;
     const {
       username,
-      isDisabled,
+      hasSmartWallet,
       smartWallets,
       isPPNTransaction,
       ethAddress,
     } = user;
-    if (isDisabled) {
+    if (!hasSmartWallet) {
       Alert.alert(
         'This user is not on Pillar Network',
         'You both should be connected to Pillar Network in order to be able to send instant transactions for free',
@@ -232,11 +232,11 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   renderContact = ({ item: user }) => {
-    const { username, isDisabled, profileImage } = user;
+    const { username, hasSmartWallet, profileImage } = user;
     return (
       <ListItemWithImage
         onPress={() => this.onContactPress(user)}
-        wrapperOpacity={isDisabled ? 0.3 : 1}
+        wrapperOpacity={hasSmartWallet ? 1 : 0.3}
         label={username}
         avatarUrl={profileImage}
       />
@@ -317,13 +317,13 @@ class SendTokenContacts extends React.Component<Props, State> {
           return {
             ...contact,
             isPPNTransaction: true,
-            isDisabled: !smartWallets.length,
+            hasSmartWallet: !!smartWallets.length,
             smartWallets,
           };
         })
         .sort((a, b) => {
-          if (a.isDisabled === b.isDisabled) return 0;
-          return a.isDisabled ? -1 : 1;
+          if (a.hasSmartWallet === b.hasSmartWallet) return 0;
+          return a.hasSmartWallet ? -1 : 1;
         });
     }
 
