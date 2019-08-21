@@ -34,7 +34,7 @@ export type HistoryAction = {
   payload: any,
 }
 
-const initialState = {
+export const initialState = {
   data: {},
   gasInfo: {
     gasPrice: {},

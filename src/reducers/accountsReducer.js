@@ -11,7 +11,7 @@ export type AccountsAction = {
   payload: any,
 };
 
-const initialState = {
+export const initialState = {
   data: [],
 };
 
