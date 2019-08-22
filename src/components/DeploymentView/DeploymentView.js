@@ -72,10 +72,12 @@ class DeploymentView extends React.PureComponent<Props> {
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const { upgrade: { deploymentStarted } } = smartWalletState;
-    const isDeploying = deploymentStarted || [
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-    ].includes(smartWalletStatus.status);
+    const isDeploying = (deploymentStarted
+      || [
+        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+        SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+      ].includes(smartWalletStatus.status))
+      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
 
     return (
       <Wrapper regularPadding center style={{ marginTop: 40, marginBottom: spacing.large }}>
