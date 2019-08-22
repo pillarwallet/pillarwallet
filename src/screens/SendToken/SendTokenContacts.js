@@ -212,7 +212,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       isPPNTransaction,
       ethAddress,
     } = user;
-    if (!hasSmartWallet) {
+    if (isPPNTransaction && !hasSmartWallet) {
       Alert.alert(
         'This user is not on Pillar Network',
         'You both should be connected to Pillar Network in order to be able to send instant transactions for free',
@@ -232,11 +232,16 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   renderContact = ({ item: user }) => {
-    const { username, hasSmartWallet, profileImage } = user;
+    const {
+      username,
+      hasSmartWallet,
+      isPPNTransaction,
+      profileImage,
+    } = user;
     return (
       <ListItemWithImage
         onPress={() => this.onContactPress(user)}
-        wrapperOpacity={hasSmartWallet ? 1 : 0.3}
+        wrapperOpacity={isPPNTransaction && !hasSmartWallet ? 0.3 : 1}
         label={username}
         avatarUrl={profileImage}
       />
@@ -292,8 +297,14 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { isScanning, formStructure, value } = this.state;
 
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
+
+    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
+    const { id: activeBNetworkId } = activeBNetwork;
+
     const userAccounts = this.getUserAccounts();
-    const allContacts = [...userAccounts, ...localContacts];
+    const allContacts = smartWalletFeatureEnabled && activeBNetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK
+      ? localContacts // no asset transfer between user accounts in PPN send flow
+      : [...userAccounts, ...localContacts];
     let contactsToRender = [...allContacts];
     if (value && value.address.length) {
       const searchStr = value.address.toLowerCase();
@@ -304,8 +315,6 @@ class SendTokenContacts extends React.Component<Props, State> {
       });
     }
 
-    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
-    const { id: activeBNetworkId } = activeBNetwork;
     if (smartWalletFeatureEnabled
       && activeBNetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK
       && contactsSmartAddresses) {
