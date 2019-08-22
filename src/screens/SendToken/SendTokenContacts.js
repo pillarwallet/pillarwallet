@@ -297,8 +297,14 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { isScanning, formStructure, value } = this.state;
 
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
+
+    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
+    const { id: activeBNetworkId } = activeBNetwork;
+
     const userAccounts = this.getUserAccounts();
-    const allContacts = [...userAccounts, ...localContacts];
+    const allContacts = smartWalletFeatureEnabled && activeBNetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK
+      ? localContacts // no asset transfer between user accounts in PPN send flow
+      : [...userAccounts, ...localContacts];
     let contactsToRender = [...allContacts];
     if (value && value.address.length) {
       const searchStr = value.address.toLowerCase();
@@ -309,8 +315,6 @@ class SendTokenContacts extends React.Component<Props, State> {
       });
     }
 
-    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
-    const { id: activeBNetworkId } = activeBNetwork;
     if (smartWalletFeatureEnabled
       && activeBNetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK
       && contactsSmartAddresses) {
