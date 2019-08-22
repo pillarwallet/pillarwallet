@@ -35,7 +35,7 @@ export type RatesReducerAction = {
   payload: any
 }
 
-const initialState = {
+export const initialState = {
   data: {},
   isFetched: false,
 };

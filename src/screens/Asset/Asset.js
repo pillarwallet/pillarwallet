@@ -297,6 +297,7 @@ class AssetScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
+        navigation={navigation}
         headerProps={{
           centerItems: [{ title: assetData.name }],
           rightItems: [

@@ -33,7 +33,7 @@ export type FeatureFlagsReducerAction = {
   payload: any,
 }
 
-const initialState = {
+export const initialState = {
   data: INITIAL_FEATURE_FLAGS,
 };
 

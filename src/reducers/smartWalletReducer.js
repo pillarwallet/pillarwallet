@@ -68,7 +68,7 @@ export type SmartWalletReducerAction = {
   payload?: any,
 };
 
-const initialState = {
+export const initialState = {
   upgradeDismissed: false,
   sdkInitialized: false,
   connectedAccount: {},
@@ -93,7 +93,7 @@ const initialState = {
 export default function smartWalletReducer(
   state: SmartWalletReducerState = initialState,
   action: SmartWalletReducerAction,
-) {
+): SmartWalletReducerState {
   switch (action.type) {
     case SET_SMART_WALLET_SDK_INIT:
       return {
