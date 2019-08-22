@@ -206,6 +206,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
           </FooterWrapper>
           )
         }
+        minAvoidHeight={200}
       >
         <BackgroundWrapper>
           <Wrapper regularPadding>
