@@ -57,7 +57,7 @@ type Chat = {
   },
 }
 
-export type ChateducerState = {
+export type ChatReducerState = {
   data: {
     chats: Chat[],
     messages: {
@@ -73,7 +73,7 @@ export type ChateducerState = {
   draft: ?string,
 }
 
-export type ChateducerAction = {
+export type ChatReducerAction = {
   type: string,
   payload: any,
 }
@@ -93,9 +93,9 @@ const initialState = {
 };
 
 export default function chatReducer(
-  state: ChateducerState = initialState,
-  action: ChateducerAction,
-): ChateducerState {
+  state: ChatReducerState = initialState,
+  action: ChatReducerAction,
+): ChatReducerState {
   switch (action.type) {
     case ADD_MESSAGE:
       const { username, message } = action.payload;

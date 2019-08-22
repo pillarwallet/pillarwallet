@@ -42,6 +42,8 @@ import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
+import type { RootReducerState } from 'reducers/rootReducer';
+
 import configureStore from './src/configureStore';
 
 export const LoadingSpinner = styled(Spinner)`
@@ -152,7 +154,7 @@ class App extends React.Component<Props, *> {
   }
 }
 
-const mapStateToProps = ({ appSettings: { isFetched } }) => ({
+const mapStateToProps = ({ appSettings: { isFetched } }: RootReducerState) => ({
   isFetched,
 });
 

@@ -23,7 +23,7 @@ import { SET_HISTORY, ADD_TRANSACTION, SET_GAS_INFO } from 'constants/historyCon
 import type { TransactionsStore } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
 
-export type HistoryState = {
+export type HistoryReducerState = {
   data: TransactionsStore,
   gasInfo: GasInfo,
   isFetched: boolean,
@@ -44,9 +44,9 @@ export const initialState = {
 };
 
 export default function historyReducer(
-  state: HistoryState = initialState,
+  state: HistoryReducerState = initialState,
   action: HistoryAction,
-): HistoryState {
+): HistoryReducerState {
   switch (action.type) {
     case REHYDRATE:
       return {

@@ -26,7 +26,7 @@ import {
 import type { CollectiblesStore, CollectiblesHistoryStore } from 'models/Collectible';
 
 
-export type CollectiblesState = {
+export type CollectiblesReducerState = {
   data: CollectiblesStore,
   transactionHistory: CollectiblesHistoryStore,
 };
@@ -43,9 +43,9 @@ const initialState = {
 
 
 export default function collectiblesReducer(
-  state: CollectiblesState = initialState,
+  state: CollectiblesReducerState = initialState,
   action: CollectiblesAction,
-): CollectiblesState {
+): CollectiblesReducerState {
   switch (action.type) {
     case UPDATE_COLLECTIBLES:
       return {

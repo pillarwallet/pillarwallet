@@ -2,7 +2,7 @@
 import { ADD_ACCOUNT, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import type { Accounts } from 'models/Account';
 
-export type AccountsState = {
+export type AccountsReducerState = {
   data: Accounts,
 };
 
@@ -16,9 +16,9 @@ export const initialState = {
 };
 
 export default function accountsReducer(
-  state: AccountsState = initialState,
+  state: AccountsReducerState = initialState,
   action: AccountsAction,
-): AccountsState {
+): AccountsReducerState {
   switch (action.type) {
     case UPDATE_ACCOUNTS:
       return { ...state, data: action.payload };
