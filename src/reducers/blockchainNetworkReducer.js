@@ -4,7 +4,7 @@ import {
   SET_ACTIVE_NETWORK,
 } from 'constants/blockchainNetworkConstants';
 
-export type NetworkState = {
+export type BlockchainNetworkReducerState = {
   data: Object[],
 };
 
@@ -29,9 +29,9 @@ const initialState = {
 };
 
 export default function blockchainNetworkReducer(
-  state: NetworkState = initialState,
+  state: BlockchainNetworkReducerState = initialState,
   action: NetworkAction,
-): NetworkState {
+): BlockchainNetworkReducerState {
   switch (action.type) {
     case SET_ACTIVE_NETWORK:
       return {

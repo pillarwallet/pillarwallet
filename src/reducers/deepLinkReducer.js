@@ -19,11 +19,11 @@
 */
 import { ADD_DEEP_LINK_DATA, RESET_DEEP_LINK_DATA } from 'constants/deepLinkConstants';
 
-export type DeepLinkRecucerState = {
+export type DeepLinkReducerState = {
   data: Object,
 }
 
-export type DeepLinkRecucerAction = {
+export type DeepLinkReducerAction = {
   type: string,
   payload: any,
 }
@@ -33,8 +33,8 @@ const initialState = {
 };
 
 export default function appSettingsReducer(
-  state: DeepLinkRecucerState = initialState,
-  action: DeepLinkRecucerAction,
+  state: DeepLinkReducerState = initialState,
+  action: DeepLinkReducerAction,
 ) {
   switch (action.type) {
     case ADD_DEEP_LINK_DATA:

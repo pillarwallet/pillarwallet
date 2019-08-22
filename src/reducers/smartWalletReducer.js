@@ -61,7 +61,7 @@ export type SmartWalletReducerState = {
     recoveryAgents: RecoveryAgent[],
   },
   lastSyncedHash: ?string,
-}
+};
 
 export type SmartWalletReducerAction = {
   type: string,

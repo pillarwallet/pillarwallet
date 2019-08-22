@@ -2,7 +2,7 @@
 import { createSelector } from 'reselect';
 import { getBalance } from 'utils/assets';
 import type { Balances } from 'models/Asset';
-import type { PaymentNetworkState } from 'reducers/paymentNetworkReducer';
+import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
 import { activeAccountIdSelector, paymentNetworkBalancesSelector } from './selectors';
 
 export const paymentNetworkAccountBalancesSelector: ((state: Object) => Balances) = createSelector(
@@ -15,7 +15,7 @@ export const paymentNetworkAccountBalancesSelector: ((state: Object) => Balances
 );
 
 export const availableStakeSelector =
-  ({ paymentNetwork }: {paymentNetwork: PaymentNetworkState}) => Number(paymentNetwork.availableStake);
+  ({ paymentNetwork }: {paymentNetwork: PaymentNetworkReducerState}) => Number(paymentNetwork.availableStake);
 
 export const paymentNetworkNonZeroBalancesSelector: ((state: Object) => Balances) = createSelector(
   paymentNetworkAccountBalancesSelector,
