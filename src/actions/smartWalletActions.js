@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { sdkModules, sdkConstants } from '@archanova/sdk';
-import { weiToEth } from '@netgum/utils';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
@@ -536,14 +535,13 @@ export const fetchVirtualAccountBalanceAction = () => {
     // process pending balances
     const accountBalances = pendingBalances.reduce((memo, tokenBalance) => {
       const symbol = get(tokenBalance, 'token.symbol', ETH);
-      let balance = get(tokenBalance, 'incoming', new BigNumber(0));
-
-      if (symbol === ETH) balance = weiToEth(balance);
+      const { decimals: assetDecimals = 18 } = assets[symbol] || {};
+      const balance = get(tokenBalance, 'incoming', new BigNumber(0));
 
       return {
         ...memo,
         [symbol]: {
-          balance: balance.toString(),
+          balance: formatUnits(balance, assetDecimals),
           symbol,
         },
       };
