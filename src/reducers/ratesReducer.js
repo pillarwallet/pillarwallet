@@ -18,10 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { UPDATE_RATES } from 'constants/ratesConstants';
-import merge from 'lodash.merge';
+
+type Rates = {
+  [key: string]: {
+    [key: string]: number,
+  },
+};
 
 export type RatesReducerState = {
-  data: Object,
+  data: Rates,
   isFetched: boolean,
 }
 
@@ -35,19 +40,16 @@ const initialState = {
   isFetched: false,
 };
 
-export default function assetsReducer(
+const ratesReducer = (
   state: RatesReducerState = initialState,
   action: RatesReducerAction,
-) {
+): RatesReducerState => {
   switch (action.type) {
     case UPDATE_RATES:
-      const updatedState = { data: action.payload, isFetched: true };
-      return merge(
-        {},
-        state,
-        updatedState,
-      );
+      return { ...state, data: action.payload, isFetched: true };
     default:
       return state;
   }
-}
+};
+
+export default ratesReducer;
