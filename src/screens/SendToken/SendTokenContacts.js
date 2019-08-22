@@ -212,7 +212,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       isPPNTransaction,
       ethAddress,
     } = user;
-    if (!hasSmartWallet) {
+    if (isPPNTransaction && !hasSmartWallet) {
       Alert.alert(
         'This user is not on Pillar Network',
         'You both should be connected to Pillar Network in order to be able to send instant transactions for free',
@@ -232,11 +232,16 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   renderContact = ({ item: user }) => {
-    const { username, hasSmartWallet, profileImage } = user;
+    const {
+      username,
+      hasSmartWallet,
+      isPPNTransaction,
+      profileImage,
+    } = user;
     return (
       <ListItemWithImage
         onPress={() => this.onContactPress(user)}
-        wrapperOpacity={hasSmartWallet ? 1 : 0.3}
+        wrapperOpacity={isPPNTransaction && !hasSmartWallet ? 0.3 : 1}
         label={username}
         avatarUrl={profileImage}
       />
