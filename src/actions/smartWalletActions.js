@@ -961,18 +961,24 @@ export const fetchAvailableTxToSettleAction = () => {
       return;
     }
 
-    const { accounts: { data: accounts } } = getState();
+    const {
+      accounts: { data: accounts },
+      assets: { data: assets },
+    } = getState();
     const activeAccountAddress = getActiveAccountAddress(accounts);
 
     dispatch({ type: START_FETCHING_AVAILABLE_TO_SETTLE_TX });
     const payments = await smartWalletService.getAccountPaymentsToSettle(activeAccountAddress);
 
-    const txToSettle = payments.map(item => ({
-      token: item.token,
-      hash: item.hash,
-      value: item.value,
-      createdAt: item.updatedAt,
-    }));
+    const txToSettle = payments.map(item => {
+      const { decimals = 18 } = assets[item.token] || {};
+      return {
+        token: item.token,
+        hash: item.hash,
+        value: new BigNumber(formatUnits(item.value, decimals)),
+        createdAt: item.updatedAt,
+      };
+    });
     dispatch({
       type: SET_AVAILABLE_TO_SETTLE_TX,
       payload: txToSettle,
