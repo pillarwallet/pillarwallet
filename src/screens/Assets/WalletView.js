@@ -160,7 +160,7 @@ const CustomKAWrapper = (props) => {
     hasStickyTabs,
   } = props;
   const scrollWrapperProps = {
-    stickyHeaderIndices: hasStickyTabs ? [2] : null,
+    stickyHeaderIndices: hasStickyTabs ? [2] : [0],
     style: { backgroundColor: baseColors.white },
     contentContainerStyle: {
       backgroundColor: baseColors.white,
@@ -378,8 +378,8 @@ class WalletView extends React.Component<Props, State> {
     const isSearchOver = assetsSearchState === FETCHED;
     const isSearching = assetsSearchState === FETCHING && query.length >= MIN_QUERY_LENGTH;
     const inAssetSearchMode = (query.length >= MIN_QUERY_LENGTH && !!assetsSearchState);
-    const isInCollectiblesSearchMode = (query && query.length >= MIN_QUERY_LENGTH) && activeTab === COLLECTIBLES;
-    const isInSearchMode = inAssetSearchMode || isInCollectiblesSearchMode;
+    const isInCollectiblesSearchMode = !!query && query.length >= MIN_QUERY_LENGTH;
+    const isInSearchMode = activeTab === TOKENS ? inAssetSearchMode : isInCollectiblesSearchMode;
 
     const filteredCollectibles = isInCollectiblesSearchMode
       ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
@@ -423,7 +423,7 @@ class WalletView extends React.Component<Props, State> {
     }
     return (
       <CustomKAWrapper
-        hasStickyTabs={!isInSearchMode && !blockAssetsView && !!collectibles.length}
+        hasStickyTabs={!isInSearchAndFocus && !blockAssetsView && !!collectibles.length}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -464,7 +464,7 @@ class WalletView extends React.Component<Props, State> {
           itemSearchState={!!isInSearchMode}
           navigation={navigation}
         />}
-        {!isInSearchMode && !blockAssetsView && !!collectibles.length &&
+        {!isInSearchAndFocus && !blockAssetsView && !!collectibles.length &&
         <Tabs
           initialActiveTab={activeTab}
           tabs={assetsTabs}
@@ -477,13 +477,13 @@ class WalletView extends React.Component<Props, State> {
         }
         {!blockAssetsView &&
         <ListWrapper>
-          {inAssetSearchMode && isSearchOver &&
+          {inAssetSearchMode && isSearchOver && activeTab === TOKENS &&
             this.renderFoundTokensList()
           }
-          {((activeTab === TOKENS || !filteredCollectibles.length) && !inAssetSearchMode) && (
+          {activeTab === TOKENS && !inAssetSearchMode && (
             <AssetsList balance={balance} />
           )}
-          {activeTab === COLLECTIBLES && !!filteredCollectibles.length && (
+          {activeTab === COLLECTIBLES && (
             <CollectiblesList
               collectibles={filteredCollectibles}
               searchQuery={query}
