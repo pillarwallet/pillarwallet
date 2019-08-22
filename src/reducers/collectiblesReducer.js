@@ -42,10 +42,10 @@ const initialState = {
 };
 
 
-export default function collectiblesReducer(
+const collectiblesReducer = (
   state: CollectiblesReducerState = initialState,
   action: CollectiblesAction,
-): CollectiblesReducerState {
+): CollectiblesReducerState => {
   switch (action.type) {
     case UPDATE_COLLECTIBLES:
       return {
@@ -75,5 +75,6 @@ export default function collectiblesReducer(
     default:
       return state;
   }
-}
+};
 
+export default collectiblesReducer;
