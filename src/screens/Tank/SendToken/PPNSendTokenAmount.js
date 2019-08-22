@@ -194,17 +194,18 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: `Send ${this.assetData.token} via PPN` }] }}
-        keyboardAvoidFooter={!!value && !!parseFloat(value.amount) && (
+        keyboardAvoidFooter={
           <FooterWrapper>
-            <Button
-              disabled={!session.isOnline}
-              small
-              flexRight
-              title="Next"
-              onPress={this.handleFormSubmit}
-            />
+            {!!value && !!parseFloat(value.amount) &&
+              <Button
+                disabled={!session.isOnline}
+                small
+                flexRight
+                title="Next"
+                onPress={this.handleFormSubmit}
+              />
+            }
           </FooterWrapper>
-          )
         }
         minAvoidHeight={200}
       >
