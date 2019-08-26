@@ -11,6 +11,7 @@ export type Account = {
   extra?: AccountExtra,
   isActive: boolean,
   walletId: string,
+  privateKey?: any,
 };
 
 export type Accounts = Account[];

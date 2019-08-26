@@ -24,12 +24,12 @@ import merge from 'lodash.merge';
 export type AppSettingsReducerState = {
   data: Object,
   isFetched: boolean,
-}
+};
 
 export type AppSettingsReducerAction = {
   type: string,
-  payload: any
-}
+  payload: Object,
+};
 
 export const initialState = {
   data: {
@@ -42,10 +42,10 @@ export const initialState = {
   isFetched: false,
 };
 
-export default function appSettingsReducer(
+const appSettingsReducer = (
   state: AppSettingsReducerState = initialState,
   action: AppSettingsReducerAction,
-) {
+): AppSettingsReducerState => {
   switch (action.type) {
     case UPDATE_APP_SETTINGS:
       const updatedState = { data: action.payload, isFetched: true };
@@ -57,4 +57,6 @@ export default function appSettingsReducer(
     default:
       return state;
   }
-}
+};
+
+export default appSettingsReducer;

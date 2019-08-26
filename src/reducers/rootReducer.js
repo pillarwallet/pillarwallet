@@ -21,6 +21,7 @@ import { combineReducers } from 'redux';
 
 // constants
 import { LOG_OUT } from 'constants/authConstants';
+import type { DbAction } from 'models/DbAction';
 
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
@@ -60,7 +61,7 @@ import type { WalletReducerState } from './walletReducer';
 import type { SmartWalletReducerState } from './smartWalletReducer';
 import type { WalletConnectReducerState } from './walletConnectReducer';
 import type { AssetsReducerState } from './assetsReducer';
-import type { AppSettingsReducerState } from './appSettingsReducer';
+import type { AppSettingsReducerAction, AppSettingsReducerState } from './appSettingsReducer';
 import type { RatesReducerState } from './ratesReducer';
 import type { UserReducerState } from './userReducer';
 import type { HistoryReducerState } from './historyReducer';
@@ -84,7 +85,7 @@ import type { AccountsReducerState } from './accountsReducer';
 import type { BalancesReducerState } from './balancesReducer';
 import type { PaymentNetworkReducerState } from './paymentNetworkReducer';
 import type { FeatureFlagsReducerState } from './featureFlagsReducer';
-import type { BlockchainNetworkReducerState } from './blockchainNetworkReducer';
+import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -118,6 +119,20 @@ export type RootReducerState = {|
   featureFlags: FeatureFlagsReducerState,
   blockchainNetwork: BlockchainNetworkReducerState,
 |};
+
+type RootReducerAction =
+    BlockchainNetworkAction
+  | AppSettingsReducerAction
+  | DbAction;
+
+export type GetState = () => RootReducerState;
+export type ThunkAction = (
+  dispatch: Dispatch, // eslint-disable-line no-use-before-define
+  getState: GetState,
+) => any;
+export type Dispatch = (
+  action: RootReducerAction | Promise<RootReducerAction> | ThunkAction,
+) => void;
 
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
@@ -154,7 +169,7 @@ const appReducer = combineReducers({
 
 const initialState = appReducer(undefined, {});
 
-const rootReducer = (state: RootReducerState, action: Object) => {
+const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
   if (action.type === LOG_OUT) {
     return initialState;
   }
