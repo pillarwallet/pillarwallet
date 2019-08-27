@@ -46,6 +46,8 @@ import {
   SMART_WALLET_UPGRADE_STATUSES,
   RESET_SMART_WALLET,
 } from 'constants/smartWalletConstants';
+import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
+import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
@@ -169,6 +171,8 @@ describe('Wallet actions', () => {
       { type: UPDATE_BADGES, payload: [] },
       { type: RESET_SMART_WALLET },
       { type: RESET_PAYMENT_NETWORK },
+      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -224,6 +228,8 @@ describe('Wallet actions', () => {
       { type: UPDATE_BADGES, payload: [] },
       { type: RESET_SMART_WALLET },
       { type: RESET_PAYMENT_NETWORK },
+      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -285,6 +291,8 @@ describe('Wallet actions', () => {
       { type: UPDATE_BADGES, payload: [] },
       { type: RESET_SMART_WALLET },
       { type: RESET_PAYMENT_NETWORK },
+      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
