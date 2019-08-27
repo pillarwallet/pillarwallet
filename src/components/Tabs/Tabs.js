@@ -24,8 +24,8 @@ import { CachedImage } from 'react-native-cached-image';
 import Title from 'components/Title';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
+import { Shadow } from 'components/Shadow';
 import { baseColors, UIColors, spacing, fontSizes } from 'utils/variables';
-import { Shadow } from '../Shadow';
 
 type Tab = {
   id: string,
@@ -45,6 +45,7 @@ type Props = {
   wrapperStyle?: Object,
   isFloating?: boolean,
   coverColor?: string,
+  onTabChange?: Function,
 }
 
 type TabWrapperProps = {
@@ -272,6 +273,7 @@ export default class Tabs extends React.Component<Props, State> {
 
   renderTabItems = (tabs: Tab[]) => {
     const { activeTab, tabLengths } = this.state;
+    const { onTabChange } = this.props;
 
     const tabItems = tabs.map(tab => {
       const isActive = activeTab === tab.id;
@@ -298,10 +300,16 @@ export default class Tabs extends React.Component<Props, State> {
         >
           <TabWrapper showSVGShadow={isActive && Platform.OS === 'android' && tabLengths[id]} width={tabLengths[id]}>
             <TabItem
+              activeOpacity={1}
               active={isActive}
-              onPress={() => this.setState({
-                activeTab: id,
-              }, onPress)}
+              onPress={() => {
+                if (onTabChange) onTabChange(true);
+                this.setState({ activeTab: id });
+                requestAnimationFrame(() => {
+                  onPress();
+                  if (onTabChange) onTabChange();
+                });
+              }}
               onLayout={(e) => {
                 if (tabLengths[id]) return;
                 const thisTabLength = e.nativeEvent.layout.width;

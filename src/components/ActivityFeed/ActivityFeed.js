@@ -138,37 +138,63 @@ type State = {
   selectedEventData: ?Object | ?Transaction,
   eventType: string,
   eventStatus: string,
-}
-
-function getSortedFeedData(tabs, activeTab, feedData) {
-  if (tabs.length) {
-    const aTab = tabs.find(({ id, data = [] }) => id === activeTab && data.length) || { data: [] };
-    return aTab.data.sort((a, b) => b.createdAt - a.createdAt);
-  } else if (feedData.length) {
-    return feedData.sort((a, b) => b.createdAt - a.createdAt);
-  }
-  return [];
+  tabIsChanging: boolean,
+  formattedFeedData: Object[],
 }
 
 const PPNIcon = require('assets/icons/icon_PPN.png');
 
 class ActivityFeed extends React.Component<Props, State> {
-  feedData: Object[];
-
   static defaultProps = {
     initialNumToRender: 7,
   };
 
   constructor(props: Props) {
     super(props);
-    this.feedData = [];
     this.state = {
       showModal: false,
       selectedEventData: null,
       eventType: '',
       eventStatus: '',
+      tabIsChanging: false,
+      formattedFeedData: [],
     };
   }
+
+  componentDidMount() {
+    this.generateFeedSections();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { tabs = [], feedData = [] } = this.props;
+    if ((tabs.length && !isEqual(tabs, prevProps.tabs))
+      || (feedData.length && !isEqual(feedData, prevProps.feedData))) {
+      this.generateFeedSections();
+    }
+  }
+
+  generateFeedSections = () => {
+    const { tabs = [], activeTab, feedData = [] } = this.props;
+    const dataSections = [];
+    let feedList = feedData;
+
+    if (tabs.length) {
+      const activeTabInfo = tabs.find(({ id }) => id === activeTab) || { data: [] };
+      ({ data: feedList } = activeTabInfo);
+    }
+
+    feedList.forEach(listItem => {
+      const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D');
+      const existingSection = dataSections.find(({ title }) => title === formattedDate);
+      if (!existingSection) {
+        dataSections.push({ title: formattedDate, data: [{ ...listItem }] });
+      } else {
+        existingSection.data.push({ ...listItem });
+      }
+    });
+
+    this.setState({ formattedFeedData: dataSections });
+  };
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
@@ -364,6 +390,10 @@ class ActivityFeed extends React.Component<Props, State> {
     return `${createdAt.toString()}${item.id || item._id || item.hash || ''}`;
   };
 
+  onTabChange = (isChanging: boolean) => {
+    this.setState({ tabIsChanging: isChanging });
+  };
+
   render() {
     const {
       feedTitle,
@@ -375,7 +405,6 @@ class ActivityFeed extends React.Component<Props, State> {
       initialNumToRender,
       tabs = [],
       activeTab,
-      feedData = [],
       extraFeedData,
       hideTabs,
     } = this.props;
@@ -385,22 +414,11 @@ class ActivityFeed extends React.Component<Props, State> {
       selectedEventData,
       eventType,
       eventStatus,
+      tabIsChanging,
+      formattedFeedData,
     } = this.state;
 
-    const feedList = getSortedFeedData(tabs, activeTab, feedData);
-    const feedSections = [];
-
-    feedList.forEach(listItem => {
-      const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D');
-      const existingSection = feedSections.find(({ title }) => title === formattedDate);
-      if (!existingSection) {
-        feedSections.push({ title: formattedDate, data: [{ ...listItem }] });
-      } else {
-        existingSection.data.push({ ...listItem });
-      }
-    });
-
-    const additionalContentContainerStyle = !feedList.length
+    const additionalContentContainerStyle = !formattedFeedData.length
       ? { justifyContent: 'center', flex: 1 }
       : {};
 
@@ -413,11 +431,16 @@ class ActivityFeed extends React.Component<Props, State> {
           <Title subtitle title={feedTitle} />
         </ActivityFeedHeader>}
         {tabs.length > 1 && !hideTabs &&
-        <Tabs initialActiveTab={activeTab} tabs={tabsProps} wrapperStyle={{ paddingTop: 0 }} />
+          <Tabs
+            initialActiveTab={activeTab}
+            tabs={tabsProps}
+            wrapperStyle={{ paddingTop: 0 }}
+            onTabChange={this.onTabChange}
+          />
         }
-
+        {!tabIsChanging &&
         <ActivityFeedList
-          sections={feedSections}
+          sections={formattedFeedData}
           initialNumToRender={initialNumToRender}
           extraData={extraFeedData}
           renderSectionHeader={({ section }) => (
@@ -437,7 +460,7 @@ class ActivityFeed extends React.Component<Props, State> {
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
           removeClippedSubviews
           stickySectionHeadersEnabled={false}
-        />
+        />}
 
         {!!selectedEventData &&
         <SlideModal
