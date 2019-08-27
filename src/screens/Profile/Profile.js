@@ -177,7 +177,7 @@ type Props = {
   logoutUser: () => Function,
   backupStatus: Object,
   useBiometrics: ?boolean,
-  changeUseBiometrics: (value: boolean) => Function,
+  changeUseBiometrics: (value: boolean, privateKey: string) => Function,
   cleanSmartWalletAccounts: Function,
   smartWalletFeatureEnabled: boolean,
   logScreenView: (view: string, screen: string) => void,
@@ -257,9 +257,9 @@ class Profile extends React.Component<Props, State> {
     this.setState((prev: State) => ({ showTrackingModal: !prev.showTrackingModal }));
   }
 
-  handleChangeUseBiometrics = (value) => {
+  handleChangeUseBiometrics = (value, privateKey) => {
     const { changeUseBiometrics } = this.props;
-    changeUseBiometrics(value);
+    changeUseBiometrics(value, privateKey);
     this.setState({ showCheckPinModal: false }, () => {
       const message = value ? 'Biometric login enabled' : 'Biometric login disabled';
       delay(500)
@@ -682,7 +682,11 @@ class Profile extends React.Component<Props, State> {
               showHeader
             >
               <Wrapper flex={1}>
-                <CheckPin onPinValid={() => this.handleChangeUseBiometrics(!useBiometrics)} />
+                <CheckPin
+                  onPinValid={
+                    (pin, { privateKey }) => this.handleChangeUseBiometrics(!useBiometrics, privateKey)
+                  }
+                />
               </Wrapper>
             </SlideModal>
 
@@ -919,7 +923,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   updateAssetsLayout: (value: string) => dispatch(updateAssetsLayoutAction(value)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
-  changeUseBiometrics: (value) => dispatch(changeUseBiometricsAction(value)),
+  changeUseBiometrics: (value, privateKey) => dispatch(changeUseBiometricsAction(value, privateKey)),
   repairStorage: () => dispatch(repairStorageAction()),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),

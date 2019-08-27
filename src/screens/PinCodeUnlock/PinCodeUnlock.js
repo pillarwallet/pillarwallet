@@ -46,7 +46,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
   connectionKeyPairs: Object,
-  smartWalletFeatureEnabled: boolean,
 }
 
 type State = {
@@ -193,12 +192,10 @@ const mapStateToProps = ({
   wallet,
   appSettings: { data: { useBiometrics = false } },
   connectionKeyPairs,
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   wallet,
   useBiometrics,
   connectionKeyPairs,
-  smartWalletFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

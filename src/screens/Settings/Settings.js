@@ -81,7 +81,7 @@ type Props = {
   repairStorage: Function,
   hasDBConflicts: boolean,
   cleanSmartWalletAccounts: Function,
-  changeUseBiometrics: (value: boolean) => Function,
+  changeUseBiometrics: (value: boolean, privateKey: string) => Function,
   resetIncorrectPassword: () => Function,
   saveBaseFiatCurrency: (currency: ?string) => Function,
   baseFiatCurrency: ?string,
@@ -300,9 +300,9 @@ class Settings extends React.Component<Props, State> {
     this.setState({ visibleModal });
   };
 
-  handleChangeUseBiometrics = (value) => {
+  handleChangeUseBiometrics = (value, privateKey) => {
     const { changeUseBiometrics } = this.props;
-    changeUseBiometrics(value);
+    changeUseBiometrics(value, privateKey);
     this.setState({ visibleModal: null }, () => {
       const message = value ? 'Biometric login enabled' : 'Biometric login disabled';
       delay(500)
@@ -460,7 +460,11 @@ class Settings extends React.Component<Props, State> {
           showHeader
         >
           <Wrapper flex={1}>
-            <CheckPin onPinValid={() => this.handleChangeUseBiometrics(!useBiometrics)} />
+            <CheckPin
+              onPinValid={
+                (pin, { privateKey }) => this.handleChangeUseBiometrics(!useBiometrics, privateKey)
+              }
+            />
           </Wrapper>
         </SlideModal>
 
@@ -636,7 +640,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Function) => ({
   saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  changeUseBiometrics: (value) => dispatch(changeUseBiometricsAction(value)),
+  changeUseBiometrics: (value, privateKey) => dispatch(changeUseBiometricsAction(value, privateKey)),
   repairStorage: () => dispatch(repairStorageAction()),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
