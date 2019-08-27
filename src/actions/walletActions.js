@@ -32,6 +32,7 @@ import {
   RESET_WALLET_IMPORT,
   BACKUP_WALLET,
   REMOVE_PRIVATE_KEY,
+  UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
 import { PIN_CODE_CONFIRMATION, NEW_PROFILE } from 'constants/navigationConstants';
 import shuffle from 'shuffle-array';
@@ -190,5 +191,26 @@ export const backupWalletAction = () => {
 export const removePrivateKeyFromMemoryAction = () => {
   return async (dispatch: Function) => {
     dispatch({ type: REMOVE_PRIVATE_KEY });
+  };
+};
+
+export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
+  return async (dispatch: Function, getState: () => Object) => {
+    const { wallet: { pinAttemptsCount } } = getState();
+    const newCount = isInvalidPin ? pinAttemptsCount + 1 : 0;
+    const currentTimeStamp = isInvalidPin ? Date.now() : 0;
+    dispatch({
+      type: UPDATE_PIN_ATTEMPTS,
+      payload: {
+        pinAttemptsCount: newCount,
+        lastPinAttempt: currentTimeStamp,
+      },
+    });
+    dispatch(saveDbAction('wallet', {
+      wallet: {
+        pinAttemptsCount: newCount,
+        lastPinAttempt: currentTimeStamp,
+      },
+    }));
   };
 };
