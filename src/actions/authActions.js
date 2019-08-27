@@ -243,10 +243,11 @@ const defaultDecryptionSettings = {
   mnemonic: false,
 };
 
-export const checkPinAction = (
-  pin: string,
+export const checkAuthAction = (
+  pin: ?string,
+  privateKey: ?string,
   onValidPin?: Function,
-  options: DecryptionSettings = defaultDecryptionSettings,
+  options?: DecryptionSettings = defaultDecryptionSettings,
 ) => {
   return async (dispatch: Function) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -255,24 +256,34 @@ export const checkPinAction = (
       payload: DECRYPTING,
     });
     await delay(100);
-    const saltedPin = await getSaltedPin(pin, dispatch);
     try {
-      const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
-      dispatch({
-        type: DECRYPT_WALLET,
-        payload: {
-          address: wallet.address,
-        },
-      });
-      if (onValidPin) {
-        onValidPin(pin, wallet);
+      let wallet;
+      if (pin) {
+        const saltedPin = await getSaltedPin(pin, dispatch);
+        wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
+      } else if (privateKey) {
+        const walletAddress = normalizeWalletAddress(encryptedWallet.address);
+        wallet = { ...encryptedWallet, privateKey, address: walletAddress };
+      }
+      if (wallet) {
+        dispatch({
+          type: DECRYPT_WALLET,
+          payload: {
+            address: wallet.address,
+          },
+        });
+        if (onValidPin) {
+          onValidPin(pin, wallet);
+        }
+        return;
       }
     } catch (e) {
-      dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: INVALID_PASSWORD,
-      });
+      // err
     }
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: INVALID_PASSWORD,
+    });
   };
 };
 
