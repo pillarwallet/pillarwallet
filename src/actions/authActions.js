@@ -69,7 +69,7 @@ const Crashlytics = firebase.crashlytics();
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
-export const loginAction = (pin: string, touchID?: boolean = false, onLoginSuccess?: Function) => {
+export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?Function) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const {
       accounts: { data: accounts },
@@ -90,7 +90,6 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       payload: DECRYPTING,
     });
     await delay(100);
-    const saltedPin = await getSaltedPin(pin, dispatch);
     try {
       let wallet;
 
@@ -103,16 +102,20 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       if (!userJoinedBeta && firebaseAnalyticsConnectionEnabled) {
         dispatch(setFirebaseAnalyticsCollectionEnabled(false));
       }
-      if (!touchID) {
+      if (pin) {
+        const saltedPin = await getSaltedPin(pin, dispatch);
         const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
         wallet = await ethers.Wallet.RNfromEncryptedWallet(
           JSON.stringify(encryptedWallet),
           saltedPin,
           decryptionOptions,
         );
-      } else {
+      } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
-        wallet = { ...encryptedWallet, address: walletAddress };
+        wallet = { ...encryptedWallet, privateKey, address: walletAddress };
+      } else {
+        // nothing provided, invalid login
+        throw new Error();
       }
 
       let { user = {} } = await storage.get('user');
