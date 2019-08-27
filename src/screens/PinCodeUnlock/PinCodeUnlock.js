@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import TouchID from 'react-native-touch-id';
+import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
@@ -106,12 +107,12 @@ class PinCodeUnlock extends React.Component<Props, State> {
     }
   }
 
-  getWaitingTime = (onMount) => {
+  getWaitingTime = (isNewMount: boolean): number => {
     const { pinAttemptsCount, lastPinAttempt } = this.props.wallet;
     const lastAttemptSeconds = (Date.now() - lastPinAttempt) / 1000;
-    const nextInterval = pinAttemptsCount * 2;
-    if (pinAttemptsCount > 5) {
-      if (onMount && lastAttemptSeconds < nextInterval) {
+    const nextInterval = pinAttemptsCount * PIN_LOCK_MULTIPLIER;
+    if (pinAttemptsCount > ALLOWED_PIN_ATTEMPTS) {
+      if (isNewMount && lastAttemptSeconds < nextInterval) {
         return nextInterval - lastAttemptSeconds;
       }
       return nextInterval;
@@ -119,16 +120,16 @@ class PinCodeUnlock extends React.Component<Props, State> {
     return 0;
   };
 
-  handleLocking = (onMount) => {
+  handleLocking = (isNewMount: boolean) => {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    const waitingTime = this.getWaitingTime(onMount);
+    const waitingTime = this.getWaitingTime(isNewMount);
     if (waitingTime > 0) {
       this.setState({ waitingTime }, () => {
         this.interval = setInterval(() => {
           if (this.state.waitingTime > 0) {
-            this.setState((prev: State) => ({ waitingTime: prev.state.waitingTime - 1 }));
+            this.setState((prev: State) => ({ waitingTime: prev.waitingTime - 1 }));
           } else {
             this.setState({ waitingTime: 0 });
             clearInterval(this.interval);
