@@ -58,6 +58,7 @@ import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
+import { updatePinAttemptsAction } from 'actions/walletActions';
 import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { saveDbAction } from './dbActions';
@@ -178,6 +179,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
           privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
         },
       });
+      dispatch(updatePinAttemptsAction(false));
 
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
@@ -224,6 +226,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
 
       navigate(navigateToAppAction);
     } catch (e) {
+      dispatch(updatePinAttemptsAction(true));
       dispatch({
         type: UPDATE_WALLET_STATE,
         payload: INVALID_PASSWORD,

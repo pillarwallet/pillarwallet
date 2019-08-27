@@ -23,6 +23,7 @@ import { DEFAULT_PIN } from 'react-native-dotenv';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 
+import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
@@ -48,9 +49,17 @@ type Props = {
   smartWalletFeatureEnabled: boolean,
 }
 
-class PinCodeUnlock extends React.Component<Props> {
+type State = {
+  waitingTime: number,
+};
+
+class PinCodeUnlock extends React.Component<Props, State> {
   errorMessage: string;
   onLoginSuccess: ?Function;
+  interval: IntervalID;
+  state = {
+    waitingTime: 0,
+  };
 
   constructor(props) {
     super(props);
@@ -70,10 +79,15 @@ class PinCodeUnlock extends React.Component<Props> {
     if (useBiometrics && !this.errorMessage) {
       this.showBiometricLogin();
     }
+
+    this.handleLocking(true);
   }
 
   componentWillUnmount() {
     removeAppStateChangeListener(this.handleAppStateChange);
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 
   handleAppStateChange = (nextAppState: string) => {
@@ -96,9 +110,44 @@ class PinCodeUnlock extends React.Component<Props> {
       .catch(() => null);
   }
 
+  getWaitingTime = (isNewMount: boolean): number => {
+    const { pinAttemptsCount, lastPinAttempt } = this.props.wallet;
+    const lastAttemptSeconds = (Date.now() - lastPinAttempt) / 1000;
+    const nextInterval = pinAttemptsCount * PIN_LOCK_MULTIPLIER;
+    if (pinAttemptsCount > ALLOWED_PIN_ATTEMPTS) {
+      if (isNewMount && lastAttemptSeconds < nextInterval) {
+        return nextInterval - lastAttemptSeconds;
+      }
+      return nextInterval;
+    }
+    return 0;
+  };
+
+  handleLocking = (isNewMount: boolean) => {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    const waitingTime = this.getWaitingTime(isNewMount);
+    if (waitingTime > 0) {
+      this.setState({ waitingTime }, () => {
+        this.interval = setInterval(() => {
+          if (this.state.waitingTime > 0) {
+            this.setState((prev: State) => ({ waitingTime: prev.waitingTime - 1 }));
+          } else {
+            this.setState({ waitingTime: 0 });
+            clearInterval(this.interval);
+          }
+        }, 1000);
+      });
+    } else {
+      this.setState({ waitingTime: 0 });
+    }
+  };
+
   handlePinSubmit = (pin: string) => {
     const { loginWithPin } = this.props;
     loginWithPin(pin, this.onLoginSuccess);
+    this.handleLocking(false);
   };
 
   handleForgotPasscode = () => {
@@ -107,6 +156,7 @@ class PinCodeUnlock extends React.Component<Props> {
 
   render() {
     const { walletState } = this.props.wallet;
+    const { waitingTime } = this.state;
     const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : (this.errorMessage || null);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
@@ -123,12 +173,17 @@ class PinCodeUnlock extends React.Component<Props> {
       <Container>
         <Header centerTitle title="Enter pincode" />
         {showError}
-        <PinCode
-          onPinEntered={this.handlePinSubmit}
-          pageInstructions=""
-          onForgotPin={this.handleForgotPasscode}
-          pinError={!!pinError}
-        />
+        {waitingTime > 0 &&
+          <ErrorMessage>Too many attempts, please try again in {waitingTime.toFixed(0)} seconds.</ErrorMessage>
+        }
+        {waitingTime <= 0 &&
+          <PinCode
+            onPinEntered={this.handlePinSubmit}
+            pageInstructions=""
+            onForgotPin={this.handleForgotPasscode}
+            pinError={!!pinError}
+          />
+        }
       </Container>
     );
   }

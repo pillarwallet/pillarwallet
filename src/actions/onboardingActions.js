@@ -48,6 +48,8 @@ import {
   UPDATE_INVITATIONS,
 } from 'constants/invitationsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
+import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
@@ -223,6 +225,8 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_BADGES, payload: [] });
     dispatch({ type: RESET_SMART_WALLET });
     dispatch({ type: RESET_PAYMENT_NETWORK });
+    dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] });
+    dispatch({ type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] });
 
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
