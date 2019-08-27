@@ -57,6 +57,8 @@ describe('Wallet reducer', () => {
       onboarding: mockOnboarding,
       walletState: CREATED,
       backupStatus: mockBackupStatus,
+      pinAttemptsCount: 0,
+      lastPinAttempt: 0,
     };
     expect(reducer(undefined, updateAction)).toEqual(expected);
   });
@@ -74,6 +76,8 @@ describe('Wallet reducer', () => {
       onboarding: mockOnboarding,
       walletState: DECRYPTED,
       backupStatus: mockBackupStatus,
+      pinAttemptsCount: 0,
+      lastPinAttempt: 0,
     };
     expect(reducer(undefined, updateAction)).toEqual(expected);
   });
