@@ -10,6 +10,7 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.Crashlytics;
 import com.crypho.scrypt.RNScryptPackage;
 import com.facebook.react.ReactApplication;
+import com.oblador.keychain.KeychainPackage;
 import com.psykar.cookiemanager.CookieManagerPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.smixx.fabric.FabricPackage;
@@ -101,7 +102,8 @@ public class MainApplication extends Application implements ShareApplication, Re
         new NativeShadowPackage(),
         new RNThreadPackage(mReactNativeHost),
         new RNFirebaseRemoteConfigPackage(),
-        new RNFirebaseAnalyticsPackage()
+        new RNFirebaseAnalyticsPackage(),
+        new KeychainPackage()
       );
     }
 

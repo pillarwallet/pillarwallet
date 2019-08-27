@@ -155,7 +155,6 @@ android {
 
 
 dependencies {
-  implementation project(':react-native-cookies')
   // For animated GIF support
   compile 'com.facebook.fresco:animated-gif:1.10.0'
   // For WebP support, including animated WebP
@@ -251,6 +250,8 @@ dependencies {
   implementation "com.android.support:appcompat-v7:28.0.0"
   implementation "com.facebook.react:react-native:+"  // From node_modules
   implementation "com.google.firebase:firebase-config:16.5.0"
+  implementation project(':react-native-cookies')
+  implementation project(':react-native-keychain')
 
   // Testing
   androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

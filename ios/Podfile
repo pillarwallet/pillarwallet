@@ -48,7 +48,7 @@ target 'pillarwallet' do
   pod 'Firebase/Performance'
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
   pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
-
+  pod 'RNKeychain', :path => '../node_modules/react-native-keychain'
 
 
 

@@ -233,6 +233,8 @@ PODS:
     - QBImagePickerController
     - React/Core
     - RSKImageCropper
+  - RNKeychain (3.1.3):
+    - React
   - RNVectorIcons (6.4.2):
     - React
   - RSKImageCropper (2.2.1)
@@ -288,6 +290,7 @@ DEPENDENCIES:
   - RNColorMatrixImageFilters (from `../node_modules/react-native-color-matrix-image-filters`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - SentryReactNative (from `../node_modules/react-native-sentry`)
   - TouchID (from `../node_modules/react-native-touch-id`)
@@ -362,6 +365,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-device-info"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNKeychain:
+    :path: "../node_modules/react-native-keychain"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   SentryReactNative:
@@ -418,6 +423,7 @@ SPEC CHECKSUMS:
   RNColorMatrixImageFilters: cf425050c778106f5f9844b69fc169758212b74d
   RNDeviceInfo: 08dd79c5adef48b6dc103bf3ddf208039aa78664
   RNImageCropPicker: 32ca4b9fef4e1b7b85ba69494242122948117e06
+  RNKeychain: 5381e340056c23de103d73ae59cbddc6ffc21d97
   RNVectorIcons: 8c52e1e8da1153613fdef44748e865c25556cb9c
   RSKImageCropper: 98296ad26b41753f796b6898d015509598f13d97
   Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
@@ -425,6 +431,6 @@ SPEC CHECKSUMS:
   TouchID: b0640fedb86fa2db2fe1df15b61594ad49e76288
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: 8b8e7d55a80b748ac5d4805bfd0407fb860db3d1
+PODFILE CHECKSUM: 003e87875229fe6307a5da84cc56bc096658305f
 
 COCOAPODS: 1.5.3
