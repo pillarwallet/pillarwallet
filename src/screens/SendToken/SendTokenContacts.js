@@ -197,12 +197,6 @@ class SendTokenContacts extends React.Component<Props, State> {
     });
   };
 
-  setUsersEthAddress = (ethAddress: string) => {
-    this.setState({ value: { ...this.state.value, address: ethAddress } }, () => {
-      this.navigateToNextScreen(ethAddress);
-    });
-  };
-
   onContactPress = (user) => {
     const { navigation } = this.props;
     const {
@@ -228,7 +222,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const address = isPPNTransaction
       ? smartWallets[0]
       : ethAddress;
-    this.setUsersEthAddress(address);
+    this.navigateToNextScreen(address);
   };
 
   renderContact = ({ item: user }) => {
