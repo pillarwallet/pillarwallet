@@ -128,7 +128,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       this.setState({ waitingTime }, () => {
         this.interval = setInterval(() => {
           if (this.state.waitingTime > 0) {
-            this.setState({ waitingTime: this.state.waitingTime - 1 });
+            this.setState((prev: State) => ({ waitingTime: prev.state.waitingTime - 1 }));
           } else {
             this.setState({ waitingTime: 0 });
             clearInterval(this.interval);
