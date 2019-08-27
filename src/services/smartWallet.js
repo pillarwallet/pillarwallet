@@ -274,14 +274,15 @@ class SmartWallet {
     const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
     if (!data) return [];
 
+    const items = data.items || [];
     const foundLastSyncedTx = lastSyncedHash
-      ? data.items.find(({ hash }) => hash === lastSyncedHash)
+      ? items.find(({ hash }) => hash === lastSyncedHash)
       : null;
     if (data.nextPage && !foundLastSyncedTx) {
-      return [...data.items, ...(await this.getAccountPayments(lastSyncedHash, page + 1))];
+      return [...items, ...(await this.getAccountPayments(lastSyncedHash, page + 1))];
     }
 
-    return data.items;
+    return items;
   }
 
   async getAccountPaymentsToSettle(accountAddress: string, page?: number = 0) {
@@ -291,7 +292,7 @@ class SmartWallet {
     const data = await this.sdk.getConnectedAccountPayments(page, filters).catch(this.handleError);
     if (!data) return [];
 
-    const items = data.items
+    const items = (data.items || [])
       .filter(payment => {
         const recipientAddress = get(payment, 'recipient.account.address', '');
         return addressesEqual(recipientAddress, accountAddress);
