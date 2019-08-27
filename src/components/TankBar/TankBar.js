@@ -23,7 +23,6 @@ import styled from 'styled-components/native/index';
 import get from 'lodash.get';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { MediumText } from 'components/Typography';
-import Spinner from 'components/Spinner';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -32,9 +31,6 @@ type Props = {
   maxValue: number,
   currentValue: number,
   currentValueFormatted: string,
-  topupAction: Function,
-  topUpLoading: boolean,
-  disabled: boolean,
 };
 
 type State = {
@@ -129,20 +125,6 @@ const LabelText = styled(MediumText)`
   margin: 0 6px;
 `;
 
-const LabelButton = styled.TouchableOpacity`
-  background-color: ${props => props.disabled ? baseColors.lightGray : baseColors.electricBlue};
-  border-radius: 12px;
-  height: 24px;
-  align-items: center;
-  justify-content: center;
-  padding: 0 10px;
-`;
-
-const ButtonText = styled(MediumText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  color: ${props => props.dark ? baseColors.darkGray : baseColors.white};
-`;
-
 // const Value = styled(MediumText)`
 //   font-size: ${fontSizes.tiny}px;
 //   line-height: ${fontSizes.tiny}px;
@@ -221,9 +203,6 @@ export default class TankBar extends React.Component<Props, State> {
       maxValue,
       currentValue,
       currentValueFormatted,
-      topupAction,
-      topUpLoading,
-      disabled,
     } = this.props;
 
     return (
@@ -288,13 +267,6 @@ export default class TankBar extends React.Component<Props, State> {
             }}
           >
             <LabelText>{`${currentValueFormatted} ${PPN_TOKEN}`}</LabelText>
-            <LabelButton
-              onPress={!topUpLoading || disabled ? () => { topupAction(); } : null}
-              disabled={topUpLoading || disabled}
-            >
-              {!topUpLoading && <ButtonText dark={disabled}>Top up</ButtonText>}
-              {topUpLoading && <Spinner width={20} height={20} />}
-            </LabelButton>
           </AnimatedProgressLabel>
         </Row>}
       </Wrapper>

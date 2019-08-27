@@ -339,11 +339,21 @@ class PPNView extends React.Component<Props> {
           maxValue={totalStake}
           currentValue={availableStake}
           currentValueFormatted={availableFormattedAmount}
-          topupAction={() => navigation.navigate(FUND_TANK)}
-          topUpLoading={false}
           disabled={!!disableTopUpAndSettle}
         />
         <AssetButtonsWrapper>
+          <CircleButton
+            label="Top up"
+            onPress={() => navigation.navigate(FUND_TANK)}
+            fontIcon="up-arrow"
+            disabled={!!disableTopUpAndSettle}
+          />
+          <CircleButton
+            label="Withdraw"
+            fontIcon="down-arrow"
+            onPress={() => {}}
+            disabled={availableStake <= 0}
+          />
           <CircleButton
             label="Send"
             icon={iconSend}
