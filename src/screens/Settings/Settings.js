@@ -60,7 +60,6 @@ import { CONFIRM_CLAIM, CHANGE_PIN_FLOW } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
-import { delay } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 import { baseColors, fontSizes, fontTrackings, fontWeights, spacing } from 'utils/variables';
 
@@ -71,6 +70,10 @@ type State = {
   visibleModal: ?string,
   showBiometricsSelector: boolean,
   joinBetaPressed: boolean,
+  setBiometrics: ?{
+    value: boolean,
+    privateKey: ?string,
+  },
 }
 
 type Props = {
@@ -81,7 +84,7 @@ type Props = {
   repairStorage: Function,
   hasDBConflicts: boolean,
   cleanSmartWalletAccounts: Function,
-  changeUseBiometrics: (value: boolean, privateKey: string) => Function,
+  changeUseBiometrics: (value: boolean, privateKey: ?string) => Function,
   resetIncorrectPassword: () => Function,
   saveBaseFiatCurrency: (currency: ?string) => Function,
   baseFiatCurrency: ?string,
@@ -281,6 +284,7 @@ class Settings extends React.Component<Props, State> {
       visibleModal,
       showBiometricsSelector: false,
       joinBetaPressed: false,
+      setBiometrics: null,
     };
   }
 
@@ -301,20 +305,23 @@ class Settings extends React.Component<Props, State> {
   };
 
   handleChangeUseBiometrics = (value, privateKey) => {
-    const { changeUseBiometrics } = this.props;
-    changeUseBiometrics(value, privateKey);
-    this.setState({ visibleModal: null }, () => {
-      const message = value ? 'Biometric login enabled' : 'Biometric login disabled';
-      delay(500)
-        .then(() => Toast.show({ title: 'Success', type: 'success', message }))
-        .catch(() => null);
+    this.setState({
+      visibleModal: null,
+      setBiometrics: {
+        value,
+        privateKey,
+      },
     });
   };
 
-  handleCheckPinModalClose = () => {
-    const { resetIncorrectPassword } = this.props;
+  handleBiometricsCheckPinModalClose = () => {
+    const { resetIncorrectPassword, changeUseBiometrics } = this.props;
+    const { setBiometrics } = this.state;
+    if (!setBiometrics) return;
+    const { value, privateKey } = setBiometrics;
+    this.setState({ setBiometrics: null });
     resetIncorrectPassword();
-    this.setState({ visibleModal: null });
+    changeUseBiometrics(value, privateKey);
   };
 
   handleCodeClaim = (field: Object) => {
@@ -453,16 +460,20 @@ class Settings extends React.Component<Props, State> {
         {/* BIOMETRIC LOGIN */}
         <SlideModal
           isVisible={visibleModal === 'checkPin'}
-          onModalHide={this.handleCheckPinModalClose}
+          onModalHidden={this.handleBiometricsCheckPinModalClose}
           title="Enter pincode"
           centerTitle
           fullScreen
           showHeader
+          onModalHide={() => this.setState({ visibleModal: null })}
         >
           <Wrapper flex={1}>
             <CheckPin
               onPinValid={
-                (pin, { privateKey }) => this.handleChangeUseBiometrics(!useBiometrics, privateKey)
+                (pin, { privateKey }) => this.handleChangeUseBiometrics(
+                  !useBiometrics,
+                  !useBiometrics ? privateKey : null,
+                )
               }
             />
           </Wrapper>

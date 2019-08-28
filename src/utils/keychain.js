@@ -21,14 +21,14 @@ import * as Keychain from 'react-native-keychain';
 
 const KEYCHAIN_SERVICE = 'com.pillarproject.wallet';
 const KEYCHAIN_DATA_KEY = 'data';
-const BIOMETRICS_PROMPT_MESSAGE = 'Continue with biometrics';
+const BIOMETRICS_PROMPT_MESSAGE = 'Continue';
 
 export function setKeychainDataObject(data: Object) {
   return Keychain
     .setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), {
-      accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+      accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
+      accessible: Keychain.ACCESSIBLE.ALWAYS_THIS_DEVICE_ONLY,
       service: KEYCHAIN_SERVICE,
-      authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
     })
     .catch(() => null);
 }
@@ -36,8 +36,8 @@ export function setKeychainDataObject(data: Object) {
 export function getKeychainDataObject() {
   return Keychain
     .getGenericPassword({
-      username: KEYCHAIN_DATA_KEY,
       service: KEYCHAIN_SERVICE,
+      authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
     })
     .then(({ password = '{}' }) => JSON.parse(password))
     .catch(() => {});
@@ -46,7 +46,6 @@ export function getKeychainDataObject() {
 export function resetKeychainDataObject() {
   return Keychain
     .resetGenericPassword({
-      username: KEYCHAIN_DATA_KEY,
       service: KEYCHAIN_SERVICE,
     })
     .catch(() => null);

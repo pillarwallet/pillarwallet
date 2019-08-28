@@ -43,6 +43,10 @@ type Props = {
   useBiometrics: ?boolean,
 }
 
+type State = {
+  biometricsShown: boolean,
+}
+
 const CheckPinWrapper = styled(Wrapper)`
   margin-top: auto;
   height: 100%;
@@ -51,9 +55,12 @@ const CheckPinWrapper = styled(Wrapper)`
 
 const ACTIVE_APP_STATE = 'active';
 
-class CheckPin extends React.Component<Props, *> {
+class CheckPin extends React.Component<Props, State> {
   static defaultProps = {
     revealMnemonic: false,
+  };
+  state = {
+    biometricsShown: false,
   };
 
   componentDidMount() {
@@ -73,15 +80,20 @@ class CheckPin extends React.Component<Props, *> {
 
   showBiometricLogin() {
     const { checkPrivateKey, onPinValid } = this.props;
-    getKeychainDataObject()
-      .then(data => {
-        const privateKey = get(data, 'privateKey', null);
-        if (privateKey) {
-          removeAppStateChangeListener(this.handleAppStateChange);
-          checkPrivateKey(privateKey, onPinValid);
-        }
-      })
-      .catch(() => null);
+    const { biometricsShown } = this.state;
+    if (biometricsShown) return;
+    this.setState({ biometricsShown: true }, () => {
+      getKeychainDataObject()
+        .then(data => {
+          this.setState({ biometricsShown: false });
+          const privateKey = get(data, 'privateKey', null);
+          if (privateKey) {
+            removeAppStateChangeListener(this.handleAppStateChange);
+            checkPrivateKey(privateKey, onPinValid);
+          }
+        })
+        .catch(() => this.setState({ biometricsShown: false }));
+    });
   }
 
   handlePinSubmit = (pin: string) => {

@@ -50,6 +50,7 @@ type Props = {
 
 type State = {
   waitingTime: number,
+  biometricsShown: boolean,
 };
 
 class PinCodeUnlock extends React.Component<Props, State> {
@@ -58,6 +59,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
   interval: IntervalID;
   state = {
     waitingTime: 0,
+    biometricsShown: false,
   };
 
   constructor(props) {
@@ -98,15 +100,20 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   showBiometricLogin() {
     const { loginWithPrivateKey } = this.props;
-    getKeychainDataObject()
-      .then(data => {
-        const privateKey = get(data, 'privateKey', null);
-        if (privateKey) {
-          removeAppStateChangeListener(this.handleAppStateChange);
-          loginWithPrivateKey(privateKey, this.onLoginSuccess);
-        }
-      })
-      .catch(() => null);
+    const { biometricsShown } = this.state;
+    if (biometricsShown) return;
+    this.setState({ biometricsShown: true }, () => {
+      getKeychainDataObject()
+        .then(data => {
+          this.setState({ biometricsShown: false });
+          const privateKey = get(data, 'privateKey', null);
+          if (privateKey) {
+            removeAppStateChangeListener(this.handleAppStateChange);
+            loginWithPrivateKey(privateKey, this.onLoginSuccess);
+          }
+        })
+        .catch(() => this.setState({ biometricsShown: false }));
+    });
   }
 
   getWaitingTime = (isNewMount: boolean): number => {

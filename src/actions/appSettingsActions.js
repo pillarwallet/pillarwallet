@@ -96,12 +96,15 @@ export const setBrowsingWebViewAction = (isBrowsingWebView: boolean) => ({
   },
 });
 
-export const changeUseBiometricsAction = (value: boolean, privateKey: string) => {
+export const changeUseBiometricsAction = (value: boolean, privateKey?: string) => {
   return async (dispatch: Function) => {
+    let message;
     if (value) {
       await setKeychainDataObject({ privateKey });
+      message = 'Biometric login enabled';
     } else {
       await resetKeychainDataObject();
+      message = 'Biometric login disabled';
     }
     dispatch(saveDbAction('app_settings', { appSettings: { useBiometrics: value } }));
     dispatch({
@@ -109,6 +112,11 @@ export const changeUseBiometricsAction = (value: boolean, privateKey: string) =>
       payload: {
         useBiometrics: value,
       },
+    });
+    Toast.show({
+      message,
+      type: 'success',
+      title: 'Success',
     });
   };
 };
