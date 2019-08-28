@@ -859,7 +859,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   generateSupportedAssetsOptions = (assets) => {
     const { balances, paymentNetworkBalances } = this.props;
-    const alphabeticalSupportedAssets = assets.sort((a, b) => a.symbol.localeCompare(b.symbol));
+    const alphabeticalSupportedAssets = (assets || []).sort((a, b) => a.symbol.localeCompare(b.symbol));
     return alphabeticalSupportedAssets.map(({ symbol, iconUrl, ...rest }) => {
       const rawAssetBalance = getBalance(balances, symbol);
       const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
