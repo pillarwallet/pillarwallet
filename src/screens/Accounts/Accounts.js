@@ -38,7 +38,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { getActiveAccount } from 'utils/accounts';
-import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { formatMoney, formatFiat } from 'utils/common';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { responsiveSize } from 'utils/ui';
 import { baseColors, spacing } from 'utils/variables';
@@ -277,12 +277,11 @@ class AccountsScreen extends React.Component<Props, State> {
     const isActiveWallet = !!item.isActive && activeBNetworkID === BLOCKCHAIN_NETWORK_TYPES.ETHEREUM;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const balanceInFiat = Object.keys(balance).length ? balance[fiatCurrency] : 0;
-    const walletBalance = formatMoney(balanceInFiat || 0);
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const walletBalance = formatFiat(balanceInFiat || 0, baseFiatCurrency);
     return (
       <SettingsItemCarded
         title={isSmartWallet ? 'Ethereum Smart Wallet' : 'Ethereum Key Wallet'}
-        subtitle={`${currencySymbol} ${walletBalance}`}
+        subtitle={walletBalance}
         onMainPress={action ? () => action() : () => this.switchWallet(item)}
         onSettingsPress={type === 'SMART_WALLET_INIT'
           ? null

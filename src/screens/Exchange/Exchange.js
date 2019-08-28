@@ -23,7 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import { formatAmount, formatMoney, getCurrencySymbol, isValidNumber } from 'utils/common';
+import { formatAmount, formatMoney, formatFiat, isValidNumber } from 'utils/common';
 import t from 'tcomb-form-native';
 import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
@@ -897,15 +897,13 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { selector: selectedFromOption, input: amount } = fromInput;
     const { selector: selectedToOption } = toInput;
     let amountValueInFiat;
-    let fiatSymbol;
     let valueInFiatToShow;
     if (amount && Object.keys(selectedFromOption).length) {
       const { symbol: token } = selectedFromOption;
       const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
       const totalInFiat = parseFloat(amount) * getRate(rates, token, fiatCurrency);
-      amountValueInFiat = formatMoney(totalInFiat);
-      fiatSymbol = getCurrencySymbol(fiatCurrency);
-      valueInFiatToShow = totalInFiat > 0 ? `${fiatSymbol}${amountValueInFiat}` : null;
+      amountValueInFiat = formatFiat(totalInFiat, baseFiatCurrency);
+      valueInFiatToShow = totalInFiat > 0 ? amountValueInFiat : null;
     }
 
     const optionsFrom = this.generateAssetsOptions(assets);

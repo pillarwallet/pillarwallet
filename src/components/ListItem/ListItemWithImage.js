@@ -492,7 +492,6 @@ const Addon = (props: Props) => {
       syntheticBalance = '',
       balance: tokenBalance = '',
       token = '',
-      currency = '',
       value = '',
     } = balance;
     return (
@@ -504,7 +503,7 @@ const Addon = (props: Props) => {
           amount={syntheticBalance}
           token={token}
         />}
-        <ItemSubText style={{ marginTop: -2 }}>{`${currency} ${value}`}</ItemSubText>
+        <ItemSubText style={{ marginTop: -2 }}>{`${value}`}</ItemSubText>
       </Wrapper>
     );
   }

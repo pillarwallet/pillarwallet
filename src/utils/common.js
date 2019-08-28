@@ -132,13 +132,13 @@ export function getCurrencySymbol(currency: string): string {
   return currencies[currency] || '';
 }
 
-export function formatFiat(src: number | string, baseFiatCurrency?: string): string {
+export function formatFiat(src: number | string, baseFiatCurrency?: ?string): string {
   const re = '\\d(?=(\\d{3})+\\D)';
   const num = new BigNumber(src).toFixed(2);
   const value = num.replace(new RegExp(re, 'g'), '$&,');
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const currencySymbol = getCurrencySymbol(fiatCurrency);
-  return `${currencySymbol}${value}`;
+  return `${currencySymbol} ${value}`;
 }
 
 export function partial(fn: Function, ...fixedArgs: any) {
