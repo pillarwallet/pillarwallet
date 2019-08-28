@@ -503,7 +503,7 @@ const Addon = (props: Props) => {
           amount={syntheticBalance}
           token={token}
         />}
-        <ItemSubText style={{ marginTop: -2 }}>{`${value}`}</ItemSubText>
+        <ItemSubText style={{ marginTop: -2 }}>{value}</ItemSubText>
       </Wrapper>
     );
   }
