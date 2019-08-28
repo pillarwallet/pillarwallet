@@ -27,7 +27,7 @@ export function setKeychainDataObject(data: Object) {
   return Keychain
     .setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), {
       accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
-      accessible: Keychain.ACCESSIBLE.ALWAYS_THIS_DEVICE_ONLY,
+      accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
       service: KEYCHAIN_SERVICE,
     })
     .catch(() => null);
