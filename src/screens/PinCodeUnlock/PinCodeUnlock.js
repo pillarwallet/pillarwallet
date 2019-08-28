@@ -99,7 +99,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     }
   };
 
-  async showBiometricLogin() {
+  showBiometricLogin() {
     const { loginWithPrivateKey } = this.props;
     const { biometricsShown } = this.state;
     if (biometricsShown) return;
