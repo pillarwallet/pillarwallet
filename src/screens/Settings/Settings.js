@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Keyboard, View, ScrollView, FlatList, Alert } from 'react-native';
 import styled from 'styled-components/native';
-import TouchID from 'react-native-touch-id';
+import * as Keychain from 'react-native-keychain';
 import Intercom from 'react-native-intercom';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -289,8 +289,8 @@ class Settings extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    TouchID.isSupported({})
-      .then(() => this.setState({ showBiometricsSelector: true }))
+    Keychain.getSupportedBiometryType()
+      .then(supported => this.setState({ showBiometricsSelector: !!supported }))
       .catch(() => null);
   }
 

@@ -15,7 +15,6 @@ import com.psykar.cookiemanager.CookieManagerPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.smixx.fabric.FabricPackage;
 import ca.jaysoo.extradimensions.ExtraDimensionsPackage;
-import com.rnfingerprint.FingerprintAuthPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -27,23 +26,18 @@ import com.peel.react.TcpSocketsModule;
 import com.peel.react.rnos.RNOSModule;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.robinpowered.react.Intercom.IntercomPackage;
-
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import org.reactnative.camera.RNCameraPackage;
-
 import java.util.Arrays;
 import java.util.List;
-
 import cl.json.RNSharePackage;
 import cl.json.ShareApplication;
 import io.fabric.sdk.android.Fabric;
-import com.robinpowered.react.Intercom.IntercomPackage;
 import io.intercom.android.sdk.Intercom;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import io.invertase.firebase.config.RNFirebaseRemoteConfigPackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
-import io.invertase.firebase.functions.RNFirebaseFunctionsPackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.instanceid.RNFirebaseInstanceIdPackage;
@@ -53,9 +47,6 @@ import iyegoroff.RNColorMatrixImageFilters.ColorMatrixImageFiltersPackage;
 import io.sentry.RNSentryPackage;
 import com.tradle.react.UdpSocketsModule;
 import com.oblador.vectoricons.VectorIconsPackage;
-import com.bitgo.randombytes.RandomBytesPackage;
-
-import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 import com.reactlibrary.RNThreadPackage;
 
 // react-native-splash-screen >= 0.3.1
@@ -73,7 +64,6 @@ public class MainApplication extends Application implements ShareApplication, Re
         new CookieManagerPackage(),
         new RNCWebViewPackage(),
         new ExtraDimensionsPackage(),
-        new FingerprintAuthPackage(),
         new RNSentryPackage(),
         new SvgPackage(),
         new UdpSocketsModule(),

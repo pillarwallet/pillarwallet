@@ -23,7 +23,7 @@ import { FlatList, Alert, ScrollView, Keyboard, View } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import TouchID from 'react-native-touch-id';
+import * as Keychain from 'react-native-keychain';
 import {
   CHANGE_PIN_FLOW,
   REVEAL_BACKUP_PHRASE,
@@ -227,8 +227,8 @@ class Profile extends React.Component<Props, State> {
 
     logScreenView('View profile', 'Profile');
 
-    TouchID.isSupported({})
-      .then(() => this.setState({ showBiometricsSelector: true }))
+    Keychain.getSupportedBiometryType()
+      .then(supported => this.setState({ showBiometricsSelector: !!supported }))
       .catch(() => null);
   }
 

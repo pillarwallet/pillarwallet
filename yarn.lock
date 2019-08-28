@@ -10639,11 +10639,6 @@ react-native-threads@^0.0.15:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-threads/-/react-native-threads-0.0.15.tgz#7dee96658065aa74ca65a27995e29d97da3aae34"
   integrity sha1-fe6WZYBlqnTKZaJ5leKdl9o6rjQ=
 
-react-native-touch-id@^4.3.0:
-  version "4.4.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-touch-id/-/react-native-touch-id-4.4.1.tgz#8b1bb2d04c30bac36bb9696d2d723e719c4a8b08"
-  integrity sha1-ixuy0EwwusNruWltLXI+cZxKiwg=
-
 react-native-udp@^2.6.0:
   version "2.6.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-udp/-/react-native-udp-2.6.0.tgz#6fe64467073a47aa728c70d35c899ddbc0b23886"
