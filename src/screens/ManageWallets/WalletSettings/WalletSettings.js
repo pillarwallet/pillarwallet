@@ -41,8 +41,7 @@ type Props = {
 const defaultSettings = (that) => ([
   {
     key: 'lockWallet',
-    title: 'Lock wallet',
-    body: 'Extra security measure',
+    title: 'Close and Lock Wallet',
     action: () => that.lockWallet(),
   },
   {
