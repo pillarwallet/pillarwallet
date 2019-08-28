@@ -34,13 +34,12 @@ import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-
 import { getKeychainDataObject } from 'utils/keychain';
 
 const ACTIVE_APP_STATE = 'active';
 
 type Props = {
-  loginWithPin: (pin: string, callback: ?Function) => Function,
+  loginWithPin: (pin: string, callback: ?Function, updateKeychain: boolean) => Function,
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
@@ -51,6 +50,7 @@ type Props = {
 type State = {
   waitingTime: number,
   biometricsShown: boolean,
+  updateKeychain: boolean,
 };
 
 class PinCodeUnlock extends React.Component<Props, State> {
@@ -60,6 +60,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
   state = {
     waitingTime: 0,
     biometricsShown: false,
+    updateKeychain: false,
   };
 
   constructor(props) {
@@ -98,7 +99,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     }
   };
 
-  showBiometricLogin() {
+  async showBiometricLogin() {
     const { loginWithPrivateKey } = this.props;
     const { biometricsShown } = this.state;
     if (biometricsShown) return;
@@ -106,6 +107,10 @@ class PinCodeUnlock extends React.Component<Props, State> {
       getKeychainDataObject()
         .then(data => {
           this.setState({ biometricsShown: false });
+          if (!data || !Object.keys(data).length) {
+            this.setState({ updateKeychain: true });
+            return;
+          }
           const privateKey = get(data, 'privateKey', null);
           if (privateKey) {
             removeAppStateChangeListener(this.handleAppStateChange);
@@ -152,7 +157,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   handlePinSubmit = (pin: string) => {
     const { loginWithPin } = this.props;
-    loginWithPin(pin, this.onLoginSuccess);
+    const { updateKeychain } = this.state;
+    loginWithPin(pin, this.onLoginSuccess, updateKeychain);
     this.handleLocking(false);
   };
 
@@ -206,7 +212,9 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  loginWithPin: (pin: string, callback: ?Function) => dispatch(loginAction(pin, null, callback)),
+  loginWithPin: (pin: string, callback: ?Function, updateKeychain) => dispatch(
+    loginAction(pin, null, callback, updateKeychain),
+  ),
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
 });
 

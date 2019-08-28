@@ -71,7 +71,7 @@ type State = {
   showBiometricsSelector: boolean,
   joinBetaPressed: boolean,
   setBiometrics: ?{
-    value: boolean,
+    enabled: boolean,
     privateKey: ?string,
   },
 }
@@ -84,7 +84,7 @@ type Props = {
   repairStorage: Function,
   hasDBConflicts: boolean,
   cleanSmartWalletAccounts: Function,
-  changeUseBiometrics: (value: boolean, privateKey: ?string) => Function,
+  changeUseBiometrics: (enabled: boolean, privateKey: ?string) => Function,
   resetIncorrectPassword: () => Function,
   saveBaseFiatCurrency: (currency: ?string) => Function,
   baseFiatCurrency: ?string,
@@ -304,11 +304,11 @@ class Settings extends React.Component<Props, State> {
     this.setState({ visibleModal });
   };
 
-  handleChangeUseBiometrics = (value, privateKey) => {
+  handleChangeUseBiometrics = (enabled, privateKey) => {
     this.setState({
       visibleModal: null,
       setBiometrics: {
-        value,
+        enabled,
         privateKey,
       },
     });
@@ -318,10 +318,10 @@ class Settings extends React.Component<Props, State> {
     const { resetIncorrectPassword, changeUseBiometrics } = this.props;
     const { setBiometrics } = this.state;
     if (!setBiometrics) return;
-    const { value, privateKey } = setBiometrics;
+    const { enabled, privateKey } = setBiometrics;
     this.setState({ setBiometrics: null });
     resetIncorrectPassword();
-    changeUseBiometrics(value, privateKey);
+    changeUseBiometrics(enabled, privateKey);
   };
 
   handleCodeClaim = (field: Object) => {
@@ -651,7 +651,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Function) => ({
   saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  changeUseBiometrics: (value, privateKey) => dispatch(changeUseBiometricsAction(value, privateKey)),
+  changeUseBiometrics: (enabled, privateKey) => dispatch(changeUseBiometricsAction(enabled, privateKey)),
   repairStorage: () => dispatch(repairStorageAction()),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),

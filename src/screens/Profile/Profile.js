@@ -177,7 +177,7 @@ type Props = {
   logoutUser: () => Function,
   backupStatus: Object,
   useBiometrics: ?boolean,
-  changeUseBiometrics: (value: boolean, privateKey: string) => Function,
+  changeUseBiometrics: (enabled: boolean, privateKey: string) => Function,
   cleanSmartWalletAccounts: Function,
   smartWalletFeatureEnabled: boolean,
   logScreenView: (view: string, screen: string) => void,
@@ -257,11 +257,11 @@ class Profile extends React.Component<Props, State> {
     this.setState((prev: State) => ({ showTrackingModal: !prev.showTrackingModal }));
   }
 
-  handleChangeUseBiometrics = (value, privateKey) => {
+  handleChangeUseBiometrics = (enabled, privateKey) => {
     const { changeUseBiometrics } = this.props;
-    changeUseBiometrics(value, privateKey);
+    changeUseBiometrics(enabled, privateKey);
     this.setState({ showCheckPinModal: false }, () => {
-      const message = value ? 'Biometric login enabled' : 'Biometric login disabled';
+      const message = enabled ? 'Biometric login enabled' : 'Biometric login disabled';
       delay(500)
         .then(() => Toast.show({ title: 'Success', type: 'success', message }))
         .catch(() => null);
@@ -923,7 +923,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   updateAssetsLayout: (value: string) => dispatch(updateAssetsLayoutAction(value)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
-  changeUseBiometrics: (value, privateKey) => dispatch(changeUseBiometricsAction(value, privateKey)),
+  changeUseBiometrics: (enabled, privateKey) => dispatch(changeUseBiometricsAction(enabled, privateKey)),
   repairStorage: () => dispatch(repairStorageAction()),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),

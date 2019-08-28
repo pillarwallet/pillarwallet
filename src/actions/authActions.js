@@ -54,6 +54,7 @@ import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
+import { setKeychainDataObject } from 'utils/keychain';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
@@ -70,14 +71,23 @@ const Crashlytics = firebase.crashlytics();
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
-export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?Function) => {
+export const loginAction = (
+  pin: ?string,
+  privateKey: ?string,
+  onLoginSuccess: ?Function,
+  updateKeychain?: boolean = false,
+) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const {
       accounts: { data: accounts },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
       appSettings: {
-        data: { userJoinedBeta = false, firebaseAnalyticsConnectionEnabled = true, blockchainNetwork = '' },
+        data: {
+          userJoinedBeta = false,
+          firebaseAnalyticsConnectionEnabled = true,
+          blockchainNetwork = '',
+        },
       },
     } = getState();
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
@@ -180,6 +190,11 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
         },
       });
       dispatch(updatePinAttemptsAction(false));
+
+      // migrate older users for keychain access with biometrics
+      if (wallet.privateKey && updateKeychain) {
+        await setKeychainDataObject({ privateKey: wallet.privateKey });
+      }
 
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));

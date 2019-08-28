@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Platform } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 
 const KEYCHAIN_SERVICE = 'com.pillarproject.wallet';
@@ -26,7 +27,10 @@ const BIOMETRICS_PROMPT_MESSAGE = 'Continue';
 export function setKeychainDataObject(data: Object) {
   return Keychain
     .setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), {
-      accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
+      accessControl: Platform.select({
+        ios: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
+        android: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+      }),
       accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
       service: KEYCHAIN_SERVICE,
     })
