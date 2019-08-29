@@ -46,6 +46,7 @@ import { getAccountAddress } from 'utils/accounts';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import type { Account, Accounts, AccountTypes } from 'models/Account';
 import type { ContactSmartAddresses } from 'models/Contacts';
+import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import { activeAccountSelector } from 'selectors';
 
 type Props = {
@@ -59,7 +60,7 @@ type Props = {
   syncContactsSmartAddresses: Function,
   contactsSmartAddresses: ContactSmartAddresses[],
   isOnline: boolean,
-  blockchainNetworks: Object[],
+  blockchainNetworks: BlockchainNetwork[],
   activeAccount: Account,
 };
 

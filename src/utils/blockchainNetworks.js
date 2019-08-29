@@ -18,8 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 
-export const isPillarPaymentNetworkActive = (blockchainNetworks: Object[]) => {
+export const isPillarPaymentNetworkActive = (blockchainNetworks: BlockchainNetwork[]) => {
   const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
   const { id: activeBNetworkId } = activeBNetwork;
   return activeBNetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK;
