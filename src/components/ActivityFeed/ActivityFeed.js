@@ -215,8 +215,8 @@ class ActivityFeed extends React.Component<Props, State> {
     let feedList = feedData;
 
     if (tabs.length) {
-      const activeTabInfo = tabs.find(({ id }) => id === activeTab) || { data: [] };
-      ({ data: feedList } = activeTabInfo);
+      const activeTabInfo = tabs.find(({ id }) => id === activeTab);
+      if (activeTabInfo) ({ data: feedList } = activeTabInfo);
     }
 
     feedList.forEach(listItem => {
