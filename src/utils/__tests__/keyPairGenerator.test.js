@@ -55,13 +55,13 @@ describe('keyPairGenerator utils tests', () => {
   });
 
   it('Should successfully generate an array of Derived keys with a value of 5 with a mnemonic', async () => {
-    const keyPairs = await generateKeyPairPool(MOCK_MNEMONIC, MOCK_PRIVKEY, 5);
+    const keyPairs = await generateKeyPairPool(MOCK_MNEMONIC, MOCK_PRIVKEY, -1, 0, 5);
     expect(keyPairs).toBeTruthy();
     expect(keyPairs.length).toBe(5);
   });
 
   it('Should successfully generate an array of Derived keys with a value of 5 without a mnemonic', async () => {
-    const keyPairs = await generateKeyPairPool('', MOCK_PRIVKEY, 5);
+    const keyPairs = await generateKeyPairPool('', MOCK_PRIVKEY, -1, 0, 5);
     expect(keyPairs).toBeTruthy();
     expect(keyPairs.length).toBe(5);
   });

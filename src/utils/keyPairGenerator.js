@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Platform } from 'react-native';
 import { HDNode } from 'ethers';
 import { Thread } from 'react-native-threads';
 
@@ -36,8 +37,11 @@ export function generateHDKeyPair(hdnodebase: HDNode, derivePath: string, connIn
   }
 }
 
-export async function generateKeyPairPool(
-  mnemonic: string, privateKey: string, count?: number = 200): Promise<Array<any>> {
+export function generateKeyPairPool(
+  mnemonic: ?string, privateKey: ?string,
+  lastConnectionKeyIndex: number,
+  connectionsCount: number = 0,
+  count?: number = 50): Array<any> {
   const keyPairs = [];
   let hdnodebase;
   if (mnemonic && mnemonic.length > 0) {
@@ -45,16 +49,17 @@ export async function generateKeyPairPool(
   } else {
     hdnodebase = HDNode.fromSeed(privateKey);
   }
-  for (let i = 0; i < count; i++) {
-    const derivePathBase = `m/44/60'/0'/connType/${i}`;
+  for (let i = 1; i <= count + connectionsCount; i++) {
+    const connIndex = i + lastConnectionKeyIndex;
+    const derivePathBase = `m/44/60'/0'/connType/${connIndex}`;
     const jobTask = () => {
       return new Promise(async (resolve) => {
-        resolve(generateHDKeyPair(hdnodebase, derivePathBase, i));
+        resolve(generateHDKeyPair(hdnodebase, derivePathBase, connIndex));
       });
     };
     keyPairs.push(jobTask);
   }
-  return Promise.all(keyPairs.map(task => task()));
+  return keyPairs;
 }
 
 const threadJobWorkerSeed = (
@@ -116,21 +121,27 @@ export async function generateKeyPairThreadPool(
   connectionsKeyPairCount: number = 0,
   lastConnectionKeyIndex: number = -1): Promise<Array<any>> {
   const derivePathBase = 'm/44/60\'/0\'/0/0';
-  const promiseJobs = [];
+  let promiseJobs = [];
   if (connectionsKeyPairCount < 20) {
-    const threads = await threadPoolCreation(5);
-    for (let i = 0; i < threads.length; i++) {
-      const job = threadJobWorkerSeed(
-        mnemonic,
-        privateKey,
-        derivePathBase,
-        i,
-        connectionsCount,
-        threads[i],
-        lastConnectionKeyIndex,
-        threads.length,
-      );
-      promiseJobs.push(job);
+    const isIOSDebuggingEnabled = Platform.OS === 'ios' &&
+      ((typeof atob !== 'undefined') || typeof location !== 'undefined'); // eslint-disable-line no-restricted-globals
+    if (isIOSDebuggingEnabled) {
+      promiseJobs = generateKeyPairPool(mnemonic, privateKey, lastConnectionKeyIndex, connectionsCount, 25);
+    } else {
+      const threads = await threadPoolCreation(5);
+      for (let i = 0; i < threads.length; i++) {
+        const job = threadJobWorkerSeed(
+          mnemonic,
+          privateKey,
+          derivePathBase,
+          i,
+          connectionsCount,
+          threads[i],
+          lastConnectionKeyIndex,
+          threads.length,
+        );
+        promiseJobs.push(job);
+      }
     }
   }
   const threadPairs = await Promise.all(promiseJobs.map(task => task()));
