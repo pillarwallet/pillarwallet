@@ -24,33 +24,31 @@ const KEYCHAIN_SERVICE = 'com.pillarproject.wallet';
 const KEYCHAIN_DATA_KEY = 'data';
 const BIOMETRICS_PROMPT_MESSAGE = 'Continue';
 
-export function setKeychainDataObject(data: Object) {
-  return Keychain
-    .setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), {
-      accessControl: Platform.select({
-        ios: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
-        android: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
-      }),
-      accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
-      service: KEYCHAIN_SERVICE,
-    })
-    .catch(() => null);
-}
+type KeyChainData = {
+  privateKey?: string,
+};
 
-export function getKeychainDataObject() {
-  return Keychain
-    .getGenericPassword({
-      service: KEYCHAIN_SERVICE,
-      authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
-    })
-    .then(({ password = '{}' }) => JSON.parse(password))
-    .catch(() => {});
-}
+export const setKeychainDataObject = (data: KeyChainData) => Keychain
+  .setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), {
+    accessControl: Platform.select({
+      ios: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
+      android: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+    }),
+    accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
+    service: KEYCHAIN_SERVICE,
+  })
+  .catch(() => null);
 
-export function resetKeychainDataObject() {
-  return Keychain
-    .resetGenericPassword({
-      service: KEYCHAIN_SERVICE,
-    })
-    .catch(() => null);
-}
+export const getKeychainDataObject = () => Keychain
+  .getGenericPassword({
+    service: KEYCHAIN_SERVICE,
+    authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
+  })
+  .then(({ password = '{}' }) => JSON.parse(password))
+  .catch(() => {});
+
+export const resetKeychainDataObject = () => Keychain
+  .resetGenericPassword({
+    service: KEYCHAIN_SERVICE,
+  })
+  .catch(() => null);
