@@ -166,7 +166,7 @@ type FeedItemConnection = {
 
 type FeedSection = {
   title: string,
-  data: Array<FeedItemTransaction | FeedItemConnection>
+  data: Array<FeedItemTransaction | FeedItemConnection>,
 }
 
 type State = {
@@ -185,17 +185,14 @@ class ActivityFeed extends React.Component<Props, State> {
     initialNumToRender: 7,
   };
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      showModal: false,
-      selectedEventData: null,
-      eventType: '',
-      eventStatus: '',
-      tabIsChanging: false,
-      formattedFeedData: [],
-    };
-  }
+  state = {
+    showModal: false,
+    selectedEventData: null,
+    eventType: '',
+    eventStatus: '',
+    tabIsChanging: false,
+    formattedFeedData: [],
+  };
 
   componentDidMount() {
     this.generateFeedSections();
