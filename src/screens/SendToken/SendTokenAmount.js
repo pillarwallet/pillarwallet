@@ -36,7 +36,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
 
 // utils
-import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
+import { formatAmount, formatFiat } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -287,6 +287,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     return Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
+      const formattedFeeInFiat = formatFiat(feeInFiat, baseFiatCurrency);
       return (
         <Btn
           key={txSpeed}
@@ -294,7 +295,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           onPress={this.handleGasPriceChange(txSpeed)}
         >
           <TextLink>{SPEED_TYPE_LABELS[txSpeed]} - {feeInEth} ETH</TextLink>
-          <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
+          <Label>{formattedFeeInFiat}</Label>
         </Btn>
       );
     });
@@ -318,7 +319,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     const transactionSpeed = this.getTxSpeed();
     const { token, icon, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     // balance
     const balance = getBalance(balances, token);
@@ -326,7 +326,7 @@ class SendTokenAmount extends React.Component<Props, State> {
 
     // balance in fiat
     const totalInFiat = balance * getRate(rates, token, fiatCurrency);
-    const formattedBalanceInFiat = formatMoney(totalInFiat);
+    const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // fee
     const txFeeInWei = this.getTxFeeInWei();
@@ -340,8 +340,7 @@ class SendTokenAmount extends React.Component<Props, State> {
 
     // value in fiat
     const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);
-    const formattedValueInFiat = formatMoney(valueInFiat);
-    const valueInFiatOutput = `${currencySymbol}${formattedValueInFiat}`;
+    const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
@@ -392,7 +391,7 @@ class SendTokenAmount extends React.Component<Props, State> {
                 <Label small>Available Balance</Label>
                 <SendTokenDetailsValue>
                   {formattedBalance} {token}
-                  <HelperText> ({currencySymbol}{formattedBalanceInFiat})</HelperText>
+                  <HelperText>{formattedBalanceInFiat}</HelperText>
                 </SendTokenDetailsValue>
               </SendTokenDetails>
               <TouchableOpacity onPress={this.useMaxValue}>

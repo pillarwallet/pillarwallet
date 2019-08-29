@@ -38,7 +38,7 @@ import { ASSET } from 'constants/navigationConstants';
 // utils
 import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
-import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { formatMoney, formatFiat } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 
 // configs
@@ -97,13 +97,11 @@ class AssetsList extends React.Component<Props> {
 
   renderHeader = () => {
     const { balance, baseFiatCurrency } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const walletBalance = formatMoney(balance || 0);
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const walletBalance = formatFiat(balance || 0, baseFiatCurrency);
 
     return (
       <ListHeaderWrapper>
-        <HeaderTitle>{`Wallet balance ${currencySymbol} ${walletBalance}`}</HeaderTitle>
+        <HeaderTitle>{`Wallet balance ${walletBalance}`}</HeaderTitle>
       </ListHeaderWrapper>
     );
   };
@@ -114,8 +112,6 @@ class AssetsList extends React.Component<Props> {
       baseFiatCurrency,
       navigation,
     } = this.props;
-
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const {
       name,
@@ -135,9 +131,8 @@ class AssetsList extends React.Component<Props> {
     const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}${IS_IOS ? '?size=3' : ''}`;
     const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
     const patternIcon = patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl;
-    const formattedBalanceInFiat = formatMoney(balanceInFiat);
+    const formattedBalanceInFiat = formatFiat(balanceInFiat, baseFiatCurrency);
     const displayAmount = formatMoney(balance, 4);
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     const {
       listed: isListed = true,
@@ -150,7 +145,7 @@ class AssetsList extends React.Component<Props> {
       token: symbol,
       amount: displayAmount,
       balance,
-      balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
+      balanceInFiat: formattedBalanceInFiat,
       address: getAccountAddress(activeAccount),
       contractAddress: asset.address,
       icon: fullIconMonoUrl,
@@ -160,7 +155,7 @@ class AssetsList extends React.Component<Props> {
       disclaimer,
       paymentNetworkBalance,
       paymentNetworkBalanceFormatted: formatMoney(paymentNetworkBalance, 4),
-      paymentNetworkBalanceInFiat: formatMoney(paymentNetworkBalanceInFiat),
+      paymentNetworkBalanceInFiat: formatFiat(paymentNetworkBalanceInFiat, baseFiatCurrency),
       patternIcon,
       description: asset.description,
       decimals,
@@ -181,8 +176,7 @@ class AssetsList extends React.Component<Props> {
         avatarUrl={fullIconUrl}
         balance={{
           balance: formatMoney(balance),
-          value: formatMoney(balanceInFiat, 2),
-          currency: currencySymbol,
+          value: formattedBalanceInFiat,
           token: symbol,
         }}
       />
