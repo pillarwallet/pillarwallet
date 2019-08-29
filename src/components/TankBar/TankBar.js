@@ -249,7 +249,7 @@ export default class TankBar extends React.Component<Props, State> {
                   outputRange: [0, barWidth],
                 }),
               }],
-              marginLeft: currentValue < 10 ? 0 : -2,
+              marginLeft: -0.5,
             }}
           />
           <AnimatedProgressLabel
