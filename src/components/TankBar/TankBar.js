@@ -38,7 +38,7 @@ type State = {
   barWidth: number,
   labelWidth: number,
   labelTransform: number,
-  sideButtonWidth: number,
+  // sideButtonWidth: number,
   didFirstAnimation: boolean,
 }
 
@@ -143,7 +143,7 @@ export default class TankBar extends React.Component<Props, State> {
       barWidth: 0,
       labelWidth: 0,
       labelTransform: 0,
-      sideButtonWidth: 0,
+      // sideButtonWidth: 0,
       didFirstAnimation: false,
     };
   }
@@ -153,14 +153,14 @@ export default class TankBar extends React.Component<Props, State> {
   }
 
   updateLabelTransform = (value: number) => {
-    const { labelWidth, barWidth, sideButtonWidth } = this.state;
+    const { labelWidth, barWidth } = this.state;
     const barWidthPixels = barWidth * (value / 100);
     const halfLabelWidth = labelWidth / 2;
-    let labelTransform = -(labelWidth / 2);
-    if (barWidthPixels <= halfLabelWidth) {
-      labelTransform = -barWidthPixels;
-    } else if (sideButtonWidth <= halfLabelWidth) {
-      labelTransform = -(halfLabelWidth - (sideButtonWidth - halfLabelWidth));
+    let labelTransform = -halfLabelWidth;
+    if (barWidthPixels < labelWidth) {
+      labelTransform = 0;
+    } else if ((barWidth - barWidthPixels) < halfLabelWidth) {
+      labelTransform = -labelWidth;
     }
     this.setState({ labelTransform });
   };
