@@ -18,24 +18,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+
 import set from 'lodash.set';
 import firebase from 'react-native-firebase';
 
 import Toast from 'components/Toast';
 import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   setKeychainDataObject,
   resetKeychainDataObject,
 } from 'utils/keychain';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { switchAccountAction } from './accountsActions';
 
 
 export const saveOptOutTrackingAction = (status: boolean) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     const settings = { optOutTracking: status };
 
     if (status) {
@@ -49,7 +53,7 @@ export const saveOptOutTrackingAction = (status: boolean) => {
 };
 
 export const saveBaseFiatCurrencyAction = (currency: string) => {
-  return (dispatch: Function) => {
+  return (dispatch: Dispatch) => {
     const settings = { baseFiatCurrency: currency };
 
     dispatch(saveDbAction('app_settings', { appSettings: settings }));
@@ -59,8 +63,8 @@ export const saveBaseFiatCurrencyAction = (currency: string) => {
 };
 
 export const updateAppSettingsAction = (path: string, fieldValue: any) => {
-  return (dispatch: Function) => {
-    const settings = set({}, path, fieldValue);
+  return (dispatch: Dispatch) => {
+    const settings: Object = set({}, path, fieldValue);
 
     dispatch(saveDbAction('app_settings', { appSettings: settings }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
@@ -68,7 +72,7 @@ export const updateAppSettingsAction = (path: string, fieldValue: any) => {
 };
 
 export const updateAssetsLayoutAction = (layoutId: string) => {
-  return (dispatch: Function) => {
+  return (dispatch: Dispatch) => {
     const settings = { appearanceSettings: { assetsLayout: layoutId } };
 
     dispatch(saveDbAction('app_settings', { appSettings: settings }));
@@ -79,7 +83,7 @@ export const updateAssetsLayoutAction = (layoutId: string) => {
 };
 
 export const handleImagePickAction = (isPickingImage: boolean) => {
-  return (dispatch: Function) => {
+  return (dispatch: Dispatch) => {
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: {
@@ -97,7 +101,7 @@ export const setBrowsingWebViewAction = (isBrowsingWebView: boolean) => ({
 });
 
 export const changeUseBiometricsAction = (value: boolean, privateKey?: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     let message;
     if (value) {
       await setKeychainDataObject({ privateKey });
@@ -122,7 +126,7 @@ export const changeUseBiometricsAction = (value: boolean, privateKey?: string) =
 };
 
 export const setFirebaseAnalyticsCollectionEnabled = (enabled: boolean) => {
-  return (dispatch: Function) => {
+  return (dispatch: Dispatch) => {
     firebase.analytics().setAnalyticsCollectionEnabled(enabled);
     dispatch(saveDbAction('app_settings', { appSettings: { firebaseAnalyticsConnectionEnabled: enabled } }));
     dispatch({
@@ -135,7 +139,7 @@ export const setFirebaseAnalyticsCollectionEnabled = (enabled: boolean) => {
 };
 
 export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessToast: boolean = false) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       user: { data: { username, walletId } },
       accounts: { data: accounts },
