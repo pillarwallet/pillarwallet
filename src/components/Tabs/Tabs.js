@@ -31,7 +31,7 @@ type Tab = {
   id: string,
   name: string,
   icon?: string,
-  onPress: Function,
+  onPress: () => void,
   unread?: number,
   tabImageNormal?: string,
   tabImageActive?: string
@@ -45,7 +45,7 @@ type Props = {
   wrapperStyle?: Object,
   isFloating?: boolean,
   coverColor?: string,
-  onTabChange?: Function,
+  onTabChange?: (isChanging?: boolean) => void,
 }
 
 type TabWrapperProps = {
@@ -59,7 +59,7 @@ type TabsComponentProps = {
   bgColor?: string,
   wrapperStyle?: Object,
   isFloating?: boolean,
-  renderTabList: Function,
+  renderTabList: () => Array<React.Node>,
 }
 
 type State = {
@@ -333,6 +333,9 @@ export default class Tabs extends React.Component<Props, State> {
 
   render() {
     const { isFloating, tabs, coverColor } = this.props;
+
+
+    console.log('tabLengths ---->', { tabLengths: this.state.tabLengths });
 
     if (isFloating) {
       return (

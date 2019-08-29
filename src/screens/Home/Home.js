@@ -344,7 +344,7 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  onTabChange = (isChanging: boolean) => {
+  onTabChange = (isChanging?: boolean) => {
     this.setState({ tabIsChanging: isChanging });
   };
 

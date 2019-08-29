@@ -133,13 +133,49 @@ type Props = {
   feedType?: string,
 }
 
+type FeedItemTransaction = {
+  username?: string,
+  to: string,
+  from: string,
+  hash: string,
+  createdAt: string,
+  pillarId: string,
+  protocol: string,
+  contractAddress: ?string,
+  blockNumber: number,
+  value: number,
+  status: string,
+  gasPrice: ?number,
+  gasUsed: number,
+  tranType: ?string,
+  tokenId?: string,
+  _id: string,
+  type: string,
+}
+
+type FeedItemConnection = {
+  id: string,
+  ethAddress: string,
+  username: string,
+  profileImage: ?string,
+  createdAt: string,
+  updatedAt: string,
+  status: string,
+  type: string,
+}
+
+type FeedSection = {
+  title: string,
+  data: Array<FeedItemTransaction | FeedItemConnection>
+}
+
 type State = {
   showModal: boolean,
   selectedEventData: ?Object | ?Transaction,
   eventType: string,
   eventStatus: string,
   tabIsChanging: boolean,
-  formattedFeedData: Object[],
+  formattedFeedData: FeedSection[],
 }
 
 const PPNIcon = require('assets/icons/icon_PPN.png');
@@ -390,7 +426,7 @@ class ActivityFeed extends React.Component<Props, State> {
     return `${createdAt.toString()}${item.id || item._id || item.hash || ''}`;
   };
 
-  onTabChange = (isChanging: boolean) => {
+  onTabChange = (isChanging?: boolean) => {
     this.setState({ tabIsChanging: isChanging });
   };
 
