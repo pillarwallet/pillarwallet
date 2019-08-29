@@ -51,7 +51,7 @@ import type { TxToSettle } from 'models/PaymentNetwork';
 
 // utils
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { formatMoney, getCurrencySymbol, formatAmount } from 'utils/common';
+import { formatFiat, formatAmount } from 'utils/common';
 import { getRate } from 'utils/assets';
 
 
@@ -136,8 +136,7 @@ class SettleBalance extends React.Component<Props, State> {
     const formattedAmount = formatAmount(assetInfo.value.toString());
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const totalInFiat = assetInfo.value.toNumber() * getRate(rates, assetInfo.symbol, fiatCurrency);
-    const formattedAmountInFiat = formatMoney(totalInFiat);
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const isToday = new Date().toDateString() === item.createdAt.toDateString();
     const time = isToday
       ? `Today at ${formatDate(item.createdAt, 'HH:mm')}`
@@ -155,7 +154,7 @@ class SettleBalance extends React.Component<Props, State> {
             <BalanceWrapper>
               <TankAssetBalance amount={formattedAmount} monoColor />
               <ValueInFiat>
-                {`${currencySymbol}${formattedAmountInFiat}`}
+                {formattedAmountInFiat}
               </ValueInFiat>
             </BalanceWrapper>
             <Checkbox

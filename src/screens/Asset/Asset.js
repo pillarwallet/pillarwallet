@@ -55,7 +55,7 @@ import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'co
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
-import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapTransactionsHistory } from 'utils/feedData';
@@ -269,8 +269,7 @@ class AssetScreen extends React.Component<Props, State> {
       : (paymentNetworkBalance <= 0 && availableStake < 0);
     const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
     const displayAmount = !isSynthetic ? formatMoney(balance, 4) : formatMoney(paymentNetworkBalance, 4);
-    const fiatAmount = !isSynthetic ? formatMoney(totalInFiat) : paymentNetworkBalance * tokenRate;
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const fiatAmount = !isSynthetic ? formatFiat(totalInFiat, baseFiatCurrency) : paymentNetworkBalance * tokenRate;
 
     const {
       listed: isListed = true,
@@ -341,7 +340,7 @@ class AssetScreen extends React.Component<Props, State> {
             {!!isListed &&
               <ValuesWrapper>
                 <ValueInFiat>
-                  {`${currencySymbol}${fiatAmount}`}
+                  {fiatAmount}
                 </ValueInFiat>
               </ValuesWrapper>
             }

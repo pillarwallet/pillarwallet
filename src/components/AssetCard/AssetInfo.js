@@ -21,7 +21,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
 import TankAssetBalance from 'components/TankAssetBalance';
-import { getCurrencySymbol } from 'utils/common';
 import { fontSizes, baseColors } from 'utils/variables';
 
 type Props = {
@@ -35,7 +34,6 @@ type Props = {
     valueOnNetwork?: string,
     valueOnNetworkInFiat?: string | number,
   },
-  currency: string,
 }
 
 const AmountWrapper = styled.View`
@@ -89,14 +87,10 @@ const AssetInfo = (props: Props) => {
     balanceOnNetwork = {},
     token,
     disclaimer,
-    currency,
   } = props;
 
   const { value, valueInFiat } = balance;
   const { valueOnNetwork, valueOnNetworkInFiat } = balanceOnNetwork;
-
-  const currencySymbol = getCurrencySymbol(currency);
-
   return (
     <AmountWrapper>
       <TokenAmountWrapper>
@@ -114,8 +108,8 @@ const AssetInfo = (props: Props) => {
         ? <Disclaimer>{disclaimer}</Disclaimer>
         :
         <AmountRow>
-          <FiatAmount>{currencySymbol}{valueInFiat}</FiatAmount>
-          {!!parseFloat(valueOnNetworkInFiat) && <FiatAmount> + {currencySymbol}{valueOnNetworkInFiat}</FiatAmount>}
+          <FiatAmount>{valueInFiat}</FiatAmount>
+          {!!parseFloat(valueOnNetworkInFiat) && <FiatAmount> + {valueOnNetworkInFiat}</FiatAmount>}
         </AmountRow>
       }
     </AmountWrapper>

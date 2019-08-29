@@ -54,7 +54,7 @@ import type { Balances } from 'models/Asset';
 // utils
 import { getRate } from 'utils/assets';
 import { baseColors, fontSizes } from 'utils/variables';
-import { delay, formatMoney, getCurrencySymbol } from 'utils/common';
+import { delay, formatMoney, formatFiat } from 'utils/common';
 
 
 type Props = {
@@ -272,12 +272,12 @@ class TankDetails extends React.Component<Props, State> {
 
     // total
     const totalInFiat = totalStake * getRate(rates, 'PLR', fiatCurrency);
-    const formattedTotalInFiat = formatMoney(totalInFiat);
+    const formattedTotalInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const totalFormattedAmount = formatMoney(totalStake, 4);
 
     // available
     const availableInFiat = availableStake * getRate(rates, 'PLR', fiatCurrency);
-    const formattedAvailableInFiat = formatMoney(availableInFiat);
+    const formattedAvailableInFiat = formatFiat(availableInFiat, baseFiatCurrency);
     const availableFormattedAmount = formatMoney(availableStake, 4);
 
     // used
@@ -285,7 +285,6 @@ class TankDetails extends React.Component<Props, State> {
     const usedFormattedAmount = formatMoney(usedAmount, 4);
 
     const isActive = availableStake > 0;
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     return (
       <Container color="#203756">
@@ -323,7 +322,7 @@ class TankDetails extends React.Component<Props, State> {
                   {`${totalFormattedAmount} ${PPN_TOKEN}`}
                 </ValueText>
                 <ValueLabel total>
-                  {`${currencySymbol}${formattedTotalInFiat}`}
+                  {formattedTotalInFiat}
                 </ValueLabel>
               </ColumnInner>
             </Column>
@@ -363,7 +362,7 @@ class TankDetails extends React.Component<Props, State> {
                 {`${availableFormattedAmount} ${PPN_TOKEN}`}
               </ValueText>
               <ValueLabel>
-                {`${currencySymbol}${formattedAvailableInFiat}`}
+                {formattedAvailableInFiat}
               </ValueLabel>
             </ColumnAnimated>
           </Body>
