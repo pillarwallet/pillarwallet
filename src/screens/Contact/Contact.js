@@ -35,6 +35,7 @@ import {
   disconnectContactAction,
   muteContactAction,
   blockContactAction,
+  syncContactsSmartAddressesAction,
 } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { fetchContactBadgesAction } from 'actions/badgesActions';
@@ -57,7 +58,8 @@ import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'uti
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 // import { CollapsibleSection } from 'components/CollapsibleSection';
 import Spinner from 'components/Spinner';
-import type { ApiUser } from 'models/Contacts';
+import { isCaseInsensitiveMatch } from 'utils/common';
+import type { ApiUser, ContactSmartAddresses } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Badges } from 'models/Badge';
@@ -119,6 +121,8 @@ type Props = {
   fetchContactBadges: Function,
   isFetchingBadges: boolean,
   logScreenView: (view: string, screen: string) => void,
+  contactsSmartAddresses: ContactSmartAddresses[],
+  syncContactsSmartAddresses: Function,
 };
 
 type State = {
@@ -137,11 +141,18 @@ class Contact extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { navigation, contacts } = this.props;
+    const { navigation, contacts, contactsSmartAddresses } = this.props;
     this.activityFeedRef = React.createRef();
     const contactName = navigation.getParam('username', '');
-    const contact = navigation.getParam('contact', { username: contactName });
-    this.localContact = contacts.find(({ username }) => username === contact.username);
+    const contactParam = navigation.getParam('contact', { username: contactName });
+    const contact = contacts.find(({ username }) => username === contactParam.username) || {};
+    const { smartWallets = [] } = contactsSmartAddresses.find(
+      ({ userId }) => contact.id && isCaseInsensitiveMatch(userId, contact.id),
+    ) || {};
+    this.localContact = {
+      ...contact,
+      ethAddress: smartWallets[0] || contact.ethAddress,
+    };
     this.scroll = React.createRef();
     this.state = {
       showManageContactModal: false,
@@ -160,6 +171,7 @@ class Contact extends React.Component<Props, State> {
       navigation,
       // fetchContactBadges,
       logScreenView,
+      syncContactsSmartAddresses,
     } = this.props;
     this.isComponentMounted = true;
     const contactName = navigation.getParam('username', '');
@@ -185,6 +197,9 @@ class Contact extends React.Component<Props, State> {
       syncContact(localContact.id);
       // fetchContactBadges(localContact);
       fetchContactTransactions(localContact.ethAddress);
+    }
+    if (session.isOnline) {
+      syncContactsSmartAddresses();
     }
     logScreenView('View contact', 'Contact');
   }
@@ -496,7 +511,7 @@ class Contact extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   chat: { data: { chats } },
   session: { data: session },
   smartWallet: smartWalletState,
@@ -510,6 +525,7 @@ const mapStateToProps = ({
   accounts,
   contactsBadges,
   isFetchingBadges,
+  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -530,6 +546,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
   fetchContactBadges: (contact) => dispatch(fetchContactBadgesAction(contact)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+  syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(Contact);
