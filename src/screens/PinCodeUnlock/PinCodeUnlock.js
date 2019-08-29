@@ -19,8 +19,10 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { DEFAULT_PIN } from 'react-native-dotenv';
+import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
-import TouchID from 'react-native-touch-id';
+
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
@@ -32,21 +34,23 @@ import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { DEFAULT_PIN } from 'react-native-dotenv';
+import { getKeychainDataObject } from 'utils/keychain';
 
 const ACTIVE_APP_STATE = 'active';
 
 type Props = {
-  login: (pin: string, touchID?: boolean, callback?: Function) => Function,
+  loginWithPin: (pin: string, callback: ?Function, updateKeychain: boolean) => Function,
+  loginWithPrivateKey: (privateKey: string, callback: ?Function) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
   connectionKeyPairs: Object,
-  smartWalletFeatureEnabled: boolean,
 }
 
 type State = {
   waitingTime: number,
+  biometricsShown: boolean,
+  updateKeychain: boolean,
 };
 
 class PinCodeUnlock extends React.Component<Props, State> {
@@ -55,6 +59,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
   interval: IntervalID;
   state = {
     waitingTime: 0,
+    biometricsShown: false,
+    updateKeychain: false,
   };
 
   constructor(props) {
@@ -66,15 +72,13 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { useBiometrics, smartWalletFeatureEnabled } = this.props;
+    const { useBiometrics } = this.props;
 
     if (!this.errorMessage && DEFAULT_PIN) {
       this.handlePinSubmit(DEFAULT_PIN);
     }
 
-    if (useBiometrics
-      && !smartWalletFeatureEnabled
-      && !this.errorMessage) {
+    if (useBiometrics && !this.errorMessage) {
       this.showBiometricLogin();
     }
 
@@ -96,15 +100,25 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   showBiometricLogin() {
-    const { login, connectionKeyPairs: { data, lastConnectionKeyIndex } } = this.props;
-    if (data.length > 20 && lastConnectionKeyIndex > -1) {
-      TouchID.authenticate('Biometric login')
-        .then(() => {
-          removeAppStateChangeListener(this.handleAppStateChange);
-          login('', true);
+    const { loginWithPrivateKey } = this.props;
+    const { biometricsShown } = this.state;
+    if (biometricsShown) return;
+    this.setState({ biometricsShown: true }, () => {
+      getKeychainDataObject()
+        .then(data => {
+          this.setState({ biometricsShown: false });
+          if (!data || !Object.keys(data).length) {
+            this.setState({ updateKeychain: true });
+            return;
+          }
+          const privateKey = get(data, 'privateKey', null);
+          if (privateKey) {
+            removeAppStateChangeListener(this.handleAppStateChange);
+            loginWithPrivateKey(privateKey, this.onLoginSuccess);
+          }
         })
-        .catch(() => null);
-    }
+        .catch(() => this.setState({ biometricsShown: false }));
+    });
   }
 
   getWaitingTime = (isNewMount: boolean): number => {
@@ -142,8 +156,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   handlePinSubmit = (pin: string) => {
-    const { login } = this.props;
-    login(pin, false, this.onLoginSuccess || undefined);
+    const { loginWithPin } = this.props;
+    const { updateKeychain } = this.state;
+    loginWithPin(pin, this.onLoginSuccess, updateKeychain);
     this.handleLocking(false);
   };
 
@@ -190,16 +205,17 @@ const mapStateToProps = ({
   wallet,
   appSettings: { data: { useBiometrics = false } },
   connectionKeyPairs,
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   wallet,
   useBiometrics,
   connectionKeyPairs,
-  smartWalletFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  login: (pin: string, touchID?: boolean, callback?: Function) => dispatch(loginAction(pin, touchID, callback)),
+  loginWithPin: (pin: string, callback: ?Function, updateKeychain) => dispatch(
+    loginAction(pin, null, callback, updateKeychain),
+  ),
+  loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);

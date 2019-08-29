@@ -35,7 +35,7 @@ import DeploymentView from 'components/DeploymentView';
 import CircleButton from 'components/CircleButton';
 
 import { calculatePortfolioBalance, getRate } from 'utils/assets';
-import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { formatMoney, formatFiat, getCurrencySymbol } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
@@ -155,7 +155,7 @@ class PPNView extends React.Component<Props> {
     const paymentNetworkBalanceFormatted = formatMoney(tokenBalance, 4);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const totalInFiat = tokenBalance * getRate(rates, tokenSymbol, fiatCurrency);
-    const formattedAmountInFiat = formatMoney(totalInFiat);
+    const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const thisAsset = assets[tokenSymbol] || {};
 
     const {
@@ -230,13 +230,12 @@ class PPNView extends React.Component<Props> {
     } = this.props;
     const portfolioBalances = calculatePortfolioBalance(assetsOnNetwork, rates, balances);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const PPNBalance = formatMoney(portfolioBalances[fiatCurrency] || 0);
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const PPNBalance = formatFiat(portfolioBalances[fiatCurrency] || 0, baseFiatCurrency);
     const disabled = !Object.keys(assetsOnNetwork).length || disableSettle;
 
     return (
       <ListHeaderWrapper>
-        <HeaderTitle>{`Balance ${currencySymbol} ${PPNBalance}`}</HeaderTitle>
+        <HeaderTitle>{`Balance ${PPNBalance}`}</HeaderTitle>
         <HeaderButton
           onPress={() => navigation.navigate(SETTLE_BALANCE)}
           disabled={disabled}
@@ -247,7 +246,7 @@ class PPNView extends React.Component<Props> {
     );
   };
 
-  goToSendPLRViaPPN = () => {
+  goToSend = () => {
     const {
       navigation,
       assets,
@@ -272,13 +271,13 @@ class PPNView extends React.Component<Props> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const paymentNetworkBalanceFormatted = formatMoney(availableStake, 4);
     const totalInFiat = availableStake * getRate(rates, PLR, fiatCurrency);
-    const formattedAmountInFiat = formatMoney(totalInFiat);
+    const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const assetData = {
       id: PLR,
       name: name || symbol,
       token: symbol,
       amount: paymentNetworkBalanceFormatted,
-      balanceInFiat: { amount: formattedAmountInFiat, currency: fiatCurrency },
+      balanceInFiat: formattedAmountInFiat,
       address: getAccountAddress(activeAccount),
       contractAddress: address,
       icon: iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '',
@@ -339,15 +338,24 @@ class PPNView extends React.Component<Props> {
           maxValue={totalStake}
           currentValue={availableStake}
           currentValueFormatted={availableFormattedAmount}
-          topupAction={() => navigation.navigate(FUND_TANK)}
-          topUpLoading={false}
-          disabled={!!disableTopUpAndSettle}
         />
         <AssetButtonsWrapper>
           <CircleButton
+            label="Top up"
+            onPress={() => navigation.navigate(FUND_TANK)}
+            fontIcon="up-arrow"
+            disabled={!!disableTopUpAndSettle}
+          />
+          { /* <CircleButton
+            label="Withdraw"
+            fontIcon="down-arrow"
+            onPress={() => {}}
+            disabled={availableStake <= 0}
+          /> */ }
+          <CircleButton
             label="Send"
             icon={iconSend}
-            onPress={this.goToSendPLRViaPPN}
+            onPress={this.goToSend}
             disabled={availableStake <= 0}
           />
         </AssetButtonsWrapper>

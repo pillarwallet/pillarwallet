@@ -27,6 +27,7 @@ import {
   formatMoney,
   uniqBy,
   formatUnits,
+  formatFiat,
 } from '../common';
 
 describe('Common utils', () => {
@@ -155,6 +156,29 @@ describe('Common utils', () => {
     it('should format 40000000 correctly with 0 decimals', () => {
       const result = formatUnits('40000000', 0);
       expect(result).toEqual('40000000.0');
+    });
+  });
+
+  describe('formatFiat', () => {
+    it('should add currency symbol to value string based on currency provided', () => {
+      const expectedValue = '€ 14.30';
+      expect(formatFiat('14.3', 'EUR')).toBe(expectedValue);
+    });
+    it('should add default (£) currency symbol to value string if no currency is provided', () => {
+      const expectedValue = '£ 14.30';
+      expect(formatFiat('14.3')).toBe(expectedValue);
+    });
+    it('should round value and show two decimals only', () => {
+      const expectedValue = '£ 14.34';
+      expect(formatFiat('14.336')).toBe(expectedValue);
+    });
+    it('should add trailing zeros to values missing second decimal', () => {
+      const expectedValue = '£ 14.30';
+      expect(formatFiat('14.3')).toBe(expectedValue);
+    });
+    it('should add trailing zeros to values missing decimals', () => {
+      const expectedValue = '£ 14.00';
+      expect(formatFiat('14')).toBe(expectedValue);
     });
   });
 });
