@@ -20,14 +20,14 @@
 
 import { getUserName } from './contacts';
 import { uniqBy } from './common';
+import { addressesEqual } from './assets';
 
 export function mapTransactionsHistory(history: Object[], contacts: Object[], eventType: string) {
   const concatedHistory = history
     .map(({ ...rest }) => ({ ...rest, type: eventType }))
     .map(({ to, from, ...rest }) => {
       const contact = contacts.find(({ ethAddress }) => {
-        return from.toUpperCase() === ethAddress.toUpperCase()
-          || to.toUpperCase() === ethAddress.toUpperCase();
+        return addressesEqual(from, ethAddress) || addressesEqual(to, ethAddress);
       });
 
       return {

@@ -38,7 +38,7 @@ import { TextLink, Label, BaseText } from 'components/Typography';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
+import { formatAmount, formatFiat } from 'utils/common';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -172,7 +172,6 @@ class FundTank extends React.Component<Props, State> {
     const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
     const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
     const isInitFlow = navigation.getParam('isInitFlow', false);
 
     // balance
@@ -181,7 +180,7 @@ class FundTank extends React.Component<Props, State> {
 
     // balance in fiat
     const totalInFiat = balance * getRate(rates, 'PLR', fiatCurrency);
-    const formattedBalanceInFiat = formatMoney(totalInFiat);
+    const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // fee
     const txFeeInWei = this.getTxFeeInWei();
@@ -196,8 +195,7 @@ class FundTank extends React.Component<Props, State> {
 
     // value in fiat
     const valueInFiat = currentValue * getRate(rates, 'PLR', fiatCurrency);
-    const formattedValueInFiat = formatMoney(valueInFiat);
-    const valueInFiatOutput = `${currencySymbol}${formattedValueInFiat}`;
+    const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
@@ -245,7 +243,7 @@ class FundTank extends React.Component<Props, State> {
               <Label small>Available Balance</Label>
               <SendTokenDetailsValue>
                 {formattedBalance} {token}
-                <HelperText> ({currencySymbol}{formattedBalanceInFiat})</HelperText>
+                <HelperText>{formattedBalanceInFiat}</HelperText>
               </SendTokenDetailsValue>
             </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
