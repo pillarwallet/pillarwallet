@@ -247,7 +247,7 @@ class PPNView extends React.Component<Props> {
     );
   };
 
-  goToSendPLRViaPPN = () => {
+  goToSend = () => {
     const {
       navigation,
       assets,
@@ -348,16 +348,16 @@ class PPNView extends React.Component<Props> {
             fontIcon="up-arrow"
             disabled={!!disableTopUpAndSettle}
           />
-          <CircleButton
+          { /* <CircleButton
             label="Withdraw"
             fontIcon="down-arrow"
             onPress={() => {}}
             disabled={availableStake <= 0}
-          />
+          /> */ }
           <CircleButton
             label="Send"
             icon={iconSend}
-            onPress={this.goToSendPLRViaPPN}
+            onPress={this.goToSend}
             disabled={availableStake <= 0}
           />
         </AssetButtonsWrapper>
