@@ -388,6 +388,13 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
       <View
         style={null}
       />
+      <View
+        style={
+          Object {
+            "height": 140,
+          }
+        }
+      />
     </View>
   </RCTScrollView>
 </View>
@@ -780,6 +787,13 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
       </View>
       <View
         style={null}
+      />
+      <View
+        style={
+          Object {
+            "height": 140,
+          }
+        }
       />
     </View>
   </RCTScrollView>
