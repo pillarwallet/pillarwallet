@@ -238,7 +238,7 @@ class AccountsScreen extends React.Component<Props, State> {
     }
   };
 
-  switchToSmartWalletAccount = async (_: string, wallet: Account) => {
+  switchToSmartWalletAccount = async (_: string, wallet: Object) => {
     this.setState({ showPinModal: false, changingAccount: true });
     const { navigation, switchAccount } = this.props;
     if (!this.switchToWallet) return;
