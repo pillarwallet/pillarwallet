@@ -339,7 +339,6 @@ class PPNView extends React.Component<Props> {
           maxValue={totalStake}
           currentValue={availableStake}
           currentValueFormatted={availableFormattedAmount}
-          disabled={!!disableTopUpAndSettle}
         />
         <AssetButtonsWrapper>
           <CircleButton
