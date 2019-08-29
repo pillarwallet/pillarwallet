@@ -25,9 +25,14 @@ import Toast from 'components/Toast';
 import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import {
+  setKeychainDataObject,
+  resetKeychainDataObject,
+} from 'utils/keychain';
 import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { switchAccountAction } from './accountsActions';
+
 
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Function) => {
@@ -91,14 +96,27 @@ export const setBrowsingWebViewAction = (isBrowsingWebView: boolean) => ({
   },
 });
 
-export const changeUseBiometricsAction = (value: boolean) => {
+export const changeUseBiometricsAction = (value: boolean, privateKey?: string) => {
   return async (dispatch: Function) => {
+    let message;
+    if (value) {
+      await setKeychainDataObject({ privateKey });
+      message = 'Biometric login enabled';
+    } else {
+      await resetKeychainDataObject();
+      message = 'Biometric login disabled';
+    }
     dispatch(saveDbAction('app_settings', { appSettings: { useBiometrics: value } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: {
         useBiometrics: value,
       },
+    });
+    Toast.show({
+      message,
+      type: 'success',
+      title: 'Success',
     });
   };
 };
