@@ -18,20 +18,43 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import type { ContactSmartAddresses } from 'models/Contacts';
+import type { Accounts } from 'models/Account';
 import { getUserName } from './contacts';
-import { uniqBy } from './common';
+import { isCaseInsensitiveMatch, uniqBy } from './common';
 import { addressesEqual } from './assets';
+import { getUserAccounts } from './accounts';
 
-export function mapTransactionsHistory(history: Object[], contacts: Object[], eventType: string) {
+export function mapTransactionsHistory(
+  history: Object[],
+  contacts: Object[],
+  contactsSmartAddresses: ContactSmartAddresses[],
+  accounts: Accounts,
+  eventType: string,
+) {
+  const userAccounts = getUserAccounts(accounts);
   const concatedHistory = history
     .map(({ ...rest }) => ({ ...rest, type: eventType }))
     .map(({ to, from, ...rest }) => {
-      const contact = contacts.find(({ ethAddress }) => {
-        return addressesEqual(from, ethAddress) || addressesEqual(to, ethAddress);
+      const contact = contacts.find(({ id: contactId, ethAddress }) => {
+        if (addressesEqual(from, ethAddress) || addressesEqual(to, ethAddress)) return true;
+        return contactsSmartAddresses && !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>
+          isCaseInsensitiveMatch(userId, contactId)
+            && smartWallets.length
+            && (addressesEqual(from, smartWallets[0]) || addressesEqual(to, smartWallets[0])),
+        );
       });
-
+      let userAccount;
+      if (userAccounts.length && !contact) {
+        userAccount = userAccounts.find(
+          ({ ethAddress }) => addressesEqual(from, ethAddress) || addressesEqual(to, ethAddress),
+        );
+      }
+      const username = userAccount
+        ? userAccount.username
+        : getUserName(contact);
       return {
-        username: getUserName(contact),
+        username,
         to,
         from,
         ...rest,

@@ -220,6 +220,8 @@ class Contact extends React.Component<Props, State> {
       history,
       contacts,
       openSeaTxHistory,
+      contactsSmartAddresses,
+      accounts,
     } = this.props;
     const contactName = navigation.getParam('username', '');
     const contact = navigation.getParam('contact', { username: contactName });
@@ -229,9 +231,21 @@ class Contact extends React.Component<Props, State> {
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const transactionsOnMainnet = mapTransactionsHistory(
+      tokenTxHistory,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      TRANSACTION_EVENT,
+    );
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, COLLECTIBLE_TRANSACTION);
+    const mappedCTransactions = mapTransactionsHistory(
+      collectiblesTransactions,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      COLLECTIBLE_TRANSACTION,
+    );
 
     const relatedTransactions = [...transactionsOnMainnet, ...mappedCTransactions]
       .filter(({ username }) => username === displayContact.username);

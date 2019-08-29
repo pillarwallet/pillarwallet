@@ -27,7 +27,6 @@ import { createStructuredSelector } from 'reselect';
 import Separator from 'components/Separator';
 import { ACCOUNTS, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { CHAT } from 'constants/chatConstants';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -42,9 +41,9 @@ import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress, isCaseInsensitiveMatch } from 'utils/common';
-import { getAccountAddress } from 'utils/accounts';
+import { getUserAccounts } from 'utils/accounts';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
-import type { Account, Accounts, AccountTypes } from 'models/Account';
+import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddresses } from 'models/Contacts';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import { activeAccountSelector } from 'selectors';
@@ -254,39 +253,23 @@ class SendTokenContacts extends React.Component<Props, State> {
     });
   }
 
-  getAccountName(accountType: AccountTypes): string {
-    switch (accountType) {
-      case ACCOUNT_TYPES.SMART_WALLET:
-        return 'Smart Wallet';
-      case ACCOUNT_TYPES.KEY_BASED:
-        return 'Key Based account';
-      default:
-        return '';
-    }
-  }
-
-  getUserAccounts() {
-    const { accounts = [], smartWalletFeatureEnabled } = this.props;
-    if (!smartWalletFeatureEnabled) return [];
-    const accountsWithoutActive = accounts.filter(({ isActive }) => !isActive);
-    return accountsWithoutActive.map(account => ({
-      ethAddress: getAccountAddress(account),
-      username: this.getAccountName(account.type),
-    }));
-  }
-
   render() {
     const {
       localContacts = [],
       contactsSmartAddresses,
       contactsSmartAddressesSynced,
       isOnline,
+      smartWalletFeatureEnabled,
+      accounts,
     } = this.props;
     const { isScanning, formStructure, value } = this.state;
 
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
-    const userAccounts = this.getUserAccounts();
+    const userAccounts = smartWalletFeatureEnabled
+      ? getUserAccounts(accounts)
+      : [];
+
     const allContacts = this.isPPNTransaction
       ? localContacts // no asset transfer between user accounts in PPN send flow
       : [...userAccounts, ...localContacts];
