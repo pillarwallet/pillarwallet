@@ -54,6 +54,7 @@ import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
+import { setKeychainDataObject } from 'utils/keychain';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
@@ -70,14 +71,23 @@ const Crashlytics = firebase.crashlytics();
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
-export const loginAction = (pin: string, touchID?: boolean = false, onLoginSuccess?: Function) => {
+export const loginAction = (
+  pin: ?string,
+  privateKey: ?string,
+  onLoginSuccess: ?Function,
+  updateKeychain?: boolean = false,
+) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const {
       accounts: { data: accounts },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
       appSettings: {
-        data: { userJoinedBeta = false, firebaseAnalyticsConnectionEnabled = true, blockchainNetwork = '' },
+        data: {
+          userJoinedBeta = false,
+          firebaseAnalyticsConnectionEnabled = true,
+          blockchainNetwork = '',
+        },
       },
     } = getState();
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
@@ -91,7 +101,6 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       payload: DECRYPTING,
     });
     await delay(100);
-    const saltedPin = await getSaltedPin(pin, dispatch);
     try {
       let wallet;
 
@@ -104,16 +113,20 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       if (!userJoinedBeta && firebaseAnalyticsConnectionEnabled) {
         dispatch(setFirebaseAnalyticsCollectionEnabled(false));
       }
-      if (!touchID) {
+      if (pin) {
+        const saltedPin = await getSaltedPin(pin, dispatch);
         const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
         wallet = await ethers.Wallet.RNfromEncryptedWallet(
           JSON.stringify(encryptedWallet),
           saltedPin,
           decryptionOptions,
         );
-      } else {
+      } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
-        wallet = { ...encryptedWallet, address: walletAddress };
+        wallet = { ...encryptedWallet, privateKey, address: walletAddress };
+      } else {
+        // nothing provided, invalid login
+        throw new Error();
       }
 
       let { user = {} } = await storage.get('user');
@@ -178,6 +191,11 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       });
       dispatch(updatePinAttemptsAction(false));
 
+      // migrate older users for keychain access with biometrics
+      if (wallet.privateKey && updateKeychain) {
+        await setKeychainDataObject({ privateKey: wallet.privateKey });
+      }
+
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
       }
@@ -240,10 +258,11 @@ const defaultDecryptionSettings = {
   mnemonic: false,
 };
 
-export const checkPinAction = (
-  pin: string,
+export const checkAuthAction = (
+  pin: ?string,
+  privateKey: ?string,
   onValidPin?: Function,
-  options: DecryptionSettings = defaultDecryptionSettings,
+  options?: DecryptionSettings = defaultDecryptionSettings,
 ) => {
   return async (dispatch: Function) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -252,24 +271,34 @@ export const checkPinAction = (
       payload: DECRYPTING,
     });
     await delay(100);
-    const saltedPin = await getSaltedPin(pin, dispatch);
     try {
-      const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
-      dispatch({
-        type: DECRYPT_WALLET,
-        payload: {
-          address: wallet.address,
-        },
-      });
-      if (onValidPin) {
-        onValidPin(pin, wallet);
+      let wallet;
+      if (pin) {
+        const saltedPin = await getSaltedPin(pin, dispatch);
+        wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
+      } else if (privateKey) {
+        const walletAddress = normalizeWalletAddress(encryptedWallet.address);
+        wallet = { ...encryptedWallet, privateKey, address: walletAddress };
+      }
+      if (wallet) {
+        dispatch({
+          type: DECRYPT_WALLET,
+          payload: {
+            address: wallet.address,
+          },
+        });
+        if (onValidPin) {
+          onValidPin(pin, wallet);
+        }
+        return;
       }
     } catch (e) {
-      dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: INVALID_PASSWORD,
-      });
+      // err
     }
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: INVALID_PASSWORD,
+    });
   };
 };
 

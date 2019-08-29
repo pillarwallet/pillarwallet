@@ -23,7 +23,7 @@ import { FlatList, Alert, ScrollView, Keyboard, View } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import TouchID from 'react-native-touch-id';
+import * as Keychain from 'react-native-keychain';
 import {
   CHANGE_PIN_FLOW,
   REVEAL_BACKUP_PHRASE,
@@ -177,7 +177,7 @@ type Props = {
   logoutUser: () => Function,
   backupStatus: Object,
   useBiometrics: ?boolean,
-  changeUseBiometrics: (value: boolean) => Function,
+  changeUseBiometrics: (enabled: boolean, privateKey: string) => Function,
   cleanSmartWalletAccounts: Function,
   smartWalletFeatureEnabled: boolean,
   logScreenView: (view: string, screen: string) => void,
@@ -227,8 +227,8 @@ class Profile extends React.Component<Props, State> {
 
     logScreenView('View profile', 'Profile');
 
-    TouchID.isSupported({})
-      .then(() => this.setState({ showBiometricsSelector: true }))
+    Keychain.getSupportedBiometryType()
+      .then(supported => this.setState({ showBiometricsSelector: !!supported }))
       .catch(() => null);
   }
 
@@ -257,11 +257,11 @@ class Profile extends React.Component<Props, State> {
     this.setState((prev: State) => ({ showTrackingModal: !prev.showTrackingModal }));
   }
 
-  handleChangeUseBiometrics = (value) => {
+  handleChangeUseBiometrics = (enabled, privateKey) => {
     const { changeUseBiometrics } = this.props;
-    changeUseBiometrics(value);
+    changeUseBiometrics(enabled, privateKey);
     this.setState({ showCheckPinModal: false }, () => {
-      const message = value ? 'Biometric login enabled' : 'Biometric login disabled';
+      const message = enabled ? 'Biometric login enabled' : 'Biometric login disabled';
       delay(500)
         .then(() => Toast.show({ title: 'Success', type: 'success', message }))
         .catch(() => null);
@@ -682,7 +682,11 @@ class Profile extends React.Component<Props, State> {
               showHeader
             >
               <Wrapper flex={1}>
-                <CheckPin onPinValid={() => this.handleChangeUseBiometrics(!useBiometrics)} />
+                <CheckPin
+                  onPinValid={
+                    (pin, { privateKey }) => this.handleChangeUseBiometrics(!useBiometrics, privateKey)
+                  }
+                />
               </Wrapper>
             </SlideModal>
 
@@ -919,7 +923,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   updateAssetsLayout: (value: string) => dispatch(updateAssetsLayoutAction(value)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
-  changeUseBiometrics: (value) => dispatch(changeUseBiometricsAction(value)),
+  changeUseBiometrics: (enabled, privateKey) => dispatch(changeUseBiometricsAction(enabled, privateKey)),
   repairStorage: () => dispatch(repairStorageAction()),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),

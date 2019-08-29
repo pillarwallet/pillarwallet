@@ -48,11 +48,7 @@ target 'pillarwallet' do
   pod 'Firebase/Performance'
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
   pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
-
-
-
-
-  pod 'TouchID', :path => '../node_modules/react-native-touch-id'
+  pod 'RNKeychain', :path => '../node_modules/react-native-keychain'
 
   pod 'react-native-intercom', :path => '../node_modules/react-native-intercom'
 
