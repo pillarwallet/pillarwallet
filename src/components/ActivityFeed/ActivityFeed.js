@@ -30,6 +30,7 @@ import get from 'lodash.get';
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
+import type { ContactSmartAddresses } from 'models/Contacts';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -43,7 +44,12 @@ import { BaseText } from 'components/Typography';
 // utils
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
-import { partial, formatAmount, formatUnits } from 'utils/common';
+import {
+  partial,
+  formatAmount,
+  formatUnits,
+  isCaseInsensitiveMatch,
+} from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 
 // constants
@@ -131,6 +137,7 @@ type Props = {
   hideTabs: boolean,
   asset?: string,
   feedType?: string,
+  contactsSmartAddresses: ContactSmartAddresses[],
 }
 
 type FeedItemTransaction = {
@@ -261,6 +268,22 @@ class ActivityFeed extends React.Component<Props, State> {
     }
   };
 
+  findMatchingContact = (address) => {
+    const {
+      contacts,
+      contactsSmartAddresses = [],
+    } = this.props;
+    const contact = contacts.find(({ id: contactId, ethAddress }) => {
+      if (addressesEqual(address, ethAddress)) return true;
+      return !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>
+        isCaseInsensitiveMatch(userId, contactId)
+        && smartWallets.length
+        && addressesEqual(address, smartWallets[0]),
+      );
+    });
+    return contact || {};
+  };
+
   renderActivityFeedItem = ({ item: notification }: Object) => {
     const { type } = notification;
     const {
@@ -297,8 +320,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
       const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
-      const contact = contacts
-        .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const contact = this.findMatchingContact(address);
       const isContact = Object.keys(contact).length !== 0;
       const itemImage = contact.profileImage || fullIconUrl;
       let itemValue = `${directionSymbol} ${formattedValue} ${notification.asset}`;
@@ -520,11 +542,12 @@ class ActivityFeed extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   assets: { data: assets },
 }) => ({
   contacts,
   assets: Object.values(assets),
+  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
