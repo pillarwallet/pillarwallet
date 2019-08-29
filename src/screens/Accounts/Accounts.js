@@ -199,7 +199,7 @@ class AccountsScreen extends React.Component<Props, State> {
     }
   };
 
-  switchToSmartWalletAndGoToPPN = async (_: string, wallet: Account) => {
+  switchToSmartWalletAndGoToPPN = async (_: string, wallet: Object) => {
     const {
       accounts,
       setActiveBlockchainNetwork,
@@ -249,10 +249,8 @@ class AccountsScreen extends React.Component<Props, State> {
   };
 
   initialisePPN = () => {
-    const { navigation } = this.props;
-
-    navigation.navigate(PILLAR_NETWORK_INTRO);
-  }
+    this.props.navigation.navigate(PILLAR_NETWORK_INTRO);
+  };
 
   renderNetwork(item: NetworkItem) {
     const {
