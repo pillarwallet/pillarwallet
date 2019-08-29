@@ -17,21 +17,22 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import { SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { saveDbAction } from './dbActions';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { updateAppSettingsAction } from 'actions/appSettingsActions';
 
 export const setActiveBlockchainNetworkAction = (id: string) => {
-  return async (dispatch: Function) => {
-    dispatch({
-      type: SET_ACTIVE_NETWORK,
-      payload: id,
-    });
-    dispatch(saveDbAction('app_settings', { appSettings: { blockchainNetwork: id } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { blockchainNetwork: id },
-    });
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { blockchainNetwork: { data: networks } } = getState();
+    const network = networks.find(({ id: networkId }) => networkId === id);
+
+    if (!(network && network.isAvailable)) {
+      console.error('Trying to activate an unavailable network'); // eslint-disable-line no-console
+      return;
+    }
+
+    dispatch({ type: SET_ACTIVE_NETWORK, payload: id });
+    dispatch(updateAppSettingsAction('blockchainNetwork', id));
   };
 };

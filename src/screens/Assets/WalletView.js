@@ -423,7 +423,7 @@ class WalletView extends React.Component<Props, State> {
     }
     return (
       <CustomKAWrapper
-        hasStickyTabs={!isInSearchAndFocus && !blockAssetsView && !!collectibles.length}
+        hasStickyTabs={!isInSearchAndFocus && !blockAssetsView}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -464,7 +464,7 @@ class WalletView extends React.Component<Props, State> {
           itemSearchState={!!isInSearchMode}
           navigation={navigation}
         />}
-        {!isInSearchAndFocus && !blockAssetsView && !!collectibles.length &&
+        {!isInSearchAndFocus && !blockAssetsView &&
         <Tabs
           initialActiveTab={activeTab}
           tabs={assetsTabs}

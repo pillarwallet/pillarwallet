@@ -22,12 +22,15 @@ import { ImageBackground, Image } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
 
 type Props = {
   disabled?: boolean,
   onPress: Function,
   label: string,
-  icon: string,
+  icon?: string,
+  fontIcon?: string,
+  fontIconStyle?: Object,
 }
 
 const CircleButtonIconWrapperColors = ['#ffffff', '#f2f4f9'];
@@ -75,6 +78,8 @@ const CircleButton = (props: Props) => {
     onPress,
     icon,
     label,
+    fontIcon,
+    fontIconStyle,
   } = props;
 
   return (
@@ -90,12 +95,24 @@ const CircleButton = (props: Props) => {
           disabled={disabled}
           colors={CircleButtonIconWrapperColors}
         >
+          {!!icon &&
           <CircleButtonIcon
             disabled={disabled}
             source={icon}
             resizeMode="contain"
             resizeMethod="resize"
-          />
+          />}
+          {!!fontIcon &&
+          <Icon
+            name={fontIcon}
+            style={{
+              fontSize: fontSizes.medium,
+              color: baseColors.electricBlue,
+              alignSelf: 'center',
+              ...fontIconStyle,
+              opacity: disabled ? 0.3 : 1,
+            }}
+          />}
         </CircleButtonIconWrapper>
 
       </ImageBackground>

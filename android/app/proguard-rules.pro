@@ -74,3 +74,7 @@
 -keep class * {
     public private *;
 }
+
+-keep class com.facebook.crypto.** {
+   *;
+}
