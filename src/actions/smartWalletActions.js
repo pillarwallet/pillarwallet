@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Alert } from 'react-native';
 import { sdkModules, sdkConstants } from '@archanova/sdk';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
@@ -69,7 +70,13 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
   MARK_PLR_TANK_INITIALISED,
 } from 'constants/paymentNetworkConstants';
-import { SMART_WALLET_UNLOCK, ASSETS, SEND_TOKEN_AMOUNT, PPN_SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
+import {
+  SMART_WALLET_UNLOCK,
+  ASSETS,
+  SEND_TOKEN_AMOUNT,
+  PPN_SEND_TOKEN_AMOUNT,
+  ACCOUNTS,
+} from 'constants/navigationConstants';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -108,11 +115,11 @@ import type { TxToSettle } from 'models/PaymentNetwork';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
-import { getActiveAccountAddress, getActiveAccountId, getActiveAccountType } from 'utils/accounts';
+import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
 import { formatAmount, formatMoney, formatUnits, getGasPriceWei } from 'utils/common';
-
+import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 
 const storage = Storage.getInstance('db');
 
@@ -1171,10 +1178,8 @@ export const cleanSmartWalletAccountsAction = () => {
 export const navigateToSendTokenAmountAction = (navOptions: Object) => {
   return async (dispatch: Function, getState: Function) => {
     const {
-      accounts: { data: accounts },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+      blockchainNetwork: { data: blockchainNetworks },
     } = getState();
-    const activeAccountType = getActiveAccountType(accounts);
 
     const standardSendFlow = NavigationActions.navigate({
       routeName: SEND_TOKEN_AMOUNT,
@@ -1186,30 +1191,34 @@ export const navigateToSendTokenAmountAction = (navOptions: Object) => {
       params: navOptions,
     });
 
-    if (!smartWalletFeatureEnabled
-      || activeAccountType !== ACCOUNT_TYPES.SMART_WALLET
-      || navOptions.assetData.token !== PPN_TOKEN
-    ) {
-      navigate(standardSendFlow);
+    if (isPillarPaymentNetworkActive(blockchainNetworks)) {
+      if (!smartWalletService || !smartWalletService.sdkInitialized) {
+        Toast.show({
+          message: 'Smart Account is not initialized',
+          type: 'warning',
+          autoClose: false,
+        });
+        return;
+      }
+
+      const userInfo = await smartWalletService.searchAccount(navOptions.receiver).catch(null);
+      if (userInfo) {
+        navigate(ppnSendFlow);
+        return;
+      }
+      Alert.alert(
+        'This address is not on Pillar Network',
+        'Address should be connected to Pillar Network in order to be able to send instant transactions for free',
+        [
+          { text: 'Switch to Ethereum Mainnet', onPress: () => navigate(ACCOUNTS) },
+          { text: 'Cancel', style: 'cancel' },
+        ],
+        { cancelable: true },
+      );
       return;
     }
 
-    if (!smartWalletService || !smartWalletService.sdkInitialized) {
-      Toast.show({
-        message: 'Smart Account is not initialized',
-        type: 'warning',
-        autoClose: false,
-      });
-      return;
-    }
-
-    const userInfo = await smartWalletService.searchAccount(navOptions.receiver).catch(null);
-    if (!userInfo) {
-      navigate(standardSendFlow);
-      return;
-    }
-
-    navigate(ppnSendFlow);
+    navigate(standardSendFlow);
   };
 };
 
