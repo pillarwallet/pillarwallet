@@ -130,6 +130,7 @@ type State = {
   addEmailRedirect: boolean,
   isScanning: boolean,
   showLoginModal: boolean,
+  tabIsChanging: boolean,
 };
 
 const BalanceWrapper = styled.View`
@@ -197,6 +198,7 @@ class HomeScreen extends React.Component<Props, State> {
     usernameWidth: 0,
     isScanning: false,
     showLoginModal: false,
+    tabIsChanging: false,
   };
 
   componentDidMount() {
@@ -342,6 +344,10 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
+  onTabChange = (isChanging?: boolean) => {
+    this.setState({ tabIsChanging: isChanging });
+  };
+
   render() {
     const {
       user,
@@ -365,6 +371,7 @@ class HomeScreen extends React.Component<Props, State> {
       activeTab,
       isScanning,
       showLoginModal,
+      tabIsChanging,
     } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
@@ -497,6 +504,7 @@ class HomeScreen extends React.Component<Props, State> {
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}
+            onTabChange={this.onTabChange}
           />
           <ActivityFeed
             backgroundColor={baseColors.white}
@@ -508,7 +516,7 @@ class HomeScreen extends React.Component<Props, State> {
             activeTab={activeTab}
             hideTabs
             initialNumToRender={6}
-            wrapperStyle={{ flexGrow: 1 }}
+            wrapperStyle={{ flexGrow: 1, opacity: tabIsChanging ? 0.5 : 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </ScrollView>
