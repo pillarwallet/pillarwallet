@@ -40,6 +40,8 @@ import {
   getConnectionStateCheckParamsByUserId,
 } from 'utils/chat';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 import { saveDbAction } from './dbActions';
 
 const chat = new ChatService();
@@ -63,7 +65,7 @@ const mergeNewChats = (newChats, existingChats) => {
 };
 
 export const getExistingChatsAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
     } = getState();
@@ -102,7 +104,7 @@ export const getExistingChatsAction = () => {
 };
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
       const params = {
@@ -150,7 +152,7 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
 };
 
 export const getChatDraftByContactAction = (contactId: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     const { drafts = {} } = await storage.get('chat');
     const [chatDraft, chatDrafts] = partition(drafts, { contactId });
     const { draftText = '' } = chatDraft[0] || {};
@@ -166,7 +168,7 @@ export const getChatDraftByContactAction = (contactId: string) => {
 };
 
 export const clearChatDraftStateAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({
       type: CLEAR_CHAT_DRAFT,
     });
@@ -174,7 +176,7 @@ export const clearChatDraftStateAction = () => {
 };
 
 export const saveDraftAction = (contactId: string, draftText: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     const chatStorage = await storage.get('chat');
     const { drafts = [] } = chatStorage || {};
 
@@ -190,7 +192,7 @@ export const getChatByContactAction = (
   avatar: string,
   loadEarlier: boolean = false,
 ) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { isDecrypting } },
     } = getState();
@@ -324,7 +326,7 @@ export const getChatByContactAction = (
 };
 
 export const addContactAndSendWebSocketChatMessageAction = (tag: string, params: Object) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { username } = params;
     const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
     const addContactParams = {
@@ -348,7 +350,7 @@ export const addContactAndSendWebSocketChatMessageAction = (tag: string, params:
 };
 
 export const deleteChatAction = (username: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     try {
       await chat.client.deleteContactMessages(username, 'chat');
 
@@ -371,7 +373,7 @@ export const deleteChatAction = (username: string) => {
 };
 
 export const deleteContactAction = (username: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     try {
       await chat.client.deleteContact(username);
 
