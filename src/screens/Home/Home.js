@@ -85,7 +85,7 @@ import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 // types
 import type { Account, Accounts } from 'models/Account';
 import type { Badges } from 'models/Badge';
-import type { ContactSmartAddresses } from 'models/Contacts';
+import type { ContactSmartAddressData } from 'models/Contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -118,7 +118,7 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
   restoreTransactionHistory: (walletAddress: string, walletId: string) => void,
   activeAccount: Account,
-  contactsSmartAddresses: ContactSmartAddresses[],
+  contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
 };
 

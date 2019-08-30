@@ -41,10 +41,10 @@ import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress, isCaseInsensitiveMatch } from 'utils/common';
-import { getInactiveUserAccounts } from 'utils/accounts';
+import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import type { Account, Accounts } from 'models/Account';
-import type { ContactSmartAddresses } from 'models/Contacts';
+import type { ContactSmartAddressData } from 'models/Contacts';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import { activeAccountSelector } from 'selectors';
 
@@ -53,11 +53,10 @@ type Props = {
   accounts: Accounts,
   localContacts: Object[],
   wallet: Object,
-  smartWalletFeatureEnabled: boolean,
   navigateToSendTokenAmount: Function,
   contactsSmartAddressesSynced: boolean,
   syncContactsSmartAddresses: Function,
-  contactsSmartAddresses: ContactSmartAddresses[],
+  contactsSmartAddresses: ContactSmartAddressData[],
   isOnline: boolean,
   blockchainNetworks: BlockchainNetwork[],
   activeAccount: Account,
@@ -259,16 +258,17 @@ class SendTokenContacts extends React.Component<Props, State> {
       contactsSmartAddresses,
       contactsSmartAddressesSynced,
       isOnline,
-      smartWalletFeatureEnabled,
       accounts,
     } = this.props;
     const { isScanning, formStructure, value } = this.state;
 
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
-    const userAccounts = smartWalletFeatureEnabled
-      ? getInactiveUserAccounts(accounts)
-      : [];
+    const userAccounts = getInactiveUserAccounts(accounts).map(account => ({
+      ...account,
+      ethAddress: getAccountAddress(account),
+      username: getAccountName(account.type),
+    }));
 
     const allContacts = this.isPPNTransaction
       ? localContacts // no asset transfer between user accounts in PPN send flow
@@ -277,6 +277,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     if (value && value.address.length) {
       const searchStr = value.address.toLowerCase();
       contactsToRender = allContacts.filter(({ username, ethAddress }) => {
+        // $FlowFixMe
         const usernameFound = username.toLowerCase().includes(searchStr);
         if (value.address.length < 3) return usernameFound;
         return usernameFound || ethAddress.toLowerCase().startsWith(searchStr);
@@ -287,7 +288,6 @@ class SendTokenContacts extends React.Component<Props, State> {
       contactsToRender = contactsToRender
         .map(contact => {
           const { smartWallets = [] } = contactsSmartAddresses.find(
-            // $FlowFixMe
             ({ userId }) => contact.id && isCaseInsensitiveMatch(userId, contact.id),
           ) || {};
           return {
@@ -350,14 +350,12 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   contacts: { data: localContacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   wallet: { data: wallet },
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
   session: { data: { contactsSmartAddressesSynced, isOnline } },
   blockchainNetwork: { data: blockchainNetworks },
 }) => ({
   accounts,
   localContacts,
   wallet,
-  smartWalletFeatureEnabled,
   contactsSmartAddresses,
   contactsSmartAddressesSynced,
   isOnline,

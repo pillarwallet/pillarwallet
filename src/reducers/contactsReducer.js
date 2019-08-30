@@ -28,7 +28,7 @@ import {
   UPDATE_CONTACTS_SMART_ADDRESSES,
   SET_CONTACTS_SMART_ADDRESSES,
 } from 'constants/contactsConstants';
-import type { SearchResults, ContactSmartAddresses } from 'models/Contacts';
+import type { SearchResults, ContactSmartAddressData } from 'models/Contacts';
 
 
 export type ContactsReducerState = {
@@ -36,7 +36,7 @@ export type ContactsReducerState = {
   contactState: ?string,
   searchResults: SearchResults,
   contactsSmartAddresses: {
-    addresses: ContactSmartAddresses[],
+    addresses: ContactSmartAddressData[],
     isFetched: boolean,
   },
 }

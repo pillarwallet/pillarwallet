@@ -32,8 +32,8 @@ import isEmpty from 'lodash.isempty';
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
-import type { ApiUser, ContactSmartAddresses } from 'models/Contacts';
-import type { UserAccount } from 'models/Account';
+import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
+import type { Accounts } from 'models/Account';
 
 // components
 import { BaseText, BoldText } from 'components/Typography';
@@ -51,7 +51,7 @@ import {
 } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
-import { findMatchingUserAccount, getInactiveUserAccounts } from 'utils/accounts';
+import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
 
 // actions
@@ -99,8 +99,8 @@ type Props = {
   txNotes: Object[],
   getTxNoteByContact: Function,
   activeAccountAddress: string,
-  contactsSmartAddresses: ContactSmartAddresses[],
-  userAccounts: UserAccount[],
+  contactsSmartAddresses: ContactSmartAddressData[],
+  inactiveAccounts: Accounts,
 }
 
 const ContentWrapper = styled.View`
@@ -254,10 +254,10 @@ class EventDetails extends React.Component<Props, {}> {
     const {
       contacts,
       contactsSmartAddresses = [],
-      userAccounts,
+      inactiveAccounts,
     } = this.props;
     return findMatchingContact(address, contacts, contactsSmartAddresses)
-      || findMatchingUserAccount(address, userAccounts)
+      || findAccountByAddress(address, inactiveAccounts)
       || {};
   };
 
@@ -269,6 +269,8 @@ class EventDetails extends React.Component<Props, {}> {
       history,
       txNotes,
       assets,
+      contacts,
+      contactsSmartAddresses = [],
     } = this.props;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
@@ -304,15 +306,17 @@ class EventDetails extends React.Component<Props, {}> {
       const isPending = status === TX_PENDING_STATUS;
       const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
       const value = formatUnits(txInfo.value, decimals);
-      const recipientContact = this.findMatchingContactOrAccount(to);
+      const recipientContact = findMatchingContact(to, contacts, contactsSmartAddresses) || {};
+      // apply to wallet accounts only if received from other account address
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
-      const relatedUserTitle = relatedUser.username || (isReceived
+      // $FlowFixMe
+      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
         : `${to.slice(0, 7)}…${to.slice(-7)}`);
       const relatedUserProfileImage = relatedUser.profileImage || null;
       // $FlowFixMe
-      const showProfileImage = !relatedUser.isUserAccount;
+      const showProfileImage = !relatedUser.type;
 
       if (isPending) {
         const pendingTimeInSeconds = differenceInSeconds(new Date(), new Date(eventData.createdAt * 1000));
@@ -454,15 +458,17 @@ class EventDetails extends React.Component<Props, {}> {
         }
       }
       const hasNote = transactionNote && transactionNote !== '';
-      const recipientContact = this.findMatchingContactOrAccount(to);
+      const recipientContact = findMatchingContact(to, contacts, contactsSmartAddresses) || {};
+      // apply to wallet accounts only if received from other account address
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
-      const relatedUserTitle = relatedUser.username || (isReceived
+      // $FlowFixMe
+      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
         : `${to.slice(0, 7)}…${to.slice(-7)}`);
       const relatedUserProfileImage = relatedUser.profileImage || null;
       // $FlowFixMe
-      const showProfileImage = !relatedUser.isUserAccount;
+      const showProfileImage = !relatedUser.type;
 
       return (
         <React.Fragment>
@@ -609,7 +615,7 @@ const mapStateToProps = ({
   txNotes,
   assets: Object.values(assets),
   contactsSmartAddresses,
-  userAccounts: getInactiveUserAccounts(accounts),
+  inactiveAccounts: getInactiveUserAccounts(accounts),
 });
 
 const structuredSelector = createStructuredSelector({

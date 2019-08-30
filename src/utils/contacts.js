@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import type { ApiUser, ContactSmartAddresses } from 'models/Contacts';
+import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import { addressesEqual } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 
@@ -47,7 +47,7 @@ export function getInitials(fullName: string = '') {
 export function findMatchingContact(
   address: string,
   contacts: ApiUser[],
-  contactsSmartAddresses: ContactSmartAddresses[],
+  contactsSmartAddresses: ContactSmartAddressData[],
 ) {
   return contacts.find(({ id: contactId, ethAddress }) =>
     addressesEqual(address, ethAddress) || !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>

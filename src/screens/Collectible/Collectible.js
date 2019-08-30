@@ -43,7 +43,7 @@ import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 
 import { accountHistorySelector } from 'selectors/history';
 
 import type { Collectible } from 'models/Collectible';
-import type { ContactSmartAddresses } from 'models/Contacts';
+import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 
 type Props = {
@@ -52,7 +52,7 @@ type Props = {
   openSeaTxHistory: Object[],
   contacts: Object[],
   history: Object[],
-  contactsSmartAddresses: ContactSmartAddresses[],
+  contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
 };
 

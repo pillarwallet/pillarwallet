@@ -30,7 +30,7 @@ import get from 'lodash.get';
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
-import type { ContactSmartAddresses, ApiUser } from 'models/Contacts';
+import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -137,7 +137,7 @@ type Props = {
   hideTabs: boolean,
   asset?: string,
   feedType?: string,
-  contactsSmartAddresses: ContactSmartAddresses[],
+  contactsSmartAddresses: ContactSmartAddressData[],
 }
 
 type FeedItemTransaction = {

@@ -59,7 +59,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 // import { CollapsibleSection } from 'components/CollapsibleSection';
 import Spinner from 'components/Spinner';
 import { isCaseInsensitiveMatch } from 'utils/common';
-import type { ApiUser, ContactSmartAddresses } from 'models/Contacts';
+import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Badges } from 'models/Badge';
@@ -121,7 +121,7 @@ type Props = {
   fetchContactBadges: Function,
   isFetchingBadges: boolean,
   logScreenView: (view: string, screen: string) => void,
-  contactsSmartAddresses: ContactSmartAddresses[],
+  contactsSmartAddresses: ContactSmartAddressData[],
   syncContactsSmartAddresses: Function,
 };
 

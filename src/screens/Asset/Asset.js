@@ -72,7 +72,7 @@ import {
 } from 'selectors/paymentNetwork';
 
 // types
-import type { ContactSmartAddresses } from 'models/Contacts';
+import type { ContactSmartAddressData } from 'models/Contacts';
 
 // local components
 import ReceiveModal from './ReceiveModal';
@@ -107,7 +107,7 @@ type Props = {
   history: Array<*>,
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
-  contactsSmartAddresses: ContactSmartAddresses[],
+  contactsSmartAddresses: ContactSmartAddressData[],
 };
 
 type State = {
