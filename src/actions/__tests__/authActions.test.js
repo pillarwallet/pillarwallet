@@ -33,7 +33,7 @@ import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
 import * as connectionKeyActions from 'actions/connectionKeyPairActions';
-import { loginAction } from '../authActions';
+import { loginAction } from 'actions/authActions';
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
