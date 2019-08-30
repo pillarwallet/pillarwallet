@@ -70,7 +70,7 @@ class SetWalletPinCode extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Create PiN code' }],
+          centerItems: [{ title: 'Create PIN code' }],
         }}
         backgroundColor={baseColors.white}
       >
