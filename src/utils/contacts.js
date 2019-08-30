@@ -49,10 +49,9 @@ export function findMatchingContact(
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddresses[],
 ) {
-  return contacts.find(({ id: contactId, ethAddress }) => {
-    return addressesEqual(address, ethAddress) ||
-      !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>
-        isCaseInsensitiveMatch(userId, contactId) && addressesEqual(address, smartWallets[0] || ''),
-      );
-  });
+  return contacts.find(({ id: contactId, ethAddress }) =>
+    addressesEqual(address, ethAddress) || !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>
+      isCaseInsensitiveMatch(userId, contactId) && addressesEqual(address, smartWallets[0] || ''),
+    ),
+  );
 }
