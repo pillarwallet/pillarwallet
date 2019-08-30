@@ -22,9 +22,11 @@ import Toast from 'components/Toast';
 import { sendMessageByContactAction, deleteContactAction } from 'actions/chatActions';
 import { ADD_MESSAGE, DELETE_CONTACT } from 'constants/chatConstants';
 
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 describe('Chat Actions', () => {
-  const dispatchMock = jest.fn();
-  const getState = jest.fn();
+  const dispatchMock: Dispatch = jest.fn();
+  const getState: GetState = jest.fn();
 
   let chatService;
 

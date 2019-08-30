@@ -22,9 +22,11 @@ import Toast from 'components/Toast';
 import { sendTxNoteByContactAction } from 'actions/txNoteActions';
 import { ADD_TX_NOTE } from 'constants/txNoteConstants';
 
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 describe('Transaction Notes Actions', () => {
-  const dispatchMock = jest.fn();
-  const getState = jest.fn();
+  const dispatchMock: Dispatch = jest.fn();
+  const getState: GetState = jest.fn();
 
   let chatService;
 
