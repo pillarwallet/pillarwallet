@@ -124,8 +124,9 @@ const BackIcon = styled(IconButton)`
 const ActionIcon = styled(IconButton)`
   position: relative;
   align-self: center;
-  height: 24px;
-  width: 24px;
+  height: 34px;
+  width: 44px;
+  padding: 5px 10px;
 `;
 
 const TextButton = styled.TouchableOpacity`
@@ -291,7 +292,7 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.icon) {
       return (
-        <View>
+        <View style={{ marginRight: -10 }}>
           <ActionIcon
             key={item.icon}
             icon={item.icon}
@@ -322,15 +323,16 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.close) {
       return (
-        <ActionIcon
-          key="close"
-          icon="close"
-          color={baseColors.slateBlack}
-          onPress={item.dismiss ? () => navigation.dismiss() : () => navigation.goBack()}
-          fontSize={fontSizes.extraSmall}
-          horizontalAlign="flex-start"
-          style={{ alignSelf: 'flex-end', width: fontSizes.extraSmall }}
-        />
+        <View style={{ marginRight: -10 }}>
+          <ActionIcon
+            key="close"
+            icon="close"
+            color={baseColors.slateBlack}
+            onPress={item.dismiss ? () => navigation.dismiss() : () => navigation.goBack()}
+            fontSize={fontSizes.extraSmall}
+            horizontalAlign="flex-end"
+          />
+        </View>
       );
     }
     if (item.actionButton) {
