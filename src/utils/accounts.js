@@ -70,9 +70,10 @@ export function getAccountName(accountType: AccountTypes): string {
 }
 
 export function getUserAccounts(accounts: Accounts) {
-  const inactiveAccounts = accounts.filter(({ isActive }) => !isActive);
-  return accountsWithoutActive.map(account => ({
-    ethAddress: getAccountAddress(account),
-    username: getAccountName(account.type),
-  }));
+  return accounts
+    .filter(({ isActive }) => !isActive)
+    .map(account => ({
+      ethAddress: getAccountAddress(account),
+      username: getAccountName(account.type),
+    }));
 }

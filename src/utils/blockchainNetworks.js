@@ -20,8 +20,6 @@
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 
-export const isPillarPaymentNetworkActive = (blockchainNetworks: BlockchainNetwork[]) => {
-  const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
-  const { id: activeBNetworkId } = activeBNetwork;
-  return activeBNetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK;
+export const isPillarPaymentNetworkActive = (blockchainNetworks: BlockchainNetwork[]): boolean => {
+  return !!blockchainNetworks.find(({ isActive, id }) => !!isActive && id === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
 };
