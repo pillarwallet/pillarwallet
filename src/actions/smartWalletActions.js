@@ -107,11 +107,13 @@ import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
 // types
-import type { AssetTransfer } from 'models/Asset';
+import type { AssetTransfer, BalancesStore } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
-import type { SmartWalletDeploymentError } from 'models/SmartWalletAccount';
+import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { TransactionsStore } from 'models/Transaction';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
@@ -124,9 +126,9 @@ import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 const storage = Storage.getInstance('db');
 
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     await smartWalletService.init(walletPrivateKey, dispatch);
-    const initialized = smartWalletService.sdkInitialized;
+    const initialized: boolean = smartWalletService.sdkInitialized;
     dispatch({
       type: SET_SMART_WALLET_SDK_INIT,
       payload: initialized,
@@ -135,13 +137,13 @@ export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
 };
 
 export const loadSmartWalletAccountsAction = (privateKey?: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const { user = {} } = await storage.get('user');
     const { session: { data: session } } = getState();
 
-    const smartAccounts = await smartWalletService.getAccounts();
+    const smartAccounts: SmartWalletAccount[] = await smartWalletService.getAccounts();
     if (!smartAccounts.length && privateKey) {
       const newSmartAccount = await smartWalletService.createAccount();
       await api.registerSmartWallet({
@@ -167,7 +169,7 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
 };
 
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
     if (upgradeStatus === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       dispatch({ type: RESET_SMART_WALLET_DEPLOYMENT });
@@ -180,7 +182,7 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
 };
 
 export const setSmartWalletDeploymentDataAction = (hash: ?string = null, error: ?SmartWalletDeploymentError = null) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     const deploymentData = { hash, error };
     dispatch(saveDbAction('smartWallet', { deploymentData }));
     dispatch({
@@ -191,13 +193,13 @@ export const setSmartWalletDeploymentDataAction = (hash: ?string = null, error: 
 };
 
 export const resetSmartWalletDeploymentDataAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     await dispatch(setSmartWalletDeploymentDataAction(null, null));
   };
 };
 
 export const connectSmartWalletAccountAction = (accountId: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
     const connectedAccount = await smartWalletService.connectAccount(accountId).catch(() => null);
     if (!connectedAccount) {
@@ -218,7 +220,7 @@ export const connectSmartWalletAccountAction = (accountId: string) => {
 };
 
 export const deploySmartWalletAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       smartWallet: {
         connectedAccount: {
@@ -311,14 +313,14 @@ export const addRecoveryAgentsToSmartWalletUpgradeAction = (recoveryAgents: Reco
 });
 
 export const dismissSmartWalletUpgradeAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch(saveDbAction('app_settings', { appSettings: { smartWalletUpgradeDismissed: true } }));
     dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
   };
 };
 
 export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     await dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: transactions }));
     dispatch({
       type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
@@ -328,7 +330,7 @@ export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {
 };
 
 export const createAssetsTransferTransactionsAction = (wallet: Object, transactions: Object[]) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     // reset local nonce to transaction count
     await dispatch(resetLocalNonceToTransactionCountAction(wallet));
     dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS));
@@ -350,7 +352,7 @@ export const createAssetsTransferTransactionsAction = (wallet: Object, transacti
 };
 
 export const checkAssetTransferTransactionsAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       assets: { data: assets },
       history: {
@@ -385,6 +387,7 @@ export const checkAssetTransferTransactionsAction = () => {
       [],
     );
 
+    // $FlowFixMe
     let updatedTransactions = transferTransactions.map(transaction => {
       const { transactionHash } = transaction;
       if (!transactionHash || transaction.status === TX_CONFIRMED_STATUS) {
@@ -416,6 +419,7 @@ export const checkAssetTransferTransactionsAction = () => {
       await dispatch(deploySmartWalletAction());
     } else {
       const unsentTransactions = _unsentTransactions.sort(
+        // $FlowFixMe
         (_a, _b) => _a.signedTransaction.nonce - _b.signedTransaction.nonce,
       );
       // grab first in queue
@@ -431,6 +435,7 @@ export const checkAssetTransferTransactionsAction = () => {
         return;
       }
       console.log('sent new asset transfer transaction: ', transactionHash);
+      // $FlowFixMe
       const { signedTransaction: { signedHash } } = unsentTransaction;
       const assetTransferTransaction = {
         ...unsentTransaction,
@@ -438,6 +443,7 @@ export const checkAssetTransferTransactionsAction = () => {
       };
       updatedTransactions = updatedTransactions
         .filter(
+          // $FlowFixMe
           transaction => transaction.signedTransaction.signedHash !== signedHash,
         )
         .concat({
@@ -448,6 +454,7 @@ export const checkAssetTransferTransactionsAction = () => {
         .then(async () => {
           const _updatedTransactions = updatedTransactions
             .filter(
+              // $FlowFixMe
               _transaction => _transaction.transactionHash !== transactionHash,
             ).concat({
               ...assetTransferTransaction,
@@ -463,7 +470,7 @@ export const checkAssetTransferTransactionsAction = () => {
 };
 
 export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions: Object[]) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { smartWallet: { sdkInitialized } } = getState();
     if (!sdkInitialized) {
       Toast.show({
@@ -501,7 +508,7 @@ export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions:
 };
 
 export const fetchVirtualAccountBalanceAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       assets: { data: assets },
       accounts: { data: accounts },
@@ -571,7 +578,7 @@ export const fetchVirtualAccountBalanceAction = () => {
 };
 
 export const managePPNInitFlag = (payments: Object[]) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     if (!payments.length) return;
 
     await dispatch(fetchVirtualAccountBalanceAction());
@@ -587,7 +594,7 @@ export const managePPNInitFlag = (payments: Object[]) => {
 };
 
 export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolean) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       smartWallet: { lastSyncedHash },
@@ -643,7 +650,7 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
 };
 
 export const onSmartWalletSdkEventAction = (event: Object) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     if (!event) return;
 
     const ACCOUNT_DEVICE_UPDATED = get(sdkModules, 'Api.EventNames.AccountDeviceUpdated', '');
@@ -812,7 +819,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
 };
 
 export const ensureSmartAccountConnectedAction = (privateKey: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       smartWallet: { connectedAccount },
@@ -831,7 +838,7 @@ export const ensureSmartAccountConnectedAction = (privateKey: string) => {
 };
 
 export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const { assets: { data: assets } } = getState();
@@ -872,7 +879,7 @@ export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
 };
 
 export const topUpVirtualAccountAction = (amount: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const {
@@ -945,7 +952,7 @@ export const topUpVirtualAccountAction = (amount: string) => {
 };
 
 export const setPLRTankAsInitAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({
       type: MARK_PLR_TANK_INITIALISED,
     });
@@ -954,7 +961,7 @@ export const setPLRTankAsInitAction = () => {
 };
 
 export const fetchAvailableTxToSettleAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
       Toast.show({
         message: 'Smart Account is not initialized',
@@ -994,7 +1001,7 @@ export const fetchAvailableTxToSettleAction = () => {
 };
 
 export const estimateSettleBalanceAction = (txToSettle: Object) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
       Toast.show({
         message: 'Smart Account is not initialized',
@@ -1038,7 +1045,7 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
 };
 
 export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
       Toast.show({
         message: 'Smart Account is not initialized',
@@ -1119,7 +1126,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
 };
 
 export const cleanSmartWalletAccountsAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       balances: { data: balances },
@@ -1139,32 +1146,34 @@ export const cleanSmartWalletAccountsAction = () => {
       return;
     }
 
-    dispatch({
-      type: UPDATE_ACCOUNTS,
-      payload: [keyBasedAccount],
-    });
-    dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
+    if (keyBasedAccount) {
+      dispatch({
+        type: UPDATE_ACCOUNTS,
+        payload: [keyBasedAccount],
+      });
+      dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
 
-    const updatedBalances = { [keyBasedAccount.id]: balances[keyBasedAccount.id] };
-    dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
-    dispatch({
-      type: UPDATE_BALANCES,
-      payload: updatedBalances,
-    });
+      const updatedBalances: BalancesStore = { [keyBasedAccount.id]: balances[keyBasedAccount.id] };
+      dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
+      dispatch({
+        type: UPDATE_BALANCES,
+        payload: updatedBalances,
+      });
 
-    const updatedHistory = { [keyBasedAccount.id]: history[keyBasedAccount.id] };
-    dispatch(saveDbAction('history', { history: updatedHistory }, true));
-    dispatch({
-      type: SET_HISTORY,
-      payload: updatedHistory,
-    });
+      const updatedHistory: TransactionsStore = { [keyBasedAccount.id]: history[keyBasedAccount.id] };
+      dispatch(saveDbAction('history', { history: updatedHistory }, true));
+      dispatch({
+        type: SET_HISTORY,
+        payload: updatedHistory,
+      });
 
-    dispatch({
-      type: RESET_SMART_WALLET,
-    });
+      dispatch({
+        type: RESET_SMART_WALLET,
+      });
 
-    if (activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
-      dispatch(switchAccountAction(keyBasedAccount.id));
+      if (activeAccount && activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
+        dispatch(switchAccountAction(keyBasedAccount.id));
+      }
     }
 
     Toast.show({
@@ -1176,7 +1185,7 @@ export const cleanSmartWalletAccountsAction = () => {
 };
 
 export const navigateToSendTokenAmountAction = (navOptions: Object) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       blockchainNetwork: { data: blockchainNetworks },
     } = getState();
@@ -1223,7 +1232,7 @@ export const navigateToSendTokenAmountAction = (navOptions: Object) => {
 };
 
 export const importSmartWalletAccountsAction = (privateKey: string, createNewAccount: boolean) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const { user = {} } = await storage.get('user');
@@ -1232,7 +1241,7 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
       assets: { data: assets },
     } = getState();
 
-    const smartAccounts = await smartWalletService.getAccounts();
+    const smartAccounts: SmartWalletAccount[] = await smartWalletService.getAccounts();
     if (!smartAccounts.length && createNewAccount) {
       const newSmartAccount = await smartWalletService.createAccount();
       await api.registerSmartWallet({
@@ -1283,7 +1292,7 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
 };
 
 export const getAssetTransferGasLimitsAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       assets: { supportedAssets },
@@ -1333,6 +1342,7 @@ export const getAssetTransferGasLimitsAction = () => {
       from,
       to,
     };
+    // $FlowFixMe
     [...transferAssets, ...transferCollectibles].map(({ name, key, amount }) => {
       let dispatchType;
       if (key) {

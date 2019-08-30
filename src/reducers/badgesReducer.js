@@ -30,6 +30,8 @@ import type { Badges } from 'models/Badge';
 
 export type BadgesReducerState = {
   data: Badges,
+  contactsBadges: { [string]: Badges },
+  isFetchingBadges: boolean,
 };
 
 export type BadgesReducerAction = {

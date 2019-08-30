@@ -20,10 +20,11 @@
 import { UPDATE_USER, REGISTERED, USER_PHONE_VERIFIED } from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { logEventAction } from 'actions/analyticsActions';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';
 
 export const updateUserAction = (walletId: string, field: Object, callback?: Function) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const response = await api.updateUser({ walletId, ...field });
     const { responseStatus, ...user } = response;
 
@@ -52,7 +53,7 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
 };
 
 export const createOneTimePasswordAction = (walletId: string, field: Object, callback?: Function) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const response = await api.createOneTimePassword({ walletId, ...field });
     const { responseStatus } = response;
 
@@ -80,7 +81,7 @@ export type VerificationPhoneAction = {
 }
 
 export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Function) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const response = await api.verifyPhone(props);
     const { responseStatus } = response;
 
@@ -112,7 +113,7 @@ export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Fun
 };
 
 export const updateUserAvatarAction = (walletId: string, formData: any) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const { user: { data: user } } = getState();
 
     const userAvatar = await api.updateUserAvatar(walletId, formData).catch(() => ({}));

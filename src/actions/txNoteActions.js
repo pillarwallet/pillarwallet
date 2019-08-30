@@ -29,11 +29,12 @@ import {
   TX_NOTE_DECRYPTING_STARTED,
 } from 'constants/txNoteConstants';
 import { ADD_WEBSOCKET_SENT_MESSAGE } from 'constants/chatConstants';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 const chat = new ChatService();
 
 export const getExistingTxNotesAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     const txNotesRaw = await chat.client.getExistingMessages('tx-note').then(JSON.parse).catch(() => []);
     const txNotes = extractTxNotesFromMessages(txNotesRaw);
     dispatch(saveDbAction('txNotes', { txNotes }, true));
@@ -45,7 +46,7 @@ export const getExistingTxNotesAction = () => {
 };
 
 export const sendTxNoteByContactAction = (username: string, message: Object) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
     const addContactParams = {
       username,
@@ -102,7 +103,7 @@ export const sendTxNoteByContactAction = (username: string, message: Object) => 
 };
 
 export const getTxNoteByContactAction = (username: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { isDecrypting } },
     } = getState();
@@ -150,7 +151,7 @@ export const getTxNoteByContactAction = (username: string) => {
 };
 
 export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, params: Object) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { username } = params;
     const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
     const addContactParams = {
@@ -174,7 +175,7 @@ export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, param
 };
 
 export const decryptReceivedWebSocketTxNoteMessageAction = (message: Object) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { source: username } = message;
     const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
     const addContactParams = {
