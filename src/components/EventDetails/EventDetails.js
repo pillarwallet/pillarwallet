@@ -32,8 +32,8 @@ import isEmpty from 'lodash.isempty';
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
-import type { ContactSmartAddresses } from 'models/Contacts';
-import type { Accounts } from 'models/Account';
+import type { ApiUser, ContactSmartAddresses } from 'models/Contacts';
+import type { UserAccount } from 'models/Account';
 
 // components
 import { BaseText, BoldText } from 'components/Typography';
@@ -48,11 +48,11 @@ import {
   formatFullAmount,
   noop,
   formatUnits,
-  isCaseInsensitiveMatch,
 } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
-import { getUserAccounts } from 'utils/accounts';
+import { findMatchingUserAccount, getInactiveUserAccounts } from 'utils/accounts';
+import { findMatchingContact } from 'utils/contacts';
 
 // actions
 import { updateTransactionStatusAction } from 'actions/historyActions';
@@ -84,7 +84,7 @@ import EventHeader from './EventHeader';
 
 type Props = {
   transaction: Transaction,
-  contacts: Object[],
+  contacts: ApiUser[],
   history: Object[],
   assets: Asset[],
   onClose: Function,
@@ -100,7 +100,7 @@ type Props = {
   getTxNoteByContact: Function,
   activeAccountAddress: string,
   contactsSmartAddresses: ContactSmartAddresses[],
-  accounts: Accounts,
+  userAccounts: UserAccount[],
 }
 
 const ContentWrapper = styled.View`
@@ -149,12 +149,6 @@ class EventDetails extends React.Component<Props, {}> {
   timeout: ?TimeoutID;
   // HACK: we need to cache the tx data for smart wallet migration process
   cachedTxInfo = {};
-  userAccounts = [];
-
-  constructor(props) {
-    super(props);
-    this.userAccounts = getUserAccounts(this.props.accounts);
-  }
 
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
@@ -256,30 +250,15 @@ class EventDetails extends React.Component<Props, {}> {
     navigation.navigate(CHAT, { username: contact.username });
   };
 
-  findMatchingContact = (address) => {
+  findMatchingContactOrAccount = (address) => {
     const {
       contacts,
       contactsSmartAddresses = [],
+      userAccounts,
     } = this.props;
-    const contact = contacts.find(({ id: contactId, ethAddress }) => {
-      if (addressesEqual(address, ethAddress)) return true;
-      return !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>
-        isCaseInsensitiveMatch(userId, contactId)
-          && smartWallets.length
-          && addressesEqual(address, smartWallets[0]),
-      );
-    });
-    let userAccount;
-    if (this.userAccounts.length && !contact) {
-      const matchingUserAccount = this.userAccounts.find(({ ethAddress }) => addressesEqual(address, ethAddress));
-      if (matchingUserAccount) {
-        userAccount = {
-          ...matchingUserAccount,
-          isUserAccount: true,
-        };
-      }
-    }
-    return contact || userAccount || {};
+    return findMatchingContact(address, contacts, contactsSmartAddresses)
+      || findMatchingUserAccount(address, userAccounts)
+      || {};
   };
 
   renderEventBody = (eventType, eventStatus) => {
@@ -325,13 +304,15 @@ class EventDetails extends React.Component<Props, {}> {
       const isPending = status === TX_PENDING_STATUS;
       const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
       const value = formatUnits(txInfo.value, decimals);
-      const recipientContact = this.findMatchingContact(to);
-      const senderContact = this.findMatchingContact(from);
+      const recipientContact = this.findMatchingContactOrAccount(to);
+      const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
       const relatedUserTitle = relatedUser.username || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
         : `${to.slice(0, 7)}…${to.slice(-7)}`);
       const relatedUserProfileImage = relatedUser.profileImage || null;
+      // $FlowFixMe
+      const showProfileImage = !relatedUser.isUserAccount;
 
       if (isPending) {
         const pendingTimeInSeconds = differenceInSeconds(new Date(), new Date(eventData.createdAt * 1000));
@@ -401,7 +382,7 @@ class EventDetails extends React.Component<Props, {}> {
               value={relatedUserTitle}
               valueAddon={(!!relatedUser.username && <EventProfileImage
                 uri={relatedUserProfileImage}
-                showProfileImage={!relatedUser.isUserAccount}
+                showProfileImage={showProfileImage}
                 userName={relatedUserTitle}
                 diameter={40}
                 initialsSize={fontSizes.extraSmall}
@@ -473,13 +454,15 @@ class EventDetails extends React.Component<Props, {}> {
         }
       }
       const hasNote = transactionNote && transactionNote !== '';
-      const recipientContact = this.findMatchingContact(to);
-      const senderContact = this.findMatchingContact(from);
+      const recipientContact = this.findMatchingContactOrAccount(to);
+      const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
       const relatedUserTitle = relatedUser.username || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
         : `${to.slice(0, 7)}…${to.slice(-7)}`);
       const relatedUserProfileImage = relatedUser.profileImage || null;
+      // $FlowFixMe
+      const showProfileImage = !relatedUser.isUserAccount;
 
       return (
         <React.Fragment>
@@ -499,7 +482,7 @@ class EventDetails extends React.Component<Props, {}> {
               value={relatedUserTitle}
               valueAddon={(!!relatedUser.username && <EventProfileImage
                 uri={relatedUserProfileImage}
-                showProfileImage={!relatedUser.isUserAccount}
+                showProfileImage={showProfileImage}
                 userName={relatedUserTitle}
                 diameter={40}
                 initialsSize={fontSizes.extraSmall}
@@ -626,7 +609,7 @@ const mapStateToProps = ({
   txNotes,
   assets: Object.values(assets),
   contactsSmartAddresses,
-  accounts,
+  userAccounts: getInactiveUserAccounts(accounts),
 });
 
 const structuredSelector = createStructuredSelector({

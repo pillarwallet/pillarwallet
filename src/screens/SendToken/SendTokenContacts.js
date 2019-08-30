@@ -41,7 +41,7 @@ import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress, isCaseInsensitiveMatch } from 'utils/common';
-import { getUserAccounts } from 'utils/accounts';
+import { getInactiveUserAccounts } from 'utils/accounts';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddresses } from 'models/Contacts';
@@ -267,7 +267,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
     const userAccounts = smartWalletFeatureEnabled
-      ? getUserAccounts(accounts)
+      ? getInactiveUserAccounts(accounts)
       : [];
 
     const allContacts = this.isPPNTransaction
@@ -287,6 +287,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       contactsToRender = contactsToRender
         .map(contact => {
           const { smartWallets = [] } = contactsSmartAddresses.find(
+            // $FlowFixMe
             ({ userId }) => contact.id && isCaseInsensitiveMatch(userId, contact.id),
           ) || {};
           return {

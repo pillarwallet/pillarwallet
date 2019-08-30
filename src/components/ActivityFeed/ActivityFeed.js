@@ -30,7 +30,7 @@ import get from 'lodash.get';
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
-import type { ContactSmartAddresses } from 'models/Contacts';
+import type { ContactSmartAddresses, ApiUser } from 'models/Contacts';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -48,9 +48,9 @@ import {
   partial,
   formatAmount,
   formatUnits,
-  isCaseInsensitiveMatch,
 } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { findMatchingContact } from 'utils/contacts';
 
 // constants
 import {
@@ -120,7 +120,7 @@ type Props = {
   onRejectInvitation: Function,
   navigation: NavigationScreenProp<*>,
   esData?: Object,
-  contacts: Object,
+  contacts: ApiUser[],
   feedTitle?: string,
   backgroundColor?: string,
   wrapperStyle?: Object,
@@ -268,22 +268,6 @@ class ActivityFeed extends React.Component<Props, State> {
     }
   };
 
-  findMatchingContact = (address) => {
-    const {
-      contacts,
-      contactsSmartAddresses = [],
-    } = this.props;
-    const contact = contacts.find(({ id: contactId, ethAddress }) => {
-      if (addressesEqual(address, ethAddress)) return true;
-      return !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>
-        isCaseInsensitiveMatch(userId, contactId)
-        && smartWallets.length
-        && addressesEqual(address, smartWallets[0]),
-      );
-    });
-    return contact || {};
-  };
-
   renderActivityFeedItem = ({ item: notification }: Object) => {
     const { type } = notification;
     const {
@@ -297,6 +281,7 @@ class ActivityFeed extends React.Component<Props, State> {
       invertAddon,
       feedType,
       asset,
+      contactsSmartAddresses,
     } = this.props;
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
@@ -320,7 +305,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
       const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
-      const contact = this.findMatchingContact(address);
+      const contact = findMatchingContact(address, contacts, contactsSmartAddresses) || {};
       const isContact = Object.keys(contact).length !== 0;
       const itemImage = contact.profileImage || fullIconUrl;
       let itemValue = `${directionSymbol} ${formattedValue} ${notification.asset}`;
@@ -358,7 +343,7 @@ class ActivityFeed extends React.Component<Props, State> {
           itemValue={itemValue}
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
           valueColor={isReceived ? baseColors.jadeGreen : baseColors.scarlet}
-          imageUpdateTimeStamp={contact.lastUpdateTime}
+          imageUpdateTimeStamp={contact.lastUpdateTime || 0}
           customAddon={customAddon}
           itemImageSource={itemImageSource}
           noImageBorder

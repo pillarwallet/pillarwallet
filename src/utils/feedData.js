@@ -18,38 +18,29 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import type { ContactSmartAddresses } from 'models/Contacts';
+import type { ApiUser, ContactSmartAddresses } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
-import { getUserName } from './contacts';
-import { isCaseInsensitiveMatch, uniqBy } from './common';
-import { addressesEqual } from './assets';
-import { getUserAccounts } from './accounts';
+import { findMatchingContact, getUserName } from './contacts';
+import { uniqBy } from './common';
+import { findMatchingUserAccount, getInactiveUserAccounts } from './accounts';
 
 export function mapTransactionsHistory(
   history: Object[],
-  contacts: Object[],
+  contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddresses[],
   accounts: Accounts,
   eventType: string,
 ) {
-  const userAccounts = getUserAccounts(accounts);
+  const userAccounts = getInactiveUserAccounts(accounts);
   const concatedHistory = history
     .map(({ ...rest }) => ({ ...rest, type: eventType }))
     .map(({ to, from, ...rest }) => {
-      const contact = contacts.find(({ id: contactId, ethAddress }) => {
-        if (addressesEqual(from, ethAddress) || addressesEqual(to, ethAddress)) return true;
-        return contactsSmartAddresses && !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>
-          isCaseInsensitiveMatch(userId, contactId)
-            && smartWallets.length
-            && (addressesEqual(from, smartWallets[0]) || addressesEqual(to, smartWallets[0])),
-        );
-      });
-      let userAccount;
-      if (userAccounts.length && !contact) {
-        userAccount = userAccounts.find(
-          ({ ethAddress }) => addressesEqual(from, ethAddress) || addressesEqual(to, ethAddress),
-        );
-      }
+      const contact = findMatchingContact(to, contacts, contactsSmartAddresses)
+        || findMatchingContact(from, contacts, contactsSmartAddresses);
+      const userAccount = !contact && (
+        findMatchingUserAccount(to, userAccounts)
+          || findMatchingUserAccount(from, userAccounts)
+      );
       const username = userAccount
         ? userAccount.username
         : getUserName(contact);

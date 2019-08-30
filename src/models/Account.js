@@ -14,3 +14,9 @@ export type Account = {
 };
 
 export type Accounts = Account[];
+
+export type UserAccount = {
+  ethAddress: string,
+  username: string,
+  isUserAccount: boolean,
+};
