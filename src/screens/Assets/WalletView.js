@@ -411,7 +411,8 @@ class WalletView extends React.Component<Props, State> {
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
 
-    const isAllInsightListDone = !Object.keys(insightList.find((insight) => !insight.status) || {}).length;
+    const isAllInsightListDone = !insightList.filter(
+      (insight) => !insight.status && insight.key !== 'biometric').length;
     const isInSearchAndFocus = hideInsightForSearch || isInSearchMode;
     const isInsightVisible = showInsight && !isAllInsightListDone && !isInSearchAndFocus;
     const searchMarginBottom = isInSearchAndFocus ? 0 : -16;

@@ -235,7 +235,7 @@ class AssetsScreen extends React.Component<Props, State> {
     const visibleKeyWalletInsights = supportsBiometrics
       ? [...keyWalletInsights, {
         key: 'biometric',
-        title: 'Enable biometric login',
+        title: 'Enable biometric login (optional)',
         status: useBiometrics,
         onPress: !useBiometrics
           ? () => navigation.navigate(SETTINGS)
