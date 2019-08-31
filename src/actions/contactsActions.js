@@ -294,7 +294,6 @@ export const syncContactsSmartAddressesAction = () => {
       user: { data: { walletId } },
       contacts: { data: contacts },
       connectionIdentityKeys: { data: connectionIdentityKeys },
-      accessTokens: { data: accessTokens },
     } = getState();
 
 
@@ -303,16 +302,6 @@ export const syncContactsSmartAddressesAction = () => {
     // get all connections keys
     const connections = contacts
       .map(({ id: contactId }) => {
-        const accessToken = accessTokens.find(token => token.userId === contactId);
-        if (accessToken) {
-          return {
-            contactId,
-            accessKeys: {
-              userAccessKey: accessToken.myAccessToken,
-              contactAccessKey: accessToken.userAccessToken,
-            },
-          };
-        }
         const connectionKeys = connectionIdentityKeys.find((cik: ConnectionIdentityKey) => {
           return cik.targetUserId === contactId;
         });
@@ -335,6 +324,7 @@ export const syncContactsSmartAddressesAction = () => {
     const {
       smartWallets: contactsSmartAddresses,
     } = await api.getContactsSmartAddresses(walletId, connections).catch(() => null) || {};
+
 
     if (!contactsSmartAddresses) return;
 

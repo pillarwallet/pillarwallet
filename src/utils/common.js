@@ -302,8 +302,7 @@ export function extractJwtPayload(jwtToken: string): Object {
 
 export function getGasPriceWei(gasInfo: GasInfo): BigNumber {
   const gasPrice = get(gasInfo, 'gasPrice.max', 0);
-  const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-  return gasPriceWei;
+  return utils.parseUnits(gasPrice.toString(), 'gwei');
 }
 
 export function formatUnits(val: string = '0', decimals: number) {
@@ -321,4 +320,8 @@ export function formatUnits(val: string = '0', decimals: number) {
     });
   }
   return formattedUnits;
+}
+
+export function isCaseInsensitiveMatch(a: string, b: string): boolean {
+  return a.toLowerCase() === b.toLowerCase();
 }

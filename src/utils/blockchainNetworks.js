@@ -17,25 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type ApiUser = {
-  id: string,
-  username: string,
-  connectionKey: string,
-  profileImage?: string,
-  profileLargeImage?: string,
-  ethAddress: string,
-  lastUpdateTime?: number,
-  status?: ?string,
-};
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 
-export type SearchResults = {
-  apiUsers: ApiUser[],
-  localContacts: Object[],
-};
-
-export type ContactsSmartAddressesList = string[];
-
-export type ContactSmartAddressData = {
-  userId: string,
-  smartWallets: ContactsSmartAddressesList,
+export const isPillarPaymentNetworkActive = (blockchainNetworks: BlockchainNetwork[]): boolean => {
+  return blockchainNetworks.some(({ isActive, id }) => !!isActive && id === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
 };

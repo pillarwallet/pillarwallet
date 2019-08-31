@@ -29,13 +29,15 @@ import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { getUserName } from 'utils/contacts';
+import { findMatchingContact, getUserName } from 'utils/contacts';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import type { ContactSmartAddressData } from 'models/Contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   contacts: Object[],
+  contactsSmartAddresses: ContactSmartAddressData[],
 };
 
 type State = {
@@ -85,7 +87,12 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 
   render() {
-    const { contacts, session, navigation } = this.props;
+    const {
+      contacts,
+      session,
+      navigation,
+      contactsSmartAddresses,
+    } = this.props;
     const {
       amount,
       to,
@@ -93,7 +100,8 @@ class SendTokenContacts extends React.Component<Props, State> {
       symbol,
     } = navigation.getParam('transactionPayload', {});
 
-    const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
+    const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
+
     const recipientUsername = getUserName(contact);
     return (
       <ContainerWithHeader
@@ -149,11 +157,12 @@ class SendTokenContacts extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   session: { data: session },
 }) => ({
   contacts,
   session,
+  contactsSmartAddresses,
 });
 
 export default connect(mapStateToProps)(SendTokenContacts);
