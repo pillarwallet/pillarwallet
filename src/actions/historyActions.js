@@ -80,7 +80,11 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
 
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
-    const updatedAccountHistory = uniqBy([...history, ...accountHistory], 'hash');
+
+    const pendingTransactions = history.filter(tx => tx.status === TX_PENDING_STATUS);
+    const minedTransactions = history.filter(tx => tx.status !== TX_PENDING_STATUS);
+
+    const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
