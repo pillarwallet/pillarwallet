@@ -334,9 +334,6 @@ export default class Tabs extends React.Component<Props, State> {
   render() {
     const { isFloating, tabs, coverColor } = this.props;
 
-
-    console.log('tabLengths ---->', { tabLengths: this.state.tabLengths });
-
     if (isFloating) {
       return (
         <FloatingHeader>
