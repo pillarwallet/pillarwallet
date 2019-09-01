@@ -49,6 +49,7 @@ import { navigate, getNavigationState, getNavigationPathAndParamsState } from 's
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
+import { getActiveAccountAddress } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
@@ -241,7 +242,7 @@ export const loginAction = (
        * this is used only to avoid BCX fetching issues,
        * TODO: remove fetching from ethplorer when BCX is fixed or BCX2 is released
        */
-      dispatch(restoreTransactionHistoryAction(wallet.address, user.walletId));
+      dispatch(restoreTransactionHistoryAction(getActiveAccountAddress(accounts), user.walletId));
 
       navigate(navigateToAppAction);
     } catch (e) {
