@@ -30,6 +30,8 @@ type Props = {
   spacedOut?: boolean,
   valueAddon?: React.Node,
   showSpinner?: boolean,
+  autoHeight?: boolean,
+  noRightPadding?: boolean,
 }
 
 const ItemWrapper = styled.View`
@@ -54,8 +56,9 @@ const ItemValueHolder = styled.View`
   align-items: flex-end;
   justify-content: flex-end;
   width: 100%;
-  height: 50px;
-  padding-right: ${spacing.mediumLarge}px;
+  ${({ autoHeight }) => !autoHeight && 'height: 50px;'}
+  ${({ noRightPadding }) => !noRightPadding && `padding-right: ${spacing.mediumLarge}px;`}
+  
 `;
 
 const ItemValue = styled(BoldText)`
@@ -76,11 +79,16 @@ const ListItemUnderlined = (props: Props) => {
     spacedOut,
     valueAddon,
     showSpinner,
+    autoHeight,
+    noRightPadding,
   } = props;
   return (
     <ItemWrapper>
       <ItemLabel>{label}</ItemLabel>
-      <ItemValueHolder>
+      <ItemValueHolder
+        autoHeight={autoHeight}
+        noRightPadding={noRightPadding}
+      >
         {valueAddon}
         {!!value &&
         <ItemValue

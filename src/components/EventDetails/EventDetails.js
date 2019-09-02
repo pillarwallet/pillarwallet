@@ -174,8 +174,8 @@ class EventDetails extends React.Component<Props, State> {
     gasLimit: 0,
   };
 
-  shouldComponentUpdate(nextProps: Props) {
-    return !isEqual(this.props, nextProps);
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    return !isEqual(this.props, nextProps) || this.state.gasLimit !== nextState.gasLimit;
   }
 
   componentDidMount() {
@@ -486,13 +486,15 @@ class EventDetails extends React.Component<Props, State> {
             {gasLimit !== 0 && isPending &&
             <ListItemUnderlined
               label="SPEED UP TRANSACTION"
+              autoHeight
+              noRightPadding
               valueAddon={
                 <Wrapper
-                  horizontal
                   style={{
                     width: '100%',
-                    marginBottom: 10,
-                    alignItems: 'stretch',
+                    paddingTop: 10,
+                    paddingBottom: 5,
+                    flexDirection: 'column',
                   }}
                 >
                   {speedMultipliers.map(multiplier => {
@@ -506,6 +508,7 @@ class EventDetails extends React.Component<Props, State> {
                         onPress={() => this.onSelectSpeedPress(newGasPrice)}
                         small
                         primaryInverted
+                        style={{ marginBottom: 5 }}
                       />
                     );
                   })}
