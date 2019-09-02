@@ -53,7 +53,7 @@ export default async function (dispatch: Function, getState: Function) {
 
     if (accountHistory.length !== cleanedHistory.length) {
       history = updateAccountHistory(history, accountId, cleanedHistory);
-      dispatch(saveDbAction('history', { history: history }, true));
+      dispatch(saveDbAction('history', { history }, true));
       dispatch({ type: SET_HISTORY, payload: history });
     }
   }
