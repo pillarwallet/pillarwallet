@@ -271,12 +271,12 @@ class TankDetails extends React.Component<Props, State> {
     const fundButtonTitle = !topUpButtonSubmitted ? 'Fund' : 'Initializing..';
 
     // total
-    const totalInFiat = totalStake * getRate(rates, 'PLR', fiatCurrency);
+    const totalInFiat = totalStake * getRate(rates, PPN_TOKEN, fiatCurrency);
     const formattedTotalInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const totalFormattedAmount = formatMoney(totalStake, 4);
 
     // available
-    const availableInFiat = availableStake * getRate(rates, 'PLR', fiatCurrency);
+    const availableInFiat = availableStake * getRate(rates, PPN_TOKEN, fiatCurrency);
     const formattedAvailableInFiat = formatFiat(availableInFiat, baseFiatCurrency);
     const availableFormattedAmount = formatMoney(availableStake, 4);
 

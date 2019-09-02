@@ -1,4 +1,5 @@
 // @flow
+import orderBy from 'lodash.orderby';
 import { createSelector } from 'reselect';
 import { historySelector, activeAccountIdSelector } from './selectors';
 
@@ -7,6 +8,6 @@ export const accountHistorySelector = createSelector(
   activeAccountIdSelector,
   (history, activeAccountId) => {
     if (!activeAccountId) return [];
-    return history[activeAccountId] || [];
+    return orderBy(history[activeAccountId] || [], ['createdAt'], ['desc']);
   },
 );
