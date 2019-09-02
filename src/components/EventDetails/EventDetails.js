@@ -329,6 +329,44 @@ class EventDetails extends React.Component<Props, State> {
       || {};
   };
 
+  renderSpeedUpOptions = (gasLimit) => {
+    const { gasInfo } = this.props;
+    const fastSpeedGasPrice = (gasInfo && gasInfo.gasPrice[SPEED_TYPES.FAST]) || 0;
+    return (
+      <ListItemUnderlined
+        label="SPEED UP TRANSACTION"
+        autoHeight
+        noRightPadding
+        valueAddon={
+          <Wrapper
+            style={{
+              width: '100%',
+              paddingTop: 10,
+              paddingBottom: 5,
+              flexDirection: 'column',
+            }}
+          >
+            {speedMultipliers.map(multiplier => {
+              const newGasPrice = fastSpeedGasPrice * multiplier;
+              const gasPriceWei = utils.parseUnits(newGasPrice.toString(), 'gwei');
+              const gasPriceEth = formatAmount(utils.formatEther(gasPriceWei.mul(gasLimit)));
+              return (
+                <Button
+                  key={multiplier}
+                  title={`${gasPriceEth} ETH`}
+                  onPress={() => this.onSelectSpeedPress(newGasPrice)}
+                  small
+                  primaryInverted
+                  style={{ marginBottom: 5 }}
+                />
+              );
+            })}
+          </Wrapper>
+        }
+      />
+    );
+  };
+
   renderEventBody = (eventType, eventStatus) => {
     const {
       eventData,
@@ -337,9 +375,9 @@ class EventDetails extends React.Component<Props, State> {
       history,
       txNotes,
       assets,
-      gasInfo,
       contacts,
       contactsSmartAddresses = [],
+      accounts,
     } = this.props;
     const { gasLimit } = this.state;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
@@ -429,7 +467,9 @@ class EventDetails extends React.Component<Props, State> {
         showViewOnBlockchain = false;
       }
 
-      const fastSpeedGasPrice = (gasInfo && gasInfo.gasPrice[SPEED_TYPES.FAST]) || 0;
+      const showSpeedUp = isPending
+        && addressesEqual(from, getActiveAccountAddress(accounts))
+        && gasLimit !== 0;
 
       return (
         <React.Fragment>
@@ -483,39 +523,7 @@ class EventDetails extends React.Component<Props, State> {
               valueAdditionalText={freeTx ? '' : 'ETH'}
             />
             }
-            {gasLimit !== 0 && isPending &&
-            <ListItemUnderlined
-              label="SPEED UP TRANSACTION"
-              autoHeight
-              noRightPadding
-              valueAddon={
-                <Wrapper
-                  style={{
-                    width: '100%',
-                    paddingTop: 10,
-                    paddingBottom: 5,
-                    flexDirection: 'column',
-                  }}
-                >
-                  {speedMultipliers.map(multiplier => {
-                    const newGasPrice = fastSpeedGasPrice * multiplier;
-                    const gasPriceWei = utils.parseUnits(newGasPrice.toString(), 'gwei');
-                    const gasPriceEth = formatAmount(utils.formatEther(gasPriceWei.mul(gasLimit)));
-                    return (
-                      <Button
-                        key={multiplier}
-                        title={`${gasPriceEth} ETH`}
-                        onPress={() => this.onSelectSpeedPress(newGasPrice)}
-                        small
-                        primaryInverted
-                        style={{ marginBottom: 5 }}
-                      />
-                    );
-                  })}
-                </Wrapper>
-              }
-            />
-            }
+            {showSpeedUp && this.renderSpeedUpOptions(gasLimit)}
             {!!hasNote && showNote &&
             <ListItemParagraph
               label="NOTE"
