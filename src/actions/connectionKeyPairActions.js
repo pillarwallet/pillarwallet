@@ -258,6 +258,10 @@ export const updateConnectionKeyPairs = (
     const totalConnections = currentConnectionsCount + oldConnectionsCount + newReceivedConnectonsCount;
 
     if (generateKeys && totalConnections === 0 && connectionKeyPairs.length === 0 && lastConnectionKeyIndex === -1) {
+      /* NOTE: -1 would be no keys generated yet at all, 0 for connections number in order not to overgenerate those 2
+       ( countToGenerate + connectionsCount in the function algorithm otherwise). These 2 are added in the
+       blocking(in progress) screen just in case a user connects to a target
+       before the background task kicks in - 10 seconds after this initial generation. */
       const promiseJobs = await generateKeyPairPool(mnemonic, privateKey, -1, 0, 2);
       const resultPairs = await Promise.all(promiseJobs.map(task => task()));
       const allPairsResults = [].concat(...resultPairs);
