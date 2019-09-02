@@ -41,6 +41,7 @@ export type Transaction = {
   note?: ?string,
   signOnly?: ?boolean,
   isPPNTransaction: boolean,
+  tag?: string,
   extra?: TransactionExtra,
 }
 
@@ -97,6 +98,7 @@ export type TransactionEthers = {
   status?: string,
   createdAt?: number,
   isPPNTransaction?: boolean,
+  tag?: string,
   extra?: TransactionExtra,
 };
 
