@@ -488,8 +488,6 @@ class ActivityFeed extends React.Component<Props, State> {
       : {};
 
     const tabsProps = tabs.map(({ data, emptyState, ...necessaryTabProps }) => necessaryTabProps);
-    console.log('--->', { emptyStateData });
-
 
     return (
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
