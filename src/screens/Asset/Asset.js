@@ -295,13 +295,13 @@ class AssetScreen extends React.Component<Props, State> {
       accounts,
       TRANSACTION_EVENT,
     );
-    const tokenTransactions = mappedTransactions.filter(({ asset, note = '', extra = [] }) =>
-      asset === token || (note === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
-    const mainnetTransactions = tokenTransactions.filter(({ isPPNTransaction = false, note = '' }) => {
-      return (!isPPNTransaction && note !== PAYMENT_NETWORK_ACCOUNT_TOPUP) || note === PAYMENT_NETWORK_TX_SETTLEMENT;
+    const tokenTransactions = mappedTransactions.filter(({ asset, tag = '', extra = [] }) =>
+      asset === token || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
+    const mainnetTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
+      return (!isPPNTransaction && tag !== PAYMENT_NETWORK_ACCOUNT_TOPUP) || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
-    const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, note = '' }) => {
-      return isPPNTransaction || note === PAYMENT_NETWORK_TX_SETTLEMENT;
+    const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
+      return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
 

@@ -711,14 +711,14 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             }));
 
           if (txUpdated) {
-            if (txUpdated.note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+            if (txUpdated.tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
               Toast.show({
                 message: 'Your Pillar Tank was successfully funded!',
                 type: 'success',
                 title: 'Success',
                 autoClose: true,
               });
-            } else if (txUpdated.note === PAYMENT_NETWORK_TX_SETTLEMENT) {
+            } else if (txUpdated.tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
               Toast.show({
                 message: 'Settlement process completed!',
                 type: 'success',
@@ -922,7 +922,7 @@ export const topUpVirtualAccountAction = (amount: string) => {
         to: accountAddress,
         value: value.toString(),
         asset: PPN_TOKEN,
-        note: PAYMENT_NETWORK_ACCOUNT_TOPUP,
+        tag: PAYMENT_NETWORK_ACCOUNT_TOPUP,
       });
 
       dispatch({
@@ -1095,7 +1095,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
         to: accountAddress,
         value: '0',
         asset: PAYMENT_NETWORK_TX_SETTLEMENT,
-        note: PAYMENT_NETWORK_TX_SETTLEMENT,
+        tag: PAYMENT_NETWORK_TX_SETTLEMENT,
         extra: settlementData,
       });
 
