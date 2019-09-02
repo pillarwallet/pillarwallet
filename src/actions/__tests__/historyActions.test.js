@@ -385,8 +385,13 @@ describe('History Actions', () => {
       });
 
       it('should call the dispatch function', () => {
+        const sortedAccountTx = [
+          transformedImportedEthTransaction,
+          ...transactions,
+          transformedImportedPlrTransaction,
+        ].sort((a, b) => b.createdAt - a.createdAt);
         const expectTransactions = {
-          [mockAccounts[0].id]: [transformedImportedEthTransaction, ...transactions, transformedImportedPlrTransaction],
+          [mockAccounts[0].id]: sortedAccountTx,
         };
         expect(dispatchMock).toBeCalledWith({
           type: SET_HISTORY,

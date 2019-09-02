@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
+import orderBy from 'lodash.orderby';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { getEthereumProvider, uniqBy } from 'utils/common';
 import {
@@ -307,8 +308,11 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
       }),
     ];
 
+    // 5) sort by date
+    const sortedHistory = orderBy(updatedAccountHistory, ['createdAt'], ['desc']);
+
     // 5) update history in storage
-    const updatedHistory = updateAccountHistory(currentHistory, walletAddress, updatedAccountHistory);
+    const updatedHistory = updateAccountHistory(currentHistory, walletAddress, sortedHistory);
 
     await dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch({
