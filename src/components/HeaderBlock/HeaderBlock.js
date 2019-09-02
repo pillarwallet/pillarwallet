@@ -328,7 +328,7 @@ class HeaderBlock extends React.Component<Props> {
             key="close"
             icon="close"
             color={baseColors.slateBlack}
-            onPress={item.dismiss ? () => navigation.dismiss() : () => navigation.goBack()}
+            onPress={() => item.dismiss ? navigation.dismiss() : navigation.goBack()}
             fontSize={fontSizes.extraSmall}
             horizontalAlign="flex-end"
           />
