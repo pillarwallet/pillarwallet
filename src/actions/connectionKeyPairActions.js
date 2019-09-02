@@ -265,7 +265,7 @@ export const updateConnectionKeyPairs = (
       const promiseJobs = await generateKeyPairPool(mnemonic, privateKey, -1, 0, 2);
       const resultPairs = await Promise.all(promiseJobs.map(task => task()));
       const allPairsResults = [].concat(...resultPairs);
-      const initialConnKeyPairs = allPairsResults.sort((a, b) => { return a.connIndex < b.connIndex ? -1 : 1; });
+      const initialConnKeyPairs = allPairsResults.sort((a, b) => a.connIndex < b.connIndex ? -1 : 1);
       await dispatch({
         type: UPDATE_CONNECTION_KEY_PAIRS,
         payload: initialConnKeyPairs,
