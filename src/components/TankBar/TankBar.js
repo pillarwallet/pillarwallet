@@ -23,7 +23,6 @@ import styled from 'styled-components/native/index';
 import get from 'lodash.get';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { MediumText } from 'components/Typography';
-import Spinner from 'components/Spinner';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -32,9 +31,6 @@ type Props = {
   maxValue: number,
   currentValue: number,
   currentValueFormatted: string,
-  topupAction: Function,
-  topUpLoading: boolean,
-  disabled: boolean,
 };
 
 type State = {
@@ -42,7 +38,7 @@ type State = {
   barWidth: number,
   labelWidth: number,
   labelTransform: number,
-  sideButtonWidth: number,
+  // sideButtonWidth: number,
   didFirstAnimation: boolean,
 }
 
@@ -96,11 +92,11 @@ const LabelLine = styled.View`
 
 const AnimatedLabelLine = Animated.createAnimatedComponent(LabelLine);
 
-const SideButton = styled.TouchableOpacity`
-  flex-direction: row;
-  padding-left: 12px;
-  margin-bottom: -2px;
-`;
+// const SideButton = styled.TouchableOpacity`
+//   flex-direction: row;
+//   padding-left: 12px;
+//   margin-bottom: -2px;
+// `;
 
 const ProgressBarWrapper = styled.View`
   flex-direction: row;
@@ -129,25 +125,11 @@ const LabelText = styled(MediumText)`
   margin: 0 6px;
 `;
 
-const LabelButton = styled.TouchableOpacity`
-  background-color: ${props => props.disabled ? baseColors.lightGray : baseColors.electricBlue};
-  border-radius: 12px;
-  height: 24px;
-  align-items: center;
-  justify-content: center;
-  padding: 0 10px;
-`;
-
-const ButtonText = styled(MediumText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  color: ${props => props.dark ? baseColors.darkGray : baseColors.white};
-`;
-
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.tiny}px;
-  line-height: ${fontSizes.tiny}px;
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
-`;
+// const Value = styled(MediumText)`
+//   font-size: ${fontSizes.tiny}px;
+//   line-height: ${fontSizes.tiny}px;
+//   color: ${props => props.color ? props.color : baseColors.slateBlack};
+// `;
 
 export default class TankBar extends React.Component<Props, State> {
   static defaultProps = {
@@ -161,7 +143,7 @@ export default class TankBar extends React.Component<Props, State> {
       barWidth: 0,
       labelWidth: 0,
       labelTransform: 0,
-      sideButtonWidth: 0,
+      // sideButtonWidth: 0,
       didFirstAnimation: false,
     };
   }
@@ -171,14 +153,14 @@ export default class TankBar extends React.Component<Props, State> {
   }
 
   updateLabelTransform = (value: number) => {
-    const { labelWidth, barWidth, sideButtonWidth } = this.state;
+    const { labelWidth, barWidth } = this.state;
     const barWidthPixels = barWidth * (value / 100);
     const halfLabelWidth = labelWidth / 2;
-    let labelTransform = -(labelWidth / 2);
-    if (barWidthPixels <= halfLabelWidth) {
-      labelTransform = -barWidthPixels;
-    } else if (sideButtonWidth <= halfLabelWidth) {
-      labelTransform = -(halfLabelWidth - (sideButtonWidth - halfLabelWidth));
+    let labelTransform = -halfLabelWidth;
+    if (barWidthPixels < labelWidth) {
+      labelTransform = 0;
+    } else if ((barWidth - barWidthPixels) < halfLabelWidth) {
+      labelTransform = -labelWidth;
     }
     this.setState({ labelTransform });
   };
@@ -214,7 +196,6 @@ export default class TankBar extends React.Component<Props, State> {
     const {
       progressAnimated,
       barWidth,
-      sideButtonWidth,
       labelTransform,
       didFirstAnimation,
     } = this.state;
@@ -222,9 +203,6 @@ export default class TankBar extends React.Component<Props, State> {
       maxValue,
       currentValue,
       currentValueFormatted,
-      topupAction,
-      topUpLoading,
-      disabled,
     } = this.props;
 
     return (
@@ -251,7 +229,7 @@ export default class TankBar extends React.Component<Props, State> {
               />
             </ProgressBarWrapper>
           </ProgressBarSide>
-          <SideButton
+          {/* <SideButton
             onLayout={(e) => {
               const width = get(e, 'nativeEvent.layout.width', 80);
               this.setState({ sideButtonWidth: width });
@@ -259,9 +237,9 @@ export default class TankBar extends React.Component<Props, State> {
           >
             <Value color={baseColors.darkGray}>{maxValue}</Value>
             <Value style={{ marginLeft: 4 }}>{PPN_TOKEN}</Value>
-          </SideButton>
+          </SideButton> */ }
         </Row>
-        {!!barWidth && !!sideButtonWidth &&
+        {!!barWidth && /* add !!sideButtonWidth if SideButton is present! */
         <Row style={{ height: 40 }}>
           <AnimatedLabelLine
             style={{
@@ -271,7 +249,7 @@ export default class TankBar extends React.Component<Props, State> {
                   outputRange: [0, barWidth],
                 }),
               }],
-              marginLeft: currentValue < 10 ? 0 : -2,
+              marginLeft: -0.5,
             }}
           />
           <AnimatedProgressLabel
@@ -289,13 +267,6 @@ export default class TankBar extends React.Component<Props, State> {
             }}
           >
             <LabelText>{`${currentValueFormatted} ${PPN_TOKEN}`}</LabelText>
-            <LabelButton
-              onPress={!topUpLoading || disabled ? () => { topupAction(); } : null}
-              disabled={topUpLoading || disabled}
-            >
-              {!topUpLoading && <ButtonText dark={disabled}>Top up</ButtonText>}
-              {topUpLoading && <Spinner width={20} height={20} />}
-            </LabelButton>
           </AnimatedProgressLabel>
         </Row>}
       </Wrapper>

@@ -25,7 +25,7 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
-import { weiToEth } from '@netgum/utils';
+import { format as formatDate } from 'date-fns';
 
 // actions
 import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
@@ -51,7 +51,7 @@ import type { TxToSettle } from 'models/PaymentNetwork';
 
 // utils
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { formatMoney, getCurrencySymbol, formatAmount } from 'utils/common';
+import { formatFiat, formatAmount } from 'utils/common';
 import { getRate } from 'utils/assets';
 
 
@@ -122,9 +122,7 @@ class SettleBalance extends React.Component<Props, State> {
     const { baseFiatCurrency, assets, rates } = this.props;
 
     const tokenSymbol = get(item, 'token.symbol', ETH);
-    let value = get(item, 'value', new BigNumber(0));
-
-    if (tokenSymbol === ETH) value = new BigNumber(weiToEth(value));
+    const value = get(item, 'value', new BigNumber(0));
 
     const assetInfo = {
       ...(assets[tokenSymbol] || {}),
@@ -138,12 +136,11 @@ class SettleBalance extends React.Component<Props, State> {
     const formattedAmount = formatAmount(assetInfo.value.toString());
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const totalInFiat = assetInfo.value.toNumber() * getRate(rates, assetInfo.symbol, fiatCurrency);
-    const formattedAmountInFiat = formatMoney(totalInFiat);
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const isToday = new Date().toDateString() === item.createdAt.toDateString();
     const time = isToday
-      ? `${item.createdAt.getHours()}:${item.createdAt.getMinutes()}`
-      : item.createdAt.toDateString();
+      ? `Today at ${formatDate(item.createdAt, 'HH:mm')}`
+      : formatDate(item.createdAt, 'MMMM D, YYYY HH:mm');
 
     return (
       <ListItemWithImage
@@ -157,7 +154,7 @@ class SettleBalance extends React.Component<Props, State> {
             <BalanceWrapper>
               <TankAssetBalance amount={formattedAmount} monoColor />
               <ValueInFiat>
-                {`${currencySymbol}${formattedAmountInFiat}`}
+                {formattedAmountInFiat}
               </ValueInFiat>
             </BalanceWrapper>
             <Checkbox

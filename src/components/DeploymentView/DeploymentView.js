@@ -44,6 +44,7 @@ import { formatUnits } from 'utils/common';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Asset } from 'models/Asset';
+import type { ContactSmartAddressData } from 'models/Contacts';
 
 import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
@@ -58,6 +59,7 @@ type Props = {
   contacts: Object[],
   openSeaTxHistory: Object[],
   assets: Asset[],
+  contactsSmartAddresses: ContactSmartAddressData[],
 }
 
 type State = {
@@ -100,16 +102,20 @@ class DeploymentView extends React.PureComponent<Props, State> {
       contacts,
       openSeaTxHistory,
       assets,
+      contactsSmartAddresses,
     } = this.props;
     const { showTransactionDetails } = this.state;
     const { title, message: bodyText } = message;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
+
     const { upgrade: { deploymentStarted } } = smartWalletState;
-    const isDeploying = deploymentStarted || [
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-    ].includes(smartWalletStatus.status);
+    const isDeploying = deploymentStarted
+      || [
+        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+        SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+      ].includes(smartWalletStatus.status);
 
     let detailedTransaction;
     const matchingTransaction = history.find(({ hash }) => hash === 'x');
@@ -119,12 +125,16 @@ class DeploymentView extends React.PureComponent<Props, State> {
         [detailedTransaction] = mapTransactionsHistory(
           mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, [matchingTransaction]),
           contacts,
+          contactsSmartAddresses,
+          accounts,
           COLLECTIBLE_TRANSACTION,
         );
       } else {
         [detailedTransaction] = mapTransactionsHistory(
           [matchingTransaction],
           contacts,
+          contactsSmartAddresses,
+          accounts,
           TRANSACTION_EVENT,
         );
       }
@@ -187,7 +197,7 @@ class DeploymentView extends React.PureComponent<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
   assets: { data: assets },
@@ -196,6 +206,7 @@ const mapStateToProps = ({
   accounts,
   contacts,
   assets: Object.values(assets),
+  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({

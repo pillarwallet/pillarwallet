@@ -35,7 +35,7 @@ export type SearchResults = {
 
 export type ContactsSmartAddressesList = string[];
 
-export type ContactSmartAddresses = {
+export type ContactSmartAddressData = {
   userId: string,
   smartWallets: ContactsSmartAddressesList,
 };

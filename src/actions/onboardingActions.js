@@ -48,6 +48,8 @@ import {
   UPDATE_INVITATIONS,
 } from 'constants/invitationsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
+import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
@@ -160,6 +162,11 @@ const finishRegistration = async ({
   });
   dispatch(saveDbAction('assets', { assets: initialAssets }));
 
+  // restore transactions history
+  await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
+
+  dispatch(fetchBadgesAction(false));
+
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
   if (smartWalletFeatureEnabled) {
     // create smart wallet account only for new wallets
@@ -167,11 +174,6 @@ const finishRegistration = async ({
     await dispatch(initSmartWalletSdkAction(privateKey));
     await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount));
   }
-
-  // restore transactions history
-  await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
-
-  dispatch(fetchBadgesAction());
 
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
@@ -223,6 +225,8 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_BADGES, payload: [] });
     dispatch({ type: RESET_SMART_WALLET });
     dispatch({ type: RESET_PAYMENT_NETWORK });
+    dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] });
+    dispatch({ type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] });
 
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));

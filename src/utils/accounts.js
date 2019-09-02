@@ -18,8 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
-import type { Account, Accounts } from 'models/Account';
+import type { Account, Accounts, AccountTypes } from 'models/Account';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { addressesEqual } from './assets';
 
 export function getActiveAccount(accounts: Accounts = []): ?Account {
   return accounts.find(({ isActive }) => isActive);
@@ -56,4 +57,27 @@ export function getActiveAccountWalletId(accounts: Accounts = []): string {
 
 export function checkIfSmartWalletAccount(account: Account): boolean {
   return account.type === ACCOUNT_TYPES.SMART_WALLET;
+}
+
+export function getAccountName(accountType: AccountTypes): ?string {
+  if (!accountType) return null;
+  switch (accountType) {
+    case ACCOUNT_TYPES.SMART_WALLET:
+      return 'Smart Wallet';
+    case ACCOUNT_TYPES.KEY_BASED:
+      return 'Key Based account';
+    default:
+      return '';
+  }
+}
+
+export function getInactiveUserAccounts(accounts: Accounts): Accounts {
+  return accounts.filter(({ isActive }) => !isActive);
+}
+
+export function findAccountByAddress(
+  address: string,
+  accounts: Accounts,
+) {
+  return accounts.find(account => addressesEqual(address, getAccountAddress(account)));
 }

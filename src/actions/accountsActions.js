@@ -45,6 +45,9 @@ import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigrati
 import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 import { sdkConstants } from '@archanova/sdk';
+
+import type { RootReducerState } from 'reducers/rootReducer';
+
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 
 const storage = Storage.getInstance('db');
@@ -164,7 +167,7 @@ export const addNewAccountAction = (
 };
 
 export const setActiveAccountAction = (accountId: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function, getState: () => RootReducerState) => {
     const {
       accounts: { data: accounts },
       smartWallet: {
@@ -205,7 +208,7 @@ export const setActiveAccountAction = (accountId: string) => {
 };
 
 export const switchAccountAction = (accountId: string, privateKey?: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function, getState: () => RootReducerState) => {
     const {
       accounts: { data: accounts },
       assets: { data: assets },
@@ -227,7 +230,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
 };
 
 export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function, getState: () => RootReducerState) => {
     const {
       appSettings: { data: { blockchainNetwork } },
       accounts: {

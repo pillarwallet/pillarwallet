@@ -23,19 +23,24 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 
 import { getActiveAccount } from './accounts';
 
-function getMessage(status: string, activeAccountType: string, smartWalletState: Object) {
+const getMessage = (
+  status: ?string,
+  isSmartWalletActive: boolean,
+  smartWalletState: SmartWalletReducerState,
+) => {
   switch (status) {
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
-      if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return {};
+      if (!isSmartWalletActive) return {};
       return {
         title: 'To send assets, deploy Smart Wallet first',
         message: 'You will have to pay a small fee',
       };
     case SMART_WALLET_UPGRADE_STATUSES.DEPLOYING:
-      if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return {};
+      if (!isSmartWalletActive) return {};
       // TODO: get average time
       return {
         title: 'Smart Wallet is being deployed now',
@@ -49,33 +54,37 @@ function getMessage(status: string, activeAccountType: string, smartWalletState:
       return {
         title: 'Assets are being transferred to Smart Wallet',
         message: 'You will be able to send assets once submitted transfer is complete' +
-          `${activeAccountType === ACCOUNT_TYPES.SMART_WALLET ? ' and Smart Wallet is deployed' : ''}.` +
+          `${isSmartWalletActive ? ' and Smart Wallet is deployed' : ''}.` +
           `\nCurrently ${complete} of ${total} assets are transferred.`,
       };
     default:
       return {};
   }
-}
+};
 
-export function getSmartWalletStatus(accounts: Accounts, smartWalletState: Object): SmartWalletStatus {
-  const account = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
-  const activeAccount = getActiveAccount(accounts) || {};
+export const userHasSmartWallet = (accounts: Accounts = []): boolean => {
+  return accounts.some(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+};
+
+export const getSmartWalletStatus = (
+  accounts: Accounts,
+  smartWalletState: SmartWalletReducerState,
+): SmartWalletStatus => {
+  const hasAccount = userHasSmartWallet(accounts);
+  const activeAccount = getActiveAccount(accounts);
+  const isSmartWalletActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.SMART_WALLET;
+
   const { upgrade: { status } } = smartWalletState;
-  const sendingBlockedMessage = getMessage(status, activeAccount.type, smartWalletState);
+  const sendingBlockedMessage = getMessage(status, isSmartWalletActive, smartWalletState);
   return {
-    hasAccount: !!account,
+    hasAccount,
     status,
     sendingBlockedMessage,
   };
-}
+};
 
 export function isConnectedToSmartAccount(connectedAccountRecord: ?Object) {
   return connectedAccountRecord && Object.keys(connectedAccountRecord).length;
-}
-
-export function userHasSmartWallet(accounts: Accounts = []) {
-  const smartAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
-  return !!smartAccount;
 }
 
 export function getDeployErrorMessage(errorType: string) {

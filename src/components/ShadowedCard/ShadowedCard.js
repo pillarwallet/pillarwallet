@@ -42,7 +42,7 @@ type Props = {
   wrapperStyle?: Object,
   contentWrapperStyle?: Object,
   upperContentWrapperStyle?: Object,
-  onPress?: Function,
+  onPress?: ?Function,
   disabled?: boolean,
 }
 

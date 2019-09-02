@@ -71,13 +71,19 @@ class FundConfirm extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.props.estimateTopUpVirtualAccount();
+    this.callEstimateMethod();
   }
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
-      this.props.estimateTopUpVirtualAccount();
+      this.callEstimateMethod();
     }
+  }
+
+  callEstimateMethod() {
+    const { navigation, estimateTopUpVirtualAccount } = this.props;
+    const amount = navigation.getParam('amount', '0');
+    estimateTopUpVirtualAccount(amount);
   }
 
   handleFormSubmit = async () => {
@@ -144,7 +150,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   topUpVirtualAccount: (amount: string) => dispatch(topUpVirtualAccountAction(amount)),
-  estimateTopUpVirtualAccount: () => dispatch(estimateTopUpVirtualAccountAction()),
+  estimateTopUpVirtualAccount: (amount: string) => dispatch(estimateTopUpVirtualAccountAction(amount)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FundConfirm);

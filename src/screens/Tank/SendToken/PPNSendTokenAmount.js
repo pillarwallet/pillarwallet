@@ -31,7 +31,7 @@ import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
 
 // utils
-import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
+import { formatAmount, formatFiat } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
 import { getRate } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -166,7 +166,6 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
 
     const { token, icon, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     // balance
     const balance = availableStake;
@@ -174,7 +173,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
 
     // balance in fiat
     const totalInFiat = balance * getRate(rates, 'PLR', fiatCurrency);
-    const formattedBalanceInFiat = formatMoney(totalInFiat);
+    const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // max amount
     const maxAmount = Number(balance);
@@ -184,8 +183,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
 
     // value in fiat
     const valueInFiat = currentValue * getRate(rates, 'PLR', fiatCurrency);
-    const formattedValueInFiat = formatMoney(valueInFiat);
-    const valueInFiatOutput = `${currencySymbol}${formattedValueInFiat}`;
+    const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
@@ -194,18 +192,20 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: `Send ${this.assetData.token} via PPN` }] }}
-        keyboardAvoidFooter={!!value && !!parseFloat(value.amount) && (
+        keyboardAvoidFooter={
           <FooterWrapper>
-            <Button
-              disabled={!session.isOnline}
-              small
-              flexRight
-              title="Next"
-              onPress={this.handleFormSubmit}
-            />
+            {!!value && !!parseFloat(value.amount) &&
+              <Button
+                disabled={!session.isOnline}
+                small
+                flexRight
+                title="Next"
+                onPress={this.handleFormSubmit}
+              />
+            }
           </FooterWrapper>
-          )
         }
+        minAvoidHeight={200}
       >
         <BackgroundWrapper>
           <Wrapper regularPadding>
@@ -221,7 +221,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
                 <Label small>Available Balance</Label>
                 <SendTokenDetailsValue>
                   {formattedBalance} {token}
-                  <HelperText> ({currencySymbol}{formattedBalanceInFiat})</HelperText>
+                  <HelperText>{formattedBalanceInFiat}</HelperText>
                 </SendTokenDetailsValue>
               </SendTokenDetails>
               <TouchableOpacity onPress={this.useMaxValue}>

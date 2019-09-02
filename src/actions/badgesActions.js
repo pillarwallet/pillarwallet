@@ -7,11 +7,14 @@ import {
   STOP_FETCHING_CONTACTS_BADGES,
 } from 'constants/badgesConstants';
 import Toast from 'components/Toast';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 import { saveDbAction } from './dbActions';
 import { offlineApiCall } from './offlineApiActions';
 
-export const fetchBadgesAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId } },
       wallet: { data: wallet },
@@ -39,7 +42,7 @@ export const fetchBadgesAction = () => {
       dispatch({ type: UPDATE_BADGES, payload: updatedBadges });
     }
 
-    if (newBadgeReceived) {
+    if (newBadgeReceived && notifyOnNewBadge) {
       Toast.show({
         message: 'New badge received!',
         type: 'success',
@@ -52,7 +55,7 @@ export const fetchBadgesAction = () => {
 
 
 export const fetchContactBadgesAction = (contact: Object) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId } },
       badges: { contactsBadges },
@@ -73,7 +76,7 @@ export const fetchContactBadgesAction = (contact: Object) => {
 };
 
 export const selfAwardBadgeAction = (badgeType: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { user: { data: { walletId } } } = getState();
     dispatch(offlineApiCall('selfAwardBadge', walletId, badgeType));
   };

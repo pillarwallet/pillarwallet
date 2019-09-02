@@ -25,7 +25,7 @@ import {
 } from 'constants/notificationConstants';
 import type { Notification } from 'models/Notification';
 
-type NotificationReducerState = {
+export type NotificationsReducerState = {
   data: Notification[],
   intercomNotificationsCount: number,
   homeNotifications: [],
@@ -33,7 +33,7 @@ type NotificationReducerState = {
   hasUnreadChatNotifications: boolean,
 }
 
-type NotificationReducerAction = {
+type NotificationsReducerAction = {
   type: string,
   payload: Notification,
 }
@@ -47,8 +47,8 @@ const initialState = {
 };
 
 export default function notificationsReducer(
-  state: NotificationReducerState = initialState,
-  action: NotificationReducerAction,
+  state: NotificationsReducerState = initialState,
+  action: NotificationsReducerAction,
 ) {
   switch (action.type) {
     case UPDATE_INTERCOM_NOTIFICATIONS_COUNT:

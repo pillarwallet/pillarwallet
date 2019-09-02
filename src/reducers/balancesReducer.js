@@ -20,7 +20,7 @@
 import { UPDATE_BALANCES } from 'constants/assetsConstants';
 import type { BalancesStore } from 'models/Asset';
 
-export type BalancesState = {
+export type BalancesReducerState = {
   data: BalancesStore,
 };
 
@@ -29,14 +29,14 @@ export type BalancesAction = {
   payload: any,
 };
 
-const initialState = {
+export const initialState = {
   data: {},
 };
 
 export default function balancesReducer(
-  state: BalancesState = initialState,
+  state: BalancesReducerState = initialState,
   action: BalancesAction,
-): BalancesState {
+): BalancesReducerState {
   switch (action.type) {
     case UPDATE_BALANCES:
       return { ...state, data: action.payload };

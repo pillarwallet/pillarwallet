@@ -26,6 +26,7 @@ import {
   sdkConstants,
 } from '@archanova/sdk';
 import { ContractNames } from '@archanova/contracts';
+import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
@@ -232,8 +233,8 @@ class SmartWallet {
     return this.sdk.submitAccountTransaction(estimatedTransaction);
   }
 
-  createAccountPayment(recipient: string, token: ?string, value: number | string) {
-    return this.sdk.createAccountPayment(recipient, token, value);
+  createAccountPayment(recipient: string, token: ?string, value: BigNumber) {
+    return this.sdk.createAccountPayment(recipient, toChecksumAddress(token), value.toHexString());
   }
 
   getConnectedAccountTransaction(txHash: string) {
@@ -241,7 +242,7 @@ class SmartWallet {
   }
 
   estimateTopUpAccountVirtualBalance(value: BigNumber, tokenAddress: ?string) {
-    return this.sdk.estimateTopUpAccountVirtualBalance(value, tokenAddress);
+    return this.sdk.estimateTopUpAccountVirtualBalance(value.toHexString(), tokenAddress);
   }
 
   estimateWithdrawFromAccountVirtualBalance(value: BigNumber) {
@@ -273,14 +274,15 @@ class SmartWallet {
     const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
     if (!data) return [];
 
+    const items = data.items || [];
     const foundLastSyncedTx = lastSyncedHash
-      ? data.items.find(({ hash }) => hash === lastSyncedHash)
+      ? items.find(({ hash }) => hash === lastSyncedHash)
       : null;
     if (data.nextPage && !foundLastSyncedTx) {
-      return [...data.items, ...(await this.getAccountPayments(lastSyncedHash, page + 1))];
+      return [...items, ...(await this.getAccountPayments(lastSyncedHash, page + 1))];
     }
 
-    return data.items;
+    return items;
   }
 
   async getAccountPaymentsToSettle(accountAddress: string, page?: number = 0) {
@@ -290,7 +292,7 @@ class SmartWallet {
     const data = await this.sdk.getConnectedAccountPayments(page, filters).catch(this.handleError);
     if (!data) return [];
 
-    const items = data.items
+    const items = (data.items || [])
       .filter(payment => {
         const recipientAddress = get(payment, 'recipient.account.address', '');
         return addressesEqual(recipientAddress, accountAddress);

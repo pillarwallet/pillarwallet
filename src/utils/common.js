@@ -34,6 +34,7 @@ import {
 import { providers, utils } from 'ethers';
 import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 import type { GasInfo } from 'models/GasInfo';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 export function delay(ms: number): Promise<void> {
   return new Promise(resolve => {
@@ -129,6 +130,15 @@ export function getCurrencySymbol(currency: string): string {
     EUR: '€',
   };
   return currencies[currency] || '';
+}
+
+export function formatFiat(src: number | string, baseFiatCurrency?: ?string): string {
+  const re = '\\d(?=(\\d{3})+\\D)';
+  const num = new BigNumber(src).toFixed(2);
+  const value = num.replace(new RegExp(re, 'g'), '$&,');
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const currencySymbol = getCurrencySymbol(fiatCurrency);
+  return `${currencySymbol} ${value}`;
 }
 
 export function partial(fn: Function, ...fixedArgs: any) {
@@ -291,9 +301,8 @@ export function extractJwtPayload(jwtToken: string): Object {
 }
 
 export function getGasPriceWei(gasInfo: GasInfo): BigNumber {
-  const gasPrice = get(gasInfo, 'gasPrice.avg', 0);
-  const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-  return gasPriceWei;
+  const gasPrice = get(gasInfo, 'gasPrice.max', 0);
+  return utils.parseUnits(gasPrice.toString(), 'gwei');
 }
 
 export function formatUnits(val: string = '0', decimals: number) {
@@ -311,4 +320,8 @@ export function formatUnits(val: string = '0', decimals: number) {
     });
   }
   return formattedUnits;
+}
+
+export function isCaseInsensitiveMatch(a: string, b: string): boolean {
+  return a.toLowerCase() === b.toLowerCase();
 }

@@ -24,7 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import type { Assets, Balances, Rates } from 'models/Asset';
 import { BaseText } from 'components/Typography';
 import { calculatePortfolioBalance } from 'utils/assets';
-import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { formatFiat } from 'utils/common';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -51,8 +51,7 @@ class PortfolioBalance extends React.PureComponent<Props, {}> {
 
     const portfolioBalances = calculatePortfolioBalance(assets, rates, balances);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const portfolioBalance = formatMoney(portfolioBalances[fiatCurrency] || 0);
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const portfolioBalance = formatFiat(portfolioBalances[fiatCurrency], baseFiatCurrency);
 
     return (
       <View style={style}>
@@ -70,7 +69,7 @@ class PortfolioBalance extends React.PureComponent<Props, {}> {
           fontSize: fontSizes.extraExtraLarge,
         }}
         >
-          {currencySymbol}{portfolioBalance}
+          {portfolioBalance}
         </BaseText>
       </View>
     );

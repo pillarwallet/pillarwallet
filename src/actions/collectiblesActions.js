@@ -24,6 +24,8 @@ import {
   COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+import type { Collectible } from 'models/Collectible';
+import type { GetState, Dispatch } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
@@ -32,8 +34,37 @@ const safeImage = (url: string): string => {
   return (/\.(jpg|png|gif)$/i).test(url) ? url : '';
 };
 
+const collectibleFromResponse = (responseItem: Object): Collectible => {
+  const {
+    token_id: id,
+    asset_contract: assetContract,
+    name,
+    description,
+    image_url: fullImage,
+    image_preview_url: preview,
+  } = responseItem;
+
+  const { name: category, address: contractAddress } = assetContract;
+  const collectibleName = name || `${category} ${id}`;
+
+  const image = safeImage(fullImage);
+  const previewImage = safeImage(preview);
+
+  return {
+    id,
+    category,
+    image: image || previewImage,
+    name: collectibleName,
+    description,
+    icon: previewImage || image,
+    contractAddress,
+    assetContract: category,
+    tokenType: COLLECTIBLES,
+  };
+};
+
 export const fetchCollectiblesAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       accounts: { data: accounts },
       collectibles: { data: collectibles },
@@ -44,33 +75,7 @@ export const fetchCollectiblesAction = () => {
 
     if (response.error || !response.assets) return;
 
-    const accountCollectibles = response.assets.map(collectible => {
-      const {
-        token_id: id,
-        asset_contract: assetContract,
-        name,
-        description,
-        image_url: fullImage,
-        image_preview_url: preview,
-      } = collectible;
-      const { name: category, address: contractAddress } = assetContract;
-      const collectibleName = name || `${category} ${id}`;
-
-      const image = safeImage(fullImage);
-      const previewImage = safeImage(preview);
-
-      return {
-        id,
-        category,
-        image: image || previewImage,
-        name: collectibleName,
-        description,
-        icon: previewImage || image,
-        contractAddress,
-        assetContract: category,
-        tokenType: COLLECTIBLES,
-      };
-    });
+    const accountCollectibles = response.assets.map(collectibleFromResponse);
 
     const updatedCollectibles = {
       ...collectibles,
@@ -82,8 +87,57 @@ export const fetchCollectiblesAction = () => {
   };
 };
 
+const collectibleTransaction = (event) => {
+  const {
+    asset,
+    transaction,
+    to_account: toAcc,
+    from_account: fromAcc,
+  } = event;
+
+  const {
+    asset_contract: assetContract,
+    name,
+    token_id: id,
+    description,
+    image_preview_url: image,
+  } = asset;
+  const { name: category, address: contractAddress } = assetContract;
+  const { transaction_hash: trxHash, block_number: blockNumber, timestamp } = transaction;
+
+  const collectibleName = name || `${category} ${id}`;
+
+  const assetData = {
+    id,
+    category,
+    name: collectibleName,
+    description,
+    icon: (/\.(png)$/i).test(image) ? image : '',
+    contractAddress,
+    assetContract: category,
+    tokenType: COLLECTIBLES,
+  };
+
+  return {
+    to: toAcc.address,
+    from: fromAcc.address,
+    hash: trxHash,
+    createdAt: (new Date(timestamp).getTime()) / 1000,
+    _id: transaction.id,
+    protocol: 'Ethereum',
+    asset: collectibleName,
+    contractAddress,
+    value: 1,
+    blockNumber,
+    status: 'confirmed',
+    type: COLLECTIBLE_TRANSACTION,
+    icon: (/\.(png)$/i).test(image) ? image : '',
+    assetData,
+  };
+};
+
 export const fetchCollectiblesHistoryAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       accounts: { data: accounts },
       collectibles: { transactionHistory: collectiblesHistory },
@@ -97,53 +151,7 @@ export const fetchCollectiblesHistoryAction = () => {
     // NOTE: for some rare transactions we don't have information about the asset sent
     const accountCollectiblesHistory = response.asset_events
       .filter(event => !!event.asset)
-      .map(event => {
-        const {
-          asset,
-          transaction,
-          to_account: toAcc,
-          from_account: fromAcc,
-        } = event;
-        const {
-          asset_contract: assetContract,
-          name,
-          token_id: id,
-          description,
-          image_preview_url: image,
-        } = asset;
-        const { name: category, address: contractAddress } = assetContract;
-        const { transaction_hash: trxHash, block_number: blockNumber, timestamp } = transaction;
-
-        const collectibleName = name || `${category} ${id}`;
-
-        const assetData = {
-          id,
-          category,
-          name: collectibleName,
-          description,
-          icon: (/\.(png)$/i).test(image) ? image : '',
-          contractAddress,
-          assetContract: category,
-          tokenType: COLLECTIBLES,
-        };
-
-        return {
-          to: toAcc.address,
-          from: fromAcc.address,
-          hash: trxHash,
-          createdAt: (new Date(timestamp).getTime()) / 1000,
-          _id: transaction.id,
-          protocol: 'Ethereum',
-          asset: collectibleName,
-          contractAddress,
-          value: 1,
-          blockNumber,
-          status: 'confirmed',
-          type: COLLECTIBLE_TRANSACTION,
-          icon: (/\.(png)$/i).test(image) ? image : '',
-          assetData,
-        };
-      });
+      .map(collectibleTransaction);
 
     const updatedCollectiblesHistory = {
       ...collectiblesHistory,
@@ -157,7 +165,7 @@ export const fetchCollectiblesHistoryAction = () => {
 };
 
 export const fetchAllCollectiblesDataAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();

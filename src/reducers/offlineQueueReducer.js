@@ -38,7 +38,7 @@ const initialState = {
   isConnected: true,
 };
 
-type OfflineQueueReducerState = {
+export type OfflineQueueReducerState = {
   queue: any,
   isConnected: boolean,
 };

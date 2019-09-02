@@ -246,3 +246,12 @@ jest.setMock('@archanova/sdk', {
     },
   }),
 });
+
+jest.setMock('react-native-keychain', {
+  setGenericPassword: () => {},
+  getGenericPassword: () => {},
+  resetGenericPassword: () => {},
+  ACCESS_CONTROL: {
+    BIOMETRY_ANY: 'BIOMETRY_ANY',
+  },
+});

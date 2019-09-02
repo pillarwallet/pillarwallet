@@ -38,6 +38,7 @@ import {
   UPDATE_WALLET_IMPORT_STATE,
   BACKUP_WALLET,
   REMOVE_PRIVATE_KEY,
+  UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
 
 export type Wallet = {
@@ -78,6 +79,8 @@ const initialState = {
     apiUser: {},
   },
   walletState: null,
+  pinAttemptsCount: 0,
+  lastPinAttempt: 0,
   backupStatus: {
     isImported: false,
     isBackedUp: false,
@@ -145,6 +148,13 @@ export default function walletReducer(
       return {
         ...state,
         data: { ...state.data, privateKey: '' },
+      };
+    case UPDATE_PIN_ATTEMPTS:
+      const { pinAttemptsCount, lastPinAttempt } = action.payload;
+      return {
+        ...state,
+        pinAttemptsCount,
+        lastPinAttempt,
       };
     default:
       return state;
