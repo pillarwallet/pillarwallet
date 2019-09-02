@@ -314,12 +314,12 @@ class ActivityFeed extends React.Component<Props, State> {
       let customAddon = null;
       let itemImageSource = '';
 
-      const note = get(notification, 'note', '');
-      if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
+      const tag = get(notification, 'tag', '');
+      if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
         return (
           <SettlementItem settleData={notification.extra} type={feedType} asset={asset} />
         );
-      } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+      } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
         nameOrAddress = 'PLR Network Top Up';
         itemImageSource = PPNIcon;
         directionIcon = '';
