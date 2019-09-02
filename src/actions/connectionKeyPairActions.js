@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { InteractionManager } from 'react-native';
-import { generateKeyPairThreadPool } from 'utils/keyPairGenerator';
+import { generateKeyPairThreadPool, generateKeyPairPool } from 'utils/keyPairGenerator';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE, DECRYPTED } from 'constants/walletConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
@@ -256,6 +256,18 @@ export const updateConnectionKeyPairs = (
 
     const { currentConnectionsCount, oldConnectionsCount, newReceivedConnectonsCount } = numberOfConnections;
     const totalConnections = currentConnectionsCount + oldConnectionsCount + newReceivedConnectonsCount;
+
+    if (generateKeys && totalConnections === 0 && connectionKeyPairs.length === 0 && lastConnectionKeyIndex === -1) {
+      const promiseJobs = await generateKeyPairPool(mnemonic, privateKey, -1, 0, 2);
+      const resultPairs = await Promise.all(promiseJobs.map(task => task()));
+      const allPairsResults = [].concat(...resultPairs);
+      const initialConnKeyPairs = allPairsResults.sort((a, b) => { return a.connIndex < b.connIndex ? -1 : 1; });
+      await dispatch({
+        type: UPDATE_CONNECTION_KEY_PAIRS,
+        payload: initialConnKeyPairs,
+      });
+      await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: initialConnKeyPairs }, true));
+    }
 
     if (oldConnectionsCount > 0 || currentConnectionsCount > connectionIdentityKeys.length) {
       if (generateKeys) {
