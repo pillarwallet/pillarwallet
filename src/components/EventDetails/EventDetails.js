@@ -360,6 +360,7 @@ class EventDetails extends React.Component<Props, State> {
         status,
         note,
         isPPNTransaction,
+        tag,
         extra,
       } = txInfo;
 
@@ -409,15 +410,15 @@ class EventDetails extends React.Component<Props, State> {
       let showViewOnBlockchain = true;
       let showAmountTxType = false;
       let txType = '';
-      const listSettledAssets = (note === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
+      const listSettledAssets = (tag === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
 
-      if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
+      if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
         showAmountReceived = false;
         showSender = false;
         showNote = false;
         showAmountTxType = true;
         txType = 'PLR Network settle';
-      } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+      } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
         showSender = false;
         showNote = false;
         showAmountTxType = true;

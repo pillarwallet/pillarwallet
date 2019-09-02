@@ -36,6 +36,7 @@ export const buildHistoryTransaction = ({
   status,
   createdAt,
   isPPNTransaction,
+  tag,
   extra,
 }: TransactionEthers): Transaction => ({
   status: status || TX_PENDING_STATUS,
@@ -51,6 +52,7 @@ export const buildHistoryTransaction = ({
   nbConfirmations: 0,
   note,
   isPPNTransaction: !!isPPNTransaction,
+  tag,
   extra,
 });
 

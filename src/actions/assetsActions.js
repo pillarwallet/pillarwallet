@@ -42,7 +42,6 @@ import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constan
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
-import { SMART_ACCOUNT_ASSET_TRANSFER } from 'constants/smartWalletConstants';
 
 import Toast from 'components/Toast';
 
@@ -120,7 +119,6 @@ export const sendSignedAssetTransactionAction = (transaction: any) => {
             value: '1',
             gasPrice: new BigNumber(transactionDetails.gasPrice),
             gasLimit: transactionDetails.gasLimit,
-            note: SMART_ACCOUNT_ASSET_TRANSFER,
           }),
           assetData: { ...collectibleInfo },
           type: COLLECTIBLE_TRANSACTION,
@@ -156,7 +154,6 @@ export const sendSignedAssetTransactionAction = (transaction: any) => {
           asset: transactionDetails.symbol,
           gasPrice: new BigNumber(transactionDetails.gasPrice),
           gasLimit: transactionDetails.gasLimit,
-          note: SMART_ACCOUNT_ASSET_TRANSFER,
         });
 
         dispatch({
