@@ -297,9 +297,15 @@ describe('History Actions', () => {
       });
 
       it('should call the dispatch function', () => {
+        const expectTransactions = {
+          [mockAccounts[0].id]: [
+            ...transactions,
+          ].sort((a, b) => b.createdAt - a.createdAt),
+        };
+
         expect(dispatchMock).toBeCalledWith({
           type: SET_HISTORY,
-          payload: accountTransactions,
+          payload: expectTransactions,
         });
       });
     });
@@ -324,7 +330,10 @@ describe('History Actions', () => {
 
       it('should call the dispatch function', () => {
         const expectTransactions = {
-          [mockAccounts[0].id]: [transformedImportedEthTransaction, ...transactions],
+          [mockAccounts[0].id]: [
+            transformedImportedEthTransaction,
+            ...transactions,
+          ].sort((a, b) => b.createdAt - a.createdAt),
         };
         expect(dispatchMock).toBeCalledWith({
           type: SET_HISTORY,
@@ -357,7 +366,10 @@ describe('History Actions', () => {
 
       it('should call the dispatch function', () => {
         const expectTransactions = {
-          [mockAccounts[0].id]: [...transactions, transformedImportedPlrTransaction],
+          [mockAccounts[0].id]: [
+            ...transactions,
+            transformedImportedPlrTransaction,
+          ].sort((a, b) => b.createdAt - a.createdAt),
         };
         expect(dispatchMock).toBeCalledWith({
           type: SET_HISTORY,
