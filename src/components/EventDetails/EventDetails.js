@@ -482,10 +482,10 @@ class EventDetails extends React.Component<Props, State> {
               valueAdditionalText={freeTx ? '' : 'ETH'}
             />
             }
-            {isPending &&
+            {gasLimit !== 0 && isPending &&
             <ListItemUnderlined
               label="SPEED UP TRANSACTION"
-              valueAddon={gasLimit !== 0 &&
+              valueAddon={
                 <Wrapper
                   horizontal
                   style={{
