@@ -173,6 +173,7 @@ type FeedItemConnection = {
 
 type FeedSection = {
   title: string,
+  date: string,
   data: Array<FeedItemTransaction | FeedItemConnection>,
 }
 
@@ -224,10 +225,11 @@ class ActivityFeed extends React.Component<Props, State> {
     }
 
     feedList.forEach(listItem => {
-      const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D');
-      const existingSection = dataSections.find(({ title }) => title === formattedDate);
+      const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D YYYY');
+      const sectionTitle = formatDate(new Date(listItem.createdAt * 1000), 'MMM D');
+      const existingSection = dataSections.find(({ date }) => date === formattedDate);
       if (!existingSection) {
-        dataSections.push({ title: formattedDate, data: [{ ...listItem }] });
+        dataSections.push({ title: sectionTitle, date: formattedDate, data: [{ ...listItem }] });
       } else {
         existingSection.data.push({ ...listItem });
       }

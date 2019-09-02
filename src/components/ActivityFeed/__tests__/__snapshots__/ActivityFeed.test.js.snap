@@ -33,6 +33,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               "value": undefined,
             },
           ],
+          "date": "Invalid Date",
           "title": "Invalid Date",
         },
       ]
@@ -68,6 +69,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               "value": undefined,
             },
           ],
+          "date": "Invalid Date",
           "title": "Invalid Date",
         },
       ]
@@ -433,6 +435,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               "value": "0",
             },
           ],
+          "date": "Invalid Date",
           "title": "Invalid Date",
         },
       ]
@@ -468,6 +471,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               "value": "0",
             },
           ],
+          "date": "Invalid Date",
           "title": "Invalid Date",
         },
       ]
