@@ -54,8 +54,14 @@ import {
 } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
-import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
+import {
+  findAccountByAddress,
+  getAccountName,
+  getActiveAccountAddress,
+  getInactiveUserAccounts,
+} from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
+import { calculateGasEstimate } from 'services/assets';
 
 // actions
 import { fetchGasInfoAction, updateTransactionStatusAction } from 'actions/historyActions';
@@ -109,7 +115,11 @@ type Props = {
   fetchGasInfo: Function,
   session: Object,
   contactsSmartAddresses: ContactSmartAddressData[],
-  inactiveAccounts: Accounts,
+  accounts: Accounts,
+}
+
+type State = {
+  gasLimit: number,
 }
 
 const ContentWrapper = styled.View`
@@ -153,11 +163,16 @@ const viewTransactionOnBlockchain = (hash: string) => {
   Linking.openURL(TX_DETAILS_URL + hash);
 };
 
-class EventDetails extends React.Component<Props, {}> {
+const speedMultipliers = [1, 3, 5];
+
+class EventDetails extends React.Component<Props, State> {
   timer: ?IntervalID;
   timeout: ?TimeoutID;
   // HACK: we need to cache the tx data for smart wallet migration process
   cachedTxInfo = {};
+  state = {
+    gasLimit: 0,
+  };
 
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
@@ -171,6 +186,8 @@ class EventDetails extends React.Component<Props, {}> {
       getTxNoteByContact,
       contacts,
       fetchGasInfo,
+      accounts,
+      assets,
     } = this.props;
 
     if (eventType !== TRANSACTION_EVENT) return;
@@ -182,6 +199,24 @@ class EventDetails extends React.Component<Props, {}> {
 
     const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
     if (txInfo.status !== TX_PENDING_STATUS) return;
+
+    const activeAccountAddress = getActiveAccountAddress(accounts);
+    const {
+      symbol,
+      decimals,
+      address: contractAddress,
+    } = assets.find(({ symbol: assetSymbol }) => assetSymbol === txInfo.asset) || {};
+    const amount = formatUnits(txInfo.value, decimals);
+    calculateGasEstimate({
+      from: activeAccountAddress,
+      to: txInfo.to,
+      amount,
+      symbol,
+      contractAddress,
+      decimals,
+    })
+      .then(gasLimit => this.setState({ gasLimit }))
+      .catch(() => null);
 
     fetchGasInfo();
     this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 500);
@@ -286,8 +321,9 @@ class EventDetails extends React.Component<Props, {}> {
     const {
       contacts,
       contactsSmartAddresses = [],
-      inactiveAccounts,
+      accounts,
     } = this.props;
+    const inactiveAccounts = getInactiveUserAccounts(accounts);
     return findMatchingContact(address, contacts, contactsSmartAddresses)
       || findAccountByAddress(address, inactiveAccounts)
       || {};
@@ -305,6 +341,7 @@ class EventDetails extends React.Component<Props, {}> {
       contacts,
       contactsSmartAddresses = [],
     } = this.props;
+    const { gasLimit } = this.state;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
@@ -448,35 +485,29 @@ class EventDetails extends React.Component<Props, {}> {
             {isPending &&
             <ListItemUnderlined
               label="SPEED UP TRANSACTION"
-              valueAddon={
+              valueAddon={gasLimit !== 0 &&
                 <Wrapper
-                  center
                   horizontal
                   style={{
-                    marginBottom: 16,
+                    width: '100%',
+                    marginBottom: 10,
+                    alignItems: 'stretch',
                   }}
                 >
-                  {
-                    [1, 3, 5].map(multiplier => {
-                      const newGasPrice = fastSpeedGasPrice * multiplier;
-                      const gasPriceWei = utils.parseUnits(newGasPrice.toString(), 'gwei');
-                      const gasPriceEth = formatAmount(utils.formatEther(gasPriceWei));
-                      console.log('gasPriceWei: ', gasPriceWei);
-                      console.log('gasPriceEth: ', gasPriceEth);
-                      console.log('fastSpeedGasPrice: ', fastSpeedGasPrice);
-                      console.log('newGasPrice: ', newGasPrice);
-                      // const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
-                      return (
-                        <Button
-                          key={multiplier}
-                          title={`${gasPriceEth} ETH`}
-                          onPress={() => this.onSelectSpeedPress(newGasPrice)}
-                          small
-                          primaryInverted
-                        />
-                      );
-                    })
-                  }
+                  {speedMultipliers.map(multiplier => {
+                    const newGasPrice = fastSpeedGasPrice * multiplier;
+                    const gasPriceWei = utils.parseUnits(newGasPrice.toString(), 'gwei');
+                    const gasPriceEth = formatAmount(utils.formatEther(gasPriceWei.mul(gasLimit)));
+                    return (
+                      <Button
+                        key={multiplier}
+                        title={`${gasPriceEth} ETH`}
+                        onPress={() => this.onSelectSpeedPress(newGasPrice)}
+                        small
+                        primaryInverted
+                      />
+                    );
+                  })}
                 </Wrapper>
               }
             />
@@ -690,7 +721,7 @@ const mapStateToProps = ({
   session,
   gasInfo,
   contactsSmartAddresses,
-  inactiveAccounts: getInactiveUserAccounts(accounts),
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({
