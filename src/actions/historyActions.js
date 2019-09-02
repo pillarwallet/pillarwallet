@@ -311,7 +311,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
     // 5) sort by date
     const sortedHistory = orderBy(updatedAccountHistory, ['createdAt'], ['desc']);
 
-    // 5) update history in storage
+    // 6) update history in storage
     const updatedHistory = updateAccountHistory(currentHistory, walletAddress, sortedHistory);
 
     await dispatch(saveDbAction('history', { history: updatedHistory }, true));
