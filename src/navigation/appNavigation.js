@@ -108,11 +108,7 @@ import {
 } from 'actions/notificationsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import {
-  fetchTransactionsHistoryNotificationsAction,
-  startListeningForBalanceChangeAction,
-  stopListeningForBalanceChangeAction,
-} from 'actions/historyActions';
+import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -629,8 +625,6 @@ type Props = {
   removePrivateKeyFromMemory: Function,
   smartWalletFeatureEnabled: boolean,
   isBrowsingWebView: boolean,
-  startListeningForBalanceChange: Function,
-  stopListeningForBalanceChange: Function,
 }
 
 type State = {
@@ -656,7 +650,6 @@ class AppFlow extends React.Component<Props, State> {
       assets,
       fetchAllCollectiblesData,
       initWalletConnect,
-      startListeningForBalanceChange,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
@@ -667,7 +660,6 @@ class AppFlow extends React.Component<Props, State> {
     fetchAllCollectiblesData();
     startListeningChatWebSocket();
     initWalletConnect();
-    startListeningForBalanceChange();
     addAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -724,7 +716,6 @@ class AppFlow extends React.Component<Props, State> {
       navigation,
       isPickingImage,
       isBrowsingWebView,
-      stopListeningForBalanceChange,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -742,7 +733,6 @@ class AppFlow extends React.Component<Props, State> {
         stopListeningNotifications();
         stopListeningIntercomNotifications();
         updateSignalInitiatedState(false);
-        stopListeningForBalanceChange();
       }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
@@ -836,8 +826,6 @@ const mapDispatchToProps = dispatch => ({
   updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
-  startListeningForBalanceChange: () => dispatch(startListeningForBalanceChangeAction()),
-  stopListeningForBalanceChange: () => dispatch(stopListeningForBalanceChangeAction()),
 });
 
 const ConnectedAppFlow = connect(

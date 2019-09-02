@@ -48,8 +48,6 @@ import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeAction
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
-const currentProvider = getEthereumProvider(NETWORK_PROVIDER);
-
 const afterHistoryUpdatedAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
@@ -319,33 +317,5 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
       type: SET_HISTORY,
       payload: updatedHistory,
     });
-  };
-};
-
-export const startListeningForBalanceChangeAction = () => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      assets: { data: assets },
-      accounts: { data: accounts },
-    } = getState();
-    const activeAccount = getActiveAccount(accounts);
-    if (activeAccount) {
-      const walletAddress = getAccountAddress(activeAccount);
-      currentProvider.on(walletAddress, () => {
-        dispatch(fetchAssetsBalancesAction(assets, true));
-      });
-    }
-  };
-};
-
-export const stopListeningForBalanceChangeAction = () => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      accounts: { data: accounts },
-    } = getState();
-    const walletAddress = getActiveAccountAddress(accounts);
-    if (walletAddress && currentProvider) {
-      currentProvider.removeListener(walletAddress);
-    }
   };
 };
