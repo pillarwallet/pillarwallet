@@ -180,5 +180,9 @@ describe('Common utils', () => {
       const expectedValue = '£ 14.00';
       expect(formatFiat('14')).toBe(expectedValue);
     });
+    it('should show just 0 (without decimals) if value is less than 0', () => {
+      const expectedValue = '£ 0';
+      expect(formatFiat('0.00')).toBe(expectedValue);
+    });
   });
 });

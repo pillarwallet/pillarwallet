@@ -921,7 +921,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                 ]
               }
             >
-              £ 0.00
+              £ 0
             </Text>
           </View>
         </View>
