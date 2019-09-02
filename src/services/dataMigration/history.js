@@ -6,7 +6,15 @@ import { SET_HISTORY } from 'constants/historyConstants';
 import type { Accounts } from 'models/Account';
 import type { Transaction, TransactionsStore } from 'models/Transaction';
 import Storage from 'services/storage';
-import { findKeyBasedAccount } from 'utils/accounts';
+import {
+  checkIfSmartWalletAccount,
+  findKeyBasedAccount,
+  getActiveAccount,
+  getActiveAccountAddress,
+  getActiveAccountId,
+} from 'utils/accounts';
+import { addressesEqual } from 'utils/assets';
+import { updateAccountHistory } from 'utils/history';
 
 const storage = Storage.getInstance('db');
 
@@ -27,12 +35,27 @@ export function migrateTxHistoryToAccountsFormat(history: Transaction[], account
 export default async function (dispatch: Function, getState: Function) {
   const { migratedToReduxPersist = {} } = await storage.get('dataMigration');
   const { accounts = [] } = await storage.get('accounts');
-  const { history = {} } = await storage.get('history');
+  let { history = {} } = await storage.get('history');
   const { history: { data: stateHistory } } = getState();
+  const activeAccount = getActiveAccount(accounts || []);
 
   // check if the data was migrated, but the current state is empty and history from storage is not empty
   if (migratedToReduxPersist.history && isEmpty(stateHistory) && !isEmpty(history)) {
     Sentry.captureMessage('Possible redux-persist crash', { level: 'info' });
+  }
+
+  if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
+    const accountAddress = getActiveAccountAddress(accounts);
+    const accountId = getActiveAccountId(accounts);
+    const accountHistory = (history[accountId] || []);
+    const cleanedHistory = accountHistory
+      .filter(tx => addressesEqual(tx.to, accountAddress) || addressesEqual(tx.from, accountAddress));
+
+    if (accountHistory.length !== cleanedHistory.length) {
+      history = updateAccountHistory(history, accountId, cleanedHistory);
+      dispatch(saveDbAction('history', { history: history }, true));
+      dispatch({ type: SET_HISTORY, payload: history });
+    }
   }
 
   // data migrated, no need to do anything
