@@ -80,7 +80,11 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
 
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
-    const updatedAccountHistory = uniqBy([...history, ...accountHistory], 'hash');
+
+    const pendingTransactions = history.filter(tx => tx.status === TX_PENDING_STATUS);
+    const minedTransactions = history.filter(tx => tx.status !== TX_PENDING_STATUS);
+
+    const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
@@ -243,8 +247,6 @@ export const updateTransactionStatusAction = (hash: string) => {
 
 export const restoreTransactionHistoryAction = (walletAddress: string, walletId: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const { accounts: { data: accounts } } = getState();
-
     const [allAssets, _erc20History, ethHistory] = await Promise.all([
       api.fetchSupportedAssets(walletId),
       api.importedErc20TransactionHistory(walletAddress),
@@ -258,8 +260,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
     });
 
     const { history: { data: currentHistory } } = getState();
-    const accountId = getActiveAccountId(accounts);
-    const accountHistory = currentHistory[accountId] || [];
+    const accountHistory = currentHistory[walletAddress] || [];
 
     // 1) filter out records those exists in accountHistory
     const ethTransactions = ethHistory.filter(tx => {
@@ -311,7 +312,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
     const sortedHistory = orderBy(updatedAccountHistory, ['createdAt'], ['asc']);
 
     // 6) update history in storage
-    const updatedHistory = updateAccountHistory(currentHistory, accountId, sortedHistory);
+    const updatedHistory = updateAccountHistory(currentHistory, walletAddress, sortedHistory);
 
     await dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch({
