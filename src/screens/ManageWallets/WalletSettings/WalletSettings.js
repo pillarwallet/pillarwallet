@@ -130,6 +130,8 @@ class WalletSettings extends React.PureComponent<Props> {
       disabled,
     } = item;
 
+    const minHeight = isSmartWallet ? 96 : 80;
+
     return (
       <ListCard
         title={title}
@@ -137,7 +139,7 @@ class WalletSettings extends React.PureComponent<Props> {
         subtitle={body}
         action={action}
         label={label}
-        contentWrapperStyle={isSmartWallet ? { minHeight: 96, padding: 16 } : { padding: 16 }}
+        contentWrapperStyle={{ minHeight, padding: 16 }}
         disabled={disabled}
       />
     );

@@ -208,7 +208,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                   ]
                 }
               >
-                <View>
+                <View
+                  style={
+                    Object {
+                      "marginRight": -10,
+                    }
+                  }
+                >
                   <View
                     accessible={true}
                     isTVSelectable={true}
@@ -222,15 +228,15 @@ exports[`Asset renders the Asset correctly 1`] = `
                       Object {
                         "alignItems": "flex-start",
                         "alignSelf": "center",
-                        "height": 24,
+                        "height": 34,
                         "justifyContent": "center",
                         "opacity": 1,
-                        "paddingBottom": 0,
-                        "paddingLeft": 0,
-                        "paddingRight": 0,
-                        "paddingTop": 0,
+                        "paddingBottom": 5,
+                        "paddingLeft": 10,
+                        "paddingRight": 10,
+                        "paddingTop": 5,
                         "position": "relative",
-                        "width": 24,
+                        "width": 44,
                       }
                     }
                   >
@@ -915,7 +921,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                 ]
               }
             >
-              £ 0.00
+              £ 0
             </Text>
           </View>
         </View>

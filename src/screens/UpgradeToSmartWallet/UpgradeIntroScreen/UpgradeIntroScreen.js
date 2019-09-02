@@ -130,7 +130,7 @@ class UpgradeIntroScreen extends React.PureComponent<Props> {
         <Container color="transparent">
           <Header
             onBack={this.onBack}
-            nextText="Get help"
+            nextText="Support"
             nextTextStyle={{
               color: baseColors.white,
               fontSize: fontSizes.extraSmall,

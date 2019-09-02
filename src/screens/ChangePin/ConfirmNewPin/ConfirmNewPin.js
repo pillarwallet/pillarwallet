@@ -26,10 +26,10 @@ import { changePinAction, resetIncorrectPasswordAction } from 'actions/authActio
 import { Container } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import ErrorMessage from 'components/ErrorMessage';
-import Spinner from 'components/Spinner';
 import PinCode from 'components/PinCode';
 import Button from 'components/Button';
 import Header from 'components/Header';
+import Loader from 'components/Loader';
 import { validatePin } from 'utils/validators';
 
 type Props = {
@@ -84,8 +84,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
     if (walletState === ENCRYPTING) {
       return (
         <Container center>
-          <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
-          <Spinner />
+          <Loader />
         </Container>
       );
     }

@@ -25,8 +25,7 @@ import get from 'lodash.get';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { checkAuthAction } from 'actions/authActions';
 import { Container, Wrapper } from 'components/Layout';
-import { BaseText } from 'components/Typography';
-import Spinner from 'components/Spinner';
+import Loader from 'components/Loader';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
@@ -125,8 +124,7 @@ class CheckPin extends React.Component<Props, State> {
     if (walletState === DECRYPTING || isChecking || walletState === GENERATING_CONNECTIONS) {
       return (
         <Container center color="transparent">
-          <BaseText style={{ marginBottom: 20 }}>Checking</BaseText>
-          <Spinner />
+          <Loader messages={['Checking']} />
         </Container>
       );
     }

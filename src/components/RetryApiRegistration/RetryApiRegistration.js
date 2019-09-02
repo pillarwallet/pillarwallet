@@ -24,7 +24,7 @@ import { BaseText } from 'components/Typography';
 import { registerOnBackendAction } from 'actions/onboardingActions';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
-import Spinner from 'components/Spinner';
+import Loader from 'components/Loader';
 import { REGISTRATION_FAILED, USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
 type Props = {
@@ -49,7 +49,7 @@ class RetryApiRegistration extends React.Component<Props> {
       <Container center>
         <BaseText style={{ marginBottom: 20 }}>Registering on backend</BaseText>
         {walletState !== REGISTRATION_FAILED && (
-          <Spinner />
+          <Loader />
         )}
         {walletState === REGISTRATION_FAILED && (
           <Button title="Try again" onPress={registerOnBackend} />

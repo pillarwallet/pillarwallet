@@ -89,6 +89,7 @@ type AccountInteraction = {|
   walletBalance: number,
   onMainPress: () => void,
   onSettingsPress?: () => void,
+  isInitButton?: boolean,
 |};
 
 type NewItem = {| type: 'NEW_SMART_WALLET', interaction: AccountInteraction |};
@@ -292,14 +293,16 @@ class AccountsScreen extends React.Component<Props, State> {
       onSettingsPress,
       isActiveWallet,
       isSmartWallet,
+      isInitButton,
     } = interaction;
 
     const { baseFiatCurrency } = this.props;
+    const balance = isInitButton ? null : formatFiat(walletBalance, baseFiatCurrency);
 
     return (
       <SettingsItemCarded
         title={isSmartWallet ? 'Ethereum Smart Wallet' : 'Ethereum Key Wallet'}
-        subtitle={formatFiat(walletBalance, baseFiatCurrency)}
+        subtitle={balance}
         onMainPress={onMainPress}
         onSettingsPress={onSettingsPress}
         isActive={isActiveWallet}
@@ -391,6 +394,7 @@ class AccountsScreen extends React.Component<Props, State> {
           walletBalance: 0,
           isActiveWallet: false,
           onMainPress: () => { navigation.navigate(SMART_WALLET_INTRO); },
+          isInitButton: true,
         },
       });
     }
@@ -406,10 +410,13 @@ class AccountsScreen extends React.Component<Props, State> {
       availableStake,
       isTankInitialised,
       smartWalletFeatureEnabled,
+      accounts,
     } = this.props;
 
     const ppnNetwork = blockchainNetworks.find((network) => network.id === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
     const availableStakeFormattedAmount = formatMoney(availableStake);
+    const hasAccount = userHasSmartWallet(accounts);
+    const hasSmartWallet = hasAccount && smartWalletFeatureEnabled;
 
     if (smartWalletFeatureEnabled && ppnNetwork) {
       networks.push({
@@ -417,7 +424,7 @@ class AccountsScreen extends React.Component<Props, State> {
         type: 'NETWORK',
         isInitialised: isTankInitialised,
         network: ppnNetwork,
-        formattedStakeAmount: `${availableStakeFormattedAmount} ${PPN_TOKEN}`,
+        formattedStakeAmount: hasSmartWallet ? `${availableStakeFormattedAmount} ${PPN_TOKEN}` : 'N/A',
         noteText: 'Instant, free and private transactions',
         noteIcon: 'sunglasses',
         iconSource: pillarNetworkIcon,
