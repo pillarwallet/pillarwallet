@@ -40,6 +40,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Tabs from 'components/Tabs';
 import TankAssetBalance from 'components/TankAssetBalance';
 import { BaseText } from 'components/Typography';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // utils
 import { createAlert } from 'utils/alerts';
@@ -95,9 +96,17 @@ const SectionHeader = styled(BaseText)`
   color: ${baseColors.darkGray};
 `;
 
-type esState = {
+const EmptyStateWrapper = styled.View`
+  padding: 15px 30px 30px;
+  width: 100%;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+type EmptyState = {
   title?: string,
-  body?: string,
+  textBody?: string,
 }
 
 type Tab = {
@@ -109,7 +118,7 @@ type Tab = {
   tabImageNormal?: string,
   tabImageActive?: string,
   data: Object[],
-  emptyState?: esState,
+  emptyState?: EmptyState,
 }
 
 type Props = {
@@ -138,6 +147,7 @@ type Props = {
   asset?: string,
   feedType?: string,
   contactsSmartAddresses: ContactSmartAddressData[],
+  emptyState?: EmptyState,
 }
 
 type FeedItemTransaction = {
@@ -184,6 +194,7 @@ type State = {
   eventStatus: string,
   tabIsChanging: boolean,
   formattedFeedData: FeedSection[],
+  emptyStateData: EmptyState,
 }
 
 const PPNIcon = require('assets/icons/icon_PPN.png');
@@ -200,6 +211,7 @@ class ActivityFeed extends React.Component<Props, State> {
     eventStatus: '',
     tabIsChanging: false,
     formattedFeedData: [],
+    emptyStateData: {},
   };
 
   componentDidMount() {
@@ -215,13 +227,23 @@ class ActivityFeed extends React.Component<Props, State> {
   }
 
   generateFeedSections = () => {
-    const { tabs = [], activeTab, feedData = [] } = this.props;
+    const {
+      tabs = [],
+      activeTab,
+      feedData = [],
+      emptyState,
+    } = this.props;
     const dataSections = [];
     let feedList = feedData;
+    let emptyStateData = emptyState || {};
 
     if (tabs.length) {
       const activeTabInfo = tabs.find(({ id }) => id === activeTab);
-      if (activeTabInfo) ({ data: feedList } = activeTabInfo);
+      if (activeTabInfo) {
+        const { data, emptyState: eState = {} } = activeTabInfo;
+        feedList = data;
+        emptyStateData = eState;
+      }
     }
 
     feedList.forEach(listItem => {
@@ -235,7 +257,7 @@ class ActivityFeed extends React.Component<Props, State> {
       }
     });
 
-    this.setState({ formattedFeedData: dataSections });
+    this.setState({ formattedFeedData: dataSections, emptyStateData });
   };
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -458,6 +480,7 @@ class ActivityFeed extends React.Component<Props, State> {
       eventStatus,
       tabIsChanging,
       formattedFeedData,
+      emptyStateData,
     } = this.state;
 
     const additionalContentContainerStyle = !formattedFeedData.length
@@ -465,6 +488,8 @@ class ActivityFeed extends React.Component<Props, State> {
       : {};
 
     const tabsProps = tabs.map(({ data, emptyState, ...necessaryTabProps }) => necessaryTabProps);
+    console.log('--->', { emptyStateData });
+
 
     return (
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
@@ -502,8 +527,12 @@ class ActivityFeed extends React.Component<Props, State> {
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
           removeClippedSubviews
           stickySectionHeadersEnabled={false}
+          ListEmptyComponent={(
+            <EmptyStateWrapper>
+              <EmptyStateParagraph {...emptyStateData} />
+            </EmptyStateWrapper>
+          )}
         />}
-
         {!!selectedEventData &&
         <SlideModal
           isVisible={showModal}

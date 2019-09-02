@@ -39,6 +39,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // constants
 import {
@@ -173,6 +174,10 @@ const DescriptionWarning = styled(Description)`
   color: ${baseColors.burningFire};
 `;
 
+const EmptyStateWrapper = styled.View`
+  margin: 20px 0 30px;
+`;
+
 const allIconNormal = require('assets/icons/all_normal.png');
 const allIconActive = require('assets/icons/all_active.png');
 const socialIconNormal = require('assets/icons/social_normal.png');
@@ -197,7 +202,7 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, logScreenView } = this.props;
+    const { fetchTransactionsHistory, logScreenView, fetchBadges } = this.props;
 
     logScreenView('View home', 'Home');
 
@@ -211,6 +216,7 @@ class HomeScreen extends React.Component<Props, State> {
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
     });
+    fetchBadges();
   }
 
   componentWillUnmount() {
@@ -402,7 +408,7 @@ class HomeScreen extends React.Component<Props, State> {
         data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts, ...invitations],
         emptyState: {
           title: 'Make your first step',
-          body: 'Your activity will appear here.',
+          bodyText: 'Your activity will appear here.',
         },
       },
       {
@@ -414,7 +420,7 @@ class HomeScreen extends React.Component<Props, State> {
         data: [...transactionsOnMainnet, ...mappedCTransactions],
         emptyState: {
           title: 'Make your first step',
-          body: 'Your transactions will appear here. Send or receive tokens to start.',
+          bodyText: 'Your transactions will appear here. Send or receive tokens to start.',
         },
       },
       {
@@ -426,7 +432,7 @@ class HomeScreen extends React.Component<Props, State> {
         data: [...mappedContacts, ...invitations],
         emptyState: {
           title: 'Make your first step',
-          body: 'Information on your connections will appear here. Send a connection request to start.',
+          bodyText: 'Information on your connections will appear here. Send a connection request to start.',
         },
       },
     ];
@@ -439,6 +445,8 @@ class HomeScreen extends React.Component<Props, State> {
     const sessionsCount = filterSessionsByUrl(connectors).length;
     const sessionsLabelPart = sessionsCount < 2 ? 'session' : 'sessions';
     const sessionsLabel = sessionsCount ? `${sessionsCount} ${sessionsLabelPart}` : '';
+
+    const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
 
     return (
       <ContainerWithHeader
@@ -475,7 +483,7 @@ class HomeScreen extends React.Component<Props, State> {
       >
         <ScrollView
           style={{ width: '100%', flex: 1 }}
-          stickyHeaderIndices={badges.length ? [3] : [2]}
+          stickyHeaderIndices={[3]}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -497,7 +505,6 @@ class HomeScreen extends React.Component<Props, State> {
               settingsLabel="Connect"
             />
           </WalletConnectWrapper>
-          {!!badges.length &&
           <BadgesWrapper>
             <ListHeader>Game of badges</ListHeader>
             <FlatList
@@ -506,10 +513,18 @@ class HomeScreen extends React.Component<Props, State> {
               keyExtractor={(item) => (item.id.toString())}
               renderItem={this.renderBadge}
               style={{ width: '100%' }}
-              contentContainerStyle={{ paddingHorizontal: 10 }}
+              contentContainerStyle={{ paddingHorizontal: 10, ...badgesContainerStyle }}
               initialNumToRender={5}
+              ListEmptyComponent={(
+                <EmptyStateWrapper>
+                  <EmptyStateParagraph
+                    title="No badges"
+                    bodyText="You do not have badges yet"
+                  />
+                </EmptyStateWrapper>
+              )}
             />
-          </BadgesWrapper>}
+          </BadgesWrapper>
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}
