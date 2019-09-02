@@ -179,7 +179,7 @@ class FundTank extends React.Component<Props, State> {
     const formattedBalance = formatAmount(balance);
 
     // balance in fiat
-    const totalInFiat = balance * getRate(rates, 'PLR', fiatCurrency);
+    const totalInFiat = balance * getRate(rates, PPN_TOKEN, fiatCurrency);
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // fee
@@ -194,7 +194,7 @@ class FundTank extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(rates, 'PLR', fiatCurrency);
+    const valueInFiat = currentValue * getRate(rates, PPN_TOKEN, fiatCurrency);
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
