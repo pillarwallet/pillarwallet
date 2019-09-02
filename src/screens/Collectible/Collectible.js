@@ -43,6 +43,8 @@ import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 
 import { accountHistorySelector } from 'selectors/history';
 
 import type { Collectible } from 'models/Collectible';
+import type { ContactSmartAddressData } from 'models/Contacts';
+import type { Accounts } from 'models/Account';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -50,6 +52,8 @@ type Props = {
   openSeaTxHistory: Object[],
   contacts: Object[],
   history: Object[],
+  contactsSmartAddresses: ContactSmartAddressData[],
+  accounts: Accounts,
 };
 
 const ActionButtonsWrapper = styled.View`
@@ -114,6 +118,8 @@ class CollectibleScreen extends React.Component<Props> {
       openSeaTxHistory,
       contacts,
       history,
+      contactsSmartAddresses,
+      accounts,
     } = this.props;
     const { assetData } = navigation.state.params;
     const {
@@ -130,7 +136,13 @@ class CollectibleScreen extends React.Component<Props> {
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, COLLECTIBLE_TRANSACTION);
+    const mappedCTransactions = mapTransactionsHistory(
+      collectiblesTransactions,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      COLLECTIBLE_TRANSACTION,
+    );
     const relatedCollectibleTransactions = mappedCTransactions.filter(({ assetData: thisAssetData }) =>
       !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id);
 
@@ -174,9 +186,12 @@ class CollectibleScreen extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
+  accounts: { data: accounts },
 }) => ({
   contacts,
+  contactsSmartAddresses,
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({

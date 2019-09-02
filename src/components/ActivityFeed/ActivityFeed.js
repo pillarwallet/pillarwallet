@@ -30,6 +30,7 @@ import get from 'lodash.get';
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
+import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -43,8 +44,13 @@ import { BaseText } from 'components/Typography';
 // utils
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
-import { partial, formatAmount, formatUnits } from 'utils/common';
+import {
+  partial,
+  formatAmount,
+  formatUnits,
+} from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { findMatchingContact } from 'utils/contacts';
 
 // constants
 import {
@@ -114,7 +120,7 @@ type Props = {
   onRejectInvitation: Function,
   navigation: NavigationScreenProp<*>,
   esData?: Object,
-  contacts: Object,
+  contacts: ApiUser[],
   feedTitle?: string,
   backgroundColor?: string,
   wrapperStyle?: Object,
@@ -131,6 +137,7 @@ type Props = {
   hideTabs: boolean,
   asset?: string,
   feedType?: string,
+  contactsSmartAddresses: ContactSmartAddressData[],
 }
 
 type FeedItemTransaction = {
@@ -166,6 +173,7 @@ type FeedItemConnection = {
 
 type FeedSection = {
   title: string,
+  date: string,
   data: Array<FeedItemTransaction | FeedItemConnection>,
 }
 
@@ -217,10 +225,11 @@ class ActivityFeed extends React.Component<Props, State> {
     }
 
     feedList.forEach(listItem => {
-      const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D');
-      const existingSection = dataSections.find(({ title }) => title === formattedDate);
+      const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D YYYY');
+      const sectionTitle = formatDate(new Date(listItem.createdAt * 1000), 'MMM D');
+      const existingSection = dataSections.find(({ date }) => date === formattedDate);
       if (!existingSection) {
-        dataSections.push({ title: formattedDate, data: [{ ...listItem }] });
+        dataSections.push({ title: sectionTitle, date: formattedDate, data: [{ ...listItem }] });
       } else {
         existingSection.data.push({ ...listItem });
       }
@@ -274,6 +283,7 @@ class ActivityFeed extends React.Component<Props, State> {
       invertAddon,
       feedType,
       asset,
+      contactsSmartAddresses,
     } = this.props;
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
@@ -297,8 +307,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
       const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
-      const contact = contacts
-        .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const contact = findMatchingContact(address, contacts, contactsSmartAddresses) || {};
       const isContact = Object.keys(contact).length !== 0;
       const itemImage = contact.profileImage || fullIconUrl;
       let itemValue = `${directionSymbol} ${formattedValue} ${notification.asset}`;
@@ -336,7 +345,7 @@ class ActivityFeed extends React.Component<Props, State> {
           itemValue={itemValue}
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
           valueColor={isReceived ? baseColors.jadeGreen : baseColors.scarlet}
-          imageUpdateTimeStamp={contact.lastUpdateTime}
+          imageUpdateTimeStamp={contact.lastUpdateTime || 0}
           customAddon={customAddon}
           itemImageSource={itemImageSource}
           noImageBorder
@@ -520,11 +529,12 @@ class ActivityFeed extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   assets: { data: assets },
 }) => ({
   contacts,
   assets: Object.values(assets),
+  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({

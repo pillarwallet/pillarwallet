@@ -256,37 +256,37 @@ export const updateConnectionKeyPairs = (
 
     const { currentConnectionsCount, oldConnectionsCount, newReceivedConnectonsCount } = numberOfConnections;
     const totalConnections = currentConnectionsCount + oldConnectionsCount + newReceivedConnectonsCount;
-    if (generateKeys) {
-      await dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: GENERATING_CONNECTIONS,
-      });
 
-      try {
-        if (lastConnectionKeyIndex === -1) {
-          const newKeyPairs =
-            await generateKeyPairThreadPool(
-              mnemonic,
-              privateKey,
-              totalConnections,
-              connectionKeyPairs.length,
-              lastConnectionKeyIndex);
-          const resultConnectionKeys = connectionKeyPairs.concat(newKeyPairs);
-          await dispatch({
-            type: UPDATE_CONNECTION_KEY_PAIRS,
-            payload: resultConnectionKeys,
-          });
-          await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
-        }
-      } catch (e) {
+    if (oldConnectionsCount > 0 || currentConnectionsCount > connectionIdentityKeys.length) {
+      if (generateKeys) {
         await dispatch({
           type: UPDATE_WALLET_STATE,
-          payload: DECRYPTED,
+          payload: GENERATING_CONNECTIONS,
         });
-      }
-    }
 
-    if (oldConnectionsCount > 0 || (currentConnectionsCount - connectionIdentityKeys.length) > 0) {
+        try {
+          if (lastConnectionKeyIndex === -1) {
+            const newKeyPairs =
+              await generateKeyPairThreadPool(
+                mnemonic,
+                privateKey,
+                totalConnections,
+                connectionKeyPairs.length,
+                lastConnectionKeyIndex);
+            const resultConnectionKeys = connectionKeyPairs.concat(newKeyPairs);
+            await dispatch({
+              type: UPDATE_CONNECTION_KEY_PAIRS,
+              payload: resultConnectionKeys,
+            });
+            await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
+          }
+        } catch (e) {
+          await dispatch({
+            type: UPDATE_WALLET_STATE,
+            payload: DECRYPTED,
+          });
+        }
+      }
       await dispatch(fetchOldInviteNotificationsAction(walletId));
       await dispatch(restoreAccessTokensAction(walletId));
       await dispatch(mapIdentityKeysAction(totalConnections + 25, walletId));

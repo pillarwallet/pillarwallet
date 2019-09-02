@@ -49,6 +49,7 @@ import { navigate, getNavigationState, getNavigationPathAndParamsState } from 's
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
+import { getActiveAccountAddress } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
@@ -62,9 +63,13 @@ import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
 import { updatePinAttemptsAction } from 'actions/walletActions';
 import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
+import { fetchBadgesAction } from 'actions/badgesActions';
+import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 import { saveDbAction } from './dbActions';
-import { fetchBadgesAction } from './badgesActions';
-import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
+
 
 const Crashlytics = firebase.crashlytics();
 
@@ -77,7 +82,7 @@ export const loginAction = (
   onLoginSuccess: ?Function,
   updateKeychain?: boolean = false,
 ) => {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       accounts: { data: accounts },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
@@ -237,7 +242,7 @@ export const loginAction = (
        * this is used only to avoid BCX fetching issues,
        * TODO: remove fetching from ethplorer when BCX is fixed or BCX2 is released
        */
-      dispatch(restoreTransactionHistoryAction(wallet.address, user.walletId));
+      dispatch(restoreTransactionHistoryAction(getActiveAccountAddress(accounts), user.walletId));
 
       navigate(navigateToAppAction);
     } catch (e) {
@@ -264,7 +269,7 @@ export const checkAuthAction = (
   onValidPin?: Function,
   options?: DecryptionSettings = defaultDecryptionSettings,
 ) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -303,7 +308,7 @@ export const checkAuthAction = (
 };
 
 export const changePinAction = (newPin: string, currentPin: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
 
     dispatch({
@@ -336,7 +341,7 @@ export const changePinAction = (newPin: string, currentPin: string) => {
 };
 
 export const resetIncorrectPasswordAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTED,
@@ -361,7 +366,7 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 };
 
 export const logoutAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     Intercom.logout();
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
     dispatch({ type: LOG_OUT });

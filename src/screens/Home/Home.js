@@ -35,7 +35,6 @@ import Tabs from 'components/Tabs';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import QRCodeScanner from 'components/QRCodeScanner';
-import Spinner from 'components/Spinner';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
@@ -81,12 +80,12 @@ import { activeAccountSelector } from 'selectors';
 import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { getAccountAddress } from 'utils/accounts';
+import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
 // types
-import type { Account } from 'models/Account';
-
+import type { Account, Accounts } from 'models/Account';
 import type { Badges } from 'models/Badge';
-import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
+import type { ContactSmartAddressData } from 'models/Contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -119,6 +118,8 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
   restoreTransactionHistory: (walletAddress: string, walletId: string) => void,
   activeAccount: Account,
+  contactsSmartAddresses: ContactSmartAddressData[],
+  accounts: Accounts,
 };
 
 type State = {
@@ -170,12 +171,6 @@ const DescriptionWarning = styled(Description)`
   font-size: ${fontSizes.small};
   font-weight: ${fontWeights.bold};
   color: ${baseColors.burningFire};
-`;
-
-export const LoadingSpinner = styled(Spinner)`
-  padding: 10px;
-  align-items: center;
-  justify-content: center;
 `;
 
 const allIconNormal = require('assets/icons/all_normal.png');
@@ -365,6 +360,8 @@ class HomeScreen extends React.Component<Props, State> {
       waitingRequest,
       badges,
       connectors,
+      contactsSmartAddresses,
+      accounts,
     } = this.props;
 
     const {
@@ -377,9 +374,21 @@ class HomeScreen extends React.Component<Props, State> {
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const transactionsOnMainnet = mapTransactionsHistory(
+      tokenTxHistory,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      TRANSACTION_EVENT,
+    );
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, COLLECTIBLE_TRANSACTION);
+    const mappedCTransactions = mapTransactionsHistory(
+      collectiblesTransactions,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      COLLECTIBLE_TRANSACTION,
+    );
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
 
@@ -568,13 +577,14 @@ class HomeScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   user: { data: user },
   invitations: { data: invitations },
   notifications: { intercomNotificationsCount },
   deepLink: { data: { loginAttemptToken } = {} },
   badges: { data: badges },
   walletConnect: { connectors },
+  accounts: { data: accounts },
 }) => ({
   contacts,
   user,
@@ -583,6 +593,8 @@ const mapStateToProps = ({
   loginAttemptToken,
   badges,
   connectors,
+  contactsSmartAddresses,
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({

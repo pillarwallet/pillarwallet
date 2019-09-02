@@ -32,6 +32,8 @@ import isEmpty from 'lodash.isempty';
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
+import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
+import type { Accounts } from 'models/Account';
 
 // components
 import { BaseText, BoldText } from 'components/Typography';
@@ -42,9 +44,15 @@ import ProfileImage from 'components/ProfileImage';
 
 // utils
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
-import { formatFullAmount, noop, formatUnits } from 'utils/common';
+import {
+  formatFullAmount,
+  noop,
+  formatUnits,
+} from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
+import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
+import { findMatchingContact } from 'utils/contacts';
 
 // actions
 import { updateTransactionStatusAction } from 'actions/historyActions';
@@ -76,7 +84,7 @@ import EventHeader from './EventHeader';
 
 type Props = {
   transaction: Transaction,
-  contacts: Object[],
+  contacts: ApiUser[],
   history: Object[],
   assets: Asset[],
   onClose: Function,
@@ -91,6 +99,8 @@ type Props = {
   txNotes: Object[],
   getTxNoteByContact: Function,
   activeAccountAddress: string,
+  contactsSmartAddresses: ContactSmartAddressData[],
+  inactiveAccounts: Accounts,
 }
 
 const ContentWrapper = styled.View`
@@ -240,15 +250,27 @@ class EventDetails extends React.Component<Props, {}> {
     navigation.navigate(CHAT, { username: contact.username });
   };
 
+  findMatchingContactOrAccount = (address) => {
+    const {
+      contacts,
+      contactsSmartAddresses = [],
+      inactiveAccounts,
+    } = this.props;
+    return findMatchingContact(address, contacts, contactsSmartAddresses)
+      || findAccountByAddress(address, inactiveAccounts)
+      || {};
+  };
+
   renderEventBody = (eventType, eventStatus) => {
     const {
       eventData,
-      contacts,
       activeAccountAddress,
       onClose,
       history,
       txNotes,
       assets,
+      contacts,
+      contactsSmartAddresses = [],
     } = this.props;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
@@ -284,12 +306,17 @@ class EventDetails extends React.Component<Props, {}> {
       const isPending = status === TX_PENDING_STATUS;
       const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
       const value = formatUnits(txInfo.value, decimals);
-      const recipientContact = contacts.find(({ ethAddress }) => addressesEqual(to, ethAddress)) || {};
-      const senderContact = contacts.find(({ ethAddress }) => addressesEqual(from, ethAddress)) || {};
+      const recipientContact = findMatchingContact(to, contacts, contactsSmartAddresses) || {};
+      // apply to wallet accounts only if received from other account address
+      const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
-      const relatedUserTitle = relatedUser.username || (isReceived
+      // $FlowFixMe
+      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
         : `${to.slice(0, 7)}…${to.slice(-7)}`);
+      const relatedUserProfileImage = relatedUser.profileImage || null;
+      // $FlowFixMe
+      const showProfileImage = !relatedUser.type;
 
       if (isPending) {
         const pendingTimeInSeconds = differenceInSeconds(new Date(), new Date(eventData.createdAt * 1000));
@@ -358,7 +385,8 @@ class EventDetails extends React.Component<Props, {}> {
               label={isReceived ? 'SENDER' : 'RECIPIENT'}
               value={relatedUserTitle}
               valueAddon={(!!relatedUser.username && <EventProfileImage
-                uri={relatedUser.profileImage}
+                uri={relatedUserProfileImage}
+                showProfileImage={showProfileImage}
                 userName={relatedUserTitle}
                 diameter={40}
                 initialsSize={fontSizes.extraSmall}
@@ -430,12 +458,17 @@ class EventDetails extends React.Component<Props, {}> {
         }
       }
       const hasNote = transactionNote && transactionNote !== '';
-      const recipientContact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase()) || {};
-      const senderContact = contacts.find(({ ethAddress }) => from.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const recipientContact = findMatchingContact(to, contacts, contactsSmartAddresses) || {};
+      // apply to wallet accounts only if received from other account address
+      const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
-      const relatedUserTitle = relatedUser.username || (isReceived
+      // $FlowFixMe
+      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
         : `${to.slice(0, 7)}…${to.slice(-7)}`);
+      const relatedUserProfileImage = relatedUser.profileImage || null;
+      // $FlowFixMe
+      const showProfileImage = !relatedUser.type;
 
       return (
         <React.Fragment>
@@ -454,7 +487,8 @@ class EventDetails extends React.Component<Props, {}> {
               label={isReceived ? 'SENDER' : 'RECIPIENT'}
               value={relatedUserTitle}
               valueAddon={(!!relatedUser.username && <EventProfileImage
-                uri={relatedUser.profileImage}
+                uri={relatedUserProfileImage}
+                showProfileImage={showProfileImage}
                 userName={relatedUserTitle}
                 diameter={40}
                 initialsSize={fontSizes.extraSmall}
@@ -572,13 +606,16 @@ class EventDetails extends React.Component<Props, {}> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   txNotes: { data: txNotes },
   assets: { data: assets },
+  accounts: { data: accounts },
 }) => ({
   contacts,
   txNotes,
   assets: Object.values(assets),
+  contactsSmartAddresses,
+  inactiveAccounts: getInactiveUserAccounts(accounts),
 });
 
 const structuredSelector = createStructuredSelector({

@@ -321,6 +321,7 @@ class ImportWallet extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={({
           centerItems: [{ title: 'Restore wallet' }],
+          customOnBack: this.handleBackAction,
         })}
         backgroundColor={baseColors.white}
         keyboardAvoidFooter={(

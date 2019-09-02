@@ -76,6 +76,7 @@ type Props = {
   children?: React.Node,
   initialsSize?: number,
   noShadow?: boolean,
+  showProfileImage?: boolean,
 }
 
 const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: number }) => {
@@ -138,6 +139,7 @@ const ProfileImage = (props: Props) => {
     userName,
     initialsSize,
     noShadow,
+    showProfileImage = true,
   } = props;
 
   const diameterWithBorder = diameter + (borderWidth * 2) + (borderSpacing * 2);
@@ -155,30 +157,32 @@ const ProfileImage = (props: Props) => {
 
   return (
     <Wrapper noShadow={noShadow} diameter={diameterWithBorder}>
-      <ImageTouchable
-        additionalContainerStyle={containerStyle}
-        diameter={diameterWithBorder}
-        disabled={!onPress}
-        onPress={onPress}
-        transparent={uri}
-        style={style}
-        hasChildren={children}
-        borderWidth={borderWidth}
-        borderColor={borderColor}
-        needBackground={!uri}
-      >
-        {!uri && renderDefaultImage()}
-        {!!uri &&
-        <CircleImage
-          useQueryParamsInCacheKey
-          additionalImageStyle={imageStyle}
-          diameter={diameter}
-          renderImage={renderImage}
-          fallbackSource={IMAGE_LOAD_FAILED}
-          source={{ uri }}
-        />
-        }
-      </ImageTouchable>
+      {showProfileImage &&
+        <ImageTouchable
+          additionalContainerStyle={containerStyle}
+          diameter={diameterWithBorder}
+          disabled={!onPress}
+          onPress={onPress}
+          transparent={uri}
+          style={style}
+          hasChildren={children}
+          borderWidth={borderWidth}
+          borderColor={borderColor}
+          needBackground={!uri}
+        >
+          {!uri && renderDefaultImage()}
+          {!!uri &&
+          <CircleImage
+            useQueryParamsInCacheKey
+            additionalImageStyle={imageStyle}
+            diameter={diameter}
+            renderImage={renderImage}
+            fallbackSource={IMAGE_LOAD_FAILED}
+            source={{ uri }}
+          />
+          }
+        </ImageTouchable>
+      }
     </Wrapper>
   );
 };

@@ -124,6 +124,7 @@ type Props = {
   apiUser: Object,
   retry?: boolean,
   registerOnBackend: Function,
+  importedWallet: ?Object,
 };
 
 type State = {
@@ -334,6 +335,7 @@ class NewProfile extends React.Component<Props, State> {
       retry,
       walletState,
       session,
+      importedWallet,
     } = this.props;
     const {
       hasAgreedToTerms,
@@ -377,37 +379,40 @@ class NewProfile extends React.Component<Props, State> {
             nextDisabled={!canGoNext}
             wrapperStyle={{ paddingBottom: 15, paddingTop: 15 }}
           >
-            <Checkbox
-              onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
-              small
-              lightText
-              darkCheckbox
-              wrapperStyle={{ marginBottom: 16 }}
-            >
-              <CheckboxText>
-                {'I have read, understand, and agree to the '}
-                <StyledTextLink
-                  onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
-                >
-                  Terms of Use
-                </StyledTextLink>
-              </CheckboxText>
-            </Checkbox>
-            <Checkbox
-              onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
-              small
-              lightText
-              darkCheckbox
-            >
-              <CheckboxText>
-                {'I have read, understand, and agree to the '}
-                <StyledTextLink
-                  onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
-                >
-                  Privacy policy
-                </StyledTextLink>
-              </CheckboxText>
-            </Checkbox>
+            {!importedWallet &&
+            <React.Fragment>
+              <Checkbox
+                onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
+                small
+                lightText
+                darkCheckbox
+                wrapperStyle={{ marginBottom: 16 }}
+              >
+                <CheckboxText>
+                  {'I have read, understand, and agree to the '}
+                  <StyledTextLink
+                    onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
+                  >
+                    Terms of Use
+                  </StyledTextLink>
+                </CheckboxText>
+              </Checkbox>
+              <Checkbox
+                onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
+                small
+                lightText
+                darkCheckbox
+              >
+                <CheckboxText>
+                  {'I have read, understand, and agree to the '}
+                  <StyledTextLink
+                    onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
+                  >
+                    Privacy policy
+                  </StyledTextLink>
+                </CheckboxText>
+              </Checkbox>
+            </React.Fragment>}
           </NextFooter>
         )}
       >
@@ -434,11 +439,12 @@ class NewProfile extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  wallet: { walletState, onboarding: { apiUser } },
+  wallet: { walletState, onboarding: { apiUser, importedWallet } },
   session: { data: session },
 }) => ({
   walletState,
   apiUser,
+  importedWallet,
   session,
 });
 

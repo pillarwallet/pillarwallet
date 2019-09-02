@@ -25,7 +25,7 @@ import {
 } from 'constants/collectiblesConstants';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import type { Collectible } from 'models/Collectible';
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { GetState, Dispatch } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
@@ -64,7 +64,7 @@ const collectibleFromResponse = (responseItem: Object): Collectible => {
 };
 
 export const fetchCollectiblesAction = () => {
-  return async (dispatch: Function, getState: () => RootReducerState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       accounts: { data: accounts },
       collectibles: { data: collectibles },
@@ -137,7 +137,7 @@ const collectibleTransaction = (event) => {
 };
 
 export const fetchCollectiblesHistoryAction = () => {
-  return async (dispatch: Function, getState: () => RootReducerState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       accounts: { data: accounts },
       collectibles: { transactionHistory: collectiblesHistory },
@@ -165,7 +165,7 @@ export const fetchCollectiblesHistoryAction = () => {
 };
 
 export const fetchAllCollectiblesDataAction = () => {
-  return async (dispatch: Function, getState: () => RootReducerState) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();

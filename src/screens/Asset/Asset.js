@@ -71,6 +71,9 @@ import {
   paymentNetworkAccountBalancesSelector,
 } from 'selectors/paymentNetwork';
 
+// types
+import type { ContactSmartAddressData } from 'models/Contacts';
+
 // local components
 import ReceiveModal from './ReceiveModal';
 
@@ -104,6 +107,7 @@ type Props = {
   history: Array<*>,
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
+  contactsSmartAddresses: ContactSmartAddressData[],
 };
 
 type State = {
@@ -256,6 +260,7 @@ class AssetScreen extends React.Component<Props, State> {
       history,
       contacts,
       availableStake,
+      contactsSmartAddresses,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -283,7 +288,13 @@ class AssetScreen extends React.Component<Props, State> {
     const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-    const mappedTransactions = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const mappedTransactions = mapTransactionsHistory(
+      tokenTxHistory,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      TRANSACTION_EVENT,
+    );
     const tokenTransactions = mappedTransactions.filter(({ asset, note = '', extra = [] }) =>
       asset === token || (note === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
     const mainnetTransactions = tokenTransactions.filter(({ isPPNTransaction = false, note = '' }) => {
@@ -404,7 +415,7 @@ class AssetScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
@@ -423,6 +434,7 @@ const mapStateToProps = ({
   smartWalletState,
   accounts,
   smartWalletFeatureEnabled,
+  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({

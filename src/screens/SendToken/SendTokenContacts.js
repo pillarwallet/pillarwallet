@@ -27,9 +27,7 @@ import { createStructuredSelector } from 'reselect';
 import Separator from 'components/Separator';
 import { ACCOUNTS, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { CHAT } from 'constants/chatConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Container, Footer } from 'components/Layout';
@@ -42,10 +40,12 @@ import Spinner from 'components/Spinner';
 import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { isValidETHAddress } from 'utils/validators';
-import { pipe, decodeETHAddress } from 'utils/common';
-import { getAccountAddress } from 'utils/accounts';
-import type { Account, Accounts, AccountTypes } from 'models/Account';
-import type { ContactSmartAddresses } from 'models/Contacts';
+import { pipe, decodeETHAddress, isCaseInsensitiveMatch } from 'utils/common';
+import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
+import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
+import type { Account, Accounts } from 'models/Account';
+import type { ContactSmartAddressData } from 'models/Contacts';
+import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import { activeAccountSelector } from 'selectors';
 
 type Props = {
@@ -53,13 +53,12 @@ type Props = {
   accounts: Accounts,
   localContacts: Object[],
   wallet: Object,
-  smartWalletFeatureEnabled: boolean,
   navigateToSendTokenAmount: Function,
   contactsSmartAddressesSynced: boolean,
   syncContactsSmartAddresses: Function,
-  contactsSmartAddresses: ContactSmartAddresses[],
+  contactsSmartAddresses: ContactSmartAddressData[],
   isOnline: boolean,
-  blockchainNetworks: Object[],
+  blockchainNetworks: BlockchainNetwork[],
   activeAccount: Account,
 };
 
@@ -142,15 +141,16 @@ const generateFormOptions = (config: Object): Object => ({
   },
 });
 
-const isCaseInsensitiveMatch = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
-
 class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
   assetData: Object;
+  isPPNTransaction: boolean;
 
   constructor(props: Props) {
     super(props);
-    this.assetData = this.props.navigation.getParam('assetData', {});
+    const { navigation, blockchainNetworks } = this.props;
+    this.assetData = navigation.getParam('assetData', {});
+    this.isPPNTransaction = isPillarPaymentNetworkActive(blockchainNetworks);
     this.state = {
       isScanning: false,
       value: { address: '' },
@@ -159,8 +159,8 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { smartWalletFeatureEnabled, isOnline, syncContactsSmartAddresses } = this.props;
-    if (smartWalletFeatureEnabled && isOnline) {
+    const { isOnline, syncContactsSmartAddresses } = this.props;
+    if (isOnline) {
       syncContactsSmartAddresses();
     }
   }
@@ -202,11 +202,9 @@ class SendTokenContacts extends React.Component<Props, State> {
     const {
       username,
       hasSmartWallet,
-      smartWallets,
-      isPPNTransaction,
       ethAddress,
     } = user;
-    if (isPPNTransaction && !hasSmartWallet) {
+    if (this.isPPNTransaction && !hasSmartWallet) {
       Alert.alert(
         'This user is not on Pillar Network',
         'You both should be connected to Pillar Network in order to be able to send instant transactions for free',
@@ -219,23 +217,19 @@ class SendTokenContacts extends React.Component<Props, State> {
       );
       return;
     }
-    const address = isPPNTransaction
-      ? smartWallets[0]
-      : ethAddress;
-    this.navigateToNextScreen(address);
+    this.navigateToNextScreen(ethAddress);
   };
 
   renderContact = ({ item: user }) => {
     const {
       username,
       hasSmartWallet,
-      isPPNTransaction,
       profileImage,
     } = user;
     return (
       <ListItemWithImage
         onPress={() => this.onContactPress(user)}
-        wrapperOpacity={isPPNTransaction && !hasSmartWallet ? 0.3 : 1}
+        wrapperOpacity={this.isPPNTransaction && !hasSmartWallet ? 0.3 : 1}
         label={username}
         avatarUrl={profileImage}
       />
@@ -258,60 +252,39 @@ class SendTokenContacts extends React.Component<Props, State> {
     });
   }
 
-  getAccountName(accountType: AccountTypes): string {
-    switch (accountType) {
-      case ACCOUNT_TYPES.SMART_WALLET:
-        return 'Smart Wallet';
-      case ACCOUNT_TYPES.KEY_BASED:
-        return 'Key Based account';
-      default:
-        return '';
-    }
-  }
-
-  getUserAccounts() {
-    const { accounts = [], smartWalletFeatureEnabled } = this.props;
-    if (!smartWalletFeatureEnabled) return [];
-    const accountsWithoutActive = accounts.filter(({ isActive }) => !isActive);
-    return accountsWithoutActive.map(account => ({
-      ethAddress: getAccountAddress(account),
-      username: this.getAccountName(account.type),
-    }));
-  }
-
   render() {
     const {
       localContacts = [],
       contactsSmartAddresses,
       contactsSmartAddressesSynced,
-      smartWalletFeatureEnabled,
       isOnline,
-      blockchainNetworks,
+      accounts,
     } = this.props;
     const { isScanning, formStructure, value } = this.state;
 
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
-    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
-    const { id: activeBNetworkId } = activeBNetwork;
+    const userAccounts = getInactiveUserAccounts(accounts).map(account => ({
+      ...account,
+      ethAddress: getAccountAddress(account),
+      username: getAccountName(account.type),
+    }));
 
-    const userAccounts = this.getUserAccounts();
-    const allContacts = smartWalletFeatureEnabled && activeBNetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK
+    const allContacts = this.isPPNTransaction
       ? localContacts // no asset transfer between user accounts in PPN send flow
       : [...userAccounts, ...localContacts];
     let contactsToRender = [...allContacts];
     if (value && value.address.length) {
       const searchStr = value.address.toLowerCase();
       contactsToRender = allContacts.filter(({ username, ethAddress }) => {
+        // $FlowFixMe
         const usernameFound = username.toLowerCase().includes(searchStr);
         if (value.address.length < 3) return usernameFound;
         return usernameFound || ethAddress.toLowerCase().startsWith(searchStr);
       });
     }
 
-    if (smartWalletFeatureEnabled
-      && activeBNetworkId === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK
-      && contactsSmartAddresses) {
+    if (contactsSmartAddresses) {
       contactsToRender = contactsToRender
         .map(contact => {
           const { smartWallets = [] } = contactsSmartAddresses.find(
@@ -319,9 +292,8 @@ class SendTokenContacts extends React.Component<Props, State> {
           ) || {};
           return {
             ...contact,
-            isPPNTransaction: true,
+            ethAddress: smartWallets[0] || contact.ethAddress,
             hasSmartWallet: !!smartWallets.length,
-            smartWallets,
           };
         })
         .sort((a, b) => {
@@ -331,10 +303,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     }
 
     const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;
-    const showSpinner = smartWalletFeatureEnabled
-      && isOnline
-      && !contactsSmartAddressesSynced
-      && !isEmpty(localContacts);
+    const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
 
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: `Send ${tokenName}` }] }}>
@@ -381,14 +350,12 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   contacts: { data: localContacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   wallet: { data: wallet },
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
   session: { data: { contactsSmartAddressesSynced, isOnline } },
   blockchainNetwork: { data: blockchainNetworks },
 }) => ({
   accounts,
   localContacts,
   wallet,
-  smartWalletFeatureEnabled,
   contactsSmartAddresses,
   contactsSmartAddressesSynced,
   isOnline,
