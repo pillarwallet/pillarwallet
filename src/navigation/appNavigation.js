@@ -706,11 +706,13 @@ class AppFlow extends React.Component<Props, State> {
       stopListeningIntercomNotifications,
       stopListeningChatWebSocket,
       updateSignalInitiatedState,
+      stopListeningForBalanceChange,
     } = this.props;
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     stopListeningChatWebSocket();
     updateSignalInitiatedState(false);
+    stopListeningForBalanceChange();
     removeAppStateChangeListener(this.handleAppStateChange);
   }
 
