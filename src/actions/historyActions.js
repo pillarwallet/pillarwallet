@@ -32,6 +32,7 @@ import {
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ETH } from 'constants/assetsConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
   getAccountAddress,
@@ -45,7 +46,6 @@ import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
-import { SMART_WALLET_UPGRADE_STATUSES } from '../constants/smartWalletConstants';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
@@ -338,8 +338,7 @@ export const startListeningForBalanceChangeAction = () => {
         },
       },
     } = getState();
-    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS) return;
-    if (!transferTransactions.length) return;
+    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS || !transferTransactions.length) return;
 
     const activeAccount = getActiveAccount(accounts);
     if (activeAccount) {
