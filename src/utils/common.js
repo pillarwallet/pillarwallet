@@ -135,7 +135,8 @@ export function getCurrencySymbol(currency: string): string {
 export function formatFiat(src: number | string, baseFiatCurrency?: ?string): string {
   const re = '\\d(?=(\\d{3})+\\D)';
   const num = new BigNumber(src).toFixed(2);
-  const value = num.replace(new RegExp(re, 'g'), '$&,');
+  const formatedValue = num.replace(new RegExp(re, 'g'), '$&,');
+  const value = parseFloat(formatedValue) > 0 ? formatedValue : 0;
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   return `${currencySymbol} ${value}`;

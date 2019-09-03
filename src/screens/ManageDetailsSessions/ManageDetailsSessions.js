@@ -194,7 +194,7 @@ class MeScreen extends React.Component<Props, State> {
         inset={{ bottom: 'never' }}
         headerProps={{
           centerItems: [{ title: 'Wallet Connect' }],
-          rightItems: [{ label: 'Help', onPress: () => Intercom.displayMessenger() }],
+          rightItems: [{ label: 'Support', onPress: () => Intercom.displayMessenger() }],
         }}
       >
         <Tabs initialActiveTab={activeTab} tabs={sessionTabs} />

@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, View, ScrollView, FlatList, Alert } from 'react-native';
+import { Keyboard, View, ScrollView, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import * as Keychain from 'react-native-keychain';
 import Intercom from 'react-native-intercom';
@@ -70,6 +70,7 @@ type State = {
   visibleModal: ?string,
   showBiometricsSelector: boolean,
   joinBetaPressed: boolean,
+  leaveBetaPressed: boolean,
   setBiometrics: ?{
     enabled: boolean,
     privateKey: ?string,
@@ -126,7 +127,6 @@ const SmallText = styled(BaseText)`
 `;
 
 const Description = styled(Paragraph)`
-  padding-bottom: ${spacing.rhythm}px;
   line-height: ${fontSizes.mediumLarge};
 `;
 
@@ -209,7 +209,9 @@ const formSystemItems = (that) => {
     {
       key: 'joinBeta',
       title: userJoinedBeta ? 'Leave Beta Testing' : 'Join Beta Testing',
-      onPress: () => userJoinedBeta ? that.handleLeaveBetaAttempt() : that.setState({ visibleModal: 'joinBeta' }),
+      onPress: () => userJoinedBeta
+        ? that.setState({ visibleModal: 'leaveBeta' })
+        : that.setState({ visibleModal: 'joinBeta' }),
     },
     {
       key: 'systemInfo',
@@ -284,6 +286,7 @@ class Settings extends React.Component<Props, State> {
       visibleModal,
       showBiometricsSelector: false,
       joinBetaPressed: false,
+      leaveBetaPressed: false,
       setBiometrics: null,
     };
   }
@@ -345,17 +348,13 @@ class Settings extends React.Component<Props, State> {
     }
   };
 
-  handleLeaveBetaAttempt = () => {
-    const { setUserJoinedBeta } = this.props;
-    Alert.alert(
-      'Are you sure?',
-      'By confirming, you will be removed from the Beta Testing program. ' +
-      'If you wish to re-join, you will need to apply again.',
-      [
-        { text: 'Cancel' },
-        { text: 'Leave Beta Testing', onPress: () => setUserJoinedBeta(false) },
-      ],
-    );
+
+  handleLeaveBetaModalClose = () => {
+    // this is needed so that toast message can be shown in settings instead of slide modal that closes
+    if (this.state.leaveBetaPressed) {
+      this.setState({ leaveBetaPressed: false });
+      this.props.setUserJoinedBeta(false);
+    }
   };
 
   // navigateToContactInfo = () => {
@@ -598,7 +597,7 @@ class Settings extends React.Component<Props, State> {
           onModalHide={() => this.setState({ visibleModal: null })}
         >
           <StyledWrapper regularPadding flex={1}>
-            <Description>
+            <Description small>
               By joining the beta program, you will be added to our Firebase Analytics data collection.
               Through this, Pillar will collect your username in order to enable beta features and monitor
               your wallet experience for any bugs and/or crashes while testing the new functionality.
@@ -612,6 +611,41 @@ class Settings extends React.Component<Props, State> {
               style={{
                 marginBottom: 13,
               }}
+            />
+          </StyledWrapper>
+        </SlideModal>
+
+        {/* LEAVE BETA */}
+        <SlideModal
+          isVisible={visibleModal === 'leaveBeta'}
+          fullScreen
+          showHeader
+          backgroundColor={baseColors.snowWhite}
+          onModalHidden={this.handleLeaveBetaModalClose}
+          avoidKeyboard
+          title="Leaving Beta"
+          onModalHide={() => this.setState({ visibleModal: null })}
+        >
+          <StyledWrapper regularPadding flex={1}>
+            <View>
+              <Description small>
+                By confirming, you will leave Beta Testing program and access to Smart wallet features and
+                your funds on it will be removed.
+              </Description>
+              <Description small>
+                We recommend you to transfer your assets from Smart Wallet and Pillar Network Tank to your Key Based
+                wallet before leaving the Beta Program.
+              </Description>
+              <Description small>
+                If you wish to re-join or regain access to your not transferred funds on Smart wallet before this
+                feature is publicly released, you will need to apply again.
+              </Description>
+            </View>
+            <Button
+              roundedCorners
+              title="Leave Beta Testing"
+              onPress={() => { this.setState({ visibleModal: null, leaveBetaPressed: true }); }}
+              style={{ marginBottom: 13 }}
             />
           </StyledWrapper>
         </SlideModal>

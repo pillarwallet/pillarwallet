@@ -226,7 +226,7 @@ class ExchangeInfo extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{
           centerItems: [{ title: 'Settings' }],
-          rightItems: [{ label: 'Get help', onPress: () => Intercom.displayMessenger() }],
+          rightItems: [{ label: 'Support', onPress: () => Intercom.displayMessenger() }],
         }}
         inset={{ bottom: 'never' }}
       >

@@ -958,7 +958,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const formStructure = generateFormStructure(balances);
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
-    const rightItems = [{ label: 'Get help', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
+    const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
     if ((!!exchangeAllowances.length || !!connectedProviders.length)
       && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
       rightItems.push({

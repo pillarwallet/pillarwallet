@@ -28,8 +28,7 @@ import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { Container } from 'components/Layout';
-import { BaseText } from 'components/Typography';
-import Spinner from 'components/Spinner';
+import Loader from 'components/Loader';
 import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
@@ -175,8 +174,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (walletState === DECRYPTING || walletState === GENERATING_CONNECTIONS) {
       return (
         <Container center>
-          <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
-          <Spinner />
+          <Loader />
         </Container>
       );
     }
