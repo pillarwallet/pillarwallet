@@ -29,7 +29,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { NetworkListCard } from 'components/ListItem/NetworkListCard';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
-import Spinner from 'components/Spinner';
+import Loader from 'components/Loader';
 import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
 
 // configs
@@ -465,7 +465,7 @@ class AccountsScreen extends React.Component<Props, State> {
 
         {changingAccount &&
         <Wrapper>
-          <Spinner />
+          <Loader noMessages />
         </Wrapper>}
 
         <SlideModal
