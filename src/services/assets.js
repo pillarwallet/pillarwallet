@@ -71,7 +71,7 @@ function contractHasMethod(contractCode, encodedMethodName) {
   return contractCode.includes(encodedMethodName);
 }
 
-function parseContractAmount(amount: number | string, decimals: number) {
+export function parseContractAmount(amount: number | string, decimals: number) {
   const formatted = amount.toString();
   return decimals > 0
     ? utils.parseUnits(formatted, decimals)

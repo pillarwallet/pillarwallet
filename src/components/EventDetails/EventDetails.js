@@ -202,16 +202,16 @@ class EventDetails extends React.Component<Props, State> {
 
     const activeAccountAddress = getActiveAccountAddress(accounts);
     const {
-      symbol,
+      symbol: assetSymbol,
       decimals,
       address: contractAddress,
-    } = assets.find(({ symbol: assetSymbol }) => assetSymbol === txInfo.asset) || {};
+    } = assets.find(({ symbol }) => symbol === assetSymbol) || {};
     const amount = formatUnits(txInfo.value, decimals);
     calculateGasEstimate({
       from: activeAccountAddress,
       to: txInfo.to,
       amount,
-      symbol,
+      assetSymbol,
       contractAddress,
       decimals,
     })
@@ -313,8 +313,11 @@ class EventDetails extends React.Component<Props, State> {
     const {
       eventData: { hash },
       speedUpTransaction,
+      onClose,
     } = this.props;
-    speedUpTransaction(hash, gasPrice);
+    const { gasLimit } = this.state;
+    if (onClose) onClose();
+    speedUpTransaction(hash, gasPrice, gasLimit);
   };
 
   findMatchingContactOrAccount = (address) => {
@@ -391,7 +394,7 @@ class EventDetails extends React.Component<Props, State> {
       const {
         to,
         from,
-        asset,
+        asset: assetSymbol,
         hash,
         gasUsed,
         gasPrice,
@@ -413,7 +416,7 @@ class EventDetails extends React.Component<Props, State> {
       }
       const hasNote = transactionNote && transactionNote !== '';
       const isPending = status === TX_PENDING_STATUS;
-      const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
+      const { decimals = 18 } = assets.find(({ symbol }) => symbol === assetSymbol) || {};
       const value = formatUnits(txInfo.value, decimals);
       const recipientContact = findMatchingContact(to, contacts, contactsSmartAddresses) || {};
       // apply to wallet accounts only if received from other account address
@@ -484,7 +487,7 @@ class EventDetails extends React.Component<Props, State> {
             <ListItemUnderlined
               label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
               value={formatFullAmount(value)}
-              valueAdditionalText={asset}
+              valueAdditionalText={assetSymbol}
             />
             }
             {showAmountTxType &&
@@ -749,7 +752,7 @@ const combinedMapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
-  speedUpTransaction: (hash, gasPrice) => dispatch(speedUpTransactionAction(hash, gasPrice)),
+  speedUpTransaction: (hash, gasPrice, gasLimit) => dispatch(speedUpTransactionAction(hash, gasPrice, gasLimit)),
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 

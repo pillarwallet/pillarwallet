@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { Keyboard, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
@@ -67,8 +67,9 @@ class SendTokenContacts extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.source = this.props.navigation.getParam('source', '');
+    const note = this.props.navigation.getParam('defaultNote', null);
     this.state = {
-      note: null,
+      note,
     };
   }
 
@@ -98,17 +99,23 @@ class SendTokenContacts extends React.Component<Props, State> {
       to,
       txFeeInWei,
       symbol,
+      replaceTransaction,
     } = navigation.getParam('transactionPayload', {});
 
     const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
-
+    const confirmButtonTitle = replaceTransaction
+      ? 'Confirm Speed Up'
+      : 'Confirm Transaction';
     const recipientUsername = getUserName(contact);
+    const txtFeeFormatted = txFeeInWei === 0
+      ? 'free'
+      : `${utils.formatEther(txFeeInWei.toString())} ETH `;
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
         keyboardAvoidFooter={(
           <FooterWrapper>
-            <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
+            <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title={confirmButtonTitle} />
           </FooterWrapper>
         )}
       >
@@ -116,39 +123,49 @@ class SendTokenContacts extends React.Component<Props, State> {
           regularPadding
           disableAutomaticScroll
         >
-          <LabeledRow>
-            <Label>Amount</Label>
-            <Value>{amount} {symbol}</Value>
-          </LabeledRow>
-          {!!recipientUsername &&
-          <LabeledRow>
-            <Label>Recipient Username</Label>
-            <Value>{recipientUsername}</Value>
-          </LabeledRow>
+          {replaceTransaction &&
+            <LabeledRow>
+              <Label>New Est. Network Fee</Label>
+              <Value>{txtFeeFormatted}</Value>
+            </LabeledRow>
           }
-          <LabeledRow>
-            <Label>Recipient Address</Label>
-            <Value>{to}</Value>
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Est. Network Fee</Label>
-            <Value>{txFeeInWei === 0 ? 'free' : `${utils.formatEther(txFeeInWei.toString())} ETH`}</Value>
-          </LabeledRow>
-          {!!recipientUsername &&
-          <TextInput
-            inputProps={{
-              onChange: (text) => this.handleNoteChange(text),
-              value: this.state.note,
-              autoCapitalize: 'none',
-              multiline: true,
-              numberOfLines: 3,
-              placeholder: 'Add a note to this transaction',
-            }}
-            inputType="secondary"
-            labelBigger
-            noBorder
-            keyboardAvoidance
-          />
+          {!replaceTransaction &&
+            <View>
+              <LabeledRow>
+                <Label>Amount</Label>
+                <Value>{amount} {symbol}</Value>
+              </LabeledRow>
+              {!!recipientUsername &&
+              <LabeledRow>
+                <Label>Recipient Username</Label>
+                <Value>{recipientUsername}</Value>
+              </LabeledRow>
+              }
+              <LabeledRow>
+                <Label>Recipient Address</Label>
+                <Value>{to}</Value>
+              </LabeledRow>
+              <LabeledRow>
+                <Label>Est. Network Fee</Label>
+                <Value>{txtFeeFormatted}</Value>
+              </LabeledRow>
+              {!!recipientUsername &&
+              <TextInput
+                inputProps={{
+                  onChange: (text) => this.handleNoteChange(text),
+                  value: this.state.note,
+                  autoCapitalize: 'none',
+                  multiline: true,
+                  numberOfLines: 3,
+                  placeholder: 'Add a note to this transaction',
+                }}
+                inputType="secondary"
+                labelBigger
+                noBorder
+                keyboardAvoidance
+              />
+              }
+            </View>
           }
         </ScrollWrapper>
       </ContainerWithHeader>

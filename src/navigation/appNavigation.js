@@ -265,6 +265,7 @@ const assetsFlow = createStackNavigator(
     [CONTACT]: ContactScreen,
     [WALLET_SETTINGS]: WalletSettingsScreen,
     [SETTINGS]: SettingsScreen,
+    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
   },
   StackNavigatorConfig,
 );
@@ -324,6 +325,7 @@ const homeFlow = createStackNavigator({
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [CHAT]: ChatScreen,
+  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

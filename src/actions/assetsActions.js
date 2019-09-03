@@ -19,6 +19,7 @@
 */
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
+import { utils } from 'ethers';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   UPDATE_ASSETS_STATE,
@@ -42,6 +43,7 @@ import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constan
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
+import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 
 import Toast from 'components/Toast';
 
@@ -50,6 +52,7 @@ import {
   transferSigned,
 } from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
+import { navigate } from 'services/navigation';
 
 import type {
   TokenTransactionPayload,
@@ -59,7 +62,7 @@ import type {
 import type { Asset, Assets, Balance, Balances } from 'models/Asset';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { addressesEqual, transformAssetsToObject } from 'utils/assets';
-import { delay, noop, uniqBy } from 'utils/common';
+import { delay, formatFullAmount, formatUnits, isCaseInsensitiveMatch, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccountAddress,
@@ -296,6 +299,12 @@ export const sendAssetAction = (
     // get wallet provider
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
     const walletProvider = await cryptoWallet.getProvider();
+
+    if (transaction.replaceTransaction) {
+      const existingNonce = 0; // TODO: get pending transaction nonce
+      // $FlowFixMe
+      transaction = { ...transaction, nonce: existingNonce };
+    }
 
     // send collectible
     if (tokenType === COLLECTIBLES) {
@@ -710,9 +719,61 @@ export const resetLocalNonceToTransactionCountAction = (wallet: Object) => {
   };
 };
 
-export const speedUpTransactionAction = (transactionHash: string, gasPrice: number) => {
-  return async () => {
-    console.log('transactionHash: ', transactionHash);
-    console.log('gasPrice: ', gasPrice);
+export const speedUpTransactionAction = (transactionHash: string, gasPriceGwei: number, gasLimit: number) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      history: { data: history },
+      accounts: { data: accounts },
+      assets: { data: assets },
+    } = getState();
+    const accountAddress = getActiveAccountAddress(accounts);
+    const transactionInfo = (history[accountAddress] || []).find(
+      ({ hash }) => isCaseInsensitiveMatch(hash, transactionHash),
+    );
+    if (!transactionInfo) {
+      Toast.show({
+        message: 'Cannot speed up transaction',
+        type: 'warning',
+        title: 'Failed',
+        autoClose: false,
+      });
+      return;
+    }
+    const txFeeInWei = utils
+      .parseUnits(gasPriceGwei.toString(), 'gwei')
+      .mul(gasLimit);
+    const gasPrice = txFeeInWei.div(gasLimit).toNumber();
+    const {
+      to,
+      from,
+      asset: assetSymbol,
+      note,
+      value,
+    } = transactionInfo;
+    // $FlowFixMe
+    const asset: Asset = Object.values(assets).find(({ symbol }) => symbol === assetSymbol) || {};
+    const {
+      symbol,
+      address: contractAddress,
+      decimals,
+    } = asset;
+    const amount = formatFullAmount(formatUnits(value, decimals));
+    const transactionPayload = {
+      to,
+      amount,
+      gasLimit,
+      gasPrice,
+      txFeeInWei,
+      symbol,
+      contractAddress,
+      decimals,
+      from,
+      replaceTransaction: transactionHash,
+    };
+    navigate(SEND_TOKEN_CONFIRM, {
+      transactionPayload,
+      source: from,
+      defaultNote: note,
+    });
   };
 };

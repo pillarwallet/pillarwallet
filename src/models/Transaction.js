@@ -67,6 +67,8 @@ export type TokenTransactionPayload = {
   data?: string,
   extra?: Object,
   usePPN?: boolean,
+  replaceTransaction?: string,
+  nonce?: number,
 }
 
 export type CollectibleTransactionPayload = {
@@ -82,6 +84,8 @@ export type CollectibleTransactionPayload = {
   gasPrice?: ?number,
   gasLimit?: ?number,
   txSpeed?: string,
+  replaceTransaction?: string,
+  nonce?: number,
 }
 
 export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;
