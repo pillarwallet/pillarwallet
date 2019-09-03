@@ -161,10 +161,6 @@ const finishRegistration = async ({
     payload: initialAssets,
   });
   dispatch(saveDbAction('assets', { assets: initialAssets }));
-
-  // restore transactions history
-  await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
-
   dispatch(fetchBadgesAction(false));
 
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
@@ -174,6 +170,14 @@ const finishRegistration = async ({
     await dispatch(initSmartWalletSdkAction(privateKey));
     await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount));
   }
+
+  const {
+    accounts: { data: accounts },
+  } = getState();
+
+  accounts.forEach(async (acc) => {
+    await dispatch(restoreTransactionHistoryAction(acc.id, userInfo.walletId));
+  });
 
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
@@ -305,6 +309,7 @@ export const registerWalletAction = () => {
         finalMnemonic = '';
       }
     }
+
     await finishRegistration({
       api,
       dispatch,

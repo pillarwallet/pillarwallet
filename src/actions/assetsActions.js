@@ -630,14 +630,13 @@ export const resetSearchAssetsResultAction = () => ({
   type: RESET_ASSETS_SEARCH_RESULT,
 });
 
-export const checkForMissedAssetsAction = (transactionNotifications: Object[]) => {
+export const checkForMissedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       accounts: { data: accounts },
       user: { data: { walletId } },
       assets: { data: currentAssets, supportedAssets },
     } = getState();
-    const activeAccountAddress = getActiveAccountAddress(accounts);
 
     // load supported assets
     let walletSupportedAssets = [...supportedAssets];
@@ -666,21 +665,21 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
     }
 
     // check if some assets are not enabled
-    const missedAssets = transactionNotifications
-      .filter(tx => !addressesEqual(tx.from, activeAccountAddress))
-      .reduce((memo, { asset: ticker }) => {
-        if (!ticker) return memo;
-        if (memo[ticker] !== undefined || currentAssets[ticker] !== undefined) return memo;
+    const ownedErc20Assets = {};
 
-        const supportedAsset = walletSupportedAssets.find(asset => asset.symbol === ticker);
-        if (supportedAsset) {
-          memo[ticker] = supportedAsset;
-        }
-        return memo;
-      }, {});
+    await Promise.all(accounts.map(async (acc) => {
+      const addressErc20Tokens = await api.getAddressErc20TokensInfo(acc.id); // all address assets except ETH;
+      if (addressErc20Tokens.length) {
+        addressErc20Tokens.forEach((token) => {
+          const tokenTicker = get(token, 'tokenInfo.symbol', '');
+          const supportedAsset = walletSupportedAssets.find(asset => asset.symbol === tokenTicker);
+          if (supportedAsset && !ownedErc20Assets[tokenTicker]) ownedErc20Assets[tokenTicker] = supportedAsset;
+        });
+      }
+    }));
 
-    if (Object.keys(missedAssets).length) {
-      const newAssets = { ...currentAssets, ...missedAssets };
+    if (Object.keys(ownedErc20Assets).length) {
+      const newAssets = { ...currentAssets, ...ownedErc20Assets };
       dispatch(updateAssetsAction(newAssets));
       dispatch(fetchAssetsBalancesAction(newAssets));
     }

@@ -148,7 +148,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     const mappedHistoryNotifications = historyNotifications
       .map(({ payload, type, createdAt }) => ({ ...payload, type, createdAt }));
 
-    dispatch(checkForMissedAssetsAction(mappedHistoryNotifications));
+    dispatch(checkForMissedAssetsAction());
 
     const minedTransactions = mappedHistoryNotifications
       .filter(tx => tx.status !== TX_PENDING_STATUS)
