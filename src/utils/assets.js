@@ -22,7 +22,7 @@ import { BigNumber } from 'bignumber.js';
 import type { Assets, Balances, Rates } from 'models/Asset';
 import get from 'lodash.get';
 import { ETH } from 'constants/assetsConstants';
-import { formatAmount } from 'utils/common';
+import { formatAmount, isCaseInsensitiveMatch } from 'utils/common';
 
 export function transformAssetsToObject(assetsArray: Object[] = []): Object {
   return assetsArray.reduce((memo, asset) => {
@@ -117,5 +117,5 @@ export function getPPNTokenAddress(token: string, assets: Assets): ?string {
 export function addressesEqual(address1: ?string, address2: ?string) {
   if (address1 === address2) return true;
   if (!address1 || !address2) return false;
-  return address1.toLowerCase() === address2.toLowerCase();
+  return isCaseInsensitiveMatch(address1, address2);
 }

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { InteractionManager } from 'react-native';
-import { generateKeyPairThreadPool } from 'utils/keyPairGenerator';
+import { generateKeyPairThreadPool, generateKeyPairPool } from 'utils/keyPairGenerator';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE, DECRYPTED } from 'constants/walletConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
@@ -256,37 +256,53 @@ export const updateConnectionKeyPairs = (
 
     const { currentConnectionsCount, oldConnectionsCount, newReceivedConnectonsCount } = numberOfConnections;
     const totalConnections = currentConnectionsCount + oldConnectionsCount + newReceivedConnectonsCount;
-    if (generateKeys) {
-      await dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: GENERATING_CONNECTIONS,
-      });
 
-      try {
-        if (lastConnectionKeyIndex === -1) {
-          const newKeyPairs =
-            await generateKeyPairThreadPool(
-              mnemonic,
-              privateKey,
-              totalConnections,
-              connectionKeyPairs.length,
-              lastConnectionKeyIndex);
-          const resultConnectionKeys = connectionKeyPairs.concat(newKeyPairs);
-          await dispatch({
-            type: UPDATE_CONNECTION_KEY_PAIRS,
-            payload: resultConnectionKeys,
-          });
-          await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
-        }
-      } catch (e) {
-        await dispatch({
-          type: UPDATE_WALLET_STATE,
-          payload: DECRYPTED,
-        });
-      }
+    if (generateKeys && totalConnections === 0 && connectionKeyPairs.length === 0 && lastConnectionKeyIndex === -1) {
+      /* NOTE: -1 would be no keys generated yet at all, 0 for connections number in order not to overgenerate those 2
+       ( countToGenerate + connectionsCount in the function algorithm otherwise). These 2 are added in the
+       blocking(in progress) screen just in case a user connects to a target
+       before the background task kicks in - 10 seconds after this initial generation. */
+      const promiseJobs = await generateKeyPairPool(mnemonic, privateKey, -1, 0, 2);
+      const resultPairs = await Promise.all(promiseJobs.map(task => task()));
+      const allPairsResults = [].concat(...resultPairs);
+      const initialConnKeyPairs = allPairsResults.sort((a, b) => a.connIndex < b.connIndex ? -1 : 1);
+      await dispatch({
+        type: UPDATE_CONNECTION_KEY_PAIRS,
+        payload: initialConnKeyPairs,
+      });
+      await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: initialConnKeyPairs }, true));
     }
 
-    if (oldConnectionsCount > 0 || (currentConnectionsCount - connectionIdentityKeys.length) > 0) {
+    if (oldConnectionsCount > 0 || currentConnectionsCount > connectionIdentityKeys.length) {
+      if (generateKeys) {
+        await dispatch({
+          type: UPDATE_WALLET_STATE,
+          payload: GENERATING_CONNECTIONS,
+        });
+
+        try {
+          if (lastConnectionKeyIndex === -1) {
+            const newKeyPairs =
+              await generateKeyPairThreadPool(
+                mnemonic,
+                privateKey,
+                totalConnections,
+                connectionKeyPairs.length,
+                lastConnectionKeyIndex);
+            const resultConnectionKeys = connectionKeyPairs.concat(newKeyPairs);
+            await dispatch({
+              type: UPDATE_CONNECTION_KEY_PAIRS,
+              payload: resultConnectionKeys,
+            });
+            await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
+          }
+        } catch (e) {
+          await dispatch({
+            type: UPDATE_WALLET_STATE,
+            payload: DECRYPTED,
+          });
+        }
+      }
       await dispatch(fetchOldInviteNotificationsAction(walletId));
       await dispatch(restoreAccessTokensAction(walletId));
       await dispatch(mapIdentityKeysAction(totalConnections + 25, walletId));

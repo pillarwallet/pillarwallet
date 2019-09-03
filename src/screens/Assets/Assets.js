@@ -23,7 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
-import TouchID from 'react-native-touch-id';
+import * as Keychain from 'react-native-keychain';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -142,8 +142,8 @@ class AssetsScreen extends React.Component<Props, State> {
 
     fetchAllCollectiblesData();
 
-    TouchID.isSupported({})
-      .then(() => this.setState({ supportsBiometrics: true }))
+    Keychain.getSupportedBiometryType()
+      .then(supported => this.setState({ supportsBiometrics: !!supported }))
       .catch(() => null);
   }
 
@@ -235,7 +235,7 @@ class AssetsScreen extends React.Component<Props, State> {
     const visibleKeyWalletInsights = supportsBiometrics
       ? [...keyWalletInsights, {
         key: 'biometric',
-        title: 'Enable biometric login',
+        title: 'Enable biometric login (optional)',
         status: useBiometrics,
         onPress: !useBiometrics
           ? () => navigation.navigate(SETTINGS)

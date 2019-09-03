@@ -20,21 +20,30 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
+import get from 'lodash.get';
+
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
-import { checkPinAction } from 'actions/authActions';
+import { checkAuthAction } from 'actions/authActions';
 import { Container, Wrapper } from 'components/Layout';
-import { BaseText } from 'components/Typography';
-import Spinner from 'components/Spinner';
+import Loader from 'components/Loader';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
+import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
+import { getKeychainDataObject } from 'utils/keychain';
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function, options: Object) => Function,
+  checkPrivateKey: (privateKey: string, onValidPin: Function) => Function,
   wallet: Object,
   revealMnemonic: boolean,
   onPinValid: Function,
   isChecking: boolean,
   title?: string,
+  useBiometrics: ?boolean,
+}
+
+type State = {
+  biometricsShown: boolean,
 }
 
 const CheckPinWrapper = styled(Wrapper)`
@@ -43,10 +52,48 @@ const CheckPinWrapper = styled(Wrapper)`
   flex: 1;
 `;
 
-class CheckPin extends React.Component<Props, *> {
+const ACTIVE_APP_STATE = 'active';
+
+class CheckPin extends React.Component<Props, State> {
   static defaultProps = {
     revealMnemonic: false,
   };
+  state = {
+    biometricsShown: false,
+  };
+
+  componentDidMount() {
+    addAppStateChangeListener(this.handleAppStateChange);
+    const { useBiometrics, revealMnemonic } = this.props;
+    if (useBiometrics && !revealMnemonic) {
+      this.showBiometricLogin();
+    }
+  }
+
+  handleAppStateChange = (nextAppState: string) => {
+    const { useBiometrics, revealMnemonic } = this.props;
+    if (nextAppState === ACTIVE_APP_STATE && useBiometrics && !revealMnemonic) {
+      this.showBiometricLogin();
+    }
+  };
+
+  showBiometricLogin() {
+    const { checkPrivateKey, onPinValid } = this.props;
+    const { biometricsShown } = this.state;
+    if (biometricsShown) return;
+    this.setState({ biometricsShown: true }, () => {
+      getKeychainDataObject()
+        .then(data => {
+          this.setState({ biometricsShown: false });
+          const privateKey = get(data, 'privateKey', null);
+          if (privateKey) {
+            removeAppStateChangeListener(this.handleAppStateChange);
+            checkPrivateKey(privateKey, onPinValid);
+          }
+        })
+        .catch(() => this.setState({ biometricsShown: false }));
+    });
+  }
 
   handlePinSubmit = (pin: string) => {
     const {
@@ -76,9 +123,8 @@ class CheckPin extends React.Component<Props, *> {
 
     if (walletState === DECRYPTING || isChecking || walletState === GENERATING_CONNECTIONS) {
       return (
-        <Container center color="transparent">
-          <BaseText style={{ marginBottom: 20 }}>Checking</BaseText>
-          <Spinner />
+        <Container style={{ flex: 1, width: '100%' }} center color="transparent">
+          <Loader messages={['Checking']} />
         </Container>
       );
     }
@@ -97,11 +143,20 @@ class CheckPin extends React.Component<Props, *> {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
+const mapStateToProps = ({
+  wallet,
+  appSettings: { data: { useBiometrics = false } },
+}) => ({
+  wallet,
+  useBiometrics,
+});
 
 const mapDispatchToProps = (dispatch: Function) => ({
   checkPin: (pin: string, onValidPin: Function, options: Object) => {
-    dispatch(checkPinAction(pin, onValidPin, options));
+    dispatch(checkAuthAction(pin, null, onValidPin, options));
+  },
+  checkPrivateKey: (privateKey: string, onValidPin: Function) => {
+    dispatch(checkAuthAction(null, privateKey, onValidPin));
   },
 });
 

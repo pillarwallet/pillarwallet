@@ -21,15 +21,15 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ENCRYPTING, CREATED } from 'constants/walletConstants';
-import { PROFILE } from 'constants/navigationConstants';
+import { SETTINGS } from 'constants/navigationConstants';
 import { changePinAction, resetIncorrectPasswordAction } from 'actions/authActions';
 import { Container } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import ErrorMessage from 'components/ErrorMessage';
-import Spinner from 'components/Spinner';
 import PinCode from 'components/PinCode';
 import Button from 'components/Button';
 import Header from 'components/Header';
+import Loader from 'components/Loader';
 import { validatePin } from 'utils/validators';
 
 type Props = {
@@ -84,8 +84,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
     if (walletState === ENCRYPTING) {
       return (
         <Container center>
-          <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
-          <Spinner />
+          <Loader />
         </Container>
       );
     }
@@ -94,7 +93,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
       return (
         <Container center>
           <BaseText style={{ marginBottom: 20 }}>Pin changed!</BaseText>
-          <Button title="Continue" onPress={() => this.props.navigation.navigate(PROFILE)} />
+          <Button title="Continue" onPress={() => this.props.navigation.navigate(SETTINGS)} />
         </Container>
       );
     }

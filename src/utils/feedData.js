@@ -18,20 +18,33 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { getUserName } from './contacts';
+import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
+import type { Accounts } from 'models/Account';
+import { findMatchingContact, getUserName } from './contacts';
 import { uniqBy } from './common';
+import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from './accounts';
 
-export function mapTransactionsHistory(history: Object[], contacts: Object[], eventType: string) {
+export function mapTransactionsHistory(
+  history: Object[],
+  contacts: ApiUser[],
+  contactsSmartAddresses: ContactSmartAddressData[],
+  accounts: Accounts,
+  eventType: string,
+) {
   const concatedHistory = history
     .map(({ ...rest }) => ({ ...rest, type: eventType }))
     .map(({ to, from, ...rest }) => {
-      const contact = contacts.find(({ ethAddress }) => {
-        return from.toUpperCase() === ethAddress.toUpperCase()
-          || to.toUpperCase() === ethAddress.toUpperCase();
-      });
+      const contact = findMatchingContact(to, contacts, contactsSmartAddresses)
+        || findMatchingContact(from, contacts, contactsSmartAddresses);
 
+      // apply to wallet accounts only if received from other account address
+      const account = !contact && findAccountByAddress(from, getInactiveUserAccounts(accounts));
+
+      const username = account
+        ? getAccountName(account.type)
+        : getUserName(contact);
       return {
-        username: getUserName(contact),
+        username,
         to,
         from,
         ...rest,

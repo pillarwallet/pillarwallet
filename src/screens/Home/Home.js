@@ -35,11 +35,11 @@ import Tabs from 'components/Tabs';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import QRCodeScanner from 'components/QRCodeScanner';
-import Spinner from 'components/Spinner';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // constants
 import {
@@ -81,12 +81,12 @@ import { activeAccountSelector } from 'selectors';
 import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { getAccountAddress } from 'utils/accounts';
+import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
 // types
-import type { Account } from 'models/Account';
-
+import type { Account, Accounts } from 'models/Account';
 import type { Badges } from 'models/Badge';
-import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
+import type { ContactSmartAddressData } from 'models/Contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -119,6 +119,8 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
   restoreTransactionHistory: (walletAddress: string, walletId: string) => void,
   activeAccount: Account,
+  contactsSmartAddresses: ContactSmartAddressData[],
+  accounts: Accounts,
 };
 
 type State = {
@@ -130,6 +132,7 @@ type State = {
   addEmailRedirect: boolean,
   isScanning: boolean,
   showLoginModal: boolean,
+  tabIsChanging: boolean,
 };
 
 const BalanceWrapper = styled.View`
@@ -171,10 +174,8 @@ const DescriptionWarning = styled(Description)`
   color: ${baseColors.burningFire};
 `;
 
-export const LoadingSpinner = styled(Spinner)`
-  padding: 10px;
-  align-items: center;
-  justify-content: center;
+const EmptyStateWrapper = styled.View`
+  margin: 20px 0 30px;
 `;
 
 const allIconNormal = require('assets/icons/all_normal.png');
@@ -197,10 +198,11 @@ class HomeScreen extends React.Component<Props, State> {
     usernameWidth: 0,
     isScanning: false,
     showLoginModal: false,
+    tabIsChanging: false,
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, logScreenView } = this.props;
+    const { fetchTransactionsHistory, logScreenView, fetchBadges } = this.props;
 
     logScreenView('View home', 'Home');
 
@@ -214,6 +216,7 @@ class HomeScreen extends React.Component<Props, State> {
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
     });
+    fetchBadges();
   }
 
   componentWillUnmount() {
@@ -342,6 +345,10 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
+  onTabChange = (isChanging?: boolean) => {
+    this.setState({ tabIsChanging: isChanging });
+  };
+
   render() {
     const {
       user,
@@ -359,20 +366,35 @@ class HomeScreen extends React.Component<Props, State> {
       waitingRequest,
       badges,
       connectors,
+      contactsSmartAddresses,
+      accounts,
     } = this.props;
 
     const {
       activeTab,
       isScanning,
       showLoginModal,
+      tabIsChanging,
     } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
+    const transactionsOnMainnet = mapTransactionsHistory(
+      tokenTxHistory,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      TRANSACTION_EVENT,
+    );
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, COLLECTIBLE_TRANSACTION);
+    const mappedCTransactions = mapTransactionsHistory(
+      collectiblesTransactions,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      COLLECTIBLE_TRANSACTION,
+    );
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
 
@@ -386,7 +408,7 @@ class HomeScreen extends React.Component<Props, State> {
         data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts, ...invitations],
         emptyState: {
           title: 'Make your first step',
-          body: 'Your activity will appear here.',
+          bodyText: 'Your activity will appear here.',
         },
       },
       {
@@ -398,7 +420,7 @@ class HomeScreen extends React.Component<Props, State> {
         data: [...transactionsOnMainnet, ...mappedCTransactions],
         emptyState: {
           title: 'Make your first step',
-          body: 'Your transactions will appear here. Send or receive tokens to start.',
+          bodyText: 'Your transactions will appear here. Send or receive tokens to start.',
         },
       },
       {
@@ -410,7 +432,7 @@ class HomeScreen extends React.Component<Props, State> {
         data: [...mappedContacts, ...invitations],
         emptyState: {
           title: 'Make your first step',
-          body: 'Information on your connections will appear here. Send a connection request to start.',
+          bodyText: 'Information on your connections will appear here. Send a connection request to start.',
         },
       },
     ];
@@ -423,6 +445,8 @@ class HomeScreen extends React.Component<Props, State> {
     const sessionsCount = filterSessionsByUrl(connectors).length;
     const sessionsLabelPart = sessionsCount < 2 ? 'session' : 'sessions';
     const sessionsLabel = sessionsCount ? `${sessionsCount} ${sessionsLabelPart}` : '';
+
+    const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
 
     return (
       <ContainerWithHeader
@@ -459,7 +483,7 @@ class HomeScreen extends React.Component<Props, State> {
       >
         <ScrollView
           style={{ width: '100%', flex: 1 }}
-          stickyHeaderIndices={badges.length ? [3] : [2]}
+          stickyHeaderIndices={[3]}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -481,7 +505,6 @@ class HomeScreen extends React.Component<Props, State> {
               settingsLabel="Connect"
             />
           </WalletConnectWrapper>
-          {!!badges.length &&
           <BadgesWrapper>
             <ListHeader>Game of badges</ListHeader>
             <FlatList
@@ -490,13 +513,22 @@ class HomeScreen extends React.Component<Props, State> {
               keyExtractor={(item) => (item.id.toString())}
               renderItem={this.renderBadge}
               style={{ width: '100%' }}
-              contentContainerStyle={{ paddingHorizontal: 10 }}
+              contentContainerStyle={{ paddingHorizontal: 10, ...badgesContainerStyle }}
               initialNumToRender={5}
+              ListEmptyComponent={(
+                <EmptyStateWrapper>
+                  <EmptyStateParagraph
+                    title="No badges"
+                    bodyText="You do not have badges yet"
+                  />
+                </EmptyStateWrapper>
+              )}
             />
-          </BadgesWrapper>}
+          </BadgesWrapper>
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}
+            onTabChange={this.onTabChange}
           />
           <ActivityFeed
             backgroundColor={baseColors.white}
@@ -508,7 +540,7 @@ class HomeScreen extends React.Component<Props, State> {
             activeTab={activeTab}
             hideTabs
             initialNumToRender={6}
-            wrapperStyle={{ flexGrow: 1 }}
+            wrapperStyle={{ flexGrow: 1, opacity: tabIsChanging ? 0.5 : 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </ScrollView>
@@ -560,13 +592,14 @@ class HomeScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   user: { data: user },
   invitations: { data: invitations },
   notifications: { intercomNotificationsCount },
   deepLink: { data: { loginAttemptToken } = {} },
   badges: { data: badges },
   walletConnect: { connectors },
+  accounts: { data: accounts },
 }) => ({
   contacts,
   user,
@@ -575,6 +608,8 @@ const mapStateToProps = ({
   loginAttemptToken,
   badges,
   connectors,
+  contactsSmartAddresses,
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({

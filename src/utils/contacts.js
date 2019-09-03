@@ -17,7 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import type { ApiUser } from 'models/Contacts';
+import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
+import { addressesEqual } from './assets';
+import { isCaseInsensitiveMatch } from './common';
 
 export function excludeLocalContacts(globalContacts: ApiUser[] = [], localContacts: Object[] = []): Object[] {
   const localContactsIds = localContacts.map(contact => contact.id);
@@ -40,4 +42,16 @@ export function getInitials(fullName: string = '') {
     .map(name => name.substring(0, 1))
     .join('')
     .toUpperCase();
+}
+
+export function findMatchingContact(
+  address: string,
+  contacts: ApiUser[],
+  contactsSmartAddresses: ContactSmartAddressData[],
+) {
+  return contacts.find(({ id: contactId, ethAddress }) =>
+    addressesEqual(address, ethAddress) || !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>
+      isCaseInsensitiveMatch(userId, contactId) && addressesEqual(address, smartWallets[0] || ''),
+    ),
+  );
 }

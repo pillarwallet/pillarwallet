@@ -21,6 +21,7 @@ import { combineReducers } from 'redux';
 
 // constants
 import { LOG_OUT } from 'constants/authConstants';
+import type { DbAction } from 'models/DbAction';
 
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
@@ -53,6 +54,96 @@ import balancesReducer from './balancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
 import featureFlagsReducer from './featureFlagsReducer';
 import blockchainNetworkReducer from './blockchainNetworkReducer';
+
+// types
+import type { OfflineQueueReducerState } from './offlineQueueReducer';
+import type { WalletReducerState } from './walletReducer';
+import type { SmartWalletReducerState, SmartWalletReducerAction } from './smartWalletReducer';
+import type { WalletConnectReducerState } from './walletConnectReducer';
+import type { AssetsReducerState } from './assetsReducer';
+import type { AppSettingsReducerAction, AppSettingsReducerState } from './appSettingsReducer';
+import type { RatesReducerState } from './ratesReducer';
+import type { UserReducerState } from './userReducer';
+import type { HistoryReducerState, HistoryAction } from './historyReducer';
+import type { NotificationsReducerState } from './notificationsReducer';
+import type { ContactsReducerState } from './contactsReducer';
+import type { InvitationsReducerState } from './invitationsReducer';
+import type { ChatReducerState } from './chatReducer';
+import type { AccessTokensReducerState } from './accessTokensReducer';
+import type { SessionReducerState } from './sessionReducer';
+import type { ICOsReducerState } from './icosReducer';
+import type { TxNoteReducerState } from './txNoteReducer';
+import type { OAuthReducerState } from './oAuthReducer';
+import type { TxCountReducerState } from './txCountReducer';
+import type { ConnectionKeyPairsReducerState } from './connectionKeyPairsReducer';
+import type { CollectiblesReducerState, CollectiblesAction } from './collectiblesReducer';
+import type { DeepLinkReducerState } from './deepLinkReducer';
+import type { ConnectionIdentityKeysReducerState } from './connectionIdentityKeysReducer';
+import type { BadgesReducerState, BadgesReducerAction } from './badgesReducer';
+import type { ExchangeReducerState, ExchangeReducerAction } from './exchangeReducer';
+import type { AccountsReducerState, AccountsAction } from './accountsReducer';
+import type { BalancesReducerState, BalancesAction } from './balancesReducer';
+import type { PaymentNetworkReducerState, PaymentNetworkAction } from './paymentNetworkReducer';
+import type { FeatureFlagsReducerState, FeatureFlagsReducerAction } from './featureFlagsReducer';
+import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
+
+export type RootReducerState = {|
+  offlineQueue: OfflineQueueReducerState,
+  wallet: WalletReducerState,
+  smartWallet: SmartWalletReducerState,
+  walletConnect: WalletConnectReducerState,
+  assets: AssetsReducerState,
+  appSettings: AppSettingsReducerState,
+  rates: RatesReducerState,
+  user: UserReducerState,
+  history: HistoryReducerState,
+  notifications: NotificationsReducerState,
+  contacts: ContactsReducerState,
+  invitations: InvitationsReducerState,
+  chat: ChatReducerState,
+  accessTokens: AccessTokensReducerState,
+  session: SessionReducerState,
+  icos: ICOsReducerState,
+  txNotes: TxNoteReducerState,
+  oAuthTokens: OAuthReducerState,
+  txCount: TxCountReducerState,
+  connectionKeyPairs: ConnectionKeyPairsReducerState,
+  collectibles: CollectiblesReducerState,
+  deepLink: DeepLinkReducerState,
+  connectionIdentityKeys: ConnectionIdentityKeysReducerState,
+  badges: BadgesReducerState,
+  exchange: ExchangeReducerState,
+  accounts: AccountsReducerState,
+  balances: BalancesReducerState,
+  paymentNetwork: PaymentNetworkReducerState,
+  featureFlags: FeatureFlagsReducerState,
+  blockchainNetwork: BlockchainNetworkReducerState,
+|};
+
+type RootReducerAction =
+  | AccountsAction
+  | AppSettingsReducerAction
+  | BadgesReducerAction
+  | BalancesAction
+  | BlockchainNetworkAction
+  | BlockchainNetworkReducerState
+  | CollectiblesAction
+  | ExchangeReducerAction
+  | FeatureFlagsReducerAction
+  | HistoryAction
+  | PaymentNetworkAction
+  | SmartWalletReducerAction
+  | DbAction;
+
+export type GetState = () => RootReducerState;
+export type ThunkAction = (
+  dispatch: Dispatch, // eslint-disable-line no-use-before-define
+  getState: GetState,
+  api: Object,
+) => any;
+export type Dispatch = (
+  action: RootReducerAction | Promise<RootReducerAction> | ThunkAction,
+) => void;
 
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
@@ -89,7 +180,7 @@ const appReducer = combineReducers({
 
 const initialState = appReducer(undefined, {});
 
-const rootReducer = (state: Object, action: Object) => {
+const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
   if (action.type === LOG_OUT) {
     return initialState;
   }

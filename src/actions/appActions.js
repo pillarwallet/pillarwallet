@@ -34,7 +34,7 @@ import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
-import { UPDATE_WALLET_IMPORT_STATE } from 'constants/walletConstants';
+import { UPDATE_WALLET_IMPORT_STATE, UPDATE_PIN_ATTEMPTS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
@@ -78,7 +78,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     // $FlowFixMe
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
 
-    const { wallet } = await storage.get('wallet');
+    const { wallet = {} } = await storage.get('wallet');
 
     if (appSettings.wallet) {
       const accounts = await loadAndMigrate('accounts', dispatch, getState);
@@ -147,6 +147,15 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { connectedProviders = [] } = await storage.get('exchangeProviders');
       dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
+
+      const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
+      dispatch({
+        type: UPDATE_PIN_ATTEMPTS,
+        payload: {
+          pinAttemptsCount,
+          lastPinAttempt,
+        },
+      });
 
       await loadAndMigrate('history', dispatch, getState);
 

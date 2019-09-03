@@ -15,6 +15,11 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
   }
 >
   <RCTScrollView
+    ListEmptyComponent={
+      <Styled(View)>
+        <EmptyStateParagraph />
+      </Styled(View)>
+    }
     contentContainerStyle={
       Array [
         Object {},
@@ -33,6 +38,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               "value": undefined,
             },
           ],
+          "date": "Invalid Date",
           "title": "Invalid Date",
         },
       ]
@@ -68,6 +74,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               "value": undefined,
             },
           ],
+          "date": "Invalid Date",
           "title": "Invalid Date",
         },
       ]
@@ -388,6 +395,13 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
       <View
         style={null}
       />
+      <View
+        style={
+          Object {
+            "height": 140,
+          }
+        }
+      />
     </View>
   </RCTScrollView>
 </View>
@@ -408,6 +422,11 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
   }
 >
   <RCTScrollView
+    ListEmptyComponent={
+      <Styled(View)>
+        <EmptyStateParagraph />
+      </Styled(View)>
+    }
     contentContainerStyle={
       Array [
         Object {},
@@ -426,6 +445,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               "value": "0",
             },
           ],
+          "date": "Invalid Date",
           "title": "Invalid Date",
         },
       ]
@@ -461,6 +481,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               "value": "0",
             },
           ],
+          "date": "Invalid Date",
           "title": "Invalid Date",
         },
       ]
@@ -780,6 +801,13 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
       </View>
       <View
         style={null}
+      />
+      <View
+        style={
+          Object {
+            "height": 140,
+          }
+        }
       />
     </View>
   </RCTScrollView>

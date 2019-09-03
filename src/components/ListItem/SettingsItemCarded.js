@@ -34,7 +34,7 @@ type Props = {
   icon?: string,
   fallbackIcon?: string,
   title: string,
-  subtitle?: string,
+  subtitle?: ?string,
   action?: Function,
   note?: Object,
   titleStyle?: Object,

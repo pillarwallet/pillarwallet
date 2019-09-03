@@ -31,7 +31,7 @@ import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
 
 // utils
-import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
+import { formatAmount, formatFiat } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
 import { getRate } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -44,6 +44,9 @@ import type { Rates } from 'models/Asset';
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+
+// configs
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
@@ -166,15 +169,14 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
 
     const { token, icon, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     // balance
     const balance = availableStake;
     const formattedBalance = formatAmount(balance);
 
     // balance in fiat
-    const totalInFiat = balance * getRate(rates, 'PLR', fiatCurrency);
-    const formattedBalanceInFiat = formatMoney(totalInFiat);
+    const totalInFiat = balance * getRate(rates, PPN_TOKEN, fiatCurrency);
+    const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // max amount
     const maxAmount = Number(balance);
@@ -183,9 +185,8 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(rates, 'PLR', fiatCurrency);
-    const formattedValueInFiat = formatMoney(valueInFiat);
-    const valueInFiatOutput = `${currencySymbol}${formattedValueInFiat}`;
+    const valueInFiat = currentValue * getRate(rates, PPN_TOKEN, fiatCurrency);
+    const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
@@ -223,7 +224,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
                 <Label small>Available Balance</Label>
                 <SendTokenDetailsValue>
                   {formattedBalance} {token}
-                  <HelperText> ({currencySymbol}{formattedBalanceInFiat})</HelperText>
+                  <HelperText>{formattedBalanceInFiat}</HelperText>
                 </SendTokenDetailsValue>
               </SendTokenDetails>
               <TouchableOpacity onPress={this.useMaxValue}>

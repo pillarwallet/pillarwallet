@@ -32,6 +32,7 @@ import {
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ETH } from 'constants/assetsConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
   getAccountAddress,
@@ -80,7 +81,11 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
 
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
-    const updatedAccountHistory = uniqBy([...history, ...accountHistory], 'hash');
+
+    const pendingTransactions = history.filter(tx => tx.status === TX_PENDING_STATUS);
+    const minedTransactions = history.filter(tx => tx.status !== TX_PENDING_STATUS);
+
+    const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
@@ -243,8 +248,6 @@ export const updateTransactionStatusAction = (hash: string) => {
 
 export const restoreTransactionHistoryAction = (walletAddress: string, walletId: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const { accounts: { data: accounts } } = getState();
-
     const [allAssets, _erc20History, ethHistory] = await Promise.all([
       api.fetchSupportedAssets(walletId),
       api.importedErc20TransactionHistory(walletAddress),
@@ -258,8 +261,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
     });
 
     const { history: { data: currentHistory } } = getState();
-    const accountId = getActiveAccountId(accounts);
-    const accountHistory = currentHistory[accountId] || [];
+    const accountHistory = currentHistory[walletAddress] || [];
 
     // 1) filter out records those exists in accountHistory
     const ethTransactions = ethHistory.filter(tx => {
@@ -308,10 +310,10 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
     ];
 
     // 5) sort by date
-    const sortedHistory = orderBy(updatedAccountHistory, ['createdAt'], ['asc']);
+    const sortedHistory = orderBy(updatedAccountHistory, ['createdAt'], ['desc']);
 
     // 6) update history in storage
-    const updatedHistory = updateAccountHistory(currentHistory, accountId, sortedHistory);
+    const updatedHistory = updateAccountHistory(currentHistory, walletAddress, sortedHistory);
 
     await dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch({
@@ -321,12 +323,23 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
   };
 };
 
+
 export const startListeningForBalanceChangeAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
       assets: { data: assets },
       accounts: { data: accounts },
+      smartWallet: {
+        upgrade: {
+          status: upgradeStatus,
+          transfer: {
+            transactions: transferTransactions = [],
+          },
+        },
+      },
     } = getState();
+    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS || !transferTransactions.length) return;
+
     const activeAccount = getActiveAccount(accounts);
     if (activeAccount) {
       const walletAddress = getAccountAddress(activeAccount);

@@ -42,7 +42,6 @@ import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constan
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
-import { SMART_ACCOUNT_ASSET_TRANSFER } from 'constants/smartWalletConstants';
 
 import Toast from 'components/Toast';
 
@@ -58,6 +57,7 @@ import type {
   TransactionPayload,
 } from 'models/Transaction';
 import type { Asset, Assets, Balance, Balances } from 'models/Asset';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { addressesEqual, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
@@ -83,7 +83,7 @@ type TransactionStatus = {
 };
 
 export const sendSignedAssetTransactionAction = (transaction: any) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       signedTransaction: { signedHash },
       transaction: transactionDetails,
@@ -119,7 +119,6 @@ export const sendSignedAssetTransactionAction = (transaction: any) => {
             value: '1',
             gasPrice: new BigNumber(transactionDetails.gasPrice),
             gasLimit: transactionDetails.gasLimit,
-            note: SMART_ACCOUNT_ASSET_TRANSFER,
           }),
           assetData: { ...collectibleInfo },
           type: COLLECTIBLE_TRANSACTION,
@@ -155,7 +154,6 @@ export const sendSignedAssetTransactionAction = (transaction: any) => {
           asset: transactionDetails.symbol,
           gasPrice: new BigNumber(transactionDetails.gasPrice),
           gasLimit: transactionDetails.gasLimit,
-          note: SMART_ACCOUNT_ASSET_TRANSFER,
         });
 
         dispatch({
@@ -182,7 +180,7 @@ export const signAssetTransactionAction = (
   assetTransaction: TransactionPayload,
   wallet: Object,
 ) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const tokenType = get(assetTransaction, 'tokenType', '');
     const symbol = get(assetTransaction, 'symbol', '');
 
@@ -264,7 +262,7 @@ export const sendAssetAction = (
   wallet: Object,
   callback: Function = noop,
 ) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const tokenType = get(transaction, 'tokenType', '');
     const symbol = get(transaction, 'symbol', '');
     const allowancePayload = get(transaction, 'extra.allowance', {});
@@ -472,7 +470,7 @@ export const sendAssetAction = (
 };
 
 export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = []) => {
-  return (dispatch: Function) => {
+  return (dispatch: Dispatch) => {
     const updatedAssets = Object.keys(assets)
       .map(key => assets[key])
       .reduce((memo, item) => {
@@ -501,7 +499,7 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
 }
 
 export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?: boolean) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       accounts: { data: accounts },
       balances: { data: balances },
@@ -552,7 +550,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
 };
 
 export const fetchInitialAssetsAction = () => {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: () => Object, api: Object) => {
     const { user: { data: { walletId } } } = getState();
     dispatch({
       type: UPDATE_ASSETS_STATE,
@@ -579,7 +577,7 @@ export const fetchInitialAssetsAction = () => {
 };
 
 export const addAssetAction = (asset: Asset) => {
-  return async (dispatch: Function, getState: () => Object) => {
+  return async (dispatch: Dispatch, getState: () => Object) => {
     const {
       assets: { data: assets },
     } = getState();
@@ -594,7 +592,7 @@ export const addAssetAction = (asset: Asset) => {
 };
 
 export const removeAssetAction = (asset: Asset) => {
-  return async (dispatch: Function, getState: () => Object) => {
+  return async (dispatch: Dispatch, getState: () => Object) => {
     const {
       assets: { data: assets },
     } = getState();
@@ -616,7 +614,7 @@ export const startAssetsSearchAction = () => ({
 });
 
 export const searchAssetsAction = (query: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const { user: { data: { walletId } } } = getState();
 
     const assets = await api.assetsSearch(query, walletId);
@@ -633,7 +631,7 @@ export const resetSearchAssetsResultAction = () => ({
 });
 
 export const checkForMissedAssetsAction = (transactionNotifications: Object[]) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       accounts: { data: accounts },
       user: { data: { walletId } },
@@ -690,7 +688,7 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
 };
 
 export const resetLocalNonceToTransactionCountAction = (wallet: Object) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
     } = getState();

@@ -34,7 +34,7 @@ import {
 import type { TopUpFee, SettleTxFee } from 'models/PaymentNetwork';
 import type { Balances } from 'models/Asset';
 
-export type PaymentNetworkState = {
+export type PaymentNetworkReducerState = {
   availableStake: string,
   balances: Balances,
   topUpFee: TopUpFee,
@@ -52,7 +52,7 @@ export type PaymentNetworkAction = {
   payload: any,
 };
 
-const initialState = {
+export const initialState = {
   availableStake: '0',
   balances: {},
   topUpFee: {
@@ -72,9 +72,9 @@ const initialState = {
 };
 
 export default function paymentNetworkReducer(
-  state: PaymentNetworkState = initialState,
+  state: PaymentNetworkReducerState = initialState,
   action: PaymentNetworkAction,
-): PaymentNetworkState {
+): PaymentNetworkReducerState {
   switch (action.type) {
     case UPDATE_PAYMENT_NETWORK_BALANCES:
       return merge({}, state, { balances: action.payload });

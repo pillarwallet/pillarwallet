@@ -30,6 +30,7 @@ import get from 'lodash.get';
 // models
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
+import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -39,12 +40,18 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Tabs from 'components/Tabs';
 import TankAssetBalance from 'components/TankAssetBalance';
 import { BaseText } from 'components/Typography';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // utils
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
-import { partial, formatAmount, formatUnits } from 'utils/common';
+import {
+  partial,
+  formatAmount,
+  formatUnits,
+} from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { findMatchingContact } from 'utils/contacts';
 
 // constants
 import {
@@ -89,9 +96,17 @@ const SectionHeader = styled(BaseText)`
   color: ${baseColors.darkGray};
 `;
 
-type esState = {
+const EmptyStateWrapper = styled.View`
+  padding: 15px 30px 30px;
+  width: 100%;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+type EmptyState = {
   title?: string,
-  body?: string,
+  textBody?: string,
 }
 
 type Tab = {
@@ -103,7 +118,7 @@ type Tab = {
   tabImageNormal?: string,
   tabImageActive?: string,
   data: Object[],
-  emptyState?: esState,
+  emptyState?: EmptyState,
 }
 
 type Props = {
@@ -114,7 +129,7 @@ type Props = {
   onRejectInvitation: Function,
   navigation: NavigationScreenProp<*>,
   esData?: Object,
-  contacts: Object,
+  contacts: ApiUser[],
   feedTitle?: string,
   backgroundColor?: string,
   wrapperStyle?: Object,
@@ -131,6 +146,45 @@ type Props = {
   hideTabs: boolean,
   asset?: string,
   feedType?: string,
+  contactsSmartAddresses: ContactSmartAddressData[],
+  emptyState?: EmptyState,
+}
+
+type FeedItemTransaction = {
+  username?: string,
+  to: string,
+  from: string,
+  hash: string,
+  createdAt: string,
+  pillarId: string,
+  protocol: string,
+  contractAddress: ?string,
+  blockNumber: number,
+  value: number,
+  status: string,
+  gasPrice: ?number,
+  gasUsed: number,
+  tranType: ?string,
+  tokenId?: string,
+  _id: string,
+  type: string,
+}
+
+type FeedItemConnection = {
+  id: string,
+  ethAddress: string,
+  username: string,
+  profileImage: ?string,
+  createdAt: string,
+  updatedAt: string,
+  status: string,
+  type: string,
+}
+
+type FeedSection = {
+  title: string,
+  date: string,
+  data: Array<FeedItemTransaction | FeedItemConnection>,
 }
 
 type State = {
@@ -138,37 +192,69 @@ type State = {
   selectedEventData: ?Object | ?Transaction,
   eventType: string,
   eventStatus: string,
-}
-
-function getSortedFeedData(tabs, activeTab, feedData) {
-  if (tabs.length) {
-    const aTab = tabs.find(({ id, data = [] }) => id === activeTab && data.length) || { data: [] };
-    return aTab.data.sort((a, b) => b.createdAt - a.createdAt);
-  } else if (feedData.length) {
-    return feedData.sort((a, b) => b.createdAt - a.createdAt);
-  }
-  return [];
+  tabIsChanging: boolean,
+  formattedFeedData: FeedSection[],
+  emptyStateData: EmptyState,
 }
 
 const PPNIcon = require('assets/icons/icon_PPN.png');
 
 class ActivityFeed extends React.Component<Props, State> {
-  feedData: Object[];
-
   static defaultProps = {
     initialNumToRender: 7,
   };
 
-  constructor(props: Props) {
-    super(props);
-    this.feedData = [];
-    this.state = {
-      showModal: false,
-      selectedEventData: null,
-      eventType: '',
-      eventStatus: '',
-    };
+  state = {
+    showModal: false,
+    selectedEventData: null,
+    eventType: '',
+    eventStatus: '',
+    tabIsChanging: false,
+    formattedFeedData: [],
+    emptyStateData: {},
+  };
+
+  componentDidMount() {
+    this.generateFeedSections();
   }
+
+  componentDidUpdate(prevProps: Props) {
+    const { tabs = [], feedData = [] } = this.props;
+    if ((tabs.length && !isEqual(tabs, prevProps.tabs))
+      || (feedData.length && !isEqual(feedData, prevProps.feedData))) {
+      this.generateFeedSections();
+    }
+  }
+
+  generateFeedSections = () => {
+    const {
+      tabs = [],
+      activeTab,
+      feedData = [],
+      emptyState,
+    } = this.props;
+    const dataSections = [];
+    let feedList = feedData;
+    let emptyStateData = emptyState || {};
+
+    if (tabs.length) {
+      const activeTabInfo = tabs.find(({ id }) => id === activeTab);
+      if (activeTabInfo) ({ data: feedList, emptyState: emptyStateData = {} } = activeTabInfo);
+    }
+
+    feedList.forEach(listItem => {
+      const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D YYYY');
+      const sectionTitle = formatDate(new Date(listItem.createdAt * 1000), 'MMM D');
+      const existingSection = dataSections.find(({ date }) => date === formattedDate);
+      if (!existingSection) {
+        dataSections.push({ title: sectionTitle, date: formattedDate, data: [{ ...listItem }] });
+      } else {
+        existingSection.data.push({ ...listItem });
+      }
+    });
+
+    this.setState({ formattedFeedData: dataSections, emptyStateData });
+  };
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
@@ -215,6 +301,7 @@ class ActivityFeed extends React.Component<Props, State> {
       invertAddon,
       feedType,
       asset,
+      contactsSmartAddresses,
     } = this.props;
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
@@ -238,20 +325,19 @@ class ActivityFeed extends React.Component<Props, State> {
 
       const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
-      const contact = contacts
-        .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const contact = findMatchingContact(address, contacts, contactsSmartAddresses) || {};
       const isContact = Object.keys(contact).length !== 0;
       const itemImage = contact.profileImage || fullIconUrl;
       let itemValue = `${directionSymbol} ${formattedValue} ${notification.asset}`;
       let customAddon = null;
       let itemImageSource = '';
 
-      const note = get(notification, 'note', '');
-      if (note === PAYMENT_NETWORK_TX_SETTLEMENT) {
+      const tag = get(notification, 'tag', '');
+      if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
         return (
           <SettlementItem settleData={notification.extra} type={feedType} asset={asset} />
         );
-      } else if (note === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+      } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
         nameOrAddress = 'PLR Network Top Up';
         itemImageSource = PPNIcon;
         directionIcon = '';
@@ -277,7 +363,7 @@ class ActivityFeed extends React.Component<Props, State> {
           itemValue={itemValue}
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
           valueColor={isReceived ? baseColors.jadeGreen : baseColors.scarlet}
-          imageUpdateTimeStamp={contact.lastUpdateTime}
+          imageUpdateTimeStamp={contact.lastUpdateTime || 0}
           customAddon={customAddon}
           itemImageSource={itemImageSource}
           noImageBorder
@@ -364,6 +450,10 @@ class ActivityFeed extends React.Component<Props, State> {
     return `${createdAt.toString()}${item.id || item._id || item.hash || ''}`;
   };
 
+  onTabChange = (isChanging?: boolean) => {
+    this.setState({ tabIsChanging: isChanging });
+  };
+
   render() {
     const {
       feedTitle,
@@ -375,7 +465,6 @@ class ActivityFeed extends React.Component<Props, State> {
       initialNumToRender,
       tabs = [],
       activeTab,
-      feedData = [],
       extraFeedData,
       hideTabs,
     } = this.props;
@@ -385,22 +474,12 @@ class ActivityFeed extends React.Component<Props, State> {
       selectedEventData,
       eventType,
       eventStatus,
+      tabIsChanging,
+      formattedFeedData,
+      emptyStateData,
     } = this.state;
 
-    const feedList = getSortedFeedData(tabs, activeTab, feedData);
-    const feedSections = [];
-
-    feedList.forEach(listItem => {
-      const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D');
-      const existingSection = feedSections.find(({ title }) => title === formattedDate);
-      if (!existingSection) {
-        feedSections.push({ title: formattedDate, data: [{ ...listItem }] });
-      } else {
-        existingSection.data.push({ ...listItem });
-      }
-    });
-
-    const additionalContentContainerStyle = !feedList.length
+    const additionalContentContainerStyle = !formattedFeedData.length
       ? { justifyContent: 'center', flex: 1 }
       : {};
 
@@ -413,11 +492,16 @@ class ActivityFeed extends React.Component<Props, State> {
           <Title subtitle title={feedTitle} />
         </ActivityFeedHeader>}
         {tabs.length > 1 && !hideTabs &&
-        <Tabs initialActiveTab={activeTab} tabs={tabsProps} wrapperStyle={{ paddingTop: 0 }} />
+          <Tabs
+            initialActiveTab={activeTab}
+            tabs={tabsProps}
+            wrapperStyle={{ paddingTop: 0 }}
+            onTabChange={this.onTabChange}
+          />
         }
-
+        {!tabIsChanging &&
         <ActivityFeedList
-          sections={feedSections}
+          sections={formattedFeedData}
           initialNumToRender={initialNumToRender}
           extraData={extraFeedData}
           renderSectionHeader={({ section }) => (
@@ -437,8 +521,12 @@ class ActivityFeed extends React.Component<Props, State> {
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
           removeClippedSubviews
           stickySectionHeadersEnabled={false}
-        />
-
+          ListEmptyComponent={(
+            <EmptyStateWrapper>
+              <EmptyStateParagraph {...emptyStateData} />
+            </EmptyStateWrapper>
+          )}
+        />}
         {!!selectedEventData &&
         <SlideModal
           isVisible={showModal}
@@ -464,11 +552,12 @@ class ActivityFeed extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   assets: { data: assets },
 }) => ({
   contacts,
   assets: Object.values(assets),
+  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({

@@ -19,9 +19,9 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, View, ScrollView, FlatList, Alert } from 'react-native';
+import { Keyboard, View, ScrollView, FlatList } from 'react-native';
 import styled from 'styled-components/native';
-import TouchID from 'react-native-touch-id';
+import * as Keychain from 'react-native-keychain';
 import Intercom from 'react-native-intercom';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -60,7 +60,6 @@ import { CONFIRM_CLAIM, CHANGE_PIN_FLOW } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
-import { delay } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 import { baseColors, fontSizes, fontTrackings, fontWeights, spacing } from 'utils/variables';
 
@@ -71,6 +70,11 @@ type State = {
   visibleModal: ?string,
   showBiometricsSelector: boolean,
   joinBetaPressed: boolean,
+  leaveBetaPressed: boolean,
+  setBiometrics: ?{
+    enabled: boolean,
+    privateKey: ?string,
+  },
 }
 
 type Props = {
@@ -81,7 +85,7 @@ type Props = {
   repairStorage: Function,
   hasDBConflicts: boolean,
   cleanSmartWalletAccounts: Function,
-  changeUseBiometrics: (value: boolean) => Function,
+  changeUseBiometrics: (enabled: boolean, privateKey: ?string) => Function,
   resetIncorrectPassword: () => Function,
   saveBaseFiatCurrency: (currency: ?string) => Function,
   baseFiatCurrency: ?string,
@@ -123,7 +127,6 @@ const SmallText = styled(BaseText)`
 `;
 
 const Description = styled(Paragraph)`
-  padding-bottom: ${spacing.rhythm}px;
   line-height: ${fontSizes.mediumLarge};
 `;
 
@@ -206,7 +209,9 @@ const formSystemItems = (that) => {
     {
       key: 'joinBeta',
       title: userJoinedBeta ? 'Leave Beta Testing' : 'Join Beta Testing',
-      onPress: () => userJoinedBeta ? that.handleLeaveBetaAttempt() : that.setState({ visibleModal: 'joinBeta' }),
+      onPress: () => userJoinedBeta
+        ? that.setState({ visibleModal: 'leaveBeta' })
+        : that.setState({ visibleModal: 'joinBeta' }),
     },
     {
       key: 'systemInfo',
@@ -281,12 +286,14 @@ class Settings extends React.Component<Props, State> {
       visibleModal,
       showBiometricsSelector: false,
       joinBetaPressed: false,
+      leaveBetaPressed: false,
+      setBiometrics: null,
     };
   }
 
   componentDidMount() {
-    TouchID.isSupported({})
-      .then(() => this.setState({ showBiometricsSelector: true }))
+    Keychain.getSupportedBiometryType()
+      .then(supported => this.setState({ showBiometricsSelector: !!supported }))
       .catch(() => null);
   }
 
@@ -300,21 +307,24 @@ class Settings extends React.Component<Props, State> {
     this.setState({ visibleModal });
   };
 
-  handleChangeUseBiometrics = (value) => {
-    const { changeUseBiometrics } = this.props;
-    changeUseBiometrics(value);
-    this.setState({ visibleModal: null }, () => {
-      const message = value ? 'Biometric login enabled' : 'Biometric login disabled';
-      delay(500)
-        .then(() => Toast.show({ title: 'Success', type: 'success', message }))
-        .catch(() => null);
+  handleChangeUseBiometrics = (enabled, privateKey) => {
+    this.setState({
+      visibleModal: null,
+      setBiometrics: {
+        enabled,
+        privateKey,
+      },
     });
   };
 
-  handleCheckPinModalClose = () => {
-    const { resetIncorrectPassword } = this.props;
+  handleBiometricsCheckPinModalClose = () => {
+    const { resetIncorrectPassword, changeUseBiometrics } = this.props;
+    const { setBiometrics } = this.state;
+    if (!setBiometrics) return;
+    const { enabled, privateKey } = setBiometrics;
+    this.setState({ setBiometrics: null });
     resetIncorrectPassword();
-    this.setState({ visibleModal: null });
+    changeUseBiometrics(enabled, privateKey);
   };
 
   handleCodeClaim = (field: Object) => {
@@ -338,17 +348,13 @@ class Settings extends React.Component<Props, State> {
     }
   };
 
-  handleLeaveBetaAttempt = () => {
-    const { setUserJoinedBeta } = this.props;
-    Alert.alert(
-      'Are you sure?',
-      'By confirming, you will be removed from the Beta Testing program. ' +
-      'If you wish to re-join, you will need to apply again.',
-      [
-        { text: 'Cancel' },
-        { text: 'Leave Beta Testing', onPress: () => setUserJoinedBeta(false) },
-      ],
-    );
+
+  handleLeaveBetaModalClose = () => {
+    // this is needed so that toast message can be shown in settings instead of slide modal that closes
+    if (this.state.leaveBetaPressed) {
+      this.setState({ leaveBetaPressed: false });
+      this.props.setUserJoinedBeta(false);
+    }
   };
 
   // navigateToContactInfo = () => {
@@ -453,14 +459,22 @@ class Settings extends React.Component<Props, State> {
         {/* BIOMETRIC LOGIN */}
         <SlideModal
           isVisible={visibleModal === 'checkPin'}
-          onModalHide={this.handleCheckPinModalClose}
+          onModalHidden={this.handleBiometricsCheckPinModalClose}
           title="Enter pincode"
           centerTitle
           fullScreen
           showHeader
+          onModalHide={() => this.setState({ visibleModal: null })}
         >
           <Wrapper flex={1}>
-            <CheckPin onPinValid={() => this.handleChangeUseBiometrics(!useBiometrics)} />
+            <CheckPin
+              onPinValid={
+                (pin, { privateKey }) => this.handleChangeUseBiometrics(
+                  !useBiometrics,
+                  !useBiometrics ? privateKey : null,
+                )
+              }
+            />
           </Wrapper>
         </SlideModal>
 
@@ -583,7 +597,7 @@ class Settings extends React.Component<Props, State> {
           onModalHide={() => this.setState({ visibleModal: null })}
         >
           <StyledWrapper regularPadding flex={1}>
-            <Description>
+            <Description small>
               By joining the beta program, you will be added to our Firebase Analytics data collection.
               Through this, Pillar will collect your username in order to enable beta features and monitor
               your wallet experience for any bugs and/or crashes while testing the new functionality.
@@ -597,6 +611,41 @@ class Settings extends React.Component<Props, State> {
               style={{
                 marginBottom: 13,
               }}
+            />
+          </StyledWrapper>
+        </SlideModal>
+
+        {/* LEAVE BETA */}
+        <SlideModal
+          isVisible={visibleModal === 'leaveBeta'}
+          fullScreen
+          showHeader
+          backgroundColor={baseColors.snowWhite}
+          onModalHidden={this.handleLeaveBetaModalClose}
+          avoidKeyboard
+          title="Leaving Beta"
+          onModalHide={() => this.setState({ visibleModal: null })}
+        >
+          <StyledWrapper regularPadding flex={1}>
+            <View>
+              <Description small>
+                By confirming, you will be removed from the Beta Testing program. As a result, your access to the Smart
+                Wallet, PIllar Payment Network and any funds stored on them will be lost.
+              </Description>
+              <Description small>
+                We strongly recommend that you transfer all assets from the Smart Wallet and Pillar Network to your Key
+                Based Wallet before leaving the Beta Program.
+              </Description>
+              <Description small>
+                If you wish to re-join the Beta Program (and re-gain access to the funds on your Smart Wallet), you will
+                need to apply again.
+              </Description>
+            </View>
+            <Button
+              roundedCorners
+              title="Leave Beta Testing"
+              onPress={() => { this.setState({ visibleModal: null, leaveBetaPressed: true }); }}
+              style={{ marginBottom: 13 }}
             />
           </StyledWrapper>
         </SlideModal>
@@ -636,7 +685,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Function) => ({
   saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  changeUseBiometrics: (value) => dispatch(changeUseBiometricsAction(value)),
+  changeUseBiometrics: (enabled, privateKey) => dispatch(changeUseBiometricsAction(enabled, privateKey)),
   repairStorage: () => dispatch(repairStorageAction()),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),

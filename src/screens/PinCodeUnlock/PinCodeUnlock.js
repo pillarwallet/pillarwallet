@@ -19,34 +19,48 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { DEFAULT_PIN } from 'react-native-dotenv';
+import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
-import TouchID from 'react-native-touch-id';
+
+import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { Container } from 'components/Layout';
-import { BaseText } from 'components/Typography';
-import Spinner from 'components/Spinner';
+import Loader from 'components/Loader';
 import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { DEFAULT_PIN } from 'react-native-dotenv';
+import { getKeychainDataObject } from 'utils/keychain';
 
 const ACTIVE_APP_STATE = 'active';
 
 type Props = {
-  login: (pin: string, touchID?: boolean, callback?: Function) => Function,
+  loginWithPin: (pin: string, callback: ?Function, updateKeychain: boolean) => Function,
+  loginWithPrivateKey: (privateKey: string, callback: ?Function) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
   connectionKeyPairs: Object,
-  smartWalletFeatureEnabled: boolean,
 }
 
-class PinCodeUnlock extends React.Component<Props> {
+type State = {
+  waitingTime: number,
+  biometricsShown: boolean,
+  updateKeychain: boolean,
+};
+
+class PinCodeUnlock extends React.Component<Props, State> {
   errorMessage: string;
   onLoginSuccess: ?Function;
+  interval: IntervalID;
+  state = {
+    waitingTime: 0,
+    biometricsShown: false,
+    updateKeychain: false,
+  };
 
   constructor(props) {
     super(props);
@@ -57,21 +71,24 @@ class PinCodeUnlock extends React.Component<Props> {
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { useBiometrics, smartWalletFeatureEnabled } = this.props;
+    const { useBiometrics } = this.props;
 
     if (!this.errorMessage && DEFAULT_PIN) {
       this.handlePinSubmit(DEFAULT_PIN);
     }
 
-    if (useBiometrics
-      && !smartWalletFeatureEnabled
-      && !this.errorMessage) {
+    if (useBiometrics && !this.errorMessage) {
       this.showBiometricLogin();
     }
+
+    this.handleLocking(true);
   }
 
   componentWillUnmount() {
     removeAppStateChangeListener(this.handleAppStateChange);
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 
   handleAppStateChange = (nextAppState: string) => {
@@ -82,20 +99,66 @@ class PinCodeUnlock extends React.Component<Props> {
   };
 
   showBiometricLogin() {
-    const { login, connectionKeyPairs: { data, lastConnectionKeyIndex } } = this.props;
-    if (data.length > 20 && lastConnectionKeyIndex > -1) {
-      TouchID.authenticate('Biometric login')
-        .then(() => {
-          removeAppStateChangeListener(this.handleAppStateChange);
-          login('', true);
+    const { loginWithPrivateKey } = this.props;
+    const { biometricsShown } = this.state;
+    if (biometricsShown) return;
+    this.setState({ biometricsShown: true }, () => {
+      getKeychainDataObject()
+        .then(data => {
+          this.setState({ biometricsShown: false });
+          if (!data || !Object.keys(data).length) {
+            this.setState({ updateKeychain: true });
+            return;
+          }
+          const privateKey = get(data, 'privateKey', null);
+          if (privateKey) {
+            removeAppStateChangeListener(this.handleAppStateChange);
+            loginWithPrivateKey(privateKey, this.onLoginSuccess);
+          }
         })
-        .catch(() => null);
-    }
+        .catch(() => this.setState({ biometricsShown: false }));
+    });
   }
 
+  getWaitingTime = (isNewMount: boolean): number => {
+    const { pinAttemptsCount, lastPinAttempt } = this.props.wallet;
+    const lastAttemptSeconds = (Date.now() - lastPinAttempt) / 1000;
+    const nextInterval = pinAttemptsCount * PIN_LOCK_MULTIPLIER;
+    if (pinAttemptsCount > ALLOWED_PIN_ATTEMPTS) {
+      if (isNewMount && lastAttemptSeconds < nextInterval) {
+        return nextInterval - lastAttemptSeconds;
+      }
+      return nextInterval;
+    }
+    return 0;
+  };
+
+  handleLocking = (isNewMount: boolean) => {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    const waitingTime = this.getWaitingTime(isNewMount);
+    if (waitingTime > 0) {
+      this.setState({ waitingTime }, () => {
+        this.interval = setInterval(() => {
+          if (this.state.waitingTime > 0) {
+            this.setState((prev: State) => ({ waitingTime: prev.waitingTime - 1 }));
+          } else {
+            this.setState({ waitingTime: 0 });
+            clearInterval(this.interval);
+          }
+        }, 1000);
+      });
+    } else {
+      this.setState({ waitingTime: 0 });
+    }
+  };
+
   handlePinSubmit = (pin: string) => {
-    const { login } = this.props;
-    login(pin, false, this.onLoginSuccess || undefined);
+    const { loginWithPin } = this.props;
+    const { updateKeychain } = this.state;
+    loginWithPin(pin, this.onLoginSuccess, updateKeychain);
+    this.handleLocking(false);
   };
 
   handleForgotPasscode = () => {
@@ -104,14 +167,14 @@ class PinCodeUnlock extends React.Component<Props> {
 
   render() {
     const { walletState } = this.props.wallet;
+    const { waitingTime } = this.state;
     const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : (this.errorMessage || null);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
     if (walletState === DECRYPTING || walletState === GENERATING_CONNECTIONS) {
       return (
         <Container center>
-          <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
-          <Spinner />
+          <Loader />
         </Container>
       );
     }
@@ -120,12 +183,17 @@ class PinCodeUnlock extends React.Component<Props> {
       <Container>
         <Header centerTitle title="Enter pincode" />
         {showError}
-        <PinCode
-          onPinEntered={this.handlePinSubmit}
-          pageInstructions=""
-          onForgotPin={this.handleForgotPasscode}
-          pinError={!!pinError}
-        />
+        {waitingTime > 0 &&
+          <ErrorMessage>Too many attempts, please try again in {waitingTime.toFixed(0)} seconds.</ErrorMessage>
+        }
+        {waitingTime <= 0 &&
+          <PinCode
+            onPinEntered={this.handlePinSubmit}
+            pageInstructions=""
+            onForgotPin={this.handleForgotPasscode}
+            pinError={!!pinError}
+          />
+        }
       </Container>
     );
   }
@@ -135,16 +203,17 @@ const mapStateToProps = ({
   wallet,
   appSettings: { data: { useBiometrics = false } },
   connectionKeyPairs,
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
   wallet,
   useBiometrics,
   connectionKeyPairs,
-  smartWalletFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  login: (pin: string, touchID?: boolean, callback?: Function) => dispatch(loginAction(pin, touchID, callback)),
+  loginWithPin: (pin: string, callback: ?Function, updateKeychain) => dispatch(
+    loginAction(pin, null, callback, updateKeychain),
+  ),
+  loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);

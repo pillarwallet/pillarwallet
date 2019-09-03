@@ -55,7 +55,7 @@ import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'co
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
-import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapTransactionsHistory } from 'utils/feedData';
@@ -70,6 +70,9 @@ import {
   availableStakeSelector,
   paymentNetworkAccountBalancesSelector,
 } from 'selectors/paymentNetwork';
+
+// types
+import type { ContactSmartAddressData } from 'models/Contacts';
 
 // local components
 import ReceiveModal from './ReceiveModal';
@@ -104,6 +107,7 @@ type Props = {
   history: Array<*>,
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
+  contactsSmartAddresses: ContactSmartAddressData[],
 };
 
 type State = {
@@ -256,6 +260,7 @@ class AssetScreen extends React.Component<Props, State> {
       history,
       contacts,
       availableStake,
+      contactsSmartAddresses,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -269,8 +274,7 @@ class AssetScreen extends React.Component<Props, State> {
       : (paymentNetworkBalance <= 0 && availableStake < 0);
     const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
     const displayAmount = !isSynthetic ? formatMoney(balance, 4) : formatMoney(paymentNetworkBalance, 4);
-    const fiatAmount = !isSynthetic ? formatMoney(totalInFiat) : paymentNetworkBalance * tokenRate;
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const fiatAmount = !isSynthetic ? formatFiat(totalInFiat, baseFiatCurrency) : paymentNetworkBalance * tokenRate;
 
     const {
       listed: isListed = true,
@@ -284,19 +288,26 @@ class AssetScreen extends React.Component<Props, State> {
     const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-    const mappedTransactions = mapTransactionsHistory(tokenTxHistory, contacts, TRANSACTION_EVENT);
-    const tokenTransactions = mappedTransactions.filter(({ asset, note = '', extra = [] }) =>
-      asset === token || (note === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
-    const mainnetTransactions = tokenTransactions.filter(({ isPPNTransaction = false, note = '' }) => {
-      return (!isPPNTransaction && note !== PAYMENT_NETWORK_ACCOUNT_TOPUP) || note === PAYMENT_NETWORK_TX_SETTLEMENT;
+    const mappedTransactions = mapTransactionsHistory(
+      tokenTxHistory,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      TRANSACTION_EVENT,
+    );
+    const tokenTransactions = mappedTransactions.filter(({ asset, tag = '', extra = [] }) =>
+      asset === token || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
+    const mainnetTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
+      return (!isPPNTransaction && tag !== PAYMENT_NETWORK_ACCOUNT_TOPUP) || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
-    const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, note = '' }) => {
-      return isPPNTransaction || note === PAYMENT_NETWORK_TX_SETTLEMENT;
+    const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
+      return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
 
     return (
       <ContainerWithHeader
+        navigation={navigation}
         headerProps={{
           centerItems: [{ title: assetData.name }],
           rightItems: [
@@ -340,7 +351,7 @@ class AssetScreen extends React.Component<Props, State> {
             {!!isListed &&
               <ValuesWrapper>
                 <ValueInFiat>
-                  {`${currencySymbol}${fiatAmount}`}
+                  {fiatAmount}
                 </ValueInFiat>
               </ValuesWrapper>
             }
@@ -404,7 +415,7 @@ class AssetScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
@@ -423,6 +434,7 @@ const mapStateToProps = ({
   smartWalletState,
   accounts,
   smartWalletFeatureEnabled,
+  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
