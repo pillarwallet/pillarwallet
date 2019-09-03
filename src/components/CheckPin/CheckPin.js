@@ -123,7 +123,7 @@ class CheckPin extends React.Component<Props, State> {
 
     if (walletState === DECRYPTING || isChecking || walletState === GENERATING_CONNECTIONS) {
       return (
-        <Container center color="transparent">
+        <Container style={{ flex: 1, width: '100%' }} center color="transparent">
           <Loader messages={['Checking']} />
         </Container>
       );
