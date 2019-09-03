@@ -362,4 +362,3 @@ export const stopListeningForBalanceChangeAction = () => {
     }
   };
 };
-
