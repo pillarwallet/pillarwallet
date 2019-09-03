@@ -36,6 +36,7 @@ import {
   ARCHANOVA_ETH_ENS_REGISTRY_ADDRESS,
   ARCHANOVA_ETH_GUARDIAN_ADDRESS,
   ARCHANOVA_ETH_VIRTUAL_PAYMENT_MANAGER_ADDRESS,
+  ARCHANOVA_HOST,
   NETWORK_PROVIDER,
 } from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
@@ -72,7 +73,7 @@ class SmartWallet {
     const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
     const sdkOptions = getSdkEnvironment(environmentNetwork)
       .extendConfig('apiOptions', {
-        host: 'archanova.pillarproject.io',
+        host: ARCHANOVA_HOST,
       })
       .extendConfig('ensOptions', {
         supportedRootNames: [
