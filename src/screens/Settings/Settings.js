@@ -629,16 +629,16 @@ class Settings extends React.Component<Props, State> {
           <StyledWrapper regularPadding flex={1}>
             <View>
               <Description small>
-                By confirming, you will leave Beta Testing program and access to Smart wallet features and
-                your funds on it will be removed.
+                By confirming, you will be removed from the Beta Testing program. As a result, your access to the Smart
+                Wallet, PIllar Payment Network and any funds stored on them will be lost.
               </Description>
               <Description small>
-                We recommend you to transfer your assets from Smart Wallet and Pillar Network Tank to your Key Based
-                wallet before leaving the Beta Program.
+                We strongly recommend that you transfer all assets from the Smart Wallet and Pillar Network to your Key
+                Based Wallet before leaving the Beta Program.
               </Description>
               <Description small>
-                If you wish to re-join or regain access to your not transferred funds on Smart wallet before this
-                feature is publicly released, you will need to apply again.
+                If you wish to re-join the Beta Program (and re-gain access to the funds on your Smart Wallet), you will
+                need to apply again.
               </Description>
             </View>
             <Button
