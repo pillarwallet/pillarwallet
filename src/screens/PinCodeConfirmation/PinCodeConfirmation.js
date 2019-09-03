@@ -20,15 +20,15 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Container } from 'components/Layout';
+import { Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import type { NavigationScreenProp } from 'react-navigation';
-import Header from 'components/Header';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
 import { confirmPinForNewWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
 import { PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
-import { baseColors, spacing, UIColors } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 
 type Props = {
   confirmPinForNewWallet: (pin: string) => Function,
@@ -42,7 +42,6 @@ type State = {
 
 const ContentWrapper = styled.View`
   flex: 1;
-  background-color: ${UIColors.defaultBackgroundColor};
   padding-top: ${spacing.medium}px;
 `;
 
@@ -78,22 +77,32 @@ class PinCodeConfirmation extends React.Component<Props, State> {
   };
 
   render() {
+    const { errorMessage } = this.state;
     return (
-      <Container color={baseColors.white}>
-        {!!this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
-        <Header title="confirm pincode" onBack={() => this.props.navigation.goBack(null)} white />
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Confirm PIN code' }],
+        }}
+        backgroundColor={baseColors.white}
+      >
+        {!!errorMessage &&
+        <ErrorMessage wrapperStyle={{ marginTop: 0 }}>
+          {this.state.errorMessage}
+        </ErrorMessage>
+        }
         <ContentWrapper>
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            onPinChanged={this.handlePinChange}
-            pageInstructions="Confirm your Pincode"
-            showForgotButton={false}
-            pinError={!!this.state.errorMessage}
-            flex={false}
-            customStyle={{ marginTop: 100 }}
-          />
+          <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
+            <PinCode
+              onPinEntered={this.handlePinSubmit}
+              onPinChanged={this.handlePinChange}
+              pageInstructions="Confirm your Pincode"
+              showForgotButton={false}
+              pinError={!!errorMessage}
+              flex={false}
+            />
+          </Wrapper>
         </ContentWrapper>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }

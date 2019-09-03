@@ -23,8 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Container } from 'components/Layout';
 import Header from 'components/Header';
 import CheckPin from 'components/CheckPin';
-import { BaseText } from 'components/Typography';
-import Spinner from 'components/Spinner';
+import Loader from 'components/Loader';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { DECRYPTING, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { CHANGE_PIN_NEW_PIN } from 'constants/navigationConstants';
@@ -47,8 +46,7 @@ class CurrentPin extends React.Component<Props> {
     if (walletState === DECRYPTING || walletState === GENERATING_CONNECTIONS) {
       return (
         <Container center>
-          <BaseText style={{ marginBottom: 20 }}>Checking</BaseText>
-          <Spinner />
+          <Loader messages={['Checking']} />
         </Container>
       );
     }
@@ -56,7 +54,7 @@ class CurrentPin extends React.Component<Props> {
     return (
       <Container>
         <Header
-          title="enter pincode"
+          title="Enter pincode"
           centerTitle
           onClose={this.handleScreenDismissal}
         />

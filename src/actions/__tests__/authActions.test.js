@@ -24,14 +24,16 @@ import {
   UPDATE_WALLET_STATE,
   DECRYPT_WALLET,
   DECRYPTING,
+  UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
+import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
 import * as connectionKeyActions from 'actions/connectionKeyPairActions';
-import { loginAction } from '../authActions';
+import { loginAction } from 'actions/authActions';
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -73,12 +75,14 @@ describe('Wallet actions', () => {
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
       accounts: { data: [] },
       featureFlags: { data: INITIAL_FEATURE_FLAGS },
+      appSettings: { data: {} },
     });
   });
 
   it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
       { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
       {
         type: DECRYPT_WALLET,
@@ -87,6 +91,7 @@ describe('Wallet actions', () => {
           privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
         },
       },
+      { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
     ];
 
     const pin = '123456';
@@ -103,9 +108,11 @@ describe('Wallet actions', () => {
     storage.save('user', { user: registeredMockUser });
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: DECRYPT_WALLET, payload: mockWallet },
+      { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
     ];
 
     const pin = '123456';

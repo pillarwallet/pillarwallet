@@ -27,53 +27,73 @@ import {
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   ADD_SMART_WALLET_RECOVERY_AGENTS,
+  SET_SMART_WALLET_DEPLOYMENT_DATA,
+  RESET_SMART_WALLET,
+  SET_SMART_WALLET_LAST_SYNCED_HASH,
+  START_SMART_WALLET_DEPLOYMENT,
+  RESET_SMART_WALLET_DEPLOYMENT,
+  SET_ASSET_TRANSFER_GAS_LIMIT,
+  SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
 } from 'constants/smartWalletConstants';
-import type { SmartWalletAccount } from 'models/SmartWalletAccount';
+import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 import type { AssetTransfer } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
 import type { SmartWalletTransferTransaction } from 'models/Transaction';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 
-export type WalletReducerState = {
+export type SmartWalletReducerState = {
   upgradeDismissed: boolean,
   sdkInitialized: boolean,
   connectedAccount: Object,
   accounts: SmartWalletAccount[],
   upgrade: {
-    status?: string,
+    status: ?string,
+    deploymentStarted: boolean,
     transfer: {
       transactions: SmartWalletTransferTransaction[],
       assets: AssetTransfer[],
       collectibles: CollectibleTransfer[],
     },
+    deploymentData: {
+      hash: ?string,
+      error: ?SmartWalletDeploymentError,
+    },
     recoveryAgents: RecoveryAgent[],
-  }
-}
+  },
+  lastSyncedHash: ?string,
+};
 
-export type WalletReducerAction = {
+export type SmartWalletReducerAction = {
   type: string,
   payload?: any,
 };
 
-const initialState = {
+export const initialState = {
   upgradeDismissed: false,
   sdkInitialized: false,
   connectedAccount: {},
   accounts: [],
   upgrade: {
+    status: null,
+    deploymentStarted: false,
     transfer: {
       transactions: [],
       assets: [],
       collectibles: [],
     },
     recoveryAgents: [],
+    deploymentData: {
+      hash: null,
+      error: null,
+    },
   },
+  lastSyncedHash: null,
 };
 
 export default function smartWalletReducer(
-  state: WalletReducerState = initialState,
-  action: WalletReducerAction,
-) {
+  state: SmartWalletReducerState = initialState,
+  action: SmartWalletReducerAction,
+): SmartWalletReducerState {
   switch (action.type) {
     case SET_SMART_WALLET_SDK_INIT:
       return {
@@ -145,6 +165,77 @@ export default function smartWalletReducer(
         upgrade: {
           ...state.upgrade,
           status: action.payload,
+        },
+      };
+    case SET_SMART_WALLET_DEPLOYMENT_DATA:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          deploymentData: {
+            ...action.payload,
+          },
+        },
+      };
+    case SET_SMART_WALLET_LAST_SYNCED_HASH:
+      return {
+        ...state,
+        lastSyncedHash: action.payload || initialState.lastSyncedHash,
+      };
+    case RESET_SMART_WALLET:
+      return { ...initialState };
+    case START_SMART_WALLET_DEPLOYMENT:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          deploymentStarted: true,
+        },
+      };
+    case RESET_SMART_WALLET_DEPLOYMENT:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          deploymentStarted: false,
+        },
+      };
+    case SET_ASSET_TRANSFER_GAS_LIMIT:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          transfer: {
+            ...state.upgrade.transfer,
+            assets: state.upgrade.transfer.assets.reduce((updated, asset) => {
+              // $FlowFixMe
+              if (action.payload.key === asset.name) {
+                // $FlowFixMe
+                asset = { ...asset, gasLimit: action.payload.gasLimit };
+              }
+              updated.push(asset);
+              return updated;
+            }, []),
+          },
+        },
+      };
+    case SET_COLLECTIBLE_TRANSFER_GAS_LIMIT:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          transfer: {
+            ...state.upgrade.transfer,
+            collectibles: state.upgrade.transfer.collectibles.reduce((updated, collectible) => {
+              // $FlowFixMe
+              if (action.payload.key === collectible.key) {
+                // $FlowFixMe
+                collectible = { ...collectible, gasLimit: action.payload.gasLimit };
+              }
+              updated.push(collectible);
+              return updated;
+            }, state.upgrade.transfer.collectibles),
+          },
         },
       };
     default:

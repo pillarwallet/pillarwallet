@@ -19,37 +19,38 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard, Platform } from 'react-native';
+import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
-import { Container, Footer, ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
-import Title from 'components/Title';
 import Button from 'components/Button';
-import Header from 'components/Header';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
-import { fontSizes } from 'utils/variables';
-import { getUserName } from 'utils/contacts';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { findMatchingContact, getUserName } from 'utils/contacts';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import type { ContactSmartAddressData } from 'models/Contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   contacts: Object[],
+  contactsSmartAddresses: ContactSmartAddressData[],
 };
 
 type State = {
   note: ?string,
-  scrollPos: number,
 };
 
 const FooterWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 0 20px;
+  padding: ${spacing.large}px;
   width: 100%;
+  background-color: ${baseColors.snowWhite};
 `;
 
 const LabeledRow = styled.View`
@@ -61,16 +62,13 @@ const Value = styled(BoldText)`
 `;
 
 class SendTokenContacts extends React.Component<Props, State> {
-  scroll: Object;
   source: string;
 
   constructor(props) {
     super(props);
-    this.scroll = React.createRef();
     this.source = this.props.navigation.getParam('source', '');
     this.state = {
       note: null,
-      scrollPos: 0,
     };
   }
 
@@ -89,8 +87,12 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 
   render() {
-    const { scrollPos } = this.state;
-    const { contacts, session, navigation } = this.props;
+    const {
+      contacts,
+      session,
+      navigation,
+      contactsSmartAddresses,
+    } = this.props;
     const {
       amount,
       to,
@@ -98,26 +100,22 @@ class SendTokenContacts extends React.Component<Props, State> {
       symbol,
     } = navigation.getParam('transactionPayload', {});
 
-    const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
+    const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
+
     const recipientUsername = getUserName(contact);
     return (
-      <Container>
-        <Header
-          onBack={() => this.props.navigation.goBack(null)}
-          title="send"
-          white
-        />
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
+        keyboardAvoidFooter={(
+          <FooterWrapper>
+            <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
+          </FooterWrapper>
+        )}
+      >
         <ScrollWrapper
           regularPadding
-          disableAutomaticScroll={Platform.OS === 'android'}
-          innerRef={ref => { this.scroll = ref; }}
-          onKeyboardWillShow={() => {
-            if (Platform.OS === 'android') {
-              this.scroll.scrollToPosition(0, scrollPos);
-            }
-          }}
+          disableAutomaticScroll
         >
-          <Title subtitle title="Review and Confirm" />
           <LabeledRow>
             <Label>Amount</Label>
             <Value>{amount} {symbol}</Value>
@@ -134,7 +132,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           </LabeledRow>
           <LabeledRow>
             <Label>Est. Network Fee</Label>
-            <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
+            <Value>{txFeeInWei === 0 ? 'free' : `${utils.formatEther(txFeeInWei.toString())} ETH`}</Value>
           </LabeledRow>
           {!!recipientUsername &&
           <TextInput
@@ -150,30 +148,21 @@ class SendTokenContacts extends React.Component<Props, State> {
             labelBigger
             noBorder
             keyboardAvoidance
-            onLayout={(e) => {
-              const scrollPosition = e.nativeEvent.layout.y + 180;
-              this.setState({ scrollPos: scrollPosition });
-              }
-            }
           />
           }
         </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40}>
-          <FooterWrapper>
-            <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
-          </FooterWrapper>
-        </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   session: { data: session },
 }) => ({
   contacts,
   session,
+  contactsSmartAddresses,
 });
 
 export default connect(mapStateToProps)(SendTokenContacts);

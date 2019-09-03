@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Sentry } from 'react-native-sentry';
+import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import * as ethUtil from 'ethereumjs-util';
 import {
@@ -31,6 +33,8 @@ import {
 } from 'react-native';
 import { providers, utils } from 'ethers';
 import { INFURA_PROJECT_ID } from 'react-native-dotenv';
+import type { GasInfo } from 'models/GasInfo';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 export function delay(ms: number): Promise<void> {
   return new Promise(resolve => {
@@ -148,6 +152,16 @@ export function getCurrencySymbol(currency: string): string {
     EUR: '€',
   };
   return currencies[currency] || '';
+}
+
+export function formatFiat(src: number | string, baseFiatCurrency?: ?string): string {
+  const re = '\\d(?=(\\d{3})+\\D)';
+  const num = new BigNumber(src).toFixed(2);
+  const formatedValue = num.replace(new RegExp(re, 'g'), '$&,');
+  const value = parseFloat(formatedValue) > 0 ? formatedValue : 0;
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const currencySymbol = getCurrencySymbol(fiatCurrency);
+  return `${currencySymbol} ${value}`;
 }
 
 export function partial(fn: Function, ...fixedArgs: any) {
@@ -307,4 +321,30 @@ export function extractJwtPayload(jwtToken: string): Object {
   const [, encodedPayload] = jwtToken.split('.');
   // do not use Buffer.toJSON
   return JSON.parse(Buffer.from(encodedPayload, 'base64').toString());
+}
+
+export function getGasPriceWei(gasInfo: GasInfo): BigNumber {
+  const gasPrice = get(gasInfo, 'gasPrice.max', 0);
+  return utils.parseUnits(gasPrice.toString(), 'gwei');
+}
+
+export function formatUnits(val: string = '0', decimals: number) {
+  let formattedUnits = '0.0';
+  try {
+    formattedUnits = utils.formatUnits(new BigNumber(val.toString()).toFixed(), decimals);
+  } catch (e) {
+    Sentry.captureMessage(e.message, {
+      level: 'info',
+      extra: {
+        sourceFunction: 'formatUnits(value,decimals)',
+        inputValue: val,
+        decimals,
+      },
+    });
+  }
+  return formattedUnits;
+}
+
+export function isCaseInsensitiveMatch(a: string, b: string): boolean {
+  return a.toLowerCase() === b.toLowerCase();
 }

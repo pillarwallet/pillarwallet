@@ -1,0 +1,815 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ActivityFeed does not fail for invalid values 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "backgroundColor": "#ffffff",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <RCTScrollView
+    ListEmptyComponent={
+      <Styled(View)>
+        <EmptyStateParagraph />
+      </Styled(View)>
+    }
+    contentContainerStyle={
+      Array [
+        Object {},
+        undefined,
+      ]
+    }
+    data={
+      Array [
+        Object {
+          "data": Array [
+            Object {
+              "createdAt": "2019-09-09 12:00",
+              "from": "0x0000000000000000000000000000000000000000",
+              "to": "0x0000000000000000000000000000000000000000",
+              "type": "transactionEvent",
+              "value": undefined,
+            },
+          ],
+          "date": "Invalid Date",
+          "title": "Invalid Date",
+        },
+      ]
+    }
+    disableVirtualization={false}
+    getItem={[Function]}
+    getItemCount={[Function]}
+    getItemLayout={[Function]}
+    horizontal={false}
+    initialNumToRender={7}
+    keyExtractor={[Function]}
+    maxToRenderPerBatch={7}
+    onContentSizeChange={[Function]}
+    onEndReachedThreshold={0.5}
+    onLayout={[Function]}
+    onMomentumScrollEnd={[Function]}
+    onScroll={[Function]}
+    onScrollBeginDrag={[Function]}
+    onScrollEndDrag={[Function]}
+    removeClippedSubviews={true}
+    renderItem={[Function]}
+    renderSectionHeader={[Function]}
+    scrollEventThrottle={50}
+    sections={
+      Array [
+        Object {
+          "data": Array [
+            Object {
+              "createdAt": "2019-09-09 12:00",
+              "from": "0x0000000000000000000000000000000000000000",
+              "to": "0x0000000000000000000000000000000000000000",
+              "type": "transactionEvent",
+              "value": undefined,
+            },
+          ],
+          "date": "Invalid Date",
+          "title": "Invalid Date",
+        },
+      ]
+    }
+    stickyHeaderIndices={Array []}
+    stickySectionHeadersEnabled={false}
+    style={
+      Array [
+        Object {
+          "flexBasis": 0,
+          "flexGrow": 1,
+          "flexShrink": 1,
+          "width": "100%",
+        },
+        undefined,
+      ]
+    }
+    updateCellsBatchingPeriod={50}
+    windowSize={21}
+  >
+    <View>
+      <View
+        style={null}
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "Aktiv Grotesk App",
+                  "fontWeight": "400",
+                  "includeFontPadding": false,
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            Invalid Date
+          </Text>
+        </View>
+      </View>
+      <View
+        style={null}
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "flexDirection": "column",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            isTVSelectable={true}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "minHeight": 84,
+                "opacity": 1,
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+                "width": "100%",
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "height": 54,
+                    "justifyContent": "center",
+                    "paddingRight": 12,
+                    "width": 66,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                fillColor="#f7ebe6"
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "backgroundColor": "#f7ebe6",
+                      "borderRadius": 26,
+                      "height": 52,
+                      "justifyContent": "center",
+                      "textAlign": "center",
+                      "width": 52,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  name="sent"
+                  style={
+                    Array [
+                      Object {
+                        "color": "#db9a84",
+                        "fontSize": 48,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+              </View>
+            </View>
+            <View
+              style={
+                Object {
+                  "flex": 1,
+                }
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                      "width": "100%",
+                    },
+                    undefined,
+                  ]
+                }
+                type="ACTION"
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-start",
+                        "flexBasis": 0,
+                        "flexDirection": "column",
+                        "flexGrow": 1,
+                        "flexShrink": 1,
+                        "justifyContent": "center",
+                        "marginTop": 0,
+                        "minHeight": 54,
+                      },
+                      Object {
+                        "flexGrow": 1,
+                      },
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "space-between",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      ellipsizeMode="tail"
+                      numberOfLines={2}
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "Aktiv Grotesk App",
+                            "fontWeight": "400",
+                            "includeFontPadding": false,
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "Aktiv Grotesk App",
+                              "fontWeight": "600",
+                              "includeFontPadding": false,
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontSize": 16,
+                                "letterSpacing": 0.2,
+                                "width": "100%",
+                              },
+                              undefined,
+                            ],
+                          ],
+                        ]
+                      }
+                      type="ACTION"
+                    >
+                      0x0000…000000
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  rightColumn={true}
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-end",
+                        "flexDirection": "column",
+                        "justifyContent": "center",
+                        "marginLeft": 10,
+                        "marginTop": 0,
+                        "minHeight": 54,
+                      },
+                      Object {
+                        "maxWidth": "50%",
+                      },
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  <View
+                    style={
+                      Array [
+                        undefined,
+                        Object {
+                          "flexWrap": "wrap",
+                        },
+                      ]
+                    }
+                  >
+                    <View
+                      horizontal={true}
+                      style={
+                        Array [
+                          Object {
+                            "flexDirection": "row",
+                            "marginBottom": 0,
+                            "marginLeft": 0,
+                            "marginRight": 0,
+                            "marginTop": 0,
+                          },
+                          Object {
+                            "flexWrap": "wrap",
+                            "justifyContent": "flex-end",
+                          },
+                        ]
+                      }
+                    >
+                      <Text
+                        color="#FD3300"
+                        ellipsizeMode="tail"
+                        numberOfLines={2}
+                        style={
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "Aktiv Grotesk App",
+                              "fontWeight": "400",
+                              "includeFontPadding": false,
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#FD3300",
+                                "fontSize": 18,
+                                "textAlign": "right",
+                              },
+                              undefined,
+                            ],
+                          ]
+                        }
+                      >
+                         0 undefined
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        style={null}
+      />
+      <View
+        style={
+          Object {
+            "height": 140,
+          }
+        }
+      />
+    </View>
+  </RCTScrollView>
+</View>
+`;
+
+exports[`ActivityFeed renders the Asset correctly 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "backgroundColor": "#ffffff",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <RCTScrollView
+    ListEmptyComponent={
+      <Styled(View)>
+        <EmptyStateParagraph />
+      </Styled(View)>
+    }
+    contentContainerStyle={
+      Array [
+        Object {},
+        undefined,
+      ]
+    }
+    data={
+      Array [
+        Object {
+          "data": Array [
+            Object {
+              "createdAt": "2019-09-09 12:00",
+              "from": "0x0000000000000000000000000000000000000000",
+              "to": "0x0000000000000000000000000000000000000000",
+              "type": "transactionEvent",
+              "value": "0",
+            },
+          ],
+          "date": "Invalid Date",
+          "title": "Invalid Date",
+        },
+      ]
+    }
+    disableVirtualization={false}
+    getItem={[Function]}
+    getItemCount={[Function]}
+    getItemLayout={[Function]}
+    horizontal={false}
+    initialNumToRender={7}
+    keyExtractor={[Function]}
+    maxToRenderPerBatch={7}
+    onContentSizeChange={[Function]}
+    onEndReachedThreshold={0.5}
+    onLayout={[Function]}
+    onMomentumScrollEnd={[Function]}
+    onScroll={[Function]}
+    onScrollBeginDrag={[Function]}
+    onScrollEndDrag={[Function]}
+    removeClippedSubviews={true}
+    renderItem={[Function]}
+    renderSectionHeader={[Function]}
+    scrollEventThrottle={50}
+    sections={
+      Array [
+        Object {
+          "data": Array [
+            Object {
+              "createdAt": "2019-09-09 12:00",
+              "from": "0x0000000000000000000000000000000000000000",
+              "to": "0x0000000000000000000000000000000000000000",
+              "type": "transactionEvent",
+              "value": "0",
+            },
+          ],
+          "date": "Invalid Date",
+          "title": "Invalid Date",
+        },
+      ]
+    }
+    stickyHeaderIndices={Array []}
+    stickySectionHeadersEnabled={false}
+    style={
+      Array [
+        Object {
+          "flexBasis": 0,
+          "flexGrow": 1,
+          "flexShrink": 1,
+          "width": "100%",
+        },
+        undefined,
+      ]
+    }
+    updateCellsBatchingPeriod={50}
+    windowSize={21}
+  >
+    <View>
+      <View
+        style={null}
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "Aktiv Grotesk App",
+                  "fontWeight": "400",
+                  "includeFontPadding": false,
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            Invalid Date
+          </Text>
+        </View>
+      </View>
+      <View
+        style={null}
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "flexDirection": "column",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            isTVSelectable={true}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "minHeight": 84,
+                "opacity": 1,
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+                "width": "100%",
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "height": 54,
+                    "justifyContent": "center",
+                    "paddingRight": 12,
+                    "width": 66,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                fillColor="#f7ebe6"
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "backgroundColor": "#f7ebe6",
+                      "borderRadius": 26,
+                      "height": 52,
+                      "justifyContent": "center",
+                      "textAlign": "center",
+                      "width": 52,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  name="sent"
+                  style={
+                    Array [
+                      Object {
+                        "color": "#db9a84",
+                        "fontSize": 48,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+              </View>
+            </View>
+            <View
+              style={
+                Object {
+                  "flex": 1,
+                }
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                      "width": "100%",
+                    },
+                    undefined,
+                  ]
+                }
+                type="ACTION"
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-start",
+                        "flexBasis": 0,
+                        "flexDirection": "column",
+                        "flexGrow": 1,
+                        "flexShrink": 1,
+                        "justifyContent": "center",
+                        "marginTop": 0,
+                        "minHeight": 54,
+                      },
+                      Object {
+                        "flexGrow": 1,
+                      },
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "space-between",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      ellipsizeMode="tail"
+                      numberOfLines={2}
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "Aktiv Grotesk App",
+                            "fontWeight": "400",
+                            "includeFontPadding": false,
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "Aktiv Grotesk App",
+                              "fontWeight": "600",
+                              "includeFontPadding": false,
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontSize": 16,
+                                "letterSpacing": 0.2,
+                                "width": "100%",
+                              },
+                              undefined,
+                            ],
+                          ],
+                        ]
+                      }
+                      type="ACTION"
+                    >
+                      0x0000…000000
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  rightColumn={true}
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-end",
+                        "flexDirection": "column",
+                        "justifyContent": "center",
+                        "marginLeft": 10,
+                        "marginTop": 0,
+                        "minHeight": 54,
+                      },
+                      Object {
+                        "maxWidth": "50%",
+                      },
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  <View
+                    style={
+                      Array [
+                        undefined,
+                        Object {
+                          "flexWrap": "wrap",
+                        },
+                      ]
+                    }
+                  >
+                    <View
+                      horizontal={true}
+                      style={
+                        Array [
+                          Object {
+                            "flexDirection": "row",
+                            "marginBottom": 0,
+                            "marginLeft": 0,
+                            "marginRight": 0,
+                            "marginTop": 0,
+                          },
+                          Object {
+                            "flexWrap": "wrap",
+                            "justifyContent": "flex-end",
+                          },
+                        ]
+                      }
+                    >
+                      <Text
+                        color="#FD3300"
+                        ellipsizeMode="tail"
+                        numberOfLines={2}
+                        style={
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "Aktiv Grotesk App",
+                              "fontWeight": "400",
+                              "includeFontPadding": false,
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#FD3300",
+                                "fontSize": 18,
+                                "textAlign": "right",
+                              },
+                              undefined,
+                            ],
+                          ]
+                        }
+                      >
+                         0 undefined
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        style={null}
+      />
+      <View
+        style={
+          Object {
+            "height": 140,
+          }
+        }
+      />
+    </View>
+  </RCTScrollView>
+</View>
+`;

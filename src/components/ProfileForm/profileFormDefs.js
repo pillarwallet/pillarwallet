@@ -36,23 +36,23 @@ UsernameDef.getValidationErrorMessage = (username): string => {
 };
 
 const FirstNameStructDef = t.refinement(t.String, (firstName: string = ''): boolean => {
-  return !!firstName && !!firstName.length && isValidName(firstName) && firstName.length <= halfMaxLength;
+  return isValidName(firstName) && firstName.length <= halfMaxLength;
 });
 
 const LastNameStructDef = t.refinement(t.String, (lastName: string = ''): boolean => {
-  return !!lastName && !!lastName.length && isValidName(lastName) && lastName.length <= halfMaxLength;
+  return isValidName(lastName) && lastName.length <= halfMaxLength;
 });
 
 const EmailStructDef = t.refinement(t.String, (email: string = ''): boolean => {
-  return !!email && !!email.length && isValidEmail(email) && email.length <= maxLength;
+  return isValidEmail(email) && email.length <= maxLength;
 });
 
 const CityStructDef = t.refinement(t.String, (city: string = ''): boolean => {
-  return !!city && !!city.length && isValidCityName(city) && city.length <= maxLength;
+  return isValidCityName(city) && city.length <= maxLength;
 });
 
 const PhoneStructDef = t.refinement(t.String, (phone: string = ''): boolean => {
-  return !!phone && !!phone.length && isValidUKPhone(phone);
+  return isValidUKPhone(phone);
 });
 
 const CodeStructDef = t.refinement(t.String, (code: string = ''): boolean => {
@@ -60,56 +60,46 @@ const CodeStructDef = t.refinement(t.String, (code: string = ''): boolean => {
 });
 
 FirstNameStructDef.getValidationErrorMessage = (firstName): string => {
-  if (firstName) {
-    if (!isValidName(firstName)) {
-      return 'Please enter a valid first name';
-    } else if (firstName.length > halfMaxLength) {
-      return `First name should not be longer than ${halfMaxLength} symbols`;
-    }
+  if (firstName && !isValidName(firstName)) {
+    return 'Please enter a valid first name';
+  } else if (firstName && firstName.length > halfMaxLength) {
+    return `First name should not be longer than ${halfMaxLength} symbols`;
   }
-  return 'Please specify your first name';
+  return '';
 };
 
 LastNameStructDef.getValidationErrorMessage = (lastName): string => {
-  if (lastName) {
-    if (!isValidName(lastName)) {
-      return 'Please enter a valid last name';
-    } else if (lastName.length > halfMaxLength) {
-      return `Last name should not be longer than ${halfMaxLength} symbols`;
-    }
+  if (lastName && !isValidName(lastName)) {
+    return 'Please enter a valid last name';
+  } else if (lastName && lastName.length > halfMaxLength) {
+    return `Last name should not be longer than ${halfMaxLength} symbols`;
   }
-  return 'Please specify your last name';
+  return '';
 };
 
 EmailStructDef.getValidationErrorMessage = (email): string => {
-  if (email) {
-    if (!isValidEmail(email)) {
-      return 'Please enter a valid email';
-    } else if (email.length > maxLength) {
-      return `Email should not be longer than ${maxLength} symbols`;
-    }
+  if (email && !isValidEmail(email)) {
+    return 'Please enter a valid email';
+  } else if (email && email.length > maxLength) {
+    return `Email should not be longer than ${maxLength} symbols`;
   }
-  return 'Please specify your email';
+  return '';
 };
 
 CityStructDef.getValidationErrorMessage = (city): string => {
-  if (city) {
-    if (!isValidCityName(city)) {
-      return 'Please enter a valid city';
-    } else if (city.length > maxLength) {
-      return `City should not be longer than ${maxLength} symbols`;
-    }
+  if (city && !isValidCityName(city)) {
+    return 'Please enter a valid city';
+  } else if (city && city.length > maxLength) {
+    return `City should not be longer than ${maxLength} symbols`;
   }
-  return 'Please specify your city';
+  return '';
 };
 
 PhoneStructDef.getValidationErrorMessage = (phone): string => {
-  if (phone) {
-    if (!isValidUKPhone(phone)) {
-      return 'Please enter a valid UK phone number with +44';
-    }
+  if (phone && !isValidUKPhone(phone)) {
+    return 'Please enter a valid UK phone number with +44';
   }
-  return 'Please enter your phone number';
+  return '';
 };
 
 CodeStructDef.getValidationErrorMessage = (code): string => {

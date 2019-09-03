@@ -35,14 +35,16 @@ import {
   TWORDSPHRASE,
   PRIVATEKEY,
 } from 'constants/walletConstants';
-import Button from 'components/Button';
-import { Container, ScrollWrapper, Footer } from 'components/Layout';
-import { Paragraph, BaseText } from 'components/Typography';
-import Header from 'components/Header';
+import { ScrollWrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Paragraph, BaseText, TextLink } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import IconButton from 'components/IconButton';
 import WalletTabs from 'components/Tabs/WalletTabs';
+import HTMLContentModal from 'components/Modals/HTMLContentModal';
+import { NextFooter } from 'components/Layout/NextFooter';
+import Checkbox from 'components/Checkbox';
 import { fontSizes, baseColors, UIColors, spacing } from 'utils/variables';
 
 type Props = {
@@ -61,22 +63,21 @@ type State = {
   isScanning: boolean,
   activeTab: string,
   inputEnabled: boolean,
+  visibleModal: string,
+  hasAgreedToTerms: boolean,
+  hasAgreedToPolicy: boolean,
 };
 
 const window = Dimensions.get('window');
 
+const TERMS_OF_USE_MODAL = 'TERMS_OF_USE_MODAL';
+const PRIVACY_POLICY_MODAL = 'PRIVACY_POLICY_MODAL';
+
 const InputWrapper = styled.View`
   flex-direction: row;
-  align-items: center;
-  margin-top: -20px;
-`;
-
-const FooterWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 0 20px;
+  align-items: flex-start;
   width: 100%;
+  margin-top: 20px;
 `;
 
 const ButtonWrapper = styled.View`
@@ -84,7 +85,19 @@ const ButtonWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-left: 14px;
-  margin-top: ${props => props.error ? 32 : 50}px;
+  margin-top: 6px;
+`;
+
+const CheckboxText = styled(BaseText)`
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: 20px;
+  color: ${baseColors.coolGrey};
+`;
+
+const StyledTextLink = styled(TextLink)`
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: 20px;
+  color: ${baseColors.rockBlue};
 `;
 
 class ImportWallet extends React.Component<Props, State> {
@@ -96,6 +109,9 @@ class ImportWallet extends React.Component<Props, State> {
     isScanning: false,
     activeTab: TWORDSPHRASE,
     inputEnabled: false,
+    visibleModal: '',
+    hasAgreedToTerms: false,
+    hasAgreedToPolicy: false,
   };
 
   physicalBackAction = () => {
@@ -200,12 +216,69 @@ class ImportWallet extends React.Component<Props, State> {
     });
   };
 
+  closeModals = () => {
+    this.setState({ visibleModal: '' });
+  };
+
+  renderForm = (tabsInfo) => {
+    const { activeTab } = this.state;
+    const inputProps = {
+      onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
+      value: tabsInfo[activeTab].value,
+      autoCapitalize: 'none',
+      importantForAutofill: 'no',
+      autoComplete: 'off',
+    };
+    let additionalProps = {};
+
+    let inputWidth = window.width - 95;
+
+    if (activeTab === TWORDSPHRASE) {
+      inputWidth = window.width - (spacing.rhythm * 2) - 2;
+      additionalProps = {
+        multiline: true,
+        numberOfLines: 3,
+      };
+    }
+
+    return (
+      <React.Fragment>
+        <TextInput
+          inputProps={{ ...inputProps, ...additionalProps }}
+          inputType="secondary"
+          noBorder
+          keyboardAvoidance
+          viewWidth={inputWidth}
+          errorMessage={tabsInfo[activeTab].errorMessage}
+        />
+        {activeTab === PRIVATEKEY &&
+          <ButtonWrapper error={!!tabsInfo[activeTab].errorMessage}>
+            <IconButton
+              icon="scan"
+              color={baseColors.electricBlue}
+              fontSize={fontSizes.extraLarge}
+              onPress={this.handleQRScannerOpen}
+              iconText="SCAN"
+              style={{
+                marginLeft: 5,
+                marginBottom: 3,
+                alignItems: 'center',
+              }}
+            />
+          </ButtonWrapper>}
+      </React.Fragment>
+    );
+  };
+
   render() {
     const {
       privateKey,
       tWordsPhrase,
       isScanning,
       activeTab,
+      visibleModal,
+      hasAgreedToTerms,
+      hasAgreedToPolicy,
     } = this.state;
 
     const restoreWalletTabs = [
@@ -241,18 +314,57 @@ class ImportWallet extends React.Component<Props, State> {
         errorMessage: this.getError(IMPORT_WALLET_PRIVATE_KEY),
       },
     };
-    const inputProps = {
-      onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
-      value: tabsInfo[activeTab].value,
-      autoCapitalize: 'none',
-      multiline: activeTab === TWORDSPHRASE,
-      numberOfLines: 3,
-    };
+
+    const canGoNext = hasAgreedToTerms && hasAgreedToPolicy && !!tabsInfo[activeTab].value;
 
     return (
-      <Container color={baseColors.white}>
-        <Header onBack={this.handleBackAction} title="restore wallet" white />
-        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+      <ContainerWithHeader
+        headerProps={({
+          centerItems: [{ title: 'Restore wallet' }],
+          customOnBack: this.handleBackAction,
+        })}
+        backgroundColor={baseColors.white}
+        keyboardAvoidFooter={(
+          <NextFooter
+            onNextPress={this.handleImportSubmit}
+            nextDisabled={!canGoNext}
+            wrapperStyle={{ paddingTop: 30, paddingBottom: 30 }}
+          >
+            <Checkbox
+              onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
+              small
+              lightText
+              darkCheckbox
+              wrapperStyle={{ marginBottom: 16 }}
+            >
+              <CheckboxText>
+                {'I have read, understand, and agree to the '}
+                <StyledTextLink
+                  onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
+                >
+                  Terms of Use
+                </StyledTextLink>
+              </CheckboxText>
+            </Checkbox>
+            <Checkbox
+              onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
+              small
+              lightText
+              darkCheckbox
+            >
+              <CheckboxText>
+                {'I have read, understand, and agree to the '}
+                <StyledTextLink
+                  onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
+                >
+                  Privacy policy
+                </StyledTextLink>
+              </CheckboxText>
+            </Checkbox>
+          </NextFooter>
+        )}
+      >
+        <ScrollWrapper regularPadding disableAutomaticScroll keyboardShouldPersistTaps="always">
           <WalletTabs title="restore wallet" tabs={restoreWalletTabs} />
           <Paragraph small light>{tabsInfo[activeTab].textStart}
             <BaseText style={{ color: UIColors.defaultTextColor }}>
@@ -260,54 +372,28 @@ class ImportWallet extends React.Component<Props, State> {
             </BaseText>
             {tabsInfo[activeTab].textEnd}
           </Paragraph>
-          <InputWrapper>
-            <TextInput
-              inputProps={Platform.OS === 'ios'
-                ? inputProps
-                : {
-                ...inputProps,
-                  keyboardType: 'email-address',
-                  importantForAutofill: 'no',
-                  autoComplete: 'off',
-              }}
-              label={tabsInfo[activeTab].inputLabel}
-              errorMessage={tabsInfo[activeTab].errorMessage}
-              viewWidth={activeTab === TWORDSPHRASE ? (window.width - (spacing.rhythm * 2) - 2) : window.width - 95}
-              inputType="secondary"
-              lowerCase
-              labelBigger
-              noBorder
-              keyboardAvoidance
-            />
-            {activeTab === PRIVATEKEY &&
-              <ButtonWrapper error={!!tabsInfo[activeTab].errorMessage}>
-                <IconButton
-                  icon="scan"
-                  color={baseColors.electricBlue}
-                  fontSize={fontSizes.extraLarge}
-                  onPress={this.handleQRScannerOpen}
-                  iconText="SCAN"
-                  style={{
-                    marginLeft: 5,
-                    marginBottom: 3,
-                    alignItems: 'center',
-                  }}
-                />
-              </ButtonWrapper>
-            }
+          <InputWrapper error={!!tabsInfo[activeTab].errorMessage}>
+            {this.renderForm(tabsInfo)}
           </InputWrapper>
         </ScrollWrapper>
-        <Footer backgroundColor={UIColors.defaultBackgroundColor}>
-          <FooterWrapper>
-            <Button title="Restore wallet" onPress={this.handleImportSubmit} />
-          </FooterWrapper>
-        </Footer>
         <QRCodeScanner
           isActive={isScanning}
           onDismiss={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
-      </Container>
+
+        <HTMLContentModal
+          isVisible={visibleModal === TERMS_OF_USE_MODAL}
+          modalHide={this.closeModals}
+          htmlEndpoint="terms_of_service"
+        />
+
+        <HTMLContentModal
+          isVisible={visibleModal === PRIVACY_POLICY_MODAL}
+          modalHide={this.closeModals}
+          htmlEndpoint="privacy_policy"
+        />
+      </ContainerWithHeader>
     );
   }
 }

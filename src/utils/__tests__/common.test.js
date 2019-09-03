@@ -27,6 +27,8 @@ import {
   isValidNumber,
   formatMoney,
   uniqBy,
+  formatUnits,
+  formatFiat,
 } from '../common';
 
 describe('Common utils', () => {
@@ -116,6 +118,10 @@ describe('Common utils', () => {
       const expectedValue = '12.03';
       expect(formatMoney('12.0300')).toBe(expectedValue);
     });
+    it('should add trailing zeros to number 12.3', () => {
+      const expectedValue = '12.30';
+      expect(formatMoney('12.3', 2, 3, ',', '.', false)).toBe(expectedValue);
+    });
     it('should strip trailing zeros and a dot from number 12.00', () => {
       const expectedValue = '12';
       expect(formatMoney('12.00')).toBe(expectedValue);
@@ -127,6 +133,64 @@ describe('Common utils', () => {
       const expected = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }];
       const input = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }, { id: 2, name: 'Snow' }];
       expect(uniqBy(input, 'id')).toEqual(expected);
+    });
+  });
+
+  describe('formatUnits', () => {
+    it('should format 0 correctly', () => {
+      const result = formatUnits('0', 18);
+      expect(result).toEqual('0.0');
+    });
+    it('should format 40000000000 correctly', () => {
+      const result = formatUnits('40000000000', 18);
+      expect(result).toEqual('0.00000004');
+    });
+    it('should format error input 0.0001 correctly', () => {
+      const result = formatUnits('0.0001', 18);
+      expect(result).toEqual('0.0');
+    });
+    it('should format 0xc420d9d8e4003a8000 correctly', () => {
+      const result = formatUnits('0xc420d9d8e4003a8000', 18);
+      expect(result).toEqual('3617.929');
+    });
+    it('should format error input undefined correctly', () => {
+      const result = formatUnits(undefined, 18);
+      expect(result).toEqual('0.0');
+    });
+    it('should format error input "" correctly', () => {
+      const result = formatUnits('', 18);
+      expect(result).toEqual('0.0');
+    });
+    it('should format 40000000 correctly with 0 decimals', () => {
+      const result = formatUnits('40000000', 0);
+      expect(result).toEqual('40000000.0');
+    });
+  });
+
+  describe('formatFiat', () => {
+    it('should add currency symbol to value string based on currency provided', () => {
+      const expectedValue = '€ 14.30';
+      expect(formatFiat('14.3', 'EUR')).toBe(expectedValue);
+    });
+    it('should add default (£) currency symbol to value string if no currency is provided', () => {
+      const expectedValue = '£ 14.30';
+      expect(formatFiat('14.3')).toBe(expectedValue);
+    });
+    it('should round value and show two decimals only', () => {
+      const expectedValue = '£ 14.34';
+      expect(formatFiat('14.336')).toBe(expectedValue);
+    });
+    it('should add trailing zeros to values missing second decimal', () => {
+      const expectedValue = '£ 14.30';
+      expect(formatFiat('14.3')).toBe(expectedValue);
+    });
+    it('should add trailing zeros to values missing decimals', () => {
+      const expectedValue = '£ 14.00';
+      expect(formatFiat('14')).toBe(expectedValue);
+    });
+    it('should show just 0 (without decimals) if value is less than 0', () => {
+      const expectedValue = '£ 0';
+      expect(formatFiat('0.00')).toBe(expectedValue);
     });
   });
 });

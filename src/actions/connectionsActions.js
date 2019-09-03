@@ -23,15 +23,20 @@ import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import type { ConnectionIdentityKey } from 'models/Connections';
 import { uniqBy } from 'utils/common';
+import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 import { saveDbAction } from './dbActions';
 
 export const updateConnectionsAction = (theWalletId?: ?string = null) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId = theWalletId } },
       connectionIdentityKeys: { data: connectionIdentityKeys },
       contacts: { data: allContacts },
       invitations: { data: allInvitations },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
 
     if (!walletId) {
@@ -137,6 +142,10 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
         { connectionIdentityKeys: updatedConnectionIdentityKeys },
         true),
     );
+
+    if (smartWalletFeatureEnabled) {
+      dispatch(syncContactsSmartAddressesAction());
+    }
   };
 };
 

@@ -19,27 +19,33 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { Keyboard, Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, Footer, Wrapper } from 'components/Layout';
-import { BoldText, Paragraph } from 'components/Typography';
-import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
-import Header from 'components/Header';
+import debounce from 'lodash.debounce';
+
+import { Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { BaseText, BoldText, Paragraph, TextLink } from 'components/Typography';
+import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
+import { InputTemplate, Form } from 'components/ProfileForm';
+import { Username, MAX_USERNAME_LENGTH, MIN_USERNAME_LENGTH } from 'components/ProfileForm/profileFormDefs';
+import Checkbox from 'components/Checkbox';
+import { NextFooter } from 'components/Layout/NextFooter';
+import HTMLContentModal from 'components/Modals/HTMLContentModal';
+
+import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
-import { baseColors, fontSizes, fontWeights, UIColors } from 'utils/variables';
-import { InputTemplate, Form } from 'components/ProfileForm';
-import { Username, MAX_USERNAME_LENGTH } from 'components/ProfileForm/profileFormDefs';
 
-const IntroParagraph = styled(Paragraph)`
-  margin: 10px 0 50px;
+const LoginForm = styled(Form)`
+  margin-top: 20px;
+  width: 100%;
 `;
-
-const LoginForm = styled(Form)``;
 
 const UsernameWrapper = styled(Wrapper)`
   margin: 36px 0 20px;
@@ -61,7 +67,24 @@ const Text = styled(BoldText)`
 
 const ContentWrapper = styled.View`
   flex: 1;
-  background-color: ${UIColors.defaultBackgroundColor};
+`;
+
+const StyledWrapper = styled.View`
+  flex-grow: 1;
+  padding: ${spacing.large}px;
+  padding-top: 15%;
+`;
+
+const CheckboxText = styled(BaseText)`
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: 20px;
+  color: ${baseColors.coolGrey};
+`;
+
+const StyledTextLink = styled(TextLink)`
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: 20px;
+  color: ${baseColors.rockBlue};
 `;
 
 const formStructure = t.struct({
@@ -84,6 +107,9 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
           disabled: inputDisabled,
           autoFocus: true,
         },
+        statusIcon: null,
+        statusIconColor: null,
+        inputType: 'bigText',
       },
     },
   },
@@ -98,6 +124,7 @@ type Props = {
   apiUser: Object,
   retry?: boolean,
   registerOnBackend: Function,
+  importedWallet: ?Object,
 };
 
 type State = {
@@ -105,7 +132,14 @@ type State = {
     username: ?string,
   },
   formOptions: Object,
+  hasAgreedToTerms: boolean,
+  hasAgreedToPolicy: boolean,
+  isPendingCheck: boolean,
+  visibleModal: string,
 };
+
+const TERMS_OF_USE_MODAL = 'TERMS_OF_USE_MODAL';
+const PRIVACY_POLICY_MODAL = 'PRIVACY_POLICY_MODAL';
 
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
@@ -118,8 +152,22 @@ class NewProfile extends React.Component<Props, State> {
     this.state = {
       value,
       formOptions: getDefaultFormOptions(inputDisabled),
+      hasAgreedToTerms: false,
+      hasAgreedToPolicy: false,
+      isPendingCheck: false,
+      visibleModal: '',
     };
+    this.validateUsername = debounce(this.validateUsername, 800);
   }
+
+  validateUsername = (username, hasError) => {
+    const { validateUserDetails } = this.props;
+
+    if (!hasError && username.length >= MIN_USERNAME_LENGTH) {
+      validateUserDetails({ username });
+    }
+    this.setState({ isPendingCheck: false });
+  };
 
   handleChange = (value: Object) => {
     // Because the idea is to display the inputError label on proper circumstances
@@ -128,30 +176,43 @@ class NewProfile extends React.Component<Props, State> {
     const validateUsername = t.validate(value, formStructure);
     const isValidUsername = validateUsername.isValid();
     const { message: errorMessage = '' } = validateUsername.firstError() || {};
+    const hasError = !isValidUsername && value.username;
 
     const options = t.update(this.state.formOptions, {
       fields: {
         username: {
-          hasError: { $set: !isValidUsername && value.username },
+          hasError: { $set: hasError },
           error: { $set: errorMessage },
+          config: {
+            statusIcon: { $set: null },
+            statusIconColor: { $set: null },
+          },
         },
       },
     });
-    this.setState({ formOptions: options, value });
+    this.setState({ formOptions: options, value, isPendingCheck: true });
+    this.validateUsername(value.username, hasError);
   };
 
   handleSubmit = () => {
     Keyboard.dismiss();
-    const { validateUserDetails, apiUser } = this.props;
+    const { apiUser } = this.props;
 
     if (apiUser && apiUser.id) {
       this.goToNextScreen();
-      return;
+    } else {
+      this.proceedWithSignup();
     }
+  };
 
+  proceedWithSignup = async () => {
+    const { validateUserDetails, walletState } = this.props;
     const value = this._form.getValue();
     if (!value) return;
-    validateUserDetails({ username: value.username });
+    await validateUserDetails({ username: value.username });
+    if (walletState === USERNAME_OK) {
+      this.goToNextScreen();
+    }
   };
 
   componentDidUpdate(prevProps: Props) {
@@ -168,6 +229,8 @@ class NewProfile extends React.Component<Props, State> {
             error: { $set: errorMessage },
             config: {
               isLoading: { $set: false },
+              statusIcon: { $set: 'close' },
+              statusIconColor: { $set: baseColors.fireEngineRed },
             },
           },
         },
@@ -181,6 +244,7 @@ class NewProfile extends React.Component<Props, State> {
           username: {
             config: {
               isLoading: { $set: true },
+              statusIcon: { $set: null },
             },
           },
         },
@@ -194,12 +258,13 @@ class NewProfile extends React.Component<Props, State> {
           username: {
             config: {
               isLoading: { $set: false },
+              statusIcon: { $set: 'check' },
+              statusIconColor: { $set: baseColors.freshEucalyptus },
             },
           },
         },
       });
       this.setState({ formOptions: options }); // eslint-disable-line
-      this.goToNextScreen();
     }
   }
 
@@ -208,63 +273,31 @@ class NewProfile extends React.Component<Props, State> {
       navigation,
       retry,
       registerOnBackend,
-      apiUser,
     } = this.props;
     Keyboard.dismiss();
     if (retry) {
       registerOnBackend();
       return;
     }
-    const navigationParams = {};
-    if (apiUser && apiUser.id) navigationParams.returningUser = true;
-    navigation.navigate(SET_WALLET_PIN_CODE, navigationParams);
+    if (Platform.OS === 'android') {
+      navigation.navigate(PERMISSIONS);
+    } else {
+      navigation.navigate(SET_WALLET_PIN_CODE);
+    }
   }
 
   renderChooseUsernameScreen() {
     const { value, formOptions } = this.state;
-    const {
-      walletState,
-      session,
-      retry,
-    } = this.props;
-    const {
-      fields: { username: { hasError: usernameHasErrors = false } },
-    } = formOptions;
-
-    const isUsernameValid = value && value.username && !usernameHasErrors;
-    const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
-    const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
     return (
-      <React.Fragment>
-        <Wrapper>
-          <Header
-            title="let's get started"
-            onBack={retry ? undefined : () => this.props.navigation.goBack()}
-            white
-          />
-          <Wrapper regularPadding>
-            <IntroParagraph light small>
-              Choose your unique username now. It cannot be changed in future.
-            </IntroParagraph>
-            <LoginForm
-              innerRef={node => { this._form = node; }}
-              type={formStructure}
-              options={formOptions}
-              value={value}
-              onChange={this.handleChange}
-            />
-          </Wrapper>
-        </Wrapper>
-        <Footer backgroundColor={UIColors.defaultBackgroundColor}>
-          {!!isUsernameValid &&
-          <Button
-            onPress={this.handleSubmit}
-            disabled={shouldNextButtonBeDisabled}
-            title="Next"
-          />
-          }
-        </Footer>
-      </React.Fragment>
+      <StyledWrapper>
+        <LoginForm
+          innerRef={node => { this._form = node; }}
+          type={formStructure}
+          options={formOptions}
+          value={value}
+          onChange={this.handleChange}
+        />
+      </StyledWrapper>
     );
   }
 
@@ -291,26 +324,127 @@ class NewProfile extends React.Component<Props, State> {
     );
   }
 
+  closeModals = () => {
+    this.setState({ visibleModal: '' });
+  };
+
+
   render() {
-    const { apiUser } = this.props;
+    const {
+      apiUser,
+      retry,
+      walletState,
+      session,
+      importedWallet,
+    } = this.props;
+    const {
+      hasAgreedToTerms,
+      hasAgreedToPolicy,
+      value,
+      formOptions,
+      isPendingCheck,
+      visibleModal,
+    } = this.state;
+    const {
+      fields: { username: { hasError: usernameHasErrors = false } },
+    } = formOptions;
+
+    const isUsernameValid = value && value.username && !usernameHasErrors;
+    const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
+    const canGoNext = !!hasAgreedToTerms && !!hasAgreedToPolicy && !!isUsernameValid && !isCheckingUsernameAvailability
+      && !isPendingCheck && session.isOnline;
+
+    const headerProps = !apiUser.walletId
+      ? {
+        centerItems: [
+          {
+            title: 'Choose username',
+          },
+        ],
+      }
+      : {
+        default: true,
+        floating: true,
+        transparent: true,
+      };
 
     return (
-      <Container color={!apiUser.walletId ? baseColors.white : UIColors.defaultBackgroundColor}>
+      <ContainerWithHeader
+        noBack={!!retry}
+        headerProps={headerProps}
+        backgroundColor={baseColors.white}
+        keyboardAvoidFooter={!apiUser.walletId && (
+          <NextFooter
+            onNextPress={this.handleSubmit}
+            nextDisabled={!canGoNext}
+            wrapperStyle={{ paddingBottom: 15, paddingTop: 15 }}
+          >
+            {!importedWallet &&
+            <React.Fragment>
+              <Checkbox
+                onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
+                small
+                lightText
+                darkCheckbox
+                wrapperStyle={{ marginBottom: 16 }}
+              >
+                <CheckboxText>
+                  {'I have read, understand, and agree to the '}
+                  <StyledTextLink
+                    onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
+                  >
+                    Terms of Use
+                  </StyledTextLink>
+                </CheckboxText>
+              </Checkbox>
+              <Checkbox
+                onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
+                small
+                lightText
+                darkCheckbox
+              >
+                <CheckboxText>
+                  {'I have read, understand, and agree to the '}
+                  <StyledTextLink
+                    onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
+                  >
+                    Privacy policy
+                  </StyledTextLink>
+                </CheckboxText>
+              </Checkbox>
+            </React.Fragment>}
+          </NextFooter>
+        )}
+      >
         <ContentWrapper>
           {!apiUser.walletId && this.renderChooseUsernameScreen()}
           {apiUser.walletId && this.renderWelcomeBackScreen()}
         </ContentWrapper>
-      </Container>
+
+        <HTMLContentModal
+          isVisible={visibleModal === TERMS_OF_USE_MODAL}
+          modalHide={this.closeModals}
+          htmlEndpoint="terms_of_service"
+        />
+
+        <HTMLContentModal
+          isVisible={visibleModal === PRIVACY_POLICY_MODAL}
+          modalHide={this.closeModals}
+          htmlEndpoint="privacy_policy"
+        />
+
+      </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
-  wallet: { walletState, onboarding: { apiUser } },
+  wallet: { walletState, onboarding: { apiUser, importedWallet } },
   session: { data: session },
 }) => ({
   walletState,
   apiUser,
+  importedWallet,
   session,
 });
 

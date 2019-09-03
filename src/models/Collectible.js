@@ -23,8 +23,8 @@ export type Collectible = {
   category: string,
   name: string,
   description: string,
-  icon?: string,
-  image?: string,
+  icon: ?string,
+  image: ?string,
   contractAddress: string,
   assetContract: string,
   tokenType: string,
@@ -34,6 +34,7 @@ export type Collectibles = Collectible[];
 
 export type CollectibleTransfer = {
   key: string,
+  gasLimit?: number,
 };
 
 export type CollectiblesStore = {

@@ -19,8 +19,10 @@
 */
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import type { Balances, Rates } from 'models/Asset';
+import type { Assets, Balances, Rates } from 'models/Asset';
+import get from 'lodash.get';
 import { ETH, BTC } from 'constants/assetsConstants';
+import { formatAmount, isCaseInsensitiveMatch } from 'utils/common';
 
 export function transformAssetsToObject(assetsArray: Object[] = []): Object {
   return assetsArray.reduce((memo, asset) => {
@@ -30,7 +32,8 @@ export function transformAssetsToObject(assetsArray: Object[] = []): Object {
 }
 
 export function getBalance(balances: Balances = {}, asset: string = ''): number {
-  return balances[asset] ? Number(balances[asset].balance) : 0;
+  const number = balances[asset] ? new BigNumber(balances[asset].balance) : 0;
+  return +formatAmount(number.toString());
 }
 
 const baseRate = (rates: Rates, asset: string, fiatCurrency: string): number => {
@@ -87,4 +90,40 @@ export function checkIfEnoughForFee(balances: Balances, txFeeInWei: BigNumber): 
   const ethBalance = getBalance(balances, ETH);
   const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
   return balanceInWei.gte(txFeeInWei);
+}
+
+export function calculatePortfolioBalance(assets: Assets, rates: Rates, balances: Object) {
+  // CLEANUP REQUIRED
+  return Object
+    .keys(assets)
+    .map(key => assets[key])
+    .map(({ symbol }) => {
+      const assetRates = rates[symbol] || {};
+      const balance = getBalance(balances, symbol);
+      const assetFiatBalance = Object
+        .keys(assetRates)
+        .map(key => ({
+          currency: key,
+          total: assetRates[key] * (balance || 0),
+        }));
+      return assetFiatBalance;
+    })
+    .reduce((memo, item) => {
+      return memo.concat(item);
+    }, [])
+    .reduce((memo, item) => {
+      memo[item.currency] = (memo[item.currency] || 0) + item.total;
+      return memo;
+    }, { GBP: 0 });
+}
+
+export function getPPNTokenAddress(token: string, assets: Assets): ?string {
+  if (token === ETH) return null;
+  return get(assets[token], 'address', '');
+}
+
+export function addressesEqual(address1: ?string, address2: ?string) {
+  if (address1 === address2) return true;
+  if (!address1 || !address2) return false;
+  return isCaseInsensitiveMatch(address1, address2);
 }

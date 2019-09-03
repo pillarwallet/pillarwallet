@@ -25,6 +25,7 @@ export type Asset = {
   iconUrl: string,
   iconMonoUrl: string,
   wallpaperUrl: string,
+  patternUrl?: string,
   decimals: number,
   amount?: number,
 };
@@ -33,11 +34,13 @@ export type Assets = {
   [string]: Asset,
 };
 
+export type Balance = {
+  balance: string,
+  symbol: string,
+};
+
 export type Balances = {
-  [ticker: string]: {
-    balance: string,
-    symbol: string,
-  },
+  [ticker: string]: Balance,
 };
 
 export type BalancesStore = {
@@ -53,4 +56,5 @@ export type Rates = {
 export type AssetTransfer = {
   name: string,
   amount: number,
+  gasLimit?: number,
 };

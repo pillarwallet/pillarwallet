@@ -1,11 +1,11 @@
 // @flow
 import { createSelector } from 'reselect';
-import { ETH } from 'constants/assetsConstants';
 import { getBalance } from 'utils/assets';
 import type { Balances } from 'models/Asset';
+import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
 import { activeAccountIdSelector, paymentNetworkBalancesSelector } from './selectors';
 
-export const paymentNetworkAccountBalancesSelector: (state: Object) => Balances = createSelector(
+export const paymentNetworkAccountBalancesSelector: ((state: Object) => Balances) = createSelector(
   paymentNetworkBalancesSelector,
   activeAccountIdSelector,
   (balances, activeAccountId) => {
@@ -14,12 +14,10 @@ export const paymentNetworkAccountBalancesSelector: (state: Object) => Balances 
   },
 );
 
-export const availableStakeSelector: (state: Object) => number = createSelector(
-  paymentNetworkAccountBalancesSelector,
-  (balances) => getBalance(balances, ETH),
-);
+export const availableStakeSelector =
+  ({ paymentNetwork }: {paymentNetwork: PaymentNetworkReducerState}) => Number(paymentNetwork.availableStake);
 
-export const paymentNetworkNonZeroBalancesSelector: (state: Object) => Balances = createSelector(
+export const paymentNetworkNonZeroBalancesSelector: ((state: Object) => Balances) = createSelector(
   paymentNetworkAccountBalancesSelector,
   (balances) => {
     return Object.keys(balances).reduce((nonZeroBalances, ticker) => {

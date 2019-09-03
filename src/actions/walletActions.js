@@ -32,18 +32,16 @@ import {
   RESET_WALLET_IMPORT,
   BACKUP_WALLET,
   REMOVE_PRIVATE_KEY,
+  UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
-import {
-  LEGAL_TERMS,
-  PIN_CODE_CONFIRMATION,
-  NEW_PROFILE,
-} from 'constants/navigationConstants';
+import { PIN_CODE_CONFIRMATION, NEW_PROFILE } from 'constants/navigationConstants';
 import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
 import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
+import { registerWalletAction } from './onboardingActions';
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
@@ -172,7 +170,7 @@ export const confirmPinForNewWalletAction = (pin: string) => {
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
-    navigate(NavigationActions.navigate({ routeName: LEGAL_TERMS }));
+    dispatch(registerWalletAction());
   };
 };
 
@@ -193,5 +191,26 @@ export const backupWalletAction = () => {
 export const removePrivateKeyFromMemoryAction = () => {
   return async (dispatch: Function) => {
     dispatch({ type: REMOVE_PRIVATE_KEY });
+  };
+};
+
+export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
+  return async (dispatch: Function, getState: () => Object) => {
+    const { wallet: { pinAttemptsCount } } = getState();
+    const newCount = isInvalidPin ? pinAttemptsCount + 1 : 0;
+    const currentTimeStamp = isInvalidPin ? Date.now() : 0;
+    dispatch({
+      type: UPDATE_PIN_ATTEMPTS,
+      payload: {
+        pinAttemptsCount: newCount,
+        lastPinAttempt: currentTimeStamp,
+      },
+    });
+    dispatch(saveDbAction('wallet', {
+      wallet: {
+        pinAttemptsCount: newCount,
+        lastPinAttempt: currentTimeStamp,
+      },
+    }));
   };
 };

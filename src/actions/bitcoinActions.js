@@ -56,7 +56,7 @@ const loadDb = async (): Promise<BitcoinStore> => {
 };
 
 export const initializeBitcoinWalletAction = (wallet: Wallet) => {
-  return async (dispatch: (action: BitcoinReducerAction) => void) => {
+  return async (dispatch: Function) => {
     const root = await rootFromMnemonic(wallet.mnemonic);
     const keyPair = root.derivePath(wallet.path);
 

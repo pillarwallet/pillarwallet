@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { View, TouchableOpacity } from 'react-native';
@@ -28,29 +29,22 @@ import { Paragraph, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Animation from 'components/Animation';
+import Toast from 'components/Toast';
 
 // utils
 import { baseColors, fontSizes } from 'utils/variables';
 
 // actions
-import { sendTxNoteByContactAction } from 'actions/txNoteActions';
 import { setDismissTransactionAction } from 'actions/exchangeActions';
 
 // constants
 import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
-import { connect } from 'react-redux';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  contacts: Object,
-  sendTxNoteByContact: Function,
   executingExchangeTransaction: boolean,
   setDismissExchangeTransaction: Function,
-}
-
-type State = {
-  noteSent: boolean,
 }
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
@@ -75,34 +69,7 @@ const CancelText = styled(BoldText)`
   font-size: ${fontSizes.small};
 `;
 
-class SendTokenTransaction extends React.Component<Props, State> {
-  state = {
-    noteSent: false,
-  };
-
-  sendNote(cb, note, txHash, toUser) {
-    this.setState({
-      noteSent: true,
-    }, async () => {
-      await cb(toUser.username, { text: note, txHash });
-    });
-  }
-
-  componentDidUpdate() {
-    const {
-      navigation, sendTxNoteByContact, contacts,
-    } = this.props;
-    const {
-      isSuccess, note, to, txHash,
-    } = navigation.state.params;
-    if (isSuccess && note && note !== '') {
-      const toUser = contacts.find(x => { return x.ethAddress === to; });
-      if (toUser && !this.state.noteSent) {
-        this.sendNote(sendTxNoteByContact, note, txHash, toUser);
-      }
-    }
-  }
-
+class SendTokenTransaction extends React.Component<Props> {
   handleDismissal = () => {
     const {
       navigation,
@@ -113,13 +80,21 @@ class SendTokenTransaction extends React.Component<Props, State> {
       setDismissExchangeTransaction();
     }
     navigation.dismiss();
+
+    const { isSuccess, transactionPayload } = navigation.state.params;
+    if (transactionPayload.usePPN && isSuccess) {
+      Toast.show({
+        message: 'Transaction was successfully sent!',
+        type: 'success',
+        title: 'Success',
+        autoClose: true,
+      });
+    }
   };
 
   handleNavigationBack = () => {
     const { navigation } = this.props;
-    const {
-      transactionPayload,
-    } = navigation.state.params;
+    const { transactionPayload } = navigation.state.params;
 
     if (transactionPayload.tokenType === COLLECTIBLES) {
       navigation.navigate(SEND_COLLECTIBLE_CONFIRM, { transactionPayload });
@@ -141,8 +116,10 @@ class SendTokenTransaction extends React.Component<Props, State> {
       },
       noRetry,
     } = navigation.state.params;
+
     const animationSource = isSuccess ? animationSuccess : animationFailure;
     const transactionStatusText = isSuccess ? transactionSuccessText : getTransactionErrorMessage(error);
+
     let successText;
     const isAllowanceTransaction = Object.keys(allowance).length;
     if (transactionTokenType === COLLECTIBLES) {
@@ -153,6 +130,7 @@ class SendTokenTransaction extends React.Component<Props, State> {
         : 'Tokens are on their way';
     }
     const transactionStatusTitle = isSuccess ? successText : 'Transaction failed';
+
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>
@@ -182,17 +160,12 @@ class SendTokenTransaction extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
   exchange: { data: { executingTransaction: executingExchangeTransaction } },
 }) => ({
-  contacts,
   executingExchangeTransaction,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  sendTxNoteByContact: (username: string, message: Object) => {
-    dispatch(sendTxNoteByContactAction(username, message));
-  },
   setDismissExchangeTransaction: () => dispatch(setDismissTransactionAction()),
 });
 

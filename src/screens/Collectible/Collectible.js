@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform } from 'react-native';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -31,11 +31,10 @@ import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants'
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 import ActivityFeed from 'components/ActivityFeed';
-import Header from 'components/Header';
-import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
@@ -44,6 +43,8 @@ import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 
 import { accountHistorySelector } from 'selectors/history';
 
 import type { Collectible } from 'models/Collectible';
+import type { ContactSmartAddressData } from 'models/Contacts';
+import type { Accounts } from 'models/Account';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -51,6 +52,8 @@ type Props = {
   openSeaTxHistory: Object[],
   contacts: Object[],
   history: Object[],
+  contactsSmartAddresses: ContactSmartAddressData[],
+  accounts: Accounts,
 };
 
 const ActionButtonsWrapper = styled.View`
@@ -115,6 +118,8 @@ class CollectibleScreen extends React.Component<Props> {
       openSeaTxHistory,
       contacts,
       history,
+      contactsSmartAddresses,
+      accounts,
     } = this.props;
     const { assetData } = navigation.state.params;
     const {
@@ -131,16 +136,18 @@ class CollectibleScreen extends React.Component<Props> {
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, contacts, COLLECTIBLE_TRANSACTION);
+    const mappedCTransactions = mapTransactionsHistory(
+      collectiblesTransactions,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      COLLECTIBLE_TRANSACTION,
+    );
     const relatedCollectibleTransactions = mappedCTransactions.filter(({ assetData: thisAssetData }) =>
       !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id);
 
     return (
-      <Container color={baseColors.white} inset={{ bottom: 0 }}>
-        <Header
-          onBack={() => { navigation.goBack(null); }}
-          title={name}
-        />
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }}>
         <ScrollWrapper>
           <CollectibleImage
             key={id.toString()}
@@ -163,7 +170,7 @@ class CollectibleScreen extends React.Component<Props> {
               />
             </CircleButtonsWrapper>
           </ActionButtonsWrapper>
-
+          {!!relatedCollectibleTransactions.length &&
           <ActivityFeed
             navigation={navigation}
             feedData={relatedCollectibleTransactions}
@@ -171,25 +178,20 @@ class CollectibleScreen extends React.Component<Props> {
             contentContainerStyle={{ paddingTop: 10 }}
             invertAddon
             feedTitle="transactions."
-            esComponent={(
-              <View style={{ width: '100%', alignItems: 'center' }}>
-                <EmptyStateParagraph
-                  title="Make your first step"
-                  bodyText="Your transactions will appear here."
-                />
-              </View>
-            )}
-          />
+          />}
         </ScrollWrapper>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
+  accounts: { data: accounts },
 }) => ({
   contacts,
+  contactsSmartAddresses,
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({

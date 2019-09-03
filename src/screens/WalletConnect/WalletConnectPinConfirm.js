@@ -168,7 +168,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     const { isChecking } = this.state;
     return (
       <Container>
-        <Header onBack={this.handleBack} title="enter pincode" />
+        <Header onBack={this.handleBack} title="Enter pincode" />
         <CheckPin onPinValid={this.handleCallRequest} isChecking={isChecking} />
       </Container>
     );

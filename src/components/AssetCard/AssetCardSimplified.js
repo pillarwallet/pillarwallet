@@ -37,10 +37,7 @@ type Props = {
   wallpaper: string,
   children?: React.Node,
   disclaimer?: string,
-  balanceInFiat: {
-    amount: string | number,
-    currency: string,
-  },
+  balanceInFiat: string,
   icon: string,
   assetData: Object,
   paymentNetworkBalance?: number,
@@ -132,7 +129,7 @@ class AssetCardSimplified extends React.Component<Props, {}> {
     const cardHeight = paymentNetworkBalance ? 94 : 74;
     const balance = {
       value: amount,
-      valueInFiat: balanceInFiat.amount,
+      valueInFiat: balanceInFiat,
     };
 
     const balanceOnNetwork = paymentNetworkBalance ? {
@@ -175,7 +172,6 @@ class AssetCardSimplified extends React.Component<Props, {}> {
                 </NameWrapper>
                 <AssetInfo
                   token={token}
-                  currency={balanceInFiat.currency}
                   balance={balance}
                   balanceOnNetwork={balanceOnNetwork}
                   disclaimer={disclaimer}

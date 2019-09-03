@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Linking } from 'react-native';
+import { SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
 import ExchangeService from 'services/exchange';
 import Toast from 'components/Toast';
 import {
@@ -37,8 +38,10 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 import { calculateGasEstimate } from 'services/assets';
 import { getActiveAccountAddress } from 'utils/accounts';
+import { isFiatCurrency } from 'utils/exchange';
 
 import type { Offer, OfferOrder } from 'models/Offer';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
 
@@ -70,7 +73,7 @@ export const takeOfferAction = (
   provider: string,
   callback: Function,
 ) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     connectExchangeService(getState());
     const offerRequest = {
       quantity: parseFloat(fromAmount),
@@ -123,7 +126,7 @@ export const takeOfferAction = (
 };
 
 export const resetOffersAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     // reset websocket listener
     exchangeService.resetOnOffers();
     dispatch({ type: RESET_OFFERS });
@@ -131,7 +134,7 @@ export const resetOffersAction = () => {
 };
 
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId: userWalletId } },
     } = getState();
@@ -153,31 +156,37 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     // we're requesting although it will start delivering when connection is established
     const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode, fromAmount);
 
-    const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
+    const isTest = SENDWYRE_ENVIRONMENT === 'test';
 
-    api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-      if (!offer.error) {
-        dispatch({
-          type: ADD_OFFER,
-          payload: {
-            ...offer,
-            offerRestricted: (!isAllowed && `Unavailable in ${alpha2}`) || null,
-          },
-        });
+    if (isFiatCurrency(fromAssetCode)) {
+      const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
+      if (isAllowed || isTest) {
+        api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+          if (!offer.error) {
+            dispatch({
+              type: ADD_OFFER,
+              payload: {
+                ...offer,
+                offerRestricted: (!isAllowed && `Unavailable in ${alpha2}`) || null,
+              },
+            });
+          }
+        }).catch(() => null);
       }
-    }).catch(() => null);
-
-    api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-      if (!offer.error) {
-        dispatch({
-          type: ADD_OFFER,
-          payload: {
-            ...offer,
-            offerRestricted: (alpha2 !== 'US' && `Unavailable in ${alpha2}`) || null,
-          },
-        });
+      if (alpha2 === 'US' || isTest) {
+        api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
+          if (!offer.error) {
+            dispatch({
+              type: ADD_OFFER,
+              payload: {
+                ...offer,
+                offerRestricted: (alpha2 !== 'US' && `Unavailable in ${alpha2}`) || null,
+              },
+            });
+          }
+        }).catch(() => null);
       }
-    }).catch(() => null);
+    }
 
     if (error) {
       const message = error.message || 'Unable to connect';
@@ -202,7 +211,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 };
 
 export const authorizeWithShapeshiftAction = () => {
-  return (dispatch: Function, getState: Function) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     connectExchangeService(getState());
     const shapeshiftAuthUrl = exchangeService.getShapeshiftAuthUrl();
     return Linking.canOpenURL(shapeshiftAuthUrl)
@@ -220,7 +229,7 @@ export const authorizeWithShapeshiftAction = () => {
 };
 
 export const addConnectedExchangeProviderAction = (providerId: string, extra?: any) => {
-  return (dispatch: Function, getState: Function) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const { exchange: { data: { connectedProviders } } } = getState();
     const provider = {
       id: providerId,
@@ -247,7 +256,7 @@ export const addConnectedExchangeProviderAction = (providerId: string, extra?: a
 };
 
 export const disconnectExchangeProviderAction = (id: string) => {
-  return (dispatch: Function, getState: Function) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const { exchange: { data: { connectedProviders } } } = getState();
     const updatedProviders = connectedProviders.filter(({ id: providerId }) => providerId !== id);
     dispatch({
@@ -266,7 +275,7 @@ export const disconnectExchangeProviderAction = (id: string) => {
 };
 
 export const requestShapeshiftAccessTokenAction = (tokenHash: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     connectExchangeService(getState());
     const { token: shapeshiftAccessToken, error } = await exchangeService.getShapeshiftAccessToken(tokenHash) || {};
     if (error || !shapeshiftAccessToken) {
@@ -294,7 +303,7 @@ export const setTokenAllowanceAction = (
   provider: string,
   callback: Function,
 ) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     connectExchangeService(getState());
     const allowanceRequest = {
       provider,
@@ -341,7 +350,7 @@ export const addExchangeAllowanceAction = (
   assetCode: string,
   transactionHash: string,
 ) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { exchange: { data: { allowances: _allowances = [] } } } = getState();
     const allowance = {
       provider,
@@ -367,7 +376,7 @@ export const addExchangeAllowanceAction = (
 };
 
 export const enableExchangeAllowanceByHashAction = (transactionHash: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { exchange: { data: { allowances: _allowances = [] } } } = getState();
     const allowance = _allowances.find(
       ({ transactionHash: _transactionHash }) => _transactionHash === transactionHash,
@@ -391,7 +400,7 @@ export const enableExchangeAllowanceByHashAction = (transactionHash: string) => 
 };
 
 export const checkEnableExchangeAllowanceTransactionsAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       history: {
         data: transactionsHistory,
@@ -404,7 +413,6 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
     } = getState();
     const accountIds = Object.keys(transactionsHistory);
     const allHistory = accountIds.reduce(
-      // $FlowFixMe
       (existing = [], accountId) => {
         const walletAssetsHistory = transactionsHistory[accountId] || [];
         return [...existing, ...walletAssetsHistory];
@@ -415,6 +423,7 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
       .filter(({ enabled }) => !enabled)
       .map(({ transactionHash, assetCode }) => {  // eslint-disable-line
         const enabledAllowance = allHistory.find(
+          // $FlowFixMe
           ({ hash, status }) => hash === transactionHash && status === TX_CONFIRMED_STATUS,
         );
         if (enabledAllowance) {
@@ -431,7 +440,7 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
 };
 
 export const markNotificationAsSeenAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({
       type: MARK_NOTIFICATION_SEEN,
     });

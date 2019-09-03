@@ -41,8 +41,11 @@ export const InputTemplate = (locals: Object) => {
       errorMessage={errorMessage}
       id={locals.label}
       inputProps={inputProps}
-      inputType="secondary"
+      inputType={config.inputType || 'secondary'}
       noBorder
+      statusIcon={config.statusIcon}
+      statusIconColor={config.statusIconColor}
+      fontSize={config.fontSize}
       {...additionalProps}
     />
   );

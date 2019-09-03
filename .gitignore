@@ -52,6 +52,7 @@ android/app/gradle/
 android/app/gradlew
 android/app/gradlew.bat
 android/*.jks
+android/rn-libs/**/*.iml
 
 # Built application files
 *.apk

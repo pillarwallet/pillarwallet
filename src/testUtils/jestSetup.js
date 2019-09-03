@@ -125,6 +125,7 @@ jest.setMock('ethers', {
     bigNumberify: x => x,
     id: utils.id,
     getAddress: utils.getAddress,
+    formatUnits: utils.formatUnits,
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
@@ -255,6 +256,7 @@ const mockSmartWalletAccount = {
 
 const mockArchanovaSdkInstance = {
   setConfig: () => mockArchanovaSdkInstance,
+  extendConfig: () => mockArchanovaSdkInstance,
 };
 
 jest.setMock('@archanova/sdk', {
@@ -263,15 +265,12 @@ jest.setMock('@archanova/sdk', {
       Created: 'Created',
       Updated: 'Updated',
     },
+    GasPriceStrategies: {
+      Avg: 'Avg',
+      Fast: 'Fast',
+    },
   },
   sdkModules: {
-    Eth: {
-      TransactionSpeeds: {
-        Slow: 'Slow',
-        Regular: 'Regular',
-        Fast: 'Fast',
-      },
-    },
     Device: {
       StorageKeys: {
         PrivateKey: 'PrivateKey',
@@ -296,4 +295,13 @@ jest.setMock('@archanova/sdk', {
       subscribe: jest.fn(),
     },
   }),
+});
+
+jest.setMock('react-native-keychain', {
+  setGenericPassword: () => {},
+  getGenericPassword: () => {},
+  resetGenericPassword: () => {},
+  ACCESS_CONTROL: {
+    BIOMETRY_ANY: 'BIOMETRY_ANY',
+  },
 });

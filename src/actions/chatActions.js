@@ -32,12 +32,16 @@ import {
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
   ADD_CHAT_DRAFT,
   CLEAR_CHAT_DRAFT,
+  RESET_UNREAD_MESSAGE,
 } from 'constants/chatConstants';
 import Storage from 'services/storage';
 import {
   getConnectionStateCheckParamsByUsername,
   getConnectionStateCheckParamsByUserId,
 } from 'utils/chat';
+import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 import { saveDbAction } from './dbActions';
 
 const chat = new ChatService();
@@ -61,7 +65,7 @@ const mergeNewChats = (newChats, existingChats) => {
 };
 
 export const getExistingChatsAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
     } = getState();
@@ -100,7 +104,7 @@ export const getExistingChatsAction = () => {
 };
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
       const params = {
@@ -148,7 +152,7 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
 };
 
 export const getChatDraftByContactAction = (contactId: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     const { drafts = {} } = await storage.get('chat');
     const [chatDraft, chatDrafts] = partition(drafts, { contactId });
     const { draftText = '' } = chatDraft[0] || {};
@@ -164,7 +168,7 @@ export const getChatDraftByContactAction = (contactId: string) => {
 };
 
 export const clearChatDraftStateAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({
       type: CLEAR_CHAT_DRAFT,
     });
@@ -172,7 +176,7 @@ export const clearChatDraftStateAction = () => {
 };
 
 export const saveDraftAction = (contactId: string, draftText: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     const chatStorage = await storage.get('chat');
     const { drafts = [] } = chatStorage || {};
 
@@ -188,7 +192,7 @@ export const getChatByContactAction = (
   avatar: string,
   loadEarlier: boolean = false,
 ) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { isDecrypting } },
     } = getState();
@@ -238,7 +242,7 @@ export const getChatByContactAction = (
     }
 
     const {
-      chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
+      chat: { data: { chats: existingChats, webSocketMessages: { received: webSocketMessagesReceived } } },
     } = getState();
 
     if (webSocketMessagesReceived !== undefined && webSocketMessagesReceived.length) {
@@ -267,29 +271,62 @@ export const getChatByContactAction = (
       .then(JSON.parse)
       .catch(() => []);
 
-    const updatedMessages = await receivedMessages.map((message, index) => ({
-      _id: `${message.serverTimestamp}_${index}`,
-      text: message.content,
-      createdAt: new Date(message.serverTimestamp),
-      status: message.status,
-      type: message.type,
-      user: {
-        _id: message.username,
-        name: message.username,
-        avatar,
-      },
-    }))
+    const updatedMessages = receivedMessages
+      .map((message, index) => ({
+        _id: `${message.serverTimestamp}_${index}`,
+        text: message.content,
+        createdAt: new Date(message.serverTimestamp),
+        status: message.status,
+        type: message.type,
+        user: {
+          _id: message.username,
+          name: message.username,
+          avatar,
+        },
+      }))
       .sort((a, b) => b.createdAt - a.createdAt);
 
     dispatch({
       type: UPDATE_MESSAGES,
       payload: { messages: updatedMessages, username },
     });
+
+    if (updatedMessages.length) {
+      const {
+        user: { name: lastMessageSenderUsername },
+        text,
+        createdAt,
+      } = updatedMessages[0];
+
+      if (lastMessageSenderUsername) {
+        dispatch({
+          type: RESET_UNREAD_MESSAGE,
+          payload: {
+            username,
+            lastMessage: {
+              content: text,
+              username: lastMessageSenderUsername,
+              device: 1,
+              serverTimestamp: createdAt,
+              savedTimestamp: 0,
+            },
+          },
+        });
+      }
+    }
+
+    // check if there are any other unread messages left
+    if (existingChats.find(
+      ({ username: messageUsername, unread }) => messageUsername !== username && !!unread,
+    )) return;
+
+    // no more unread messages left, set unread to false
+    dispatch(setUnreadChatNotificationsStatusAction(false));
   };
 };
 
 export const addContactAndSendWebSocketChatMessageAction = (tag: string, params: Object) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { username } = params;
     const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
     const addContactParams = {
@@ -313,7 +350,7 @@ export const addContactAndSendWebSocketChatMessageAction = (tag: string, params:
 };
 
 export const deleteChatAction = (username: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     try {
       await chat.client.deleteContactMessages(username, 'chat');
 
@@ -336,7 +373,7 @@ export const deleteChatAction = (username: string) => {
 };
 
 export const deleteContactAction = (username: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     try {
       await chat.client.deleteContact(username);
 
