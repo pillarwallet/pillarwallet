@@ -29,20 +29,32 @@ import {
 } from 'services/navigation';
 import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
 import {
-  HOME_TAB,
+  AUTH_FLOW,
   LOGIN,
   CONFIRM_CLAIM,
 } from 'constants/navigationConstants';
 
 type ApproveLoginQuery = {
-  loginToken: string,
+  loginToken?: string,
+};
+
+const canNavigateNow = (): boolean => {
+  const pathAndParams = getNavigationPathAndParamsState();
+
+  if (!pathAndParams) {
+    return false;
+  }
+
+  const pathParts = pathAndParams.path.split('/');
+  const currentFlow = pathParts[0];
+
+  return currentFlow !== AUTH_FLOW;
 };
 
 const beginApproveLogin = (query: ApproveLoginQuery) => {
   const { loginToken: loginAttemptToken } = query;
 
-  const pathAndParams = getNavigationPathAndParamsState();
-  if (!pathAndParams) {
+  if (!canNavigateNow()) {
     updateNavigationLastScreenState({
       lastActiveScreen: LOGIN,
       lastActiveScreenParams: { loginAttemptToken },
@@ -51,15 +63,12 @@ const beginApproveLogin = (query: ApproveLoginQuery) => {
     return;
   }
 
-  navigate(NavigationActions.navigate({
-    routeName: HOME_TAB,
-    action: NavigationActions.navigate({
-      routeName: LOGIN,
-      params: {
-        loginAttemptToken,
-      },
-    }),
-  }));
+  const navigateToAppAction = NavigationActions.navigate({
+    routeName: LOGIN,
+    params: { loginAttemptToken },
+  });
+
+  navigate(navigateToAppAction);
 };
 
 export const executeDeepLinkAction = (deepLink: string) => {
@@ -79,7 +88,7 @@ export const executeDeepLinkAction = (deepLink: string) => {
         break;
       case 'approve':
         const {
-          query = { loginToken: '' },
+          query = { },
         } = params;
 
         beginApproveLogin(query);
