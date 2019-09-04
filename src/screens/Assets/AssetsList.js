@@ -175,7 +175,7 @@ class AssetsList extends React.Component<Props> {
         label={name}
         avatarUrl={fullIconUrl}
         balance={{
-          balance: formatMoney(balance),
+          balance: formatMoney(balance, decimals),
           value: formattedBalanceInFiat,
           token: symbol,
         }}
