@@ -130,6 +130,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
+      goBackDismiss: !!transactionPayload.replaceTransaction,
       source: this.source,
     });
   };

@@ -79,6 +79,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
+      goBackDismiss: !!transactionPayload.replaceTransaction,
       source: this.source,
     });
   };
@@ -124,10 +125,16 @@ class SendTokenContacts extends React.Component<Props, State> {
           disableAutomaticScroll
         >
           {replaceTransaction &&
-            <LabeledRow>
-              <Label>New Est. Network Fee</Label>
-              <Value>{txtFeeFormatted}</Value>
-            </LabeledRow>
+            <View>
+              <LabeledRow>
+                <Label>Hash of transaction to speed up</Label>
+                <Value>{replaceTransaction}</Value>
+              </LabeledRow>
+              <LabeledRow>
+                <Label>New Est. Network Fee</Label>
+                <Value>{txtFeeFormatted}</Value>
+              </LabeledRow>
+            </View>
           }
           {!replaceTransaction &&
             <View>

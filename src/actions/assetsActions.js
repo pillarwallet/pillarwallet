@@ -285,7 +285,14 @@ export const sendAssetAction = (
     const activeAccount = getActiveAccount(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
     const activeAccountType = getActiveAccountType(accounts);
-    if (!activeAccount) return;
+    if (!activeAccount) {
+      callback({
+        isSuccess: false,
+        error: 'Failed to get wallet account',
+        noRetry: true,
+      });
+      return;
+    }
 
     if (activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
       await dispatch(ensureSmartAccountConnectedAction(wallet.privateKey));
@@ -303,7 +310,14 @@ export const sendAssetAction = (
 
     if (transaction.replaceTransaction) {
       const existingNonce = await getTransactionNonceByHash(transaction.replaceTransaction);
-      if (existingNonce === null) return;
+      if (existingNonce === null) {
+        callback({
+          isSuccess: false,
+          error: 'Cannot get nonce for transaction speed up',
+          noRetry: false,
+        });
+        return;
+      }
       // $FlowFixMe
       transaction = { ...transaction, nonce: existingNonce };
     }

@@ -37,9 +37,15 @@ export default class KeyBasedWalletProvider {
       gasPrice,
       signOnly = false,
     } = transaction;
-    const from = getAccountAddress(account);
-    const { nonce, transactionCount } = await this.calculateNonce(from, state, signOnly);
 
+    let transactionCount;
+    let { nonce } = transaction;
+    const from = getAccountAddress(account);
+    if (!nonce) {
+      ({ nonce, transactionCount } = await this.calculateNonce(from, state, signOnly));
+    } else {
+      transactionCount = await this.getTransactionCount(from);
+    }
     return transferERC721({
       from,
       to,

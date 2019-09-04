@@ -55,9 +55,11 @@ import {
 import { createAlert } from 'utils/alerts';
 import { addressesEqual } from 'utils/assets';
 import {
+  checkIfSmartWalletAccount,
   findAccountByAddress,
+  getAccountAddress,
   getAccountName,
-  getActiveAccountAddress,
+  getActiveAccount,
   getInactiveUserAccounts,
 } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
@@ -120,6 +122,7 @@ type Props = {
 
 type State = {
   gasLimit: number,
+  showSpeedUp: boolean,
 }
 
 const ContentWrapper = styled.View`
@@ -172,6 +175,7 @@ class EventDetails extends React.Component<Props, State> {
   cachedTxInfo = {};
   state = {
     gasLimit: 0,
+    showSpeedUp: false,
   };
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -200,23 +204,29 @@ class EventDetails extends React.Component<Props, State> {
     const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
     if (txInfo.status !== TX_PENDING_STATUS) return;
 
-    const activeAccountAddress = getActiveAccountAddress(accounts);
-    const {
-      symbol: assetSymbol,
-      decimals,
-      address: contractAddress,
-    } = assets.find(({ symbol }) => symbol === assetSymbol) || {};
-    const amount = formatUnits(txInfo.value, decimals);
-    calculateGasEstimate({
-      from: activeAccountAddress,
-      to: txInfo.to,
-      amount,
-      assetSymbol,
-      contractAddress,
-      decimals,
-    })
-      .then(gasLimit => this.setState({ gasLimit }))
-      .catch(() => null);
+    const activeAccount = getActiveAccount(accounts);
+    if (activeAccount && !checkIfSmartWalletAccount(activeAccount)) {
+      // TODO: add support for smart wallet transactions speed up
+      const activeAccountAddress = getAccountAddress(activeAccount);
+      if (addressesEqual(txInfo.from, activeAccountAddress)) {
+        const {
+          symbol: assetSymbol,
+          decimals,
+          address: contractAddress,
+        } = assets.find(({ symbol }) => symbol === assetSymbol) || {};
+        const amount = formatUnits(txInfo.value, decimals);
+        calculateGasEstimate({
+          from: activeAccountAddress,
+          to: txInfo.to,
+          amount,
+          assetSymbol,
+          contractAddress,
+          decimals,
+        })
+          .then(gasLimit => this.setState({ gasLimit, showSpeedUp: gasLimit !== 0 }))
+          .catch(() => null);
+      }
+    }
 
     fetchGasInfo();
     this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 500);
@@ -380,9 +390,8 @@ class EventDetails extends React.Component<Props, State> {
       assets,
       contacts,
       contactsSmartAddresses = [],
-      accounts,
     } = this.props;
-    const { gasLimit } = this.state;
+    const { gasLimit, showSpeedUp } = this.state;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
@@ -470,10 +479,6 @@ class EventDetails extends React.Component<Props, State> {
         showViewOnBlockchain = false;
       }
 
-      const showSpeedUp = isPending
-        && addressesEqual(from, getActiveAccountAddress(accounts))
-        && gasLimit !== 0;
-
       return (
         <React.Fragment>
           <EventHeader
@@ -549,6 +554,7 @@ class EventDetails extends React.Component<Props, State> {
     }
 
     if (eventType === COLLECTIBLE_TRANSACTION) {
+      // TODO: add full support for collectibles speed up
       const {
         to,
         from,
