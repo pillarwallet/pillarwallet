@@ -119,11 +119,9 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
   if (isWalletEmpty || !appSettings.wallet) {
     Sentry.captureMessage('Wallet login issue spotted', {
       extra: {
-        missing: {
-          wallet: isWalletEmpty,
-          walletTimestamp: !appSettings.wallet,
-          appSettings: !appSettings || !Object.keys(appSettings).length,
-        },
+        isWalletEmpty,
+        walletCreationTimestamp: appSettings.wallet,
+        isAppSettingsEmpty: !appSettings || !Object.keys(appSettings).length,
         walletHadBackup: !!walletBackup,
       },
     });
