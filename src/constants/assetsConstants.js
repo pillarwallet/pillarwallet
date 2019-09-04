@@ -54,3 +54,9 @@ export const SPEED_TYPES = {
   NORMAL: 'avg',
   FAST: 'max',
 };
+
+export const CURRENCY_SYMBOLS = {
+  USD: '$',
+  GBP: '£',
+  EUR: '€',
+};
