@@ -206,7 +206,7 @@ class EventDetails extends React.Component<Props, State> {
 
     const activeAccount = getActiveAccount(accounts);
     if (activeAccount && !checkIfSmartWalletAccount(activeAccount)) {
-      // TODO: add support for smart wallet transactions speed up
+      // TODO: add support for smart wallet sdk transactions speed up
       const activeAccountAddress = getAccountAddress(activeAccount);
       if (addressesEqual(txInfo.from, activeAccountAddress)) {
         const {
@@ -554,7 +554,10 @@ class EventDetails extends React.Component<Props, State> {
     }
 
     if (eventType === COLLECTIBLE_TRANSACTION) {
-      // TODO: add full support for collectibles speed up
+      /**
+        * TODO: add support for collectible transactions speed up when needed
+        * the only missing piece is to build updated payload in action
+        */
       const {
         to,
         from,
