@@ -81,9 +81,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
 
     // $FlowFixMe
-    const wallet = await getWalletFromStorage();
+    const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings);
 
-    if (appSettings.wallet) {
+    if (walletTimestamp) {
       const accounts = await loadAndMigrate('accounts', dispatch, getState);
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 

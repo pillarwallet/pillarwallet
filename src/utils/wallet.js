@@ -29,6 +29,7 @@ import { getRandomInt, ethSign } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
 import { WALLET_STORAGE_BACKUP_KEY } from 'constants/walletConstants';
+import type { Dispatch } from 'reducers/rootReducer';
 
 const storage = Storage.getInstance('db');
 
@@ -95,15 +96,37 @@ export function signPersonalMessage(message: string, wallet: Object): Promise<st
 }
 
 // we use basic AsyncStorage implementation just to prevent backup being stored in same manner
-export async function getWalletFromStorage() {
-  const { wallet = {} } = await storage.get('wallet');
+export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Object) {
+  let { wallet = {} } = await storage.get('wallet');
   const walletBackup = await AsyncStorage.getItem(WALLET_STORAGE_BACKUP_KEY);
   const isWalletEmpty = !wallet || !Object.keys(wallet).length;
+  // wallet timestamp missing causes welcome screen
+  let walletTimestamp = appSettings.wallet;
   if (isWalletEmpty && walletBackup) {
+    console.log('RESTORING WALLET FROM BACKUP');
     // restore wallet to storage
-    const restoredWallet = JSON.parse(walletBackup);
-    await storage.save('wallet', restoredWallet, true);
-    return restoredWallet;
+    wallet = JSON.parse(walletBackup);
+    dispatch(saveDbAction('wallet', { wallet }));
+  }
+  // we can only set new timestamp if any wallet is present (existing or backup)
+  if (!walletTimestamp && (!isWalletEmpty || walletBackup)) {
+    walletTimestamp = +(new Date());
+    console.log('SETTING NEW WALLET TIMESTAMP');
+    // only wallet timestamp was missing, let's update it to storage
+    dispatch(saveDbAction('app_settings', { appSettings: { wallet: walletTimestamp } }));
+  }
+  // we check for previous value of `appSettings.wallet` as by this point `walletTimestamp` can be already set
+  if (isWalletEmpty || !appSettings.wallet) {
+    Sentry.captureMessage('Wallet login issue spotted', {
+      extra: {
+        missing: {
+          wallet: isWalletEmpty,
+          walletTimestamp: !appSettings.wallet,
+          appSettings: !appSettings || !Object.keys(appSettings).length,
+        },
+        walletHadBackup: !!walletBackup,
+      },
+    });
   }
   const walletAsString = !isWalletEmpty && JSON.stringify(wallet);
   // check backup and store if needed
@@ -111,5 +134,8 @@ export async function getWalletFromStorage() {
     // wallet has changed or backup does not exist, let's update it
     await AsyncStorage.setItem(WALLET_STORAGE_BACKUP_KEY, walletAsString);
   }
-  return wallet;
+  return {
+    wallet,
+    walletTimestamp,
+  };
 }
