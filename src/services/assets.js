@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Contract, utils } from 'ethers';
+import { Contract, providers, utils } from 'ethers';
 import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import { Sentry } from 'react-native-sentry';
@@ -350,4 +350,11 @@ export async function calculateGasEstimate(transaction: Object) {
       Math.round(utils.bigNumberify(calculatedGasLimit).toNumber() * 1.5), // safe buffer multiplier
     )
     .catch(() => DEFAULT_GAS_LIMIT);
+}
+
+export async function getTransactionNonceByHash(hash: string) {
+  // infura doesn't support pending transactions info so we use etherscan in this case
+  const provider = new providers.EtherscanProvider(NETWORK_PROVIDER);
+  const transaction = await provider.getTransaction(hash).catch(() => null) || {};
+  return transaction.nonce || null;
 }

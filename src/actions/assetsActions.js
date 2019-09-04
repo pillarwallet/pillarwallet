@@ -50,6 +50,7 @@ import Toast from 'components/Toast';
 import {
   getExchangeRates,
   transferSigned,
+  getTransactionNonceByHash,
 } from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
 import { navigate } from 'services/navigation';
@@ -301,7 +302,8 @@ export const sendAssetAction = (
     const walletProvider = await cryptoWallet.getProvider();
 
     if (transaction.replaceTransaction) {
-      const existingNonce = 0; // TODO: get pending transaction nonce
+      const existingNonce = await getTransactionNonceByHash(transaction.replaceTransaction);
+      if (existingNonce === null) return;
       // $FlowFixMe
       transaction = { ...transaction, nonce: existingNonce };
     }
