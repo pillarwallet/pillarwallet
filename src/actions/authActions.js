@@ -63,7 +63,6 @@ import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
 import { updatePinAttemptsAction } from 'actions/walletActions';
 import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
-import { fetchBadgesAction } from 'actions/badgesActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -235,8 +234,6 @@ export const loginAction = (
 
       const isWalletBackedUp = isImported || isBackedUp;
       toastWalletBackup(isWalletBackedUp);
-
-      dispatch(fetchBadgesAction());
 
       /**
        * this is used only to avoid BCX fetching issues,

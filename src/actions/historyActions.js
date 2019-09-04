@@ -32,6 +32,7 @@ import {
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ETH } from 'constants/assetsConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
   getAccountAddress,
@@ -322,12 +323,23 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
   };
 };
 
+
 export const startListeningForBalanceChangeAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
       assets: { data: assets },
       accounts: { data: accounts },
+      smartWallet: {
+        upgrade: {
+          status: upgradeStatus,
+          transfer: {
+            transactions: transferTransactions = [],
+          },
+        },
+      },
     } = getState();
+    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS || !transferTransactions.length) return;
+
     const activeAccount = getActiveAccount(accounts);
     if (activeAccount) {
       const walletAddress = getAccountAddress(activeAccount);
