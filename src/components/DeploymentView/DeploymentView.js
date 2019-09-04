@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
+import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
@@ -50,6 +51,7 @@ import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 type Props = {
+  navigation: NavigationScreenProp<*>,
   buttonLabel?: string,
   message: Object,
   buttonAction?: ?Function,
@@ -103,6 +105,7 @@ class DeploymentView extends React.PureComponent<Props, State> {
       openSeaTxHistory,
       assets,
       contactsSmartAddresses,
+      navigation,
     } = this.props;
     const { showTransactionDetails } = this.state;
     const { title, message: bodyText } = message;
@@ -187,7 +190,7 @@ class DeploymentView extends React.PureComponent<Props, State> {
             eventType={detailedTransaction.type}
             eventStatus={detailedTransaction.status}
             onClose={this.handleTransactionDetailsClose}
-            // navigation={navigation}
+            navigation={navigation}
           />
         </SlideModal>
         }
