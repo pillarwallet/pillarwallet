@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import ethers from 'ethers';
+import { AsyncStorage } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import {
@@ -28,6 +29,7 @@ import {
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
+  WALLET_STORAGE_BACKUP_KEY,
 } from 'constants/walletConstants';
 import {
   APP_FLOW,
@@ -371,6 +373,7 @@ export const logoutAction = () => {
     chat.client.resetAccount().catch(() => null);
     clearWebViewCookies();
     await firebase.iid().delete().catch(() => {});
+    await AsyncStorage.removeItem(WALLET_STORAGE_BACKUP_KEY);
     await storage.removeAll();
   };
 };

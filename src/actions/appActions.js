@@ -62,6 +62,8 @@ import {
   MARK_PLR_TANK_INITIALISED,
 } from 'constants/paymentNetworkConstants';
 
+import { getWalletFromStorage } from 'utils/wallet';
+
 const storage = Storage.getInstance('db');
 
 const BACKGROUND = 'background';
@@ -78,7 +80,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     // $FlowFixMe
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
 
-    const { wallet = {} } = await storage.get('wallet');
+    // $FlowFixMe
+    const wallet = await getWalletFromStorage();
 
     if (appSettings.wallet) {
       const accounts = await loadAndMigrate('accounts', dispatch, getState);

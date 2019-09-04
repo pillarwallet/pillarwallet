@@ -19,13 +19,16 @@
 */
 import DeviceInfo from 'react-native-device-info';
 import ethers, { providers } from 'ethers';
-
+import isEqual from 'lodash.isequal';
+import { Sentry } from 'react-native-sentry';
 import { isHexString } from '@walletconnect/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { AsyncStorage } from 'react-native';
+
 import { getRandomInt, ethSign } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
-import { Sentry } from 'react-native-sentry';
+import { WALLET_STORAGE_BACKUP_KEY } from 'constants/walletConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -70,26 +73,43 @@ export function catchTransactionError(e: Object, type: string, tx: Object) {
 }
 
 // handle eth_signTransaction
-export async function signTransaction(trx: Object, wallet: Object): Promise<string> {
+export function signTransaction(trx: Object, wallet: Object): Promise<string> {
   wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
   if (trx && trx.from) {
     delete trx.from;
   }
-  const result = await wallet.sign(trx);
-  return result;
+  return wallet.sign(trx);
 }
 
 // handle eth_sign
-export async function signMessage(message: any, wallet: Object): Promise<string> {
+export function signMessage(message: any, wallet: Object): string {
   wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
   // TODO: this method needs to be replaced when ethers.js is migrated to v4.0
-  const result = ethSign(message, wallet.privateKey);
-  return result;
+  return ethSign(message, wallet.privateKey);
 }
 
 // handle personal_sign
-export async function signPersonalMessage(message: string, wallet: Object): Promise<string> {
+export function signPersonalMessage(message: string, wallet: Object): Promise<string> {
   wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
-  const result = await wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
-  return result;
+  return wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
+}
+
+// we use basic AsyncStorage implementation just to prevent backup being stored in same manner
+export async function getWalletFromStorage() {
+  const { wallet = {} } = await storage.get('wallet');
+  const walletBackup = await AsyncStorage.getItem(WALLET_STORAGE_BACKUP_KEY);
+  const isWalletEmpty = !wallet || !Object.keys(wallet).length;
+  if (isWalletEmpty && walletBackup) {
+    // restore wallet to storage
+    const restoredWallet = JSON.parse(walletBackup);
+    await storage.save('wallet', restoredWallet, true);
+    return restoredWallet;
+  }
+  const walletAsString = !isWalletEmpty && JSON.stringify(wallet);
+  // check backup and store if needed
+  if (!!walletAsString && !isEqual(walletAsString, walletBackup)) {
+    // wallet has changed or backup does not exist, let's update it
+    await AsyncStorage.setItem(WALLET_STORAGE_BACKUP_KEY, walletAsString);
+  }
+  return wallet;
 }
