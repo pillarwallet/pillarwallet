@@ -231,6 +231,7 @@ export const updateTransactionStatusAction = (hash: string) => {
         ...transaction,
         nbConfirmations,
         status,
+        gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
         gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
       }));
 
@@ -239,8 +240,8 @@ export const updateTransactionStatusAction = (hash: string) => {
       payload: updatedHistory,
     });
 
-    dispatch(afterHistoryUpdatedAction());
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch(afterHistoryUpdatedAction());
 
     dispatch(fetchAssetsBalancesAction(assets));
   };
