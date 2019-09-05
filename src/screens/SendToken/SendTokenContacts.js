@@ -84,7 +84,7 @@ const ContactCardList = styled.FlatList`
 `;
 
 // make Dynamic once more tokens supported
-const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
+const ETHValidator = (address: string): boolean => pipe(decodeETHAddress, isValidETHAddress)(address);
 const { Form } = t.form;
 
 function AddressInputTemplate(locals) {
@@ -333,7 +333,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           validator={ETHValidator}
           dataFormatter={decodeETHAddress}
           isActive={isScanning}
-          onDismiss={this.handleQRScannerClose}
+          onCancel={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
         {!!value && !!value.address.length &&
