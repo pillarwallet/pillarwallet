@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import ethers from 'ethers';
+import { AsyncStorage } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import {
@@ -28,6 +29,7 @@ import {
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
+  WALLET_STORAGE_BACKUP_KEY,
 } from 'constants/walletConstants';
 import {
   APP_FLOW,
@@ -94,7 +96,6 @@ export const loginAction = (
         },
       },
     } = getState();
-    const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
     const { oAuthTokens } = await storage.get('oAuthTokens');
 
@@ -208,6 +209,7 @@ export const loginAction = (
       if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
 
+      const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
       const navigateToLastActiveScreen = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
         routeName: lastActiveScreen || HOME,
@@ -371,6 +373,7 @@ export const logoutAction = () => {
     chat.client.resetAccount().catch(() => null);
     clearWebViewCookies();
     await firebase.iid().delete().catch(() => {});
+    await AsyncStorage.removeItem(WALLET_STORAGE_BACKUP_KEY);
     await storage.removeAll();
   };
 };

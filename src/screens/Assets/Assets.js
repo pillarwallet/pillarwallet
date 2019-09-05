@@ -71,8 +71,8 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 import { activeAccountSelector } from 'selectors';
 
 // local components
-import PPNView from './PPNView';
-import WalletView from './WalletView';
+import PPNView from 'screens/Assets/PPNView';
+import WalletView from 'screens/Assets/WalletView';
 
 type Props = {
   fetchInitialAssets: () => Function,
