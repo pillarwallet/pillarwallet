@@ -20,6 +20,7 @@
 import DeviceInfo from 'react-native-device-info';
 import ethers, { providers } from 'ethers';
 import isEqual from 'lodash.isequal';
+import isEmpty from 'lodash.isempty';
 import { Sentry } from 'react-native-sentry';
 import { isHexString } from '@walletconnect/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
@@ -99,9 +100,10 @@ export function signPersonalMessage(message: string, wallet: Object): Promise<st
 export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Object) {
   let { wallet = {} } = await storage.get('wallet');
   const walletBackup = await AsyncStorage.getItem(WALLET_STORAGE_BACKUP_KEY);
-  const isWalletEmpty = !wallet || !Object.keys(wallet).length;
+  const isWalletEmpty = isEmpty(wallet);
   // wallet timestamp missing causes welcome screen
   let walletTimestamp = appSettings.wallet;
+  // restore wallet if one is empty and backup is present
   if (isWalletEmpty && walletBackup) {
     console.log('RESTORING WALLET FROM BACKUP');
     // restore wallet to storage
@@ -110,7 +112,7 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
   }
   // we can only set new timestamp if any wallet is present (existing or backup)
   if (!walletTimestamp && (!isWalletEmpty || walletBackup)) {
-    walletTimestamp = +(new Date());
+    walletTimestamp = +new Date();
     console.log('SETTING NEW WALLET TIMESTAMP');
     // only wallet timestamp was missing, let's update it to storage
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: walletTimestamp } }));
