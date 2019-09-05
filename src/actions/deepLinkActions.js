@@ -32,6 +32,7 @@ import {
   AUTH_FLOW,
   LOGIN,
   CONFIRM_CLAIM,
+  HOME,
 } from 'constants/navigationConstants';
 
 type ApproveLoginQuery = {
@@ -110,6 +111,12 @@ export const approveLoginAttemptAction = (loginAttemptToken: string) => {
     try {
       const result = await api.approveLoginToExternalResource(loginAttemptToken);
       if (!result || result.error) throw new Error();
+      navigate(HOME);
+      Toast.show({
+        message: 'Your forum login was approved.',
+        type: 'success',
+        title: 'Success',
+      });
     } catch (e) {
       Toast.show({
         message: 'Failed to approve your login, please try again.',

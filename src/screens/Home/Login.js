@@ -26,7 +26,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 // components
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
-import { BoldText, Paragraph } from 'components/Typography';
+import { Paragraph } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 
@@ -52,6 +52,10 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
 };
 
+type State = {
+  loginPending: boolean,
+};
+
 const Description = styled(Paragraph)`
   text-align: center;
   padding-bottom: ${spacing.rhythm}px;
@@ -64,58 +68,50 @@ const DescriptionWarning = styled(Description)`
   color: ${baseColors.burningFire};
 `;
 
-export const StatusMessage = styled(BoldText)`
-  padding-top: 10px;
-`;
-
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
   align-items: center;
   justify-content: center;
 `;
 
-export const ItemWrapper = styled.View`
-  margin-top: ${spacing.large}px;
-  border-bottom-width: 1px;
-  border-top-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
-`;
+class LoginScreen extends React.Component<Props, State> {
+  state = {
+    loginPending: false,
+  };
 
-class LoginScreen extends React.Component<Props> {
   componentDidMount() {
     const { logScreenView } = this.props;
-
     logScreenView('Login request', 'Home');
   }
 
-  onConfirm = () => {
+  onConfirmPress = (emailRequired: boolean) => {
     const {
       navigation,
       approveLoginAttempt,
     } = this.props;
-
-    const loginAttemptToken = navigation.getParam('loginAttemptToken');
-
-    approveLoginAttempt(loginAttemptToken);
-  }
-
-  onAddEmail = () => {
-    const { navigation } = this.props;
-
-    navigation.navigate(PROFILE, { visibleModal: 'email' });
-  }
+    if (emailRequired) {
+      navigation.navigate(PROFILE, { visibleModal: 'email' });
+      return;
+    }
+    this.setState({ loginPending: true }, async () => {
+      const loginAttemptToken = navigation.getParam('loginAttemptToken');
+      await approveLoginAttempt(loginAttemptToken);
+      this.setState({ loginPending: false });
+    });
+  };
 
   onBack = () => {
     const { navigation } = this.props;
-
     navigation.goBack(null);
-  }
+  };
 
   render() {
     const { user } = this.props;
-
-    const requireEmail = !user.email;
-
+    const { loginPending } = this.state;
+    const emailRequired = !user.email;
+    const confirmButtonTitle = emailRequired
+      ? 'Add your email'
+      : 'Confirm login';
     return (
       <Container color={baseColors.white} inset={{ bottom: 0 }}>
         <Header
@@ -129,16 +125,19 @@ class LoginScreen extends React.Component<Props> {
             <Description>
               You are about to confirm your login with your Pillar wallet to external resource.
             </Description>
-            {requireEmail && (
+            {emailRequired &&
               <DescriptionWarning>
                 In order to proceed with Discourse login you must have email added to your profile.
               </DescriptionWarning>
-            )}
-            {requireEmail ? (
-              <Button title="Add your email" onPress={this.onAddEmail} style={{ marginBottom: 13 }} />
-            ) : (
-              <Button title="Confirm login" onPress={this.onConfirm} style={{ marginBottom: 13 }} />
-            )}
+            }
+            {loginPending && <LoadingSpinner />}
+            {!loginPending &&
+              <Button
+                title={confirmButtonTitle}
+                onPress={() => this.onConfirmPress(emailRequired)}
+                style={{ marginBottom: 13 }}
+              />
+            }
           </View>
         </Wrapper>
       </Container>
