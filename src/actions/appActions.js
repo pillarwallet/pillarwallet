@@ -80,7 +80,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     // $FlowFixMe
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
 
-    const { wallet } = await storage.get('wallet');
+    const { wallet = {} } = await storage.get('wallet');
 
     if (appSettings.wallet) {
       const accounts = await loadAndMigrate('accounts', dispatch, getState);
