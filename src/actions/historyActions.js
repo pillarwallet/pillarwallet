@@ -25,6 +25,7 @@ import {
   SET_HISTORY,
   TRANSACTION_PENDING_EVENT,
   TRANSACTION_CONFIRMATION_EVENT,
+  TRANSACTION_CONFIRMATION_SENDER_EVENT,
   SET_GAS_INFO,
   TX_CONFIRMED_STATUS,
   TX_FAILED_STATUS,
@@ -144,6 +145,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     const types = [
       TRANSACTION_PENDING_EVENT,
       TRANSACTION_CONFIRMATION_EVENT,
+      TRANSACTION_CONFIRMATION_SENDER_EVENT,
     ];
     const historyNotifications = await api.fetchNotifications(walletId, types.join(' '), d.toISOString());
     const mappedHistoryNotifications = historyNotifications
@@ -167,11 +169,17 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     const updatedAccountHistory = uniqBy([...accountHistory, ...pendingTransactions], 'hash')
       .map(tx => {
         if (!minedTransactions[tx.hash]) return tx;
-        const { status, gasUsed, blockNumber } = minedTransactions[tx.hash];
+        const {
+          status,
+          gasUsed,
+          gasPrice,
+          blockNumber,
+        } = minedTransactions[tx.hash];
         return {
           ...tx,
           status,
-          gasUsed,
+          gasUsed: gasUsed || tx.gasUsed,
+          gasPrice: gasPrice || tx.gasPrice,
           blockNumber,
         };
       });
