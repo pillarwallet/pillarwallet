@@ -19,91 +19,101 @@
 */
 import * as React from 'react';
 import { Vibration, Dimensions, Platform } from 'react-native';
-import { RNCamera } from 'react-native-camera';
 import throttle from 'lodash.throttle';
 import Modal from 'react-native-modal';
 import Permissions from 'react-native-permissions';
 import { noop } from 'utils/common';
-import { baseColors } from 'utils/variables';
-import Header from 'components/Header';
-import { BaseText } from 'components/Typography';
-import styled from 'styled-components/native';
+import { CameraView } from 'components/QRCodeScanner/CameraView';
+import NoPermissions from 'components/QRCodeScanner/NoPermissions';
+
+import type { Barcode, Point, Size } from 'react-native-camera';
 
 const AUTHORIZED = 'AUTHORIZED';
 const PENDING = 'PENDING';
 const DENIED = 'DENIED';
 
+type BarcodeBounds = {
+  size: Size,
+  origin: Point,
+};
+
 type Props = {
-  onRead: Function,
-  onDismiss: Function,
-  reactivate: boolean,
-  validator: Function,
-  dataFormatter: Function,
+  onRead: (code: string) => void,
+  onCancel: () => void,
+  validator: (code: string) => boolean,
+  dataFormatter: (code: string) => string,
   rectangleColor: string,
   isActive: boolean,
-  onModalHide?: Function,
 };
 
 type State = {
   authorizationState: string,
+  isFinished: boolean,
+  code: ?string,
 };
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const squareSize = 250;
+const rectangleSize = 250;
 
-const viewMinScanX = (screenWidth - squareSize) / 2;
-const viewMinScanY = (screenHeight - squareSize) / 2;
-
-const SquareContainer = styled.View`
-  position: absolute;
-  justify-content: center;
-  display: flex;
-  height: ${squareSize};
-  width: ${squareSize};
-  border-width: 4px;
-  border-color: ${props => props.color};
-  background-color: transparent;
-`;
-
-const HeaderWrapper = styled.SafeAreaView`
-  margin-bottom: auto;
-  width: 100%;
-`;
-
-const NoPermissions = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-`;
+const viewMinScanX = (screenWidth - rectangleSize) / 2;
+const viewMinScanY = (screenHeight - rectangleSize) / 2;
 
 export default class QRCodeScanner extends React.Component<Props, State> {
   static defaultProps = {
-    reactivate: false,
     rectangleColor: '#FFFFFF',
     onRead: noop,
     validator: () => true,
     dataFormatter: (x: any) => x,
   };
-  camera: ?Object;
-  isScanned: boolean = false;
+
+  state = {
+    authorizationState: PENDING,
+    isFinished: false,
+    code: null,
+  };
 
   constructor(props: Props) {
     super(props);
-    this.handleAndroidQRRead = throttle(this.handleAndroidQRRead, 700);
-    this.state = {
-      authorizationState: PENDING,
-    };
+
+    this.handleQRRead = throttle(this.handleQRRead, 1000, {
+      leading: true,
+      trailing: false,
+    });
   }
 
-  componentDidUpdate(prevProps: Props) {
-    if (this.props.isActive && this.state.authorizationState === PENDING) {
+  shouldComponentUpdate(nextProps: Props): boolean {
+    const { isFinished } = this.state;
+    const { isActive } = this.props;
+    const { isActive: nextActive } = nextProps;
+
+    if (isFinished && isActive && !nextActive) {
+      // Is deactivating a finished scanner, reset state
+      this.setState({ isFinished: false, code: null });
+
+      return false;
+    }
+
+    if (!isActive && nextProps.isActive) {
+      // Is reactivating a scanner
+      return true;
+    }
+
+    if (isFinished) {
+      // Scan is finished, stop rendering
+      return false;
+    }
+
+    return true;
+  }
+
+  componentDidUpdate() {
+    const { isActive } = this.props;
+
+    if (isActive && this.state.authorizationState === PENDING) {
       this.askPermissions();
     }
-    if (prevProps.isActive === this.props.isActive) return;
-    this.isScanned = false;
   }
 
   componentDidMount() {
@@ -114,117 +124,99 @@ export default class QRCodeScanner extends React.Component<Props, State> {
 
   async askPermissions() {
     const status = await Permissions.request('camera');
+    const isAuthorized = status.toUpperCase() === AUTHORIZED;
+
     this.setState({
-      authorizationState: status.toUpperCase() === AUTHORIZED ? AUTHORIZED : DENIED,
+      authorizationState: isAuthorized ? AUTHORIZED : DENIED,
     });
   }
 
-  getIOSCoordinates = (bounds: Object) => {
-    return {
-      x: +bounds.origin.x,
-      y: +bounds.origin.y,
-    };
+  getIOSCoordinates = (bounds: BarcodeBounds) => {
+    const { origin: { x, y } = {} } = bounds;
+
+    return { x: +x, y: +y };
   };
 
-  handleIosQRRead = (data: Object) => {
-    const { bounds, data: address } = data;
+  isInsideScanArea = (bounds: BarcodeBounds) => {
     const { x, y } = this.getIOSCoordinates(bounds);
+
     const isInRecognitionArea =
       x > viewMinScanX + 20 && y > viewMinScanY && x < viewMinScanX + 100 && y < viewMinScanY + 100;
-    if (!isInRecognitionArea) return;
-    const { onRead, validator, dataFormatter } = this.props;
-    const isValid = validator(address);
-    if (!this.isScanned && isValid) {
-      this.isScanned = true;
-      Vibration.vibrate();
-      onRead(dataFormatter(address));
-    }
-  };
 
-  handleAndroidQRRead = (data: Object) => {
-    const { onRead, validator, dataFormatter } = this.props;
-    const { data: address } = data;
-    const isValid = validator(address);
-    if (!this.isScanned && isValid) {
-      this.isScanned = true;
-      Vibration.vibrate();
-      onRead(dataFormatter(address));
-    }
-  };
-
-  handleAnimationDismiss = () => {
-    const { onDismiss } = this.props;
-    this.isScanned = false;
-    onDismiss();
-  };
-
-  renderNoPermissions() {
-    return (
-      <React.Fragment>
-        <HeaderWrapper>
-          <Header light flexStart onClose={this.handleAnimationDismiss} />
-        </HeaderWrapper>
-        <NoPermissions>
-          <BaseText style={{ color: baseColors.white }}>
-            Camera permissions not granted - cannot open the QR scanner.
-          </BaseText>
-        </NoPermissions>
-      </React.Fragment>
-    );
+    return isInRecognitionArea;
   }
 
-  renderScanner() {
-    const { rectangleColor } = this.props;
-    const handleQRRead = Platform.OS === 'ios' ? this.handleIosQRRead : this.handleAndroidQRRead;
-    return (
-      <RNCamera
-        captureAudio={false}
-        style={{
-          width: screenWidth,
-          height: screenHeight,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-        type={RNCamera.Constants.Type.back}
-        onBarCodeRead={handleQRRead}
-      >
-        <HeaderWrapper>
-          <Header light flexStart onClose={this.handleAnimationDismiss} />
-        </HeaderWrapper>
-        <SquareContainer color={rectangleColor} />
-      </RNCamera>
-    );
+  handleQRRead = (barcode: Barcode): void => {
+    if (this.state.isFinished) {
+      return;
+    }
+
+    const { bounds, data: code } = barcode;
+    const isIos = Platform.OS === 'ios';
+
+    if (isIos && !this.isInsideScanArea(bounds)) {
+      return;
+    }
+
+    const { validator } = this.props;
+
+    if (!validator(code)) {
+      return;
+    }
+
+    Vibration.vibrate();
+    this.setState({ code, isFinished: true });
+  };
+
+  onModalClosed = () => {
+    const { code } = this.state;
+
+    if (code) {
+      this.props.onRead(this.props.dataFormatter(code));
+    }
   }
 
   render() {
-    const { isActive, onModalHide } = this.props;
-    const { authorizationState } = this.state;
+    const {
+      isActive,
+      rectangleColor,
+      onCancel,
+    } = this.props;
+    const { authorizationState, isFinished } = this.state;
 
     if (authorizationState === PENDING) {
       return null;
     }
 
-    const content = authorizationState === DENIED ? this.renderNoPermissions() : this.renderScanner();
-
+    const isDenied = authorizationState === DENIED;
     const animationInTiming = 300;
-    const animationOutTiming = this.isScanned ? 1 : 300;
+    const animationOutTiming = isFinished ? 1 : 300;
 
     return (
       <Modal
-        isVisible={isActive}
+        isVisible={isActive && !isFinished}
         animationInTiming={animationInTiming}
         animationOutTiming={animationOutTiming}
         animationIn="fadeIn"
         animationOut="fadeOut"
         hideModalContentWhileAnimating
-        onBackButtonPress={this.handleAnimationDismiss}
+        onBackButtonPress={onCancel}
         style={{
           margin: 0,
           justifyContent: 'flex-start',
         }}
-        onModalHide={onModalHide}
+        onModalHide={this.onModalClosed}
       >
-        {content}
+        {isDenied ? (
+          <NoPermissions onClose={onCancel} />
+        ) : (
+          <CameraView
+            onQRRead={this.handleQRRead}
+            onCancel={onCancel}
+            rectangleSize={rectangleSize}
+            rectangleColor={rectangleColor}
+          />
+        )}
       </Modal>
     );
   }

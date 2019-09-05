@@ -94,7 +94,6 @@ export const loginAction = (
         },
       },
     } = getState();
-    const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
     const { oAuthTokens } = await storage.get('oAuthTokens');
 
@@ -208,6 +207,7 @@ export const loginAction = (
       if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
 
+      const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
       const navigateToLastActiveScreen = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
         routeName: lastActiveScreen || HOME,
