@@ -244,12 +244,13 @@ class ActivityFeed extends React.Component<Props, State> {
     }
 
     orderBy(feedList, ['createdAt'], ['desc']).forEach(listItem => {
-      const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D YYYY');
+      const itemCreatedDate = new Date(listItem.createdAt * 1000);
+      const formattedDate = formatDate(itemCreatedDate, 'MMM D YYYY');
       // don't show the year if the event happened this year
-      const titleDateFormat = new Date(listItem.createdAt * 1000).getFullYear() === new Date().getFullYear()
+      const titleDateFormat = itemCreatedDate.getFullYear() === new Date().getFullYear()
         ? 'MMM D'
         : 'MMM D YYYY';
-      const sectionTitle = formatDate(new Date(listItem.createdAt * 1000), titleDateFormat);
+      const sectionTitle = formatDate(itemCreatedDate, titleDateFormat);
       const existingSection = dataSections.find(({ date }) => date === formattedDate);
       if (!existingSection) {
         dataSections.push({ title: sectionTitle, date: formattedDate, data: [{ ...listItem }] });
