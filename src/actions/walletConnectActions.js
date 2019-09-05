@@ -333,7 +333,7 @@ export function onWalletConnectSubscribeToEvents(peerId: string) {
 export function initWalletConnectSessions() {
   return async (dispatch: Function) => {
     try {
-      const { sessions } = await storage.get('walletconnect');
+      const { sessions = [] } = await storage.get('walletconnect');
 
       const connectors = (await Promise.all(
         sessions.map(async session => {
@@ -344,9 +344,9 @@ export function initWalletConnectSessions() {
 
             return connector;
           }
-          return null;
+          return {};
         }),
-      )).filter(c => !!c);
+      )).filter(c => !!c.peerId);
 
       dispatch({ type: WALLETCONNECT_INIT_SESSIONS, payload: connectors });
 
