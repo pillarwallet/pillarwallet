@@ -177,9 +177,7 @@ class ImportWallet extends React.Component<Props, State> {
       });
   };
 
-  handleQRScannerClose = () => {
-    this.setState({ isScanning: false });
-  };
+  handleQRScannerClose = () => this.setState({ isScanning: false });
 
   handleQRRead = (privateKey: string) => {
     this.setState({ privateKey, isScanning: false });
@@ -378,7 +376,7 @@ class ImportWallet extends React.Component<Props, State> {
         </ScrollWrapper>
         <QRCodeScanner
           isActive={isScanning}
-          onDismiss={this.handleQRScannerClose}
+          onCancel={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
 
