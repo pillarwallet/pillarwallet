@@ -103,12 +103,26 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
   const isWalletEmpty = isEmpty(wallet);
   // wallet timestamp missing causes welcome screen
   let walletTimestamp = appSettings.wallet;
+  const reportToSentry = (message, extra = {}) => Sentry.captureMessage(message, {
+    walletHadBackup: !!walletBackup,
+    isWalletEmpty,
+    walletCreationTimestamp: appSettings.wallet,
+    isAppSettingsEmpty: isEmpty(appSettings),
+    ...extra,
+  });
   // restore wallet if one is empty and backup is present
   if (isWalletEmpty && walletBackup) {
     console.log('RESTORING WALLET FROM BACKUP');
     // restore wallet to storage
-    wallet = JSON.parse(walletBackup);
-    dispatch(saveDbAction('wallet', { wallet }));
+    try {
+      wallet = JSON.parse(walletBackup);
+      dispatch(saveDbAction('wallet', { wallet }));
+    } catch (e) {
+      reportToSentry('Wallet parse failed', {
+        walletHadBackup: true,
+        walletBackupParseError: e,
+      });
+    }
   }
   // we can only set new timestamp if any wallet is present (existing or backup)
   if (!walletTimestamp && (!isWalletEmpty || walletBackup)) {
@@ -118,16 +132,8 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: walletTimestamp } }));
   }
   // we check for previous value of `appSettings.wallet` as by this point `walletTimestamp` can be already set
-  if (isWalletEmpty || !appSettings.wallet) {
-    Sentry.captureMessage('Wallet login issue spotted', {
-      extra: {
-        isWalletEmpty,
-        walletCreationTimestamp: appSettings.wallet,
-        isAppSettingsEmpty: !appSettings || !Object.keys(appSettings).length,
-        walletHadBackup: !!walletBackup,
-      },
-    });
-  }
+  if (isWalletEmpty || !appSettings.wallet) reportToSentry('Wallet login issue spotted');
+
   const walletAsString = !isWalletEmpty && JSON.stringify(wallet);
   // check backup and store if needed
   if (!!walletAsString && !isEqual(walletAsString, walletBackup)) {
