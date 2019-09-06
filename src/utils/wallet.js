@@ -134,7 +134,10 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: walletTimestamp } }));
   }
   // we check for previous value of `appSettings.wallet` as by this point `walletTimestamp` can be already set
-  if (isWalletEmpty || !appSettings.wallet) reportToSentry('Wallet login issue spotted');
+  // in tis piece we report a case if either wallet was empty or wallet timestamp AND we additionally check+
+  // if walletBackup is present because this would conflict with onboarding flow and will report to sentry
+  // because both wallet and wallet timestamp will be empty
+  if (walletBackup && (isWalletEmpty || !appSettings.wallet)) reportToSentry('Wallet login issue spotted');
 
   const walletAsString = !isWalletEmpty && JSON.stringify(wallet);
   // check backup and store if needed
