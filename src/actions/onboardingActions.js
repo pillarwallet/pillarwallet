@@ -158,9 +158,15 @@ const finishRegistration = async ({
 
   dispatch({
     type: SET_INITIAL_ASSETS,
-    payload: initialAssets,
+    payload: {
+      accountId: address,
+      assets: initialAssets,
+    },
   });
-  dispatch(saveDbAction('assets', { assets: initialAssets }));
+
+  const assets = { [address]: initialAssets };
+  dispatch(saveDbAction('assets', { assets }));
+
   dispatch(fetchBadgesAction(false));
 
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
@@ -168,12 +174,10 @@ const finishRegistration = async ({
     // create smart wallet account only for new wallets
     const createNewAccount = !isImported;
     await dispatch(initSmartWalletSdkAction(privateKey));
-    await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount));
+    await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
   }
 
-  const {
-    accounts: { data: accounts },
-  } = getState();
+  const { accounts: { data: accounts } } = getState();
 
   accounts.forEach(async (acc) => {
     await dispatch(restoreTransactionHistoryAction(acc.id, userInfo.walletId));

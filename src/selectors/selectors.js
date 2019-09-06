@@ -5,6 +5,7 @@ import type { BalancesReducerState } from 'reducers/balancesReducer';
 import type { CollectiblesReducerState } from 'reducers/collectiblesReducer';
 import type { HistoryReducerState } from 'reducers/historyReducer';
 import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
+import type { AssetsReducerState } from 'reducers/assetsReducer';
 import { getAccountAddress } from 'utils/accounts';
 
 //
@@ -32,3 +33,5 @@ export const activeAccountAddressSelector = createSelector(
   activeAccountSelector,
   activeAccount => activeAccount ? getAccountAddress(activeAccount) : '',
 );
+
+export const assetsSelector = ({ assets }: {assets: AssetsReducerState}) => assets.data;

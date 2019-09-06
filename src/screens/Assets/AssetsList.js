@@ -52,6 +52,7 @@ import type { Account } from 'models/Account';
 import { accountBalancesSelector } from 'selectors/balances';
 import { activeAccountSelector } from 'selectors';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 const IS_IOS = Platform.OS === 'ios';
 
@@ -241,11 +242,9 @@ class AssetsList extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
 }) => ({
-  assets,
   rates,
   baseFiatCurrency,
   assetsLayout,
@@ -255,6 +254,7 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   activeAccount: activeAccountSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

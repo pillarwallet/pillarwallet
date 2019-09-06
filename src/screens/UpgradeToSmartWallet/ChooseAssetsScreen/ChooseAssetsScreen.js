@@ -49,13 +49,15 @@ import { getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
-import type { AssetTransfer, Assets, Balances } from 'models/Asset';
+import type { AssetTransfer, Assets, Balances, AssetsByAccount } from 'models/Asset';
 import type { Collectible, CollectibleTransfer } from 'models/Collectible';
+import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  fetchAssetsBalances: (assets: Assets) => Function,
+  fetchAssetsBalances: (assets: AssetsByAccount) => Function,
   assets: Assets,
+  allAccAssets: AssetsByAccount,
   balances: Balances,
   fetchAllCollectiblesData: Function,
   collectibles: Collectible[],
@@ -174,8 +176,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
   };
 
   refreshAssetsList = () => {
-    const { assets, fetchAssetsBalances } = this.props;
-    fetchAssetsBalances(assets);
+    const { allAccAssets, fetchAssetsBalances } = this.props;
+    fetchAssetsBalances(allAccAssets);
   };
 
   setActiveTab = (activeTab) => {
@@ -400,18 +402,19 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
   smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
   session: { data: session },
+  assets: { data: allAccAssets },
 }) => ({
-  assets,
   addedAssets,
   session,
+  allAccAssets,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   collectibles: accountCollectiblesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

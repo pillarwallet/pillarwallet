@@ -50,7 +50,7 @@ import {
   SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { ETH, UPDATE_BALANCES } from 'constants/assetsConstants';
+import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 
 import {
   TX_PENDING_STATUS,
@@ -107,7 +107,7 @@ import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
 // types
-import type { AssetTransfer, BalancesStore } from 'models/Asset';
+import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
@@ -529,7 +529,8 @@ export const fetchVirtualAccountBalanceAction = () => {
     if (!isConnectedToSmartAccount(connectedAccount) || !isOnline) return;
 
     const accountId = getActiveAccountId(accounts);
-    const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
+    const accountAssets = assets[accountId];
+    const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
     const { decimals = 18 } = assets[PPN_TOKEN] || {};
 
     const [staked, pendingBalances] = await Promise.all([
@@ -772,10 +773,15 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     }
 
     if (event.name === ACCOUNT_VIRTUAL_BALANCE_UPDATED) {
-      const { assets: { data: assets } } = getState();
+      const {
+        accounts: { data: accounts },
+        assets: { data: assets },
+      } = getState();
       const tokenTransferred = get(event, 'payload.token.address', null);
-      const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
-      const { decimals = 18 } = assets[PPN_TOKEN] || {};
+      const activeAccountAddress = getActiveAccountAddress(accounts);
+      const accountAssets = assets[activeAccountAddress];
+      const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
+      const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
 
       if (addressesEqual(tokenTransferred, ppnTokenAddress)) {
         // update the balance
@@ -800,7 +806,8 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txReceiverAddress = get(event, 'payload.recipient.account.address', '');
 
-      const { decimals = 18 } = assets[PPN_TOKEN] || {};
+      const accountAssets = assets[activeAccountAddress];
+      const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
       const txAmountFormatted = formatUnits(txAmount, decimals);
 
       if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {
@@ -841,10 +848,15 @@ export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
-    const { assets: { data: assets } } = getState();
-    const { decimals = 18 } = assets[PPN_TOKEN] || {};
+    const {
+      assets: { data: assets },
+      accounts: { data: accounts },
+    } = getState();
+    const accountAddress = getActiveAccountAddress(accounts);
+    const accountAssets = assets[accountAddress];
+    const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount, decimals);
-    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
+    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
 
     const response = await smartWalletService
       .estimateTopUpAccountVirtualBalance(value, tokenAddress)
@@ -888,9 +900,10 @@ export const topUpVirtualAccountAction = (amount: string) => {
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
-    const { decimals = 18 } = assets[PPN_TOKEN] || {};
+    const accountAssets = assets[accountAddress];
+    const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount.toString(), decimals);
-    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
+    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
 
     const estimated = await smartWalletService
       .estimateTopUpAccountVirtualBalance(value, tokenAddress)
@@ -980,12 +993,12 @@ export const fetchAvailableTxToSettleAction = () => {
       assets: { data: assets },
     } = getState();
     const activeAccountAddress = getActiveAccountAddress(accounts);
-
+    const accountAssets = assets[activeAccountAddress];
     dispatch({ type: START_FETCHING_AVAILABLE_TO_SETTLE_TX });
     const payments = await smartWalletService.getAccountPaymentsToSettle(activeAccountAddress);
 
     const txToSettle = payments.map(item => {
-      const { decimals = 18 } = assets[item.token] || {};
+      const { decimals = 18 } = accountAssets[item.token] || {};
       return {
         token: item.token,
         hash: item.hash,
@@ -1231,14 +1244,13 @@ export const navigateToSendTokenAmountAction = (navOptions: Object) => {
   };
 };
 
-export const importSmartWalletAccountsAction = (privateKey: string, createNewAccount: boolean) => {
+export const importSmartWalletAccountsAction = (privateKey: string, createNewAccount: boolean, initAssets: Assets) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const { user = {} } = await storage.get('user');
     const {
       session: { data: session },
-      assets: { data: assets },
     } = getState();
 
     const smartAccounts: SmartWalletAccount[] = await smartWalletService.getAccounts();
@@ -1282,8 +1294,18 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
     await Promise.all(newAccountsPromises);
 
     if (smartAccounts.length) {
-      await dispatch(connectSmartWalletAccountAction(smartAccounts[0].address));
-      await dispatch(setActiveAccountAction(smartAccounts[0].address));
+      const { assets: { data: assets } } = getState();
+      const accountId = smartAccounts[0].address;
+      await dispatch(connectSmartWalletAccountAction(accountId));
+      await dispatch(setActiveAccountAction(accountId));
+      // set default assets for smart wallet
+      await dispatch({
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId,
+          assets: initAssets,
+        },
+      });
       dispatch(fetchAssetsBalancesAction(assets));
       dispatch(fetchCollectiblesAction());
       dispatch(syncVirtualAccountTransactionsAction(true));

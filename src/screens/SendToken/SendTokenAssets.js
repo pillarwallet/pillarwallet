@@ -25,7 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
-import type { Assets, Balances } from 'models/Asset';
+import type { Assets, AssetsByAccount, Balances } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -54,10 +54,12 @@ import assetsConfig from 'configs/assetsConfig';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
-  fetchAssetsBalances: (assets: Assets) => Function,
+  fetchAssetsBalances: (assets: AssetsByAccount) => Function,
   assets: Assets,
+  allAccAssets: AssetsByAccount,
   balances: Balances,
   navigation: NavigationScreenProp<*>,
   fetchAllCollectiblesData: Function,
@@ -190,8 +192,8 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
   };
 
   refreshAssetsList = () => {
-    const { assets, fetchAssetsBalances } = this.props;
-    fetchAssetsBalances(assets);
+    const { allAccAssets, fetchAssetsBalances } = this.props;
+    fetchAssetsBalances(allAccAssets);
   };
 
   setActiveTab = (activeTab) => {
@@ -313,11 +315,11 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
+  assets: { data: allAccAssets },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
 }) => ({
-  assets,
+  allAccAssets,
   accounts,
   smartWalletState,
 });
@@ -326,6 +328,7 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   collectibles: accountCollectiblesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

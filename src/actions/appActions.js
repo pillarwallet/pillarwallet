@@ -84,7 +84,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const accounts = await loadAndMigrate('accounts', dispatch, getState);
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 
-      const { assets = {} } = await storage.get('assets');
+      const assets = await loadAndMigrate('assets', dispatch, getState);
       dispatch({ type: UPDATE_ASSETS, payload: assets });
 
       const balances = await loadAndMigrate('balances', dispatch, getState);

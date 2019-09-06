@@ -183,7 +183,13 @@ describe('Wallet actions', () => {
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
       { type: UPDATE_RATES, payload: mockExchangeRates },
-      { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
+      {
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId: mockKeyBasedAccount.id,
+          assets: transformAssetsToObject(mockInitialAssets),
+        },
+      },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
     ];
@@ -240,12 +246,25 @@ describe('Wallet actions', () => {
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
       { type: UPDATE_RATES, payload: mockExchangeRates },
-      { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
+      {
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId: mockKeyBasedAccount.id,
+          assets: transformAssetsToObject(mockInitialAssets),
+        },
+      },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
       { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
       { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, isActive: true }] },
       { type: SET_SMART_WALLET_UPGRADE_STATUS, payload: SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED },
+      {
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId: mockSmartWalletAccount.id,
+          assets: transformAssetsToObject(mockInitialAssets),
+        },
+      },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
     ];
@@ -302,7 +321,13 @@ describe('Wallet actions', () => {
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
       { type: UPDATE_RATES, payload: mockExchangeRates },
-      { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
+      {
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId: mockKeyBasedAccount.id,
+          assets: transformAssetsToObject(mockInitialAssets),
+        },
+      },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
     ];

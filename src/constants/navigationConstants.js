@@ -28,7 +28,6 @@ export const ME_TAB = 'ME_TAB';
 export const PEOPLE = 'PEOPLE';
 export const ASSET = 'ASSET';
 export const MARKET = 'MARKET';
-export const ADD_TOKEN = 'ADD_TOKEN';
 export const PROFILE = 'PROFILE';
 export const CONTACT_INFO = 'CONTACT_INFO';
 export const REVEAL_BACKUP_PHRASE = 'REVEAL_BACKUP_PHRASE';

@@ -29,7 +29,7 @@ import {
   UPDATE_BALANCES,
 } from 'constants/assetsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
-import type { Assets } from 'models/Asset';
+import type { Assets, AssetsByAccount } from 'models/Asset';
 import PillarSdk from 'services/api';
 import { sendAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
@@ -61,7 +61,7 @@ const mockTransaction: Object = {
   note: 'test note',
 };
 
-const mockAssets: Assets = {
+const mockAssetsByAccount: Assets = {
   ETH: {
     symbol: ETH,
     name: 'ethereum',
@@ -73,6 +73,10 @@ const mockAssets: Assets = {
     wallpaperUrl: '',
     decimals: 18,
   },
+};
+
+const mockAssets: AssetsByAccount = {
+  '0x9c': mockAssetsByAccount,
 };
 
 const mockExchangeRates = {

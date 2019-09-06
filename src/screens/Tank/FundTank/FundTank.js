@@ -57,6 +57,7 @@ import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountAssetsSelector } from 'selectors/assets';
 
 
 const ActionsWrapper = styled.View`
@@ -257,13 +258,11 @@ class FundTank extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
   session: { data: session },
   rates: { data: rates },
   paymentNetwork: { topUpFee },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
-  assets,
   rates,
   session,
   topUpFee,
@@ -272,6 +271,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

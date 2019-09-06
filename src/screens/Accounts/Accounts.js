@@ -68,6 +68,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 type NetworkItem = {|
   id: string,
@@ -490,7 +491,6 @@ class AccountsScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   accounts: { data: accounts },
   blockchainNetwork: { data: blockchainNetworks },
-  assets: { data: assets },
   paymentNetwork: { isTankInitialised },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
   appSettings: { data: { baseFiatCurrency } },
@@ -499,7 +499,6 @@ const mapStateToProps = ({
 }: RootReducerState) => ({
   accounts,
   blockchainNetworks,
-  assets,
   isTankInitialised,
   smartWalletFeatureEnabled,
   baseFiatCurrency,
@@ -509,6 +508,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState) => ({

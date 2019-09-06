@@ -30,7 +30,6 @@ import { BaseText } from 'components/Typography';
 import { updateNavigationLastScreenState } from 'services/navigation';
 
 // screens
-import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import ProfileScreen from 'screens/Profile';
@@ -120,7 +119,6 @@ import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 
 // constants
 import {
-  ADD_TOKEN,
   ME,
   // ME_TAB,
   ASSETS,
@@ -578,7 +576,6 @@ tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
 const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
-    [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,

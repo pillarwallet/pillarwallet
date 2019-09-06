@@ -85,7 +85,14 @@ export default function assetsReducer(
       delete clonedState.data[removedAsset.symbol];
       return { ...clonedState };
     case SET_INITIAL_ASSETS:
-      return { ...state, data: action.payload || {}, assetsState: FETCHED_INITIAL };
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          [action.payload.accountId]: action.payload.assets || {},
+        },
+        assetsState: FETCHED_INITIAL,
+      };
     case START_ASSETS_SEARCH:
       return {
         ...state,

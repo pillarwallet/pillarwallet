@@ -28,6 +28,7 @@ import { formatFiat } from 'utils/common';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
   assets: Assets,
@@ -77,17 +78,16 @@ class PortfolioBalance extends React.PureComponent<Props, {}> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   rates,
-  assets,
   baseFiatCurrency,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

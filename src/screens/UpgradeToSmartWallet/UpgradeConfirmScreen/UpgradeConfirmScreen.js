@@ -40,17 +40,19 @@ import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
 import { getRate, getBalance } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { accountAssetsSelector } from 'selectors/assets';
 import smartWalletService from 'services/smartWallet';
 import { DEFAULT_GAS_LIMIT } from 'services/assets';
 
-import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
+import type { Assets, Balances, AssetTransfer, Rates, AssetsByAccount } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { Collectible } from 'models/Collectible';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  fetchAssetsBalances: (assets: Assets) => Function,
+  fetchAssetsBalances: (assets: AssetsByAccount) => Function,
   assets: Assets,
+  allAccAssets: AssetsByAccount,
   balances: Balances,
   transferAssets: AssetTransfer[],
   transferCollectibles: AssetTransfer[],
@@ -103,12 +105,12 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
   componentDidMount() {
     const {
-      assets,
+      allAccAssets,
       fetchGasInfo,
       fetchAssetsBalances,
     } = this.props;
     fetchGasInfo();
-    fetchAssetsBalances(assets);
+    fetchAssetsBalances(allAccAssets);
     smartWalletService.sdk.estimateAccountDeployment()
       .then(({ totalCost }) => this.setState({ deployEstimateFee: totalCost }))
       .catch(this.setDefaultDeployEstimate);
@@ -117,12 +119,12 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
   componentDidUpdate(prevProps: Props) {
     if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
       const {
-        assets,
+        allAccAssets,
         fetchGasInfo,
         fetchAssetsBalances,
       } = this.props;
       fetchGasInfo();
-      fetchAssetsBalances(assets);
+      fetchAssetsBalances(allAccAssets);
     }
   }
 
@@ -372,24 +374,25 @@ const mapStateToProps = ({
       },
     },
   },
-  assets: { data: assets },
   session: { data: session },
   history: { gasInfo },
   appSettings: { data: { baseFiatCurrency } },
   rates: { data: rates },
+  assets: { data: allAccAssets },
 }) => ({
   transferAssets,
   transferCollectibles,
-  assets,
   session,
   gasInfo,
   baseFiatCurrency,
   rates,
+  allAccAssets,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   collectibles: accountCollectiblesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

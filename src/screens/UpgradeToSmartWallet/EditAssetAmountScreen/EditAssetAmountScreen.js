@@ -38,14 +38,16 @@ import { addAssetsToSmartWalletUpgradeAction } from 'actions/smartWalletActions'
 import { formatAmount, parseNumber, isValidNumber } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
-import type { AssetTransfer, Assets, Balances } from 'models/Asset';
+import type { AssetTransfer, Assets, Balances, AssetsByAccount } from 'models/Asset';
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  fetchAssetsBalances: (assets: Assets) => Function,
+  fetchAssetsBalances: (assets: AssetsByAccount) => Function,
   addedAssets: AssetTransfer[],
-  allAssets: Assets,
+  assets: Assets,
+  allAccAssets: AssetsByAccount,
   balances: Balances,
   navigation: NavigationScreenProp<*>,
   addAssetsToSmartWallet: Function,
@@ -157,8 +159,8 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
   };
 
   refreshAssetsList = () => {
-    const { allAssets, fetchAssetsBalances } = this.props;
-    fetchAssetsBalances(allAssets);
+    const { allAccAssets, fetchAssetsBalances } = this.props;
+    fetchAssetsBalances(allAccAssets);
   };
 
   onNextPress = async () => {
@@ -173,7 +175,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { navigation, allAssets, addedAssets } = this.props;
+    const { navigation, assets: allAssets, addedAssets } = this.props;
     const { query, errors, disableScroll } = this.state;
     const assetsArray = Object.values(allAssets);
     const assets = assetsArray
@@ -235,15 +237,16 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: allAssets },
   smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
+  assets: { data: allAccAssets },
 }) => ({
-  allAssets,
   addedAssets,
+  allAccAssets,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

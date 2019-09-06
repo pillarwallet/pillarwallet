@@ -43,7 +43,7 @@ import { logScreenViewAction } from 'actions/analyticsActions';
 
 // models
 import type { Transaction } from 'models/Transaction';
-import type { Assets, Balances } from 'models/Asset';
+import type { Assets, Balances, AssetsByAccount } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 
@@ -70,6 +70,7 @@ import {
   availableStakeSelector,
   paymentNetworkAccountBalancesSelector,
 } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 // types
 import type { ContactSmartAddressData } from 'models/Contacts';
@@ -90,10 +91,11 @@ const activeModalResetState = {
 };
 
 type Props = {
-  fetchAssetsBalances: (assets: Assets) => Function,
+  fetchAssetsBalances: (assets: AssetsByAccount) => Function,
   fetchTransactionsHistory: (asset: string, indexFrom?: number) => Function,
   history: Transaction[],
   assets: Assets,
+  allAccAssets: AssetsByAccount,
   balances: Balances,
   rates: Object,
   navigation: NavigationScreenProp<*>,
@@ -247,7 +249,7 @@ class AssetScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      assets,
+      allAccAssets,
       rates,
       balances,
       paymentNetworkBalances,
@@ -327,7 +329,7 @@ class AssetScreen extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                fetchAssetsBalances(assets);
+                fetchAssetsBalances(allAccAssets);
                 fetchTransactionsHistory(token);
               }}
             />
@@ -416,7 +418,7 @@ class AssetScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-  assets: { data: assets },
+  assets: { data: allAccAssets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
@@ -428,7 +430,7 @@ const mapStateToProps = ({
   },
 }) => ({
   contacts,
-  assets,
+  allAccAssets,
   rates,
   baseFiatCurrency,
   smartWalletState,
@@ -442,6 +444,7 @@ const structuredSelector = createStructuredSelector({
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   history: accountHistorySelector,
   availableStake: availableStakeSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

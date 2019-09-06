@@ -26,7 +26,6 @@ import {
   START_ASSETS_SEARCH,
   UPDATE_ASSETS_SEARCH_RESULT,
   RESET_ASSETS_SEARCH_RESULT,
-  REMOVE_ASSET,
   SET_INITIAL_ASSETS,
   FETCHING,
   FETCHING_INITIAL,
@@ -56,7 +55,8 @@ import type {
   CollectibleTransactionPayload,
   TransactionPayload,
 } from 'models/Transaction';
-import type { Asset, Assets, Balance, Balances } from 'models/Asset';
+import type { Asset, Assets, AssetsByAccount, Balance, Balances } from 'models/Asset';
+import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { addressesEqual, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
@@ -498,7 +498,7 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
   }
 }
 
-export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?: boolean) => {
+export const fetchAssetsBalancesAction = (assets: AssetsByAccount, showToastIfIncreased?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       accounts: { data: accounts },
@@ -508,9 +508,10 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
+    const walletAddress = getAccountAddress(activeAccount);
+    if (!walletAddress) return;
 
-    const walletAddress = getActiveAccountAddress(accounts);
-    const accountId = getActiveAccountId(accounts);
+    const accountAssets = assets[walletAddress] || {};
     const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
 
     dispatch({
@@ -518,12 +519,13 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
       payload: FETCHING,
     });
 
-    const newBalances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
+    const newBalances = await api.fetchBalances({ address: walletAddress, assets: Object.values(accountAssets) });
+
     if (newBalances && newBalances.length) {
       const transformedBalances = transformAssetsToObject(newBalances);
       const updatedBalances = {
         ...balances,
-        [accountId]: transformedBalances,
+        [walletAddress]: transformedBalances,
       };
       if (showToastIfIncreased && !isSmartWalletAccount) {
         const currentBalances = accountBalancesSelector(getState());
@@ -537,11 +539,12 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
     }
 
     // @TODO: Extract "rates fetching" to its own action ones required.
-    const rates = await getExchangeRates(Object.keys(assets));
+    const rates = await getExchangeRates(Object.keys(accountAssets));
     if (rates && Object.keys(rates).length) {
       dispatch(saveDbAction('rates', { rates }, true));
       dispatch({ type: UPDATE_RATES, payload: rates });
     }
+
 
     if (smartWalletFeatureEnabled && isSmartWalletAccount) {
       dispatch(fetchVirtualAccountBalanceAction());
@@ -551,7 +554,11 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
 
 export const fetchInitialAssetsAction = () => {
   return async (dispatch: Dispatch, getState: () => Object, api: Object) => {
-    const { user: { data: { walletId } } } = getState();
+    const {
+      user: { data: { walletId } },
+      accounts: { data: accounts },
+    } = getState();
+
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING_INITIAL,
@@ -567,12 +574,17 @@ export const fetchInitialAssetsAction = () => {
       return;
     }
 
-    dispatch({
-      type: SET_INITIAL_ASSETS,
-      payload: initialAssets,
+    accounts.forEach(async (account) => {
+      const { id } = account;
+      dispatch({
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId: id,
+          assets: initialAssets,
+        },
+      });
+      await dispatch(fetchAssetsBalancesAction({ [id]: initialAssets }, true)); // todo: add acc
     });
-
-    dispatch(fetchAssetsBalancesAction(initialAssets));
   };
 };
 
@@ -580,10 +592,19 @@ export const addAssetAction = (asset: Asset) => {
   return async (dispatch: Dispatch, getState: () => Object) => {
     const {
       assets: { data: assets },
+      accounts: { data: accounts },
     } = getState();
-    const updatedAssets = { ...assets, [asset.symbol]: { ...asset } };
+
+    const activeAccount = getActiveAccount(accounts);
+    const accountId = get(activeAccount, 'id', null);
+    if (!accountId) return;
+
+    const accountAssets = assets[accountId];
+    const updatedAssets = { ...assets };
+    updatedAssets[accountId] = { ...accountAssets, [asset.symbol]: { ...asset } };
 
     dispatch(saveDbAction('assets', { assets: updatedAssets }));
+
     dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
     dispatch(fetchAssetsBalancesAction(assets));
 
@@ -595,17 +616,25 @@ export const removeAssetAction = (asset: Asset) => {
   return async (dispatch: Dispatch, getState: () => Object) => {
     const {
       assets: { data: assets },
+      accounts: { data: accounts },
     } = getState();
 
-    const updatedAssets = Object.keys(assets).reduce((object, key) => {
+    const activeAccount = getActiveAccount(accounts);
+    const accountId = get(activeAccount, 'id', null);
+    if (!accountId) return;
+
+    const accountAssets = assets[accountId];
+    const updatedAssets = { ...assets };
+
+    updatedAssets[accountId] = Object.keys(accountAssets).reduce((object, key) => {
       if (key !== asset.symbol) {
-        object[key] = assets[key];
+        object[key] = accountAssets[key];
       }
       return object;
     }, {});
 
     dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-    dispatch({ type: REMOVE_ASSET, payload: asset });
+    dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
   };
 };
 
@@ -630,6 +659,61 @@ export const resetSearchAssetsResultAction = () => ({
   type: RESET_ASSETS_SEARCH_RESULT,
 });
 
+const addSupportedTokensAction = (supportedAssets: Asset[], currentAssets: AssetsByAccount, accountId: string) => {
+  return async (dispatch: Dispatch) => {
+    if (!supportedAssets.length) return;
+    const currentAccountAssets = get(currentAssets, accountId, {});
+    const currentAccountAssetsTickers = Object.keys(currentAccountAssets);
+
+    // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
+    if (!currentAccountAssetsTickers.includes(ETH)) currentAccountAssetsTickers.push(ETH);
+    if (!currentAccountAssetsTickers.includes(PLR)) currentAccountAssetsTickers.push(PLR);
+
+    const updatedAccountAssets = supportedAssets
+      .filter(asset => currentAccountAssetsTickers.includes(asset.symbol))
+      .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
+
+    const updatedAssets = currentAssets;
+    updatedAssets[accountId] = updatedAccountAssets;
+
+    dispatch({
+      type: UPDATE_ASSETS,
+      payload: updatedAssets,
+    });
+    // dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+  };
+};
+
+const setAllOwnedAssetsAction = (account: Account) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+    const {
+      assets: { data: currentAssets, supportedAssets },
+    } = getState();
+    const { id: accountId } = account;
+    const accOwnedErc20Assets = {};
+    const accCurrentAssets = get(currentAssets, accountId, {});
+
+    const addressErc20Tokens = await api.getAddressErc20TokensInfo(accountId); // all address' assets except ETH;
+    if (addressErc20Tokens.length) {
+      addressErc20Tokens.forEach((token) => {
+        const tokenTicker = get(token, 'tokenInfo.symbol', '');
+        const supportedAsset = supportedAssets.find(asset => asset.symbol === tokenTicker);
+        if (supportedAsset && !accOwnedErc20Assets[tokenTicker]) accOwnedErc20Assets[tokenTicker] = supportedAsset;
+      });
+    }
+
+    const updatedAssets = { ...currentAssets };
+    updatedAssets[accountId] = { ...accCurrentAssets, ...accOwnedErc20Assets };
+
+    dispatch({
+      type: UPDATE_ASSETS,
+      payload: updatedAssets,
+    });
+    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+    dispatch(fetchAssetsBalancesAction(updatedAssets, false)); // todo: add acc
+  };
+};
+
 export const checkForMissedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
@@ -646,43 +730,16 @@ export const checkForMissedAssetsAction = () => {
         type: UPDATE_SUPPORTED_ASSETS,
         payload: walletSupportedAssets,
       });
-      const currentAssetsTickers = Object.keys(currentAssets);
 
-      // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
-      if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
-      if (!currentAssetsTickers.includes(PLR)) currentAssetsTickers.push(PLR);
-
-      if (walletSupportedAssets.length) {
-        const updatedAssets = walletSupportedAssets
-          .filter(asset => currentAssetsTickers.includes(asset.symbol))
-          .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
-        dispatch({
-          type: UPDATE_ASSETS,
-          payload: updatedAssets,
-        });
-        dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-      }
+      accounts.forEach(async ({ id }) => {
+        await dispatch(addSupportedTokensAction(supportedAssets, currentAssets, id));
+      });
     }
 
     // check if some assets are not enabled
-    const ownedErc20Assets = {};
-
-    await Promise.all(accounts.map(async (acc) => {
-      const addressErc20Tokens = await api.getAddressErc20TokensInfo(acc.id); // all address assets except ETH;
-      if (addressErc20Tokens.length) {
-        addressErc20Tokens.forEach((token) => {
-          const tokenTicker = get(token, 'tokenInfo.symbol', '');
-          const supportedAsset = walletSupportedAssets.find(asset => asset.symbol === tokenTicker);
-          if (supportedAsset && !ownedErc20Assets[tokenTicker]) ownedErc20Assets[tokenTicker] = supportedAsset;
-        });
-      }
-    }));
-
-    if (Object.keys(ownedErc20Assets).length) {
-      const newAssets = { ...currentAssets, ...ownedErc20Assets };
-      dispatch(updateAssetsAction(newAssets));
-      dispatch(fetchAssetsBalancesAction(newAssets));
-    }
+    accounts.forEach(async (acc) => {
+      await dispatch(setAllOwnedAssetsAction(acc));
+    });
   };
 };
 

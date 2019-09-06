@@ -34,13 +34,14 @@ import {
   fetchVirtualAccountBalanceAction,
   syncVirtualAccountTransactionsAction,
 } from 'actions/smartWalletActions';
-import { UPDATE_BALANCES } from 'constants/assetsConstants';
+import { UPDATE_BALANCES, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
 import Storage from 'services/storage';
 import { migrateBalancesToAccountsFormat } from 'services/dataMigration/balances';
 import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history';
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
+import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
 import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
@@ -54,11 +55,6 @@ const storage = Storage.getInstance('db');
 
 export const initDefaultAccountAction = (walletAddress: string, walletId: string, migrateData: boolean = true) => {
   return async (dispatch: Function) => {
-    const { balances = {} } = await storage.get('balances');
-    const { history = {} } = await storage.get('history');
-    const { collectibles = {} } = await storage.get('collectibles');
-    const { collectiblesHistory = {} } = await storage.get('collectiblesHistory');
-
     const keyBasedAccount = {
       id: walletAddress,
       type: ACCOUNT_TYPES.KEY_BASED,
@@ -79,6 +75,12 @@ export const initDefaultAccountAction = (walletAddress: string, walletId: string
     /*
      * Data migration
      */
+
+    const { balances = {} } = await storage.get('balances');
+    const { history = {} } = await storage.get('history');
+    const { collectibles = {} } = await storage.get('collectibles');
+    const { collectiblesHistory = {} } = await storage.get('collectiblesHistory');
+    const { assets = {} } = await storage.get('assets');
 
     // balances
     if (!balances[walletAddress]) {
@@ -116,6 +118,15 @@ export const initDefaultAccountAction = (walletAddress: string, walletId: string
       if (migratedCollectiblesHistory) {
         dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: migratedCollectiblesHistory });
         await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: migratedCollectiblesHistory }, true));
+      }
+    }
+
+    // assets
+    if (!assets[walletAddress]) {
+      const migratedAssets = migrateAssetsToAccountsFormat(assets, [keyBasedAccount]);
+      if (migratedAssets) {
+        dispatch({ type: UPDATE_ASSETS, payload: migratedAssets });
+        await dispatch(saveDbAction('assets', { assets: migratedAssets }, true));
       }
     }
 

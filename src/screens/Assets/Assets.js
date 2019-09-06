@@ -41,7 +41,6 @@ import type { Accounts, Account } from 'models/Account';
 
 // actions
 import {
-  updateAssetsAction,
   fetchInitialAssetsAction,
   startAssetsSearchAction,
   searchAssetsAction,
@@ -68,6 +67,7 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
 import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountSelector } from 'selectors';
 
 // local components
@@ -84,7 +84,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetsLayout: string,
-  updateAssets: Function,
   startAssetsSearch: Function,
   searchAssets: Function,
   resetSearchAssetsResult: Function,
@@ -321,7 +320,6 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   wallet: { data: wallet, backupStatus },
   assets: {
-    data: assets,
     assetsState,
     assetsSearchState,
     assetsSearchResults,
@@ -335,7 +333,6 @@ const mapStateToProps = ({
   wallet,
   backupStatus,
   accounts,
-  assets,
   assetsState,
   assetsSearchState,
   assetsSearchResults,
@@ -350,6 +347,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
+  assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   availableStake: availableStakeSelector,
 });
@@ -361,7 +359,6 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
-  updateAssets: (assets: Assets, assetsToExclude: string[]) => dispatch(updateAssetsAction(assets, assetsToExclude)),
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),

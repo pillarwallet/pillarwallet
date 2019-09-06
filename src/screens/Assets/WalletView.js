@@ -53,19 +53,20 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { accountAssetsSelector } from 'selectors/assets';
+
 import Spinner from 'components/Spinner';
 import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import DeploymentView from 'components/DeploymentView';
 
-import type { Asset, Assets, Balances, Rates } from 'models/Asset';
+import type { Asset, Assets, AssetsByAccount, Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 
 // actions
 import {
-  updateAssetsAction,
   startAssetsSearchAction,
   searchAssetsAction,
   resetSearchAssetsResultAction,
@@ -103,7 +104,6 @@ type Props = {
   resetSearchAssetsResult: Function,
   addAsset: Function,
   removeAsset: Function,
-  updateAssets: Function,
   assetsSearchState: string,
   logScreenView: Function,
   balances: Balances,
@@ -115,6 +115,7 @@ type Props = {
   fetchAllCollectiblesData: Function,
   deploySmartWallet: Function,
   showDeploySmartWallet?: boolean,
+  allAccAssets: AssetsByAccount,
 }
 
 type State = {
@@ -364,6 +365,7 @@ class WalletView extends React.Component<Props, State> {
       insightsTitle,
       assetsSearchState,
       assets,
+      allAccAssets,
       rates,
       balances,
       baseFiatCurrency,
@@ -372,6 +374,8 @@ class WalletView extends React.Component<Props, State> {
       smartWalletFeatureEnabled,
       showDeploySmartWallet,
       deploySmartWallet,
+      fetchAssetsBalances,
+      fetchAllCollectiblesData,
     } = this.props;
 
     // SEARCH
@@ -428,8 +432,7 @@ class WalletView extends React.Component<Props, State> {
           <RefreshControl
             refreshing={false}
             onRefresh={() => {
-              const { fetchAssetsBalances, fetchAllCollectiblesData } = this.props;
-              fetchAssetsBalances(assets);
+              fetchAssetsBalances(allAccAssets);
               fetchAllCollectiblesData();
             }}
           />
@@ -513,7 +516,7 @@ class WalletView extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: {
-    data: assets,
+    data: allAccAssets,
     assetsState,
     assetsSearchState,
     assetsSearchResults,
@@ -524,7 +527,7 @@ const mapStateToProps = ({
   smartWallet: smartWalletState,
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
-  assets,
+  allAccAssets,
   assetsState,
   assetsSearchState,
   assetsSearchResults,
@@ -539,6 +542,7 @@ const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
   activeAccount: activeAccountSelector,
   balances: accountBalancesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -547,7 +551,6 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  updateAssets: (assets: Assets, assetsToExclude: string[]) => dispatch(updateAssetsAction(assets, assetsToExclude)),
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
