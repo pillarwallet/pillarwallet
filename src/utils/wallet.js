@@ -103,12 +103,14 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
   const isWalletEmpty = isEmpty(wallet);
   // wallet timestamp missing causes welcome screen
   let walletTimestamp = appSettings.wallet;
-  const reportToSentry = (message, extra = {}) => Sentry.captureMessage(message, {
-    walletHadBackup: !!walletBackup,
-    isWalletEmpty,
-    walletCreationTimestamp: appSettings.wallet,
-    isAppSettingsEmpty: isEmpty(appSettings),
-    ...extra,
+  const reportToSentry = (message, data = {}) => Sentry.captureMessage(message, {
+    extra: {
+      walletHadBackup: !!walletBackup,
+      isWalletEmpty,
+      walletCreationTimestamp: appSettings.wallet,
+      isAppSettingsEmpty: isEmpty(appSettings),
+      ...data,
+    },
   });
   // restore wallet if one is empty and backup is present
   if (isWalletEmpty && walletBackup) {
