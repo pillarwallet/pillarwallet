@@ -19,6 +19,7 @@
 */
 import {
   TRANSACTION_CONFIRMATION_EVENT,
+  TRANSACTION_CONFIRMATION_SENDER_EVENT,
   TRANSACTION_PENDING_EVENT,
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
@@ -60,6 +61,7 @@ export const isTransactionEvent = (eventType: string) => {
   return [
     TRANSACTION_PENDING_EVENT,
     TRANSACTION_CONFIRMATION_EVENT,
+    TRANSACTION_CONFIRMATION_SENDER_EVENT,
   ].includes(eventType);
 };
 

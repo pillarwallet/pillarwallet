@@ -351,8 +351,9 @@ class NewProfile extends React.Component<Props, State> {
 
     const isUsernameValid = value && value.username && !usernameHasErrors;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
-    const canGoNext = !!hasAgreedToTerms && !!hasAgreedToPolicy && !!isUsernameValid && !isCheckingUsernameAvailability
-      && !isPendingCheck && session.isOnline;
+    const canGoNext = !!isUsernameValid && !isCheckingUsernameAvailability && !isPendingCheck && session.isOnline;
+    const hasAgreedToAllTerms = !!hasAgreedToTerms && !!hasAgreedToPolicy;
+    const allowNext = importedWallet ? canGoNext : canGoNext && hasAgreedToAllTerms;
 
     const headerProps = !apiUser.walletId
       ? {
@@ -376,7 +377,7 @@ class NewProfile extends React.Component<Props, State> {
         keyboardAvoidFooter={!apiUser.walletId && (
           <NextFooter
             onNextPress={this.handleSubmit}
-            nextDisabled={!canGoNext}
+            nextDisabled={!allowNext}
             wrapperStyle={{ paddingBottom: 15, paddingTop: 15 }}
           >
             {!importedWallet &&

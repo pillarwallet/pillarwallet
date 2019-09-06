@@ -29,11 +29,8 @@ import Intercom from 'react-native-intercom';
 // components
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
-import { Wrapper } from 'components/Layout';
-import { MediumText, Paragraph } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
-import SlideModal from 'components/Modals/SlideModal';
-import Button from 'components/Button';
 import QRCodeScanner from 'components/QRCodeScanner';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
@@ -43,7 +40,6 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // constants
 import {
-  ADD_EDIT_USER,
   MANAGE_DETAILS_SESSIONS,
   BADGE,
   SETTINGS,
@@ -61,16 +57,19 @@ import {
 } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { resetDeepLinkDataAction, approveLoginAttemptAction, executeDeepLinkAction } from 'actions/deepLinkActions';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import { onWalletConnectSessionRequest, cancelWaitingRequest } from 'actions/walletConnectActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
+import {
+  requestWalletConnectSessionAction,
+  cancelWaitingRequest,
+} from 'actions/walletConnectActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { executeDeepLinkAction } from 'actions/deepLinkActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -78,7 +77,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { activeAccountSelector } from 'selectors';
 
 // utils
-import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { getAccountAddress } from 'utils/accounts';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -104,15 +103,12 @@ type Props = {
   homeNotifications: Object[],
   intercomNotificationsCount: number,
   fetchAllCollectiblesData: Function,
-  resetDeepLinkData: Function,
-  approveLoginAttempt: Function,
   openSeaTxHistory: Object[],
   history: Array<*>,
   waitingRequest?: string,
-  onWalletConnectSessionRequest: Function,
-  onWalletLinkScan: Function,
+  requestWalletConnectSession: (uri: string) => void,
+  executeDeepLink: (uri: string) => void,
   cancelWaitingRequest: Function,
-  loginAttemptToken?: string,
   badges: Badges,
   fetchBadges: Function,
   connectors: any[],
@@ -129,9 +125,7 @@ type State = {
   activeTab: string,
   permissionsGranted: boolean,
   scrollY: Animated.Value,
-  addEmailRedirect: boolean,
   isScanning: boolean,
-  showLoginModal: boolean,
   tabIsChanging: boolean,
 };
 
@@ -162,18 +156,6 @@ const BadgesWrapper = styled.View`
   border-color: ${baseColors.mediumLightGray};
 `;
 
-const Description = styled(Paragraph)`
-  text-align: center;
-  padding-bottom: ${spacing.rhythm}px;
-  line-height: ${fontSizes.mediumLarge};
-`;
-
-const DescriptionWarning = styled(Description)`
-  font-size: ${fontSizes.small};
-  font-weight: ${fontWeights.bold};
-  color: ${baseColors.burningFire};
-`;
-
 const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
@@ -190,14 +172,12 @@ class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   state = {
-    addEmailRedirect: false,
     showCamera: false,
     permissionsGranted: false,
     scrollY: new Animated.Value(0),
     activeTab: ALL,
     usernameWidth: 0,
     isScanning: false,
-    showLoginModal: false,
     tabIsChanging: false,
   };
 
@@ -220,7 +200,6 @@ class HomeScreen extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    this.props.resetDeepLinkData();
     this._willFocus.remove();
   }
 
@@ -232,6 +211,8 @@ class HomeScreen extends React.Component<Props, State> {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
+
+  closeCamera = () => this.setState({ showCamera: false });
 
   refreshScreenData = () => {
     const {
@@ -261,69 +242,32 @@ class HomeScreen extends React.Component<Props, State> {
     this.setState({ activeTab });
   };
 
-  /**
-   * modals can't be shown if one is not fully closed,
-   * this issue happens on iOS when camera modal is not yet closed
-   * and forum login approve modal is set to appear
-   * https://github.com/react-native-community/react-native-modal#i-cant-show-multiple-modals-one-after-another
-   */
-  checkLoginModalVisibility = () => {
-    const { loginAttemptToken } = this.props;
-    const { showLoginModal } = this.state;
-    if (!!loginAttemptToken && !showLoginModal) {
-      this.setState({ showLoginModal: true });
-    }
-  };
+  openQRScanner = () => this.setState({
+    isScanning: true,
+  });
 
-  /**
-   * modals can't be shown if one is not fully closed,
-   * this case happens on iOS when login approve modal is not yet closed
-   * and add email modal is set to appear on other screen
-   * https://github.com/react-native-community/react-native-modal#i-cant-show-multiple-modals-one-after-another
-   */
-  checkAddEmailRedirect = () => {
-    const { navigation } = this.props;
-    const { addEmailRedirect } = this.state;
-    if (!addEmailRedirect) return;
-    this.setState({ addEmailRedirect: false }, () => {
-      /**
-      * NOTE: `showLoginModal` needs reset because
-      * after: (1) navigating to email settings with login token to approve
-      * then (2) saving email and (3) closing email modal should have
-      * login approve modal open in Home screen, however,
-      * login approve modal cannot be open while navigating
-      */
-      this.setState({ showLoginModal: true });
-      navigation.navigate(ADD_EDIT_USER);
-    });
-  };
-
-  closeLoginModal = () => {
-    const { navigation, resetDeepLinkData } = this.props;
-    resetDeepLinkData();
-    this.setState({ showLoginModal: false });
-    const showLoginApproveModal = navigation.getParam('showLoginApproveModal');
-    if (showLoginApproveModal) {
-      navigation.setParams({ showLoginApproveModal: null });
-    }
-  };
+  closeQRScanner = () => this.setState({
+    isScanning: false,
+  });
 
   // START OF Wallet connect related methods
-  validateWalletConnectQRCode = (uri: string) => {
+  validateQRCode = (uri: string): boolean => {
     return uri.startsWith('wc:') || uri.startsWith('pillarwallet:');
   };
 
-  handleQRScannerClose = () => this.setState({ isScanning: false });
-
-  toggleQRScanner = () => this.setState({ isScanning: !this.state.isScanning });
-
   handleQRRead = (uri: string) => {
+    const {
+      requestWalletConnectSession,
+      executeDeepLink,
+    } = this.props;
+
+    this.closeQRScanner();
+
     if (uri.startsWith('wc:')) {
-      this.props.onWalletConnectSessionRequest(uri);
+      requestWalletConnectSession(uri);
     } else {
-      this.props.onWalletLinkScan(uri);
+      executeDeepLink(uri);
     }
-    this.handleQRScannerClose();
   };
 
   cancelWaiting = () => {
@@ -351,14 +295,11 @@ class HomeScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      user,
       cancelInvitation,
       acceptInvitation,
       rejectInvitation,
       intercomNotificationsCount,
       navigation,
-      loginAttemptToken,
-      approveLoginAttempt,
       history,
       openSeaTxHistory,
       contacts,
@@ -373,7 +314,6 @@ class HomeScreen extends React.Component<Props, State> {
     const {
       activeTab,
       isScanning,
-      showLoginModal,
       tabIsChanging,
     } = this.state;
 
@@ -439,9 +379,6 @@ class HomeScreen extends React.Component<Props, State> {
 
     const hasIntercomNotifications = !!intercomNotificationsCount;
 
-    // getting from navigation params solves case when forum login approve modal should appear after PIN screen
-    const isLoginModalVisible = showLoginModal || navigation.getParam('showLoginApproveModal');
-
     const sessionsCount = filterSessionsByUrl(connectors).length;
     const sessionsLabelPart = sessionsCount < 2 ? 'session' : 'sessions';
     const sessionsLabel = sessionsCount ? `${sessionsCount} ${sessionsLabelPart}` : '';
@@ -498,7 +435,7 @@ class HomeScreen extends React.Component<Props, State> {
               title="Wallet Connect"
               subtitle={sessionsLabel}
               onMainPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
-              onSettingsPress={this.toggleQRScanner}
+              onSettingsPress={this.openQRScanner}
               onSettingsLoadingPress={this.cancelWaiting}
               isLoading={!!waitingRequest}
               settingsIconSource={iconConnect}
@@ -545,47 +482,11 @@ class HomeScreen extends React.Component<Props, State> {
           />
         </ScrollView>
         <QRCodeScanner
-          validator={this.validateWalletConnectQRCode}
+          validator={this.validateQRCode}
           isActive={isScanning}
-          onDismiss={this.handleQRScannerClose}
+          onCancel={this.closeQRScanner}
           onRead={this.handleQRRead}
-          onModalHide={this.checkLoginModalVisibility}
         />
-
-        <SlideModal
-          isVisible={!!loginAttemptToken && isLoginModalVisible}
-          fullScreen
-          showHeader
-          onModalHide={this.closeLoginModal}
-          onModalHidden={this.checkAddEmailRedirect}
-          backgroundColor={baseColors.snowWhite}
-          avoidKeyboard
-          centerTitle
-          title="confirm"
-        >
-          <Wrapper flex={1} center regularPadding>
-            <View style={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
-              <Description>
-                You are about to confirm your login with your Pillar wallet to external resource.
-              </Description>
-              {!user.email && (
-                <DescriptionWarning>
-                  In order to proceed with Discourse login you must have email added to your profile.
-                </DescriptionWarning>
-              )}
-              <Button
-                title={!user.email ? 'Add your email' : 'Confirm login'}
-                onPress={() => (user.email
-                    ? approveLoginAttempt(loginAttemptToken)
-                    : this.setState({ showLoginModal: false, addEmailRedirect: true })
-                )}
-                style={{
-                  marginBottom: 13,
-                }}
-              />
-            </View>
-          </Wrapper>
-        </SlideModal>
       </ContainerWithHeader>
     );
   }
@@ -596,7 +497,6 @@ const mapStateToProps = ({
   user: { data: user },
   invitations: { data: invitations },
   notifications: { intercomNotificationsCount },
-  deepLink: { data: { loginAttemptToken } = {} },
   badges: { data: badges },
   walletConnect: { connectors },
   accounts: { data: accounts },
@@ -605,7 +505,6 @@ const mapStateToProps = ({
   user,
   invitations,
   intercomNotificationsCount,
-  loginAttemptToken,
   badges,
   connectors,
   contactsSmartAddresses,
@@ -632,10 +531,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  resetDeepLinkData: () => dispatch(resetDeepLinkDataAction()),
-  approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
-  onWalletConnectSessionRequest: uri => dispatch(onWalletConnectSessionRequest(uri)),
-  onWalletLinkScan: uri => dispatch(executeDeepLinkAction(uri)),
+  requestWalletConnectSession: uri => dispatch(requestWalletConnectSessionAction(uri)),
+  executeDeepLink: uri => dispatch(executeDeepLinkAction(uri)),
   cancelWaitingRequest: clientId => dispatch(cancelWaitingRequest(clientId)),
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
@@ -645,4 +542,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
-

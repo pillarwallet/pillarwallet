@@ -71,7 +71,7 @@ import { getTxNoteByContactAction } from 'actions/txNoteActions';
 import { speedUpTransactionAction } from 'actions/assetsActions';
 
 // constants
-import { TRANSACTION_EVENT, TX_PENDING_STATUS } from 'constants/historyConstants';
+import { TRANSACTION_EVENT, TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -192,6 +192,7 @@ class EventDetails extends React.Component<Props, State> {
       fetchGasInfo,
       accounts,
       assets,
+      history,
     } = this.props;
 
     if (eventType !== TRANSACTION_EVENT) return;
@@ -201,36 +202,40 @@ class EventDetails extends React.Component<Props, State> {
       getTxNoteByContact(eventData.contact.username);
     }
 
-    const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
-    if (txInfo.status !== TX_PENDING_STATUS) return;
+    fetchGasInfo();
 
-    const activeAccount = getActiveAccount(accounts);
-    if (activeAccount && !checkIfSmartWalletAccount(activeAccount)) {
-      // TODO: add support for smart wallet sdk transactions speed up
-      const activeAccountAddress = getAccountAddress(activeAccount);
-      if (addressesEqual(txInfo.from, activeAccountAddress)) {
-        const {
-          symbol: assetSymbol,
-          decimals,
-          address: contractAddress,
-        } = assets.find(({ symbol }) => symbol === assetSymbol) || {};
-        const amount = formatUnits(txInfo.value, decimals);
-        calculateGasEstimate({
-          from: activeAccountAddress,
-          to: txInfo.to,
-          amount,
-          assetSymbol,
-          contractAddress,
-          decimals,
-        })
-          .then(gasLimit => this.setState({ gasLimit, showSpeedUp: gasLimit !== 0 }))
-          .catch(() => null);
+    const txInfo = history.find(tx => tx.hash === eventData.hash) || {};
+    if (txInfo.status === TX_PENDING_STATUS) {
+      this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 500);
+      this.timer = setInterval(() => updateTransactionStatus(eventData.hash), 10000);
+      const activeAccount = getActiveAccount(accounts);
+      if (activeAccount && !checkIfSmartWalletAccount(activeAccount)) {
+        // TODO: add support for smart wallet sdk transactions speed up
+        const activeAccountAddress = getAccountAddress(activeAccount);
+        if (addressesEqual(txInfo.from, activeAccountAddress)) {
+          const {
+            symbol: assetSymbol,
+            decimals,
+            address: contractAddress,
+          } = assets.find(({ symbol }) => symbol === assetSymbol) || {};
+          const amount = formatUnits(txInfo.value, decimals);
+          calculateGasEstimate({
+            from: activeAccountAddress,
+            to: txInfo.to,
+            amount,
+            assetSymbol,
+            contractAddress,
+            decimals,
+          })
+            .then(gasLimit => this.setState({ gasLimit, showSpeedUp: gasLimit !== 0 }))
+            .catch(() => null);
+        }
       }
     }
 
-    fetchGasInfo();
-    this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 500);
-    this.timer = setInterval(() => updateTransactionStatus(eventData.hash), 10000);
+    if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
+      updateTransactionStatus(eventData.hash);
+    }
   }
 
   componentWillUnmount() {
@@ -524,7 +529,7 @@ class EventDetails extends React.Component<Props, State> {
               value={extra.map(item => <BoldText key={item.hash}> {item.value} {item.symbol}</BoldText>)}
             />
             }
-            {(toMyself || !isReceived) && !isPending &&
+            {(toMyself || !isReceived) && !isPending && (freeTx || !!fee) &&
             <ListItemUnderlined
               label="TRANSACTION FEE"
               value={freeTx ? 'free' : utils.formatEther(fee.toString())}

@@ -45,7 +45,6 @@ import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
 import connectionKeyPairsReducer from './connectionKeyPairsReducer';
 import collectiblesReducer from './collectiblesReducer';
-import deepLinkReducer from './deepLinkReducer';
 import connectionIdentityKeysReducer from './connectionIdentityKeysReducer';
 import badgesReducer from './badgesReducer';
 import exchangeReducer from './exchangeReducer';
@@ -77,7 +76,6 @@ import type { OAuthReducerState } from './oAuthReducer';
 import type { TxCountReducerState } from './txCountReducer';
 import type { ConnectionKeyPairsReducerState } from './connectionKeyPairsReducer';
 import type { CollectiblesReducerState, CollectiblesAction } from './collectiblesReducer';
-import type { DeepLinkReducerState } from './deepLinkReducer';
 import type { ConnectionIdentityKeysReducerState } from './connectionIdentityKeysReducer';
 import type { BadgesReducerState, BadgesReducerAction } from './badgesReducer';
 import type { ExchangeReducerState, ExchangeReducerAction } from './exchangeReducer';
@@ -109,7 +107,6 @@ export type RootReducerState = {|
   txCount: TxCountReducerState,
   connectionKeyPairs: ConnectionKeyPairsReducerState,
   collectibles: CollectiblesReducerState,
-  deepLink: DeepLinkReducerState,
   connectionIdentityKeys: ConnectionIdentityKeysReducerState,
   badges: BadgesReducerState,
   exchange: ExchangeReducerState,
@@ -166,7 +163,6 @@ const appReducer = combineReducers({
   oAuthTokens: oAuthReducer,
   txCount: txCountReducer,
   collectibles: collectiblesReducer,
-  deepLink: deepLinkReducer,
   connectionKeyPairs: connectionKeyPairsReducer,
   connectionIdentityKeys: connectionIdentityKeysReducer,
   badges: badgesReducer,

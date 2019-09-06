@@ -24,7 +24,6 @@ import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
 import { Animated, Easing, View, Image, AppState } from 'react-native';
 import { BaseText } from 'components/Typography';
-// import ProfileImage from 'components/ProfileImage/ProfileImage';
 
 // services
 import { updateNavigationLastScreenState } from 'services/navigation';
@@ -53,7 +52,7 @@ import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
 import HomeScreen from 'screens/Home';
-import MeScreen from 'screens/Me';
+import LoginScreen from 'screens/Home/Login';
 import ParticipateScreen from 'screens/Participate';
 import InstructionsScreen from 'screens/Participate/Instructions';
 import ConfirmScreen from 'screens/Participate/Confirm';
@@ -121,8 +120,6 @@ import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 // constants
 import {
   ADD_TOKEN,
-  ME,
-  // ME_TAB,
   ASSETS,
   ASSET,
   EXCHANGE_TAB,
@@ -134,6 +131,7 @@ import {
   CONTACT,
   HOME,
   HOME_TAB,
+  LOGIN,
   CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
@@ -284,14 +282,6 @@ const exchangeFlow = createStackNavigator({
 
 exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// ME FLOW
-const meFlow = createStackNavigator({
-  [ME]: MeScreen,
-  [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
-}, StackNavigatorConfig);
-
-meFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
@@ -318,6 +308,7 @@ const walletConnectFlow = createStackNavigator(
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [SETTINGS]: SettingsScreen,
+  [LOGIN]: LoginScreen,
   [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
@@ -361,22 +352,6 @@ const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => 
     </View>
   );
 };
-
-// const tabBarImage = (image) => ({ focused }) => {
-//   return (
-//     <View style={{ padding: 4 }}>
-//       <ProfileImage
-//         noShadow
-//         borderWidth={2}
-//         borderColor={focused ? baseColors.electricBlue : baseColors.white}
-//         borderSpacing={1}
-//         initialsSize={10}
-//         diameter={24}
-//         uri={image}
-//       />
-//     </View>
-//   );
-// };
 
 const tabBarLabel = labelText => ({ focused, tintColor }) => (
   <BaseText
@@ -429,15 +404,6 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('Exchange'),
       }),
     },
-    // [ME_TAB]: {
-    //   screen: meFlow,
-    //   navigationOptions: ({ screenProps }) => ({
-    //     tabBarIcon: screenProps.profileImage
-    //       ? tabBarImage(screenProps.profileImage)
-    //       : tabBarIcon(iconMeActive, iconMe),
-    //     tabBarLabel: tabBarLabel('Me'),
-    //   }),
-    // },
   }, {
     tabBarOptions: {
       activeTintColor: UIColors.primary,

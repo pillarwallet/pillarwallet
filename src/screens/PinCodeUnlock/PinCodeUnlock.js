@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { AppState } from 'react-native';
 import { connect } from 'react-redux';
 import { DEFAULT_PIN } from 'react-native-dotenv';
 import get from 'lodash.get';
@@ -36,6 +37,7 @@ import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/c
 import { getKeychainDataObject } from 'utils/keychain';
 
 const ACTIVE_APP_STATE = 'active';
+const BACKGROUND_APP_STATE = 'background';
 
 type Props = {
   loginWithPin: (pin: string, callback: ?Function, updateKeychain: boolean) => Function,
@@ -50,6 +52,7 @@ type State = {
   waitingTime: number,
   biometricsShown: boolean,
   updateKeychain: boolean,
+  lastAppState: string,
 };
 
 class PinCodeUnlock extends React.Component<Props, State> {
@@ -60,6 +63,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     waitingTime: 0,
     biometricsShown: false,
     updateKeychain: false,
+    lastAppState: AppState.currentState,
   };
 
   constructor(props) {
@@ -93,9 +97,14 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   handleAppStateChange = (nextAppState: string) => {
     const { useBiometrics } = this.props;
-    if (nextAppState === ACTIVE_APP_STATE && useBiometrics && !this.errorMessage) {
+    const { lastAppState } = this.state;
+    if (nextAppState === ACTIVE_APP_STATE
+      && lastAppState === BACKGROUND_APP_STATE
+      && useBiometrics
+      && !this.errorMessage) {
       this.showBiometricLogin();
     }
+    this.setState({ lastAppState: nextAppState });
   };
 
   showBiometricLogin() {
