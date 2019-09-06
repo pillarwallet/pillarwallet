@@ -498,7 +498,7 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
   }
 }
 
-export const fetchAssetsBalancesAction = (assets: AssetsByAccount, showToastIfIncreased?: boolean) => {
+export const fetchAssetsBalancesAction = (assets: AssetsByAccount, showToastIfIncreased?: boolean, acc?: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       accounts: { data: accounts },
@@ -506,13 +506,13 @@ export const fetchAssetsBalancesAction = (assets: AssetsByAccount, showToastIfIn
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
     } = getState();
 
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount) return;
-    const walletAddress = getAccountAddress(activeAccount);
+    const relatedAccount = acc || getActiveAccount(accounts);
+    if (!relatedAccount) return;
+    const walletAddress = getAccountAddress(relatedAccount);
     if (!walletAddress) return;
 
     const accountAssets = assets[walletAddress] || {};
-    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
+    const isSmartWalletAccount = checkIfSmartWalletAccount(relatedAccount);
 
     dispatch({
       type: UPDATE_ASSETS_STATE,
@@ -583,7 +583,7 @@ export const fetchInitialAssetsAction = () => {
           assets: initialAssets,
         },
       });
-      await dispatch(fetchAssetsBalancesAction({ [id]: initialAssets }, true)); // todo: add acc
+      await dispatch(fetchAssetsBalancesAction({ [id]: initialAssets }, true, account));
     });
   };
 };
@@ -600,8 +600,10 @@ export const addAssetAction = (asset: Asset) => {
     if (!accountId) return;
 
     const accountAssets = assets[accountId];
-    const updatedAssets = { ...assets };
-    updatedAssets[accountId] = { ...accountAssets, [asset.symbol]: { ...asset } };
+    const updatedAssets = {
+      ...assets,
+      accountId: { ...accountAssets, [asset.symbol]: { ...asset } },
+    };
 
     dispatch(saveDbAction('assets', { assets: updatedAssets }));
 
@@ -624,14 +626,17 @@ export const removeAssetAction = (asset: Asset) => {
     if (!accountId) return;
 
     const accountAssets = assets[accountId];
-    const updatedAssets = { ...assets };
-
-    updatedAssets[accountId] = Object.keys(accountAssets).reduce((object, key) => {
+    const updatedAccountAssets = Object.keys(accountAssets).reduce((object, key) => {
       if (key !== asset.symbol) {
         object[key] = accountAssets[key];
       }
       return object;
     }, {});
+
+    const updatedAssets = {
+      ...assets,
+      accountId: updatedAccountAssets,
+    };
 
     dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
     dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
@@ -673,14 +678,16 @@ const addSupportedTokensAction = (supportedAssets: Asset[], currentAssets: Asset
       .filter(asset => currentAccountAssetsTickers.includes(asset.symbol))
       .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
 
-    const updatedAssets = currentAssets;
-    updatedAssets[accountId] = updatedAccountAssets;
+    const updatedAssets = {
+      ...currentAssets,
+      accountId: updatedAccountAssets,
+    };
 
     dispatch({
       type: UPDATE_ASSETS,
       payload: updatedAssets,
     });
-    // dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
   };
 };
 
@@ -702,15 +709,18 @@ const setAllOwnedAssetsAction = (account: Account) => {
       });
     }
 
-    const updatedAssets = { ...currentAssets };
-    updatedAssets[accountId] = { ...accCurrentAssets, ...accOwnedErc20Assets };
+    const updatedAssets = {
+      ...currentAssets,
+      [accountId]: { ...accCurrentAssets, ...accOwnedErc20Assets },
+    };
 
     dispatch({
       type: UPDATE_ASSETS,
       payload: updatedAssets,
     });
+
     dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-    dispatch(fetchAssetsBalancesAction(updatedAssets, false)); // todo: add acc
+    dispatch(fetchAssetsBalancesAction(updatedAssets, false, account));
   };
 };
 
@@ -731,7 +741,7 @@ export const checkForMissedAssetsAction = () => {
         payload: walletSupportedAssets,
       });
 
-      accounts.forEach(async ({ id }) => {
+      await accounts.forEach(async ({ id }) => {
         await dispatch(addSupportedTokensAction(supportedAssets, currentAssets, id));
       });
     }
