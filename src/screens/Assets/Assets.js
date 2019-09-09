@@ -45,8 +45,6 @@ import {
   startAssetsSearchAction,
   searchAssetsAction,
   resetSearchAssetsResultAction,
-  addAssetAction,
-  removeAssetAction,
 } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -90,7 +88,7 @@ type Props = {
   assetsSearchResults: Asset[],
   assetsSearchState: string,
   addAsset: Function,
-  removeAsset: Function,
+  hideAsset: Function,
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
@@ -362,8 +360,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
-  addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
-  removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });

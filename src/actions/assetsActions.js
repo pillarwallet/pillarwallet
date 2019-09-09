@@ -76,6 +76,8 @@ import { fetchCollectiblesAction } from './collectiblesActions';
 import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
 import { sendTxNoteByContactAction } from './txNoteActions';
+import smartWalletService from '../services/smartWallet';
+import { showAssetAction } from './userSettingsActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -498,7 +500,7 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
   }
 }
 
-export const fetchAssetsBalancesAction = (assets: AssetsByAccount, showToastIfIncreased?: boolean, acc?: Account) => {
+export const fetchAssetsBalancesAction = (assets: AssetsByAccount, showToastIfIncreased?: boolean, acc?: ?Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       accounts: { data: accounts },
@@ -602,44 +604,25 @@ export const addAssetAction = (asset: Asset) => {
     const accountAssets = assets[accountId];
     const updatedAssets = {
       ...assets,
-      accountId: { ...accountAssets, [asset.symbol]: { ...asset } },
+      [accountId]: { ...accountAssets, [asset.symbol]: { ...asset } },
     };
+
+    Toast.show({
+      title: null,
+      message: `${asset.name} (${asset.symbol}) has been added`,
+      type: 'info',
+      autoClose: true,
+    });
+
+    dispatch(showAssetAction(asset));
 
     dispatch(saveDbAction('assets', { assets: updatedAssets }));
 
     dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
     dispatch(fetchAssetsBalancesAction(assets));
+    dispatch(showAssetAction(asset));
 
     dispatch(logEventAction('asset_token_added', { symbol: asset.symbol }));
-  };
-};
-
-export const removeAssetAction = (asset: Asset) => {
-  return async (dispatch: Dispatch, getState: () => Object) => {
-    const {
-      assets: { data: assets },
-      accounts: { data: accounts },
-    } = getState();
-
-    const activeAccount = getActiveAccount(accounts);
-    const accountId = get(activeAccount, 'id', null);
-    if (!accountId) return;
-
-    const accountAssets = assets[accountId];
-    const updatedAccountAssets = Object.keys(accountAssets).reduce((object, key) => {
-      if (key !== asset.symbol) {
-        object[key] = accountAssets[key];
-      }
-      return object;
-    }, {});
-
-    const updatedAssets = {
-      ...assets,
-      accountId: updatedAccountAssets,
-    };
-
-    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-    dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
   };
 };
 
@@ -680,7 +663,7 @@ const addSupportedTokensAction = (supportedAssets: Asset[], currentAssets: Asset
 
     const updatedAssets = {
       ...currentAssets,
-      accountId: updatedAccountAssets,
+      [accountId]: updatedAccountAssets,
     };
 
     dispatch({
@@ -695,6 +678,7 @@ const setAllOwnedAssetsAction = (account: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       assets: { data: currentAssets, supportedAssets },
+      smartWallet: { sdkInitialized },
     } = getState();
     const { id: accountId } = account;
     const accOwnedErc20Assets = {};
@@ -720,7 +704,11 @@ const setAllOwnedAssetsAction = (account: Account) => {
     });
 
     dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-    dispatch(fetchAssetsBalancesAction(updatedAssets, false, account));
+    const isSmartWalletAccount = checkIfSmartWalletAccount(account);
+
+    const smartAccount = smartWalletService.sdkInitialized || sdkInitialized ? account : null;
+    const accountToPass = isSmartWalletAccount ? smartAccount : account;
+    dispatch(fetchAssetsBalancesAction(updatedAssets, false, accountToPass));
   };
 };
 

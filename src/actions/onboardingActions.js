@@ -60,6 +60,7 @@ import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'const
 import { RESET_SMART_WALLET } from 'constants/smartWalletConstants';
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
+import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import Storage from 'services/storage';
@@ -235,6 +236,7 @@ export const registerWalletAction = () => {
     dispatch({ type: RESET_PAYMENT_NETWORK });
     dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] });
     dispatch({ type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] });
+    dispatch({ type: SET_USER_SETTINGS, payload: {} });
 
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));

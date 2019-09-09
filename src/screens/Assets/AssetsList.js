@@ -19,21 +19,27 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FlatList, Platform, View } from 'react-native';
+import { Alert, FlatList, Platform, View } from 'react-native';
 import isEqualWith from 'lodash.isequalwith';
-import type { NavigationScreenProp } from 'react-navigation';
+import isEqual from 'lodash.isequal';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import styled from 'styled-components/native';
+import Swipeout from 'react-native-swipeout';
 
 // components
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { MediumText } from 'components/Typography';
+import Toast from 'components/Toast';
 
 // constants
-import { defaultFiatCurrency, TOKENS } from 'constants/assetsConstants';
+import { defaultFiatCurrency, TOKENS, ETH, PLR } from 'constants/assetsConstants';
 import { ASSET } from 'constants/navigationConstants';
+
+// actions
+import { hideAssetAction } from 'actions/userSettingsActions';
 
 // utils
 import { getAccountAddress } from 'utils/accounts';
@@ -45,7 +51,7 @@ import { baseColors, fontSizes, spacing } from 'utils/variables';
 import assetsConfig from 'configs/assetsConfig';
 
 // types
-import type { Assets, Balances } from 'models/Asset';
+import type { Asset, Assets, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 
 // selectors
@@ -53,6 +59,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { activeAccountSelector } from 'selectors';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
+import HideAssetButton from './HideAssetButton';
 
 const IS_IOS = Platform.OS === 'ios';
 
@@ -66,10 +73,13 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetsLayout: string,
-  forceHideRemoval: boolean,
-  updateHideRemoval: Function,
   activeAccount: Account,
   paymentNetworkBalances: Balances,
+  hideAsset: Function,
+}
+
+type State = {
+  forceHideRemoval: boolean,
 }
 
 const ListHeaderWrapper = styled.View`
@@ -87,12 +97,38 @@ const HeaderTitle = styled(MediumText)`
   color: ${baseColors.blueYonder};
 `;
 
-class AssetsList extends React.Component<Props> {
-  shouldComponentUpdate(nextProps: Props) {
+class AssetsList extends React.Component<Props, State> {
+  didBlur: NavigationEventSubscription;
+  willFocus: NavigationEventSubscription;
+
+  state = {
+    forceHideRemoval: false,
+  };
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    this.willFocus = navigation.addListener(
+      'willFocus',
+      () => { this.setState({ forceHideRemoval: false }); },
+    );
+
+    this.didBlur = navigation.addListener(
+      'didBlur',
+      () => { this.setState({ forceHideRemoval: true }); },
+    );
+  }
+
+  componentWillUnmount() {
+    this.didBlur.remove();
+    this.willFocus.remove();
+  }
+
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqualWith(this.props, nextProps, (val1, val2) => {
       if (typeof val1 === 'function' && typeof val2 === 'function') return true;
       return undefined;
-    });
+    }) && isEqual(this.state, nextState);
     return !isEq;
   }
 
@@ -107,7 +143,29 @@ class AssetsList extends React.Component<Props> {
     );
   };
 
+  hideAsset = (asset) => {
+    const { hideAsset } = this.props;
+    Alert.alert(
+      'Are you sure?',
+      `This will hide ${asset.name} from your wallet`,
+      [
+        { text: 'Cancel', onPress: () => this.setState({ forceHideRemoval: true }), style: 'cancel' },
+        { text: 'Hide', onPress: () => hideAsset(asset) },
+      ],
+    );
+  };
+
+  showNotRemovedToast = (asset) => {
+    Toast.show({
+      message: `${asset.name} is essential for Pillar Wallet`,
+      type: 'info',
+      title: 'This asset cannot be switched off',
+    });
+    this.setState({ forceHideRemoval: true });
+  };
+
   renderToken = ({ item: asset }) => {
+    const { forceHideRemoval } = this.state;
     const {
       activeAccount,
       baseFiatCurrency,
@@ -140,6 +198,8 @@ class AssetsList extends React.Component<Props> {
       disclaimer,
     } = assetsConfig[symbol] || {};
 
+    const disableRemove = symbol === ETH || symbol === PLR;
+
     const props = {
       id: symbol,
       name: name || symbol,
@@ -162,25 +222,42 @@ class AssetsList extends React.Component<Props> {
       decimals,
     };
     return (
-      <ListItemWithImage
-        onPress={() => {
-          navigation.navigate(ASSET,
-            {
-              assetData: {
-                ...props,
-                tokenType: TOKENS,
+      <Swipeout
+        right={[{
+          component: (
+            <HideAssetButton
+              onPress={() => disableRemove ? this.showNotRemovedToast(asset) : this.hideAsset(asset)}
+              disabled={disableRemove}
+            />
+            ),
+          backgroundColor: baseColors.white,
+        }]}
+        backgroundColor="transparent"
+        sensitivity={10}
+        close={forceHideRemoval}
+        buttonWidth={80}
+        onOpen={() => this.setState({ forceHideRemoval: false })}
+      >
+        <ListItemWithImage
+          onPress={() => {
+            navigation.navigate(ASSET,
+              {
+                assetData: {
+                  ...props,
+                  tokenType: TOKENS,
+                },
               },
-            },
-          );
-        }}
-        label={name}
-        avatarUrl={fullIconUrl}
-        balance={{
-          balance: formatMoney(balance),
-          value: formattedBalanceInFiat,
-          token: symbol,
-        }}
-      />
+            );
+          }}
+          label={name}
+          avatarUrl={fullIconUrl}
+          balance={{
+            balance: formatMoney(balance),
+            value: formattedBalanceInFiat,
+            token: symbol,
+          }}
+        />
+      </Swipeout>
     );
   };
 
@@ -262,4 +339,8 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-export default withNavigation(connect(combinedMapStateToProps)(AssetsList));
+const mapDispatchToProps = (dispatch: Function) => ({
+  hideAsset: (asset: Asset) => dispatch(hideAssetAction(asset)),
+});
+
+export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(AssetsList));

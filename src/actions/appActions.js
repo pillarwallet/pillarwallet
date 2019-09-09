@@ -61,6 +61,7 @@ import {
   UPDATE_PAYMENT_NETWORK_STAKED,
   MARK_PLR_TANK_INITIALISED,
 } from 'constants/paymentNetworkConstants';
+import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -147,6 +148,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { connectedProviders = [] } = await storage.get('exchangeProviders');
       dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
+
+      const { userSettings = {} } = await storage.get('userSettings');
+      dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({

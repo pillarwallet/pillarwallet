@@ -1,12 +1,22 @@
 // @flow
+import get from 'lodash.get';
+import omit from 'lodash.omit';
 import { createSelector } from 'reselect';
-import { assetsSelector, activeAccountIdSelector } from './selectors';
+import { assetsSelector, activeAccountIdSelector, hiddenAssetsSelector } from './selectors';
 
 export const accountAssetsSelector = createSelector(
   assetsSelector,
   activeAccountIdSelector,
-  (assets, activeAccountId) => {
+  hiddenAssetsSelector,
+  (assets, activeAccountId, hiddenAssets) => {
     if (!activeAccountId) return {};
-    return assets[activeAccountId] || {};
+    const activeAccountAssets = get(assets, activeAccountId, {});
+    const activeAccountHiddenAssets = get(hiddenAssets, activeAccountId, []);
+
+    if (Object.keys(activeAccountAssets).length) {
+      const visibleAssets = omit(activeAccountAssets, activeAccountHiddenAssets);
+      return visibleAssets;
+    }
+    return {};
   },
 );

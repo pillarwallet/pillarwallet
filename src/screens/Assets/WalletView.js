@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, Switch, SectionList, Platform, ScrollView, StyleSheet, RefreshControl } from 'react-native';
+import { Keyboard, Switch, SectionList, Platform, ScrollView, StyleSheet, RefreshControl, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
@@ -46,6 +46,7 @@ import {
   COLLECTIBLES,
   defaultFiatCurrency,
   ETH,
+  PLR,
 } from 'constants/assetsConstants';
 import { EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
@@ -71,9 +72,9 @@ import {
   searchAssetsAction,
   resetSearchAssetsResultAction,
   addAssetAction,
-  removeAssetAction,
   fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
+import { hideAssetAction } from 'actions/userSettingsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
@@ -103,7 +104,7 @@ type Props = {
   searchAssets: Function,
   resetSearchAssetsResult: Function,
   addAsset: Function,
-  removeAsset: Function,
+  hideAsset: Function,
   assetsSearchState: string,
   logScreenView: Function,
   balances: Balances,
@@ -325,26 +326,27 @@ class WalletView extends React.Component<Props, State> {
 
   hideTokenFromWallet = (asset: Asset) => {
     const {
-      removeAsset,
+      hideAsset,
     } = this.props;
 
-    if (asset.symbol === ETH) {
-      this.showETHRemovalNotification();
+    if (asset.symbol === ETH || asset.symbol === PLR) {
+      this.showNotHiddenNotification(asset);
       return;
     }
 
-    removeAsset(asset);
-    Toast.show({
-      title: null,
-      message: `${asset.name} (${asset.symbol}) has been hidden`,
-      type: 'info',
-      autoClose: true,
-    });
+    Alert.alert(
+      'Are you sure?',
+      `This will hide ${asset.name} from your wallet`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Hide', onPress: () => hideAsset(asset) },
+      ],
+    );
   };
 
-  showETHRemovalNotification = () => {
+  showNotHiddenNotification = (asset) => {
     Toast.show({
-      message: 'Ethereum is essential for Pillar',
+      message: `${asset.name} is essential for Pillar wallet`,
       type: 'info',
       title: 'This asset cannot be switched off',
     });
@@ -555,12 +557,11 @@ const mapDispatchToProps = (dispatch: Function) => ({
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
-  removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
+  hideAsset: (asset: Asset) => dispatch(hideAssetAction(asset)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets, true)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
-
 
 export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(WalletView));

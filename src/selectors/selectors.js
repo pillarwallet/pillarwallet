@@ -6,6 +6,8 @@ import type { CollectiblesReducerState } from 'reducers/collectiblesReducer';
 import type { HistoryReducerState } from 'reducers/historyReducer';
 import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
 import type { AssetsReducerState } from 'reducers/assetsReducer';
+import type { UserSettingsReducerState } from 'reducers/userSettingsReducer';
+
 import { getAccountAddress } from 'utils/accounts';
 
 //
@@ -35,3 +37,6 @@ export const activeAccountAddressSelector = createSelector(
 );
 
 export const assetsSelector = ({ assets }: {assets: AssetsReducerState}) => assets.data;
+
+export const hiddenAssetsSelector = ({ userSettings }: { userSettings: UserSettingsReducerState}) =>
+  userSettings.data.hiddenAssets;
