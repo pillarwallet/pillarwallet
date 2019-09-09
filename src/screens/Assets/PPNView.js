@@ -34,7 +34,10 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import DeploymentView from 'components/DeploymentView';
 import CircleButton from 'components/CircleButton';
 
-import { calculatePortfolioBalance, getRate } from 'utils/assets';
+import {
+  calculateBalanceInFiat,
+  getRate,
+} from 'utils/assets';
 import { formatMoney, formatFiat, getCurrencySymbol } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress } from 'utils/accounts';
@@ -134,7 +137,6 @@ const ValueInFiat = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall}px;
 `;
 
-// const iconRequest = require('assets/icons/icon_receive.png');
 const iconSend = require('assets/icons/icon_send.png');
 const genericToken = require('assets/images/tokens/genericToken.png');
 
@@ -228,9 +230,10 @@ class PPNView extends React.Component<Props> {
       baseFiatCurrency,
       balances,
     } = this.props;
-    const portfolioBalances = calculatePortfolioBalance(assetsOnNetwork, rates, balances);
+
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const PPNBalance = formatFiat(portfolioBalances[fiatCurrency] || 0, baseFiatCurrency);
+    const balance = calculateBalanceInFiat(rates, balances, fiatCurrency);
+    const PPNBalance = formatFiat(balance, baseFiatCurrency);
     const disabled = !Object.keys(assetsOnNetwork).length || disableSettle;
 
     return (

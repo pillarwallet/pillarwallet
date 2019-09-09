@@ -149,7 +149,7 @@ export default class ExchangeService {
   }
 
   getShapeshiftAuthUrl() {
-    const { sub: regId } = extractJwtPayload(this.tokens.accessToken) || {};
+    const { sub: regId } = extractJwtPayload(this.tokens.accessToken);
     const sessionId = getRandomString();
     const urlPath = `authorize?sessionID=${sessionId}&regId=${regId}`;
     return buildApiUrl(urlPath);

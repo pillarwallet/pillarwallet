@@ -17,67 +17,82 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import get from 'lodash.get';
 import type { Account, Accounts, AccountTypes } from 'models/Account';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { addressesEqual } from './assets';
 
-export function getActiveAccount(accounts: Accounts = []): ?Account {
+export const getActiveAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ isActive }) => isActive);
-}
+};
 
-export function getActiveAccountId(accounts: Accounts = []): string {
-  const activeAccount = getActiveAccount(accounts) || {};
-  return activeAccount.id || '';
-}
+export const getInactiveUserAccounts = (accounts: Accounts): Accounts => {
+  return accounts.filter(({ isActive }) => !isActive);
+};
 
-export function getActiveAccountType(accounts: Accounts = []): string {
-  const activeAccount = getActiveAccount(accounts) || {};
-  return activeAccount.type || '';
-}
-
-export function getAccountAddress(account: Account): string {
-  return get(account, 'id', '');
-}
-
-export function getActiveAccountAddress(accounts: Accounts = []): string {
+export const getActiveAccountId = (accounts: Accounts): string => {
   const activeAccount = getActiveAccount(accounts);
-  if (!activeAccount) return '';
+  if (!activeAccount) {
+    return '';
+  }
+
+  return activeAccount.id;
+};
+
+export const getActiveAccountType = (accounts: Accounts): string => {
+  const activeAccount = getActiveAccount(accounts);
+  if (!activeAccount) {
+    return '';
+  }
+
+  return activeAccount.type;
+};
+
+export const getAccountAddress = (account: Account): string => {
+  return account.id;
+};
+
+export const getActiveAccountAddress = (accounts: Accounts): string => {
+  const activeAccount = getActiveAccount(accounts);
+  if (!activeAccount) {
+    return '';
+  }
+
   return getAccountAddress(activeAccount);
-}
+};
 
-export function findKeyBasedAccount(accounts: Accounts): ?Account {
+export const findKeyBasedAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-}
+};
 
-export function getActiveAccountWalletId(accounts: Accounts = []): string {
-  const activeAccount = getActiveAccount(accounts) || {};
-  return activeAccount.walletId || '';
-}
+export const getActiveAccountWalletId = (accounts: Accounts): string => {
+  const activeAccount = getActiveAccount(accounts);
+  if (!activeAccount) {
+    return '';
+  }
 
-export function checkIfSmartWalletAccount(account: Account): boolean {
+  return activeAccount.walletId;
+};
+
+export const checkIfSmartWalletAccount = (account: Account): boolean => {
   return account.type === ACCOUNT_TYPES.SMART_WALLET;
-}
+};
 
-export function getAccountName(accountType: AccountTypes): ?string {
-  if (!accountType) return null;
+export const getAccountName = (accountType: AccountTypes): string => {
   switch (accountType) {
     case ACCOUNT_TYPES.SMART_WALLET:
       return 'Smart Wallet';
+
     case ACCOUNT_TYPES.KEY_BASED:
       return 'Key Based account';
+
     default:
       return '';
   }
-}
+};
 
-export function getInactiveUserAccounts(accounts: Accounts): Accounts {
-  return accounts.filter(({ isActive }) => !isActive);
-}
-
-export function findAccountByAddress(
+export const findAccountByAddress = (
   address: string,
   accounts: Accounts,
-) {
+): ?Account => {
   return accounts.find(account => addressesEqual(address, getAccountAddress(account)));
-}
+};
