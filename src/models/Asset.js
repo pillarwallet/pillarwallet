@@ -40,11 +40,6 @@ export type AssetsByAccount = {
   [string]: Assets,
 };
 
-//
-// export type Assets = {
-//   [string]: Asset,
-// };
-
 export type AssetsStore = {
   [accountId: string]: Asset[],
 };
