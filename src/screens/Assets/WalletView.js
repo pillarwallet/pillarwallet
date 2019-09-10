@@ -313,14 +313,7 @@ class WalletView extends React.Component<Props, State> {
 
   addTokenToWallet = (asset: Asset) => {
     const { addAsset } = this.props;
-
     addAsset(asset);
-    Toast.show({
-      title: null,
-      message: `${asset.name} (${asset.symbol}) has been added`,
-      type: 'info',
-      autoClose: true,
-    });
   };
 
   hideTokenFromWallet = (asset: Asset) => {

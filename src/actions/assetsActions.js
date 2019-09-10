@@ -603,6 +603,11 @@ export const addAssetAction = (asset: Asset) => {
       [accountId]: { ...accountAssets, [asset.symbol]: { ...asset } },
     };
 
+    dispatch(showAssetAction(asset));
+    dispatch(saveDbAction('assets', { assets: updatedAssets }));
+
+    dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
+
     Toast.show({
       title: null,
       message: `${asset.name} (${asset.symbol}) has been added`,
@@ -610,13 +615,7 @@ export const addAssetAction = (asset: Asset) => {
       autoClose: true,
     });
 
-    dispatch(showAssetAction(asset));
-
-    dispatch(saveDbAction('assets', { assets: updatedAssets }));
-
-    dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
     dispatch(fetchAssetsBalancesAction());
-    dispatch(showAssetAction(asset));
 
     dispatch(logEventAction('asset_token_added', { symbol: asset.symbol }));
   };
