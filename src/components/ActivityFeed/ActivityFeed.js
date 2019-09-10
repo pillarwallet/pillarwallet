@@ -383,8 +383,7 @@ class ActivityFeed extends React.Component<Props, State> {
       const nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'Received' : 'Sent';
 
-      const contact = contacts
-        .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const contact = contacts.find(({ ethAddress }) => addressesEqual(address, ethAddress)) || {};
       return (
         <ListItemWithImage
           onPress={() => this.selectEvent({ ...notification, contact }, type, notification.status)}
