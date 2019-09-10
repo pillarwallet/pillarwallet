@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { FlatList, Platform } from 'react-native';
+import { FlatList, Platform, View } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -29,6 +29,7 @@ import Icon from 'components/Icon';
 import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
+import { LabelBadge } from 'components/LabelBadge';
 
 import { baseColors, fontSizes } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
@@ -76,6 +77,13 @@ const CustomWrapper = styled.View`
 const Title = styled(BoldText)`
   color: ${baseColors.pomegranate};
   font-size: ${fontSizes.rJumbo}px;
+`;
+
+const Row = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-top: ${responsiveSize(26)}px;
+  flex: 1;
 `;
 
 const BodyText = styled(MediumText)`
@@ -132,17 +140,18 @@ const features = [
   {
     key: 'instant',
     label: 'Instant.',
-    subtext: 'Like, seriously. Instant transactions.',
+    subtext: 'No waiting for miner or block confirmations. Seriously instant transactions.',
   },
   {
     key: 'free',
     label: 'Free.',
-    subtext: 'Transaction fees are on us.',
+    subtext: 'No need to pay network costs or gas for any transactions.',
   },
   {
     key: 'private',
     label: 'Private.',
-    subtext: 'It’s in Pillar DNA.',
+    subtext: 'Only final settlement is recorded on-chain. ' +
+      'Batched transactions allow multiple transfers to be combined.',
   },
 ];
 
@@ -215,9 +224,20 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               Pillar Network
             </Title>
             <BodyText>
-              Store your assets in a personal smart contract and control access through an intuitive key management
-              system.
+              Stake PLR tokens in your tank to enable free and instant transactions between you and your contacts.
             </BodyText>
+            <BodyText>
+              PLR acts as a meta token allowing you to send and receive any asset that is supported by the Pillar
+              Payment Network.
+            </BodyText>
+            <Row>
+              <View style={{ flex: 1, paddingRight: 10 }}>
+                <BodyText style={{ marginTop: 0 }}>
+                  Draw from your PLR tank to send whatever you’d like.
+                </BodyText>
+              </View>
+              <LabelBadge label="SOON" containerStyle={{ backgroundColor: baseColors.pomegranate }} />
+            </Row>
             <FlatList
               data={features}
               keyExtractor={(item) => item.key}
