@@ -30,6 +30,8 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
+import Button from 'components/Button';
+import SlideModal from 'components/Modals/SlideModal';
 
 import { baseColors, fontSizes } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
@@ -49,6 +51,11 @@ type Props = {
   baseFiatCurrency: ?string,
   deploySmartWallet: Function,
 }
+
+type State = {
+  showDeployPayOptions: boolean,
+}
+
 const CustomWrapper = styled.View`
   flex: 1;
   padding: 20px 55px 20px 46px;
@@ -74,12 +81,18 @@ const BodyText = styled(BoldText)`
 //   margin-top: ${responsiveSize(16)}px;
 // `;
 
-const ActionsWrapper = styled(Wrapper)`
+const ButtonWrapper = styled(Wrapper)`
   margin: 30px 0 50px;
+  padding: 0 46px;
+`;
+
+const ActionsWrapper = styled(Wrapper)`
+  margin: 10px -20px 50px;
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
   border-top-width: ${StyleSheet.hairlineWidth}px;
   border-color: ${baseColors.mediumLightGray};
 `;
+
 
 const FeatureIcon = styled(CachedImage)`
   height: 124px;
@@ -89,8 +102,13 @@ const FeatureIcon = styled(CachedImage)`
 
 const smartWalletIcon = require('assets/images/logo_smart_wallet.png');
 
-class SmartWalletIntro extends React.PureComponent<Props> {
+class SmartWalletIntro extends React.PureComponent<Props, State> {
+  state = {
+    showDeployPayOptions: false,
+  };
+
   render() {
+    const { showDeployPayOptions } = this.state;
     const {
       navigation,
       baseFiatCurrency,
@@ -126,37 +144,31 @@ class SmartWalletIntro extends React.PureComponent<Props> {
               Smart Wallet
             </Title>
             <BodyText>
-              In order to enable sending assets from your Smart Wallet, it’s needed to deploy smart contract first.
-              There is a small fee for that
+              Your new Pillar Smart Wallet is powered by a personal smart contract. This provides better asset
+              management, security and recovery functionality.
+            </BodyText>
+            <BodyText>
+              In order to enable your Smart Wallet, it needs to be deployed which comes with a small fee.
+            </BodyText>
+            <BodyText>
+              Pillar also recommends that you transfer most of your assets to your Smart Wallet due to the benefits
+              listed.
             </BodyText>
             { /* <FeeText>{smartContractDeployFee}</FeeText> */ }
           </CustomWrapper>
-          <ActionsWrapper>
-            <ListItemChevron
-              label="I don't have tokens"
-              subtext="Buy ETH with credit card"
-              onPress={() => {
-                navigation.navigate(EXCHANGE, {
-                  fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
-                  toAssetCode: 'ETH',
-                });
+          <ButtonWrapper>
+            <Button
+              block
+              title={isDeploy ? 'Deploy' : 'Proceed'}
+              onPress={() => { this.setState({ showDeployPayOptions: true }); }}
+              roundedCorners
+              style={{
+                backgroundColor: baseColors.ultramarine,
+                marginTop: 40,
+                marginBottom: 20,
+                borderRadius: 6,
               }}
-              color={baseColors.persianBlue}
-              bordered
-              subtextAddon={(<LabelBadge label="NEW" />)}
-            />
-            <ListItemChevron
-              label="I have tokens"
-              subtext="Use ETH to deploy contract"
-              onPress={isDeploy
-                ? () => {
-                  deploySmartWallet();
-                  navigation.navigate(ASSETS);
-                }
-                : () => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)
-              }
-              color={baseColors.persianBlue}
-              bordered
+              textStyle={{ color: baseColors.white }}
             />
             { /* <ListItemChevron
               label="Enable with PLR available"
@@ -164,7 +176,46 @@ class SmartWalletIntro extends React.PureComponent<Props> {
               color={baseColors.persianBlue}
               bordered
             /> */ }
-          </ActionsWrapper>
+          </ButtonWrapper>
+          <SlideModal
+            // title={}
+            isVisible={showDeployPayOptions}
+            onModalHide={() => { this.setState({ showDeployPayOptions: false }); }}
+          >
+            <ActionsWrapper>
+              <ListItemChevron
+                label="I don't have tokens"
+                subtext="Buy ETH with credit card"
+                onPress={() => {
+                  this.setState({ showDeployPayOptions: false }, () => {
+                    navigation.navigate(EXCHANGE, {
+                      fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
+                      toAssetCode: 'ETH',
+                    });
+                  });
+                }}
+                color={baseColors.persianBlue}
+                bordered
+                subtextAddon={(<LabelBadge label="NEW" />)}
+              />
+              <ListItemChevron
+                label="I have tokens"
+                subtext="Use ETH to deploy contract"
+                onPress={() => {
+                  this.setState({ showDeployPayOptions: false }, () => {
+                    if (isDeploy) {
+                      deploySmartWallet();
+                      navigation.navigate(ASSETS);
+                    } else {
+                      navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER);
+                    }
+                  });
+                }}
+                color={baseColors.persianBlue}
+                bordered
+              />
+            </ActionsWrapper>
+          </SlideModal>
         </ScrollWrapper>
       </ContainerWithHeader>
     );
