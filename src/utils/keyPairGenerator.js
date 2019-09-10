@@ -125,7 +125,7 @@ export async function generateKeyPairThreadPool(
   if (connectionsKeyPairCount < 20) {
     const isIOSDebuggingEnabled = Platform.OS === 'ios'
       && typeof location !== 'undefined' // eslint-disable-line no-restricted-globals
-      && location.href.indexOf('debug') > -1; // eslint-disable-line no-restricted-globals,no-undef
+      && location.href.toLowerCase().includes('debug'); // eslint-disable-line no-restricted-globals,no-undef
     if (isIOSDebuggingEnabled) {
       promiseJobs = generateKeyPairPool(mnemonic, privateKey, lastConnectionKeyIndex, connectionsCount, 25);
     } else {
