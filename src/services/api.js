@@ -353,17 +353,19 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
 
 SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
   if (!walletAddress) return Promise.resolve({ assets: [] });
+  const url = `${OPEN_SEA_API}/assets/?owner=${walletAddress}` +
+    '&exclude_currencies=true&order_by=listing_date&order_direction=asc';
   return new Promise((resolve, reject) => {
-    getLimitedData(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=listing_date&order_direction=asc`,
-      [], 300, 0, 'assets', resolve, reject);
+    getLimitedData(url, [], 300, 0, 'assets', resolve, reject);
   })
     .then(response => ({ assets: response }))
     .catch(() => ({ error: true }));
 };
 
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
+  const url = `${OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
   return Promise.resolve()
-    .then(() => fetch(`${OPEN_SEA_API}/events/?account_address=${walletAddress}&event_type=transfer`, {
+    .then(() => fetch(url, {
       method: 'GET',
       headers: {
         Accept: 'application/json',

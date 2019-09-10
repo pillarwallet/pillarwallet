@@ -21,9 +21,12 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { createStructuredSelector } from 'reselect';
-import type { Assets, Balances, Rates } from 'models/Asset';
+import type {
+  Balances,
+  Rates,
+} from 'models/Asset';
 import { BaseText } from 'components/Typography';
-import { calculatePortfolioBalance } from 'utils/assets';
+import { calculateBalanceInFiat } from 'utils/assets';
 import { formatFiat } from 'utils/common';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -31,7 +34,6 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
-  assets: Assets,
   rates: Rates,
   balances: Balances,
   baseFiatCurrency: string,
@@ -39,20 +41,19 @@ type Props = {
   style: Object,
 };
 
-class PortfolioBalance extends React.PureComponent<Props, {}> {
+class PortfolioBalance extends React.PureComponent<Props> {
   render() {
     const {
       style,
-      assets,
       rates,
       balances,
       baseFiatCurrency,
       label,
     } = this.props;
 
-    const portfolioBalances = calculatePortfolioBalance(assets, rates, balances);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const portfolioBalance = formatFiat(portfolioBalances[fiatCurrency], baseFiatCurrency);
+    const balance = calculateBalanceInFiat(rates, balances, fiatCurrency);
+    const portfolioBalance = formatFiat(balance, baseFiatCurrency);
 
     return (
       <View style={style}>

@@ -80,7 +80,7 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // utils
-import { calculatePortfolioBalance } from 'utils/assets';
+import { calculateBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 
 // partials
@@ -358,7 +358,6 @@ class WalletView extends React.Component<Props, State> {
       insightList = [],
       insightsTitle,
       assetsSearchState,
-      assets,
       rates,
       balances,
       baseFiatCurrency,
@@ -395,8 +394,7 @@ class WalletView extends React.Component<Props, State> {
       },
     ];
 
-    const walletBalances = calculatePortfolioBalance(assets, rates, balances);
-    const balance = Object.keys(walletBalances).length ? walletBalances[baseFiatCurrency || defaultFiatCurrency] : 0;
+    const balance = calculateBalanceInFiat(rates, balances, baseFiatCurrency || defaultFiatCurrency);
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 

@@ -24,6 +24,7 @@ export const PENDING = 'PENDING';
 export const TRANSACTION_EVENT = 'transactionEvent';
 export const TRANSACTION_PENDING_EVENT = 'transactionPendingEvent';
 export const TRANSACTION_CONFIRMATION_EVENT = 'transactionConfirmationEvent';
+export const TRANSACTION_CONFIRMATION_SENDER_EVENT = 'transactionConfirmationSenderEvent';
 export const CONNECTION_EVENT = 'connectionEvent';
 export const SET_GAS_INFO = 'SET_GAS_INFO';
 export const TX_PENDING_STATUS = 'pending';

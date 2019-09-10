@@ -20,12 +20,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
+import get from 'lodash.get';
+import orderBy from 'lodash.orderby';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-import get from 'lodash.get';
 
 // models
 import type { Transaction } from 'models/Transaction';
@@ -242,9 +243,14 @@ class ActivityFeed extends React.Component<Props, State> {
       if (activeTabInfo) ({ data: feedList, emptyState: emptyStateData = {} } = activeTabInfo);
     }
 
-    feedList.forEach(listItem => {
-      const formattedDate = formatDate(new Date(listItem.createdAt * 1000), 'MMM D YYYY');
-      const sectionTitle = formatDate(new Date(listItem.createdAt * 1000), 'MMM D');
+    orderBy(feedList, ['createdAt'], ['desc']).forEach(listItem => {
+      const itemCreatedDate = new Date(listItem.createdAt * 1000);
+      const formattedDate = formatDate(itemCreatedDate, 'MMM D YYYY');
+      // don't show the year if the event happened this year
+      const titleDateFormat = itemCreatedDate.getFullYear() === new Date().getFullYear()
+        ? 'MMM D'
+        : 'MMM D YYYY';
+      const sectionTitle = formatDate(itemCreatedDate, titleDateFormat);
       const existingSection = dataSections.find(({ date }) => date === formattedDate);
       if (!existingSection) {
         dataSections.push({ title: sectionTitle, date: formattedDate, data: [{ ...listItem }] });
@@ -377,8 +383,7 @@ class ActivityFeed extends React.Component<Props, State> {
       const nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'Received' : 'Sent';
 
-      const contact = contacts
-        .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const contact = contacts.find(({ ethAddress }) => addressesEqual(address, ethAddress)) || {};
       return (
         <ListItemWithImage
           onPress={() => this.selectEvent({ ...notification, contact }, type, notification.status)}

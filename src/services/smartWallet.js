@@ -29,7 +29,16 @@ import { ContractNames } from '@archanova/contracts';
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import {
+  ARCHANOVA_ETH_ACCOUNT_PROVIDER_ADDRESS,
+  ARCHANOVA_ETH_ACCOUNT_PROXY_ADDRESS,
+  ARCHANOVA_ETH_ACCOUNT_FRIEND_RECOVERY_ADDRESS,
+  ARCHANOVA_ETH_ENS_REGISTRY_ADDRESS,
+  ARCHANOVA_ETH_GUARDIAN_ADDRESS,
+  ARCHANOVA_ETH_VIRTUAL_PAYMENT_MANAGER_ADDRESS,
+  ARCHANOVA_HOST,
+  NETWORK_PROVIDER,
+} from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
 
@@ -64,7 +73,7 @@ class SmartWallet {
     const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
     const sdkOptions = getSdkEnvironment(environmentNetwork)
       .extendConfig('apiOptions', {
-        host: 'archanova.pillarproject.io',
+        host: ARCHANOVA_HOST,
       })
       .extendConfig('ensOptions', {
         supportedRootNames: [
@@ -74,12 +83,12 @@ class SmartWallet {
       .extendConfig('ethOptions', {
         networkName: 'Pillar',
         contractAddresses: {
-          [ContractNames.AccountProvider]: '0xb2743F5f6CB3e7A78607dDD5b5A7a41C49B7AAFD',
-          [ContractNames.AccountProxy]: '0x9EE73425D7F76AB9b9247A4E4c12CD0f1f661153',
-          [ContractNames.AccountFriendRecovery]: '0x26cE3eb9eFf5F2a9970810f5eaf2EA45eeeEB52a',
-          [ContractNames.ENSRegistry]: '0x314159265dD8dbb310642f98f50C066173C1259b',
-          [ContractNames.Guardian]: '0xb221E91CcE019E40f9013832CbCC2Fe69E862cd0',
-          [ContractNames.VirtualPaymentManager]: '0x3a7f053e1E8314eeE4b86E5d2F2465391f46552c',
+          [ContractNames.AccountProvider]: ARCHANOVA_ETH_ACCOUNT_PROVIDER_ADDRESS,
+          [ContractNames.AccountProxy]: ARCHANOVA_ETH_ACCOUNT_PROXY_ADDRESS,
+          [ContractNames.AccountFriendRecovery]: ARCHANOVA_ETH_ACCOUNT_FRIEND_RECOVERY_ADDRESS,
+          [ContractNames.ENSRegistry]: ARCHANOVA_ETH_ENS_REGISTRY_ADDRESS,
+          [ContractNames.Guardian]: ARCHANOVA_ETH_GUARDIAN_ADDRESS,
+          [ContractNames.VirtualPaymentManager]: ARCHANOVA_ETH_VIRTUAL_PAYMENT_MANAGER_ADDRESS,
         },
       })
       .extendConfig('storageOptions', {
@@ -108,7 +117,9 @@ class SmartWallet {
     await this.sdk
       .initialize({ device: { privateKey } })
       .then(() => { this.sdkInitialized = true; })
-      .catch(this.handleError);
+      .catch(() => {
+        console.log('Error initiating sdk.');
+      });
 
     if (this.sdkInitialized) {
       this.subscribeToEvents(dispatch);
@@ -271,6 +282,7 @@ class SmartWallet {
   }
 
   async getAccountPayments(lastSyncedHash: ?string, page?: number = 0) {
+    if (!this.sdkInitialized) return [];
     const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
     if (!data) return [];
 

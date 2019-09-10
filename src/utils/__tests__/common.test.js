@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { BigNumber } from 'bignumber.js';
+
 import {
   delay,
   formatAmount,
@@ -28,6 +30,7 @@ import {
   uniqBy,
   formatUnits,
   formatFiat,
+  extractJwtPayload,
 } from '../common';
 
 describe('Common utils', () => {
@@ -53,7 +56,12 @@ describe('Common utils', () => {
   });
 
   describe('decodeETHAddress', () => {
-    it('should get ETH address from string provided', () => {
+    it('returns ETH address when string is an address', () => {
+      const expectedAddress = '0xf74b153d202ab7368aca04efb71cb3c8c316b514';
+      expect(decodeETHAddress('0xf74b153d202ab7368aca04efb71cb3c8c316b514')).toBe(expectedAddress);
+    });
+
+    it('returns ETH address from string provided', () => {
       const expectedAddress = '0xf74b153d202ab7368aca04efb71cb3c8c316b514';
       expect(decodeETHAddress('ethereum:0xf74b153d202ab7368aca04efb71cb3c8c316b514')).toBe(expectedAddress);
     });
@@ -69,38 +77,66 @@ describe('Common utils', () => {
     });
   });
 
+  describe('extractJwtPayload', () => {
+    it('returns {} for invalid tokens', () => {
+      const token = '-not-valid-';
+      const expectedValue = {};
+      expect(extractJwtPayload(token)).toEqual(expectedValue);
+    });
+
+    it('decodes jwt token', () => {
+      const token = `ignored.${Buffer.from(JSON.stringify({ id: 4 })).toString('base64')}`;
+      const expectedValue = { id: 4 };
+      expect(extractJwtPayload(token)).toEqual(expectedValue);
+    });
+  });
+
   describe('parseNumber', () => {
-    it('should convert a comma separated number (as string) to a decimal separated number', () => {
+    it('supports receiving a BigNumber', () => {
+      const expectedValue = 3;
+      expect(parseNumber(new BigNumber(3))).toBe(expectedValue);
+    });
+    it('supports receiving undefined', () => {
+      const expectedValue = 0;
+      expect(parseNumber(undefined)).toBe(expectedValue);
+    });
+    it('converts a comma separated number (as string) to a decimal separated number', () => {
       const expectedValue = 12.345;
       expect(parseNumber('12,345')).toBe(expectedValue);
     });
-    it('should convert a decimal separated number (as string) to the exact same number', () => {
+    it('converts a decimal separated number (as string) to the exact same number', () => {
       const expectedValue = 23.45;
       expect(parseNumber('23.45')).toBe(expectedValue);
     });
-    it('should convert a value with multiple decimal separators', () => {
+    it('converts a value with multiple decimal separators', () => {
       const expectedValue = 5678.91;
       expect(parseNumber('5,678.91')).toBe(expectedValue);
     });
   });
 
   describe('isValidNumber', () => {
-    it('should fail on string with non numerical symbols', () => {
+    it('allows BigNumber', () => {
+      expect(isValidNumber(new BigNumber(2))).toBeTruthy();
+    });
+    it('allows undefined', () => {
+      expect(isValidNumber(undefined)).toBeTruthy();
+    });
+    it('fails on string with non numerical symbols', () => {
       expect(isValidNumber('a12,3m4')).toBeFalsy();
     });
-    it('should fail on string with two dots', () => {
+    it('fails on string with two dots', () => {
       expect(isValidNumber('2.3.45')).toBeFalsy();
     });
-    it('should fail on string with two commas', () => {
+    it('fails on string with two commas', () => {
       expect(isValidNumber('5,678,91')).toBeFalsy();
     });
-    it('should fail on string with ,. going side by side', () => {
+    it('fails on string with ,. going side by side', () => {
       expect(isValidNumber('5,.678')).toBeFalsy();
     });
-    it('should fail on string with ., going side by side', () => {
+    it('fails on string with ., going side by side', () => {
       expect(isValidNumber('5.,678')).toBeFalsy();
     });
-    it('should allow to have a dot and a comma', () => {
+    it('allows to have a dot and a comma', () => {
       expect(isValidNumber('5,678.91')).toBeTruthy();
     });
   });
@@ -121,9 +157,10 @@ describe('Common utils', () => {
   });
 
   describe('uniqBy', () => {
-    it('should return uniq items by key', () => {
+    it('returns uniq items by key', () => {
       const expected = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }];
       const input = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }, { id: 2, name: 'Snow' }];
+
       expect(uniqBy(input, 'id')).toEqual(expected);
     });
   });

@@ -47,7 +47,8 @@ import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 import { sdkConstants } from '@archanova/sdk';
 
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { AccountExtra, AccountTypes } from 'models/Account';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 
@@ -136,11 +137,11 @@ export const initDefaultAccountAction = (walletAddress: string, walletId: string
 
 export const addNewAccountAction = (
   accountAddress: string,
-  type: string,
-  accountExtra?: Object = {},
+  type: AccountTypes,
+  accountExtra?: AccountExtra,
   backendAccounts: Object[] = [],
 ) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = {
       id: accountAddress,
@@ -178,7 +179,7 @@ export const addNewAccountAction = (
 };
 
 export const setActiveAccountAction = (accountId: string) => {
-  return async (dispatch: Function, getState: () => RootReducerState) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       smartWallet: {
@@ -219,7 +220,7 @@ export const setActiveAccountAction = (accountId: string) => {
 };
 
 export const switchAccountAction = (accountId: string, privateKey?: string) => {
-  return async (dispatch: Function, getState: () => RootReducerState) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
     } = getState();
@@ -240,7 +241,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
 };
 
 export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
-  return async (dispatch: Function, getState: () => RootReducerState) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { blockchainNetwork } },
       accounts: {

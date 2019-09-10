@@ -59,7 +59,7 @@ import { updateTransactionStatusAction } from 'actions/historyActions';
 import { getTxNoteByContactAction } from 'actions/txNoteActions';
 
 // constants
-import { TRANSACTION_EVENT, TX_PENDING_STATUS } from 'constants/historyConstants';
+import { TRANSACTION_EVENT, TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -162,6 +162,7 @@ class EventDetails extends React.Component<Props, {}> {
       updateTransactionStatus,
       getTxNoteByContact,
       contacts,
+      history,
     } = this.props;
 
     if (eventType !== TRANSACTION_EVENT) return;
@@ -171,11 +172,15 @@ class EventDetails extends React.Component<Props, {}> {
       getTxNoteByContact(eventData.contact.username);
     }
 
-    const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
-    if (txInfo.status !== TX_PENDING_STATUS) return;
+    const txInfo = history.find(tx => tx.hash === eventData.hash) || {};
+    if (txInfo.status === TX_PENDING_STATUS) {
+      this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 500);
+      this.timer = setInterval(() => updateTransactionStatus(eventData.hash), 10000);
+    }
 
-    this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 500);
-    this.timer = setInterval(() => updateTransactionStatus(eventData.hash), 10000);
+    if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
+      updateTransactionStatus(eventData.hash);
+    }
   }
 
   componentWillUnmount() {
@@ -406,7 +411,7 @@ class EventDetails extends React.Component<Props, {}> {
               value={extra.map(item => <BoldText key={item.hash}> {item.value} {item.symbol}</BoldText>)}
             />
             }
-            {(toMyself || !isReceived) && !isPending &&
+            {(toMyself || !isReceived) && !isPending && (freeTx || !!fee) &&
             <ListItemUnderlined
               label="TRANSACTION FEE"
               value={freeTx ? 'free' : utils.formatEther(fee.toString())}

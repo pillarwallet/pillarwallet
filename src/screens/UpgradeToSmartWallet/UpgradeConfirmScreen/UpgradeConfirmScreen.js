@@ -125,7 +125,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     }
   }
 
-  onNextClick = (ethTransferAmount) => {
+  onNextClick = (ethTransferAmountBN: BigNumber) => {
     const {
       assets,
       collectibles,
@@ -188,7 +188,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     // make sure ether transaction is the last one, very important!
     const transferTransactions = transferTransactionsCombined
       .filter(({ symbol }: any) => symbol !== ETH)
-      .concat({ ...ethTransaction, amount: ethTransferAmount });
+      .concat({ ...ethTransaction, amount: ethTransferAmountBN.toNumber() });
     this.setState({ upgradeStarted: false }, () => {
       navigation.navigate(SMART_WALLET_UNLOCK, { transferTransactions });
     });
@@ -229,28 +229,33 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
     const assetsTransferFeeTotal = transferAssets
       .reduce((a, b: any) => a + this.calculateTransferFee(b.gasLimit), 0);
-    const feeTokensTransferEth = formatAmount(utils.formatEther(
+    const feeTokensTransferEthBN = new BigNumber(utils.formatEther(
       new BigNumber(assetsTransferFeeTotal).toFixed(),
     ));
-    const feeTokensTransferFiat = parseFloat(feeTokensTransferEth) * getRate(rates, ETH, fiatCurrency);
-    const assetsTransferFee = `${feeTokensTransferEth} ETH (${fiatSymbol}${feeTokensTransferFiat.toFixed(2)})`;
+    const feeTokensTransferFiatBN = feeTokensTransferEthBN.multipliedBy(getRate(rates, ETH, fiatCurrency));
+    const feeTokensTransferEthFormatted = formatAmount(feeTokensTransferEthBN.toString());
+    const assetsTransferFee =
+      `${feeTokensTransferEthFormatted} ETH (${fiatSymbol}${feeTokensTransferFiatBN.toFixed(2)})`;
 
     let collectiblesTransferFee;
     if (transferCollectibles.length) {
       const collectiblesTransferFeeTotal = transferCollectibles
         .reduce((a, b: any) => a + this.calculateTransferFee(b.gasLimit), 0);
-      const feeCollectiblesTransferEth = formatAmount(utils.formatEther(
+      const feeCollectiblesTransferEthBN = new BigNumber(utils.formatEther(
         new BigNumber(collectiblesTransferFeeTotal).toFixed(),
       ));
-      const feeCollectiblesTransferFiat = parseFloat(feeCollectiblesTransferEth) * getRate(rates, ETH, fiatCurrency);
+      const feeCollectiblesTransferFiatBN = feeCollectiblesTransferEthBN
+        .multipliedBy(getRate(rates, ETH, fiatCurrency));
+      const feeCollectiblesTransferEthFormatted = formatAmount(feeCollectiblesTransferEthBN.toString());
       collectiblesTransferFee =
-        `${feeCollectiblesTransferEth} ETH (${fiatSymbol}${feeCollectiblesTransferFiat.toFixed(2)})`;
+        `${feeCollectiblesTransferEthFormatted} ETH (${fiatSymbol}${feeCollectiblesTransferFiatBN.toFixed(2)})`;
     }
 
-    const feeSmartContractDeployEth = formatAmount(utils.formatEther(deployEstimateFee));
-    const feeSmartContractDeployFiat = parseFloat(feeSmartContractDeployEth) * getRate(rates, ETH, fiatCurrency);
+    const feeSmartContractDeployEthBN = new BigNumber(utils.formatEther(deployEstimateFee));
+    const feeSmartContractDeployFiatBN = feeSmartContractDeployEthBN.multipliedBy(getRate(rates, ETH, fiatCurrency));
+    const feeSmartContractDeployEthFormatted = formatAmount(feeSmartContractDeployEthBN.toString());
     const smartContractDeployFee =
-      `${feeSmartContractDeployEth} ETH (${fiatSymbol}${feeSmartContractDeployFiat.toFixed(2)})`;
+      `${feeSmartContractDeployEthFormatted} ETH (${fiatSymbol}${feeSmartContractDeployFiatBN.toFixed(2)})`;
 
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = transferAssets.map((transferAsset: any) => {
@@ -264,16 +269,19 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     });
 
     const etherTransfer = nonEmptyAssets.find(asset => asset.symbol === ETH);
-    const etherBalance = getBalance(balances, ETH);
+    const etherBalanceBN = new BigNumber(getBalance(balances, ETH));
     const { amount: etherTransferAmount } = etherTransfer || {};
-    const etherBalanceAfterTransfer = etherBalance - etherTransferAmount - parseFloat(feeTokensTransferEth);
-    const etherTransferAmountUpdated = etherBalanceAfterTransfer < 0
-      ? etherTransferAmount - parseFloat(feeTokensTransferEth)
-      : etherTransferAmount;
+    const etherTransferAmountBN = new BigNumber(etherTransferAmount);
+    const etherBalanceAfterTransfer = etherBalanceBN
+      .minus(etherTransferAmountBN)
+      .minus(feeTokensTransferEthBN);
+    const etherTransferAmountUpdatedBN = etherBalanceAfterTransfer.lt(0)
+      ? etherTransferAmountBN.minus(feeTokensTransferEthBN)
+      : etherTransferAmountBN;
 
     const updatedTransferAssets = nonEmptyAssets
       .filter(asset => asset.symbol !== ETH)
-      .concat({ ...etherTransfer, amount: etherTransferAmountUpdated });
+      .concat({ ...etherTransfer, amount: etherTransferAmountUpdatedBN.toNumber() });
 
     /**
      * there should be selected enough ether for contract deployment
@@ -285,10 +293,10 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
      */
 
     const notEnoughEtherForTokensTransfer = !etherTransfer
-      || (parseFloat((etherBalance - etherTransferAmountUpdated).toFixed(6)) < parseFloat(feeTokensTransferEth));
+      || etherBalanceBN.minus(etherTransferAmountUpdatedBN).lt(feeTokensTransferEthBN);
 
     const notEnoughEtherForContractDeployment = !etherTransfer
-      || (parseFloat(etherTransferAmountUpdated) < parseFloat(feeSmartContractDeployEth));
+      || etherTransferAmountUpdatedBN.lt(feeSmartContractDeployEthBN);
 
     const notEnoughEther = notEnoughEtherForTokensTransfer || notEnoughEtherForContractDeployment;
 
@@ -331,7 +339,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           block
           disabled={!!notEnoughEther}
           title="Create Smart Wallet"
-          onPress={() => this.onNextClick(etherTransferAmountUpdated)}
+          onPress={() => this.onNextClick(etherTransferAmountUpdatedBN)}
         />}
       </React.Fragment>
     );

@@ -63,6 +63,8 @@ import {
 } from 'constants/paymentNetworkConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 
+import { getWalletFromStorage } from 'utils/wallet';
+
 const storage = Storage.getInstance('db');
 
 const BACKGROUND = 'background';
@@ -79,9 +81,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     // $FlowFixMe
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
 
-    const { wallet } = await storage.get('wallet');
+    // $FlowFixMe
+    const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings);
 
-    if (appSettings.wallet) {
+    if (walletTimestamp) {
       const accounts = await loadAndMigrate('accounts', dispatch, getState);
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 

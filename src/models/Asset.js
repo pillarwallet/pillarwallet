@@ -33,7 +33,7 @@ export type Asset = {
 
 
 export type Assets = {
-  [string]: Asset,
+  [symbol: string]: Asset,
 };
 
 export type AssetsByAccount = {
@@ -55,7 +55,7 @@ export type Balance = {
 };
 
 export type Balances = {
-  [ticker: string]: Balance,
+  [symbol: string]: Balance,
 };
 
 export type BalancesStore = {

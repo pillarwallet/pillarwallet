@@ -25,6 +25,7 @@ import {
   SET_HISTORY,
   TRANSACTION_PENDING_EVENT,
   TRANSACTION_CONFIRMATION_EVENT,
+  TRANSACTION_CONFIRMATION_SENDER_EVENT,
   SET_GAS_INFO,
   TX_CONFIRMED_STATUS,
   TX_FAILED_STATUS,
@@ -32,6 +33,7 @@ import {
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ETH } from 'constants/assetsConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
   getAccountAddress,
@@ -116,7 +118,11 @@ export const fetchContactTransactionsAction = (contactAddress: string, asset?: s
 
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
-    const updatedAccountHistory = uniqBy([...history, ...accountHistory], 'hash');
+
+    const pendingTransactions = history.filter(tx => tx.status === TX_PENDING_STATUS);
+    const minedTransactions = history.filter(tx => tx.status !== TX_PENDING_STATUS);
+
+    const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
@@ -143,6 +149,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     const types = [
       TRANSACTION_PENDING_EVENT,
       TRANSACTION_CONFIRMATION_EVENT,
+      TRANSACTION_CONFIRMATION_SENDER_EVENT,
     ];
     const historyNotifications = await api.fetchNotifications(walletId, types.join(' '), d.toISOString());
     const mappedHistoryNotifications = historyNotifications
@@ -166,11 +173,17 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     const updatedAccountHistory = uniqBy([...accountHistory, ...pendingTransactions], 'hash')
       .map(tx => {
         if (!minedTransactions[tx.hash]) return tx;
-        const { status, gasUsed, blockNumber } = minedTransactions[tx.hash];
+        const {
+          status,
+          gasUsed,
+          gasPrice,
+          blockNumber,
+        } = minedTransactions[tx.hash];
         return {
           ...tx,
           status,
-          gasUsed,
+          gasUsed: gasUsed || tx.gasUsed,
+          gasPrice: gasPrice || tx.gasPrice,
           blockNumber,
         };
       });
@@ -229,6 +242,7 @@ export const updateTransactionStatusAction = (hash: string) => {
         ...transaction,
         nbConfirmations,
         status,
+        gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
         gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
       }));
 
@@ -237,8 +251,8 @@ export const updateTransactionStatusAction = (hash: string) => {
       payload: updatedHistory,
     });
 
-    dispatch(afterHistoryUpdatedAction());
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch(afterHistoryUpdatedAction());
     dispatch(fetchAssetsBalancesAction());
   };
 };
@@ -320,11 +334,22 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
   };
 };
 
+
 export const startListeningForBalanceChangeAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
       accounts: { data: accounts },
+      smartWallet: {
+        upgrade: {
+          status: upgradeStatus,
+          transfer: {
+            transactions: transferTransactions = [],
+          },
+        },
+      },
     } = getState();
+    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS || !transferTransactions.length) return;
+
     const activeAccount = getActiveAccount(accounts);
     if (activeAccount) {
       const walletAddress = getAccountAddress(activeAccount);
