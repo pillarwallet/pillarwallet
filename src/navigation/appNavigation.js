@@ -202,9 +202,6 @@ import { PENDING, REGISTERED } from 'constants/userConstants';
 
 import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
 
-// models
-import type { Assets } from 'models/Asset';
-
 // utils
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
@@ -608,7 +605,7 @@ type Props = {
   startListeningChatWebSocket: Function,
   stopListeningChatWebSocket: Function,
   initWalletConnect: Function,
-  fetchAssetsBalances: (assets: Assets) => Function,
+  fetchAssetsBalances: () => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
@@ -619,7 +616,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   wallet: Object,
   backupStatus: Object,
-  assets: Object,
   isPickingImage: boolean,
   updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
@@ -650,14 +646,13 @@ class AppFlow extends React.Component<Props, State> {
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
       getExistingChats,
-      assets,
       fetchAllCollectiblesData,
       initWalletConnect,
       startListeningForBalanceChange,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
-    fetchAssetsBalances(assets);
+    fetchAssetsBalances();
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     getExistingChats();
@@ -791,7 +786,6 @@ const mapStateToProps = ({
     hasUnreadNotifications,
     hasUnreadChatNotifications,
   },
-  assets: { data: assets },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
   featureFlags: {
@@ -804,7 +798,6 @@ const mapStateToProps = ({
   userState,
   notifications,
   hasUnreadNotifications,
-  assets,
   wallet,
   backupStatus,
   hasUnreadChatNotifications,
@@ -822,7 +815,7 @@ const mapDispatchToProps = dispatch => ({
   stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
   startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },

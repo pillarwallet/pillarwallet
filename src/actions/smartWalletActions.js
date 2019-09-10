@@ -354,7 +354,6 @@ export const createAssetsTransferTransactionsAction = (wallet: Object, transacti
 export const checkAssetTransferTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      assets: { data: assets },
       history: {
         data: transactionsHistory,
       },
@@ -414,7 +413,7 @@ export const checkAssetTransferTransactionsAction = () => {
       const { address } = accounts[0];
       navigate(NavigationActions.navigate({ routeName: ASSETS }));
       await dispatch(connectSmartWalletAccountAction(address));
-      await dispatch(fetchAssetsBalancesAction(assets));
+      await dispatch(fetchAssetsBalancesAction());
       dispatch(fetchCollectiblesAction());
       await dispatch(deploySmartWalletAction());
     } else {
@@ -689,7 +688,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const {
         history: { data: currentHistory },
         accounts: { data: accounts },
-        assets: { data: assets },
         paymentNetwork: { txToListen },
       } = getState();
       const activeAccountAddress = getActiveAccountAddress(accounts);
@@ -746,7 +744,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             });
           }
         }
-        dispatch(fetchAssetsBalancesAction(assets));
+        dispatch(fetchAssetsBalancesAction());
       }
     }
 
@@ -817,7 +815,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           title: 'Success',
           autoClose: true,
         });
-        dispatch(fetchAssetsBalancesAction(assets));
+        dispatch(fetchAssetsBalancesAction());
         dispatch(syncVirtualAccountTransactionsAction());
       }
     }
@@ -1294,7 +1292,6 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
     await Promise.all(newAccountsPromises);
 
     if (smartAccounts.length) {
-      const { assets: { data: assets } } = getState();
       const accountId = smartAccounts[0].address;
       await dispatch(connectSmartWalletAccountAction(accountId));
       await dispatch(setActiveAccountAction(accountId));
@@ -1306,7 +1303,7 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
           assets: initAssets,
         },
       });
-      dispatch(fetchAssetsBalancesAction(assets));
+      dispatch(fetchAssetsBalancesAction());
       dispatch(fetchCollectiblesAction());
       dispatch(syncVirtualAccountTransactionsAction(true));
     }

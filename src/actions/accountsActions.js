@@ -222,7 +222,6 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
   return async (dispatch: Function, getState: () => RootReducerState) => {
     const {
       accounts: { data: accounts },
-      assets: { data: assets },
     } = getState();
     const account = accounts.find(_acc => _acc.id === accountId) || {};
 
@@ -235,7 +234,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
     }
 
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
-    dispatch(fetchAssetsBalancesAction(assets));
+    dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());
   };
 };

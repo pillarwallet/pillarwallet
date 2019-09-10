@@ -61,7 +61,7 @@ import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import DeploymentView from 'components/DeploymentView';
 
-import type { Asset, Assets, AssetsByAccount, Balances, Rates } from 'models/Asset';
+import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
@@ -116,7 +116,6 @@ type Props = {
   fetchAllCollectiblesData: Function,
   deploySmartWallet: Function,
   showDeploySmartWallet?: boolean,
-  allAccAssets: AssetsByAccount,
 }
 
 type State = {
@@ -367,7 +366,6 @@ class WalletView extends React.Component<Props, State> {
       insightsTitle,
       assetsSearchState,
       assets,
-      allAccAssets,
       rates,
       balances,
       baseFiatCurrency,
@@ -434,7 +432,7 @@ class WalletView extends React.Component<Props, State> {
           <RefreshControl
             refreshing={false}
             onRefresh={() => {
-              fetchAssetsBalances(allAccAssets);
+              fetchAssetsBalances();
               fetchAllCollectiblesData();
             }}
           />
@@ -518,7 +516,6 @@ class WalletView extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: {
-    data: allAccAssets,
     assetsState,
     assetsSearchState,
     assetsSearchResults,
@@ -529,7 +526,6 @@ const mapStateToProps = ({
   smartWallet: smartWalletState,
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
-  allAccAssets,
   assetsState,
   assetsSearchState,
   assetsSearchResults,
@@ -560,7 +556,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   hideAsset: (asset: Asset) => dispatch(hideAssetAction(asset)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets, true)),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction(true)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 

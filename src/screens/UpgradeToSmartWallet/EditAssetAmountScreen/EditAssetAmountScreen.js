@@ -38,16 +38,15 @@ import { addAssetsToSmartWalletUpgradeAction } from 'actions/smartWalletActions'
 import { formatAmount, parseNumber, isValidNumber } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
-import type { AssetTransfer, Assets, Balances, AssetsByAccount } from 'models/Asset';
+import type { AssetTransfer, Assets, Balances } from 'models/Asset';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  fetchAssetsBalances: (assets: AssetsByAccount) => Function,
+  fetchAssetsBalances: () => Function,
   addedAssets: AssetTransfer[],
   assets: Assets,
-  allAccAssets: AssetsByAccount,
   balances: Balances,
   navigation: NavigationScreenProp<*>,
   addAssetsToSmartWallet: Function,
@@ -159,8 +158,8 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
   };
 
   refreshAssetsList = () => {
-    const { allAccAssets, fetchAssetsBalances } = this.props;
-    fetchAssetsBalances(allAccAssets);
+    const { fetchAssetsBalances } = this.props;
+    fetchAssetsBalances();
   };
 
   onNextPress = async () => {
@@ -238,10 +237,8 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   smartWallet: { upgrade: { transfer: { assets: addedAssets } } },
-  assets: { data: allAccAssets },
 }) => ({
   addedAssets,
-  allAccAssets,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -255,7 +252,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: assets => dispatch(fetchAssetsBalancesAction(assets)),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   addAssetsToSmartWallet: assets => dispatch(
     addAssetsToSmartWalletUpgradeAction(assets),
   ),

@@ -25,7 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
-import type { Assets, AssetsByAccount, Balances } from 'models/Asset';
+import type { Assets, Balances } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -57,9 +57,8 @@ import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork'
 import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
-  fetchAssetsBalances: (assets: AssetsByAccount) => Function,
+  fetchAssetsBalances: () => Function,
   assets: Assets,
-  allAccAssets: AssetsByAccount,
   balances: Balances,
   navigation: NavigationScreenProp<*>,
   fetchAllCollectiblesData: Function,
@@ -192,8 +191,8 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
   };
 
   refreshAssetsList = () => {
-    const { allAccAssets, fetchAssetsBalances } = this.props;
-    fetchAssetsBalances(allAccAssets);
+    const { fetchAssetsBalances } = this.props;
+    fetchAssetsBalances();
   };
 
   setActiveTab = (activeTab) => {
@@ -315,11 +314,9 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: allAccAssets },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
 }) => ({
-  allAccAssets,
   accounts,
   smartWalletState,
 });
@@ -337,7 +334,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 

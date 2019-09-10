@@ -92,7 +92,7 @@ Object.defineProperty(mockWallet, 'sendTransaction', {
 });
 
 const initialState = {
-  assets: { data: { [ETH]: { balance: 10 } } },
+  assets: { data: mockAssets },
   txCount: { data: { lastCount: 0, lastNonce: 0 } },
   history: { data: {} },
   wallet: { data: { address: mockWallet.address } },
@@ -128,7 +128,7 @@ describe('Wallet actions', () => {
       { payload: updateBalancesPayload, type: UPDATE_BALANCES },
       { payload: mockExchangeRates, type: UPDATE_RATES },
     ];
-    return store.dispatch(fetchAssetsBalancesAction(mockAssets))
+    return store.dispatch(fetchAssetsBalancesAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

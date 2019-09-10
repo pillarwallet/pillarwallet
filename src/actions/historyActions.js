@@ -148,7 +148,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     const mappedHistoryNotifications = historyNotifications
       .map(({ payload, type, createdAt }) => ({ ...payload, type, createdAt }));
 
-    dispatch(checkForMissedAssetsAction());
+    await dispatch(checkForMissedAssetsAction());
 
     const minedTransactions = mappedHistoryNotifications
       .filter(tx => tx.status !== TX_PENDING_STATUS)
@@ -208,7 +208,6 @@ export const fetchGasInfoAction = () => {
 export const updateTransactionStatusAction = (hash: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      assets: { data: assets },
       session: { data: { isOnline } },
     } = getState();
 
@@ -240,8 +239,7 @@ export const updateTransactionStatusAction = (hash: string) => {
 
     dispatch(afterHistoryUpdatedAction());
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
-
-    dispatch(fetchAssetsBalancesAction(assets));
+    dispatch(fetchAssetsBalancesAction());
   };
 };
 
@@ -325,14 +323,14 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
 export const startListeningForBalanceChangeAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
-      assets: { data: assets },
       accounts: { data: accounts },
     } = getState();
     const activeAccount = getActiveAccount(accounts);
     if (activeAccount) {
       const walletAddress = getAccountAddress(activeAccount);
+
       currentProvider.on(walletAddress, () => {
-        dispatch(fetchAssetsBalancesAction(assets, true));
+        dispatch(fetchAssetsBalancesAction(true));
       });
     }
   };

@@ -44,15 +44,14 @@ import { accountAssetsSelector } from 'selectors/assets';
 import smartWalletService from 'services/smartWallet';
 import { DEFAULT_GAS_LIMIT } from 'services/assets';
 
-import type { Assets, Balances, AssetTransfer, Rates, AssetsByAccount } from 'models/Asset';
+import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { Collectible } from 'models/Collectible';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  fetchAssetsBalances: (assets: AssetsByAccount) => Function,
+  fetchAssetsBalances: () => Function,
   assets: Assets,
-  allAccAssets: AssetsByAccount,
   balances: Balances,
   transferAssets: AssetTransfer[],
   transferCollectibles: AssetTransfer[],
@@ -105,12 +104,11 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
   componentDidMount() {
     const {
-      allAccAssets,
       fetchGasInfo,
       fetchAssetsBalances,
     } = this.props;
     fetchGasInfo();
-    fetchAssetsBalances(allAccAssets);
+    fetchAssetsBalances();
     smartWalletService.sdk.estimateAccountDeployment()
       .then(({ totalCost }) => this.setState({ deployEstimateFee: totalCost }))
       .catch(this.setDefaultDeployEstimate);
@@ -119,12 +117,11 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
   componentDidUpdate(prevProps: Props) {
     if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
       const {
-        allAccAssets,
         fetchGasInfo,
         fetchAssetsBalances,
       } = this.props;
       fetchGasInfo();
-      fetchAssetsBalances(allAccAssets);
+      fetchAssetsBalances();
     }
   }
 
@@ -378,7 +375,6 @@ const mapStateToProps = ({
   history: { gasInfo },
   appSettings: { data: { baseFiatCurrency } },
   rates: { data: rates },
-  assets: { data: allAccAssets },
 }) => ({
   transferAssets,
   transferCollectibles,
@@ -386,7 +382,6 @@ const mapStateToProps = ({
   gasInfo,
   baseFiatCurrency,
   rates,
-  allAccAssets,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -402,7 +397,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(UpgradeConfirmScreen);

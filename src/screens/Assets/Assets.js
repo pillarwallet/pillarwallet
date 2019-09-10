@@ -33,7 +33,7 @@ import Button from 'components/Button';
 import { Container } from 'components/Layout';
 
 // types
-import type { Assets, Asset } from 'models/Asset';
+import type { Assets, Asset, AssetsByAccount } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -45,6 +45,7 @@ import {
   startAssetsSearchAction,
   searchAssetsAction,
   resetSearchAssetsResultAction,
+  checkForMissedAssetsAction,
 } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -99,6 +100,8 @@ type Props = {
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
+  checkForMissedAssets: Function,
+  allAssets: AssetsByAccount,
 }
 
 type State = {
@@ -129,6 +132,8 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       assets,
       logScreenView,
+      checkForMissedAssets,
+      allAssets,
     } = this.props;
 
     logScreenView('View assets list', 'Assets');
@@ -138,10 +143,18 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     fetchAllCollectiblesData();
+    checkForMissedAssets(allAssets);
 
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ supportsBiometrics: !!supported }))
       .catch(() => null);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { activeAccount, checkForMissedAssets, allAssets } = this.props;
+    if (!isEqual(prevProps.activeAccount, activeAccount)) {
+      checkForMissedAssets(allAssets);
+    }
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -318,6 +331,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   wallet: { data: wallet, backupStatus },
   assets: {
+    data: allAssets,
     assetsState,
     assetsSearchState,
     assetsSearchResults,
@@ -331,6 +345,7 @@ const mapStateToProps = ({
   wallet,
   backupStatus,
   accounts,
+  allAssets,
   assetsState,
   assetsSearchState,
   assetsSearchResults,
@@ -357,6 +372,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
+  checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
