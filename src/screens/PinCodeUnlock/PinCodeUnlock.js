@@ -25,6 +25,7 @@ import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
+import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
@@ -108,9 +109,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   showBiometricLogin() {
-    const { loginWithPrivateKey } = this.props;
+    const { loginWithPrivateKey, connectionKeyPairs: { data: connKeys, lastConnectionKeyIndex } } = this.props;
     const { biometricsShown } = this.state;
-    if (biometricsShown) return;
+    if (biometricsShown || connKeys.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1) return;
     this.setState({ biometricsShown: true }, () => {
       getKeychainDataObject()
         .then(data => {
