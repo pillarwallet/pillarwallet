@@ -99,7 +99,7 @@ export const loginAction = (
     const { wallet: encryptedWallet } = await storage.get('wallet');
     const { oAuthTokens } = await storage.get('oAuthTokens');
 
-    const generateNewConnKeys = !(connectionKeyPairs.length > 20 && lastConnectionKeyIndex > -1);
+    const generateNewConnKeys = connectionKeyPairs.length <= 20 || lastConnectionKeyIndex === -1;
 
     dispatch({
       type: UPDATE_WALLET_STATE,

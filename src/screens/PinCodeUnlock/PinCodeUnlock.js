@@ -108,9 +108,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   showBiometricLogin() {
-    const { loginWithPrivateKey } = this.props;
+    const { loginWithPrivateKey, connectionKeyPairs: { data: connKeys, lastConnectionKeyIndex } } = this.props;
     const { biometricsShown } = this.state;
-    if (biometricsShown) return;
+    if (biometricsShown || connKeys.length <= 20 || lastConnectionKeyIndex === -1) return;
     this.setState({ biometricsShown: true }, () => {
       getKeychainDataObject()
         .then(data => {
