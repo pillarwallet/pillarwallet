@@ -17,44 +17,4 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type Asset = {
-  symbol: string,
-  name: string,
-  address: string,
-  description: string,
-  iconUrl: string,
-  iconMonoUrl: string,
-  wallpaperUrl: string,
-  patternUrl?: string,
-  decimals: number,
-  amount?: number,
-};
-
-export type Assets = {
-  [symbol: string]: Asset,
-};
-
-export type Balance = {
-  balance: string,
-  symbol: string,
-};
-
-export type Balances = {
-  [symbol: string]: Balance,
-};
-
-export type BalancesStore = {
-  [accountId: string]: Balances,
-};
-
-export type Rates = {
-  [string]: {
-    [string]: number,
-  },
-};
-
-export type AssetTransfer = {
-  name: string,
-  amount: number,
-  gasLimit?: number,
-};
+export const PRE_KEY_THRESHOLD = 20;

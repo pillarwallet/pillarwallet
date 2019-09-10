@@ -117,7 +117,9 @@ class SmartWallet {
     await this.sdk
       .initialize({ device: { privateKey } })
       .then(() => { this.sdkInitialized = true; })
-      .catch(this.handleError);
+      .catch(() => {
+        console.log('Error initiating sdk.');
+      });
 
     if (this.sdkInitialized) {
       this.subscribeToEvents(dispatch);
@@ -280,6 +282,7 @@ class SmartWallet {
   }
 
   async getAccountPayments(lastSyncedHash: ?string, page?: number = 0) {
+    if (!this.sdkInitialized) return [];
     const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
     if (!data) return [];
 
