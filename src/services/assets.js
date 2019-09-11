@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import get from 'lodash.get';
 import { Contract, providers, utils } from 'ethers';
 import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
@@ -353,8 +354,8 @@ export async function calculateGasEstimate(transaction: Object) {
 }
 
 export async function getTransactionNonceByHash(hash: string) {
-  // infura doesn't support pending transactions info so we use etherscan in this case
+  // Infura doesn't support pending transactions info so we use etherscan in this case
   const provider = new providers.EtherscanProvider(NETWORK_PROVIDER);
-  const transaction = await provider.getTransaction(hash).catch(() => null) || {};
-  return transaction.nonce || null;
+  const transaction = await provider.getTransaction(hash).catch(() => null);
+  return get(transaction, 'nonce', null);
 }

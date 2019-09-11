@@ -205,7 +205,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
           {!!recipientUsername &&
           <TextInput
             inputProps={{
-              onChange: (text) => this.handleNoteChange(text),
+              onChange: this.handleNoteChange,
               value: this.state.note,
               autoCapitalize: 'none',
               multiline: true,
