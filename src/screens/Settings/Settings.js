@@ -602,7 +602,7 @@ class Settings extends React.Component<Props, State> {
               Through this, Pillar will collect your username in order to enable new features and monitor your new
               wallet experience for any bugs and/or crashes.
               You can choose to leave the Smart Wallet Early Access program and Firebase Analytics collection any time
-              via the &quot;System &quot; under Settings.
+              via the &quot;System&quot; under Settings.
             </Description>
             <Button
               roundedCorners

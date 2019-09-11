@@ -145,13 +145,10 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
       accounts: { data: accounts },
     } = getState();
     let message;
-    let autoClose = true;
     if (userJoinedBeta) {
       dispatch(setFirebaseAnalyticsCollectionEnabled(true));
       firebase.analytics().setUserProperty('username', username);
-      message = 'You have successfully been added to the early access queue for the new Pillar Smart Wallet. ' +
-        'We will let you know once your application is approved.';
-      autoClose = false;
+      message = 'You have successfully been added to the early access queue for the new Pillar Smart Wallet.';
     } else {
       firebase.analytics().setUserProperty('username', null);
       dispatch(setFirebaseAnalyticsCollectionEnabled(false));
@@ -175,7 +172,7 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
       message,
       type: 'success',
       title: 'Success',
-      autoClose,
+      autoClose: false,
     });
   };
 };
