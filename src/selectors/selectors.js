@@ -1,4 +1,5 @@
 // @flow
+import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import type { AccountsReducerState } from 'reducers/accountsReducer';
 import type { BalancesReducerState } from 'reducers/balancesReducer';
@@ -39,4 +40,4 @@ export const activeAccountAddressSelector = createSelector(
 export const assetsSelector = ({ assets }: {assets: AssetsReducerState}) => assets.data;
 
 export const hiddenAssetsSelector = ({ userSettings }: { userSettings: UserSettingsReducerState}) =>
-  userSettings.data.hiddenAssets;
+  get(userSettings, 'data.hiddenAssets', {});

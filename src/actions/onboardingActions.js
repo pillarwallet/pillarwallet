@@ -180,9 +180,9 @@ const finishRegistration = async ({
 
   const { accounts: { data: accounts } } = getState();
 
-  accounts.forEach(async (acc) => {
+  await Promise.all(accounts.map(async acc => {
     await dispatch(restoreTransactionHistoryAction(acc.id, userInfo.walletId));
-  });
+  }));
 
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 

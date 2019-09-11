@@ -67,9 +67,11 @@ import {
   getActiveAccountId,
   getActiveAccountType,
   getAccountAddress,
+  getAccountId,
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
@@ -502,7 +504,6 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
 export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
-      assets: { data: allAssets },
       accounts: { data: accounts },
       balances: { data: balances },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
@@ -512,8 +513,7 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
     if (!activeAccount) return;
     const walletAddress = getAccountAddress(activeAccount);
     if (!walletAddress) return;
-
-    const accountAssets = allAssets[walletAddress] || {};
+    const accountAssets = accountAssetsSelector(getState());
     const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
 
     dispatch({
@@ -574,7 +574,7 @@ export const fetchInitialAssetsAction = () => {
       });
       return;
     }
-    const activeAccountId = getActiveAccountAddress(accounts);
+    const activeAccountId = getActiveAccountId(accounts);
     dispatch({
       type: SET_INITIAL_ASSETS,
       payload: {
@@ -593,8 +593,7 @@ export const addAssetAction = (asset: Asset) => {
       accounts: { data: accounts },
     } = getState();
 
-    const activeAccount = getActiveAccount(accounts);
-    const accountId = get(activeAccount, 'id', null);
+    const accountId = getActiveAccountId(accounts);
     if (!accountId) return;
 
     const accountAssets = assets[accountId];
@@ -643,8 +642,8 @@ export const resetSearchAssetsResultAction = () => ({
 });
 
 const getSupportedTokensAction = (supportedAssets: Asset[], currentAssets: AssetsByAccount, account: Account) => {
-  const accountId = getAccountAddress(account);
-  const currentAccountAssets = get(currentAssets, accountId, {});
+  const accountAddress = getAccountAddress(account);
+  const currentAccountAssets = get(currentAssets, accountAddress, {});
   const currentAccountAssetsTickers = Object.keys(currentAccountAssets);
 
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
@@ -654,8 +653,7 @@ const getSupportedTokensAction = (supportedAssets: Asset[], currentAssets: Asset
   const updatedAccountAssets = supportedAssets
     .filter(asset => currentAccountAssetsTickers.includes(asset.symbol))
     .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
-  // return { [accountId]: updatedAccountAssets };
-  return { id: accountId, ...updatedAccountAssets };
+  return { id: accountAddress, ...updatedAccountAssets };
 };
 
 const getAllOwnedAssetsAction = (accountId: string, supportedAssets) => {
@@ -691,7 +689,7 @@ export const checkForMissedAssetsAction = () => {
       });
     }
 
-    const allSupportedAddedAssetsByAccount = await accounts.map((acc) => {
+    const allSupportedAddedAssetsByAccount = accounts.map((acc) => {
       const supportedAccountAssets = getSupportedTokensAction(walletSupportedAssets, currentAssets, acc);
       return supportedAccountAssets;
     }).reduce((obj, { id, ...rest }) => {
@@ -701,7 +699,7 @@ export const checkForMissedAssetsAction = () => {
 
     // check if some assets are not enabled
     const ownedAssetsByAccount = await Promise.all(accounts.map(async (acc) => {
-      const accountId = getAccountAddress(acc);
+      const accountId = getAccountId(acc);
       const ownedAssets = await dispatch(getAllOwnedAssetsAction(accountId, walletSupportedAssets));
       return { id: accountId, ...ownedAssets };
     }));

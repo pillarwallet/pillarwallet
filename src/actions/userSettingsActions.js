@@ -23,7 +23,7 @@ import Toast from 'components/Toast';
 
 import type { Asset } from 'models/Asset';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { getActiveAccountAddress } from 'utils/accounts';
+import { getActiveAccountId } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 
 export const hideAssetAction = (asset: Asset) => {
@@ -33,7 +33,7 @@ export const hideAssetAction = (asset: Asset) => {
       userSettings: { data: { hiddenAssets } },
     } = getState();
 
-    const accountId = getActiveAccountAddress(accounts);
+    const accountId = getActiveAccountId(accounts);
     const { symbol: assetTicker } = asset;
 
     if (!assetTicker || !accountId) return;
@@ -62,7 +62,7 @@ export const showAssetAction = (asset: Asset) => {
       userSettings: { data: { hiddenAssets } },
     } = getState();
 
-    const accountId = getActiveAccountAddress(accounts);
+    const accountId = getActiveAccountId(accounts);
     const { symbol: assetTicker } = asset;
 
     if (!assetTicker || !accountId) return;

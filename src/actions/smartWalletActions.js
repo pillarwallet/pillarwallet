@@ -89,6 +89,7 @@ import { calculateGasEstimate, waitForTransaction } from 'services/assets';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountAssetsSelector } from 'selectors/assets';
 
 // actions
 import {
@@ -528,7 +529,7 @@ export const fetchVirtualAccountBalanceAction = () => {
     if (!isConnectedToSmartAccount(connectedAccount) || !isOnline) return;
 
     const accountId = getActiveAccountId(accounts);
-    const accountAssets = assets[accountId];
+    const accountAssets = accountAssetsSelector(getState());
     const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
     const { decimals = 18 } = assets[PPN_TOKEN] || {};
 

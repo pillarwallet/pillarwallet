@@ -37,7 +37,7 @@ export type Assets = {
 };
 
 export type AssetsByAccount = {
-  [string]: Assets,
+  [accountId: string]: Assets,
 };
 
 export type AssetsStore = {

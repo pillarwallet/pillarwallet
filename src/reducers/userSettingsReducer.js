@@ -20,7 +20,7 @@
 import { SET_USER_SETTINGS, SET_HIDDEN_ASSETS } from 'constants/userSettingsConstants';
 
 type HiddenAssetsByAccount = {
-  [string]: String[],
+  [accountId: string]: string[],
 }
 
 type UserSettings = {
