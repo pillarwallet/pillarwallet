@@ -512,7 +512,8 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
     const walletAddress = getAccountAddress(activeAccount);
-    if (!walletAddress) return;
+    const accountId = getAccountId(activeAccount);
+    if (!walletAddress || !accountId) return;
     const accountAssets = accountAssetsSelector(getState());
     const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
 
@@ -527,7 +528,7 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
       const transformedBalances = transformAssetsToObject(newBalances);
       const updatedBalances = {
         ...balances,
-        [walletAddress]: transformedBalances,
+        [accountId]: transformedBalances,
       };
       if (showToastIfIncreased && !isSmartWalletAccount) {
         const currentBalances = accountBalancesSelector(getState());
@@ -642,8 +643,8 @@ export const resetSearchAssetsResultAction = () => ({
 });
 
 const getSupportedTokensAction = (supportedAssets: Asset[], currentAssets: AssetsByAccount, account: Account) => {
-  const accountAddress = getAccountAddress(account);
-  const currentAccountAssets = get(currentAssets, accountAddress, {});
+  const accountId = getAccountId(account);
+  const currentAccountAssets = get(currentAssets, accountId, {});
   const currentAccountAssetsTickers = Object.keys(currentAccountAssets);
 
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
@@ -653,7 +654,7 @@ const getSupportedTokensAction = (supportedAssets: Asset[], currentAssets: Asset
   const updatedAccountAssets = supportedAssets
     .filter(asset => currentAccountAssetsTickers.includes(asset.symbol))
     .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
-  return { id: accountAddress, ...updatedAccountAssets };
+  return { id: accountId, ...updatedAccountAssets };
 };
 
 const getAllOwnedAssetsAction = (accountId: string, supportedAssets) => {
