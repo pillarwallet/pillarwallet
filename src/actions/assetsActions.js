@@ -766,8 +766,7 @@ export const speedUpTransactionAction = (transactionHash: string, gasPriceGwei: 
       note,
       value,
     } = transactionInfo;
-    // $FlowFixMe
-    const asset: Asset = Object.values(assets).find(({ symbol }) => symbol === assetSymbol) || {};
+    const asset = assets[assetSymbol] || {};
     const {
       symbol,
       address: contractAddress,
