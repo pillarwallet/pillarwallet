@@ -208,7 +208,7 @@ const formSystemItems = (that) => {
   return [
     {
       key: 'joinBeta',
-      title: userJoinedBeta ? 'Leave Beta Testing' : 'Join Beta Testing',
+      title: userJoinedBeta ? 'Leave the Smart Wallet Early Access program' : 'Opt in to Smart Wallet Early Access',
       onPress: () => userJoinedBeta
         ? that.setState({ visibleModal: 'leaveBeta' })
         : that.setState({ visibleModal: 'joinBeta' }),
@@ -593,20 +593,20 @@ class Settings extends React.Component<Props, State> {
           backgroundColor={baseColors.snowWhite}
           onModalHidden={this.handleJoinBetaModalClose}
           avoidKeyboard
-          title="Join Beta"
+          title="Smart Wallet Early Access"
           onModalHide={() => this.setState({ visibleModal: null })}
         >
           <StyledWrapper regularPadding flex={1}>
             <Description small>
-              By joining the beta program, you will be added to our Firebase Analytics data collection.
-              Through this, Pillar will collect your username in order to enable beta features and monitor
-              your wallet experience for any bugs and/or crashes while testing the new functionality.
-              You can opt out of the beta program and Firebase Analytics collection at any time
+              By choosing to upgrade your wallet, you will be added to our Firebase Analytics data collection.
+              Through this, Pillar will collect your username in order to enable new features and monitor your new
+              wallet experience for any bugs and/or crashes.
+              You can choose to leave the Smart Wallet Early Access program and Firebase Analytics collection any time
               via the &quot;System&quot; under Settings.
             </Description>
             <Button
               roundedCorners
-              title="Join Beta Testing"
+              title="Opt in"
               onPress={() => this.setState({ visibleModal: null, joinBetaPressed: true })}
               style={{
                 marginBottom: 13,
@@ -623,27 +623,27 @@ class Settings extends React.Component<Props, State> {
           backgroundColor={baseColors.snowWhite}
           onModalHidden={this.handleLeaveBetaModalClose}
           avoidKeyboard
-          title="Leaving Beta"
+          title="Leaving Early Access program"
           onModalHide={() => this.setState({ visibleModal: null })}
         >
           <StyledWrapper regularPadding flex={1}>
             <View>
               <Description small>
-                By confirming, you will be removed from the Beta Testing program. As a result, your access to the Smart
-                Wallet, PIllar Payment Network and any funds stored on them will be lost.
+                By confirming, you will leave the Smart Wallet Early Access program. As a result, your access to the
+                Smart Wallet, Pillar Payment Network and any funds stored on them will be lost.
               </Description>
               <Description small>
                 We strongly recommend that you transfer all assets from the Smart Wallet and Pillar Network to your Key
-                Based Wallet before leaving the Beta Program.
+                Based Wallet before leaving this Program.
               </Description>
               <Description small>
-                If you wish to re-join the Beta Program (and re-gain access to the funds on your Smart Wallet), you will
-                need to apply again.
+                If you wish to re-gain early access to Smart Wallet (and re-gain access to the funds on your Smart
+                Wallet), you will need to apply again.
               </Description>
             </View>
             <Button
               roundedCorners
-              title="Leave Beta Testing"
+              title="Leave Program"
               onPress={() => { this.setState({ visibleModal: null, leaveBetaPressed: true }); }}
               style={{ marginBottom: 13 }}
             />
