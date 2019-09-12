@@ -262,11 +262,17 @@ class PillarNetworkIntro extends React.Component<Props, State> {
           </CustomWrapper>
           {!!needsSmartWallet &&
           <ListItemChevron
+            wrapperStyle={{
+              marginTop: 46,
+              marginBottom: 70,
+              borderColor: baseColors.pomegranate,
+            }}
             label="Enable Smart wallet to create Tank"
             onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
             color={baseColors.pomegranate}
             bordered
           />}
+          {!needsSmartWallet &&
           <ButtonWrapper>
             <Button
               block
@@ -282,9 +288,8 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               }}
               textStyle={{ color: baseColors.ultramarine }}
               isLoading={processingCreate}
-              disabled={needsSmartWallet}
             />
-          </ButtonWrapper>
+          </ButtonWrapper>}
         </ScrollWrapper>
         <SlideModal
           isVisible={!!showPinScreenForAction}

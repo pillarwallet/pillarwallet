@@ -163,7 +163,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
               onPress={() => { this.setState({ showDeployPayOptions: true }); }}
               roundedCorners
               style={{
-                backgroundColor: baseColors.ultramarine,
+                backgroundColor: baseColors.persianBlue,
                 marginTop: 40,
                 marginBottom: 20,
                 borderRadius: 6,
