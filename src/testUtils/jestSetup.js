@@ -24,6 +24,7 @@ import { View as mockView } from 'react-native';
 import { utils, HDNode } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
+import WalletConnectMock from './walletConnectMock';
 
 process.env.IS_TEST = 'TEST';
 
@@ -255,3 +256,5 @@ jest.setMock('react-native-keychain', {
     BIOMETRY_ANY: 'BIOMETRY_ANY',
   },
 });
+
+jest.setMock('@walletconnect/react-native', WalletConnectMock);

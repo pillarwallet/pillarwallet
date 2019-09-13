@@ -49,11 +49,14 @@ import { WALLETCONNECT_SESSION_REQUEST_SCREEN, WALLETCONNECT_CALL_REQUEST_SCREEN
 import { navigate } from 'services/navigation';
 import Toast from 'components/Toast';
 import { logEventAction } from 'actions/analyticsActions';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 import { saveDbAction } from './dbActions';
 
 const storage = Storage.getInstance('db');
 
-async function getNativeOptions() {
+const getNativeOptions = async () => {
   // const language = DEVICE_LANGUAGE.replace(/[-_](\w?)+/gi, "").toLowerCase();
   // const token = await getFCMToken();
 
@@ -76,17 +79,17 @@ async function getNativeOptions() {
   };
 
   return nativeOptions;
-}
+};
 
-function updateSavedConnectors(connectors: WalletConnect[]) {
-  return async (dispatch: Function) => {
+const updateSavedConnectors = (connectors: WalletConnect[]) => {
+  return async (dispatch: Dispatch) => {
     const sessions = connectors.map(connector => connector.session);
     dispatch(saveDbAction('walletconnect', { sessions }, true));
   };
-}
+};
 
-export function onWalletConnectCallRequest(peerId: string, payload: Object) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const onWalletConnectCallRequest = (peerId: string, payload: Object) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const { connectors } = getState().walletConnect;
 
@@ -138,10 +141,10 @@ export function onWalletConnectCallRequest(peerId: string, payload: Object) {
       });
     }
   };
-}
+};
 
-export function killWalletConnectSession(peerId: string) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const killWalletConnectSession = (peerId: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const { connectors } = getState().walletConnect;
 
@@ -181,10 +184,10 @@ export function killWalletConnectSession(peerId: string) {
       });
     }
   };
-}
+};
 
-export function killWalletConnectSessionByUrl(url: string) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const killWalletConnectSessionByUrl = (url: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const { connectors } = getState().walletConnect;
 
@@ -222,10 +225,10 @@ export function killWalletConnectSessionByUrl(url: string) {
       });
     }
   };
-}
+};
 
-export function clearPendingWalletConnectSessionByUrl(url: string) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const clearPendingWalletConnectSessionByUrl = (url: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const { pending } = getState().walletConnect;
 
@@ -245,10 +248,10 @@ export function clearPendingWalletConnectSessionByUrl(url: string) {
       });
     }
   };
-}
+};
 
-export function onWalletConnectDisconnect(peerId: string) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const onWalletConnectDisconnect = (peerId: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const { connectors } = getState().walletConnect;
 
@@ -272,10 +275,10 @@ export function onWalletConnectDisconnect(peerId: string) {
       });
     }
   };
-}
+};
 
-export function onWalletConnectSubscribeToEvents(peerId: string) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const onWalletConnectSubscribeToEvents = (peerId: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const { connectors } = getState().walletConnect;
 
@@ -328,10 +331,10 @@ export function onWalletConnectSubscribeToEvents(peerId: string) {
       });
     }
   };
-}
+};
 
-export function initWalletConnectSessions() {
-  return async (dispatch: Function) => {
+export const initWalletConnectSessions = () => {
+  return async (dispatch: Dispatch) => {
     try {
       const { sessions = [] } = await storage.get('walletconnect');
 
@@ -363,10 +366,10 @@ export function initWalletConnectSessions() {
       });
     }
   };
-}
+};
 
-export function onWalletConnectSubscribeToSessionRequestEvent(clientId: string) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const onWalletConnectSubscribeToSessionRequestEvent = (clientId: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const { pending } = getState().walletConnect;
 
@@ -407,10 +410,10 @@ export function onWalletConnectSubscribeToSessionRequestEvent(clientId: string) 
       });
     }
   };
-}
+};
 
-export function cancelWaitingRequest(clientId: string, timeout: boolean = false) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const cancelWaitingRequest = (clientId: string, timeout: boolean = false) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { pending, waitingRequest } = getState().walletConnect;
 
     if (waitingRequest !== clientId) {
@@ -441,10 +444,10 @@ export function cancelWaitingRequest(clientId: string, timeout: boolean = false)
       });
     }
   };
-}
+};
 
-export function requestWalletConnectSessionAction(uri: string) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const requestWalletConnectSessionAction = (uri: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const { pending } = getState().walletConnect;
 
@@ -484,10 +487,10 @@ export function requestWalletConnectSessionAction(uri: string) {
       });
     }
   };
-}
+};
 
-export function onWalletConnectSessionApproval(peerId: string) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const onWalletConnectSessionApproval = (peerId: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const { pending, connectors } = getState().walletConnect;
 
@@ -538,10 +541,10 @@ export function onWalletConnectSessionApproval(peerId: string) {
       });
     }
   };
-}
+};
 
-export function onWalletConnectSessionRejection(peerId: string) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const onWalletConnectSessionRejection = (peerId: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     try {
       const { pending } = getState().walletConnect;
 
@@ -577,10 +580,10 @@ export function onWalletConnectSessionRejection(peerId: string) {
       });
     }
   };
-}
+};
 
-export function onWalletConnectRejectCallRequest(peerId: string, callId: string, errorMsg?: string) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const onWalletConnectRejectCallRequest = (peerId: string, callId: string, errorMsg?: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { connectors } = getState().walletConnect;
 
     const matchingConnectors = connectors.filter(c => c.peerId === peerId);
@@ -598,10 +601,10 @@ export function onWalletConnectRejectCallRequest(peerId: string, callId: string,
       });
     }
   };
-}
+};
 
-export function onWalletConnectApproveCallRequest(peerId: string, callId: string, result: any) {
-  return async (dispatch: Function, getState: () => Object) => {
+export const onWalletConnectApproveCallRequest = (peerId: string, callId: string, result: any) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     if (!result) {
       dispatch(onWalletConnectRejectCallRequest(peerId, callId));
     }
@@ -624,4 +627,4 @@ export function onWalletConnectApproveCallRequest(peerId: string, callId: string
       });
     }
   };
-}
+};

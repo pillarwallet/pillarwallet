@@ -77,16 +77,25 @@ export const syncContactAction = (userId: string) => {
       user: { data: { walletId } },
       contacts: { data: contacts },
       accessTokens: { data: accessTokens },
+      connectionIdentityKeys: { data: connections },
     } = getState();
 
-    const accessToken = accessTokens.find(token => token.userId === userId);
-    if (!accessToken) return;
-
-    const userInfo = await api.userInfoById(userId, {
-      walletId,
-      userAccessKey: accessToken.myAccessToken,
-      targetUserAccessKey: accessToken.userAccessToken,
-    });
+    let userInfo;
+    const connection = connections.find((conn: ConnectionIdentityKey) => conn.targetUserId === userId);
+    if (connection) {
+      userInfo = {
+        ...connection.targetUserInfo,
+        id: connection.targetUserId,
+      };
+    } else {
+      const accessToken = accessTokens.find(token => token.userId === userId);
+      if (!accessToken) return;
+      userInfo = await api.userInfoById(userId, {
+        walletId,
+        userAccessKey: accessToken.myAccessToken,
+        targetUserAccessKey: accessToken.userAccessToken,
+      });
+    }
 
     if (!userInfo || !Object.keys(userInfo).length) {
       return;
