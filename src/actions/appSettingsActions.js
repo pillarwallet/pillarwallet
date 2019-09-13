@@ -145,13 +145,10 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
       accounts: { data: accounts },
     } = getState();
     let message;
-    let autoClose = true;
     if (userJoinedBeta) {
       dispatch(setFirebaseAnalyticsCollectionEnabled(true));
       firebase.analytics().setUserProperty('username', username);
-      message = 'You have successfully applied for Beta Testing. ' +
-        'We will let you know once your application is approved.';
-      autoClose = false;
+      message = 'You have successfully been added to the early access queue for the new Pillar Smart Wallet.';
     } else {
       firebase.analytics().setUserProperty('username', null);
       dispatch(setFirebaseAnalyticsCollectionEnabled(false));
@@ -160,7 +157,7 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
       // in case user opts out when Smart wallet account is active
       const keyBasedAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
       dispatch(switchAccountAction(keyBasedAccount.id));
-      message = 'You have successfully left Beta Testing.';
+      message = 'You have successfully left Smart Wallet Early Access program.';
     }
     await api.updateUser({ walletId, betaProgramParticipant: userJoinedBeta });
     dispatch(saveDbAction('app_settings', { appSettings: { userJoinedBeta } }));
@@ -175,7 +172,7 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
       message,
       type: 'success',
       title: 'Success',
-      autoClose,
+      autoClose: false,
     });
   };
 };
