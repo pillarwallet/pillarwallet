@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { FlatList, Platform, View } from 'react-native';
+import { FlatList, Platform } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -79,17 +79,10 @@ const Title = styled(BoldText)`
   font-size: ${fontSizes.rJumbo}px;
 `;
 
-const Row = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-top: ${responsiveSize(26)}px;
-  flex: 1;
-`;
-
 const BodyText = styled(MediumText)`
   color: ${baseColors.pomegranate};
   font-size: ${fontSizes.rMedium}px;
-  line-height: ${fontSizes.rExtraLarge}px;
+  line-height: ${fontSizes.rExtraLarger}px;
   margin-top: ${responsiveSize(26)}px;
 `;
 
@@ -102,18 +95,20 @@ const ListItemWrapper = styled.View`
 const ContentWrapper = styled.View`
   align-items: flex-start;
   margin-left: ${responsiveSize(19)}px;
+  flex: 1;
+  flex-wrap: wrap;
+    
 `;
 
 const Label = styled(BoldText)`
   color: ${baseColors.pomegranate};
   font-size: ${fontSizes.rLarge}px;
-  line-height: ${responsiveSize(34)}px;
 `;
 
 const Subtext = styled(BoldText)`
   color: ${baseColors.pomegranate};
   font-size: ${fontSizes.rMedium}px;
-  line-height: ${responsiveSize(34)}px;
+  line-height: ${fontSizes.rExtraLarger}px;
   margin-top: ${responsiveSize(10)}px;
 `;
 
@@ -225,19 +220,17 @@ class PillarNetworkIntro extends React.Component<Props, State> {
             </Title>
             <BodyText>
               Stake PLR tokens in your tank to enable free and instant transactions between you and your contacts.
-            </BodyText>
-            <BodyText>
               PLR acts as a meta token allowing you to send and receive any asset that is supported by the Pillar
               Payment Network.
             </BodyText>
-            <Row>
-              <View style={{ flex: 1, paddingRight: 10 }}>
-                <BodyText style={{ marginTop: 0 }}>
-                  Draw from your PLR tank to send whatever you’d like.
-                </BodyText>
-              </View>
-              <LabelBadge label="SOON" containerStyle={{ backgroundColor: baseColors.pomegranate }} />
-            </Row>
+            <LabelBadge
+              label="COMING SOON"
+              containerStyle={{ backgroundColor: baseColors.darkOrange, marginTop: 57, paddingVertical: 2 }}
+              labelStyle={{ color: baseColors.ultramarine, fontSize: responsiveSize(11) }}
+            />
+            <BodyText style={{ marginTop: 10 }}>
+              Draw from your PLR tank to send whatever you’d like.
+            </BodyText>
             <FlatList
               data={features}
               keyExtractor={(item) => item.key}

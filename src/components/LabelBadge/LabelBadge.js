@@ -29,11 +29,10 @@ type Props = {
 }
 
 const BadgeWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
   background-color: ${baseColors.pastelGreen};
   padding: 3px 8px;
   border-radius: 12px;
+  align-self: flex-start;
 `;
 
 const Label = styled(BoldText)`
