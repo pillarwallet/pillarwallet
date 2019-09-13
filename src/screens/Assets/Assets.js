@@ -182,7 +182,10 @@ class AssetsScreen extends React.Component<Props, State> {
           label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet',
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
-          customHeaderProps: { background: baseColors.jellyBean, light: true },
+          customHeaderProps: {
+            background: walletType === ACCOUNT_TYPES.KEY_BASED ? baseColors.tomato : baseColors.neonBlue,
+            light: true,
+          },
           customHeaderButtonProps: {},
         };
       default:

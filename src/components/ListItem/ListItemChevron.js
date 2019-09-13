@@ -126,6 +126,7 @@ type Props = {
   color?: string,
   subtext?: string,
   subtextAddon?: React.Node,
+  wrapperStyle?: Object,
 }
 
 export const ListItemChevron = (props: Props) => {
@@ -137,9 +138,10 @@ export const ListItemChevron = (props: Props) => {
     bordered,
     color,
     subtext,
+    wrapperStyle,
   } = props;
   return (
-    <ListItem bordered={bordered}>
+    <ListItem bordered={bordered} style={wrapperStyle}>
       <ButtonWrapper onPress={onPress}>
         <ItemRow>
           <ContentWrapper>

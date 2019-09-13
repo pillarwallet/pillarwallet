@@ -432,7 +432,7 @@ class HomeScreen extends React.Component<Props, State> {
           </BalanceWrapper>
           <WalletConnectWrapper>
             <SettingsItemCarded
-              title="Wallet Connect"
+              title="Manage Sessions"
               subtitle={sessionsLabel}
               onMainPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
               onSettingsPress={this.openQRScanner}
