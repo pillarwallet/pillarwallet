@@ -115,6 +115,8 @@ export const baseColors = {
   stratos: '#000260',
   rockBlue: '#8e8fb8',
   scarlet: '#FD3300',
+  tomato: '#F9584F',
+  neonBlue: '#3C71FF',
 };
 
 export const brandColors = [
