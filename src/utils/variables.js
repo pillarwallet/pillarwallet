@@ -117,6 +117,7 @@ export const baseColors = {
   scarlet: '#FD3300',
   tomato: '#F9584F',
   neonBlue: '#3C71FF',
+  darkOrange: '#ff8d04',
 };
 
 export const brandColors = [
@@ -169,9 +170,9 @@ export const fontSizes = {
   androidCloseIcon: 22,
   androidCheckmarkIcon: 26,
   rJumbo: responsiveSize(64),
-  rMedium: responsiveSize(17),
+  rMedium: responsiveSize(19),
   rLarge: responsiveSize(25),
-  rExtraLarge: responsiveSize(40),
+  rExtraLarger: responsiveSize(27),
 };
 
 export const spacing = {
