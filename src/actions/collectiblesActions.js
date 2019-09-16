@@ -100,19 +100,24 @@ const collectibleTransaction = (event) => {
     name,
     token_id: id,
     description,
-    image_preview_url: image,
+    image_preview_url: imagePreviewUrl,
+    image_url: imageUrl,
   } = asset;
   const { name: category, address: contractAddress } = assetContract;
   const { transaction_hash: trxHash, block_number: blockNumber, timestamp } = transaction;
 
   const collectibleName = name || `${category} ${id}`;
 
+  const previewIcon = safeImage(imagePreviewUrl);
+  const image = safeImage(imageUrl) || previewIcon;
+
   const assetData = {
     id,
     category,
     name: collectibleName,
     description,
-    icon: (/\.(png)$/i).test(image) ? image : '',
+    icon: previewIcon,
+    image,
     contractAddress,
     assetContract: category,
     tokenType: COLLECTIBLES,
@@ -131,7 +136,7 @@ const collectibleTransaction = (event) => {
     blockNumber,
     status: 'confirmed',
     type: COLLECTIBLE_TRANSACTION,
-    icon: (/\.(png)$/i).test(image) ? image : '',
+    icon: previewIcon,
     assetData,
   };
 };

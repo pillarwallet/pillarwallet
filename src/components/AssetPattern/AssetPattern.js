@@ -33,16 +33,27 @@ type Props = {
   isListed: boolean,
 }
 
+type State = {
+  errorLoading: boolean,
+  didLoad: boolean,
+}
+
 const windowWidth = Dimensions.get('window').width;
+
+const Wrapper = styled.View`
+  width: 100%;
+  height: 250px;
+  justify-content: center;
+`;
 
 const PatternWrapper = styled.View`
   width: 100%;
-  height: 250px;
+  height: 220px;
 `;
 
 const NoIconWrapper = styled.View`
   width: 100%;
-  height: 220px;
+  height: 250px;
   margin-top: 14px;
   margin-bottom: 20px;
   align-items: center;
@@ -62,10 +73,10 @@ const IconWrapper = styled.View`
   left: ${props => props.left}px;
   justify-content: center;
   align-items: center;
-  elevation: ${props => props.elevation};
+  elevation: ${props => props.addShadow ? props.elevation : 0};
   shadow-color: ${baseColors.black};
-  shadow-offset: 0px 3px;
-  shadow-opacity: ${props => props.shadowOpacity};
+  shadow-offset: ${props => props.addShadow ? '0px 3px' : 0};
+  shadow-opacity: ${props => props.addShadow ? props.shadowOpacity : 0};
   shadow-radius: 6px;
   background-color: ${baseColors.white};
 `;
@@ -75,8 +86,14 @@ const NoIconImage = styled(CachedImage)`
   width: 192px;
 `;
 
-export default class AssetPattern extends React.Component<Props, {}> {
+export default class AssetPattern extends React.Component<Props, State> {
+  state = {
+    errorLoading: false,
+    didLoad: false,
+  };
+
   generatePattern = (token: string, icon: string, isListed: boolean) => {
+    const { didLoad } = this.state;
     const paternDetails = [];
     const uniqueCode = [];
     const tokenSymbols = token.split('');
@@ -190,6 +207,7 @@ export default class AssetPattern extends React.Component<Props, {}> {
               { translateY: -(diameter / 2) },
             ],
           }}
+          addShadow={didLoad}
         >
           <ColorMatrix
             matrix={saturate(saturation)}
@@ -202,19 +220,9 @@ export default class AssetPattern extends React.Component<Props, {}> {
               }}
               source={{ uri: icon }}
               resizeMode="contain"
+              onLoadEnd={() => { this.setState({ didLoad: true }); }}
+              onError={() => { this.setState({ errorLoading: true }); }}
             />
-            {/*
-            <CachedImage
-              key={token}
-              style={{
-                height: diameter - 4,
-                width: diameter - 4,
-                opacity,
-              }}
-              source={{ uri: icon }}
-              resizeMode="contain"
-            />
-            */}
           </ColorMatrix>
         </IconWrapper>,
       );
@@ -229,19 +237,20 @@ export default class AssetPattern extends React.Component<Props, {}> {
       icon,
       isListed,
     } = this.props;
-
-    if (!isListed || !icon) {
-      return (
-        <NoIconWrapper isUnlisted={!isListed}>
-          <NoIconImage source={noIconImageSource} />
-        </NoIconWrapper>
-      );
-    }
-
+    const { errorLoading } = this.state;
     return (
-      <PatternWrapper>
-        {this.generatePattern(token, icon, isListed)}
-      </PatternWrapper>
+      <Wrapper>
+        {(!isListed || !icon || errorLoading) ?
+          <NoIconWrapper isUnlisted={!isListed}>
+            <NoIconImage source={noIconImageSource} />
+          </NoIconWrapper>
+        :
+        (
+          <PatternWrapper>
+            {this.generatePattern(token, icon, isListed)}
+          </PatternWrapper>
+        )}
+      </Wrapper>
     );
   }
 }
