@@ -26,7 +26,7 @@ import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { TRANSACTION_EVENT, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT } from 'constants/collectiblesConstants';
 import {
   TYPE_RECEIVED,
@@ -48,11 +48,27 @@ type Props = {
 
 const getEventInfo = (eventType, eventStatus) => {
   if (eventType === TRANSACTION_EVENT) {
-    const isPending = eventStatus === 'pending';
+    const isConfirmed = eventStatus === TX_CONFIRMED_STATUS;
+    const isFailed = eventStatus === TX_FAILED_STATUS;
+
+    if (isConfirmed) {
+      return {
+        title: 'Success',
+        background: baseColors.freshEucalyptus,
+        iconName: 'tick-circle',
+      };
+    }
+    if (isFailed) {
+      return {
+        title: 'Failed',
+        background: baseColors.burningFire,
+        iconName: 'warning-circle',
+      };
+    }
     return {
-      title: isPending ? 'Pending' : 'Success',
-      background: isPending ? baseColors.burningFire : baseColors.freshEucalyptus,
-      iconName: isPending ? 'pending-circle' : 'tick-circle',
+      title: 'Pending',
+      background: baseColors.burningFire,
+      iconName: 'pending-circle',
     };
   }
   if (eventStatus === TYPE_RECEIVED) {
