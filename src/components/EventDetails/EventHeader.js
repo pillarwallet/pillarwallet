@@ -58,7 +58,6 @@ const getEventInfo = (eventType, eventStatus) => {
         iconName: 'tick-circle',
       };
     }
-
     if (isFailed) {
       return {
         title: 'Failed',
