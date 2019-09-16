@@ -20,19 +20,36 @@
 import WalletConnect from '@walletconnect/react-native';
 import {
   WALLETCONNECT_ERROR,
-  WALLETCONNECT_CLEAR_PENDING,
+  // WALLETCONNECT_CLEAR_PENDING,
   WALLETCONNECT_CANCEL_REQUEST,
   WALLETCONNECT_INIT_SESSIONS,
   WALLETCONNECT_SESSION_DISCONNECTED,
-  WALLETCONNECT_SESSION_KILLED,
+  WALLETCONNECT_SESSIONS_KILLED,
   WALLETCONNECT_SESSION_APPROVED,
   WALLETCONNECT_SESSION_REQUEST,
   WALLETCONNECT_SESSION_REJECTED,
+  WALLETCONNECT_CALL_APPROVED,
+  WALLETCONNECT_CALL_REJECTED,
+  WALLETCONNECT_CALL_REQUEST,
 } from 'constants/walletConnectConstants';
 import reducer from 'reducers/walletConnectReducer';
 
-const mockConnector = (options = {}, params = {}) => {
+import type { Connector, CallRequest } from 'models/WalletConnect';
+
+const mockConnector = (options = {}, params = {}): Connector => {
   return new WalletConnect(options, params);
+};
+
+const mockRequest = (callId: number): CallRequest => {
+  return {
+    callId,
+    peerId: `peer-${callId}`,
+    name: `peer-${callId}`,
+    url: `http://requests.com/peer-${callId}`,
+    icon: '',
+    method: '',
+    params: [],
+  };
 };
 
 describe('WalletConnect reducer', () => {
@@ -43,7 +60,7 @@ describe('WalletConnect reducer', () => {
 
       const result = reducer(undefined, {
         type: WALLETCONNECT_INIT_SESSIONS,
-        payload: [connector1, connector2],
+        connectors: [connector1, connector2],
       });
 
       expect(result).toMatchObject({
@@ -59,12 +76,12 @@ describe('WalletConnect reducer', () => {
 
       const state = reducer(undefined, {
         type: WALLETCONNECT_INIT_SESSIONS,
-        payload: [connector1, connector2],
+        connectors: [connector1, connector2],
       });
 
       const result = reducer(state, {
         type: WALLETCONNECT_SESSION_DISCONNECTED,
-        payload: [connector1],
+        connector: connector2,
       });
 
       expect(result).toMatchObject({
@@ -73,23 +90,23 @@ describe('WalletConnect reducer', () => {
     });
   });
 
-  describe('WALLETCONNECT_SESSION_KILLED', () => {
+  describe('WALLETCONNECT_SESSIONS_KILLED', () => {
     it('stores new connectors', () => {
       const connector1 = mockConnector();
       const connector2 = mockConnector();
 
       const state = reducer(undefined, {
         type: WALLETCONNECT_INIT_SESSIONS,
-        payload: [connector1, connector2],
+        connectors: [connector1, connector2],
       });
 
       const result = reducer(state, {
-        type: WALLETCONNECT_SESSION_KILLED,
-        payload: [connector1],
+        type: WALLETCONNECT_SESSIONS_KILLED,
+        connectors: [connector1],
       });
 
       expect(result).toMatchObject({
-        connectors: [connector1],
+        connectors: [connector2],
       });
     });
   });
@@ -101,22 +118,17 @@ describe('WalletConnect reducer', () => {
 
       const state = reducer(undefined, {
         type: WALLETCONNECT_INIT_SESSIONS,
-        payload: [connector1, connector2],
+        connectors: [connector1],
       });
 
       const result = reducer(state, {
         type: WALLETCONNECT_SESSION_APPROVED,
-        payload: {
-          pending: [],
-          connectors: [connector1],
-        },
-        pending: 0,
+        connector: connector2,
       });
 
       expect(result).toMatchObject({
-        pending: [],
-        connectors: [connector1],
-        waitingRequest: null,
+        connectors: [connector1, connector2],
+        pendingConnector: null,
       });
     });
   });
@@ -128,22 +140,18 @@ describe('WalletConnect reducer', () => {
 
       const state = reducer(undefined, {
         type: WALLETCONNECT_INIT_SESSIONS,
-        payload: [connector1, connector2],
+        connectors: [connector1, connector2],
       });
 
       const connector3 = mockConnector();
       const result = reducer(state, {
         type: WALLETCONNECT_SESSION_REQUEST,
-        payload: {
-          pending: [connector3],
-          clientId: 'client-n',
-        },
+        connector: connector3,
       });
 
       expect(result).toMatchObject({
         connectors: [connector1, connector2],
-        pending: [connector3],
-        waitingRequest: 'client-n',
+        pendingConnector: connector3,
       });
     });
   });
@@ -155,27 +163,22 @@ describe('WalletConnect reducer', () => {
 
       let state = reducer(undefined, {
         type: WALLETCONNECT_INIT_SESSIONS,
-        payload: [connector1, connector2],
+        connectors: [connector1, connector2],
       });
 
       const connector3 = mockConnector();
       state = reducer(state, {
         type: WALLETCONNECT_SESSION_REQUEST,
-        payload: {
-          pending: [connector3],
-          clientId: 'client-n',
-        },
+        connector: connector3,
       });
 
       const result = reducer(state, {
         type: WALLETCONNECT_CANCEL_REQUEST,
-        payload: [],
       });
 
       expect(result).toMatchObject({
         connectors: [connector1, connector2],
-        pending: [],
-        waitingRequest: null,
+        pendingConnector: null,
       });
     });
   });
@@ -187,58 +190,22 @@ describe('WalletConnect reducer', () => {
 
       let state = reducer(undefined, {
         type: WALLETCONNECT_INIT_SESSIONS,
-        payload: [connector1, connector2],
+        connectors: [connector1, connector2],
       });
 
       const connector3 = mockConnector();
       state = reducer(state, {
         type: WALLETCONNECT_SESSION_REQUEST,
-        payload: {
-          pending: [connector3],
-          clientId: 'client-n',
-        },
+        connector: connector3,
       });
 
       const result = reducer(state, {
         type: WALLETCONNECT_SESSION_REJECTED,
-        payload: [],
       });
 
       expect(result).toMatchObject({
         connectors: [connector1, connector2],
-        pending: [],
-        waitingRequest: null,
-      });
-    });
-  });
-
-  describe('handles WALLETCONNECT_CLEAR_PENDING', () => {
-    it('updates pending', () => {
-      const connector1 = mockConnector();
-      const connector2 = mockConnector();
-
-      let state = reducer(undefined, {
-        type: WALLETCONNECT_INIT_SESSIONS,
-        payload: [connector1, connector2],
-      });
-
-      const connector3 = mockConnector();
-      state = reducer(state, {
-        type: WALLETCONNECT_SESSION_REQUEST,
-        payload: {
-          pending: [connector3],
-          clientId: 'client-n',
-        },
-      });
-      const result = reducer(state, {
-        type: WALLETCONNECT_CLEAR_PENDING,
-        payload: [],
-      });
-
-      expect(result).toMatchObject({
-        connectors: [connector1, connector2],
-        pending: [],
-        waitingRequest: null,
+        pendingConnector: null,
       });
     });
   });
@@ -258,6 +225,59 @@ describe('WalletConnect reducer', () => {
           code: 'error-code',
           message: 'error-message',
         },
+      });
+    });
+  });
+
+  describe('WALLETCONNECT_CALL_REQUEST', () => {
+    it('stores requests', () => {
+      const request = mockRequest(1);
+
+      const result = reducer(undefined, {
+        type: WALLETCONNECT_CALL_REQUEST,
+        request,
+      });
+
+      expect(result).toMatchObject({
+        requests: [request],
+      });
+    });
+  });
+
+  describe('WALLETCONNECT_CALL_APPROVED', () => {
+    it('removes requests', () => {
+      const request = mockRequest(1);
+
+      const state = reducer(undefined, {
+        type: WALLETCONNECT_CALL_REQUEST,
+        request,
+      });
+      const result = reducer(state, {
+        type: WALLETCONNECT_CALL_APPROVED,
+        callId: 1,
+      });
+
+      expect(result).toMatchObject({
+        requests: [],
+      });
+    });
+  });
+
+  describe('WALLETCONNECT_CALL_REJECTED', () => {
+    it('removes requests', () => {
+      const request = mockRequest(1);
+
+      const state = reducer(undefined, {
+        type: WALLETCONNECT_CALL_REQUEST,
+        request,
+      });
+      const result = reducer(state, {
+        type: WALLETCONNECT_CALL_REJECTED,
+        callId: 1,
+      });
+
+      expect(result).toMatchObject({
+        requests: [],
       });
     });
   });
