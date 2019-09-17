@@ -642,7 +642,7 @@ export const resetSearchAssetsResultAction = () => ({
   type: RESET_ASSETS_SEARCH_RESULT,
 });
 
-const getSupportedTokensAction = (supportedAssets: Asset[], currentAssets: AssetsByAccount, account: Account) => {
+export const getSupportedTokens = (supportedAssets: Asset[], currentAssets: AssetsByAccount, account: Account) => {
   const accountId = getAccountId(account);
   const currentAccountAssets = get(currentAssets, accountId, {});
   const currentAccountAssetsTickers = Object.keys(currentAccountAssets);
@@ -657,19 +657,17 @@ const getSupportedTokensAction = (supportedAssets: Asset[], currentAssets: Asset
   return { id: accountId, ...updatedAccountAssets };
 };
 
-const getAllOwnedAssetsAction = (accountId: string, supportedAssets) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
-    const addressErc20Tokens = await api.getAddressErc20TokensInfo(accountId); // all address' assets except ETH;
-    const accOwnedErc20Assets = {};
-    if (addressErc20Tokens.length) {
-      addressErc20Tokens.forEach((token) => {
-        const tokenTicker = get(token, 'tokenInfo.symbol', '');
-        const supportedAsset = supportedAssets.find(asset => asset.symbol === tokenTicker);
-        if (supportedAsset && !accOwnedErc20Assets[tokenTicker]) accOwnedErc20Assets[tokenTicker] = supportedAsset;
-      });
-    }
-    return accOwnedErc20Assets;
-  };
+const getAllOwnedAssets = async (api: Object, accountId: string, supportedAssets: Asset[]) => {
+  const addressErc20Tokens = await api.getAddressErc20TokensInfo(accountId); // all address' assets except ETH;
+  const accOwnedErc20Assets = {};
+  if (addressErc20Tokens.length) {
+    addressErc20Tokens.forEach((token) => {
+      const tokenTicker = get(token, 'tokenInfo.symbol', '');
+      const supportedAsset = supportedAssets.find(asset => asset.symbol === tokenTicker);
+      if (supportedAsset && !accOwnedErc20Assets[tokenTicker]) accOwnedErc20Assets[tokenTicker] = supportedAsset;
+    });
+  }
+  return accOwnedErc20Assets;
 };
 
 export const checkForMissedAssetsAction = () => {
@@ -677,7 +675,7 @@ export const checkForMissedAssetsAction = () => {
     const {
       accounts: { data: accounts },
       user: { data: { walletId } },
-      assets: { data: currentAssets, supportedAssets },
+      assets: { data: currentAssets, supportedAssets = [] },
     } = getState();
 
     // load supported assets
@@ -691,7 +689,7 @@ export const checkForMissedAssetsAction = () => {
     }
 
     const allSupportedAddedAssetsByAccount = accounts.map((acc) => {
-      const supportedAccountAssets = getSupportedTokensAction(walletSupportedAssets, currentAssets, acc);
+      const supportedAccountAssets = getSupportedTokens(walletSupportedAssets, currentAssets, acc);
       return supportedAccountAssets;
     }).reduce((obj, { id, ...rest }) => {
       obj[id] = rest;
@@ -701,7 +699,7 @@ export const checkForMissedAssetsAction = () => {
     // check if some assets are not enabled
     const ownedAssetsByAccount = await Promise.all(accounts.map(async (acc) => {
       const accountId = getAccountId(acc);
-      const ownedAssets = await dispatch(getAllOwnedAssetsAction(accountId, walletSupportedAssets));
+      const ownedAssets = await getAllOwnedAssets(api, accountId, walletSupportedAssets);
       return { id: accountId, ...ownedAssets };
     }));
 

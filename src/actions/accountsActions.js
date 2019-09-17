@@ -55,7 +55,7 @@ import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 const storage = Storage.getInstance('db');
 
 export const initDefaultAccountAction = (walletAddress: string, walletId: string, migrateData: boolean = true) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     const keyBasedAccount = {
       id: walletAddress,
       type: ACCOUNT_TYPES.KEY_BASED,
