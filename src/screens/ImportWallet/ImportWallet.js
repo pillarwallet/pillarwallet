@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { Platform, BackHandler, Keyboard, Dimensions } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
+import { CachedImage } from 'react-native-cached-image';
 import {
   importWalletFromTWordsPhraseAction,
   importWalletFromPrivateKeyAction,
@@ -35,17 +36,15 @@ import {
   TWORDSPHRASE,
   PRIVATEKEY,
 } from 'constants/walletConstants';
-import { ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Paragraph, BaseText, TextLink } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
-import IconButton from 'components/IconButton';
-import WalletTabs from 'components/Tabs/WalletTabs';
+import Tabs from 'components/Tabs';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
-import { NextFooter } from 'components/Layout/NextFooter';
-import Checkbox from 'components/Checkbox';
-import { fontSizes, baseColors, UIColors, spacing } from 'utils/variables';
+import Button from 'components/Button';
+import { fontSizes, baseColors, spacing } from 'utils/variables';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -66,12 +65,16 @@ type State = {
   visibleModal: string,
   hasAgreedToTerms: boolean,
   hasAgreedToPolicy: boolean,
+  backupPhrase: Object,
+  currentWordIndex: number,
+  currentBPWord: string,
 };
 
 const window = Dimensions.get('window');
 
 const TERMS_OF_USE_MODAL = 'TERMS_OF_USE_MODAL';
 const PRIVACY_POLICY_MODAL = 'PRIVACY_POLICY_MODAL';
+const DEV = 'DEV';
 
 const InputWrapper = styled.View`
   flex-direction: row;
@@ -79,31 +82,110 @@ const InputWrapper = styled.View`
   width: 100%;
   margin-top: 20px;
 `;
+//
+// const ButtonWrapper = styled.View`
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   margin-left: 14px;
+//   margin-top: 6px;
+// `;
 
-const ButtonWrapper = styled.View`
-  display: flex;
+// const CheckboxText = styled(BaseText)`
+//   font-size: ${fontSizes.extraSmall}px;
+//   line-height: 20px;
+//   color: ${baseColors.coolGrey};
+// `;
+//
+// const StyledTextLink = styled(TextLink)`
+//   font-size: ${fontSizes.extraSmall}px;
+//   line-height: 20px;
+//   color: ${baseColors.rockBlue};
+// `;
+
+const FooterWrapper = styled.View`
   justify-content: center;
   align-items: center;
-  margin-left: 14px;
-  margin-top: 6px;
+  padding: ${spacing.large}px;
+  width: 100%;
+  background-color: ${baseColors.white};
 `;
 
-const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: 20px;
-  color: ${baseColors.coolGrey};
+const ButtonsWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+  flex-direction: ${props => props.isRow ? 'row' : 'column'};
 `;
 
-const StyledTextLink = styled(TextLink)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: 20px;
-  color: ${baseColors.rockBlue};
+const StyledButton = styled(Button)`
+  margin: 0 6px;
 `;
+
+const Label = styled(BaseText)`
+  color: ${baseColors.blueYonder};
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+`;
+
+const FormWrapper = styled.View`
+  flex-direction: column;
+`;
+
+const Row = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex: 1;
+  margin-bottom: ${spacing.large}px;
+`;
+
+const BackupWordText = styled(BaseText)`
+  margin: 4px 2px;
+  align-items: flex-start;
+  color: ${baseColors.mediumGray};
+  font-size: ${fontSizes.extraSmall}px;
+`;
+
+const ScannerButton = styled.TouchableOpacity`
+  margin-top: 16px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ButtonText = styled(BaseText)`
+  color: ${baseColors.electricBlue};
+  font-size: ${fontSizes.small}px;
+`;
+
+const ButtonIcon = styled(CachedImage)`
+  height: 24px;
+  width: 24px;
+  justify-content: center;
+  margin-right: 8px; 
+`;
+
+const getButtonLabel = (currentWordIndex, error) => {
+  if (error) {
+    return 'Try again';
+  } else if (currentWordIndex < 12) {
+    return 'Next';
+  }
+  return 'Finish';
+};
+
+const iconReceive = require('assets/icons/icon_receive.png');
 
 class ImportWallet extends React.Component<Props, State> {
+  backupPhraseInput: Object;
+
+  // backupPhraseInput = React.createRef();
+
   state = {
     privateKey: '',
     tWordsPhrase: '',
+    backupPhrase: {},
+    currentBPWord: '',
+    currentWordIndex: 1,
     errorMessage: '',
     errorField: '',
     isScanning: false,
@@ -135,12 +217,14 @@ class ImportWallet extends React.Component<Props, State> {
   }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    const { activeTab } = prevState;
     const { walletState, error } = nextProps.wallet;
 
     if (walletState === WALLET_ERROR && error.code === IMPORT_ERROR) {
+      const errorMessage = activeTab === PRIVATEKEY ? 'Incorrect private key' : 'Incorrect backup phrase';
       return {
         ...prevState,
-        errorMessage: error.message,
+        errorMessage,
         errorField: error.field,
       };
     } else if (walletState !== WALLET_ERROR) {
@@ -156,11 +240,19 @@ class ImportWallet extends React.Component<Props, State> {
   handleImportSubmit = () => {
     Keyboard.dismiss();
     const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
-    const { privateKey, tWordsPhrase, activeTab } = this.state;
+    const {
+      privateKey,
+      tWordsPhrase,
+      activeTab,
+      backupPhrase,
+    } = this.state;
 
     if (activeTab === PRIVATEKEY) {
       importWalletFromPrivateKey(privateKey);
     } else if (activeTab === TWORDSPHRASE) {
+      const trimmedPhrase = Object.values(backupPhrase).join(' ');
+      importWalletFromTWordsPhrase(trimmedPhrase);
+    } else if (activeTab === DEV) {
       const trimmedPhrase = tWordsPhrase.split(' ').filter(Boolean).join(' ');
       importWalletFromTWordsPhrase(trimmedPhrase);
     } else {
@@ -202,9 +294,13 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   handleValueChange = (field) => (value) => {
-    this.setState({
-      [field]: value,
-    });
+    if (field === 'currentBPWord') {
+      this.onBackupPhraseWordChange(value);
+    } else {
+      this.setState({
+        [field]: value,
+      });
+    }
     this.props.resetWalletError();
   };
 
@@ -219,7 +315,7 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   renderForm = (tabsInfo) => {
-    const { activeTab } = this.state;
+    const { activeTab, backupPhrase, currentWordIndex } = this.state;
     const inputProps = {
       onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
       value: tabsInfo[activeTab].value,
@@ -227,45 +323,157 @@ class ImportWallet extends React.Component<Props, State> {
       importantForAutofill: 'no',
       autoComplete: 'off',
     };
-    let additionalProps = {};
+    const inputWidth = window.width - (spacing.rhythm * 2) - 2;
 
-    let inputWidth = window.width - 95;
-
-    if (activeTab === TWORDSPHRASE) {
-      inputWidth = window.width - (spacing.rhythm * 2) - 2;
-      additionalProps = {
-        multiline: true,
-        numberOfLines: 3,
-      };
+    if (activeTab === PRIVATEKEY) {
+      return (
+        <FormWrapper>
+          <Label style={{ marginBottom: 20 }}>Paste your private key</Label>
+          <TextInput
+            inputProps={{
+              ...inputProps,
+              multiline: true,
+              numberOfLines: 3,
+            }}
+            inputType="noBackground"
+            noBorder
+            keyboardAvoidance
+            viewWidth={inputWidth}
+            errorMessage={tabsInfo[activeTab].errorMessage}
+            additionalStyle={{ textAlign: 'center', paddingRight: 0 }}
+            errorMessageStyle={{ textAlign: 'center', color: baseColors.chestnutRose }}
+          />
+        </FormWrapper>
+      );
     }
 
-    return (
-      <React.Fragment>
+    if (activeTab === DEV) {
+      return (
         <TextInput
-          inputProps={{ ...inputProps, ...additionalProps }}
+          inputProps={{
+            ...inputProps,
+            multiline: true,
+            numberOfLines: 2,
+          }}
           inputType="secondary"
           noBorder
           keyboardAvoidance
           viewWidth={inputWidth}
           errorMessage={tabsInfo[activeTab].errorMessage}
         />
-        {activeTab === PRIVATEKEY &&
-          <ButtonWrapper error={!!tabsInfo[activeTab].errorMessage}>
-            <IconButton
-              icon="scan"
-              color={baseColors.electricBlue}
-              fontSize={fontSizes.extraLarge}
-              onPress={this.handleQRScannerOpen}
-              iconText="SCAN"
-              style={{
-                marginLeft: 5,
-                marginBottom: 3,
-                alignItems: 'center',
-              }}
-            />
-          </ButtonWrapper>}
-      </React.Fragment>
+      );
+    }
+
+    return (
+      <FormWrapper>
+        <Row>
+          {Object.keys(backupPhrase).map((key) => {
+            return (<BackupWordText key={key}>{`${key}. ${backupPhrase[key]}`}</BackupWordText>);
+          })}
+        </Row>
+        <Label>{`Word ${currentWordIndex}`}</Label>
+        <TextInput
+          getInputRef={(ref) => { this.backupPhraseInput = ref; }}
+          inputProps={inputProps}
+          additionalStyle={{ textAlign: 'center' }}
+          inputType="bigTextNoBackground"
+          noBorder
+          keyboardAvoidance
+          viewWidth={inputWidth}
+          errorMessage={tabsInfo[activeTab].errorMessage}
+          errorMessageStyle={{ textAlign: 'center', color: baseColors.chestnutRose }}
+          onLayout={() => {
+            // this.backupPhraseInput.focus();
+          }}
+        />
+      </FormWrapper>
     );
+  };
+
+  renderFooterButtons = (tabsInfo) => {
+    const { activeTab, currentBPWord, currentWordIndex } = this.state;
+
+    if (activeTab === TWORDSPHRASE) {
+      const { errorMessage } = tabsInfo[activeTab];
+      const showPrev = currentWordIndex > 1;
+      const nextButtonText = getButtonLabel(currentWordIndex, errorMessage);
+      return (
+        <ButtonsWrapper isRow>
+          {!!showPrev &&
+          <StyledButton
+            primaryInvertedSquare
+            title="Prev"
+            onPress={this.showPrevWord}
+          />}
+          <StyledButton
+            disabled={!currentBPWord}
+            primarySquare
+            title={nextButtonText}
+            onPress={this.showNextWord}
+          />
+        </ButtonsWrapper>
+      );
+    } else if (activeTab === PRIVATEKEY) {
+      return (
+        <ButtonsWrapper>
+          <Button
+            disabled={!tabsInfo[activeTab].value}
+            primarySquare
+            title="Re-import"
+            onPress={this.handleImportSubmit}
+          />
+          <ScannerButton onPress={this.handleQRScannerOpen}>
+            <ButtonIcon source={iconReceive} />
+            <ButtonText>QR code scan</ButtonText>
+          </ScannerButton>
+        </ButtonsWrapper>
+      );
+    }
+
+    return (
+      <Button
+        disabled={!tabsInfo[activeTab].value}
+        primarySquare
+        title="Re-import"
+        onPress={this.handleImportSubmit}
+      />
+    );
+  };
+
+  onBackupPhraseWordChange = (value) => {
+    // TODO: check if correct form (no spacings)
+    const { backupPhrase, currentWordIndex } = this.state;
+    const noSpacesRegex = /^\S*$/;
+    if (value.match(noSpacesRegex)) {
+      this.setState({
+        currentBPWord: value,
+        backupPhrase: { ...backupPhrase, [currentWordIndex]: value },
+      });
+    }
+    // else if (value.replace(/ /g,'').length) {
+    //   this.showNextWord();
+    // }
+    this.props.resetWalletError();
+  }
+
+  showNextWord = () => {
+    const { backupPhrase, currentWordIndex } = this.state;
+    const nextWordIndex = currentWordIndex + 1;
+    if (currentWordIndex < 12) {
+      this.setState({
+        currentWordIndex: nextWordIndex,
+        currentBPWord: backupPhrase[nextWordIndex],
+      });
+    } else {
+      this.handleImportSubmit();
+    }
+  };
+
+  showPrevWord = () => {
+    const { backupPhrase, currentWordIndex } = this.state;
+    const prevWordIndex = currentWordIndex - 1;
+    const prevWord = backupPhrase[prevWordIndex];
+    this.setState({ currentBPWord: prevWord, currentWordIndex: prevWordIndex });
   };
 
   render() {
@@ -273,16 +481,17 @@ class ImportWallet extends React.Component<Props, State> {
       privateKey,
       tWordsPhrase,
       isScanning,
-      activeTab,
+      // activeTab,
       visibleModal,
-      hasAgreedToTerms,
-      hasAgreedToPolicy,
+      // hasAgreedToTerms,
+      // hasAgreedToPolicy,
+      currentBPWord,
     } = this.state;
 
     const restoreWalletTabs = [
       {
         id: TWORDSPHRASE,
-        name: '12 word',
+        name: 'Backup phrase',
         onPress: () => this.setActiveTab(TWORDSPHRASE),
       },
       {
@@ -292,87 +501,96 @@ class ImportWallet extends React.Component<Props, State> {
       },
     ];
 
+    if (__DEV__) {
+      restoreWalletTabs.push({
+        id: DEV,
+        name: 'Dev\'s phrase',
+        onPress: () => this.setActiveTab(DEV),
+      });
+    }
+
     const tabsInfo = {
       TWORDSPHRASE: {
-        textStart: 'Restore your ERC-20 compatible Ethereum wallet using your ',
-        textAttention: '12 word backup phrase',
-        textEnd: '.',
         inputLabel: 'Backup phrase',
-        changeName: 'tWordsPhrase',
-        value: tWordsPhrase,
+        changeName: 'currentBPWord',
+        value: currentBPWord,
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
       },
       PRIVATEKEY: {
-        textStart: 'Don\'t have your backup phrase? Use your ',
-        textAttention: 'private key',
-        textEnd: ' instead.',
         inputLabel: 'Private key',
         changeName: 'privateKey',
         value: privateKey,
         errorMessage: this.getError(IMPORT_WALLET_PRIVATE_KEY),
       },
+      DEV: {
+        inputLabel: 'Backup phrase',
+        changeName: 'tWordsPhrase',
+        value: tWordsPhrase,
+        errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
+      },
     };
 
-    const canGoNext = hasAgreedToTerms && hasAgreedToPolicy && !!tabsInfo[activeTab].value;
+    // const canGoNext = hasAgreedToTerms && hasAgreedToPolicy && !!tabsInfo[activeTab].value;
 
     return (
       <ContainerWithHeader
         headerProps={({
-          centerItems: [{ title: 'Restore wallet' }],
+          centerItems: [{ title: 'Re-import wallet' }],
           customOnBack: this.handleBackAction,
         })}
         backgroundColor={baseColors.white}
         keyboardAvoidFooter={(
-          <NextFooter
-            onNextPress={this.handleImportSubmit}
-            nextDisabled={!canGoNext}
-            wrapperStyle={{ paddingTop: 30, paddingBottom: 30 }}
-          >
-            <Checkbox
-              onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
-              small
-              lightText
-              darkCheckbox
-              wrapperStyle={{ marginBottom: 16 }}
-            >
-              <CheckboxText>
-                {'I have read, understand, and agree to the '}
-                <StyledTextLink
-                  onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
-                >
-                  Terms of Use
-                </StyledTextLink>
-              </CheckboxText>
-            </Checkbox>
-            <Checkbox
-              onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
-              small
-              lightText
-              darkCheckbox
-            >
-              <CheckboxText>
-                {'I have read, understand, and agree to the '}
-                <StyledTextLink
-                  onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
-                >
-                  Privacy policy
-                </StyledTextLink>
-              </CheckboxText>
-            </Checkbox>
-          </NextFooter>
+          <FooterWrapper>
+            {this.renderFooterButtons(tabsInfo)}
+          </FooterWrapper>
         )}
+        // keyboardAvoidFooter={(
+        //   <NextFooter
+        //     onNextPress={this.handleImportSubmit}
+        //     nextDisabled={!canGoNext}
+        //     wrapperStyle={{ paddingTop: 30, paddingBottom: 30 }}
+        //   >
+        //     <Checkbox
+        //       onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
+        //       small
+        //       lightText
+        //       darkCheckbox
+        //       wrapperStyle={{ marginBottom: 16 }}
+        //     >
+        //       <CheckboxText>
+        //         {'I have read, understand, and agree to the '}
+        //         <StyledTextLink
+        //           onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
+        //         >
+        //           Terms of Use
+        //         </StyledTextLink>
+        //       </CheckboxText>
+        //     </Checkbox>
+        //     <Checkbox
+        //       onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
+        //       small
+        //       lightText
+        //       darkCheckbox
+        //     >
+        //       <CheckboxText>
+        //         {'I have read, understand, and agree to the '}
+        //         <StyledTextLink
+        //           onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
+        //         >
+        //           Privacy policy
+        //         </StyledTextLink>
+        //       </CheckboxText>
+        //     </Checkbox>
+        //   </NextFooter>
+        // )}
       >
-        <ScrollWrapper regularPadding disableAutomaticScroll keyboardShouldPersistTaps="always">
-          <WalletTabs title="restore wallet" tabs={restoreWalletTabs} />
-          <Paragraph small light>{tabsInfo[activeTab].textStart}
-            <BaseText style={{ color: UIColors.defaultTextColor }}>
-              {tabsInfo[activeTab].textAttention}
-            </BaseText>
-            {tabsInfo[activeTab].textEnd}
-          </Paragraph>
-          <InputWrapper error={!!tabsInfo[activeTab].errorMessage}>
-            {this.renderForm(tabsInfo)}
-          </InputWrapper>
+        <ScrollWrapper disableAutomaticScroll keyboardShouldPersistTaps="always">
+          <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} />
+          <Wrapper regularPadding>
+            <InputWrapper>
+              {this.renderForm(tabsInfo)}
+            </InputWrapper>
+          </Wrapper>
         </ScrollWrapper>
         <QRCodeScanner
           isActive={isScanning}
