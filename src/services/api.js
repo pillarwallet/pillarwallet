@@ -37,14 +37,13 @@ import {
 } from 'react-native-dotenv';
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
-import type { UserBadgesResponse, BadgesInfoResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
+import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
 import {
   fetchAssetBalances,
   fetchLastBlockNumber,
   fetchTransactionInfo,
   fetchTransactionReceipt,
 } from 'services/assets';
-import { fetchBadges } from 'services/badges';
 import EthplorerSdk from 'services/EthplorerSdk';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
@@ -487,16 +486,12 @@ SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePaylo
   // return Promise.all(promises).catch(() => []);
 };
 
-SDKWrapper.prototype.fetchBadges = function (address: string): Promise<UserBadgesResponse> {
-  return fetchBadges(address).catch(() => ({}));
-};
-
-SDKWrapper.prototype.fetchBadgesInfo = function (walletId: string): Promise<BadgesInfoResponse> {
+SDKWrapper.prototype.fetchBadges = function (walletId: string): Promise<UserBadgesResponse> {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.badge.my({ walletId }))
     .then(({ data }) => data)
-    .then(data => data.reduce((memo, badge) => ({ ...memo, [badge.id]: badge }), {}))
-    .catch(() => ({}));
+    .then(data => uniqBy(data, 'id'))
+    .catch(() => []);
 };
 
 SDKWrapper.prototype.fetchContactBadges = function (walletId: string, userId: string): Promise<Badges> {

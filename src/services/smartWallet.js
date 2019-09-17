@@ -253,7 +253,7 @@ class SmartWallet {
   }
 
   estimateTopUpAccountVirtualBalance(value: BigNumber, tokenAddress: ?string) {
-    return this.sdk.estimateTopUpAccountVirtualBalance(value.toHexString(), tokenAddress);
+    return this.sdk.estimateTopUpAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
   }
 
   estimateWithdrawFromAccountVirtualBalance(value: BigNumber) {

@@ -212,6 +212,7 @@ export const setActiveAccountAction = (accountId: string) => {
     if ([
       SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
       SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+      SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
     ].includes(upgradeStatus)) {
       return;
     }
