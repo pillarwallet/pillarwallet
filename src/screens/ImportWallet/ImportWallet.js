@@ -38,11 +38,12 @@ import {
 } from 'constants/walletConstants';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Tabs from 'components/Tabs';
 import Button from 'components/Button';
+import Icon from 'components/Icon';
 import { fontSizes, baseColors, spacing } from 'utils/variables';
 
 type Props = {
@@ -137,21 +138,39 @@ const ButtonIcon = styled(CachedImage)`
   margin-right: 8px; 
 `;
 
+const ButtonInner = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ButtonLabel = styled(BoldText)`
+  color: ${props => props.blue ? baseColors.electricBlue : baseColors.white};
+  font-size: ${fontSizes.medium}px;
+  margin-bottom: 2px;
+`;
+
+const ButtonIconArrow = styled(Icon)`
+  font-size: ${fontSizes.medium}px;
+  color: ${props => props.blue ? baseColors.electricBlue : baseColors.white};
+  ${props => props.isOnLeft ? 'margin-right: 5px;' : 'margin-left: 5px;'}
+  ${props => props.flip ? 'transform: rotate(180deg);' : ''}
+`;
+
 const getButtonLabel = (currentWordIndex, error) => {
-  if (error) {
-    return 'Try again';
+  if (error && currentWordIndex === 12) {
+    return { text: 'Try again', showArrow: false };
   } else if (currentWordIndex < 12) {
-    return 'Next';
+    return { text: 'Next', showArrow: true };
   }
-  return 'Finish';
+  return { text: 'Finish', showArrow: false };
 };
 
 const iconReceive = require('assets/icons/icon_receive.png');
 
 class ImportWallet extends React.Component<Props, State> {
   backupPhraseInput: Object;
-
-  // backupPhraseInput = React.createRef();
+  privKeyInput: Object;
+  devPhraseInput: Object;
 
   state = {
     privateKey: '',
@@ -265,6 +284,7 @@ class ImportWallet extends React.Component<Props, State> {
         <FormWrapper>
           <Label style={{ marginBottom: 20 }}>Paste your private key</Label>
           <TextInput
+            getInputRef={(ref) => { this.privKeyInput = ref; }}
             inputProps={{
               ...inputProps,
               multiline: true,
@@ -277,6 +297,9 @@ class ImportWallet extends React.Component<Props, State> {
             errorMessage={tabsInfo[activeTab].errorMessage}
             additionalStyle={{ textAlign: 'center', paddingRight: 0 }}
             errorMessageStyle={{ textAlign: 'center', color: baseColors.chestnutRose }}
+            onLayout={() => {
+              this.privKeyInput._root.focus();
+            }}
           />
         </FormWrapper>
       );
@@ -285,6 +308,7 @@ class ImportWallet extends React.Component<Props, State> {
     if (activeTab === DEV) {
       return (
         <TextInput
+          getInputRef={(ref) => { this.devPhraseInput = ref; }}
           inputProps={{
             ...inputProps,
             multiline: true,
@@ -295,6 +319,9 @@ class ImportWallet extends React.Component<Props, State> {
           keyboardAvoidance
           viewWidth={inputWidth}
           errorMessage={tabsInfo[activeTab].errorMessage}
+          onLayout={() => {
+            this.devPhraseInput._root.focus();
+          }}
         />
       );
     }
@@ -318,7 +345,7 @@ class ImportWallet extends React.Component<Props, State> {
           errorMessage={tabsInfo[activeTab].errorMessage}
           errorMessageStyle={{ textAlign: 'center', color: baseColors.chestnutRose }}
           onLayout={() => {
-            // this.backupPhraseInput.focus();
+            this.backupPhraseInput._root.focus();
           }}
         />
       </FormWrapper>
@@ -331,21 +358,29 @@ class ImportWallet extends React.Component<Props, State> {
     if (activeTab === TWORDSPHRASE) {
       const { errorMessage } = tabsInfo[activeTab];
       const showPrev = currentWordIndex > 1;
-      const nextButtonText = getButtonLabel(currentWordIndex, errorMessage);
+      const { text: nextButtonText, showArrow: showBackArrow } = getButtonLabel(currentWordIndex, errorMessage);
       return (
         <ButtonsWrapper isRow>
           {!!showPrev &&
           <StyledButton
             primaryInvertedSquare
-            title="Prev"
             onPress={this.showPrevWord}
-          />}
+          >
+            <ButtonInner>
+              <ButtonIconArrow name="back" blue isOnLeft />
+              <ButtonLabel blue>Prev</ButtonLabel>
+            </ButtonInner>
+          </StyledButton>}
           <StyledButton
             disabled={!currentBPWord}
             primarySquare
-            title={nextButtonText}
             onPress={this.showNextWord}
-          />
+          >
+            <ButtonInner>
+              <ButtonLabel>{nextButtonText}</ButtonLabel>
+              {!!showBackArrow && <ButtonIconArrow name="back" flip />}
+            </ButtonInner>
+          </StyledButton>
         </ButtonsWrapper>
       );
     } else if (activeTab === PRIVATEKEY) {
