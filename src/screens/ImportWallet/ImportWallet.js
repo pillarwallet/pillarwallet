@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Platform, BackHandler, Keyboard, Dimensions } from 'react-native';
+import { Keyboard, Dimensions } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
@@ -42,7 +42,6 @@ import { BaseText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Tabs from 'components/Tabs';
-import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import Button from 'components/Button';
 import { fontSizes, baseColors, spacing } from 'utils/variables';
 
@@ -62,18 +61,12 @@ type State = {
   isScanning: boolean,
   activeTab: string,
   inputEnabled: boolean,
-  visibleModal: string,
-  hasAgreedToTerms: boolean,
-  hasAgreedToPolicy: boolean,
   backupPhrase: Object,
   currentWordIndex: number,
   currentBPWord: string,
 };
 
 const window = Dimensions.get('window');
-
-const TERMS_OF_USE_MODAL = 'TERMS_OF_USE_MODAL';
-const PRIVACY_POLICY_MODAL = 'PRIVACY_POLICY_MODAL';
 const DEV = 'DEV';
 
 const InputWrapper = styled.View`
@@ -82,26 +75,6 @@ const InputWrapper = styled.View`
   width: 100%;
   margin-top: 20px;
 `;
-//
-// const ButtonWrapper = styled.View`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   margin-left: 14px;
-//   margin-top: 6px;
-// `;
-
-// const CheckboxText = styled(BaseText)`
-//   font-size: ${fontSizes.extraSmall}px;
-//   line-height: 20px;
-//   color: ${baseColors.coolGrey};
-// `;
-//
-// const StyledTextLink = styled(TextLink)`
-//   font-size: ${fontSizes.extraSmall}px;
-//   line-height: 20px;
-//   color: ${baseColors.rockBlue};
-// `;
 
 const FooterWrapper = styled.View`
   justify-content: center;
@@ -191,30 +164,7 @@ class ImportWallet extends React.Component<Props, State> {
     isScanning: false,
     activeTab: TWORDSPHRASE,
     inputEnabled: false,
-    visibleModal: '',
-    hasAgreedToTerms: false,
-    hasAgreedToPolicy: false,
   };
-
-  physicalBackAction = () => {
-    this.handleBackAction();
-    return true;
-  };
-
-  componentDidMount() {
-    const { navigation } = this.props;
-    const navigateTo = navigation.getParam('navigateTo', null);
-
-    if (Platform.OS === 'android' && navigateTo) {
-      BackHandler.addEventListener('hardwareBackPress', this.physicalBackAction);
-    }
-  }
-
-  componentWillUnmount() {
-    if (Platform.OS === 'android') {
-      BackHandler.removeEventListener('hardwareBackPress', this.physicalBackAction);
-    }
-  }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const { activeTab } = prevState;
@@ -282,17 +232,6 @@ class ImportWallet extends React.Component<Props, State> {
     return '';
   };
 
-  handleBackAction = () => {
-    const { navigation, resetWalletError } = this.props;
-    resetWalletError();
-    const navigateTo = navigation.getParam('navigateTo', null);
-    if (navigateTo) {
-      navigation.navigate(navigateTo);
-    } else {
-      navigation.goBack(null);
-    }
-  };
-
   handleValueChange = (field) => (value) => {
     if (field === 'currentBPWord') {
       this.onBackupPhraseWordChange(value);
@@ -308,10 +247,6 @@ class ImportWallet extends React.Component<Props, State> {
     this.setState({
       activeTab,
     });
-  };
-
-  closeModals = () => {
-    this.setState({ visibleModal: '' });
   };
 
   renderForm = (tabsInfo) => {
@@ -481,10 +416,6 @@ class ImportWallet extends React.Component<Props, State> {
       privateKey,
       tWordsPhrase,
       isScanning,
-      // activeTab,
-      visibleModal,
-      // hasAgreedToTerms,
-      // hasAgreedToPolicy,
       currentBPWord,
     } = this.state;
 
@@ -530,59 +461,15 @@ class ImportWallet extends React.Component<Props, State> {
       },
     };
 
-    // const canGoNext = hasAgreedToTerms && hasAgreedToPolicy && !!tabsInfo[activeTab].value;
-
     return (
       <ContainerWithHeader
-        headerProps={({
-          centerItems: [{ title: 'Re-import wallet' }],
-          customOnBack: this.handleBackAction,
-        })}
+        headerProps={({ centerItems: [{ title: 'Re-import wallet' }] })}
         backgroundColor={baseColors.white}
         keyboardAvoidFooter={(
           <FooterWrapper>
             {this.renderFooterButtons(tabsInfo)}
           </FooterWrapper>
         )}
-        // keyboardAvoidFooter={(
-        //   <NextFooter
-        //     onNextPress={this.handleImportSubmit}
-        //     nextDisabled={!canGoNext}
-        //     wrapperStyle={{ paddingTop: 30, paddingBottom: 30 }}
-        //   >
-        //     <Checkbox
-        //       onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
-        //       small
-        //       lightText
-        //       darkCheckbox
-        //       wrapperStyle={{ marginBottom: 16 }}
-        //     >
-        //       <CheckboxText>
-        //         {'I have read, understand, and agree to the '}
-        //         <StyledTextLink
-        //           onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
-        //         >
-        //           Terms of Use
-        //         </StyledTextLink>
-        //       </CheckboxText>
-        //     </Checkbox>
-        //     <Checkbox
-        //       onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
-        //       small
-        //       lightText
-        //       darkCheckbox
-        //     >
-        //       <CheckboxText>
-        //         {'I have read, understand, and agree to the '}
-        //         <StyledTextLink
-        //           onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
-        //         >
-        //           Privacy policy
-        //         </StyledTextLink>
-        //       </CheckboxText>
-        //     </Checkbox>
-        //   </NextFooter>
-        // )}
       >
         <ScrollWrapper disableAutomaticScroll keyboardShouldPersistTaps="always">
           <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} />
@@ -596,18 +483,6 @@ class ImportWallet extends React.Component<Props, State> {
           isActive={isScanning}
           onCancel={this.handleQRScannerClose}
           onRead={this.handleQRRead}
-        />
-
-        <HTMLContentModal
-          isVisible={visibleModal === TERMS_OF_USE_MODAL}
-          modalHide={this.closeModals}
-          htmlEndpoint="terms_of_service"
-        />
-
-        <HTMLContentModal
-          isVisible={visibleModal === PRIVACY_POLICY_MODAL}
-          modalHide={this.closeModals}
-          htmlEndpoint="privacy_policy"
         />
       </ContainerWithHeader>
     );

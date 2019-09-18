@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { IMPORT_WALLET } from 'constants/navigationConstants';
+import { IMPORT_WALLET_LEGALS } from 'constants/navigationConstants';
 import { Container, Footer, Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import AnimatedBackground from 'components/AnimatedBackground';
@@ -77,7 +77,7 @@ class Welcome extends React.Component<Props, State> {
 
   navigateToWalletImportPage = () => {
     const { navigation } = this.props;
-    navigation.navigate(IMPORT_WALLET);
+    navigation.navigate(IMPORT_WALLET_LEGALS);
   };
 
   render() {

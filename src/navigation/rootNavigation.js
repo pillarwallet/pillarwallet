@@ -30,6 +30,7 @@ import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import LegalTermsScreen from 'screens/LegalTerms';
 import ImportWalletScreen from 'screens/ImportWallet';
+import ImportWalletLegalsScreen from 'screens/ImportWallet/ImportWalletLegals';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
@@ -56,6 +57,7 @@ import {
   WELCOME,
   FORGOT_PIN,
   PERMISSIONS,
+  IMPORT_WALLET_LEGALS,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
@@ -82,6 +84,7 @@ const onBoardingFlow = createStackNavigator({
       header: null,
     },
   },
+  [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
   [IMPORT_WALLET]: ImportWalletScreen,
   [SECURITY_CONFIRM]: SecurityConfirmScreen,
   [BACKUP_PHRASE]: BackupPhraseScreen,
