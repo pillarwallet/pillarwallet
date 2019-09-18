@@ -411,7 +411,6 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   onBackupPhraseWordChange = (value) => {
-    // TODO: check if correct form (no spacings)
     const { backupPhrase, currentWordIndex } = this.state;
     const noSpacesRegex = /^\S*$/;
     if (value.match(noSpacesRegex)) {
@@ -420,11 +419,8 @@ class ImportWallet extends React.Component<Props, State> {
         backupPhrase: { ...backupPhrase, [currentWordIndex]: value },
       });
     }
-    // else if (value.replace(/ /g,'').length) {
-    //   this.showNextWord();
-    // }
     this.props.resetWalletError();
-  }
+  };
 
   showNextWord = () => {
     const { backupPhrase, currentWordIndex } = this.state;

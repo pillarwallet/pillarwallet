@@ -92,7 +92,6 @@ const themes = {
     borderRadius: 6,
   },
   primarySquareDisabled: {
-    // ...primaryTheme,
     borderColor: baseColors.veryLightBlue,
     background: 'rgba(0, 122, 255, 0.3)',
     color: baseColors.white,
