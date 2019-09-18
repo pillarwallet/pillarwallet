@@ -40,7 +40,7 @@ type Props = {
   titleStyle?: Object,
   label?: string,
   contentWrapperStyle?: Object,
-  onMainPress?: Function,
+  onMainPress?: ?Function,
   onSettingsPress?: ?Function,
   isActive?: boolean,
   customIcon?: React.Node,

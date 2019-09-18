@@ -179,7 +179,7 @@ class AssetsScreen extends React.Component<Props, State> {
     switch (activeBNetworkId) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
         return {
-          label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet',
+          label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Legacy wallet' : 'Smart wallet',
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
           customHeaderProps: {

@@ -36,8 +36,9 @@ type Props = {
   toggleWrapperStyle?: Object,
   collapsePadding?: Object,
   noPadding?: boolean,
+  collapseWrapperStyle?: Object,
+  noRipple?: boolean,
 }
-
 
 const StyledItemTouchable = styled.TouchableHighlight`
   display: flex;
@@ -78,6 +79,13 @@ const ListItemMainPart = styled.View`
   justify-content: center;
 `;
 
+const CustomToggleWrapper = styled.View`
+  flex: 1;
+  flex-direction: row; 
+  align-items: center;
+  justify-content: space-between;
+`;
+
 const ItemLabel = styled(BaseText)`
   font-size: ${fontSizes.small};
 `;
@@ -95,28 +103,36 @@ const CollapseWrapper = styled.View`
   ${props => props.noPadding ? '' : 'padding: 4px 16px 10px 36px;'}
 `;
 
-const ButtonWrapper = ({ onPress, children, collapseContent }) => {
-  if (Platform.OS === 'android') {
+const ButtonWrapper = (props) => {
+  const {
+    onPress,
+    children,
+    collapseContent,
+    noRipple,
+  } = props;
+
+  if (Platform.OS === 'ios' || noRipple) {
     return (
-      <TouchableNativeFeedback
+      <StyledItemTouchable
         onPress={onPress}
-        background={TouchableNativeFeedback.Ripple()}
+        underlayColor={baseColors.lightGray}
         disabled={!onPress || !collapseContent}
       >
-        <StyledItemView>
-          {children}
-        </StyledItemView>
-      </TouchableNativeFeedback>
+        {children}
+      </StyledItemTouchable>
     );
   }
+
   return (
-    <StyledItemTouchable
+    <TouchableNativeFeedback
       onPress={onPress}
-      underlayColor={baseColors.lightGray}
+      background={TouchableNativeFeedback.Ripple()}
       disabled={!onPress || !collapseContent}
     >
-      {children}
-    </StyledItemTouchable>
+      <StyledItemView>
+        {children}
+      </StyledItemView>
+    </TouchableNativeFeedback>
   );
 };
 
@@ -181,14 +197,10 @@ export default class CollapsibleListItem extends React.Component<Props> {
     } = this.props;
     if (customToggle) {
       return (
-        <ListItemMainPart style={toggleWrapperStyle}>
-          <ItemLabelHolder>
-            <InnerWrapper>
-              {customToggle}
-            </InnerWrapper>
-          </ItemLabelHolder>
+        <CustomToggleWrapper style={toggleWrapperStyle}>
+          {customToggle}
           {this.renderToggleArrow(!!collapseContent)}
-        </ListItemMainPart>
+        </CustomToggleWrapper>
       );
     }
 
@@ -211,15 +223,17 @@ export default class CollapsibleListItem extends React.Component<Props> {
       collapseContent,
       wrapperStyle,
       noPadding,
+      collapseWrapperStyle,
+      noRipple,
     } = this.props;
 
     return (
       <ListItem style={wrapperStyle}>
-        <ButtonWrapper onPress={onPress} collapseContent={collapseContent}>
+        <ButtonWrapper onPress={onPress} collapseContent={collapseContent} noRipple={noRipple}>
           {this.renderSectionToggle()}
         </ButtonWrapper>
         <Collapsible collapsed={!open}>
-          <CollapseWrapper noPadding={noPadding}>
+          <CollapseWrapper noPadding={noPadding} style={collapseWrapperStyle}>
             {collapseContent}
           </CollapseWrapper>
         </Collapsible>

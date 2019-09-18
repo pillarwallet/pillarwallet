@@ -149,7 +149,7 @@ class WalletSettings extends React.PureComponent<Props> {
     const { navigation, user } = this.props;
     const selectedWallet = navigation.getParam('wallet', {});
     const isSmartWallet = selectedWallet.type === ACCOUNT_TYPES.SMART_WALLET;
-    const walletType = isSmartWallet ? 'Smart' : 'Key';
+    const walletType = isSmartWallet ? 'Smart' : 'Legacy';
     const settings = isSmartWallet
       ? [...smartWalletSettings, ...defaultSettings(this)]
       : [...keyWalletSettings(this), ...defaultSettings(this)];
