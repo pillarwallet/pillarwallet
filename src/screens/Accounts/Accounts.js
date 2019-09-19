@@ -43,7 +43,7 @@ import { getActiveAccount, getActiveAccountType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { responsiveSize } from 'utils/ui';
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 
 // types
@@ -154,6 +154,19 @@ const IconWrapper = styled.View`
 const IconImage = styled(CachedImage)`
   height: ${iconRadius}px;
   width: ${iconRadius}px;
+`;
+
+const FooterWrapper = styled.View`
+  flex-grow: 1;
+  padding: 40px; ${spacing.large}px;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const FooterParagraph = styled(BaseText)`
+  text-align: center;
+  color: ${baseColors.coolGrey};
+  font-size: ${fontSizes.extraSmall}px;
 `;
 
 const pillarNetworkIcon = require('assets/icons/icon_PPN.png');
@@ -420,8 +433,10 @@ class AccountsScreen extends React.Component<Props, State> {
           justifyContent: 'flex-start',
           paddingHorizontal: spacing.large,
           paddingTop: spacing.large,
+          paddingBottom: 4,
         }}
-        collapseWrapperStyle={{ padding: spacing.large }}
+        collapseWrapperStyle={{ padding: spacing.large, paddingTop: 10 }}
+        wrapperStyle={{ marginTop: -spacing.mediumLarge }}
         noPadding
         noRipple
         collapseContent={
@@ -431,6 +446,7 @@ class AccountsScreen extends React.Component<Props, State> {
             onMainPress={mainAction}
             onSettingsPress={onSettingsPress}
             isActive={isActive}
+            sidePaddingsForWidth={40}
             customIcon={(
               <IconWrapper>
                 <IconImage source={iconSource} />
@@ -467,15 +483,22 @@ class AccountsScreen extends React.Component<Props, State> {
         }}
       >
         {!changingAccount &&
-        <ScrollWrapper>
+        <ScrollWrapper
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
           <FlatList
             data={[...walletsInList, ...networksToShow]}
             keyExtractor={(item) => item.id || item.type}
-            style={{ width: '100%' }}
+            style={{ width: '100%', flexGrow: 0 }}
             contentContainerStyle={{ width: '100%', padding: spacing.large }}
             renderItem={this.renderListItem}
           />
           {!isLegacyUser && legacyAccountCard && this.renderKeyWallet(legacyAccountCard, isLegacyWalletVisible)}
+          <FooterWrapper>
+            <FooterParagraph>
+              {'Bitcoin, Binance Coin, Ripple \n and more coming soon'}
+            </FooterParagraph>
+          </FooterWrapper>
         </ScrollWrapper>}
 
         {changingAccount &&

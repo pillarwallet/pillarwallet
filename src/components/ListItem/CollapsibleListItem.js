@@ -40,7 +40,7 @@ type Props = {
   noRipple?: boolean,
 }
 
-const StyledItemTouchable = styled.TouchableHighlight`
+const StyledItemTouchable = styled.TouchableOpacity`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -96,6 +96,7 @@ const ListAddon = styled.View`
   align-items: center;
   margin-right: ${spacing.large}px;
   margin-left: ${spacing.large}px;
+  margin-top: 2px;
 `;
 
 const CollapseWrapper = styled.View`
@@ -179,6 +180,7 @@ export default class CollapsibleListItem extends React.Component<Props> {
               style={{
                 fontSize: fontSizes.tiny,
                 color: baseColors.coolGrey,
+                alignSelf: 'center',
               }}
             />
           </Animated.View>
