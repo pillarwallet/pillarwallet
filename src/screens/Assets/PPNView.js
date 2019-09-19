@@ -27,7 +27,6 @@ import { withNavigation } from 'react-navigation';
 import get from 'lodash.get';
 import unionBy from 'lodash.unionby';
 
-import TankBar from 'components/TankBar';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText, MediumText } from 'components/Typography';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -38,7 +37,7 @@ import {
   calculateBalanceInFiat,
   getRate,
 } from 'utils/assets';
-import { formatMoney, formatFiat, getCurrencySymbol } from 'utils/common';
+import { formatMoney, formatFiat } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
@@ -66,6 +65,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { Accounts } from 'models/Account';
 
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
+import { responsiveSize } from 'utils/ui';
 
 
 type Props = {
@@ -103,6 +103,16 @@ const ListHeaderWrapper = styled.View`
 const HeaderTitle = styled(MediumText)`
   font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.blueYonder};
+`;
+
+const TankBalanceWrapper = styled.View`
+  padding: 40px;
+  align-items: center;
+`;
+
+const TankBalance = styled(BaseText)`
+  font-size: ${responsiveSize(36)}px;
+  color: ${baseColors.slateBlack};
 `;
 
 const HeaderButton = styled.TouchableOpacity`
@@ -190,8 +200,6 @@ class PPNView extends React.Component<Props> {
       isListed: true,
     };
 
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
-
     return (
       <ListItemWithImage
         onPress={() => {
@@ -212,7 +220,7 @@ class PPNView extends React.Component<Props> {
             <BalanceWrapper>
               <TankAssetBalance amount={paymentNetworkBalanceFormatted} monoColor />
               <ValueInFiat>
-                {`${currencySymbol} ${formattedAmountInFiat}`}
+                {formattedAmountInFiat}
               </ValueInFiat>
             </BalanceWrapper>
           </AddonWrapper>
@@ -305,7 +313,6 @@ class PPNView extends React.Component<Props> {
     } = this.props;
 
     const assetsOnNetworkArray = Object.keys(assetsOnNetwork).map((asset) => assetsOnNetwork[asset]);
-    const totalStake = availableStake + 10;
     const availableFormattedAmount = formatMoney(availableStake, 4);
     const assetsOnNetworkToShow = unionBy(assetsOnNetworkArray, this.initialAssets, 'symbol');
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
@@ -337,11 +344,11 @@ class PPNView extends React.Component<Props> {
           buttonLabel="Deploy Smart Wallet"
           buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
         />}
-        <TankBar
-          maxValue={totalStake}
-          currentValue={availableStake}
-          currentValueFormatted={availableFormattedAmount}
-        />
+        <TankBalanceWrapper>
+          <TankBalance>
+            {`${availableFormattedAmount} PLR`}
+          </TankBalance>
+        </TankBalanceWrapper>
         <AssetButtonsWrapper>
           <CircleButton
             label="Top up"
