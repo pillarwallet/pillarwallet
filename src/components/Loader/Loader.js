@@ -69,10 +69,10 @@ export default class Loader extends React.Component<Props, State> {
   componentDidMount() {
     const { noMessages } = this.props;
     if (noMessages) return;
-    this.timerToChangeMessage = setInterval(() => this.changeMessages(), 4000);
+    this.timerToChangeMessage = setInterval(() => this.changeMessages(), 6000);
     this.startTimeout = setTimeout(() => {
       this.showMessage();
-    }, 400);
+    }, 2000);
   }
 
   showMessage = () => {

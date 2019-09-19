@@ -31,8 +31,8 @@ import {
 } from 'constants/walletConnectConstants';
 
 export type WalletConnectReducerState = {
-  connectors: Array<WalletConnect>,
-  pending: Array<WalletConnect>,
+  connectors: WalletConnect[],
+  pending: WalletConnect[],
   requests: Array<{
     peerId: string,
     peerMeta: Object,
@@ -45,10 +45,71 @@ export type WalletConnectReducerState = {
   waitingRequest: ?string,
 };
 
-export type WalletConnectReducerAction = {
-  type: string,
-  payload: any,
+type SessionApproved = {
+  type: 'WALLETCONNECT_SESSION_APPROVED',
+  payload: {
+    pending: WalletConnect[],
+    connectors: WalletConnect[],
+  },
+  pending: number,
 };
+
+type SessionRejected = {
+  type: 'WALLETCONNECT_SESSION_REJECTED',
+  payload: WalletConnect[],
+};
+
+type SessionKilled = {
+  type: 'WALLETCONNECT_SESSION_KILLED',
+  payload: WalletConnect[],
+};
+
+type SessionRequest = {
+  type: 'WALLETCONNECT_SESSION_REQUEST',
+  payload: {
+    pending: WalletConnect[],
+    clientId: string,
+  },
+};
+
+type InitSessions = {
+  type: 'WALLETCONNECT_INIT_SESSIONS',
+  payload: WalletConnect[],
+};
+
+type SessionDisconnected = {
+  type: 'WALLETCONNECT_SESSION_DISCONNECTED',
+  payload: WalletConnect[],
+};
+
+type SessionCancelRequest = {
+  type: 'WALLETCONNECT_CANCEL_REQUEST',
+  payload: WalletConnect[],
+};
+
+type WalletConnectClearPending = {
+  type: 'WALLETCONNECT_CLEAR_PENDING',
+  payload: WalletConnect[],
+};
+
+type WalletConnectError = {
+  type: 'WALLETCONNECT_ERROR',
+  payload: {
+    code: string,
+    message: string,
+  },
+};
+
+export type WalletConnectReducerAction =
+  | WalletConnectError
+  | SessionApproved
+  | WalletConnectClearPending
+  | InitSessions
+  | SessionRequest
+  | SessionCancelRequest
+  | SessionRejected
+  | SessionKilled
+  | SessionDisconnected;
 
 const initialState = {
   connectors: [],
@@ -58,34 +119,39 @@ const initialState = {
   waitingRequest: null,
 };
 
-export default function walletConnectReducer(
+const walletConnectReducer = (
   state: WalletConnectReducerState = initialState,
   action: WalletConnectReducerAction,
-) {
-  const { payload } = action;
-
+): WalletConnectReducerState => {
   switch (action.type) {
     case WALLETCONNECT_INIT_SESSIONS:
     case WALLETCONNECT_SESSION_DISCONNECTED:
     case WALLETCONNECT_SESSION_KILLED:
-      return { ...state, connectors: payload };
+      return { ...state, connectors: action.payload };
+
     case WALLETCONNECT_SESSION_APPROVED:
       return {
         ...state,
-        pending: payload.pending,
-        connectors: payload.connectors,
+        pending: action.payload.pending,
+        connectors: action.payload.connectors,
         waitingRequest: null,
       };
+
     case WALLETCONNECT_SESSION_REQUEST:
-      return { ...state, pending: payload.pending, waitingRequest: payload.clientId };
+      return { ...state, pending: action.payload.pending, waitingRequest: action.payload.clientId };
+
     case WALLETCONNECT_CANCEL_REQUEST:
-      return { ...state, pending: payload, waitingRequest: null };
+      return { ...state, pending: action.payload, waitingRequest: null };
+
     case WALLETCONNECT_SESSION_REJECTED:
     case WALLETCONNECT_CLEAR_PENDING:
-      return { ...state, pending: payload, waitingRequest: null };
+      return { ...state, pending: action.payload, waitingRequest: null };
+
     case WALLETCONNECT_ERROR:
-      return { ...state, error: payload, waitingRequest: null };
+      return { ...state, error: action.payload, waitingRequest: null };
+
     default:
       return state;
   }
-}
+};
+export default walletConnectReducer;

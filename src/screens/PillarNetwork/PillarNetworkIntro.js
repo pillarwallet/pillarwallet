@@ -29,6 +29,7 @@ import Icon from 'components/Icon';
 import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
+import { LabelBadge } from 'components/LabelBadge';
 
 import { baseColors, fontSizes } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
@@ -81,7 +82,7 @@ const Title = styled(BoldText)`
 const BodyText = styled(MediumText)`
   color: ${baseColors.pomegranate};
   font-size: ${fontSizes.rMedium}px;
-  line-height: ${fontSizes.rExtraLarge}px;
+  line-height: ${fontSizes.rExtraLarger}px;
   margin-top: ${responsiveSize(26)}px;
 `;
 
@@ -94,18 +95,20 @@ const ListItemWrapper = styled.View`
 const ContentWrapper = styled.View`
   align-items: flex-start;
   margin-left: ${responsiveSize(19)}px;
+  flex: 1;
+  flex-wrap: wrap;
+    
 `;
 
 const Label = styled(BoldText)`
   color: ${baseColors.pomegranate};
   font-size: ${fontSizes.rLarge}px;
-  line-height: ${responsiveSize(34)}px;
 `;
 
 const Subtext = styled(BoldText)`
   color: ${baseColors.pomegranate};
   font-size: ${fontSizes.rMedium}px;
-  line-height: ${responsiveSize(34)}px;
+  line-height: ${fontSizes.rExtraLarger}px;
   margin-top: ${responsiveSize(10)}px;
 `;
 
@@ -132,17 +135,18 @@ const features = [
   {
     key: 'instant',
     label: 'Instant.',
-    subtext: 'Like, seriously. Instant transactions.',
+    subtext: 'No waiting for miner or block confirmations. Seriously instant transactions.',
   },
   {
     key: 'free',
     label: 'Free.',
-    subtext: 'Transaction fees are on us.',
+    subtext: 'No need to pay network costs or gas for any transactions.',
   },
   {
     key: 'private',
     label: 'Private.',
-    subtext: 'It’s in Pillar DNA.',
+    subtext: 'Only final settlement is recorded on-chain. ' +
+      'Batched transactions allow multiple transfers to be combined.',
   },
 ];
 
@@ -215,8 +219,17 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               Pillar Network
             </Title>
             <BodyText>
-              Store your assets in a personal smart contract and control access through an intuitive key management
-              system.
+              Stake PLR tokens in your tank to enable free and instant transactions between you and your contacts.
+              PLR acts as a meta token allowing you to send and receive any asset that is supported by the Pillar
+              Payment Network.
+            </BodyText>
+            <LabelBadge
+              label="COMING SOON"
+              containerStyle={{ backgroundColor: baseColors.darkOrange, marginTop: 57, paddingVertical: 2 }}
+              labelStyle={{ color: baseColors.ultramarine, fontSize: responsiveSize(11) }}
+            />
+            <BodyText style={{ marginTop: 10 }}>
+              Draw from your PLR tank to send whatever you’d like.
             </BodyText>
             <FlatList
               data={features}
@@ -242,11 +255,17 @@ class PillarNetworkIntro extends React.Component<Props, State> {
           </CustomWrapper>
           {!!needsSmartWallet &&
           <ListItemChevron
+            wrapperStyle={{
+              marginTop: 46,
+              marginBottom: 70,
+              borderColor: baseColors.pomegranate,
+            }}
             label="Enable Smart wallet to create Tank"
             onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
             color={baseColors.pomegranate}
             bordered
           />}
+          {!needsSmartWallet &&
           <ButtonWrapper>
             <Button
               block
@@ -262,9 +281,8 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               }}
               textStyle={{ color: baseColors.ultramarine }}
               isLoading={processingCreate}
-              disabled={needsSmartWallet}
             />
-          </ButtonWrapper>
+          </ButtonWrapper>}
         </ScrollWrapper>
         <SlideModal
           isVisible={!!showPinScreenForAction}

@@ -193,7 +193,7 @@ class MeScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
         headerProps={{
-          centerItems: [{ title: 'Wallet Connect' }],
+          centerItems: [{ title: 'Manage Sessions' }],
           rightItems: [{ label: 'Support', onPress: () => Intercom.displayMessenger() }],
         }}
       >
