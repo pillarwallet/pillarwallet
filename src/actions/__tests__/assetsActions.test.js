@@ -26,12 +26,13 @@ import {
   FETCHED,
   FETCHING,
   ETH,
+  PLR,
   UPDATE_BALANCES,
 } from 'constants/assetsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
-import type { Assets } from 'models/Asset';
+import type { Assets, AssetsByAccount } from 'models/Asset';
 import PillarSdk from 'services/api';
-import { sendAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { sendAssetAction, fetchAssetsBalancesAction, getSupportedTokens } from 'actions/assetsActions';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 const pillarSdk = new PillarSdk();
@@ -50,6 +51,7 @@ const mockWallet: Object = {
 
 const mockAccounts: Object[] = [{
   id: '0x9c',
+  address: '0x9c',
   isActive: true,
 }];
 
@@ -61,7 +63,7 @@ const mockTransaction: Object = {
   note: 'test note',
 };
 
-const mockAssets: Assets = {
+const mockAssetsByAccount: Assets = {
   ETH: {
     symbol: ETH,
     name: 'ethereum',
@@ -75,6 +77,10 @@ const mockAssets: Assets = {
   },
 };
 
+const mockAssets: AssetsByAccount = {
+  '0x9c': mockAssetsByAccount,
+};
+
 const mockExchangeRates = {
   ETH: {
     EUR: 624.21,
@@ -83,12 +89,62 @@ const mockExchangeRates = {
   },
 };
 
+const mockSupportedAssets = [
+  {
+    symbol: ETH,
+    name: 'ethereum',
+    balance: 1,
+    address: '',
+    description: '',
+    iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+    decimals: 18,
+  },
+  {
+    symbol: PLR,
+    name: 'ethereum',
+    balance: 1,
+    address: '',
+    description: '',
+    iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+    decimals: 18,
+  },
+];
+
+const mockFullAssetsListByAccount: Assets = {
+  ETH: {
+    symbol: ETH,
+    name: 'ethereum',
+    balance: 1,
+    address: '',
+    description: '',
+    iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+    decimals: 18,
+  },
+  PLR: {
+    symbol: PLR,
+    name: 'ethereum',
+    balance: 1,
+    address: '',
+    description: '',
+    iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+    decimals: 18,
+  },
+};
+
 Object.defineProperty(mockWallet, 'sendTransaction', {
   value: () => Promise.resolve('trx_hash'),
 });
 
 const initialState = {
-  assets: { data: { [ETH]: { balance: 10 } } },
+  assets: { data: mockAssets, supportedAssets: [] },
   txCount: { data: { lastCount: 0, lastNonce: 0 } },
   history: { data: {} },
   wallet: { data: { address: mockWallet.address } },
@@ -124,10 +180,15 @@ describe('Wallet actions', () => {
       { payload: updateBalancesPayload, type: UPDATE_BALANCES },
       { payload: mockExchangeRates, type: UPDATE_RATES },
     ];
-    return store.dispatch(fetchAssetsBalancesAction(mockAssets))
+    return store.dispatch(fetchAssetsBalancesAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
       });
+  });
+
+  it('should add missing PLR and/or ETH to asset list on checkForMissedAssetsAction execution', () => {
+    expect(getSupportedTokens(mockSupportedAssets, mockAssets, mockAccounts[0]))
+      .toEqual({ ...mockFullAssetsListByAccount, id: mockAccounts[0].id });
   });
 });

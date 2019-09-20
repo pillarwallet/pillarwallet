@@ -7782,6 +7782,11 @@ lodash.merge@^4.6.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.merge/-/lodash.merge-4.6.1.tgz#adc25d9cb99b9391c59624f379fbba60d7111d54"
   integrity sha1-rcJdnLmbk5HFliTzefu6YNcRHVQ=
 
+lodash.omit@^4.5.0:
+  version "4.5.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.omit/-/lodash.omit-4.5.0.tgz#6eb19ae5a1ee1dd9df0b969e66ce0b7fa30b5e60"
+  integrity sha1-brGa5aHuHdnfC5aeZs4Lf6MLXmA=
+
 lodash.orderby@^4.6.0:
   version "4.6.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.orderby/-/lodash.orderby-4.6.0.tgz#e697f04ce5d78522f54d9338b32b81a3393e4eb3"

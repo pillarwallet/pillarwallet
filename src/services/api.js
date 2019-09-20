@@ -763,6 +763,14 @@ SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: 
     .catch(() => []);
 };
 
+SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string) {
+  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
+  return Promise.resolve()
+    .then(() => ethplorerSdk.getAddressInfo(walletAddress))
+    .then(data => get(data, 'tokens', []))
+    .catch(() => []);
+};
+
 SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: string, amount: number) {
   const url = `${MOONPAY_API_URL}/v2/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
   + `&baseCurrencyAmount=${amount}&baseCurrencyCode=${fromAsset.toLowerCase()}`;

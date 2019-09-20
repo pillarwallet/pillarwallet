@@ -53,6 +53,7 @@ import balancesReducer from './balancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
 import featureFlagsReducer from './featureFlagsReducer';
 import blockchainNetworkReducer from './blockchainNetworkReducer';
+import userSettingsReducer from './userSettingsReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -84,6 +85,7 @@ import type { BalancesReducerState, BalancesAction } from './balancesReducer';
 import type { PaymentNetworkReducerState, PaymentNetworkAction } from './paymentNetworkReducer';
 import type { FeatureFlagsReducerState, FeatureFlagsReducerAction } from './featureFlagsReducer';
 import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
+import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -115,6 +117,7 @@ export type RootReducerState = {|
   paymentNetwork: PaymentNetworkReducerState,
   featureFlags: FeatureFlagsReducerState,
   blockchainNetwork: BlockchainNetworkReducerState,
+  userSettings: UserSettingsReducerState,
 |};
 
 type RootReducerAction =
@@ -130,6 +133,7 @@ type RootReducerAction =
   | HistoryAction
   | PaymentNetworkAction
   | SmartWalletReducerAction
+  | UserSettingsReducerAction
   | DbAction;
 
 export type GetState = () => RootReducerState;
@@ -172,6 +176,7 @@ const appReducer = combineReducers({
   paymentNetwork: paymentNetworkReducer,
   featureFlags: featureFlagsReducer,
   blockchainNetwork: blockchainNetworkReducer,
+  userSettings: userSettingsReducer,
 });
 
 const initialState = appReducer(undefined, {});

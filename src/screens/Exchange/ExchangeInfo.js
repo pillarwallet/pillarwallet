@@ -44,6 +44,9 @@ import type { Allowance, ExchangeProvider } from 'models/Offer';
 import { getProviderDisplayName } from 'utils/exchange';
 import Intercom from 'react-native-intercom';
 
+import { createStructuredSelector } from 'reselect';
+import { accountAssetsSelector } from 'selectors/assets';
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   assets: Assets,
@@ -270,12 +273,19 @@ class ExchangeInfo extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
   exchange: { data: { allowances: exchangeAllowances, connectedProviders } },
 }) => ({
-  assets,
   exchangeAllowances,
   connectedProviders,
+});
+
+const structuredSelector = createStructuredSelector({
+  assets: accountAssetsSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -287,4 +297,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   ),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ExchangeInfo);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeInfo);
