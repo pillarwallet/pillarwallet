@@ -428,7 +428,7 @@ class PPNView extends React.Component<Props, State> {
             <CircleButton
               label="Top up"
               onPress={() => navigation.navigate(FUND_TANK)}
-              fontIcon="up-arrow"
+              fontIcon="plus"
               disabled={!!disableTopUpAndSettle}
             />
             <CircleButton
