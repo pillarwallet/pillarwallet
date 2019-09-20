@@ -35,6 +35,7 @@ import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import Tabs from 'components/Tabs';
 
 import {
+  addressesEqual,
   calculateBalanceInFiat,
   getRate,
 } from 'utils/assets';
@@ -53,7 +54,10 @@ import {
 } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
-import { activeAccountSelector } from 'selectors';
+import {
+  activeAccountAddressSelector,
+  activeAccountSelector,
+} from 'selectors';
 import {
   availableStakeSelector,
   paymentNetworkAccountBalancesSelector,
@@ -67,6 +71,14 @@ import type { Accounts } from 'models/Account';
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
 import { responsiveSize } from 'utils/ui';
 import ActivityFeed from 'components/ActivityFeed';
+import { accountHistorySelector } from 'selectors/history';
+import type { Transaction } from 'models/Transaction';
+import { mapTransactionsHistory } from 'utils/feedData';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import type {
+  ApiUser,
+  ContactSmartAddressData,
+} from 'models/Contacts';
 
 type Props = {
   baseFiatCurrency: string,
@@ -82,6 +94,11 @@ type Props = {
   fetchVirtualAccountBalance: Function,
   accounts: Accounts,
   smartWalletState: Object,
+  availableToSettleTx: Object,
+  history: Transaction[],
+  contacts: ApiUser[],
+  contactsSmartAddresses: ContactSmartAddressData[],
+  activeAccountAddress: string,
 }
 
 type State = {
@@ -331,6 +348,10 @@ class PPNView extends React.Component<Props, State> {
       navigation,
       accounts,
       smartWalletState,
+      history,
+      contacts,
+      contactsSmartAddresses,
+      activeAccountAddress,
     } = this.props;
 
     const assetsOnNetworkArray = Object.values(assetsOnNetwork);
@@ -345,12 +366,23 @@ class PPNView extends React.Component<Props, State> {
       : smartWalletStatus.sendingBlockedMessage || {};
     const disableTopUpAndSettle = Object.keys(sendingBlockedMessage).length;
 
+    const PPNTransactions = history.filter(
+      ({ isPPNTransaction, to }) => !!isPPNTransaction && addressesEqual(to, activeAccountAddress),
+    );
+    const unsettledTransactions = mapTransactionsHistory(
+      PPNTransactions,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      TRANSACTION_EVENT,
+    );
+
     const historyTabs = [
       {
         id: UNSETTLED,
         name: 'Unsettled',
         onPress: () => this.setActiveTab(UNSETTLED),
-        data: [],
+        data: unsettledTransactions,
         emptyState: {
           title: 'No unsettled transactions',
         },
@@ -399,12 +431,12 @@ class PPNView extends React.Component<Props, State> {
               fontIcon="up-arrow"
               disabled={!!disableTopUpAndSettle}
             />
-            { /* <CircleButton
-            label="Withdraw"
-            fontIcon="down-arrow"
-            onPress={() => {}}
-            disabled={availableStake <= 0}
-          /> */ }
+            <CircleButton
+              label="Withdraw"
+              fontIcon="up-arrow"
+              onPress={() => {}}
+              disabled={availableStake <= 0}
+            />
             <CircleButton
               label="Send"
               icon={iconSend}
@@ -421,7 +453,7 @@ class PPNView extends React.Component<Props, State> {
             borderColor: baseColors.mediumLightGray,
           }}
           chevronStyle={{ color: baseColors.darkGray }}
-          label="Unsettled Balance"
+          label="Incoming balance"
           rightAddon={(<BlueText>11.11</BlueText>)}
           onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
           color={baseColors.slateBlack}
@@ -453,6 +485,7 @@ const mapStateToProps = ({
   smartWallet: smartWalletState,
   accounts: { data: accounts },
   paymentNetwork: { balances, availableToSettleTx: { data: availableToSettleTx, isFetched } },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
 }) => ({
   assets,
   rates,
@@ -464,6 +497,8 @@ const mapStateToProps = ({
   balances,
   availableToSettleTx,
   isFetched,
+  contacts,
+  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -471,6 +506,8 @@ const structuredSelector = createStructuredSelector({
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
   availableStake: availableStakeSelector,
   activeAccount: activeAccountSelector,
+  history: accountHistorySelector,
+  activeAccountAddress: activeAccountAddressSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
