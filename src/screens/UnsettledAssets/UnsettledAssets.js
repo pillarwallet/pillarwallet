@@ -1,0 +1,133 @@
+// @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+import * as React from 'react';
+import { connect } from 'react-redux';
+import styled from 'styled-components/native';
+import { SDK_PROVIDER } from 'react-native-dotenv';
+import { createStructuredSelector } from 'reselect';
+import get from 'lodash.get';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
+
+import { getRate } from 'utils/assets';
+import { formatMoney, formatFiat } from 'utils/common';
+import { baseColors } from 'utils/variables';
+
+import { defaultFiatCurrency } from 'constants/assetsConstants';
+import {
+  paymentNetworkAccountBalancesSelector,
+  paymentNetworkNonZeroBalancesSelector,
+} from 'selectors/paymentNetwork';
+import type { Assets, Balances } from 'models/Asset';
+import type { NavigationScreenProp } from 'react-navigation';
+
+type Props = {
+  baseFiatCurrency: string,
+  assets: Assets,
+  rates: Object,
+  paymentNetworkBalances: Balances,
+  navigation: NavigationScreenProp<*>,
+  assetsOnNetwork: Object,
+}
+
+const StyledFlatList = styled.FlatList`
+  background-color: ${baseColors.white};
+`;
+
+const genericToken = require('assets/images/tokens/genericToken.png');
+
+class UnsettledAssets extends React.Component<Props> {
+  renderAsset = ({ item }) => {
+    const {
+      baseFiatCurrency,
+      assets,
+      rates,
+    } = this.props;
+
+    const tokenSymbol = get(item, 'symbol', '');
+    const tokenBalance = get(item, 'balance', '0');
+    const paymentNetworkBalanceFormatted = formatMoney(tokenBalance, 4);
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const totalInFiat = tokenBalance * getRate(rates, tokenSymbol, fiatCurrency);
+    const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
+    const thisAsset = assets[tokenSymbol] || {};
+    const { symbol, iconUrl } = thisAsset;
+    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+
+    return (
+      <AssetCardMinimized
+        id={symbol}
+        token={symbol}
+        amount={paymentNetworkBalanceFormatted}
+        name={symbol}
+        balanceInFiat={formattedAmountInFiat}
+        icon={fullIconUrl || genericToken}
+        columnCount={3}
+      />
+    );
+  };
+
+  render() {
+    const { assetsOnNetwork } = this.props;
+    const assetsOnNetworkArray = Object.keys(assetsOnNetwork).map((asset) => assetsOnNetwork[asset]);
+
+    return (
+      <ContainerWithHeader
+        backgroundColor={baseColors.white}
+        headerProps={{ centerItems: [{ title: 'Unsettled Assets' }] }}
+        inset={{ bottom: 0 }}
+      >
+        <StyledFlatList
+          data={assetsOnNetworkArray}
+          keyExtractor={(item) => item.symbol}
+          renderItem={this.renderAsset}
+          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          onEndReachedThreshold={0.5}
+          style={{ width: '100%', height: '100%' }}
+          contentContainerStyle={{ padding: 10 }}
+          numColumns={3}
+        />
+      </ContainerWithHeader>
+    );
+  }
+}
+
+const mapStateToProps = ({
+  assets: { data: assets },
+  rates: { data: rates },
+  appSettings: { data: { baseFiatCurrency } },
+}) => ({
+  assets,
+  rates,
+  baseFiatCurrency,
+});
+
+const structuredSelector = createStructuredSelector({
+  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
+  assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default connect(combinedMapStateToProps)(UnsettledAssets);

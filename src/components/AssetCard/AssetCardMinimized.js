@@ -25,7 +25,6 @@ import styled from 'styled-components/native';
 import { LightText, BaseText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
-import { getCurrencySymbol } from 'utils/common';
 import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
 import Icon from 'components/Icon';
 import Toast from 'components/Toast';
@@ -34,16 +33,13 @@ type Props = {
   id: string,
   token: string,
   amount: string,
-  onPress: Function,
+  onPress?: Function,
   address?: string,
   wallpaper?: string,
   name: string,
   children?: React.Node,
   disclaimer?: string,
-  balanceInFiat: {
-    amount: string | number,
-    currency: string,
-  },
+  balanceInFiat: string,
   icon: string,
   smallScreen?: boolean,
   extraSmall?: boolean,
@@ -274,8 +270,6 @@ class AssetCardMinimized extends React.Component<Props, State> {
       name,
     } = this.props;
 
-    const currencySymbol = isCollectible ? '' : getCurrencySymbol(balanceInFiat.currency);
-
     if (isCollectible) {
       const imageSize = icon ? 135 : 55;
       return (
@@ -323,7 +317,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
             <DetailWrapper>
               {disclaimer
                 ? <Disclaimer smallScreen={smallScreen}>{disclaimer}</Disclaimer>
-                : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+                : <FiatAmount>{balanceInFiat}</FiatAmount>
               }
             </DetailWrapper>
           </AmountWrapper>

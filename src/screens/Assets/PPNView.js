@@ -25,13 +25,14 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import get from 'lodash.get';
-import unionBy from 'lodash.unionby';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText, MediumText } from 'components/Typography';
 import TankAssetBalance from 'components/TankAssetBalance';
 import DeploymentView from 'components/DeploymentView';
 import CircleButton from 'components/CircleButton';
+import { ListItemChevron } from 'components/ListItem/ListItemChevron';
+import Tabs from 'components/Tabs';
 
 import {
   calculateBalanceInFiat,
@@ -48,7 +49,7 @@ import {
   FUND_TANK,
   SEND_TOKEN_FROM_ASSET_FLOW,
   SETTLE_BALANCE,
-  SMART_WALLET_INTRO,
+  SMART_WALLET_INTRO, UNSETTLED_ASSETS,
 } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
@@ -58,7 +59,6 @@ import {
   paymentNetworkAccountBalancesSelector,
   paymentNetworkNonZeroBalancesSelector,
 } from 'selectors/paymentNetwork';
-import { accountBalancesSelector } from 'selectors/balances';
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -66,7 +66,7 @@ import type { Accounts } from 'models/Account';
 
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
 import { responsiveSize } from 'utils/ui';
-
+import ActivityFeed from 'components/ActivityFeed';
 
 type Props = {
   baseFiatCurrency: string,
@@ -84,12 +84,13 @@ type Props = {
   smartWalletState: Object,
 }
 
+type State = {
+  activeTab: string,
+}
+
 const AssetButtonsWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
-  padding: 20px 20px 40px;
-  border-bottom-color: ${baseColors.mediumLightGray};
-  border-bottom-width: 1px;
 `;
 
 const ListHeaderWrapper = styled.View`
@@ -100,13 +101,20 @@ const ListHeaderWrapper = styled.View`
   padding: ${spacing.large}px;
 `;
 
-const HeaderTitle = styled(MediumText)`
+const TopPartWrapper = styled.View`
+  padding: 36px ${spacing.large}px;
+  background-color: ${baseColors.snowWhite};
+  border-bottom-width: 1;
+  border-color: ${baseColors.mediumLightGray};
+`;
+
+const SectionTitle = styled(MediumText)`
   font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.blueYonder};
 `;
 
 const TankBalanceWrapper = styled.View`
-  padding: 40px;
+  padding: ${spacing.large}px 40px;
   align-items: center;
 `;
 
@@ -126,10 +134,6 @@ const ButtonText = styled(MediumText)`
   color: ${props => props.disabled ? baseColors.darkGray : baseColors.white};
 `;
 
-const StyledFlatList = styled.FlatList`
-  background-color: ${baseColors.white};
-`;
-
 const AddonWrapper = styled.View`
   flex-direction: row;
   justify-content: flex-end;
@@ -147,11 +151,23 @@ const ValueInFiat = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall}px;
 `;
 
+const BlueText = styled(BaseText)`
+  color: ${baseColors.electricBlue};
+  font-size: ${fontSizes.extraSmall}px;
+  margin-right: ${spacing.medium}px;
+`;
+
 const iconSend = require('assets/icons/icon_send.png');
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-class PPNView extends React.Component<Props> {
+const UNSETTLED = 'UNSETTLED';
+const SETTLED = 'SETTLED';
+
+class PPNView extends React.Component<Props, State> {
   initialAssets = [{ balance: '0', symbol: ETH }, { balance: '0', symbol: PLR }];
+  state = {
+    activeTab: UNSETTLED,
+  };
 
   renderAsset = ({ item }) => {
     const {
@@ -246,7 +262,7 @@ class PPNView extends React.Component<Props> {
 
     return (
       <ListHeaderWrapper>
-        <HeaderTitle>{`Balance ${PPNBalance}`}</HeaderTitle>
+        <SectionTitle>{`Balance ${PPNBalance}`}</SectionTitle>
         <HeaderButton
           onPress={() => navigation.navigate(SETTLE_BALANCE)}
           disabled={disabled}
@@ -302,7 +318,12 @@ class PPNView extends React.Component<Props> {
     navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
+  setActiveTab = (activeTab) => {
+    this.setState({ activeTab });
+  };
+
   render() {
+    const { activeTab } = this.state;
     const {
       availableStake,
       assetsOnNetwork,
@@ -312,9 +333,8 @@ class PPNView extends React.Component<Props> {
       smartWalletState,
     } = this.props;
 
-    const assetsOnNetworkArray = Object.keys(assetsOnNetwork).map((asset) => assetsOnNetwork[asset]);
+    const assetsOnNetworkArray = Object.values(assetsOnNetwork);
     const availableFormattedAmount = formatMoney(availableStake, 4);
-    const assetsOnNetworkToShow = unionBy(assetsOnNetworkArray, this.initialAssets, 'symbol');
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const { upgrade: { status } } = smartWalletState;
     const sendingBlockedMessage = status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
@@ -324,6 +344,27 @@ class PPNView extends React.Component<Props> {
       }
       : smartWalletStatus.sendingBlockedMessage || {};
     const disableTopUpAndSettle = Object.keys(sendingBlockedMessage).length;
+
+    const historyTabs = [
+      {
+        id: UNSETTLED,
+        name: 'Unsettled',
+        onPress: () => this.setActiveTab(UNSETTLED),
+        data: [],
+        emptyState: {
+          title: 'No unsettled transactions',
+        },
+      },
+      {
+        id: SETTLED,
+        name: 'Settled',
+        onPress: () => this.setActiveTab(SETTLED),
+        data: [],
+        emptyState: {
+          title: 'No settled transactions',
+        },
+      },
+    ];
 
     return (
       <ScrollView
@@ -344,40 +385,61 @@ class PPNView extends React.Component<Props> {
           buttonLabel="Deploy Smart Wallet"
           buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
         />}
-        <TankBalanceWrapper>
-          <TankBalance>
-            {`${availableFormattedAmount} PLR`}
-          </TankBalance>
-        </TankBalanceWrapper>
-        <AssetButtonsWrapper>
-          <CircleButton
-            label="Top up"
-            onPress={() => navigation.navigate(FUND_TANK)}
-            fontIcon="up-arrow"
-            disabled={!!disableTopUpAndSettle}
-          />
-          { /* <CircleButton
+        <TopPartWrapper>
+          <SectionTitle>PLR Tank</SectionTitle>
+          <TankBalanceWrapper>
+            <TankBalance>
+              {`${availableFormattedAmount} PLR`}
+            </TankBalance>
+          </TankBalanceWrapper>
+          <AssetButtonsWrapper>
+            <CircleButton
+              label="Top up"
+              onPress={() => navigation.navigate(FUND_TANK)}
+              fontIcon="up-arrow"
+              disabled={!!disableTopUpAndSettle}
+            />
+            { /* <CircleButton
             label="Withdraw"
             fontIcon="down-arrow"
             onPress={() => {}}
             disabled={availableStake <= 0}
           /> */ }
-          <CircleButton
-            label="Send"
-            icon={iconSend}
-            onPress={this.goToSend}
-            disabled={availableStake <= 0}
-          />
-        </AssetButtonsWrapper>
-        <StyledFlatList
-          data={assetsOnNetworkToShow}
-          keyExtractor={(item) => item.symbol}
-          renderItem={this.renderAsset}
-          initialNumToRender={5}
-          maxToRenderPerBatch={5}
-          onEndReachedThreshold={0.5}
-          style={{ width: '100%', height: '100%' }}
-          ListHeaderComponent={() => this.renderHeader(!!disableTopUpAndSettle)}
+            <CircleButton
+              label="Send"
+              icon={iconSend}
+              onPress={this.goToSend}
+              disabled={availableStake <= 0}
+            />
+          </AssetButtonsWrapper>
+        </TopPartWrapper>
+        {!!assetsOnNetworkArray.length &&
+        <ListItemChevron
+          wrapperStyle={{
+            borderTopWidth: 0,
+            borderBottomWidth: 1,
+            borderColor: baseColors.mediumLightGray,
+          }}
+          chevronStyle={{ color: baseColors.darkGray }}
+          label="Unsettled Balance"
+          rightAddon={(<BlueText>11.11</BlueText>)}
+          onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
+          color={baseColors.slateBlack}
+          bordered
+        />}
+        <Tabs
+          tabs={historyTabs}
+          wrapperStyle={{ paddingTop: 16 }}
+        />
+        <ActivityFeed
+          backgroundColor={baseColors.white}
+          navigation={navigation}
+          tabs={historyTabs}
+          activeTab={activeTab}
+          hideTabs
+          initialNumToRender={6}
+          wrapperStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
         />
       </ScrollView>
     );
@@ -390,6 +452,7 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
+  paymentNetwork: { balances, availableToSettleTx: { data: availableToSettleTx, isFetched } },
 }) => ({
   assets,
   rates,
@@ -398,10 +461,12 @@ const mapStateToProps = ({
   supportedAssets,
   smartWalletState,
   accounts,
+  balances,
+  availableToSettleTx,
+  isFetched,
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
   availableStake: availableStakeSelector,

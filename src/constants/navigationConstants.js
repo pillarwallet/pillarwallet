@@ -44,6 +44,7 @@ export const SETTINGS = 'SETTINGS';
 
 // ASSETS FLOW
 export const ACCOUNTS = 'ACCOUNTS';
+export const UNSETTLED_ASSETS = 'UNSETTLED_ASSETS';
 
 // CHANGE PIN FLOW
 export const CHANGE_PIN_FLOW = 'CHANGE_PIN_FLOW';
