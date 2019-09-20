@@ -148,7 +148,6 @@ export const startListeningNotificationsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
       wallet: { data: wallet },
-      assets: { data: assets },
       invitations: { data: invitations },
       contacts: { data: contacts },
     } = getState();
@@ -180,7 +179,7 @@ export const startListeningNotificationsAction = () => {
         if (data.type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
           dispatch(fetchTransactionsHistoryAction(data.asset));
-          dispatch(fetchAssetsBalancesAction(assets));
+          dispatch(fetchAssetsBalancesAction());
         }
         if (
           data.type === CONNECTION_REQUESTED_EVENT ||
@@ -221,7 +220,7 @@ export const startListeningNotificationsAction = () => {
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
         dispatch(fetchTransactionsHistoryAction(notification.asset));
-        dispatch(fetchAssetsBalancesAction(assets));
+        dispatch(fetchAssetsBalancesAction());
       }
       if (notification.type === COLLECTIBLE) {
         dispatch(fetchAllCollectiblesDataAction());
@@ -304,12 +303,9 @@ export const startListeningOnOpenNotificationAction = () => {
       });
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
-          const {
-            assets: { data: assets },
-          } = getState();
           dispatch(fetchTransactionsHistoryNotificationsAction());
           dispatch(fetchTransactionsHistoryAction(asset));
-          dispatch(fetchAssetsBalancesAction(assets));
+          dispatch(fetchAssetsBalancesAction());
         }
         if (type === COLLECTIBLE) {
           dispatch(fetchAllCollectiblesDataAction());

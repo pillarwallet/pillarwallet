@@ -68,6 +68,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 type NetworkItem = {|
   id: string,
@@ -504,6 +505,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState) => ({

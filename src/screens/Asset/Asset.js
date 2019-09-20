@@ -70,6 +70,7 @@ import {
   availableStakeSelector,
   paymentNetworkAccountBalancesSelector,
 } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 // types
 import type { ContactSmartAddressData } from 'models/Contacts';
@@ -90,7 +91,7 @@ const activeModalResetState = {
 };
 
 type Props = {
-  fetchAssetsBalances: (assets: Assets) => Function,
+  fetchAssetsBalances: () => Function,
   fetchTransactionsHistory: (asset: string, indexFrom?: number) => Function,
   history: Transaction[],
   assets: Assets,
@@ -247,7 +248,6 @@ class AssetScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      assets,
       rates,
       balances,
       paymentNetworkBalances,
@@ -327,7 +327,7 @@ class AssetScreen extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                fetchAssetsBalances(assets);
+                fetchAssetsBalances();
                 fetchTransactionsHistory(token);
               }}
             />
@@ -416,7 +416,6 @@ class AssetScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-  assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
@@ -428,7 +427,6 @@ const mapStateToProps = ({
   },
 }) => ({
   contacts,
-  assets,
   rates,
   baseFiatCurrency,
   smartWalletState,
@@ -442,6 +440,7 @@ const structuredSelector = createStructuredSelector({
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   history: accountHistorySelector,
   availableStake: availableStakeSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -450,8 +449,8 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets) => {
-    dispatch(fetchAssetsBalancesAction(assets));
+  fetchAssetsBalances: () => {
+    dispatch(fetchAssetsBalancesAction());
   },
   fetchTransactionsHistory: (asset, indexFrom) => {
     dispatch(fetchTransactionsHistoryAction(asset, indexFrom));

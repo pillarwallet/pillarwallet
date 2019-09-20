@@ -54,9 +54,10 @@ import assetsConfig from 'configs/assetsConfig';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
-  fetchAssetsBalances: (assets: Assets) => Function,
+  fetchAssetsBalances: () => Function,
   assets: Assets,
   balances: Balances,
   navigation: NavigationScreenProp<*>,
@@ -190,8 +191,8 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
   };
 
   refreshAssetsList = () => {
-    const { assets, fetchAssetsBalances } = this.props;
-    fetchAssetsBalances(assets);
+    const { fetchAssetsBalances } = this.props;
+    fetchAssetsBalances();
   };
 
   setActiveTab = (activeTab) => {
@@ -313,11 +314,9 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
 }) => ({
-  assets,
   accounts,
   smartWalletState,
 });
@@ -326,6 +325,7 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   collectibles: accountCollectiblesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -334,7 +334,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 

@@ -5,6 +5,7 @@ import loadAndMigrateBalances from './balances';
 import loadAndMigrateHistory from './history';
 import loadAndMigrateCollectibles from './collectibles';
 import loadAndMigrateCollectiblesHistory from './collectiblesHistory';
+import loadAndMigrateAssets from './assets';
 
 export function loadAndMigrate(collection: string, dispatch: Function, getState: Function) {
   switch (collection) {
@@ -14,6 +15,7 @@ export function loadAndMigrate(collection: string, dispatch: Function, getState:
     case 'history': return loadAndMigrateHistory(dispatch, getState);
     case 'collectibles': return loadAndMigrateCollectibles(dispatch);
     case 'collectiblesHistory': return loadAndMigrateCollectiblesHistory(dispatch);
+    case 'assets': return loadAndMigrateAssets(dispatch);
     default: return null;
   }
 }
