@@ -20,11 +20,15 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
+import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import {
+  TRANSACTION_EVENT,
+  TX_PENDING_STATUS,
+} from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 import { BaseText, BoldText } from 'components/Typography';
@@ -113,7 +117,15 @@ class DeploymentView extends React.PureComponent<Props, State> {
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
 
-    const { upgrade: { deploymentStarted } } = smartWalletState;
+    const {
+      upgrade: {
+        deploymentStarted,
+        transfer: {
+          transactions: upgradeTransferTransactions,
+        },
+      },
+    } = smartWalletState;
+
     const isDeploying = deploymentStarted
       || [
         SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
@@ -121,7 +133,9 @@ class DeploymentView extends React.PureComponent<Props, State> {
       ].includes(smartWalletStatus.status);
 
     let detailedTransaction;
-    const matchingTransaction = history.find(({ hash }) => hash === 'x');
+    const pendingTransferTransaction = upgradeTransferTransactions.find(({ status }) => status === TX_PENDING_STATUS);
+    const pendingTransferTransactionHash = get(pendingTransferTransaction, 'hash');
+    const matchingTransaction = history.find(({ hash }) => hash === pendingTransferTransactionHash);
 
     if (matchingTransaction) {
       if (matchingTransaction.tranType === 'collectible') {
