@@ -203,6 +203,11 @@ export default class SmartWalletProvider {
     return 0;
   }
 
+  getTransactionCountWithPending(walletAddress: string) { //eslint-disable-line
+    // TODO: connect this to sdk
+    return 0;
+  }
+
   mapTransactionSpeed(txSpeed?: string) {
     switch (txSpeed) {
       case SPEED_TYPES.FAST: return FAST;

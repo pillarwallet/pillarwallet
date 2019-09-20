@@ -195,4 +195,8 @@ export default class KeyBasedWalletProvider {
   async getTransactionCount(walletAddress: string) {
     return this.wallet.provider.getTransactionCount(walletAddress, 'pending');
   }
+
+  async getTransactionCountWithPending(walletAddress: string) {
+    return this.wallet.provider.getTransactionCount(walletAddress);
+  }
 }

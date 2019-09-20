@@ -19,6 +19,17 @@
 */
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
+import get from 'lodash.get';
+import orderBy from 'lodash.orderby';
+
+// constants
+import { ETH } from 'constants/assetsConstants';
+import { TX_PENDING_STATUS } from 'constants/historyConstants';
+
+// utils
+import { formatAmount, isCaseInsensitiveMatch } from 'utils/common';
+
+// models
 import type {
   Asset,
   Assets,
@@ -26,9 +37,7 @@ import type {
   Balances,
   Rates,
 } from 'models/Asset';
-import get from 'lodash.get';
-import { ETH } from 'constants/assetsConstants';
-import { formatAmount, isCaseInsensitiveMatch } from 'utils/common';
+import type { Transaction } from 'models/Transaction';
 
 export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
   return assetsArray.reduce((memo, asset) => {
@@ -142,4 +151,16 @@ export const addressesEqual = (address1: ?string, address2: ?string): boolean =>
   if (!address1 || !address2) return false;
 
   return isCaseInsensitiveMatch(address1, address2);
+};
+
+export const calculateTransactionNonceFromHistory = (
+  totalTransactionCount: number,
+  history: Transaction[],
+  transactionHash: string,
+): number => {
+  const pendingTransactions = history.filter(({ status }) => status === TX_PENDING_STATUS);
+  const sortedHistory = orderBy(pendingTransactions, ['createdAt'], ['asc']);
+  const pendingTransactionIndex = sortedHistory.findIndex(({ hash }) => hash === transactionHash);
+  if (pendingTransactionIndex < 0) return pendingTransactionIndex;
+  return (totalTransactionCount - 1) - pendingTransactionIndex;
 };

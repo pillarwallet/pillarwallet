@@ -50,7 +50,6 @@ import Toast from 'components/Toast';
 import {
   getExchangeRates,
   transferSigned,
-  getTransactionNonceByHash,
 } from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
 import { navigate } from 'services/navigation';
@@ -62,7 +61,7 @@ import type {
 } from 'models/Transaction';
 import type { Asset, Assets, Balance, Balances } from 'models/Asset';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { addressesEqual, transformAssetsToObject } from 'utils/assets';
+import { addressesEqual, transformAssetsToObject, calculateTransactionNonceFromHistory } from 'utils/assets';
 import { delay, formatFullAmount, formatUnits, isCaseInsensitiveMatch, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -279,6 +278,7 @@ export const sendAssetAction = (
     const {
       accounts: { data: accounts },
       collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
+      history: { data: currentHistory },
     } = getState();
 
     const accountId = getActiveAccountId(accounts);
@@ -298,19 +298,26 @@ export const sendAssetAction = (
       await dispatch(ensureSmartAccountConnectedAction(wallet.privateKey));
     }
 
+    const accountHistory = currentHistory[accountId] || [];
+
     let tokenTx = {};
     let historyTx;
     const accountCollectibles = collectibles[accountId] || [];
     const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
-    const { to, note } = transaction;
+    const { to, note, replaceTransaction } = transaction;
 
     // get wallet provider
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
     const walletProvider = await cryptoWallet.getProvider();
 
-    if (transaction.replaceTransaction) {
-      const existingNonce = await getTransactionNonceByHash(transaction.replaceTransaction);
-      if (existingNonce === null) {
+    if (replaceTransaction) {
+      const totalTransactionCount = await walletProvider.getTransactionCountWithPending(accountAddress);
+      const existingNonce = calculateTransactionNonceFromHistory(
+        totalTransactionCount,
+        accountHistory,
+        replaceTransaction,
+      );
+      if (existingNonce < 0) {
         callback({
           isSuccess: false,
           error: 'Cannot get nonce for transaction speed up',
@@ -447,8 +454,6 @@ export const sendAssetAction = (
             historyTx,
           },
         });
-        const { history: { data: currentHistory } } = getState();
-        const accountHistory = currentHistory[accountId] || [];
         const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
         const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
