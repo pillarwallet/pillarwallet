@@ -118,6 +118,7 @@ export const baseColors = {
   tomato: '#F9584F',
   neonBlue: '#3C71FF',
   darkOrange: '#ff8d04',
+  chestnutRose: '#cb4c4c',
 };
 
 export const brandColors = [
