@@ -80,6 +80,8 @@ import {
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 
+import type { Account } from 'models/Account';
+
 const storage = Storage.getInstance('db');
 
 const getTokenWalletAndRegister = async (privateKey: string, api: Object, user: Object, dispatch: Function) => {
@@ -195,14 +197,15 @@ const finishRegistration = async ({
   });
 };
 
-const navigateToAppFlow = (isWalletBackedUp: boolean) => {
+const navigateToAppFlow = (isWalletBackedUp: boolean, wallet: Account) => {
   const navigateToAssetsAction = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: HOME }),
   });
 
-  toastWalletBackup(isWalletBackedUp);
+  toastWalletBackup(isWalletBackedUp, wallet);
+
   navigate(navigateToAssetsAction);
 };
 
@@ -337,7 +340,7 @@ export const registerWalletAction = () => {
 
     // STEP 6: all done, navigate to the assets screen
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp);
+    navigateToAppFlow(isWalletBackedUp, wallet);
   };
 };
 
@@ -397,7 +400,7 @@ export const registerOnBackendAction = () => {
     });
 
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp);
+    navigateToAppFlow(isWalletBackedUp, walletData);
   };
 };
 

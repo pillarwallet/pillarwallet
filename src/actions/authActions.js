@@ -236,7 +236,7 @@ export const loginAction = (
       } = getState().wallet.backupStatus;
 
       const isWalletBackedUp = isImported || isBackedUp;
-      toastWalletBackup(isWalletBackedUp);
+      toastWalletBackup(isWalletBackedUp, wallet);
 
       /**
        * this is used only to avoid BCX fetching issues,
