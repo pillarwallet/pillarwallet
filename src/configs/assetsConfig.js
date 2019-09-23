@@ -26,6 +26,12 @@ export default {
     receive: false,
     disclaimer: 'Unsupported',
   },
+  CMT: {
+    listed: false,
+    send: false,
+    receive: false,
+    disclaimer: 'Unsupported',
+  },
 };
 
 export const PPN_TOKEN = PLR;

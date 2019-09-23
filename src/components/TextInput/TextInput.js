@@ -60,6 +60,10 @@ type Props = {
   onLayout?: Function,
   statusIcon?: string,
   statusIconColor?: string,
+  additionalStyle?: Object,
+  labelStyle?: Object,
+  errorMessageStyle?: Object,
+  getInputRef?: Function,
 }
 
 type State = {
@@ -86,6 +90,24 @@ const inputTypes = {
     fontWeight: fontWeights.bold,
     padding: '0 20px',
     inputHeight: Platform.OS === 'ios' ? 80 : 70,
+  },
+  bigTextNoBackground: {
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
+    color: baseColors.slateBlack,
+    fontSize: fontSizes.extraLarger,
+    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
+    fontWeight: fontWeights.bold,
+    padding: '0 20px',
+    inputHeight: Platform.OS === 'ios' ? 80 : 70,
+  },
+  noBackground: {
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
+    color: baseColors.slateBlack,
+    fontSize: fontSizes.medium,
+    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
+    fontWeight: fontWeights.medium,
   },
   amount: {
     fontSize: fontSizes.extraExtraLarge,
@@ -267,6 +289,10 @@ class TextInput extends React.Component<Props, State> {
       onLayout,
       statusIcon,
       statusIconColor,
+      additionalStyle,
+      labelStyle,
+      getInputRef,
+      errorMessageStyle,
     } = this.props;
     const { value = '' } = inputProps;
     const { isFocused } = this.state;
@@ -292,10 +318,20 @@ class TextInput extends React.Component<Props, State> {
           noBorder={noBorder}
           height={inputHeight}
         >
-          {!!label && <CustomLabel labelBigger={labelBigger}>{lowerCase ? label : label.toUpperCase()}</CustomLabel>}
+          {!!label &&
+          <CustomLabel
+            labelBigger={labelBigger}
+            style={labelStyle}
+          >
+            {lowerCase ? label : label.toUpperCase()}
+          </CustomLabel>
+          }
           <InputField
             {...inputProps}
-            innerRef={(input) => { this.multilineInputField = input; }}
+            innerRef={(input) => {
+              this.multilineInputField = input;
+              if (getInputRef) getInputRef(input);
+            }}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
             onEndEditing={this.handleBlur}
@@ -310,7 +346,9 @@ class TextInput extends React.Component<Props, State> {
               textAlignVertical: inputProps.multiline ? 'top' : 'center',
               marginBottom: 10,
               height: inputHeight,
-            }, customStyle]}
+            }, customStyle,
+              additionalStyle,
+            ]}
             onLayout={onLayout}
           />
           {Platform.OS === 'ios' && <RNInput
@@ -326,7 +364,7 @@ class TextInput extends React.Component<Props, State> {
           {!!postfix && <PostFix>{postfix}</PostFix>}
         </Item>
         <InputFooter>
-          {errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : <View />}
+          {errorMessage ? <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage> : <View />}
           {!!footerAddonText &&
           <TouchableOpacity onPress={footerAddonAction}>
             <AddonText>{footerAddonText}</AddonText>
