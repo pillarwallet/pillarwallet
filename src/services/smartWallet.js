@@ -24,21 +24,11 @@ import {
   createSdk,
   Sdk,
   sdkConstants,
-} from '@archanova/sdk';
-import { ContractNames } from '@archanova/contracts';
+} from '@smartwallet/sdk';
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
-import {
-  ARCHANOVA_ETH_ACCOUNT_PROVIDER_ADDRESS,
-  ARCHANOVA_ETH_ACCOUNT_PROXY_ADDRESS,
-  ARCHANOVA_ETH_ACCOUNT_FRIEND_RECOVERY_ADDRESS,
-  ARCHANOVA_ETH_ENS_REGISTRY_ADDRESS,
-  ARCHANOVA_ETH_GUARDIAN_ADDRESS,
-  ARCHANOVA_ETH_VIRTUAL_PAYMENT_MANAGER_ADDRESS,
-  ARCHANOVA_HOST,
-  NETWORK_PROVIDER,
-} from 'react-native-dotenv';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
 
@@ -71,29 +61,7 @@ class SmartWallet {
 
   constructor() {
     const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
-    const sdkOptions = getSdkEnvironment(environmentNetwork)
-      .extendConfig('apiOptions', {
-        host: ARCHANOVA_HOST,
-      })
-      .extendConfig('ensOptions', {
-        supportedRootNames: [
-          'pillarnetwork.eth',
-        ],
-      })
-      .extendConfig('ethOptions', {
-        networkName: 'Pillar',
-        contractAddresses: {
-          [ContractNames.AccountProvider]: ARCHANOVA_ETH_ACCOUNT_PROVIDER_ADDRESS,
-          [ContractNames.AccountProxy]: ARCHANOVA_ETH_ACCOUNT_PROXY_ADDRESS,
-          [ContractNames.AccountFriendRecovery]: ARCHANOVA_ETH_ACCOUNT_FRIEND_RECOVERY_ADDRESS,
-          [ContractNames.ENSRegistry]: ARCHANOVA_ETH_ENS_REGISTRY_ADDRESS,
-          [ContractNames.Guardian]: ARCHANOVA_ETH_GUARDIAN_ADDRESS,
-          [ContractNames.VirtualPaymentManager]: ARCHANOVA_ETH_VIRTUAL_PAYMENT_MANAGER_ADDRESS,
-        },
-      })
-      .extendConfig('storageOptions', {
-        namespace: '@pillar',
-      });
+    const sdkOptions = getSdkEnvironment(environmentNetwork);
 
     try {
       this.sdk = createSdk(sdkOptions);

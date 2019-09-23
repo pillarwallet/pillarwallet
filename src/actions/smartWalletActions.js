@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Alert } from 'react-native';
-import { sdkModules, sdkConstants } from '@archanova/sdk';
+import { sdkModules, sdkConstants } from '@smartwallet/sdk';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
