@@ -10697,10 +10697,10 @@ react-native-webview@^5.4.0:
     escape-string-regexp "1.0.5"
     invariant "2.2.4"
 
-react-native@0.59.4:
-  version "0.59.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native/-/react-native-0.59.4.tgz#c0725e2e8efdea135533794ce95fea2289fe619a"
-  integrity sha1-wHJeLo796hNVM3lM6V/qIon+YZo=
+react-native@0.59.10:
+  version "0.59.10"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native/-/react-native-0.59.10.tgz#352f381e382f93a0403be499c9e384bf51c2591c"
+  integrity sha1-NS84Hjgvk6BAO+SZyeOEv1HCWRw=
   dependencies:
     "@babel/runtime" "^7.0.0"
     "@react-native-community/cli" "^1.2.1"
