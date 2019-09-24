@@ -867,19 +867,17 @@ export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
     if (!response || !Object.keys(response).length) return;
 
     const {
-      fixedGas,
-      totalGas,
-      totalCost,
-      gasPrice,
+      gasFee,
+      signedGasPrice: { gasPrice },
     } = response;
+    const totalCost = gasFee.mul(gasPrice);
 
     dispatch({
       type: SET_ESTIMATED_TOPUP_FEE,
       payload: {
-        fixedGas,
-        totalGas,
-        totalCost,
+        gasAmount: gasFee,
         gasPrice,
+        totalCost,
       },
     });
   };
