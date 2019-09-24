@@ -23,6 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import get from 'lodash.get';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 
@@ -110,7 +111,14 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     fetchGasInfo();
     fetchAssetsBalances();
     smartWalletService.sdk.estimateAccountDeployment()
-      .then(({ totalCost }) => this.setState({ deployEstimateFee: totalCost }))
+      .then(deployEstimate => {
+        const gasAmount = get(deployEstimate, 'gasFee');
+        const gasPrice = get(deployEstimate, 'signedGasPrice.gasPrice');
+        if (!gasAmount || !gasPrice) throw new Error();
+
+        const totalCost = deployEstimate.gasFee.mul(deployEstimate.signedGasPrice.gasPrice);
+        this.setState({ deployEstimateFee: totalCost });
+      })
       .catch(this.setDefaultDeployEstimate);
   }
 

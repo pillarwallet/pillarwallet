@@ -139,7 +139,15 @@ class SmartWallet {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
 
     const accountBalance = this.getAccountRealBalance();
-    if (get(deployEstimate, 'totalCost') && accountBalance.gte(deployEstimate.totalCost)) {
+    if (get(deployEstimate, 'gasFee')
+      && get(deployEstimate, 'signedGasPrice.gasPrice')
+      && accountBalance.gte(deployEstimate.gasFee.mul(deployEstimate.signedGasPrice.gasPrice))
+    ) {
+      console.log({
+        accountBalance,
+        deployEstimate,
+        total: deployEstimate.gasFee.mul(deployEstimate.signedGasPrice.gasPrice),
+      });
       return this.sdk.deployAccount(deployEstimate);
     }
 
@@ -291,7 +299,7 @@ class SmartWallet {
      * but it needs sdk init and when migrating we don't have SDK initiated yet
      * so we're using calculation method below that is provided by SDK creators
      */
-    return utils.bigNumberify(650000).mul(gasPrice);
+    return utils.bigNumberify(790000).mul(gasPrice);
   }
 
   handleError(error: any) {
