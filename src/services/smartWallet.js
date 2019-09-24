@@ -31,6 +31,7 @@ import { utils } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
+import type { GasInfo } from 'models/GasInfo';
 
 const {
   GasPriceStrategies: {
@@ -293,13 +294,15 @@ class SmartWallet {
     return items;
   }
 
-  getDeployEstimate(gasPrice: BigNumber) {
-    /**
-     * can also call `this.sdk.estimateAccountDeployment(REGULAR);`,
-     * but it needs sdk init and when migrating we don't have SDK initiated yet
-     * so we're using calculation method below that is provided by SDK creators
-     */
-    return utils.bigNumberify(790000).mul(gasPrice);
+  async estimateAccountDeployment(gasInfo: GasInfo) {
+    const deployEstimate = await this.sdk.estimateAccountDeployment().catch(() => {});
+    const gasAmount = get(deployEstimate, 'gasFee', 790000);
+    let gasPrice = get(deployEstimate, 'signedGasPrice.gasPrice');
+    if (!gasPrice) {
+      const defaultGasPrice = get(gasInfo, 'gasPrice.max', 0);
+      gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
+    }
+    return gasPrice.mul(gasAmount);
   }
 
   handleError(error: any) {

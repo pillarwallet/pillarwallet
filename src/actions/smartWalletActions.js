@@ -251,13 +251,11 @@ export const deploySmartWalletAction = () => {
 
     await dispatch(fetchGasInfoAction());
     const gasInfo = get(getState(), 'history.gasInfo', {});
-    const gasPriceWei = getGasPriceWei(gasInfo);
-    const deployEstimate = smartWalletService.getDeployEstimate(gasPriceWei);
-    const feeSmartContractDeployEth = parseFloat(formatAmount(utils.formatEther(deployEstimate)));
+    const deployEstimateFee = await smartWalletService.estimateAccountDeployment(gasInfo);
+    const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee));
     const balances = accountBalancesSelector(getState());
-    const etherBalance = getBalance(balances, ETH);
-
-    if (etherBalance < feeSmartContractDeployEth) {
+    const etherBalanceBN = new BigNumber(getBalance(balances, ETH));
+    if (etherBalanceBN.lt(deployEstimateFeeBN)) {
       Toast.show({
         message: 'Not enough ETH to make deployment',
         type: 'warning',
@@ -268,9 +266,7 @@ export const deploySmartWalletAction = () => {
         null,
         SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS,
       ));
-
       dispatch({ type: RESET_SMART_WALLET_DEPLOYMENT });
-
       return;
     }
 
