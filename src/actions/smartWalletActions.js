@@ -1032,19 +1032,17 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
     if (!response || !Object.keys(response).length) return;
 
     const {
-      fixedGas,
-      totalGas,
-      totalCost,
-      gasPrice,
+      gasFee,
+      signedGasPrice: { gasPrice },
     } = response;
+    const totalCost = gasFee.mul(gasPrice);
 
     dispatch({
       type: SET_ESTIMATED_SETTLE_TX_FEE,
       payload: {
-        fixedGas,
-        totalGas,
-        totalCost,
+        gasAmount: gasFee,
         gasPrice,
+        totalCost,
       },
     });
   };
