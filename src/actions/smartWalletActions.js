@@ -1019,7 +1019,7 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
 
     const hashes = txToSettle.map(({ hash }) => hash);
     const response = await smartWalletService
-      .estimateWithdrawAccountPayment(hashes)
+      .estimatePaymentSettlement(hashes)
       .catch((e) => {
         Toast.show({
           message: e.toString() || 'You need to deposit ETH to cover the withdrawal',
@@ -1061,7 +1061,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
 
     const hashes = txToSettle.map(({ hash }) => hash);
     const estimated = await smartWalletService
-      .estimateWithdrawAccountPayment(hashes)
+      .estimatePaymentSettlement(hashes)
       .catch((e) => {
         Toast.show({
           message: e.toString() || 'You need to deposit ETH to cover the withdrawal',

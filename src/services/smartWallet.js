@@ -237,7 +237,7 @@ class SmartWallet {
     return this.sdk.estimateWithdrawFromAccountVirtualBalance(value);
   }
 
-  estimateWithdrawAccountPayment(hashes: string[] = []) {
+  estimatePaymentSettlement(hashes: string[] = []) {
     const items = hashes.length === 1 ? hashes[0] : hashes;
     return this.sdk.estimateWithdrawAccountPayment(items);
   }
