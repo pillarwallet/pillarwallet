@@ -18,22 +18,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import type { TransactionPayload } from 'models/Transaction';
-import { onWalletConnectApproveCallRequest, onWalletConnectRejectCallRequest } from 'actions/walletConnectActions';
+import { approveCallRequestAction, rejectCallRequestAction } from 'actions/walletConnectActions';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 import { signMessage, signPersonalMessage, signTransaction } from 'utils/wallet';
 
+import type { TransactionPayload } from 'models/Transaction';
+import type { NavigationScreenProp } from 'react-navigation';
+import type { CallRequest } from 'models/WalletConnect';
+
 type Props = {
+  requests: CallRequest[],
   navigation: NavigationScreenProp<*>,
-  approveCallRequest: (peerId: string, callId: string, result: any) => Function,
-  rejectCallRequest: (peerId: string, callId: string, errorMsg?: string) => Function,
+  approveCallRequest: (callId: number, result: any) => Function,
+  rejectCallRequest: (callId: number, errorMsg?: string) => Function,
   sendAsset: (payload: TransactionPayload, wallet: Object, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
 };
@@ -43,36 +46,53 @@ type State = {
 };
 
 class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
+  request: ?CallRequest;
+
   state = {
     isChecking: false,
   };
 
+  componentDidMount() {
+    const { navigation, requests } = this.props;
+
+    const requestCallId = +navigation.getParam('callId', 0);
+    const request = requests.find(({ callId }) => callId === requestCallId);
+    if (!request) {
+      return;
+    }
+
+    this.request = request;
+  }
+
   handleDismissal = async () => {
     const { navigation, rejectCallRequest, resetIncorrectPassword } = this.props;
-    const peerId = navigation.getParam('peerId', {});
-    const payload = navigation.getParam('payload', {});
-    await rejectCallRequest(peerId, payload.id);
+    const { request } = this;
+    if (request) {
+      await rejectCallRequest(request.callId);
+    }
     resetIncorrectPassword();
     navigation.dismiss();
   };
 
   handleCallRequest = (pin: string, wallet: Object) => {
-    const { navigation } = this.props;
-    const peerId = navigation.getParam('peerId', {});
-    const payload = navigation.getParam('payload', {});
+    const { request } = this;
+
+    if (!request) {
+      return;
+    }
 
     let callback = () => {};
 
-    switch (payload.method) {
+    switch (request.method) {
       case 'eth_sendTransaction':
-        callback = () => this.handleSendTransaction(peerId, payload, wallet);
+        callback = () => this.handleSendTransaction(request, wallet);
         break;
       case 'eth_signTransaction':
-        callback = () => this.handleSignTransaction(peerId, payload, wallet);
+        callback = () => this.handleSignTransaction(request, wallet);
         break;
       case 'eth_sign':
       case 'personal_sign':
-        callback = () => this.handleSignMessage(peerId, payload, wallet);
+        callback = () => this.handleSignMessage(request, wallet);
         break;
       default:
         break;
@@ -81,16 +101,16 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     this.setState({ isChecking: true }, callback);
   };
 
-  handleSendTransaction = (peerId: string, payload: Object, wallet: Object) => {
+  handleSendTransaction = (request: CallRequest, wallet: Object) => {
     const {
       sendAsset, approveCallRequest, rejectCallRequest, navigation,
     } = this.props;
     const transactionPayload = navigation.getParam('transactionPayload', {});
     sendAsset(transactionPayload, wallet, async (txStatus: Object) => {
       if (txStatus.isSuccess) {
-        await approveCallRequest(peerId, payload.id, txStatus.txHash);
+        await approveCallRequest(request.callId, txStatus.txHash);
       } else {
-        await rejectCallRequest(peerId, payload.id);
+        await rejectCallRequest(request.callId);
       }
       this.setState(
         {
@@ -104,14 +124,14 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     });
   };
 
-  handleSignTransaction = async (peerId: string, payload: Object, wallet: Object) => {
+  handleSignTransaction = async (request: CallRequest, wallet: Object) => {
     const { approveCallRequest, rejectCallRequest } = this.props;
-    const trx = payload.params[0];
+    const trx = request.params[0];
     try {
       const result = await signTransaction(trx, wallet);
-      await approveCallRequest(peerId, payload.id, result);
+      await approveCallRequest(request.callId, result);
     } catch (error) {
-      await rejectCallRequest(peerId, payload.id);
+      await rejectCallRequest(request.callId);
     }
     this.setState(
       {
@@ -121,21 +141,21 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     );
   };
 
-  handleSignMessage = async (peerId: string, payload: Object, wallet: Object) => {
+  handleSignMessage = async (request: CallRequest, wallet: Object) => {
     const { approveCallRequest, rejectCallRequest } = this.props;
     let message = '';
     try {
       let result = null;
-      if (payload.method === 'personal_sign') {
-        message = payload.params[0] // eslint-disable-line
+      if (request.method === 'personal_sign') {
+        message = request.params[0]; // eslint-disable-line
         result = await signPersonalMessage(message, wallet);
       } else {
-        message = payload.params[1] // eslint-disable-line
+        message = request.params[1]; // eslint-disable-line
         result = await signMessage(message, wallet);
       }
-      await approveCallRequest(peerId, payload.id, result);
+      await approveCallRequest(request.callId, result);
     } catch (error) {
-      await rejectCallRequest(peerId, payload.id, error.toString());
+      await rejectCallRequest(request.callId, error.toString());
     }
     this.setState(
       {
@@ -175,12 +195,18 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = ({
+  walletConnect: { requests },
+}) => ({
+  requests,
+});
+
 const mapDispatchToProps = dispatch => ({
-  approveCallRequest: (peerId: string, callId: string, result: any) => {
-    dispatch(onWalletConnectApproveCallRequest(peerId, callId, result));
+  approveCallRequest: (callId: number, result: any) => {
+    dispatch(approveCallRequestAction(callId, result));
   },
-  rejectCallRequest: (peerId: string, callId: string, errorMsg?: string) => {
-    dispatch(onWalletConnectRejectCallRequest(peerId, callId, errorMsg));
+  rejectCallRequest: (callId: number, errorMsg?: string) => {
+    dispatch(rejectCallRequestAction(callId, errorMsg));
   },
   sendAsset: (transaction: TransactionPayload, wallet: Object, navigate) => {
     dispatch(sendAssetAction(transaction, wallet, navigate));
@@ -189,6 +215,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(WalletConnectPinConfirmScreeen);
