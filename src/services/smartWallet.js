@@ -313,10 +313,11 @@ class SmartWallet {
 
   async estimateAccountDeployment(gasInfo: GasInfo) {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(() => {});
-    let {
-      gasAmount = new BigNumber(790000), // eslint-disable-line
-      gasPrice,
-    } = parseEstimatePayload(deployEstimate);
+    let { gasAmount, gasPrice } = parseEstimatePayload(deployEstimate);
+
+    if (!gasAmount) {
+      gasAmount = new BigNumber(790000);
+    }
     if (!gasPrice) {
       const defaultGasPrice = get(gasInfo, 'gasPrice.max', 0);
       gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
