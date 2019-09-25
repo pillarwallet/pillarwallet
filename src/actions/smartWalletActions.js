@@ -61,6 +61,7 @@ import {
 import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   SET_ESTIMATED_TOPUP_FEE,
+  SET_ESTIMATED_WITHDRAWAL_FEE,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
@@ -70,6 +71,7 @@ import {
   SET_ESTIMATED_SETTLE_TX_FEE,
   PAYMENT_NETWORK_TX_SETTLEMENT,
   MARK_PLR_TANK_INITIALISED,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
 } from 'constants/paymentNetworkConstants';
 import {
   SMART_WALLET_UNLOCK,
@@ -953,6 +955,118 @@ export const topUpVirtualAccountAction = (amount: string) => {
 
       Toast.show({
         message: 'Your Pillar Tank will be funded soon',
+        type: 'success',
+        title: 'Success',
+        autoClose: true,
+      });
+    }
+  };
+};
+
+export const estimateWithdrawFromVirtualAccountAction = (amount?: string = '1') => {
+  return async (dispatch: Function, getState: Function) => {
+    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+
+    const { assets: { data: assets } } = getState();
+    const { decimals = 18 } = assets[PPN_TOKEN] || {};
+    const value = utils.parseUnits(amount, decimals);
+    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
+
+    const response = await smartWalletService
+      .estimateWithdrawFromVirtualAccount(value, tokenAddress)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString(),
+          type: 'warning',
+          autoClose: false,
+        });
+        return {};
+      });
+
+    if (!response || !Object.keys(response).length) return;
+
+    const {
+      gasFee,
+      signedGasPrice: { gasPrice },
+    } = response;
+    const totalCost = gasFee.mul(gasPrice);
+
+    dispatch({
+      type: SET_ESTIMATED_WITHDRAWAL_FEE,
+      payload: {
+        gasAmount: gasFee,
+        gasPrice,
+        totalCost,
+      },
+    });
+  };
+};
+
+export const withdrawFromVirtualAccountAction = (amount: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+
+    const {
+      accounts: { data: accounts },
+      assets: { data: assets },
+    } = getState();
+    const accountId = getActiveAccountId(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
+    const { decimals = 18 } = assets[PPN_TOKEN] || {};
+    const value = utils.parseUnits(amount.toString(), decimals);
+    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
+
+    const estimated = await smartWalletService
+      .estimateWithdrawFromVirtualAccount(value, tokenAddress)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString(),
+          type: 'warning',
+          autoClose: false,
+        });
+        return {};
+      });
+
+    if (!estimated || !Object.keys(estimated).length) return;
+
+    const txHash = await smartWalletService.withdrawFromVirtualAccount(estimated)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString() || 'Failed to top up the account',
+          type: 'warning',
+          autoClose: false,
+        });
+        return null;
+      });
+
+    if (txHash) {
+      const historyTx = buildHistoryTransaction({
+        from: accountAddress,
+        hash: txHash,
+        to: accountAddress,
+        value: value.toString(),
+        asset: PPN_TOKEN,
+        note: PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+      });
+
+      dispatch({
+        type: ADD_TRANSACTION,
+        payload: {
+          accountId,
+          historyTx,
+        },
+      });
+
+      dispatch({
+        type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
+        payload: txHash,
+      });
+
+      const { history: { data: currentHistory } } = getState();
+      dispatch(saveDbAction('history', { history: currentHistory }, true));
+
+      Toast.show({
+        message: 'Your withdrawal will be processed soon',
         type: 'success',
         title: 'Success',
         autoClose: true,

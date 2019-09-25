@@ -77,6 +77,8 @@ import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
 import SettleBalanceConfrimScreen from 'screens/Tank/SettleBalanceConfirm';
+import TankWithdrawalScreen from 'screens/Tank/TankWithdrawal';
+import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
 import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
@@ -195,6 +197,9 @@ import {
   SMART_WALLET_INTRO,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
+  TANK_WITHDRAWAL_FLOW,
+  TANK_WITHDRAWAL,
+  TANK_WITHDRAWAL_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -535,6 +540,13 @@ const tankFundFlow = createStackNavigator({
 
 tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const tankWithdrawalFlow = createStackNavigator({
+  [TANK_WITHDRAWAL]: TankWithdrawalScreen,
+  [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
+}, StackNavigatorConfig);
+
+tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -551,6 +563,7 @@ const AppFlowNavigation = createStackNavigator(
     [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
     [TANK_SETTLE_FLOW]: tankSettleFlow,
     [TANK_FUND_FLOW]: tankFundFlow,
+    [TANK_WITHDRAWAL_FLOW]: tankWithdrawalFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
     [MANAGE_USERS_FLOW]: manageUsersFlow,
     [CONTACT_INFO]: ConnectedContactInfo,
