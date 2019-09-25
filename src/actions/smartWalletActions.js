@@ -1339,7 +1339,7 @@ export const getAssetTransferGasLimitsAction = () => {
     };
     // $FlowFixMe
     [...transferAssets, ...transferCollectibles].map(({ name, key, amount }) => {
-      let dispatchType;
+      let dispatchType: string;
       if (key) {
         const {
           id: tokenId,
