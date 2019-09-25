@@ -1046,7 +1046,7 @@ export const withdrawFromVirtualAccountAction = (amount: string) => {
         to: accountAddress,
         value: value.toString(),
         asset: PPN_TOKEN,
-        note: PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+        tag: PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
       });
 
       dispatch({
