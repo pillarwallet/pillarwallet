@@ -56,10 +56,15 @@ type AccountTransaction = {
 
 let subscribedToEvents = false;
 
-const parseEstimatePayload = (estimatePayload) => ({
-  gasFee: get(estimatePayload, 'gasFee'),
-  gasPrice: get(estimatePayload, 'signedGasPrice.gasPrice'),
-});
+const parseEstimatePayload = (estimatePayload) => {
+  const gasAmount = get(estimatePayload, 'gasFee');
+  const gasPrice = get(estimatePayload, 'signedGasPrice.gasPrice');
+  return {
+    gasAmount,
+    gasPrice,
+    gasFee: gasAmount && gasPrice && gasPrice.mul(gasAmount),
+  };
+};
 
 class SmartWallet {
   sdk: Sdk;
@@ -145,13 +150,13 @@ class SmartWallet {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
 
     const accountBalance = this.getAccountRealBalance();
-    const { gasFee, gasPrice } = parseEstimatePayload(deployEstimate);
+    const { gasFee } = parseEstimatePayload(deployEstimate);
 
-    if (gasFee && gasPrice && accountBalance.gte(gasFee.mul(gasPrice))) {
+    if (gasFee && accountBalance.gte(gasFee)) {
       console.log({
         accountBalance,
         deployEstimate,
-        total: gasFee.mul(gasPrice),
+        total: gasFee,
       });
       return this.sdk.deployAccount(deployEstimate);
     }
@@ -301,14 +306,14 @@ class SmartWallet {
   async estimateAccountDeployment(gasInfo: GasInfo) {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(() => {});
     let {
-      gasFee = new BigNumber(790000), // eslint-disable-line
+      gasAmount = new BigNumber(790000), // eslint-disable-line
       gasPrice,
     } = parseEstimatePayload(deployEstimate);
     if (!gasPrice) {
       const defaultGasPrice = get(gasInfo, 'gasPrice.max', 0);
       gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
     }
-    return gasPrice.mul(gasFee);
+    return gasPrice.mul(gasAmount);
   }
 
   handleError(error: any) {
