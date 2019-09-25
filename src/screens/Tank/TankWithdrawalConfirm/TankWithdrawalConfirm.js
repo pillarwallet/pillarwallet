@@ -35,7 +35,7 @@ import {
   withdrawFromVirtualAccountAction,
 } from 'actions/smartWalletActions';
 import { formatAmount } from 'utils/common';
-import type { TopUpFee } from 'models/PaymentNetwork';
+import type { WithdrawalFee } from 'models/PaymentNetwork';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 import { ASSETS } from 'constants/navigationConstants';
 
@@ -43,7 +43,7 @@ import { ASSETS } from 'constants/navigationConstants';
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
-  topUpFee: TopUpFee,
+  withdrawalFee: WithdrawalFee,
   estimateWithdrawFromVirtualAccount: Function,
   withdrawFromVirtualAccount: Function,
 };
@@ -102,7 +102,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
   };
 
   render() {
-    const { session, navigation, topUpFee } = this.props;
+    const { session, navigation, withdrawalFee } = this.props;
     const { buttonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
     const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
@@ -114,7 +114,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
         keyboardAvoidFooter={(
           <FooterWrapper>
             <Button
-              disabled={!session.isOnline || !topUpFee.isFetched || buttonSubmitted}
+              disabled={!session.isOnline || !withdrawalFee.isFetched || buttonSubmitted}
               onPress={this.handleFormSubmit}
               title={submitButtonTitle}
             />
@@ -145,10 +145,10 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   session: { data: session },
-  paymentNetwork: { topUpFee },
+  paymentNetwork: { withdrawalFee },
 }) => ({
   session,
-  topUpFee,
+  withdrawalFee,
 });
 
 const mapDispatchToProps = (dispatch) => ({

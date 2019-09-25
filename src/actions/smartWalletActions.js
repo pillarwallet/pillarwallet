@@ -963,15 +963,23 @@ export const topUpVirtualAccountAction = (amount: string) => {
   };
 };
 
-export const estimateWithdrawFromVirtualAccountAction = (amount?: string = '1') => {
+export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
   return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
-    const { assets: { data: assets } } = getState();
-    const { decimals = 18 } = assets[PPN_TOKEN] || {};
+    const {
+      accounts: { data: accounts },
+      assets: { data: assets },
+    } = getState();
+    const accountAddress = getActiveAccountAddress(accounts);
+    const accountAssets = assets[accountAddress];
+    const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount, decimals);
-    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
-
+    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
+console.log({ amount,
+  value, //  value.toString(),
+  valueHex: value.toHexString(),
+  tokenAddress, decimals });
     const response = await smartWalletService
       .estimateWithdrawFromVirtualAccount(value, tokenAddress)
       .catch((e) => {

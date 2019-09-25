@@ -38,7 +38,7 @@ import { TextLink, Label, BaseText } from 'components/Typography';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { formatAmount, getCurrencySymbol, formatMoney } from 'utils/common';
+import { formatAmount, getCurrencySymbol, formatMoney, formatFiat } from 'utils/common';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -58,6 +58,7 @@ import { estimateWithdrawFromVirtualAccountAction } from 'actions/smartWalletAct
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 
 const ActionsWrapper = styled.View`
@@ -117,13 +118,20 @@ class TankWithdrawal extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.props.estimateWithdrawFromVirtualAccount();
+    this.props.estimateWithdrawFromVirtualAccount(this.getMaxAmount().toString());
   }
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
-      this.props.estimateWithdrawFromVirtualAccount();
+      this.props.estimateWithdrawFromVirtualAccount(this.getMaxAmount().toString());
     }
+  }
+
+  getMaxAmount() {
+    const { availableStake } = this.props;
+    const token = PPN_TOKEN;
+    const txFeeInWei = this.getTxFeeInWei();
+    return calculateMaxAmount(token, availableStake, txFeeInWei);
   }
 
   handleChange = (value: Object) => {
@@ -144,9 +152,7 @@ class TankWithdrawal extends React.Component<Props, State> {
   useMaxValue = () => {
     const { balances } = this.props;
     const txFeeInWei = this.getTxFeeInWei();
-    const token = PPN_TOKEN;
-    const balance = getBalance(balances, token);
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
+    const maxAmount = this.getMaxAmount();
     this.enoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
     this.setState({
       value: {
@@ -174,7 +180,6 @@ class TankWithdrawal extends React.Component<Props, State> {
     const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
     const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     // balance
     const balance = availableStake;
@@ -182,7 +187,7 @@ class TankWithdrawal extends React.Component<Props, State> {
 
     // balance in fiat
     const totalInFiat = balance * getRate(rates, PPN_TOKEN, fiatCurrency);
-    const formattedBalanceInFiat = formatMoney(totalInFiat);
+    const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // fee
     const txFeeInWei = this.getTxFeeInWei();
@@ -197,8 +202,7 @@ class TankWithdrawal extends React.Component<Props, State> {
 
     // value in fiat
     const valueInFiat = currentValue * getRate(rates, PPN_TOKEN, fiatCurrency);
-    const formattedValueInFiat = formatMoney(valueInFiat);
-    const valueInFiatOutput = `${currencySymbol}${formattedValueInFiat}`;
+    const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
@@ -246,7 +250,7 @@ class TankWithdrawal extends React.Component<Props, State> {
               <Label small>Available Balance</Label>
               <SendTokenDetailsValue>
                 {formattedBalance} {token}
-                <HelperText> ({currencySymbol}{formattedBalanceInFiat})</HelperText>
+                <HelperText>{formattedBalanceInFiat}</HelperText>
               </SendTokenDetailsValue>
             </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
@@ -260,13 +264,11 @@ class TankWithdrawal extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
   session: { data: session },
   rates: { data: rates },
   paymentNetwork: { withdrawalFee },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
-  assets,
   rates,
   session,
   withdrawalFee,
@@ -275,6 +277,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  assets: accountAssetsSelector,
   availableStake: availableStakeSelector,
 });
 
@@ -284,7 +287,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  estimateWithdrawFromVirtualAccount: () => dispatch(estimateWithdrawFromVirtualAccountAction()),
+  estimateWithdrawFromVirtualAccount: (amount) => dispatch(estimateWithdrawFromVirtualAccountAction(amount)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(TankWithdrawal);
