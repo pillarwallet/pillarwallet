@@ -54,15 +54,28 @@ type AccountTransaction = {
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
 };
 
+type EstimatePayload = {
+  gasFee: BigNumber,
+  signedGasPrice: {
+    gasPrice: BigNumber,
+  },
+};
+
+type ParsedEstimate = {
+  gasAmount: ?BigNumber,
+  gasPrice: ?BigNumber,
+  totalCost: ?BigNumber,
+};
+
 let subscribedToEvents = false;
 
-const parseEstimatePayload = (estimatePayload) => {
+export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEstimate => {
   const gasAmount = get(estimatePayload, 'gasFee');
   const gasPrice = get(estimatePayload, 'signedGasPrice.gasPrice');
   return {
     gasAmount,
     gasPrice,
-    gasFee: gasAmount && gasPrice && gasPrice.mul(gasAmount),
+    totalCost: gasAmount && gasPrice && gasPrice.mul(gasAmount),
   };
 };
 
@@ -150,14 +163,9 @@ class SmartWallet {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
 
     const accountBalance = this.getAccountRealBalance();
-    const { gasFee } = parseEstimatePayload(deployEstimate);
+    const { totalCost } = parseEstimatePayload(deployEstimate);
 
-    if (gasFee && accountBalance.gte(gasFee)) {
-      console.log({
-        accountBalance,
-        deployEstimate,
-        total: gasFee,
-      });
+    if (totalCost && accountBalance.gte(totalCost)) {
       return this.sdk.deployAccount(deployEstimate);
     }
 

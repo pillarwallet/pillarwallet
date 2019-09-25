@@ -20,6 +20,7 @@
 import { Alert } from 'react-native';
 import { sdkModules, sdkConstants } from '@smartwallet/sdk';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
 import { Sentry } from 'react-native-sentry';
@@ -82,7 +83,7 @@ import {
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // services
-import smartWalletService from 'services/smartWallet';
+import smartWalletService, { parseEstimatePayload } from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { calculateGasEstimate, waitForTransaction } from 'services/assets';
@@ -863,19 +864,14 @@ export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
         });
         return {};
       });
+    if (isEmpty(response)) return;
 
-    if (!response || !Object.keys(response).length) return;
-
-    const {
-      gasFee,
-      signedGasPrice: { gasPrice },
-    } = response;
-    const totalCost = gasFee.mul(gasPrice);
+    const { gasAmount, gasPrice, totalCost } = parseEstimatePayload(response);
 
     dispatch({
       type: SET_ESTIMATED_TOPUP_FEE,
       payload: {
-        gasAmount: gasFee,
+        gasAmount,
         gasPrice,
         totalCost,
       },
@@ -1028,19 +1024,14 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
         });
         return {};
       });
+    if (isEmpty(response)) return;
 
-    if (!response || !Object.keys(response).length) return;
-
-    const {
-      gasFee,
-      signedGasPrice: { gasPrice },
-    } = response;
-    const totalCost = gasFee.mul(gasPrice);
+    const { gasAmount, gasPrice, totalCost } = parseEstimatePayload(response);
 
     dispatch({
       type: SET_ESTIMATED_SETTLE_TX_FEE,
       payload: {
-        gasAmount: gasFee,
+        gasAmount,
         gasPrice,
         totalCost,
       },
