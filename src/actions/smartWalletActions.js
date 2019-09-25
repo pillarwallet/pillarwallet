@@ -127,6 +127,14 @@ import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 
 const storage = Storage.getInstance('db');
 
+const notifySmartWalletNotInitialized = () => {
+  Toast.show({
+    message: 'Smart Account is not initialized',
+    type: 'warning',
+    autoClose: false,
+  });
+};
+
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
   return async (dispatch: Dispatch) => {
     await smartWalletService.init(walletPrivateKey, dispatch);
@@ -965,11 +973,7 @@ export const setPLRTankAsInitAction = () => {
 export const fetchAvailableTxToSettleAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
-      Toast.show({
-        message: 'Smart Account is not initialized',
-        type: 'warning',
-        autoClose: false,
-      });
+      notifySmartWalletNotInitialized();
       dispatch({
         type: SET_AVAILABLE_TO_SETTLE_TX,
         payload: [],
@@ -1005,11 +1009,7 @@ export const fetchAvailableTxToSettleAction = () => {
 export const estimateSettleBalanceAction = (txToSettle: Object) => {
   return async (dispatch: Dispatch) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
-      Toast.show({
-        message: 'Smart Account is not initialized',
-        type: 'warning',
-        autoClose: false,
-      });
+      notifySmartWalletNotInitialized();
       return;
     }
 
@@ -1042,11 +1042,7 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
 export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
-      Toast.show({
-        message: 'Smart Account is not initialized',
-        type: 'warning',
-        autoClose: false,
-      });
+      notifySmartWalletNotInitialized();
       return;
     }
 
@@ -1197,11 +1193,7 @@ export const navigateToSendTokenAmountAction = (navOptions: Object) => {
 
     if (isPillarPaymentNetworkActive(blockchainNetworks)) {
       if (!smartWalletService || !smartWalletService.sdkInitialized) {
-        Toast.show({
-          message: 'Smart Account is not initialized',
-          type: 'warning',
-          autoClose: false,
-        });
+        notifySmartWalletNotInitialized();
         return;
       }
 
