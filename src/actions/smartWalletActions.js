@@ -982,19 +982,14 @@ export const estimateWithdrawFromVirtualAccountAction = (amount?: string = '1') 
         });
         return {};
       });
+    if (isEmpty(response)) return;
 
-    if (!response || !Object.keys(response).length) return;
-
-    const {
-      gasFee,
-      signedGasPrice: { gasPrice },
-    } = response;
-    const totalCost = gasFee.mul(gasPrice);
+    const { gasAmount, gasPrice, totalCost } = parseEstimatePayload(response);
 
     dispatch({
       type: SET_ESTIMATED_WITHDRAWAL_FEE,
       payload: {
-        gasAmount: gasFee,
+        gasAmount,
         gasPrice,
         totalCost,
       },
