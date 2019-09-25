@@ -2,35 +2,6 @@
 # yarn lockfile v1
 
 
-"@archanova/contracts@^1.0.0":
-  version "1.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/contracts/-/contracts-1.0.0.tgz#fb4c4925ab42fc292e797adbc52706a6bdd3a4d1"
-  integrity sha1-+0xJJatC/CkueXrbxScGpr3TpNE=
-  dependencies:
-    "@ensdomains/ens" "0.3.5"
-    openzeppelin-solidity "2.1.2"
-    solidity-bytes-utils "0.0.8"
-
-"@archanova/sdk@^1.1.2":
-  version "1.1.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@archanova/sdk/-/sdk-1.1.2.tgz#0cafc0226f931d74abe73b221d9482129acadbd5"
-  integrity sha1-DK/AIm+THXSr5zsiHZSCEprK29U=
-  dependencies:
-    "@archanova/contracts" "^1.0.0"
-    "@babel/runtime" "^7.4.4"
-    "@netgum/types" "^0.1.8"
-    "@netgum/utils" "^0.1.3"
-    "@types/node" "^12.0.0"
-    "@types/webpack-env" "^1.13.9"
-    bn.js "^4.11.8"
-    cross-fetch "^3.0.2"
-    deep-equal-extended "^0.0.2"
-    ethjs "^0.4.0"
-    ethjs-abi "^0.2.1"
-    redux "^4.0.1"
-    rxjs "6.4.0"
-    rxjs-addons "^0.0.4"
-
 "@babel/code-frame@7.0.0-beta.44":
   version "7.0.0-beta.44"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@babel/code-frame/-/code-frame-7.0.0-beta.44.tgz#2a02643368de80916162be70865c97774f3adbd9"
@@ -1047,6 +1018,36 @@
     xcode "2.0.0"
     yargs "^12.0.2"
 
+"@smartwallet/contracts@1.0.0-rc.4":
+  version "1.0.0-rc.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/contracts/-/contracts-1.0.0-rc.4.tgz#6fbed59845a87c206a68a0a9b5bb1ac1c7ff193d"
+  integrity sha1-b77VmEWofCBqaKCptbsawcf/GT0=
+  dependencies:
+    "@ensdomains/ens" "0.3.5"
+    openzeppelin-solidity "2.1.2"
+    solidity-bytes-utils "0.0.8"
+
+"@smartwallet/sdk@1.0.0-rc.4":
+  version "1.0.0-rc.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/sdk/-/sdk-1.0.0-rc.4.tgz#4d157b936f5a916cd3d357d02664f290c6af07ac"
+  integrity sha1-TRV7k29akWzT01fQJmTykMavB6w=
+  dependencies:
+    "@babel/runtime" "^7.4.4"
+    "@netgum/types" "^0.1.8"
+    "@netgum/utils" "^0.1.3"
+    "@smartwallet/contracts" "1.0.0-rc.4"
+    "@types/bn.js" "^4.11.5"
+    "@types/node" "^12.0.0"
+    "@types/webpack-env" "^1.13.9"
+    bn.js "^4.11.8"
+    cross-fetch "^3.0.2"
+    deep-equal-extended "^0.0.2"
+    ethjs "^0.4.0"
+    ethjs-abi "^0.2.1"
+    redux "^4.0.1"
+    rxjs "6.4.0"
+    rxjs-addons "^0.0.4"
+
 "@tradle/react-native-http@^2.0.0":
   version "2.0.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@tradle/react-native-http/-/react-native-http-2.0.1.tgz#af19e240e1e580bfa249563924d1be472686f48b"
@@ -1055,7 +1056,7 @@
     Base64 "~0.2.0"
     inherits "~2.0.1"
 
-"@types/bn.js@^4.11.4":
+"@types/bn.js@^4.11.4", "@types/bn.js@^4.11.5":
   version "4.11.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/bn.js/-/bn.js-4.11.5.tgz#40e36197433f78f807524ec623afcf0169ac81dc"
   integrity sha1-QONhl0M/ePgHUk7GI6/PAWmsgdw=

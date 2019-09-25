@@ -24,23 +24,14 @@ import {
   createSdk,
   Sdk,
   sdkConstants,
-} from '@archanova/sdk';
-import { ContractNames } from '@archanova/contracts';
+} from '@smartwallet/sdk';
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
-import {
-  ARCHANOVA_ETH_ACCOUNT_PROVIDER_ADDRESS,
-  ARCHANOVA_ETH_ACCOUNT_PROXY_ADDRESS,
-  ARCHANOVA_ETH_ACCOUNT_FRIEND_RECOVERY_ADDRESS,
-  ARCHANOVA_ETH_ENS_REGISTRY_ADDRESS,
-  ARCHANOVA_ETH_GUARDIAN_ADDRESS,
-  ARCHANOVA_ETH_VIRTUAL_PAYMENT_MANAGER_ADDRESS,
-  ARCHANOVA_HOST,
-  NETWORK_PROVIDER,
-} from 'react-native-dotenv';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
+import type { GasInfo } from 'models/GasInfo';
 
 const {
   GasPriceStrategies: {
@@ -63,7 +54,30 @@ type AccountTransaction = {
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
 };
 
+type EstimatePayload = {
+  gasFee: BigNumber,
+  signedGasPrice: {
+    gasPrice: BigNumber,
+  },
+};
+
+type ParsedEstimate = {
+  gasAmount: ?BigNumber,
+  gasPrice: ?BigNumber,
+  totalCost: ?BigNumber,
+};
+
 let subscribedToEvents = false;
+
+export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEstimate => {
+  const gasAmount = get(estimatePayload, 'gasFee');
+  const gasPrice = get(estimatePayload, 'signedGasPrice.gasPrice');
+  return {
+    gasAmount,
+    gasPrice,
+    totalCost: gasAmount && gasPrice && gasPrice.mul(gasAmount),
+  };
+};
 
 class SmartWallet {
   sdk: Sdk;
@@ -71,29 +85,7 @@ class SmartWallet {
 
   constructor() {
     const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
-    const sdkOptions = getSdkEnvironment(environmentNetwork)
-      .extendConfig('apiOptions', {
-        host: ARCHANOVA_HOST,
-      })
-      .extendConfig('ensOptions', {
-        supportedRootNames: [
-          'pillarnetwork.eth',
-        ],
-      })
-      .extendConfig('ethOptions', {
-        networkName: 'Pillar',
-        contractAddresses: {
-          [ContractNames.AccountProvider]: ARCHANOVA_ETH_ACCOUNT_PROVIDER_ADDRESS,
-          [ContractNames.AccountProxy]: ARCHANOVA_ETH_ACCOUNT_PROXY_ADDRESS,
-          [ContractNames.AccountFriendRecovery]: ARCHANOVA_ETH_ACCOUNT_FRIEND_RECOVERY_ADDRESS,
-          [ContractNames.ENSRegistry]: ARCHANOVA_ETH_ENS_REGISTRY_ADDRESS,
-          [ContractNames.Guardian]: ARCHANOVA_ETH_GUARDIAN_ADDRESS,
-          [ContractNames.VirtualPaymentManager]: ARCHANOVA_ETH_VIRTUAL_PAYMENT_MANAGER_ADDRESS,
-        },
-      })
-      .extendConfig('storageOptions', {
-        namespace: '@pillar',
-      });
+    const sdkOptions = getSdkEnvironment(environmentNetwork);
 
     try {
       this.sdk = createSdk(sdkOptions);
@@ -171,7 +163,9 @@ class SmartWallet {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
 
     const accountBalance = this.getAccountRealBalance();
-    if (get(deployEstimate, 'totalCost') && accountBalance.gte(deployEstimate.totalCost)) {
+    const { totalCost } = parseEstimatePayload(deployEstimate);
+
+    if (totalCost && accountBalance.gte(totalCost)) {
       return this.sdk.deployAccount(deployEstimate);
     }
 
@@ -260,7 +254,7 @@ class SmartWallet {
     return this.sdk.estimateWithdrawFromAccountVirtualBalance(value);
   }
 
-  estimateWithdrawAccountPayment(hashes: string[] = []) {
+  estimatePaymentSettlement(hashes: string[] = []) {
     const items = hashes.length === 1 ? hashes[0] : hashes;
     return this.sdk.estimateWithdrawAccountPayment(items);
   }
@@ -317,13 +311,18 @@ class SmartWallet {
     return items;
   }
 
-  getDeployEstimate(gasPrice: BigNumber) {
-    /**
-     * can also call `this.sdk.estimateAccountDeployment(REGULAR);`,
-     * but it needs sdk init and when migrating we don't have SDK initiated yet
-     * so we're using calculation method below that is provided by SDK creators
-     */
-    return utils.bigNumberify(650000).mul(gasPrice);
+  async estimateAccountDeployment(gasInfo: GasInfo) {
+    const deployEstimate = await this.sdk.estimateAccountDeployment().catch(() => {});
+    let { gasAmount, gasPrice } = parseEstimatePayload(deployEstimate);
+
+    if (!gasAmount) {
+      gasAmount = new BigNumber(790000);
+    }
+    if (!gasPrice) {
+      const defaultGasPrice = get(gasInfo, 'gasPrice.max', 0);
+      gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
+    }
+    return gasPrice.mul(gasAmount);
   }
 
   handleError(error: any) {

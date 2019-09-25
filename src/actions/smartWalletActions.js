@@ -18,8 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Alert } from 'react-native';
-import { sdkModules, sdkConstants } from '@archanova/sdk';
+import { sdkModules, sdkConstants } from '@smartwallet/sdk';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
 import { Sentry } from 'react-native-sentry';
@@ -82,7 +83,7 @@ import {
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // services
-import smartWalletService from 'services/smartWallet';
+import smartWalletService, { parseEstimatePayload } from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { calculateGasEstimate, waitForTransaction } from 'services/assets';
@@ -121,10 +122,18 @@ import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } fr
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
-import { formatAmount, formatMoney, formatUnits, getGasPriceWei } from 'utils/common';
+import { formatMoney, formatUnits } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 
 const storage = Storage.getInstance('db');
+
+const notifySmartWalletNotInitialized = () => {
+  Toast.show({
+    message: 'Smart Account is not initialized',
+    type: 'warning',
+    autoClose: false,
+  });
+};
 
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
   return async (dispatch: Dispatch) => {
@@ -251,13 +260,11 @@ export const deploySmartWalletAction = () => {
 
     await dispatch(fetchGasInfoAction());
     const gasInfo = get(getState(), 'history.gasInfo', {});
-    const gasPriceWei = getGasPriceWei(gasInfo);
-    const deployEstimate = smartWalletService.getDeployEstimate(gasPriceWei);
-    const feeSmartContractDeployEth = parseFloat(formatAmount(utils.formatEther(deployEstimate)));
+    const deployEstimateFee = await smartWalletService.estimateAccountDeployment(gasInfo);
+    const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee));
     const balances = accountBalancesSelector(getState());
-    const etherBalance = getBalance(balances, ETH);
-
-    if (etherBalance < feeSmartContractDeployEth) {
+    const etherBalanceBN = new BigNumber(getBalance(balances, ETH));
+    if (etherBalanceBN.lt(deployEstimateFeeBN)) {
       Toast.show({
         message: 'Not enough ETH to make deployment',
         type: 'warning',
@@ -268,9 +275,7 @@ export const deploySmartWalletAction = () => {
         null,
         SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS,
       ));
-
       dispatch({ type: RESET_SMART_WALLET_DEPLOYMENT });
-
       return;
     }
 
@@ -867,23 +872,16 @@ export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
         });
         return {};
       });
+    if (isEmpty(response)) return;
 
-    if (!response || !Object.keys(response).length) return;
-
-    const {
-      fixedGas,
-      totalGas,
-      totalCost,
-      gasPrice,
-    } = response;
+    const { gasAmount, gasPrice, totalCost } = parseEstimatePayload(response);
 
     dispatch({
       type: SET_ESTIMATED_TOPUP_FEE,
       payload: {
-        fixedGas,
-        totalGas,
-        totalCost,
+        gasAmount,
         gasPrice,
+        totalCost,
       },
     });
   };
@@ -975,11 +973,7 @@ export const setPLRTankAsInitAction = () => {
 export const fetchAvailableTxToSettleAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
-      Toast.show({
-        message: 'Smart Account is not initialized',
-        type: 'warning',
-        autoClose: false,
-      });
+      notifySmartWalletNotInitialized();
       dispatch({
         type: SET_AVAILABLE_TO_SETTLE_TX,
         payload: [],
@@ -1015,17 +1009,13 @@ export const fetchAvailableTxToSettleAction = () => {
 export const estimateSettleBalanceAction = (txToSettle: Object) => {
   return async (dispatch: Dispatch) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
-      Toast.show({
-        message: 'Smart Account is not initialized',
-        type: 'warning',
-        autoClose: false,
-      });
+      notifySmartWalletNotInitialized();
       return;
     }
 
     const hashes = txToSettle.map(({ hash }) => hash);
     const response = await smartWalletService
-      .estimateWithdrawAccountPayment(hashes)
+      .estimatePaymentSettlement(hashes)
       .catch((e) => {
         Toast.show({
           message: e.toString() || 'You need to deposit ETH to cover the withdrawal',
@@ -1034,23 +1024,16 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
         });
         return {};
       });
+    if (isEmpty(response)) return;
 
-    if (!response || !Object.keys(response).length) return;
-
-    const {
-      fixedGas,
-      totalGas,
-      totalCost,
-      gasPrice,
-    } = response;
+    const { gasAmount, gasPrice, totalCost } = parseEstimatePayload(response);
 
     dispatch({
       type: SET_ESTIMATED_SETTLE_TX_FEE,
       payload: {
-        fixedGas,
-        totalGas,
-        totalCost,
+        gasAmount,
         gasPrice,
+        totalCost,
       },
     });
   };
@@ -1059,17 +1042,13 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
 export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
-      Toast.show({
-        message: 'Smart Account is not initialized',
-        type: 'warning',
-        autoClose: false,
-      });
+      notifySmartWalletNotInitialized();
       return;
     }
 
     const hashes = txToSettle.map(({ hash }) => hash);
     const estimated = await smartWalletService
-      .estimateWithdrawAccountPayment(hashes)
+      .estimatePaymentSettlement(hashes)
       .catch((e) => {
         Toast.show({
           message: e.toString() || 'You need to deposit ETH to cover the withdrawal',
@@ -1214,11 +1193,7 @@ export const navigateToSendTokenAmountAction = (navOptions: Object) => {
 
     if (isPillarPaymentNetworkActive(blockchainNetworks)) {
       if (!smartWalletService || !smartWalletService.sdkInitialized) {
-        Toast.show({
-          message: 'Smart Account is not initialized',
-          type: 'warning',
-          autoClose: false,
-        });
+        notifySmartWalletNotInitialized();
         return;
       }
 
