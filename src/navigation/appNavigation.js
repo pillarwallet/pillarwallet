@@ -29,7 +29,6 @@ import { BaseText } from 'components/Typography';
 import { updateNavigationLastScreenState } from 'services/navigation';
 
 // screens
-import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import ProfileScreen from 'screens/Profile';
@@ -119,7 +118,6 @@ import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 
 // constants
 import {
-  ADD_TOKEN,
   ASSETS,
   ASSET,
   EXCHANGE_TAB,
@@ -202,9 +200,6 @@ import {
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
 import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
-
-// models
-import type { Assets } from 'models/Asset';
 
 // utils
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
@@ -547,7 +542,6 @@ tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
 const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
-    [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
@@ -580,7 +574,7 @@ type Props = {
   startListeningChatWebSocket: Function,
   stopListeningChatWebSocket: Function,
   initWalletConnect: Function,
-  fetchAssetsBalances: (assets: Assets) => Function,
+  fetchAssetsBalances: () => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
@@ -591,7 +585,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   wallet: Object,
   backupStatus: Object,
-  assets: Object,
   isPickingImage: boolean,
   updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
@@ -622,14 +615,13 @@ class AppFlow extends React.Component<Props, State> {
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
       getExistingChats,
-      assets,
       fetchAllCollectiblesData,
       initWalletConnect,
       startListeningForBalanceChange,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
-    fetchAssetsBalances(assets);
+    fetchAssetsBalances();
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     getExistingChats();
@@ -765,7 +757,6 @@ const mapStateToProps = ({
     hasUnreadNotifications,
     hasUnreadChatNotifications,
   },
-  assets: { data: assets },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
   featureFlags: {
@@ -778,7 +769,6 @@ const mapStateToProps = ({
   userState,
   notifications,
   hasUnreadNotifications,
-  assets,
   wallet,
   backupStatus,
   hasUnreadChatNotifications,
@@ -796,7 +786,7 @@ const mapDispatchToProps = dispatch => ({
   stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
   startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },

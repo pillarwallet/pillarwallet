@@ -17,54 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-export type Asset = {
-  symbol: string,
-  name: string,
-  address: string,
-  description: string,
-  iconUrl: string,
-  iconMonoUrl: string,
-  wallpaperUrl: string,
-  patternUrl?: string,
-  decimals: number,
-  amount?: number,
-};
-
-
-export type Assets = {
-  [symbol: string]: Asset,
-};
-
-export type AssetsByAccount = {
-  [accountId: string]: Assets,
-};
-
-export type AssetsStore = {
-  [accountId: string]: Asset[],
-};
-
-export type Balance = {
-  balance: string,
-  symbol: string,
-};
-
-export type Balances = {
-  [symbol: string]: Balance,
-};
-
-export type BalancesStore = {
-  [accountId: string]: Balances,
-};
-
-export type Rates = {
-  [string]: {
-    [string]: number,
-  },
-};
-
-export type AssetTransfer = {
-  name: string,
-  amount: number,
-  gasLimit?: number,
-};
+export const WALLETCONNECT_SESSIONS_IMPORTED = 'WALLETCONNECT_SESSIONS_IMPORTED';
+export const WALLETCONNECT_SESSIONS_LOADED = 'WALLETCONNECT_SESSIONS_LOADED';
+export const WALLETCONNECT_SESSION_ADDED = 'WALLETCONNECT_SESSION_ADDED';
+export const WALLETCONNECT_SESSION_REMOVED = 'WALLETCONNECT_SESSION_REMOVED';
+export const WALLETCONNECT_SESSIONS_REMOVED = 'WALLETCONNECT_SESSIONS_REMOVED';

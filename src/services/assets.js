@@ -21,7 +21,7 @@ import { Contract, utils } from 'ethers';
 import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import { Sentry } from 'react-native-sentry';
-import { ETH, supportedFiatCurrencies } from 'constants/assetsConstants';
+import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
 import type { Asset } from 'models/Asset';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
@@ -262,7 +262,23 @@ export function fetchAssetBalances(assets: Asset[], walletAddress: string): Prom
 export function getExchangeRates(assets: string[]): Promise<?Object> {
   if (!assets.length) return Promise.resolve({});
   const targetCurrencies = supportedFiatCurrencies.concat(ETH);
-  return cryptocompare.priceMulti(assets, targetCurrencies).catch(() => ({}));
+
+  const hasHoloToken = assets.some(token => token.toUpperCase() === HOT);
+  if (hasHoloToken) {
+    // rename HOT to HOLO
+    assets = assets.filter(token => token.toUpperCase() !== HOT);
+    assets.push(HOLO);
+  }
+
+  return cryptocompare.priceMulti(assets, targetCurrencies)
+    .then(data => {
+      // rename HOLO to HOT
+      if (data[HOLO]) {
+        data[HOT] = { ...data[HOLO] };
+        delete data[HOLO];
+      }
+      return data;
+    }).catch(() => ({}));
 }
 
 // from the getTransaction() method you'll get the the basic tx info without the status

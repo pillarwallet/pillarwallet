@@ -54,6 +54,9 @@ import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { formatFiat, formatAmount } from 'utils/common';
 import { getRate } from 'utils/assets';
 
+import { createStructuredSelector } from 'reselect';
+import { accountAssetsSelector } from 'selectors/assets';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -251,13 +254,11 @@ class SettleBalance extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
   paymentNetwork: { availableToSettleTx: { data: availableToSettleTx, isFetched } },
 }) => ({
-  assets,
   rates,
   baseFiatCurrency,
   session,
@@ -265,8 +266,17 @@ const mapStateToProps = ({
   isFetched,
 });
 
+const structuredSelector = createStructuredSelector({
+  assets: accountAssetsSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch) => ({
   fetchAvailableTxToSettle: () => dispatch(fetchAvailableTxToSettleAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SettleBalance);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SettleBalance);

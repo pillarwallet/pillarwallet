@@ -35,6 +35,7 @@ import { initialState as ratesState } from 'reducers/ratesReducer';
 import { initialState as accountsState } from 'reducers/accountsReducer';
 import { initialState as featureFlagsState } from 'reducers/featureFlagsReducer';
 import { initialState as appSettingsState } from 'reducers/appSettingsReducer';
+import { initialState as userSettingsState } from 'reducers/userSettingsReducer';
 
 const mockStore = configureMockStore([thunk]);
 
@@ -50,6 +51,7 @@ const initialStore = mockStore({
   accounts: accountsState,
   featureFlags: featureFlagsState,
   appSettings: appSettingsState,
+  userSettings: userSettingsState,
 });
 
 const Component = (store, navigation) => (

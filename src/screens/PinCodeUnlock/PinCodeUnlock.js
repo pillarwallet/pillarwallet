@@ -77,12 +77,15 @@ class PinCodeUnlock extends React.Component<Props, State> {
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
     const { useBiometrics } = this.props;
+    const { lastAppState } = this.state;
 
     if (!this.errorMessage && DEFAULT_PIN) {
       this.handlePinSubmit(DEFAULT_PIN);
     }
 
-    if (useBiometrics && !this.errorMessage) {
+    if (useBiometrics
+      && !this.errorMessage
+      && lastAppState !== BACKGROUND_APP_STATE) {
       this.showBiometricLogin();
     }
 

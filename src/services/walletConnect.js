@@ -17,54 +17,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import WalletConnect from '@walletconnect/react-native';
+import type { IWalletConnectOptions } from '@walletconnect/react-native';
 
-export type Asset = {
-  symbol: string,
-  name: string,
-  address: string,
-  description: string,
-  iconUrl: string,
-  iconMonoUrl: string,
-  wallpaperUrl: string,
-  patternUrl?: string,
-  decimals: number,
-  amount?: number,
+const getNativeOptions = () => {
+  const nativeOptions = {
+    clientMeta: {
+      name: 'Pillar Wallet ',
+      description: 'Social. Secure. Intuitive.',
+      url: 'https://pillarproject.io/wallet',
+      icons: [
+        'https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/8c/36/c7/8c36c7d5-0698-97b5-13b2-a51564706cf5/AppIcon-1x_U007emarketing-85-220-0-6.png/460x0w.jpg',
+      ],
+    },
+  };
+
+  return nativeOptions;
 };
 
+export const createConnector = (options: IWalletConnectOptions): WalletConnect => {
+  const nativeOptions = getNativeOptions();
 
-export type Assets = {
-  [symbol: string]: Asset,
-};
+  const connector = new WalletConnect(options, nativeOptions);
 
-export type AssetsByAccount = {
-  [accountId: string]: Assets,
-};
-
-export type AssetsStore = {
-  [accountId: string]: Asset[],
-};
-
-export type Balance = {
-  balance: string,
-  symbol: string,
-};
-
-export type Balances = {
-  [symbol: string]: Balance,
-};
-
-export type BalancesStore = {
-  [accountId: string]: Balances,
-};
-
-export type Rates = {
-  [string]: {
-    [string]: number,
-  },
-};
-
-export type AssetTransfer = {
-  name: string,
-  amount: number,
-  gasLimit?: number,
+  return connector;
 };

@@ -63,6 +63,7 @@ import {
   paymentNetworkAccountBalancesSelector,
   paymentNetworkNonZeroBalancesSelector,
 } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -479,7 +480,7 @@ class PPNView extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets, supportedAssets },
+  assets: { supportedAssets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
   smartWallet: smartWalletState,
@@ -487,7 +488,6 @@ const mapStateToProps = ({
   paymentNetwork: { balances, availableToSettleTx: { data: availableToSettleTx, isFetched } },
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
 }) => ({
-  assets,
   rates,
   baseFiatCurrency,
   assetsLayout,
@@ -508,6 +508,7 @@ const structuredSelector = createStructuredSelector({
   activeAccount: activeAccountSelector,
   history: accountHistorySelector,
   activeAccountAddress: activeAccountAddressSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
