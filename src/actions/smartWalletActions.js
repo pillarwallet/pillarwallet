@@ -1035,7 +1035,7 @@ export const withdrawFromVirtualAccountAction = (amount: string) => {
     const txHash = await smartWalletService.withdrawFromVirtualAccount(estimated)
       .catch((e) => {
         Toast.show({
-          message: e.toString() || 'Failed to top up the account',
+          message: e.toString() || 'Failed to withdraw from the account',
           type: 'warning',
           autoClose: false,
         });
