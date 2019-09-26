@@ -38,9 +38,9 @@ import { TextLink, Label, BaseText } from 'components/Typography';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { formatAmount, getCurrencySymbol, formatMoney, formatFiat } from 'utils/common';
+import { formatAmount, formatFiat } from 'utils/common';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
+import { getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
 // types

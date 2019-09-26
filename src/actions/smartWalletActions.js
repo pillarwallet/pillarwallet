@@ -987,10 +987,7 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount, decimals);
     const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
-console.log({ amount,
-  value, //  value.toString(),
-  valueHex: value.toHexString(),
-  tokenAddress, decimals });
+
     const response = await smartWalletService
       .estimateWithdrawFromVirtualAccount(value, tokenAddress)
       .catch((e) => {
