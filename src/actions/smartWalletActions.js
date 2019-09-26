@@ -122,7 +122,11 @@ import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } fr
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
-import { formatMoney, formatUnits } from 'utils/common';
+import {
+  formatMoney,
+  formatUnits,
+  isCaseInsensitiveMatch,
+} from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 
 const storage = Storage.getInstance('db');
@@ -612,8 +616,8 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
     // filter out already stored payments
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
-    const newPayments = payments.filter(payment => {
-      const paymentExists = accountHistory.find(({ hash }) => hash === payment.hash);
+    const newPayments = payments.filter(({ hash: paymentHash }) => {
+      const paymentExists = accountHistory.find(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash));
       return !paymentExists;
     });
 
@@ -622,6 +626,7 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
       const value = get(payment, 'value', new BigNumber(0));
       const senderAddress = get(payment, 'sender.account.address');
       const recipientAddress = get(payment, 'recipient.account.address');
+      const stateInPPN = get(payment, 'state');
 
       return buildHistoryTransaction({
         from: senderAddress,
@@ -632,6 +637,7 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
         isPPNTransaction: true,
         createdAt: +new Date(payment.updatedAt) / 1000,
         status: TX_CONFIRMED_STATUS,
+        stateInPPN,
       });
     });
 

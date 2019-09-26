@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
+import { sdkConstants } from '@smartwallet/sdk';
 import get from 'lodash.get';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -39,7 +40,10 @@ import {
   calculateBalanceInFiat,
   getRate,
 } from 'utils/assets';
-import { formatMoney, formatFiat } from 'utils/common';
+import {
+  formatMoney,
+  formatFiat,
+} from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
@@ -180,6 +184,9 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 const UNSETTLED = 'UNSETTLED';
 const SETTLED = 'SETTLED';
+
+const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
+const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');
 
 class PPNView extends React.Component<Props, State> {
   initialAssets = [{ balance: '0', symbol: ETH }, { balance: '0', symbol: PLR }];
@@ -353,9 +360,22 @@ class PPNView extends React.Component<Props, State> {
       contacts,
       contactsSmartAddresses,
       activeAccountAddress,
+      baseFiatCurrency,
+      rates,
     } = this.props;
 
+    let incomingBalanceInFiat = 0;
     const assetsOnNetworkArray = Object.values(assetsOnNetwork);
+    if (assetsOnNetworkArray.length) {
+      incomingBalanceInFiat = assetsOnNetworkArray.reduce((totalInFiat, incomingAsset) => {
+        const tokenSymbol = get(incomingAsset, 'symbol', ETH);
+        const tokenBalance = parseFloat(get(incomingAsset, 'balance', '0'));
+        const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+        const tokenRate = getRate(rates, tokenSymbol, fiatCurrency);
+        return totalInFiat + (tokenBalance * tokenRate);
+      }, 0);
+    }
+
     const availableFormattedAmount = formatMoney(availableStake, 4);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const { upgrade: { status } } = smartWalletState;
@@ -370,7 +390,8 @@ class PPNView extends React.Component<Props, State> {
     const PPNTransactions = history.filter(
       ({ isPPNTransaction, to }) => !!isPPNTransaction && addressesEqual(to, activeAccountAddress),
     );
-    const unsettledTransactions = mapTransactionsHistory(
+
+    const PPNTransactionsMapped = mapTransactionsHistory(
       PPNTransactions,
       contacts,
       contactsSmartAddresses,
@@ -378,12 +399,28 @@ class PPNView extends React.Component<Props, State> {
       TRANSACTION_EVENT,
     );
 
+    const PPNTransactionsGrouped = PPNTransactionsMapped.reduce((filtered, transaction) => {
+      const { stateInPPN } = transaction;
+      const { settled, unsettled } = filtered;
+      switch (stateInPPN) {
+        case PAYMENT_PROCESSED:
+          filtered.settled = settled.concat(transaction);
+          break;
+        case PAYMENT_COMPLETED:
+          filtered.unsettled = unsettled.concat(transaction);
+          break;
+        default:
+          break;
+      }
+      return filtered;
+    }, { settled: [], unsettled: [] });
+
     const historyTabs = [
       {
         id: UNSETTLED,
         name: 'Unsettled',
         onPress: () => this.setActiveTab(UNSETTLED),
-        data: unsettledTransactions,
+        data: PPNTransactionsGrouped.unsettled,
         emptyState: {
           title: 'No unsettled transactions',
         },
@@ -392,7 +429,7 @@ class PPNView extends React.Component<Props, State> {
         id: SETTLED,
         name: 'Settled',
         onPress: () => this.setActiveTab(SETTLED),
-        data: [],
+        data: PPNTransactionsGrouped.settled,
         emptyState: {
           title: 'No settled transactions',
         },
@@ -446,7 +483,7 @@ class PPNView extends React.Component<Props, State> {
             />
           </AssetButtonsWrapper>
         </TopPartWrapper>
-        {!!assetsOnNetworkArray.length &&
+        {incomingBalanceInFiat > 0 &&
         <ListItemChevron
           wrapperStyle={{
             borderTopWidth: 0,
@@ -455,7 +492,7 @@ class PPNView extends React.Component<Props, State> {
           }}
           chevronStyle={{ color: baseColors.darkGray }}
           label="Incoming balance"
-          rightAddon={(<BlueText>11.11</BlueText>)}
+          rightAddon={(<BlueText>{formatFiat(incomingBalanceInFiat, baseFiatCurrency)}</BlueText>)}
           onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
           color={baseColors.slateBlack}
           bordered
