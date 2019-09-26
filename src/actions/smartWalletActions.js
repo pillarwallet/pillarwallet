@@ -732,6 +732,13 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
                 title: 'Success',
                 autoClose: true,
               });
+            } else if (txUpdated.tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
+              Toast.show({
+                message: 'Withdrawal process completed!',
+                type: 'success',
+                title: 'Success',
+                autoClose: true,
+              });
             } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
               Toast.show({
                 message: 'Transaction was successfully sent!',
