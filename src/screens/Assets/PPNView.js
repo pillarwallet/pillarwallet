@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RefreshControl, ScrollView } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
@@ -27,17 +27,15 @@ import { withNavigation } from 'react-navigation';
 import { sdkConstants } from '@smartwallet/sdk';
 import get from 'lodash.get';
 
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText, MediumText } from 'components/Typography';
-import TankAssetBalance from 'components/TankAssetBalance';
 import DeploymentView from 'components/DeploymentView';
 import CircleButton from 'components/CircleButton';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import Tabs from 'components/Tabs';
+import Button from 'components/Button';
 
 import {
   addressesEqual,
-  calculateBalanceInFiat,
   getRate,
 } from 'utils/assets';
 import {
@@ -48,9 +46,8 @@ import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
-import { defaultFiatCurrency, ETH, PLR, TOKENS } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import {
-  ASSET,
   FUND_TANK,
   SEND_TOKEN_FROM_ASSET_FLOW,
   SETTLE_BALANCE,
@@ -115,14 +112,6 @@ const AssetButtonsWrapper = styled.View`
   justify-content: center;
 `;
 
-const ListHeaderWrapper = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: ${spacing.large}px;
-`;
-
 const TopPartWrapper = styled.View`
   padding: 36px ${spacing.large}px;
   background-color: ${baseColors.snowWhite};
@@ -145,42 +134,21 @@ const TankBalance = styled(BaseText)`
   color: ${baseColors.slateBlack};
 `;
 
-const HeaderButton = styled.TouchableOpacity`
-  background-color: ${props => props.disabled ? baseColors.lightGray : baseColors.electricBlue};
-  border-radius: 3px;
-  padding: 6px 12px;
-`;
-
-const ButtonText = styled(MediumText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  color: ${props => props.disabled ? baseColors.darkGray : baseColors.white};
-`;
-
-const AddonWrapper = styled.View`
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-`;
-
-const BalanceWrapper = styled.View`
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-end;
-`;
-
-const ValueInFiat = styled(BaseText)`
-  color: ${baseColors.coolGrey};
-  font-size: ${fontSizes.extraExtraSmall}px;
-`;
-
 const BlueText = styled(BaseText)`
   color: ${baseColors.electricBlue};
   font-size: ${fontSizes.extraSmall}px;
   margin-right: ${spacing.medium}px;
 `;
 
+const FloatingButtonView = styled.View`
+  position: absolute;
+  bottom: ${spacing.rhythm}px;
+  alignItems: center;
+  justify-content: center;
+  width: 100%;
+`;
+
 const iconSend = require('assets/icons/icon_send.png');
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 const UNSETTLED = 'UNSETTLED';
 const SETTLED = 'SETTLED';
@@ -189,113 +157,8 @@ const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', ''
 const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');
 
 class PPNView extends React.Component<Props, State> {
-  initialAssets = [{ balance: '0', symbol: ETH }, { balance: '0', symbol: PLR }];
   state = {
     activeTab: UNSETTLED,
-  };
-
-  renderAsset = ({ item }) => {
-    const {
-      baseFiatCurrency,
-      assets,
-      rates,
-      navigation,
-      activeAccount,
-    } = this.props;
-
-    const tokenSymbol = get(item, 'symbol', ETH);
-    const tokenBalance = get(item, 'balance', '0');
-    const paymentNetworkBalanceFormatted = formatMoney(tokenBalance, 4);
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const totalInFiat = tokenBalance * getRate(rates, tokenSymbol, fiatCurrency);
-    const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
-    const thisAsset = assets[tokenSymbol] || {};
-
-    const {
-      name,
-      symbol,
-      iconMonoUrl,
-      decimals,
-      iconUrl,
-      patternUrl,
-      address,
-      description,
-    } = thisAsset;
-
-    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-
-    const assetInfo = {
-      id: tokenSymbol,
-      name: name || symbol,
-      token: symbol,
-      amount: paymentNetworkBalanceFormatted,
-      balanceInFiat: { amount: formattedAmountInFiat, currency: fiatCurrency },
-      address: getAccountAddress(activeAccount),
-      contractAddress: address,
-      icon: iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '',
-      iconColor: fullIconUrl,
-      patternIcon: patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl,
-      description,
-      decimals,
-      isSynthetic: true,
-      isListed: true,
-    };
-
-    return (
-      <ListItemWithImage
-        onPress={() => {
-          navigation.navigate(ASSET,
-            {
-              assetData: {
-                ...assetInfo,
-                tokenType: TOKENS,
-              },
-            },
-          );
-        }}
-        label={assetInfo.name}
-        itemImageUrl={fullIconUrl || genericToken}
-        fallbackSource={genericToken}
-        customAddon={
-          <AddonWrapper>
-            <BalanceWrapper>
-              <TankAssetBalance amount={paymentNetworkBalanceFormatted} monoColor />
-              <ValueInFiat>
-                {formattedAmountInFiat}
-              </ValueInFiat>
-            </BalanceWrapper>
-          </AddonWrapper>
-        }
-        rightColumnInnerStyle={{ flexDirection: 'row' }}
-      />
-    );
-  };
-
-  renderHeader = (disableSettle: boolean) => {
-    const {
-      assetsOnNetwork,
-      navigation,
-      rates,
-      baseFiatCurrency,
-      balances,
-    } = this.props;
-
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const balance = calculateBalanceInFiat(rates, balances, fiatCurrency);
-    const PPNBalance = formatFiat(balance, baseFiatCurrency);
-    const disabled = !Object.keys(assetsOnNetwork).length || disableSettle;
-
-    return (
-      <ListHeaderWrapper>
-        <SectionTitle>{`Balance ${PPNBalance}`}</SectionTitle>
-        <HeaderButton
-          onPress={() => navigation.navigate(SETTLE_BALANCE)}
-          disabled={disabled}
-        >
-          <ButtonText disabled={disabled}>Settle</ButtonText>
-        </HeaderButton>
-      </ListHeaderWrapper>
-    );
   };
 
   goToSend = () => {
@@ -404,10 +267,12 @@ class PPNView extends React.Component<Props, State> {
       const { settled, unsettled } = filtered;
       switch (stateInPPN) {
         case PAYMENT_PROCESSED:
-          filtered.settled = settled.concat(transaction);
+          filtered.settled = settled
+            .concat(transaction);
           break;
         case PAYMENT_COMPLETED:
-          filtered.unsettled = unsettled.concat(transaction);
+          filtered.unsettled = unsettled
+            .concat(transaction);
           break;
         default:
           break;
@@ -436,82 +301,99 @@ class PPNView extends React.Component<Props, State> {
       },
     ];
 
+    const showSettleButton = activeTab !== SETTLED && !!PPNTransactionsGrouped.unsettled.length;
+
     return (
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}
-        refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={() => {
-              fetchVirtualAccountBalance();
-            }}
-          />
-        }
-      >
-        {!!disableTopUpAndSettle &&
-        <DeploymentView
-          message={sendingBlockedMessage}
-          buttonLabel="Deploy Smart Wallet"
-          buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-        />}
-        <TopPartWrapper>
-          <SectionTitle>PLR Tank</SectionTitle>
-          <TankBalanceWrapper>
-            <TankBalance>
-              {`${availableFormattedAmount} PLR`}
-            </TankBalance>
-          </TankBalanceWrapper>
-          <AssetButtonsWrapper>
-            <CircleButton
-              label="Top up"
-              onPress={() => navigation.navigate(FUND_TANK)}
-              fontIcon="plus"
-              disabled={!!disableTopUpAndSettle}
-            />
-            <CircleButton
-              label="Withdraw"
-              fontIcon="up-arrow"
-              onPress={() => {}}
-              disabled={availableStake <= 0}
-            />
-            <CircleButton
-              label="Send"
-              icon={iconSend}
-              onPress={this.goToSend}
-              disabled={availableStake <= 0}
-            />
-          </AssetButtonsWrapper>
-        </TopPartWrapper>
-        {incomingBalanceInFiat > 0 &&
-        <ListItemChevron
-          wrapperStyle={{
-            borderTopWidth: 0,
-            borderBottomWidth: 1,
-            borderColor: baseColors.mediumLightGray,
+      <View style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: showSettleButton ? (56 + spacing.rhythm) : 0,
           }}
-          chevronStyle={{ color: baseColors.darkGray }}
-          label="Incoming balance"
-          rightAddon={(<BlueText>{formatFiat(incomingBalanceInFiat, baseFiatCurrency)}</BlueText>)}
-          onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
-          color={baseColors.slateBlack}
-          bordered
-        />}
-        <Tabs
-          tabs={historyTabs}
-          wrapperStyle={{ paddingTop: 16 }}
-        />
-        <ActivityFeed
-          backgroundColor={baseColors.white}
-          navigation={navigation}
-          tabs={historyTabs}
-          activeTab={activeTab}
-          hideTabs
-          initialNumToRender={6}
-          wrapperStyle={{ flexGrow: 1 }}
-          contentContainerStyle={{ flexGrow: 1 }}
-        />
-      </ScrollView>
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => {
+                fetchVirtualAccountBalance();
+              }}
+            />
+          }
+        >
+          {!!disableTopUpAndSettle &&
+          <DeploymentView
+            message={sendingBlockedMessage}
+            buttonLabel="Deploy Smart Wallet"
+            buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
+          />}
+          <TopPartWrapper>
+            <SectionTitle>PLR Tank</SectionTitle>
+            <TankBalanceWrapper>
+              <TankBalance>
+                {`${availableFormattedAmount} PLR`}
+              </TankBalance>
+            </TankBalanceWrapper>
+            <AssetButtonsWrapper>
+              <CircleButton
+                label="Top up"
+                onPress={() => navigation.navigate(FUND_TANK)}
+                fontIcon="plus"
+                disabled={!!disableTopUpAndSettle}
+              />
+              <CircleButton
+                label="Withdraw"
+                fontIcon="up-arrow"
+                onPress={() => {}}
+                disabled={availableStake <= 0}
+              />
+              <CircleButton
+                label="Send"
+                icon={iconSend}
+                onPress={this.goToSend}
+                disabled={availableStake <= 0}
+              />
+            </AssetButtonsWrapper>
+          </TopPartWrapper>
+          {incomingBalanceInFiat > 0 &&
+          <ListItemChevron
+            wrapperStyle={{
+              borderTopWidth: 0,
+              borderBottomWidth: 1,
+              borderColor: baseColors.mediumLightGray,
+            }}
+            chevronStyle={{ color: baseColors.darkGray }}
+            label="Incoming balance"
+            rightAddon={(<BlueText>{formatFiat(incomingBalanceInFiat, baseFiatCurrency)}</BlueText>)}
+            onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
+            color={baseColors.slateBlack}
+            bordered
+          />}
+          <Tabs
+            tabs={historyTabs}
+            wrapperStyle={{ paddingTop: 16 }}
+          />
+          <ActivityFeed
+            backgroundColor={baseColors.white}
+            navigation={navigation}
+            tabs={historyTabs}
+            activeTab={activeTab}
+            hideTabs
+            initialNumToRender={6}
+            wrapperStyle={{ flexGrow: 1 }}
+            contentContainerStyle={{ flexGrow: 1 }}
+          />
+        </ScrollView>
+        {showSettleButton &&
+          <FloatingButtonView>
+            <Button
+              roundedCorners
+              style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
+              width="auto"
+              title="Settle transactions"
+              onPress={() => navigation.navigate(SETTLE_BALANCE)}
+            />
+          </FloatingButtonView>
+        }
+      </View>
     );
   }
 }
