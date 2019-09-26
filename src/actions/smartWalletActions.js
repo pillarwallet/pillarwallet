@@ -818,12 +818,16 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txStatus = get(event, 'payload.state', '');
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txReceiverAddress = get(event, 'payload.recipient.account.address', '');
+      const txSenderAddress = get(event, 'payload.sender.account.address', '');
 
       const accountAssets = assets[activeAccountAddress];
       const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
       const txAmountFormatted = formatUnits(txAmount, decimals);
 
-      if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {
+      if (txStatus === PAYMENT_COMPLETED
+        && activeAccountAddress === txReceiverAddress
+        && txReceiverAddress !== txSenderAddress
+      ) {
         Toast.show({
           message: `You received ${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`,
           type: 'success',
