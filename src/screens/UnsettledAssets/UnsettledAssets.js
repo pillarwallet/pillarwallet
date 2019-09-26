@@ -29,7 +29,10 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
 import { getRate } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
-import { baseColors } from 'utils/variables';
+import {
+  baseColors,
+  spacing,
+} from 'utils/variables';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
@@ -40,6 +43,8 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 import type { Assets, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
+import Button from 'components/Button';
+import { SETTLE_BALANCE } from 'constants/navigationConstants';
 
 type Props = {
   baseFiatCurrency: string,
@@ -52,6 +57,14 @@ type Props = {
 
 const StyledFlatList = styled.FlatList`
   background-color: ${baseColors.white};
+`;
+
+const FloatingButtonView = styled.View`
+  position: absolute;
+  bottom: ${spacing.rhythm}px;
+  alignItems: center;
+  justify-content: center;
+  width: 100%;
 `;
 
 class UnsettledAssets extends React.Component<Props> {
@@ -86,7 +99,7 @@ class UnsettledAssets extends React.Component<Props> {
   };
 
   render() {
-    const { assetsOnNetwork } = this.props;
+    const { assetsOnNetwork, navigation } = this.props;
     const assetsOnNetworkArray = Object.keys(assetsOnNetwork).map((asset) => assetsOnNetwork[asset]);
 
     return (
@@ -103,8 +116,17 @@ class UnsettledAssets extends React.Component<Props> {
           maxToRenderPerBatch={5}
           onEndReachedThreshold={0.5}
           style={{ width: '100%', height: '100%', flex: 1 }}
-          contentContainerStyle={{ paddingTop: 4 }}
+          contentContainerStyle={{ paddingTop: 4, paddingBottom: 56 + spacing.rhythm }}
         />
+        <FloatingButtonView>
+          <Button
+            roundedCorners
+            style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
+            width="auto"
+            title="Settle transactions"
+            onPress={() => navigation.navigate(SETTLE_BALANCE)}
+          />
+        </FloatingButtonView>
       </ContainerWithHeader>
     );
   }
