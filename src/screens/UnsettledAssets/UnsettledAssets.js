@@ -23,8 +23,9 @@ import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
 import { getRate } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
@@ -35,6 +36,8 @@ import {
   paymentNetworkAccountBalancesSelector,
   paymentNetworkNonZeroBalancesSelector,
 } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
+
 import type { Assets, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -51,8 +54,6 @@ const StyledFlatList = styled.FlatList`
   background-color: ${baseColors.white};
 `;
 
-const genericToken = require('assets/images/tokens/genericToken.png');
-
 class UnsettledAssets extends React.Component<Props> {
   renderAsset = ({ item }) => {
     const {
@@ -68,18 +69,18 @@ class UnsettledAssets extends React.Component<Props> {
     const totalInFiat = tokenBalance * getRate(rates, tokenSymbol, fiatCurrency);
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const thisAsset = assets[tokenSymbol] || {};
-    const { symbol, iconUrl } = thisAsset;
+    const { symbol, iconUrl, name } = thisAsset;
     const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
     return (
-      <AssetCardMinimized
-        id={symbol}
-        token={symbol}
-        amount={paymentNetworkBalanceFormatted}
-        name={symbol}
-        balanceInFiat={formattedAmountInFiat}
-        icon={fullIconUrl || genericToken}
-        columnCount={3}
+      <ListItemWithImage
+        label={name || symbol}
+        avatarUrl={fullIconUrl}
+        balance={{
+          balance: paymentNetworkBalanceFormatted,
+          value: formattedAmountInFiat,
+          token: symbol,
+        }}
       />
     );
   };
@@ -96,14 +97,13 @@ class UnsettledAssets extends React.Component<Props> {
       >
         <StyledFlatList
           data={assetsOnNetworkArray}
-          keyExtractor={(item) => item.symbol}
+          keyExtractor={({ symbol }) => symbol}
           renderItem={this.renderAsset}
           initialNumToRender={5}
           maxToRenderPerBatch={5}
           onEndReachedThreshold={0.5}
-          style={{ width: '100%', height: '100%' }}
-          contentContainerStyle={{ padding: 10 }}
-          numColumns={3}
+          style={{ width: '100%', height: '100%', flex: 1 }}
+          contentContainerStyle={{ paddingTop: 4 }}
         />
       </ContainerWithHeader>
     );
@@ -111,11 +111,9 @@ class UnsettledAssets extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
-  assets,
   rates,
   baseFiatCurrency,
 });
@@ -123,6 +121,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
