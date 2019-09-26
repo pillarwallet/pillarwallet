@@ -50,7 +50,12 @@ import type { Assets, Balances, Rates } from 'models/Asset';
 import type { TxToSettle } from 'models/PaymentNetwork';
 
 // utils
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import {
+  baseColors,
+  fontSizes,
+  spacing,
+  UIColors,
+} from 'utils/variables';
 import { formatFiat, formatAmount } from 'utils/common';
 import { getRate } from 'utils/assets';
 
@@ -109,6 +114,16 @@ const ValueInFiat = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall}px;
 `;
 
+const SubtitleView = styled.View`
+  background-color: ${UIColors.defaultBackgroundColor};
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 30px ${spacing.rhythm}px;
+  border-bottom-width: 1px;
+  border-color: ${baseColors.mediumLightGray};
+`;
+
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 class SettleBalance extends React.Component<Props, State> {
@@ -144,7 +159,8 @@ class SettleBalance extends React.Component<Props, State> {
     const time = isToday
       ? `Today at ${formatDate(item.createdAt, 'HH:mm')}`
       : formatDate(item.createdAt, 'MMMM D, YYYY HH:mm');
-
+    const isChecked = txToSettle.some(({ hash }) => hash === assetInfo.hash);
+    const isDisabled = !isChecked && txToSettle.length === MAX_TX_TO_SETTLE;
     return (
       <ListItemWithImage
         label={assetInfo.name}
@@ -162,7 +178,8 @@ class SettleBalance extends React.Component<Props, State> {
             </BalanceWrapper>
             <Checkbox
               onPress={() => this.toggleItemToTransfer(assetInfo)}
-              checked={!!txToSettle.find(({ hash }) => hash === assetInfo.hash)}
+              checked={isChecked}
+              disabled={isDisabled}
               rounded
               wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
             />
@@ -182,7 +199,7 @@ class SettleBalance extends React.Component<Props, State> {
       Toast.show({
         message: `You can settle only ${MAX_TX_TO_SETTLE} transactions at once`,
         type: 'info',
-        title: 'Error',
+        title: 'Warning',
       });
       return;
     } else {
@@ -208,13 +225,15 @@ class SettleBalance extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Settle balances' }] }}
+        headerProps={{ centerItems: [{ title: 'Settle transactions' }] }}
+        backgroundColor={baseColors.white}
         keyboardAvoidFooter={(
           <FooterInner style={{ alignItems: 'center' }}>
             <Label>&nbsp;</Label>
             {!!txToSettle.length && (
               <Button
                 small
+                roundedCorners
                 disabled={!session.isOnline}
                 title="Next"
                 onPress={this.goToConfirm}
@@ -226,9 +245,10 @@ class SettleBalance extends React.Component<Props, State> {
         {showSpinner && <LoadingSpinner />}
         {!showSpinner && (
           <React.Fragment>
-            <Paragraph light small center style={{ paddingTop: 15 }}>
-              You can settle up to {MAX_TX_TO_SETTLE} transactions at once
-            </Paragraph>
+            <SubtitleView>
+              <Paragraph light small>Transactions available to settle</Paragraph>
+              <Paragraph style={{ textAlign: 'right' }} small>{txToSettle.length} of {MAX_TX_TO_SETTLE}</Paragraph>
+            </SubtitleView>
             <FlatList
               keyExtractor={item => item.hash}
               data={availableToSettleTx}
