@@ -1022,9 +1022,10 @@ export const withdrawFromVirtualAccountAction = (amount: string) => {
     } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
-    const { decimals = 18 } = assets[PPN_TOKEN] || {};
+    const accountAssets = assets[accountAddress];
+    const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount.toString(), decimals);
-    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, assets);
+    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
 
     const estimated = await smartWalletService
       .estimateWithdrawFromVirtualAccount(value, tokenAddress)
