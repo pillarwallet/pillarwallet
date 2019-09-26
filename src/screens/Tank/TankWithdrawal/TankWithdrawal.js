@@ -177,8 +177,8 @@ class TankWithdrawal extends React.Component<Props, State> {
       baseFiatCurrency,
     } = this.props;
 
-    const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
-    const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const { symbol: token, iconMonoUrl, decimals } = assets[PPN_TOKEN] || {};
+    const icon = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     // balance
@@ -210,11 +210,6 @@ class TankWithdrawal extends React.Component<Props, State> {
       icon,
       currency: token,
       valueInFiatOutput,
-      customProps: {
-        noTint: true,
-        floatingImageStyle: { marginRight: 3 },
-        white: true,
-      },
     });
 
     return (
