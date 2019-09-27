@@ -26,10 +26,13 @@ import type { ConnectionIdentityKey } from 'models/Connections';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { fetchOldInviteNotificationsAction } from 'actions/oldInvitationsActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
-import { saveDbAction } from './dbActions';
+import SDKWrapper from 'services/api';
+import { saveDbAction } from 'actions/dbActions';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 export const useConnectionKeyPairs = (count: number = 1) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { connectionKeyPairs: { data: connectionKeyPairs } } = getState();
     const resultConnectionKeys = connectionKeyPairs.splice(0, count);
     await dispatch({
@@ -42,7 +45,7 @@ export const useConnectionKeyPairs = (count: number = 1) => {
 };
 
 export const prependConnectionKeyPairs = (connKeyPairs: Object[] = []) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       connectionKeyPairs: { data: connectionKeyPairs },
     } = getState();
@@ -57,7 +60,7 @@ export const prependConnectionKeyPairs = (connKeyPairs: Object[] = []) => {
 };
 
 export const updateConnectionIdentityKeys = (successfullConnIdentityKeys: Object[]) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { connectionIdentityKeys: { data: connectionIdentityKeys } } = getState();
     const resultConnectionIdentityKeys = connectionIdentityKeys.concat(successfullConnIdentityKeys);
     await dispatch({
@@ -74,7 +77,7 @@ export const updateConnectionIdentityKeys = (successfullConnIdentityKeys: Object
 };
 
 export const mapIdentityKeysAction = (connectionPreKeyCount: number, theWalletId?: ?string = null) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Function, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId = theWalletId } },
     } = getState();
@@ -119,7 +122,7 @@ export const mapIdentityKeysAction = (connectionPreKeyCount: number, theWalletId
 };
 
 export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?string = null) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Function, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId = theWalletId } },
       contacts: { data: contacts },
@@ -213,7 +216,7 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
 };
 
 export const backgroundPreKeyGeneratorAction = (mnemonic: ?string, privateKey: ?string, insideRun?: ?boolean) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     if (insideRun) {
       InteractionManager.runAfterInteractions(async () => {
         const { connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex } } = getState();
@@ -339,7 +342,7 @@ export const updateConnectionKeyPairs = (
   walletId: string,
   generateKeys: boolean = true,
 ) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
       connectionIdentityKeys: { data: connectionIdentityKeys },

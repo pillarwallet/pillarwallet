@@ -7,6 +7,7 @@ import {
   STOP_FETCHING_CONTACTS_BADGES,
 } from 'constants/badgesConstants';
 import Toast from 'components/Toast';
+import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
@@ -14,7 +15,7 @@ import { saveDbAction } from './dbActions';
 import { offlineApiCall } from './offlineApiActions';
 
 export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       badges: { data: badges },
@@ -52,7 +53,7 @@ export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
 
 
 export const fetchContactBadgesAction = (contact: Object) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       badges: { contactsBadges },
