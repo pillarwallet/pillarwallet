@@ -345,7 +345,12 @@ class ActivityFeed extends React.Component<Props, State> {
       const tag = get(notification, 'tag', '');
       if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
         return (
-          <SettlementItem settleData={notification.extra} type={feedType} asset={asset} />
+          <SettlementItem
+            settleData={notification.extra}
+            onPress={() => this.selectEvent({ ...notification, value, contact }, type, notification.status)}
+            type={feedType}
+            asset={asset}
+          />
         );
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
         nameOrAddress = 'PLR Network Top Up';
