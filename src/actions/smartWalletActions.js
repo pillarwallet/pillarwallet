@@ -926,7 +926,7 @@ export const topUpVirtualAccountAction = (amount: string) => {
         return {};
       });
 
-    if (!estimated || !Object.keys(estimated).length) return;
+    if (isEmpty(estimated)) return;
 
     const txHash = await smartWalletService.topUpAccountVirtualBalance(estimated)
       .catch((e) => {
@@ -1039,7 +1039,7 @@ export const withdrawFromVirtualAccountAction = (amount: string) => {
         return {};
       });
 
-    if (!estimated || !Object.keys(estimated).length) return;
+    if (isEmpty(estimated)) return;
 
     const txHash = await smartWalletService.withdrawFromVirtualAccount(estimated)
       .catch((e) => {
@@ -1184,7 +1184,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
         return {};
       });
 
-    if (!estimated || !Object.keys(estimated).length) return;
+    if (isEmpty(estimated)) return;
 
     const txHash = await smartWalletService.withdrawAccountPayment(estimated)
       .catch((e) => {
