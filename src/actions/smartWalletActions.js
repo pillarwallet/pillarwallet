@@ -834,13 +834,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             title: 'Success',
             autoClose: true,
           });
-        } else {
-          Toast.show({
-            message: `Transaction for ${paymentInfo} has been settled`,
-            type: 'success',
-            title: 'Success',
-            autoClose: true,
-          });
         }
         dispatch(fetchAssetsBalancesAction());
         dispatch(syncVirtualAccountTransactionsAction());
