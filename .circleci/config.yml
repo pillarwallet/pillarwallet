@@ -9,6 +9,7 @@ executors:
     macos:
       xcode: "10.3.0"
     environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
       _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
@@ -846,7 +847,7 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
+                  - fix/xcode_circleci_fix
       - hockeyapp_android:
           requires:
             - build-and-test
@@ -860,7 +861,7 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/xcode_circleci_fix
+                  - master
       - stage_android:
           requires:
             - build-and-test
@@ -879,7 +880,15 @@ workflows:
             - stage_android
       - prod_ios:
           requires:
-            - release_to_prod
+            - hockeyapp_ios
+          filters:
+            branches:
+              only:
+                - fix/xcode_circleci_fix
       - prod_android:
           requires:
-            - release_to_prod
+            - hockeyapp_ios
+          filters:
+            branches:
+              only:
+                - fix/xcode_circleci_fix
