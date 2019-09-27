@@ -616,12 +616,15 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
     // filter out already stored payments
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
-    const newPayments = payments.filter(({ hash: paymentHash }) => {
-      const paymentExists = accountHistory.find(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash));
-      return !paymentExists;
-    });
 
-    const transformedNewPayments = newPayments.map(payment => {
+    // new or updated payment is one that doesn't exist in history contain or payment state has changed
+    const newOrUpdatedPayments = payments.filter(
+      ({ hash: paymentHash, state: prevStateInPPN }) => !accountHistory.some(
+        ({ hash, stateInPPN }) => isCaseInsensitiveMatch(hash, paymentHash) && stateInPPN === prevStateInPPN,
+      ),
+    );
+
+    const transformedNewPayments = newOrUpdatedPayments.map(payment => {
       const tokenSymbol = get(payment, 'token.symbol', ETH);
       const value = get(payment, 'value', new BigNumber(0));
       const senderAddress = get(payment, 'sender.account.address');
@@ -671,6 +674,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     const ACCOUNT_VIRTUAL_BALANCE_UPDATED = get(sdkModules, 'Api.EventNames.AccountVirtualBalanceUpdated', '');
     const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
     const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
+    const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');
 
     if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !TRANSACTION_COMPLETED) {
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
@@ -820,13 +824,24 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
       const txAmountFormatted = formatUnits(txAmount, decimals);
 
-      if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {
-        Toast.show({
-          message: `You received ${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`,
-          type: 'success',
-          title: 'Success',
-          autoClose: true,
-        });
+      if (activeAccountAddress === txReceiverAddress
+        && [PAYMENT_COMPLETED, PAYMENT_PROCESSED].includes(txStatus)) {
+        const paymentInfo = `${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`;
+        if (txStatus === PAYMENT_COMPLETED) {
+          Toast.show({
+            message: `You received ${paymentInfo}`,
+            type: 'success',
+            title: 'Success',
+            autoClose: true,
+          });
+        } else {
+          Toast.show({
+            message: `Transaction for ${paymentInfo} has been settled`,
+            type: 'success',
+            title: 'Success',
+            autoClose: true,
+          });
+        }
         dispatch(fetchAssetsBalancesAction());
         dispatch(syncVirtualAccountTransactionsAction());
       }
