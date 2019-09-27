@@ -34,13 +34,14 @@ const EmptySectionTextWrapper = styled.View`
 `;
 
 const EmptySectionTitle = styled(BaseText)`
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.large}px;
   color: ${baseColors.slateBlack};
   margin-bottom: 6px;
+  text-align: center;
 `;
 
 const EmptySectionText = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
   text-align: center;
 `;

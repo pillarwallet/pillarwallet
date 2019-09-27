@@ -124,7 +124,11 @@ import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } fr
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
-import { formatMoney, formatUnits } from 'utils/common';
+import {
+  formatMoney,
+  formatUnits,
+  isCaseInsensitiveMatch,
+} from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 
 const storage = Storage.getInstance('db');
@@ -614,16 +618,20 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
     // filter out already stored payments
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
-    const newPayments = payments.filter(payment => {
-      const paymentExists = accountHistory.find(({ hash }) => hash === payment.hash);
-      return !paymentExists;
-    });
 
-    const transformedNewPayments = newPayments.map(payment => {
+    // new or updated payment is one that doesn't exist in history contain or payment state has changed
+    const newOrUpdatedPayments = payments.filter(
+      ({ hash: paymentHash, state: prevStateInPPN }) => !accountHistory.some(
+        ({ hash, stateInPPN }) => isCaseInsensitiveMatch(hash, paymentHash) && stateInPPN === prevStateInPPN,
+      ),
+    );
+
+    const transformedNewPayments = newOrUpdatedPayments.map(payment => {
       const tokenSymbol = get(payment, 'token.symbol', ETH);
       const value = get(payment, 'value', new BigNumber(0));
       const senderAddress = get(payment, 'sender.account.address');
       const recipientAddress = get(payment, 'recipient.account.address');
+      const stateInPPN = get(payment, 'state');
 
       return buildHistoryTransaction({
         from: senderAddress,
@@ -634,6 +642,7 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
         isPPNTransaction: true,
         createdAt: +new Date(payment.updatedAt) / 1000,
         status: TX_CONFIRMED_STATUS,
+        stateInPPN,
       });
     });
 
@@ -667,6 +676,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     const ACCOUNT_VIRTUAL_BALANCE_UPDATED = get(sdkModules, 'Api.EventNames.AccountVirtualBalanceUpdated', '');
     const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
     const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
+    const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');
 
     if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !TRANSACTION_COMPLETED) {
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
@@ -824,16 +834,18 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
       const txAmountFormatted = formatUnits(txAmount, decimals);
 
-      if (txStatus === PAYMENT_COMPLETED
-        && activeAccountAddress === txReceiverAddress
+      if (activeAccountAddress === txReceiverAddress
         && txReceiverAddress !== txSenderAddress
-      ) {
-        Toast.show({
-          message: `You received ${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`,
-          type: 'success',
-          title: 'Success',
-          autoClose: true,
-        });
+        && [PAYMENT_COMPLETED, PAYMENT_PROCESSED].includes(txStatus)) {
+        const paymentInfo = `${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`;
+        if (txStatus === PAYMENT_COMPLETED) {
+          Toast.show({
+            message: `You received ${paymentInfo}`,
+            type: 'success',
+            title: 'Success',
+            autoClose: true,
+          });
+        }
         dispatch(fetchAssetsBalancesAction());
         dispatch(syncVirtualAccountTransactionsAction());
       }
@@ -1118,11 +1130,13 @@ export const fetchAvailableTxToSettleAction = () => {
 
     const txToSettle = payments.map(item => {
       const { decimals = 18 } = accountAssets[item.token] || {};
+      const senderAddress = get(item, 'sender.account.address', '');
       return {
         token: item.token,
         hash: item.hash,
         value: new BigNumber(formatUnits(item.value, decimals)),
         createdAt: item.updatedAt,
+        senderAddress,
       };
     });
     dispatch({

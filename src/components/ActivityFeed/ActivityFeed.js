@@ -21,10 +21,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import get from 'lodash.get';
-import orderBy from 'lodash.orderby';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { format as formatDate } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
@@ -50,6 +48,7 @@ import {
   partial,
   formatAmount,
   formatUnits,
+  groupAndSortByDate,
 } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact } from 'utils/contacts';
@@ -238,7 +237,6 @@ class ActivityFeed extends React.Component<Props, State> {
       feedData = [],
       emptyState,
     } = this.props;
-    const dataSections = [];
     let feedList = feedData;
     let emptyStateData = emptyState || {};
 
@@ -247,21 +245,7 @@ class ActivityFeed extends React.Component<Props, State> {
       if (activeTabInfo) ({ data: feedList, emptyState: emptyStateData = {} } = activeTabInfo);
     }
 
-    orderBy(feedList, ['createdAt'], ['desc']).forEach(listItem => {
-      const itemCreatedDate = new Date(listItem.createdAt * 1000);
-      const formattedDate = formatDate(itemCreatedDate, 'MMM D YYYY');
-      // don't show the year if the event happened this year
-      const titleDateFormat = itemCreatedDate.getFullYear() === new Date().getFullYear()
-        ? 'MMM D'
-        : 'MMM D YYYY';
-      const sectionTitle = formatDate(itemCreatedDate, titleDateFormat);
-      const existingSection = dataSections.find(({ date }) => date === formattedDate);
-      if (!existingSection) {
-        dataSections.push({ title: sectionTitle, date: formattedDate, data: [{ ...listItem }] });
-      } else {
-        existingSection.data.push({ ...listItem });
-      }
-    });
+    const dataSections = groupAndSortByDate(feedList);
 
     this.setState({ formattedFeedData: dataSections, emptyStateData });
   };

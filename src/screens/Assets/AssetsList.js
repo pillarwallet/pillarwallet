@@ -312,7 +312,7 @@ class AssetsList extends React.Component<Props, State> {
         onEndReachedThreshold={0.5}
         style={{ width: '100%', height: '100%', flex: 1 }}
         ListHeaderComponent={this.renderHeader}
-        conentContainerStyle={{ paddingTop: 4 }}
+        contentContainerStyle={{ paddingTop: 4 }}
       />
     );
   }

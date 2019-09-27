@@ -91,6 +91,7 @@ import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/UpgradeToSmartWallet/SmartWalletIntro';
+import UnsettledAssets from 'screens/UnsettledAssets';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -197,6 +198,7 @@ import {
   SMART_WALLET_INTRO,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
+  UNSETTLED_ASSETS,
   TANK_WITHDRAWAL_FLOW,
   TANK_WITHDRAWAL,
   TANK_WITHDRAWAL_CONFIRM,
@@ -263,6 +265,7 @@ const assetsFlow = createStackNavigator(
     [CONTACT]: ContactScreen,
     [WALLET_SETTINGS]: WalletSettingsScreen,
     [SETTINGS]: SettingsScreen,
+    [UNSETTLED_ASSETS]: UnsettledAssets,
   },
   StackNavigatorConfig,
 );
