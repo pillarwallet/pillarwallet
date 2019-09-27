@@ -30,6 +30,7 @@ import {
   SET_AVAILABLE_TO_SETTLE_TX,
   START_FETCHING_AVAILABLE_TO_SETTLE_TX,
   MARK_PLR_TANK_INITIALISED,
+  SET_ESTIMATED_WITHDRAWAL_FEE,
 } from 'constants/paymentNetworkConstants';
 import type { TopUpFee, SettleTxFee } from 'models/PaymentNetwork';
 import type { Balances } from 'models/Asset';
@@ -38,6 +39,7 @@ export type PaymentNetworkReducerState = {
   availableStake: string,
   balances: Balances,
   topUpFee: TopUpFee,
+  withdrawalFee: TopUpFee,
   settleTxFee: SettleTxFee,
   txToListen: string[],
   availableToSettleTx: {
@@ -56,6 +58,10 @@ export const initialState = {
   availableStake: '0',
   balances: {},
   topUpFee: {
+    isFetched: false,
+    feeInfo: null,
+  },
+  withdrawalFee: {
     isFetched: false,
     feeInfo: null,
   },
@@ -84,6 +90,8 @@ export default function paymentNetworkReducer(
       return merge({}, state, { availableStake: action.payload || initialState.availableStake });
     case SET_ESTIMATED_TOPUP_FEE:
       return merge({}, state, { topUpFee: { feeInfo: action.payload, isFetched: true } });
+    case SET_ESTIMATED_WITHDRAWAL_FEE:
+      return merge({}, state, { withdrawalFee: { feeInfo: action.payload, isFetched: true } });
     case SET_ESTIMATED_SETTLE_TX_FEE:
       return merge({}, state, { settleTxFee: { feeInfo: action.payload, isFetched: true } });
     case PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS:

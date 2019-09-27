@@ -32,6 +32,11 @@ export type TopUpFee = {
   feeInfo: ?FeeInfo,
 };
 
+export type WithdrawalFee = {
+  isFetched: boolean,
+  feeInfo: ?FeeInfo,
+};
+
 export type SettleTxFee = {
   isFetched: boolean,
   feeInfo: ?FeeInfo,

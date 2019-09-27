@@ -319,9 +319,12 @@ class EventDetails extends React.Component<Props, {}> {
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
-      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
+      let relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
         : `${to.slice(0, 7)}…${to.slice(-7)}`);
+      if (addressesEqual(to, from)) {
+        relatedUserTitle = 'My account';
+      }
       const relatedUserProfileImage = relatedUser.profileImage || null;
       // $FlowFixMe
       const showProfileImage = !relatedUser.type;

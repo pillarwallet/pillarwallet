@@ -40,23 +40,24 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
+import { getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { TopUpFee } from 'models/PaymentNetwork';
+import type { WithdrawalFee } from 'models/PaymentNetwork';
 import type { Assets, Balances, Rates } from 'models/Asset';
 
 // constants
-import { FUND_CONFIRM } from 'constants/navigationConstants';
+import { TANK_WITHDRAWAL_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // actions
-import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
+import { estimateWithdrawFromVirtualAccountAction } from 'actions/smartWalletActions';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
+import { availableStakeSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
 
@@ -91,9 +92,10 @@ type Props = {
   assets: Assets,
   navigation: NavigationScreenProp<*>,
   balances: Balances,
+  availableStake: number,
   session: Object,
-  estimateTopUpVirtualAccount: Function,
-  topUpFee: TopUpFee,
+  estimateWithdrawFromVirtualAccount: Function,
+  withdrawalFee: WithdrawalFee,
   rates: Rates,
   baseFiatCurrency: string,
 };
@@ -107,7 +109,7 @@ type State = {
 const { Form } = t.form;
 const MIN_TX_AMOUNT = 0.000000000000000001;
 
-class FundTank extends React.Component<Props, State> {
+class TankWithdrawal extends React.Component<Props, State> {
   _form: t.form;
   formSubmitted: boolean = false;
   enoughForFee: boolean = false;
@@ -116,20 +118,27 @@ class FundTank extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.props.estimateTopUpVirtualAccount();
+    this.props.estimateWithdrawFromVirtualAccount(this.getMaxAmount().toString());
   }
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
-      this.props.estimateTopUpVirtualAccount();
+      this.props.estimateWithdrawFromVirtualAccount(this.getMaxAmount().toString());
     }
+  }
+
+  getMaxAmount() {
+    const { availableStake } = this.props;
+    const token = PPN_TOKEN;
+    const txFeeInWei = this.getTxFeeInWei();
+    return calculateMaxAmount(token, availableStake, txFeeInWei);
   }
 
   handleChange = (value: Object) => {
     this.setState({ value });
   };
 
-  handleFormSubmit = (isInitFlow: boolean) => {
+  handleFormSubmit = () => {
     this.formSubmitted = true;
     const { navigation } = this.props;
     const formValues = this._form.getValue();
@@ -137,15 +146,13 @@ class FundTank extends React.Component<Props, State> {
     if (!formValues) return;
 
     Keyboard.dismiss();
-    navigation.navigate(FUND_CONFIRM, { amount: formValues.amount, isInitFlow });
+    navigation.navigate(TANK_WITHDRAWAL_CONFIRM, { amount: formValues.amount });
   };
 
   useMaxValue = () => {
     const { balances } = this.props;
     const txFeeInWei = this.getTxFeeInWei();
-    const token = PPN_TOKEN;
-    const balance = getBalance(balances, token);
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
+    const maxAmount = this.getMaxAmount();
     this.enoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
     this.setState({
       value: {
@@ -155,28 +162,27 @@ class FundTank extends React.Component<Props, State> {
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'topUpFee.feeInfo.totalCost', 0);
+    return get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
   };
 
   render() {
     const { value } = this.state;
     const {
       assets,
+      availableStake,
       session,
       balances,
-      topUpFee,
+      withdrawalFee,
       rates,
       baseFiatCurrency,
-      navigation,
     } = this.props;
 
     const { symbol: token, iconMonoUrl, decimals } = assets[PPN_TOKEN] || {};
     const icon = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const isInitFlow = navigation.getParam('isInitFlow', false);
 
     // balance
-    const balance = getBalance(balances, token);
+    const balance = availableStake;
     const formattedBalance = formatAmount(balance);
 
     // balance in fiat
@@ -200,22 +206,26 @@ class FundTank extends React.Component<Props, State> {
 
     // form
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
-    const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
+    const formFields = getAmountFormFields({
+      icon,
+      currency: token,
+      valueInFiatOutput,
+    });
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: isInitFlow ? 'Stake initial PLR' : 'Fund PLR tank' }] }}
+        headerProps={{ centerItems: [{ title: 'Withdraw from PLR tank' }] }}
         backgroundColor={baseColors.white}
         keyboardAvoidFooter={(
           <FooterInner>
             <Label>Estimated fee {feeInEth} ETH</Label>
             {!!value && !!parseFloat(value.amount) &&
             <Button
-              disabled={!session.isOnline || !topUpFee.isFetched}
+              disabled={!session.isOnline || !withdrawalFee.isFetched}
               small
               flexRight
               title="Next"
-              onPress={() => this.handleFormSubmit(isInitFlow)}
+              onPress={this.handleFormSubmit}
             />
             }
           </FooterInner>
@@ -251,18 +261,19 @@ class FundTank extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   rates: { data: rates },
-  paymentNetwork: { topUpFee },
+  paymentNetwork: { withdrawalFee },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   rates,
   session,
-  topUpFee,
+  withdrawalFee,
   baseFiatCurrency,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
+  availableStake: availableStakeSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -271,7 +282,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  estimateTopUpVirtualAccount: () => dispatch(estimateTopUpVirtualAccountAction()),
+  estimateWithdrawFromVirtualAccount: (amount) => dispatch(estimateWithdrawFromVirtualAccountAction(amount)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(FundTank);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(TankWithdrawal);
