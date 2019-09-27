@@ -68,6 +68,8 @@ import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import SDKWrapper from 'services/api';
+import { findEthereumNetwork } from 'utils/networks';
+import { setEthereumNetwork } from 'actions/networkActions';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
@@ -95,6 +97,7 @@ export const loginAction = (
           userJoinedBeta = false,
           firebaseAnalyticsConnectionEnabled = true,
           blockchainNetwork = '',
+          ethereumNetwork,
         },
       },
     } = getState();
@@ -136,6 +139,9 @@ export const loginAction = (
         throw new Error();
       }
 
+      const network = findEthereumNetwork(ethereumNetwork);
+      dispatch(setEthereumNetwork(network));
+
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
@@ -152,7 +158,8 @@ export const loginAction = (
         };
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
         const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
-        api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
+        api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed, network);
+
         if (onLoginSuccess && wallet.privateKey) {
           let { privateKey: privateKeyParam } = wallet;
           privateKeyParam = privateKeyParam.indexOf('0x') === 0 ? privateKeyParam.slice(2) : privateKeyParam;
@@ -179,7 +186,7 @@ export const loginAction = (
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
       } else {
-        api.init();
+        api.init(null, undefined, null, network);
       }
 
       // re-fetch accounts as they might change at this point

@@ -48,6 +48,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
 import type { CallRequest } from 'models/WalletConnect';
+import type { EthereumNetwork } from 'models/Network';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -60,6 +61,7 @@ type Props = {
   gasInfo: GasInfo,
   fetchGasInfo: Function,
   activeAccountAddress: string,
+  ethereumNetwork: EthereumNetwork,
 };
 
 type State = {
@@ -108,7 +110,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     this.props.fetchGasInfo();
-    const { navigation, activeAccountAddress, requests } = this.props;
+    const {
+      navigation,
+      activeAccountAddress,
+      requests,
+      ethereumNetwork,
+    } = this.props;
 
     const requestCallId = +navigation.getParam('callId', 0);
     const request = requests.find(({ callId }) => callId === requestCallId);
@@ -119,7 +126,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     this.request = request;
 
     if (['eth_sendTransaction', 'eth_signTransaction'].includes(request.method)) {
-      calculateGasEstimate({ ...this.transactionDetails(), from: activeAccountAddress })
+      calculateGasEstimate({
+        ...this.transactionDetails(),
+        from: activeAccountAddress,
+      }, ethereumNetwork.id)
         .then(gasLimit => this.setState({ gasLimit }))
         .catch(() => null);
     }
@@ -472,12 +482,14 @@ const mapStateToProps = ({
   session: { data: session },
   walletConnect: { requests },
   history: { gasInfo },
+  network: { ethereumNetwork },
 }) => ({
   contacts,
   session,
   supportedAssets,
   requests,
   gasInfo,
+  ethereumNetwork,
 });
 
 const structuredSelector = createStructuredSelector({

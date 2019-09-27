@@ -144,8 +144,9 @@ const notifySmartWalletNotInitialized = () => {
 };
 
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
-  return async (dispatch: Dispatch) => {
-    await smartWalletService.init(walletPrivateKey, dispatch);
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { network: { ethereumNetwork } } = getState();
+    await smartWalletService.init(walletPrivateKey, ethereumNetwork.id, dispatch);
     const initialized: boolean = smartWalletService.sdkInitialized;
     dispatch({
       type: SET_SMART_WALLET_SDK_INIT,
@@ -372,6 +373,7 @@ export const checkAssetTransferTransactionsAction = () => {
         data: transactionsHistory,
       },
       collectibles: { transactionHistory: collectiblesHistory = {} },
+      network: { ethereumNetwork },
       smartWallet: {
         upgrade: {
           status: upgradeStatus,
@@ -463,7 +465,7 @@ export const checkAssetTransferTransactionsAction = () => {
           ...assetTransferTransaction,
           status: TX_PENDING_STATUS,
         });
-      waitForTransaction(transactionHash)
+      waitForTransaction(transactionHash, ethereumNetwork.id)
         .then(async () => {
           const _updatedTransactions = updatedTransactions
             .filter(
@@ -1416,6 +1418,7 @@ export const getAssetTransferGasLimitsAction = () => {
       accounts: { data: accounts },
       assets: { supportedAssets },
       collectibles: { data: collectiblesByAccount },
+      network: { ethereumNetwork },
       smartWallet: {
         upgrade: {
           transfer: {
@@ -1485,7 +1488,7 @@ export const getAssetTransferGasLimitsAction = () => {
         };
         dispatchType = SET_ASSET_TRANSFER_GAS_LIMIT;
       }
-      return calculateGasEstimate(estimateTransaction)
+      return calculateGasEstimate(estimateTransaction, ethereumNetwork.id)
         .then(gasLimit =>
           dispatch({
             type: dispatchType,

@@ -31,6 +31,7 @@ import { signMessage, signPersonalMessage, signTransaction } from 'utils/wallet'
 import type { TransactionPayload } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
+import type { EthereumNetwork } from 'models/Network';
 
 type Props = {
   requests: CallRequest[],
@@ -39,6 +40,7 @@ type Props = {
   rejectCallRequest: (callId: number, errorMsg?: string) => Function,
   sendAsset: (payload: TransactionPayload, wallet: Object, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
+  ethereumNetwork: EthereumNetwork,
 };
 
 type State = {
@@ -125,10 +127,10 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   };
 
   handleSignTransaction = async (request: CallRequest, wallet: Object) => {
-    const { approveCallRequest, rejectCallRequest } = this.props;
+    const { approveCallRequest, rejectCallRequest, ethereumNetwork } = this.props;
     const trx = request.params[0];
     try {
-      const result = await signTransaction(trx, wallet);
+      const result = await signTransaction(trx, wallet, ethereumNetwork.id);
       await approveCallRequest(request.callId, result);
     } catch (error) {
       await rejectCallRequest(request.callId);
@@ -142,16 +144,16 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   };
 
   handleSignMessage = async (request: CallRequest, wallet: Object) => {
-    const { approveCallRequest, rejectCallRequest } = this.props;
+    const { approveCallRequest, rejectCallRequest, ethereumNetwork } = this.props;
     let message = '';
     try {
       let result = null;
       if (request.method === 'personal_sign') {
         message = request.params[0]; // eslint-disable-line
-        result = await signPersonalMessage(message, wallet);
+        result = await signPersonalMessage(message, wallet, ethereumNetwork.id);
       } else {
         message = request.params[1]; // eslint-disable-line
-        result = await signMessage(message, wallet);
+        result = await signMessage(message, wallet, ethereumNetwork.id);
       }
       await approveCallRequest(request.callId, result);
     } catch (error) {
@@ -197,8 +199,10 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   walletConnect: { requests },
+  network: { ethereumNetwork },
 }) => ({
   requests,
+  ethereumNetwork,
 });
 
 const mapDispatchToProps = dispatch => ({

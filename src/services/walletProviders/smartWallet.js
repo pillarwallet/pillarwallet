@@ -3,7 +3,6 @@ import { ethToWei } from '@netgum/utils';
 import { utils } from 'ethers';
 import abi from 'ethjs-abi';
 import { sdkConstants } from '@smartwallet/sdk';
-import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
@@ -13,11 +12,13 @@ import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 import type { Account } from 'models/Account';
 import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
+import type { EthereumNetwork } from 'models/Network';
 import { getERC721ContractTransferMethod } from 'services/assets';
-import smartWalletService from 'services/smartWallet';
 import { getEthereumProvider } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
+
+import smartWalletService from 'services/smartWallet';
 
 const {
   GasPriceStrategies: {
@@ -28,12 +29,14 @@ const {
 
 export default class SmartWalletProvider {
   wallet: Object;
+  ethereumNetwork: EthereumNetwork;
   sdkInitialized: boolean = false;
   sdkInitPromise: Promise<any>;
 
-  constructor(privateKey: string, account: Account) {
+  constructor(privateKey: string, account: Account, ethereumNetwork: EthereumNetwork) {
+    this.ethereumNetwork = ethereumNetwork;
     this.sdkInitPromise = smartWalletService
-      .init(privateKey)
+      .init(privateKey, ethereumNetwork.id)
       .then(() => smartWalletService.connectAccount(account.id))
       .then(() => { this.sdkInitialized = true; })
       .catch(() => null);
@@ -152,7 +155,7 @@ export default class SmartWalletProvider {
     let data = '';
     let transferMethodSignature;
     let contractAbi;
-    const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+    const provider = getEthereumProvider(this.ethereumNetwork.collectiblesNetwork);
     const contractCode = await provider.getCode(contractAddress);
     const contractTransferMethod = getERC721ContractTransferMethod(contractCode);
 

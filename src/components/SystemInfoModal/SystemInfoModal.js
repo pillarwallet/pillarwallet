@@ -20,18 +20,13 @@
 import * as React from 'react';
 import {
   BUILD_NUMBER,
-  BCX_URL,
-  SDK_PROVIDER,
-  TX_DETAILS_URL,
-  NETWORK_PROVIDER,
-  NOTIFICATIONS_URL,
-  COLLECTIBLES_NETWORK,
-  OPEN_SEA_API,
 } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import { baseColors, fontSizes } from 'utils/variables';
+
+import type { EthereumNetwork } from 'models/Network';
 
 const LabeledRow = styled.View`
   margin: 6px 0;
@@ -48,8 +43,23 @@ const Value = styled(BoldText)`
   font-size: ${fontSizes.medium}
 `;
 
+type Props = {
+  ethereumNetwork: EthereumNetwork,
+};
 
-const SystemInfoModal = () => {
+const SystemInfoModal = (props: Props) => {
+  const {
+    ethereumNetwork: {
+      id,
+      bcxUrl,
+      txDetailsUrl,
+      sdkProvider,
+      collectiblesNetwork,
+      notificationsUrl,
+      openSeaUrl,
+    },
+  } = props;
+
   return (
     <Wrapper regularPadding>
       <LabeledRow>
@@ -58,31 +68,31 @@ const SystemInfoModal = () => {
       </LabeledRow>
       <LabeledRow>
         <Label>BCX_URL</Label>
-        <Value>{BCX_URL}</Value>
+        <Value>{bcxUrl}</Value>
       </LabeledRow>
       <LabeledRow>
         <Label>SDK_PROVIDER</Label>
-        <Value>{SDK_PROVIDER}</Value>
+        <Value>{sdkProvider}</Value>
       </LabeledRow>
       <LabeledRow>
         <Label>TX_DETAILS_URL</Label>
-        <Value>{TX_DETAILS_URL}</Value>
+        <Value>{txDetailsUrl}</Value>
       </LabeledRow>
       <LabeledRow>
         <Label>NETWORK_PROVIDER</Label>
-        <Value>{NETWORK_PROVIDER}</Value>
+        <Value>{id}</Value>
       </LabeledRow>
       <LabeledRow>
         <Label>COLLECTIBLES_NETWORK</Label>
-        <Value>{COLLECTIBLES_NETWORK}</Value>
+        <Value>{collectiblesNetwork}</Value>
       </LabeledRow>
       <LabeledRow>
         <Label>NOTIFICATIONS_URL</Label>
-        <Value>{NOTIFICATIONS_URL}</Value>
+        <Value>{notificationsUrl}</Value>
       </LabeledRow>
       <LabeledRow>
         <Label>OPEN_SEA_API</Label>
-        <Value>{OPEN_SEA_API}</Value>
+        <Value>{openSeaUrl}</Value>
       </LabeledRow>
     </Wrapper>
   );

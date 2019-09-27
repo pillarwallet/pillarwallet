@@ -47,6 +47,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { GasInfo } from 'models/GasInfo';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Balances, Rates } from 'models/Asset';
+import type { EthereumNetwork } from 'models/Network';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
@@ -121,6 +122,7 @@ type Props = {
   transactionSpeed: string,
   updateAppSettings: Function,
   activeAccountAddress: string,
+  ethereumNetwork: EthereumNetwork,
 };
 
 type State = {
@@ -251,7 +253,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     // cannot be set if value is zero or not present, fee select will be hidden
     if (!amount) return Promise.resolve(0);
 
-    const { activeAccountAddress } = this.props;
+    const { activeAccountAddress, ethereumNetwork } = this.props;
 
     return calculateGasEstimate({
       from: activeAccountAddress,
@@ -260,7 +262,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       symbol,
       contractAddress,
       decimals,
-    });
+    }, ethereumNetwork.id);
   };
 
   updateGasLimit = () => {
@@ -419,12 +421,14 @@ const mapStateToProps = ({
   rates: { data: rates },
   history: { gasInfo },
   appSettings: { data: { baseFiatCurrency, transactionSpeed } },
+  network: { ethereumNetwork },
 }) => ({
   rates,
   session,
   gasInfo,
   baseFiatCurrency,
   transactionSpeed,
+  ethereumNetwork,
 });
 
 const structuredSelector = createStructuredSelector({

@@ -25,7 +25,7 @@ import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { MAIN_SDK_PROVIDER } from 'react-native-dotenv';
 
 // models
 import type { Transaction } from 'models/Transaction';
@@ -324,7 +324,7 @@ class ActivityFeed extends React.Component<Props, State> {
         directionSymbol = '';
       }
 
-      const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+      const fullIconUrl = iconUrl ? `${MAIN_SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
       const contact = findMatchingContact(address, contacts, contactsSmartAddresses) || {};
       const isContact = Object.keys(contact).length !== 0;

@@ -29,6 +29,8 @@ import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
 import Toast from 'components/Toast';
 
+import type { EthereumNetwork } from 'models/Network';
+
 const ContentWrapper = styled.View`
   height: 300;
   justify-content: flex-start;
@@ -41,6 +43,7 @@ type Props = {
   token: string,
   tokenName: string,
   isVisible: boolean,
+  ethereumNetwork: EthereumNetwork,
 }
 
 const CopyAddressLink = styled.TouchableOpacity`
@@ -82,6 +85,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
       isVisible,
       address,
       onModalHide,
+      ethereumNetwork,
     } = this.props;
     return (
       <SlideModal
@@ -89,7 +93,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
         isVisible={isVisible}
         onModalHide={onModalHide}
       >
-        <WarningBanner rounded small />
+        {!!ethereumNetwork.id !== 'homestead' && <WarningBanner rounded small />}
         <ContentWrapper>
           <QRCodeWrapper>
             <View

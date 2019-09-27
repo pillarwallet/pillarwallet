@@ -19,6 +19,7 @@
 */
 import SDKWrapper from 'services/api';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
+import { ETHEREUM_NETWORKS } from 'constants/networkConstants';
 
 const sdkWrapper = new SDKWrapper();
 
@@ -83,7 +84,7 @@ const mockPillarSDK: Object = {
 
 describe('API service', () => {
   beforeEach(() => {
-    sdkWrapper.init();
+    sdkWrapper.init(null, undefined, null, ETHEREUM_NETWORKS[1]);
     // $FlowFixMe
     sdkWrapper.pillarWalletSdk = mockPillarSDK;
   });

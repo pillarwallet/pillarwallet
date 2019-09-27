@@ -44,10 +44,7 @@ import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetwork
 
 import Toast from 'components/Toast';
 
-import {
-  getExchangeRates,
-  transferSigned,
-} from 'services/assets';
+import { getExchangeRates } from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
 
 import type {
@@ -88,14 +85,14 @@ type TransactionStatus = {
 };
 
 export const sendSignedAssetTransactionAction = (transaction: any) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       signedTransaction: { signedHash },
       transaction: transactionDetails,
     } = transaction;
     if (!signedHash) return null;
 
-    const transactionHash = await transferSigned(signedHash).catch(e => ({ error: e }));
+    const transactionHash = await api.transferSigned(signedHash).catch(e => ({ error: e }));
     if (transactionHash && transactionHash.error) {
       return null;
     }
@@ -196,6 +193,7 @@ export const signAssetTransactionAction = (
     const {
       accounts: { data: accounts },
       collectibles: { data: collectibles },
+      network: { ethereumNetwork },
     } = getState();
 
     const accountId = getActiveAccountId(accounts);
@@ -206,7 +204,7 @@ export const signAssetTransactionAction = (
     let signedTransaction;
 
     // get wallet provider
-    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
+    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount, ethereumNetwork);
     const walletProvider = await cryptoWallet.getProvider();
 
     // get only signed transaction
@@ -280,6 +278,7 @@ export const sendAssetAction = (
     const {
       accounts: { data: accounts },
       collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
+      network: { ethereumNetwork },
     } = getState();
 
     const accountId = getActiveAccountId(accounts);
@@ -299,7 +298,7 @@ export const sendAssetAction = (
     const { to, note } = transaction;
 
     // get wallet provider
-    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
+    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount, ethereumNetwork);
     const walletProvider = await cryptoWallet.getProvider();
 
     // send collectible
@@ -739,11 +738,12 @@ export const resetLocalNonceToTransactionCountAction = (wallet: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
+      network: { ethereumNetwork },
     } = getState();
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
     const accountAddress = getAccountAddress(activeAccount);
-    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
+    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount, ethereumNetwork);
     const walletProvider = await cryptoWallet.getProvider();
     const transactionCount = await walletProvider.getTransactionCount(accountAddress);
     const txCountNew = {

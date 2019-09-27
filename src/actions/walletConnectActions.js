@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { NavigationActions } from 'react-navigation';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
 import {
   WALLETCONNECT_CANCEL_REQUEST,
@@ -373,12 +372,15 @@ export const approveSessionAction = (peerId: string) => {
     if (peerMeta) {
       dispatch(killWalletConnectSessionByUrl(peerMeta.url, peerId));
     }
-    const { wallet: { data: { address } } } = getState();
+    const {
+      wallet: { data: { address } },
+      network: { ethereumNetwork },
+    } = getState();
 
     try {
       await connector.approveSession({
         accounts: [address],
-        chainId: NETWORK_PROVIDER === 'ropsten' ? 3 : 1,
+        chainId: ethereumNetwork.id === 'ropsten' ? 3 : 1,
       });
     } catch (e) {
       dispatch(walletConnectError(SESSION_APPROVAL_ERROR, e.toString()));

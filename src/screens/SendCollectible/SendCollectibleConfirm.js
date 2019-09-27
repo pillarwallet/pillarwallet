@@ -6,7 +6,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
@@ -15,16 +14,18 @@ import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import type { CollectibleTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
+import type { EthereumNetwork } from 'models/Network';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { baseColors, fontSizes, UIColors, spacing } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
-import { calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
+import { calculateGasEstimate, fetchETHBalance } from 'services/assets';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { activeAccountAddressSelector } from 'selectors';
 
 const NORMAL = 'avg';
 
 type Props = {
+  ethereumNetwork: EthereumNetwork,
   navigation: NavigationScreenProp<*>,
   session: Object,
   contacts: Object[],
@@ -36,7 +37,7 @@ type Props = {
 
 type State = {
   note: ?string,
-  rinkebyETH: string,
+  collectiblesETH: string,
   gasLimit: number,
 };
 
@@ -70,7 +71,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
     this.state = {
       note: null,
-      rinkebyETH: '',
+      collectiblesETH: '',
       gasLimit: 0,
     };
   }
@@ -79,9 +80,10 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const {
       activeAccountAddress,
       fetchGasInfo,
+      ethereumNetwork,
     } = this.props;
     fetchGasInfo();
-    this.fetchETHBalanceInRinkeby();
+    this.fetchETHBalanceForCollectibles();
     const {
       id: tokenId,
       contractAddress,
@@ -91,7 +93,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       to: this.receiver,
       contractAddress,
       tokenId,
-    })
+    }, ethereumNetwork.collectiblesNetwork)
       .then(gasLimit => this.setState({ gasLimit }))
       .catch(() => null);
   }
@@ -102,10 +104,13 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     }
   }
 
-  fetchETHBalanceInRinkeby = async () => {
-    const { wallet } = this.props;
-    const rinkebyETHBlanace = await fetchRinkebyETHBalance(wallet.address);
-    this.setState({ rinkebyETH: rinkebyETHBlanace });
+  fetchETHBalanceForCollectibles = async () => {
+    const { wallet, ethereumNetwork } = this.props;
+    const collectiblesETHBalance = await fetchETHBalance(
+      wallet.address,
+      ethereumNetwork.collectiblesNetwork,
+    );
+    this.setState({ collectiblesETH: collectiblesETHBalance });
   };
 
   handleFormSubmit = () => {
@@ -147,15 +152,20 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   };
 
   render() {
-    const { contacts, session, gasInfo } = this.props;
+    const {
+      contacts,
+      session,
+      gasInfo,
+      ethereumNetwork,
+    } = this.props;
     const { name } = this.assetData;
-    const { rinkebyETH, gasLimit } = this.state;
+    const { collectiblesETH, gasLimit } = this.state;
     const to = this.receiver;
     const txFeeInWei = this.getTxFeeInWei();
     const txFee = utils.formatEther(txFeeInWei.toString());
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
     const recipientUsername = getUserName(contact);
-    const canProceedTesting = parseFloat(rinkebyETH) > parseFloat(txFee) || NETWORK_PROVIDER !== 'ropsten';
+    const canProceedTesting = parseFloat(collectiblesETH) > parseFloat(txFee);
 
     return (
       <ContainerWithHeader
@@ -196,10 +206,10 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
               || <Spinner style={{ marginTop: 5 }} width={20} height={20} />
             }
           </LabeledRow>
-          {NETWORK_PROVIDER === 'ropsten' &&
+          {ethereumNetwork.id === ethereumNetwork.collectiblesNetwork &&
           <LabeledRow>
-            <Label>Balance in Rinkeby ETH (visible in dev and staging)</Label>
-            <Value>{rinkebyETH} ETH</Value>
+            <Label>Balance on collectibles network</Label>
+            <Value>{collectiblesETH} ETH</Value>
           </LabeledRow>}
           {!!recipientUsername &&
           <TextInput
@@ -228,11 +238,13 @@ const mapStateToProps = ({
   session: { data: session },
   history: { gasInfo },
   wallet: { data: wallet },
+  network: { ethereumNetwork },
 }) => ({
   contacts,
   session,
   gasInfo,
   wallet,
+  ethereumNetwork,
 });
 
 const structuredSelector = createStructuredSelector({

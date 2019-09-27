@@ -1,11 +1,11 @@
 // @flow
 
 import ethers from 'ethers';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 
 import { ETH } from 'constants/assetsConstants';
 import type { Account } from 'models/Account';
 import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
+import type { EthereumNetwork } from 'models/Network';
 import {
   transferERC20,
   transferERC721,
@@ -22,10 +22,12 @@ type CalculateNonceResult = {
 
 export default class KeyBasedWalletProvider {
   wallet: Object;
+  network: EthereumNetwork;
 
-  constructor(privateKey: string) {
+  constructor(privateKey: string, network: EthereumNetwork) {
     this.wallet = new ethers.Wallet(privateKey);
-    this.wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
+    this.network = network;
+    this.wallet.provider = getEthereumProvider(network.id);
   }
 
   async transferERC721(account: Account, transaction: CollectibleTransactionPayload, state: Object) {
@@ -50,7 +52,7 @@ export default class KeyBasedWalletProvider {
       gasLimit,
       gasPrice,
       signOnly,
-    })
+    }, this.network.collectiblesNetwork)
       .then(result => {
         if (!signOnly) return { ...result, transactionCount };
         // result is signed hash
@@ -92,7 +94,7 @@ export default class KeyBasedWalletProvider {
       nonce,
       signOnly,
       data,
-    })
+    }, this.network.id)
       .then(result => {
         if (!signOnly) return { ...result, transactionCount };
         return {
@@ -136,7 +138,7 @@ export default class KeyBasedWalletProvider {
       nonce,
       signOnly,
       data,
-    })
+    }, this.network.id)
       .then(result => {
         if (!signOnly) return { ...result, transactionCount };
         return {

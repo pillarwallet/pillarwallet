@@ -35,6 +35,7 @@ import {
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { repairStorageAction } from 'actions/appActions';
 import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
+import { selectEthereumNetworkAction } from 'actions/networkActions';
 
 // components
 import { Wrapper } from 'components/Layout';
@@ -55,9 +56,13 @@ import Button from 'components/Button';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 
+// types
+import type { EthereumNetwork } from 'models/Network';
+
 // constants
 import { CONFIRM_CLAIM, CHANGE_PIN_FLOW } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
+import { ETHEREUM_NETWORKS } from 'constants/networkConstants';
 
 // utils
 import { isProdEnv } from 'utils/environment';
@@ -65,6 +70,10 @@ import { baseColors, fontSizes, fontTrackings, fontWeights, spacing } from 'util
 
 // partials
 import { SettingsSection } from './SettingsSection';
+
+type EthereumNetworkItem = {
+  item: EthereumNetwork,
+};
 
 type State = {
   visibleModal: ?string,
@@ -94,6 +103,8 @@ type Props = {
   optOutTracking: boolean,
   setUserJoinedBeta: Function,
   userJoinedBeta: boolean,
+  ethereumNetwork: EthereumNetwork,
+  selectEthereumNetwork: (networkId: string) => void,
 }
 
 const storage = new Storage('db');
@@ -217,6 +228,11 @@ const formSystemItems = (that) => {
       key: 'systemInfo',
       title: 'System Info',
       onPress: () => that.setState({ visibleModal: 'systemInfo' }),
+    },
+    {
+      key: 'ethNetwork',
+      title: 'Etherum Network',
+      onPress: () => that.setState({ visibleModal: 'ethNetwork' }),
     },
     {
       key: 'analytics',
@@ -357,12 +373,21 @@ class Settings extends React.Component<Props, State> {
     }
   };
 
-  // navigateToContactInfo = () => {
-  //   requestAnimationFrame(() => {
-  //     const { navigation } = this.props;
-  //     navigation.navigate(CONTACT_INFO);
-  //   });
-  // }
+  selectEthNetwork(networkId: string) {
+    this.props.selectEthereumNetwork(networkId);
+  }
+
+  renderEthNetwork = (item: EthereumNetworkItem) => {
+    const { item: { id, title } } = item;
+
+    return (
+      <SettingsListItem
+        key={id}
+        label={title}
+        onPress={() => this.selectEthNetwork(id)}
+      />
+    );
+  }
 
   renderListItem = (field: string, onSelect: Function) => ({ item: { name } }: Object) => {
     return (
@@ -386,6 +411,7 @@ class Settings extends React.Component<Props, State> {
       useBiometrics,
       smartWalletFeatureEnabled,
       optOutTracking,
+      ethereumNetwork,
     } = this.props;
 
     const {
@@ -499,7 +525,10 @@ class Settings extends React.Component<Props, State> {
           title="system info"
           onModalHide={() => this.setState({ visibleModal: null })}
         >
-          <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
+          <SystemInfoModal
+            ethereumNetwork={ethereumNetwork}
+            headerOnClose={() => this.setState({ visibleModal: null })}
+          />
         </SlideModal>
 
         {/* REFERRAL */}
@@ -583,6 +612,24 @@ class Settings extends React.Component<Props, State> {
               </SmallText>
             </StyledWrapper>
           </Wrapper>
+        </SlideModal>
+
+        {/* ETHEREUM NETWORK SELECTION */}
+        <SlideModal
+          isVisible={visibleModal === 'ethNetwork'}
+          fullScreen
+          showHeader
+          onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
+        >
+          <SettingsModalTitle extraHorizontalSpacing>
+            Choose the Ethereum Network to use
+          </SettingsModalTitle>
+          <FlatList
+            data={ETHEREUM_NETWORKS}
+            renderItem={this.renderEthNetwork}
+            keyExtractor={({ name }) => name}
+          />
         </SlideModal>
 
         {/* JOIN BETA */}
@@ -669,6 +716,7 @@ const mapStateToProps = ({
   session: { data: { hasDBConflicts } },
   wallet: { backupStatus },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  network: { ethereumNetwork },
 }) => ({
   user,
   baseFiatCurrency,
@@ -680,6 +728,7 @@ const mapStateToProps = ({
   useBiometrics,
   smartWalletFeatureEnabled,
   userJoinedBeta,
+  ethereumNetwork,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -690,6 +739,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
   setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
+  selectEthereumNetwork: (networkId: string) => dispatch(selectEthereumNetworkAction(networkId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

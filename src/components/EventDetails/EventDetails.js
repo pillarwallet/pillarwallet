@@ -24,7 +24,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Linking } from 'react-native';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
@@ -84,6 +83,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 import EventHeader from './EventHeader';
 
 type Props = {
+  txDetailsUrl: string,
   transaction: Transaction,
   contacts: ApiUser[],
   history: Object[],
@@ -141,8 +141,8 @@ const EventBodyTitle = styled(BaseText)`
   text-align: center;
 `;
 
-const viewTransactionOnBlockchain = (hash: string) => {
-  Linking.openURL(TX_DETAILS_URL + hash);
+const viewTransactionOnBlockchain = (txDetailsUrl: string, hash: string) => {
+  Linking.openURL(txDetailsUrl + hash);
 };
 
 class EventDetails extends React.Component<Props, {}> {
@@ -275,6 +275,7 @@ class EventDetails extends React.Component<Props, {}> {
       history,
       txNotes,
       assets,
+      txDetailsUrl,
     } = this.props;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
@@ -430,7 +431,7 @@ class EventDetails extends React.Component<Props, {}> {
                 block
                 title="View on the blockchain"
                 primaryInverted
-                onPress={() => viewTransactionOnBlockchain(hash)}
+                onPress={() => viewTransactionOnBlockchain(txDetailsUrl, hash)}
               />
             </ButtonsWrapper>
             }
@@ -523,7 +524,7 @@ class EventDetails extends React.Component<Props, {}> {
                 block
                 title="View on the blockchain"
                 primaryInverted
-                onPress={() => viewTransactionOnBlockchain(hash)}
+                onPress={() => viewTransactionOnBlockchain(txDetailsUrl, hash)}
               />
             </ButtonsWrapper>
           </EventBody>
@@ -613,14 +614,19 @@ class EventDetails extends React.Component<Props, {}> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
+  contacts: {
+    data: contacts,
+    contactsSmartAddresses: { addresses: contactsSmartAddresses },
+  },
   txNotes: { data: txNotes },
   accounts: { data: accounts },
+  network: { ethereumNetwork: { txDetailsUrl } },
 }) => ({
   contacts,
   txNotes,
   contactsSmartAddresses,
   inactiveAccounts: getInactiveUserAccounts(accounts),
+  txDetailsUrl,
 });
 
 const structuredSelector = createStructuredSelector({

@@ -108,6 +108,7 @@ export const takeOfferAction = (
     const {
       accounts: { data: accounts },
       assets: { supportedAssets },
+      network: { ethereumNetwork },
     } = getState();
     const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
     const from = getActiveAccountAddress(accounts);
@@ -119,7 +120,7 @@ export const takeOfferAction = (
       symbol: fromAssetCode,
       contractAddress: asset ? asset.address : '',
       decimals: asset ? asset.decimals : 18,
-    });
+    }, ethereumNetwork.id);
     callback({
       ...offerOrderData,
       gasLimit,
@@ -325,6 +326,7 @@ export const setTokenAllowanceAction = (
     const {
       accounts: { data: accounts },
       assets: { supportedAssets },
+      network: { ethereumNetwork },
     } = getState();
     const asset = supportedAssets.find(a => a.symbol === assetCode);
     const from = getActiveAccountAddress(accounts);
@@ -335,7 +337,7 @@ export const setTokenAllowanceAction = (
       symbol: assetCode,
       contractAddress: asset ? asset.address : '',
       decimals: asset ? asset.decimals : 18,
-    });
+    }, ethereumNetwork.id);
     callback({
       data,
       payToAddress,

@@ -62,6 +62,7 @@ import { fontSizes, fontTrackings, baseColors, spacing } from 'utils/variables';
 import { delay } from 'utils/common';
 import ProfileSettingsItem from 'components/ListItem/SettingsItem';
 import Button from 'components/Button';
+import type { EthereumNetwork } from 'models/Network';
 import EditProfile from './EditProfile';
 import SettingsModalTitle from './SettingsModalTitle';
 import ReferralCodeModal from './ReferralCodeModal';
@@ -186,6 +187,7 @@ type Props = {
   optOutTracking: boolean,
   setUserJoinedBeta: Function,
   userJoinedBeta: boolean,
+  ethereumNetwork: EthereumNetwork,
 }
 
 type State = {
@@ -391,6 +393,7 @@ class Profile extends React.Component<Props, State> {
       optOutTracking,
       setUserJoinedBeta,
       userJoinedBeta,
+      ethereumNetwork,
     } = this.props;
 
     const {
@@ -845,7 +848,10 @@ class Profile extends React.Component<Props, State> {
               title="system info"
               onModalHide={() => this.setState({ showSystemInfoModal: false })}
             >
-              <SystemInfoModal headerOnClose={() => this.setState({ showSystemInfoModal: false })} />
+              <SystemInfoModal
+                ethereumNetwork={ethereumNetwork}
+                headerOnClose={() => this.setState({ showSystemInfoModal: false })}
+              />
             </SlideModal>
 
             <SlideModal
@@ -900,6 +906,7 @@ const mapStateToProps = ({
   session: { data: { hasDBConflicts } },
   wallet: { backupStatus },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  network: { ethereumNetwork },
 }) => ({
   user,
   baseFiatCurrency,
@@ -911,6 +918,7 @@ const mapStateToProps = ({
   smartWalletFeatureEnabled,
   optOutTracking,
   userJoinedBeta,
+  ethereumNetwork,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

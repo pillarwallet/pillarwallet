@@ -28,7 +28,6 @@ import {
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
 import type { GasInfo } from 'models/GasInfo';
@@ -79,19 +78,13 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
   };
 };
 
-class SmartWallet {
+export class SmartWallet {
   sdk: Sdk;
   sdkInitialized: boolean = false;
+  network: string;
 
-  constructor() {
-    const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
-    const sdkOptions = getSdkEnvironment(environmentNetwork);
-
-    try {
-      this.sdk = createSdk(sdkOptions);
-    } catch (err) {
-      this.handleError(err);
-    }
+  currentNetwork(): string {
+    return this.network;
   }
 
   getEnvironmentNetwork(networkName: string) {
@@ -103,19 +96,29 @@ class SmartWallet {
     }
   }
 
-  async init(privateKey: string, dispatch?: Function) {
+  async init(privateKey: string, network: string, dispatch?: Function) {
     if (this.sdkInitialized) return;
+
+    this.network = network;
+    const environmentNetwork = this.getEnvironmentNetwork(network);
+    const sdkOptions = getSdkEnvironment(environmentNetwork);
+
+    try {
+      this.sdk = createSdk(sdkOptions);
+    } catch (err) {
+      this.handleError(err);
+      return;
+    }
 
     await this.sdk
       .initialize({ device: { privateKey } })
-      .then(() => { this.sdkInitialized = true; })
+      .then(() => {
+        this.sdkInitialized = true;
+        this.subscribeToEvents(dispatch);
+      })
       .catch(() => {
         console.log('Error initiating sdk.');
       });
-
-    if (this.sdkInitialized) {
-      this.subscribeToEvents(dispatch);
-    }
     // TODO: remove private key from smart wallet sdk
   }
 

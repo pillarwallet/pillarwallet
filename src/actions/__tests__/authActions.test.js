@@ -26,6 +26,10 @@ import {
   DECRYPTING,
   UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
+import {
+  ETHEREUM_NETWORKS,
+  SET_ETHEREUM_NETWORK,
+} from 'constants/networkConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
@@ -83,6 +87,7 @@ describe('Wallet actions', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
+      { type: SET_ETHEREUM_NETWORK, network: ETHEREUM_NETWORKS[0] },
       { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
       {
         type: DECRYPT_WALLET,
@@ -109,6 +114,7 @@ describe('Wallet actions', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
+      { type: SET_ETHEREUM_NETWORK, network: ETHEREUM_NETWORKS[0] },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: DECRYPT_WALLET, payload: mockWallet },

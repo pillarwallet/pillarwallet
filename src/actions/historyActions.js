@@ -19,7 +19,6 @@
 */
 import get from 'lodash.get';
 import orderBy from 'lodash.orderby';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { getEthereumProvider, uniqBy } from 'utils/common';
 import {
   SET_HISTORY,
@@ -42,6 +41,8 @@ import {
   getActiveAccountId,
   getActiveAccountWalletId,
 } from 'utils/accounts';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
@@ -50,7 +51,7 @@ import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeAction
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
-const currentProvider = getEthereumProvider(NETWORK_PROVIDER);
+let currentProvider;
 
 const afterHistoryUpdatedAction = () => {
   return async (dispatch: Function, getState: Function) => {
@@ -336,9 +337,10 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
 
 
 export const startListeningForBalanceChangeAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
+      network: { ethereumNetwork },
       smartWallet: {
         upgrade: {
           status: upgradeStatus,
@@ -354,6 +356,9 @@ export const startListeningForBalanceChangeAction = () => {
     if (activeAccount) {
       const walletAddress = getAccountAddress(activeAccount);
 
+      // FIXME:
+      currentProvider = currentProvider || getEthereumProvider(ethereumNetwork.id);
+
       currentProvider.on(walletAddress, () => {
         dispatch(fetchAssetsBalancesAction(true));
       });
@@ -362,11 +367,15 @@ export const startListeningForBalanceChangeAction = () => {
 };
 
 export const stopListeningForBalanceChangeAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
+      network: { ethereumNetwork },
     } = getState();
     const walletAddress = getActiveAccountAddress(accounts);
+    // FIXME:
+    currentProvider = currentProvider || getEthereumProvider(ethereumNetwork.id);
+
     if (walletAddress && currentProvider) {
       currentProvider.removeListener(walletAddress);
     }

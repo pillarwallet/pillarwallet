@@ -74,6 +74,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // types
 import type { ContactSmartAddressData } from 'models/Contacts';
+import type { EthereumNetwork } from 'models/Network';
 
 // local components
 import ReceiveModal from './ReceiveModal';
@@ -109,6 +110,7 @@ type Props = {
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
   contactsSmartAddresses: ContactSmartAddressData[],
+  ethereumNetwork: EthereumNetwork,
 };
 
 type State = {
@@ -261,6 +263,7 @@ class AssetScreen extends React.Component<Props, State> {
       contacts,
       availableStake,
       contactsSmartAddresses,
+      ethereumNetwork,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -397,6 +400,7 @@ class AssetScreen extends React.Component<Props, State> {
           onModalHide={() => {
             this.setState({ activeModal: activeModalResetState });
           }}
+          ethereumNetwork={ethereumNetwork}
           address={assetData.address}
           token={assetData.token}
           tokenName={assetData.name}
@@ -420,6 +424,7 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
+  network: { ethereumNetwork },
   featureFlags: {
     data: {
       SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
@@ -433,6 +438,7 @@ const mapStateToProps = ({
   accounts,
   smartWalletFeatureEnabled,
   contactsSmartAddresses,
+  ethereumNetwork,
 });
 
 const structuredSelector = createStructuredSelector({

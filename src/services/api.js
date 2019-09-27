@@ -23,12 +23,6 @@ import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
 import { Sentry } from 'react-native-sentry';
 import {
-  SDK_PROVIDER,
-  BCX_URL,
-  NETWORK_PROVIDER,
-  NOTIFICATIONS_URL,
-  INVESTMENTS_URL,
-  OPEN_SEA_API,
   OPEN_SEA_API_KEY,
   ETHPLORER_API_KEY,
   SENDWYRE_API_URL,
@@ -43,6 +37,7 @@ import {
   fetchLastBlockNumber,
   fetchTransactionInfo,
   fetchTransactionReceipt,
+  transferSigned,
 } from 'services/assets';
 import EthplorerSdk from 'services/EthplorerSdk';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
@@ -55,6 +50,7 @@ import type {
 } from 'models/Connections';
 import { getLimitedData } from 'utils/opensea';
 import { uniqBy } from 'utils/common';
+import type { EthereumNetwork } from 'models/Network';
 
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
@@ -105,18 +101,22 @@ const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 export default function SDKWrapper() {
   this.BCXSdk = null;
   this.pillarWalletSdk = null;
+  this.network = {};
 }
 
 SDKWrapper.prototype.init = function (
   updateOAuth?: ?Function,
   oAuthTokensStored?: ?OAuthTokens,
   onOAuthTokensFailed?: ?Function,
+  network: EthereumNetwork,
 ) {
-  this.BCXSdk = new BCX({ apiUrl: BCX_URL });
+  this.network = network;
+
+  this.BCXSdk = new BCX({ apiUrl: network.bcxUrl });
   this.pillarWalletSdk = new PillarSdk({
-    apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
-    notificationsUrl: NOTIFICATIONS_URL,
-    investmentsUrl: INVESTMENTS_URL,
+    apiUrl: network.sdkProvider, // ONLY if you have platform running locally
+    notificationsUrl: network.notificationsUrl,
+    investmentsUrl: network.investmentsUrl,
     updateOAuthFn: updateOAuth,
     oAuthTokens: oAuthTokensStored,
     tokensFailedCallbackFn: onOAuthTokensFailed,
@@ -357,7 +357,7 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
 
 SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
   if (!walletAddress) return Promise.resolve({ assets: [] });
-  const url = `${OPEN_SEA_API}/assets/?owner=${walletAddress}` +
+  const url = `${this.network.openSeaUrl}/assets/?owner=${walletAddress}` +
     '&exclude_currencies=true&order_by=listing_date&order_direction=asc';
   return new Promise((resolve, reject) => {
     getLimitedData(url, [], 300, 0, 'assets', resolve, reject);
@@ -367,7 +367,9 @@ SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
 };
 
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
-  const url = `${OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
+  const url = `${
+    this.network.openSeaUrl
+  }/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
   return Promise.resolve()
     .then(() => fetch(url, {
       method: 'GET',
@@ -469,20 +471,24 @@ SDKWrapper.prototype.fetchGasInfo = function () {
 };
 
 SDKWrapper.prototype.fetchTxInfo = function (hash: string) {
-  return fetchTransactionInfo(hash);
+  return fetchTransactionInfo(hash, this.network.id);
 };
 
 SDKWrapper.prototype.fetchTransactionReceipt = function (hash: string) {
-  return fetchTransactionReceipt(hash);
+  return fetchTransactionReceipt(hash, this.network.id);
 };
 
 SDKWrapper.prototype.fetchLastBlockNumber = function () {
-  return fetchLastBlockNumber();
+  return fetchLastBlockNumber(this.network.id);
+};
+
+SDKWrapper.prototype.transferSigned = function (signedHash: string) {
+  return transferSigned(signedHash, this.network.id);
 };
 
 SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePayload) {
   // TEMPORARY FETCH FROM BLOCKCHAIN DIRECTLY
-  return fetchAssetBalances(assets, address);
+  return fetchAssetBalances(assets, address, this.network.id);
   // const promises = assets.map(async ({ symbol, address: contractAddress }) => {
   //   const payload = { contractAddress, address, asset: symbol };
   //   const { balance: response } = await this.BCXSdk.getBalance(payload);
@@ -760,7 +766,7 @@ SDKWrapper.prototype.getContactsSmartAddresses = function (walletId: string, con
 };
 
 SDKWrapper.prototype.importedEthTransactionHistory = function (walletAddress: string) {
-  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
+  if (this.network.id !== 'homestead') return Promise.resolve([]);
   return Promise.resolve()
     .then(() => ethplorerSdk.getAddressTransactions(walletAddress, { limit: 40 }))
     .then(data => Array.isArray(data) ? data : [])
@@ -768,7 +774,7 @@ SDKWrapper.prototype.importedEthTransactionHistory = function (walletAddress: st
 };
 
 SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: string) {
-  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
+  if (this.network.id !== 'homestead') return Promise.resolve([]);
   return Promise.resolve()
     .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer', limit: 40 }))
     .then(data => get(data, 'operations', []))
@@ -776,7 +782,7 @@ SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: 
 };
 
 SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string) {
-  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
+  if (this.network.id !== 'homestead') return Promise.resolve([]);
   return Promise.resolve()
     .then(() => ethplorerSdk.getAddressInfo(walletAddress))
     .then(data => get(data, 'tokens', []))

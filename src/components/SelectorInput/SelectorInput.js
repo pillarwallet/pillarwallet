@@ -21,7 +21,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Platform, TextInput, FlatList, Keyboard } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { MAIN_SDK_PROVIDER } from 'react-native-dotenv';
 
 // COMPONENTS
 import { BoldText, BaseText, MediumText, SubHeading } from 'components/Typography';
@@ -310,7 +310,7 @@ export default class SelectorInput extends React.Component<Props, State> {
       assetBalance,
       paymentNetworkBalance,
     } = option;
-    const iconUrl = `${SDK_PROVIDER}/${option.icon}?size=3`;
+    const iconUrl = `${MAIN_SDK_PROVIDER}/${option.icon}?size=3`;
     const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
 
     return (
@@ -345,7 +345,7 @@ export default class SelectorInput extends React.Component<Props, State> {
     return options
       .map(option => {
         const { name, icon } = option;
-        const iconUri = `${SDK_PROVIDER}/${icon}?size=3`;
+        const iconUri = `${MAIN_SDK_PROVIDER}/${icon}?size=3`;
         return (
           <HorizontalOptionItem
             key={name}
@@ -385,7 +385,7 @@ export default class SelectorInput extends React.Component<Props, State> {
     } = inputProps;
     const { selector: selectedOption = {}, input: inputValue } = value;
     const { value: selectedValue, icon } = selectedOption;
-    const iconUrl = `${SDK_PROVIDER}/${icon}?size=3`;
+    const iconUrl = `${MAIN_SDK_PROVIDER}/${icon}?size=3`;
 
     const isSearchQuery = query && query.length >= MIN_QUERY_LENGTH;
 

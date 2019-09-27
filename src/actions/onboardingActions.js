@@ -68,6 +68,7 @@ import { delay, uniqBy } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
+import { findEthereumNetwork } from 'utils/networks';
 
 // services
 import Storage from 'services/storage';
@@ -287,13 +288,20 @@ export const registerWalletAction = () => {
       .then(JSON.parse)
       .catch(() => ({}));
 
+    const network = findEthereumNetwork(null);
+
     dispatch(saveDbAction('wallet', {
       wallet: {
         ...encryptedWallet,
         backupStatus: { isImported: !!importedWallet, isBackedUp },
       },
     }));
-    dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
+    dispatch(saveDbAction('app_settings', {
+      appSettings: {
+        wallet: +new Date(),
+        ethereumNetwork: network.id,
+      },
+    }));
     const user = apiUser.username ? { username: apiUser.username } : {};
     dispatch(saveDbAction('user', { user }));
     dispatch({
@@ -309,7 +317,8 @@ export const registerWalletAction = () => {
       payload: REGISTERING,
     });
 
-    api.init();
+    api.init(null, undefined, null, network);
+
     const {
       sdkWallet,
       userInfo,

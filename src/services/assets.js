@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Contract, utils } from 'ethers';
-import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import { Sentry } from 'react-native-sentry';
 import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
@@ -78,7 +77,7 @@ function parseContractAmount(amount: number | string, decimals: number) {
     : utils.bigNumberify(formatted);
 }
 
-export async function transferERC20(options: ERC20TransferOptions) {
+export async function transferERC20(options: ERC20TransferOptions, network: string) {
   const {
     contractAddress,
     amount,
@@ -91,7 +90,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
   } = options;
   let { data, to } = options;
 
-  wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
+  wallet.provider = getEthereumProvider(network);
 
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
   const contractAmount = parseContractAmount(amount, defaultDecimals);
@@ -131,7 +130,7 @@ export function getERC721ContractTransferMethod(code: any): string {
   return '';
 }
 
-export async function transferERC721(options: ERC721TransferOptions) {
+export async function transferERC721(options: ERC721TransferOptions, network: string) {
   const {
     contractAddress,
     from,
@@ -143,7 +142,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
     gasPrice,
     signOnly = false,
   } = options;
-  wallet.provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+  wallet.provider = getEthereumProvider(network);
 
   let contract;
   const code = await wallet.provider.getCode(contractAddress);
@@ -193,7 +192,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
     {
       level: 'info',
       extra: {
-        networkProvider: COLLECTIBLES_NETWORK,
+        networkProvider: network,
         contractAddress,
         tokenId,
       },
@@ -201,7 +200,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
   return { error: 'can not be transferred', noRetry: true };
 }
 
-export async function transferETH(options: ETHTransferOptions) {
+export async function transferETH(options: ETHTransferOptions, network: string) {
   const {
     to,
     wallet,
@@ -221,7 +220,7 @@ export async function transferETH(options: ETHTransferOptions) {
     nonce,
     data,
   };
-  wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
+  wallet.provider = getEthereumProvider(network);
   if (!signOnly) return wallet.sendTransaction(trx);
   const signedHash = await wallet.sign(trx);
   return { signedHash, value };
@@ -229,28 +228,28 @@ export async function transferETH(options: ETHTransferOptions) {
 
 // Fetch methods are temporary until the BCX API provided
 
-export function fetchETHBalance(walletAddress: Address) {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function fetchETHBalance(walletAddress: Address, network: string) {
+  const provider = getEthereumProvider(network);
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export function fetchRinkebyETHBalance(walletAddress: Address) {
-  const provider = getEthereumProvider('rinkeby');
-  return provider.getBalance(walletAddress).then(utils.formatEther);
-}
-
-export function fetchERC20Balance(walletAddress: Address, contractAddress: Address, decimals: number = 18) {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+function fetchERC20Balance(
+  walletAddress: Address,
+  contractAddress: Address,
+  network: string,
+  decimals: number = 18,
+) {
+  const provider = getEthereumProvider(network);
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
   return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
 
-export function fetchAssetBalances(assets: Asset[], walletAddress: string): Promise<Object[]> {
+export function fetchAssetBalances(assets: Asset[], walletAddress: string, network: string): Promise<Object[]> {
   const promises = assets
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
-        ? await fetchETHBalance(walletAddress)
-        : await fetchERC20Balance(walletAddress, asset.address, asset.decimals).catch(() => 0);
+        ? await fetchETHBalance(walletAddress, network)
+        : await fetchERC20Balance(walletAddress, asset.address, network, asset.decimals).catch(() => 0);
       return {
         balance,
         symbol: asset.symbol,
@@ -282,35 +281,35 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
 }
 
 // from the getTransaction() method you'll get the the basic tx info without the status
-export function fetchTransactionInfo(hash: string): Promise<?Object> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function fetchTransactionInfo(hash: string, network: string): Promise<?Object> {
+  const provider = getEthereumProvider(network);
   return provider.getTransaction(hash).catch(() => null);
 }
 
 // receipt available for mined transactions only, here you can get the status of the tx
-export function fetchTransactionReceipt(hash: string): Promise<?Object> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function fetchTransactionReceipt(hash: string, network: string): Promise<?Object> {
+  const provider = getEthereumProvider(network);
   return provider.getTransactionReceipt(hash).catch(() => null);
 }
 
-export function fetchLastBlockNumber(): Promise<number> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function fetchLastBlockNumber(network: string): Promise<number> {
+  const provider = getEthereumProvider(network);
   return provider.getBlockNumber().then(parseInt).catch(() => 0);
 }
 
-export function transferSigned(signed: string) {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function transferSigned(signed: string, network: string) {
+  const provider = getEthereumProvider(network);
   return provider.sendTransaction(signed);
 }
 
-export function waitForTransaction(hash: string) {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function waitForTransaction(hash: string, network: string) {
+  const provider = getEthereumProvider(network);
   return provider.waitForTransaction(hash);
 }
 
 export const DEFAULT_GAS_LIMIT = 500000;
 
-export async function calculateGasEstimate(transaction: Object) {
+export async function calculateGasEstimate(transaction: Object, network: string) {
   const {
     from,
     amount,
@@ -320,7 +319,7 @@ export async function calculateGasEstimate(transaction: Object) {
     tokenId,
   } = transaction;
   let { to, data } = transaction;
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(network);
   const value = symbol === ETH
     ? utils.parseEther(amount.toString())
     : '0x';
