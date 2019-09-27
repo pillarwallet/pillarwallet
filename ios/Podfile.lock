@@ -238,12 +238,12 @@ PODS:
   - RNVectorIcons (6.4.2):
     - React
   - RSKImageCropper (2.2.1)
-  - Sentry (4.1.3):
-    - Sentry/Core (= 4.1.3)
-  - Sentry/Core (4.1.3)
-  - SentryReactNative (0.43.2):
+  - Sentry (4.0.1):
+    - Sentry/Core (= 4.0.1)
+  - Sentry/Core (4.0.1)
+  - SentryReactNative (0.39.1):
     - React
-    - Sentry (~> 4.1.3)
+    - Sentry (~> 4.0.1)
   - yoga (0.59.10.React)
 
 DEPENDENCIES:
@@ -421,8 +421,8 @@ SPEC CHECKSUMS:
   RNKeychain: 5381e340056c23de103d73ae59cbddc6ffc21d97
   RNVectorIcons: 8c52e1e8da1153613fdef44748e865c25556cb9c
   RSKImageCropper: 98296ad26b41753f796b6898d015509598f13d97
-  Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
-  SentryReactNative: fc630be25b30c1a494b478ba1fa38f761cc6da20
+  Sentry: a38f7879924c02239e121b19d993d23bdd1684db
+  SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
 PODFILE CHECKSUM: 42e7a551dffe95bc74db51cdfd535a756cb632ab
