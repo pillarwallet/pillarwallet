@@ -53,7 +53,6 @@ import {
   SETTLE_BALANCE,
   SMART_WALLET_INTRO,
   UNSETTLED_ASSETS,
-  SMART_WALLET_INTRO,
   TANK_WITHDRAWAL,
 } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
