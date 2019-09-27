@@ -51,7 +51,10 @@ import {
   FUND_TANK,
   SEND_TOKEN_FROM_ASSET_FLOW,
   SETTLE_BALANCE,
-  SMART_WALLET_INTRO, UNSETTLED_ASSETS,
+  SMART_WALLET_INTRO,
+  UNSETTLED_ASSETS,
+  SMART_WALLET_INTRO,
+  TANK_WITHDRAWAL,
 } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
@@ -342,7 +345,7 @@ class PPNView extends React.Component<Props, State> {
               <CircleButton
                 label="Withdraw"
                 fontIcon="up-arrow"
-                onPress={() => {}}
+                onPress={() => navigation.navigate(TANK_WITHDRAWAL)}
                 disabled={availableStake <= 0}
               />
               <CircleButton
