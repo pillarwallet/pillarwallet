@@ -65,7 +65,11 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
-import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import {
+  PAYMENT_NETWORK_ACCOUNT_TOPUP,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_TX_SETTLEMENT
+} from 'constants/paymentNetworkConstants';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
@@ -347,10 +351,17 @@ class ActivityFeed extends React.Component<Props, State> {
         nameOrAddress = 'PLR Network Top Up';
         itemImageSource = PPNIcon;
         directionIcon = '';
+      } else if (tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
+        nameOrAddress = 'PLR Network Withdrawal';
+        itemImageSource = PPNIcon;
+        directionIcon = '';
       }
 
       const isPPNTransaction = get(notification, 'isPPNTransaction', false);
       if (isPPNTransaction) {
+        if (addressesEqual(notification.to, notification.from)) {
+          nameOrAddress = 'Transfer to own account';
+        }
         itemValue = '';
         customAddon = (<TankAssetBalance
           amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
