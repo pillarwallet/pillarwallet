@@ -326,6 +326,7 @@ describe('ConnectionKeyPair actions', () => {
         { type: UPDATE_CONTACTS, payload: [...contactsMock] },
         { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
         { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(3, 7)] },
+        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(2, 7)] },
       ];
 
       // $FlowFixMe

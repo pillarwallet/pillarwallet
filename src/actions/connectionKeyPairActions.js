@@ -107,7 +107,7 @@ export const mapIdentityKeysAction = (connectionPreKeyCount: number, theWalletId
         }
       });
     } else if (resultCurrentConnections && resultCurrentConnections.length === 0) {
-      errorConnectionKeyMaps.concat(currentConnectionKeyPairs);
+      errorConnectionKeyMaps.push(...currentConnectionKeyPairs);
     }
     if (successfullConnectionMaps.length > 0) {
       await dispatch(updateConnectionIdentityKeys(successfullConnectionMaps));
@@ -178,7 +178,7 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
           }
         });
       } else {
-        errorConnectionUpdates.concat(identityKeysOldConnections);
+        errorConnectionUpdates.push(...identityKeysOldConnections);
       }
       if (errorConnectionUpdates.length > 0) {
         await dispatch(prependConnectionKeyPairs(errorConnectionUpdates));
@@ -251,9 +251,8 @@ const patchConnections = (theWalletId?: ?string = null) => {
       accessTokens: { data: accessTokens },
     } = getState();
 
-    const patchContactsList = contacts.filter(contact => {
-      return !connectionIdentityKeys.find((cik: ConnectionIdentityKey) => cik.targetUserId === contact.id);
-    });
+    const patchContactsList = contacts.filter(contact =>
+      !connectionIdentityKeys.some((cik: ConnectionIdentityKey) => cik.targetUserId === contact.id));
 
     const finalPatchList = patchContactsList.map(conn => {
       const contactAccessToken = accessTokens.find(at => at.userId === conn.id);
@@ -307,18 +306,16 @@ const patchConnections = (theWalletId?: ?string = null) => {
         }
       });
     } else {
-      errorConnectionUpdates.concat(identityKeysPatchConnections);
+      errorConnectionUpdates.push(...identityKeysPatchConnections);
     }
     if (errorConnectionUpdates.length > 0) {
       await dispatch(prependConnectionKeyPairs(errorConnectionUpdates));
     }
     if (successfullConnectionUpdates.length > 0) {
-      const currentConnectionKeyPairList = successfullConnectionUpdates.map((keyPair) => {
-        return {
-          sourceIdentityKey: keyPair.A,
-          targetIdentityKey: keyPair.Ad,
-        };
-      });
+      const currentConnectionKeyPairList = successfullConnectionUpdates.map(keyPair => ({
+        sourceIdentityKey: keyPair.A,
+        targetIdentityKey: keyPair.Ad,
+      }));
       const connectionIdentityKeyMap = {
         walletId,
         identityKeys: currentConnectionKeyPairList,
@@ -327,11 +324,7 @@ const patchConnections = (theWalletId?: ?string = null) => {
       const successfullConnectionMaps = [];
       const resultCurrentConnections = await api.mapIdentityKeys(connectionIdentityKeyMap);
       if (resultCurrentConnections) {
-        resultCurrentConnections.forEach((conn) => {
-          if (conn.userId) {
-            successfullConnectionMaps.push(conn);
-          }
-        });
+        resultCurrentConnections.forEach(conn => conn.userId && successfullConnectionMaps.push(conn));
       }
       if (successfullConnectionMaps.length > 0) {
         await dispatch(updateConnectionIdentityKeys(successfullConnectionMaps));
