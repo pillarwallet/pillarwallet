@@ -89,6 +89,7 @@ import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/UpgradeToSmartWallet/SmartWalletIntro';
+import UnsettledAssets from 'screens/UnsettledAssets';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -205,7 +206,6 @@ import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from '
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import UnsettledAssets from '../screens/UnsettledAssets';
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';

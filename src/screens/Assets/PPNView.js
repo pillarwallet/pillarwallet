@@ -96,7 +96,7 @@ type Props = {
   fetchVirtualAccountBalance: Function,
   accounts: Accounts,
   smartWalletState: Object,
-  availableToSettleTx: Object,
+  availableToSettleTx: Object[],
   history: Transaction[],
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
