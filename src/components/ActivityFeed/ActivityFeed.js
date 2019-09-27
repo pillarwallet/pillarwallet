@@ -40,6 +40,7 @@ import Tabs from 'components/Tabs';
 import TankAssetBalance from 'components/TankAssetBalance';
 import { BaseText } from 'components/Typography';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
 
 // utils
 import { createAlert } from 'utils/alerts';
@@ -72,7 +73,7 @@ import {
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
-import { SettlementItem } from './SettlementItem';
+import { accountAssetsSelector } from 'selectors/assets';
 
 const ActivityFeedList = styled.SectionList`
   width: 100%;
@@ -558,15 +559,14 @@ class ActivityFeed extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-  assets: { data: assets },
 }) => ({
   contacts,
-  assets: Object.values(assets),
   contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
+  assets: (state) => Object.values(accountAssetsSelector(state)),
 });
 
 const combinedMapStateToProps = (state) => ({
