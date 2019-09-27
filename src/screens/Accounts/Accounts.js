@@ -41,11 +41,11 @@ import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { responsiveSize } from 'utils/ui';
 import { baseColors, spacing } from 'utils/variables';
-import { calculatePortfolioBalance } from 'utils/assets';
+import { calculateBalanceInFiat } from 'utils/assets';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Assets, Balances, Rates } from 'models/Asset';
+import type { Assets, BalancesStore, Balances, Rates } from 'models/Asset';
 import type { Accounts, Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
@@ -68,6 +68,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 type NetworkItem = {|
   id: string,
@@ -117,7 +118,7 @@ type Props = {|
   accounts: Accounts,
   resetIncorrectPassword: Function,
   switchAccount: Function,
-  balances: Balances,
+  balances: BalancesStore,
   rates: Rates,
 |};
 
@@ -342,7 +343,6 @@ class AccountsScreen extends React.Component<Props, State> {
       accounts,
       navigation,
       balances,
-      assets,
       rates,
       smartWalletFeatureEnabled,
       baseFiatCurrency,
@@ -359,15 +359,13 @@ class AccountsScreen extends React.Component<Props, State> {
 
     const wallets = visibleAccounts.map((account: Account): ListItem => {
       const { id, isActive, type } = account;
-      const accountBalances = balances[id];
+      const accountBalances: Balances = balances[id];
       const isActiveWallet = !!isActive && isEthereumActive;
       const isSmartWallet = type === ACCOUNT_TYPES.SMART_WALLET;
       let walletBalance = 0;
 
       if (accountBalances) {
-        // TODO: improve balance calculation?
-        const balance = calculatePortfolioBalance(assets, rates, accountBalances);
-        walletBalance = balance && balance[fiatCurrency];
+        walletBalance = calculateBalanceInFiat(rates, accountBalances, fiatCurrency);
       }
 
       const accountItem = {
@@ -490,7 +488,6 @@ class AccountsScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   accounts: { data: accounts },
   blockchainNetwork: { data: blockchainNetworks },
-  assets: { data: assets },
   paymentNetwork: { isTankInitialised },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
   appSettings: { data: { baseFiatCurrency } },
@@ -499,7 +496,6 @@ const mapStateToProps = ({
 }: RootReducerState) => ({
   accounts,
   blockchainNetworks,
-  assets,
   isTankInitialised,
   smartWalletFeatureEnabled,
   baseFiatCurrency,
@@ -509,6 +505,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState) => ({

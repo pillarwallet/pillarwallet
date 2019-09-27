@@ -27,6 +27,9 @@ import ErrorMessage from 'components/ErrorMessage';
 import Header from 'components/Header';
 import SelectorInput from 'components/SelectorInput';
 
+import { createStructuredSelector } from 'reselect';
+import { accountAssetsSelector } from 'selectors/assets';
+
 function SelectorInputTemplate(locals) {
   const {
     config: {
@@ -205,12 +208,19 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   user: { data: user },
   accounts: { data: accounts },
-  assets: { data: assets },
 }) => ({
   wallet,
   user,
   accounts,
-  assets,
 });
 
-export default connect(mapStateToProps)(FiatCrypto);
+const structuredSelector = createStructuredSelector({
+  assets: accountAssetsSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default connect(combinedMapStateToProps)(FiatCrypto);

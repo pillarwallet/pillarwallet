@@ -18,12 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { AppState } from 'react-native';
 import { connect } from 'react-redux';
 import { DEFAULT_PIN } from 'react-native-dotenv';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
+import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
@@ -36,6 +38,7 @@ import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/c
 import { getKeychainDataObject } from 'utils/keychain';
 
 const ACTIVE_APP_STATE = 'active';
+const BACKGROUND_APP_STATE = 'background';
 
 type Props = {
   loginWithPin: (pin: string, callback: ?Function, updateKeychain: boolean) => Function,
@@ -50,6 +53,7 @@ type State = {
   waitingTime: number,
   biometricsShown: boolean,
   updateKeychain: boolean,
+  lastAppState: string,
 };
 
 class PinCodeUnlock extends React.Component<Props, State> {
@@ -60,6 +64,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     waitingTime: 0,
     biometricsShown: false,
     updateKeychain: false,
+    lastAppState: AppState.currentState,
   };
 
   constructor(props) {
@@ -72,12 +77,15 @@ class PinCodeUnlock extends React.Component<Props, State> {
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
     const { useBiometrics } = this.props;
+    const { lastAppState } = this.state;
 
     if (!this.errorMessage && DEFAULT_PIN) {
       this.handlePinSubmit(DEFAULT_PIN);
     }
 
-    if (useBiometrics && !this.errorMessage) {
+    if (useBiometrics
+      && !this.errorMessage
+      && lastAppState !== BACKGROUND_APP_STATE) {
       this.showBiometricLogin();
     }
 
@@ -93,15 +101,20 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   handleAppStateChange = (nextAppState: string) => {
     const { useBiometrics } = this.props;
-    if (nextAppState === ACTIVE_APP_STATE && useBiometrics && !this.errorMessage) {
+    const { lastAppState } = this.state;
+    if (nextAppState === ACTIVE_APP_STATE
+      && lastAppState === BACKGROUND_APP_STATE
+      && useBiometrics
+      && !this.errorMessage) {
       this.showBiometricLogin();
     }
+    this.setState({ lastAppState: nextAppState });
   };
 
   showBiometricLogin() {
-    const { loginWithPrivateKey } = this.props;
+    const { loginWithPrivateKey, connectionKeyPairs: { data: connKeys, lastConnectionKeyIndex } } = this.props;
     const { biometricsShown } = this.state;
-    if (biometricsShown) return;
+    if (biometricsShown || connKeys.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1) return;
     this.setState({ biometricsShown: true }, () => {
       getKeychainDataObject()
         .then(data => {

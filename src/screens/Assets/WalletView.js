@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, Switch, SectionList, Platform, ScrollView, StyleSheet, RefreshControl } from 'react-native';
+import { Keyboard, Switch, SectionList, Platform, ScrollView, StyleSheet, RefreshControl, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
@@ -46,6 +46,7 @@ import {
   COLLECTIBLES,
   defaultFiatCurrency,
   ETH,
+  PLR,
 } from 'constants/assetsConstants';
 import { EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
@@ -53,6 +54,8 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { accountAssetsSelector } from 'selectors/assets';
+
 import Spinner from 'components/Spinner';
 import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -65,20 +68,19 @@ import type { Accounts } from 'models/Account';
 
 // actions
 import {
-  updateAssetsAction,
   startAssetsSearchAction,
   searchAssetsAction,
   resetSearchAssetsResultAction,
   addAssetAction,
-  removeAssetAction,
   fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
+import { hideAssetAction } from 'actions/userSettingsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // utils
-import { calculatePortfolioBalance } from 'utils/assets';
+import { calculateBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 
 // partials
@@ -102,8 +104,7 @@ type Props = {
   searchAssets: Function,
   resetSearchAssetsResult: Function,
   addAsset: Function,
-  removeAsset: Function,
-  updateAssets: Function,
+  hideAsset: Function,
   assetsSearchState: string,
   logScreenView: Function,
   balances: Balances,
@@ -312,38 +313,32 @@ class WalletView extends React.Component<Props, State> {
 
   addTokenToWallet = (asset: Asset) => {
     const { addAsset } = this.props;
-
     addAsset(asset);
-    Toast.show({
-      title: null,
-      message: `${asset.name} (${asset.symbol}) has been added`,
-      type: 'info',
-      autoClose: true,
-    });
   };
 
   hideTokenFromWallet = (asset: Asset) => {
     const {
-      removeAsset,
+      hideAsset,
     } = this.props;
 
-    if (asset.symbol === ETH) {
-      this.showETHRemovalNotification();
+    if (asset.symbol === ETH || asset.symbol === PLR) {
+      this.showNotHiddenNotification(asset);
       return;
     }
 
-    removeAsset(asset);
-    Toast.show({
-      title: null,
-      message: `${asset.name} (${asset.symbol}) has been hidden`,
-      type: 'info',
-      autoClose: true,
-    });
+    Alert.alert(
+      'Are you sure?',
+      `This will hide ${asset.name} from your wallet`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Hide', onPress: () => hideAsset(asset) },
+      ],
+    );
   };
 
-  showETHRemovalNotification = () => {
+  showNotHiddenNotification = (asset) => {
     Toast.show({
-      message: 'Ethereum is essential for Pillar',
+      message: `${asset.name} is essential for Pillar wallet`,
       type: 'info',
       title: 'This asset cannot be switched off',
     });
@@ -363,7 +358,6 @@ class WalletView extends React.Component<Props, State> {
       insightList = [],
       insightsTitle,
       assetsSearchState,
-      assets,
       rates,
       balances,
       baseFiatCurrency,
@@ -372,6 +366,8 @@ class WalletView extends React.Component<Props, State> {
       smartWalletFeatureEnabled,
       showDeploySmartWallet,
       deploySmartWallet,
+      fetchAssetsBalances,
+      fetchAllCollectiblesData,
     } = this.props;
 
     // SEARCH
@@ -398,8 +394,7 @@ class WalletView extends React.Component<Props, State> {
       },
     ];
 
-    const walletBalances = calculatePortfolioBalance(assets, rates, balances);
-    const balance = Object.keys(walletBalances).length ? walletBalances[baseFiatCurrency || defaultFiatCurrency] : 0;
+    const balance = calculateBalanceInFiat(rates, balances, baseFiatCurrency || defaultFiatCurrency);
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
@@ -428,8 +423,7 @@ class WalletView extends React.Component<Props, State> {
           <RefreshControl
             refreshing={false}
             onRefresh={() => {
-              const { fetchAssetsBalances, fetchAllCollectiblesData } = this.props;
-              fetchAssetsBalances(assets);
+              fetchAssetsBalances();
               fetchAllCollectiblesData();
             }}
           />
@@ -513,7 +507,6 @@ class WalletView extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: {
-    data: assets,
     assetsState,
     assetsSearchState,
     assetsSearchResults,
@@ -524,7 +517,6 @@ const mapStateToProps = ({
   smartWallet: smartWalletState,
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
-  assets,
   assetsState,
   assetsSearchState,
   assetsSearchResults,
@@ -539,6 +531,7 @@ const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
   activeAccount: activeAccountSelector,
   balances: accountBalancesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -547,17 +540,15 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  updateAssets: (assets: Assets, assetsToExclude: string[]) => dispatch(updateAssetsAction(assets, assetsToExclude)),
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
-  removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
+  hideAsset: (asset: Asset) => dispatch(hideAssetAction(asset)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets, true)),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction(true)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
-
 
 export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(WalletView));

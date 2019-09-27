@@ -33,7 +33,7 @@ import Button from 'components/Button';
 import { Container } from 'components/Layout';
 
 // types
-import type { Assets, Asset } from 'models/Asset';
+import type { Assets, Asset, AssetsByAccount } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -41,13 +41,11 @@ import type { Accounts, Account } from 'models/Account';
 
 // actions
 import {
-  updateAssetsAction,
   fetchInitialAssetsAction,
   startAssetsSearchAction,
   searchAssetsAction,
   resetSearchAssetsResultAction,
-  addAssetAction,
-  removeAssetAction,
+  checkForMissedAssetsAction,
 } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -68,6 +66,7 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
 import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountSelector } from 'selectors';
 
 // local components
@@ -84,14 +83,13 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetsLayout: string,
-  updateAssets: Function,
   startAssetsSearch: Function,
   searchAssets: Function,
   resetSearchAssetsResult: Function,
   assetsSearchResults: Asset[],
   assetsSearchState: string,
   addAsset: Function,
-  removeAsset: Function,
+  hideAsset: Function,
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
@@ -102,6 +100,8 @@ type Props = {
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
+  checkForMissedAssets: Function,
+  allAssets: AssetsByAccount,
 }
 
 type State = {
@@ -132,6 +132,8 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       assets,
       logScreenView,
+      checkForMissedAssets,
+      allAssets,
     } = this.props;
 
     logScreenView('View assets list', 'Assets');
@@ -141,10 +143,18 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     fetchAllCollectiblesData();
+    checkForMissedAssets(allAssets);
 
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ supportsBiometrics: !!supported }))
       .catch(() => null);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { activeAccount, checkForMissedAssets, allAssets } = this.props;
+    if (!isEqual(prevProps.activeAccount, activeAccount)) {
+      checkForMissedAssets(allAssets);
+    }
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -182,7 +192,10 @@ class AssetsScreen extends React.Component<Props, State> {
           label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet',
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
-          customHeaderProps: { background: baseColors.jellyBean, light: true },
+          customHeaderProps: {
+            background: walletType === ACCOUNT_TYPES.KEY_BASED ? baseColors.tomato : baseColors.neonBlue,
+            light: true,
+          },
           customHeaderButtonProps: {},
         };
       default:
@@ -321,7 +334,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   wallet: { data: wallet, backupStatus },
   assets: {
-    data: assets,
+    data: allAssets,
     assetsState,
     assetsSearchState,
     assetsSearchResults,
@@ -335,7 +348,7 @@ const mapStateToProps = ({
   wallet,
   backupStatus,
   accounts,
-  assets,
+  allAssets,
   assetsState,
   assetsSearchState,
   assetsSearchResults,
@@ -350,6 +363,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
+  assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   availableStake: availableStakeSelector,
 });
@@ -361,12 +375,10 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
-  updateAssets: (assets: Assets, assetsToExclude: string[]) => dispatch(updateAssetsAction(assets, assetsToExclude)),
+  checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
-  addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
-  removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });

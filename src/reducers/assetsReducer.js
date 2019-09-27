@@ -21,8 +21,6 @@ import {
   UPDATE_ASSET,
   UPDATE_ASSETS,
   UPDATE_ASSETS_STATE,
-  ADD_ASSET,
-  REMOVE_ASSET,
   SET_INITIAL_ASSETS,
   FETCHING,
   FETCHED,
@@ -75,17 +73,15 @@ export default function assetsReducer(
     case UPDATE_ASSETS:
       const assetsState = Object.keys(action.payload).length ? FETCHED : initialState.assetsState;
       return { ...state, data: action.payload || {}, assetsState };
-    case ADD_ASSET:
-      const addedAsset = action.payload;
-      return merge({}, state, { data: { [addedAsset.symbol]: { ...addedAsset } } });
-    case REMOVE_ASSET:
-      const removedAsset = action.payload;
-      const clonedState = merge({}, state);
-      // better to use reduce to filter out and remove the key from the object
-      delete clonedState.data[removedAsset.symbol];
-      return { ...clonedState };
     case SET_INITIAL_ASSETS:
-      return { ...state, data: action.payload || {}, assetsState: FETCHED_INITIAL };
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          [action.payload.accountId]: action.payload.assets || {},
+        },
+        assetsState: FETCHED_INITIAL,
+      };
     case START_ASSETS_SEARCH:
       return {
         ...state,

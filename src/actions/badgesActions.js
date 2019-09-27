@@ -17,24 +17,21 @@ export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId } },
-      wallet: { data: wallet },
       badges: { data: badges },
     } = getState();
 
     let newBadgeReceived = false;
-    const userBadges = await api.fetchBadges(wallet.address);
-    if (userBadges && Object.keys(userBadges).length) {
-      const ids = Object.keys(userBadges).map(Number);
-      const badgesInfo = await api.fetchBadgesInfo(walletId);
+    const userBadges = await api.fetchBadges(walletId);
 
-      const updatedBadges = ids.map(badgeId => {
-        const oldBadgeInfo = badges.find(({ id }) => id === badgeId) || {};
-        if (isEmpty(oldBadgeInfo)) newBadgeReceived = true;
-        const badgeInfo = badgesInfo[badgeId] || oldBadgeInfo;
+    if (!isEmpty(userBadges)) {
+      const updatedBadges = userBadges.map(badge => {
+        const badgeId = badge.id;
+        const oldBadgeInfo = badges.find(({ id }) => id === badgeId);
+        if (!oldBadgeInfo) newBadgeReceived = true;
+        const badgeInfo = badge || oldBadgeInfo || {};
         return {
           ...badgeInfo,
-          id: badgeId,
-          balance: userBadges[badgeId],
+          balance: 1, // TODO: this should come from the backend
         };
       });
 

@@ -24,6 +24,7 @@ import { View as mockView } from 'react-native';
 import { utils, HDNode } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
+import WalletConnectMock from './walletConnectMock';
 
 process.env.IS_TEST = 'TEST';
 
@@ -209,7 +210,7 @@ const mockArchanovaSdkInstance = {
   extendConfig: () => mockArchanovaSdkInstance,
 };
 
-jest.setMock('@archanova/sdk', {
+jest.setMock('@smartwallet/sdk', {
   sdkConstants: {
     AccountStates: {
       Created: 'Created',
@@ -255,3 +256,5 @@ jest.setMock('react-native-keychain', {
     BIOMETRY_ANY: 'BIOMETRY_ANY',
   },
 });
+
+jest.setMock('@walletconnect/react-native', WalletConnectMock);

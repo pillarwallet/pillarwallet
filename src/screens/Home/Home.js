@@ -65,8 +65,8 @@ import {
 } from 'actions/invitationsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import {
-  requestWalletConnectSessionAction,
-  cancelWaitingRequest,
+  requestSessionAction,
+  cancelWaitingRequestAction,
 } from 'actions/walletConnectActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
@@ -86,6 +86,7 @@ import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 import type { Account, Accounts } from 'models/Account';
 import type { Badges } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
+import type { Connector } from 'models/WalletConnect';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -105,13 +106,13 @@ type Props = {
   fetchAllCollectiblesData: Function,
   openSeaTxHistory: Object[],
   history: Array<*>,
-  waitingRequest?: string,
   requestWalletConnectSession: (uri: string) => void,
   executeDeepLink: (uri: string) => void,
-  cancelWaitingRequest: Function,
+  cancelWaitingRequest: () => void,
   badges: Badges,
   fetchBadges: Function,
-  connectors: any[],
+  connectors: Connector[],
+  pendingConnector?: Connector,
   logScreenView: (view: string, screen: string) => void,
   restoreTransactionHistory: (walletAddress: string, walletId: string) => void,
   activeAccount: Account,
@@ -271,11 +272,7 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   cancelWaiting = () => {
-    const { waitingRequest } = this.props;
-
-    if (waitingRequest) {
-      this.props.cancelWaitingRequest(waitingRequest);
-    }
+    this.props.cancelWaitingRequest();
   };
   // END OF Wallet connect related methods
 
@@ -304,7 +301,7 @@ class HomeScreen extends React.Component<Props, State> {
       openSeaTxHistory,
       contacts,
       invitations,
-      waitingRequest,
+      pendingConnector,
       badges,
       connectors,
       contactsSmartAddresses,
@@ -432,12 +429,12 @@ class HomeScreen extends React.Component<Props, State> {
           </BalanceWrapper>
           <WalletConnectWrapper>
             <SettingsItemCarded
-              title="Wallet Connect"
+              title="Manage Sessions"
               subtitle={sessionsLabel}
               onMainPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
               onSettingsPress={this.openQRScanner}
               onSettingsLoadingPress={this.cancelWaiting}
-              isLoading={!!waitingRequest}
+              isLoading={!!pendingConnector}
               settingsIconSource={iconConnect}
               settingsLabel="Connect"
             />
@@ -498,7 +495,7 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   notifications: { intercomNotificationsCount },
   badges: { data: badges },
-  walletConnect: { connectors },
+  walletConnect: { connectors, pendingConnector },
   accounts: { data: accounts },
 }) => ({
   contacts,
@@ -507,6 +504,7 @@ const mapStateToProps = ({
   intercomNotificationsCount,
   badges,
   connectors,
+  pendingConnector,
   contactsSmartAddresses,
   accounts,
 });
@@ -531,9 +529,9 @@ const mapDispatchToProps = (dispatch) => ({
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  requestWalletConnectSession: uri => dispatch(requestWalletConnectSessionAction(uri)),
+  requestWalletConnectSession: uri => dispatch(requestSessionAction(uri)),
   executeDeepLink: uri => dispatch(executeDeepLinkAction(uri)),
-  cancelWaitingRequest: clientId => dispatch(cancelWaitingRequest(clientId)),
+  cancelWaitingRequest: () => dispatch(cancelWaitingRequestAction()),
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   restoreTransactionHistory: (walletAddress: string, walletId: string) => dispatch(

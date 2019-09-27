@@ -37,19 +37,22 @@ import {
 } from 'react-native-dotenv';
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
-import type { UserBadgesResponse, BadgesInfoResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
+import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
 import {
   fetchAssetBalances,
   fetchLastBlockNumber,
   fetchTransactionInfo,
   fetchTransactionReceipt,
 } from 'services/assets';
-import { fetchBadges } from 'services/badges';
 import EthplorerSdk from 'services/EthplorerSdk';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
-import type { ConnectionIdentityKeyMap, ConnectionUpdateIdentityKeys } from 'models/Connections';
+import type {
+  ConnectionIdentityKeyMap,
+  ConnectionUpdateIdentityKeys,
+  ConnectionPatchIdentityKeys,
+} from 'models/Connections';
 import { getLimitedData } from 'utils/opensea';
 import { uniqBy } from 'utils/common';
 
@@ -353,17 +356,19 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
 
 SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
   if (!walletAddress) return Promise.resolve({ assets: [] });
+  const url = `${OPEN_SEA_API}/assets/?owner=${walletAddress}` +
+    '&exclude_currencies=true&order_by=listing_date&order_direction=asc';
   return new Promise((resolve, reject) => {
-    getLimitedData(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=listing_date&order_direction=asc`,
-      [], 300, 0, 'assets', resolve, reject);
+    getLimitedData(url, [], 300, 0, 'assets', resolve, reject);
   })
     .then(response => ({ assets: response }))
     .catch(() => ({ error: true }));
 };
 
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
+  const url = `${OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
   return Promise.resolve()
-    .then(() => fetch(`${OPEN_SEA_API}/events/?account_address=${walletAddress}&event_type=transfer`, {
+    .then(() => fetch(url, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -485,16 +490,12 @@ SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePaylo
   // return Promise.all(promises).catch(() => []);
 };
 
-SDKWrapper.prototype.fetchBadges = function (address: string): Promise<UserBadgesResponse> {
-  return fetchBadges(address).catch(() => ({}));
-};
-
-SDKWrapper.prototype.fetchBadgesInfo = function (walletId: string): Promise<BadgesInfoResponse> {
+SDKWrapper.prototype.fetchBadges = function (walletId: string): Promise<UserBadgesResponse> {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.badge.my({ walletId }))
     .then(({ data }) => data)
-    .then(data => data.reduce((memo, badge) => ({ ...memo, [badge.id]: badge }), {}))
-    .catch(() => ({}));
+    .then(data => uniqBy(data, 'id'))
+    .catch(() => []);
 };
 
 SDKWrapper.prototype.fetchContactBadges = function (walletId: string, userId: string): Promise<Badges> {
@@ -743,6 +744,13 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
     .catch(() => false);
 };
 
+SDKWrapper.prototype.patchIdentityKeys = function (updatedIdentityKeys: ConnectionPatchIdentityKeys) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
+    .then(({ data }) => data)
+    .catch(() => false);
+};
+
 SDKWrapper.prototype.getContactsSmartAddresses = function (walletId: string, contacts: MapContactsAddresses) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.mapContactsAddresses({ walletId, contacts }))
@@ -763,6 +771,14 @@ SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: 
   return Promise.resolve()
     .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer', limit: 40 }))
     .then(data => get(data, 'operations', []))
+    .catch(() => []);
+};
+
+SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string) {
+  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
+  return Promise.resolve()
+    .then(() => ethplorerSdk.getAddressInfo(walletAddress))
+    .then(data => get(data, 'tokens', []))
     .catch(() => []);
 };
 

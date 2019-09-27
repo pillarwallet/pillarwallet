@@ -20,7 +20,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import NewProfile from 'screens/NewProfile';
-import { BaseText } from 'components/Typography';
 import { registerOnBackendAction } from 'actions/onboardingActions';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
@@ -47,9 +46,8 @@ class RetryApiRegistration extends React.Component<Props> {
     }
     return (
       <Container center>
-        <BaseText style={{ marginBottom: 20 }}>Registering on backend</BaseText>
         {walletState !== REGISTRATION_FAILED && (
-          <Loader />
+          <Loader messages={['Registering on backend']} />
         )}
         {walletState === REGISTRATION_FAILED && (
           <Button title="Try again" onPress={registerOnBackend} />

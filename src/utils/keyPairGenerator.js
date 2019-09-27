@@ -20,6 +20,7 @@
 import { Platform } from 'react-native';
 import { HDNode } from 'ethers';
 import { Thread } from 'react-native-threads';
+import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
 
 export function generateHDKeyPair(hdnodebase: HDNode, derivePath: string, connIndex: number): any {
   const dP1 = derivePath.replace('connType', '0');
@@ -122,10 +123,10 @@ export async function generateKeyPairThreadPool(
   lastConnectionKeyIndex: number = -1): Promise<Array<any>> {
   const derivePathBase = 'm/44/60\'/0\'/0/0';
   let promiseJobs = [];
-  if (connectionsKeyPairCount < 20) {
+  if (connectionsKeyPairCount <= PRE_KEY_THRESHOLD) {
     const isIOSDebuggingEnabled = Platform.OS === 'ios'
       && typeof location !== 'undefined' // eslint-disable-line no-restricted-globals
-      && location.href.indexOf('debug') > -1; // eslint-disable-line no-restricted-globals,no-undef
+      && location.href.toLowerCase().includes('debug'); // eslint-disable-line no-restricted-globals,no-undef
     if (isIOSDebuggingEnabled) {
       promiseJobs = generateKeyPairPool(mnemonic, privateKey, lastConnectionKeyIndex, connectionsCount, 25);
     } else {

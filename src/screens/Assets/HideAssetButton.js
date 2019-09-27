@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TouchableOpacity, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -30,15 +29,11 @@ type Props = {
   disabled?: boolean,
 }
 
-const HideButtonWrapper = styled.View`
-  padding: ${Platform.select({
-    ios: props => props.expanded ? '10px 20px' : '15px 10px',
-    android: props => props.expanded ? '10px 20px' : '10px 10px 20px',
-  })};
+const HideButtonWrapper = styled.TouchableOpacity`
+  padding: 10px;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   flex: 1;
-  margin-left: 6px;
 `;
 
 const HideButtonLabel = styled(BaseText)`
@@ -51,26 +46,18 @@ const HideButtonLabel = styled(BaseText)`
 const HideAssetButton = (props: Props) => {
   const { onPress, expanded, disabled } = props;
   return (
-    <HideButtonWrapper expanded={expanded}>
-      <TouchableOpacity
-        onPress={onPress}
+    <HideButtonWrapper onPress={onPress}>
+      <Icon
+        name="turn-off"
         style={{
-          justifyContent: 'center',
-          alignItems: 'center',
+          color: baseColors.burningFire,
+          fontSize: expanded ? fontSizes.medium : fontSizes.small,
+          opacity: disabled ? 0.5 : 1,
         }}
-      >
-        <Icon
-          name="turn-off"
-          style={{
-            color: baseColors.burningFire,
-            fontSize: expanded ? fontSizes.medium : fontSizes.small,
-            opacity: disabled ? 0.5 : 1,
-          }}
-        />
-        <HideButtonLabel expanded={expanded} disabled={disabled}>
-          Hide
-        </HideButtonLabel>
-      </TouchableOpacity>
+      />
+      <HideButtonLabel expanded={expanded} disabled={disabled}>
+        Hide
+      </HideButtonLabel>
     </HideButtonWrapper>
   );
 };

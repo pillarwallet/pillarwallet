@@ -22,6 +22,7 @@ import { generateKeyPairThreadPool, generateKeyPairPool } from 'utils/keyPairGen
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE, DECRYPTED } from 'constants/walletConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
+import type { ConnectionIdentityKey } from 'models/Connections';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { fetchOldInviteNotificationsAction } from 'actions/oldInvitationsActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
@@ -105,6 +106,8 @@ export const mapIdentityKeysAction = (connectionPreKeyCount: number, theWalletId
           errorConnectionKeyMaps.push(errorConnKey);
         }
       });
+    } else if (resultCurrentConnections && resultCurrentConnections.length === 0) {
+      errorConnectionKeyMaps.push(...currentConnectionKeyPairs);
     }
     if (successfullConnectionMaps.length > 0) {
       await dispatch(updateConnectionIdentityKeys(successfullConnectionMaps));
@@ -174,6 +177,8 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
             errorConnectionUpdates.push(errorConnKeyPair);
           }
         });
+      } else {
+        errorConnectionUpdates.push(...identityKeysOldConnections);
       }
       if (errorConnectionUpdates.length > 0) {
         await dispatch(prependConnectionKeyPairs(errorConnectionUpdates));
@@ -233,6 +238,97 @@ export const backgroundPreKeyGeneratorAction = (mnemonic: ?string, privateKey: ?
       setTimeout(() => {
         dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey, true));
       }, 10000);
+    }
+  };
+};
+
+const patchConnections = (theWalletId?: ?string = null) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId = theWalletId } },
+      connectionIdentityKeys: { data: connectionIdentityKeys },
+      contacts: { data: contacts },
+      accessTokens: { data: accessTokens },
+    } = getState();
+
+    const patchContactsList = contacts.filter(contact =>
+      !connectionIdentityKeys.some((cik: ConnectionIdentityKey) => cik.targetUserId === contact.id));
+
+    const finalPatchList = patchContactsList.map(conn => {
+      const contactAccessToken = accessTokens.find(at => at.userId === conn.id);
+      return {
+        accessTokens: contactAccessToken,
+        targetUserId: conn.id,
+        username: conn.username,
+      };
+    });
+
+    const identityKeysPatchConnections = await dispatch(useConnectionKeyPairs(finalPatchList.length));
+    const patchConnectionsUpdateList = identityKeysPatchConnections.map((keyPair, index) => {
+      if (finalPatchList[index].accessTokens) {
+        return {
+          sourceUserAccessKey: finalPatchList[index].accessTokens.myAccessToken,
+          targetUserAccessKey: finalPatchList[index].accessTokens.userAccessToken,
+          sourceIdentityKey: keyPair.A,
+          targetIdentityKey: keyPair.Ad,
+          targetUserId: finalPatchList[index].targetUserId,
+        };
+      }
+      return {
+        sourceUserAccessKey: null,
+        targetUserAccessKey: null,
+        sourceIdentityKey: keyPair.A,
+        targetIdentityKey: keyPair.Ad,
+        targetUserId: finalPatchList[index].targetUserId,
+      };
+    });
+    const patchConnectionsUpdateData = {
+      walletId,
+      connections: patchConnectionsUpdateList,
+    };
+
+    const successfullConnectionUpdates = [];
+    const errorConnectionUpdates = [];
+    const resultPatchConnections = await api.patchIdentityKeys(patchConnectionsUpdateData);
+    if (resultPatchConnections) {
+      resultPatchConnections.forEach((conn) => {
+        const { sourceIdentityKey, targetIdentityKey } = conn;
+        if (conn.updated) {
+          const successConKeyPair = identityKeysPatchConnections.find((connKeyPair) => {
+            return connKeyPair.A === sourceIdentityKey && connKeyPair.Ad === targetIdentityKey;
+          });
+          successfullConnectionUpdates.push(successConKeyPair);
+        } else {
+          const errorConnKeyPair = identityKeysPatchConnections.find((connKeyPair) => {
+            return connKeyPair.A === sourceIdentityKey && connKeyPair.Ad === targetIdentityKey;
+          });
+          errorConnectionUpdates.push(errorConnKeyPair);
+        }
+      });
+    } else {
+      errorConnectionUpdates.push(...identityKeysPatchConnections);
+    }
+    if (errorConnectionUpdates.length > 0) {
+      await dispatch(prependConnectionKeyPairs(errorConnectionUpdates));
+    }
+    if (successfullConnectionUpdates.length > 0) {
+      const currentConnectionKeyPairList = successfullConnectionUpdates.map(keyPair => ({
+        sourceIdentityKey: keyPair.A,
+        targetIdentityKey: keyPair.Ad,
+      }));
+      const connectionIdentityKeyMap = {
+        walletId,
+        identityKeys: currentConnectionKeyPairList,
+      };
+
+      const successfullConnectionMaps = [];
+      const resultCurrentConnections = await api.mapIdentityKeys(connectionIdentityKeyMap);
+      if (resultCurrentConnections) {
+        resultCurrentConnections.forEach(conn => conn.userId && successfullConnectionMaps.push(conn));
+      }
+      if (successfullConnectionMaps.length > 0) {
+        await dispatch(updateConnectionIdentityKeys(successfullConnectionMaps));
+      }
     }
   };
 };
@@ -310,6 +406,8 @@ export const updateConnectionKeyPairs = (
     }
 
     await dispatch(updateConnectionsAction(walletId));
+
+    await dispatch(patchConnections(walletId));
 
     if (generateKeys) {
       dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey));

@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { sdkConstants } from '@smartwallet/sdk';
 import {
   ADD_ACCOUNT,
   UPDATE_ACCOUNTS,
@@ -34,31 +35,27 @@ import {
   fetchVirtualAccountBalanceAction,
   syncVirtualAccountTransactionsAction,
 } from 'actions/smartWalletActions';
-import { UPDATE_BALANCES } from 'constants/assetsConstants';
+import { UPDATE_BALANCES, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
 import Storage from 'services/storage';
 import { migrateBalancesToAccountsFormat } from 'services/dataMigration/balances';
 import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history';
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
+import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
 import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
-import { sdkConstants } from '@archanova/sdk';
 
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { AccountExtra, AccountTypes } from 'models/Account';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 
 const storage = Storage.getInstance('db');
 
 export const initDefaultAccountAction = (walletAddress: string, walletId: string, migrateData: boolean = true) => {
-  return async (dispatch: Function) => {
-    const { balances = {} } = await storage.get('balances');
-    const { history = {} } = await storage.get('history');
-    const { collectibles = {} } = await storage.get('collectibles');
-    const { collectiblesHistory = {} } = await storage.get('collectiblesHistory');
-
+  return async (dispatch: Dispatch) => {
     const keyBasedAccount = {
       id: walletAddress,
       type: ACCOUNT_TYPES.KEY_BASED,
@@ -79,6 +76,12 @@ export const initDefaultAccountAction = (walletAddress: string, walletId: string
     /*
      * Data migration
      */
+
+    const { balances = {} } = await storage.get('balances');
+    const { history = {} } = await storage.get('history');
+    const { collectibles = {} } = await storage.get('collectibles');
+    const { collectiblesHistory = {} } = await storage.get('collectiblesHistory');
+    const { assets = {} } = await storage.get('assets');
 
     // balances
     if (!balances[walletAddress]) {
@@ -119,17 +122,26 @@ export const initDefaultAccountAction = (walletAddress: string, walletId: string
       }
     }
 
+    // assets
+    if (!assets[walletAddress]) {
+      const migratedAssets = migrateAssetsToAccountsFormat(assets, [keyBasedAccount]);
+      if (migratedAssets) {
+        dispatch({ type: UPDATE_ASSETS, payload: migratedAssets });
+        await dispatch(saveDbAction('assets', { assets: migratedAssets }, true));
+      }
+    }
+
     return Promise.resolve();
   };
 };
 
 export const addNewAccountAction = (
   accountAddress: string,
-  type: string,
-  accountExtra?: Object = {},
+  type: AccountTypes,
+  accountExtra?: AccountExtra,
   backendAccounts: Object[] = [],
 ) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = {
       id: accountAddress,
@@ -167,7 +179,7 @@ export const addNewAccountAction = (
 };
 
 export const setActiveAccountAction = (accountId: string) => {
-  return async (dispatch: Function, getState: () => RootReducerState) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       smartWallet: {
@@ -200,6 +212,7 @@ export const setActiveAccountAction = (accountId: string) => {
     if ([
       SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
       SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+      SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
     ].includes(upgradeStatus)) {
       return;
     }
@@ -208,10 +221,9 @@ export const setActiveAccountAction = (accountId: string) => {
 };
 
 export const switchAccountAction = (accountId: string, privateKey?: string) => {
-  return async (dispatch: Function, getState: () => RootReducerState) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      assets: { data: assets },
     } = getState();
     const account = accounts.find(_acc => _acc.id === accountId) || {};
 
@@ -224,13 +236,13 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
     }
 
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
-    dispatch(fetchAssetsBalancesAction(assets));
+    dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());
   };
 };
 
 export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
-  return async (dispatch: Function, getState: () => RootReducerState) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { blockchainNetwork } },
       accounts: {

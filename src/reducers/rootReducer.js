@@ -28,6 +28,7 @@ import offlineQueueReducer from './offlineQueueReducer';
 import walletReducer from './walletReducer';
 import smartWalletReducer from './smartWalletReducer';
 import walletConnectReducer from './walletConnectReducer';
+import walletConnectSessionsReducer from './walletConnectSessionsReducer';
 import assetsReducer from './assetsReducer';
 import appSettingsReducer from './appSettingsReducer';
 import ratesReducer from './ratesReducer';
@@ -53,12 +54,17 @@ import balancesReducer from './balancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
 import featureFlagsReducer from './featureFlagsReducer';
 import blockchainNetworkReducer from './blockchainNetworkReducer';
+import userSettingsReducer from './userSettingsReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
 import type { WalletReducerState } from './walletReducer';
 import type { SmartWalletReducerState, SmartWalletReducerAction } from './smartWalletReducer';
-import type { WalletConnectReducerState } from './walletConnectReducer';
+import type { WalletConnectReducerState, WalletConnectReducerAction } from './walletConnectReducer';
+import type {
+  WalletConnectSessionsReducerAction,
+  WalletConnectSessionsReducerState,
+} from './walletConnectSessionsReducer';
 import type { AssetsReducerState } from './assetsReducer';
 import type { AppSettingsReducerAction, AppSettingsReducerState } from './appSettingsReducer';
 import type { RatesReducerState } from './ratesReducer';
@@ -84,12 +90,14 @@ import type { BalancesReducerState, BalancesAction } from './balancesReducer';
 import type { PaymentNetworkReducerState, PaymentNetworkAction } from './paymentNetworkReducer';
 import type { FeatureFlagsReducerState, FeatureFlagsReducerAction } from './featureFlagsReducer';
 import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
+import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
   wallet: WalletReducerState,
   smartWallet: SmartWalletReducerState,
   walletConnect: WalletConnectReducerState,
+  walletConnectSessions: WalletConnectSessionsReducerState,
   assets: AssetsReducerState,
   appSettings: AppSettingsReducerState,
   rates: RatesReducerState,
@@ -115,6 +123,7 @@ export type RootReducerState = {|
   paymentNetwork: PaymentNetworkReducerState,
   featureFlags: FeatureFlagsReducerState,
   blockchainNetwork: BlockchainNetworkReducerState,
+  userSettings: UserSettingsReducerState,
 |};
 
 type RootReducerAction =
@@ -130,6 +139,9 @@ type RootReducerAction =
   | HistoryAction
   | PaymentNetworkAction
   | SmartWalletReducerAction
+  | WalletConnectReducerAction
+  | WalletConnectSessionsReducerAction
+  | UserSettingsReducerAction
   | DbAction;
 
 export type GetState = () => RootReducerState;
@@ -147,6 +159,7 @@ const appReducer = combineReducers({
   wallet: walletReducer,
   smartWallet: smartWalletReducer,
   walletConnect: walletConnectReducer,
+  walletConnectSessions: walletConnectSessionsReducer,
   assets: assetsReducer,
   appSettings: appSettingsReducer,
   rates: ratesReducer,
@@ -172,6 +185,7 @@ const appReducer = combineReducers({
   paymentNetwork: paymentNetworkReducer,
   featureFlags: featureFlagsReducer,
   blockchainNetwork: blockchainNetworkReducer,
+  userSettings: userSettingsReducer,
 });
 
 const initialState = appReducer(undefined, {});
