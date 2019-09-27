@@ -58,6 +58,11 @@ const ContentWrapper = styled.View`
   align-items: center;
 `;
 
+const AddonWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
 const ListItem = styled.View`
   ${props => props.bordered
     ? `
@@ -127,6 +132,8 @@ type Props = {
   subtext?: string,
   subtextAddon?: React.Node,
   wrapperStyle?: Object,
+  chevronStyle?: Object,
+  rightAddon?: React.Node,
 }
 
 export const ListItemChevron = (props: Props) => {
@@ -139,6 +146,8 @@ export const ListItemChevron = (props: Props) => {
     color,
     subtext,
     wrapperStyle,
+    chevronStyle,
+    rightAddon,
   } = props;
   return (
     <ListItem bordered={bordered} style={wrapperStyle}>
@@ -157,13 +166,17 @@ export const ListItemChevron = (props: Props) => {
               </Row>}
             </TextWrapper>
           </ContentWrapper>
-          <Icon
-            name="chevron-right"
-            style={{
-              fontSize: fontSizes.extraExtraSmall,
-              color: color || baseColors.electricBlue,
-            }}
-          />
+          <AddonWrapper>
+            {rightAddon}
+            <Icon
+              name="chevron-right"
+              style={{
+                fontSize: fontSizes.extraExtraSmall,
+                color: color || baseColors.electricBlue,
+                ...chevronStyle,
+              }}
+            />
+          </AddonWrapper>
         </ItemRow>
       </ButtonWrapper>
     </ListItem>

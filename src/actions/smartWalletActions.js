@@ -61,6 +61,7 @@ import {
 import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   SET_ESTIMATED_TOPUP_FEE,
+  SET_ESTIMATED_WITHDRAWAL_FEE,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
@@ -70,6 +71,7 @@ import {
   SET_ESTIMATED_SETTLE_TX_FEE,
   PAYMENT_NETWORK_TX_SETTLEMENT,
   MARK_PLR_TANK_INITIALISED,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
 } from 'constants/paymentNetworkConstants';
 import {
   SMART_WALLET_UNLOCK,
@@ -122,7 +124,11 @@ import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } fr
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
 import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
-import { formatMoney, formatUnits } from 'utils/common';
+import {
+  formatMoney,
+  formatUnits,
+  isCaseInsensitiveMatch,
+} from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 
 const storage = Storage.getInstance('db');
@@ -612,16 +618,20 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
     // filter out already stored payments
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
-    const newPayments = payments.filter(payment => {
-      const paymentExists = accountHistory.find(({ hash }) => hash === payment.hash);
-      return !paymentExists;
-    });
 
-    const transformedNewPayments = newPayments.map(payment => {
+    // new or updated payment is one that doesn't exist in history contain or payment state has changed
+    const newOrUpdatedPayments = payments.filter(
+      ({ hash: paymentHash, state: prevStateInPPN }) => !accountHistory.some(
+        ({ hash, stateInPPN }) => isCaseInsensitiveMatch(hash, paymentHash) && stateInPPN === prevStateInPPN,
+      ),
+    );
+
+    const transformedNewPayments = newOrUpdatedPayments.map(payment => {
       const tokenSymbol = get(payment, 'token.symbol', ETH);
       const value = get(payment, 'value', new BigNumber(0));
       const senderAddress = get(payment, 'sender.account.address');
       const recipientAddress = get(payment, 'recipient.account.address');
+      const stateInPPN = get(payment, 'state');
 
       return buildHistoryTransaction({
         from: senderAddress,
@@ -632,6 +642,7 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
         isPPNTransaction: true,
         createdAt: +new Date(payment.updatedAt) / 1000,
         status: TX_CONFIRMED_STATUS,
+        stateInPPN,
       });
     });
 
@@ -665,6 +676,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     const ACCOUNT_VIRTUAL_BALANCE_UPDATED = get(sdkModules, 'Api.EventNames.AccountVirtualBalanceUpdated', '');
     const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
     const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
+    const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');
 
     if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !TRANSACTION_COMPLETED) {
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
@@ -726,6 +738,13 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             } else if (txUpdated.tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
               Toast.show({
                 message: 'Settlement process completed!',
+                type: 'success',
+                title: 'Success',
+                autoClose: true,
+              });
+            } else if (txUpdated.tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
+              Toast.show({
+                message: 'Withdrawal process completed!',
                 type: 'success',
                 title: 'Success',
                 autoClose: true,
@@ -809,18 +828,24 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txStatus = get(event, 'payload.state', '');
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txReceiverAddress = get(event, 'payload.recipient.account.address', '');
+      const txSenderAddress = get(event, 'payload.sender.account.address', '');
 
       const accountAssets = assets[activeAccountAddress];
       const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
       const txAmountFormatted = formatUnits(txAmount, decimals);
 
-      if (txStatus === PAYMENT_COMPLETED && activeAccountAddress === txReceiverAddress) {
-        Toast.show({
-          message: `You received ${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`,
-          type: 'success',
-          title: 'Success',
-          autoClose: true,
-        });
+      if (activeAccountAddress === txReceiverAddress
+        && txReceiverAddress !== txSenderAddress
+        && [PAYMENT_COMPLETED, PAYMENT_PROCESSED].includes(txStatus)) {
+        const paymentInfo = `${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`;
+        if (txStatus === PAYMENT_COMPLETED) {
+          Toast.show({
+            message: `You received ${paymentInfo}`,
+            type: 'success',
+            title: 'Success',
+            autoClose: true,
+          });
+        }
         dispatch(fetchAssetsBalancesAction());
         dispatch(syncVirtualAccountTransactionsAction());
       }
@@ -913,7 +938,7 @@ export const topUpVirtualAccountAction = (amount: string) => {
         return {};
       });
 
-    if (!estimated || !Object.keys(estimated).length) return;
+    if (isEmpty(estimated)) return;
 
     const txHash = await smartWalletService.topUpAccountVirtualBalance(estimated)
       .catch((e) => {
@@ -961,6 +986,119 @@ export const topUpVirtualAccountAction = (amount: string) => {
   };
 };
 
+export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+
+    const {
+      accounts: { data: accounts },
+      assets: { data: assets },
+    } = getState();
+    const accountAddress = getActiveAccountAddress(accounts);
+    const accountAssets = assets[accountAddress];
+    const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
+    const value = utils.parseUnits(amount, decimals);
+    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
+
+    const response = await smartWalletService
+      .estimateWithdrawFromVirtualAccount(value, tokenAddress)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString(),
+          type: 'warning',
+          autoClose: false,
+        });
+        return {};
+      });
+    if (isEmpty(response)) return;
+
+    const { gasAmount, gasPrice, totalCost } = parseEstimatePayload(response);
+
+    dispatch({
+      type: SET_ESTIMATED_WITHDRAWAL_FEE,
+      payload: {
+        gasAmount,
+        gasPrice,
+        totalCost,
+      },
+    });
+  };
+};
+
+export const withdrawFromVirtualAccountAction = (amount: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+
+    const {
+      accounts: { data: accounts },
+      assets: { data: assets },
+    } = getState();
+    const accountId = getActiveAccountId(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
+    const accountAssets = assets[accountAddress];
+    const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
+    const value = utils.parseUnits(amount.toString(), decimals);
+    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
+
+    const estimated = await smartWalletService
+      .estimateWithdrawFromVirtualAccount(value, tokenAddress)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString(),
+          type: 'warning',
+          autoClose: false,
+        });
+        return {};
+      });
+
+    if (isEmpty(estimated)) return;
+
+    const txHash = await smartWalletService.withdrawFromVirtualAccount(estimated)
+      .catch((e) => {
+        Toast.show({
+          message: e.toString() || 'Failed to withdraw from the account',
+          type: 'warning',
+          autoClose: false,
+        });
+        return null;
+      });
+
+    if (txHash) {
+      const historyTx = buildHistoryTransaction({
+        from: accountAddress,
+        hash: txHash,
+        to: accountAddress,
+        value: value.toString(),
+        asset: PPN_TOKEN,
+        tag: PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+      });
+
+      dispatch({
+        type: ADD_TRANSACTION,
+        payload: {
+          accountId,
+          historyTx,
+        },
+      });
+
+      dispatch({
+        type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
+        payload: txHash,
+      });
+
+      const { history: { data: currentHistory } } = getState();
+      dispatch(saveDbAction('history', { history: currentHistory }, true));
+
+      Toast.show({
+        message: 'Your withdrawal will be processed soon',
+        type: 'success',
+        title: 'Success',
+        autoClose: true,
+      });
+    }
+  };
+};
+
 export const setPLRTankAsInitAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch({
@@ -992,11 +1130,13 @@ export const fetchAvailableTxToSettleAction = () => {
 
     const txToSettle = payments.map(item => {
       const { decimals = 18 } = accountAssets[item.token] || {};
+      const senderAddress = get(item, 'sender.account.address', '');
       return {
         token: item.token,
         hash: item.hash,
         value: new BigNumber(formatUnits(item.value, decimals)),
         createdAt: item.updatedAt,
+        senderAddress,
       };
     });
     dispatch({
@@ -1058,7 +1198,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
         return {};
       });
 
-    if (!estimated || !Object.keys(estimated).length) return;
+    if (isEmpty(estimated)) return;
 
     const txHash = await smartWalletService.withdrawAccountPayment(estimated)
       .catch((e) => {

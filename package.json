@@ -106,9 +106,9 @@
     "includeFailureMsg": true
   },
   "dependencies": {
-    "@smartwallet/sdk": "1.0.0-rc.4",
     "@netgum/utils": "^0.1.3",
     "@pillarwallet/pillarwallet-nodejs-sdk": "1.36.1628",
+    "@smartwallet/sdk": "1.0.0-rc.5",
     "@tradle/react-native-http": "^2.0.0",
     "@walletconnect/react-native": "^1.0.0-beta.29",
     "@walletconnect/utils": "^1.0.0-beta.29",

@@ -250,8 +250,8 @@ class SmartWallet {
     return this.sdk.estimateTopUpAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
   }
 
-  estimateWithdrawFromAccountVirtualBalance(value: BigNumber) {
-    return this.sdk.estimateWithdrawFromAccountVirtualBalance(value);
+  estimateWithdrawFromVirtualAccount(value: BigNumber, tokenAddress: ?string) {
+    return this.sdk.estimateWithdrawFromAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
   }
 
   estimatePaymentSettlement(hashes: string[] = []) {
@@ -263,8 +263,8 @@ class SmartWallet {
     return this.sdk.submitAccountTransaction(estimated);
   }
 
-  withdrawAccountVirtualBalance(estimated: Object) {
-    return this.sdk.submitAccountTransaction(estimated);
+  withdrawFromVirtualAccount(estimated: Object) {
+    return this.sdk.withdrawFromAccountVirtualBalance(estimated);
   }
 
   withdrawAccountPayment(estimated: Object) {
