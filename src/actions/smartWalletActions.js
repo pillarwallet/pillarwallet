@@ -998,11 +998,13 @@ export const fetchAvailableTxToSettleAction = () => {
 
     const txToSettle = payments.map(item => {
       const { decimals = 18 } = accountAssets[item.token] || {};
+      const senderAddress = get(item, 'sender.account.address', '');
       return {
         token: item.token,
         hash: item.hash,
         value: new BigNumber(formatUnits(item.value, decimals)),
         createdAt: item.updatedAt,
+        senderAddress,
       };
     });
     dispatch({
