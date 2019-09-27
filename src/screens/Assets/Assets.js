@@ -33,7 +33,7 @@ import Button from 'components/Button';
 import { Container } from 'components/Layout';
 
 // types
-import type { Assets, Asset, AssetsByAccount } from 'models/Asset';
+import type { Assets, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -101,7 +101,6 @@ type Props = {
   backupStatus: Object,
   availableStake: number,
   checkForMissedAssets: Function,
-  allAssets: AssetsByAccount,
 }
 
 type State = {
@@ -133,7 +132,6 @@ class AssetsScreen extends React.Component<Props, State> {
       assets,
       logScreenView,
       checkForMissedAssets,
-      allAssets,
     } = this.props;
 
     logScreenView('View assets list', 'Assets');
@@ -143,7 +141,7 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     fetchAllCollectiblesData();
-    checkForMissedAssets(allAssets);
+    checkForMissedAssets();
 
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ supportsBiometrics: !!supported }))
@@ -151,9 +149,9 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { activeAccount, checkForMissedAssets, allAssets } = this.props;
+    const { activeAccount, checkForMissedAssets } = this.props;
     if (!isEqual(prevProps.activeAccount, activeAccount)) {
-      checkForMissedAssets(allAssets);
+      checkForMissedAssets();
     }
   }
 
@@ -334,7 +332,6 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   wallet: { data: wallet, backupStatus },
   assets: {
-    data: allAssets,
     assetsState,
     assetsSearchState,
     assetsSearchResults,
@@ -348,7 +345,6 @@ const mapStateToProps = ({
   wallet,
   backupStatus,
   accounts,
-  allAssets,
   assetsState,
   assetsSearchState,
   assetsSearchResults,
