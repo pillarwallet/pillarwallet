@@ -847,7 +847,7 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/xcode_circleci_fix
+                  - develop
       - hockeyapp_android:
           requires:
             - build-and-test
@@ -880,14 +880,14 @@ workflows:
             - stage_android
       - prod_ios:
           requires:
-            - hockeyapp_ios
+            - build-and-test
           filters:
             branches:
               only:
                 - fix/xcode_circleci_fix
       - prod_android:
           requires:
-            - hockeyapp_ios
+            - build-and-test
           filters:
             branches:
               only:
