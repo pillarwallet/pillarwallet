@@ -275,8 +275,6 @@ class EventDetails extends React.Component<Props, {}> {
       history,
       txNotes,
       assets,
-      contacts,
-      contactsSmartAddresses = [],
     } = this.props;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
@@ -314,8 +312,7 @@ class EventDetails extends React.Component<Props, {}> {
       const assetsData = Object.keys(assets).map(id => assets[id]);
       const { decimals = 18 } = assetsData.find(({ symbol }) => symbol === asset) || {};
       const value = formatUnits(txInfo.value, decimals);
-      const recipientContact = findMatchingContact(to, contacts, contactsSmartAddresses) || {};
-      // apply to wallet accounts only if received from other account address
+      const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
@@ -469,8 +466,7 @@ class EventDetails extends React.Component<Props, {}> {
         }
       }
       const hasNote = transactionNote && transactionNote !== '';
-      const recipientContact = findMatchingContact(to, contacts, contactsSmartAddresses) || {};
-      // apply to wallet accounts only if received from other account address
+      const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
