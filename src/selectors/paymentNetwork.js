@@ -1,9 +1,11 @@
 // @flow
 import { createSelector } from 'reselect';
-import { getBalance } from 'utils/assets';
+import { addressesEqual, getBalance } from 'utils/assets';
 import type { Balances } from 'models/Asset';
+import type { Transaction } from 'models/Transaction';
 import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
-import { activeAccountIdSelector, paymentNetworkBalancesSelector } from './selectors';
+import { activeAccountAddressSelector, activeAccountIdSelector, paymentNetworkBalancesSelector } from './selectors';
+import { accountHistorySelector } from './history';
 
 export const paymentNetworkAccountBalancesSelector: ((state: Object) => Balances) = createSelector(
   paymentNetworkBalancesSelector,
@@ -28,5 +30,13 @@ export const paymentNetworkNonZeroBalancesSelector: ((state: Object) => Balances
         [ticker]: balances[ticker],
       };
     }, {});
+  },
+);
+
+export const PPNTransactionsSelector: ((state: Object) => Transaction[]) = createSelector(
+  accountHistorySelector,
+  activeAccountAddressSelector,
+  (history: Transaction[], activeAccountAddress: string) => {
+    return history.filter(({ isPPNTransaction, to }) => !!isPPNTransaction && addressesEqual(to, activeAccountAddress));
   },
 );
