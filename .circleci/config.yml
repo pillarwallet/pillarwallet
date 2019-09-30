@@ -880,15 +880,7 @@ workflows:
             - stage_android
       - prod_ios:
           requires:
-            - build-and-test
-          filters:
-            branches:
-              only:
-                - fix/xcode_circleci_fix
+            - release_to_prod
       - prod_android:
           requires:
-            - build-and-test
-          filters:
-            branches:
-              only:
-                - fix/xcode_circleci_fix
+            - release_to_prod
