@@ -420,7 +420,7 @@ const Addon = (props: Props) => {
   } = props;
   if (itemValue || itemStatusIcon) {
     return (
-      <Wrapper horizontal style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+      <Wrapper horizontal style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end' }}>
         {!!itemValue &&
           <ItemValue color={valueColor} numberOfLines={2} ellipsizeMode="tail">
             {itemValue}

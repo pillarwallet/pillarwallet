@@ -352,6 +352,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                             "marginTop": 0,
                           },
                           Object {
+                            "alignItems": "center",
                             "flexWrap": "wrap",
                             "justifyContent": "flex-end",
                           },
@@ -759,6 +760,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                             "marginTop": 0,
                           },
                           Object {
+                            "alignItems": "center",
                             "flexWrap": "wrap",
                             "justifyContent": "flex-end",
                           },
