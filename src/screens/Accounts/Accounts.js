@@ -281,11 +281,10 @@ class AccountsScreen extends React.Component<Props, State> {
     );
   }
 
-  accountSettings = (wallet: Account) => {
+  accountSettings = (account: Account) => {
     const { navigation } = this.props;
-
-    navigation.navigate(WALLET_SETTINGS, { wallet });
-  }
+    navigation.navigate(WALLET_SETTINGS, { accountId: account.id });
+  };
 
   renderAccount(interaction: AccountInteraction) {
     const {

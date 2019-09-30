@@ -37,6 +37,7 @@ type Props = {
   settleData: SettlementItemType[],
   type?: string,
   asset?: string,
+  onPress: Function,
 }
 
 const ListWrapper = styled.View`
@@ -51,7 +52,12 @@ const ItemValue = styled(BaseText)`
 `;
 
 export const SettlementItem = (props: Props) => {
-  const { settleData, type, asset } = props;
+  const {
+    settleData,
+    type,
+    asset,
+    onPress,
+  } = props;
   const ppnTransactions = asset
     ? settleData.filter(({ symbol }) => symbol === asset)
     : settleData;
@@ -72,6 +78,7 @@ export const SettlementItem = (props: Props) => {
   return (
     <React.Fragment>
       {(!type || type === NONSYNTHETIC) && <ListItemWithImage
+        onPress={onPress}
         label="Deposit"
         itemImageSource={ppnIcon}
         subtext="to Smart Wallet"
@@ -83,6 +90,7 @@ export const SettlementItem = (props: Props) => {
         noImageBorder
       />}
       {(!type || type === SYNTHETIC) && <ListItemWithImage
+        onPress={onPress}
         label="Withdrawal"
         itemImageSource={ppnIcon}
         subtext="from PLR Network"

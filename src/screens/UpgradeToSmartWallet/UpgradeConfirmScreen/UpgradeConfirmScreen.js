@@ -42,7 +42,6 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import { accountAssetsSelector } from 'selectors/assets';
 import smartWalletService from 'services/smartWallet';
-import { DEFAULT_GAS_LIMIT } from 'services/assets';
 
 import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
@@ -106,12 +105,13 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const {
       fetchGasInfo,
       fetchAssetsBalances,
+      gasInfo,
     } = this.props;
     fetchGasInfo();
     fetchAssetsBalances();
-    smartWalletService.sdk.estimateAccountDeployment()
-      .then(({ totalCost }) => this.setState({ deployEstimateFee: totalCost }))
-      .catch(this.setDefaultDeployEstimate);
+    smartWalletService.estimateAccountDeployment(gasInfo)
+      .then(deployEstimateFee => this.setState({ deployEstimateFee }))
+      .catch(() => {});
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -198,12 +198,6 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const { gasInfo } = this.props;
     const gasPriceWei = getGasPriceWei(gasInfo);
     return gasLimit && gasPriceWei.mul(gasLimit).toNumber();
-  };
-
-  setDefaultDeployEstimate = () => {
-    this.setState({
-      deployEstimateFee: this.calculateTransferFee(DEFAULT_GAS_LIMIT),
-    });
   };
 
   renderSpinner() {

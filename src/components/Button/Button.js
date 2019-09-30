@@ -59,6 +59,8 @@ type Props = {
   isLoading?: boolean,
   primarySquare?: boolean,
   primarySquareDisabled?: boolean,
+  roundedCorners?: boolean,
+  roundedCornersDisabled?: boolean,
 };
 
 type State = {
@@ -180,6 +182,15 @@ const themes = {
     background: baseColors.electricBlue,
     color: baseColors.white,
     borderColor: 'transparent',
+    borderWidth: 0,
+    flexDirection: 'row',
+    borderRadius: 6,
+    iconHorizontalMargin: 0,
+  },
+  roundedCornersDisabled: {
+    background: baseColors.lightGray,
+    color: baseColors.darkGray,
+    borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
     flexDirection: 'row',
     borderRadius: 6,
@@ -315,6 +326,9 @@ const getTheme = (props: Props) => {
   }
   if (props.primarySquare && props.disabled) {
     return themes.primarySquareDisabled;
+  }
+  if (props.roundedCorners && props.disabled) {
+    return themes.roundedCornersDisabled;
   }
 
   const propsKeys = Object.keys(props);

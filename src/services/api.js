@@ -48,7 +48,11 @@ import EthplorerSdk from 'services/EthplorerSdk';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
-import type { ConnectionIdentityKeyMap, ConnectionUpdateIdentityKeys } from 'models/Connections';
+import type {
+  ConnectionIdentityKeyMap,
+  ConnectionUpdateIdentityKeys,
+  ConnectionPatchIdentityKeys,
+} from 'models/Connections';
 import { getLimitedData } from 'utils/opensea';
 import { uniqBy } from 'utils/common';
 
@@ -736,6 +740,13 @@ SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: Conne
 SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: ConnectionUpdateIdentityKeys) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.updateIdentityKeys(updatedIdentityKeys))
+    .then(({ data }) => data)
+    .catch(() => false);
+};
+
+SDKWrapper.prototype.patchIdentityKeys = function (updatedIdentityKeys: ConnectionPatchIdentityKeys) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
     .then(({ data }) => data)
     .catch(() => false);
 };
