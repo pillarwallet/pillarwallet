@@ -338,7 +338,7 @@ export const registerWalletAction = () => {
 
     // STEP 6: all done, navigate to the assets screen
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp, wallet);
+    navigateToAppFlow(isWalletBackedUp, wallet.address);
   };
 };
 
@@ -398,7 +398,7 @@ export const registerOnBackendAction = () => {
     });
 
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp, walletData);
+    navigateToAppFlow(isWalletBackedUp, walletData.address);
   };
 };
 
