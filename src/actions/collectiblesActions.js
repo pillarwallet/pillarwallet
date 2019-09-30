@@ -24,6 +24,7 @@ import {
   COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+import SDKWrapper from 'services/api';
 import type { Collectible } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';
@@ -64,7 +65,7 @@ const collectibleFromResponse = (responseItem: Object): Collectible => {
 };
 
 export const fetchCollectiblesAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       collectibles: { data: collectibles },
@@ -142,7 +143,7 @@ const collectibleTransaction = (event) => {
 };
 
 export const fetchCollectiblesHistoryAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       collectibles: { transactionHistory: collectiblesHistory },
