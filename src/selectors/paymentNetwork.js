@@ -1,11 +1,14 @@
 // @flow
 import { createSelector } from 'reselect';
-import { getBalance } from 'utils/assets';
+import { addressesEqual, getBalance } from 'utils/assets';
 import type { Balances } from 'models/Asset';
+import type { Transaction } from 'models/Transaction';
 import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
-import { activeAccountIdSelector, paymentNetworkBalancesSelector } from './selectors';
+import type { RootReducerState } from 'reducers/rootReducer';
+import { activeAccountAddressSelector, activeAccountIdSelector, paymentNetworkBalancesSelector } from './selectors';
+import { accountHistorySelector } from './history';
 
-export const paymentNetworkAccountBalancesSelector: ((state: Object) => Balances) = createSelector(
+export const paymentNetworkAccountBalancesSelector: ((state: RootReducerState) => Balances) = createSelector(
   paymentNetworkBalancesSelector,
   activeAccountIdSelector,
   (balances, activeAccountId) => {
@@ -17,7 +20,7 @@ export const paymentNetworkAccountBalancesSelector: ((state: Object) => Balances
 export const availableStakeSelector =
   ({ paymentNetwork }: {paymentNetwork: PaymentNetworkReducerState}) => Number(paymentNetwork.availableStake);
 
-export const paymentNetworkNonZeroBalancesSelector: ((state: Object) => Balances) = createSelector(
+export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) => Balances) = createSelector(
   paymentNetworkAccountBalancesSelector,
   (balances) => {
     return Object.keys(balances).reduce((nonZeroBalances, ticker) => {
@@ -28,5 +31,13 @@ export const paymentNetworkNonZeroBalancesSelector: ((state: Object) => Balances
         [ticker]: balances[ticker],
       };
     }, {});
+  },
+);
+
+export const PPNTransactionsSelector: ((state: RootReducerState) => Transaction[]) = createSelector(
+  accountHistorySelector,
+  activeAccountAddressSelector,
+  (history: Transaction[], activeAccountAddress: string) => {
+    return history.filter(({ isPPNTransaction, to }) => !!isPPNTransaction && addressesEqual(to, activeAccountAddress));
   },
 );
