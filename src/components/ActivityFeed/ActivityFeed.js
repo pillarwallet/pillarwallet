@@ -339,6 +339,7 @@ class ActivityFeed extends React.Component<Props, State> {
             onPress={() => this.selectEvent({ ...notification, value, contact }, type, notificationStatus)}
             type={feedType}
             asset={asset}
+            isPending={notificationStatus === 'pending'}
           />
         );
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
