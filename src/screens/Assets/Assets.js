@@ -117,14 +117,11 @@ const VIEWS = {
 };
 
 class AssetsScreen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      showKeyWalletInsight: true,
-      showSmartWalletInsight: false,
-      supportsBiometrics: false,
-    };
-  }
+  state = {
+    showKeyWalletInsight: true,
+    showSmartWalletInsight: false,
+    supportsBiometrics: false,
+  };
 
   componentDidMount() {
     const {
@@ -208,22 +205,14 @@ class AssetsScreen extends React.Component<Props, State> {
     }
   };
 
-  renderView = (viewType: string) => {
+  getInsightsList = () => {
     const {
-      assets,
-      assetsState,
-      fetchInitialAssets,
       accounts,
-      smartWalletState,
       backupStatus,
       navigation,
       useBiometrics,
     } = this.props;
-    const {
-      showKeyWalletInsight,
-      showSmartWalletInsight,
-      supportsBiometrics,
-    } = this.state;
+    const { supportsBiometrics } = this.state;
 
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
     const keyBasedAccount = findKeyBasedAccount(accounts) || {};
@@ -244,16 +233,30 @@ class AssetsScreen extends React.Component<Props, State> {
       },
     ];
 
-    const visibleKeyWalletInsights = supportsBiometrics
-      ? [...keyWalletInsights, {
+    if (supportsBiometrics) {
+      const biometricsInsight = {
         key: 'biometric',
         title: 'Enable biometric login (optional)',
         status: useBiometrics,
         onPress: !useBiometrics
           ? () => navigation.navigate(SETTINGS)
           : null,
-      }]
-      : keyWalletInsights;
+      };
+      return [...keyWalletInsights, biometricsInsight];
+    }
+
+    return keyWalletInsights;
+  };
+
+  renderView = (viewType: string) => {
+    const {
+      assets,
+      assetsState,
+      fetchInitialAssets,
+      accounts,
+      smartWalletState,
+    } = this.props;
+    const { showKeyWalletInsight, showSmartWalletInsight } = this.state;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
@@ -286,7 +289,7 @@ class AssetsScreen extends React.Component<Props, State> {
           <WalletView
             showInsight={showKeyWalletInsight}
             hideInsight={() => this.hideWalletInsight('KEY')}
-            insightList={visibleKeyWalletInsights}
+            insightList={this.getInsightsList()}
             insightsTitle="Never lose your funds"
           />);
       default:
