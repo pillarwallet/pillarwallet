@@ -21,13 +21,12 @@ import { NavigationActions } from 'react-navigation';
 import Toast from 'components/Toast';
 import { WALLET_SETTINGS } from 'constants/navigationConstants';
 import { navigate } from 'services/navigation';
-import type { Account } from 'models/Account';
 
 const BACKUP_MESSAGE =
   'Go to wallet settings on the assets screen and complete the wallet backup. ' +
   'Pillar cannot help you retrieve your wallet if it is lost.';
 
-export const toastWalletBackup = (isWalletBackedUp: boolean, wallet: Account) => {
+export const toastWalletBackup = (isWalletBackedUp: boolean, accountId: string) => {
   if (isWalletBackedUp) {
     return;
   }
@@ -40,7 +39,7 @@ export const toastWalletBackup = (isWalletBackedUp: boolean, wallet: Account) =>
     onPress: () => {
       const action = NavigationActions.navigate({
         routeName: WALLET_SETTINGS,
-        params: { wallet },
+        params: { accountId },
       });
       navigate(action);
     },

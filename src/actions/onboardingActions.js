@@ -80,8 +80,6 @@ import {
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 
-import type { Account } from 'models/Account';
-
 const storage = Storage.getInstance('db');
 
 const getTokenWalletAndRegister = async (privateKey: string, api: Object, user: Object, dispatch: Function) => {
@@ -197,14 +195,14 @@ const finishRegistration = async ({
   });
 };
 
-const navigateToAppFlow = (isWalletBackedUp: boolean, wallet: Account) => {
+const navigateToAppFlow = (isWalletBackedUp: boolean, accountId: string) => {
   const navigateToAssetsAction = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: HOME }),
   });
 
-  toastWalletBackup(isWalletBackedUp, wallet);
+  toastWalletBackup(isWalletBackedUp, accountId);
 
   navigate(navigateToAssetsAction);
 };
