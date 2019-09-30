@@ -61,6 +61,7 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
+import { findKeyBasedAccount } from 'utils/accounts';
 import { baseColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -225,7 +226,7 @@ class AssetsScreen extends React.Component<Props, State> {
     } = this.state;
 
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-    const keyBasedWallet = accounts.find((item) => item.type === ACCOUNT_TYPES.KEY_BASED);
+    const keyBasedAccount = findKeyBasedAccount(accounts) || {};
 
     const keyWalletInsights = [
       {
@@ -233,7 +234,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: 'Backup wallet',
         status: isBackedUp,
         onPress: !isBackedUp
-          ? () => navigation.navigate(WALLET_SETTINGS, { wallet: keyBasedWallet })
+          ? () => navigation.navigate(WALLET_SETTINGS, { accountId: keyBasedAccount.id })
           : null,
       },
       {
