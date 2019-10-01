@@ -24,13 +24,14 @@ import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import type { ConnectionIdentityKey } from 'models/Connections';
 import { uniqBy } from 'utils/common';
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
+import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
 
 export const updateConnectionsAction = (theWalletId?: ?string = null) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId = theWalletId } },
       connectionIdentityKeys: { data: connectionIdentityKeys },

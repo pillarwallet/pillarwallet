@@ -33,11 +33,13 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { excludeLocalContacts } from 'utils/contacts';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { saveDbAction } from './dbActions';
-import { deleteChatAction, deleteContactAction } from './chatActions';
+import { saveDbAction } from 'actions/dbActions';
+import { deleteChatAction, deleteContactAction } from 'actions/chatActions';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 export const searchContactsAction = (query: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const { user: { data: { walletId } }, contacts: { data: localContacts } } = getState();
 
     dispatch({
@@ -63,7 +65,7 @@ export const searchContactsAction = (query: string) => {
 };
 
 export const resetSearchContactsStateAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({
       type: UPDATE_CONTACTS_STATE,
       payload: null,
@@ -72,7 +74,7 @@ export const resetSearchContactsStateAction = () => {
 };
 
 export const syncContactAction = (userId: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId } },
       contacts: { data: contacts },
@@ -121,7 +123,7 @@ export const syncContactAction = (userId: string) => {
 };
 
 export const disconnectContactAction = (contactId: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
@@ -184,7 +186,7 @@ export const disconnectContactAction = (contactId: string) => {
 };
 
 export const muteContactAction = (contactId: string, mute: boolean) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
@@ -234,7 +236,7 @@ export const muteContactAction = (contactId: string, mute: boolean) => {
 };
 
 export const blockContactAction = (contactId: string, block: boolean) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
@@ -298,7 +300,7 @@ export const blockContactAction = (contactId: string, block: boolean) => {
 };
 
 export const syncContactsSmartAddressesAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
       user: { data: { walletId } },
       contacts: { data: contacts },
