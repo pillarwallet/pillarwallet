@@ -29,7 +29,6 @@ import { BaseText } from 'components/Typography';
 import { updateNavigationLastScreenState } from 'services/navigation';
 
 // screens
-import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import ProfileScreen from 'screens/Profile';
@@ -78,6 +77,8 @@ import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
 import SettleBalanceConfrimScreen from 'screens/Tank/SettleBalanceConfirm';
+import TankWithdrawalScreen from 'screens/Tank/TankWithdrawal';
+import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
 import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
@@ -90,6 +91,7 @@ import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/UpgradeToSmartWallet/SmartWalletIntro';
+import UnsettledAssets from 'screens/UnsettledAssets';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -119,7 +121,6 @@ import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 
 // constants
 import {
-  ADD_TOKEN,
   ASSETS,
   ASSET,
   EXCHANGE_TAB,
@@ -197,13 +198,14 @@ import {
   SMART_WALLET_INTRO,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
+  UNSETTLED_ASSETS,
+  TANK_WITHDRAWAL_FLOW,
+  TANK_WITHDRAWAL,
+  TANK_WITHDRAWAL_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
 import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
-
-// models
-import type { Assets } from 'models/Asset';
 
 // utils
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
@@ -265,6 +267,7 @@ const assetsFlow = createStackNavigator(
     [SETTINGS]: SettingsScreen,
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+    [UNSETTLED_ASSETS]: UnsettledAssets,
   },
   StackNavigatorConfig,
 );
@@ -544,11 +547,17 @@ const tankFundFlow = createStackNavigator({
 
 tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const tankWithdrawalFlow = createStackNavigator({
+  [TANK_WITHDRAWAL]: TankWithdrawalScreen,
+  [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
+}, StackNavigatorConfig);
+
+tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
-    [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
@@ -561,6 +570,7 @@ const AppFlowNavigation = createStackNavigator(
     [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
     [TANK_SETTLE_FLOW]: tankSettleFlow,
     [TANK_FUND_FLOW]: tankFundFlow,
+    [TANK_WITHDRAWAL_FLOW]: tankWithdrawalFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
     [MANAGE_USERS_FLOW]: manageUsersFlow,
     [CONTACT_INFO]: ConnectedContactInfo,
@@ -581,7 +591,7 @@ type Props = {
   startListeningChatWebSocket: Function,
   stopListeningChatWebSocket: Function,
   initWalletConnect: Function,
-  fetchAssetsBalances: (assets: Assets) => Function,
+  fetchAssetsBalances: () => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
@@ -592,7 +602,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   wallet: Object,
   backupStatus: Object,
-  assets: Object,
   isPickingImage: boolean,
   updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
@@ -623,14 +632,13 @@ class AppFlow extends React.Component<Props, State> {
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
       getExistingChats,
-      assets,
       fetchAllCollectiblesData,
       initWalletConnect,
       startListeningForBalanceChange,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
-    fetchAssetsBalances(assets);
+    fetchAssetsBalances();
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     getExistingChats();
@@ -766,7 +774,6 @@ const mapStateToProps = ({
     hasUnreadNotifications,
     hasUnreadChatNotifications,
   },
-  assets: { data: assets },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
   featureFlags: {
@@ -779,7 +786,6 @@ const mapStateToProps = ({
   userState,
   notifications,
   hasUnreadNotifications,
-  assets,
   wallet,
   backupStatus,
   hasUnreadChatNotifications,
@@ -797,7 +803,7 @@ const mapDispatchToProps = dispatch => ({
   stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
   startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },

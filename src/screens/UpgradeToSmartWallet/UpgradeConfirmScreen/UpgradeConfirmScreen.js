@@ -40,8 +40,8 @@ import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
 import { getRate, getBalance } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { accountAssetsSelector } from 'selectors/assets';
 import smartWalletService from 'services/smartWallet';
-import { DEFAULT_GAS_LIMIT } from 'services/assets';
 
 import type { Assets, Balances, AssetTransfer, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
@@ -49,7 +49,7 @@ import type { Collectible } from 'models/Collectible';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  fetchAssetsBalances: (assets: Assets) => Function,
+  fetchAssetsBalances: () => Function,
   assets: Assets,
   balances: Balances,
   transferAssets: AssetTransfer[],
@@ -103,26 +103,25 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
 
   componentDidMount() {
     const {
-      assets,
       fetchGasInfo,
       fetchAssetsBalances,
+      gasInfo,
     } = this.props;
     fetchGasInfo();
-    fetchAssetsBalances(assets);
-    smartWalletService.sdk.estimateAccountDeployment()
-      .then(({ totalCost }) => this.setState({ deployEstimateFee: totalCost }))
-      .catch(this.setDefaultDeployEstimate);
+    fetchAssetsBalances();
+    smartWalletService.estimateAccountDeployment(gasInfo)
+      .then(deployEstimateFee => this.setState({ deployEstimateFee }))
+      .catch(() => {});
   }
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
       const {
-        assets,
         fetchGasInfo,
         fetchAssetsBalances,
       } = this.props;
       fetchGasInfo();
-      fetchAssetsBalances(assets);
+      fetchAssetsBalances();
     }
   }
 
@@ -199,12 +198,6 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const { gasInfo } = this.props;
     const gasPriceWei = getGasPriceWei(gasInfo);
     return gasLimit && gasPriceWei.mul(gasLimit).toNumber();
-  };
-
-  setDefaultDeployEstimate = () => {
-    this.setState({
-      deployEstimateFee: this.calculateTransferFee(DEFAULT_GAS_LIMIT),
-    });
   };
 
   renderSpinner() {
@@ -380,7 +373,6 @@ const mapStateToProps = ({
       },
     },
   },
-  assets: { data: assets },
   session: { data: session },
   history: { gasInfo },
   appSettings: { data: { baseFiatCurrency } },
@@ -388,7 +380,6 @@ const mapStateToProps = ({
 }) => ({
   transferAssets,
   transferCollectibles,
-  assets,
   session,
   gasInfo,
   baseFiatCurrency,
@@ -398,6 +389,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   collectibles: accountCollectiblesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -407,7 +399,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
-  fetchAssetsBalances: (assets) => dispatch(fetchAssetsBalancesAction(assets)),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(UpgradeConfirmScreen);

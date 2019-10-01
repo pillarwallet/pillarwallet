@@ -39,6 +39,17 @@ export type ConnectionUpdateIdentityKeys = {
   }],
 }
 
+export type ConnectionPatchIdentityKeys = {
+  walletId: string,
+  connections: [{
+    sourceUserAccessKey: ?string,
+    targetUserAccessKey: ?string,
+    sourceIdentityKey: string,
+    targetIdentityKey: string,
+    targetUserId: string,
+  }],
+}
+
 export type ConnectionIdentityKey = {
   userId: string,
   targetUserId: string,

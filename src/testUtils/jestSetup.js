@@ -210,7 +210,7 @@ const mockArchanovaSdkInstance = {
   extendConfig: () => mockArchanovaSdkInstance,
 };
 
-jest.setMock('@archanova/sdk', {
+jest.setMock('@smartwallet/sdk', {
   sdkConstants: {
     AccountStates: {
       Created: 'Created',

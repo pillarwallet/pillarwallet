@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 export type Asset = {
   symbol: string,
   name: string,
@@ -30,8 +31,17 @@ export type Asset = {
   amount?: number,
 };
 
+
 export type Assets = {
   [symbol: string]: Asset,
+};
+
+export type AssetsByAccount = {
+  [accountId: string]: Assets,
+};
+
+export type AssetsStore = {
+  [accountId: string]: Asset[],
 };
 
 export type Balance = {

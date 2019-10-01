@@ -31,7 +31,7 @@ import isEmpty from 'lodash.isempty';
 
 // models
 import type { Transaction } from 'models/Transaction';
-import type { Asset } from 'models/Asset';
+import type { Assets } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
@@ -91,6 +91,7 @@ import { SPEED_TYPES } from 'constants/assetsConstants';
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountAddressSelector } from 'selectors';
+import { accountAssetsSelector } from 'selectors/assets';
 
 // local components
 import EventHeader from './EventHeader';
@@ -99,7 +100,7 @@ type Props = {
   transaction: Transaction,
   contacts: ApiUser[],
   history: Object[],
-  assets: Asset[],
+  assets: Assets,
   onClose: Function,
   onAccept: Function,
   onReject: Function,
@@ -213,11 +214,12 @@ class EventDetails extends React.Component<Props, State> {
         // TODO: add support for smart wallet sdk transactions speed up
         const activeAccountAddress = getAccountAddress(activeAccount);
         if (addressesEqual(txInfo.from, activeAccountAddress)) {
+          const assetsData = Object.keys(assets).map(id => assets[id]);
           const {
             symbol: assetSymbol,
             decimals,
             address: contractAddress,
-          } = assets.find(({ symbol }) => symbol === assetSymbol) || {};
+          } = assetsData.find(({ symbol }) => symbol === assetSymbol) || {};
           const amount = formatUnits(txInfo.value, decimals);
           calculateGasEstimate({
             from: activeAccountAddress,
@@ -393,8 +395,6 @@ class EventDetails extends React.Component<Props, State> {
       history,
       txNotes,
       assets,
-      contacts,
-      contactsSmartAddresses = [],
     } = this.props;
     const { gasLimit, showSpeedUp } = this.state;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
@@ -430,16 +430,19 @@ class EventDetails extends React.Component<Props, State> {
       }
       const hasNote = transactionNote && transactionNote !== '';
       const isPending = status === TX_PENDING_STATUS;
-      const { decimals = 18 } = assets.find(({ symbol }) => symbol === assetSymbol) || {};
+      const assetsData = Object.keys(assets).map(id => assets[id]);
+      const { decimals = 18 } = assetsData.find(({ symbol }) => symbol === assetSymbol) || {};
       const value = formatUnits(txInfo.value, decimals);
-      const recipientContact = findMatchingContact(to, contacts, contactsSmartAddresses) || {};
-      // apply to wallet accounts only if received from other account address
+      const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
-      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
+      let relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
         : `${to.slice(0, 7)}…${to.slice(-7)}`);
+      if (addressesEqual(to, from)) {
+        relatedUserTitle = 'My account';
+      }
       const relatedUserProfileImage = relatedUser.profileImage || null;
       // $FlowFixMe
       const showProfileImage = !relatedUser.type;
@@ -589,8 +592,7 @@ class EventDetails extends React.Component<Props, State> {
         }
       }
       const hasNote = transactionNote && transactionNote !== '';
-      const recipientContact = findMatchingContact(to, contacts, contactsSmartAddresses) || {};
-      // apply to wallet accounts only if received from other account address
+      const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
@@ -739,16 +741,10 @@ class EventDetails extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   txNotes: { data: txNotes },
-  assets: { data: assets },
-  session: { data: session },
-  history: { gasInfo },
   accounts: { data: accounts },
 }) => ({
   contacts,
   txNotes,
-  assets: Object.values(assets),
-  session,
-  gasInfo,
   contactsSmartAddresses,
   accounts,
 });
@@ -756,6 +752,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   activeAccountAddress: activeAccountAddressSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

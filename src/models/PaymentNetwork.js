@@ -22,13 +22,17 @@ import type { Asset } from './Asset';
 import type { TxSettlementItem } from './Transaction';
 
 export type FeeInfo = {
-  fixedGas: BigNumber,
+  gasAmount: BigNumber,
   gasPrice: BigNumber,
   totalCost: BigNumber,
-  totalGas: BigNumber,
 };
 
 export type TopUpFee = {
+  isFetched: boolean,
+  feeInfo: ?FeeInfo,
+};
+
+export type WithdrawalFee = {
   isFetched: boolean,
   feeInfo: ?FeeInfo,
 };

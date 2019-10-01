@@ -39,15 +39,16 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import { calculateGasEstimate } from 'services/assets';
 import { getActiveAccountAddress } from 'utils/accounts';
 import { isFiatCurrency } from 'utils/exchange';
+import SDKWrapper from 'services/api';
 
 import type { Offer, OfferOrder } from 'models/Offer';
-import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
 
 const exchangeService = new ExchangeService();
 
-const connectExchangeService = (state: Object) => {
+const connectExchangeService = (state: RootReducerState) => {
   const {
     oAuthTokens: { data: oAuthTokens },
     exchange: { data: { connectedProviders } },
@@ -63,6 +64,7 @@ const connectExchangeService = (state: Object) => {
     if (existingAccessToken === oAuthTokens.accessToken
       && existingShapeshiftToken === shapeshiftAccessToken) return;
   }
+  // $FlowFixMe oAuthTokens can be null
   exchangeService.connect(oAuthTokens.accessToken, shapeshiftAccessToken);
 };
 
@@ -134,7 +136,7 @@ export const resetOffersAction = () => {
 };
 
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId: userWalletId } },
     } = getState();

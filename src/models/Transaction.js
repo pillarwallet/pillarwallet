@@ -43,6 +43,7 @@ export type Transaction = {
   isPPNTransaction: boolean,
   tag?: string,
   extra?: TransactionExtra,
+  stateInPPN?: string,
 }
 
 export type TransactionsStore = {
@@ -104,6 +105,7 @@ export type TransactionEthers = {
   isPPNTransaction?: boolean,
   tag?: string,
   extra?: TransactionExtra,
+  stateInPPN?: string,
 };
 
 export type SmartWalletTransferTransaction = {

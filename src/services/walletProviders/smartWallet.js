@@ -2,7 +2,7 @@
 import { ethToWei } from '@netgum/utils';
 import { utils } from 'ethers';
 import abi from 'ethjs-abi';
-import { sdkConstants } from '@archanova/sdk';
+import { sdkConstants } from '@smartwallet/sdk';
 import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';

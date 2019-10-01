@@ -68,6 +68,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 type NetworkItem = {|
   id: string,
@@ -280,11 +281,10 @@ class AccountsScreen extends React.Component<Props, State> {
     );
   }
 
-  accountSettings = (wallet: Account) => {
+  accountSettings = (account: Account) => {
     const { navigation } = this.props;
-
-    navigation.navigate(WALLET_SETTINGS, { wallet });
-  }
+    navigation.navigate(WALLET_SETTINGS, { accountId: account.id });
+  };
 
   renderAccount(interaction: AccountInteraction) {
     const {
@@ -504,6 +504,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState) => ({

@@ -27,7 +27,6 @@ import {
   START_ASSETS_SEARCH,
   UPDATE_ASSETS_SEARCH_RESULT,
   RESET_ASSETS_SEARCH_RESULT,
-  REMOVE_ASSET,
   SET_INITIAL_ASSETS,
   FETCHING,
   FETCHING_INITIAL,
@@ -59,9 +58,10 @@ import type {
   CollectibleTransactionPayload,
   TransactionPayload,
 } from 'models/Transaction';
-import type { Asset, Assets, Balance, Balances } from 'models/Asset';
+import type { Asset, Assets, AssetsByAccount, Balance, Balances } from 'models/Asset';
+import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { addressesEqual, transformAssetsToObject, calculateTransactionNonceFromHistory } from 'utils/assets';
+import { transformAssetsToObject, calculateTransactionNonceFromHistory } from 'utils/assets';
 import { delay, formatFullAmount, formatUnits, isCaseInsensitiveMatch, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -70,15 +70,20 @@ import {
   getActiveAccountId,
   getActiveAccountType,
   getAccountAddress,
+  getAccountId,
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
+import { findMatchingContact } from 'utils/contacts';
 import { accountBalancesSelector } from 'selectors/balances';
+import { accountAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
+import SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
 import { sendTxNoteByContactAction } from './txNoteActions';
+import { showAssetAction } from './userSettingsActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -485,8 +490,13 @@ export const sendAssetAction = (
 
     // send note
     if (tokenTx.hash && note) {
-      const { contacts: { data: contacts } } = getState();
-      const toUser = contacts.find(contact => addressesEqual(contact.ethAddress, to));
+      const {
+        contacts: {
+          data: contacts,
+          contactsSmartAddresses: { addresses: contactsSmartAddresses },
+        },
+      } = getState();
+      const toUser = findMatchingContact(to, contacts, contactsSmartAddresses);
       if (toUser) {
         dispatch(sendTxNoteByContactAction(toUser.username, {
           text: note,
@@ -528,8 +538,8 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
   }
 }
 
-export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?: boolean) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       balances: { data: balances },
@@ -538,9 +548,10 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
-
-    const walletAddress = getActiveAccountAddress(accounts);
-    const accountId = getActiveAccountId(accounts);
+    const walletAddress = getAccountAddress(activeAccount);
+    const accountId = getAccountId(activeAccount);
+    if (!walletAddress || !accountId) return;
+    const accountAssets = accountAssetsSelector(getState());
     const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
 
     dispatch({
@@ -548,7 +559,12 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
       payload: FETCHING,
     });
 
-    const newBalances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
+    const newBalances = await api.fetchBalances({
+      address: walletAddress,
+      // $FlowFixMe Object.values returns mixed type
+      assets: Object.values(accountAssets),
+    });
+
     if (newBalances && newBalances.length) {
       const transformedBalances = transformAssetsToObject(newBalances);
       const updatedBalances = {
@@ -567,11 +583,12 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
     }
 
     // @TODO: Extract "rates fetching" to its own action ones required.
-    const rates = await getExchangeRates(Object.keys(assets));
+    const rates = await getExchangeRates(Object.keys(accountAssets));
     if (rates && Object.keys(rates).length) {
       dispatch(saveDbAction('rates', { rates }, true));
       dispatch({ type: UPDATE_RATES, payload: rates });
     }
+
 
     if (smartWalletFeatureEnabled && isSmartWalletAccount) {
       dispatch(fetchVirtualAccountBalanceAction());
@@ -580,15 +597,18 @@ export const fetchAssetsBalancesAction = (assets: Assets, showToastIfIncreased?:
 };
 
 export const fetchInitialAssetsAction = () => {
-  return async (dispatch: Dispatch, getState: () => Object, api: Object) => {
-    const { user: { data: { walletId } } } = getState();
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: { walletId } },
+      accounts: { data: accounts },
+    } = getState();
+
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING_INITIAL,
     });
     await delay(1000);
     const initialAssets = await api.fetchInitialAssets(walletId);
-
     if (!Object.keys(initialAssets).length) {
       dispatch({
         type: UPDATE_ASSETS_STATE,
@@ -596,13 +616,15 @@ export const fetchInitialAssetsAction = () => {
       });
       return;
     }
-
+    const activeAccountId = getActiveAccountId(accounts);
     dispatch({
       type: SET_INITIAL_ASSETS,
-      payload: initialAssets,
+      payload: {
+        accountId: activeAccountId,
+        assets: initialAssets,
+      },
     });
-
-    dispatch(fetchAssetsBalancesAction(initialAssets));
+    dispatch(fetchAssetsBalancesAction(true));
   };
 };
 
@@ -610,32 +632,33 @@ export const addAssetAction = (asset: Asset) => {
   return async (dispatch: Dispatch, getState: () => Object) => {
     const {
       assets: { data: assets },
+      accounts: { data: accounts },
     } = getState();
-    const updatedAssets = { ...assets, [asset.symbol]: { ...asset } };
 
+    const accountId = getActiveAccountId(accounts);
+    if (!accountId) return;
+
+    const accountAssets = assets[accountId];
+    const updatedAssets = {
+      ...assets,
+      [accountId]: { ...accountAssets, [asset.symbol]: { ...asset } },
+    };
+
+    dispatch(showAssetAction(asset));
     dispatch(saveDbAction('assets', { assets: updatedAssets }));
+
     dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
-    dispatch(fetchAssetsBalancesAction(assets));
+
+    Toast.show({
+      title: null,
+      message: `${asset.name} (${asset.symbol}) has been added`,
+      type: 'info',
+      autoClose: true,
+    });
+
+    dispatch(fetchAssetsBalancesAction());
 
     dispatch(logEventAction('asset_token_added', { symbol: asset.symbol }));
-  };
-};
-
-export const removeAssetAction = (asset: Asset) => {
-  return async (dispatch: Dispatch, getState: () => Object) => {
-    const {
-      assets: { data: assets },
-    } = getState();
-
-    const updatedAssets = Object.keys(assets).reduce((object, key) => {
-      if (key !== asset.symbol) {
-        object[key] = assets[key];
-      }
-      return object;
-    }, {});
-
-    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-    dispatch({ type: REMOVE_ASSET, payload: asset });
   };
 };
 
@@ -644,7 +667,7 @@ export const startAssetsSearchAction = () => ({
 });
 
 export const searchAssetsAction = (query: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { user: { data: { walletId } } } = getState();
 
     const assets = await api.assetsSearch(query, walletId);
@@ -660,14 +683,41 @@ export const resetSearchAssetsResultAction = () => ({
   type: RESET_ASSETS_SEARCH_RESULT,
 });
 
-export const checkForMissedAssetsAction = (transactionNotifications: Object[]) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+export const getSupportedTokens = (supportedAssets: Asset[], currentAssets: AssetsByAccount, account: Account) => {
+  const accountId = getAccountId(account);
+  const currentAccountAssets = get(currentAssets, accountId, {});
+  const currentAccountAssetsTickers = Object.keys(currentAccountAssets);
+
+  // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
+  if (!currentAccountAssetsTickers.includes(ETH)) currentAccountAssetsTickers.push(ETH);
+  if (!currentAccountAssetsTickers.includes(PLR)) currentAccountAssetsTickers.push(PLR);
+
+  const updatedAccountAssets = supportedAssets
+    .filter(asset => currentAccountAssetsTickers.includes(asset.symbol))
+    .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
+  return { id: accountId, ...updatedAccountAssets };
+};
+
+const getAllOwnedAssets = async (api: SDKWrapper, accountId: string, supportedAssets: Asset[]) => {
+  const addressErc20Tokens = await api.getAddressErc20TokensInfo(accountId); // all address' assets except ETH;
+  const accOwnedErc20Assets = {};
+  if (addressErc20Tokens.length) {
+    addressErc20Tokens.forEach((token) => {
+      const tokenTicker = get(token, 'tokenInfo.symbol', '');
+      const supportedAsset = supportedAssets.find(asset => asset.symbol === tokenTicker);
+      if (supportedAsset && !accOwnedErc20Assets[tokenTicker]) accOwnedErc20Assets[tokenTicker] = supportedAsset;
+    });
+  }
+  return accOwnedErc20Assets;
+};
+
+export const checkForMissedAssetsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       user: { data: { walletId } },
-      assets: { data: currentAssets, supportedAssets },
+      assets: { data: currentAssets, supportedAssets = [] },
     } = getState();
-    const activeAccountAddress = getActiveAccountAddress(accounts);
 
     // load supported assets
     let walletSupportedAssets = [...supportedAssets];
@@ -677,43 +727,41 @@ export const checkForMissedAssetsAction = (transactionNotifications: Object[]) =
         type: UPDATE_SUPPORTED_ASSETS,
         payload: walletSupportedAssets,
       });
-      const currentAssetsTickers = Object.keys(currentAssets);
-
-      // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
-      if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
-      if (!currentAssetsTickers.includes(PLR)) currentAssetsTickers.push(PLR);
-
-      if (walletSupportedAssets.length) {
-        const updatedAssets = walletSupportedAssets
-          .filter(asset => currentAssetsTickers.includes(asset.symbol))
-          .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
-        dispatch({
-          type: UPDATE_ASSETS,
-          payload: updatedAssets,
-        });
-        dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-      }
     }
+
+    const allSupportedAddedAssetsByAccount = accounts.map((acc) => {
+      const supportedAccountAssets = getSupportedTokens(walletSupportedAssets, currentAssets, acc);
+      return supportedAccountAssets;
+    }).reduce((obj, { id, ...rest }) => {
+      obj[id] = rest;
+      return obj;
+    }, {});
 
     // check if some assets are not enabled
-    const missedAssets = transactionNotifications
-      .filter(tx => !addressesEqual(tx.from, activeAccountAddress))
-      .reduce((memo, { asset: ticker }) => {
-        if (!ticker) return memo;
-        if (memo[ticker] !== undefined || currentAssets[ticker] !== undefined) return memo;
+    const ownedAssetsByAccount = await Promise.all(accounts.map(async (acc) => {
+      const accountId = getAccountId(acc);
+      const ownedAssets = await getAllOwnedAssets(api, accountId, walletSupportedAssets);
+      return { id: accountId, ...ownedAssets };
+    }));
 
-        const supportedAsset = walletSupportedAssets.find(asset => asset.symbol === ticker);
-        if (supportedAsset) {
-          memo[ticker] = supportedAsset;
-        }
-        return memo;
-      }, {});
+    const reducedOwnedAssetsByAccount = ownedAssetsByAccount.reduce((obj, { id, ...rest }) => {
+      obj[id] = rest;
+      return obj;
+    }, {});
 
-    if (Object.keys(missedAssets).length) {
-      const newAssets = { ...currentAssets, ...missedAssets };
-      dispatch(updateAssetsAction(newAssets));
-      dispatch(fetchAssetsBalancesAction(newAssets));
-    }
+    const updatedAssets = Object.keys(allSupportedAddedAssetsByAccount).map((acc) => {
+      return { id: acc, ...allSupportedAddedAssetsByAccount[acc], ...reducedOwnedAssetsByAccount[acc] };
+    }).reduce((obj, { id, ...rest }) => {
+      obj[id] = rest;
+      return obj;
+    }, {});
+
+    dispatch({
+      type: UPDATE_ASSETS,
+      payload: updatedAssets,
+    });
+    dispatch(fetchAssetsBalancesAction());
+    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
   };
 };
 

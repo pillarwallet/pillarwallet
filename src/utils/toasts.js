@@ -17,15 +17,31 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { NavigationActions } from 'react-navigation';
 import Toast from 'components/Toast';
+import { WALLET_SETTINGS } from 'constants/navigationConstants';
+import { navigate } from 'services/navigation';
 
-export function toastWalletBackup(isWalletBackedUp: boolean) {
-  if (!isWalletBackedUp) {
-    Toast.show({
-      message: 'Go to settings on the home screen and complete the wallet backup. Pillar cannot help you retrieve your wallet if it is lost.', // eslint-disable-line max-len
-      type: 'warning',
-      title: 'Please ensure you backup your wallet now',
-      autoClose: false,
-    });
+const BACKUP_MESSAGE =
+  'Go to wallet settings on the assets screen and complete the wallet backup. ' +
+  'Pillar cannot help you retrieve your wallet if it is lost.';
+
+export const toastWalletBackup = (isWalletBackedUp: boolean, accountId: string) => {
+  if (isWalletBackedUp) {
+    return;
   }
-}
+
+  Toast.show({
+    message: BACKUP_MESSAGE,
+    type: 'warning',
+    title: 'Please ensure you backup your wallet now',
+    autoClose: false,
+    onPress: () => {
+      const action = NavigationActions.navigate({
+        routeName: WALLET_SETTINGS,
+        params: { accountId },
+      });
+      navigate(action);
+    },
+  });
+};

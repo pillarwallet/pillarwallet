@@ -47,6 +47,7 @@ import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
 import { checkIfEnoughForFee } from 'utils/assets';
 import { fontSizes, spacing } from 'utils/variables';
 import { formatAmount } from 'utils/common';
+import Spinner from 'components/Spinner';
 
 
 type Props = {
@@ -150,13 +151,18 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
       submitButtonTitle = 'Processing..';
     }
 
+    const submitButtonDisabled = !session.isOnline
+      || !settleTxFee.isFetched
+      || settleButtonSubmitted;
+
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Review' }] }}
         keyboardAvoidFooter={(
           <FooterWrapper>
             <Button
-              disabled={!session.isOnline || !settleTxFee.isFetched || settleButtonSubmitted}
+              disabled={submitButtonDisabled}
+              roundedCorners
               onPress={this.handleFormSubmit}
               title={submitButtonTitle}
             />
@@ -171,14 +177,15 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
           contentContainerStyle={{ marginTop: 40 }}
         >
           <LabeledRow>
-            <Label>Selected transactions to settle:</Label>
+            <Label>Assets to settle</Label>
             {this.txToSettle.map((asset: Object, index: number) =>
               <Value key={index}>{`${formatAmount(asset.value.toNumber())} ${asset.symbol}`}</Value>)
             }
           </LabeledRow>
           <LabeledRow>
             <Label>Transaction fee</Label>
-            <Value>{settleTxFee.isFetched ? `${feeInEth} ETH` : 'loading..'}</Value>
+            {settleTxFee.isFetched && <Value>{`${feeInEth} ETH`}</Value>}
+            {!settleTxFee.isFetched && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
           </LabeledRow>
         </ScrollWrapper>
       </ContainerWithHeader>

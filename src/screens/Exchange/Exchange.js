@@ -72,6 +72,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 // partials
 import { ExchangeStatus } from './ExchangeStatus';
@@ -1060,7 +1061,7 @@ const mapStateToProps = ({
       hasNotification: hasUnreadExchangeNotification,
     },
   },
-  assets: { data: assets, supportedAssets },
+  assets: { supportedAssets },
   rates: { data: rates },
   featureFlags: {
     data: {
@@ -1072,7 +1073,6 @@ const mapStateToProps = ({
 }) => ({
   baseFiatCurrency,
   offers,
-  assets,
   supportedAssets,
   rates,
   exchangeSearchRequest,
@@ -1088,6 +1088,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
