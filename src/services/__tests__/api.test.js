@@ -84,10 +84,11 @@ const mockPillarSDK: Object = {
 describe('API service', () => {
   beforeEach(() => {
     sdkWrapper.init();
+    // $FlowFixMe
     sdkWrapper.pillarWalletSdk = mockPillarSDK;
   });
 
-  it('Should successfully register an account with the given username and fcm token and return userId', async () => {
+  it('registers an account with the given username and fcm token and return userId', async () => {
     const result = await sdkWrapper.registerOnAuthServer(
       mockWallet.privateKey,
       'uniqueFCMToken',
@@ -96,7 +97,7 @@ describe('API service', () => {
     expect(result).toBe(mockResponseSuccess.data);
   });
 
-  it('Should fail to register an account with a duplicate username and return USERNAME_EXISTS reason', async () => {
+  it('fails to register an account with a duplicate username and return USERNAME_EXISTS reason', async () => {
     const result = await sdkWrapper.registerOnAuthServer(
       mockWallet.privateKey,
       'anyFCMToken',
@@ -108,7 +109,7 @@ describe('API service', () => {
     });
   });
 
-  it('Should fail to register an account with empty parameters and return REGISTRATION_FAILED reason', async () => {
+  it('fails to register an account with empty parameters and return REGISTRATION_FAILED reason', async () => {
     const result = await sdkWrapper.registerOnAuthServer('', '', '');
     expect(result).toEqual({
       error: true,

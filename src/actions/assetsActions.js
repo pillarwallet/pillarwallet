@@ -73,6 +73,7 @@ import {
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
+import SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
@@ -502,7 +503,7 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
 }
 
 export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       balances: { data: balances },
@@ -522,7 +523,11 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
       payload: FETCHING,
     });
 
-    const newBalances = await api.fetchBalances({ address: walletAddress, assets: Object.values(accountAssets) });
+    const newBalances = await api.fetchBalances({
+      address: walletAddress,
+      // $FlowFixMe Object.values returns mixed type
+      assets: Object.values(accountAssets),
+    });
 
     if (newBalances && newBalances.length) {
       const transformedBalances = transformAssetsToObject(newBalances);
@@ -556,7 +561,7 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
 };
 
 export const fetchInitialAssetsAction = () => {
-  return async (dispatch: Dispatch, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       accounts: { data: accounts },
@@ -626,7 +631,7 @@ export const startAssetsSearchAction = () => ({
 });
 
 export const searchAssetsAction = (query: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { user: { data: { walletId } } } = getState();
 
     const assets = await api.assetsSearch(query, walletId);
@@ -657,7 +662,7 @@ export const getSupportedTokens = (supportedAssets: Asset[], currentAssets: Asse
   return { id: accountId, ...updatedAccountAssets };
 };
 
-const getAllOwnedAssets = async (api: Object, accountId: string, supportedAssets: Asset[]) => {
+const getAllOwnedAssets = async (api: SDKWrapper, accountId: string, supportedAssets: Asset[]) => {
   const addressErc20Tokens = await api.getAddressErc20TokensInfo(accountId); // all address' assets except ETH;
   const accOwnedErc20Assets = {};
   if (addressErc20Tokens.length) {
@@ -671,7 +676,7 @@ const getAllOwnedAssets = async (api: Object, accountId: string, supportedAssets
 };
 
 export const checkForMissedAssetsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       user: { data: { walletId } },

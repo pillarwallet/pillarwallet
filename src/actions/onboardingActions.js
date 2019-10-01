@@ -79,10 +79,18 @@ import {
   setUserJoinedBetaAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
+import SDKWrapper from 'services/api';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 const storage = Storage.getInstance('db');
 
-const getTokenWalletAndRegister = async (privateKey: string, api: Object, user: Object, dispatch: Function) => {
+const getTokenWalletAndRegister = async (
+  privateKey: string,
+  api: Object, // FIXME: this should be api: SDKWrapper
+  user: Object,
+  dispatch: Dispatch,
+) => {
   await firebase.messaging().requestPermission().catch(() => { });
   const fcmToken = await firebase.messaging().getToken().catch(() => { });
 
@@ -208,7 +216,7 @@ const navigateToAppFlow = (isWalletBackedUp: boolean, accountId: string) => {
 };
 
 export const registerWalletAction = () => {
-  return async (dispatch: Function, getState: () => any, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const currentState = getState();
     const {
       mnemonic,
