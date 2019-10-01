@@ -63,7 +63,11 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
+import {
+  TRANSACTION_EVENT,
+  CONNECTION_EVENT,
+  TX_PENDING_STATUS,
+} from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 import {
@@ -301,7 +305,7 @@ class ActivityFeed extends React.Component<Props, State> {
     } = this.props;
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
-    const itemStatusIcon = notificationStatus === 'pending' ? 'pending' : '';
+    const itemStatusIcon = notificationStatus === TX_PENDING_STATUS ? TX_PENDING_STATUS : '';
 
     if (type === TRANSACTION_EVENT) {
       const isReceived = addressesEqual(notification.to, activeAccountAddress);
@@ -339,7 +343,7 @@ class ActivityFeed extends React.Component<Props, State> {
             onPress={() => this.selectEvent({ ...notification, value, contact }, type, notificationStatus)}
             type={feedType}
             asset={asset}
-            isPending={notificationStatus === 'pending'}
+            isPending={notificationStatus === TX_PENDING_STATUS}
           />
         );
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
