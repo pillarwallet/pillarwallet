@@ -19,6 +19,7 @@
 */
 import { UPDATE_USER, REGISTERED, USER_PHONE_VERIFIED } from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { logEventAction } from 'actions/analyticsActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';
@@ -132,6 +133,40 @@ export const updateUserAvatarAction = (walletId: string, formData: any) => {
     });
 
     dispatch(logEventAction('avatar_updated'));
+  };
+};
+
+export const labelUserAsLegacyAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+    const {
+      oAuthTokens: { data: oAuthTokens },
+      user: { data: user },
+    } = getState();
+
+    const userWallets = await api.getUserWallets(oAuthTokens.accessToken);
+    if (!userWallets.length) return;
+
+    const keyWallet = userWallets.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED) || {};
+    const smartWallet = userWallets.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET) || {};
+
+    const { createdAt: keyWalletCreationTime } = keyWallet;
+    const { createdAt: smartWalletCreationTime } = smartWallet;
+
+    const diff = keyWalletCreationTime && smartWalletCreationTime
+      ? Math.floor((new Date(smartWalletCreationTime) - new Date(keyWalletCreationTime)) / 1000 / 60)
+      : null;
+    let isLegacyUser = true;
+
+    // to those users who gets smart wallet created for them, key based and smart wallets are created one by one
+    // in couple of minutes difference
+    if (smartWalletCreationTime && diff && diff <= 5) {
+      isLegacyUser = false;
+    }
+
+    dispatch({
+      type: UPDATE_USER,
+      payload: { user: { ...user, isLegacyUser }, state: REGISTERED },
+    });
   };
 };
 

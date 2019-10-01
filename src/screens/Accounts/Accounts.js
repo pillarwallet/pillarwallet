@@ -121,6 +121,7 @@ type Props = {|
   switchAccount: Function,
   balances: BalancesStore,
   rates: Rates,
+  user: Object,
 |};
 
 type State = {|
@@ -173,14 +174,13 @@ const FooterParagraph = styled(BaseText)`
 const pillarNetworkIcon = require('assets/icons/icon_PPN.png');
 const ethereumWalletIcon = require('assets/icons/icon_ethereum_network.png');
 
-const isLegacyUser = false;
-
 class AccountsScreen extends React.Component<Props, State> {
   switchToWallet: ?Account = null;
 
   constructor(props) {
     const isActiveKeyWallet = getActiveAccountType(props.accounts) === ACCOUNT_TYPES.KEY_BASED;
-    const forceShowLegacyWallet = !isLegacyUser && isActiveKeyWallet;
+    const { user } = props;
+    const forceShowLegacyWallet = !user.isLegacyUser && isActiveKeyWallet;
     super(props);
     this.state = {
       showPinModal: false,
@@ -461,7 +461,8 @@ class AccountsScreen extends React.Component<Props, State> {
 
   render() {
     const { showPinModal, changingAccount, isLegacyWalletVisible } = this.state;
-    const { blockchainNetworks } = this.props;
+    const { blockchainNetworks, user } = this.props;
+    const { isLegacyUser } = user;
 
     const activeNetwork = blockchainNetworks.find((net) => net.isActive);
     const walletsToShow = this.wallets(activeNetwork);
@@ -534,6 +535,7 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   balances: { data: balances },
   rates: { data: rates },
+  user: { data: user },
 }: RootReducerState) => ({
   accounts,
   blockchainNetworks,
@@ -542,6 +544,7 @@ const mapStateToProps = ({
   baseFiatCurrency,
   balances,
   rates,
+  user,
 });
 
 const structuredSelector = createStructuredSelector({

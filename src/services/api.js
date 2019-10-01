@@ -840,3 +840,19 @@ SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset:
     })
     .catch(() => ({ error: true }));
 };
+
+SDKWrapper.prototype.getUserWallets = function (accessToken) {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  };
+  return Promise.resolve()
+    .then(() => fetch(`${SDK_PROVIDER}/user`, config))
+    .then(response => response.text())
+    .then(response => JSON.parse(response))
+    .then(({ wallets }) => wallets)
+    .catch(() => []);
+};
