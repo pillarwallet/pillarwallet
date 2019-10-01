@@ -19,6 +19,8 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import isEmpty from 'lodash.isempty';
+
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText } from 'components/Typography';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -38,6 +40,7 @@ type Props = {
   type?: string,
   asset?: string,
   onPress: Function,
+  isPending?: boolean,
 }
 
 const ListWrapper = styled.View`
@@ -57,6 +60,7 @@ export const SettlementItem = (props: Props) => {
     type,
     asset,
     onPress,
+    isPending,
   } = props;
   const ppnTransactions = asset
     ? settleData.filter(({ symbol }) => symbol === asset)
@@ -75,39 +79,53 @@ export const SettlementItem = (props: Props) => {
 
   const valuesArray = Object.keys(valueByAsset).map((key) => valueByAsset[key]);
 
+  const itemStatusIcon = (isPending && 'pending') || '';
+  const rightColumnInnerStyle = (isPending && { flexDirection: 'row', alignItems: 'center' }) || {};
+  const customAddonAlignLeft = !isEmpty(rightColumnInnerStyle);
+
   return (
     <React.Fragment>
-      {(!type || type === NONSYNTHETIC) && <ListItemWithImage
-        onPress={onPress}
-        label="Deposit"
-        itemImageSource={ppnIcon}
-        subtext="to Smart Wallet"
-        customAddon={(
-          <ListWrapper>
-            {valuesArray.map(({ symbol, value }) => <ItemValue key={symbol}>{`${value} ${symbol}`}</ItemValue>)}
-          </ListWrapper>)}
-        innerWrapperHorizontalAlign="flex-start"
-        noImageBorder
-      />}
-      {(!type || type === SYNTHETIC) && <ListItemWithImage
-        onPress={onPress}
-        label="Withdrawal"
-        itemImageSource={ppnIcon}
-        subtext="from PLR Network"
-        customAddon={(
-          <ListWrapper>
-            {ppnTransactions.map(({ symbol, value, hash }) => (
-              <TankAssetBalance
-                key={hash}
-                amount={`-${value} ${symbol}`}
-                monoColor
-                textStyle={{ color: baseColors.scarlet }}
-              />
-            ))}
-          </ListWrapper>)}
-        innerWrapperHorizontalAlign="flex-start"
-        noImageBorder
-      />}
+      {(!type || type === NONSYNTHETIC) &&
+        <ListItemWithImage
+          onPress={onPress}
+          label="Deposit"
+          itemImageSource={ppnIcon}
+          subtext="to Smart Wallet"
+          customAddon={(
+            <ListWrapper>
+              {valuesArray.map(({ symbol, value }) => <ItemValue key={symbol}>{`${value} ${symbol}`}</ItemValue>)}
+            </ListWrapper>)}
+          innerWrapperHorizontalAlign="flex-start"
+          noImageBorder
+          itemStatusIcon={itemStatusIcon}
+          customAddonAlignLeft={customAddonAlignLeft}
+          rightColumnInnerStyle={rightColumnInnerStyle}
+        />
+      }
+      {(!type || type === SYNTHETIC) &&
+        <ListItemWithImage
+          onPress={onPress}
+          label="Withdrawal"
+          itemImageSource={ppnIcon}
+          subtext="from PLR Network"
+          customAddon={(
+            <ListWrapper>
+              {ppnTransactions.map(({ symbol, value, hash }) => (
+                <TankAssetBalance
+                  key={hash}
+                  amount={`-${value} ${symbol}`}
+                  monoColor
+                  textStyle={{ color: baseColors.scarlet }}
+                />
+              ))}
+            </ListWrapper>)}
+          innerWrapperHorizontalAlign="flex-start"
+          noImageBorder
+          itemStatusIcon={itemStatusIcon}
+          customAddonAlignLeft={customAddonAlignLeft}
+          rightColumnInnerStyle={rightColumnInnerStyle}
+        />
+      }
     </React.Fragment>
   );
 };

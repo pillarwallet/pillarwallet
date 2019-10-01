@@ -333,7 +333,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   <View
                     style={
                       Array [
-                        undefined,
+                        Object {},
                         Object {
                           "flexWrap": "wrap",
                         },
@@ -352,6 +352,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                             "marginTop": 0,
                           },
                           Object {
+                            "alignItems": "center",
                             "flexWrap": "wrap",
                             "justifyContent": "flex-end",
                           },
@@ -740,7 +741,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   <View
                     style={
                       Array [
-                        undefined,
+                        Object {},
                         Object {
                           "flexWrap": "wrap",
                         },
@@ -759,6 +760,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                             "marginTop": 0,
                           },
                           Object {
+                            "alignItems": "center",
                             "flexWrap": "wrap",
                             "justifyContent": "flex-end",
                           },
