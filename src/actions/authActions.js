@@ -52,7 +52,7 @@ import { navigate, getNavigationState, getNavigationPathAndParamsState } from 's
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
-import { getActiveAccountAddress } from 'utils/accounts';
+import { getActiveAccountAddress, findKeyBasedAccount, getAccountId } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
@@ -86,8 +86,8 @@ export const loginAction = (
   updateKeychain?: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    let { accounts: { data: accounts } } = getState();
     const {
-      accounts: { data: accounts },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
       appSettings: {
@@ -181,6 +181,10 @@ export const loginAction = (
       } else {
         api.init();
       }
+
+      // re-fetch accounts as they might change at this point
+      accounts = getState().accounts.data;
+
       Crashlytics.setUserIdentifier(user.username);
       dispatch({
         type: UPDATE_USER,
@@ -232,13 +236,17 @@ export const loginAction = (
         action: navigateToRoute,
       });
 
+      // show toast if the wallet wasn't backed up
       const {
         isImported,
         isBackedUp,
       } = getState().wallet.backupStatus;
 
       const isWalletBackedUp = isImported || isBackedUp;
-      toastWalletBackup(isWalletBackedUp, wallet.address);
+      const keyBasedAccount = findKeyBasedAccount(accounts);
+      if (keyBasedAccount) {
+        toastWalletBackup(isWalletBackedUp, getAccountId(keyBasedAccount));
+      }
 
       /**
        * this is used only to avoid BCX fetching issues,

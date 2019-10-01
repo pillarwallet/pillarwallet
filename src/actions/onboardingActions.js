@@ -21,10 +21,10 @@ import ethers from 'ethers';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
-import { delay, uniqBy } from 'utils/common';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
-import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
+
+// constants
 import {
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
@@ -61,11 +61,21 @@ import { RESET_SMART_WALLET } from 'constants/smartWalletConstants';
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
+
+// utils
+import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
+import { delay, uniqBy } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
+import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
+
+// services
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
+import SDKWrapper from 'services/api';
+
+// actions
 import { signalInitAction } from 'actions/signalClientActions';
 import { initSmartWalletSdkAction, importSmartWalletAccountsAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
@@ -79,9 +89,10 @@ import {
   setUserJoinedBetaAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
-import SDKWrapper from 'services/api';
 
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 
 const storage = Storage.getInstance('db');
 
@@ -203,15 +214,18 @@ const finishRegistration = async ({
   });
 };
 
-const navigateToAppFlow = (isWalletBackedUp: boolean, accountId: string) => {
+const navigateToAppFlow = (isWalletBackedUp: boolean, getState: GetState) => {
+  const accounts = getState().accounts.data;
+  const keyBasedAccount = findKeyBasedAccount(accounts);
+  const accountId = keyBasedAccount ? getAccountId(keyBasedAccount) : '';
+
+  toastWalletBackup(isWalletBackedUp, accountId);
+
   const navigateToAssetsAction = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: HOME }),
   });
-
-  toastWalletBackup(isWalletBackedUp, accountId);
-
   navigate(navigateToAssetsAction);
 };
 
@@ -228,7 +242,7 @@ export const registerWalletAction = () => {
     const mnemonicPhrase = mnemonic.original;
     const { isBackedUp, isImported } = currentState.wallet.backupStatus;
 
-    // STEP 0: Clear local storage
+    // STEP 0: Clear local storage and reset app state
     await storage.removeAll();
     dispatch({ type: UPDATE_ACCOUNTS, payload: [] });
     dispatch({ type: UPDATE_CONTACTS, payload: [] });
@@ -344,9 +358,9 @@ export const registerWalletAction = () => {
       dispatch(setFirebaseAnalyticsCollectionEnabled(false));
     }
 
-    // STEP 6: all done, navigate to the assets screen
+    // STEP 6: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp, wallet.address);
+    navigateToAppFlow(isWalletBackedUp, getState);
   };
 };
 
@@ -406,7 +420,7 @@ export const registerOnBackendAction = () => {
     });
 
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp, walletData.address);
+    navigateToAppFlow(isWalletBackedUp, getState);
   };
 };
 
