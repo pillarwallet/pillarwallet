@@ -22,7 +22,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { availableStakeSelector } from 'selectors/paymentNetwork';
+import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
 import * as Keychain from 'react-native-keychain';
 
 // components
@@ -38,6 +38,7 @@ import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts, Account } from 'models/Account';
+import type { Transaction } from 'models/Transaction';
 
 // actions
 import {
@@ -55,7 +56,7 @@ import {
   FETCH_INITIAL_FAILED,
   FETCHED,
 } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
@@ -102,6 +103,7 @@ type Props = {
   backupStatus: Object,
   availableStake: number,
   checkForMissedAssets: Function,
+  PPNTransactions: Transaction[],
 }
 
 type State = {
@@ -176,6 +178,7 @@ class AssetsScreen extends React.Component<Props, State> {
       blockchainNetworks,
       activeAccount,
       availableStake,
+      PPNTransactions,
     } = this.props;
 
     const { type: walletType } = activeAccount;
@@ -195,12 +198,13 @@ class AssetsScreen extends React.Component<Props, State> {
           customHeaderButtonProps: {},
         };
       default:
+        const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === PAYMENT_COMPLETED);
         return {
           label: activeBNetworkTitle,
           action: () => navigation.navigate(ACCOUNTS),
           screenView: VIEWS.PPN_VIEW,
           customHeaderProps: {},
-          customHeaderButtonProps: { isActive: availableStake > 0 },
+          customHeaderButtonProps: { isActive: availableStake > 0 || hasUnsettledTx },
         };
     }
   };
@@ -366,6 +370,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   availableStake: availableStakeSelector,
+  PPNTransactions: PPNTransactionsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
