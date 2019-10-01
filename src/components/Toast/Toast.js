@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Animated, StatusBar } from 'react-native';
+import { View, Animated, StatusBar, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import merge from 'lodash.merge';
 import IconButton from 'components/IconButton';
@@ -29,6 +29,7 @@ import { BoldText, BaseText } from 'components/Typography';
 
 type ToastOptions = {
   autoClose?: boolean,
+  onPress?: () => void,
   type: string,
   message: string,
   title?: ?string,
@@ -40,7 +41,7 @@ type State = {
   toastOptions: ToastOptions,
 };
 
-const toastInitialOptions = {
+const toastInitialOptions: ToastOptions = {
   autoClose: true,
   type: 'info',
   message: '',
@@ -170,6 +171,47 @@ export default class Toast extends React.Component<{}, State> {
     }).start(() => this.setState({ toastOptions: toastInitialOptions }));
   };
 
+  handlePress = () => {
+    const { toastOptions: { onPress } } = this.state;
+    if (!onPress) {
+      return;
+    }
+
+    this.handleClose();
+    onPress();
+  };
+
+  renderText() {
+    const { toastOptions: { title, message } } = this.state;
+
+    return (
+      <View>
+        {!!title && <BoldText>{title}</BoldText>}
+        <BaseText style={{ color: baseColors.darkGray }}>
+          {message}
+        </BaseText>
+      </View>
+    );
+  }
+
+  renderTextWrapper() {
+    const { toastOptions: { onPress } } = this.state;
+
+    if (onPress) {
+      return (
+        <TextHolder>
+          <TouchableOpacity onPress={this.handlePress}>
+            {this.renderText()}
+          </TouchableOpacity>
+        </TextHolder>
+      );
+    }
+
+    return (
+      <TextHolder>{this.renderText()}</TextHolder>
+    );
+  }
+
   render() {
     const { toastOptions } = this.state;
     const animation = this.state.animSlide.interpolate({
@@ -194,16 +236,7 @@ export default class Toast extends React.Component<{}, State> {
               }}
             />
           </IconHolder>
-          <TextHolder>
-            {!!toastOptions.title &&
-            <BoldText>
-              {toastOptions.title}
-            </BoldText>
-            }
-            <BaseText style={{ color: baseColors.darkGray }}>
-              {toastOptions.message}
-            </BaseText>
-          </TextHolder>
+          {this.renderTextWrapper()}
           <IconButton
             onPress={this.handleClose}
             icon="close"
