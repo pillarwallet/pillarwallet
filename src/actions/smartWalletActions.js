@@ -633,7 +633,9 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
       const senderAddress = get(payment, 'sender.account.address');
       const recipientAddress = get(payment, 'recipient.account.address');
       const stateInPPN = get(payment, 'state');
-
+      const paymentHash = get(payment, 'hash');
+      const existingTransaction = accountHistory.find(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)) || {};
+      // if transaction exists this will update only its status and stateInPPN
       return buildHistoryTransaction({
         from: senderAddress,
         hash: payment.hash,
@@ -642,6 +644,7 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
         asset: tokenSymbol,
         isPPNTransaction: true,
         createdAt: +new Date(payment.updatedAt) / 1000,
+        ...existingTransaction,
         status: TX_CONFIRMED_STATUS,
         stateInPPN,
       });
@@ -1222,6 +1225,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
         type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
         payload: txHash,
       });
+
 
       const { history: { data: currentHistory } } = getState();
       dispatch(saveDbAction('history', { history: currentHistory }, true));

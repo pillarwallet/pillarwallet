@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
@@ -62,7 +63,11 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
+import {
+  TRANSACTION_EVENT,
+  CONNECTION_EVENT,
+  TX_PENDING_STATUS,
+} from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 import {
@@ -284,7 +289,7 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   renderActivityFeedItem = ({ item: notification }: Object) => {
-    const { type } = notification;
+    const { type, status: notificationStatus } = notification;
     const {
       activeAccountAddress,
       navigation,
@@ -300,6 +305,7 @@ class ActivityFeed extends React.Component<Props, State> {
     } = this.props;
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
+    const itemStatusIcon = notificationStatus === TX_PENDING_STATUS ? TX_PENDING_STATUS : '';
 
     if (type === TRANSACTION_EVENT) {
       const isReceived = addressesEqual(notification.to, activeAccountAddress);
@@ -326,15 +332,18 @@ class ActivityFeed extends React.Component<Props, State> {
       let itemValue = `${directionSymbol} ${formattedValue} ${notification.asset}`;
       let customAddon = null;
       let itemImageSource = '';
+      let rightColumnInnerStyle = {};
+      let customAddonAlignLeft = false;
 
       const tag = get(notification, 'tag', '');
       if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
         return (
           <SettlementItem
             settleData={notification.extra}
-            onPress={() => this.selectEvent({ ...notification, value, contact }, type, notification.status)}
+            onPress={() => this.selectEvent({ ...notification, value, contact }, type, notificationStatus)}
             type={feedType}
             asset={asset}
+            isPending={notificationStatus === TX_PENDING_STATUS}
           />
         );
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
@@ -347,28 +356,37 @@ class ActivityFeed extends React.Component<Props, State> {
         directionIcon = '';
       }
 
+      // centers line right addons side vertically if status is present
+      if (!isEmpty(itemStatusIcon)) {
+        rightColumnInnerStyle = { ...rightColumnInnerStyle, alignItems: 'center' };
+      }
+
       const isPPNTransaction = get(notification, 'isPPNTransaction', false);
       if (isPPNTransaction) {
         if (addressesEqual(notification.to, notification.from)) {
           nameOrAddress = 'Transfer to own account';
         }
         itemValue = '';
+        customAddonAlignLeft = true;
         customAddon = (<TankAssetBalance
           amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
           textStyle={!isReceived ? { color: baseColors.scarlet } : null}
           monoColor
         />);
+        rightColumnInnerStyle = { ...rightColumnInnerStyle, flexDirection: 'row' };
       }
 
       return (
         <ListItemWithImage
-          onPress={() => this.selectEvent({ ...notification, value, contact }, type, notification.status)}
+          onPress={() => this.selectEvent({ ...notification, value, contact }, type, notificationStatus)}
           label={nameOrAddress}
           avatarUrl={itemImage}
           navigateToProfile={isContact ? navigateToContact : null}
           iconName={showArrowsOnly || !(itemImage || itemImageSource) ? directionIcon : ''}
           itemValue={itemValue}
-          itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
+          itemStatusIcon={itemStatusIcon}
+          rightColumnInnerStyle={rightColumnInnerStyle}
+          customAddonAlignLeft={customAddonAlignLeft}
           valueColor={isReceived ? baseColors.jadeGreen : baseColors.scarlet}
           imageUpdateTimeStamp={contact.lastUpdateTime || 0}
           customAddon={customAddon}
@@ -387,7 +405,7 @@ class ActivityFeed extends React.Component<Props, State> {
       const contact = contacts.find(({ ethAddress }) => addressesEqual(address, ethAddress)) || {};
       return (
         <ListItemWithImage
-          onPress={() => this.selectEvent({ ...notification, contact }, type, notification.status)}
+          onPress={() => this.selectEvent({ ...notification, contact }, type, notificationStatus)}
           label={nameOrAddress}
           navigateToProfile={Object.keys(contact).length !== 0 ? navigateToContact : () => {}}
           avatarUrl={notification.icon}
@@ -397,7 +415,7 @@ class ActivityFeed extends React.Component<Props, State> {
             ? directionIcon.toLowerCase()
             : undefined}
           iconName={invertAddon ? directionIcon.toLowerCase() : null}
-          itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
+          itemStatusIcon={itemStatusIcon}
           actionLabel={directionIcon}
           actionLabelColor={isReceived ? baseColors.jadeGreen : null}
         />

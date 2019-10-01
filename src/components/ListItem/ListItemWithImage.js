@@ -67,6 +67,7 @@ type Props = {
   imageUpdateTimeStamp?: number,
   rightColumnInnerStyle?: Object,
   customAddonFullWidth?: React.Node,
+  customAddonAlignLeft?: boolean,
   imageColorFill?: string,
   customImage?: React.Node,
   imageDiameter?: number,
@@ -417,16 +418,15 @@ const Addon = (props: Props) => {
     acceptInvitation,
     balance,
   } = props;
-
-  if (itemValue) {
+  if (itemValue || itemStatusIcon) {
     return (
-      <Wrapper horizontal style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-        <ItemValue color={valueColor} numberOfLines={2} ellipsizeMode="tail">
-          {itemValue}
-        </ItemValue>
-        {!!itemStatusIcon &&
-          <ItemValueStatus name={itemStatusIcon} />
+      <Wrapper horizontal style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end' }}>
+        {!!itemValue &&
+          <ItemValue color={valueColor} numberOfLines={2} ellipsizeMode="tail">
+            {itemValue}
+          </ItemValue>
         }
+        {!!itemStatusIcon && <ItemValueStatus name={itemStatusIcon} />}
       </Wrapper>
     );
   }
@@ -547,6 +547,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
       customAddonFullWidth,
       innerWrapperHorizontalAlign,
       wrapperOpacity,
+      customAddonAlignLeft,
     } = this.props;
 
     const type = getType(this.props);
@@ -581,8 +582,9 @@ class ListItemWithImage extends React.Component<Props, {}> {
               </Column>
               <Column rightColumn type={type} style={{ maxWidth: '50%' }}>
                 <View style={[rightColumnInnerStyle, { flexWrap: 'wrap' }]}>
+                  {!!customAddonAlignLeft && customAddon}
                   <Addon {...this.props} type={type} />
-                  {customAddon}
+                  {!customAddonAlignLeft && customAddon}
                   {children}
                 </View>
               </Column>
