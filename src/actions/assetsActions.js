@@ -58,7 +58,7 @@ import type {
 import type { Asset, Assets, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { addressesEqual, transformAssetsToObject } from 'utils/assets';
+import { transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -70,6 +70,7 @@ import {
   getAccountId,
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
+import { findMatchingContact } from 'utils/contacts';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
@@ -459,8 +460,13 @@ export const sendAssetAction = (
 
     // send note
     if (tokenTx.hash && note) {
-      const { contacts: { data: contacts } } = getState();
-      const toUser = contacts.find(contact => addressesEqual(contact.ethAddress, to));
+      const {
+        contacts: {
+          data: contacts,
+          contactsSmartAddresses: { addresses: contactsSmartAddresses },
+        },
+      } = getState();
+      const toUser = findMatchingContact(to, contacts, contactsSmartAddresses);
       if (toUser) {
         dispatch(sendTxNoteByContactAction(toUser.username, {
           text: note,
