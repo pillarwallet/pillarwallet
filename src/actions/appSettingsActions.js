@@ -31,6 +31,8 @@ import {
   resetKeychainDataObject,
 } from 'utils/keychain';
 
+import SDKWrapper from 'services/api';
+
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
@@ -139,7 +141,7 @@ export const setFirebaseAnalyticsCollectionEnabled = (enabled: boolean) => {
 };
 
 export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessToast: boolean = false) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { username, walletId } },
       accounts: { data: accounts },
