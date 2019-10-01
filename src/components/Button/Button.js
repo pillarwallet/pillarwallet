@@ -57,6 +57,10 @@ type Props = {
   textStyle?: ?Object,
   style?: Object,
   isLoading?: boolean,
+  primarySquare?: boolean,
+  primarySquareDisabled?: boolean,
+  roundedCorners?: boolean,
+  roundedCornersDisabled?: boolean,
 };
 
 type State = {
@@ -68,19 +72,39 @@ type ButtonNextProps = {
   disabled?: boolean,
 };
 
+const primaryTheme = {
+  background: baseColors.electricBlue,
+  color: baseColors.white,
+  borderColor: UIColors.defaultBorderColor,
+  borderWidth: 0,
+  shadow: true,
+};
+
+const primaryInvertedTheme = {
+  background: baseColors.white,
+  color: baseColors.electricBlue,
+  borderColor: baseColors.veryLightBlue,
+  borderWidth: '1px',
+};
+
 const themes = {
-  primary: {
-    background: baseColors.electricBlue,
-    color: '#ffffff',
-    borderColor: UIColors.defaultBorderColor,
-    borderWidth: 0,
-    shadow: true,
+  primary: primaryTheme,
+  primarySquare: {
+    ...primaryTheme,
+    borderRadius: 6,
   },
-  primaryInverted: {
-    background: baseColors.white,
-    color: baseColors.electricBlue,
+  primarySquareDisabled: {
     borderColor: baseColors.veryLightBlue,
-    borderWidth: '1px',
+    background: 'rgba(0, 122, 255, 0.3)',
+    color: baseColors.white,
+    borderWidth: 0,
+    shadow: false,
+    borderRadius: 6,
+  },
+  primaryInverted: primaryInvertedTheme,
+  primaryInvertedSquare: {
+    ...primaryInvertedTheme,
+    borderRadius: 6,
   },
   dangerInverted: {
     background: baseColors.white,
@@ -163,6 +187,15 @@ const themes = {
     borderRadius: 6,
     iconHorizontalMargin: 0,
   },
+  roundedCornersDisabled: {
+    background: baseColors.lightGray,
+    color: baseColors.darkGray,
+    borderColor: UIColors.defaultBorderColor,
+    borderWidth: 0,
+    flexDirection: 'row',
+    borderRadius: 6,
+    iconHorizontalMargin: 0,
+  },
 };
 
 const getButtonHeight = (props) => {
@@ -221,6 +254,7 @@ const ButtonIcon = styled(Icon)`
 const ButtonWrapper = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
+  align-self: flex-start;
   padding: 0 ${props => getButtonPadding(props)};
   background-color: ${props => props.theme.background};
   opacity: ${props => props.theme.opacity ? props.theme.opacity : 1};
@@ -233,7 +267,7 @@ const ButtonWrapper = styled.TouchableOpacity`
     : 40}px;
   width: ${props => getButtonWidth(props)};
   height: ${props => getButtonHeight(props)};
-  align-self: ${props => props.flexRight ? 'flex-end' : 'auto'} ;
+  align-self: ${props => props.flexRight ? 'flex-end' : 'auto'};
   border-color: ${props => props.theme.borderColor};
   border-width: ${props => props.theme.borderWidth};
   border-style: solid;
@@ -289,6 +323,12 @@ const getTheme = (props: Props) => {
 
   if (props.secondaryTransparent && props.disabled) {
     return themes.secondaryTransparentDisabled;
+  }
+  if (props.primarySquare && props.disabled) {
+    return themes.primarySquareDisabled;
+  }
+  if (props.roundedCorners && props.disabled) {
+    return themes.roundedCornersDisabled;
   }
 
   const propsKeys = Object.keys(props);

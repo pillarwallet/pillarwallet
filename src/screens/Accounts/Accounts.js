@@ -71,6 +71,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
 
 type commonItemsParams = {|
   id: string,
@@ -270,9 +271,9 @@ class AccountsScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(PILLAR_NETWORK_INTRO);
   };
 
-  accountSettings = (wallet: Account) => {
+  accountSettings = (account: Account) => {
     const { navigation } = this.props;
-    navigation.navigate(WALLET_SETTINGS, { wallet });
+    navigation.navigate(WALLET_SETTINGS, { accountId: account.id });
   };
 
   renderListItem = ({ item }: ListElement) => {
@@ -545,6 +546,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState) => ({

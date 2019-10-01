@@ -21,10 +21,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import get from 'lodash.get';
-import orderBy from 'lodash.orderby';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { format as formatDate } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
@@ -42,6 +40,7 @@ import Tabs from 'components/Tabs';
 import TankAssetBalance from 'components/TankAssetBalance';
 import { BaseText } from 'components/Typography';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
 
 // utils
 import { createAlert } from 'utils/alerts';
@@ -50,6 +49,7 @@ import {
   partial,
   formatAmount,
   formatUnits,
+  groupAndSortByDate,
 } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact } from 'utils/contacts';
@@ -65,11 +65,15 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
-import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import {
+  PAYMENT_NETWORK_ACCOUNT_TOPUP,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+} from 'constants/paymentNetworkConstants';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
-import { SettlementItem } from './SettlementItem';
+import { accountAssetsSelector } from 'selectors/assets';
 
 const ActivityFeedList = styled.SectionList`
   width: 100%;
@@ -234,7 +238,6 @@ class ActivityFeed extends React.Component<Props, State> {
       feedData = [],
       emptyState,
     } = this.props;
-    const dataSections = [];
     let feedList = feedData;
     let emptyStateData = emptyState || {};
 
@@ -243,21 +246,7 @@ class ActivityFeed extends React.Component<Props, State> {
       if (activeTabInfo) ({ data: feedList, emptyState: emptyStateData = {} } = activeTabInfo);
     }
 
-    orderBy(feedList, ['createdAt'], ['desc']).forEach(listItem => {
-      const itemCreatedDate = new Date(listItem.createdAt * 1000);
-      const formattedDate = formatDate(itemCreatedDate, 'MMM D YYYY');
-      // don't show the year if the event happened this year
-      const titleDateFormat = itemCreatedDate.getFullYear() === new Date().getFullYear()
-        ? 'MMM D'
-        : 'MMM D YYYY';
-      const sectionTitle = formatDate(itemCreatedDate, titleDateFormat);
-      const existingSection = dataSections.find(({ date }) => date === formattedDate);
-      if (!existingSection) {
-        dataSections.push({ title: sectionTitle, date: formattedDate, data: [{ ...listItem }] });
-      } else {
-        existingSection.data.push({ ...listItem });
-      }
-    });
+    const dataSections = groupAndSortByDate(feedList);
 
     this.setState({ formattedFeedData: dataSections, emptyStateData });
   };
@@ -341,16 +330,28 @@ class ActivityFeed extends React.Component<Props, State> {
       const tag = get(notification, 'tag', '');
       if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
         return (
-          <SettlementItem settleData={notification.extra} type={feedType} asset={asset} />
+          <SettlementItem
+            settleData={notification.extra}
+            onPress={() => this.selectEvent({ ...notification, value, contact }, type, notification.status)}
+            type={feedType}
+            asset={asset}
+          />
         );
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
         nameOrAddress = 'PLR Network Top Up';
+        itemImageSource = PPNIcon;
+        directionIcon = '';
+      } else if (tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
+        nameOrAddress = 'PLR Network Withdrawal';
         itemImageSource = PPNIcon;
         directionIcon = '';
       }
 
       const isPPNTransaction = get(notification, 'isPPNTransaction', false);
       if (isPPNTransaction) {
+        if (addressesEqual(notification.to, notification.from)) {
+          nameOrAddress = 'Transfer to own account';
+        }
         itemValue = '';
         customAddon = (<TankAssetBalance
           amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
@@ -558,15 +559,14 @@ class ActivityFeed extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-  assets: { data: assets },
 }) => ({
   contacts,
-  assets: Object.values(assets),
   contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
+  assets: (state) => Object.values(accountAssetsSelector(state)),
 });
 
 const combinedMapStateToProps = (state) => ({

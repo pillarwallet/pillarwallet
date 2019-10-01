@@ -70,6 +70,7 @@ import type { Collectible } from 'models/Collectible';
 import { baseColors, spacing, fontSizes } from 'utils/variables';
 import { formatAmount, getGasPriceWei } from 'utils/common';
 import { getBalance } from 'utils/assets';
+import { accountAssetsSelector } from 'selectors/assets';
 
 
 type Props = {
@@ -348,14 +349,12 @@ const mapStateToProps = ({
       },
     },
   },
-  assets: { data: assets },
   session: { data: session },
   history: { gasInfo },
 }) => ({
   recoveryAgents,
   transferAssets,
   transferCollectibles,
-  assets,
   session,
   gasInfo,
 });
@@ -363,6 +362,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   collectibles: accountCollectiblesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

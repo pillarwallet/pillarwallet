@@ -60,6 +60,7 @@ import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'const
 import { RESET_SMART_WALLET } from 'constants/smartWalletConstants';
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
+import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import Storage from 'services/storage';
@@ -78,10 +79,18 @@ import {
   setUserJoinedBetaAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
+import SDKWrapper from 'services/api';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 const storage = Storage.getInstance('db');
 
-const getTokenWalletAndRegister = async (privateKey: string, api: Object, user: Object, dispatch: Function) => {
+const getTokenWalletAndRegister = async (
+  privateKey: string,
+  api: Object, // FIXME: this should be api: SDKWrapper
+  user: Object,
+  dispatch: Dispatch,
+) => {
   await firebase.messaging().requestPermission().catch(() => { });
   const fcmToken = await firebase.messaging().getToken().catch(() => { });
 
@@ -158,12 +167,14 @@ const finishRegistration = async ({
 
   dispatch({
     type: SET_INITIAL_ASSETS,
-    payload: initialAssets,
+    payload: {
+      accountId: address,
+      assets: initialAssets,
+    },
   });
-  dispatch(saveDbAction('assets', { assets: initialAssets }));
 
-  // restore transactions history
-  await dispatch(restoreTransactionHistoryAction(address, userInfo.walletId));
+  const assets = { [address]: initialAssets };
+  dispatch(saveDbAction('assets', { assets }));
 
   dispatch(fetchBadgesAction(false));
 
@@ -172,8 +183,14 @@ const finishRegistration = async ({
     // create smart wallet account only for new wallets
     const createNewAccount = !isImported;
     await dispatch(initSmartWalletSdkAction(privateKey));
-    await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount));
+    await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
   }
+
+  const { accounts: { data: accounts } } = getState();
+
+  await Promise.all(accounts.map(async acc => {
+    await dispatch(restoreTransactionHistoryAction(acc.id, userInfo.walletId));
+  }));
 
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
@@ -198,7 +215,7 @@ const navigateToAppFlow = (isWalletBackedUp: boolean) => {
 };
 
 export const registerWalletAction = () => {
-  return async (dispatch: Function, getState: () => any, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const currentState = getState();
     const {
       mnemonic,
@@ -227,6 +244,7 @@ export const registerWalletAction = () => {
     dispatch({ type: RESET_PAYMENT_NETWORK });
     dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] });
     dispatch({ type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] });
+    dispatch({ type: SET_USER_SETTINGS, payload: {} });
 
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
@@ -305,6 +323,7 @@ export const registerWalletAction = () => {
         finalMnemonic = '';
       }
     }
+
     await finishRegistration({
       api,
       dispatch,

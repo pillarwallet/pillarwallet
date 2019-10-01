@@ -22,50 +22,23 @@ import { Alert, FlatList } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
-// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { REVEAL_BACKUP_PHRASE, BACKUP_WALLET_IN_SETTINGS_FLOW } from 'constants/navigationConstants';
 import { ListCard } from 'components/ListItem/ListCard';
+import { REVEAL_BACKUP_PHRASE, BACKUP_WALLET_IN_SETTINGS_FLOW } from 'constants/navigationConstants';
+import { checkIfSmartWalletAccount, findAccountById } from 'utils/accounts';
 import { baseColors } from 'utils/variables';
 import { lockScreenAction, logoutAction } from 'actions/authActions';
+import type { Accounts } from 'models/Account';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   lockScreen: Function,
   logoutUser: Function,
   user: Object,
+  accounts: Accounts,
   backupStatus: Object,
 }
-
-const defaultSettings = (that) => ([
-  {
-    key: 'lockWallet',
-    title: 'Close and Lock Wallet',
-    action: () => that.lockWallet(),
-  },
-  {
-    key: 'deleteWallet',
-    title: 'Delete wallet',
-    labelColor: baseColors.redDamask,
-    body: 'Wipe all data on this device',
-    action: () => that.deleteWallet(),
-  },
-]);
-
-const keyWalletSettings = (that) => {
-  const { backupStatus } = that.props;
-  const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-  return [
-    {
-      key: 'backupPhrase',
-      title: 'Backup phase',
-      body: 'Secure your wallet from loss',
-      action: () => that.navigateToBackup(),
-      label: isBackedUp ? '' : 'Not finished',
-    },
-  ];
-};
 
 const smartWalletSettings = [
   {
@@ -83,7 +56,6 @@ const smartWalletSettings = [
     disabled: true,
   },
 ];
-
 
 class WalletSettings extends React.PureComponent<Props> {
   // settings actions
@@ -120,6 +92,35 @@ class WalletSettings extends React.PureComponent<Props> {
     );
   };
 
+  defaultSettings = () => ([
+    {
+      key: 'lockWallet',
+      title: 'Close and Lock Wallet',
+      action: () => this.lockWallet(),
+    },
+    {
+      key: 'deleteWallet',
+      title: 'Delete wallet',
+      labelColor: baseColors.redDamask,
+      body: 'Wipe all data on this device',
+      action: () => this.deleteWallet(),
+    },
+  ]);
+
+  keyWalletSettings = () => {
+    const { backupStatus } = this.props;
+    const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
+    return [
+      {
+        key: 'backupPhrase',
+        title: 'Backup phase',
+        body: 'Secure your wallet from loss',
+        action: () => this.navigateToBackup(),
+        label: isBackedUp ? '' : 'Not finished',
+      },
+    ];
+  };
+
   renderSettingsItems = ({ item }, isSmartWallet) => {
     const {
       title,
@@ -146,13 +147,15 @@ class WalletSettings extends React.PureComponent<Props> {
   };
 
   render() {
-    const { navigation, user } = this.props;
-    const selectedWallet = navigation.getParam('wallet', {});
-    const isSmartWallet = selectedWallet.type === ACCOUNT_TYPES.SMART_WALLET;
-    const walletType = isSmartWallet ? 'Smart' : 'Legacy';
+    const { accounts, navigation, user } = this.props;
+    const accountId = navigation.getParam('accountId', '');
+    const account = findAccountById(accountId, accounts);
+    if (!account) return null;
+    const isSmartWallet = checkIfSmartWalletAccount(account);
+    const accountType = isSmartWallet ? 'Smart' : 'Legacy';
     const settings = isSmartWallet
-      ? [...smartWalletSettings, ...defaultSettings(this)]
-      : [...keyWalletSettings(this), ...defaultSettings(this)];
+      ? [...smartWalletSettings, ...this.defaultSettings()]
+      : [...this.keyWalletSettings(), ...this.defaultSettings()];
 
     return (
       <ContainerWithHeader
@@ -160,7 +163,7 @@ class WalletSettings extends React.PureComponent<Props> {
         headerProps={{
           centerItems: [
             { userIcon: true },
-            { title: `${user.username}'s ${walletType} wallet` },
+            { title: `${user.username}'s ${accountType} wallet` },
           ],
         }}
         inset={{ bottom: 'never' }}
@@ -180,9 +183,11 @@ class WalletSettings extends React.PureComponent<Props> {
 const mapStateToProps = ({
   user: { data: user },
   wallet: { backupStatus },
+  accounts: { data: accounts },
 }) => ({
   user,
   backupStatus,
+  accounts,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

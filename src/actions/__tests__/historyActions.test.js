@@ -39,7 +39,8 @@ const mockAccounts: Object[] = [{
 }];
 
 const plrContractAddress = '0x1234567';
-const mockAssets: Assets = {
+
+const mockAssetsByAccount: Assets = {
   ETH: {
     symbol: ETH,
     name: 'Ethereum',
@@ -118,9 +119,9 @@ const mockImportedPlrTransaction = {
   to: bobAddress,
   tokenInfo: {
     address: plrContractAddress,
-    name: mockAssets[PLR].name,
-    decimals: mockAssets[PLR].decimals,
-    symbol: mockAssets[PLR].symbol,
+    name: mockAssetsByAccount[PLR].name,
+    decimals: mockAssetsByAccount[PLR].decimals,
+    symbol: mockAssetsByAccount[PLR].symbol,
     totalSupply: '55191260000000',
     owner: '',
     txsCount: 111,
@@ -236,7 +237,7 @@ describe('History Actions', () => {
         history: { data: {} },
         wallet: { data: mockWallet },
       }));
-      api.fetchSupportedAssets.mockImplementation(() => Promise.resolve(Object.values(mockAssets)));
+      api.fetchSupportedAssets.mockImplementation(() => Promise.resolve(Object.values(mockAssetsByAccount)));
     });
 
     afterEach(() => {

@@ -9,6 +9,7 @@ executors:
     macos:
       xcode: "10.2.0"
     environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
       _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
@@ -222,6 +223,7 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
+          no_output_timeout: 20m
           name: Upload to Hockeyapp
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
@@ -393,6 +395,7 @@ jobs:
           paths:
             - vendor/bundle
       - run:
+          no_output_timeout: 20m
           name: Upload to TestFlight
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
@@ -650,6 +653,7 @@ jobs:
           paths:
             - vendor/bundle
       - run:
+          no_output_timeout: 20m
           name: Upload to TestFlight
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
