@@ -100,10 +100,10 @@ type MapContactsAddresses = Array<{
   },
 }>;
 
-const BCXSdk = new BCX({ apiUrl: BCX_URL });
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
 export default function SDKWrapper() {
+  this.BCXSdk = null;
   this.pillarWalletSdk = null;
 }
 
@@ -112,6 +112,7 @@ SDKWrapper.prototype.init = function (
   oAuthTokensStored?: ?OAuthTokens,
   onOAuthTokensFailed?: ?Function,
 ) {
+  this.BCXSdk = new BCX({ apiUrl: BCX_URL });
   this.pillarWalletSdk = new PillarSdk({
     apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
     notificationsUrl: NOTIFICATIONS_URL,
@@ -437,7 +438,7 @@ SDKWrapper.prototype.fetchICOFundingInstructions = function (walletId, currency)
 };
 
 SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
-  return BCXSdk.txHistory(payload)
+  return this.BCXSdk.txHistory(payload)
     .then(({ txHistory: { txHistory } }) => txHistory)
     .then(history => {
       return history.map(({
@@ -458,7 +459,7 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
 };
 
 SDKWrapper.prototype.fetchGasInfo = function () {
-  return BCXSdk.gasStation()
+  return this.BCXSdk.gasStation()
     .then(data => ({
       min: data.safeLow,
       avg: data.standard,
@@ -484,7 +485,7 @@ SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePaylo
   return fetchAssetBalances(assets, address);
   // const promises = assets.map(async ({ symbol, address: contractAddress }) => {
   //   const payload = { contractAddress, address, asset: symbol };
-  //   const { balance: response } = await BCXSdk.getBalance(payload);
+  //   const { balance: response } = await this.BCXSdk.getBalance(payload);
   //   return { balance: response.balance, symbol: response.ticker };
   // });
   // return Promise.all(promises).catch(() => []);

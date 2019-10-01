@@ -22,7 +22,16 @@ import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import merge from 'lodash.merge';
 
 export type AppSettingsReducerState = {
-  data: Object,
+  data: {
+    lastTxSyncDatetimes: Object,
+    appearanceSettings: {
+      assetsLayout: string,
+    },
+    blockchainNetwork: ?string,
+    userJoinedBeta: ?boolean,
+    firebaseAnalyticsConnectionEnabled: ?boolean,
+    baseFiatCurrency: ?string,
+  },
   isFetched: boolean,
 };
 
@@ -31,13 +40,16 @@ export type AppSettingsReducerAction = {
   payload: Object,
 };
 
-export const initialState = {
+export const initialState: AppSettingsReducerState = {
   data: {
     lastTxSyncDatetimes: {},
     appearanceSettings: {
       assetsLayout: SIMPLIFIED,
     },
     blockchainNetwork: null,
+    userJoinedBeta: false,
+    firebaseAnalyticsConnectionEnabled: false,
+    baseFiatCurrency: null,
   },
   isFetched: false,
 };
@@ -54,6 +66,7 @@ const appSettingsReducer = (
         state,
         updatedState,
       );
+
     default:
       return state;
   }
