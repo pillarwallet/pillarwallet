@@ -25,7 +25,6 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
-import { sdkConstants } from '@smartwallet/sdk';
 import get from 'lodash.get';
 
 // actions
@@ -51,7 +50,11 @@ import {
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
 } from 'constants/navigationConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import {
+  PAYMENT_COMPLETED,
+  PAYMENT_PROCESSED,
+  SMART_WALLET_UPGRADE_STATUSES,
+} from 'constants/smartWalletConstants';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -152,9 +155,6 @@ const iconSend = require('assets/icons/icon_send.png');
 
 const UNSETTLED = 'UNSETTLED';
 const SETTLED = 'SETTLED';
-
-const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
-const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');
 
 class PPNView extends React.Component<Props, State> {
   state = {
