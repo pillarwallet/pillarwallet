@@ -26,7 +26,7 @@ import {
 
 export async function getRemoteFeatureFlags() {
   if (isTest) return INITIAL_FEATURE_FLAGS;
-  if (__DEV__) firebase.config().enableDeveloperMode();
+  // if (__DEV__) firebase.config().enableDeveloperMode();
   const firebaseConfig = firebase.config();
   firebaseConfig.setDefaults(INITIAL_FEATURE_FLAGS);
   await firebaseConfig.fetch(0).catch(() => null); // 0 – try no caching, though Firebase can still throttle requests
