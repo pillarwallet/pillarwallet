@@ -859,14 +859,15 @@ class ExchangeScreen extends React.Component<Props, State> {
   }));
 
   generateSupportedAssetsOptions = (assets) => {
+    if (!Array.isArray(assets)) return [];
     const { balances, paymentNetworkBalances } = this.props;
-    const alphabeticalSupportedAssets = (assets || []).sort((a, b) => a.symbol.localeCompare(b.symbol));
+    const alphabeticalSupportedAssets = assets.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return alphabeticalSupportedAssets.map(({ symbol, iconUrl, ...rest }) => {
       const rawAssetBalance = getBalance(balances, symbol);
       const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
       const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
 
-      return ({
+      return {
         key: symbol,
         value: symbol,
         icon: iconUrl,
@@ -875,7 +876,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         ...rest,
         assetBalance,
         paymentNetworkBalance,
-      });
+      };
     });
   };
 
