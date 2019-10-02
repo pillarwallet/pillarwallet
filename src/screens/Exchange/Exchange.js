@@ -996,6 +996,8 @@ class ExchangeScreen extends React.Component<Props, State> {
         <DeploymentView
           message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
           buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
+          buttonLabel="Retry"
+          forceRetry={!!deploymentData.error}
         />}
         {!blockView &&
         <ScrollWrapper

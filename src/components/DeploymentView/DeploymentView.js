@@ -41,6 +41,7 @@ type Props = {
   buttonAction?: ?Function,
   smartWalletState: Object,
   accounts: Accounts,
+  forceRetry?: boolean,
 }
 
 const MessageTitle = styled(BoldText)`
@@ -67,6 +68,7 @@ class DeploymentView extends React.PureComponent<Props> {
       buttonAction,
       smartWalletState,
       accounts,
+      forceRetry,
     } = this.props;
     const { title, message: bodyText } = message;
 
@@ -85,16 +87,19 @@ class DeploymentView extends React.PureComponent<Props> {
         <MessageTitle>{title}</MessageTitle>
         <Message>{bodyText}</Message>
         <Wrapper style={{ margin: spacing.small, width: '100%', alignItems: 'center' }}>
-          {isDeploying &&
-          <SpinnerWrapper>
-            <Spinner />
-          </SpinnerWrapper>}
-          {!isDeploying && buttonAction && buttonLabel && <Button
-            marginTop={spacing.mediumLarge.toString()}
-            height={52}
-            title={buttonLabel}
-            onPress={buttonAction}
-          />}
+          {isDeploying && !forceRetry &&
+            <SpinnerWrapper>
+              <Spinner />
+            </SpinnerWrapper>
+          }
+          {(!isDeploying || forceRetry) && buttonAction && buttonLabel &&
+            <Button
+              marginTop={spacing.mediumLarge.toString()}
+              height={52}
+              title={buttonLabel}
+              onPress={buttonAction}
+            />
+          }
         </Wrapper>
       </Wrapper>
     );
