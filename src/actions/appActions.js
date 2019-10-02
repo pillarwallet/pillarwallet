@@ -62,6 +62,10 @@ import {
   MARK_PLR_TANK_INITIALISED,
 } from 'constants/paymentNetworkConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
+import {
+  INITIAL_FEATURE_FLAGS,
+  SET_FEATURE_FLAGS,
+} from 'constants/featureFlagsConstants';
 
 import { getWalletFromStorage } from 'utils/wallet';
 
@@ -154,6 +158,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { userSettings = {} } = await storage.get('userSettings');
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
+
+      const { featureFlags = INITIAL_FEATURE_FLAGS } = await storage.get('featureFlags');
+      dispatch({ type: SET_FEATURE_FLAGS, payload: featureFlags });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
