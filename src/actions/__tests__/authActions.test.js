@@ -76,6 +76,7 @@ describe('Wallet actions', () => {
       accounts: { data: [] },
       featureFlags: { data: INITIAL_FEATURE_FLAGS },
       appSettings: { data: {} },
+      session: { data: { isOnline: true } },
     });
   });
 

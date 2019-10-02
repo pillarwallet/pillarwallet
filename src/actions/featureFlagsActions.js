@@ -20,13 +20,20 @@
 
 import { getRemoteFeatureFlags } from 'services/featureFlags';
 import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { saveDbAction } from 'actions/dbActions';
+import type { GetState } from 'reducers/rootReducer';
 
 export const fetchFeatureFlagsAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: GetState) => {
+    const {
+      session: { data: { isOnline } },
+    } = getState();
+    if (!isOnline) return;
     const featureFlags = await getRemoteFeatureFlags();
     dispatch({
       type: SET_FEATURE_FLAGS,
       payload: featureFlags,
     });
+    dispatch(saveDbAction('featureFlags', { featureFlags }, true));
   };
 };
