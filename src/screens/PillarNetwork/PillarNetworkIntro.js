@@ -93,11 +93,10 @@ const ListItemWrapper = styled.View`
 `;
 
 const ContentWrapper = styled.View`
-  align-items: flex-start;
+  align-items: stretch;
   margin-left: ${responsiveSize(19)}px;
   flex: 1;
   flex-wrap: wrap;
-    
 `;
 
 const Label = styled(BoldText)`
