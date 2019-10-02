@@ -79,7 +79,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
-      goBackDismiss: !!transactionPayload.replaceTransaction,
+      goBackDismiss: !!transactionPayload.replaceTransactionHash,
       source: this.source,
     });
   };
@@ -100,11 +100,11 @@ class SendTokenContacts extends React.Component<Props, State> {
       to,
       txFeeInWei,
       symbol,
-      replaceTransaction,
+      replaceTransactionHash,
     } = navigation.getParam('transactionPayload', {});
 
     const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
-    const confirmButtonTitle = replaceTransaction
+    const confirmButtonTitle = replaceTransactionHash
       ? 'Confirm Speed Up'
       : 'Confirm Transaction';
     const recipientUsername = getUserName(contact);
@@ -124,11 +124,11 @@ class SendTokenContacts extends React.Component<Props, State> {
           regularPadding
           disableAutomaticScroll
         >
-          {replaceTransaction &&
+          {replaceTransactionHash &&
             <View>
               <LabeledRow>
                 <Label>Hash of transaction to speed up</Label>
-                <Value>{replaceTransaction}</Value>
+                <Value>{replaceTransactionHash}</Value>
               </LabeledRow>
               <LabeledRow>
                 <Label>New Est. Network Fee</Label>
@@ -136,7 +136,7 @@ class SendTokenContacts extends React.Component<Props, State> {
               </LabeledRow>
             </View>
           }
-          {!replaceTransaction &&
+          {!replaceTransactionHash &&
             <View>
               <LabeledRow>
                 <Label>Amount</Label>

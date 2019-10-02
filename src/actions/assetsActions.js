@@ -309,18 +309,18 @@ export const sendAssetAction = (
     let historyTx;
     const accountCollectibles = collectibles[accountId] || [];
     const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
-    const { to, note, replaceTransaction } = transaction;
+    const { to, note, replaceTransactionHash } = transaction;
 
     // get wallet provider
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
     const walletProvider = await cryptoWallet.getProvider();
 
-    if (replaceTransaction) {
-      const totalTransactionCount = await walletProvider.getTransactionCountWithPending(accountAddress);
+    if (replaceTransactionHash) {
+      const totalTransactionCount = await walletProvider.getTransactionCount(accountAddress);
       const existingNonce = calculateTransactionNonceFromHistory(
         totalTransactionCount,
         accountHistory,
-        replaceTransaction,
+        replaceTransactionHash,
       );
       if (existingNonce < 0) {
         callback({
@@ -459,7 +459,10 @@ export const sendAssetAction = (
             historyTx,
           },
         });
-        const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
+        let updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
+        if (replaceTransactionHash) {
+          updatedAccountHistory = updatedAccountHistory.filter(({ hash }) => hash !== replaceTransactionHash);
+        }
         const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
       }
@@ -793,7 +796,6 @@ export const speedUpTransactionAction = (transactionHash: string, gasPriceGwei: 
     const {
       history: { data: history },
       accounts: { data: accounts },
-      assets: { data: assets },
     } = getState();
     const accountAddress = getActiveAccountAddress(accounts);
     const transactionInfo = (history[accountAddress] || []).find(
@@ -819,7 +821,8 @@ export const speedUpTransactionAction = (transactionHash: string, gasPriceGwei: 
       note,
       value,
     } = transactionInfo;
-    const asset = assets[assetSymbol] || {};
+    const accountAssets = accountAssetsSelector(getState());
+    const asset = accountAssets[assetSymbol] || {};
     const {
       symbol,
       address: contractAddress,
@@ -836,7 +839,7 @@ export const speedUpTransactionAction = (transactionHash: string, gasPriceGwei: 
       contractAddress,
       decimals,
       from,
-      replaceTransaction: transactionHash,
+      replaceTransactionHash: transactionHash,
     };
     navigate(SEND_TOKEN_CONFIRM, {
       transactionPayload,

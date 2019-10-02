@@ -51,9 +51,13 @@ import {
   noop,
   formatUnits,
   formatAmount,
+  formatFiat,
 } from 'utils/common';
 import { createAlert } from 'utils/alerts';
-import { addressesEqual } from 'utils/assets';
+import {
+  addressesEqual,
+  getRate,
+} from 'utils/assets';
 import {
   checkIfSmartWalletAccount,
   findAccountByAddress,
@@ -86,7 +90,11 @@ import {
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
-import { SPEED_TYPES } from 'constants/assetsConstants';
+import {
+  ETH,
+  SPEED_TYPES,
+  defaultFiatCurrency,
+} from 'constants/assetsConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -116,9 +124,11 @@ type Props = {
   speedUpTransaction: Function,
   gasInfo: GasInfo,
   fetchGasInfo: Function,
-  session: Object,
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
+  isOnline: boolean,
+  rates: Object,
+  baseFiatCurrency: ?string,
 }
 
 type State = {
@@ -251,7 +261,7 @@ class EventDetails extends React.Component<Props, State> {
       eventData,
       history,
       fetchGasInfo,
-      session,
+      isOnline,
     } = this.props;
     if (eventType !== TRANSACTION_EVENT) return;
 
@@ -259,7 +269,7 @@ class EventDetails extends React.Component<Props, State> {
 
     if (!this.timer && txInfo.status !== TX_PENDING_STATUS) return;
 
-    if (prevProps.session.isOnline !== session.isOnline && session.isOnline) {
+    if (prevProps.isOnline !== isOnline && isOnline) {
       fetchGasInfo();
     }
 
@@ -350,7 +360,7 @@ class EventDetails extends React.Component<Props, State> {
   };
 
   renderSpeedUpOptions = (gasLimit) => {
-    const { gasInfo } = this.props;
+    const { gasInfo, rates, baseFiatCurrency } = this.props;
     const fastSpeedGasPrice = (gasInfo && gasInfo.gasPrice[SPEED_TYPES.FAST]) || 0;
     return (
       <ListItemUnderlined
@@ -370,10 +380,13 @@ class EventDetails extends React.Component<Props, State> {
               const newGasPrice = fastSpeedGasPrice * multiplier;
               const gasPriceWei = utils.parseUnits(newGasPrice.toString(), 'gwei');
               const gasPriceEth = formatAmount(utils.formatEther(gasPriceWei.mul(gasLimit)));
+              const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+              const feeInFiat = parseFloat(gasPriceEth) * getRate(rates, ETH, fiatCurrency);
+              const formattedFeeInFiat = formatFiat(feeInFiat, baseFiatCurrency);
               return (
                 <Button
                   key={multiplier}
-                  title={`${gasPriceEth} ETH`}
+                  title={`${gasPriceEth} ETH (${formattedFeeInFiat})`}
                   onPress={() => this.onSelectSpeedPress(newGasPrice)}
                   small
                   primaryInverted
@@ -742,11 +755,19 @@ const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   txNotes: { data: txNotes },
   accounts: { data: accounts },
+  session: { data: { isOnline } },
+  rates: { data: rates },
+  appSettings: { data: { baseFiatCurrency } },
+  history: { gasInfo },
 }) => ({
   contacts,
   txNotes,
   contactsSmartAddresses,
   accounts,
+  isOnline,
+  rates,
+  baseFiatCurrency,
+  gasInfo,
 });
 
 const structuredSelector = createStructuredSelector({

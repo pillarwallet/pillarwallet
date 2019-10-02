@@ -162,5 +162,5 @@ export const calculateTransactionNonceFromHistory = (
   const sortedHistory = orderBy(pendingTransactions, ['createdAt'], ['asc']);
   const pendingTransactionIndex = sortedHistory.findIndex(({ hash }) => hash === transactionHash);
   if (pendingTransactionIndex < 0) return pendingTransactionIndex;
-  return (totalTransactionCount - 1) - pendingTransactionIndex;
+  return totalTransactionCount - pendingTransactionIndex;
 };
