@@ -19,6 +19,7 @@
 */
 import { Platform } from 'react-native';
 import * as Keychain from 'react-native-keychain';
+import { delay } from 'utils/common';
 
 const KEYCHAIN_SERVICE = 'com.pillarproject.wallet';
 const KEYCHAIN_DATA_KEY = 'data';
@@ -39,13 +40,17 @@ export const setKeychainDataObject = (data: KeyChainData) => Keychain
   })
   .catch(() => null);
 
-export const getKeychainDataObject = () => Keychain
-  .getGenericPassword({
-    service: KEYCHAIN_SERVICE,
-    authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
-  })
-  .then(({ password = '{}' }) => JSON.parse(password))
-  .catch(() => {});
+export const getKeychainDataObject = async () => {
+  // android keychain unlock happens too fast when prompted right after device unlock
+  if (Platform.OS === 'android') await delay(1000);
+  return Keychain
+    .getGenericPassword({
+      service: KEYCHAIN_SERVICE,
+      authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
+    })
+    .then(({ password = '{}' }) => JSON.parse(password))
+    .catch(() => {});
+}
 
 export const resetKeychainDataObject = () => Keychain
   .resetGenericPassword({
