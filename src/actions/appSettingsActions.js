@@ -26,6 +26,7 @@ import firebase from 'react-native-firebase';
 
 import Toast from 'components/Toast';
 import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
+import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import {
   setKeychainDataObject,
   resetKeychainDataObject,
@@ -169,6 +170,7 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
         userJoinedBeta,
       },
     });
+    dispatch(fetchFeatureFlagsAction());
     if (ignoreSuccessToast) return;
     Toast.show({
       message,
