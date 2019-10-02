@@ -67,6 +67,7 @@ import { updatePinAttemptsAction } from 'actions/walletActions';
 import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
+import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -86,6 +87,8 @@ export const loginAction = (
   updateKeychain?: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    await dispatch(fetchFeatureFlagsAction()); // wait until fetches new flags
+
     let { accounts: { data: accounts } } = getState();
     const {
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
