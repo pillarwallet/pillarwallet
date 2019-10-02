@@ -50,7 +50,7 @@ export const getKeychainDataObject = async () => {
     })
     .then(({ password = '{}' }) => JSON.parse(password))
     .catch(() => {});
-}
+};
 
 export const resetKeychainDataObject = () => Keychain
   .resetGenericPassword({
