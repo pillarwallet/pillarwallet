@@ -45,7 +45,7 @@ import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
 
 // utils
 import { createAlert } from 'utils/alerts';
-import { addressesEqual } from 'utils/assets';
+import { addressesEqual, getAssetData } from 'utils/assets';
 import {
   partial,
   formatAmount,
@@ -158,7 +158,7 @@ type Props = {
   feedType?: string,
   contactsSmartAddresses: ContactSmartAddressData[],
   emptyState?: EmptyState,
-  supportedAssets: Object[],
+  supportedAssets: Asset[],
 }
 
 type FeedItemTransaction = {
@@ -315,8 +315,7 @@ class ActivityFeed extends React.Component<Props, State> {
       const {
         decimals = 18,
         iconUrl,
-      } = assets.find(({ symbol }) => symbol === notification.asset)
-      || supportedAssets.find(({ symbol }) => symbol === notification.asset) || {};
+      } = getAssetData(assets, supportedAssets, notification.asset);
       const value = formatUnits(notification.value, decimals);
       const formattedValue = formatAmount(value);
       let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;

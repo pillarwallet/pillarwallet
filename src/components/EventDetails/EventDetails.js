@@ -31,7 +31,7 @@ import isEmpty from 'lodash.isempty';
 
 // models
 import type { Transaction } from 'models/Transaction';
-import type { Assets } from 'models/Asset';
+import type { Assets, Asset } from 'models/Asset';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 
@@ -50,7 +50,7 @@ import {
   formatUnits,
 } from 'utils/common';
 import { createAlert } from 'utils/alerts';
-import { addressesEqual } from 'utils/assets';
+import { addressesEqual, getAssetData } from 'utils/assets';
 import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
 
@@ -102,7 +102,7 @@ type Props = {
   activeAccountAddress: string,
   contactsSmartAddresses: ContactSmartAddressData[],
   inactiveAccounts: Accounts,
-  supportedAssets: Object[],
+  supportedAssets: Asset[],
 }
 
 const ContentWrapper = styled.View`
@@ -312,8 +312,7 @@ class EventDetails extends React.Component<Props, {}> {
       const hasNote = transactionNote && transactionNote !== '';
       const isPending = status === TX_PENDING_STATUS;
       const assetsData = Object.keys(assets).map(id => assets[id]);
-      const { decimals = 18 } = assetsData.find(({ symbol }) => symbol === asset)
-      || supportedAssets.find(({ symbol }) => symbol === asset) || {};
+      const { decimals = 18 } = getAssetData(assetsData, supportedAssets, asset);
       const value = formatUnits(txInfo.value, decimals);
       const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);

@@ -143,3 +143,10 @@ export const addressesEqual = (address1: ?string, address2: ?string): boolean =>
 
   return isCaseInsensitiveMatch(address1, address2);
 };
+
+export const getAssetData = (assetsData: Asset[],
+  supportedAssetsData: Asset[],
+  assetSymbol: string): Asset | Object => {
+  return assetsData.find(({ symbol }: Asset) => symbol === assetSymbol)
+  || supportedAssetsData.find(({ symbol }: Asset) => symbol === assetSymbol) || {};
+};
