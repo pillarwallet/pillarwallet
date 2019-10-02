@@ -27,7 +27,7 @@ import {
   UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
-import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { INITIAL_FEATURE_FLAGS, SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import Storage from 'services/storage';
@@ -76,12 +76,14 @@ describe('Wallet actions', () => {
       accounts: { data: [] },
       featureFlags: { data: INITIAL_FEATURE_FLAGS },
       appSettings: { data: {} },
+      session: { data: { isOnline: true } },
     });
   });
 
   it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
       { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
       {
@@ -108,6 +110,7 @@ describe('Wallet actions', () => {
     storage.save('user', { user: registeredMockUser });
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },

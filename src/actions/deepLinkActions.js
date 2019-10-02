@@ -34,6 +34,8 @@ import {
   CONFIRM_CLAIM,
   HOME,
 } from 'constants/navigationConstants';
+import SDKWrapper from 'services/api';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 type ApproveLoginQuery = {
   loginToken?: string,
@@ -73,7 +75,7 @@ const beginApproveLogin = (query: ApproveLoginQuery) => {
 };
 
 export const executeDeepLinkAction = (deepLink: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     const params: Object = url.parse(deepLink, true);
     if (params.protocol !== 'pillarwallet:') return;
     switch (params.host) {
@@ -107,7 +109,7 @@ export const executeDeepLinkAction = (deepLink: string) => {
 };
 
 export const approveLoginAttemptAction = (loginAttemptToken: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     try {
       const result = await api.approveLoginToExternalResource(loginAttemptToken);
       if (!result || result.error) throw new Error();

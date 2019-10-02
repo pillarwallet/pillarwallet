@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { AppState } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import get from 'lodash.get';
@@ -44,6 +45,7 @@ type Props = {
 
 type State = {
   biometricsShown: boolean,
+  lastAppState: string,
 }
 
 const CheckPinWrapper = styled(Wrapper)`
@@ -53,6 +55,7 @@ const CheckPinWrapper = styled(Wrapper)`
 `;
 
 const ACTIVE_APP_STATE = 'active';
+const BACKGROUND_APP_STATE = 'background';
 
 class CheckPin extends React.Component<Props, State> {
   static defaultProps = {
@@ -60,21 +63,30 @@ class CheckPin extends React.Component<Props, State> {
   };
   state = {
     biometricsShown: false,
+    lastAppState: AppState.currentState,
   };
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
     const { useBiometrics, revealMnemonic } = this.props;
-    if (useBiometrics && !revealMnemonic) {
+    const { lastAppState } = this.state;
+    if (useBiometrics
+      && !revealMnemonic
+      && lastAppState !== BACKGROUND_APP_STATE) {
       this.showBiometricLogin();
     }
   }
 
   handleAppStateChange = (nextAppState: string) => {
     const { useBiometrics, revealMnemonic } = this.props;
-    if (nextAppState === ACTIVE_APP_STATE && useBiometrics && !revealMnemonic) {
+    const { lastAppState } = this.state;
+    if (nextAppState === ACTIVE_APP_STATE
+      && lastAppState === BACKGROUND_APP_STATE
+      && useBiometrics
+      && !revealMnemonic) {
       this.showBiometricLogin();
     }
+    this.setState({ lastAppState: nextAppState });
   };
 
   showBiometricLogin() {

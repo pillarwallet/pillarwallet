@@ -22,7 +22,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { availableStakeSelector } from 'selectors/paymentNetwork';
+import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
 import * as Keychain from 'react-native-keychain';
 
 // components
@@ -38,6 +38,7 @@ import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts, Account } from 'models/Account';
+import type { Transaction } from 'models/Transaction';
 
 // actions
 import {
@@ -55,12 +56,13 @@ import {
   FETCH_INITIAL_FAILED,
   FETCHED,
 } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
+import { findKeyBasedAccount } from 'utils/accounts';
 import { baseColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -101,6 +103,7 @@ type Props = {
   backupStatus: Object,
   availableStake: number,
   checkForMissedAssets: Function,
+  PPNTransactions: Transaction[],
 }
 
 type State = {
@@ -116,14 +119,11 @@ const VIEWS = {
 };
 
 class AssetsScreen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      showKeyWalletInsight: true,
-      showSmartWalletInsight: false,
-      supportsBiometrics: false,
-    };
-  }
+  state = {
+    showKeyWalletInsight: true,
+    showSmartWalletInsight: false,
+    supportsBiometrics: false,
+  };
 
   componentDidMount() {
     const {
@@ -178,6 +178,7 @@ class AssetsScreen extends React.Component<Props, State> {
       blockchainNetworks,
       activeAccount,
       availableStake,
+      PPNTransactions,
     } = this.props;
 
     const { type: walletType } = activeAccount;
@@ -197,35 +198,28 @@ class AssetsScreen extends React.Component<Props, State> {
           customHeaderButtonProps: {},
         };
       default:
+        const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === PAYMENT_COMPLETED);
         return {
           label: activeBNetworkTitle,
           action: () => navigation.navigate(ACCOUNTS),
           screenView: VIEWS.PPN_VIEW,
           customHeaderProps: {},
-          customHeaderButtonProps: { isActive: availableStake > 0 },
+          customHeaderButtonProps: { isActive: availableStake > 0 || hasUnsettledTx },
         };
     }
   };
 
-  renderView = (viewType: string) => {
+  getInsightsList = () => {
     const {
-      assets,
-      assetsState,
-      fetchInitialAssets,
       accounts,
-      smartWalletState,
       backupStatus,
       navigation,
       useBiometrics,
     } = this.props;
-    const {
-      showKeyWalletInsight,
-      showSmartWalletInsight,
-      supportsBiometrics,
-    } = this.state;
+    const { supportsBiometrics } = this.state;
 
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-    const keyBasedWallet = accounts.find((item) => item.type === ACCOUNT_TYPES.KEY_BASED);
+    const keyBasedAccount = findKeyBasedAccount(accounts) || {};
 
     const keyWalletInsights = [
       {
@@ -233,7 +227,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: 'Backup wallet',
         status: isBackedUp,
         onPress: !isBackedUp
-          ? () => navigation.navigate(WALLET_SETTINGS, { wallet: keyBasedWallet })
+          ? () => navigation.navigate(WALLET_SETTINGS, { accountId: keyBasedAccount.id })
           : null,
       },
       {
@@ -243,16 +237,30 @@ class AssetsScreen extends React.Component<Props, State> {
       },
     ];
 
-    const visibleKeyWalletInsights = supportsBiometrics
-      ? [...keyWalletInsights, {
+    if (supportsBiometrics) {
+      const biometricsInsight = {
         key: 'biometric',
         title: 'Enable biometric login (optional)',
         status: useBiometrics,
         onPress: !useBiometrics
           ? () => navigation.navigate(SETTINGS)
           : null,
-      }]
-      : keyWalletInsights;
+      };
+      return [...keyWalletInsights, biometricsInsight];
+    }
+
+    return keyWalletInsights;
+  };
+
+  renderView = (viewType: string) => {
+    const {
+      assets,
+      assetsState,
+      fetchInitialAssets,
+      accounts,
+      smartWalletState,
+    } = this.props;
+    const { showKeyWalletInsight, showSmartWalletInsight } = this.state;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
@@ -285,7 +293,7 @@ class AssetsScreen extends React.Component<Props, State> {
           <WalletView
             showInsight={showKeyWalletInsight}
             hideInsight={() => this.hideWalletInsight('KEY')}
-            insightList={visibleKeyWalletInsights}
+            insightList={this.getInsightsList()}
             insightsTitle="Never lose your funds"
           />);
       default:
@@ -362,6 +370,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   availableStake: availableStakeSelector,
+  PPNTransactions: PPNTransactionsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

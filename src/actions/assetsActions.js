@@ -58,7 +58,7 @@ import type {
 import type { Asset, Assets, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { addressesEqual, transformAssetsToObject } from 'utils/assets';
+import { transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -70,9 +70,11 @@ import {
   getAccountId,
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
+import { findMatchingContact } from 'utils/contacts';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
+import SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
@@ -458,8 +460,13 @@ export const sendAssetAction = (
 
     // send note
     if (tokenTx.hash && note) {
-      const { contacts: { data: contacts } } = getState();
-      const toUser = contacts.find(contact => addressesEqual(contact.ethAddress, to));
+      const {
+        contacts: {
+          data: contacts,
+          contactsSmartAddresses: { addresses: contactsSmartAddresses },
+        },
+      } = getState();
+      const toUser = findMatchingContact(to, contacts, contactsSmartAddresses);
       if (toUser) {
         dispatch(sendTxNoteByContactAction(toUser.username, {
           text: note,
@@ -502,7 +509,7 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
 }
 
 export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       balances: { data: balances },
@@ -522,7 +529,11 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
       payload: FETCHING,
     });
 
-    const newBalances = await api.fetchBalances({ address: walletAddress, assets: Object.values(accountAssets) });
+    const newBalances = await api.fetchBalances({
+      address: walletAddress,
+      // $FlowFixMe Object.values returns mixed type
+      assets: Object.values(accountAssets),
+    });
 
     if (newBalances && newBalances.length) {
       const transformedBalances = transformAssetsToObject(newBalances);
@@ -556,7 +567,7 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
 };
 
 export const fetchInitialAssetsAction = () => {
-  return async (dispatch: Dispatch, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       accounts: { data: accounts },
@@ -626,7 +637,7 @@ export const startAssetsSearchAction = () => ({
 });
 
 export const searchAssetsAction = (query: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { user: { data: { walletId } } } = getState();
 
     const assets = await api.assetsSearch(query, walletId);
@@ -657,7 +668,7 @@ export const getSupportedTokens = (supportedAssets: Asset[], currentAssets: Asse
   return { id: accountId, ...updatedAccountAssets };
 };
 
-const getAllOwnedAssets = async (api: Object, accountId: string, supportedAssets: Asset[]) => {
+const getAllOwnedAssets = async (api: SDKWrapper, accountId: string, supportedAssets: Asset[]) => {
   const addressErc20Tokens = await api.getAddressErc20TokensInfo(accountId); // all address' assets except ETH;
   const accOwnedErc20Assets = {};
   if (addressErc20Tokens.length) {
@@ -671,7 +682,7 @@ const getAllOwnedAssets = async (api: Object, accountId: string, supportedAssets
 };
 
 export const checkForMissedAssetsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       user: { data: { walletId } },

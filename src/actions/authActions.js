@@ -21,6 +21,7 @@ import ethers from 'ethers';
 import { AsyncStorage } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
+import get from 'lodash.get';
 import {
   DECRYPT_WALLET,
   UPDATE_WALLET_STATE,
@@ -52,7 +53,7 @@ import { navigate, getNavigationState, getNavigationPathAndParamsState } from 's
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
-import { getActiveAccountAddress } from 'utils/accounts';
+import { getActiveAccountAddress, findKeyBasedAccount, getAccountId } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
@@ -67,6 +68,8 @@ import { updatePinAttemptsAction } from 'actions/walletActions';
 import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
+import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
+import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
@@ -84,10 +87,9 @@ export const loginAction = (
   onLoginSuccess: ?Function,
   updateKeychain?: boolean = false,
 ) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    let { accounts: { data: accounts } } = getState();
     const {
-      accounts: { data: accounts },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
       appSettings: {
         data: {
@@ -107,6 +109,10 @@ export const loginAction = (
       payload: DECRYPTING,
     });
     await delay(100);
+
+    await dispatch(fetchFeatureFlagsAction()); // wait until fetches new flags
+    const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+
     try {
       let wallet;
 
@@ -164,8 +170,9 @@ export const loginAction = (
         await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
-        await
-        dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys));
+        await dispatch(
+          updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys),
+        );
 
         if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
           await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
@@ -179,6 +186,10 @@ export const loginAction = (
       } else {
         api.init();
       }
+
+      // re-fetch accounts as they might change at this point
+      accounts = getState().accounts.data;
+
       Crashlytics.setUserIdentifier(user.username);
       dispatch({
         type: UPDATE_USER,
@@ -230,13 +241,17 @@ export const loginAction = (
         action: navigateToRoute,
       });
 
+      // show toast if the wallet wasn't backed up
       const {
         isImported,
         isBackedUp,
       } = getState().wallet.backupStatus;
 
       const isWalletBackedUp = isImported || isBackedUp;
-      toastWalletBackup(isWalletBackedUp);
+      const keyBasedAccount = findKeyBasedAccount(accounts);
+      if (keyBasedAccount) {
+        toastWalletBackup(isWalletBackedUp, getAccountId(keyBasedAccount));
+      }
 
       /**
        * this is used only to avoid BCX fetching issues,

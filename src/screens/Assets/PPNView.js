@@ -24,29 +24,24 @@ import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
-import { sdkConstants } from '@smartwallet/sdk';
+import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
 
+// actions
+import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
+
+// components
 import { BaseText, MediumText } from 'components/Typography';
 import DeploymentView from 'components/DeploymentView';
 import CircleButton from 'components/CircleButton';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import Tabs from 'components/Tabs';
 import Button from 'components/Button';
+import ActivityFeed from 'components/ActivityFeed';
 
-import {
-  addressesEqual,
-  getRate,
-} from 'utils/assets';
-import {
-  formatMoney,
-  formatFiat,
-} from 'utils/common';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { getAccountAddress } from 'utils/accounts';
-import { getSmartWalletStatus } from 'utils/smartWallet';
-
+// constants
 import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   FUND_TANK,
   SEND_TOKEN_FROM_ASSET_FLOW,
@@ -55,34 +50,41 @@ import {
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
 } from 'constants/navigationConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-
 import {
-  activeAccountAddressSelector,
-  activeAccountSelector,
-} from 'selectors';
+  PAYMENT_COMPLETED,
+  PAYMENT_PROCESSED,
+  SMART_WALLET_UPGRADE_STATUSES,
+} from 'constants/smartWalletConstants';
+
+// models
+import type { Accounts } from 'models/Account';
+import type { Asset, Assets, Balances } from 'models/Asset';
+import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Transaction } from 'models/Transaction';
+
+// utils
+import { getRate } from 'utils/assets';
+import { getAccountAddress } from 'utils/accounts';
+import {
+  formatMoney,
+  formatFiat,
+} from 'utils/common';
+import { mapTransactionsHistory } from 'utils/feedData';
+import { responsiveSize } from 'utils/ui';
+import { getSmartWalletStatus } from 'utils/smartWallet';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
+
+// selectors
+import { activeAccountSelector } from 'selectors';
 import {
   availableStakeSelector,
   paymentNetworkAccountBalancesSelector,
   paymentNetworkNonZeroBalancesSelector,
+  PPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
-import type { Asset, Assets, Balances } from 'models/Asset';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { NavigationScreenProp } from 'react-navigation';
-import type { Accounts } from 'models/Account';
 
-import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
-import { responsiveSize } from 'utils/ui';
-import ActivityFeed from 'components/ActivityFeed';
-import { accountHistorySelector } from 'selectors/history';
-import type { Transaction } from 'models/Transaction';
-import { mapTransactionsHistory } from 'utils/feedData';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import type {
-  ApiUser,
-  ContactSmartAddressData,
-} from 'models/Contacts';
 
 type Props = {
   baseFiatCurrency: string,
@@ -99,10 +101,9 @@ type Props = {
   accounts: Accounts,
   smartWalletState: Object,
   availableToSettleTx: Object[],
-  history: Transaction[],
+  PPNTransactions: Transaction[],
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
-  activeAccountAddress: string,
 }
 
 type State = {
@@ -145,7 +146,7 @@ const BlueText = styled(BaseText)`
 const FloatingButtonView = styled.View`
   position: absolute;
   bottom: ${spacing.rhythm}px;
-  alignItems: center;
+  align-items: center;
   justify-content: center;
   width: 100%;
 `;
@@ -154,9 +155,6 @@ const iconSend = require('assets/icons/icon_send.png');
 
 const UNSETTLED = 'UNSETTLED';
 const SETTLED = 'SETTLED';
-
-const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
-const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');
 
 class PPNView extends React.Component<Props, State> {
   state = {
@@ -221,10 +219,9 @@ class PPNView extends React.Component<Props, State> {
       navigation,
       accounts,
       smartWalletState,
-      history,
+      PPNTransactions,
       contacts,
       contactsSmartAddresses,
-      activeAccountAddress,
       baseFiatCurrency,
       rates,
     } = this.props;
@@ -251,10 +248,6 @@ class PPNView extends React.Component<Props, State> {
       }
       : smartWalletStatus.sendingBlockedMessage || {};
     const disableTopUpAndSettle = Object.keys(sendingBlockedMessage).length;
-
-    const PPNTransactions = history.filter(
-      ({ isPPNTransaction, to }) => !!isPPNTransaction && addressesEqual(to, activeAccountAddress),
-    );
 
     const PPNTransactionsMapped = mapTransactionsHistory(
       PPNTransactions,
@@ -427,8 +420,7 @@ const structuredSelector = createStructuredSelector({
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
   availableStake: availableStakeSelector,
   activeAccount: activeAccountSelector,
-  history: accountHistorySelector,
-  activeAccountAddress: activeAccountAddressSelector,
+  PPNTransactions: PPNTransactionsSelector,
   assets: accountAssetsSelector,
 });
 

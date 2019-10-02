@@ -49,6 +49,8 @@ import {
   RESET_SMART_WALLET_DEPLOYMENT,
   SET_ASSET_TRANSFER_GAS_LIMIT,
   SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
+  PAYMENT_COMPLETED,
+  PAYMENT_PROCESSED,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -631,7 +633,9 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
       const senderAddress = get(payment, 'sender.account.address');
       const recipientAddress = get(payment, 'recipient.account.address');
       const stateInPPN = get(payment, 'state');
-
+      const paymentHash = get(payment, 'hash');
+      const existingTransaction = accountHistory.find(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)) || {};
+      // if transaction exists this will update only its status and stateInPPN
       return buildHistoryTransaction({
         from: senderAddress,
         hash: payment.hash,
@@ -640,6 +644,7 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
         asset: tokenSymbol,
         isPPNTransaction: true,
         createdAt: +new Date(payment.updatedAt) / 1000,
+        ...existingTransaction,
         status: TX_CONFIRMED_STATUS,
         stateInPPN,
       });
@@ -674,8 +679,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     const ACCOUNT_PAYMENT_UPDATED = get(sdkModules, 'Api.EventNames.AccountPaymentUpdated', '');
     const ACCOUNT_VIRTUAL_BALANCE_UPDATED = get(sdkModules, 'Api.EventNames.AccountVirtualBalanceUpdated', '');
     const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
-    const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
-    const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');
 
     if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !TRANSACTION_COMPLETED) {
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
@@ -1222,6 +1225,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
         type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
         payload: txHash,
       });
+
 
       const { history: { data: currentHistory } } = getState();
       dispatch(saveDbAction('history', { history: currentHistory }, true));
