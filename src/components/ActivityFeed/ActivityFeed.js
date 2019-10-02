@@ -77,7 +77,7 @@ import {
 } from 'constants/paymentNetworkConstants';
 
 // selectors
-import { activeAccountAddressSelector } from 'selectors';
+import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 const ActivityFeedList = styled.SectionList`
@@ -158,6 +158,7 @@ type Props = {
   feedType?: string,
   contactsSmartAddresses: ContactSmartAddressData[],
   emptyState?: EmptyState,
+  supportedAssets: Object[],
 }
 
 type FeedItemTransaction = {
@@ -302,6 +303,7 @@ class ActivityFeed extends React.Component<Props, State> {
       feedType,
       asset,
       contactsSmartAddresses,
+      supportedAssets,
     } = this.props;
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
@@ -313,7 +315,8 @@ class ActivityFeed extends React.Component<Props, State> {
       const {
         decimals = 18,
         iconUrl,
-      } = assets.find(({ symbol }) => symbol === notification.asset) || {};
+      } = assets.find(({ symbol }) => symbol === notification.asset)
+      || supportedAssets.find(({ symbol }) => symbol === notification.asset) || {};
       const value = formatUnits(notification.value, decimals);
       const formattedValue = formatAmount(value);
       let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
@@ -585,6 +588,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   assets: (state) => Object.values(accountAssetsSelector(state)),
+  supportedAssets: supportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

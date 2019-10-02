@@ -77,7 +77,7 @@ import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'co
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
-import { activeAccountAddressSelector } from 'selectors';
+import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // local components
@@ -102,6 +102,7 @@ type Props = {
   activeAccountAddress: string,
   contactsSmartAddresses: ContactSmartAddressData[],
   inactiveAccounts: Accounts,
+  supportedAssets: Object[],
 }
 
 const ContentWrapper = styled.View`
@@ -275,6 +276,7 @@ class EventDetails extends React.Component<Props, {}> {
       history,
       txNotes,
       assets,
+      supportedAssets,
     } = this.props;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
@@ -310,7 +312,8 @@ class EventDetails extends React.Component<Props, {}> {
       const hasNote = transactionNote && transactionNote !== '';
       const isPending = status === TX_PENDING_STATUS;
       const assetsData = Object.keys(assets).map(id => assets[id]);
-      const { decimals = 18 } = assetsData.find(({ symbol }) => symbol === asset) || {};
+      const { decimals = 18 } = assetsData.find(({ symbol }) => symbol === asset)
+      || supportedAssets.find(({ symbol }) => symbol === asset) || {};
       const value = formatUnits(txInfo.value, decimals);
       const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);
@@ -627,6 +630,7 @@ const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   activeAccountAddress: activeAccountAddressSelector,
   assets: accountAssetsSelector,
+  supportedAssets: supportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
