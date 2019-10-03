@@ -147,21 +147,20 @@ export const labelUserAsLegacyAction = () => {
     const userWallets = await api.getUserWallets(oAuthTokens.accessToken);
     if (!userWallets.length) return;
 
-    const keyWallet = userWallets.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED) || {};
-    const smartWallet = userWallets.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET) || {};
+    const keyWallet = userWallets.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+    const smartWallet = userWallets.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
 
-    const { createdAt: keyWalletCreationTime } = keyWallet;
-    const { createdAt: smartWalletCreationTime } = smartWallet;
-
-    const diff = keyWalletCreationTime && smartWalletCreationTime
-      ? Math.floor((new Date(smartWalletCreationTime) - new Date(keyWalletCreationTime)) / 1000 / 60)
-      : null;
     let isLegacyUser = true;
 
-    // to those users who gets smart wallet created for them, key based and smart wallets are created one by one
-    // in couple of minutes difference
-    if (smartWalletCreationTime && diff && diff <= 5) {
-      isLegacyUser = false;
+    if (keyWallet && smartWallet) {
+      const { createdAt: keyWalletCreationTime } = keyWallet;
+      const { createdAt: smartWalletCreationTime } = smartWallet;
+      const diff = Math.floor((new Date(smartWalletCreationTime) - new Date(keyWalletCreationTime)) / 1000 / 60);
+      // to those users who gets smart wallet created for them, key based and smart wallets are created one by one
+      // in couple of minutes difference
+      if (diff <= 5) {
+        isLegacyUser = false;
+      }
     }
 
     dispatch({
