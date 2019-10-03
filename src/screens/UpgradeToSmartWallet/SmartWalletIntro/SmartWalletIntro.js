@@ -131,7 +131,6 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          rightItems: [{ userIcon: true }],
           floating: true,
           transparent: true,
         }}

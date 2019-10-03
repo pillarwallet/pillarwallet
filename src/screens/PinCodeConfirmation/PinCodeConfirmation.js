@@ -80,9 +80,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
     const { errorMessage } = this.state;
     return (
       <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: 'Confirm PIN code' }],
-        }}
+        headerProps={{ centerItems: [{ title: 'Confirm PIN code' }] }}
         backgroundColor={baseColors.white}
       >
         {!!errorMessage &&
