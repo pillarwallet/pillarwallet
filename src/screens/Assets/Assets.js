@@ -43,9 +43,6 @@ import type { Transaction } from 'models/Transaction';
 // actions
 import {
   fetchInitialAssetsAction,
-  startAssetsSearchAction,
-  searchAssetsAction,
-  resetSearchAssetsResultAction,
   checkForMissedAssetsAction,
 } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
@@ -86,25 +83,20 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetsLayout: string,
-  startAssetsSearch: Function,
-  searchAssets: Function,
-  resetSearchAssetsResult: Function,
   assetsSearchResults: Asset[],
   assetsSearchState: string,
-  addAsset: Function,
-  hideAsset: Function,
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
   blockchainNetworks: Object[],
   activeAccount: Account,
   logScreenView: (view: string, screen: string) => void,
-  fetchAllCollectiblesData: Function,
+  fetchAllCollectiblesData: () => void,
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
-  checkForMissedAssets: Function,
-  labelUserAsLegacy: Function,
+  checkForMissedAssets: () => void,
+  labelUserAsLegacy: () => void,
   PPNTransactions: Transaction[],
 }
 
@@ -385,9 +377,6 @@ const combinedMapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
-  startAssetsSearch: () => dispatch(startAssetsSearchAction()),
-  searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
-  resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   labelUserAsLegacy: () => dispatch(labelUserAsLegacyAction()),

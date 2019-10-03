@@ -73,6 +73,8 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
+const NEW_SMART_WALLET = 'NEW_SMART_WALLET';
+
 type commonItemsParams = {|
   id: string,
   title: string,
@@ -178,10 +180,10 @@ class AccountsScreen extends React.Component<Props, State> {
   switchToWallet: ?Account = null;
 
   constructor(props) {
+    super(props);
     const isActiveKeyWallet = getActiveAccountType(props.accounts) === ACCOUNT_TYPES.KEY_BASED;
     const { user } = props;
     const forceShowLegacyWallet = !user.isLegacyUser && isActiveKeyWallet;
-    super(props);
     this.state = {
       showPinModal: false,
       changingAccount: false,
@@ -359,8 +361,8 @@ class AccountsScreen extends React.Component<Props, State> {
 
     if (showSmartWalletInitButton) {
       wallets.push({
-        id: 'NEW_SMART_WALLET',
-        type: 'NEW_SMART_WALLET',
+        id: NEW_SMART_WALLET,
+        type: NEW_SMART_WALLET,
         title: 'Smart Wallet',
         balance: null,
         isInitialised: false,
@@ -469,7 +471,7 @@ class AccountsScreen extends React.Component<Props, State> {
     const networksToShow = this.networks();
 
     const smartAccountCard = walletsToShow
-      .find(({ type, isSmartWallet }) => !!isSmartWallet || type === 'NEW_SMART_WALLET');
+      .find(({ type, isSmartWallet }) => !!isSmartWallet || type === NEW_SMART_WALLET);
     const legacyAccountCard = walletsToShow.find(({ isSmartWallet }) => !isSmartWallet);
 
     const walletsInList = isLegacyUser ? walletsToShow : [smartAccountCard];
