@@ -164,3 +164,13 @@ export const calculateTransactionNonceFromHistory = (
   if (pendingTransactionIndex < 0) return pendingTransactionIndex;
   return totalTransactionCount - pendingTransactionIndex;
 };
+
+export const getAssetData = (
+  assetsData: Asset[],
+  supportedAssetsData: Asset[],
+  assetSymbol: string,
+): Asset | Object => {
+  return assetsData.find(({ symbol }: Asset) => symbol === assetSymbol)
+  || supportedAssetsData.find(({ symbol }: Asset) => symbol === assetSymbol)
+  || {};
+};

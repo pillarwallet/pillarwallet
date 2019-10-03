@@ -41,3 +41,6 @@ export const assetsSelector = ({ assets }: {assets: AssetsReducerState}) => asse
 
 export const hiddenAssetsSelector = ({ userSettings }: { userSettings: UserSettingsReducerState}) =>
   get(userSettings, 'data.hiddenAssets', {});
+
+export const supportedAssetsSelector = ({ assets }: { assets: AssetsReducerState}) =>
+  get(assets, 'supportedAssets', []);

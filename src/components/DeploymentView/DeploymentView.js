@@ -66,6 +66,7 @@ type Props = {
   openSeaTxHistory: Object[],
   assets: Asset[],
   contactsSmartAddresses: ContactSmartAddressData[],
+  forceRetry?: boolean,
 }
 
 type State = {
@@ -110,6 +111,7 @@ class DeploymentView extends React.PureComponent<Props, State> {
       assets,
       contactsSmartAddresses,
       navigation,
+      forceRetry,
     } = this.props;
     const { showTransactionDetails } = this.state;
     const { title, message: bodyText } = message;
@@ -168,45 +170,49 @@ class DeploymentView extends React.PureComponent<Props, State> {
     }
 
     const showDeployButton = !isDeploying && buttonAction && buttonLabel;
+    const showOngoingTransactionButton = !showDeployButton && !!detailedTransaction;
 
     return (
       <Wrapper regularPadding center style={{ marginTop: 40, marginBottom: spacing.large }}>
         <MessageTitle>{title}</MessageTitle>
         <Message>{bodyText}</Message>
         <Wrapper style={{ margin: spacing.small, width: '100%', alignItems: 'center' }}>
-          {isDeploying &&
+          {isDeploying && !forceRetry &&
           <SpinnerWrapper>
             <Spinner />
           </SpinnerWrapper>}
-          {!showDeployButton && !!detailedTransaction && <Button
-            marginTop="30"
-            height={52}
-            title="View ongoing transaction"
-            onPress={() => this.setState({ showTransactionDetails: true })}
-          />}
-          {showDeployButton && buttonAction && buttonLabel &&
-          <Button
-            marginTop="30"
-            height={52}
-            title={buttonLabel}
-            onPress={buttonAction}
-          />}
+          {showOngoingTransactionButton &&
+            <Button
+              marginTop="30"
+              height={52}
+              title="View ongoing transaction"
+              onPress={() => this.setState({ showTransactionDetails: true })}
+            />
+          }
+          {(!isDeploying || forceRetry) && buttonAction && buttonLabel &&
+            <Button
+              marginTop="30"
+              height={52}
+              title={buttonLabel}
+              onPress={buttonAction}
+            />
+          }
         </Wrapper>
         {!!detailedTransaction &&
-        <SlideModal
-          isVisible={showTransactionDetails}
-          title="transaction details"
-          onModalHide={this.handleTransactionDetailsClose}
-          eventDetail
-        >
-          <EventDetails
-            eventData={detailedTransaction}
-            eventType={detailedTransaction.type}
-            eventStatus={detailedTransaction.status}
-            onClose={this.handleTransactionDetailsClose}
-            navigation={navigation}
-          />
-        </SlideModal>
+          <SlideModal
+            isVisible={showTransactionDetails}
+            title="transaction details"
+            onModalHide={this.handleTransactionDetailsClose}
+            eventDetail
+          >
+            <EventDetails
+              eventData={detailedTransaction}
+              eventType={detailedTransaction.type}
+              eventStatus={detailedTransaction.status}
+              onClose={this.handleTransactionDetailsClose}
+              navigation={navigation}
+            />
+          </SlideModal>
         }
       </Wrapper>
     );

@@ -31,7 +31,7 @@ import isEmpty from 'lodash.isempty';
 
 // models
 import type { Transaction } from 'models/Transaction';
-import type { Assets } from 'models/Asset';
+import type { Assets, Asset } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
@@ -57,6 +57,7 @@ import { createAlert } from 'utils/alerts';
 import {
   addressesEqual,
   getRate,
+  getAssetData,
 } from 'utils/assets';
 import {
   checkIfSmartWalletAccount,
@@ -98,7 +99,7 @@ import {
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
-import { activeAccountAddressSelector } from 'selectors';
+import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // local components
@@ -129,6 +130,7 @@ type Props = {
   isOnline: boolean,
   rates: Object,
   baseFiatCurrency: ?string,
+  supportedAssets: Asset[],
 }
 
 type State = {
@@ -204,6 +206,7 @@ class EventDetails extends React.Component<Props, State> {
       accounts,
       assets,
       history,
+      supportedAssets,
     } = this.props;
 
     if (eventType !== TRANSACTION_EVENT) return;
@@ -229,7 +232,7 @@ class EventDetails extends React.Component<Props, State> {
             symbol: assetSymbol,
             decimals,
             address: contractAddress,
-          } = assetsData.find(({ symbol }) => symbol === assetSymbol) || {};
+          } = getAssetData(assetsData, supportedAssets, txInfo.asset);
           const amount = formatUnits(txInfo.value, decimals);
           calculateGasEstimate({
             from: activeAccountAddress,
@@ -408,6 +411,7 @@ class EventDetails extends React.Component<Props, State> {
       history,
       txNotes,
       assets,
+      supportedAssets,
     } = this.props;
     const { gasLimit, showSpeedUp } = this.state;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
@@ -444,7 +448,7 @@ class EventDetails extends React.Component<Props, State> {
       const hasNote = transactionNote && transactionNote !== '';
       const isPending = status === TX_PENDING_STATUS;
       const assetsData = Object.keys(assets).map(id => assets[id]);
-      const { decimals = 18 } = assetsData.find(({ symbol }) => symbol === assetSymbol) || {};
+      const { decimals = 18 } = getAssetData(assetsData, supportedAssets, assetSymbol);
       const value = formatUnits(txInfo.value, decimals);
       const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);
@@ -774,6 +778,7 @@ const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   activeAccountAddress: activeAccountAddressSelector,
   assets: accountAssetsSelector,
+  supportedAssets: supportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
