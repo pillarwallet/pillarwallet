@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StatusBar, View, FlatList, TouchableOpacity } from 'react-native';
+import { StatusBar, View, TouchableOpacity } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
@@ -113,6 +113,14 @@ const LeftItems = styled.View`
   flex-wrap: wrap;
 `;
 
+const RightItems = styled.View`
+  flex: ${props => props.sideFlex || 1};
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: row;
+  flex-wrap: wrap;
+`;
+
 const BackIcon = styled(IconButton)`
   position: relative;
   height: 24px;
@@ -127,6 +135,12 @@ const ActionIcon = styled(IconButton)`
   height: 34px;
   width: 44px;
   padding: 5px 10px;
+`;
+
+const CloseIcon = styled(IconButton)`
+  position: relative;
+  align-self: center;
+  padding: 20px;
 `;
 
 const TextButton = styled.TouchableOpacity`
@@ -147,10 +161,6 @@ const ButtonLabel = styled(BaseText)`
   line-height: ${fontSizes.small};
   font-size: ${fontSizes.extraSmall}px;
   color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
-`;
-
-const Separator = styled.View`
-  width: ${spacing.small}px;
 `;
 
 const Indicator = styled.View`
@@ -262,41 +272,38 @@ class HeaderBlock extends React.Component<Props> {
         </CenterItems>
         }
         {(!!centerItems.length || !!rightItems.length) &&
-        <FlatList
-          keyExtractor={(item) => item.key || item.label || item.title || item.icon || 'close'}
-          data={rightItems}
-          renderItem={({ item }) => this.renderSideItems(item, theme, RIGHT)}
-          ItemSeparatorComponent={() => <Separator />}
-          horizontal
-          contentContainerStyle={{ justifyContent: 'flex-end', flexGrow: 1 }}
-          style={{ flex: sideFlex || 1 }}
-          scrollEnabled={false}
-        />}
+          <RightItems sideFlex={sideFlex}>
+            {rightItems.map((item) => this.renderSideItems(item, theme, RIGHT))}
+          </RightItems>
+        }
       </HeaderRow>
     );
   };
 
   renderSideItems = (item, theme, type = '') => {
     const { navigation } = this.props;
+    const commonStyle = {};
+    if (type === RIGHT) commonStyle.marginLeft = spacing.small;
     if (item.user || item.userIcon) {
       return this.renderUser(theme, !item.userIcon);
     }
     if (item.title) {
       return (
-        <HeaderTitle
-          theme={theme}
-          key={item.title}
-          style={item.color ? { color: item.color } : {}}
-          onPress={item.onPress}
-          centerText={type === CENTER}
-        >
-          {item.title}
-        </HeaderTitle>
+        <View style={commonStyle} key={item.title}>
+          <HeaderTitle
+            theme={theme}
+            style={item.color ? { color: item.color } : {}}
+            onPress={item.onPress}
+            centerText={type === CENTER}
+          >
+            {item.title}
+          </HeaderTitle>
+        </View>
       );
     }
     if (item.icon) {
       return (
-        <View style={{ marginRight: -10 }} key={item.icon}>
+        <View style={{ marginRight: -10, ...commonStyle }} key={item.icon}>
           <ActionIcon
             icon={item.icon}
             color={item.color || theme.rightActionIconColor || UIColors.defaultNavigationColor}
@@ -310,7 +317,7 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.iconSource) {
       return (
-        <TouchableOpacity onPress={item.onPress} key={item.key || item.iconSource}>
+        <TouchableOpacity onPress={item.onPress} key={item.key || item.iconSource} style={commonStyle}>
           <IconImage source={item.iconSource} />
           {!!item.indicator && <Indicator />}
         </TouchableOpacity>
@@ -318,7 +325,7 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.label) {
       return (
-        <TextButton onPress={item.onPress} key={item.label} bordered={item.bordered} theme={theme}>
+        <TextButton onPress={item.onPress} key={item.label} bordered={item.bordered} theme={theme} style={commonStyle}>
           <ButtonLabel theme={theme}>{item.label}</ButtonLabel>
           {item.addon}
         </TextButton>
@@ -326,12 +333,18 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.close) {
       const wrapperStyle = {};
-      if (type === LEFT) wrapperStyle.marginLeft = -16;
-      if (type === RIGHT) wrapperStyle.marginRight = -10;
+      if (type === LEFT) {
+        wrapperStyle.marginLeft = -20;
+        wrapperStyle.marginRight = -(20 - spacing.small);
+      }
+      if (type === RIGHT) {
+        wrapperStyle.marginRight = -20;
+        wrapperStyle.marginLeft = -(20 - spacing.small);
+      }
 
       return (
-        <View style={wrapperStyle} key="close">
-          <ActionIcon
+        <View style={{ ...wrapperStyle, marginTop: -20, marginBottom: -20 }} key="close">
+          <CloseIcon
             icon="close"
             color={baseColors.slateBlack}
             onPress={() => item.dismiss ? navigation.dismiss() : navigation.goBack()}
@@ -342,10 +355,10 @@ class HeaderBlock extends React.Component<Props> {
       );
     }
     if (item.actionButton) {
-      return (<HeaderActionButton {...item.actionButton} theme={theme} />);
+      return (<HeaderActionButton {...item.actionButton} theme={theme} wrapperStyle={commonStyle} />);
     }
     if (item.custom) {
-      return <View key={item.key || 'custom'}>{item.custom}</View>;
+      return <View key={item.key || 'custom'} style={commonStyle}>{item.custom}</View>;
     }
     return null;
   };

@@ -31,6 +31,7 @@ type Props = {
   onPress: Function,
   hasChevron?: boolean,
   isActive?: boolean,
+  wrapperStyle?: Object,
 }
 
 const HeaderButtonRounded = styled.TouchableOpacity`
@@ -108,10 +109,11 @@ export const HeaderActionButton = (props: Props) => {
     onPress,
     hasChevron,
     isActive,
+    wrapperStyle,
   } = props;
 
   return (
-    <HeaderButtonRounded onPress={onPress} theme={theme}>
+    <HeaderButtonRounded onPress={onPress} theme={theme} style={wrapperStyle}>
       {isActive !== undefined && <Status isActive={isActive} />}
       <RoundedButtonLabel theme={theme}>{label}</RoundedButtonLabel>
       {!!hasChevron && <ChevronIcon name="chevron-right" theme={theme} />}
