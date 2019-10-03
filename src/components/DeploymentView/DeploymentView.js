@@ -141,7 +141,7 @@ class DeploymentView extends React.PureComponent<Props, State> {
 
     let detailedTransaction;
     const pendingTransferTransaction = upgradeTransferTransactions.find(({ status }) => status === TX_PENDING_STATUS);
-    const pendingTransferTransactionHash = get(pendingTransferTransaction, 'hash');
+    const pendingTransferTransactionHash = get(pendingTransferTransaction, 'transactionHash');
     const matchingTransaction = history.find(({ hash }) => hash === pendingTransferTransactionHash);
 
     if (matchingTransaction) {
@@ -174,9 +174,6 @@ class DeploymentView extends React.PureComponent<Props, State> {
       };
     }
 
-    const showDeployButton = !isDeploying && buttonAction && buttonLabel;
-    const showOngoingTransactionButton = !showDeployButton && !!detailedTransaction;
-
     return (
       <Wrapper regularPadding center style={{ marginTop: 40, marginBottom: spacing.large }}>
         <MessageTitle>{title}</MessageTitle>
@@ -186,7 +183,7 @@ class DeploymentView extends React.PureComponent<Props, State> {
           <SpinnerWrapper>
             <Spinner />
           </SpinnerWrapper>}
-          {showOngoingTransactionButton &&
+          {!!detailedTransaction &&
             <Button
               marginTop="30"
               height={52}
