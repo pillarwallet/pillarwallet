@@ -19,7 +19,6 @@
 */
 import { Platform } from 'react-native';
 import * as Keychain from 'react-native-keychain';
-import { delay } from 'utils/common';
 
 const KEYCHAIN_SERVICE = 'com.pillarproject.wallet';
 const KEYCHAIN_DATA_KEY = 'data';
