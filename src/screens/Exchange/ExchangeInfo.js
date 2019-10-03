@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { FlatList, RefreshControl } from 'react-native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { MAIN_SDK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
@@ -166,7 +166,7 @@ class ExchangeInfo extends React.Component<Props, State> {
   renderToken = ({ item: token }: Object) => {
     const { exchangeAllowances } = this.props;
     const { openCollapseKey } = this.state;
-    const fullIconUrl = `${SDK_PROVIDER}/${token.iconUrl}?size=3`;
+    const fullIconUrl = `${MAIN_SDK_PROVIDER}/${token.iconUrl}?size=3`;
     const tokenAllowances = exchangeAllowances.filter(({ assetCode }) => assetCode === token.symbol);
     return (
       <CollapsibleListItem

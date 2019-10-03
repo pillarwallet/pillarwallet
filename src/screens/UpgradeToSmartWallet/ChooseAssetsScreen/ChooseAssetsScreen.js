@@ -21,7 +21,7 @@ import * as React from 'react';
 import { FlatList, Keyboard, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { MAIN_SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -122,7 +122,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       return null;
     }
     const { assetsToTransfer } = this.state;
-    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
+    const fullIconUrl = `${MAIN_SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const formattedAmount = formatAmount(item.amount);
     return (
       <ListItemWithImage

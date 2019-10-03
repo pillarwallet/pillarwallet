@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Keyboard, Switch, SectionList, Platform, ScrollView, StyleSheet, RefreshControl, Alert } from 'react-native';
 import styled from 'styled-components/native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { MAIN_SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -230,7 +230,7 @@ class WalletView extends React.Component<Props, State> {
       } = asset;
 
       const isAdded = !!assets[symbol];
-      const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+      const fullIconUrl = `${MAIN_SDK_PROVIDER}/${iconUrl}?size=3`;
 
       return (
         <ListItemWithImage

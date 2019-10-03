@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { MAIN_SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -182,7 +182,7 @@ class PPNView extends React.Component<Props, State> {
       address,
       description,
     } = thisAsset;
-    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const fullIconUrl = iconUrl ? `${MAIN_SDK_PROVIDER}/${iconUrl}?size=3` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const paymentNetworkBalanceFormatted = formatMoney(availableStake, 4);
     const totalInFiat = availableStake * getRate(rates, PLR, fiatCurrency);
@@ -195,9 +195,9 @@ class PPNView extends React.Component<Props, State> {
       balanceInFiat: formattedAmountInFiat,
       address: getAccountAddress(activeAccount),
       contractAddress: address,
-      icon: iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '',
+      icon: iconMonoUrl ? `${MAIN_SDK_PROVIDER}/${iconMonoUrl}?size=2` : '',
       iconColor: fullIconUrl,
-      patternIcon: patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl,
+      patternIcon: patternUrl ? `${MAIN_SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl,
       description,
       decimals,
       isSynthetic: true,

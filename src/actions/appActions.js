@@ -24,6 +24,7 @@ import { Sentry } from 'react-native-sentry';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { loadAndMigrate } from 'services/dataMigration';
+import loadAndMigrateAppSettings from 'services/dataMigration/appSettings';
 
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
@@ -64,6 +65,9 @@ import {
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 
 import { getWalletFromStorage } from 'utils/wallet';
+import { findEthereumNetwork } from 'utils/networks';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 const storage = Storage.getInstance('db');
 
@@ -71,18 +75,24 @@ const BACKGROUND = 'background';
 const ANDROID = 'android';
 
 export const initAppAndRedirectAction = (appState: string, platform: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
 
     // TEMP: remove after we move to AsyncStorage
     await storage.repair();
 
-    // $FlowFixMe
-    const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
+    const appSettings = await loadAndMigrateAppSettings(storage, dispatch);
+
+    const ethereumNetwork = findEthereumNetwork(appSettings.ethereumNetwork);
+    const networkStorage = Storage.getInstance(ethereumNetwork.id);
 
     // $FlowFixMe
-    const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings);
+    const { wallet, walletTimestamp } = await getWalletFromStorage(
+      dispatch,
+      appSettings,
+      networkStorage,
+    );
 
     if (walletTimestamp) {
       const accounts = await loadAndMigrate('accounts', dispatch, getState);

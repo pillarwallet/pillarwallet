@@ -27,7 +27,7 @@ import { AsyncStorage } from 'react-native';
 
 import { getRandomInt, ethSign } from 'utils/common';
 import Storage from 'services/storage';
-import { saveDbAction } from 'actions/dbActions';
+import { saveDbAction, saveStorageAction } from 'actions/dbActions';
 import { WALLET_STORAGE_BACKUP_KEY } from 'constants/walletConstants';
 import type { Dispatch } from 'reducers/rootReducer';
 
@@ -96,8 +96,12 @@ export function signPersonalMessage(message: string, wallet: Object, network: st
 }
 
 // we use basic AsyncStorage implementation just to prevent backup being stored in same manner
-export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Object) {
-  let { wallet = {} } = await storage.get('wallet');
+export async function getWalletFromStorage(
+  dispatch: Dispatch,
+  appSettings: Object,
+  networkStorage: Storage,
+) {
+  let { wallet = {} } = await networkStorage.get('wallet');
   const walletBackup = await AsyncStorage.getItem(WALLET_STORAGE_BACKUP_KEY);
   const isWalletEmpty = isEmpty(wallet);
   // wallet timestamp missing causes welcome screen
@@ -117,7 +121,7 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     // restore wallet to storage
     try {
       wallet = JSON.parse(walletBackup);
-      dispatch(saveDbAction('wallet', { wallet }));
+      dispatch(saveStorageAction(networkStorage, 'wallet', { wallet }));
     } catch (e) {
       reportToSentry('Wallet parse failed', {
         walletHadBackup: true,
@@ -130,7 +134,7 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     walletTimestamp = +new Date();
     console.log('SETTING NEW WALLET TIMESTAMP');
     // only wallet timestamp was missing, let's update it to storage
-    dispatch(saveDbAction('app_settings', { appSettings: { wallet: walletTimestamp } }));
+    dispatch(saveStorageAction(storage, 'app_settings', { appSettings: { wallet: walletTimestamp } }));
   }
   // we check for previous value of `appSettings.wallet` as by this point `walletTimestamp` can be already set
   // in tis piece we report a case if either wallet was empty or wallet timestamp AND we additionally check+
@@ -144,6 +148,7 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     // wallet has changed or backup does not exist, let's update it
     await AsyncStorage.setItem(WALLET_STORAGE_BACKUP_KEY, walletAsString);
   }
+
   return {
     wallet,
     walletTimestamp,

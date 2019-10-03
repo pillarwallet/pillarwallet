@@ -24,6 +24,22 @@ import type { DbAction } from 'models/DbAction';
 
 const storage = Storage.getInstance('db');
 
+export const saveStorageAction = (
+  storageInstance: Storage,
+  key: string,
+  data: any,
+  forceRewrite: boolean = false,
+): DbAction => ({
+  type: UPDATE_DB,
+  queue: 'db',
+  callback: (next: () => void) => {
+    storageInstance.save(key, data, forceRewrite)
+      .then(() => next()) // eslint-disable-line
+      .catch(() => {});
+  },
+});
+
+// TODO: This should be deprecated so we don't use a global storage
 export const saveDbAction = (
   key: string,
   data: any,

@@ -37,7 +37,7 @@ export const selectEthereumNetworkAction = (networkId: string) => {
     const { network: { ethereumNetwork } } = getState();
     const selectedNetwork = findEthereumNetwork(networkId);
 
-    dispatch(updateAppSettingsAction('ethereum_network', selectedNetwork.id));
+    dispatch(updateAppSettingsAction('ethereumNetwork', selectedNetwork.id));
 
     if (ethereumNetwork.id !== selectedNetwork.id) {
       Toast.show({

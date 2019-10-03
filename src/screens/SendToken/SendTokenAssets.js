@@ -23,7 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { MAIN_SDK_PROVIDER } from 'react-native-dotenv';
 
 import type { Assets, Balances } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
@@ -143,8 +143,8 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
     const { balances, navigation, paymentNetworkBalances } = this.props;
     const contact = navigation.getParam('contact', {});
     const assetBalance = formatAmount(getBalance(balances, item.symbol));
-    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
-    const fullIconMonoUrl = `${SDK_PROVIDER}/${item.iconMonoUrl}?size=2`;
+    const fullIconUrl = `${MAIN_SDK_PROVIDER}/${item.iconUrl}?size=3`;
+    const fullIconMonoUrl = `${MAIN_SDK_PROVIDER}/${item.iconMonoUrl}?size=2`;
     const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
     const paymentNetworkBalance = getBalance(paymentNetworkBalances, item.symbol);
     const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);

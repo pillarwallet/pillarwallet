@@ -21,7 +21,7 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SectionList, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { MAIN_SDK_PROVIDER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { utils } from 'ethers';
@@ -179,7 +179,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       return null;
     }
 
-    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
+    const fullIconUrl = `${MAIN_SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const formattedAmount = formatAmount(item.amount);
 
     return (

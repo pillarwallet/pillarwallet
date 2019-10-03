@@ -26,7 +26,7 @@ import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { MAIN_SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -171,7 +171,7 @@ class FundTank extends React.Component<Props, State> {
     } = this.props;
 
     const { symbol: token, iconMonoUrl, decimals } = assets[PPN_TOKEN] || {};
-    const icon = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
+    const icon = iconMonoUrl ? `${MAIN_SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const isInitFlow = navigation.getParam('isInitFlow', false);
 

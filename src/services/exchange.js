@@ -17,18 +17,19 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { EXCHANGE_URL, MOONPAY_API_URL } from 'react-native-dotenv';
+import { MOONPAY_API_URL } from 'react-native-dotenv';
 import SocketIO from 'socket.io-client';
 
 import type { OfferRequest, TokenAllowanceRequest } from 'models/Offer';
+import type { EthereumNetwork } from 'models/Network';
 import { extractJwtPayload, getRandomString } from 'utils/common';
 
 const executeCallback = (data?: any, callback?: Function) => {
   if (typeof callback === 'function') callback(data);
 };
 
-const buildApiUrl = (path: string) => {
-  return `${EXCHANGE_URL}/${path}`;
+const buildApiUrl = (ethereumNetwork: EthereumNetwork, path: string) => {
+  return `${ethereumNetwork.exchangeUrl}/${path}`;
 };
 
 export default class ExchangeService {
@@ -37,8 +38,11 @@ export default class ExchangeService {
   apiConfig: Object;
   tokens: Object;
   ipInfo: Object;
+  ethereumNetwork: EthereumNetwork;
 
-  connect(accessToken: string, shapeshiftAccessToken?: string) {
+  connect(accessToken: string, shapeshiftAccessToken?: string, ethereumNetwork: EthereumNetwork) {
+    this.ethereumNetwork = ethereumNetwork;
+
     this.stop();
     this.tokens = {
       accessToken,
@@ -59,7 +63,7 @@ export default class ExchangeService {
           token: shapeshiftAccessToken,
         };
       }
-      const wsUrl = EXCHANGE_URL
+      const wsUrl = ethereumNetwork.exchangeUrl
         .replace(/(https:\/\/)/gi, 'wss://')
         .replace(/(http:\/\/)/gi, 'ws://');
       this.io = new SocketIO(`${wsUrl}:443`, {
@@ -122,14 +126,14 @@ export default class ExchangeService {
 
   requestOffers(fromAssetCode: string, toAssetCode: string, quantity: number) {
     const urlPath = `offers?name=${fromAssetCode}-${toAssetCode}&quantity=${quantity}`;
-    return fetch(buildApiUrl(urlPath), this.apiConfig)
+    return fetch(buildApiUrl(this.ethereumNetwork, urlPath), this.apiConfig)
       .then(response => response.text())
       .then(response => response.toLowerCase() === 'ok' ? {} : JSON.parse(response))
       .catch(error => ({ error }));
   }
 
   takeOffer(order: OfferRequest) {
-    return fetch(buildApiUrl('orders'), {
+    return fetch(buildApiUrl(this.ethereumNetwork, 'orders'), {
       ...this.apiConfig,
       method: 'POST',
       body: JSON.stringify(order),
@@ -139,7 +143,7 @@ export default class ExchangeService {
   }
 
   setTokenAllowance(request: TokenAllowanceRequest) {
-    return fetch(buildApiUrl('orders/allowance'), {
+    return fetch(buildApiUrl(this.ethereumNetwork, 'orders/allowance'), {
       ...this.apiConfig,
       method: 'POST',
       body: JSON.stringify(request),
@@ -152,12 +156,12 @@ export default class ExchangeService {
     const { sub: regId } = extractJwtPayload(this.tokens.accessToken);
     const sessionId = getRandomString();
     const urlPath = `authorize?sessionID=${sessionId}&regId=${regId}`;
-    return buildApiUrl(urlPath);
+    return buildApiUrl(this.ethereumNetwork, urlPath);
   }
 
   getShapeshiftAccessToken(tokenHash: string) {
     const urlPath = `gettoken?hash=${tokenHash}`;
-    return fetch(buildApiUrl(urlPath), this.apiConfig)
+    return fetch(buildApiUrl(this.ethereumNetwork, urlPath), this.apiConfig)
       .then(response => response.json())
       .catch(error => ({ error }));
   }

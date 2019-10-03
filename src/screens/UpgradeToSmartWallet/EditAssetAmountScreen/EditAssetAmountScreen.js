@@ -21,7 +21,7 @@ import * as React from 'react';
 import { FlatList, Keyboard, TextInput, View, ScrollView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { MAIN_SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -126,7 +126,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
     const { balances } = this.props;
     const assetBalance = getBalance(balances, item.symbol);
     const formattedAssetBalance = formatAmount(assetBalance);
-    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
+    const fullIconUrl = `${MAIN_SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
     if (assetShouldRender) {
       return null;
