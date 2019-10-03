@@ -444,8 +444,8 @@ class AccountsScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          leftItems: [{ title: 'Accounts' }],
-          rightItems: [{ close: true, dismiss: true }],
+          centerItems: [{ title: 'Accounts' }],
+          leftItems: [{ close: true, dismiss: true }],
         }}
       >
         {!changingAccount &&

@@ -225,6 +225,10 @@ const getTheme = (props: Props) => {
   return themes().default;
 };
 
+const LEFT = 'LEFT';
+const CENTER = 'CENTER';
+const RIGHT = 'RIGHT';
+
 class HeaderBlock extends React.Component<Props> {
   renderHeaderContent = (theme: Object) => {
     const {
@@ -241,7 +245,7 @@ class HeaderBlock extends React.Component<Props> {
       <HeaderRow>
         <LeftItems sideFlex={sideFlex} style={!centerItems.length && !rightItems.length ? { flexGrow: 2 } : {}}>
           {(leftItems.length || !!noBack)
-            ? leftItems.map((item) => this.renderSideItems(item, theme))
+            ? leftItems.map((item) => this.renderSideItems(item, theme, LEFT))
             : (
               <BackIcon
                 icon="back"
@@ -254,14 +258,14 @@ class HeaderBlock extends React.Component<Props> {
         </LeftItems>
         {!!centerItems.length &&
         <CenterItems>
-          {centerItems.map((item) => this.renderSideItems(item, theme, 'CENTER'))}
+          {centerItems.map((item) => this.renderSideItems(item, theme, CENTER))}
         </CenterItems>
         }
         {(!!centerItems.length || !!rightItems.length) &&
         <FlatList
           keyExtractor={(item) => item.key || item.label || item.title || item.icon || 'close'}
           data={rightItems}
-          renderItem={({ item }) => this.renderSideItems(item, theme)}
+          renderItem={({ item }) => this.renderSideItems(item, theme, RIGHT)}
           ItemSeparatorComponent={() => <Separator />}
           horizontal
           contentContainerStyle={{ justifyContent: 'flex-end', flexGrow: 1 }}
@@ -284,7 +288,7 @@ class HeaderBlock extends React.Component<Props> {
           key={item.title}
           style={item.color ? { color: item.color } : {}}
           onPress={item.onPress}
-          centerText={type === 'CENTER'}
+          centerText={type === CENTER}
         >
           {item.title}
         </HeaderTitle>
@@ -292,9 +296,8 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.icon) {
       return (
-        <View style={{ marginRight: -10 }}>
+        <View style={{ marginRight: -10 }} key={item.icon}>
           <ActionIcon
-            key={item.icon}
             icon={item.icon}
             color={item.color || theme.rightActionIconColor || UIColors.defaultNavigationColor}
             onPress={item.onPress}
@@ -307,7 +310,7 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.iconSource) {
       return (
-        <TouchableOpacity onPress={item.onPress}>
+        <TouchableOpacity onPress={item.onPress} key={item.key || item.iconSource}>
           <IconImage source={item.iconSource} />
           {!!item.indicator && <Indicator />}
         </TouchableOpacity>
@@ -322,10 +325,13 @@ class HeaderBlock extends React.Component<Props> {
       );
     }
     if (item.close) {
+      const wrapperStyle = {};
+      if (type === LEFT) wrapperStyle.marginLeft = -16;
+      if (type === RIGHT) wrapperStyle.marginRight = -10;
+
       return (
-        <View style={{ marginRight: -10 }}>
+        <View style={wrapperStyle} key="close">
           <ActionIcon
-            key="close"
             icon="close"
             color={baseColors.slateBlack}
             onPress={() => item.dismiss ? navigation.dismiss() : navigation.goBack()}
