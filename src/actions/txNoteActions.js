@@ -52,6 +52,16 @@ export const sendTxNoteByContactAction = (username: string, message: Object) => 
       username,
       ...connectionStateCheckParams,
     };
+
+    if (!addContactParams.userId) {
+      Toast.show({
+        message: 'Tx note send failed',
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
+
     await chat.client.addContact(addContactParams, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({

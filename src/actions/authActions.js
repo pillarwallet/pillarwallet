@@ -21,6 +21,7 @@ import ethers from 'ethers';
 import { AsyncStorage } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
+import get from 'lodash.get';
 import {
   DECRYPT_WALLET,
   UPDATE_WALLET_STATE,
@@ -67,6 +68,7 @@ import { updatePinAttemptsAction } from 'actions/walletActions';
 import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
+import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -88,7 +90,6 @@ export const loginAction = (
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     let { accounts: { data: accounts } } = getState();
     const {
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
       appSettings: {
         data: {
@@ -108,6 +109,10 @@ export const loginAction = (
       payload: DECRYPTING,
     });
     await delay(100);
+
+    await dispatch(fetchFeatureFlagsAction()); // wait until fetches new flags
+    const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+
     try {
       let wallet;
 
@@ -190,8 +195,6 @@ export const loginAction = (
         type: UPDATE_USER,
         payload: { user, state: userState },
       });
-
-      await storage.viewCleanup().catch(() => null);
 
       const { address } = wallet;
       dispatch({
