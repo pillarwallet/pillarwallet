@@ -45,14 +45,17 @@ import {
   mapTransactionsHistory,
 } from 'utils/feedData';
 import { formatUnits } from 'utils/common';
+import { getAssetData } from 'utils/assets';
 
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Asset } from 'models/Asset';
 import type { ContactSmartAddressData } from 'models/Contacts';
 
+import { supportedAssetsSelector } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
+import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -67,6 +70,7 @@ type Props = {
   assets: Asset[],
   contactsSmartAddresses: ContactSmartAddressData[],
   forceRetry?: boolean,
+  supportedAssets: Asset[],
 }
 
 type State = {
@@ -112,6 +116,7 @@ class DeploymentView extends React.PureComponent<Props, State> {
       contactsSmartAddresses,
       navigation,
       forceRetry,
+      supportedAssets,
     } = this.props;
     const { showTransactionDetails } = this.state;
     const { title, message: bodyText } = message;
@@ -161,7 +166,7 @@ class DeploymentView extends React.PureComponent<Props, State> {
 
     if (detailedTransaction) {
       // $FlowFixMe
-      const { decimals = 18 } = assets.find(({ symbol }) => symbol === detailedTransaction.asset) || {};
+      const { decimals = 18 } = getAssetData(Object.values(assets), supportedAssets, detailedTransaction.asset);
       const value = formatUnits(detailedTransaction.value, decimals);
       detailedTransaction = {
         ...detailedTransaction,
@@ -223,18 +228,18 @@ const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
-  assets: { data: assets },
 }) => ({
   smartWalletState,
   accounts,
   contacts,
-  assets: Object.values(assets),
   contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   openSeaTxHistory: accountCollectiblesHistorySelector,
+  assets: accountAssetsSelector,
+  supportedAssets: supportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
