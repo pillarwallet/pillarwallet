@@ -40,17 +40,13 @@ export const setKeychainDataObject = (data: KeyChainData) => Keychain
   })
   .catch(() => null);
 
-export const getKeychainDataObject = async () => {
-  // android keychain unlock happens too fast when prompted right after device unlock
-  if (Platform.OS === 'android') await delay(1000);
-  return Keychain
-    .getGenericPassword({
-      service: KEYCHAIN_SERVICE,
-      authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
-    })
-    .then(({ password = '{}' }) => JSON.parse(password))
-    .catch(() => {});
-};
+export const getKeychainDataObject = () => Keychain
+  .getGenericPassword({
+    service: KEYCHAIN_SERVICE,
+    authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
+  })
+  .then(({ password = '{}' }) => JSON.parse(password))
+  .catch(() => {});
 
 export const resetKeychainDataObject = () => Keychain
   .resetGenericPassword({
