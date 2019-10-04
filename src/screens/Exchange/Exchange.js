@@ -18,8 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import { FlatList, TextInput, View } from 'react-native';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
@@ -370,10 +370,13 @@ function formatAmountDisplay(value: number | string) {
 
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
-  fromInputRef: ?Object;
+  fromInputRef: TextInput;
+  listeners: NavigationEventSubscription[];
 
   constructor(props: Props) {
     super(props);
+    this.fromInputRef = React.createRef();
+    this.listeners = [];
     this.state = {
       shapeshiftAuthPressed: false,
       pressedOfferId: '',
@@ -436,14 +439,28 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { exchangeSearchRequest = {}, baseFiatCurrency } = this.props;
+    const { exchangeSearchRequest = {}, baseFiatCurrency, navigation } = this.props;
     this.provideOptions();
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const defaultFrom = this.checkIfAssetsExchangeIsAllowed() ? ETH : fiatCurrency;
     const { fromAssetCode = defaultFrom, toAssetCode, fromAmount } = exchangeSearchRequest;
     this.setInitialSelection(fromAssetCode, toAssetCode, fromAmount);
+    this.listeners = [
+      navigation.addListener('didFocus', this.focusInputWithKeyboard),
+      navigation.addListener('didBlur', () => this.fromInputRef.blur()),
+    ];
   }
+
+  componentWillUnmount() {
+    this.listeners.forEach(listener => listener.remove());
+  }
+
+  focusInputWithKeyboard = () => {
+    setTimeout(() => {
+      this.fromInputRef.focus();
+    }, 200);
+  };
 
   componentDidUpdate(prevProps: Props) {
     const {
