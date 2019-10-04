@@ -82,8 +82,8 @@ describe('Wallet actions', () => {
 
   it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
     const expectedActions = [
-      { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
       { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
       {
@@ -109,8 +109,8 @@ describe('Wallet actions', () => {
     const storage = Storage.getInstance('db');
     storage.save('user', { user: registeredMockUser });
     const expectedActions = [
-      { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
