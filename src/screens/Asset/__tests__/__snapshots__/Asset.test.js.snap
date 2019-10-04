@@ -151,114 +151,72 @@ exports[`Asset renders the Asset correctly 1`] = `
               ]
             }
           />
-          <RCTScrollView
-            ItemSeparatorComponent={[Function]}
-            contentContainerStyle={
-              Object {
-                "flexGrow": 1,
-                "justifyContent": "flex-end",
-              }
-            }
-            data={
+          <View
+            style={
               Array [
                 Object {
-                  "icon": "info-circle-inverse",
-                  "onPress": [Function],
+                  "alignItems": "center",
+                  "flexBasis": 0,
+                  "flexDirection": "row",
+                  "flexGrow": 1,
+                  "flexShrink": 1,
+                  "flexWrap": "wrap",
+                  "justifyContent": "flex-end",
                 },
+                undefined,
               ]
             }
-            disableVirtualization={false}
-            getItem={[Function]}
-            getItemCount={[Function]}
-            horizontal={true}
-            initialNumToRender={10}
-            keyExtractor={[Function]}
-            maxToRenderPerBatch={10}
-            numColumns={1}
-            onContentSizeChange={[Function]}
-            onEndReachedThreshold={2}
-            onLayout={[Function]}
-            onMomentumScrollEnd={[Function]}
-            onScroll={[Function]}
-            onScrollBeginDrag={[Function]}
-            onScrollEndDrag={[Function]}
-            removeClippedSubviews={false}
-            renderItem={[Function]}
-            scrollEnabled={false}
-            scrollEventThrottle={50}
-            stickyHeaderIndices={Array []}
-            style={
-              Object {
-                "flex": 1,
-              }
-            }
-            updateCellsBatchingPeriod={50}
-            viewabilityConfigCallbackPairs={Array []}
-            windowSize={21}
           >
-            <View>
+            <View
+              style={
+                Object {
+                  "marginLeft": 8,
+                  "marginRight": -10,
+                }
+              }
+            >
               <View
-                onLayout={[Function]}
+                accessible={true}
+                isTVSelectable={true}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
                 style={
-                  Array [
-                    Object {
-                      "flexDirection": "row",
-                    },
-                    null,
-                  ]
+                  Object {
+                    "alignItems": "flex-start",
+                    "alignSelf": "center",
+                    "height": 34,
+                    "justifyContent": "center",
+                    "opacity": 1,
+                    "paddingBottom": 5,
+                    "paddingLeft": 10,
+                    "paddingRight": 10,
+                    "paddingTop": 5,
+                    "position": "relative",
+                    "width": 44,
+                  }
                 }
               >
                 <View
+                  name="info-circle-inverse"
                   style={
                     Object {
-                      "marginRight": -10,
+                      "color": "#007AFF",
+                      "fontSize": 24,
+                      "marginBottom": undefined,
+                      "marginLeft": undefined,
+                      "marginRight": undefined,
+                      "marginTop": undefined,
+                      "paddingTop": 0,
                     }
                   }
-                >
-                  <View
-                    accessible={true}
-                    isTVSelectable={true}
-                    onResponderGrant={[Function]}
-                    onResponderMove={[Function]}
-                    onResponderRelease={[Function]}
-                    onResponderTerminate={[Function]}
-                    onResponderTerminationRequest={[Function]}
-                    onStartShouldSetResponder={[Function]}
-                    style={
-                      Object {
-                        "alignItems": "flex-start",
-                        "alignSelf": "center",
-                        "height": 34,
-                        "justifyContent": "center",
-                        "opacity": 1,
-                        "paddingBottom": 5,
-                        "paddingLeft": 10,
-                        "paddingRight": 10,
-                        "paddingTop": 5,
-                        "position": "relative",
-                        "width": 44,
-                      }
-                    }
-                  >
-                    <View
-                      name="info-circle-inverse"
-                      style={
-                        Object {
-                          "color": "#007AFF",
-                          "fontSize": 24,
-                          "marginBottom": undefined,
-                          "marginLeft": undefined,
-                          "marginRight": undefined,
-                          "marginTop": undefined,
-                          "paddingTop": 0,
-                        }
-                      }
-                    />
-                  </View>
-                </View>
+                />
               </View>
             </View>
-          </RCTScrollView>
+          </View>
         </View>
       </View>
     </View>

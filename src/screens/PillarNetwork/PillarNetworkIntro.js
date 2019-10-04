@@ -204,7 +204,6 @@ class PillarNetworkIntro extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          rightItems: [{ userIcon: true }],
           floating: true,
           transparent: true,
           light: true,
