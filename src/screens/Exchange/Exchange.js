@@ -437,7 +437,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const { exchangeSearchRequest = {}, baseFiatCurrency } = this.props;
-    this.provideOptions();
+    this.provideOptions(true);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const defaultFrom = this.checkIfAssetsExchangeIsAllowed() ? ETH : fiatCurrency;
@@ -480,12 +480,14 @@ class ExchangeScreen extends React.Component<Props, State> {
       || (isSmartWallet && smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
   };
 
-  provideOptions = () => {
+  provideOptions = (initialRender: boolean = false) => {
     const { assets, supportedAssets } = this.props;
     const fiatOptionsFrom = this.generateFiatOptions();
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(supportedAssets);
-    const initialAssetsOptionsBuying = assetsOptionsBuying.filter((option) => option.value !== ETH);
+    const initialAssetsOptionsBuying = initialRender
+      ? assetsOptionsBuying.filter(({ value }) => value !== ETH)
+      : assetsOptionsBuying;
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
     thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
     thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = fiatOptionsFrom;
@@ -826,25 +828,23 @@ class ExchangeScreen extends React.Component<Props, State> {
   generateAssetsOptions = (assets) => {
     const { balances, paymentNetworkBalances } = this.props;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-    const nonEmptyAssets = assetsList.filter(({ symbol }): any => {
-      return getBalance(balances, symbol) !== 0 || symbol === ETH;
-    });
-    const alphabeticalAssets = nonEmptyAssets.sort((a, b) => a.symbol.localeCompare(b.symbol));
-    return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) => {
-      const assetBalance = formatAmount(getBalance(balances, symbol));
-      const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
-
-      return ({
-        key: symbol,
-        value: symbol,
-        icon: iconUrl,
-        iconUrl,
-        symbol,
-        ...rest,
-        assetBalance,
-        paymentNetworkBalance,
+    return assetsList
+      .filter(({ symbol }) => getBalance(balances, symbol) !== 0 || symbol === ETH)
+      .sort((a, b) => a.symbol.localeCompare(b.symbol))
+      .map(({ symbol, iconUrl, ...rest }) => {
+        const assetBalance = formatAmount(getBalance(balances, symbol));
+        const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
+        return ({
+          key: symbol,
+          value: symbol,
+          icon: iconUrl,
+          iconUrl,
+          symbol,
+          ...rest,
+          assetBalance,
+          paymentNetworkBalance,
+        });
       });
-    });
   };
 
   generateFiatOptions = () => fiatCurrencies.map(({ symbol, iconUrl, ...rest }) => ({
@@ -861,23 +861,23 @@ class ExchangeScreen extends React.Component<Props, State> {
   generateSupportedAssetsOptions = (assets) => {
     if (!Array.isArray(assets)) return [];
     const { balances, paymentNetworkBalances } = this.props;
-    const alphabeticalSupportedAssets = assets.sort((a, b) => a.symbol.localeCompare(b.symbol));
-    return alphabeticalSupportedAssets.map(({ symbol, iconUrl, ...rest }) => {
-      const rawAssetBalance = getBalance(balances, symbol);
-      const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
-      const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
-
-      return {
-        key: symbol,
-        value: symbol,
-        icon: iconUrl,
-        iconUrl,
-        symbol,
-        ...rest,
-        assetBalance,
-        paymentNetworkBalance,
-      };
-    });
+    return assets
+      .sort((a, b) => a.symbol.localeCompare(b.symbol))
+      .map(({ symbol, iconUrl, ...rest }) => {
+        const rawAssetBalance = getBalance(balances, symbol);
+        const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
+        const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
+        return {
+          key: symbol,
+          value: symbol,
+          icon: iconUrl,
+          iconUrl,
+          symbol,
+          ...rest,
+          assetBalance,
+          paymentNetworkBalance,
+        };
+      });
   };
 
   handleFormChange = (value: Object) => {
