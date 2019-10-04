@@ -71,7 +71,7 @@ const ContentWrapper = styled.View`
   align-items: flex-start;
   padding-top: 8px;
   padding-bottom: ${spacing.rhythm / 2}px;
-  ${props => props.androidStatusbarHeight ? `margin-top: ${props.androidStatusbarHeigh}px` : ''}
+  margin-top: ${props => props.androidStatusbarHeight || 0}px;
 `;
 
 const ToastWrapper = styled.View`
