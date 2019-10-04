@@ -18,11 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import get from 'lodash.get';
+import debounce from 'lodash.debounce';
+import orderBy from 'lodash.orderby';
 import { FlatList, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import debounce from 'lodash.debounce';
 import { formatAmount, formatMoney, formatFiat, isValidNumber } from 'utils/common';
 import t from 'tcomb-form-native';
 import { CachedImage } from 'react-native-cached-image';
@@ -30,7 +32,6 @@ import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
-import get from 'lodash.get';
 
 import { fiatCurrencies } from 'fixtures/assets';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
@@ -834,9 +835,8 @@ class ExchangeScreen extends React.Component<Props, State> {
   generateAssetsOptions = (assets) => {
     const { balances, paymentNetworkBalances } = this.props;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-    return assetsList
+    const mapped = assetsList
       .filter(({ symbol }) => getBalance(balances, symbol) !== 0 || symbol === ETH)
-      .sort((a, b) => a.symbol.localeCompare(b.symbol))
       .map(({ symbol, iconUrl, ...rest }) => {
         const assetBalance = formatAmount(getBalance(balances, symbol));
         const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
@@ -851,6 +851,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           paymentNetworkBalance,
         });
       });
+    return orderBy(mapped, 'symbol');
   };
 
   generateFiatOptions = () => fiatCurrencies.map(({ symbol, iconUrl, ...rest }) => ({
@@ -867,23 +868,22 @@ class ExchangeScreen extends React.Component<Props, State> {
   generateSupportedAssetsOptions = (assets) => {
     if (!Array.isArray(assets)) return [];
     const { balances, paymentNetworkBalances } = this.props;
-    return assets
-      .sort((a, b) => a.symbol.localeCompare(b.symbol))
-      .map(({ symbol, iconUrl, ...rest }) => {
-        const rawAssetBalance = getBalance(balances, symbol);
-        const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
-        const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
-        return {
-          key: symbol,
-          value: symbol,
-          icon: iconUrl,
-          iconUrl,
-          symbol,
-          ...rest,
-          assetBalance,
-          paymentNetworkBalance,
-        };
-      });
+    const mapped = assets.map(({ symbol, iconUrl, ...rest }) => {
+      const rawAssetBalance = getBalance(balances, symbol);
+      const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
+      const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
+      return {
+        key: symbol,
+        value: symbol,
+        icon: iconUrl,
+        iconUrl,
+        symbol,
+        ...rest,
+        assetBalance,
+        paymentNetworkBalance,
+      };
+    });
+    return orderBy(mapped, 'symbol');
   };
 
   handleFormChange = (value: Object) => {
