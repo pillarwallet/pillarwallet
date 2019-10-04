@@ -345,9 +345,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const showSpinner = !gasInfo.isFetched || upgradeStarted;
     return (
       <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: 'Confirm' }],
-        }}
+        headerProps={{ centerItems: [{ title: 'Confirm' }] }}
         backgroundColor={baseColors.white}
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flexGrow: 1 }}>

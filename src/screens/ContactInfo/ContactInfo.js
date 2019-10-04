@@ -154,10 +154,7 @@ export class ContactInfo extends React.Component<Props, State> {
       <ContainerWithHeader
         backgroundColor={baseColors.white}
         headerProps={{
-          leftItems: [
-            { userIcon: true },
-            { title: 'User info' },
-          ],
+          centerItems: [{ title: 'User info' }],
           rightItems: [{ close: true }],
         }}
       >

@@ -86,9 +86,7 @@ class ConnectionRequests extends React.Component<Props> {
     } = this.props;
 
     return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Connection requests' }] }}
-      >
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Connection requests' }] }}>
         <FlatList
           data={invitations.filter(({ type }) => type === TYPE_RECEIVED)}
           extraData={invitations}
