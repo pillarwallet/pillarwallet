@@ -397,9 +397,7 @@ class Settings extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: 'General settings' }],
-        }}
+        headerProps={{ centerItems: [{ title: 'General settings' }] }}
       >
         <ScrollView
           contentContainerStyle={{ padding: spacing.large, paddingTop: 0 }}

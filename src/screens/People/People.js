@@ -460,9 +460,7 @@ class PeopleScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         backgroundColor={baseColors.white}
-        headerProps={{
-          leftItems: [{ user: true }],
-        }}
+        headerProps={{ leftItems: [{ user: true }] }}
         inset={{ bottom: 0 }}
       >
         <ScrollView
