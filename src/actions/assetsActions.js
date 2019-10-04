@@ -80,7 +80,11 @@ import { logEventAction } from 'actions/analyticsActions';
 import SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
+import {
+  ensureSmartAccountConnectedAction,
+  fetchVirtualAccountBalanceAction,
+  replaceAssetsTransferTransactionHash,
+} from './smartWalletActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
 import { sendTxNoteByContactAction } from './txNoteActions';
 import { showAssetAction } from './userSettingsActions';
@@ -462,6 +466,7 @@ export const sendAssetAction = (
         let updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
         if (replaceTransactionHash) {
           updatedAccountHistory = updatedAccountHistory.filter(({ hash }) => hash !== replaceTransactionHash);
+          dispatch(replaceAssetsTransferTransactionHash(replaceTransactionHash, historyTx.hash));
         }
         const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
         dispatch(saveDbAction('history', { history: updatedHistory }, true));

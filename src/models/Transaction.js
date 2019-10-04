@@ -109,8 +109,10 @@ export type TransactionEthers = {
 };
 
 export type SmartWalletTransferTransaction = {
-  hash: string,
-  value: Object,
-  asset: string,
+  transaction: {
+    value: Object,
+    asset: string,
+  },
+  transactionHash?: string,
   status: string,
 };

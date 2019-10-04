@@ -1498,3 +1498,26 @@ export const getAssetTransferGasLimitsAction = () => {
     });
   };
 };
+
+export const replaceAssetsTransferTransactionHash = (prevHash: string, updatedHash: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      smartWallet: { upgrade: { transfer: { transactions: transferTransactions = [] } } },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+    } = getState();
+    if (!smartWalletFeatureEnabled || !transferTransactions.length) return;
+    const matchingTransaction = transferTransactions.find(
+      ({ transactionHash }) => !!transactionHash && isCaseInsensitiveMatch(prevHash, transactionHash),
+    );
+    if (!matchingTransaction) return;
+    // we want to keep transfer transactions in same array order
+    const updatedTransferTransactions = transferTransactions.map((transaction) => {
+      if (!!transaction.transactionHash
+        && isCaseInsensitiveMatch(prevHash, transaction.transactionHash)) {
+        return { ...transaction, transactionHash: updatedHash };
+      }
+      return transaction;
+    });
+    dispatch(setAssetsTransferTransactionsAction(updatedTransferTransactions));
+  };
+};
