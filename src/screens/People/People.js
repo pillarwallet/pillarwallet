@@ -163,18 +163,19 @@ const ConnectionStatus = (props: ConnectionStatusProps) => {
 class PeopleScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
-
-  state = {
-    query: '',
-    showConfirmationModal: false,
-    manageContactType: '',
-    manageContactId: '',
-    forceHideRemoval: false,
-  };
+  scrollViewRef: ScrollView;
 
   constructor(props: Props) {
     super(props);
     this.handleContactsSearch = debounce(this.handleContactsSearch, 500);
+    this.scrollViewRef = React.createRef();
+    this.state = {
+      query: '',
+      showConfirmationModal: false,
+      manageContactType: '',
+      manageContactId: '',
+      forceHideRemoval: false,
+    };
   }
 
   componentDidMount() {
@@ -291,6 +292,11 @@ class PeopleScreen extends React.Component<Props, State> {
         sensitivity={10}
         close={this.state.forceHideRemoval}
         buttonWidth={80}
+        scroll={(shouldAllowScroll) => {
+          if (this.scrollViewRef && Object.keys(this.scrollViewRef).length) {
+            this.scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
+          }
+        }}
       >
         <ListItemWithImage
           label={item.username}
@@ -468,6 +474,7 @@ class PeopleScreen extends React.Component<Props, State> {
         <ScrollView
           keyboardShouldPersistTaps="always"
           contentContainerStyle={{ flexGrow: 1 }}
+          ref={(ref) => { this.scrollViewRef = ref; }}
           onScroll={() => {
             if (inSearchMode) {
               Keyboard.dismiss();

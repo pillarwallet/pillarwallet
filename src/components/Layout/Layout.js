@@ -111,13 +111,6 @@ export const Wrapper = styled.View`
   ${({ zIndex }) => zIndex && `z-index: ${zIndex};`}
 `;
 
-export const KAScrollView = styled(KeyboardAwareScrollView)`
-  padding: ${props => (props.regularPadding ? '0 20px' : '0')};
-  background-color: ${props => (props.color ? props.color : 'transparent')};
-  flex: 1;
-  height: 100%;
-`;
-
 const FooterInner = styled.KeyboardAvoidingView`
   width: 100%;
   margin-top: auto;
@@ -143,9 +136,7 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
   } = props;
 
   return (
-    <KAScrollView
-      regularPadding={regularPadding}
-      color={color}
+    <KeyboardAwareScrollView
       enableOnAndroid
       enableAutomaticScroll={!disableAutomaticScroll}
       innerRef={innerRef}
@@ -158,9 +149,15 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
       extraScrollHeight={0}
       scrollEnabled={scrollEnabled}
       refreshControl={refreshControl}
+      style={{
+        paddingHorizontal: regularPadding ? 20 : 0,
+        backgroundColor: color || 'transparent',
+        flex: 1,
+        height: '100%',
+      }}
     >
       {children}
-    </KAScrollView>
+    </KeyboardAwareScrollView>
   );
 };
 

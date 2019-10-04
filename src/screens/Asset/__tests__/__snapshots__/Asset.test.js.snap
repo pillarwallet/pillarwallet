@@ -311,20 +311,12 @@ exports[`Asset renders the Asset correctly 1`] = `
       scrollToPosition={[Function]}
       showsVerticalScrollIndicator={true}
       style={
-        Array [
-          Object {
-            "backgroundColor": "transparent",
-            "flexBasis": 0,
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "height": "100%",
-            "paddingBottom": 0,
-            "paddingLeft": 0,
-            "paddingRight": 0,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "backgroundColor": "transparent",
+          "flex": 1,
+          "height": "100%",
+          "paddingHorizontal": 0,
+        }
       }
       viewIsInsideTabBar={false}
     >
