@@ -360,9 +360,7 @@ class Permissions extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: 'Know how Pillar makes you safe' }],
-        }}
+        headerProps={{ centerItems: [{ title: 'Know how Pillar makes you safe' }] }}
         backgroundColor={baseColors.white}
       >
         <ScrollView
