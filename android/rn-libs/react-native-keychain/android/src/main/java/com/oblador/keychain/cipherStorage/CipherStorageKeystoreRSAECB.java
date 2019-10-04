@@ -217,7 +217,7 @@ public class CipherStorageKeystoreRSAECB extends CipherStorageKeystoreBase imple
                 .setEncryptionPaddings(ENCRYPTION_PADDING)
                 .setRandomizedEncryptionRequired(true)
                 .setUserAuthenticationRequired(true)
-                .setUserAuthenticationValidityDurationSeconds(0)
+                .setUserAuthenticationValidityDurationSeconds(1)
                 .setKeySize(ENCRYPTION_KEY_SIZE);
     }
 
@@ -239,13 +239,15 @@ public class CipherStorageKeystoreRSAECB extends CipherStorageKeystoreBase imple
             throw new CryptoFailedException("Unknown error: " + e.getMessage(), e);
         }
 
-        String decryptedUsername;
-        String decryptedPassword;
-        try {
-            // try to get a Cipher, if exception is thrown, authentication is needed
-            decryptedUsername = decryptBytes(key, username);
-            decryptedPassword = decryptBytes(key, password);
-        } catch (UserNotAuthenticatedException e) {
+        // commenting everything out to prevent decryption right away from lock screen
+
+//        String decryptedUsername;
+//        String decryptedPassword;
+//        try {
+//            // try to get a Cipher, if exception is thrown, authentication is needed
+//            decryptedUsername = decryptBytes(key, username);
+//            decryptedPassword = decryptBytes(key, password);
+//        } catch (UserNotAuthenticatedException e) {
             mDecryptParams = new CipherDecryptionParams(decryptionResultHandler, key, username, password);
             if (!canStartFingerprintAuthentication()) {
                 throw new CryptoFailedException("Could not start fingerprint Authentication");
@@ -257,11 +259,11 @@ public class CipherStorageKeystoreRSAECB extends CipherStorageKeystoreBase imple
                 e1.printStackTrace();
                 throw new CryptoFailedException("Could not start fingerprint Authentication", e1);
             }
-            return;
-        }
+//            return;
+//        }
 
         // The Cipher is unlocked, we can decrypt straight away.
-        decryptionResultHandler.onDecrypt(new DecryptionResult(decryptedUsername, decryptedPassword, SecurityLevel.ANY), null);
+//        decryptionResultHandler.onDecrypt(new DecryptionResult(decryptedUsername, decryptedPassword, SecurityLevel.ANY), null);
     }
 
     private byte[] encryptString(Key key, String service, String value) throws CryptoFailedException {
