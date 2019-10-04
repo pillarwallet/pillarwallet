@@ -34,7 +34,11 @@ import get from 'lodash.get';
 
 import { fiatCurrencies } from 'fixtures/assets';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import { getBalance, getRate } from 'utils/assets';
+import {
+  getAssetData,
+  getBalance,
+  getRate,
+} from 'utils/assets';
 import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 import { getActiveAccountType } from 'utils/accounts';
@@ -500,7 +504,9 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
     const { assets, supportedAssets } = this.props;
-    const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode) || assets[fromAssetCode];
+    const assetsData = Object.keys(assets).map(id => assets[id]);
+    const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode)
+      || getAssetData(assetsData, supportedAssets, fromAssetCode);
     const selectedAssetOptions = isFiatCurrency(fromAssetCode)
       ? this.generateFiatOptions().find(({ symbol }) => symbol === fromAssetCode)
       : this.generateAssetsOptions({ [fromAssetCode]: fromAsset })[0];
@@ -512,7 +518,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       },
     };
     if (toAssetCode) {
-      const toAsset = supportedAssets.find(({ symbol }) => symbol === toAssetCode);
+      const toAsset = getAssetData(assetsData, supportedAssets, toAssetCode);
       if (toAsset) {
         const supportedAssetsOptions = this.generateSupportedAssetsOptions([toAsset]);
         initialFormState.toInput = {
