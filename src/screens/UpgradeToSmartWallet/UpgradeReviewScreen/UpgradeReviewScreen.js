@@ -292,9 +292,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 
     return (
       <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: 'Review' }],
-        }}
+        headerProps={{ centerItems: [{ title: 'Review' }] }}
         backgroundColor={baseColors.white}
       >
         <ScrollView>

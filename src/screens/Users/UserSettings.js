@@ -98,12 +98,7 @@ class UserSettings extends React.PureComponent<Props> {
     return (
       <ContainerWithHeader
         color={baseColors.white}
-        headerProps={{
-          centerItems: [
-            { userIcon: true },
-            { title: 'User settings' },
-          ],
-        }}
+        headerProps={{ centerItems: [{ title: 'User settings' }] }}
         inset={{ bottom: 'never' }}
       >
         <FlatList
