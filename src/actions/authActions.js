@@ -196,8 +196,6 @@ export const loginAction = (
         payload: { user, state: userState },
       });
 
-      await storage.viewCleanup().catch(() => null);
-
       const { address } = wallet;
       dispatch({
         type: DECRYPT_WALLET,
