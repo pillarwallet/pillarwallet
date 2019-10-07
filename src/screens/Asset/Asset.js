@@ -298,7 +298,7 @@ class AssetScreen extends React.Component<Props, State> {
     const tokenTransactions = mappedTransactions.filter(({ asset, tag = '', extra = [] }) =>
       asset === token || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
     const mainnetTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
-      return (!isPPNTransaction && tag !== PAYMENT_NETWORK_ACCOUNT_TOPUP) || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
+      return !isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
     const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
       return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
