@@ -1633,16 +1633,16 @@ exports[`Asset renders the Asset correctly 1`] = `
                           onStartShouldSetResponder={[Function]}
                           style={
                             Object {
-                              "alignItems": "flex-end",
+                              "alignItems": "center",
                               "height": 44,
                               "justifyContent": "center",
-                              "marginRight": -10,
+                              "marginRight": -20,
                               "opacity": 1,
                               "paddingBottom": 0,
                               "paddingLeft": 0,
-                              "paddingRight": 10,
+                              "paddingRight": 0,
                               "paddingTop": 0,
-                              "width": 44,
+                              "width": 58,
                             }
                           }
                         >
@@ -2755,16 +2755,16 @@ exports[`Asset renders the Asset correctly 1`] = `
                           onStartShouldSetResponder={[Function]}
                           style={
                             Object {
-                              "alignItems": "flex-end",
+                              "alignItems": "center",
                               "height": 44,
                               "justifyContent": "center",
-                              "marginRight": -10,
+                              "marginRight": -20,
                               "opacity": 1,
                               "paddingBottom": 0,
                               "paddingLeft": 0,
-                              "paddingRight": 10,
+                              "paddingRight": 0,
                               "paddingTop": 0,
-                              "width": 44,
+                              "width": 58,
                             }
                           }
                         >
