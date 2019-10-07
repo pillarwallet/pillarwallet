@@ -51,7 +51,7 @@ import type { Accounts } from 'models/Account';
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
