@@ -126,6 +126,13 @@ export const getTxNoteByContactAction = (username: string) => {
       username,
       ...connectionStateCheckParams,
     };
+    if (!addContactParams.userId) {
+      Toast.show({
+        message: `Unable to retrieve tx note for ${username}`,
+        type: 'warning',
+      });
+      return;
+    }
     await chat.client.addContact(addContactParams, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
@@ -168,6 +175,13 @@ export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, param
       username,
       ...connectionStateCheckParams,
     };
+    if (!addContactParams.userId) {
+      Toast.show({
+        message: `Can't send message to ${username}`,
+        type: 'warning',
+      });
+      return;
+    }
     try {
       await chat.client.addContact(addContactParams, true);
       await chat.sendMessage(tag, params, true);
@@ -192,6 +206,13 @@ export const decryptReceivedWebSocketTxNoteMessageAction = (message: Object) => 
       username,
       ...connectionStateCheckParams,
     };
+    if (!addContactParams.userId) {
+      Toast.show({
+        message: `Unable to retrieve tx note for ${username}`,
+        type: 'warning',
+      });
+      return;
+    }
     await chat.client.addContact(addContactParams, false).then(async () => {
       await chat.client.decryptSignalMessage('tx-note', JSON.stringify(message));
       await chat.deleteMessage(message.source, message.timestamp, message.requestId);
