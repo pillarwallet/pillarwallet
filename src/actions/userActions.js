@@ -140,11 +140,10 @@ export const updateUserAvatarAction = (walletId: string, formData: any) => {
 export const labelUserAsLegacyAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      oAuthTokens: { data: oAuthTokens },
       user: { data: user },
     } = getState();
 
-    const userWallets = await api.getUserWallets(oAuthTokens.accessToken);
+    const userWallets = await api.listAccounts(user.walletId);
     if (!userWallets.length) return;
 
     const keyWallet = userWallets.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);

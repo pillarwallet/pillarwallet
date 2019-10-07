@@ -53,7 +53,6 @@ import type {
   ConnectionUpdateIdentityKeys,
   ConnectionPatchIdentityKeys,
 } from 'models/Connections';
-import type { Accounts } from 'models/Account';
 import { getLimitedData } from 'utils/opensea';
 import { uniqBy } from 'utils/common';
 
@@ -840,20 +839,4 @@ SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset:
       return { error: true };
     })
     .catch(() => ({ error: true }));
-};
-
-SDKWrapper.prototype.getUserWallets = function (accessToken: string): Promise<Accounts> {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-  };
-  return Promise.resolve()
-    .then(() => fetch(`${SDK_PROVIDER}/user`, config))
-    .then(response => response.json())
-    .then(response => JSON.parse(response))
-    .then(({ wallets }) => wallets)
-    .catch(() => []);
 };
