@@ -51,7 +51,7 @@ import type { Accounts } from 'models/Account';
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // utils
 import { baseColors, spacing, fontSizes } from 'utils/variables';
@@ -298,7 +298,7 @@ class AssetScreen extends React.Component<Props, State> {
     const tokenTransactions = mappedTransactions.filter(({ asset, tag = '', extra = [] }) =>
       asset === token || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
     const mainnetTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
-      return (!isPPNTransaction && tag !== PAYMENT_NETWORK_ACCOUNT_TOPUP) || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
+      return !isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
     const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
       return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
