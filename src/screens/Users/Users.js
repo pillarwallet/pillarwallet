@@ -119,11 +119,8 @@ class UsersScreen extends React.Component<Props> {
       <ContainerWithHeader
         color={baseColors.white}
         headerProps={{
-          leftItems: [
-            { userIcon: true },
-            { title: 'Users' },
-          ],
-          rightItems: [{ close: true, dismiss: true }],
+          leftItems: [{ close: true, dismiss: true }],
+          centerItems: [{ title: 'Users' }],
         }}
       >
         <SectionList

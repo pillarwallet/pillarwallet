@@ -386,9 +386,7 @@ class HomeScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         backgroundColor={baseColors.white}
         headerProps={{
-          leftItems: [
-            { user: true },
-          ],
+          leftItems: [{ user: true }],
           rightItems: [
             {
               label: 'Settings',
