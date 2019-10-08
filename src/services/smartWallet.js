@@ -342,7 +342,7 @@ class SmartWallet {
       data,
       transactionSpeed = TransactionSpeeds[AVG],
     } = transaction;
-    const deployEstimate = await this.sdk.estimateAccountTransaction(
+    const estimatedTransaction = await this.sdk.estimateAccountTransaction(
       recipient,
       value,
       data,
@@ -351,7 +351,7 @@ class SmartWallet {
     const defaultSpeed = transactionSpeed === TransactionSpeeds[FAST]
       ? SPEED_TYPES.FAST
       : SPEED_TYPES.NORMAL;
-    return calculateEstimate(deployEstimate, gasInfo, defaultSpeed);
+    return calculateEstimate(estimatedTransaction, gasInfo, defaultSpeed);
   }
 
   handleError(error: any) {

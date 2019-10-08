@@ -41,6 +41,7 @@ import { formatAmount, formatFiat } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
+import { checkIfSmartWalletAccount } from 'utils/accounts';
 import { calculateGasEstimate } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
 
@@ -66,8 +67,6 @@ import {
 } from 'selectors';
 import type { Account } from 'models/Account';
 import Spinner from 'components/Spinner';
-import { checkIfSmartWalletAccount } from 'utils/accounts';
-import { ethToWei } from '@netgum/utils';
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -263,7 +262,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const updatedState = {};
     let txFeeInWei;
     if (checkIfSmartWalletAccount(activeAccount)) {
-      txFeeInWei = await this.getTxFeeInWei();
+      txFeeInWei = await this.getSmartWalletTxFeeInWei(balance);
     } else {
       updatedState.gasLimit = await this.getGasLimit(balance); // calculate gas limit for max available balance
       const transactionSpeed = this.getTxSpeed();
@@ -314,14 +313,19 @@ class SendTokenAmount extends React.Component<Props, State> {
       .catch(() => null);
   };
 
+  getSmartWalletTxFeeInWei = (amount?: number): BigNumber => {
+    const { gasInfo } = this.props;
+    const value = amount || get(this.state, 'value.amount');
+    return smartWalletService.estimateAccountTransaction({
+      recipient: this.receiver,
+      value,
+    }, gasInfo).catch(() => 0);
+  };
+
   getTxFeeInWei = (txSpeed?: string, gasLimit?: number): BigNumber => {
     const { gasInfo, activeAccount } = this.props;
     if (checkIfSmartWalletAccount(activeAccount)) {
-      const { value } = this.state;
-      return smartWalletService.estimateAccountTransaction({
-        recipient: this.receiver,
-        value: ethToWei(value),
-      }, gasInfo).catch(() => null);
+      return this.getSmartWalletTxFeeInWei();
     }
     txSpeed = txSpeed || this.getTxSpeed();
     // calculate either with gasLimit in state or provided as param
@@ -334,7 +338,8 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   renderTxSpeedButtons = () => {
-    const { rates, baseFiatCurrency } = this.props;
+    const { rates, baseFiatCurrency, activeAccount } = this.props;
+    if (checkIfSmartWalletAccount(activeAccount)) return null;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
