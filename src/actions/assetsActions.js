@@ -663,9 +663,10 @@ export const getSupportedTokens = (supportedAssets: Asset[], currentAssets: Asse
   if (!currentAccountAssetsTickers.includes(ETH)) currentAccountAssetsTickers.push(ETH);
   if (!currentAccountAssetsTickers.includes(PLR)) currentAccountAssetsTickers.push(PLR);
 
+  // TODO: remove when we find an issue with supported assets
   if (!supportedAssets || !supportedAssets.length) {
     Sentry.captureMessage('Wrong supported assets received', { level: 'info', extra: { supportedAssets } });
-    supportedAssets = [];
+    return { id: accountId };
   }
 
   const updatedAccountAssets = supportedAssets
