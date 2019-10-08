@@ -19,6 +19,7 @@
 */
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
+import { Sentry } from 'react-native-sentry';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   UPDATE_ASSETS_STATE,
@@ -661,6 +662,12 @@ export const getSupportedTokens = (supportedAssets: Asset[], currentAssets: Asse
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
   if (!currentAccountAssetsTickers.includes(ETH)) currentAccountAssetsTickers.push(ETH);
   if (!currentAccountAssetsTickers.includes(PLR)) currentAccountAssetsTickers.push(PLR);
+
+  // TODO: remove when we find an issue with supported assets
+  if (!supportedAssets || !supportedAssets.length) {
+    Sentry.captureMessage('Wrong supported assets received', { level: 'info', extra: { supportedAssets } });
+    return { id: accountId };
+  }
 
   const updatedAccountAssets = supportedAssets
     .filter(asset => currentAccountAssetsTickers.includes(asset.symbol))
