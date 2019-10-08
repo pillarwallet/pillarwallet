@@ -5,65 +5,32 @@ import { normalizeWalletAddress } from 'utils/wallet';
 
 import type { Dispatch } from 'reducers/rootReducer';
 
-const migrateFromV1 = async (
-  storage: Storage,
-  appSettings: Object,
-  dispatch: Dispatch,
-): Object => {
-  const { wallet } = await storage.get('wallet');
-
-  if (wallet && !wallet.address) {
-    return appSettings;
-  }
-
+function migrateAppSettingsToAccountsFormat(appSettings: Object, walletAddress: string) {
   const { lastTxSyncDatetime } = appSettings;
-  const walletAddress = normalizeWalletAddress(wallet.address);
-
-  const migratedAppSettings = {
+  const migratedData = {
     ...appSettings,
     lastTxSyncDatetimes: {
       [walletAddress]: lastTxSyncDatetime,
     },
   };
-  delete migratedAppSettings.lastTxSyncDatetime;
+  delete migratedData.lastTxSyncDatetime;
+  return migratedData;
+}
 
-  dispatch(saveStorageAction(storage, 'app_settings', {
-    appSettings: migratedAppSettings,
-  }, true));
-
-  return migratedAppSettings;
-};
-
-const migrateFromV2 = async (
-  appStorage: Storage,
-  networkStorage: Storage,
+export default async function (
   appSettings: Object,
+  wallet: Object,
+  appStorage: Storage,
   dispatch: Dispatch,
-): Object => {
-  dispatch(saveStorageAction(networkStorage, 'settings', {
-    lastTxSyncDatetimes: appSettings.lastTxSyncDatetimes,
-  }, true));
+) {
+  if (appSettings.wallet && wallet.address) {
+    const migratedAppSettings = migrateAppSettingsToAccountsFormat(
+      appSettings,
+      normalizeWalletAddress(wallet.address),
+    );
 
-  delete appSettings.lastTxSyncDatetimes;
-  return appSettings;
-};
-
-const migrateAppSettings = async (
-  storage: Storage,
-  networkStorage: Storage,
-  dispatch: Dispatch,
-): Object => {
-  let { appSettings = {} } = await storage.get('app_settings');
-
-  if (appSettings.wallet && appSettings.lastTxSyncDatetime) {
-    appSettings = migrateFromV1(storage, appSettings, dispatch);
+    dispatch(saveStorageAction(appStorage, 'app_settings', {
+      appSettings: migratedAppSettings,
+    }, true));
   }
-
-  if (appSettings.lastTxSyncDatetimes) {
-    migrateFromV2(storage, networkStorage, appSettings, dispatch);
-  }
-
-  return appSettings;
-};
-
-export default migrateAppSettings;
+}

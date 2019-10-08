@@ -1,11 +1,11 @@
 // @flow
-import { saveDbAction } from 'actions/dbActions';
-import type { Accounts } from 'models/Account';
-import type { CollectiblesHistoryStore } from 'models/Collectible';
+import { saveStorageAction } from 'actions/dbActions';
 import Storage from 'services/storage';
 import { findKeyBasedAccount } from 'utils/accounts';
 
-const storage = Storage.getInstance('db');
+import type { Dispatch } from 'reducers/rootReducer';
+import type { Accounts } from 'models/Account';
+import type { CollectiblesHistoryStore } from 'models/Collectible';
 
 export function migrateCollectiblesHistoryToAccountsFormat(
   history: Object[],
@@ -20,16 +20,22 @@ export function migrateCollectiblesHistoryToAccountsFormat(
   };
 }
 
-export default async function (dispatch: Function) {
-  const { accounts = [] } = await storage.get('accounts');
-  const { collectiblesHistory = {} } = await storage.get('collectiblesHistory');
+export default async function (
+  appStorage: Storage,
+  dispatch: Dispatch,
+) {
+  const { accounts = [] } = await appStorage.get('accounts');
+  const { collectiblesHistory = {} } = await appStorage.get('collectiblesHistory');
 
   if (Array.isArray(collectiblesHistory) && accounts.length) {
-    const migratedCollectiblesHistory = migrateCollectiblesHistoryToAccountsFormat(collectiblesHistory, accounts);
+    const migratedCollectiblesHistory = migrateCollectiblesHistoryToAccountsFormat(
+      collectiblesHistory, accounts,
+    );
+
     if (migratedCollectiblesHistory) {
-      dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: migratedCollectiblesHistory }, true));
-      return migratedCollectiblesHistory;
+      dispatch(saveStorageAction(appStorage, 'collectiblesHistory', {
+        collectiblesHistory: migratedCollectiblesHistory,
+      }, true));
     }
   }
-  return collectiblesHistory;
 }

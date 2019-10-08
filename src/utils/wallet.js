@@ -97,11 +97,11 @@ export function signPersonalMessage(message: string, wallet: Object, network: st
 
 // we use basic AsyncStorage implementation just to prevent backup being stored in same manner
 export async function getWalletFromStorage(
-  dispatch: Dispatch,
   appSettings: Object,
-  networkStorage: Storage,
+  appStorage: Storage,
+  dispatch: Dispatch,
 ) {
-  let { wallet = {} } = await networkStorage.get('wallet');
+  let { wallet = {} } = await appStorage.get('wallet');
   const walletBackup = await AsyncStorage.getItem(WALLET_STORAGE_BACKUP_KEY);
   const isWalletEmpty = isEmpty(wallet);
   // wallet timestamp missing causes welcome screen
@@ -121,7 +121,7 @@ export async function getWalletFromStorage(
     // restore wallet to storage
     try {
       wallet = JSON.parse(walletBackup);
-      dispatch(saveStorageAction(networkStorage, 'wallet', { wallet }));
+      dispatch(saveStorageAction(appStorage, 'wallet', { wallet }));
     } catch (e) {
       reportToSentry('Wallet parse failed', {
         walletHadBackup: true,

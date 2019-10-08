@@ -23,10 +23,10 @@ import { Sentry } from 'react-native-sentry';
 // services
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
-import { loadAndMigrate } from 'services/dataMigration';
-import loadAndMigrateAppSettings from 'services/dataMigration/appSettings';
+import { migrateStorage } from 'services/dataMigration';
 
 // constants
+import { MAIN_NETWORK_PROVIDER } from 'react-native-dotenv';
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -63,11 +63,10 @@ import {
   MARK_PLR_TANK_INITIALISED,
 } from 'constants/paymentNetworkConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
+import { SET_HISTORY } from 'constants/historyConstants';
 
 import { getWalletFromStorage } from 'utils/wallet';
-import { findEthereumNetwork } from 'utils/networks';
-
-import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { Dispatch } from 'reducers/rootReducer';
 
 const storage = Storage.getInstance('db');
 
@@ -75,94 +74,93 @@ const BACKGROUND = 'background';
 const ANDROID = 'android';
 
 export const initAppAndRedirectAction = (appState: string, platform: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return async (dispatch: Dispatch) => {
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
 
     // TEMP: remove after we move to AsyncStorage
     await storage.repair();
 
-    const appSettings = await loadAndMigrateAppSettings(storage, dispatch);
+    const { appSettings = {} } = await storage.get('app_settings');
+    const { ethereumNetwork } = appSettings;
 
-    const ethereumNetwork = findEthereumNetwork(appSettings.ethereumNetwork);
-    const networkStorage = Storage.getInstance(ethereumNetwork.id);
+    const networkStorage = Storage.getInstance(ethereumNetwork || MAIN_NETWORK_PROVIDER);
+    await migrateStorage(appSettings, storage, networkStorage, dispatch);
 
     // $FlowFixMe
-    const { wallet, walletTimestamp } = await getWalletFromStorage(
-      dispatch,
-      appSettings,
-      networkStorage,
+    const wallet = await getWalletFromStorage(
+      appSettings, networkStorage, dispatch,
     );
 
-    if (walletTimestamp) {
-      const accounts = await loadAndMigrate('accounts', dispatch, getState);
+    if (wallet) {
+      const { accounts = [] } = await networkStorage.get('accounts');
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 
-      const assets = await loadAndMigrate('assets', dispatch, getState);
+      const { assets = {} } = await networkStorage.get('assets');
       dispatch({ type: UPDATE_ASSETS, payload: assets });
 
-      const balances = await loadAndMigrate('balances', dispatch, getState);
+      const { balances = {} } = await networkStorage.get('balances');
       dispatch({ type: UPDATE_BALANCES, payload: balances });
 
-      const { rates = {} } = await storage.get('rates');
+      const { rates = {} } = await networkStorage.get('rates');
       dispatch({ type: UPDATE_RATES, payload: rates });
 
-      const { contacts = [] } = await storage.get('contacts');
+      const { contacts = [] } = await networkStorage.get('contacts');
       dispatch({ type: UPDATE_CONTACTS, payload: contacts });
 
-      const { contactsSmartAddresses = [] } = await storage.get('contactsSmartAddresses');
+      const { contactsSmartAddresses = [] } = await networkStorage.get('contactsSmartAddresses');
       dispatch({ type: SET_CONTACTS_SMART_ADDRESSES, payload: contactsSmartAddresses });
 
-      const { invitations = [] } = await storage.get('invitations');
+      const { invitations = [] } = await networkStorage.get('invitations');
       dispatch({ type: UPDATE_INVITATIONS, payload: invitations });
 
-      const { accessTokens = [] } = await storage.get('accessTokens');
+      const { accessTokens = [] } = await networkStorage.get('accessTokens');
       dispatch({ type: UPDATE_ACCESS_TOKENS, payload: accessTokens });
 
-      const { oAuthTokens = {} } = await storage.get('oAuthTokens');
+      const { oAuthTokens = {} } = await networkStorage.get('oAuthTokens');
       dispatch({ type: UPDATE_OAUTH_TOKENS, payload: oAuthTokens });
 
-      const { txCount = {} } = await storage.get('txCount');
+      const { txCount = {} } = await networkStorage.get('txCount');
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });
 
-      const { connectionKeyPairs = [] } = await storage.get('connectionKeyPairs');
+      const { connectionKeyPairs = [] } = await networkStorage.get('connectionKeyPairs');
       dispatch({ type: UPDATE_CONNECTION_KEY_PAIRS, payload: connectionKeyPairs });
 
-      const { connectionIdentityKeys = [] } = await storage.get('connectionIdentityKeys');
+      const { connectionIdentityKeys = [] } = await networkStorage.get('connectionIdentityKeys');
       dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: connectionIdentityKeys });
 
-      const collectibles = await loadAndMigrate('collectibles', dispatch, getState);
+      const { collectibles = {} } = await networkStorage.get('collectibles');
       dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
 
-      const collectiblesHistory = await loadAndMigrate('collectiblesHistory', dispatch, getState);
+      const { collectiblesHistory = {} } = await networkStorage.get('collectiblesHistory');
       dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
 
-      const { badges = [] } = await storage.get('badges');
+      const { badges = [] } = await networkStorage.get('badges');
       dispatch({ type: UPDATE_BADGES, payload: badges });
 
-      const { contactsBadges = {} } = await storage.get('contactsBadges');
+      const { contactsBadges = {} } = await networkStorage.get('contactsBadges');
       dispatch({ type: SET_CONTACTS_BADGES, payload: contactsBadges });
 
-      const { paymentNetworkBalances = {} } = await storage.get('paymentNetworkBalances');
+      const { paymentNetworkBalances = {} } = await networkStorage.get('paymentNetworkBalances');
       dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });
 
-      const { paymentNetworkStaked = '' } = await storage.get('paymentNetworkStaked');
+      const { paymentNetworkStaked = '' } = await networkStorage.get('paymentNetworkStaked');
       dispatch({ type: UPDATE_PAYMENT_NETWORK_STAKED, payload: paymentNetworkStaked });
 
-      const { isPLRTankInitialised = false } = await storage.get('isPLRTankInitialised');
+      const { isPLRTankInitialised = false } = await networkStorage.get('isPLRTankInitialised');
       if (isPLRTankInitialised) dispatch({ type: MARK_PLR_TANK_INITIALISED });
 
-      const { offlineQueue = [] } = await storage.get('offlineQueue');
+      const { offlineQueue = [] } = await networkStorage.get('offlineQueue');
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const { allowances = [] } = await storage.get('exchangeAllowances');
+      const { allowances = [] } = await networkStorage.get('exchangeAllowances');
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
-      const { connectedProviders = [] } = await storage.get('exchangeProviders');
+      const { connectedProviders = [] } = await networkStorage.get('exchangeProviders');
       dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
 
-      const { userSettings = {} } = await storage.get('userSettings');
+      const { userSettings = {} } = await networkStorage.get('userSettings');
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
@@ -174,7 +172,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
         },
       });
 
-      await loadAndMigrate('history', dispatch, getState);
+      const { history } = await networkStorage.get('history');
+      dispatch({ type: SET_HISTORY, payload: history });
 
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
@@ -186,7 +185,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
         accounts: smartAccounts = [],
         deploymentData = {},
         lastSyncedHash = null,
-      } = await storage.get('smartWallet');
+      } = await networkStorage.get('smartWallet');
       dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
       dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
       dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: smartAccounts });

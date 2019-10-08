@@ -57,7 +57,10 @@ const persistConfig = {
   storage: AsyncStorage,
   // version: 0,
   stateReconciler: autoMergeLevel2,
-  whitelist: ['history', 'walletConnectSessions'],
+  whitelist: [
+    // 'history',
+    'walletConnectSessions',
+  ],
   // migrate: createMigrate(migrations, { debug: true }),
   timeout: 0, // HACK: wait until the storage responds
 };
@@ -79,7 +82,9 @@ const enhancer = composeWithDevTools({
   // Options: https://github.com/jhen0409/react-native-debugger#options
 })(applyMiddleware(...middlewares));
 
-const configureStore = (initialState: ?Object): Object => {
+const configureStore = async (
+  initialState: ?Object,
+): Object => {
   const useReactotron = __DEV__ && !isTest;
 
   const store = useReactotron ?

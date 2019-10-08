@@ -1,13 +1,12 @@
 // @flow
 import get from 'lodash.get';
-import { saveDbAction } from 'actions/dbActions';
+import { saveStorageAction } from 'actions/dbActions';
 import type { Accounts } from 'models/Account';
 import type { Assets, AssetsStore } from 'models/Asset';
+import type { Dispatch } from 'reducers/rootReducer';
 
 import Storage from 'services/storage';
 import { findKeyBasedAccount } from 'utils/accounts';
-
-const storage = Storage.getInstance('db');
 
 export function migrateAssetsToAccountsFormat(
   assets: Assets,
@@ -23,18 +22,19 @@ export function migrateAssetsToAccountsFormat(
   return assetsByAcc;
 }
 
-export default async function (dispatch: Function) {
-  const { accounts = [] } = await storage.get('accounts');
-  const { assets = {} } = await storage.get('assets');
+export default async function (
+  appStorage: Storage,
+  dispatch: Dispatch,
+) {
+  const { accounts = [] } = await appStorage.get('accounts');
+  const { assets = {} } = await appStorage.get('assets');
   const keyBasedAccount = findKeyBasedAccount(accounts);
   const keyBasedAccountId = get(keyBasedAccount, 'id', null);
 
   if (accounts.length && !assets[keyBasedAccountId]) {
     const migratedAssets = migrateAssetsToAccountsFormat(assets, accounts);
     if (migratedAssets) {
-      dispatch(saveDbAction('assets', { assets: migratedAssets }, true));
-      return migratedAssets;
+      dispatch(saveStorageAction(appStorage, 'assets', { assets: migratedAssets }, true));
     }
   }
-  return assets;
 }

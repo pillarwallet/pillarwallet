@@ -1,12 +1,12 @@
 // @flow
-import { saveDbAction } from 'actions/dbActions';
+import { saveStorageAction } from 'actions/dbActions';
 import { ETH } from 'constants/assetsConstants';
-import type { Balances, BalancesStore } from 'models/Asset';
-import type { Accounts } from 'models/Account';
 import Storage from 'services/storage';
 import { findKeyBasedAccount } from 'utils/accounts';
 
-const storage = Storage.getInstance('db');
+import type { Balances, BalancesStore } from 'models/Asset';
+import type { Accounts } from 'models/Account';
+import type { Dispatch } from 'reducers/rootReducer';
 
 export function migrateBalancesToAccountsFormat(balances: Balances, accounts: Accounts): ?BalancesStore {
   const keyBasedAccount = findKeyBasedAccount(accounts);
@@ -18,16 +18,17 @@ export function migrateBalancesToAccountsFormat(balances: Balances, accounts: Ac
   };
 }
 
-export default async function (dispatch: Function) {
-  const { accounts = [] } = await storage.get('accounts');
-  const { balances = {} } = await storage.get('balances');
+export default async function (
+  appStorage: Storage,
+  dispatch: Dispatch,
+) {
+  const { accounts = [] } = await appStorage.get('accounts');
+  const { balances = {} } = await appStorage.get('balances');
 
   if (balances[ETH] && accounts.length) {
     const migratedBalances = migrateBalancesToAccountsFormat(balances, accounts);
     if (migratedBalances) {
-      dispatch(saveDbAction('balances', { balances: migratedBalances }, true));
-      return migratedBalances;
+      dispatch(saveStorageAction(appStorage, 'balances', { balances: migratedBalances }, true));
     }
   }
-  return balances;
 }

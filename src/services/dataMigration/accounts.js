@@ -1,13 +1,13 @@
 // @flow
-import { saveDbAction } from 'actions/dbActions';
-import type { Accounts } from 'models/Account';
+import { saveStorageAction } from 'actions/dbActions';
 import Storage from 'services/storage';
 import { findKeyBasedAccount } from 'utils/accounts';
 import { normalizeWalletAddress } from 'utils/wallet';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
-const storage = Storage.getInstance('db');
+import type { Accounts } from 'models/Account';
+import type { Dispatch } from 'reducers/rootReducer';
 
 function addWalletIdToKeyBasedAccount(accounts: Accounts, walletId: string) {
   return accounts.map(account => {
@@ -19,27 +19,28 @@ function addWalletIdToKeyBasedAccount(accounts: Accounts, walletId: string) {
   });
 }
 
-export default async function (dispatch: Function, getState: Function) {
-  const { accounts = [] } = await storage.get('accounts');
-  const { wallet } = await storage.get('wallet');
-  const { user = {} } = await storage.get('user');
+export default async function (
+  wallet: Object,
+  appStorage: Storage,
+  dispatch: Dispatch,
+) {
+  const { accounts = [] } = await appStorage.get('accounts');
+  const { user = {} } = await appStorage.get('user');
 
   // wallet is not registered yet
-  if (!user.walletId) return accounts;
+  if (!user.walletId) return;
 
   if (!accounts.length) {
     await dispatch(initDefaultAccountAction(normalizeWalletAddress(wallet.address), user.walletId));
-    const { accounts: { data: migratedAccounts } } = getState();
-    return migratedAccounts;
+
+    return;
   }
 
   const keyBasedAccount = findKeyBasedAccount(accounts);
 
   if (keyBasedAccount && !keyBasedAccount.walletId) {
     const migratedAccounts = addWalletIdToKeyBasedAccount(accounts, user.walletId);
-    dispatch(saveDbAction('accounts', { balances: migratedAccounts }, true));
-    return migratedAccounts;
-  }
 
-  return accounts;
+    dispatch(saveStorageAction(appStorage, 'accounts', { balances: migratedAccounts }, true));
+  }
 }

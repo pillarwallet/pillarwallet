@@ -1,10 +1,8 @@
 // @flow
-import { Sentry } from 'react-native-sentry';
+// import { Sentry } from 'react-native-sentry';
 import isEmpty from 'lodash.isempty';
-import { saveDbAction } from 'actions/dbActions';
+import { saveStorageAction } from 'actions/dbActions';
 import { SET_HISTORY } from 'constants/historyConstants';
-import type { Accounts } from 'models/Account';
-import type { Transaction, TransactionsStore } from 'models/Transaction';
 import Storage from 'services/storage';
 import {
   checkIfSmartWalletAccount,
@@ -16,9 +14,17 @@ import {
 import { addressesEqual } from 'utils/assets';
 import { updateAccountHistory } from 'utils/history';
 
-const storage = Storage.getInstance('db');
+import type {
+  Dispatch,
+  // GetState,
+} from 'reducers/rootReducer';
+import type { Accounts } from 'models/Account';
+import type { Transaction, TransactionsStore } from 'models/Transaction';
 
-export function migrateTxHistoryToAccountsFormat(history: Transaction[], accounts: Accounts): ?TransactionsStore {
+export function migrateTxHistoryToAccountsFormat(
+  history: Transaction[],
+  accounts: Accounts,
+): ?TransactionsStore {
   const keyBasedAccount = findKeyBasedAccount(accounts);
   if (!keyBasedAccount) return null;
 
@@ -32,17 +38,14 @@ export function migrateTxHistoryToAccountsFormat(history: Transaction[], account
   };
 }
 
-export default async function (dispatch: Function, getState: Function) {
-  const { migratedToReduxPersist = {} } = await storage.get('dataMigration');
-  const { accounts = [] } = await storage.get('accounts');
-  let { history = {} } = await storage.get('history');
-  const { history: { data: stateHistory } } = getState();
-  const activeAccount = getActiveAccount(accounts || []);
+export default async function (
+  appStorage: Storage,
+  dispatch: Dispatch,
+) {
+  const { accounts = [] } = await appStorage.get('accounts');
+  let { history = {} } = await appStorage.get('history');
 
-  // check if the data was migrated, but the current state is empty and history from storage is not empty
-  if (migratedToReduxPersist.history && isEmpty(stateHistory) && !isEmpty(history)) {
-    Sentry.captureMessage('Possible redux-persist crash', { level: 'info' });
-  }
+  const activeAccount = getActiveAccount(accounts || []);
 
   if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
     const accountAddress = getActiveAccountAddress(accounts);
@@ -53,28 +56,19 @@ export default async function (dispatch: Function, getState: Function) {
 
     if (accountHistory.length !== cleanedHistory.length) {
       history = updateAccountHistory(history, accountId, cleanedHistory);
-      dispatch(saveDbAction('history', { history }, true));
-      dispatch({ type: SET_HISTORY, payload: history });
+      dispatch(saveStorageAction(appStorage, 'history', { history }, true));
     }
   }
-
-  // data migrated, no need to do anything
-  if (migratedToReduxPersist.history) {
-    // TODO: remove this dispatch method once we decide to fully use the redux-persist
-    dispatch({ type: SET_HISTORY, payload: history });
-    return;
-  }
-
-  await dispatch(saveDbAction('dataMigration', { migratedToReduxPersist: { history: +new Date() } }));
 
   if (Array.isArray(history) && accounts.length) {
     const migratedHistory = migrateTxHistoryToAccountsFormat(history, accounts);
     if (migratedHistory) {
-      dispatch(saveDbAction('history', { history: migratedHistory }, true));
-      dispatch({ type: SET_HISTORY, payload: migratedHistory });
-      return;
+      history = migratedHistory;
+      dispatch(saveStorageAction(appStorage, 'history', { history }, true));
     }
   }
 
-  dispatch({ type: SET_HISTORY, payload: history });
+  if (!isEmpty(history)) {
+    dispatch({ type: SET_HISTORY, payload: history });
+  }
 }
