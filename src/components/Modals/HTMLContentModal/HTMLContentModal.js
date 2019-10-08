@@ -36,10 +36,18 @@ type Props = {
 type State = {
   isHtmlFetched: boolean,
   htmlData: string,
+  scrollOffset?: number,
+  contentContainerHeight?: number,
+  containerHeight?: number,
 };
 
 type CustomNode = {
   name: string,
+}
+
+type ScrollToProps = {
+  x: number,
+  y: number,
 }
 
 const LEGAL_HTML_ENDPOINT = 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/';
@@ -56,15 +64,21 @@ const commonTextStyle = {
 };
 
 export default class HTMLContentModal extends React.Component<Props, State> {
+  scrollViewRef: Object;
+
   static defaultProps = {
     fullScreenComponent: null,
   };
 
   constructor(props: Props) {
     super(props);
+    this.scrollViewRef = React.createRef();
     this.state = {
       isHtmlFetched: false,
       htmlData: '',
+      scrollOffset: undefined,
+      containerHeight: undefined,
+      contentContainerHeight: undefined,
     };
   }
 
@@ -97,6 +111,11 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     return undefined;
   }
 
+  handleScrollTo = (p: ScrollToProps) => {
+    const { x, y } = p;
+    this.scrollViewRef.props.scrollToPosition(x, y);
+  };
+
   render() {
     const {
       isVisible,
@@ -105,6 +124,9 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     const {
       htmlData,
       isHtmlFetched,
+      scrollOffset,
+      contentContainerHeight,
+      containerHeight,
     } = this.state;
 
     const animationInTiming = 400;
@@ -118,6 +140,11 @@ export default class HTMLContentModal extends React.Component<Props, State> {
         animationOut="slideOutDown"
         onBackButtonPress={modalHide}
         onModalHide={this.handleModalClose}
+        scrollOffset={scrollOffset}
+        onSwipeComplete={modalHide}
+        scrollOffsetMax={contentContainerHeight && containerHeight ? contentContainerHeight - containerHeight : null}
+        swipeDirection="down"
+        scrollTo={this.handleScrollTo}
         style={{
           margin: 0,
           justifyContent: 'flex-start',
@@ -131,7 +158,27 @@ export default class HTMLContentModal extends React.Component<Props, State> {
           </ActivityIndicatorWrapper>
           }
           {!!isHtmlFetched &&
-          <ScrollWrapper regularPadding>
+          <ScrollWrapper
+            regularPadding
+            scrollEventThrottle={16}
+            onScroll={(event) => {
+              const { contentOffset } = event.nativeEvent;
+              const { y } = contentOffset;
+              this.setState({
+                scrollOffset: y,
+              });
+            }}
+            innerRef={(ref) => { this.scrollViewRef = ref; }}
+            onLayout={(event) => {
+              const { height } = event.nativeEvent.layout;
+              if (!containerHeight || containerHeight !== height) {
+                this.setState({ containerHeight: height });
+              }
+            }}
+            onContentSizeChange={(contentWidth, contentHeight) => {
+              this.setState({ contentContainerHeight: contentHeight });
+            }}
+          >
             <HTMLView
               value={htmlData}
               textComponentProps={{ style: commonTextStyle }}

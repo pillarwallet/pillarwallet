@@ -56,6 +56,8 @@ type ScrollWrapperProps = {
   stickyHeaderIndices?: ?number[],
   scrollEnabled?: boolean,
   refreshControl?: React.Node,
+  scrollEventThrottle?: number,
+  onContentSizeChange?: Function,
 };
 
 export const Center = styled.View`
@@ -140,10 +142,12 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
     stickyHeaderIndices,
     scrollEnabled,
     refreshControl,
+    scrollEventThrottle,
+    onContentSizeChange,
   } = props;
 
   return (
-    <KAScrollView
+    <KeyboardAwareScrollView
       regularPadding={regularPadding}
       color={color}
       enableOnAndroid
@@ -158,9 +162,17 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
       extraScrollHeight={0}
       scrollEnabled={scrollEnabled}
       refreshControl={refreshControl}
+      scrollEventThrottle={scrollEventThrottle}
+      onContentSizeChange={onContentSizeChange}
+      style={{
+        paddingHorizontal: regularPadding ? 20 : 0,
+        backgroundColor: color || 'transparent',
+        flex: 1,
+        height: '100%',
+      }}
     >
       {children}
-    </KAScrollView>
+    </KeyboardAwareScrollView>
   );
 };
 
