@@ -27,6 +27,7 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 
 // components
 import { Wrapper } from 'components/Layout';
@@ -41,6 +42,7 @@ import { fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { calculateGasEstimate } from 'services/assets';
+import smartWalletService from 'services/smartWallet';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -58,7 +60,14 @@ import { updateAppSettingsAction } from 'actions/appSettingsActions';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { activeAccountAddressSelector } from 'selectors';
+import {
+  activeAccountAddressSelector,
+  activeAccountSelector,
+} from 'selectors';
+import type { Account } from 'models/Account';
+import Spinner from 'components/Spinner';
+import { checkIfSmartWalletAccount } from 'utils/accounts';
+import { ethToWei } from '@netgum/utils';
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -121,6 +130,7 @@ type Props = {
   transactionSpeed: string,
   updateAppSettings: Function,
   activeAccountAddress: string,
+  activeAccount: Account,
 };
 
 type State = {
@@ -129,7 +139,11 @@ type State = {
   },
   showModal: boolean,
   gasLimit: number,
-  gettingGasLimit: boolean,
+  gettingFee: boolean,
+  calculatingMaxValue: boolean,
+  inputHasError: boolean,
+  txFeeInWei: BigNumber,
+  submitPressed: boolean,
 };
 
 const { Form } = t.form;
@@ -159,7 +173,11 @@ class SendTokenAmount extends React.Component<Props, State> {
       value: null,
       showModal: false,
       gasLimit: 0,
-      gettingGasLimit: true,
+      gettingFee: true,
+      calculatingMaxValue: false,
+      inputHasError: false,
+      txFeeInWei: 0,
+      submitPressed: false,
     };
 
     this.updateGasLimit = debounce(this.updateGasLimit, 500);
@@ -187,32 +205,48 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   handleChange = (value: Object) => {
-    this.setState({ value });
-    this.updateGasLimit();
+    // first update the amount, then after state is updated check for errors
+    this.setState({ value, gettingFee: true });
+    this.getTxFeeInWei()
+      .then(txFeeInWei => this.setState({ txFeeInWei, gettingFee: false }))
+      .catch(() => null);
+    this.checkFormInputErrors();
+    if (!checkIfSmartWalletAccount(this.props.activeAccount)) {
+      this.updateGasLimit();
+    }
   };
 
-  handleFormSubmit = () => {
+  handleFormSubmit = async () => {
+    const { submitPressed } = this.state;
+    if (submitPressed) return;
     this.formSubmitted = true;
-    const txFeeInWei = this.getTxFeeInWei();
+    this.setState({ submitPressed: true });
+    const txFeeInWei = await this.getTxFeeInWei();
     const value = this._form.getValue();
-    const { navigation } = this.props;
-    const { gasLimit } = this.state;
-    const transactionSpeed = this.getTxSpeed();
-    const gasPrice = txFeeInWei.div(gasLimit).toNumber();
     if (!value) return;
-    const transactionPayload: TokenTransactionPayload = {
+    // $FlowFixMe
+    let transactionPayload: TokenTransactionPayload = {
       to: this.receiver,
       amount: value.amount,
-      gasLimit,
-      gasPrice,
       txFeeInWei,
-      txSpeed: transactionSpeed,
       symbol: this.assetData.token,
       contractAddress: this.assetData.contractAddress,
       decimals: this.assetData.decimals,
     };
-
+    const { navigation, activeAccount } = this.props;
+    if (!checkIfSmartWalletAccount(activeAccount)) {
+      const { gasLimit } = this.state;
+      const transactionSpeed = this.getTxSpeed();
+      const gasPrice = txFeeInWei.div(gasLimit).toNumber();
+      transactionPayload = {
+        ...transactionPayload,
+        gasPrice,
+        gasLimit,
+        txSpeed: transactionSpeed,
+      };
+    }
     Keyboard.dismiss();
+    this.setState({ submitPressed: false }); // reset in case of user navigates back
     navigation.navigate(SEND_TOKEN_CONFIRM, {
       transactionPayload,
       source: this.source,
@@ -220,24 +254,35 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   useMaxValue = async () => {
-    const { balances } = this.props;
+    const { balances, activeAccount } = this.props;
+    const { calculatingMaxValue } = this.state;
+    if (calculatingMaxValue) return;
+    this.setState({ calculatingMaxValue: true, gettingFee: true });
     const { token } = this.assetData;
     const balance = getBalance(balances, token);
-    const gasLimit = await this.getGasLimit(balance); // calculate gas limit for max available balance
-    const transactionSpeed = this.getTxSpeed();
-    const txFeeInWei = this.getTxFeeInWei(transactionSpeed, gasLimit);
+    const updatedState = {};
+    let txFeeInWei;
+    if (checkIfSmartWalletAccount(activeAccount)) {
+      txFeeInWei = await this.getTxFeeInWei();
+    } else {
+      updatedState.gasLimit = await this.getGasLimit(balance); // calculate gas limit for max available balance
+      const transactionSpeed = this.getTxSpeed();
+      txFeeInWei = this.getTxFeeInWei(transactionSpeed, updatedState.gasLimit);
+    }
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
     this.enoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
     const amount = formatAmount(maxAmount);
     this.setState({
-      gasLimit,
+      ...updatedState,
       value: { amount },
-      gettingGasLimit: false,
+      gettingFee: false,
+      calculatingMaxValue: false,
     });
+    this.checkFormInputErrors();
   };
 
   getGasLimit = (amount?: number) => {
-    this.setState({ gettingGasLimit: true });
+    this.setState({ gettingFee: true });
     // calculate either with amount in form or provided as param
     if (!amount) {
       amount = parseFloat(get(this._form.getValue(), 'amount', 0));
@@ -265,13 +310,20 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   updateGasLimit = () => {
     this.getGasLimit()
-      .then(gasLimit => this.setState({ gasLimit, gettingGasLimit: false }))
+      .then(gasLimit => this.setState({ gasLimit, gettingFee: false }))
       .catch(() => null);
   };
 
   getTxFeeInWei = (txSpeed?: string, gasLimit?: number): BigNumber => {
+    const { gasInfo, activeAccount } = this.props;
+    if (checkIfSmartWalletAccount(activeAccount)) {
+      const { value } = this.state;
+      return smartWalletService.estimateAccountTransaction({
+        recipient: this.receiver,
+        value: ethToWei(value),
+      }, gasInfo).catch(() => null);
+    }
     txSpeed = txSpeed || this.getTxSpeed();
-    const { gasInfo } = this.props;
     // calculate either with gasLimit in state or provided as param
     if (!gasLimit) {
       ({ gasLimit } = this.state);
@@ -301,12 +353,26 @@ class SendTokenAmount extends React.Component<Props, State> {
     });
   };
 
+  checkFormInputErrors = () => {
+    if (!this._form) return;
+    const { inputHasError } = this.state;
+    if (!isEmpty(get(this._form.validate(), 'errors'))) {
+      this.setState({ inputHasError: true });
+    } else if (inputHasError) {
+      this.setState({ inputHasError: false });
+    }
+  };
+
   render() {
     const {
       value,
       showModal,
       gasLimit,
-      gettingGasLimit,
+      gettingFee,
+      calculatingMaxValue,
+      inputHasError,
+      txFeeInWei,
+      submitPressed,
     } = this.state;
     const {
       session,
@@ -314,9 +380,11 @@ class SendTokenAmount extends React.Component<Props, State> {
       gasInfo,
       rates,
       baseFiatCurrency,
+      activeAccount,
     } = this.props;
 
-    const transactionSpeed = this.getTxSpeed();
+    const showTransactionSpeeds = !!gasLimit && !checkIfSmartWalletAccount(activeAccount);
+    const transactionSpeed = showTransactionSpeeds && this.getTxSpeed();
     const { token, icon, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
@@ -329,7 +397,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // fee
-    const txFeeInWei = this.getTxFeeInWei();
     const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
 
     // max amount
@@ -346,7 +413,9 @@ class SendTokenAmount extends React.Component<Props, State> {
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
     const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
 
-    const nextButtonTitle = gettingGasLimit
+    const showNextButton = !submitPressed && !!value && !!parseFloat(value.amount) && !inputHasError;
+    const isNextButtonDisabled = gettingFee || !session.isOnline || !gasInfo.isFetched;
+    const nextButtonTitle = gettingFee
       ? 'Getting the fee..'
       : 'Next';
 
@@ -355,24 +424,25 @@ class SendTokenAmount extends React.Component<Props, State> {
         headerProps={{ centerItems: [{ title: `Send ${this.assetData.token}` }] }}
         keyboardAvoidFooter={(
           <FooterInner>
-            {!!gasLimit &&
+            {!!transactionSpeed &&
             <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
               <SendTokenDetailsValue>
                 <Label small>Fee:</Label>
-                <TextLink> {SPEED_TYPE_LABELS[transactionSpeed]}</TextLink>
+                <TextLink>{SPEED_TYPE_LABELS[transactionSpeed]}</TextLink>
               </SendTokenDetailsValue>
             </TouchableOpacity>
             }
-            {!gasLimit && <Label>&nbsp;</Label>}
-            {!!value && !!parseFloat(value.amount) &&
-            <Button
-              disabled={gettingGasLimit || !session.isOnline || !gasInfo.isFetched}
-              small
-              flexRight
-              title={nextButtonTitle}
-              onPress={this.handleFormSubmit}
-            />
+            {!showTransactionSpeeds && <Label>&nbsp;</Label>}
+            {showNextButton &&
+              <Button
+                disabled={isNextButtonDisabled}
+                small
+                flexRight
+                title={nextButtonTitle}
+                onPress={this.handleFormSubmit}
+              />
             }
+            {submitPressed && <Spinner width={20} height={20} />}
           </FooterInner>
         )}
         minAvoidHeight={200}
@@ -394,21 +464,28 @@ class SendTokenAmount extends React.Component<Props, State> {
                   <HelperText>{formattedBalanceInFiat}</HelperText>
                 </SendTokenDetailsValue>
               </SendTokenDetails>
-              <TouchableOpacity onPress={this.useMaxValue}>
-                <TextLink>Send All</TextLink>
-              </TouchableOpacity>
+              {!calculatingMaxValue &&
+                <TouchableOpacity onPress={this.useMaxValue}>
+                  <TextLink>Send All</TextLink>
+                </TouchableOpacity>
+              }
+              {calculatingMaxValue && <Spinner width={20} height={20} />}
             </ActionsWrapper>
           </Wrapper>
         </BackgroundWrapper>
-        <SlideModal
-          isVisible={showModal}
-          title="transaction speed"
-          onModalHide={() => { this.setState({ showModal: false }); }}
-        >
-          <Label>Choose your gas price.</Label>
-          <Label>Faster transaction requires more fee.</Label>
-          <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
-        </SlideModal>
+        {showTransactionSpeeds &&
+          <SlideModal
+            isVisible={showModal}
+            title="transaction speed"
+            onModalHide={() => {
+              this.setState({ showModal: false });
+            }}
+          >
+            <Label>Choose your gas price.</Label>
+            <Label>Faster transaction requires more fee.</Label>
+            <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
+          </SlideModal>
+        }
       </ContainerWithHeader>
     );
   }
@@ -429,6 +506,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  activeAccount: activeAccountSelector,
   activeAccountAddress: activeAccountAddressSelector,
 });
 

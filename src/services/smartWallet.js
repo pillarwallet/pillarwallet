@@ -32,6 +32,8 @@ import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
 import type { GasInfo } from 'models/GasInfo';
+import { DEFAULT_GAS_LIMIT } from 'services/assets';
+import { SPEED_TYPES } from 'constants/assetsConstants';
 
 const {
   GasPriceStrategies: {
@@ -50,7 +52,7 @@ const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', ''
 type AccountTransaction = {
   recipient: string,
   value: number | string | BigNumber,
-  data: string | Buffer,
+  data?: string | Buffer,
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
 };
 
@@ -77,6 +79,24 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
     gasPrice,
     totalCost: gasAmount && gasPrice && gasPrice.mul(gasAmount),
   };
+};
+
+const calculateEstimate = (
+  estimate,
+  gasInfo?: GasInfo,
+  speed?: string = SPEED_TYPES.NORMAL,
+  defaultGasAmount?: number = DEFAULT_GAS_LIMIT,
+): BigNumber => {
+  let { gasAmount, gasPrice } = parseEstimatePayload(estimate);
+
+  if (!gasAmount) {
+    gasAmount = new BigNumber(defaultGasAmount);
+  }
+  if (!gasPrice) {
+    const defaultGasPrice = get(gasInfo, `gasPrice.${speed}`, 0);
+    gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
+  }
+  return gasPrice.mul(gasAmount);
 };
 
 class SmartWallet {
@@ -221,9 +241,8 @@ class SmartWallet {
       recipient,
       value,
       data,
-      transactionSpeed,
+      transactionSpeed = TransactionSpeeds[AVG],
     } = transaction;
-
     const estimatedTransaction = await this.sdk.estimateAccountTransaction(
       recipient,
       value,
@@ -313,16 +332,26 @@ class SmartWallet {
 
   async estimateAccountDeployment(gasInfo: GasInfo) {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(() => {});
-    let { gasAmount, gasPrice } = parseEstimatePayload(deployEstimate);
+    return calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, 790000);
+  }
 
-    if (!gasAmount) {
-      gasAmount = new BigNumber(790000);
-    }
-    if (!gasPrice) {
-      const defaultGasPrice = get(gasInfo, 'gasPrice.max', 0);
-      gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
-    }
-    return gasPrice.mul(gasAmount);
+  async estimateAccountTransaction(transaction: AccountTransaction, gasInfo: GasInfo) {
+    const {
+      recipient,
+      value,
+      data,
+      transactionSpeed = TransactionSpeeds[AVG],
+    } = transaction;
+    const deployEstimate = await this.sdk.estimateAccountTransaction(
+      recipient,
+      value,
+      data,
+      transactionSpeed,
+    ).catch(() => {});
+    const defaultSpeed = transactionSpeed === TransactionSpeeds[FAST]
+      ? SPEED_TYPES.FAST
+      : SPEED_TYPES.NORMAL;
+    return calculateEstimate(deployEstimate, gasInfo, defaultSpeed);
   }
 
   handleError(error: any) {
