@@ -108,8 +108,8 @@ export default class HTMLContentModal extends React.Component<Props, State> {
   }
 
   handleScrollTo = (p: ScrollToProps) => {
-    const { x, y } = p;
-    this.scrollViewRef.props.scrollToPosition(x, y);
+    const { y } = p;
+    this.scrollViewRef.props.scrollToPosition(0, y);
   };
 
   render() {

@@ -696,8 +696,6 @@ class EventDetails extends React.Component<Props, State> {
           scrollEventThrottle={16}
           ref={getRef}
           scrollToOverflowEnabled={false}
-          showsVerticalScrollIndicator={false}
-          overScrollMode="never"
         >
           {this.renderEventBody(eventType)}
         </ScrollView>
