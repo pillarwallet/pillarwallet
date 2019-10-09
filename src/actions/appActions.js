@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import { Sentry } from 'react-native-sentry';
 
@@ -28,7 +29,11 @@ import { loadAndMigrate } from 'services/dataMigration';
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
+import {
+  UPDATE_ASSETS,
+  UPDATE_BALANCES,
+  UPDATE_SUPPORTED_ASSETS,
+} from 'constants/assetsConstants';
 import { SET_CONTACTS_SMART_ADDRESSES, UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
@@ -92,8 +97,11 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const accounts = await loadAndMigrate('accounts', dispatch, getState);
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 
-      const assets = await loadAndMigrate('assets', dispatch, getState);
+      const migratedAssets = await loadAndMigrate('assets', dispatch, getState);
+      const assets = get(migratedAssets, 'assets', {});
+      const supportedAssets = get(migratedAssets, 'supportedAssets', []);
       dispatch({ type: UPDATE_ASSETS, payload: assets });
+      dispatch({ type: UPDATE_SUPPORTED_ASSETS, payload: supportedAssets });
 
       const balances = await loadAndMigrate('balances', dispatch, getState);
       dispatch({ type: UPDATE_BALANCES, payload: balances });

@@ -68,12 +68,16 @@ export const getExistingChatsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
+      session: { data: { isOnline } },
     } = getState();
     const chats = await chat.client.getExistingMessages('chat').then(JSON.parse).catch(() => []);
     const filteredChats = chats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
-    const {
-      unread: unreadChats = {},
-    } = await chat.client.getUnreadMessagesCount('chat').then(JSON.parse).catch(() => ({}));
+    let unreadChats = {};
+    if (isOnline) {
+      ({ unread: unreadChats = {} } = await chat.client.getUnreadMessagesCount('chat')
+        .then(JSON.parse)
+        .catch(() => ({})));
+    }
     webSocketMessagesReceived.filter(wsMessage => wsMessage.tag === 'chat').forEach(wsMessage => {
       if (!unreadChats[wsMessage.source]) {
         unreadChats[wsMessage.source] = { count: 1, latest: wsMessage.timestamp };

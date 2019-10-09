@@ -98,6 +98,7 @@ export const loginAction = (
           blockchainNetwork = '',
         },
       },
+      session: { data: { isOnline } },
     } = getState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
     const { oAuthTokens } = await storage.get('oAuthTokens');
@@ -146,8 +147,7 @@ export const loginAction = (
       if (userState === REGISTERED) {
         const fcmToken = await firebase.messaging().getToken().catch(() => null);
         dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
-
-        await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+        if (isOnline) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
         const signalCredentials = {
           userId: user.id,
           username: user.username,
@@ -165,7 +165,7 @@ export const loginAction = (
         }
         api.setUsername(user.username);
         const userInfo = await api.userInfo(user.walletId);
-        await api.updateFCMToken(user.walletId, fcmToken);
+        if (isOnline) await api.updateFCMToken(user.walletId, fcmToken);
         const { oAuthTokens: { data: OAuthTokensObject } } = getState();
         // $FlowFixMe
         await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
