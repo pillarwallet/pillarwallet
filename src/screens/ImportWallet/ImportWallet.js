@@ -363,7 +363,7 @@ class ImportWallet extends React.Component<Props, State> {
         <ButtonsWrapper isRow>
           {!!showPrev &&
           <StyledButton
-            primaryInvertedSquare
+            primaryInverted
             onPress={this.showPrevWord}
           >
             <ButtonInner>
@@ -373,7 +373,6 @@ class ImportWallet extends React.Component<Props, State> {
           </StyledButton>}
           <StyledButton
             disabled={!currentBPWord}
-            primarySquare
             onPress={this.showNextWord}
           >
             <ButtonInner>
@@ -388,7 +387,6 @@ class ImportWallet extends React.Component<Props, State> {
         <ButtonsWrapper>
           <Button
             disabled={!tabsInfo[activeTab].value}
-            primarySquare
             title="Re-import"
             onPress={this.handleImportSubmit}
           />
@@ -403,7 +401,6 @@ class ImportWallet extends React.Component<Props, State> {
     return (
       <Button
         disabled={!tabsInfo[activeTab].value}
-        primarySquare
         title="Re-import"
         onPress={this.handleImportSubmit}
       />
