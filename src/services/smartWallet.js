@@ -49,6 +49,8 @@ const TransactionSpeeds = {
 
 const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 
+const DEFAULT_DEPLOYMENT_GAS_LIMIT = 790000;
+
 type AccountTransaction = {
   recipient: string,
   value: number | string | BigNumber,
@@ -332,7 +334,7 @@ class SmartWallet {
 
   async estimateAccountDeployment(gasInfo: GasInfo) {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(() => {});
-    return calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, 790000);
+    return calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT);
   }
 
   async estimateAccountTransaction(transaction: AccountTransaction, gasInfo: GasInfo) {
