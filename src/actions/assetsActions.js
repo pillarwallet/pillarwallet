@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 import { Sentry } from 'react-native-sentry';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -480,6 +481,7 @@ export const sendAssetAction = (
   };
 };
 
+// TODO: remove this?
 export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = []) => {
   return (dispatch: Dispatch) => {
     const updatedAssets = Object.keys(assets)
@@ -694,25 +696,30 @@ export const checkForMissedAssetsAction = () => {
       accounts: { data: accounts },
       user: { data: { walletId } },
       assets: { data: currentAssets, supportedAssets = [] },
+      session: { data: { isOnline } },
     } = getState();
 
     // load supported assets
     let walletSupportedAssets = [...supportedAssets];
-    if (!supportedAssets.length) {
-      walletSupportedAssets = await api.fetchSupportedAssets(walletId);
-      dispatch({
-        type: UPDATE_SUPPORTED_ASSETS,
-        payload: walletSupportedAssets,
-      });
+    if (isOnline) {
+      const remoteSupportedAssets = await api.fetchSupportedAssets(walletId);
+      // update if remote supported list has changed or current supported is empty (length=0)
+      if (!isEmpty(remoteSupportedAssets)
+        && remoteSupportedAssets.length !== walletSupportedAssets.length) {
+        walletSupportedAssets = [...remoteSupportedAssets];
+        dispatch({
+          type: UPDATE_SUPPORTED_ASSETS,
+          payload: walletSupportedAssets,
+        });
+      }
     }
 
-    const allSupportedAddedAssetsByAccount = accounts.map((acc) => {
-      const supportedAccountAssets = getSupportedTokens(walletSupportedAssets, currentAssets, acc);
-      return supportedAccountAssets;
-    }).reduce((obj, { id, ...rest }) => {
-      obj[id] = rest;
-      return obj;
-    }, {});
+    const allSupportedAddedAssetsByAccount = accounts
+      .map((acc) => getSupportedTokens(walletSupportedAssets, currentAssets, acc))
+      .reduce((obj, { id, ...rest }) => {
+        obj[id] = rest;
+        return obj;
+      }, {});
 
     // check if some assets are not enabled
     const ownedAssetsByAccount = await Promise.all(accounts.map(async (acc) => {
@@ -738,7 +745,7 @@ export const checkForMissedAssetsAction = () => {
       payload: updatedAssets,
     });
     dispatch(fetchAssetsBalancesAction());
-    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+    dispatch(saveDbAction('assets', { assets: updatedAssets, supportedAssets: walletSupportedAssets }, true));
   };
 };
 
