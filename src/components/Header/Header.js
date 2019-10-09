@@ -104,6 +104,13 @@ const NextIcon = styled(IconButton)`
   align-items: flex-end;
 `;
 
+const CloseIcon = styled(IconButton)`
+  height: 44px;
+  width: 58px;
+  margin-right: -20px;
+  align-items: center;
+`;
+
 const HeaderLeft = styled(Left)`
   flex: ${props => props.flex ? props.flex : 1};
   justify-content: flex-start;
@@ -233,12 +240,12 @@ const Header = (props: Props) => {
                 {onCloseText &&
                   <CloseIconText light={light} >{onCloseText}</CloseIconText>
                 }
-                <NextIcon
+                <CloseIcon
                   icon="close"
                   color={light ? baseColors.white : UIColors.defaultNavigationColor}
                   onPress={onClose}
                   fontSize={fontSizes.small}
-                  horizontalAlign="flex-end"
+                  horizontalAlign="center"
                 />
               </IconWrapper>
             }

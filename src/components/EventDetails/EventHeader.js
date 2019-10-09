@@ -114,12 +114,12 @@ const Wrapper = styled.View`
 const CloseIcon = styled(IconButton)`
   position: absolute;
   height: 24px;
-  width: 24px;
+  width: 48px;
   top: ${Platform.select({
     ios: '20px',
     android: '19px',
   })}
-  right: 12px;
+  right: 0;
   opacity: 0.7;
 `;
 

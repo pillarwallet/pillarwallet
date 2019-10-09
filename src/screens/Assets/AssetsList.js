@@ -76,6 +76,7 @@ type Props = {
   activeAccount: Account,
   paymentNetworkBalances: Balances,
   hideAsset: Function,
+  scrollViewRef?: Object,
 }
 
 type State = {
@@ -170,6 +171,7 @@ class AssetsList extends React.Component<Props, State> {
       activeAccount,
       baseFiatCurrency,
       navigation,
+      scrollViewRef,
     } = this.props;
 
     const {
@@ -237,6 +239,9 @@ class AssetsList extends React.Component<Props, State> {
         close={forceHideRemoval}
         buttonWidth={80}
         onOpen={() => this.setState({ forceHideRemoval: false })}
+        scroll={(shouldAllowScroll) => {
+          if (scrollViewRef) scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
+        }}
       >
         <ListItemWithImage
           onPress={() => {
@@ -313,6 +318,7 @@ class AssetsList extends React.Component<Props, State> {
         style={{ width: '100%', height: '100%', flex: 1 }}
         ListHeaderComponent={this.renderHeader}
         contentContainerStyle={{ paddingTop: 4 }}
+        scrollEnabled={false}
       />
     );
   }

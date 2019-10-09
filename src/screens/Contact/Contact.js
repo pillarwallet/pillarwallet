@@ -427,7 +427,7 @@ class Contact extends React.Component<Props, State> {
                 userName={contactUsername}
                 borderWidth={4}
                 initialsSize={fontSizes.extraGiant}
-                diameter={164}
+                diameter={184}
                 style={{ backgroundColor: baseColors.geyser }}
                 imageUpdateTimeStamp={displayContact.lastUpdateTime}
               />
