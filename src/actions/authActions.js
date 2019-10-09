@@ -167,6 +167,7 @@ export const loginAction = (
         const userInfo = await api.userInfo(user.walletId);
         await api.updateFCMToken(user.walletId, fcmToken);
         const { oAuthTokens: { data: OAuthTokensObject } } = getState();
+        // $FlowFixMe
         await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));

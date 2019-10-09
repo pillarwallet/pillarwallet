@@ -17,10 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import isEmpty from 'lodash.isempty';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from 'actions/dbActions';
 import { lockScreenAction } from 'actions/authActions';
+import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
+import { stopListeningChatWebSocketAction } from 'actions/notificationsActions';
 
 export type OAuthTokens = {
   refreshToken?: string,
@@ -33,7 +36,8 @@ export const updateOAuthTokensCB = (dispatch: Function, signalCredentials?: Obje
       type: UPDATE_OAUTH_TOKENS,
       payload: oAuthTokens,
     });
-    if (typeof signalCredentials !== 'undefined') {
+    if (!isEmpty(signalCredentials)) {
+      // $FlowFixMe
       await dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
     }
     dispatch(saveDbAction('oAuthTokens', { oAuthTokens }, true));
@@ -42,6 +46,8 @@ export const updateOAuthTokensCB = (dispatch: Function, signalCredentials?: Obje
 
 export const onOAuthTokensFailedCB = (dispatch: Function) => {
   return async (callback: Function) => {
+    dispatch(stopListeningChatWebSocketAction());
+    dispatch(updateSignalInitiatedStateAction(false));
     dispatch(lockScreenAction(callback, 'Authentication tokens expired, please enter your PIN to proceed.'));
   };
 };
