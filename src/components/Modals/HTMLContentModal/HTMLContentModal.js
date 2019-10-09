@@ -24,6 +24,7 @@ import HTMLView from 'react-native-htmlview';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import Spinner from 'components/Spinner';
+import type { ScrollToProps } from 'components/Modals/SlideModal';
 
 type Props = {
   htmlEndpoint: string,
@@ -36,18 +37,13 @@ type Props = {
 type State = {
   isHtmlFetched: boolean,
   htmlData: string,
-  scrollOffset?: number,
-  contentContainerHeight?: number,
-  containerHeight?: number,
+  scrollOffset?: ?number,
+  contentContainerHeight?: ?number,
+  containerHeight?: ?number,
 };
 
 type CustomNode = {
   name: string,
-}
-
-type ScrollToProps = {
-  x: number,
-  y: number,
 }
 
 const LEGAL_HTML_ENDPOINT = 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/';
