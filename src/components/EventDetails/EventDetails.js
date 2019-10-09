@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Linking, Dimensions, ScrollView } from 'react-native';
+import { Linking, Dimensions, ScrollView, Clipboard } from 'react-native';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
@@ -83,6 +83,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // local components
 import EventHeader from './EventHeader';
+import Toast from '../Toast';
 
 type Props = {
   transaction: Transaction,
@@ -333,11 +334,10 @@ class EventDetails extends React.Component<Props, State> {
       const value = formatUnits(txInfo.value, decimals);
       const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);
+      const relatedAddress = isReceived ? from : to;
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
-      let relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
-        ? `${from.slice(0, 7)}…${from.slice(-7)}`
-        : `${to.slice(0, 7)}…${to.slice(-7)}`);
+      let relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || relatedAddress;
       if (addressesEqual(to, from)) {
         relatedUserTitle = 'My account';
       }
@@ -372,8 +372,7 @@ class EventDetails extends React.Component<Props, State> {
           {showAmountReceived &&
           <ListItemUnderlined
             label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
-            value={formatFullAmount(value)}
-            valueAdditionalText={asset}
+            value={`${formatFullAmount(value)} ${asset}`}
           />
           }
           {showAmountTxType &&
@@ -397,6 +396,7 @@ class EventDetails extends React.Component<Props, State> {
               noShadow
               borderWidth={0}
             />)}
+            onPress={Object.keys(relatedUser).length ? null : () => this.writeToClipboard(relatedUserTitle)}
           />
           }
           {listSettledAssets &&
@@ -408,8 +408,7 @@ class EventDetails extends React.Component<Props, State> {
           {(toMyself || !isReceived) && !isPending && (freeTx || !!fee) &&
           <ListItemUnderlined
             label="TRANSACTION FEE"
-            value={freeTx ? 'free' : utils.formatEther(fee.toString())}
-            valueAdditionalText={freeTx ? '' : 'ETH'}
+            value={freeTx ? 'free' : `${utils.formatEther(fee.toString())} ETH`}
           />
           }
           {!!hasNote && showNote &&
@@ -474,8 +473,7 @@ class EventDetails extends React.Component<Props, State> {
           {(toMyself || !isReceived) && !!fee &&
           <ListItemUnderlined
             label="TRANSACTION FEE"
-            value={utils.formatEther(fee.toString())}
-            valueAdditionalText="ETH"
+            value={`${utils.formatEther(fee.toString())} ETH`}
           />
           }
           {!!hasNote &&
@@ -661,6 +659,11 @@ class EventDetails extends React.Component<Props, State> {
     );
   };
 
+  writeToClipboard = async (valueToSet) => {
+    await Clipboard.setString(valueToSet);
+    Toast.show({ message: 'Address copied to clipboard', type: 'success', title: 'Success' });
+  };
+
   render() {
     const {
       eventType,
@@ -673,6 +676,7 @@ class EventDetails extends React.Component<Props, State> {
 
     return (
       <ContentWrapper>
+        {this.renderEventHeader(eventType, eventStatus)}
         <ScrollView
           style={{ flexGrow: 1 }}
           onScroll={(event) => {
@@ -689,14 +693,12 @@ class EventDetails extends React.Component<Props, State> {
           onContentSizeChange={(contentWidth, contentHeight) => {
             if (getMaxScrollOffset && containerHeight) getMaxScrollOffset(containerHeight - contentHeight);
           }}
-          scrollEventThrottle={20}
+          scrollEventThrottle={16}
           ref={getRef}
-          stickyHeaderIndices={[0]}
           scrollToOverflowEnabled={false}
           showsVerticalScrollIndicator={false}
           overScrollMode="never"
         >
-          {this.renderEventHeader(eventType, eventStatus)}
           {this.renderEventBody(eventType)}
         </ScrollView>
         {this.renderEventButtons(eventType, eventStatus)}
