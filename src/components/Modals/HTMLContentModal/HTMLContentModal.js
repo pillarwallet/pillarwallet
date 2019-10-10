@@ -37,9 +37,9 @@ type Props = {
 type State = {
   isHtmlFetched: boolean,
   htmlData: string,
-  scrollOffset?: ?number,
-  contentContainerHeight?: ?number,
-  containerHeight?: ?number,
+  scrollOffset: ?number,
+  contentContainerHeight: ?number,
+  containerHeight: ?number,
 };
 
 type CustomNode = {

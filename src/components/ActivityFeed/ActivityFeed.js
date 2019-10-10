@@ -206,8 +206,8 @@ type State = {
   tabIsChanging: boolean,
   formattedFeedData: FeedSection[],
   emptyStateData: EmptyState,
-  scrollOffset?: ?number,
-  maxScrollOffset?: ?number,
+  scrollOffset: ?number,
+  maxScrollOffset: ?number,
 }
 
 const PPNIcon = require('assets/icons/icon_PPN.png');

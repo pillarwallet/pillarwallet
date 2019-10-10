@@ -42,6 +42,7 @@ import Button from 'components/Button';
 import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
 import ProfileImage from 'components/ProfileImage';
+import Toast from 'components/Toast';
 
 // utils
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
@@ -83,7 +84,6 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // local components
 import EventHeader from './EventHeader';
-import Toast from '../Toast';
 
 type Props = {
   transaction: Transaction,
@@ -111,7 +111,7 @@ type Props = {
 }
 
 type State = {
-  containerHeight?: number,
+  containerHeight: ?number,
 }
 
 const { height: screenHeight } = Dimensions.get('window');
@@ -367,6 +367,8 @@ class EventDetails extends React.Component<Props, State> {
         txType = 'TANK TOP UP';
       }
 
+      const showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
+
       return (
         <EventBody>
           {showAmountReceived &&
@@ -405,7 +407,7 @@ class EventDetails extends React.Component<Props, State> {
             value={extra.map(item => <BoldText key={item.hash}> {item.value} {item.symbol}</BoldText>)}
           />
           }
-          {(toMyself || !isReceived) && !isPending && (freeTx || !!fee) &&
+          {showFeeBlock &&
           <ListItemUnderlined
             label="TRANSACTION FEE"
             value={freeTx ? 'free' : `${utils.formatEther(fee.toString())} ETH`}
