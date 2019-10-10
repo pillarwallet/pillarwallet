@@ -26,11 +26,9 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
+import ImageView from 'react-native-image-view';
 
-import {
-  SEND_COLLECTIBLE_FROM_ASSET_FLOW,
-  FULL_SCREEN_COLLECTIBLE,
-} from 'constants/navigationConstants';
+import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 import ActivityFeed from 'components/ActivityFeed';
@@ -59,6 +57,10 @@ type Props = {
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
 };
+
+type State = {|
+  isImageViewVisible: boolean,
+|};
 
 const ActionButtonsWrapper = styled.View`
   flex: 1;
@@ -101,14 +103,23 @@ const CollectibleImage = styled(CachedImage)`
 const iconSend = require('assets/icons/icon_send.png');
 const genericCollectible = require('assets/images/no_logo.png');
 
-class CollectibleScreen extends React.Component<Props> {
-  shouldComponentUpdate(nextProps: Props) {
+class CollectibleScreen extends React.Component<Props, State> {
+  state = {
+    isImageViewVisible: false,
+  };
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isFocused = this.props.navigation.isFocused();
     if (!isFocused) {
       return false;
     }
-    const isEq = isEqual(this.props, nextProps);
-    return !isEq;
+    if (!isEqual(this.state, nextState)) {
+      return true;
+    }
+    if (!isEqual(this.props, nextProps)) {
+      return true;
+    }
+    return false;
   }
 
   goToSendTokenFlow = (assetData: Object) => {
@@ -116,9 +127,32 @@ class CollectibleScreen extends React.Component<Props> {
   };
 
   onTouchImage = () => {
-    const { navigation: { state: { params: { assetData } } } } = this.props;
+    this.setState({ isImageViewVisible: true });
+  }
 
-    this.props.navigation.navigate(FULL_SCREEN_COLLECTIBLE, { collectible: assetData });
+  onCloseImageView = () => {
+    this.setState({ isImageViewVisible: false });
+  }
+
+  renderImageView(collectible: Collectible) {
+    const { isImageViewVisible } = this.state;
+    const { image, name } = collectible;
+
+    const imageViewImages = [
+      {
+        source: { uri: image },
+        title: name,
+      },
+    ];
+
+    return (
+      <ImageView
+        images={imageViewImages}
+        imageIndex={0}
+        isVisible={isImageViewVisible}
+        onClose={this.onCloseImageView}
+      />
+    );
   }
 
   render() {
@@ -158,6 +192,8 @@ class CollectibleScreen extends React.Component<Props> {
 
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }}>
+        {this.renderImageView(assetData)}
+
         <ScrollWrapper>
           <TouchableOpacity onPress={this.onTouchImage}>
             <CollectibleImage
