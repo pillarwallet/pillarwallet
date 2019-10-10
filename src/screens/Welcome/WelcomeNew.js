@@ -141,7 +141,7 @@ class Welcome extends React.Component<Props> {
         <Footer
           style={{ paddingBottom: 30 }}
         >
-          <Button roundedCorners marginBottom="20px" onPress={this.loginAction} title="Create account" width="auto" />
+          <Button marginBottom="20px" onPress={this.loginAction} title="Create account" width="auto" />
           <ButtonText
             buttonText="Restore wallet"
             onPress={this.navigateToWalletImportPage}
