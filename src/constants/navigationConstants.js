@@ -37,6 +37,7 @@ export const CHAT = 'CHAT';
 export const ICO = 'ICO';
 export const BACKUP_WALLET_IN_SETTINGS_FLOW = 'BACKUP_WALLET_IN_SETTINGS_FLOW';
 export const COLLECTIBLE = 'COLLECTIBLE';
+export const FULL_SCREEN_COLLECTIBLE = 'FULL_SCREEN_COLLECTIBLE';
 export const BADGE = 'BADGE';
 export const CONFIRM_CLAIM = 'CONFIRM_CLAIM';
 export const SETTINGS = 'SETTINGS';

@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, TouchableOpacity } from 'react-native';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -27,7 +27,10 @@ import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 
-import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import {
+  SEND_COLLECTIBLE_FROM_ASSET_FLOW,
+  FULL_SCREEN_COLLECTIBLE,
+} from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 import ActivityFeed from 'components/ActivityFeed';
@@ -45,6 +48,7 @@ import { accountHistorySelector } from 'selectors/history';
 import type { Collectible } from 'models/Collectible';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -111,6 +115,12 @@ class CollectibleScreen extends React.Component<Props> {
     this.props.navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
   };
 
+  onTouchImage = () => {
+    const { navigation: { state: { params: { assetData } } } } = this.props;
+
+    this.props.navigation.navigate(FULL_SCREEN_COLLECTIBLE, { collectible: assetData });
+  }
+
   render() {
     const {
       navigation,
@@ -149,12 +159,14 @@ class CollectibleScreen extends React.Component<Props> {
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }}>
         <ScrollWrapper>
-          <CollectibleImage
-            key={id.toString()}
-            source={{ uri: image }}
-            fallbackSource={genericCollectible}
-            resizeMode="contain"
-          />
+          <TouchableOpacity onPress={this.onTouchImage}>
+            <CollectibleImage
+              key={id.toString()}
+              source={{ uri: image }}
+              fallbackSource={genericCollectible}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
           <DataWrapper>
             {!!description &&
               <Description small light>{description.replace(new RegExp('\\n\\n', 'g'), '\n')}</Description>
@@ -188,7 +200,7 @@ class CollectibleScreen extends React.Component<Props> {
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   accounts: { data: accounts },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   contactsSmartAddresses,
   accounts,
@@ -200,7 +212,7 @@ const structuredSelector = createStructuredSelector({
   openSeaTxHistory: accountCollectiblesHistorySelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState) => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });

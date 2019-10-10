@@ -58,6 +58,7 @@ import ConfirmScreen from 'screens/Participate/Confirm';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
+import FullScreenCollectibleScreen from 'screens/Collectible/FullScreenCollectible';
 import WalletConnectSessionRequest from 'screens/WalletConnect/WalletConnectSessionRequest';
 import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
@@ -157,6 +158,7 @@ import {
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   COLLECTIBLE,
+  FULL_SCREEN_COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
   WALLETCONNECT_FLOW,
@@ -262,6 +264,7 @@ const assetsFlow = createStackNavigator(
     [ASSETS]: AssetsScreen,
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
+    [FULL_SCREEN_COLLECTIBLE]: FullScreenCollectibleScreen,
     [CONTACT]: ContactScreen,
     [WALLET_SETTINGS]: WalletSettingsScreen,
     [SETTINGS]: SettingsScreen,
