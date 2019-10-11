@@ -198,7 +198,7 @@ export const getiOSNavbarHeight = (): number => {
 
 export const modalTransition = {
   mode: 'modal',
-  navigationOptions: {
+  defaultNavigationOptions: {
     header: null,
   },
   transitionConfig: () => ({

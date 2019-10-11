@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
@@ -236,13 +237,13 @@ const StackNavigatorModalConfig = {
       easing: Easing.step0,
     },
   }),
-  navigationOptions: {
+  defaultNavigationOptions: {
     header: null,
   },
 };
 
 const StackNavigatorConfig = {
-  navigationOptions: {
+  defaultNavigationOptions: {
     header: null,
     gesturesEnabled: true,
   },
@@ -270,7 +271,7 @@ const assetsFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
+assetsFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // EXCHANGE FLOW
 const exchangeFlow = createStackNavigator({
@@ -281,7 +282,7 @@ const exchangeFlow = createStackNavigator({
   [FIAT_CRYPTO]: FiatCryptoScreen,
 }, StackNavigatorConfig);
 
-exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
+exchangeFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
@@ -293,7 +294,7 @@ const peopleFlow = createStackNavigator({
   [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
 
-peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
+peopleFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
@@ -320,7 +321,7 @@ const homeFlow = createStackNavigator({
   [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
 
-homeFlow.navigationOptions = hideTabNavigatorOnChildView;
+homeFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => ({ focused }) => {
   const notificationColor = warningNotification ? baseColors.burningFire : baseColors.sunYellow;
@@ -498,7 +499,7 @@ const smartWalletUpgradeFlow = createStackNavigator({
   [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
-smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
+smartWalletUpgradeFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // PPN SEND TOKEN FROM ASSET FLOW
 const ppnSendTokenFromAssetFlow = createStackNavigator(
@@ -517,7 +518,7 @@ const manageWalletsFlow = createStackNavigator({
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
 }, StackNavigatorConfig);
 
-manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
+manageWalletsFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // MANAGE USERS FLOW
 const manageUsersFlow = createStackNavigator({
@@ -526,7 +527,7 @@ const manageUsersFlow = createStackNavigator({
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
-manageUsersFlow.navigationOptions = hideTabNavigatorOnChildView;
+manageUsersFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // TANK FLOWS
 const tankSettleFlow = createStackNavigator({
@@ -534,21 +535,21 @@ const tankSettleFlow = createStackNavigator({
   [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfrimScreen,
 }, StackNavigatorConfig);
 
-tankSettleFlow.navigationOptions = hideTabNavigatorOnChildView;
+tankSettleFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 const tankFundFlow = createStackNavigator({
   [FUND_TANK]: FundTankScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
 }, StackNavigatorConfig);
 
-tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
+tankFundFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 const tankWithdrawalFlow = createStackNavigator({
   [TANK_WITHDRAWAL]: TankWithdrawalScreen,
   [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
 }, StackNavigatorConfig);
 
-tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
+tankWithdrawalFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -819,6 +820,6 @@ const ConnectedAppFlow = connect(
   mapDispatchToProps,
 )(AppFlow);
 ConnectedAppFlow.router = AppFlowNavigation.router;
-ConnectedAppFlow.navigationOptions = AppFlowNavigation.navigationOptions;
+ConnectedAppFlow.defaultNavigationOptions = AppFlowNavigation.defaultNavigationOptions;
 
 export default ConnectedAppFlow;
