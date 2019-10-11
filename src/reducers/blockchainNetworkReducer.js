@@ -46,6 +46,12 @@ const initialState: BlockchainNetworkReducerState = {
       isActive: false,
       isAvailable: true,
     },
+    {
+      id: BLOCKCHAIN_NETWORK_TYPES.BITCOIN,
+      title: 'Bitcoin network',
+      isActive: false,
+      isAvailable: false,
+    },
   ],
 };
 
