@@ -18,61 +18,55 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 
 export const BaseText = styled.Text`
-  font-family: Aktiv Grotesk App;
-  font-weight: 400;
-  include-font-padding: false;
+  font-family: EuclidCircularB-Regular;
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;
 
 export const BoldText = styled(BaseText)`
-  font-family: Aktiv Grotesk App;
-  font-weight: 600;
-  include-font-padding: false;
+  font-family: EuclidCircularB-Bold;
+  text-align-vertical: center;
+  color: ${UIColors.defaultTextColor};
+`;
+
+export const ExtraBoldText = styled(BaseText)`
+  font-family: EuclidCircularB-Bold;
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;
 
 export const LightText = styled(BaseText)`
-  font-family: Aktiv Grotesk App;
-  font-weight: 300;
-  include-font-padding: false;
+  font-family: EuclidCircularB-Light;
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;
 
 export const MediumText = styled(BaseText)`
-  font-family: Aktiv Grotesk App;
-  font-weight: 500;
-  include-font-padding: false;
+  font-family: EuclidCircularB-Medium;
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;
 
-
 export const Title = styled(BaseText)`
   font-size: ${fontSizes.extraLarge};
   margin: 20px 0;
-  font-weight: 700;
   padding: ${props => (props.padding ? '0 20px' : '0')};
   text-align: ${props => (props.align || 'left')};
 `;
 
 export const SubTitle = styled(BaseText)`
   font-size: ${fontSizes.medium};
-  font-weight: 400;
   color: ${UIColors.primary};
   text-align: ${props => (props.align || 'left')};
   line-height: 24px;
   margin: ${props => props.margin || '0 0 20px'};
 `;
 
-export const SubHeading = styled(BaseText)`
+export const SubHeading = styled(LightText)`
   font-size: ${fontSizes.extraExtraSmall};
-  font-weight: ${fontWeights.book};
   color: ${baseColors.darkGray};
   letter-spacing: 0.4;
 `;

@@ -116,6 +116,10 @@
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
+		<string>EuclidCircularB-Bold.otf</string>
+		<string>EuclidCircularB-Light.otf</string>
+		<string>EuclidCircularB-Medium.otf</string>
+		<string>EuclidCircularB-Regular.otf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
