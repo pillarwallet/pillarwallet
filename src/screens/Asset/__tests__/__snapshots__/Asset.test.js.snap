@@ -36,6 +36,7 @@ exports[`Asset renders the Asset correctly 1`] = `
     }
   >
     <View
+      androidStatusbarHeight={42}
       onLayout={[Function]}
       pointerEvents="box-none"
       style={
@@ -223,6 +224,8 @@ exports[`Asset renders the Asset correctly 1`] = `
     </View>
   </View>
   <View
+    androidStatusbarHeight={0}
+    color="#ffffff"
     onLayout={[Function]}
     pointerEvents="box-none"
     style={
