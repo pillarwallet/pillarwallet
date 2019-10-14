@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Animation from 'components/Animation';
 
@@ -43,7 +43,7 @@ const HeaderButtonRounded = styled.TouchableOpacity`
   border-radius: 20px;
 `;
 
-const RoundedButtonLabel = styled(BaseText)`
+const RoundedButtonLabel = styled(MediumText)`
   line-height: ${fontSizes.small};
   font-size: ${fontSizes.extraSmall}px;
   color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};

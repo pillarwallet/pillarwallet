@@ -25,7 +25,7 @@ import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import { connect } from 'react-redux';
 import ProfileImage from 'components/ProfileImage';
@@ -83,13 +83,11 @@ const HeaderRow = styled.View`
 
 const HeaderProfileImage = styled(ProfileImage)``;
 
-const HeaderTitle = styled(BaseText)`
-  line-height: ${fontSizes.extraSmall}px;
+const HeaderTitle = styled(MediumText)`
+  line-height: ${fontSizes.small}px;
   font-size: ${fontSizes.extraSmall}px;
   color: ${props => props.theme.color || UIColors.defaultTextColor};
-  font-weight: 500;
   text-align: ${props => props.centerText ? 'center' : 'left'};
-  max-height: 28px;
   margin-top: 2px;
 `;
 
@@ -291,7 +289,7 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.title) {
       return (
-        <View style={commonStyle} key={item.title}>
+        <View style={{ ...commonStyle, flexDirection: 'row', flexWrap: 'wrap' }} key={item.title}>
           <HeaderTitle
             theme={theme}
             style={item.color ? { color: item.color } : {}}
