@@ -56,9 +56,9 @@ const ListRow = styled(View)`
 const ListRowItem = styled(BaseText)`
   width: 50%;
   padding-right: ${spacing.rhythm}px;
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   letter-spacing: ${fontTrackings.tiny}px;
-  line-height: ${fontSizes.medium}px;
+  line-height: ${fontSizes.big}px;
   color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
 `;
 

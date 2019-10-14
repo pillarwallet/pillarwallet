@@ -79,7 +79,7 @@ const ConnectionConfirmationModal = (props: Props) => {
       subtitle={subtitle}
       subtitleStyles={{
         color: baseColors.darkGray,
-        fontSize: fontSizes.small,
+        fontSize: fontSizes.medium,
         lineHeight: 21,
         letterSpacing: 0.1,
         marginTop: 7,

@@ -193,11 +193,11 @@ const getButtonFontSize = (props) => {
   if (props.listItemButton) {
     return `${fontSizes.small}px`;
   } else if (props.small) {
-    return `${fontSizes.extraSmall}px`;
+    return `${fontSizes.small}px`;
   } else if (props.extraSmall) {
-    return `${fontSizes.extraExtraSmall}px`;
+    return `${fontSizes.extraSmall}px`;
   }
-  return `${fontSizes.medium}px`;
+  return `${fontSizes.big}px`;
 };
 
 const ButtonIcon = styled(Icon)`
@@ -265,7 +265,7 @@ const ButtonNextWrapper = styled.TouchableOpacity`
 `;
 
 const NextIcon = styled(Icon)`
-  font-size: ${fontSizes.extraLarge}px;
+  font-size: ${fontSizes.large}px;
   color: ${baseColors.white};
   transform: rotate(180deg);
 `;

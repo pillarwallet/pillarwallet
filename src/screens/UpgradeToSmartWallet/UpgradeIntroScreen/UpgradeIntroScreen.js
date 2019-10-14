@@ -72,12 +72,12 @@ const FeatureTextWrapper = styled.View`
 `;
 
 const FeatureLabel = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   color: ${baseColors.midnight};
 `;
 
 const FeatureBody = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   color: ${baseColors.midnight};
   opacity: 0.6;
   flex: 1;
@@ -133,7 +133,7 @@ class UpgradeIntroScreen extends React.PureComponent<Props> {
             nextText="Support"
             nextTextStyle={{
               color: baseColors.white,
-              fontSize: fontSizes.extraSmall,
+              fontSize: fontSizes.small,
               letterSpacing: 0.1,
               opacity: 0.8,
             }}

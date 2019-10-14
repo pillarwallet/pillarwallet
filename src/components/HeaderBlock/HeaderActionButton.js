@@ -44,8 +44,8 @@ const HeaderButtonRounded = styled.TouchableOpacity`
 `;
 
 const RoundedButtonLabel = styled(MediumText)`
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
+  line-height: ${fontSizes.medium}px;
+  font-size: ${fontSizes.small}px;
   color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};
   margin-left: 6px;
 `;

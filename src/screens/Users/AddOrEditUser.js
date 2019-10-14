@@ -189,7 +189,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           ],
         }}
       >
-        <ScrollWrapper>
+        <ScrollWrapper disableOnAndroid>
           <CameraButton onPress={this.openCamera}>
             <ImageWrapper>
               {!!profileImage && <ProfileImage

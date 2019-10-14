@@ -102,7 +102,7 @@ const SectionHeaderWrapper = styled.View`
 `;
 
 const SectionHeader = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
 `;
 

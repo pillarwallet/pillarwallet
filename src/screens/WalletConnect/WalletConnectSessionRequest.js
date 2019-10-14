@@ -47,7 +47,7 @@ const LabeledRow = styled.View`
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
 `;
 
 const OptionButton = styled(Button)`

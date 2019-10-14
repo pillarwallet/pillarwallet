@@ -63,7 +63,7 @@ const LabeledRow = styled.View`
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium}
+  font-size: ${fontSizes.big}px;
 `;
 
 const LabelSub = styled(Label)`
@@ -84,7 +84,7 @@ const ButtonWrapper = styled.View`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;

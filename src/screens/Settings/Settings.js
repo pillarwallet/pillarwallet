@@ -61,7 +61,7 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 
 // utils
 import { isProdEnv } from 'utils/environment';
-import { baseColors, fontSizes, fontTrackings, fontWeights, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontTrackings, fontWeights, spacing, lineHeights } from 'utils/variables';
 
 // partials
 import { SettingsSection } from './SettingsSection';
@@ -100,8 +100,8 @@ const storage = new Storage('db');
 const chat = new ChatService();
 
 const SettingsModalTitle = styled(BoldText)`
-  line-height: ${fontSizes.medium};
-  font-size: ${fontSizes.medium};
+  line-height: ${fontSizes.big}px;
+  font-size: ${fontSizes.big}px;
   font-weight: ${fontWeights.bold};
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
@@ -113,7 +113,7 @@ const StyledWrapper = styled(Wrapper)`
 `;
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
   line-height: 20px;
@@ -121,13 +121,13 @@ const CheckboxText = styled(BaseText)`
 `;
 
 const SmallText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
 `;
 
 const Description = styled(Paragraph)`
-  line-height: ${fontSizes.mediumLarge};
+  line-height: ${lineHeights.medium}px;
 `;
 
 const formSecurityItems = (that, showBiometricsSelector) => {

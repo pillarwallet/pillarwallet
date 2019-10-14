@@ -25,7 +25,7 @@ import { LightText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { fontSizes, fontTrackings, baseColors, fontWeights, spacing } from 'utils/variables';
+import { fontSizes, fontTrackings, baseColors, fontWeights, spacing, lineHeights } from 'utils/variables';
 
 const { width } = Dimensions.get('window');
 
@@ -97,14 +97,14 @@ const AmountWrapper = styled.View`
 `;
 
 const Amount = styled(LightText)`
-  font-size: ${fontSizes.extraLarge};
-  line-height: ${fontSizes.extraLarge};
+  font-size: ${fontSizes.large}px;
+  line-height: ${fontSizes.large}px;
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
   margin-right: ${props => props.innerCard ? '4px' : 0};
 `;
 
 const FiatAmount = styled(LightText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small}px;
   line-height: 14px;
   color: #fff;
   margin-left: -2px;
@@ -112,15 +112,15 @@ const FiatAmount = styled(LightText)`
 `;
 
 const Disclaimer = styled(LightText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small}px;
   line-height: 14px;
   color: ${baseColors.burningFire};
 `;
 
 const AmountToken = styled(LightText)`
-  font-size: ${props => props.innerCard ? fontSizes.extraLarge : fontSizes.medium};
+  font-size: ${props => props.innerCard ? fontSizes.large : fontSizes.big}px;
   font-weight: ${props => props.innerCard ? fontWeights.book : fontWeights.bold};
-  line-height: ${fontSizes.extraLarge};
+  line-height: ${fontSizes.large}px;
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
@@ -149,10 +149,10 @@ const IconCircle = styled.View`
 `;
 
 const Name = styled(BoldText)`
-  font-size: ${props => props.innerCard ? '34' : fontSizes.mediumLarge}px;
+  font-size: ${props => props.innerCard ? '34' : fontSizes.large}px;
   margin-top: ${props => props.innerCard ? '5px' : 0};
   letter-spacing: ${fontTrackings.medium};
-  line-height: ${props => props.innerCard ? '34' : fontSizes.mediumLarge};
+  line-height: ${props => props.innerCard ? '34' : lineHeights.medium}px;
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 

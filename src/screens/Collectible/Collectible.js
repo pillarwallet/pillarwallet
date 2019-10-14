@@ -36,7 +36,7 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, spacing, lineHeights } from 'utils/variables';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
@@ -77,7 +77,7 @@ const DataWrapper = styled.View`
 `;
 
 const Description = styled(Paragraph)`
-  line-height: ${fontSizes.mediumLarge};
+  line-height: ${lineHeights.medium}px;
 `;
 
 const CircleButtonsWrapper = styled(Wrapper)`

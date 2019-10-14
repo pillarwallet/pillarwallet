@@ -83,7 +83,7 @@ const LocalContactsItem = styled.TouchableOpacity`
 `;
 
 const LocalContactsItemName = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall};
+  font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   padding: 0 4px;
   margin-top: ${Platform.select({
@@ -194,7 +194,7 @@ class PeopleSearchResults extends React.Component<Props> {
             uri={contact.profileImage}
             userName={contact.username}
             diameter={itemSizes.avatarCircleMedium}
-            textStyle={{ fontSize: fontSizes.medium }}
+            textStyle={{ fontSize: fontSizes.big }}
           />
           <LocalContactsItemName numberOfLines={1}>{contact.username}</LocalContactsItemName>
         </LocalContactsItem>

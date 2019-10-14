@@ -66,7 +66,7 @@ const getTransactionErrorMessage = (error: string): string => {
 
 const CancelText = styled(BoldText)`
   color: ${baseColors.burningFire};
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
 `;
 
 class SendTokenTransaction extends React.Component<Props> {

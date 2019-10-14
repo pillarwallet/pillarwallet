@@ -77,7 +77,7 @@ const LabeledRow = styled.View`
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
 `;
 
 const LabelSub = styled(Label)`
@@ -86,7 +86,6 @@ const LabelSub = styled(Label)`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.extraSmall};
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;
@@ -444,7 +443,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       >
         {body}
         <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
-          {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
+          {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <OptionButton
               primaryInverted

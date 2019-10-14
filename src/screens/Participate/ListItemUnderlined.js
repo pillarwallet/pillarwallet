@@ -38,7 +38,7 @@ const ItemWrapper = styled.View`
 
 const ItemLabel = styled(MediumText)`
   text-align:center;
-  font-size: ${fontSizes.extraExtraSmall};
+  font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
 `;
 
@@ -51,7 +51,7 @@ const ItemValueHolder = styled.View`
 `;
 
 const ItemValue = styled(BoldText)`
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.big}px;
   font-weight: ${fontWeights.bold};
 `;
 

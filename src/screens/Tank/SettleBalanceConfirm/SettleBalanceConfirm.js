@@ -76,7 +76,7 @@ const LabeledRow = styled.View`
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium}
+  font-size: ${fontSizes.big}px;
 `;
 
 /*
@@ -86,7 +86,7 @@ const TextButton = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled(MediumText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
   letter-spacing: 0.1;
   color: #c95c45;
 `;

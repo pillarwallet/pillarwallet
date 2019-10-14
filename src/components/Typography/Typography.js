@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, lineHeights } from 'utils/variables';
 
 export const BaseText = styled.Text`
   font-family: EuclidCircularB-Regular;
@@ -45,14 +45,14 @@ export const MediumText = styled(BaseText)`
 `;
 
 export const Title = styled(BaseText)`
-  font-size: ${fontSizes.extraLarge};
+  font-size: ${fontSizes.large}px;
   margin: 20px 0;
   padding: ${props => (props.padding ? '0 20px' : '0')};
   text-align: ${props => (props.align || 'left')};
 `;
 
 export const SubTitle = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
   color: ${UIColors.primary};
   text-align: ${props => (props.align || 'left')};
   line-height: 24px;
@@ -60,7 +60,7 @@ export const SubTitle = styled(BaseText)`
 `;
 
 const subheadingStyle = `
-  font-size: ${fontSizes.extraExtraSmall};
+  font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   letter-spacing: 0.4;
 `;
@@ -74,7 +74,8 @@ export const SubHeadingMedium = styled(MediumText)`
 `;
 
 export const Paragraph = styled(BaseText)`
-  font-size: ${props => props.small ? fontSizes.small : fontSizes.medium};
+  font-size: ${props => props.small ? fontSizes.medium : fontSizes.big}px;
+  line-height: ${props => props.small ? lineHeights.medium : lineHeights.big}px;
   margin-bottom: ${props => props.small ? '5px' : '10px'};
   color: ${props => props.light ? baseColors.darkGray : UIColors.defaultTextColor};
   text-align: ${props => props.center ? 'center' : 'left'};
@@ -82,17 +83,17 @@ export const Paragraph = styled(BaseText)`
 `;
 
 export const TextLink = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   color: ${UIColors.primary};
 `;
 
 export const Label = styled(MediumText)`
-  font-size: ${props => props.small ? fontSizes.small : fontSizes.extraSmall};
+  font-size: ${props => props.small ? fontSizes.medium : fontSizes.small}px;
   color: ${props => props.color || baseColors.darkGray};
 `;
 
 export const HelpText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small}px;
   padding: 10px;
   color: grey;
 `;

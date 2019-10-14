@@ -404,7 +404,7 @@ class Contact extends React.Component<Props, State> {
                 onPress: () => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT }),
                 indicator: !!unreadChats.length,
                 color: baseColors.coolGrey,
-                fontSize: fontSizes.mediumLarge,
+                fontSize: fontSizes.large,
               }
             : {}],
         }}
@@ -426,7 +426,7 @@ class Contact extends React.Component<Props, State> {
                 uri={userAvatar}
                 userName={contactUsername}
                 borderWidth={4}
-                initialsSize={fontSizes.extraGiant}
+                initialsSize={48}
                 diameter={184}
                 style={{ backgroundColor: baseColors.geyser }}
                 imageUpdateTimeStamp={displayContact.lastUpdateTime}

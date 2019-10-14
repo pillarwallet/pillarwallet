@@ -53,7 +53,7 @@ const TextWrapper = styled.View`
 `;
 
 const ExplanationTitle = styled(BoldText)`
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.midnight};
 `;
 
@@ -63,7 +63,7 @@ const BodyWrapper = styled(BaseText)`
 `;
 
 const ExplanationBody = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   color: ${baseColors.midnight};
   flex: 1;
 `;

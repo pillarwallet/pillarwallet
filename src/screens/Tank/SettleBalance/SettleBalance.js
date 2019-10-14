@@ -118,7 +118,7 @@ const BalanceWrapper = styled.View`
 
 const ValueInFiat = styled(BaseText)`
   color: ${baseColors.coolGrey};
-  font-size: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
 `;
 
 const SubtitleView = styled.View`
@@ -142,7 +142,7 @@ const SectionHeaderWrapper = styled.View`
 `;
 
 const SectionHeader = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
 `;
 

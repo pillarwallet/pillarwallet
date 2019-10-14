@@ -31,7 +31,7 @@ const ComingSoonBanner = styled.View`
 `;
 
 const ComingSoonBannerText = styled(BoldText)`
-  font-size: ${fontSizes.extraLarge};
+  font-size: ${fontSizes.large}px;
   font-weight: ${fontWeights.bold};
 `;
 

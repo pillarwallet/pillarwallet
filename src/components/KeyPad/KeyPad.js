@@ -57,7 +57,7 @@ const PinButton = styled.TouchableOpacity`
 
 const ButtonText = styled(BaseText)`
   color: ${baseColors.slateBlack};
-  font-size: ${props => props.fontSize || fontSizes.extraLarge};
+  font-size: ${props => props.fontSize || fontSizes.large}px;
   align-self: center;
   line-height: 56;
 `;
@@ -128,9 +128,9 @@ export default class KeyPad extends React.Component<Props> {
       );
     }
 
-    let buttonFontSize = type === STRING ? fontSizes.mediumLarge : null;
+    let buttonFontSize = type === STRING ? fontSizes.large : null;
     if (value === KEYPAD_BUTTON_FORGOT) {
-      buttonFontSize = fontSizes.medium;
+      buttonFontSize = fontSizes.big;
     }
 
     return (

@@ -104,14 +104,14 @@ const TabItem = styled.TouchableOpacity`
 `;
 
 const TabItemIcon = styled(Icon)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small}px;
   margin-right: 4px;
   margin-top: 2px;
   color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
 `;
 
 const TabItemText = styled(MediumText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
 `;
 
@@ -227,7 +227,7 @@ const UnreadBadge = styled.View`
 `;
 
 const UnreadText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.white};
 `;
 

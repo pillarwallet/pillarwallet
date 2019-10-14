@@ -110,7 +110,7 @@ const renderDay = (props: Props) => (
     textStyle={{
       color: baseColors.darkGray,
       fontWeight: '400',
-      fontSize: fontSizes.extraSmall,
+      fontSize: fontSizes.small,
       fontFamily: 'Aktiv Grotesk App',
     }}
     dateFormat="LL"
@@ -126,13 +126,13 @@ const renderTime = (props: Props) => {
           color: baseColors.darkGray,
           fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
+          fontSize: fontSizes.extraSmall,
         },
         left: {
           color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
           fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
+          fontSize: fontSizes.extraSmall,
         },
       }}
       timeFormat="HH:mm"
@@ -159,7 +159,7 @@ const renderSend = (props: Props) => (
       name="send-message"
       style={{
         color: baseColors.brightBlue,
-        fontSize: fontSizes.extraLarge,
+        fontSize: fontSizes.large,
       }}
     />
   </Send>
@@ -408,8 +408,8 @@ class ChatTab extends React.Component<Props, State> {
             android: 8,
           }),
           marginBottom: 5,
-          fontSize: fontSizes.extraSmall,
-          lineHeight: fontSizes.small,
+          fontSize: fontSizes.small,
+          lineHeight: fontSizes.medium,
         }}
         placeholder="Type your message here"
         textInputProps={{
@@ -427,13 +427,13 @@ class ChatTab extends React.Component<Props, State> {
       textStyle={{
         left: {
           color: isWarning ? baseColors.white : baseColors.slateBlack,
-          fontSize: fontSizes.extraSmall,
+          fontSize: fontSizes.small,
           fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
         },
         right: {
           color: baseColors.slateBlack,
-          fontSize: fontSizes.extraSmall,
+          fontSize: fontSizes.small,
           fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
         },

@@ -112,7 +112,7 @@ const ColumnInner = styled.View`
 
 const BoldTitle = styled(BoldText)`
   color: ${baseColors.white};
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
 `;
 
 const Status = styled.View`
@@ -132,20 +132,20 @@ const StatusIcon = styled.View`
 
 const StatusText = styled(BaseText)`
   color: ${props => props.active ? baseColors.emerald : baseColors.fireEngineRed};
-  font-size: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
   letter-spacing: 0.15px;
 `;
 
 const ValueLabel = styled(BaseText)`
   color: ${props => props.total ? baseColors.caribbeanGreen : baseColors.lavenderBlue};
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   margin-bottom: 5px;
   opacity: ${props => props.light ? 0.7 : 1};
 `;
 
 const ValueText = styled(MediumText)`
   color: ${props => props.total ? baseColors.caribbeanGreen : baseColors.lavenderBlue};
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
 `;
 
 const TankHolder = styled.View`
@@ -292,7 +292,7 @@ class TankDetails extends React.Component<Props, State> {
           icon="close"
           color={baseColors.coolGrey}
           onPress={() => navigation.goBack(null)}
-          fontSize={fontSizes.small}
+          fontSize={fontSizes.medium}
           horizontalAlign="flex-end"
         />
         <ScrollWrapper contentContainerStyle={{ paddingHorizontal: 30, paddingTop: 70 }}>
@@ -379,7 +379,7 @@ class TankDetails extends React.Component<Props, State> {
             <ValueText style={{ color: baseColors.hoki }}>
               {`${usedFormattedAmount} ${PPN_TOKEN}`}
             </ValueText>
-            <ValueLabel style={{ color: baseColors.hoki, fontSize: fontSizes.extraExtraSmall }}>Used</ValueLabel>
+            <ValueLabel style={{ color: baseColors.hoki, fontSize: fontSizes.extraSmall }}>Used</ValueLabel>
           </ColumnAnimated>
           <FooterWrapper>
             <Button

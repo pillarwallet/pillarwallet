@@ -48,7 +48,7 @@ const ContentHolder = styled.View`
 `;
 
 const MessageText = styled(BoldText)`
-  font-size: ${fontSizes.extraLarge}px;
+  font-size: ${fontSizes.large}px;
   line-height: 40px;
   color: ${baseColors.slateBlack};
   position: absolute;

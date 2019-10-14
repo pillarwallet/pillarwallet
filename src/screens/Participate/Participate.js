@@ -91,7 +91,7 @@ function InputTemplate(locals) {
       errorMessage={errorMessage}
       inputProps={inputProps}
       inlineLabel
-      fontSize={fontSizes.large}
+      fontSize={fontSizes.big}
     />
   );
 }
@@ -113,7 +113,7 @@ const amountOptionsSelector = (selectedOption) => {
       <Icon
         name={getCurrencyIcon(selectedOption)}
         style={{
-          fontSize: fontSizes.extraLarge,
+          fontSize: fontSizes.large,
           color: baseColors.manatee,
           marginRight: 6,
         }}
@@ -188,7 +188,7 @@ const FooterInner = styled.View`
 
 const LegalText = styled(BaseText)`
   flex: 1;
-  font-size: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
   padding-right: 28px;
 `;
 
@@ -220,7 +220,7 @@ const ItemLabelHolder = styled.View`
 `;
 
 const ItemLabel = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   padding-right: 10px;
   flex: 1;
   color: ${baseColors.slateBlack};

@@ -123,7 +123,7 @@ const TopPartWrapper = styled.View`
 `;
 
 const SectionTitle = styled(MediumText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.blueYonder};
 `;
 
@@ -139,7 +139,7 @@ const TankBalance = styled(BaseText)`
 
 const BlueText = styled(BaseText)`
   color: ${baseColors.electricBlue};
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   margin-right: ${spacing.medium}px;
 `;
 

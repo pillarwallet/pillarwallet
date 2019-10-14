@@ -53,7 +53,7 @@ const MnemonicPhraseWord = styled.TouchableOpacity`
 `;
 
 const MnemonicPhraseWordText = styled(BoldText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small}px;
   color: #ffffff;
 `;
 
@@ -89,7 +89,7 @@ const RemoveWordButtonIcon = styled(IconButton)`
 `;
 
 const WordInputText = styled(BoldText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   color: white;
   margin-left: 10px;
 `;
@@ -104,7 +104,7 @@ const ShuffledWordWrapper = styled.View`
 
 const ErrorParagraph = styled(Paragraph)`
   color: ${baseColors.fireEngineRed};
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
 `;
 
 const FooterWrapper = styled.View`
@@ -190,7 +190,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
               <RemoveWordButtonIcon
                 icon="close"
                 onPress={this.handleLastWordRemoval}
-                fontSize={fontSizes.small}
+                fontSize={fontSizes.medium}
                 color={UIColors.primary}
               />
             }

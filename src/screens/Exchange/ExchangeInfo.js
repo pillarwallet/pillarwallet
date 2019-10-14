@@ -61,7 +61,7 @@ type State = {
 };
 
 const SectionTitle = styled(BoldText)`
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
   margin: 16px;
   margin-bottom: 10px;
 `;
@@ -76,11 +76,11 @@ const ProviderItem = styled.View`
 `;
 
 const ProviderName = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
 `;
 
 const ProviderStatus = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${props => props.isPending ? baseColors.darkGray : baseColors.jadeGreen};
 `;
 
@@ -90,7 +90,7 @@ const DisconnectButton = styled.TouchableOpacity`
 `;
 
 const DisconnectButtonLabel = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.blueViolet};
 `;
 

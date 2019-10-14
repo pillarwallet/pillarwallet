@@ -48,18 +48,18 @@ const ProfileCardAvatar = styled.View`
 `;
 
 const ProfileCardAvatarText = styled(BoldText)`
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.snowWhite};
 `;
 
 const ProfileCardName = styled(BaseText)`
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.big}px;
   color: ${UIColors.defaultTextColor};
   margin-bottom: 10px;
 `;
 
 const ProfileCardEmail = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   color: ${UIColors.defaultTextColor};
 `;
 

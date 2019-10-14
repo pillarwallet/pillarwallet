@@ -33,13 +33,13 @@ const Image = styled(BadgeImage)`
 
 const Subtitle = styled(BoldText)`
   padding-top: 40px;
-  font-size: ${fontSizes.semiGiant}px;
+  font-size: ${fontSizes.giant}px;
   text-align: center;
 `;
 
 const Description = styled(BaseText)`
   padding-top: 40px;
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   color: ${baseColors.darkGray};
 `;
 

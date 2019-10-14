@@ -34,7 +34,7 @@ const WarningBannerBackground = styled.View`
 
 const WarningBannerText = styled(BoldText)`
   color: ${baseColors.white};
-  font-size: ${props => props.small ? fontSizes.extraSmall : fontSizes.small};
+  font-size: ${props => props.small ? fontSizes.small : fontSizes.medium}px;
   font-weight: ${fontWeights.bold};
 `;
 

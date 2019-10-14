@@ -74,14 +74,14 @@ const ListItem = styled.View`
 `;
 
 const ItemLabel = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  line-height: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
+  line-height: ${fontSizes.medium}px;
   color: ${props => props.color ? props.color : baseColors.electricBlue};
 `;
 
 const SubText = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall};
-  line-height: ${fontSizes.extraExtraSmall};
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: ${fontSizes.extraSmall}px;
   color: ${props => props.color ? props.color : baseColors.darkGray};
   margin-top: 4px;
 `;
@@ -171,7 +171,7 @@ export const ListItemChevron = (props: Props) => {
             <Icon
               name="chevron-right"
               style={{
-                fontSize: fontSizes.extraExtraSmall,
+                fontSize: fontSizes.extraSmall,
                 color: color || baseColors.electricBlue,
                 ...chevronStyle,
               }}

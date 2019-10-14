@@ -338,7 +338,7 @@ class Permissions extends React.Component<Props, State> {
       );
     }
     return (
-      <SectionTitle key={key} style={{ margin: 30, fontSize: fontSizes.small }}>{title}</SectionTitle>
+      <SectionTitle key={key} style={{ margin: 30, fontSize: fontSizes.medium }}>{title}</SectionTitle>
     );
   };
 

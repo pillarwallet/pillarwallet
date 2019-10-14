@@ -45,13 +45,13 @@ type Props = {
 }
 
 const MessageTitle = styled(BoldText)`
-  font-size: ${fontSizes.large}px;
+  font-size: ${fontSizes.big}px;
   text-align: center;
 `;
 
 const Message = styled(BaseText)`
   padding-top: 20px;
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
   text-align: center;
 `;

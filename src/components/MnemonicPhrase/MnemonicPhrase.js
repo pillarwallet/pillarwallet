@@ -46,12 +46,12 @@ const MnemonicPhraseItem = styled.View`
 const MnemonicPhraseIndex = styled(BaseText)`
   flex: 0 0 30px;
   text-align: right;
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   color: ${transparentize(0.5, baseColors.white)};
 `;
 
 const MnemonicPhraseWord = styled(BoldText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   padding-left: 10px;
   flex: 1;
   color: ${baseColors.white};

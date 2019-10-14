@@ -87,7 +87,7 @@ const BackIcon = styled(IconButton)`
 
 const CloseIconText = styled(BaseText)`
   color: ${props => props.light ? baseColors.white : baseColors.darkGray};
-  font-size: ${fontSizes.extraExtraSmall};
+  font-size: ${fontSizes.extraSmall}px;
 `;
 
 const IconWrapper = styled.View`
@@ -192,7 +192,7 @@ const Header = (props: Props) => {
               icon={backIcon || 'back'}
               color={light ? baseColors.white : UIColors.defaultNavigationColor}
               onPress={() => onBack()}
-              fontSize={fontSizes.extraLarge}
+              fontSize={fontSizes.large}
               horizontalAlign="flex-start"
             />
           }
@@ -229,7 +229,7 @@ const Header = (props: Props) => {
                   icon={nextIcon}
                   color={light ? baseColors.white : UIColors.primary}
                   onPress={onNextPress}
-                  fontSize={nextIconSize || fontSizes.small}
+                  fontSize={nextIconSize || fontSizes.medium}
                   horizontalAlign="flex-end"
                 />
               </IconWrapper>
@@ -244,7 +244,7 @@ const Header = (props: Props) => {
                   icon="close"
                   color={light ? baseColors.white : UIColors.defaultNavigationColor}
                   onPress={onClose}
-                  fontSize={fontSizes.small}
+                  fontSize={fontSizes.medium}
                   horizontalAlign="center"
                 />
               </IconWrapper>

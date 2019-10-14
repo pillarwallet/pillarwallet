@@ -153,27 +153,28 @@ export const UIColors = {
 };
 
 export const fontSizes = {
-  micro: 8,
   tiny: 10,
-  extraExtraSmall: 12,
-  extraSmall: 14,
-  small: 16,
-  medium: 18,
-  mediumLarge: 20,
-  large: 22,
-  extraLarge: 24,
-  extraLarger: 28,
-  extraExtraLarge: 32,
-  semiGiant: 34,
+  extraSmall: 12,
+  small: 14,
+  medium: 16,
+  big: 18,
+  large: 24,
   giant: 36,
-  extraGiant: 48,
-  iosIcons: 32,
-  androidCloseIcon: 22,
-  androidCheckmarkIcon: 26,
+  rBig: responsiveSize(18),
+  rLarge: responsiveSize(24),
   rJumbo: responsiveSize(64),
-  rMedium: responsiveSize(18),
-  rLarge: responsiveSize(25),
-  rExtraLarger: responsiveSize(28),
+};
+
+export const lineHeights = {
+  tiny: 14,
+  extraSmall: 18,
+  small: 22,
+  medium: 24,
+  big: 28,
+  large: 38,
+  giant: 54,
+  rBig: responsiveSize(28),
+  rLarge: responsiveSize(38),
 };
 
 export const spacing = {

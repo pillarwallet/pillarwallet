@@ -851,7 +851,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                     Array [
                       Object {
                         "color": "#0A1427",
-                        "fontSize": 34,
+                        "fontSize": 36,
                         "textAlign": "center",
                       },
                       undefined,
@@ -1553,7 +1553,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                                 Array [
                                   Object {
                                     "fontSize": 18,
-                                    "lineHeight": 28,
+                                    "lineHeight": 24,
                                   },
                                   Object {},
                                 ],
@@ -2258,7 +2258,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "color": "#8B939E",
-                              "lineHeight": 22,
+                              "lineHeight": 18,
                             },
                             undefined,
                           ],
@@ -2661,7 +2661,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                                 Array [
                                   Object {
                                     "fontSize": 18,
-                                    "lineHeight": 28,
+                                    "lineHeight": 24,
                                   },
                                   Object {},
                                 ],
@@ -2774,12 +2774,12 @@ exports[`Asset renders the Asset correctly 1`] = `
                           "color": "#8B939E",
                           "flexWrap": "wrap",
                           "fontSize": 16,
+                          "lineHeight": 24,
                           "marginBottom": 5,
                           "textAlign": "left",
                         },
                         Array [
                           Object {
-                            "lineHeight": 20,
                             "paddingBottom": 80,
                           },
                           undefined,
@@ -2925,7 +2925,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "color": "#8B939E",
-                              "lineHeight": 22,
+                              "lineHeight": 18,
                             },
                             undefined,
                           ],

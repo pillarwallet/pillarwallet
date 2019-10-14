@@ -34,15 +34,15 @@ const EmptySectionTextWrapper = styled.View`
 `;
 
 const EmptySectionTitle = styled(BaseText)`
-  font-size: ${fontSizes.large}px;
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.slateBlack};
   margin-bottom: 6px;
   text-align: center;
 `;
 
 const EmptySectionText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.extraLarge}px;
+  font-size: ${fontSizes.medium}px;
+  line-height: ${fontSizes.large}px;
   color: ${baseColors.darkGray};
   text-align: center;
 `;

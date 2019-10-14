@@ -53,7 +53,7 @@ type State = {
 };
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
   line-height: 20px;
@@ -216,7 +216,7 @@ class LegalTerms extends React.Component<Props, State> {
             <ButtonText
               buttonText="Backup wallet"
               onPress={this.backupWallet}
-              fontSize={fontSizes.medium}
+              fontSize={fontSizes.big}
               wrapperStyle={{ marginTop: 20 }}
             />}
           </MultiButtonWrapper>

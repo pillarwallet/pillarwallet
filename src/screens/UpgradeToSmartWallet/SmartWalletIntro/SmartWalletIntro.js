@@ -33,7 +33,7 @@ import { LabelBadge } from 'components/LabelBadge';
 import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
 
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, lineHeights } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 // import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
 // import { getRate } from 'utils/assets';
@@ -69,8 +69,8 @@ const Title = styled(BoldText)`
 
 const BodyText = styled(MediumText)`
   color: ${baseColors.persianBlue};
-  font-size: ${fontSizes.rMedium}px;
-  line-height: ${fontSizes.rExtraLarger}px;
+  font-size: ${fontSizes.rBig}px;
+  line-height: ${lineHeights.rBig}px;
   margin-top: ${responsiveSize(26)}px;
 `;
 

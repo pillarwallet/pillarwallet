@@ -150,20 +150,20 @@ const ValueWrapper = styled.View`
 `;
 
 const TokenValue = styled(BoldText)`
-  font-size: ${fontSizes.semiGiant}px;
+  font-size: ${fontSizes.giant}px;
   text-align: center;
   color: ${props => props.isSynthetic ? baseColors.electricBlueIntense : baseColors.slateBlack};
 `;
 
 const ValueInFiat = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
   text-align: center;
   color: ${baseColors.darkGray};
   margin-top: 5px;
 `;
 
 const Disclaimer = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   text-align: center;
   color: ${baseColors.burningFire};
   margin-top: 5px;
@@ -171,7 +171,6 @@ const Disclaimer = styled(BaseText)`
 
 const Description = styled(Paragraph)`
   padding-bottom: 80px;
-  line-height: ${fontSizes.mediumLarge};
 `;
 
 const ValuesWrapper = styled.View`
@@ -316,7 +315,7 @@ class AssetScreen extends React.Component<Props, State> {
               onPress: () => { this.setState({ showDescriptionModal: true }); },
             },
           ],
-          rightIconsSize: fontSizes.extraLarge,
+          rightIconsSize: fontSizes.large,
         }}
         backgroundColor={baseColors.white}
         inset={{ bottom: 0 }}

@@ -57,8 +57,8 @@ const UsernameWrapper = styled(Wrapper)`
 `;
 
 const Text = styled(BoldText)`
-  line-height: ${fontSizes.large};
-  font-size: ${fontSizes.large};
+  line-height: ${fontSizes.big}px;
+  font-size: ${fontSizes.big}px;
   font-weight: ${fontWeights.bold};
   width: 100%;
   text-align: center;
@@ -76,13 +76,13 @@ const StyledWrapper = styled.View`
 `;
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   line-height: 20px;
   color: ${baseColors.coolGrey};
 `;
 
 const StyledTextLink = styled(TextLink)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   line-height: 20px;
   color: ${baseColors.rockBlue};
 `;
@@ -310,7 +310,7 @@ class NewProfile extends React.Component<Props, State> {
           diameter={PROFILE_IMAGE_WIDTH}
           style={{ marginBottom: 47 }}
           userName={apiUser.username}
-          initialsSize={fontSizes.extraGiant}
+          initialsSize={48}
         />
         <UsernameWrapper>
           <Text>Welcome back,</Text>

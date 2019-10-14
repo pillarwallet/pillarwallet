@@ -56,7 +56,7 @@ const QRCodeWrapper = styled.View`
 `;
 
 const WalletAddress = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
 `;
 
 export default class ReceiveModal extends React.Component<Props, *> {

@@ -106,7 +106,7 @@ const getTheme = (props: Props) => {
 };
 
 const Label = styled(MediumText)`
-  font-size: ${fontSizes.extraExtraSmall};
+  font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   padding-bottom: ${spacing.rhythm / 2}px;
 `;
@@ -184,7 +184,7 @@ const ErrorMessage = styled(BaseText)`
 `;
 
 const InputField = styled(Input)`
-  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraExtraLarge}px;
+  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.giant}px;
   include-font-padding: false;
   text-align: ${props => props.textAlign || 'right'};
   textAlignVertical: center;
@@ -360,7 +360,7 @@ class SingleInput extends React.Component<Props, *> {
           <IconButton
             icon="scan"
             color={baseColors.electricBlue}
-            fontSize={fontSizes.extraLarge}
+            fontSize={fontSizes.large}
             onPress={onPress}
             iconText={outterIconText}
             style={{

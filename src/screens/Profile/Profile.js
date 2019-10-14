@@ -58,7 +58,7 @@ import { logScreenViewAction, logEventAction } from 'actions/analyticsActions';
 import { isProdEnv } from 'utils/environment';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
-import { fontSizes, fontTrackings, baseColors, spacing } from 'utils/variables';
+import { fontSizes, fontTrackings, baseColors, spacing, lineHeights } from 'utils/variables';
 import { delay } from 'utils/common';
 import ProfileSettingsItem from 'components/ListItem/SettingsItem';
 import Button from 'components/Button';
@@ -87,7 +87,7 @@ const ListSeparator = styled.View`
 `;
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
   line-height: 20px;
@@ -95,7 +95,7 @@ const CheckboxText = styled(BaseText)`
 `;
 
 const SmallText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
 `;
@@ -108,7 +108,7 @@ const StyledWrapper = styled(Wrapper)`
 
 const Description = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
-  line-height: ${fontSizes.mediumLarge};
+  line-height: ${lineHeights.medium}px;
 `;
 
 const cityFormFields = [{

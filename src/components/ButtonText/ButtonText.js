@@ -31,7 +31,7 @@ type Props = {
 }
 
 const ButtonLabel = styled(BaseText)`
-  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraSmall}px;
+  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.small}px;
   color: rgb(32,119,253);
 `;
 

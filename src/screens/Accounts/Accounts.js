@@ -170,7 +170,7 @@ const FooterWrapper = styled.View`
 const FooterParagraph = styled(BaseText)`
   text-align: center;
   color: ${baseColors.coolGrey};
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
 `;
 
 const pillarNetworkIcon = require('assets/icons/icon_PPN.png');

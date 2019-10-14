@@ -87,7 +87,7 @@ const CustomToggleWrapper = styled.View`
 `;
 
 const ItemLabel = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
 `;
 
 const ListAddon = styled.View`

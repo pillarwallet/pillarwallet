@@ -42,13 +42,13 @@ const FormPlacer = styled.View`
 `;
 
 const PanelHeaderIOS = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
   margin-bottom: ${props => (props.headerMarginIOS ? '40px' : '0')};;
   text-align: center;
 `;
 
 const PanelHeaderAndroid = styled(BoldText)`
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.big}px;
   margin-bottom: 20px;
   text-align: left;
 `;

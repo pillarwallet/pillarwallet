@@ -50,30 +50,30 @@ const TokenAmountWrapper = styled.View`
 `;
 
 const Amount = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
+  line-height: ${fontSizes.medium}px;
   color: ${baseColors.slateBlack};
 `;
 
 const FiatAmount = styled(LightText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  line-height: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   align-self: flex-end;
   text-align: right;
 `;
 
 const Disclaimer = styled(LightText)`
-  font-size: ${fontSizes.extraSmall};
-  line-height: ${fontSizes.small};
+  font-size: ${fontSizes.small}px;
+  line-height: ${fontSizes.medium}px;
   color: ${baseColors.burningFire};
   align-self: flex-end;
   text-align: right;
 `;
 
 const AmountToken = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
+  line-height: ${fontSizes.medium}px;
   color: ${baseColors.slateBlack};
 `;
 

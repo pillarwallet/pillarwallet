@@ -69,12 +69,12 @@ const ActionsWrapper = styled.View`
 const SendTokenDetails = styled.View``;
 
 const SendTokenDetailsValue = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   margin-bottom: 8px;
 `;
 
 const HelperText = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   margin-bottom: ${spacing.rhythm / 2}px;
   color: ${UIColors.placeholderTextColor};
 `;

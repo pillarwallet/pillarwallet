@@ -54,7 +54,7 @@ const Title = styled(BoldText)`
 
 const BodyText = styled(MediumText)`
   color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rMedium}px;
+  font-size: ${fontSizes.rBig}px;
   line-height: ${responsiveSize(19)}px;
   margin-top: ${responsiveSize(26)}px;
 `;
@@ -145,7 +145,7 @@ class Welcome extends React.Component<Props> {
           <ButtonText
             buttonText="Restore wallet"
             onPress={this.navigateToWalletImportPage}
-            fontSize={fontSizes.medium}
+            fontSize={fontSizes.big}
           />
         </Footer>
       </ContainerWithHeader>

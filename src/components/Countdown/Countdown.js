@@ -50,15 +50,15 @@ const CountdownWrapper = styled(MediumText)`
   flex-direction: row;
   flex-wrap: wrap;
   letter-spacing: ${fontTrackings.tiny};
-  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraSmall}px;
-  line-height: ${props => props.lineHeight ? props.lineHeight : fontSizes.small}px;
+  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.small}px;
+  line-height: ${props => props.lineHeight ? props.lineHeight : fontSizes.medium}px;
   justify-content: center;
   align-items: center;
 `;
 
 const CountdownDigits = styled(MediumText)`
   letter-spacing: ${fontTrackings.tiny};
-  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraSmall}px;
+  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.small}px;
   color: ${props => props.fontColor ? props.fontColor : baseColors.slateBlack};
 `;
 

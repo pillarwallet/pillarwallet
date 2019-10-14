@@ -76,7 +76,7 @@ type EventLike = {
 
 const inputTypes = {
   default: {
-    fontSize: fontSizes.medium,
+    fontSize: fontSizes.big,
     textAlign: 'left',
   },
   bigText: {
@@ -84,8 +84,8 @@ const inputTypes = {
     borderBottomWidth: 0,
     borderRadius: 6,
     color: baseColors.slateBlack,
-    fontSize: fontSizes.extraLarger,
-    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
+    fontSize: fontSizes.large,
+    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
     padding: '0 20px',
     inputHeight: Platform.OS === 'ios' ? 80 : 70,
   },
@@ -93,8 +93,8 @@ const inputTypes = {
     backgroundColor: 'transparent',
     borderBottomWidth: 0,
     color: baseColors.slateBlack,
-    fontSize: fontSizes.extraLarger,
-    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
+    fontSize: fontSizes.large,
+    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
     padding: '0 20px',
     inputHeight: Platform.OS === 'ios' ? 80 : 70,
   },
@@ -102,11 +102,11 @@ const inputTypes = {
     backgroundColor: 'transparent',
     borderBottomWidth: 0,
     color: baseColors.slateBlack,
-    fontSize: fontSizes.medium,
-    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
+    fontSize: fontSizes.big,
+    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
   },
   amount: {
-    fontSize: fontSizes.extraExtraLarge,
+    fontSize: fontSizes.giant,
     textAlign: 'right',
   },
   secondary: {
@@ -114,7 +114,7 @@ const inputTypes = {
     borderBottomWidth: 0,
     borderRadius: 6,
     color: baseColors.slateBlack,
-    fontSize: fontSizes.small,
+    fontSize: fontSizes.medium,
     padding: '0 14px',
   },
 };
@@ -173,7 +173,7 @@ const AddonText = styled(BaseText)`
 
 const CustomLabel = styled(Label)`
   color: ${props => props.labelBigger ? UIColors.defaultTextColor : baseColors.darkGray};
-  font-size: ${props => props.labelBigger ? fontSizes.small : fontSizes.extraSmall};
+  font-size: ${props => props.labelBigger ? fontSizes.medium : fontSizes.small}px;
   letter-spacing: 0.5;
   line-height: 24px;
   padding-top: ${props => props.labelBigger ? '35px' : '5px'};
@@ -192,7 +192,7 @@ const AbsoluteIcon = styled(Icon)`
   right: ${spacing.mediumLarge}px;
   top: 50%;
   margin-top: -13px;
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${props => props.color || baseColors.electricBlue};
 `;
 

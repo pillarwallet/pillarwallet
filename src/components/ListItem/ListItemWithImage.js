@@ -25,7 +25,7 @@ import isEqualWith from 'lodash.isequalwith';
 import Icon from 'components/Icon';
 import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
-import { baseColors, fontSizes, spacing, fontWeights, fontTrackings } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontWeights, fontTrackings, lineHeights } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
 import { Shadow } from 'components/Shadow';
@@ -125,15 +125,15 @@ const Column = styled.View`
 
 const ItemTitle = styled(BoldText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   letter-spacing: ${fontTrackings.small}px;
   width: 100%;
 `;
 
 const ItemParagraph = styled(BaseText)`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: ${fontSizes.mediumLarge}px;
+  font-size: ${fontSizes.small}px;
+  line-height: ${lineHeights.medium}px;
   letter-spacing: ${fontTrackings.tiny}px;
   margin-top: 4px;
   flex: 1;
@@ -142,7 +142,7 @@ const ItemParagraph = styled(BaseText)`
 const ItemSubText = styled(BaseText)`
   color: ${baseColors.darkGray};
   font-size: 13px;
-  line-height: ${fontSizes.small}
+  line-height: ${fontSizes.medium}px;
   margin-top: 4px;
 `;
 
@@ -158,7 +158,7 @@ const IconCircle = styled.View`
 `;
 
 const ItemIcon = styled(Icon)`
-  font-size: ${props => props.fontSize || fontSizes.extraGiant};
+  font-size: ${props => props.fontSize || 48}px;
   color: ${props => props.warm ? baseColors.tumbleweed : baseColors.offBlue};
 `;
 
@@ -182,8 +182,8 @@ const TimeWrapper = styled.View`
 
 const TimeSent = styled(BaseText)`
   color: ${baseColors.darkGray}
-  font-size: ${fontSizes.extraSmall};
-  line-height: ${fontSizes.small};
+  font-size: ${fontSizes.small}px;
+  line-height: ${fontSizes.medium}px;
   text-align-vertical: bottom;
 `;
 
@@ -207,13 +207,13 @@ const UnreadNumber = styled(BaseText)`
 `;
 
 const ItemValue = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   text-align: right;
 `;
 
 const ItemValueBold = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   text-align: right;
 `;
@@ -221,7 +221,7 @@ const ItemValueBold = styled(BoldText)`
 const ItemValueStatus = styled(Icon)`
   margin-left: 7px;
   color: ${baseColors.mediumGray};
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
 `;
 
 const IndicatorsRow = styled.View`
@@ -239,7 +239,7 @@ const ActionLabel = styled.View`
 `;
 
 const ActionLabelText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   color: ${props => props.color ? props.color : baseColors.darkGray};
   margin-left: auto;
   margin-bottom: ${props => props.button ? '2px' : 0};
@@ -358,7 +358,7 @@ const ItemImage = (props: Props) => {
       userName={label}
       diameter={type === ACTION ? 52 : 50}
       borderWidth={type === ACTION ? 0 : 2}
-      textStyle={{ fontSize: fontSizes.medium }}
+      textStyle={{ fontSize: fontSizes.big }}
       noShadow={type === ACTION}
     />
   );
@@ -379,7 +379,7 @@ const ImageAddon = (props: Props) => {
           <ItemIcon
             name={imageAddonIconName}
             warm={warm}
-            fontSize={fontSizes.extraLarger}
+            fontSize={fontSizes.large}
             style={{ position: 'absolute', top: -5, right: 4 }}
           />
         </IconCircle>
@@ -396,7 +396,7 @@ const ImageAddon = (props: Props) => {
         diameter={22}
         borderWidth={2}
         noShadow
-        initialsSize={fontSizes.extraExtraSmall}
+        initialsSize={fontSizes.extraSmall}
       />
     </ImageAddonHolder>
   );
@@ -472,7 +472,7 @@ const Addon = (props: Props) => {
           color={baseColors.darkGray}
           margin={0}
           icon="close"
-          fontSize={fontSizes.extraSmall}
+          fontSize={fontSizes.small}
           onPress={rejectInvitation}
         />
         <ActionCircleButton
@@ -480,7 +480,7 @@ const Addon = (props: Props) => {
           margin={0}
           accept
           icon="check"
-          fontSize={fontSizes.extraSmall}
+          fontSize={fontSizes.small}
           onPress={acceptInvitation}
         />
       </ButtonIconWrapper>

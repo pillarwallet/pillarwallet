@@ -124,7 +124,7 @@ const CloseIcon = styled(IconButton)`
 `;
 
 const EventTitle = styled(BoldText)`
-  font-size: ${fontSizes.mediumLarge}px;
+  font-size: ${fontSizes.large}px;
   letter-spacing: ${fontTrackings.tiny}px;
   color: ${baseColors.white};
   margin: 2px 0;
@@ -182,7 +182,7 @@ const EventHeader = (props: Props) => {
         icon="close"
         color={baseColors.white}
         onPress={onClose}
-        fontSize={fontSizes.small}
+        fontSize={fontSizes.medium}
       />
       <EventTitle>{thisEvent.title}</EventTitle>
       <EventSubtitle>{eventTime}</EventSubtitle>

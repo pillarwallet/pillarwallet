@@ -48,7 +48,7 @@ const ItemLabelHolder = styled.View`
 `;
 
 const ItemLabel = styled(MediumText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.coolGrey};
   flex-wrap: wrap;
   width: 100%;
@@ -56,7 +56,7 @@ const ItemLabel = styled(MediumText)`
 `;
 
 const ErrorMessage = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.fireEngineRed};
   flex-wrap: wrap;
   width: 100%;
@@ -65,15 +65,16 @@ const ErrorMessage = styled(BaseText)`
 
 const ItemValue = styled(Input)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   flex-wrap: wrap;
   width:100%;
   padding: 0 0 9px;
+  font-family: EuclidCircularB-Medium;
 `;
 
 const SelectedOption = styled(BaseText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   flex-wrap: wrap;
   flex: 1;
   padding: 0 0 9px;
@@ -87,7 +88,7 @@ const VerifyView = styled.View`
 
 const VerifyLabel = styled(BaseText)`
   color: ${({ isVerified }) => isVerified ? baseColors.eucalypus : baseColors.brightBlue};
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small}px;
   margin: 0 4px 0;
 `;
 
@@ -103,8 +104,8 @@ const ItemAddon = styled.View`
 `;
 
 const ModalTitle = styled(BoldText)`
-  line-height: ${fontSizes.medium};
-  font-size: ${fontSizes.medium};
+  line-height: ${fontSizes.big}px;
+  font-size: ${fontSizes.big}px;
   font-weight: ${fontWeights.bold};
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;

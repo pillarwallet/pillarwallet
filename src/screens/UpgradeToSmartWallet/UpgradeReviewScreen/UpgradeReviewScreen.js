@@ -102,7 +102,7 @@ const ListSeparator = styled.View`
 `;
 
 const Label = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
   color: #999999;
 `;
 
@@ -116,7 +116,7 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;

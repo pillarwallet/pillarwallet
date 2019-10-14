@@ -42,7 +42,7 @@ const ItemWrapper = styled.View`
 
 const ItemLabel = styled(BaseText)`
   text-align:center;
-  font-size: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   font-weight: ${fontWeights.medium};
 `;
@@ -61,7 +61,7 @@ const ItemWrapperButton = styled.TouchableOpacity`
 `;
 
 const ItemValue = styled(BoldText)`
-  font-size: ${fontSizes.large}px;
+  font-size: ${fontSizes.big}px;
   font-weight: ${fontWeights.bold};
   margin-bottom: ${spacing.medium}px;
   margin-top: ${props => props.spacedOut ? '8px' : '0'};

@@ -73,11 +73,11 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
 `;
 
 const ConnectionRequestBannerText = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
 `;
 
 const ConnectionRequestBannerIcon = styled(NIcon)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.darkGray};
   margin-left: auto;
   margin-right: ${spacing.rhythm}px;
@@ -100,8 +100,8 @@ const ItemBadge = styled.View`
 `;
 
 const BadgeIcon = styled(Icon)`
-  font-size: ${props => props.fontSize || fontSizes.extraExtraSmall};
-  line-height: ${props => props.fontSize || fontSizes.extraExtraSmall};
+  font-size: ${props => props.fontSize || fontSizes.extraSmall}px;
+  line-height: ${props => props.fontSize || fontSizes.extraSmall}px;
   color: ${baseColors.white};
 `;
 

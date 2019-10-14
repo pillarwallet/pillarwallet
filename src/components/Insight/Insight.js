@@ -62,7 +62,7 @@ const ListItem = styled.TouchableOpacity`
 
 const CardTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   margin-bottom: 10px;
 `;
 
@@ -133,7 +133,7 @@ export const Insight = (props: Props) => {
           icon="close"
           color={baseColors.coolGrey}
           onPress={onClose}
-          fontSize={fontSizes.extraExtraSmall}
+          fontSize={fontSizes.extraSmall}
           horizontalAlign="flex-end"
         />
         <CardRow>

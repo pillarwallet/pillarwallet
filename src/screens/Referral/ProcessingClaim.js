@@ -13,7 +13,7 @@ const Status = styled(BoldText)`
 `;
 
 const Text = styled(LightText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   color: ${baseColors.coolGrey};
   text-align: center;
 `;

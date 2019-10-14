@@ -93,7 +93,7 @@ class UsersScreen extends React.Component<Props> {
             userName={username}
             diameter={iconRadius}
             borderWidth={0}
-            textStyle={{ fontSize: fontSizes.medium }}
+            textStyle={{ fontSize: fontSizes.big }}
             noShadow
           />
         )}

@@ -85,9 +85,9 @@ const ListRow = styled(View)`
 const ListRowItem = styled(BaseText)`
   width: 50%;
   padding-right: ${spacing.rhythm}px;
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   letter-spacing: ${fontTrackings.tiny}px;
-  line-height: ${fontSizes.medium}px;
+  line-height: ${fontSizes.big}px;
   color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
 `;
 
@@ -121,9 +121,9 @@ const ContactsWrapper = styled(View)`
 
 const ContactsLabel = styled(BaseText)`
   width: 40%;
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   letter-spacing: ${fontTrackings.tiny}px;
-  line-height: ${fontSizes.medium}px;
+  line-height: ${fontSizes.big}px;
   color: ${baseColors.slateBlack};
   margin-top: 13px;
   padding-right: ${spacing.rhythm}px;
@@ -442,10 +442,10 @@ class ICOScreen extends React.Component<Props, {}> {
               {!!isPending &&
               <Countdown
                 endDate={plannedOpeningDate}
-                fontSize={fontSizes.medium}
+                fontSize={fontSizes.big}
                 fontColor={baseColors.white}
                 extendedDayLabel
-                lineHeight={fontSizes.large}
+                lineHeight={fontSizes.big}
               />}
             </Button>
           </ButtonWrapper>

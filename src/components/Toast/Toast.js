@@ -112,13 +112,13 @@ const IconHolder = styled.View`
 `;
 
 const ToastTitle = styled(MediumText)`
-  line-height: ${fontSizes.large}px;
+  line-height: ${fontSizes.big}px;
   color: ${baseColors.slateBlack};
   margin-bottom: 2px;
 `;
 
 const ToastBody = styled(BaseText)`
-  line-height: ${fontSizes.large}px;
+  line-height: ${fontSizes.big}px;
   color: ${baseColors.darkGray};
 `;
 
@@ -248,7 +248,7 @@ export default class Toast extends React.Component<{}, State> {
                 name={typeIcons[toastOptions.type]}
                 style={{
                   color: typeColors[toastOptions.type],
-                  fontSize: fontSizes.extraLarge,
+                  fontSize: fontSizes.large,
                 }}
               />
             </IconHolder>

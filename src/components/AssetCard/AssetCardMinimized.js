@@ -123,22 +123,22 @@ const AmountWrapper = styled.View`
 `;
 
 const Amount = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
+  line-height: ${fontSizes.medium}px;
   color: ${baseColors.slateBlack};
   text-align: left;
 `;
 
 const FiatAmount = styled(LightText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  line-height: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   text-align: left;
 `;
 
 const Disclaimer = styled(LightText)`
-  font-size: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
-  line-height: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
+  font-size: ${props => props.smallScreen ? fontSizes.extraSmall : fontSizes.small}px;
+  line-height: ${props => props.smallScreen ? fontSizes.extraSmall : fontSizes.small}px;
   color: ${baseColors.burningFire};
   text-align: left;
 `;
@@ -154,9 +154,9 @@ const IconCircle = styled.View`
 `;
 
 const Name = styled(BaseText)`
-  font-size: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
+  font-size: ${props => props.smallScreen ? fontSizes.extraSmall : fontSizes.small}px;
   letter-spacing: ${fontTrackings.small};
-  line-height: ${fontSizes.small}px;
+  line-height: ${fontSizes.medium}px;
   color: ${baseColors.darkGray};
   ${({ center }) => center ? 'width: 100%; text-align: center;' : ''}
   font-weight: ${props => props.fontWeight ? props.fontWeight : 600};
@@ -391,7 +391,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
               name="turn-off"
               style={{
                 color: baseColors.white,
-                fontSize: fontSizes.small,
+                fontSize: fontSizes.medium,
                 opacity: disabledRemove ? 0.5 : 1,
               }}
             />

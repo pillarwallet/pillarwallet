@@ -42,6 +42,7 @@ import {
   itemSizes,
   spacing,
   UIColors,
+  lineHeights,
 } from 'utils/variables';
 import { formatMoney, noop } from 'utils/common';
 
@@ -80,8 +81,8 @@ const Wrapper = styled.View`
 `;
 
 const Label = styled(BoldText)`
-  font-size: ${fontSizes.medium}px;
-  line-height: ${fontSizes.mediumLarge}px;
+  font-size: ${fontSizes.big}px;
+  line-height: ${lineHeights.medium}px;
   letter-spacing: 0.23px;
   color: ${baseColors.slateBlack};
   margin-bottom: ${spacing.small}px;
@@ -129,8 +130,8 @@ const SelectorImage = styled(CachedImage)`
 `;
 
 const SlectorValue = styled(MediumText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.mediumLarge}px;
+  font-size: ${fontSizes.medium}px;
+  line-height: ${lineHeights.medium}px;
   color: ${baseColors.slateBlack};
   margin-right: 20px;
 `;
@@ -161,15 +162,15 @@ const PlaceholderWrapper = styled.View`
 `;
 
 const Placeholder = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: ${fontSizes.mediumLarge}px;
+  font-size: ${fontSizes.small}px;
+  line-height: ${lineHeights.medium}px;
   letter-spacing: 0.23px;
   color: ${baseColors.darkGray};
 `;
 
 const ErrorMessage = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: ${fontSizes.medium}px;
+  font-size: ${fontSizes.small}px;
+  line-height: ${fontSizes.big}px;
   color: tomato;
   margin: 8px 12px;
 `;
@@ -224,7 +225,7 @@ const HorizontalOptionItem = styled.TouchableOpacity`
 `;
 
 const HorizontalOptionItemName = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall};
+  font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   padding: 0 4px;
   margin-top: ${Platform.select({
@@ -506,7 +507,7 @@ export default class SelectorInput extends React.Component<Props, State> {
                   ? baseColors.white
                   : UIColors.defaultBackgroundColor,
               }}
-              disableOnAndroid
+              customProps={{ enableOnAndroid: false }}
             >
               {!!filteredHorizontalListData.length &&
                 <HorizontalOptions>

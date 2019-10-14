@@ -68,13 +68,13 @@ type State = {
 };
 
 const DetailsTitle = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   padding-bottom: 5px;
   color: #999999;
 `;
 
 const DetailsValue = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.slateBlack};
   font-weight: ${fontWeights.medium};
 `;
@@ -89,7 +89,7 @@ const DetailsWrapper = styled.View`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;

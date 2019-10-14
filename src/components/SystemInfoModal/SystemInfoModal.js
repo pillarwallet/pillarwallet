@@ -39,13 +39,13 @@ const LabeledRow = styled.View`
 
 const Label = styled(BoldText)`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small}px;
   letter-spacing: 0.5;
   line-height: 24px;
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium}
+  font-size: ${fontSizes.big}px;
 `;
 
 

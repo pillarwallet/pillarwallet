@@ -68,7 +68,7 @@ const ErrorHolder = styled.View`
 
 const ErrorText = styled(BaseText)`
   color: ${baseColors.fireEngineRed};
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   width: 100%;
   text-align: right;
 `;
@@ -142,7 +142,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
         customAddon={
           <View style={{ height: 70, justifyContent: 'center', minWidth: 180 }}>
             <TextInput
-              style={{ fontSize: fontSizes.medium, textAlign: 'right', maxWidth: 200 }}
+              style={{ fontSize: fontSizes.big, textAlign: 'right', maxWidth: 200 }}
               onChangeText={text => this.handleAmountChange(text, item.name, assetBalance, item.decimals)}
               value={amount ? amount.toString() : ''}
               placeholder={formattedAssetBalance}

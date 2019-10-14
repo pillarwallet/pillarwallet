@@ -74,8 +74,8 @@ const CardContent = styled.View`
 
 const CardTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.medium}px;
+  font-size: ${fontSizes.medium}px;
+  line-height: ${fontSizes.big}px;
 `;
 
 const CardSubtitle = styled(BaseText)`
@@ -92,7 +92,7 @@ const CheckIcon = styled(Icon)`
 `;
 
 const SettingsIcon = styled(Icon)`
-  font-size: ${fontSizes.extraLarge};
+  font-size: ${fontSizes.large}px;
   color: ${baseColors.malibu};
 `;
 

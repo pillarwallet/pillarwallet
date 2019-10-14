@@ -49,18 +49,18 @@ const Row = styled.View`
 
 const InstructionsLabel = styled(Label)`
   text-align:center;
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small}px;
   margin-bottom: 4px;
 `;
 
 const IntroText = styled(BoldText)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: ${fontSizes.medium}px;
+  font-size: ${fontSizes.small}px;
+  line-height: ${fontSizes.big}px;
   color: ${baseColors.darkGray};
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${props => props.xl ? fontSizes.large : fontSizes.small};
+  font-size: ${props => props.xl ? fontSizes.big : fontSizes.medium}px;
   text-align: center;
 `;
 
@@ -201,7 +201,7 @@ class InstructionsScreen extends React.Component<Props, {}> {
             <Instructions>
               <Row>
                 <InstructionsLabel>{instructions.currency} address to receive tokens</InstructionsLabel>
-                <Value style={{ fontSize: fontSizes.small }}>{instructions.address}</Value>
+                <Value style={{ fontSize: fontSizes.medium }}>{instructions.address}</Value>
               </Row>
               <Row style={{ marginTop: spacing.rhythm }}>
                 <QRCode value={instructions.address} size={125} />

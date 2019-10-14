@@ -57,7 +57,7 @@ const TokenValue = styled(BoldText)`
 `;
 
 const TextCode = styled(LightText)`
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.coolGrey};
   text-align: center;
   margin-bottom: 30px;

@@ -151,7 +151,7 @@ const EventRow = styled.View`
 `;
 
 const EventBodyTitle = styled(BaseText)`
-  font-size: ${fontSizes.large}px;
+  font-size: ${fontSizes.big}px;
   font-weight: ${fontWeights.medium};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   margin: 0 10px 2px;
@@ -392,7 +392,7 @@ class EventDetails extends React.Component<Props, State> {
               showProfileImage={showProfileImage}
               userName={relatedUserTitle}
               diameter={40}
-              initialsSize={fontSizes.extraSmall}
+              initialsSize={fontSizes.small}
               style={{ marginBottom: 4 }}
               onPress={() => this.goToProfile(relatedUser)}
               noShadow
@@ -465,7 +465,7 @@ class EventDetails extends React.Component<Props, State> {
               showProfileImage={showProfileImage}
               userName={relatedUserTitle}
               diameter={40}
-              initialsSize={fontSizes.extraSmall}
+              initialsSize={fontSizes.small}
               style={{ marginBottom: 4 }}
               onPress={() => this.goToProfile(relatedUser)}
               noShadow
@@ -503,7 +503,7 @@ class EventDetails extends React.Component<Props, State> {
             uri={userData.profileImage}
             userName={userData.username}
             diameter={40}
-            initialsSize={fontSizes.extraSmall}
+            initialsSize={fontSizes.small}
             onPress={() => this.goToProfile(userData)}
             noShadow
             borderWidth={0}

@@ -65,7 +65,7 @@ const LabeledRow = styled.View`
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium}
+  font-size: ${fontSizes.big}px;
 `;
 
 class TankWithdrawalConfirm extends React.Component<Props, State> {

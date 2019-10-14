@@ -38,7 +38,7 @@ const ItemWrapper = styled.View`
 
 const ItemLabel = styled(BaseText)`
   text-align:center;
-  font-size: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   font-weight: ${fontWeights.medium};
 `;
@@ -55,7 +55,7 @@ const ItemValueHolder = styled.View`
 `;
 
 const StyledBaseText = styled(CustomParsedText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
   color: ${UIColors.defaultTextColor};
 `;
 

@@ -62,8 +62,8 @@ const TankButton = styled.TouchableOpacity`
 `;
 
 const TankLabel = styled(LightText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  line-height: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   margin-bottom: -4px;
 `;
@@ -76,8 +76,8 @@ const UpgradeButton = styled.TouchableOpacity`
 `;
 
 const UpgradeLabel = styled(LightText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  line-height: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: ${fontSizes.extraSmall}px;
   color: ${baseColors.darkGray};
   margin-bottom: -2px;
 `;

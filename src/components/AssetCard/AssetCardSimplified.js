@@ -93,9 +93,9 @@ const NameWrapper = styled.View`
 `;
 
 const Name = styled(BoldText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   letter-spacing: ${fontTrackings.small};
-  line-height: ${fontSizes.medium};
+  line-height: ${fontSizes.big}px;
   color: ${baseColors.slateBlack};
   text-align-vertical: center;
 `;

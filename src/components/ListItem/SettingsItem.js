@@ -79,7 +79,7 @@ const Badge = styled(NBBadge)`
 
 const BadgeText = styled(BaseText)`
   color: #fff;
-  font-size: ${fontSizes.extraExtraSmall};
+  font-size: ${fontSizes.extraSmall}px;
   text-align: center;
   width: 100%;
   padding: 0 2px;
@@ -92,7 +92,7 @@ const ItemLabel = styled(MediumText)`
 `;
 
 const ItemValue = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   color: ${baseColors.coolGrey};
   flex-wrap: wrap;
   text-align: center;
@@ -102,7 +102,7 @@ const ItemValue = styled(BaseText)`
 `;
 
 const WarningIcon = styled(Icon)`
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.big}px;
   margin-right: 10px;
   color: ${baseColors.burningFire};
 `;

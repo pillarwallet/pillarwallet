@@ -21,7 +21,7 @@ import * as React from 'react';
 import { StatusBar, View, TouchableOpacity } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, lineHeights, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -84,8 +84,8 @@ const HeaderRow = styled.View`
 const HeaderProfileImage = styled(ProfileImage)``;
 
 const HeaderTitle = styled(MediumText)`
-  line-height: ${fontSizes.small}px;
-  font-size: ${fontSizes.extraSmall}px;
+  line-height: ${lineHeights.small}px;
+  font-size: ${fontSizes.small}px;
   color: ${props => props.theme.color || UIColors.defaultTextColor};
   text-align: ${props => props.centerText ? 'center' : 'left'};
   margin-top: 2px;
@@ -158,8 +158,8 @@ const TextButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
+  line-height: ${fontSizes.medium}px;
+  font-size: ${fontSizes.small}px;
   color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
 `;
 
@@ -261,7 +261,7 @@ class HeaderBlock extends React.Component<Props> {
                 icon="back"
                 color={theme.iconColor || UIColors.defaultNavigationColor}
                 onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
-                fontSize={fontSizes.extraLarge}
+                fontSize={fontSizes.large}
                 horizontalAlign="flex-start"
               />)
           }
@@ -308,7 +308,7 @@ class HeaderBlock extends React.Component<Props> {
             icon={item.icon}
             color={item.color || theme.rightActionIconColor || UIColors.defaultNavigationColor}
             onPress={item.onPress}
-            fontSize={item.fontSize || fontSizes.extraLarge}
+            fontSize={item.fontSize || fontSizes.large}
             horizontalAlign="flex-start"
           />
           {!!item.indicator && <Indicator />}
@@ -348,7 +348,7 @@ class HeaderBlock extends React.Component<Props> {
             icon="close"
             color={baseColors.slateBlack}
             onPress={() => item.dismiss ? navigation.dismiss() : navigation.goBack()}
-            fontSize={fontSizes.extraSmall}
+            fontSize={fontSizes.small}
             horizontalAlign="flex-end"
           />
         </View>

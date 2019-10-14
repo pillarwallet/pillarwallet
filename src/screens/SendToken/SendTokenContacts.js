@@ -99,7 +99,7 @@ function AddressInputTemplate(locals) {
     textAlign: 'left',
     maxLength: 42,
     letterSpacing: 0.1,
-    fontSize: fontSizes.small,
+    fontSize: fontSizes.medium,
     fontWeight: 300,
   };
   return (
@@ -110,7 +110,7 @@ function AddressInputTemplate(locals) {
       id="address"
       onPress={onIconPress}
       inputProps={inputProps}
-      fontSize={fontSizes.small}
+      fontSize={fontSizes.medium}
     />
   );
 }
