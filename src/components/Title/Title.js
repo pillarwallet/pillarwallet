@@ -18,9 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TouchableOpacity, Platform } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import { fontSizes, fontWeights } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
 import { BoldText } from 'components/Typography';
 
 
@@ -57,20 +57,10 @@ const Wrapper = styled.View`
 const Text = styled(BoldText)`
   line-height: ${fontSizes.extraLarger};
   font-size: ${props => props.subtitle ? fontSizes.extraSmall : fontSizes.medium};
-  font-weight: ${fontWeights.bold};
   ${({ align }) => align === 'center' && `
     line-height: 25px;
     text-align: center;
   `}
-`;
-
-/**
- *  this separate definition has to stay here as it affects font rendering
- *  otherwise if it's taken then once font is being shorten with ellipsis
- *  on Android it gets cut
- */
-const AktivTextTitle = styled(Text)`
-  fontFamily: 'Aktiv Grotesk App${Platform.OS === 'android' ? '_bold' : ''};
 `;
 
 const Title = (props: Props) => {
@@ -103,7 +93,7 @@ const Title = (props: Props) => {
     >
       {onTitlePress ?
         <TouchableOpacity onPress={onTitlePress}>
-          <AktivTextTitle
+          <Text
             align={align}
             subtitle={subtitle}
             {...ellipsized}
@@ -111,10 +101,10 @@ const Title = (props: Props) => {
             fullWidth={fullWidth}
           >
             {title}
-          </AktivTextTitle>
+          </Text>
         </TouchableOpacity>
         :
-        <AktivTextTitle
+        <Text
           align={align}
           subtitle={subtitle}
           {...ellipsized}
@@ -122,7 +112,7 @@ const Title = (props: Props) => {
           fullWidth={fullWidth}
         >
           {title}
-        </AktivTextTitle>
+        </Text>
       }
     </Wrapper>
   );

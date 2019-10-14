@@ -118,9 +118,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               Array [
                 Object {
                   "color": "#0A1427",
-                  "fontFamily": "Aktiv Grotesk App",
-                  "fontWeight": "400",
-                  "includeFontPadding": false,
+                  "fontFamily": "EuclidCircularB-Regular",
                   "textAlignVertical": "center",
                 },
                 Array [
@@ -280,17 +278,13 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "Aktiv Grotesk App",
-                            "fontWeight": "400",
-                            "includeFontPadding": false,
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "600",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Bold",
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -367,9 +361,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "400",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -526,9 +518,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               Array [
                 Object {
                   "color": "#0A1427",
-                  "fontFamily": "Aktiv Grotesk App",
-                  "fontWeight": "400",
-                  "includeFontPadding": false,
+                  "fontFamily": "EuclidCircularB-Regular",
                   "textAlignVertical": "center",
                 },
                 Array [
@@ -688,17 +678,13 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "Aktiv Grotesk App",
-                            "fontWeight": "400",
-                            "includeFontPadding": false,
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "600",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Bold",
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -775,9 +761,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "400",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [

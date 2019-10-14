@@ -171,9 +171,9 @@ export const fontSizes = {
   androidCloseIcon: 22,
   androidCheckmarkIcon: 26,
   rJumbo: responsiveSize(64),
-  rMedium: responsiveSize(19),
+  rMedium: responsiveSize(18),
   rLarge: responsiveSize(25),
-  rExtraLarger: responsiveSize(27),
+  rExtraLarger: responsiveSize(28),
 };
 
 export const spacing = {
