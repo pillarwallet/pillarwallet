@@ -33,6 +33,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Separator from 'components/Separator';
 import ProfileImage from 'components/ProfileImage';
+import { ScrollWrapper } from 'components/Layout';
 
 // UTILS
 import {
@@ -498,46 +499,50 @@ export default class SelectorInput extends React.Component<Props, State> {
                 forceShowCloseButton
               />
             </SearchBarWrapper>
-            {!!filteredHorizontalListData.length &&
-              <HorizontalOptions>
-                {(showOptionsTitles && !!horizontalOptionsTitle) &&
-                  <HorizontalOptionsHeader>{horizontalOptionsTitle}</HorizontalOptionsHeader>
-                }
-                <HorizontalOptionsScrollView
-                  keyboardShouldPersistTaps="always"
-                  horizontal
-                >
-                  {this.renderHorizontalOptions(filteredHorizontalListData)}
-                </HorizontalOptionsScrollView>
-              </HorizontalOptions>
-            }
-            {!!filteredListData.length &&
-              <FlatList
-                data={filteredListData}
-                renderItem={this.renderOption}
-                keyExtractor={({ value: val }) => val}
-                keyboardShouldPersistTaps="handled"
-                contentContainerStyle={{
-                  paddingBottom: 40,
-                  backgroundColor: filteredHorizontalListData.length
-                    ? baseColors.white
-                    : UIColors.defaultBackgroundColor,
-                }}
-                ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-                initialNumToRender={10}
-                maxToRenderPerBatch={5}
-                removeClippedSubviews
-                viewabilityConfig={viewConfig}
-                ListHeaderComponent={
-                  (showOptionsTitles && !!optionsTitle) && <OptionsHeader>{optionsTitle}</OptionsHeader>
-                }
-              />
-            }
-            {(!filteredListData.length && !filteredHorizontalListData.length) &&
-              <EmptyStateWrapper fullScreen>
-                <EmptyStateParagraph title="Nothing found" />
-              </EmptyStateWrapper>
-            }
+            <ScrollWrapper
+              contentContainerStyle={{
+                paddingBottom: 30,
+                backgroundColor: filteredHorizontalListData.length
+                  ? baseColors.white
+                  : UIColors.defaultBackgroundColor,
+              }}
+              disableOnAndroid
+            >
+              {!!filteredHorizontalListData.length &&
+                <HorizontalOptions>
+                  {(showOptionsTitles && !!horizontalOptionsTitle) &&
+                    <HorizontalOptionsHeader>{horizontalOptionsTitle}</HorizontalOptionsHeader>
+                  }
+                  <HorizontalOptionsScrollView
+                    keyboardShouldPersistTaps="always"
+                    horizontal
+                  >
+                    {this.renderHorizontalOptions(filteredHorizontalListData)}
+                  </HorizontalOptionsScrollView>
+                </HorizontalOptions>
+              }
+              {!!filteredListData.length &&
+                <FlatList
+                  data={filteredListData}
+                  renderItem={this.renderOption}
+                  keyExtractor={({ value: val }) => val}
+                  keyboardShouldPersistTaps="handled"
+                  ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+                  initialNumToRender={10}
+                  maxToRenderPerBatch={5}
+                  removeClippedSubviews
+                  viewabilityConfig={viewConfig}
+                  ListHeaderComponent={
+                    (showOptionsTitles && !!optionsTitle) && <OptionsHeader>{optionsTitle}</OptionsHeader>
+                  }
+                />
+              }
+              {(!filteredListData.length && !filteredHorizontalListData.length) &&
+                <EmptyStateWrapper fullScreen>
+                  <EmptyStateParagraph title="Nothing found" />
+                </EmptyStateWrapper>
+              }
+            </ScrollWrapper>
           </Wrapper>
         </SlideModal>
       </React.Fragment>
