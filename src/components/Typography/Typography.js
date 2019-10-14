@@ -32,12 +32,6 @@ export const BoldText = styled(BaseText)`
   color: ${UIColors.defaultTextColor};
 `;
 
-export const ExtraBoldText = styled(BaseText)`
-  font-family: EuclidCircularB-Bold;
-  text-align-vertical: center;
-  color: ${UIColors.defaultTextColor};
-`;
-
 export const LightText = styled(BaseText)`
   font-family: EuclidCircularB-Light;
   text-align-vertical: center;

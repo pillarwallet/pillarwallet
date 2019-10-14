@@ -24,7 +24,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { spacing, baseColors, fontSizes } from 'utils/variables';
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
-import { BaseText, BoldText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
 import { responsiveSize } from 'utils/ui';
@@ -70,7 +70,7 @@ const CardContent = styled.View`
   padding-right: 6px;
 `;
 
-const CardTitle = styled(BoldText)`
+const CardTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
   font-size: ${fontSizes.small}px;
   line-height: ${fontSizes.medium}px;
@@ -108,7 +108,7 @@ const CardImage = styled(CachedImage)`
   background-color: ${baseColors.darkGray};
 `;
 const SettingsLabel = styled(MediumText)`
-  font-size: ${responsiveSize(13)}px;
+  font-size: ${responsiveSize(14)}px;
   color: ${baseColors.malibu};
   margin-top: 4px;
 `;

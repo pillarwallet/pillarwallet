@@ -27,7 +27,7 @@ import { CachedImage } from 'react-native-cached-image';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
-import { BoldText } from 'components/Typography';
+import { MediumText, BoldText } from 'components/Typography';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
 import Button from 'components/Button';
@@ -67,10 +67,10 @@ const Title = styled(BoldText)`
   line-height: ${fontSizes.rJumbo}px;
 `;
 
-const BodyText = styled(BoldText)`
+const BodyText = styled(MediumText)`
   color: ${baseColors.persianBlue};
   font-size: ${fontSizes.rMedium}px;
-  line-height: ${responsiveSize(22)}px;
+  line-height: ${fontSizes.rExtraLarger}px;
   margin-top: ${responsiveSize(26)}px;
 `;
 

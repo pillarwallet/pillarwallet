@@ -343,7 +343,6 @@ class TextInput extends React.Component<Props, State> {
               additionalStyle,
             ]}
             onLayout={onLayout}
-            underlineColorAndroid="transparent"
           />
           {Platform.OS === 'ios' && <RNInput
             caretHidden

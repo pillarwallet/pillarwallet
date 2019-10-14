@@ -99,12 +99,12 @@ const ContentWrapper = styled.View`
   flex-wrap: wrap;
 `;
 
-const Label = styled(BoldText)`
+const Label = styled(MediumText)`
   color: ${baseColors.pomegranate};
   font-size: ${fontSizes.rLarge}px;
 `;
 
-const Subtext = styled(BoldText)`
+const Subtext = styled(MediumText)`
   color: ${baseColors.pomegranate};
   font-size: ${fontSizes.rMedium}px;
   line-height: ${fontSizes.rExtraLarger}px;
