@@ -248,7 +248,9 @@ class TextInput extends React.Component<Props, State> {
 
   handleRNFocus = () => {
     setTimeout(() => {
-      this.multilineInputField._root.focus();
+      if (!!this.multilineInputField && Object.keys(this.multilineInputField).length) {
+        this.multilineInputField._root.focus();
+      }
       this.setState({
         isFocused: true,
       });
