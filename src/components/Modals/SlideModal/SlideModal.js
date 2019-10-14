@@ -28,6 +28,12 @@ import { spacing, baseColors, UIColors } from 'utils/variables';
 import { SubTitle } from 'components/Typography';
 import { Keyboard } from 'react-native';
 
+export type ScrollToProps = {
+  x?: number,
+  y: number,
+  animated: boolean,
+}
+
 type Props = {
   title?: string,
   fullWidthTitle?: boolean,
@@ -50,10 +56,13 @@ type Props = {
   eventDetail?: boolean,
   eventType?: string,
   eventData?: ?Object,
-  scrollOffset?: any,
+  scrollOffset?: ?number,
   subtitleStyles?: ?Object,
   titleStyles?: ?Object,
   noSwipeToDismiss?: boolean,
+  scrollOffsetMax?: ?number,
+  handleScrollTo?: (ScrollToProps) => void,
+  onSwipeComplete?: () => void,
 };
 
 const themes = {
@@ -151,6 +160,7 @@ export default class SlideModal extends React.Component<Props, *> {
   };
 
   hideModal = () => {
+    const { onSwipeComplete } = this.props;
     Keyboard.dismiss();
     const TIMEOUT = Toast.isVisible() ? 150 : 0;
     if (Toast.isVisible()) {
@@ -162,12 +172,15 @@ export default class SlideModal extends React.Component<Props, *> {
       }
       clearTimeout(timer);
     }, TIMEOUT);
+    if (onSwipeComplete) onSwipeComplete();
   };
 
-  handleScroll = () => {
+  handleScroll = (p: ScrollToProps) => {
+    const { handleScrollTo } = this.props;
     if (Toast.isVisible()) {
       Toast.close();
     }
+    if (handleScrollTo) handleScrollTo(p);
   };
 
   render() {
@@ -194,6 +207,7 @@ export default class SlideModal extends React.Component<Props, *> {
       subtitleStyles,
       titleStyles,
       noSwipeToDismiss,
+      scrollOffsetMax,
     } = this.props;
 
     const theme = getTheme(this.props);
@@ -280,6 +294,7 @@ export default class SlideModal extends React.Component<Props, *> {
         animationOut="slideOutDown"
         swipeDirection={!noSwipeToDismiss ? 'down' : null}
         avoidKeyboard={avoidKeyboard}
+        scrollOffsetMax={scrollOffsetMax}
         style={{
           margin: 0,
           position: 'relative',
