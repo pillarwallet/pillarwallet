@@ -62,7 +62,7 @@ public class MainApplication extends Application implements ShareApplication, Re
       return Arrays.<ReactPackage>asList(
         new ColorMatrixImageFiltersPackage(),
         new MainReactPackage(),
-            new RNGestureHandlerPackage(),
+        new RNGestureHandlerPackage(),
         new CookieManagerPackage(),
         new RNCWebViewPackage(),
         new ExtraDimensionsPackage(),
