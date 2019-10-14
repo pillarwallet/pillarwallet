@@ -21,7 +21,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Button as NBButton } from 'native-base';
 import debounce from 'lodash.debounce';
-import { BoldText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 import { UIColors, baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
@@ -228,7 +228,7 @@ const getButtonPadding = (props) => {
   } else if (props.square) {
     return '4px';
   }
-  return `${spacing.rhythm * 2.5}px`;
+  return `${spacing.rhythm * 1.5}px`;
 };
 
 const getButtonFontSize = (props) => {
@@ -276,7 +276,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   ${props => props.theme.shadow ? 'elevation: 1;' : ''}
 `;
 
-const ButtonText = styled(BoldText)`
+const ButtonText = styled(MediumText)`
   color: ${props => props.theme.color};
   font-size: ${props => getButtonFontSize(props)};
   margin-bottom: ${props => props.extraSmall ? '2px' : 0};
@@ -295,7 +295,7 @@ const ButtonMiniWrapper = styled(NBButton)`
   width: auto;
 `;
 
-const ButtonMiniText = styled(BoldText)`
+const ButtonMiniText = styled(MediumText)`
   font-size: 14px;
   letter-spacing: 0.3;
   color: #fff;

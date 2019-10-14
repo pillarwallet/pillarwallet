@@ -2068,8 +2068,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                           "marginTop": 0,
                           "opacity": 1,
                           "paddingBottom": 0,
-                          "paddingLeft": 50,
-                          "paddingRight": 50,
+                          "paddingLeft": 30,
+                          "paddingRight": 30,
                           "paddingTop": 0,
                           "shadowColor": "rgba(0,0,0,.12)",
                           "shadowOffset": Object {
@@ -2093,7 +2093,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Bold",
+                                "fontFamily": "EuclidCircularB-Medium",
                                 "textAlignVertical": "center",
                               },
                               Array [

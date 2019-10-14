@@ -38,7 +38,7 @@ import {
 } from 'constants/walletConstants';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText, BoldText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Tabs from 'components/Tabs';
@@ -143,7 +143,7 @@ const ButtonInner = styled.View`
   align-items: center;
 `;
 
-const ButtonLabel = styled(BoldText)`
+const ButtonLabel = styled(MediumText)`
   color: ${props => props.blue ? baseColors.electricBlue : baseColors.white};
   font-size: ${fontSizes.medium}px;
   margin-bottom: 2px;
