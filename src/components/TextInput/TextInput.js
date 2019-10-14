@@ -25,7 +25,7 @@ import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
-import { fontSizes, fontWeights, baseColors, UIColors, spacing } from 'utils/variables';
+import { fontSizes, baseColors, UIColors, spacing } from 'utils/variables';
 
 type inputPropsType = {
   placeholder?: string,
@@ -77,7 +77,6 @@ type EventLike = {
 const inputTypes = {
   default: {
     fontSize: fontSizes.medium,
-    fontWeight: fontWeights.bold,
     textAlign: 'left',
   },
   bigText: {
@@ -87,7 +86,6 @@ const inputTypes = {
     color: baseColors.slateBlack,
     fontSize: fontSizes.extraLarger,
     lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
-    fontWeight: fontWeights.bold,
     padding: '0 20px',
     inputHeight: Platform.OS === 'ios' ? 80 : 70,
   },
@@ -97,7 +95,6 @@ const inputTypes = {
     color: baseColors.slateBlack,
     fontSize: fontSizes.extraLarger,
     lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
-    fontWeight: fontWeights.bold,
     padding: '0 20px',
     inputHeight: Platform.OS === 'ios' ? 80 : 70,
   },
@@ -107,11 +104,9 @@ const inputTypes = {
     color: baseColors.slateBlack,
     fontSize: fontSizes.medium,
     lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
-    fontWeight: fontWeights.medium,
   },
   amount: {
     fontSize: fontSizes.extraExtraLarge,
-    fontWeight: fontWeights.bold,
     textAlign: 'right',
   },
   secondary: {
@@ -141,19 +136,18 @@ const ErrorMessage = styled(BaseText)`
 `;
 
 const PostFix = styled(BoldText)`
-  font-weight: 900;
   line-height: 22px;
   margin-top: 8px;
 `;
 
 const InputField = styled(Input)`
-  ${props => props.inputType.fontWeight ? `font-weight: ${props.inputType.fontWeight};` : ''}
   ${props => props.inputType.textAlign ? `text-align: ${props.inputType.textAlign};` : ''}
   ${props => props.inputType.backgroundColor ? `background-color: ${props.inputType.backgroundColor};` : ''}
   ${props => props.inputType.borderRadius ? `border-radius: ${props.inputType.borderRadius};` : ''}
   ${props => props.inputType.color ? `color: ${props.inputType.color};` : ''}
   ${props => props.inputType.lineHeight ? `line-height: ${props.inputType.lineHeight};` : ''}
   padding: ${props => props.inputType.padding || 0};
+  font-family: EuclidCircularB-Medium;
 `;
 
 const Item = styled(NBItem)`
@@ -181,7 +175,6 @@ const CustomLabel = styled(Label)`
   color: ${props => props.labelBigger ? UIColors.defaultTextColor : baseColors.darkGray};
   font-size: ${props => props.labelBigger ? fontSizes.small : fontSizes.extraSmall};
   letter-spacing: 0.5;
-  font-weight: ${props => props.labelBigger ? fontWeights.bold : '600'};
   line-height: 24px;
   padding-top: ${props => props.labelBigger ? '35px' : '5px'};
   padding-bottom: ${props => props.labelBigger ? '12px' : '0'};
@@ -350,6 +343,7 @@ class TextInput extends React.Component<Props, State> {
               additionalStyle,
             ]}
             onLayout={onLayout}
+            underlineColorAndroid="transparent"
           />
           {Platform.OS === 'ios' && <RNInput
             caretHidden

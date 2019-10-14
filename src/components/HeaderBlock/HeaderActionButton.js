@@ -47,10 +47,6 @@ const RoundedButtonLabel = styled(MediumText)`
   line-height: ${fontSizes.small};
   font-size: ${fontSizes.extraSmall}px;
   color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};
-  font-weight: ${Platform.select({
-    ios: '500',
-    android: '400',
-  })};
   margin-left: 6px;
 `;
 const ChevronIcon = styled(Icon)`

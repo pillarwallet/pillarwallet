@@ -281,9 +281,7 @@ const ButtonText = styled(MediumText)`
   font-size: ${props => getButtonFontSize(props)};
   margin-bottom: ${props => props.extraSmall ? '2px' : 0};
   ${props => props.listItemButton || props.extraSmall ? `font-weight: ${fontWeights.book};` : ''}
-  ${props => props.listItemButton || props.extraSmall
-    ? 'font-family: Aktiv Grotesk App;'
-    : ''}
+ 
 `;
 
 const ButtonMiniWrapper = styled(NBButton)`

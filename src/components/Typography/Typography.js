@@ -65,10 +65,18 @@ export const SubTitle = styled(BaseText)`
   margin: ${props => props.margin || '0 0 20px'};
 `;
 
-export const SubHeading = styled(LightText)`
+const subheadingStyle = `
   font-size: ${fontSizes.extraExtraSmall};
   color: ${baseColors.darkGray};
   letter-spacing: 0.4;
+`;
+
+export const SubHeading = styled(LightText)`
+  ${subheadingStyle}
+`;
+
+export const SubHeadingMedium = styled(MediumText)`
+  ${subheadingStyle}
 `;
 
 export const Paragraph = styled(BaseText)`
@@ -84,7 +92,7 @@ export const TextLink = styled(BaseText)`
   color: ${UIColors.primary};
 `;
 
-export const Label = styled(BaseText)`
+export const Label = styled(MediumText)`
   font-size: ${props => props.small ? fontSizes.small : fontSizes.extraSmall};
   color: ${props => props.color || baseColors.darkGray};
 `;

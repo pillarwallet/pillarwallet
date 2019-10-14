@@ -19,11 +19,10 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Platform } from 'react-native';
 import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
-import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
 
@@ -186,7 +185,6 @@ const ErrorMessage = styled(BaseText)`
 
 const InputField = styled(Input)`
   font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraExtraLarge}px;
-  font-weight: ${props => props.fontWeight ? props.fontWeight : fontWeights.bold};
   include-font-padding: false;
   text-align: ${props => props.textAlign || 'right'};
   textAlignVertical: center;
@@ -196,8 +194,7 @@ const InputField = styled(Input)`
   border-width: ${props => props.error ? '1px' : props.theme.borderWidth};
   border-color: ${props => props.error ? 'tomato' : props.theme.borderColor};
   padding: 0 12px;  
-  ${props => Platform.OS === 'ios' || props.value ? 'font-family: Aktiv Grotesk App;' : ''}
-  ${props => Platform.OS === 'android' && props.fontSize ? `line-height: ${props.fontSize};` : ''}
+  font-family: EuclidCircularB-Medium;
 `;
 
 const SelectedOptionWrapper = styled.View`

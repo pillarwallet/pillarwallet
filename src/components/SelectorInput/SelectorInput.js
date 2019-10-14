@@ -24,7 +24,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // COMPONENTS
-import { BoldText, BaseText, MediumText, SubHeading } from 'components/Typography';
+import { BoldText, BaseText, MediumText, SubHeadingMedium } from 'components/Typography';
 import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -38,7 +38,6 @@ import ProfileImage from 'components/ProfileImage';
 import {
   baseColors,
   fontSizes,
-  fontWeights,
   itemSizes,
   spacing,
   UIColors,
@@ -149,16 +148,12 @@ const InputWrapper = styled.View`
 const InputField = styled(TextInput)`
   flex: 1;
   text-align: right;
-  font-weight: bold;
   padding: 0;
   margin: 0;
   font-size: ${fontSizes.giant}px;
   height: 100%;
-  ${props => Platform.OS === 'ios' || props.value ? 'font-family: Aktiv Grotesk App;' : ''}
-  ${props => props.value && Platform.OS === 'android'
-    ? 'lineHeight: 42px;'
-    : ''}
   min-width: 10px;
+  font-family: EuclidCircularB-Medium;
 `;
 
 const PlaceholderWrapper = styled.View`
@@ -207,9 +202,8 @@ const HorizontalOptions = styled.View`
 const HorizontalOptionsScrollView = styled.ScrollView`
 `;
 
-const HorizontalOptionsHeader = styled(SubHeading)`
+const HorizontalOptionsHeader = styled(SubHeadingMedium)`
   margin: 22px 16px 13px;
-  font-weight: ${fontWeights.medium};
 `;
 
 const HorizontalOptionItem = styled.TouchableOpacity`
@@ -238,9 +232,8 @@ const HorizontalOptionItemName = styled(BaseText)`
   })};
 `;
 
-const OptionsHeader = styled(SubHeading)`
+const OptionsHeader = styled(SubHeadingMedium)`
   margin: 22px 16px 13px;
-  font-weight: ${fontWeights.medium};
 `;
 
 const EmptyStateWrapper = styled(Wrapper)`
