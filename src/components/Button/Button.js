@@ -57,10 +57,6 @@ type Props = {
   textStyle?: ?Object,
   style?: Object,
   isLoading?: boolean,
-  primarySquare?: boolean,
-  primarySquareDisabled?: boolean,
-  roundedCorners?: boolean,
-  roundedCornersDisabled?: boolean,
 };
 
 type State = {
@@ -72,39 +68,19 @@ type ButtonNextProps = {
   disabled?: boolean,
 };
 
-const primaryTheme = {
-  background: baseColors.electricBlue,
-  color: baseColors.white,
-  borderColor: UIColors.defaultBorderColor,
-  borderWidth: 0,
-  shadow: true,
-};
-
-const primaryInvertedTheme = {
-  background: baseColors.white,
-  color: baseColors.electricBlue,
-  borderColor: baseColors.veryLightBlue,
-  borderWidth: '1px',
-};
-
 const themes = {
-  primary: primaryTheme,
-  primarySquare: {
-    ...primaryTheme,
-    borderRadius: 6,
-  },
-  primarySquareDisabled: {
-    borderColor: baseColors.veryLightBlue,
-    background: 'rgba(0, 122, 255, 0.3)',
+  primary: {
+    background: baseColors.electricBlue,
     color: baseColors.white,
+    borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
-    shadow: false,
-    borderRadius: 6,
+    shadow: true,
   },
-  primaryInverted: primaryInvertedTheme,
-  primaryInvertedSquare: {
-    ...primaryInvertedTheme,
-    borderRadius: 6,
+  primaryInverted: {
+    background: baseColors.white,
+    color: baseColors.electricBlue,
+    borderColor: baseColors.veryLightBlue,
+    borderWidth: '1px',
   },
   dangerInverted: {
     background: baseColors.white,
@@ -178,24 +154,6 @@ const themes = {
     borderRadius: 0,
     iconHorizontalMargin: 0,
   },
-  roundedCorners: {
-    background: baseColors.electricBlue,
-    color: baseColors.white,
-    borderColor: 'transparent',
-    borderWidth: 0,
-    flexDirection: 'row',
-    borderRadius: 6,
-    iconHorizontalMargin: 0,
-  },
-  roundedCornersDisabled: {
-    background: baseColors.lightGray,
-    color: baseColors.darkGray,
-    borderColor: UIColors.defaultBorderColor,
-    borderWidth: 0,
-    flexDirection: 'row',
-    borderRadius: 6,
-    iconHorizontalMargin: 0,
-  },
 };
 
 const getButtonHeight = (props) => {
@@ -262,9 +220,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   margin-bottom: ${props => props.marginBottom || '0px'};
   margin-left: ${props => props.marginLeft || '0px'};
   margin-right: ${props => props.marginRight || '0px'};
-  border-radius: ${props => props.theme.borderRadius || props.theme.borderRadius === 0
-    ? props.theme.borderRadius
-    : 40}px;
+  border-radius: ${props => props.theme.borderRadius || props.borderRadius || 0}px;
   width: ${props => getButtonWidth(props)};
   height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'};
@@ -322,12 +278,6 @@ const getTheme = (props: Props) => {
   if (props.secondaryTransparent && props.disabled) {
     return themes.secondaryTransparentDisabled;
   }
-  if (props.primarySquare && props.disabled) {
-    return themes.primarySquareDisabled;
-  }
-  if (props.roundedCorners && props.disabled) {
-    return themes.roundedCornersDisabled;
-  }
 
   const propsKeys = Object.keys(props);
   const themesKeys = Object.keys(themes);
@@ -367,7 +317,7 @@ class Button extends React.Component<Props, State> {
     this.ignoreTapTimeout = setTimeout(() => {
       this.setState({ shouldIgnoreTap: false });
     }, 1000);
-  }
+  };
 
   render() {
     const theme = getTheme(this.props);
@@ -385,6 +335,7 @@ class Button extends React.Component<Props, State> {
         theme={theme}
         onPress={debounce(this.handlePress, this.props.debounceTime, { leading: true, trailing: false })}
         disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap || isLoading}
+        borderRadius={this.props.small ? 3 : 6}
         style={isLoading ? { ...style, backgroundColor: 'transparent' } : style}
 
       >

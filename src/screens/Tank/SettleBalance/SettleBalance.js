@@ -264,7 +264,6 @@ class SettleBalance extends React.Component<Props, State> {
             {!!txToSettle.length && (
               <Button
                 small
-                roundedCorners
                 disabled={!session.isOnline}
                 title="Next"
                 onPress={this.goToConfirm}

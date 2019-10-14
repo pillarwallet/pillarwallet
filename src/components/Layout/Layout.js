@@ -57,6 +57,8 @@ type ScrollWrapperProps = {
   scrollEnabled?: boolean,
   refreshControl?: React.Node,
   disableOnAndroid?: boolean,
+  scrollEventThrottle?: number,
+  onContentSizeChange?: Function,
 };
 
 export const Center = styled.View`
@@ -135,6 +137,8 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
     scrollEnabled,
     refreshControl,
     disableOnAndroid,
+    scrollEventThrottle,
+    onContentSizeChange,
   } = props;
 
   return (
@@ -151,6 +155,8 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
       extraScrollHeight={0}
       scrollEnabled={scrollEnabled}
       refreshControl={refreshControl}
+      scrollEventThrottle={scrollEventThrottle}
+      onContentSizeChange={onContentSizeChange}
       style={{
         paddingHorizontal: regularPadding ? 20 : 0,
         backgroundColor: color || 'transparent',

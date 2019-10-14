@@ -269,13 +269,11 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               block
               title="Go to PLR Tank"
               onPress={() => this.setState({ showPinScreenForAction: true, processingCreate: true })}
-              roundedCorners
               style={{
                 backgroundColor: baseColors.pomegranate,
                 marginTop: 40,
                 marginBottom: 20,
                 opacity: needsSmartWallet ? 0.3 : 1,
-                borderRadius: 6,
               }}
               textStyle={{ color: baseColors.ultramarine }}
               isLoading={processingCreate}

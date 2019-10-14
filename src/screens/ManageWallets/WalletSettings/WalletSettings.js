@@ -152,7 +152,7 @@ class WalletSettings extends React.PureComponent<Props> {
     const account = findAccountById(accountId, accounts);
     if (!account) return null;
     const isSmartWallet = checkIfSmartWalletAccount(account);
-    const accountType = isSmartWallet ? 'Smart' : 'Key';
+    const accountType = isSmartWallet ? 'Smart' : 'Legacy';
     const settings = isSmartWallet
       ? [...smartWalletSettings, ...this.defaultSettings()]
       : [...this.keyWalletSettings(), ...this.defaultSettings()];

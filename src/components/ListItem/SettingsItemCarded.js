@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
@@ -40,7 +41,7 @@ type Props = {
   titleStyle?: Object,
   label?: string,
   contentWrapperStyle?: Object,
-  onMainPress?: Function,
+  onMainPress?: ?Function,
   onSettingsPress?: ?Function,
   isActive?: boolean,
   customIcon?: React.Node,
@@ -49,6 +50,7 @@ type Props = {
   isLoading?: boolean,
   onSettingsLoadingPress?: Function,
   settingsIconSource?: string,
+  sidePaddingsForWidth?: number,
 }
 
 const ItemWrapper = styled.View`
@@ -126,6 +128,8 @@ export const LoadingSpinner = styled(Spinner)`
   justify-content: center;
 `;
 
+const { width: screenWidth } = Dimensions.get('window');
+
 const defaultSettingsIcon = require('assets/icons/icon_settings.png');
 
 const SettingsIconComponent = (props) => {
@@ -160,17 +164,24 @@ export const SettingsItemCarded = (props: Props) => {
     settingsIcon,
     settingsLabel,
     isLoading,
+    sidePaddingsForWidth,
   } = props;
 
   const buttonSideLength = responsiveSize(84);
   const settingsActionOnLoading = onSettingsLoadingPress || noop;
   const settingsAction = isLoading ? settingsActionOnLoading : onSettingsPress;
+  const cardsSpacing = 8;
+  const additionalWrapperStyle = {};
+  if (sidePaddingsForWidth) {
+    additionalWrapperStyle.width = screenWidth - sidePaddingsForWidth - buttonSideLength - cardsSpacing;
+  }
 
   return (
     <ItemWrapper>
       <ShadowedCard
         wrapperStyle={{
           flexGrow: 1,
+          ...additionalWrapperStyle,
         }}
         contentWrapperStyle={{
           paddingVertical: 6,
@@ -200,7 +211,7 @@ export const SettingsItemCarded = (props: Props) => {
       <ShadowedCard
         wrapperStyle={{
           width: buttonSideLength,
-          marginLeft: 8,
+          marginLeft: cardsSpacing,
           flexDirection: 'column',
           height: '100%',
         }}

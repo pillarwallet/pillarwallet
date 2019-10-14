@@ -24,6 +24,7 @@ import HTMLView from 'react-native-htmlview';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import Spinner from 'components/Spinner';
+import type { ScrollToProps } from 'components/Modals/SlideModal';
 
 type Props = {
   htmlEndpoint: string,
@@ -36,6 +37,9 @@ type Props = {
 type State = {
   isHtmlFetched: boolean,
   htmlData: string,
+  scrollOffset: ?number,
+  contentContainerHeight: ?number,
+  containerHeight: ?number,
 };
 
 type CustomNode = {
@@ -56,15 +60,21 @@ const commonTextStyle = {
 };
 
 export default class HTMLContentModal extends React.Component<Props, State> {
+  scrollViewRef: Object;
+
   static defaultProps = {
     fullScreenComponent: null,
   };
 
   constructor(props: Props) {
     super(props);
+    this.scrollViewRef = React.createRef();
     this.state = {
       isHtmlFetched: false,
       htmlData: '',
+      scrollOffset: undefined,
+      containerHeight: undefined,
+      contentContainerHeight: undefined,
     };
   }
 
@@ -97,6 +107,11 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     return undefined;
   }
 
+  handleScrollTo = (p: ScrollToProps) => {
+    const { y } = p;
+    this.scrollViewRef.props.scrollToPosition(0, y);
+  };
+
   render() {
     const {
       isVisible,
@@ -105,6 +120,9 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     const {
       htmlData,
       isHtmlFetched,
+      scrollOffset,
+      contentContainerHeight,
+      containerHeight,
     } = this.state;
 
     const animationInTiming = 400;
@@ -118,6 +136,11 @@ export default class HTMLContentModal extends React.Component<Props, State> {
         animationOut="slideOutDown"
         onBackButtonPress={modalHide}
         onModalHide={this.handleModalClose}
+        scrollOffset={scrollOffset}
+        onSwipeComplete={modalHide}
+        scrollOffsetMax={contentContainerHeight && containerHeight ? contentContainerHeight - containerHeight : null}
+        swipeDirection="down"
+        scrollTo={this.handleScrollTo}
         style={{
           margin: 0,
           justifyContent: 'flex-start',
@@ -131,7 +154,27 @@ export default class HTMLContentModal extends React.Component<Props, State> {
           </ActivityIndicatorWrapper>
           }
           {!!isHtmlFetched &&
-          <ScrollWrapper regularPadding>
+          <ScrollWrapper
+            regularPadding
+            scrollEventThrottle={16}
+            onScroll={(event) => {
+              const { contentOffset } = event.nativeEvent;
+              const { y } = contentOffset;
+              this.setState({
+                scrollOffset: y,
+              });
+            }}
+            innerRef={(ref) => { this.scrollViewRef = ref; }}
+            onLayout={(event) => {
+              const { height } = event.nativeEvent.layout;
+              if (!containerHeight || containerHeight !== height) {
+                this.setState({ containerHeight: height });
+              }
+            }}
+            onContentSizeChange={(contentWidth, contentHeight) => {
+              this.setState({ contentContainerHeight: contentHeight });
+            }}
+          >
             <HTMLView
               value={htmlData}
               textComponentProps={{ style: commonTextStyle }}
