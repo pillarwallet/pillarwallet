@@ -380,7 +380,6 @@ class PPNView extends React.Component<Props, State> {
         {showSettleButton &&
           <FloatingButtonView>
             <Button
-              roundedCorners
               style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
               width="auto"
               title="Settle transactions"

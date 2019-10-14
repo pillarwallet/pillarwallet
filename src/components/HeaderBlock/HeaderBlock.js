@@ -65,8 +65,9 @@ const Wrapper = styled.View`
 `;
 
 const HeaderContentWrapper = styled.View`
-  padding: ${spacing.large}px;
+  padding: 15px ${spacing.large}px;
   width: 100%;
+  min-height: 58px;
 `;
 
 const SafeArea = styled(SafeAreaView)`
@@ -83,12 +84,13 @@ const HeaderRow = styled.View`
 const HeaderProfileImage = styled(ProfileImage)``;
 
 const HeaderTitle = styled(BaseText)`
-  line-height: ${fontSizes.small};
+  line-height: ${fontSizes.extraSmall}px;
   font-size: ${fontSizes.extraSmall}px;
   color: ${props => props.theme.color || UIColors.defaultTextColor};
   font-weight: 500;
   text-align: ${props => props.centerText ? 'center' : 'left'};
-  padding: 5px 0;
+  max-height: 28px;
+  margin-top: 2px;
 `;
 
 const UserButton = styled.TouchableOpacity`

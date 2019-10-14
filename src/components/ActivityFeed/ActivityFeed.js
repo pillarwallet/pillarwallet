@@ -206,11 +206,15 @@ type State = {
   tabIsChanging: boolean,
   formattedFeedData: FeedSection[],
   emptyStateData: EmptyState,
+  scrollOffset: ?number,
+  maxScrollOffset: ?number,
 }
 
 const PPNIcon = require('assets/icons/icon_PPN.png');
 
 class ActivityFeed extends React.Component<Props, State> {
+  eventDetailScrollViewRef: ?Object;
+
   static defaultProps = {
     initialNumToRender: 7,
   };
@@ -223,6 +227,8 @@ class ActivityFeed extends React.Component<Props, State> {
     tabIsChanging: false,
     formattedFeedData: [],
     emptyStateData: {},
+    scrollOffset: undefined,
+    maxScrollOffset: undefined,
   };
 
   componentDidMount() {
@@ -503,6 +509,8 @@ class ActivityFeed extends React.Component<Props, State> {
       tabIsChanging,
       formattedFeedData,
       emptyStateData,
+      scrollOffset,
+      maxScrollOffset,
     } = this.state;
 
     const additionalContentContainerStyle = !formattedFeedData.length
@@ -559,6 +567,14 @@ class ActivityFeed extends React.Component<Props, State> {
           title="transaction details"
           onModalHide={this.handleClose}
           eventDetail
+          handleScrollTo={({ y }) => {
+            if (this.eventDetailScrollViewRef && y) {
+              this.eventDetailScrollViewRef.scrollTo({ x: 0, y, animated: false });
+            }
+          }}
+          scrollOffset={scrollOffset}
+          scrollOffsetMax={maxScrollOffset}
+          onSwipeComplete={this.handleClose}
         >
           <EventDetails
             eventData={selectedEventData}
@@ -569,6 +585,9 @@ class ActivityFeed extends React.Component<Props, State> {
             onCancel={this.handleCancelInvitation}
             onAccept={this.handleAcceptInvitation}
             navigation={navigation}
+            getRef={(ref) => { this.eventDetailScrollViewRef = ref; }}
+            getScrollOffset={(offset) => this.setState({ scrollOffset: offset })}
+            getMaxScrollOffset={(maxOffset) => this.setState({ maxScrollOffset: maxOffset })}
           />
         </SlideModal>
         }

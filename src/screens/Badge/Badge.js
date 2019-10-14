@@ -61,7 +61,7 @@ class Badge extends React.Component<Props, {}> {
       <ContainerWithHeader headerProps={{ centerItems: [{ title: badge.name || 'Unknown badge' }] }}>
         <ScrollWrapper color={UIColors.defaultBackgroundColor}>
           <BadgeWrapper>
-            <Image data={badge} size="150" />
+            <Image data={badge} size="184" />
             {!!badge.subtitle && (
             <Subtitle>
               {badge.subtitle}

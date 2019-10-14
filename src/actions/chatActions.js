@@ -112,6 +112,14 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
         message: message.text,
         ...connectionStateCheckParams,
       };
+      if (!params.userId) {
+        Toast.show({
+          message: `Unable to send message to ${username}`,
+          type: 'warning',
+          autoClose: false,
+        });
+        return;
+      }
       await chat.sendMessage('chat', params, false, (requestId) => {
         // callback is ran if websocket message sent
         dispatch({
@@ -333,6 +341,14 @@ export const addContactAndSendWebSocketChatMessageAction = (tag: string, params:
       username,
       ...connectionStateCheckParams,
     };
+    if (!addContactParams.userId) {
+      Toast.show({
+        message: `Unable to send message to ${username}`,
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
     try {
       await chat.client.addContact(addContactParams, true);
       await chat.sendMessage(tag, params, false);

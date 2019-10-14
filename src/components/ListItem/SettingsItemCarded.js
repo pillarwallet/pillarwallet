@@ -75,7 +75,7 @@ const CardContent = styled.View`
 const CardTitle = styled(BoldText)`
   color: ${baseColors.slateBlack};
   font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.small}px;
+  line-height: ${fontSizes.medium}px;
 `;
 
 const CardSubtitle = styled(BaseText)`

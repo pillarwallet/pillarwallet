@@ -21,7 +21,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, spacing, fontWeights, UIColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
-import { ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { CustomParsedText } from 'components/CustomParsedText';
 
 type Props = {
@@ -52,7 +51,7 @@ const ItemValueHolder = styled.View`
   justify-content: flex-start;
   width: 100%;
   padding-right: ${spacing.mediumLarge}px;
-  height: 50px;
+  padding-bottom: ${spacing.mediumLarge}px;
 `;
 
 const StyledBaseText = styled(CustomParsedText)`
@@ -69,11 +68,7 @@ const ListItemParagraph = (props: Props) => {
     <ItemWrapper>
       <ItemLabel>{label}</ItemLabel>
       <ItemValueHolder>
-        <ScrollView>
-          <TouchableWithoutFeedback>
-            <StyledBaseText text={value} />
-          </TouchableWithoutFeedback>
-        </ScrollView>
+        <StyledBaseText text={value} />
       </ItemValueHolder>
     </ItemWrapper>
   );

@@ -162,7 +162,6 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
           <FooterWrapper>
             <Button
               disabled={submitButtonDisabled}
-              roundedCorners
               onPress={this.handleFormSubmit}
               title={submitButtonTitle}
             />
