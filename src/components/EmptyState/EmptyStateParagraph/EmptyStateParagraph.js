@@ -42,6 +42,7 @@ const EmptySectionTitle = styled(BaseText)`
 
 const EmptySectionText = styled(BaseText)`
   font-size: ${fontSizes.small}px;
+  line-height: ${fontSizes.extraLarge}px;
   color: ${baseColors.darkGray};
   text-align: center;
 `;

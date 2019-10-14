@@ -26,7 +26,7 @@ import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { BaseText, BoldText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 
 type Props = {
   title: string,
@@ -60,9 +60,9 @@ const ListItem = styled.TouchableOpacity`
   padding: 2px 0;
 `;
 
-const CardTitle = styled(BoldText)`
+const CardTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.small}px;
   margin-bottom: 10px;
 `;
 

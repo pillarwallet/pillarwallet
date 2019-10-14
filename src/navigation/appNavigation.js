@@ -355,7 +355,7 @@ const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => 
 const tabBarLabel = labelText => ({ focused, tintColor }) => (
   <BaseText
     style={{
-      fontSize: fontSizes.extraExtraSmall,
+      fontSize: fontSizes.extraSmall,
       color: focused ? tintColor : baseColors.mediumGray,
       textAlign: 'center',
     }}

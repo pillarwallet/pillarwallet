@@ -2256,9 +2256,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                             "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
-                          Object {
-                            "color": "#8B939E",
-                          },
+                          Array [
+                            Object {
+                              "color": "#8B939E",
+                              "lineHeight": 22,
+                            },
+                            undefined,
+                          ],
                         ]
                       }
                     >
@@ -2919,9 +2923,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                             "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
-                          Object {
-                            "color": "#8B939E",
-                          },
+                          Array [
+                            Object {
+                              "color": "#8B939E",
+                              "lineHeight": 22,
+                            },
+                            undefined,
+                          ],
                         ]
                       }
                     >

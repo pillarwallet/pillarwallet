@@ -25,7 +25,7 @@ import merge from 'lodash.merge';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { BoldText, BaseText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/Typography';
 
 type ToastOptions = {
   autoClose?: boolean,
@@ -111,6 +111,17 @@ const IconHolder = styled.View`
   padding-top: 2px;
 `;
 
+const ToastTitle = styled(MediumText)`
+  line-height: ${fontSizes.large}px;
+  color: ${baseColors.slateBlack};
+  margin-bottom: 2px;
+`;
+
+const ToastBody = styled(BaseText)`
+  line-height: ${fontSizes.large}px;
+  color: ${baseColors.darkGray};
+`;
+
 export default class Toast extends React.Component<{}, State> {
   timeout: TimeoutID;
 
@@ -192,10 +203,8 @@ export default class Toast extends React.Component<{}, State> {
 
     return (
       <View>
-        {!!title && <BoldText>{title}</BoldText>}
-        <BaseText style={{ color: baseColors.darkGray }}>
-          {message}
-        </BaseText>
+        {!!title && <ToastTitle>{title}</ToastTitle>}
+        <ToastBody>{message}</ToastBody>
       </View>
     );
   }
