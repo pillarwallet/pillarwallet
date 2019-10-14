@@ -263,7 +263,6 @@ exports[`Asset renders the Asset correctly 1`] = `
         />
       }
       resetKeyboardSpace={[Function]}
-      scrollEventThrottle={1}
       scrollForExtraHeightOnAndroid={[Function]}
       scrollToEnd={[Function]}
       scrollToFocusedInput={[Function]}
