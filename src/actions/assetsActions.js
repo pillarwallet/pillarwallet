@@ -684,8 +684,7 @@ export const checkForMissedAssetsAction = () => {
     let walletSupportedAssets = [...supportedAssets];
     if (isOnline) {
       const apiSupportedAssets = await api.fetchSupportedAssets(walletId);
-      // update if remote supported list has changed or current supported is empty (length=0)
-      if (!isEmpty(apiSupportedAssets) && apiSupportedAssets.length !== walletSupportedAssets.length) {
+      if (!isEmpty(apiSupportedAssets)) {
         walletSupportedAssets = [...apiSupportedAssets];
         dispatch({
           type: UPDATE_SUPPORTED_ASSETS,
