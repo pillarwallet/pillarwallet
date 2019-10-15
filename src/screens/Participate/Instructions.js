@@ -49,12 +49,12 @@ const Row = styled.View`
 
 const InstructionsLabel = styled(Label)`
   text-align:center;
-  ${fontStyles.small};
+  ${fontStyles.regular};
   margin-bottom: 4px;
 `;
 
 const IntroText = styled(BoldText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: ${baseColors.darkGray};
 `;
 

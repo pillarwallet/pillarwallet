@@ -79,7 +79,7 @@ const ItemLabel = styled(BaseText)`
 `;
 
 const SubText = styled(BaseText)`
-  ${fontStyles.extraSmall};
+  ${fontStyles.small};
   color: ${props => props.color ? props.color : baseColors.darkGray};
   margin-top: 4px;
 `;
@@ -169,7 +169,7 @@ export const ListItemChevron = (props: Props) => {
             <Icon
               name="chevron-right"
               style={{
-                fontSize: fontSizes.extraSmall,
+                fontSize: fontSizes.small,
                 color: color || baseColors.electricBlue,
                 ...chevronStyle,
               }}

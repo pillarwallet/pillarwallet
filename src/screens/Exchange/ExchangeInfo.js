@@ -32,7 +32,7 @@ import { BoldText, BaseText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Separator from 'components/Separator';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontStyles, spacing, UIColors } from 'utils/variables';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
 import { EXCHANGE } from 'constants/navigationConstants';
@@ -61,7 +61,7 @@ type State = {
 };
 
 const SectionTitle = styled(BoldText)`
-  font-size: ${fontSizes.big}px;
+  ${fontStyles.big};
   margin: 16px;
   margin-bottom: 10px;
 `;
@@ -76,11 +76,11 @@ const ProviderItem = styled.View`
 `;
 
 const ProviderName = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
 `;
 
 const ProviderStatus = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.regular};
   color: ${props => props.isPending ? baseColors.darkGray : baseColors.jadeGreen};
 `;
 
@@ -90,7 +90,7 @@ const DisconnectButton = styled.TouchableOpacity`
 `;
 
 const DisconnectButtonLabel = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.regular};
   color: ${baseColors.blueViolet};
 `;
 

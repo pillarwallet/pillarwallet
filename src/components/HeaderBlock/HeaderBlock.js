@@ -84,7 +84,7 @@ const HeaderRow = styled.View`
 const HeaderProfileImage = styled(ProfileImage)``;
 
 const HeaderTitle = styled(MediumText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: ${props => props.theme.color || UIColors.defaultTextColor};
   text-align: ${props => props.centerText ? 'center' : 'left'};
   margin-top: 2px;
@@ -157,7 +157,7 @@ const TextButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
 `;
 
@@ -346,7 +346,7 @@ class HeaderBlock extends React.Component<Props> {
             icon="close"
             color={baseColors.slateBlack}
             onPress={() => item.dismiss ? navigation.dismiss() : navigation.goBack()}
-            fontSize={fontSizes.small}
+            fontSize={fontSizes.regular}
             horizontalAlign="flex-end"
           />
         </View>

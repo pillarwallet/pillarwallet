@@ -38,7 +38,7 @@ const ItemWrapper = styled.View`
 
 const ItemLabel = styled(MediumText)`
   text-align:center;
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
 `;
 

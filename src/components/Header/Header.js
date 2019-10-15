@@ -87,7 +87,7 @@ const BackIcon = styled(IconButton)`
 
 const CloseIconText = styled(BaseText)`
   color: ${props => props.light ? baseColors.white : baseColors.darkGray};
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
 `;
 
 const IconWrapper = styled.View`

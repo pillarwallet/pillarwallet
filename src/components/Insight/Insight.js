@@ -133,7 +133,7 @@ export const Insight = (props: Props) => {
           icon="close"
           color={baseColors.coolGrey}
           onPress={onClose}
-          fontSize={fontSizes.extraSmall}
+          fontSize={fontSizes.small}
           horizontalAlign="flex-end"
         />
         <CardRow>

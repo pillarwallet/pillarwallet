@@ -100,8 +100,8 @@ const ItemBadge = styled.View`
 `;
 
 const BadgeIcon = styled(Icon)`
-  font-size: ${props => props.fontSize || fontSizes.extraSmall}px;
-  line-height: ${props => props.fontSize || fontSizes.extraSmall}px;
+  font-size: ${props => props.fontSize || fontSizes.small}px;
+  line-height: ${props => props.fontSize || fontSizes.small}px;
   color: ${baseColors.white};
 `;
 

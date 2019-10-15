@@ -44,7 +44,7 @@ import QRCodeScanner from 'components/QRCodeScanner';
 import Tabs from 'components/Tabs';
 import Button from 'components/Button';
 import Icon from 'components/Icon';
-import { fontSizes, baseColors, spacing } from 'utils/variables';
+import { fontSizes, baseColors, spacing, fontStyles } from 'utils/variables';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -114,10 +114,10 @@ const Row = styled.View`
 `;
 
 const BackupWordText = styled(BaseText)`
+  ${fontStyles.regular};
   margin: 4px 2px;
   align-items: flex-start;
   color: ${baseColors.mediumGray};
-  font-size: ${fontSizes.small}px;
 `;
 
 const ScannerButton = styled.TouchableOpacity`

@@ -191,11 +191,11 @@ const getButtonPadding = (props) => {
 
 const getButtonFontSize = (props) => {
   if (props.listItemButton) {
-    return `${fontSizes.small}px`;
+    return `${fontSizes.regular}px`;
   } else if (props.small) {
-    return `${fontSizes.small}px`;
+    return `${fontSizes.regular}px`;
   } else if (props.extraSmall) {
-    return `${fontSizes.extraSmall}px`;
+    return `${fontSizes.small}px`;
   }
   return `${fontSizes.big}px`;
 };

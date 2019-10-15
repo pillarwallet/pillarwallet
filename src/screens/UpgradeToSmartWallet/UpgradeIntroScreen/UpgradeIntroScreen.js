@@ -133,7 +133,7 @@ class UpgradeIntroScreen extends React.PureComponent<Props> {
             nextText="Support"
             nextTextStyle={{
               color: baseColors.white,
-              fontSize: fontSizes.small,
+              fontSize: fontSizes.regular,
               letterSpacing: 0.1,
               opacity: 0.8,
             }}

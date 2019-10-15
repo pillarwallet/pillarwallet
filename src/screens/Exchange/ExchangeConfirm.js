@@ -84,7 +84,7 @@ const ButtonWrapper = styled.View`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.regular}px;
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;

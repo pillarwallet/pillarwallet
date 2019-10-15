@@ -38,7 +38,7 @@ const HideButtonWrapper = styled.TouchableOpacity`
 
 const HideButtonLabel = styled(BaseText)`
   color: ${baseColors.burningFire};
-  font-size: ${props => props.expanded ? fontSizes.small : fontSizes.extraSmall}px;
+  font-size: ${props => props.expanded ? fontSizes.regular : fontSizes.small}px;
   margin-top: 8px;
   opacity: ${props => props.disabled ? 0.5 : 1}
 `;

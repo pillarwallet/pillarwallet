@@ -112,13 +112,13 @@ const IconHolder = styled.View`
 `;
 
 const ToastTitle = styled(MediumText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: ${baseColors.slateBlack};
   margin-bottom: 2px;
 `;
 
 const ToastBody = styled(BaseText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: ${baseColors.darkGray};
 `;
 

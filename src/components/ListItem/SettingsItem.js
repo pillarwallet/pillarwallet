@@ -79,7 +79,7 @@ const Badge = styled(NBBadge)`
 
 const BadgeText = styled(BaseText)`
   color: #fff;
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   text-align: center;
   width: 100%;
   padding: 0 2px;

@@ -67,7 +67,7 @@ const CheckboxBox = styled.View`
 `;
 
 const CheckboxText = styled(BaseText)`
-  ${props => props.small ? fontStyles.small : fontStyles.medium};
+  ${props => props.small ? fontStyles.regular : fontStyles.medium};
   color: ${props => props.light ? baseColors.darkGray : baseColors.slateBlack};
   flex-wrap: wrap;
 `;

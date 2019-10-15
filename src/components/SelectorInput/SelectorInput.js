@@ -160,13 +160,13 @@ const PlaceholderWrapper = styled.View`
 `;
 
 const Placeholder = styled(BaseText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   letter-spacing: 0.23px;
   color: ${baseColors.darkGray};
 `;
 
 const ErrorMessage = styled(BaseText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: tomato;
   margin: 8px 12px;
 `;
@@ -221,7 +221,7 @@ const HorizontalOptionItem = styled.TouchableOpacity`
 `;
 
 const HorizontalOptionItemName = styled(BaseText)`
-  ${fontStyles.extraSmall};
+  ${fontStyles.small};
   color: ${baseColors.darkGray};
   padding: 0 4px;
   margin-top: ${Platform.select({

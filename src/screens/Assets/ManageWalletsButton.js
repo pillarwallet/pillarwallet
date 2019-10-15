@@ -49,7 +49,7 @@ const ButtonIcon = styled(Icon)`
 
 const ButtonText = styled(BaseText)`
   color: ${props => props.color};
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.regular}px;
 `;
 
 const IconsWrapper = styled.View`

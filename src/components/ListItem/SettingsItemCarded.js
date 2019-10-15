@@ -79,7 +79,7 @@ const CardTitle = styled(MediumText)`
 
 const CardSubtitle = styled(BaseText)`
   color: ${baseColors.coolGrey};
-  ${fontStyles.small};
+  ${fontStyles.regular};
   margin-top: 4px;
 `;
 
@@ -108,7 +108,7 @@ const CardImage = styled(CachedImage)`
   background-color: ${baseColors.darkGray};
 `;
 const SettingsLabel = styled(MediumText)`
-  font-size: ${responsiveSize(14)}px;
+  ${fontStyles.rRegular};
   color: ${baseColors.malibu};
   margin-top: 4px;
 `;

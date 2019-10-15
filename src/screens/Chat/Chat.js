@@ -112,7 +112,7 @@ const renderDay = (props: Props) => (
     textStyle={{
       color: baseColors.darkGray,
       fontWeight: '400',
-      fontSize: fontSizes.small,
+      fontSize: fontSizes.regular,
       fontFamily: 'Aktiv Grotesk App',
     }}
     dateFormat="LL"
@@ -128,13 +128,13 @@ const renderTime = (props: Props) => {
           color: baseColors.darkGray,
           fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
-          fontSize: fontSizes.extraSmall,
+          fontSize: fontSizes.small,
         },
         left: {
           color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
           fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
-          fontSize: fontSizes.extraSmall,
+          fontSize: fontSizes.small,
         },
       }}
       timeFormat="HH:mm"
@@ -382,8 +382,8 @@ class Chat extends React.Component<Props, State> {
             android: 8,
           }),
           marginBottom: 5,
-          fontSize: fontSizes.small,
-          lineHeight: lineHeights.small,
+          fontSize: fontSizes.regular,
+          lineHeight: lineHeights.regular,
         }}
         placeholder="Type your message here"
       />
@@ -397,13 +397,13 @@ class Chat extends React.Component<Props, State> {
       textStyle={{
         left: {
           color: isWarning ? baseColors.white : baseColors.slateBlack,
-          fontSize: fontSizes.small,
+          fontSize: fontSizes.regular,
           fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
         },
         right: {
           color: baseColors.slateBlack,
-          fontSize: fontSizes.small,
+          fontSize: fontSizes.regular,
           fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
         },

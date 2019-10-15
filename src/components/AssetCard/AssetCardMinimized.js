@@ -135,7 +135,7 @@ const FiatAmount = styled(LightText)`
 `;
 
 const Disclaimer = styled(LightText)`
-  ${props => props.smallScreen ? fontStyles.extraSmall : fontStyles.small}px;
+  ${props => props.smallScreen ? fontStyles.small : fontStyles.regular}px;
   color: ${baseColors.burningFire};
   text-align: left;
 `;
@@ -151,7 +151,7 @@ const IconCircle = styled.View`
 `;
 
 const Name = styled(BaseText)`
-  ${props => props.smallScreen ? fontStyles.extraSmall : fontStyles.small}px;
+  ${props => props.smallScreen ? fontStyles.small : fontStyles.regular}px;
   letter-spacing: ${fontTrackings.small};
   color: ${baseColors.darkGray};
   ${({ center }) => center ? 'width: 100%; text-align: center;' : ''}

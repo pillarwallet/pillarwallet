@@ -103,14 +103,14 @@ const Amount = styled(LightText)`
 `;
 
 const FiatAmount = styled(LightText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: #fff;
   margin-left: -2px;
   opacity: ${props => props.innerCard ? 0.7 : 1};
 `;
 
 const Disclaimer = styled(LightText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: ${baseColors.burningFire};
 `;
 

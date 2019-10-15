@@ -132,13 +132,13 @@ const StatusIcon = styled.View`
 
 const StatusText = styled(BaseText)`
   color: ${props => props.active ? baseColors.emerald : baseColors.fireEngineRed};
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   letter-spacing: 0.15px;
 `;
 
 const ValueLabel = styled(BaseText)`
   color: ${props => props.total ? baseColors.caribbeanGreen : baseColors.lavenderBlue};
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.regular}px;
   margin-bottom: 5px;
   opacity: ${props => props.light ? 0.7 : 1};
 `;
@@ -379,7 +379,7 @@ class TankDetails extends React.Component<Props, State> {
             <ValueText style={{ color: baseColors.hoki }}>
               {`${usedFormattedAmount} ${PPN_TOKEN}`}
             </ValueText>
-            <ValueLabel style={{ color: baseColors.hoki, fontSize: fontSizes.extraSmall }}>Used</ValueLabel>
+            <ValueLabel style={{ color: baseColors.hoki, fontSize: fontSizes.small }}>Used</ValueLabel>
           </ColumnAnimated>
           <FooterWrapper>
             <Button

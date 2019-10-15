@@ -112,7 +112,7 @@ const CardColumn = styled.View`
 `;
 
 const CardText = styled(BaseText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   letter-spacing: 0.18px;
   color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
   flex-wrap: wrap;
@@ -133,7 +133,7 @@ const CardButton = styled.TouchableOpacity`
 
 const ButtonLabel = styled(BaseText)`
   color: ${props => props.color ? props.color : baseColors.slateBlack};
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.regular}px;
 `;
 
 const FormWrapper = styled.View`
@@ -157,7 +157,7 @@ const CardNote = styled(BaseText)`
   padding: 4px 0;
   margin-left: 10px;
   color: ${props => props.color ? props.color : baseColors.slateBlack};
-  ${fontStyles.small};
+  ${fontStyles.regular};
 `;
 
 type Props = {

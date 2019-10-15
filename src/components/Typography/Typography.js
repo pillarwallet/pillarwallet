@@ -64,12 +64,12 @@ const subheadingStyle = `
 `;
 
 export const SubHeading = styled(LightText)`
-  ${fontStyles.extraSmall};
+  ${fontStyles.small};
   ${subheadingStyle}
 `;
 
 export const SubHeadingMedium = styled(MediumText)`
-  ${fontStyles.extraSmall};
+  ${fontStyles.small};
   ${subheadingStyle}
 `;
 
@@ -87,12 +87,12 @@ export const TextLink = styled(BaseText)`
 `;
 
 export const Label = styled(MediumText)`
-  ${props => props.small ? fontStyles.medium : fontStyles.small}px;
+  ${props => props.small ? fontStyles.medium : fontStyles.regular}px;
   color: ${props => props.color || baseColors.darkGray};
 `;
 
 export const HelpText = styled(BaseText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   padding: 10px;
   color: grey;
 `;

@@ -42,7 +42,7 @@ const ItemWrapper = styled.View`
 
 const ItemLabel = styled(BaseText)`
   text-align:center;
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
   font-weight: ${fontWeights.medium};
 `;

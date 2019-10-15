@@ -83,7 +83,7 @@ const LocalContactsItem = styled.TouchableOpacity`
 `;
 
 const LocalContactsItemName = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
   padding: 0 4px;
   margin-top: ${Platform.select({

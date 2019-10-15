@@ -53,7 +53,7 @@ const MnemonicPhraseWord = styled.TouchableOpacity`
 `;
 
 const MnemonicPhraseWordText = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.regular}px;
   color: #ffffff;
 `;
 
@@ -104,7 +104,7 @@ const ShuffledWordWrapper = styled.View`
 
 const ErrorParagraph = styled(Paragraph)`
   color: ${baseColors.fireEngineRed};
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.regular}px;
 `;
 
 const FooterWrapper = styled.View`

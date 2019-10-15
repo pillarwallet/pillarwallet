@@ -392,7 +392,7 @@ class EventDetails extends React.Component<Props, State> {
               showProfileImage={showProfileImage}
               userName={relatedUserTitle}
               diameter={40}
-              initialsSize={fontSizes.small}
+              initialsSize={fontSizes.regular}
               style={{ marginBottom: 4 }}
               onPress={() => this.goToProfile(relatedUser)}
               noShadow
@@ -465,7 +465,7 @@ class EventDetails extends React.Component<Props, State> {
               showProfileImage={showProfileImage}
               userName={relatedUserTitle}
               diameter={40}
-              initialsSize={fontSizes.small}
+              initialsSize={fontSizes.regular}
               style={{ marginBottom: 4 }}
               onPress={() => this.goToProfile(relatedUser)}
               noShadow
@@ -503,7 +503,7 @@ class EventDetails extends React.Component<Props, State> {
             uri={userData.profileImage}
             userName={userData.username}
             diameter={40}
-            initialsSize={fontSizes.small}
+            initialsSize={fontSizes.regular}
             onPress={() => this.goToProfile(userData)}
             noShadow
             borderWidth={0}

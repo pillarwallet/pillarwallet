@@ -55,14 +55,14 @@ const Amount = styled(BoldText)`
 `;
 
 const FiatAmount = styled(LightText)`
-  ${fontStyles.extraSmall};
+  ${fontStyles.small};
   color: ${baseColors.darkGray};
   align-self: flex-end;
   text-align: right;
 `;
 
 const Disclaimer = styled(LightText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: ${baseColors.burningFire};
   align-self: flex-end;
   text-align: right;

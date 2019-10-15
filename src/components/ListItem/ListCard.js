@@ -84,7 +84,7 @@ const TitleWrapper = styled.View`
 
 const Label = styled(MediumText)`
   color: ${baseColors.dodgerBlue};
-  ${fontStyles.small};
+  ${fontStyles.regular};
   text-align: right;
   padding-left: ${spacing.medium}px;
 `;

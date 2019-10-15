@@ -106,7 +106,7 @@ const getTheme = (props: Props) => {
 };
 
 const Label = styled(MediumText)`
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
   padding-bottom: ${spacing.rhythm / 2}px;
 `;

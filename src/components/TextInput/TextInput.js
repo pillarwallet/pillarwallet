@@ -176,7 +176,7 @@ const CustomLabel = styled(Label)`
   letter-spacing: 0.5;
   padding-top: ${props => props.labelBigger ? '35px' : '5px'};
   padding-bottom: ${props => props.labelBigger ? '12px' : '0'};
-  ${props => props.labelBigger ? fontStyles.medium : fontStyles.small};
+  ${props => props.labelBigger ? fontStyles.medium : fontStyles.regular};
   `;
 
 const AbsoluteSpinner = styled(Spinner)`
@@ -191,7 +191,7 @@ const AbsoluteIcon = styled(Icon)`
   right: ${spacing.mediumLarge}px;
   top: 50%;
   margin-top: -13px;
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.regular}px;
   color: ${props => props.color || baseColors.electricBlue};
 `;
 

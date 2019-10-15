@@ -56,7 +56,7 @@ const CardRow = styled.View`
 `;
 
 const Name = styled(BaseText)`
-  ${props => props.smallScreen ? fontStyles.extraSmall : fontStyles.small}px;
+  ${props => props.smallScreen ? fontStyles.small : fontStyles.regular}px;
   letter-spacing: ${fontTrackings.small};
   color: ${baseColors.darkGray};
   width: 100%; 

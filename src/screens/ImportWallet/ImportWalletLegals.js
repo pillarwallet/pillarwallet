@@ -59,12 +59,12 @@ const ButtonWrapper = styled.View`
 `;
 
 const CheckboxText = styled(BaseText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: ${baseColors.coolGrey};
 `;
 
 const StyledTextLink = styled(TextLink)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: ${baseColors.rockBlue};
 `;
 

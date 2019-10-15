@@ -68,7 +68,7 @@ type State = {
 };
 
 const DetailsTitle = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.regular}px;
   padding-bottom: 5px;
   color: #999999;
 `;
@@ -89,7 +89,7 @@ const DetailsWrapper = styled.View`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.regular}px;
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;

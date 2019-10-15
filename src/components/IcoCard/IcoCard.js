@@ -126,14 +126,14 @@ const Column = styled.View`
 `;
 
 const ColumnLabel = styled(BaseText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   letter-spacing: ${fontTrackings.tiny};
   color: ${baseColors.darkGray};
   margin-bottom: 2px;
 `;
 
 const ColumnValue = styled(MediumText)`
-  ${props => props.xl ? fontStyles.big : fontStyles.small};
+  ${props => props.xl ? fontStyles.big : fontStyles.regular};
   color: ${baseColors.slateBlack};
   letter-spacing: ${fontTrackings.tiny};
   margin-top: 2px;

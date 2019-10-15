@@ -55,7 +55,7 @@ const Wrapper = styled.View`
 `;
 
 const Text = styled(MediumText)`
-  ${props => props.subtitle ? fontStyles.small : fontStyles.big};
+  ${props => props.subtitle ? fontStyles.regular : fontStyles.big};
   ${({ align }) => align === 'center' ? 'text-align: center;' : ''}
 `;
 

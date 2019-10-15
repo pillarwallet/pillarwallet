@@ -154,12 +154,13 @@ export const UIColors = {
 
 export const fontSizes = {
   tiny: 10,
-  extraSmall: 12,
-  small: 14,
+  small: 12,
+  regular: 14,
   medium: 16,
   big: 18,
   large: 24,
   giant: 36,
+  rRegular: responsiveSize(14),
   rBig: responsiveSize(18),
   rLarge: responsiveSize(24),
   rJumbo: responsiveSize(64),
@@ -167,12 +168,13 @@ export const fontSizes = {
 
 export const lineHeights = {
   tiny: 14,
-  extraSmall: 18,
-  small: 22,
+  small: 18,
+  regular: 22,
   medium: 24,
   big: 28,
   large: 38,
   giant: 54,
+  rRegular: responsiveSize(22),
   rBig: responsiveSize(28),
   rLarge: responsiveSize(38),
   rJumbo: responsiveSize(74),
@@ -180,12 +182,13 @@ export const lineHeights = {
 
 export const fontStyles = {
   tiny: { fontSize: fontSizes.tiny, lineHeight: lineHeights.tiny },
-  extraSmall: { fontSize: fontSizes.extraSmall, lineHeight: lineHeights.extraSmall },
   small: { fontSize: fontSizes.small, lineHeight: lineHeights.small },
+  regular: { fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
   medium: { fontSize: fontSizes.medium, lineHeight: lineHeights.medium },
   big: { fontSize: fontSizes.big, lineHeight: lineHeights.big },
   large: { fontSize: fontSizes.large, lineHeight: lineHeights.large },
   giant: { fontSize: fontSizes.giant, lineHeight: lineHeights.giant },
+  rRegular: { fontSize: fontSizes.rRegular, lineHeight: lineHeights.rRegular },
   rBig: { fontSize: fontSizes.rBig, lineHeight: lineHeights.rBig },
   rLarge: { fontSize: fontSizes.rLarge, lineHeight: lineHeights.rLarge },
   rJumbo: { fontSize: fontSizes.rJumbo, lineHeight: lineHeights.rJumbo },

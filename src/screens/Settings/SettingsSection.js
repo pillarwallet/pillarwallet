@@ -31,7 +31,7 @@ import { baseColors, UIColors, fontStyles } from 'utils/variables';
 
 const SectionHeader = styled(MediumText)`
   color: ${baseColors.blueYonder};
-  ${fontStyles.small};
+  ${fontStyles.regular};
   margin-top: 20px;
   margin-bottom: 9px;
 `;

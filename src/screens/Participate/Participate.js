@@ -188,7 +188,7 @@ const FooterInner = styled.View`
 
 const LegalText = styled(BaseText)`
   flex: 1;
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.small}px;
   padding-right: 28px;
 `;
 

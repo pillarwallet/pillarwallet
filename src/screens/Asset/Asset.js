@@ -54,7 +54,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // utils
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, spacing, fontSizes, fontStyles } from 'utils/variables';
 import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
@@ -150,20 +150,20 @@ const ValueWrapper = styled.View`
 `;
 
 const TokenValue = styled(BoldText)`
-  font-size: ${fontSizes.giant}px;
+  ${fontStyles.giant};
   text-align: center;
   color: ${props => props.isSynthetic ? baseColors.electricBlueIntense : baseColors.slateBlack};
 `;
 
 const ValueInFiat = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.small};
   text-align: center;
   color: ${baseColors.darkGray};
   margin-top: 5px;
 `;
 
 const Disclaimer = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.regular};
   text-align: center;
   color: ${baseColors.burningFire};
   margin-top: 5px;

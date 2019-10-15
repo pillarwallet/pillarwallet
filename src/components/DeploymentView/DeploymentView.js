@@ -51,7 +51,7 @@ const MessageTitle = styled(BoldText)`
 
 const Message = styled(BaseText)`
   padding-top: 20px;
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.regular}px;
   color: ${baseColors.darkGray};
   text-align: center;
 `;

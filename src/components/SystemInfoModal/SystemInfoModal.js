@@ -38,7 +38,7 @@ const LabeledRow = styled.View`
 `;
 
 const Label = styled(BoldText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   color: ${baseColors.darkGray};
   letter-spacing: 0.5;
 `;

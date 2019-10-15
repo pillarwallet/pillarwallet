@@ -47,7 +47,7 @@ type Props = {
 
 const SectionHeader = styled(MediumText)`
   color: ${baseColors.blueYonder};
-  ${fontStyles.small};
+  ${fontStyles.regular};
   margin: ${spacing.mediumLarge}px 0;
 `;
 

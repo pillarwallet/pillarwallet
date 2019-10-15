@@ -94,7 +94,7 @@ const ListHeaderWrapper = styled.View`
 `;
 
 const HeaderTitle = styled(MediumText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.regular}px;
   color: ${baseColors.blueYonder};
 `;
 

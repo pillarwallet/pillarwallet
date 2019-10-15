@@ -48,7 +48,7 @@ const ItemLabelHolder = styled.View`
 `;
 
 const ItemLabel = styled(MediumText)`
-  ${fontStyles.extraSmall};
+  ${fontStyles.small};
   color: ${baseColors.coolGrey};
   flex-wrap: wrap;
   width: 100%;
@@ -56,7 +56,7 @@ const ItemLabel = styled(MediumText)`
 `;
 
 const ErrorMessage = styled(BaseText)`
-  ${fontStyles.extraSmall};
+  ${fontStyles.small};
   color: ${baseColors.fireEngineRed};
   flex-wrap: wrap;
   width: 100%;
@@ -88,7 +88,7 @@ const VerifyView = styled.View`
 
 const VerifyLabel = styled(BaseText)`
   color: ${({ isVerified }) => isVerified ? baseColors.eucalypus : baseColors.brightBlue};
-  ${fontStyles.small};
+  ${fontStyles.regular};
   margin: 0 4px 0;
 `;
 

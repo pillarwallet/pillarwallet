@@ -132,7 +132,7 @@ const ItemTitle = styled(BoldText)`
 
 const ItemParagraph = styled(BaseText)`
   color: ${baseColors.darkGray};
-  ${fontStyles.small};
+  ${fontStyles.regular};
   letter-spacing: ${fontTrackings.tiny}px;
   margin-top: 4px;
   flex: 1;
@@ -140,7 +140,7 @@ const ItemParagraph = styled(BaseText)`
 
 const ItemSubText = styled(BaseText)`
   color: ${baseColors.darkGray};
-  ${fontStyles.small};
+  ${fontStyles.regular};
   margin-top: 4px;
 `;
 
@@ -180,7 +180,7 @@ const TimeWrapper = styled.View`
 
 const TimeSent = styled(BaseText)`
   color: ${baseColors.darkGray};
-  ${fontStyles.small};
+  ${fontStyles.regular};
   text-align-vertical: bottom;
 `;
 
@@ -393,7 +393,7 @@ const ImageAddon = (props: Props) => {
         diameter={22}
         borderWidth={2}
         noShadow
-        initialsSize={fontSizes.extraSmall}
+        initialsSize={fontSizes.small}
       />
     </ImageAddonHolder>
   );
@@ -469,7 +469,7 @@ const Addon = (props: Props) => {
           color={baseColors.darkGray}
           margin={0}
           icon="close"
-          fontSize={fontSizes.small}
+          fontSize={fontSizes.regular}
           onPress={rejectInvitation}
         />
         <ActionCircleButton
@@ -477,7 +477,7 @@ const Addon = (props: Props) => {
           margin={0}
           accept
           icon="check"
-          fontSize={fontSizes.small}
+          fontSize={fontSizes.regular}
           onPress={acceptInvitation}
         />
       </ButtonIconWrapper>

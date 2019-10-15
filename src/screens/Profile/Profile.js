@@ -94,7 +94,7 @@ const CheckboxText = styled(BaseText)`
 `;
 
 const SmallText = styled(BaseText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
 `;
