@@ -57,7 +57,7 @@ import type {
   CollectibleTransactionPayload,
   TransactionPayload,
 } from 'models/Transaction';
-import type { Asset, Assets, AssetsByAccount, Balance, Balances } from 'models/Asset';
+import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { transformAssetsToObject } from 'utils/assets';
@@ -481,25 +481,6 @@ export const sendAssetAction = (
   };
 };
 
-// TODO: remove this?
-export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = []) => {
-  return (dispatch: Dispatch) => {
-    const updatedAssets = Object.keys(assets)
-      .map(key => assets[key])
-      .reduce((memo, item) => {
-        if (!assetsToExclude.includes(item.symbol)) {
-          memo[item.symbol] = item;
-        }
-        return memo;
-      }, {});
-    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-    dispatch({
-      type: UPDATE_ASSETS,
-      payload: updatedAssets,
-    });
-  };
-};
-
 function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balances) {
   const increasedBalances = newBalances
     .filter(({ balance, symbol }) => {
@@ -611,14 +592,14 @@ export const addAssetAction = (asset: Asset) => {
     const accountId = getActiveAccountId(accounts);
     if (!accountId) return;
 
-    const accountAssets = assets[accountId];
+    const accountAssets = accountAssetsSelector(getState());
     const updatedAssets = {
       ...assets,
       [accountId]: { ...accountAssets, [asset.symbol]: { ...asset } },
     };
 
     dispatch(showAssetAction(asset));
-    dispatch(saveDbAction('assets', { assets: updatedAssets }));
+    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
 
     dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
 
@@ -656,14 +637,14 @@ export const resetSearchAssetsResultAction = () => ({
   type: RESET_ASSETS_SEARCH_RESULT,
 });
 
-export const getSupportedTokens = (supportedAssets: Asset[], currentAssets: AssetsByAccount, account: Account) => {
+export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: AssetsByAccount, account: Account) => {
   const accountId = getAccountId(account);
-  const currentAccountAssets = get(currentAssets, accountId, {});
-  const currentAccountAssetsTickers = Object.keys(currentAccountAssets);
+  const accountAssets = get(accountsAssets, accountId, {});
+  const accountAssetsTickers = Object.keys(accountAssets);
 
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
-  if (!currentAccountAssetsTickers.includes(ETH)) currentAccountAssetsTickers.push(ETH);
-  if (!currentAccountAssetsTickers.includes(PLR)) currentAccountAssetsTickers.push(PLR);
+  if (!accountAssetsTickers.includes(ETH)) accountAssetsTickers.push(ETH);
+  if (!accountAssetsTickers.includes(PLR)) accountAssetsTickers.push(PLR);
 
   // TODO: remove when we find an issue with supported assets
   if (!supportedAssets || !supportedAssets.length) {
@@ -672,7 +653,7 @@ export const getSupportedTokens = (supportedAssets: Asset[], currentAssets: Asse
   }
 
   const updatedAccountAssets = supportedAssets
-    .filter(asset => currentAccountAssetsTickers.includes(asset.symbol))
+    .filter(asset => accountAssetsTickers.includes(asset.symbol))
     .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
   return { id: accountId, ...updatedAccountAssets };
 };
@@ -695,18 +676,17 @@ export const checkForMissedAssetsAction = () => {
     const {
       accounts: { data: accounts },
       user: { data: { walletId } },
-      assets: { data: currentAssets, supportedAssets = [] },
+      assets: { data: accountsAssets, supportedAssets = [] },
       session: { data: { isOnline } },
     } = getState();
 
     // load supported assets
     let walletSupportedAssets = [...supportedAssets];
     if (isOnline) {
-      const remoteSupportedAssets = await api.fetchSupportedAssets(walletId);
+      const apiSupportedAssets = await api.fetchSupportedAssets(walletId);
       // update if remote supported list has changed or current supported is empty (length=0)
-      if (!isEmpty(remoteSupportedAssets)
-        && remoteSupportedAssets.length !== walletSupportedAssets.length) {
-        walletSupportedAssets = [...remoteSupportedAssets];
+      if (!isEmpty(apiSupportedAssets) && apiSupportedAssets.length !== walletSupportedAssets.length) {
+        walletSupportedAssets = [...apiSupportedAssets];
         dispatch({
           type: UPDATE_SUPPORTED_ASSETS,
           payload: walletSupportedAssets,
@@ -715,7 +695,7 @@ export const checkForMissedAssetsAction = () => {
     }
 
     const allSupportedAddedAssetsByAccount = accounts
-      .map((acc) => getSupportedTokens(walletSupportedAssets, currentAssets, acc))
+      .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc))
       .reduce((obj, { id, ...rest }) => {
         obj[id] = rest;
         return obj;
@@ -745,7 +725,8 @@ export const checkForMissedAssetsAction = () => {
       payload: updatedAssets,
     });
     dispatch(fetchAssetsBalancesAction());
-    dispatch(saveDbAction('assets', { assets: updatedAssets, supportedAssets: walletSupportedAssets }, true));
+    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+    dispatch(saveDbAction('supportedAssets', { supportedAssets: walletSupportedAssets }, true));
   };
 };
 

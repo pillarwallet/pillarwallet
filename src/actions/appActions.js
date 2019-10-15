@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import { Sentry } from 'react-native-sentry';
 
@@ -97,10 +96,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const accounts = await loadAndMigrate('accounts', dispatch, getState);
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 
-      const migratedAssets = await loadAndMigrate('assets', dispatch, getState);
-      const assets = get(migratedAssets, 'assets', {});
-      const supportedAssets = get(migratedAssets, 'supportedAssets', []);
+      const assets = await loadAndMigrate('assets', dispatch, getState);
       dispatch({ type: UPDATE_ASSETS, payload: assets });
+
+      const { supportedAssets = [] } = await storage.get('supportedAssets');
       dispatch({ type: UPDATE_SUPPORTED_ASSETS, payload: supportedAssets });
 
       const balances = await loadAndMigrate('balances', dispatch, getState);

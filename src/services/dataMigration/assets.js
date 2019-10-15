@@ -25,7 +25,7 @@ export function migrateAssetsToAccountsFormat(
 
 export default async function (dispatch: Function) {
   const { accounts = [] } = await storage.get('accounts');
-  const { assets = {}, supportedAssets = [] } = await storage.get('assets');
+  const { assets = {} } = await storage.get('assets');
   const keyBasedAccount = findKeyBasedAccount(accounts);
   const keyBasedAccountId = get(keyBasedAccount, 'id', null);
 
@@ -33,9 +33,9 @@ export default async function (dispatch: Function) {
     const migratedAssets = migrateAssetsToAccountsFormat(assets, accounts);
     if (migratedAssets) {
       dispatch(saveDbAction('assets', { assets: migratedAssets }, true));
-      return { assets: migratedAssets, supportedAssets };
+      return migratedAssets;
     }
   }
 
-  return { assets, supportedAssets };
+  return assets;
 }
