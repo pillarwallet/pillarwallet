@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import isEmpty from 'lodash.isempty';
 import partition from 'lodash.partition';
 import ChatService from 'services/chat';
 import Toast from 'components/Toast';
@@ -246,12 +247,11 @@ export const getChatByContactAction = (
 
       const data = await chat.client.receiveNewMessagesByContact(username, 'chat')
         .then(JSON.parse)
-        .catch(() => {
-        });
+        .catch(() => {});
 
-      if (data !== undefined && Object.keys(data).length) {
+      if (!isEmpty(data)) {
         const { messages: newRemoteMessages } = data;
-        if (newRemoteMessages !== undefined && newRemoteMessages.length) {
+        if (!isEmpty(newRemoteMessages)) {
           const remotePromises = newRemoteMessages.map(async remoteMessage => {
             const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
             await chat.deleteMessage(rmUsername, rmServerTimestamp);
