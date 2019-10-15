@@ -170,7 +170,6 @@ class ImportWalletLegals extends React.Component<Props, State> {
           <ButtonWrapper>
             <StyledButton
               disabled={!canGoNext}
-              primarySquare
               title="Proceed"
               onPress={() => navigation.navigate(IMPORT_WALLET)}
             />
