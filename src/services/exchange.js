@@ -170,7 +170,7 @@ export default class ExchangeService {
           this.setIPInfo(data);
           return data;
         })
-        .catch(() => {});
+        .catch(() => ({}));
     }
     return Promise.resolve(this.ipInfo);
   }

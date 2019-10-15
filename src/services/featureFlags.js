@@ -32,7 +32,7 @@ export async function getRemoteFeatureFlags() {
   await firebaseConfig.fetch(0).catch(() => null); // 0 – try no caching, though Firebase can still throttle requests
   await firebaseConfig.activateFetched().catch(() => null);
   const featureFlagKeys = Object.keys(INITIAL_FEATURE_FLAGS || {});
-  const fetchedFlags = await firebaseConfig.getValues(featureFlagKeys).catch(() => {});
+  const fetchedFlags = await firebaseConfig.getValues(featureFlagKeys).catch(() => ({}));
   const mappedFeatureFlags = Object.keys(fetchedFlags).reduce((flags, flagKey) => ({
     ...flags,
     [flagKey]: !!fetchedFlags[flagKey].val(),
