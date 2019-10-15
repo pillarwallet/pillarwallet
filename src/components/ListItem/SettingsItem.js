@@ -78,7 +78,7 @@ const Badge = styled(NBBadge)`
 `;
 
 const BadgeText = styled(BaseText)`
-  color: #fff;
+  color: ${baseColors.white};
   font-size: ${fontSizes.small}px;
   text-align: center;
   width: 100%;

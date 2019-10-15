@@ -22,10 +22,10 @@ import { TouchableOpacity, Animated, Easing, Dimensions } from 'react-native';
 import isEqual from 'lodash.isequal';
 import isEqualWith from 'lodash.isequalwith';
 import styled from 'styled-components/native';
-import { LightText, BaseText, BoldText } from 'components/Typography';
+import { LightText, BaseText, MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
-import { spacing, fontSizes, fontTrackings, baseColors, fontStyles } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors, fontStyles, lineHeights } from 'utils/variables';
 import Icon from 'components/Icon';
 import Toast from 'components/Toast';
 
@@ -122,7 +122,7 @@ const AmountWrapper = styled.View`
   margin-top: ${props => props.extraSmall ? 4 : spacing.rhythm / 2}px;
 `;
 
-const Amount = styled(BoldText)`
+const Amount = styled(MediumText)`
   ${fontStyles.medium};
   color: ${baseColors.slateBlack};
   text-align: left;
@@ -150,12 +150,20 @@ const IconCircle = styled.View`
   justify-content: center;
 `;
 
-const Name = styled(BaseText)`
-  ${props => props.smallScreen ? fontStyles.small : fontStyles.regular}px;
+const nameStyle = (props) => `
+  font-size: ${props.smallScreen ? fontSizes.small : fontSizes.regular}px;
+  line-height: ${props.smallScreen ? lineHeights.small : lineHeights.regular}px;
   letter-spacing: ${fontTrackings.small};
   color: ${baseColors.darkGray};
-  ${({ center }) => center ? 'width: 100%; text-align: center;' : ''}
-  font-weight: ${props => props.fontWeight ? props.fontWeight : 600};
+  ${props.center ? 'width: 100%; text-align: center;' : ''}
+`;
+
+const Name = styled(MediumText)`
+  ${props => nameStyle(props)};
+`;
+
+const NameRegular = styled(BaseText)`
+  ${props => nameStyle(props)};
 `;
 
 const DetailWrapper = styled.View`
@@ -284,7 +292,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
             />
           </CardRow>
           <CardRow justify="center">
-            <Name center numberOfLines={1} ellipsizeMode="tail" fontWeight={400}>{name}</Name>
+            <NameRegular center numberOfLines={1} ellipsizeMode="tail">{name}</NameRegular>
           </CardRow>
         </InnerWrapper>
       );

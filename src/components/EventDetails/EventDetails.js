@@ -37,7 +37,7 @@ import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 
 // components
-import { BaseText, BoldText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
@@ -45,7 +45,7 @@ import ProfileImage from 'components/ProfileImage';
 import Toast from 'components/Toast';
 
 // utils
-import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { spacing, baseColors, fontSizes, fontStyles } from 'utils/variables';
 import {
   formatFullAmount,
   noop,
@@ -150,9 +150,8 @@ const EventRow = styled.View`
   flex-wrap: wrap;
 `;
 
-const EventBodyTitle = styled(BaseText)`
-  font-size: ${fontSizes.big}px;
-  font-weight: ${fontWeights.medium};
+const EventBodyTitle = styled(MediumText)`
+  ${fontStyles.big};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   margin: 0 10px 2px;
   text-align: center;
@@ -404,7 +403,7 @@ class EventDetails extends React.Component<Props, State> {
           {listSettledAssets &&
           <ListItemUnderlined
             label="ASSETS"
-            value={extra.map(item => <BoldText key={item.hash}> {item.value} {item.symbol}</BoldText>)}
+            value={extra.map(item => <MediumText key={item.hash}> {item.value} {item.symbol}</MediumText>)}
           />
           }
           {showFeeBlock &&

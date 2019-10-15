@@ -125,6 +125,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   Object {
                     "color": "#8B939E",
                     "fontSize": 14,
+                    "lineHeight": 22,
                   },
                   undefined,
                 ],
@@ -284,7 +285,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Bold",
+                              "fontFamily": "EuclidCircularB-Medium",
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -527,6 +528,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   Object {
                     "color": "#8B939E",
                     "fontSize": 14,
+                    "lineHeight": 22,
                   },
                   undefined,
                 ],
@@ -686,7 +688,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Bold",
+                              "fontFamily": "EuclidCircularB-Medium",
                               "textAlignVertical": "center",
                             },
                             Array [

@@ -27,7 +27,7 @@ import { BigNumber } from 'bignumber.js';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
-import { Label, BoldText } from 'components/Typography';
+import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import { fontSizes, spacing } from 'utils/variables';
 import {
@@ -64,7 +64,7 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
+const Value = styled(MediumText)`
   font-size: ${fontSizes.big}px;
 `;
 

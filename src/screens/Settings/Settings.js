@@ -38,7 +38,7 @@ import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
 
 // components
 import { Wrapper } from 'components/Layout';
-import { BaseText, BoldText, Paragraph } from 'components/Typography';
+import { BaseText, MediumText, Paragraph } from 'components/Typography';
 import Toast from 'components/Toast';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
@@ -61,7 +61,7 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 
 // utils
 import { isProdEnv } from 'utils/environment';
-import { baseColors, fontTrackings, fontWeights, spacing, fontStyles } from 'utils/variables';
+import { baseColors, fontTrackings, spacing, fontStyles } from 'utils/variables';
 
 // partials
 import { SettingsSection } from './SettingsSection';
@@ -99,16 +99,15 @@ type Props = {
 const storage = new Storage('db');
 const chat = new ChatService();
 
-const SettingsModalTitle = styled(BoldText)`
+const SettingsModalTitle = styled(MediumText)`
   ${fontStyles.big};
-  font-weight: ${fontWeights.bold};
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 
 const StyledWrapper = styled(Wrapper)`
   justify-content: space-between;
   padding-bottom: ${spacing.rhythm}px;
-  margin-top: 25px;
+  margin-top: ${spacing.medium}px;
 `;
 
 const CheckboxText = styled(BaseText)`
@@ -488,7 +487,7 @@ class Settings extends React.Component<Props, State> {
           isVisible={visibleModal === 'systemInfo'}
           fullScreen
           showHeader
-          title="system info"
+          title="System info"
           onModalHide={() => this.setState({ visibleModal: null })}
         >
           <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
@@ -562,6 +561,7 @@ class Settings extends React.Component<Props, State> {
               <Checkbox
                 checked={!optOutTracking}
                 onPress={() => this.handleToggleOptOutTracking()}
+                wrapperStyle={{ marginBottom: spacing.large }}
               >
                 <CheckboxText>
                   I&apos;m happy to share anonymous application usage statistics

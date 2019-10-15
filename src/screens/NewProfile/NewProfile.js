@@ -27,7 +27,7 @@ import debounce from 'lodash.debounce';
 
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText, BoldText, Paragraph, TextLink } from 'components/Typography';
+import { BaseText, MediumText, Paragraph, TextLink } from 'components/Typography';
 import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
@@ -56,7 +56,7 @@ const UsernameWrapper = styled(Wrapper)`
   top: 2px;
 `;
 
-const Text = styled(BoldText)`
+const Text = styled(MediumText)`
   ${fontStyles.big};
   width: 100%;
   text-align: center;

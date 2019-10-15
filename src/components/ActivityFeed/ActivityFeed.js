@@ -52,7 +52,7 @@ import {
   formatUnits,
   groupAndSortByDate,
 } from 'utils/common';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { findMatchingContact } from 'utils/contacts';
 
 // constants
@@ -102,7 +102,7 @@ const SectionHeaderWrapper = styled.View`
 `;
 
 const SectionHeader = styled(BaseText)`
-  font-size: ${fontSizes.regular}px;
+  ${fontStyles.regular};
   color: ${baseColors.darkGray};
 `;
 

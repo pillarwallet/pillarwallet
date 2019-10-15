@@ -24,7 +24,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // COMPONENTS
-import { BoldText, BaseText, MediumText, SubHeadingMedium } from 'components/Typography';
+import { BaseText, MediumText, SubHeadingMedium } from 'components/Typography';
 import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -80,7 +80,7 @@ type EventLike = {
 const Wrapper = styled.View`
 `;
 
-const Label = styled(BoldText)`
+const Label = styled(MediumText)`
   ${fontStyles.big};
   letter-spacing: 0.23px;
   color: ${baseColors.slateBlack};

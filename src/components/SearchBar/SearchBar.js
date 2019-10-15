@@ -52,7 +52,7 @@ const InputField = styled.TextInput`
   height: 42px;
   padding-left: 14px;
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.regular}px;
   font-family: EuclidCircularB-Regular;
 `;
 

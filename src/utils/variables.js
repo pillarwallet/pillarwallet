@@ -214,12 +214,3 @@ export const fontTrackings = {
   mediumLarge: 0.4,
   large: 0.5,
 };
-
-export const fontWeights = {
-  thin: '100',
-  light: '300',
-  book: '400',
-  medium: '500',
-  bold: '700',
-  black: '900',
-};

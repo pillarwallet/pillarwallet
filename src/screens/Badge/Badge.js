@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { fontSizes, spacing, UIColors } from 'utils/variables';
+import { fontStyles, spacing, UIColors } from 'utils/variables';
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeImage from 'components/BadgeImage';
@@ -33,7 +33,7 @@ const Image = styled(BadgeImage)`
 
 const Subtitle = styled(MediumText)`
   padding-top: 40px;
-  font-size: ${fontSizes.large}px;
+  ${fontStyles.large};
   text-align: center;
 `;
 

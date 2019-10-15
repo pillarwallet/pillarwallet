@@ -36,7 +36,7 @@ import Icon from 'components/Icon';
 import ListItemUnderlined from 'screens/Participate/ListItemUnderlined';
 
 // utils
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 import { parseNumber, formatAmount, formatMoney } from 'utils/common';
 import { getRate } from 'utils/assets';
 
@@ -188,7 +188,7 @@ const FooterInner = styled.View`
 
 const LegalText = styled(BaseText)`
   flex: 1;
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.small};
   padding-right: 28px;
 `;
 
@@ -220,7 +220,7 @@ const ItemLabelHolder = styled.View`
 `;
 
 const ItemLabel = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   padding-right: 10px;
   flex: 1;
   color: ${baseColors.slateBlack};

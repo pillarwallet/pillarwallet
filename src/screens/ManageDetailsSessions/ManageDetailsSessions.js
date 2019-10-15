@@ -200,8 +200,9 @@ class ManageDetailsSessions extends React.Component<Props, State> {
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
         headerProps={{
-          centerItems: [{ title: 'Manage Sessions' }],
+          centerItems: [{ title: 'Manage SessionsX' }],
           rightItems: [{ label: 'Support', onPress: () => Intercom.displayMessenger() }],
+          sideFlex: 2,
         }}
       >
         <Tabs initialActiveTab={activeTab} tabs={sessionTabs} />

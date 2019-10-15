@@ -22,7 +22,7 @@ import { Animated } from 'react-native';
 import styled from 'styled-components/native';
 
 import { Wrapper } from 'components/Layout';
-import { BoldText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import { baseColors, fontStyles } from 'utils/variables';
 
@@ -47,11 +47,11 @@ const ContentHolder = styled.View`
   margin-top: -20px;
 `;
 
-const MessageText = styled(BoldText)`
+const MessageText = styled(MediumText)`
   ${fontStyles.large};
   color: ${baseColors.slateBlack};
   position: absolute;
-  top: 52px;
+  top: 62px;
   left: 0;
 `;
 

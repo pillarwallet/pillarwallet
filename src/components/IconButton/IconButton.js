@@ -21,8 +21,8 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { StyleSheet } from 'react-native';
 import Icon from 'components/Icon';
-import { BaseText } from 'components/Typography';
-import { fontSizes, baseColors, fontWeights } from 'utils/variables';
+import { MediumText } from 'components/Typography';
+import { fontSizes, baseColors } from 'utils/variables';
 
 type Props = {
   icon: string,
@@ -43,10 +43,9 @@ const IconButtonWrapper = styled.TouchableOpacity`
   padding: 0;
 `;
 
-const ButtonText = styled(BaseText)`
+const ButtonText = styled(MediumText)`
   color: ${baseColors.electricBlue};
   font-size: ${fontSizes.small}px;
-  font-weight: ${fontWeights.medium};
 `;
 
 const IconButton = (props: Props) => {

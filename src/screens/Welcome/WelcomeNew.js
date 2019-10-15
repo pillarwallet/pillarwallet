@@ -48,7 +48,6 @@ const PillarLogo = styled(CachedImage)`
 const Title = styled(BoldText)`
   color: ${baseColors.pomegranate};
   ${fontStyles.rJumbo};
-  font-weight: 700;
 `;
 
 const BodyText = styled(MediumText)`

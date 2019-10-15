@@ -19,8 +19,8 @@
 */
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { BoldText, BaseText } from 'components/Typography';
-import { fontTrackings, baseColors, fontSizes, spacing } from 'utils/variables';
+import { MediumText, BaseText } from 'components/Typography';
+import { fontTrackings, baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
@@ -123,8 +123,8 @@ const CloseIcon = styled(IconButton)`
   opacity: 0.7;
 `;
 
-const EventTitle = styled(BoldText)`
-  font-size: ${fontSizes.large}px;
+const EventTitle = styled(MediumText)`
+  ${fontStyles.large};
   letter-spacing: ${fontTrackings.tiny}px;
   color: ${baseColors.white};
   margin: 2px 0;
@@ -132,7 +132,7 @@ const EventTitle = styled(BoldText)`
 `;
 
 const EventSubtitle = styled(BaseText)`
-  font-size: ${fontSizes.tiny}px;
+  ${fontStyles.tiny};
   letter-spacing: ${fontTrackings.mediumLarge}px;
   color: ${baseColors.white};
   margin: 2px 0;

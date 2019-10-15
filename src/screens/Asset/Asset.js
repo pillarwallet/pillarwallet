@@ -33,7 +33,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
-import { BoldText, BaseText, Paragraph } from 'components/Typography';
+import { BaseText, Paragraph, MediumText } from 'components/Typography';
 import DeploymentView from 'components/DeploymentView';
 
 // actions
@@ -149,7 +149,7 @@ const ValueWrapper = styled.View`
   align-items: center;
 `;
 
-const TokenValue = styled(BoldText)`
+const TokenValue = styled(MediumText)`
   ${fontStyles.giant};
   text-align: center;
   color: ${props => props.isSynthetic ? baseColors.electricBlueIntense : baseColors.slateBlack};
@@ -159,7 +159,6 @@ const ValueInFiat = styled(BaseText)`
   ${fontStyles.small};
   text-align: center;
   color: ${baseColors.darkGray};
-  margin-top: 5px;
 `;
 
 const Disclaimer = styled(BaseText)`

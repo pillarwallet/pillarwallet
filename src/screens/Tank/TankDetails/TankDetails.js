@@ -30,7 +30,7 @@ import { ensureSmartAccountConnectedAction } from 'actions/smartWalletActions';
 
 // components
 import { ScrollWrapper, Container } from 'components/Layout';
-import { BoldText, BaseText, MediumText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/Typography';
 import Tank from 'components/Tank';
 import Button from 'components/Button';
 import IconButton from 'components/IconButton';
@@ -53,7 +53,7 @@ import type { Balances } from 'models/Asset';
 
 // utils
 import { getRate } from 'utils/assets';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles } from 'utils/variables';
 import { delay, formatMoney, formatFiat } from 'utils/common';
 
 
@@ -110,9 +110,9 @@ const ColumnInner = styled.View`
   flex-direction: column;
 `;
 
-const BoldTitle = styled(BoldText)`
+const BoldTitle = styled(MediumText)`
   color: ${baseColors.white};
-  font-size: ${fontSizes.big}px;
+  ${fontStyles.big};
 `;
 
 const Status = styled.View`
@@ -138,7 +138,7 @@ const StatusText = styled(BaseText)`
 
 const ValueLabel = styled(BaseText)`
   color: ${props => props.total ? baseColors.caribbeanGreen : baseColors.lavenderBlue};
-  font-size: ${fontSizes.regular}px;
+  ${fontStyles.regular};
   margin-bottom: 5px;
   opacity: ${props => props.light ? 0.7 : 1};
 `;

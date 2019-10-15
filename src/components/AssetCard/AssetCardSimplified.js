@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Dimensions } from 'react-native';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
-import { BoldText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { spacing, fontTrackings, baseColors, fontStyles } from 'utils/variables';
@@ -92,7 +92,7 @@ const NameWrapper = styled.View`
   padding-right: ${spacing.small}px;
 `;
 
-const Name = styled(BoldText)`
+const Name = styled(MediumText)`
   ${fontStyles.medium};
   letter-spacing: ${fontTrackings.small};
   color: ${baseColors.slateBlack};

@@ -45,7 +45,7 @@ import { hideAssetAction } from 'actions/userSettingsActions';
 import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -94,7 +94,7 @@ const ListHeaderWrapper = styled.View`
 `;
 
 const HeaderTitle = styled(MediumText)`
-  font-size: ${fontSizes.regular}px;
+  ${fontStyles.regular};
   color: ${baseColors.blueYonder};
 `;
 

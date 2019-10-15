@@ -20,7 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { transparentize } from 'polished';
-import { BaseText, BoldText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import { baseColors, fontSizes } from 'utils/variables';
 
 const MnemonicPhraseWrapper = styled.View`
@@ -50,12 +50,11 @@ const MnemonicPhraseIndex = styled(BaseText)`
   color: ${transparentize(0.5, baseColors.white)};
 `;
 
-const MnemonicPhraseWord = styled(BoldText)`
+const MnemonicPhraseWord = styled(MediumText)`
   font-size: ${fontSizes.medium}px;
   padding-left: 10px;
   flex: 1;
   color: ${baseColors.white};
-
 `;
 
 const getIndex = (number: number) => {

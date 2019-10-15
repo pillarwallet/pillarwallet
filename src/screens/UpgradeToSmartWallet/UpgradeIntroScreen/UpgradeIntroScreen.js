@@ -28,10 +28,10 @@ import Intercom from 'react-native-intercom';
 import { UPGRADE_INFO } from 'constants/navigationConstants';
 import { dismissSmartWalletUpgradeAction } from 'actions/smartWalletActions';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { BoldText, BaseText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -39,8 +39,8 @@ type Props = {
   dismissSmartWalletUpgrade: Function,
 };
 
-const Title = styled(BoldText)`
-  font-size: 24px;
+const Title = styled(MediumText)`
+  ${fontStyles.medium};
   text-align: center;
   color: ${baseColors.midnight};
   margin-top: 30px;
@@ -71,13 +71,13 @@ const FeatureTextWrapper = styled.View`
   flex: 1;
 `;
 
-const FeatureLabel = styled(BoldText)`
-  font-size: ${fontSizes.medium}px;
+const FeatureLabel = styled(MediumText)`
+  ${fontStyles.medium};
   color: ${baseColors.midnight};
 `;
 
 const FeatureBody = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   color: ${baseColors.midnight};
   opacity: 0.6;
   flex: 1;

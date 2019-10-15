@@ -43,7 +43,7 @@ import { getActiveAccount, getActiveAccountType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { responsiveSize } from 'utils/ui';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 
 // types
@@ -168,9 +168,9 @@ const FooterWrapper = styled.View`
 `;
 
 const FooterParagraph = styled(BaseText)`
+  ${fontStyles.regular};
   text-align: center;
   color: ${baseColors.coolGrey};
-  font-size: ${fontSizes.regular}px;
 `;
 
 const pillarNetworkIcon = require('assets/icons/icon_PPN.png');

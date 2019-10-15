@@ -28,7 +28,7 @@ import { CachedImage } from 'react-native-cached-image';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
-import { BoldText, BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Separator from 'components/Separator';
@@ -60,10 +60,9 @@ type State = {
   openCollapseKey: string,
 };
 
-const SectionTitle = styled(BoldText)`
-  ${fontStyles.big};
+const SectionTitle = styled(MediumText)`
+  ${fontStyles.medium};
   margin: 16px;
-  margin-bottom: 10px;
 `;
 
 const ProviderItem = styled.View`
@@ -230,6 +229,7 @@ class ExchangeInfo extends React.Component<Props, State> {
         headerProps={{
           centerItems: [{ title: 'Settings' }],
           rightItems: [{ label: 'Support', onPress: () => Intercom.displayMessenger() }],
+          sideFlex: 2,
         }}
         inset={{ bottom: 'never' }}
       >

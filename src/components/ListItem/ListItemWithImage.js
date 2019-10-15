@@ -24,8 +24,8 @@ import { CachedImage } from 'react-native-cached-image';
 import isEqualWith from 'lodash.isequalwith';
 import Icon from 'components/Icon';
 import IconButton from 'components/IconButton';
-import { BaseText, BoldText } from 'components/Typography';
-import { baseColors, fontSizes, spacing, fontWeights, fontTrackings, fontStyles } from 'utils/variables';
+import { BaseText, MediumText } from 'components/Typography';
+import { baseColors, fontSizes, spacing, fontTrackings, fontStyles } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
 import { Shadow } from 'components/Shadow';
@@ -123,7 +123,7 @@ const Column = styled.View`
   min-height: 54px;
 `;
 
-const ItemTitle = styled(BoldText)`
+const ItemTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
   ${fontStyles.medium};
   letter-spacing: ${fontTrackings.small}px;
@@ -196,8 +196,8 @@ const ItemBadge = styled.View`
 `;
 
 const UnreadNumber = styled(BaseText)`
-  color: #ffffff;
-  font-size: 10px;
+  color: ${baseColors.white};
+  font-size: ${fontSizes.tiny}px;
   align-self: center;
   width: 20px;
   text-align: center;
@@ -209,7 +209,7 @@ const ItemValue = styled(BaseText)`
   text-align: right;
 `;
 
-const ItemValueBold = styled(BoldText)`
+const ItemValueBold = styled(MediumText)`
   ${fontStyles.big};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   text-align: right;
@@ -232,7 +232,6 @@ const ActionLabel = styled.View`
   ${props => props.button ? `border: 1px solid ${baseColors.veryLightBlue}` : ''}
   ${props => props.button ? 'border-radius: 40px;' : ''}
   ${props => props.button ? 'height: 34px;' : ''}
-  ${props => props.button ? `font-weight: ${fontWeights.medium};` : ''}
 `;
 
 const ActionLabelText = styled(BaseText)`

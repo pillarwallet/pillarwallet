@@ -25,7 +25,7 @@ import ShadowedCard from 'components/ShadowedCard';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 
 type Props = {
@@ -62,13 +62,13 @@ const ListItem = styled.TouchableOpacity`
 
 const CardTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.regular};
   margin-bottom: 10px;
 `;
 
 const InsightText = styled(BaseText)`
   color: ${props => props.color};
-  font-size: 14px;
+  ${fontStyles.regular};
 `;
 
 const Close = styled(IconButton)`

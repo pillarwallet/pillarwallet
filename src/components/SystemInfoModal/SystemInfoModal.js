@@ -30,20 +30,20 @@ import {
 } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
-import { BoldText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import { baseColors, fontStyles } from 'utils/variables';
 
 const LabeledRow = styled.View`
   margin: 6px 0;
 `;
 
-const Label = styled(BoldText)`
+const Label = styled(MediumText)`
   ${fontStyles.regular};
   color: ${baseColors.darkGray};
   letter-spacing: 0.5;
 `;
 
-const Value = styled(BoldText)`
+const Value = styled(MediumText)`
   ${fontStyles.big};
 `;
 

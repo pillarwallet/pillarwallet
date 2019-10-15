@@ -49,7 +49,7 @@ import type { TxToSettle } from 'models/PaymentNetwork';
 // utils
 import {
   baseColors,
-  fontSizes,
+  fontStyles,
   spacing,
   UIColors,
 } from 'utils/variables';
@@ -117,8 +117,8 @@ const BalanceWrapper = styled.View`
 `;
 
 const ValueInFiat = styled(BaseText)`
+  ${fontStyles.small};
   color: ${baseColors.coolGrey};
-  font-size: ${fontSizes.small}px;
 `;
 
 const SubtitleView = styled.View`
@@ -142,7 +142,7 @@ const SectionHeaderWrapper = styled.View`
 `;
 
 const SectionHeader = styled(BaseText)`
-  font-size: ${fontSizes.regular}px;
+  ${fontStyles.regular};
   color: ${baseColors.darkGray};
 `;
 

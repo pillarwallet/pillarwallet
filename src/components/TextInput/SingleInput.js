@@ -22,7 +22,7 @@ import styled from 'styled-components/native';
 import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
-import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
 
@@ -106,7 +106,7 @@ const getTheme = (props: Props) => {
 };
 
 const Label = styled(MediumText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.small};
   color: ${baseColors.darkGray};
   padding-bottom: ${spacing.rhythm / 2}px;
 `;

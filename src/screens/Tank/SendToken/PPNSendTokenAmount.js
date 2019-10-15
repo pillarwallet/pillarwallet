@@ -32,7 +32,7 @@ import { TextLink, Label, BaseText } from 'components/Typography';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { fontSizes, spacing, UIColors } from 'utils/variables';
+import { fontSizes, fontStyles, spacing, UIColors } from 'utils/variables';
 import { getRate } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
@@ -66,9 +66,10 @@ const SendTokenDetailsValue = styled(BaseText)`
 `;
 
 const HelperText = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   margin-bottom: ${spacing.rhythm / 2}px;
   color: ${UIColors.placeholderTextColor};
+  margin-left: 4px;
 `;
 
 const BackgroundWrapper = styled.View`
@@ -79,6 +80,10 @@ const BackgroundWrapper = styled.View`
 const FooterWrapper = styled.View`
   width: 100%;
   padding: ${spacing.large}px;
+`;
+
+const TextRow = styled.View`
+  flex-direction: row;
 `;
 
 type Props = {
@@ -222,10 +227,12 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
             <ActionsWrapper>
               <SendTokenDetails>
                 <Label small>Available Balance</Label>
-                <SendTokenDetailsValue>
-                  {formattedBalance} {token}
+                <TextRow>
+                  <SendTokenDetailsValue>
+                    {formattedBalance} {token}
+                  </SendTokenDetailsValue>
                   <HelperText>{formattedBalanceInFiat}</HelperText>
-                </SendTokenDetailsValue>
+                </TextRow>
               </SendTokenDetails>
               <TouchableOpacity onPress={this.useMaxValue}>
                 <TextLink>Send All</TextLink>

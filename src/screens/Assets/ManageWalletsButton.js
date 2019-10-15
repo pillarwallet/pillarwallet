@@ -26,7 +26,7 @@ import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 
 // utils
-import { baseColors, fontSizes, fontStyles } from 'utils/variables';
+import { baseColors, fontStyles } from 'utils/variables';
 
 type Props = {
   onPress: Function,
@@ -49,7 +49,7 @@ const ButtonIcon = styled(Icon)`
 
 const ButtonText = styled(BaseText)`
   color: ${props => props.color};
-  font-size: ${fontSizes.regular}px;
+  ${fontStyles.regular};
 `;
 
 const IconsWrapper = styled.View`

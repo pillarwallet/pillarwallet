@@ -13,7 +13,7 @@ const LabeledRow = styled.View`
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${fontSizes.big}px;
+  font-size: ${fontSizes.large}px;
   padding: 14px
 `;
 

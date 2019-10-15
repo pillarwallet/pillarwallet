@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, brandColors, UIColors, fontSizes } from 'utils/variables';
+import { baseColors, brandColors, UIColors, fontSizes, fontStyles } from 'utils/variables';
 import { BaseText, BoldText } from 'components/Typography';
 
 type Props = {
@@ -53,13 +53,13 @@ const ProfileCardAvatarText = styled(BoldText)`
 `;
 
 const ProfileCardName = styled(BaseText)`
-  font-size: ${fontSizes.big}px;
+  ${fontStyles.big};
   color: ${UIColors.defaultTextColor};
   margin-bottom: 10px;
 `;
 
 const ProfileCardEmail = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   color: ${UIColors.defaultTextColor};
 `;
 

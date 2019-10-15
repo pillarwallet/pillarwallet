@@ -22,7 +22,7 @@ import { Clipboard, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { TextLink, BaseText } from 'components/Typography';
 import { Footer } from 'components/Layout';
-import { spacing, fontSizes } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
@@ -56,7 +56,7 @@ const QRCodeWrapper = styled.View`
 `;
 
 const WalletAddress = styled(BaseText)`
-  font-size: ${fontSizes.big}px;
+  ${fontStyles.big};
 `;
 
 export default class ReceiveModal extends React.Component<Props, *> {

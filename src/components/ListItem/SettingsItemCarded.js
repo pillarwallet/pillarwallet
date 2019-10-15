@@ -80,11 +80,10 @@ const CardTitle = styled(MediumText)`
 const CardSubtitle = styled(BaseText)`
   color: ${baseColors.coolGrey};
   ${fontStyles.regular};
-  margin-top: 4px;
 `;
 
 const CheckIcon = styled(Icon)`
-  font-size: ${responsiveSize(14)}px;
+  font-size: ${fontSizes.rRegular}px;
   color: ${baseColors.electricBlue};
   align-self: flex-start;
 `;

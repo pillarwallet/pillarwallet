@@ -18,12 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import styled from 'styled-components/native';
-import { BoldText } from 'components/Typography';
-import { spacing, fontWeights, fontStyles } from 'utils/variables';
+import { MediumText } from 'components/Typography';
+import { spacing, fontStyles } from 'utils/variables';
 
-const SettingsModalTitle = styled(BoldText)`
+const SettingsModalTitle = styled(MediumText)`
   ${fontStyles.big};
-  font-weight: ${fontWeights.bold};
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 

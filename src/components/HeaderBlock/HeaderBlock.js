@@ -102,6 +102,7 @@ const CenterItems = styled.View`
   align-items: center;
   justify-content: center;
   flex-direction: row;
+  min-height: 28px;
 `;
 
 const LeftItems = styled.View`
@@ -110,6 +111,7 @@ const LeftItems = styled.View`
   justify-content: flex-start;
   flex-direction: row;
   flex-wrap: wrap;
+  min-height: 28px;
 `;
 
 const RightItems = styled.View`
@@ -118,6 +120,7 @@ const RightItems = styled.View`
   justify-content: flex-end;
   flex-direction: row;
   flex-wrap: wrap;
+  min-height: 28px;
 `;
 
 const BackIcon = styled(IconButton)`
@@ -157,7 +160,7 @@ const TextButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  ${fontStyles.regular};
+  font-size: ${fontSizes.regular}px;
   color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
 `;
 

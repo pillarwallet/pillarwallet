@@ -17,9 +17,9 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing, fontWeights, fontStyles } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import { Switch, Input } from 'native-base';
-import { BaseText, BoldText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import SelectList from './SelectList';
@@ -103,9 +103,8 @@ const ItemAddon = styled.View`
   margin-left: 15px;
 `;
 
-const ModalTitle = styled(BoldText)`
+const ModalTitle = styled(MediumText)`
   ${fontStyles.big};
-  font-weight: ${fontWeights.bold};
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 

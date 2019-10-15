@@ -26,10 +26,10 @@ import unionBy from 'lodash.unionby';
 import intersectionBy from 'lodash.intersectionby';
 import { TYPE_INVITE, TYPE_REJECTED, TYPE_SENT } from 'constants/invitationsConstants';
 import { CONTACT } from 'constants/navigationConstants';
-import { baseColors, fontSizes, itemSizes, spacing, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, itemSizes, spacing } from 'utils/variables';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
-import { SubHeading, BaseText } from 'components/Typography';
+import { SubHeadingMedium, BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import type { SearchResults, ApiUser } from 'models/Contacts';
 import { createAlert } from 'utils/alerts';
@@ -56,14 +56,12 @@ const LocalContacts = styled.View`
 const LocalContactsScrollView = styled.ScrollView`
 `;
 
-const LocalContactsSubHeading = styled(SubHeading)`
+const LocalContactsSubHeading = styled(SubHeadingMedium)`
   margin: 22px 16px 13px;
-  font-weight: ${fontWeights.medium};
 `;
 
-const ListSubHeading = styled(SubHeading)`
+const ListSubHeading = styled(SubHeadingMedium)`
   margin: 6px ${spacing.mediumLarge}px 8px;
-  font-weight: ${fontWeights.medium};
 `;
 
 const LocalContactsItem = styled.TouchableOpacity`
@@ -83,7 +81,7 @@ const LocalContactsItem = styled.TouchableOpacity`
 `;
 
 const LocalContactsItemName = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.small};
   color: ${baseColors.darkGray};
   padding: 0 4px;
   margin-top: ${Platform.select({

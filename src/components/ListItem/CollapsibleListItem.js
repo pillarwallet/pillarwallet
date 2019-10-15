@@ -22,7 +22,7 @@ import { Animated, Easing, TouchableNativeFeedback, Platform } from 'react-nativ
 import styled from 'styled-components/native';
 import Collapsible from 'react-native-collapsible';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 
@@ -87,7 +87,7 @@ const CustomToggleWrapper = styled.View`
 `;
 
 const ItemLabel = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
 `;
 
 const ListAddon = styled.View`

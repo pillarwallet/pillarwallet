@@ -23,12 +23,12 @@ import styled from 'styled-components/native';
 
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
-import { BaseText, BoldText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -44,14 +44,14 @@ type Props = {
   forceRetry?: boolean,
 }
 
-const MessageTitle = styled(BoldText)`
-  font-size: ${fontSizes.big}px;
+const MessageTitle = styled(MediumText)`
+  ${fontStyles.big};
   text-align: center;
 `;
 
 const Message = styled(BaseText)`
-  padding-top: 20px;
-  font-size: ${fontSizes.regular}px;
+  padding-top: ${spacing.small}px;
+  ${fontStyles.regular}
   color: ${baseColors.darkGray};
   text-align: center;
 `;

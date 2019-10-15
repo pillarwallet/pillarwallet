@@ -19,8 +19,8 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing, fontWeights, UIColors } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { baseColors, fontStyles, spacing, UIColors } from 'utils/variables';
+import { MediumText } from 'components/Typography';
 import { CustomParsedText } from 'components/CustomParsedText';
 
 type Props = {
@@ -36,11 +36,10 @@ const ItemWrapper = styled.View`
   width: 100%;
 `;
 
-const ItemLabel = styled(BaseText)`
+const ItemLabel = styled(MediumText)`
   text-align:center;
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.small}
   color: ${baseColors.darkGray};
-  font-weight: ${fontWeights.medium};
 `;
 
 const ItemValueHolder = styled.View`
@@ -55,7 +54,7 @@ const ItemValueHolder = styled.View`
 `;
 
 const StyledBaseText = styled(CustomParsedText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   color: ${UIColors.defaultTextColor};
 `;
 

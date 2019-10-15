@@ -21,11 +21,11 @@ import * as React from 'react';
 import { Platform, View, Dimensions } from 'react-native';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
-import { LightText, BoldText } from 'components/Typography';
+import { LightText, MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { fontTrackings, baseColors, fontWeights, spacing, fontStyles } from 'utils/variables';
+import { fontTrackings, baseColors, spacing, fontStyles } from 'utils/variables';
 
 const { width } = Dimensions.get('window');
 
@@ -114,12 +114,19 @@ const Disclaimer = styled(LightText)`
   color: ${baseColors.burningFire};
 `;
 
-const AmountToken = styled(LightText)`
-  ${props => props.innerCard ? fontStyles.large : fontStyles.big};
-  font-weight: ${props => props.innerCard ? fontWeights.book : fontWeights.bold};
-  color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
+const ammountTokenStyle = (props) => `
+  color: ${props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
+const AmountToken = styled(MediumText)`
+  ${fontStyles.big};
+  ${props => ammountTokenStyle(props)};
+`;
+
+const AmountTokenLight = styled(LightText)`
+  ${fontStyles.large};
+  ${props => ammountTokenStyle(props)};
+`;
 
 const DetailsWrapper = styled.View`
   justify-content: space-between;
@@ -144,7 +151,7 @@ const IconCircle = styled.View`
   justify-content: center;
 `;
 
-const Name = styled(BoldText)`
+const Name = styled(MediumText)`
   ${props => props.innerCard ? fontStyles.giant : fontStyles.large};
   margin-top: ${props => props.innerCard ? '5px' : 0};
   letter-spacing: ${fontTrackings.medium};
@@ -209,7 +216,10 @@ class AssetCard extends React.Component<Props, {}> {
                 <View style={{ flexDirection: 'column' }}>
                   <AmountWrapper>
                     <Amount isListed={isListed} innerCard={innerCard}>{amount}</Amount>
-                    <AmountToken isListed={isListed} innerCard={innerCard}>{token}</AmountToken>
+                    {!innerCard
+                      ? <AmountToken isListed={isListed}>{token}</AmountToken>
+                      : <AmountTokenLight isListed={isListed}>{token}</AmountTokenLight>
+                    }
                   </AmountWrapper>
                   <View style={{ marginTop: 8 }}>
                     {disclaimer

@@ -31,7 +31,7 @@ import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { BaseText } from 'components/Typography';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { addAssetsToSmartWalletUpgradeAction } from 'actions/smartWalletActions';
@@ -68,7 +68,7 @@ const ErrorHolder = styled.View`
 
 const ErrorText = styled(BaseText)`
   color: ${baseColors.fireEngineRed};
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   width: 100%;
   text-align: right;
 `;

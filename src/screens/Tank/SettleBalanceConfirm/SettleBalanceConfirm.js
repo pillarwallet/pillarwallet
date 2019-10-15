@@ -32,7 +32,7 @@ import { settleTransactionsAction, estimateSettleBalanceAction } from 'actions/s
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
-import { Label, BoldText } from 'components/Typography';
+import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 
@@ -75,7 +75,7 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
+const Value = styled(MediumText)`
   font-size: ${fontSizes.big}px;
 `;
 

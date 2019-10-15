@@ -87,6 +87,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   "flexShrink": 1,
                   "flexWrap": "wrap",
                   "justifyContent": "flex-start",
+                  "minHeight": 28,
                 },
                 Object {},
               ]
@@ -143,6 +144,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   "flexGrow": 4,
                   "flexShrink": 1,
                   "justifyContent": "center",
+                  "minHeight": 28,
                   "paddingBottom": 0,
                   "paddingLeft": 12,
                   "paddingRight": 12,
@@ -163,6 +165,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   "flexShrink": 1,
                   "flexWrap": "wrap",
                   "justifyContent": "flex-end",
+                  "minHeight": 28,
                 },
                 undefined,
               ]
@@ -845,7 +848,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   Array [
                     Object {
                       "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Bold",
+                      "fontFamily": "EuclidCircularB-Medium",
                       "textAlignVertical": "center",
                     },
                     Array [
@@ -887,7 +890,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                       "color": "#8B939E",
                       "fontSize": 12,
                       "lineHeight": 18,
-                      "marginTop": 5,
                       "textAlign": "center",
                     },
                     undefined,
@@ -2000,6 +2002,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "fontSize": 18,
+                              "lineHeight": 28,
                             },
                             undefined,
                           ],

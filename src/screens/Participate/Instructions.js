@@ -28,7 +28,7 @@ import QRCode from 'react-native-qrcode-svg';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import { Container, Wrapper, ScrollWrapper, Footer } from 'components/Layout';
-import { BoldText, Label } from 'components/Typography';
+import { Label, MediumText } from 'components/Typography';
 import ListItemUnderlined from 'screens/Participate/ListItemUnderlined';
 
 // models
@@ -53,12 +53,12 @@ const InstructionsLabel = styled(Label)`
   margin-bottom: 4px;
 `;
 
-const IntroText = styled(BoldText)`
+const IntroText = styled(MediumText)`
   ${fontStyles.regular};
   color: ${baseColors.darkGray};
 `;
 
-const Value = styled(BoldText)`
+const Value = styled(MediumText)`
   ${props => props.xl ? fontStyles.big : fontStyles.medium}px;
   text-align: center;
 `;
