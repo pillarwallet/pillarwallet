@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, fontStyles, UIColors } from 'utils/variables';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Animation from 'components/Animation';
@@ -44,8 +44,7 @@ const HeaderButtonRounded = styled.TouchableOpacity`
 `;
 
 const RoundedButtonLabel = styled(MediumText)`
-  line-height: ${fontSizes.medium}px;
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.small};
   color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};
   margin-left: 6px;
 `;

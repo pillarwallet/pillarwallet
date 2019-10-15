@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import { BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
-import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
+import { spacing, fontTrackings, baseColors, fontStyles } from 'utils/variables';
 import AssetInfo from './AssetInfo';
 
 type Props = {
@@ -93,9 +93,8 @@ const NameWrapper = styled.View`
 `;
 
 const Name = styled(BoldText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   letter-spacing: ${fontTrackings.small};
-  line-height: ${fontSizes.big}px;
   color: ${baseColors.slateBlack};
   text-align-vertical: center;
 `;

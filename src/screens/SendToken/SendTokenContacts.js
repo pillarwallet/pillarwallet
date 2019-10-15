@@ -100,7 +100,6 @@ function AddressInputTemplate(locals) {
     maxLength: 42,
     letterSpacing: 0.1,
     fontSize: fontSizes.medium,
-    fontWeight: 300,
   };
   return (
     <SingleInput

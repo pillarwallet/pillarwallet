@@ -31,7 +31,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import { LabelBadge } from 'components/LabelBadge';
 
-import { baseColors, fontSizes, lineHeights } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { ASSETS, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -81,8 +81,7 @@ const Title = styled(BoldText)`
 
 const BodyText = styled(MediumText)`
   color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rBig}px;
-  line-height: ${lineHeights.rBig}px;
+  ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
 `;
 
@@ -107,7 +106,7 @@ const Label = styled(MediumText)`
 const Subtext = styled(MediumText)`
   color: ${baseColors.pomegranate};
   font-size: ${fontSizes.rBig}px;
-  line-height: ${lineHeights.rBig}px;
+  ${fontStyles.rBig};
   margin-top: ${responsiveSize(10)}px;
 `;
 

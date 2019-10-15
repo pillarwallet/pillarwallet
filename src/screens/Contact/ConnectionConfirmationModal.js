@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, lineHeights } from 'utils/variables';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
@@ -80,7 +80,7 @@ const ConnectionConfirmationModal = (props: Props) => {
       subtitleStyles={{
         color: baseColors.darkGray,
         fontSize: fontSizes.medium,
-        lineHeight: 21,
+        lineHeight: lineHeights.medium,
         letterSpacing: 0.1,
         marginTop: 7,
         marginBottom: 22,

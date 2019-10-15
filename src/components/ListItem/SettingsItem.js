@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Platform, TouchableNativeFeedback, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 import { Switch, Badge as NBBadge } from 'native-base';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -87,8 +87,7 @@ const BadgeText = styled(BaseText)`
 
 const ItemLabel = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  font-size: 17px;
-  line-height: 24px;
+  ${fontStyles.big};
 `;
 
 const ItemValue = styled(BaseText)`

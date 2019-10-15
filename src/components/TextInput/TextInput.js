@@ -25,7 +25,7 @@ import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
-import { fontSizes, baseColors, UIColors, spacing } from 'utils/variables';
+import { fontSizes, baseColors, UIColors, spacing, fontStyles } from 'utils/variables';
 
 type inputPropsType = {
   placeholder?: string,
@@ -173,11 +173,10 @@ const AddonText = styled(BaseText)`
 
 const CustomLabel = styled(Label)`
   color: ${props => props.labelBigger ? UIColors.defaultTextColor : baseColors.darkGray};
-  font-size: ${props => props.labelBigger ? fontSizes.medium : fontSizes.small}px;
   letter-spacing: 0.5;
-  line-height: 24px;
   padding-top: ${props => props.labelBigger ? '35px' : '5px'};
   padding-bottom: ${props => props.labelBigger ? '12px' : '0'};
+  ${props => props.labelBigger ? fontStyles.medium : fontStyles.small};
   `;
 
 const AbsoluteSpinner = styled(Spinner)`

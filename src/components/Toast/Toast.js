@@ -24,7 +24,7 @@ import { SafeAreaView } from 'react-navigation';
 import merge from 'lodash.merge';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import { MediumText, BaseText } from 'components/Typography';
 
 type ToastOptions = {
@@ -112,13 +112,13 @@ const IconHolder = styled.View`
 `;
 
 const ToastTitle = styled(MediumText)`
-  line-height: ${fontSizes.big}px;
+  ${fontStyles.small};
   color: ${baseColors.slateBlack};
   margin-bottom: 2px;
 `;
 
 const ToastBody = styled(BaseText)`
-  line-height: ${fontSizes.big}px;
+  ${fontStyles.small};
   color: ${baseColors.darkGray};
 `;
 

@@ -25,7 +25,7 @@ import { LightText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { fontSizes, fontTrackings, baseColors, fontWeights, spacing, lineHeights } from 'utils/variables';
+import { fontTrackings, baseColors, fontWeights, spacing, fontStyles } from 'utils/variables';
 
 const { width } = Dimensions.get('window');
 
@@ -97,30 +97,26 @@ const AmountWrapper = styled.View`
 `;
 
 const Amount = styled(LightText)`
-  font-size: ${fontSizes.large}px;
-  line-height: ${fontSizes.large}px;
+  ${fontStyles.large};
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
   margin-right: ${props => props.innerCard ? '4px' : 0};
 `;
 
 const FiatAmount = styled(LightText)`
-  font-size: ${fontSizes.small}px;
-  line-height: 14px;
+  ${fontStyles.small};
   color: #fff;
   margin-left: -2px;
   opacity: ${props => props.innerCard ? 0.7 : 1};
 `;
 
 const Disclaimer = styled(LightText)`
-  font-size: ${fontSizes.small}px;
-  line-height: 14px;
+  ${fontStyles.small};
   color: ${baseColors.burningFire};
 `;
 
 const AmountToken = styled(LightText)`
-  font-size: ${props => props.innerCard ? fontSizes.large : fontSizes.big}px;
+  ${props => props.innerCard ? fontStyles.large : fontStyles.big};
   font-weight: ${props => props.innerCard ? fontWeights.book : fontWeights.bold};
-  line-height: ${fontSizes.large}px;
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
@@ -149,10 +145,9 @@ const IconCircle = styled.View`
 `;
 
 const Name = styled(BoldText)`
-  font-size: ${props => props.innerCard ? '34' : fontSizes.large}px;
+  ${props => props.innerCard ? fontStyles.giant : fontStyles.large};
   margin-top: ${props => props.innerCard ? '5px' : 0};
   letter-spacing: ${fontTrackings.medium};
-  line-height: ${props => props.innerCard ? '34' : lineHeights.medium}px;
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 

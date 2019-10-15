@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontStyles } from 'utils/variables';
 
 
 type Props = {
@@ -48,8 +48,7 @@ const ContentHolder = styled.View`
 `;
 
 const MessageText = styled(BoldText)`
-  font-size: ${fontSizes.large}px;
-  line-height: 40px;
+  ${fontStyles.large};
   color: ${baseColors.slateBlack};
   position: absolute;
   top: 52px;

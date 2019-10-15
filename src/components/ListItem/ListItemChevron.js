@@ -21,7 +21,7 @@ import * as React from 'react';
 import { TouchableNativeFeedback, Platform, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 
 import Icon from 'components/Icon';
@@ -74,14 +74,12 @@ const ListItem = styled.View`
 `;
 
 const ItemLabel = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
-  line-height: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   color: ${props => props.color ? props.color : baseColors.electricBlue};
 `;
 
 const SubText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: ${fontSizes.extraSmall}px;
+  ${fontStyles.extraSmall};
   color: ${props => props.color ? props.color : baseColors.darkGray};
   margin-top: 4px;
 `;

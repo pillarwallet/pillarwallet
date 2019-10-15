@@ -61,7 +61,7 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 
 // utils
 import { isProdEnv } from 'utils/environment';
-import { baseColors, fontSizes, fontTrackings, fontWeights, spacing, lineHeights } from 'utils/variables';
+import { baseColors, fontTrackings, fontWeights, spacing, fontStyles } from 'utils/variables';
 
 // partials
 import { SettingsSection } from './SettingsSection';
@@ -100,8 +100,7 @@ const storage = new Storage('db');
 const chat = new ChatService();
 
 const SettingsModalTitle = styled(BoldText)`
-  line-height: ${fontSizes.big}px;
-  font-size: ${fontSizes.big}px;
+  ${fontStyles.big};
   font-weight: ${fontWeights.bold};
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
@@ -113,21 +112,16 @@ const StyledWrapper = styled(Wrapper)`
 `;
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
-  line-height: 20px;
   margin-bottom: ${spacing.medium}px;
 `;
 
 const SmallText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.small};
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
-`;
-
-const Description = styled(Paragraph)`
-  line-height: ${lineHeights.medium}px;
 `;
 
 const formSecurityItems = (that, showBiometricsSelector) => {
@@ -595,13 +589,13 @@ class Settings extends React.Component<Props, State> {
           onModalHide={() => this.setState({ visibleModal: null })}
         >
           <StyledWrapper regularPadding flex={1}>
-            <Description small>
+            <Paragraph small>
               By choosing to upgrade your wallet, you will be added to our Firebase Analytics data collection.
               Through this, Pillar will collect your username in order to enable new features and monitor your new
               wallet experience for any bugs and/or crashes.
               You can choose to leave the Smart Wallet Early Access program and Firebase Analytics collection any time
               via the &quot;System&quot; under Settings.
-            </Description>
+            </Paragraph>
             <Button
               title="Opt in"
               onPress={() => this.setState({ visibleModal: null, joinBetaPressed: true })}
@@ -625,18 +619,18 @@ class Settings extends React.Component<Props, State> {
         >
           <StyledWrapper regularPadding flex={1}>
             <View>
-              <Description small>
+              <Paragraph small>
                 By confirming, you will leave the Smart Wallet Early Access program. As a result, your access to the
                 Smart Wallet, Pillar Payment Network and any funds stored on them will be lost.
-              </Description>
-              <Description small>
+              </Paragraph>
+              <Paragraph small>
                 We strongly recommend that you transfer all assets from the Smart Wallet and Pillar Network to your Key
                 Based Wallet before leaving this Program.
-              </Description>
-              <Description small>
+              </Paragraph>
+              <Paragraph small>
                 If you wish to re-gain early access to Smart Wallet (and re-gain access to the funds on your Smart
                 Wallet), you will need to apply again.
-              </Description>
+              </Paragraph>
             </View>
             <Button
               title="Leave Program"

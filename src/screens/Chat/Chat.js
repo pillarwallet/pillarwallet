@@ -35,7 +35,7 @@ import {
   LoadEarlier,
   Message,
 } from 'react-native-gifted-chat';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, lineHeights } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -383,7 +383,7 @@ class Chat extends React.Component<Props, State> {
           }),
           marginBottom: 5,
           fontSize: fontSizes.small,
-          lineHeight: fontSizes.medium,
+          lineHeight: lineHeights.small,
         }}
         placeholder="Type your message here"
       />

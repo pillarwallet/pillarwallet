@@ -26,7 +26,7 @@ import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 
 // utils
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles } from 'utils/variables';
 
 type Props = {
   onPress: Function,
@@ -43,9 +43,8 @@ const SWButtonWrapper = styled.TouchableOpacity`
 `;
 
 const ButtonIcon = styled(Icon)`
-  font-size: ${fontSizes.tiny}px;
+  ${fontStyles.tiny};
   color: ${baseColors.coolGrey};
-  line-height: ${fontSizes.tiny}px;
 `;
 
 const ButtonText = styled(BaseText)`

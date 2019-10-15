@@ -175,6 +175,20 @@ export const lineHeights = {
   giant: 54,
   rBig: responsiveSize(28),
   rLarge: responsiveSize(38),
+  rJumbo: responsiveSize(74),
+};
+
+export const fontStyles = {
+  tiny: { fontSize: fontSizes.tiny, lineHeight: lineHeights.tiny },
+  extraSmall: { fontSize: fontSizes.extraSmall, lineHeight: lineHeights.extraSmall },
+  small: { fontSize: fontSizes.small, lineHeight: lineHeights.small },
+  medium: { fontSize: fontSizes.medium, lineHeight: lineHeights.medium },
+  big: { fontSize: fontSizes.big, lineHeight: lineHeights.big },
+  large: { fontSize: fontSizes.large, lineHeight: lineHeights.large },
+  giant: { fontSize: fontSizes.giant, lineHeight: lineHeights.giant },
+  rBig: { fontSize: fontSizes.rBig, lineHeight: lineHeights.rBig },
+  rLarge: { fontSize: fontSizes.rLarge, lineHeight: lineHeights.rLarge },
+  rJumbo: { fontSize: fontSizes.rJumbo, lineHeight: lineHeights.rJumbo },
 };
 
 export const spacing = {

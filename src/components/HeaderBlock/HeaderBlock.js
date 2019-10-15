@@ -21,7 +21,7 @@ import * as React from 'react';
 import { StatusBar, View, TouchableOpacity } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { baseColors, fontSizes, lineHeights, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -84,8 +84,7 @@ const HeaderRow = styled.View`
 const HeaderProfileImage = styled(ProfileImage)``;
 
 const HeaderTitle = styled(MediumText)`
-  line-height: ${lineHeights.small}px;
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.small};
   color: ${props => props.theme.color || UIColors.defaultTextColor};
   text-align: ${props => props.centerText ? 'center' : 'left'};
   margin-top: 2px;
@@ -158,8 +157,7 @@ const TextButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  line-height: ${fontSizes.medium}px;
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.small};
   color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
 `;
 

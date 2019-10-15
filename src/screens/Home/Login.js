@@ -38,7 +38,7 @@ import { approveLoginAttemptAction } from 'actions/deepLinkActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
 // utils
-import { baseColors, fontSizes, spacing, lineHeights } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -54,11 +54,10 @@ type State = {
 const Description = styled(Paragraph)`
   text-align: center;
   padding-bottom: ${spacing.rhythm}px;
-  line-height: ${lineHeights.medium}px;
 `;
 
 const DescriptionWarning = styled(MediumText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   color: ${baseColors.burningFire};
 `;
 

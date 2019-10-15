@@ -20,8 +20,8 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import { fontSizes } from 'utils/variables';
-import { BoldText } from 'components/Typography';
+import { fontStyles } from 'utils/variables';
+import { MediumText } from 'components/Typography';
 
 
 type Props = {
@@ -54,13 +54,9 @@ const Wrapper = styled.View`
   `}
 `;
 
-const Text = styled(BoldText)`
-  line-height: ${fontSizes.large}px;
-  font-size: ${props => props.subtitle ? fontSizes.small : fontSizes.big}px;
-  ${({ align }) => align === 'center' && `
-    line-height: 25px;
-    text-align: center;
-  `}
+const Text = styled(MediumText)`
+  ${props => props.subtitle ? fontStyles.small : fontStyles.big};
+  ${({ align }) => align === 'center' ? 'text-align: center;' : ''}
 `;
 
 const Title = (props: Props) => {

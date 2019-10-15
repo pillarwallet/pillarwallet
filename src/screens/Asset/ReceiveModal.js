@@ -85,7 +85,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
     } = this.props;
     return (
       <SlideModal
-        title="receive"
+        title="Receive"
         isVisible={isVisible}
         onModalHide={onModalHide}
       >

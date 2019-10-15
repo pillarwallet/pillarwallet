@@ -1547,13 +1547,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                               Array [
                                 Object {
                                   "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Bold",
+                                  "fontFamily": "EuclidCircularB-Medium",
                                   "textAlignVertical": "center",
                                 },
                                 Array [
                                   Object {
                                     "fontSize": 18,
-                                    "lineHeight": 24,
+                                    "lineHeight": 28,
                                   },
                                   Object {},
                                 ],
@@ -1561,7 +1561,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                             ]
                           }
                         >
-                          receive
+                          Receive
                         </Text>
                       </View>
                     </View>
@@ -1977,6 +1977,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                               Object {
                                 "color": "#007AFF",
                                 "fontSize": 16,
+                                "lineHeight": 24,
                               },
                               undefined,
                             ],
@@ -2258,7 +2259,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "color": "#8B939E",
-                              "lineHeight": 18,
+                              "fontSize": 14,
+                              "lineHeight": 22,
                             },
                             undefined,
                           ],
@@ -2655,13 +2657,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                               Array [
                                 Object {
                                   "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Bold",
+                                  "fontFamily": "EuclidCircularB-Medium",
                                   "textAlignVertical": "center",
                                 },
                                 Array [
                                   Object {
                                     "fontSize": 18,
-                                    "lineHeight": 24,
+                                    "lineHeight": 28,
                                   },
                                   Object {},
                                 ],
@@ -2925,7 +2927,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "color": "#8B939E",
-                              "lineHeight": 18,
+                              "fontSize": 14,
+                              "lineHeight": 22,
                             },
                             undefined,
                           ],

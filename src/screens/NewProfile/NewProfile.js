@@ -37,7 +37,7 @@ import Checkbox from 'components/Checkbox';
 import { NextFooter } from 'components/Layout/NextFooter';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 
-import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
@@ -57,9 +57,7 @@ const UsernameWrapper = styled(Wrapper)`
 `;
 
 const Text = styled(BoldText)`
-  line-height: ${fontSizes.big}px;
-  font-size: ${fontSizes.big}px;
-  font-weight: ${fontWeights.bold};
+  ${fontStyles.big};
   width: 100%;
   text-align: center;
   max-width: 230px;
@@ -76,14 +74,12 @@ const StyledWrapper = styled.View`
 `;
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
-  line-height: 20px;
+  ${fontStyles.small};
   color: ${baseColors.coolGrey};
 `;
 
 const StyledTextLink = styled(TextLink)`
-  font-size: ${fontSizes.small}px;
-  line-height: 20px;
+  ${fontStyles.small};
   color: ${baseColors.rockBlue};
 `;
 

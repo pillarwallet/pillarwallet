@@ -36,7 +36,7 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 
-import { baseColors, spacing, lineHeights } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
@@ -74,10 +74,6 @@ const ActionButtonsWrapper = styled.View`
 const DataWrapper = styled.View`
   margin: 64px ${spacing.large}px ${spacing.large}px;
   justify-content: center;
-`;
-
-const Description = styled(Paragraph)`
-  line-height: ${lineHeights.medium}px;
 `;
 
 const CircleButtonsWrapper = styled(Wrapper)`
@@ -157,7 +153,7 @@ class CollectibleScreen extends React.Component<Props> {
           />
           <DataWrapper>
             {!!description &&
-              <Description small light>{description.replace(new RegExp('\\n\\n', 'g'), '\n')}</Description>
+              <Paragraph small light>{description.replace(new RegExp('\\n\\n', 'g'), '\n')}</Paragraph>
             }
           </DataWrapper>
           <ActionButtonsWrapper>

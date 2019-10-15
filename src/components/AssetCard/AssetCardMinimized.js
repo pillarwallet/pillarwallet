@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 import { LightText, BaseText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
-import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors, fontStyles } from 'utils/variables';
 import Icon from 'components/Icon';
 import Toast from 'components/Toast';
 
@@ -123,22 +123,19 @@ const AmountWrapper = styled.View`
 `;
 
 const Amount = styled(BoldText)`
-  font-size: ${fontSizes.medium}px;
-  line-height: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   color: ${baseColors.slateBlack};
   text-align: left;
 `;
 
 const FiatAmount = styled(LightText)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: ${fontSizes.extraSmall}px;
+  ${fontStyles.medium};
   color: ${baseColors.darkGray};
   text-align: left;
 `;
 
 const Disclaimer = styled(LightText)`
-  font-size: ${props => props.smallScreen ? fontSizes.extraSmall : fontSizes.small}px;
-  line-height: ${props => props.smallScreen ? fontSizes.extraSmall : fontSizes.small}px;
+  ${props => props.smallScreen ? fontStyles.extraSmall : fontStyles.small}px;
   color: ${baseColors.burningFire};
   text-align: left;
 `;
@@ -154,9 +151,8 @@ const IconCircle = styled.View`
 `;
 
 const Name = styled(BaseText)`
-  font-size: ${props => props.smallScreen ? fontSizes.extraSmall : fontSizes.small}px;
+  ${props => props.smallScreen ? fontStyles.extraSmall : fontStyles.small}px;
   letter-spacing: ${fontTrackings.small};
-  line-height: ${fontSizes.medium}px;
   color: ${baseColors.darkGray};
   ${({ center }) => center ? 'width: 100%; text-align: center;' : ''}
   font-weight: ${props => props.fontWeight ? props.fontWeight : 600};

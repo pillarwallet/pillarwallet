@@ -292,6 +292,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                                 "color": "#0A1427",
                                 "fontSize": 16,
                                 "letterSpacing": 0.2,
+                                "lineHeight": 24,
                                 "width": "100%",
                               },
                               undefined,
@@ -368,6 +369,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                               Object {
                                 "color": "#FD3300",
                                 "fontSize": 18,
+                                "lineHeight": 28,
                                 "textAlign": "right",
                               },
                               undefined,
@@ -692,6 +694,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                                 "color": "#0A1427",
                                 "fontSize": 16,
                                 "letterSpacing": 0.2,
+                                "lineHeight": 24,
                                 "width": "100%",
                               },
                               undefined,
@@ -768,6 +771,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                               Object {
                                 "color": "#FD3300",
                                 "fontSize": 18,
+                                "lineHeight": 28,
                                 "textAlign": "right",
                               },
                               undefined,

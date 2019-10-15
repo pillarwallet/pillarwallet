@@ -29,7 +29,7 @@ import Checkbox from 'components/Checkbox';
 import { connect } from 'react-redux';
 import { registerWalletAction } from 'actions/onboardingActions';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
-import { baseColors, fontSizes, fontTrackings, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, fontTrackings, UIColors } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 import { BACKUP_PHRASE } from 'constants/navigationConstants';
@@ -53,10 +53,9 @@ type State = {
 };
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
-  line-height: 20px;
 `;
 
 const ModalInnerWrapper = styled.ScrollView`

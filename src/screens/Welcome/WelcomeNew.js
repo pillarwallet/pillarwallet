@@ -27,7 +27,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BoldText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
-import { fontSizes, baseColors } from 'utils/variables';
+import { fontSizes, baseColors, fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { navigateToNewWalletPageAction } from 'actions/walletActions';
 import { CachedImage } from 'react-native-cached-image';
@@ -47,15 +47,13 @@ const PillarLogo = styled(CachedImage)`
 
 const Title = styled(BoldText)`
   color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rJumbo}px;
-  line-height: ${fontSizes.rJumbo}px;
+  ${fontStyles.rJumbo};
   font-weight: 700;
 `;
 
 const BodyText = styled(MediumText)`
   color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rBig}px;
-  line-height: ${responsiveSize(19)}px;
+  ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
 `;
 

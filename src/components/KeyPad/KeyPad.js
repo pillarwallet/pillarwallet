@@ -59,7 +59,7 @@ const ButtonText = styled(BaseText)`
   color: ${baseColors.slateBlack};
   font-size: ${props => props.fontSize || fontSizes.large}px;
   align-self: center;
-  line-height: 56;
+  line-height: 56px;
 `;
 
 const RippleSizer = styled.View`

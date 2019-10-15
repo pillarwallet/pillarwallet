@@ -20,7 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { MediumText } from 'components/Typography';
-import { fontSizes, fontTrackings, baseColors } from 'utils/variables';
+import { fontSizes, fontTrackings, baseColors, lineHeights } from 'utils/variables';
 
 type Props = {
   endDate: string,
@@ -51,7 +51,7 @@ const CountdownWrapper = styled(MediumText)`
   flex-wrap: wrap;
   letter-spacing: ${fontTrackings.tiny};
   font-size: ${props => props.fontSize ? props.fontSize : fontSizes.small}px;
-  line-height: ${props => props.lineHeight ? props.lineHeight : fontSizes.medium}px;
+  line-height: ${props => props.lineHeight ? props.lineHeight : lineHeights.small}px;
   justify-content: center;
   align-items: center;
 `;

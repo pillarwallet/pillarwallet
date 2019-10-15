@@ -31,21 +31,20 @@ import {
 import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontStyles } from 'utils/variables';
 
 const LabeledRow = styled.View`
   margin: 6px 0;
 `;
 
 const Label = styled(BoldText)`
+  ${fontStyles.small};
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.small}px;
   letter-spacing: 0.5;
-  line-height: 24px;
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${fontSizes.big}px;
+  ${fontStyles.big};
 `;
 
 

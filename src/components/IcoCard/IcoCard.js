@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol, formatMoney } from 'utils/common';
-import { spacing, fontSizes, fontTrackings, baseColors, lineHeights } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors, lineHeights, fontStyles } from 'utils/variables';
 import Countdown from 'components/Countdown';
 import TruncatedText from 'components/TruncatedText';
 import Progress from 'components/Progress';
@@ -93,8 +93,7 @@ const TitleWrapper = styled.View`
 `;
 
 const Title = styled(MediumText)`
-  font-size: ${fontSizes.large}px;
-  line-height: ${lineHeights.large}px;
+  ${fontStyles.large};
   color: ${baseColors.slateBlack};
   margin-right: 8px;
 `;
@@ -109,8 +108,7 @@ const Label = styled.View`
 `;
 
 const LabelText = styled(MediumText)`
-  font-size: ${fontSizes.tiny};
-  line-height: ${fontSizes.extraSmall}px;
+  ${fontStyles.tiny};
   color: ${baseColors.pineGlade};
   margin-top: ${Platform.select({
     ios: 0,
@@ -128,16 +126,14 @@ const Column = styled.View`
 `;
 
 const ColumnLabel = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.medium}px;
+  ${fontStyles.small};
   letter-spacing: ${fontTrackings.tiny};
   color: ${baseColors.darkGray};
   margin-bottom: 2px;
 `;
 
 const ColumnValue = styled(MediumText)`
-  font-size: ${props => props.xl ? fontSizes.big : fontSizes.small}px;
-  line-height: ${lineHeights.medium}px;
+  ${props => props.xl ? fontStyles.big : fontStyles.small};
   color: ${baseColors.slateBlack};
   letter-spacing: ${fontTrackings.tiny};
   margin-top: 2px;
@@ -175,7 +171,7 @@ const IcoCard = (props: Props) => {
         <Countdown
           endDate={isPending ? startDate : endDate}
           fontSize={fontSizes.big}
-          lineHeight={lineHeights.medium}
+          lineHeight={lineHeights.big}
         />
       );
     }

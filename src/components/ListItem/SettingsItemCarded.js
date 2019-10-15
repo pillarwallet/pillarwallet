@@ -22,7 +22,7 @@ import { Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { spacing, baseColors, fontSizes } from 'utils/variables';
+import { spacing, baseColors, fontSizes, fontStyles } from 'utils/variables';
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
@@ -74,14 +74,12 @@ const CardContent = styled.View`
 
 const CardTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.medium}px;
-  line-height: ${fontSizes.big}px;
+  ${fontStyles.medium};
 `;
 
 const CardSubtitle = styled(BaseText)`
   color: ${baseColors.coolGrey};
-  font-size: 13px;
-  line-height: 15px;
+  ${fontStyles.small};
   margin-top: 4px;
 `;
 

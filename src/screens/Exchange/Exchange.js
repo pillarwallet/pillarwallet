@@ -33,7 +33,7 @@ import Intercom from 'react-native-intercom';
 import get from 'lodash.get';
 
 import { fiatCurrencies } from 'fixtures/assets';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
 import {
   getAssetData,
   getBalance,
@@ -112,8 +112,7 @@ const CardColumn = styled.View`
 `;
 
 const CardText = styled(BaseText)`
-  line-height: 18px;
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.small};
   letter-spacing: 0.18px;
   color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
   flex-wrap: wrap;
@@ -158,7 +157,7 @@ const CardNote = styled(BaseText)`
   padding: 4px 0;
   margin-left: 10px;
   color: ${props => props.color ? props.color : baseColors.slateBlack};
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.small};
 `;
 
 type Props = {

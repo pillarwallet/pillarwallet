@@ -25,7 +25,7 @@ import isEqualWith from 'lodash.isequalwith';
 import Icon from 'components/Icon';
 import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
-import { baseColors, fontSizes, spacing, fontWeights, fontTrackings, lineHeights } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontWeights, fontTrackings, fontStyles } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
 import { Shadow } from 'components/Shadow';
@@ -125,15 +125,14 @@ const Column = styled.View`
 
 const ItemTitle = styled(BoldText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   letter-spacing: ${fontTrackings.small}px;
   width: 100%;
 `;
 
 const ItemParagraph = styled(BaseText)`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.small}px;
-  line-height: ${lineHeights.medium}px;
+  ${fontStyles.small};
   letter-spacing: ${fontTrackings.tiny}px;
   margin-top: 4px;
   flex: 1;
@@ -141,8 +140,7 @@ const ItemParagraph = styled(BaseText)`
 
 const ItemSubText = styled(BaseText)`
   color: ${baseColors.darkGray};
-  font-size: 13px;
-  line-height: ${fontSizes.medium}px;
+  ${fontStyles.small};
   margin-top: 4px;
 `;
 
@@ -181,9 +179,8 @@ const TimeWrapper = styled.View`
 `;
 
 const TimeSent = styled(BaseText)`
-  color: ${baseColors.darkGray}
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.medium}px;
+  color: ${baseColors.darkGray};
+  ${fontStyles.small};
   text-align-vertical: bottom;
 `;
 
@@ -207,13 +204,13 @@ const UnreadNumber = styled(BaseText)`
 `;
 
 const ItemValue = styled(BaseText)`
-  font-size: ${fontSizes.big}px;
+  ${fontStyles.big};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   text-align: right;
 `;
 
 const ItemValueBold = styled(BoldText)`
-  font-size: ${fontSizes.big}px;
+  ${fontStyles.big};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   text-align: right;
 `;
@@ -221,7 +218,7 @@ const ItemValueBold = styled(BoldText)`
 const ItemValueStatus = styled(Icon)`
   margin-left: 7px;
   color: ${baseColors.mediumGray};
-  font-size: ${fontSizes.big}px;
+  ${fontStyles.big};
 `;
 
 const IndicatorsRow = styled.View`
@@ -239,7 +236,7 @@ const ActionLabel = styled.View`
 `;
 
 const ActionLabelText = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   color: ${props => props.color ? props.color : baseColors.darkGray};
   margin-left: auto;
   margin-bottom: ${props => props.button ? '2px' : 0};
