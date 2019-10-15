@@ -302,7 +302,9 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    // HEADER PROPS
+    const { activeAccount } = this.props;
+    if (!activeAccount) return null;
+
     const screenInfo = this.getScreenInfo();
     const {
       label: headerButtonLabel,
