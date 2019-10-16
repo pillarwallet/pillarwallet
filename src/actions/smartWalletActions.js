@@ -720,14 +720,26 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txFound = txToListen.find(hash => hash.toLowerCase() === txHash);
 
       if (txStatus === TRANSACTION_COMPLETED) {
+        let notificationMessage;
         if (txType === transactionTypes.TopUp) {
+          notificationMessage = 'Your Pillar Tank was successfully funded!';
+        } else if (txType === transactionTypes.Withdrawal) {
+          notificationMessage = 'Withdrawal process completed!';
+        } else if (txType === transactionTypes.Settlement) {
+          notificationMessage = 'Settlement process completed!';
+        } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
+          notificationMessage = 'Transaction was successfully sent!';
+        }
+
+        if (notificationMessage) {
           Toast.show({
-            message: 'Your Pillar Tank was successfully funded!',
+            message: notificationMessage,
             type: 'success',
             title: 'Success',
             autoClose: true,
           });
         }
+
         if (txFound) {
           const { txUpdated, updatedHistory } = updateHistoryRecord(
             currentHistory,
@@ -740,29 +752,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             }));
 
           if (txUpdated) {
-            if (txUpdated.tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
-              Toast.show({
-                message: 'Settlement process completed!',
-                type: 'success',
-                title: 'Success',
-                autoClose: true,
-              });
-            } else if (txUpdated.tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
-              Toast.show({
-                message: 'Withdrawal process completed!',
-                type: 'success',
-                title: 'Success',
-                autoClose: true,
-              });
-            } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
-              Toast.show({
-                message: 'Transaction was successfully sent!',
-                type: 'success',
-                title: 'Success',
-                autoClose: true,
-              });
-            }
-
             dispatch(saveDbAction('history', { history: updatedHistory }, true));
             dispatch({
               type: SET_HISTORY,
@@ -785,7 +774,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txStatus = get(event, 'payload.state', '');
       const txFound = transferTransactions.find(({ transactionHash }) => transactionHash.toLowerCase() === txHash);
 
-      if (txStatus === TRANSACTION_COMPLETED) {
+      if (transferTransactions.length && txStatus === TRANSACTION_COMPLETED) {
         if (txFound) {
           const updatedTransactions = transferTransactions.filter(({ transactionHash }) => {
             return transactionHash !== txFound.transactionHash;
