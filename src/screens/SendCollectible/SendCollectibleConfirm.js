@@ -201,21 +201,21 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
             <Label>Balance in Rinkeby ETH (visible in dev and staging)</Label>
             <Value>{rinkebyETH} ETH</Value>
           </LabeledRow>}
-          {!!recipientUsername &&
-          <TextInput
-            inputProps={{
-              onChange: (text) => this.handleNoteChange(text),
-              value: this.state.note,
-              autoCapitalize: 'none',
-              multiline: true,
-              numberOfLines: 3,
-              placeholder: 'Add a note to this transaction',
-            }}
-            inputType="secondary"
-            labelBigger
-            noBorder
-            keyboardAvoidance
-          />
+          {session.isOnline && !!recipientUsername &&
+            <TextInput
+              inputProps={{
+                onChange: (text) => this.handleNoteChange(text),
+                value: this.state.note,
+                autoCapitalize: 'none',
+                multiline: true,
+                numberOfLines: 3,
+                placeholder: 'Add a note to this transaction',
+              }}
+              inputType="secondary"
+              labelBigger
+              noBorder
+              keyboardAvoidance
+            />
           }
         </ScrollWrapper>
       </ContainerWithHeader>

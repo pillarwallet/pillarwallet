@@ -28,7 +28,11 @@ import { loadAndMigrate } from 'services/dataMigration';
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
+import {
+  UPDATE_ASSETS,
+  UPDATE_BALANCES,
+  UPDATE_SUPPORTED_ASSETS,
+} from 'constants/assetsConstants';
 import { SET_CONTACTS_SMART_ADDRESSES, UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
@@ -94,6 +98,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const assets = await loadAndMigrate('assets', dispatch, getState);
       dispatch({ type: UPDATE_ASSETS, payload: assets });
+
+      const { supportedAssets = [] } = await storage.get('supportedAssets');
+      dispatch({ type: UPDATE_SUPPORTED_ASSETS, payload: supportedAssets });
 
       const balances = await loadAndMigrate('balances', dispatch, getState);
       dispatch({ type: UPDATE_BALANCES, payload: balances });

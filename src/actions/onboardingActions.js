@@ -185,7 +185,7 @@ const finishRegistration = async ({
   });
 
   const assets = { [address]: initialAssets };
-  dispatch(saveDbAction('assets', { assets }));
+  dispatch(saveDbAction('assets', { assets }, true));
 
   dispatch(fetchBadgesAction(false));
 

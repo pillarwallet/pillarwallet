@@ -148,7 +148,7 @@ describe('Wallet actions', () => {
   it(`should expect series of actions with payload to be dispatched 
   on registerWalletAction execution when wallet wasn't imported`, () => {
     store = mockStore({
-      session: { data: { isSignalInitiated: false } },
+      session: { data: { isSignalInitiated: false, isOnline: true } },
       oAuthTokens: { data: {} },
       wallet: {
         onboarding: mockOnboarding,
@@ -210,7 +210,7 @@ describe('Wallet actions', () => {
   on registerWalletAction execution when wallet wasn't imported 
   and Smart Wallet feature enabled`, () => {
     store = mockStore({
-      session: { data: { isSignalInitiated: false } },
+      session: { data: { isSignalInitiated: false, isOnline: true } },
       oAuthTokens: { data: {} },
       wallet: {
         onboarding: mockOnboarding,
@@ -285,7 +285,7 @@ describe('Wallet actions', () => {
   it(`should expect series of actions with payload to be 
   dispatch on registerWalletAction execution when wallet was imported`, () => {
     store = mockStore({
-      session: { data: { isSignalInitiated: false } },
+      session: { data: { isSignalInitiated: false, isOnline: true } },
       oAuthTokens: { data: {} },
       wallet: {
         onboarding: {
