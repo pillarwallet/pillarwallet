@@ -679,6 +679,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     const ACCOUNT_PAYMENT_UPDATED = get(sdkModules, 'Api.EventNames.AccountPaymentUpdated', '');
     const ACCOUNT_VIRTUAL_BALANCE_UPDATED = get(sdkModules, 'Api.EventNames.AccountVirtualBalanceUpdated', '');
     const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
+    const transactionTypes = get(sdkConstants, 'AccountTransactionTypes', {});
 
     if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !TRANSACTION_COMPLETED) {
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
@@ -691,7 +692,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     const accountState = get(getState(), 'smartWallet.upgrade.status', '');
     if (event.name === ACCOUNT_DEVICE_UPDATED) {
       const newAccountState = get(event, 'payload.state', '');
-      const deployedAccountState = sdkConstants.AccountStates.Deployed;
+      const deployedAccountState = get(sdkConstants, 'AccountStates.Deployed', '');
       if (newAccountState === deployedAccountState && accountState !== deployedAccountState) {
         dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
         Toast.show({
@@ -715,9 +716,18 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txStatus = get(event, 'payload.state', '');
       const txGasInfo = get(event, 'payload.gas', {});
       const txSenderAddress = get(event, 'payload.from.account.address', '');
+      const txType = get(event, 'payload.transactionType', '');
       const txFound = txToListen.find(hash => hash.toLowerCase() === txHash);
 
       if (txStatus === TRANSACTION_COMPLETED) {
+        if (txType === transactionTypes.TopUp) {
+          Toast.show({
+            message: 'Your Pillar Tank was successfully funded!',
+            type: 'success',
+            title: 'Success',
+            autoClose: true,
+          });
+        }
         if (txFound) {
           const { txUpdated, updatedHistory } = updateHistoryRecord(
             currentHistory,
@@ -730,14 +740,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             }));
 
           if (txUpdated) {
-            if (txUpdated.tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-              Toast.show({
-                message: 'Your Pillar Tank was successfully funded!',
-                type: 'success',
-                title: 'Success',
-                autoClose: true,
-              });
-            } else if (txUpdated.tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
+            if (txUpdated.tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
               Toast.show({
                 message: 'Settlement process completed!',
                 type: 'success',
