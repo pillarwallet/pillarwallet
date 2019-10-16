@@ -36,5 +36,6 @@ export default async function (dispatch: Function) {
       return migratedAssets;
     }
   }
+
   return assets;
 }

@@ -603,7 +603,6 @@ class Settings extends React.Component<Props, State> {
               via the &quot;System&quot; under Settings.
             </Description>
             <Button
-              roundedCorners
               title="Opt in"
               onPress={() => this.setState({ visibleModal: null, joinBetaPressed: true })}
               style={{
@@ -640,7 +639,6 @@ class Settings extends React.Component<Props, State> {
               </Description>
             </View>
             <Button
-              roundedCorners
               title="Leave Program"
               onPress={() => { this.setState({ visibleModal: null, leaveBetaPressed: true }); }}
               style={{ marginBottom: 13 }}

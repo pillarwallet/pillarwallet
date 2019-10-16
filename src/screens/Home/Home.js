@@ -37,6 +37,7 @@ import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Toast from 'components/Toast';
 
 // constants
 import {
@@ -118,6 +119,7 @@ type Props = {
   activeAccount: Account,
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
+  isOnline: boolean,
 };
 
 type State = {
@@ -243,9 +245,18 @@ class HomeScreen extends React.Component<Props, State> {
     this.setState({ activeTab });
   };
 
-  openQRScanner = () => this.setState({
-    isScanning: true,
-  });
+  openQRScanner = () => {
+    const { isOnline } = this.props;
+    if (!isOnline) {
+      Toast.show({
+        message: 'Cannot use Connect while offline',
+        type: 'warning',
+        title: 'Warning',
+      });
+      return;
+    }
+    this.setState({ isScanning: true });
+  };
 
   closeQRScanner = () => this.setState({
     isScanning: false,
@@ -495,6 +506,7 @@ const mapStateToProps = ({
   badges: { data: badges },
   walletConnect: { connectors, pendingConnector },
   accounts: { data: accounts },
+  session: { data: { isOnline } },
 }) => ({
   contacts,
   user,
@@ -505,6 +517,7 @@ const mapStateToProps = ({
   pendingConnector,
   contactsSmartAddresses,
   accounts,
+  isOnline,
 });
 
 const structuredSelector = createStructuredSelector({
