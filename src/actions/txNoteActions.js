@@ -116,6 +116,7 @@ export const getTxNoteByContactAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { isDecrypting } },
+      session: { data: { isOnline } },
     } = getState();
     if (isDecrypting) return;
     dispatch({
@@ -133,29 +134,32 @@ export const getTxNoteByContactAction = (username: string) => {
       });
       return;
     }
-    await chat.client.addContact(addContactParams, false).catch(e => {
-      if (e.code === 'ERR_ADD_CONTACT_FAILED') {
-        Toast.show({
-          message: e.message,
-          type: 'warning',
-          title: 'Cannot retrieve remote user',
-          autoClose: false,
-        });
-      }
-    });
+    if (isOnline) {
+      await chat.client.addContact(addContactParams, false).catch(e => {
+        if (e.code === 'ERR_ADD_CONTACT_FAILED') {
+          Toast.show({
+            message: e.message,
+            type: 'warning',
+            title: 'Cannot retrieve remote user',
+            autoClose: false,
+          });
+        }
+      });
 
-    const data = await chat.client.receiveNewMessagesByContact(username, 'tx-note')
-      .then(JSON.parse)
-      .catch(() => {});
-
-    if (data !== undefined && Object.keys(data).length) {
-      const { messages: newRemoteMessages } = data;
-      if (newRemoteMessages !== undefined && newRemoteMessages.length) {
-        const remotePromises = newRemoteMessages.map(async remoteMessage => {
-          const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
-          await chat.deleteMessage(rmUsername, rmServerTimestamp);
+      const data = await chat.client.receiveNewMessagesByContact(username, 'tx-note')
+        .then(JSON.parse)
+        .catch(() => {
         });
-        await Promise.all(remotePromises);
+
+      if (data !== undefined && Object.keys(data).length) {
+        const { messages: newRemoteMessages } = data;
+        if (newRemoteMessages !== undefined && newRemoteMessages.length) {
+          const remotePromises = newRemoteMessages.map(async remoteMessage => {
+            const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
+            await chat.deleteMessage(rmUsername, rmServerTimestamp);
+          });
+          await Promise.all(remotePromises);
+        }
       }
     }
 

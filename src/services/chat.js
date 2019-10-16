@@ -32,7 +32,7 @@ export default class Chat {
     this.client = SignalClient;
   }
 
-  async init(credentials: Object) {
+  init(credentials: Object) {
     credentials.host = SIGNAL_SERVER_HOST;
     webSocketInstance = new ChatWebSocketService(credentials);
 

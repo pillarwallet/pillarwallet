@@ -118,6 +118,7 @@ import { getExistingChatsAction } from 'actions/chatActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
+import { signalInitAction } from 'actions/signalClientActions';
 
 // constants
 import {
@@ -606,6 +607,8 @@ type Props = {
   isBrowsingWebView: boolean,
   startListeningForBalanceChange: Function,
   stopListeningForBalanceChange: Function,
+  isOnline: boolean,
+  initSignal: Function,
 }
 
 type State = {
@@ -651,11 +654,25 @@ class AppFlow extends React.Component<Props, State> {
       userState,
       wallet,
       removePrivateKeyFromMemory,
+      isOnline,
+      startListeningChatWebSocket,
+      stopListeningChatWebSocket,
+      initSignal,
     } = this.props;
-    const { notifications: prevNotifications } = prevProps;
+    const { notifications: prevNotifications, isOnline: prevIsOnline } = prevProps;
 
     if (userState === REGISTERED && wallet.privateKey) {
       removePrivateKeyFromMemory();
+    }
+
+    if (prevIsOnline !== isOnline) {
+      if (isOnline) {
+        // try initializing Signal in case of user user logged to wallet while being offline and then switched
+        initSignal();
+        startListeningChatWebSocket();
+      } else {
+        stopListeningChatWebSocket();
+      }
     }
 
     if (notifications.length !== prevNotifications.length) {
@@ -777,6 +794,7 @@ const mapStateToProps = ({
       SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
     },
   },
+  session: { data: { isOnline } },
 }) => ({
   profileImage,
   userState,
@@ -789,6 +807,7 @@ const mapStateToProps = ({
   isPickingImage,
   smartWalletFeatureEnabled,
   isBrowsingWebView,
+  isOnline,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -812,6 +831,7 @@ const mapDispatchToProps = dispatch => ({
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   startListeningForBalanceChange: () => dispatch(startListeningForBalanceChangeAction()),
   stopListeningForBalanceChange: () => dispatch(stopListeningForBalanceChangeAction()),
+  initSignal: () => dispatch(signalInitAction()),
 });
 
 const ConnectedAppFlow = connect(
