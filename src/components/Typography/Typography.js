@@ -18,28 +18,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontStyles } from 'utils/variables';
+import { UIColors, baseColors, fontStyles, appFont } from 'utils/variables';
 
 export const BaseText = styled.Text`
-  font-family: EuclidCircularB-Regular;
+  font-family: ${appFont.regular};
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;
 
 export const BoldText = styled(BaseText)`
-  font-family: EuclidCircularB-Bold;
+  font-family: ${appFont.bold};
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;
 
 export const LightText = styled(BaseText)`
-  font-family: EuclidCircularB-Light;
+  font-family: ${appFont.light};
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;
 
 export const MediumText = styled(BaseText)`
-  font-family: EuclidCircularB-Medium;
+  font-family: ${appFont.medium};
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;

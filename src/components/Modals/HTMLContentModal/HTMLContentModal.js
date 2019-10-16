@@ -26,7 +26,7 @@ import Header from 'components/Header';
 import Spinner from 'components/Spinner';
 import type { ScrollToProps } from 'components/Modals/SlideModal';
 import { StyleSheet } from 'react-native';
-import { fontSizes, lineHeights } from 'utils/variables';
+import { fontSizes, lineHeights, baseColors, appFont } from 'utils/variables';
 
 type Props = {
   htmlEndpoint: string,
@@ -58,17 +58,17 @@ const ActivityIndicatorWrapper = styled.View`
 
 const commonTextStyle = {
   color: 'black',
-  fontFamily: 'EuclidCircularB-Regular',
+  fontFamily: appFont.regular,
 };
 
-const boldStyle = { fontFamily: 'EuclidCircularB-Medium' };
+const boldStyle = { fontFamily: appFont.medium };
 
 const baseStyles = StyleSheet.create({
   b: boldStyle,
   strong: boldStyle,
   a: {
     ...boldStyle,
-    color: '#007AFF',
+    color: baseColors.electricBlue,
     fontSize: fontSizes.regular,
     lineHeight: lineHeights.regular,
   },

@@ -17,7 +17,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { Switch, Input } from 'native-base';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -69,7 +69,7 @@ const ItemValue = styled(Input)`
   flex-wrap: wrap;
   width:100%;
   padding: 0 0 9px;
-  font-family: EuclidCircularB-Medium;
+  font-family: ${appFont.medium};
 `;
 
 const SelectedOption = styled(BaseText)`

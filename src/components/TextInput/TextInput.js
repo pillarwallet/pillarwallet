@@ -25,7 +25,7 @@ import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
-import { fontSizes, baseColors, UIColors, spacing, fontStyles } from 'utils/variables';
+import { fontSizes, baseColors, UIColors, spacing, fontStyles, appFont } from 'utils/variables';
 
 type inputPropsType = {
   placeholder?: string,
@@ -147,7 +147,7 @@ const InputField = styled(Input)`
   ${props => props.inputType.color ? `color: ${props.inputType.color};` : ''}
   ${props => props.inputType.lineHeight ? `line-height: ${props.inputType.lineHeight};` : ''}
   padding: ${props => props.inputType.padding || 0};
-  font-family: EuclidCircularB-Medium;
+  font-family: ${appFont.medium};
 `;
 
 const Item = styled(NBItem)`

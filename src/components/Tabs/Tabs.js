@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import Title from 'components/Title';
 import Icon from 'components/Icon';
-import { BaseText, MediumText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { baseColors, UIColors, spacing, fontSizes } from 'utils/variables';
 
@@ -226,7 +226,7 @@ const UnreadBadge = styled.View`
   justify-content: center;
 `;
 
-const UnreadText = styled(BaseText)`
+const UnreadText = styled(MediumText)`
   font-size: ${fontSizes.regular}px;
   color: ${baseColors.white};
 `;

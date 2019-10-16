@@ -135,7 +135,7 @@ const FiatAmount = styled(LightText)`
 `;
 
 const Disclaimer = styled(LightText)`
-  ${props => props.smallScreen ? fontStyles.small : fontStyles.regular}px;
+  ${props => props.smallScreen ? fontStyles.small : fontStyles.regular};
   color: ${baseColors.burningFire};
   text-align: left;
 `;

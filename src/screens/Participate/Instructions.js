@@ -59,7 +59,7 @@ const IntroText = styled(MediumText)`
 `;
 
 const Value = styled(MediumText)`
-  ${props => props.xl ? fontStyles.big : fontStyles.medium}px;
+  ${props => props.xl ? fontStyles.big : fontStyles.medium};
   text-align: center;
 `;
 

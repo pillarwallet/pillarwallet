@@ -22,7 +22,7 @@ import styled from 'styled-components/native';
 import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
-import { baseColors, UIColors, fontSizes, spacing, fontStyles } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
 
@@ -195,7 +195,7 @@ const InputField = styled(Input)`
   border-width: ${props => props.error ? '1px' : props.theme.borderWidth};
   border-color: ${props => props.error ? 'tomato' : props.theme.borderColor};
   padding: 0 12px;  
-  font-family: EuclidCircularB-Medium;
+  font-family: ${appFont.medium};
 `;
 
 const SelectedOptionWrapper = styled.View`

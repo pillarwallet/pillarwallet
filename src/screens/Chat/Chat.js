@@ -35,7 +35,7 @@ import {
   LoadEarlier,
   Message,
 } from 'react-native-gifted-chat';
-import { baseColors, fontSizes, spacing, lineHeights } from 'utils/variables';
+import { baseColors, fontSizes, spacing, lineHeights, appFont } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -111,8 +111,9 @@ const renderDay = (props: Props) => (
     }}
     textStyle={{
       color: baseColors.darkGray,
-      fontSize: fontSizes.regular,
-      fontFamily: 'EuclidCircularB-Regular',
+      fontSize: fontSizes.small,
+      fontFamily: appFont.regular,
+      fontWeight: 'normal',
     }}
     dateFormat="LL"
   />
@@ -125,12 +126,12 @@ const renderTime = (props: Props) => {
       textStyle={{
         right: {
           color: baseColors.darkGray,
-          fontFamily: 'EuclidCircularB-Regular',
+          fontFamily: appFont.regular,
           fontSize: fontSizes.small,
         },
         left: {
           color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
-          fontFamily: 'EuclidCircularB-Regular',
+          fontFamily: appFont.regular,
           fontSize: fontSizes.small,
         },
       }}
@@ -381,7 +382,7 @@ class Chat extends React.Component<Props, State> {
           marginBottom: 5,
           fontSize: fontSizes.regular,
           lineHeight: lineHeights.regular,
-          fontFamily: 'EuclidCircularB-Regular',
+          fontFamily: appFont.regular,
         }}
         placeholder="Type your message here"
       />
@@ -396,12 +397,12 @@ class Chat extends React.Component<Props, State> {
         left: {
           color: isWarning ? baseColors.white : baseColors.slateBlack,
           fontSize: fontSizes.regular,
-          fontFamily: 'EuclidCircularB-Regular',
+          fontFamily: appFont.regular,
         },
         right: {
           color: baseColors.slateBlack,
           fontSize: fontSizes.regular,
-          fontFamily: 'EuclidCircularB-Regular',
+          fontFamily: appFont.regular,
         },
       }}
       wrapperStyle={{

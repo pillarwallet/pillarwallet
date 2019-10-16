@@ -214,3 +214,10 @@ export const fontTrackings = {
   mediumLarge: 0.4,
   large: 0.5,
 };
+
+export const appFont = {
+  regular: 'EuclidCircularB-Regular',
+  medium: 'EuclidCircularB-Medium',
+  bold: 'EuclidCircularB-Bold',
+  light: 'EuclidCircularB-Light',
+};

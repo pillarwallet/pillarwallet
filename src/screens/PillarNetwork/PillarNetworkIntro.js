@@ -100,7 +100,7 @@ const ContentWrapper = styled.View`
 
 const Label = styled(MediumText)`
   color: ${baseColors.pomegranate};
-   ${fontStyles.rLarge};
+  ${fontStyles.rLarge};
 `;
 
 const Subtext = styled(MediumText)`

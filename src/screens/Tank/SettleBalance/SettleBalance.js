@@ -52,6 +52,7 @@ import {
   fontStyles,
   spacing,
   UIColors,
+  fontSizes,
 } from 'utils/variables';
 import {
   formatFiat,
@@ -117,7 +118,7 @@ const BalanceWrapper = styled.View`
 `;
 
 const ValueInFiat = styled(BaseText)`
-  ${fontStyles.small};
+  font-size: ${fontSizes.regular}px;
   color: ${baseColors.coolGrey};
 `;
 

@@ -42,7 +42,7 @@ import {
   itemSizes,
   spacing,
   UIColors,
-  fontStyles,
+  fontStyles, appFont,
 } from 'utils/variables';
 import { formatMoney, noop } from 'utils/common';
 
@@ -153,7 +153,7 @@ const InputField = styled(TextInput)`
   font-size: ${fontSizes.giant}px;
   height: 100%;
   min-width: 10px;
-  font-family: EuclidCircularB-Medium;
+  font-family: ${appFont.medium};
 `;
 
 const PlaceholderWrapper = styled.View`
