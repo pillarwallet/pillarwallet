@@ -52,6 +52,7 @@ import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'const
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
+import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import * as connectionKeyActions from 'actions/connectionKeyPairActions';
@@ -175,6 +176,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
       { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
+      { type: SET_FEATURE_FLAGS, payload: {} },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -239,6 +241,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
       { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
+      { type: SET_FEATURE_FLAGS, payload: {} },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -316,6 +319,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
       { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
+      { type: SET_FEATURE_FLAGS, payload: {} },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
