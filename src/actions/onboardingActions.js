@@ -61,6 +61,7 @@ import { RESET_SMART_WALLET } from 'constants/smartWalletConstants';
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
+import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // utils
 import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
@@ -268,6 +269,7 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] });
     dispatch({ type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] });
     dispatch({ type: SET_USER_SETTINGS, payload: {} });
+    dispatch({ type: SET_FEATURE_FLAGS, payload: {} });
 
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
