@@ -91,7 +91,7 @@ const ActivityFeedWrapper = styled.View`
 `;
 
 const ActivityFeedHeader = styled.View`
-  padding: ${spacing.mediumLarge}px ${spacing.mediumLarge}px 0;
+  padding: ${spacing.mediumLarge}px ${spacing.large}px 0;
   border-top-width: ${props => props.noBorder ? 0 : '1px'};
   border-top-color: ${baseColors.mediumLightGray};
 `;

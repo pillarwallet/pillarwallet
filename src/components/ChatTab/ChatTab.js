@@ -109,9 +109,8 @@ const renderDay = (props: Props) => (
     }}
     textStyle={{
       color: baseColors.darkGray,
-      fontWeight: '400',
       fontSize: fontSizes.regular,
-      fontFamily: 'Aktiv Grotesk App',
+      fontFamily: 'EuclidCircularB-Regular',
     }}
     dateFormat="LL"
   />
@@ -124,14 +123,12 @@ const renderTime = (props: Props) => {
       textStyle={{
         right: {
           color: baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
+          fontFamily: 'EuclidCircularB-Regular',
           fontSize: fontSizes.small,
         },
         left: {
           color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
+          fontFamily: 'EuclidCircularB-Regular',
           fontSize: fontSizes.small,
         },
       }}
@@ -428,14 +425,12 @@ class ChatTab extends React.Component<Props, State> {
         left: {
           color: isWarning ? baseColors.white : baseColors.slateBlack,
           fontSize: fontSizes.regular,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
+          fontFamily: 'EuclidCircularB-Regular',
         },
         right: {
           color: baseColors.slateBlack,
           fontSize: fontSizes.regular,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
+          fontFamily: 'EuclidCircularB-Regular',
         },
       }}
       wrapperStyle={{

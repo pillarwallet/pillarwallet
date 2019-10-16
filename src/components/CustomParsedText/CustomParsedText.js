@@ -24,8 +24,7 @@ export const CustomParsedText = (props: Props) => {
   return (
     <ParsedText
       style={{
-        fontFamily: 'Aktiv Grotesk App',
-        fontWeight: '400',
+        fontFamily: 'EuclidCircularB-Regular',
         includeFontPadding: false,
         textAlignVertical: 'center',
         color: UIColors.defaultTextColor,
