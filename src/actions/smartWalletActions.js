@@ -780,13 +780,13 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const transferTransactions = get(getState(), 'smartWallet.upgrade.transfer.transactions', []);
       const txHash = get(event, 'payload.hash', '').toLowerCase();
       const txStatus = get(event, 'payload.state', '');
-      const txFound = transferTransactions.find(({ transactionHash }) => transactionHash === txHash);
+      const txFound = transferTransactions.find(({ transactionHash }) => transactionHash.toLowerCase() === txHash);
 
       if (txStatus === TRANSACTION_COMPLETED) {
         if (txFound) {
-          const updatedTransactions = transferTransactions.filter(
-            _tx => _tx.transactionHash !== txFound.transactionHash,
-          );
+          const updatedTransactions = transferTransactions.filter(({ transactionHash }) => {
+            return transactionHash !== txFound.transactionHash;
+          });
           updatedTransactions.push({
             ...txFound,
             status: TX_CONFIRMED_STATUS,
