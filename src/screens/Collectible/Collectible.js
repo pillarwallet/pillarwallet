@@ -31,6 +31,7 @@ import ImageView from 'react-native-image-view';
 import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
+import IconButton from 'components/IconButton';
 import ActivityFeed from 'components/ActivityFeed';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
@@ -100,6 +101,32 @@ const CollectibleImage = styled(CachedImage)`
   margin-top: 30px;
 `;
 
+const IconWrapper = styled.View`
+  padding: 6px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const CloseIcon = styled(IconButton)`
+  height: 44px;
+  width: 58px;
+`;
+
+const ImageCloseIcon = (props: {onPress: () => void}) => {
+  return (
+    <IconWrapper>
+      <CloseIcon
+        icon="close"
+        color={baseColors.white}
+        onPress={props.onPress}
+        fontSize={fontSizes.small}
+        horizontalAlign="center"
+      />
+    </IconWrapper>
+  );
+};
+
 const iconSend = require('assets/icons/icon_send.png');
 const genericCollectible = require('assets/images/no_logo.png');
 
@@ -113,12 +140,11 @@ class CollectibleScreen extends React.Component<Props, State> {
     if (!isFocused) {
       return false;
     }
-    if (!isEqual(this.state, nextState)) {
+
+    if (!isEqual(this.state, nextState) || !isEqual(this.props, nextProps)) {
       return true;
     }
-    if (!isEqual(this.props, nextProps)) {
-      return true;
-    }
+
     return false;
   }
 
@@ -151,6 +177,7 @@ class CollectibleScreen extends React.Component<Props, State> {
         imageIndex={0}
         isVisible={isImageViewVisible}
         onClose={this.onCloseImageView}
+        controls={{ close: ImageCloseIcon }}
       />
     );
   }
