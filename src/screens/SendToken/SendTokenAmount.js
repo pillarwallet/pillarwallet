@@ -179,7 +179,8 @@ class SendTokenAmount extends React.Component<Props, State> {
       submitPressed: false,
     };
 
-    this.updateGasLimit = debounce(this.updateGasLimit, 500);
+    this.updateTxFee = debounce(this.updateTxFee, 500);
+    this.updateGasLimitAndTxFee = debounce(this.updateGasLimitAndTxFee, 500);
   }
 
   componentDidMount() {
@@ -206,13 +207,12 @@ class SendTokenAmount extends React.Component<Props, State> {
   handleChange = (value: Object) => {
     // first update the amount, then after state is updated check for errors
     this.setState({ value, gettingFee: true });
-    this.getTxFeeInWei()
-      .then(txFeeInWei => this.setState({ txFeeInWei, gettingFee: false }))
-      .catch(() => null);
     this.checkFormInputErrors();
-    if (!checkIfSmartWalletAccount(this.props.activeAccount)) {
-      this.updateGasLimit();
+    if (checkIfSmartWalletAccount(this.props.activeAccount)) {
+      this.updateTxFee();
+      return;
     }
+    this.updateGasLimitAndTxFee();
   };
 
   handleFormSubmit = async () => {
@@ -245,10 +245,11 @@ class SendTokenAmount extends React.Component<Props, State> {
       };
     }
     Keyboard.dismiss();
-    this.setState({ submitPressed: false }); // reset in case of user navigates back
-    navigation.navigate(SEND_TOKEN_CONFIRM, {
-      transactionPayload,
-      source: this.source,
+    this.setState({ submitPressed: false }, () => {
+      navigation.navigate(SEND_TOKEN_CONFIRM, {
+        transactionPayload,
+        source: this.source,
+      });
     });
   };
 
@@ -281,7 +282,6 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   getGasLimit = (amount?: number) => {
-    this.setState({ gettingFee: true });
     // calculate either with amount in form or provided as param
     if (!amount) {
       amount = parseFloat(get(this._form.getValue(), 'amount', 0));
@@ -307,21 +307,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     });
   };
 
-  updateGasLimit = () => {
-    this.getGasLimit()
-      .then(gasLimit => this.setState({ gasLimit, gettingFee: false }))
-      .catch(() => null);
-  };
-
-  getSmartWalletTxFeeInWei = (amount?: number): BigNumber => {
-    const { gasInfo } = this.props;
-    const value = amount || get(this.state, 'value.amount');
-    return smartWalletService.estimateAccountTransaction({
-      recipient: this.receiver,
-      value,
-    }, gasInfo).catch(() => 0);
-  };
-
   getTxFeeInWei = (txSpeed?: string, gasLimit?: number): BigNumber => {
     const { gasInfo, activeAccount } = this.props;
     if (checkIfSmartWalletAccount(activeAccount)) {
@@ -335,6 +320,26 @@ class SendTokenAmount extends React.Component<Props, State> {
     const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
     return gasPriceWei.mul(gasLimit);
+  };
+
+  updateTxFee = async () => {
+    const txFeeInWei = await this.getTxFeeInWei();
+    this.setState({ txFeeInWei, gettingFee: false });
+  };
+
+  updateGasLimitAndTxFee = () => {
+    this.getGasLimit()
+      .then(gasLimit => this.setState({ gasLimit }, () => this.updateTxFee()))
+      .catch(() => null);
+  };
+
+  getSmartWalletTxFeeInWei = (amount?: number): BigNumber => {
+    const { gasInfo } = this.props;
+    const value = amount || get(this.state, 'value.amount');
+    return smartWalletService.estimateAccountTransaction({
+      recipient: this.receiver,
+      value,
+    }, gasInfo).catch(() => 0);
   };
 
   renderTxSpeedButtons = () => {
@@ -382,13 +387,12 @@ class SendTokenAmount extends React.Component<Props, State> {
     const {
       session,
       balances,
-      gasInfo,
       rates,
       baseFiatCurrency,
       activeAccount,
     } = this.props;
 
-    const showTransactionSpeeds = !!gasLimit && !checkIfSmartWalletAccount(activeAccount);
+    const showTransactionSpeeds = !inputHasError && !!gasLimit && !checkIfSmartWalletAccount(activeAccount);
     const transactionSpeed = showTransactionSpeeds && this.getTxSpeed();
     const { token, icon, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -419,7 +423,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
 
     const showNextButton = !submitPressed && !!value && !!parseFloat(value.amount) && !inputHasError;
-    const isNextButtonDisabled = gettingFee || !session.isOnline || !gasInfo.isFetched;
+    const isNextButtonDisabled = gettingFee || !session.isOnline;
     const nextButtonTitle = gettingFee
       ? 'Getting the fee..'
       : 'Next';
@@ -432,7 +436,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             {!!transactionSpeed &&
             <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
               <SendTokenDetailsValue>
-                <Label small>Fee:</Label>
+                <Label small>Fee: </Label>
                 <TextLink>{SPEED_TYPE_LABELS[transactionSpeed]}</TextLink>
               </SendTokenDetailsValue>
             </TouchableOpacity>

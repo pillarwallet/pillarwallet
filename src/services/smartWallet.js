@@ -51,7 +51,7 @@ const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', ''
 
 const DEFAULT_DEPLOYMENT_GAS_LIMIT = 790000;
 
-type AccountTransaction = {
+export type AccountTransaction = {
   recipient: string,
   value: number | string | BigNumber,
   data?: string | Buffer,
@@ -91,14 +91,19 @@ const calculateEstimate = (
 ): BigNumber => {
   let { gasAmount, gasPrice } = parseEstimatePayload(estimate);
 
-  if (!gasAmount) {
-    gasAmount = new BigNumber(defaultGasAmount);
-  }
+  // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
+
+  gasAmount = new BigNumber(gasAmount
+    ? gasAmount.toString()
+    : defaultGasAmount,
+  );
+
   if (!gasPrice) {
     const defaultGasPrice = get(gasInfo, `gasPrice.${speed}`, 0);
     gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
   }
-  return gasPrice.mul(gasAmount);
+
+  return new BigNumber(gasPrice.toString()).multipliedBy(gasAmount);
 };
 
 class SmartWallet {
