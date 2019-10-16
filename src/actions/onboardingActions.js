@@ -189,6 +189,14 @@ const finishRegistration = async ({
 
   dispatch(fetchBadgesAction(false));
 
+  // user might be already joined to beta program before
+  if (isImported && userInfo.betaProgramParticipant) {
+    await dispatch(setUserJoinedBetaAction(true, true)); // 2nd true value sets to ignore toast success message
+  } else {
+    // we don't want to track by default, we will use this only when user applies for beta
+    dispatch(setFirebaseAnalyticsCollectionEnabled(false));
+  }
+
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
   if (smartWalletFeatureEnabled) {
     // create smart wallet account only for new wallets
@@ -349,14 +357,6 @@ export const registerWalletAction = () => {
       privateKey: wallet.privateKey,
       isImported,
     });
-
-    // user might be already joined to beta program before
-    if (userInfo.betaProgramParticipant) {
-      dispatch(setUserJoinedBetaAction(true, true)); // 2nd true value sets to ignore toast success message
-    } else {
-      // we don't want to track by default, we will use this only when user applies for beta
-      dispatch(setFirebaseAnalyticsCollectionEnabled(false));
-    }
 
     // STEP 6: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;

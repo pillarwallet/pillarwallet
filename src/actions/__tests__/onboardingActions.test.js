@@ -192,8 +192,8 @@ describe('Wallet actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
+      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
     // $FlowFixMe
@@ -256,6 +256,7 @@ describe('Wallet actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
+      { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
       { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
@@ -269,7 +270,6 @@ describe('Wallet actions', () => {
         },
       },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
-      { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
     ];
 
     // $FlowFixMe
@@ -332,8 +332,8 @@ describe('Wallet actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
+      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
     // $FlowFixMe
