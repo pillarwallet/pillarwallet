@@ -91,7 +91,7 @@ const ActivityFeedWrapper = styled.View`
 `;
 
 const ActivityFeedHeader = styled.View`
-  padding: 0 ${spacing.mediumLarge}px;
+  padding: ${spacing.mediumLarge}px ${spacing.mediumLarge}px 0;
   border-top-width: ${props => props.noBorder ? 0 : '1px'};
   border-top-color: ${baseColors.mediumLightGray};
 `;
@@ -523,7 +523,7 @@ class ActivityFeed extends React.Component<Props, State> {
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
         {!!feedTitle &&
         <ActivityFeedHeader noBorder={noBorder}>
-          <Title subtitle title={feedTitle} />
+          <Title subtitle title={feedTitle} noMargin />
         </ActivityFeedHeader>}
         {tabs.length > 1 && !hideTabs &&
           <Tabs

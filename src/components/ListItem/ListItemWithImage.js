@@ -134,14 +134,12 @@ const ItemParagraph = styled(BaseText)`
   color: ${baseColors.darkGray};
   ${fontStyles.regular};
   letter-spacing: ${fontTrackings.tiny}px;
-  margin-top: 4px;
   flex: 1;
 `;
 
 const ItemSubText = styled(BaseText)`
   color: ${baseColors.darkGray};
   ${fontStyles.regular};
-  margin-top: 4px;
 `;
 
 const IconCircle = styled.View`

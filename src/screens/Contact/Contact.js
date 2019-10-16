@@ -404,7 +404,7 @@ class Contact extends React.Component<Props, State> {
                 onPress: () => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT }),
                 indicator: !!unreadChats.length,
                 color: baseColors.coolGrey,
-                fontSize: fontSizes.large,
+                fontSize: fontSizes.big,
               }
             : {}],
         }}
@@ -450,7 +450,7 @@ class Contact extends React.Component<Props, State> {
                   }
                 </CircleButtonsWrapper>
                 <ActivityFeed
-                  feedTitle="activity."
+                  feedTitle="Activity"
                   noBorder
                   ref={(ref) => { this.activityFeedRef = ref; }}
                   navigation={navigation}

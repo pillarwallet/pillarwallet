@@ -150,6 +150,7 @@ const TextHolder = styled.View`
   align-items: center;
   width: 70%;
   height: 100%;
+  margin-left: 4px;
 `;
 
 const InnerImageText = styled(BaseText)`

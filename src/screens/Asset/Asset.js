@@ -379,7 +379,7 @@ class AssetScreen extends React.Component<Props, State> {
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
           <ActivityFeed
-            feedTitle="transactions."
+            feedTitle="Transactions"
             navigation={navigation}
             backgroundColor={baseColors.white}
             showArrowsOnly

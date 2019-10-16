@@ -74,12 +74,12 @@ const CardContent = styled.View`
 
 const CardTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  ${fontStyles.medium};
+  ${fontStyles.big};
 `;
 
 const CardSubtitle = styled(BaseText)`
   color: ${baseColors.coolGrey};
-  ${fontStyles.regular};
+  ${fontStyles.medium};
 `;
 
 const CheckIcon = styled(Icon)`

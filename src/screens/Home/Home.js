@@ -146,7 +146,7 @@ const WalletConnectWrapper = styled.View`
 const ListHeader = styled(MediumText)`
   color: ${baseColors.blueYonder};
   ${fontStyles.regular};
-  margin: ${spacing.mediumLarge}px ${spacing.large}px;
+  margin: ${spacing.medium}px ${spacing.large}px ${spacing.small}px;
 `;
 
 const BadgesWrapper = styled.View`

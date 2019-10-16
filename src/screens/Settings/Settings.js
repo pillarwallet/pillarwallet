@@ -551,12 +551,9 @@ class Settings extends React.Component<Props, State> {
           onModalHide={() => this.setState({ visibleModal: null })}
           backgroundColor={baseColors.lightGray}
           avoidKeyboard
+          title="Usage analytics"
         >
           <Wrapper regularPadding flex={1}>
-            <SettingsModalTitle>
-              Usage analytics
-            </SettingsModalTitle>
-
             <StyledWrapper>
               <Checkbox
                 checked={!optOutTracking}

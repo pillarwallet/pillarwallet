@@ -303,7 +303,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           centerItems: [{ title: 'Confirm exchange' }],
           customOnBack: this.handleBack,
         }}
-        inset={{ bottom: 'never' }}
       >
         <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
           <Paragraph small style={{ marginBottom: spacing.medium, paddingTop: spacing.medium }}>
@@ -368,7 +367,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           onModalHide={() => { this.setState({ showFeeModal: false }); }}
         >
           <Label>Choose your gas price.</Label>
-          <Label>Faster transaction requires more fee.</Label>In
+          <Label>Faster transaction requires more fee.</Label>
           <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
         </SlideModal>
       </ContainerWithHeader>

@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Platform, TextInput, FlatList, Keyboard } from 'react-native';
+import { TextInput, FlatList, Keyboard } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
@@ -190,48 +190,31 @@ const SearchBarWrapper = styled.View`
 `;
 
 const HorizontalOptions = styled.View`
-  height: 145px;
   background-color: ${UIColors.defaultBackgroundColor};
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${baseColors.mediumLightGray};
+  padding-bottom: ${spacing.small}px;
 `;
 
 const HorizontalOptionsScrollView = styled.ScrollView`
 `;
 
-const HorizontalOptionsHeader = styled(SubHeadingMedium)`
-  margin: 22px 16px 13px;
-`;
-
 const HorizontalOptionItem = styled.TouchableOpacity`
   align-items: center;
-  width: ${Platform.select({
-    ios: '60px',
-    android: '74px',
-  })};
-  margin: ${Platform.select({
-    ios: `0 ${spacing.rhythm / 2}px`,
-    android: `-6px ${spacing.rhythm / 2}px 0`,
-  })};
-  padding-top: ${Platform.select({
-    ios: '3px',
-    android: 0,
-  })};
+  width: ${itemSizes.avatarCircleMedium + 4}px;
+  margin: 0 8px;
 `;
 
 const HorizontalOptionItemName = styled(BaseText)`
   ${fontStyles.small};
   color: ${baseColors.darkGray};
   padding: 0 4px;
-  margin-top: ${Platform.select({
-    ios: '3px',
-    android: '-4px',
-  })};
+  margin-top: 3px;
 `;
 
 const OptionsHeader = styled(SubHeadingMedium)`
-  margin: 22px 16px 13px;
+  margin: ${spacing.large}px ${spacing.large}px 0;
 `;
 
 const EmptyStateWrapper = styled(Wrapper)`
@@ -347,6 +330,7 @@ export default class SelectorInput extends React.Component<Props, State> {
               userName={name}
               diameter={itemSizes.avatarCircleMedium}
               textStyle={{ fontSize: fontSizes.medium }}
+              noShadow
             />
             <HorizontalOptionItemName numberOfLines={1}>{name}</HorizontalOptionItemName>
           </HorizontalOptionItem>
@@ -503,16 +487,17 @@ export default class SelectorInput extends React.Component<Props, State> {
                   ? baseColors.white
                   : UIColors.defaultBackgroundColor,
               }}
-              customProps={{ enableOnAndroid: false }}
+              disableOnAndroid
             >
               {!!filteredHorizontalListData.length &&
                 <HorizontalOptions>
                   {(showOptionsTitles && !!horizontalOptionsTitle) &&
-                    <HorizontalOptionsHeader>{horizontalOptionsTitle}</HorizontalOptionsHeader>
+                    <OptionsHeader>{horizontalOptionsTitle}</OptionsHeader>
                   }
                   <HorizontalOptionsScrollView
                     keyboardShouldPersistTaps="always"
                     horizontal
+                    contentContainerStyle={{ paddingHorizontal: spacing.large / 2, paddingVertical: spacing.medium }}
                   >
                     {this.renderHorizontalOptions(filteredHorizontalListData)}
                   </HorizontalOptionsScrollView>

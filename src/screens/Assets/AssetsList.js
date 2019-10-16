@@ -88,8 +88,7 @@ const ListHeaderWrapper = styled.View`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: ${spacing.large}px ${spacing.large}px 0;
-  margin-top: 4px;
+  padding: ${spacing.medium}px ${spacing.large}px 0;
   margin-bottom: 6px;
 `;
 

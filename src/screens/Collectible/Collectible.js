@@ -143,7 +143,7 @@ class CollectibleScreen extends React.Component<Props> {
       !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id);
 
     return (
-      <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }}>
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }} inset={{ bottom: 0 }}>
         <ScrollWrapper>
           <CollectibleImage
             key={id.toString()}
@@ -173,7 +173,7 @@ class CollectibleScreen extends React.Component<Props> {
             showArrowsOnly
             contentContainerStyle={{ paddingTop: 10 }}
             invertAddon
-            feedTitle="transactions."
+            feedTitle="Transactions"
           />}
         </ScrollWrapper>
       </ContainerWithHeader>
