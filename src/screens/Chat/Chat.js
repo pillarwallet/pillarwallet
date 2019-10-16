@@ -72,6 +72,7 @@ type Props = {
   draft: ?string,
   logScreenView: Function,
   logEvent: Function,
+  isOnline: boolean,
 }
 
 type State = {
@@ -265,7 +266,12 @@ class Chat extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isFetching, draft } = this.props;
+    const {
+      isFetching,
+      draft,
+      isOnline,
+      getChatByContact,
+    } = this.props;
     const { draft: prevDraft } = prevProps;
 
     if (this.state.isFetching && !isFetching) {
@@ -274,6 +280,11 @@ class Chat extends React.Component<Props, State> {
 
     if (!prevDraft && draft) {
       this.setState({ chatText: draft }); // eslint-disable-line
+    }
+
+    if (prevProps.isOnline !== isOnline && isOnline) {
+      const { contact } = this.state;
+      getChatByContact(contact.username, contact.id, contact.profileImage);
     }
   }
 
@@ -565,6 +576,7 @@ const mapStateToProps = ({
   user: { data: user },
   chat: { data: { messages, isFetching, chats }, draft },
   contacts: { data: contacts },
+  session: { data: { isOnline } },
 }) => ({
   user,
   messages,
@@ -572,6 +584,7 @@ const mapStateToProps = ({
   chats,
   contacts,
   draft,
+  isOnline,
 });
 
 const mapDispatchToProps = (dispatch) => ({

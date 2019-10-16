@@ -44,8 +44,7 @@ export const getKeychainDataObject = () => Keychain
     service: KEYCHAIN_SERVICE,
     authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
   })
-  .then(({ password = '{}' }) => JSON.parse(password))
-  .catch(() => {});
+  .then(({ password = '{}' }) => JSON.parse(password));
 
 export const resetKeychainDataObject = () => Keychain
   .resetGenericPassword({

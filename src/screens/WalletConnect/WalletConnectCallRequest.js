@@ -273,6 +273,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const {
       contacts,
       balances,
+      session,
     } = this.props;
     const { gasLimit } = this.state;
 
@@ -375,7 +376,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 <Value>{data}</Value>
               </LabeledRow>
             )}
-            {!!recipientUsername && (
+            {session.isOnline && !!recipientUsername &&
               <TextInput
                 inputProps={{
                   onChange: text => this.handleNoteChange(text),
@@ -390,7 +391,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 noBorder
                 keyboardAvoidance
               />
-            )}
+            }
           </ScrollWrapper>
         );
         break;

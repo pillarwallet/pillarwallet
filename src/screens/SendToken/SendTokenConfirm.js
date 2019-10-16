@@ -134,21 +134,21 @@ class SendTokenContacts extends React.Component<Props, State> {
             <Label>Est. Network Fee</Label>
             <Value>{txFeeInWei === 0 ? 'free' : `${utils.formatEther(txFeeInWei.toString())} ETH`}</Value>
           </LabeledRow>
-          {!!recipientUsername &&
-          <TextInput
-            inputProps={{
-              onChange: (text) => this.handleNoteChange(text),
-              value: this.state.note,
-              autoCapitalize: 'none',
-              multiline: true,
-              numberOfLines: 3,
-              placeholder: 'Add a note to this transaction',
-            }}
-            inputType="secondary"
-            labelBigger
-            noBorder
-            keyboardAvoidance
-          />
+          {session.isOnline && !!recipientUsername &&
+            <TextInput
+              inputProps={{
+                onChange: (text) => this.handleNoteChange(text),
+                value: this.state.note,
+                autoCapitalize: 'none',
+                multiline: true,
+                numberOfLines: 3,
+                placeholder: 'Add a note to this transaction',
+              }}
+              inputType="secondary"
+              labelBigger
+              noBorder
+              keyboardAvoidance
+            />
           }
         </ScrollWrapper>
       </ContainerWithHeader>
