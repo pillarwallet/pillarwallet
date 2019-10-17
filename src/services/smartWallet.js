@@ -32,6 +32,8 @@ import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
 import type { GasInfo } from 'models/GasInfo';
+import { DEFAULT_GAS_LIMIT } from 'services/assets';
+import { SPEED_TYPES } from 'constants/assetsConstants';
 
 const {
   GasPriceStrategies: {
@@ -47,10 +49,12 @@ const TransactionSpeeds = {
 
 const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 
-type AccountTransaction = {
+const DEFAULT_DEPLOYMENT_GAS_LIMIT = 790000;
+
+export type AccountTransaction = {
   recipient: string,
   value: number | string | BigNumber,
-  data: string | Buffer,
+  data?: string | Buffer,
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
 };
 
@@ -77,6 +81,29 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
     gasPrice,
     totalCost: gasAmount && gasPrice && gasPrice.mul(gasAmount),
   };
+};
+
+const calculateEstimate = (
+  estimate,
+  gasInfo?: GasInfo,
+  speed?: string = SPEED_TYPES.NORMAL,
+  defaultGasAmount?: number = DEFAULT_GAS_LIMIT,
+): BigNumber => {
+  let { gasAmount, gasPrice } = parseEstimatePayload(estimate);
+
+  // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
+
+  gasAmount = new BigNumber(gasAmount
+    ? gasAmount.toString()
+    : defaultGasAmount,
+  );
+
+  if (!gasPrice) {
+    const defaultGasPrice = get(gasInfo, `gasPrice.${speed}`, 0);
+    gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
+  }
+
+  return new BigNumber(gasPrice.toString()).multipliedBy(gasAmount);
 };
 
 class SmartWallet {
@@ -221,9 +248,8 @@ class SmartWallet {
       recipient,
       value,
       data,
-      transactionSpeed,
+      transactionSpeed = TransactionSpeeds[AVG],
     } = transaction;
-
     const estimatedTransaction = await this.sdk.estimateAccountTransaction(
       recipient,
       value,
@@ -313,16 +339,26 @@ class SmartWallet {
 
   async estimateAccountDeployment(gasInfo: GasInfo) {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(() => {});
-    let { gasAmount, gasPrice } = parseEstimatePayload(deployEstimate);
+    return calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT);
+  }
 
-    if (!gasAmount) {
-      gasAmount = new BigNumber(790000);
-    }
-    if (!gasPrice) {
-      const defaultGasPrice = get(gasInfo, 'gasPrice.max', 0);
-      gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
-    }
-    return gasPrice.mul(gasAmount);
+  async estimateAccountTransaction(transaction: AccountTransaction, gasInfo: GasInfo) {
+    const {
+      recipient,
+      value,
+      data,
+      transactionSpeed = TransactionSpeeds[AVG],
+    } = transaction;
+    const estimatedTransaction = await this.sdk.estimateAccountTransaction(
+      recipient,
+      value,
+      data,
+      transactionSpeed,
+    ).catch(() => {});
+    const defaultSpeed = transactionSpeed === TransactionSpeeds[FAST]
+      ? SPEED_TYPES.FAST
+      : SPEED_TYPES.NORMAL;
+    return calculateEstimate(estimatedTransaction, gasInfo, defaultSpeed);
   }
 
   handleError(error: any) {

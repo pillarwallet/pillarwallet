@@ -19,12 +19,14 @@
 */
 import * as React from 'react';
 import { ScrollView } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
+import isEmpty from 'lodash.isempty';
+import isEqual from 'lodash.isequal';
+import type { NavigationScreenProp } from 'react-navigation';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
@@ -56,7 +58,7 @@ type Props = {
   transferCollectibles: AssetTransfer[],
   fetchGasInfo: Function,
   gasInfo: GasInfo,
-  session: Object,
+  isOnline: boolean,
   baseFiatCurrency: string,
   rates: Rates,
   collectibles: Collectible[],
@@ -99,28 +101,38 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
   };
 
   componentDidMount() {
-    const {
-      fetchGasInfo,
-      fetchAssetsBalances,
-      gasInfo,
-    } = this.props;
-    fetchGasInfo();
-    fetchAssetsBalances();
-    smartWalletService.estimateAccountDeployment(gasInfo)
-      .then(deployEstimateFee => this.setState({ deployEstimateFee }))
-      .catch(() => {});
+    this.updateGasInfoAndBalances();
+    this.updateDeploymentFee();
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
-      const {
-        fetchGasInfo,
-        fetchAssetsBalances,
-      } = this.props;
-      fetchGasInfo();
-      fetchAssetsBalances();
+    const {
+      isOnline,
+      gasInfo,
+    } = this.props;
+    if (prevProps.isOnline !== isOnline && isOnline) {
+      this.updateGasInfoAndBalances();
+      this.updateDeploymentFee();
+    } else if (!isEqual(prevProps.gasInfo, gasInfo)) {
+      this.updateDeploymentFee();
     }
   }
+
+  updateGasInfoAndBalances = () => {
+    const { fetchGasInfo, fetchAssetsBalances } = this.props;
+    fetchGasInfo();
+    fetchAssetsBalances();
+  };
+
+  updateDeploymentFee = () => {
+    const { gasInfo } = this.props;
+    const { deployEstimateFee: currentDeployEstimateFee } = this.state;
+    // set "getting fee" (fee is 0) state
+    if (currentDeployEstimateFee !== 0) this.setState({ deployEstimateFee: 0 });
+    smartWalletService.estimateAccountDeployment(gasInfo)
+      .then(deployEstimateFee => this.setState({ deployEstimateFee }))
+      .catch(() => {});
+  };
 
   onNextClick = (ethTransferAmountBN: BigNumber) => {
     const {
@@ -131,6 +143,8 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       transferCollectibles,
       gasInfo,
     } = this.props;
+    const { upgradeStarted } = this.state;
+    if (upgradeStarted) return;
     this.setState({ upgradeStarted: true });
     const gasPriceWei = getGasPriceWei(gasInfo);
     const gasPrice = gasPriceWei.toNumber();
@@ -209,6 +223,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       balances,
       baseFiatCurrency,
       rates,
+      isOnline,
     } = this.props;
     const {
       upgradeStarted,
@@ -242,7 +257,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
         `${feeCollectiblesTransferEthFormatted} ETH (${fiatSymbol}${feeCollectiblesTransferFiatBN.toFixed(2)})`;
     }
 
-    const feeSmartContractDeployEthBN = new BigNumber(utils.formatEther(deployEstimateFee));
+    const feeSmartContractDeployEthBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
     const feeSmartContractDeployFiatBN = feeSmartContractDeployEthBN.multipliedBy(getRate(rates, ETH, fiatCurrency));
     const feeSmartContractDeployEthFormatted = formatAmount(feeSmartContractDeployEthBN.toString());
     const smartContractDeployFee =
@@ -292,7 +307,9 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const notEnoughEther = notEnoughEtherForTokensTransfer || notEnoughEtherForContractDeployment;
 
     let errorMessage = '';
-    if (!etherTransfer) {
+    if (!isOnline) {
+      errorMessage = 'You need to be online in order to create Smart Wallet.';
+    } else if (!etherTransfer) {
       errorMessage = 'You need to select to transfer ETH in order to cover the contract deployment fee.';
     } else if (notEnoughEtherForTokensTransfer) {
       errorMessage = `There is not enough ether left in order to cover the assets transfer fee.
@@ -301,6 +318,12 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
       errorMessage = 'There is not enough ether being sent to smart contract ' +
         'in order to cover the contract deployment fee.';
     }
+
+    const isGettingDeploymentFee = isOnline && parseFloat(deployEstimateFee.toString()) <= 0;
+    const submitButtonTitle = isGettingDeploymentFee
+      ? 'Getting deployment fee..'
+      : 'Create Smart Wallet';
+    const isSubmitDisabled = !!notEnoughEther || !isEmpty(errorMessage) || isGettingDeploymentFee;
 
     return (
       <React.Fragment>
@@ -315,23 +338,25 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           <DetailsValue>{assetsTransferFee}</DetailsValue>
         </DetailsLine>
         {!!transferCollectibles.length &&
-        <DetailsLine>
-          <DetailsTitle>Est. fee for collectibles transfer</DetailsTitle>
-          <DetailsValue>{collectiblesTransferFee}</DetailsValue>
-        </DetailsLine>
+          <DetailsLine>
+            <DetailsTitle>Est. fee for collectibles transfer</DetailsTitle>
+            <DetailsValue>{collectiblesTransferFee}</DetailsValue>
+          </DetailsLine>
         }
         <DetailsLine>
           <DetailsTitle>Est. fee for smart contract deployment</DetailsTitle>
-          <DetailsValue>{smartContractDeployFee}</DetailsValue>
+          {isGettingDeploymentFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
+          {!isGettingDeploymentFee && <DetailsValue>{smartContractDeployFee}</DetailsValue>}
         </DetailsLine>
-        {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
+        {!isEmpty(errorMessage) && <WarningMessage small>{errorMessage}</WarningMessage>}
         {!upgradeStarted &&
-        <Button
-          block
-          disabled={!!notEnoughEther}
-          title="Create Smart Wallet"
-          onPress={() => this.onNextClick(etherTransferAmountUpdatedBN)}
-        />}
+          <Button
+            block
+            disabled={isSubmitDisabled}
+            title={submitButtonTitle}
+            onPress={() => this.onNextClick(etherTransferAmountUpdatedBN)}
+          />
+        }
       </React.Fragment>
     );
   };
@@ -368,14 +393,14 @@ const mapStateToProps = ({
       },
     },
   },
-  session: { data: session },
+  session: { data: { isOnline } },
   history: { gasInfo },
   appSettings: { data: { baseFiatCurrency } },
   rates: { data: rates },
 }) => ({
   transferAssets,
   transferCollectibles,
-  session,
+  isOnline,
   gasInfo,
   baseFiatCurrency,
   rates,
