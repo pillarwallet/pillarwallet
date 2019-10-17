@@ -731,7 +731,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
           notificationMessage = 'Transaction was successfully sent!';
         }
-        console.log({ notificationMessage });
 
         if (notificationMessage) {
           Toast.show({
