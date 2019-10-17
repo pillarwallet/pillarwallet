@@ -38,7 +38,7 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
@@ -81,10 +81,6 @@ const ActionButtonsWrapper = styled.View`
 const DataWrapper = styled.View`
   margin: 64px ${spacing.large}px ${spacing.large}px;
   justify-content: center;
-`;
-
-const Description = styled(Paragraph)`
-  line-height: ${fontSizes.mediumLarge};
 `;
 
 const CircleButtonsWrapper = styled(Wrapper)`
@@ -218,9 +214,8 @@ class CollectibleScreen extends React.Component<Props, State> {
       !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id);
 
     return (
-      <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }}>
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }} inset={{ bottom: 0 }}>
         {this.renderImageView(assetData)}
-
         <ScrollWrapper>
           <TouchableOpacity onPress={this.onTouchImage}>
             <CollectibleImage
@@ -232,7 +227,7 @@ class CollectibleScreen extends React.Component<Props, State> {
           </TouchableOpacity>
           <DataWrapper>
             {!!description &&
-              <Description small light>{description.replace(new RegExp('\\n\\n', 'g'), '\n')}</Description>
+              <Paragraph small light>{description.replace(new RegExp('\\n\\n', 'g'), '\n')}</Paragraph>
             }
           </DataWrapper>
           <ActionButtonsWrapper>
@@ -252,7 +247,7 @@ class CollectibleScreen extends React.Component<Props, State> {
             showArrowsOnly
             contentContainerStyle={{ paddingTop: 10 }}
             invertAddon
-            feedTitle="transactions."
+            feedTitle="Transactions"
           />}
         </ScrollWrapper>
       </ContainerWithHeader>

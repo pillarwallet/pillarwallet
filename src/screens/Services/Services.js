@@ -19,13 +19,13 @@
 */
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
-import { TouchableOpacity, FlatList, Text, Image } from 'react-native';
+import { TouchableOpacity, FlatList, Image } from 'react-native';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
-import { UIColors } from 'utils/variables';
+import { baseColors, fontStyles, UIColors } from 'utils/variables';
 import { EXCHANGE } from 'constants/navigationConstants';
+import { BaseText, MediumText } from 'components/Typography';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -57,18 +57,18 @@ const ItemDetails = styled.View`
   margin-left: 20px;
 `;
 
-const ItemTitle = styled(Text)`
-  font-weight: bold;
-  color: black;
+const ItemTitle = styled(MediumText)`
+  color: ${baseColors.slateBlack};
+  ${fontStyles.regular};
 `;
 
-const ItemDescription = styled(Text)`
-  color: black;
+const ItemDescription = styled(BaseText)`
+  color: ${baseColors.slateBlack};
+  ${fontStyles.regular};
 `;
 
 const goToExchange = (props: Props) => {
   const { navigation } = props;
-
   navigation.navigate(EXCHANGE);
 };
 
@@ -126,10 +126,4 @@ const ServicesScreen = (props: Props) => {
   );
 };
 
-// const mapStateToProps = ({
-// }) => ({
-// });
-//
-// const mapDispatchToProps = (dispatch: Function) => ({});
-
-export default connect(null, null)(ServicesScreen);
+export default ServicesScreen;

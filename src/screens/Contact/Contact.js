@@ -404,7 +404,7 @@ class Contact extends React.Component<Props, State> {
                 onPress: () => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT }),
                 indicator: !!unreadChats.length,
                 color: baseColors.coolGrey,
-                fontSize: fontSizes.mediumLarge,
+                fontSize: fontSizes.big,
               }
             : {}],
         }}
@@ -426,7 +426,7 @@ class Contact extends React.Component<Props, State> {
                 uri={userAvatar}
                 userName={contactUsername}
                 borderWidth={4}
-                initialsSize={fontSizes.extraGiant}
+                initialsSize={48}
                 diameter={184}
                 style={{ backgroundColor: baseColors.geyser }}
                 imageUpdateTimeStamp={displayContact.lastUpdateTime}
@@ -450,7 +450,7 @@ class Contact extends React.Component<Props, State> {
                   }
                 </CircleButtonsWrapper>
                 <ActivityFeed
-                  feedTitle="activity."
+                  feedTitle="Activity"
                   noBorder
                   ref={(ref) => { this.activityFeedRef = ref; }}
                   navigation={navigation}
