@@ -29,7 +29,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, UIColors } from 'utils/variables';
 import {
   syncContactAction,
   disconnectContactAction,
@@ -417,7 +417,7 @@ class Contact extends React.Component<Props, State> {
                 uri={userAvatar}
                 userName={contactUsername}
                 borderWidth={4}
-                initialsSize={fontSizes.extraGiant}
+                initialsSize={48}
                 diameter={184}
                 style={{ backgroundColor: baseColors.geyser }}
                 imageUpdateTimeStamp={displayContact.lastUpdateTime}
@@ -448,7 +448,7 @@ class Contact extends React.Component<Props, State> {
                   }
                 </CircleButtonsWrapper>
                 <ActivityFeed
-                  feedTitle="activity."
+                  feedTitle="Activity"
                   noBorder
                   ref={(ref) => { this.activityFeedRef = ref; }}
                   navigation={navigation}

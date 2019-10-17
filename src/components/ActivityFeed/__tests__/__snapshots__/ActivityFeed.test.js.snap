@@ -118,15 +118,14 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               Array [
                 Object {
                   "color": "#0A1427",
-                  "fontFamily": "Aktiv Grotesk App",
-                  "fontWeight": "400",
-                  "includeFontPadding": false,
+                  "fontFamily": "EuclidCircularB-Regular",
                   "textAlignVertical": "center",
                 },
                 Array [
                   Object {
                     "color": "#8B939E",
                     "fontSize": 14,
+                    "lineHeight": 22,
                   },
                   undefined,
                 ],
@@ -280,17 +279,13 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "Aktiv Grotesk App",
-                            "fontWeight": "400",
-                            "includeFontPadding": false,
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "600",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Medium",
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -298,6 +293,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                                 "color": "#0A1427",
                                 "fontSize": 16,
                                 "letterSpacing": 0.2,
+                                "lineHeight": 24,
                                 "width": "100%",
                               },
                               undefined,
@@ -367,15 +363,14 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "400",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
                                 "color": "#FD3300",
                                 "fontSize": 18,
+                                "lineHeight": 28,
                                 "textAlign": "right",
                               },
                               undefined,
@@ -526,15 +521,14 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               Array [
                 Object {
                   "color": "#0A1427",
-                  "fontFamily": "Aktiv Grotesk App",
-                  "fontWeight": "400",
-                  "includeFontPadding": false,
+                  "fontFamily": "EuclidCircularB-Regular",
                   "textAlignVertical": "center",
                 },
                 Array [
                   Object {
                     "color": "#8B939E",
                     "fontSize": 14,
+                    "lineHeight": 22,
                   },
                   undefined,
                 ],
@@ -688,17 +682,13 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "Aktiv Grotesk App",
-                            "fontWeight": "400",
-                            "includeFontPadding": false,
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "600",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Medium",
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -706,6 +696,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                                 "color": "#0A1427",
                                 "fontSize": 16,
                                 "letterSpacing": 0.2,
+                                "lineHeight": 24,
                                 "width": "100%",
                               },
                               undefined,
@@ -775,15 +766,14 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "400",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
                                 "color": "#FD3300",
                                 "fontSize": 18,
+                                "lineHeight": 28,
                                 "textAlign": "right",
                               },
                               undefined,

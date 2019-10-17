@@ -56,6 +56,7 @@ type ScrollWrapperProps = {
   stickyHeaderIndices?: ?number[],
   scrollEnabled?: boolean,
   refreshControl?: React.Node,
+  disableOnAndroid?: boolean,
   scrollEventThrottle?: number,
   onContentSizeChange?: Function,
 };
@@ -135,13 +136,14 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
     stickyHeaderIndices,
     scrollEnabled,
     refreshControl,
+    disableOnAndroid,
     scrollEventThrottle,
     onContentSizeChange,
   } = props;
 
   return (
     <KeyboardAwareScrollView
-      enableOnAndroid
+      enableOnAndroid={!disableOnAndroid}
       enableAutomaticScroll={!disableAutomaticScroll}
       innerRef={innerRef}
       onKeyboardWillShow={onKeyboardWillShow}

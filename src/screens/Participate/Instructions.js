@@ -28,14 +28,14 @@ import QRCode from 'react-native-qrcode-svg';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import { Container, Wrapper, ScrollWrapper, Footer } from 'components/Layout';
-import { BoldText, Label } from 'components/Typography';
+import { Label, MediumText } from 'components/Typography';
 import ListItemUnderlined from 'screens/Participate/ListItemUnderlined';
 
 // models
 import type { ICOFundingInstructions } from 'models/ICO';
 
 // utils
-import { fontSizes, baseColors, spacing } from 'utils/variables';
+import { baseColors, spacing, fontStyles } from 'utils/variables';
 
 const BANK_TRANSFER = 'bank_transfer';
 
@@ -49,18 +49,17 @@ const Row = styled.View`
 
 const InstructionsLabel = styled(Label)`
   text-align:center;
-  font-size: ${fontSizes.extraSmall};
+  ${fontStyles.regular};
   margin-bottom: 4px;
 `;
 
-const IntroText = styled(BoldText)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: ${fontSizes.medium}px;
+const IntroText = styled(MediumText)`
+  ${fontStyles.regular};
   color: ${baseColors.darkGray};
 `;
 
-const Value = styled(BoldText)`
-  font-size: ${props => props.xl ? fontSizes.large : fontSizes.small};
+const Value = styled(MediumText)`
+  ${props => props.xl ? fontStyles.big : fontStyles.medium};
   text-align: center;
 `;
 
@@ -201,7 +200,7 @@ class InstructionsScreen extends React.Component<Props, {}> {
             <Instructions>
               <Row>
                 <InstructionsLabel>{instructions.currency} address to receive tokens</InstructionsLabel>
-                <Value style={{ fontSize: fontSizes.small }}>{instructions.address}</Value>
+                <Value>{instructions.address}</Value>
               </Row>
               <Row style={{ marginTop: spacing.rhythm }}>
                 <QRCode value={instructions.address} size={125} />

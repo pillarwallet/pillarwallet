@@ -27,7 +27,7 @@ import {
 } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { baseColors, fontSizes, spacing, fontTrackings } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontTrackings, fontStyles } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Header from 'components/Header';
@@ -54,11 +54,10 @@ const ListRow = styled(View)`
 `;
 
 const ListRowItem = styled(BaseText)`
+  ${fontStyles.medium};
   width: 50%;
   padding-right: ${spacing.rhythm}px;
-  font-size: ${fontSizes.small}px;
   letter-spacing: ${fontTrackings.tiny}px;
-  line-height: ${fontSizes.medium}px;
   color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
 `;
 
