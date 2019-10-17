@@ -75,7 +75,11 @@ import {
   CHAT,
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
-import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import {
+  PAYMENT_NETWORK_ACCOUNT_TOPUP,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+} from 'constants/paymentNetworkConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -350,7 +354,7 @@ class EventDetails extends React.Component<Props, State> {
       let showAmountReceived = true;
       let showSender = true;
       let showNote = true;
-      let showAmountTxType = false;
+      let showTxType = false;
       let txType = '';
       const listSettledAssets = (tag === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
 
@@ -358,13 +362,18 @@ class EventDetails extends React.Component<Props, State> {
         showAmountReceived = false;
         showSender = false;
         showNote = false;
-        showAmountTxType = true;
+        showTxType = true;
         txType = 'PLR Network settle';
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
         showSender = false;
         showNote = false;
-        showAmountTxType = true;
+        showTxType = true;
         txType = 'TANK TOP UP';
+      } else if (tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
+        showSender = false;
+        showNote = false;
+        showTxType = true;
+        txType = 'TANK WITHDRAWAL';
       }
 
       const showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
@@ -377,7 +386,7 @@ class EventDetails extends React.Component<Props, State> {
             value={`${formatFullAmount(value)} ${asset}`}
           />
           }
-          {showAmountTxType &&
+          {showTxType &&
           <ListItemUnderlined
             label="TRANSACTION TYPE"
             value={txType}
