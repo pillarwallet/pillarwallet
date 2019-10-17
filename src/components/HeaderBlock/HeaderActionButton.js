@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Animation from 'components/Animation';
 
@@ -43,14 +43,9 @@ const HeaderButtonRounded = styled.TouchableOpacity`
   border-radius: 20px;
 `;
 
-const RoundedButtonLabel = styled(BaseText)`
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
+const RoundedButtonLabel = styled(MediumText)`
+  font-size: ${fontSizes.regular}px;
   color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};
-  font-weight: ${Platform.select({
-    ios: '500',
-    android: '400',
-  })};
   margin-left: 6px;
 `;
 const ChevronIcon = styled(Icon)`

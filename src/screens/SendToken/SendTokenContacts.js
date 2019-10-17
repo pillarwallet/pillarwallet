@@ -99,8 +99,7 @@ function AddressInputTemplate(locals) {
     textAlign: 'left',
     maxLength: 42,
     letterSpacing: 0.1,
-    fontSize: fontSizes.small,
-    fontWeight: 300,
+    fontSize: fontSizes.medium,
   };
   return (
     <SingleInput
@@ -110,7 +109,7 @@ function AddressInputTemplate(locals) {
       id="address"
       onPress={onIconPress}
       inputProps={inputProps}
-      fontSize={fontSizes.small}
+      fontSize={fontSizes.medium}
     />
   );
 }
@@ -312,7 +311,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
 
     return (
-      <ContainerWithHeader headerProps={{ centerItems: [{ title: `Send ${tokenName}` }] }}>
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: `Send ${tokenName}` }] }} inset={{ bottom: 0 }}>
         <FormWrapper>
           <Form
             ref={node => {

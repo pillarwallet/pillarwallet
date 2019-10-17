@@ -27,12 +27,11 @@ import SettingsListItem from 'components/ListItem/SettingsItem';
 import ShadowedCard from 'components/ShadowedCard';
 
 // utils
-import { baseColors, UIColors } from 'utils/variables';
+import { baseColors, UIColors, fontStyles } from 'utils/variables';
 
 const SectionHeader = styled(MediumText)`
   color: ${baseColors.blueYonder};
-  font-size: 14px;
-  line-height: 17px;
+  ${fontStyles.regular};
   margin-top: 20px;
   margin-bottom: 9px;
 `;

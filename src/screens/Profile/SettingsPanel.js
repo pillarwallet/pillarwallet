@@ -19,8 +19,8 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { BaseText, BoldText } from 'components/Typography';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { BaseText, MediumText } from 'components/Typography';
 import { Platform, StyleSheet } from 'react-native';
 
 const SettingsPanelIOS = styled.View`
@@ -41,14 +41,14 @@ const FormPlacer = styled.View`
   padding: 0 ${spacing.rhythm}px;
 `;
 
-const PanelHeaderIOS = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+const PanelHeaderIOS = styled(MediumText)`
+  ${fontStyles.big};
   margin-bottom: ${props => (props.headerMarginIOS ? '40px' : '0')};;
   text-align: center;
 `;
 
-const PanelHeaderAndroid = styled(BoldText)`
-  font-size: ${fontSizes.large};
+const PanelHeaderAndroid = styled(MediumText)`
+  ${fontStyles.big};
   margin-bottom: 20px;
   text-align: left;
 `;

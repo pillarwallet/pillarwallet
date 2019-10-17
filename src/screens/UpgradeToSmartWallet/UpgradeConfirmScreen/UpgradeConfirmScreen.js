@@ -30,8 +30,8 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
-import { Paragraph, BaseText } from 'components/Typography';
-import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import { Paragraph, BaseText, MediumText } from 'components/Typography';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -68,15 +68,13 @@ type State = {
 };
 
 const DetailsTitle = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
-  padding-bottom: 5px;
+  ${fontStyles.regular};
   color: #999999;
 `;
 
-const DetailsValue = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
+const DetailsValue = styled(MediumText)`
+  ${fontStyles.big};
   color: ${baseColors.slateBlack};
-  font-weight: ${fontWeights.medium};
 `;
 
 const DetailsLine = styled.View`
@@ -89,7 +87,6 @@ const DetailsWrapper = styled.View`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.extraSmall}px;
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;
@@ -327,7 +324,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
           <DetailsTitle>Est. fee for smart contract deployment</DetailsTitle>
           <DetailsValue>{smartContractDeployFee}</DetailsValue>
         </DetailsLine>
-        {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
+        {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
         {!upgradeStarted &&
         <Button
           block
