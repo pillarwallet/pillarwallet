@@ -260,22 +260,23 @@ class SendTokenContacts extends React.Component<Props, State> {
       accounts,
     } = this.props;
     const { isScanning, formStructure, value } = this.state;
-
+    const isSearchQueryProvided = !!(value && value.address.length);
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
     const userAccounts = getInactiveUserAccounts(accounts).map(account => ({
       ...account,
       ethAddress: getAccountAddress(account),
       username: getAccountName(account.type),
+      sortToTop: true,
     }));
 
-    const allContacts = this.isPPNTransaction
-      ? localContacts // no asset transfer between user accounts in PPN send flow
+    // asset transfer between user accounts only in regular, but not in PPN send flow
+    let contactsToRender = this.isPPNTransaction
+      ? [...localContacts]
       : [...userAccounts, ...localContacts];
-    let contactsToRender = [...allContacts];
-    if (value && value.address.length) {
+    if (isSearchQueryProvided) {
       const searchStr = value.address.toLowerCase();
-      contactsToRender = allContacts.filter(({ username, ethAddress }) => {
+      contactsToRender = contactsToRender.filter(({ username, ethAddress }) => {
         // $FlowFixMe
         const usernameFound = username.toLowerCase().includes(searchStr);
         if (value.address.length < 3) return usernameFound;
@@ -296,7 +297,12 @@ class SendTokenContacts extends React.Component<Props, State> {
           };
         })
         .sort((a, b) => {
-          if (a.hasSmartWallet === b.hasSmartWallet) return 0;
+          // keep as it is
+          if (a.hasSmartWallet === b.hasSmartWallet
+            || (a.sortToTop && a.sortToTop === b.sortToTop)) return 0;
+          // sort user accounts to top
+          if (a.sortToTop || b.sortToTop) return 1;
+          // sort smart wallet contacts to top
           return a.hasSmartWallet ? -1 : 1;
         });
     }
@@ -335,7 +341,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           onCancel={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
-        {!!value && !!value.address.length &&
+        {isSearchQueryProvided &&
           <Footer keyboardVerticalOffset={35} backgroundColor={UIColors.defaultBackgroundColor}>
             <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
           </Footer>

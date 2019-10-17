@@ -61,7 +61,7 @@ const Value = styled(MediumText)`
   font-size: ${fontSizes.big}px;
 `;
 
-class SendTokenContacts extends React.Component<Props, State> {
+class SendTokenConfirm extends React.Component<Props, State> {
   source: string;
 
   constructor(props) {
@@ -165,4 +165,4 @@ const mapStateToProps = ({
   contactsSmartAddresses,
 });
 
-export default connect(mapStateToProps)(SendTokenContacts);
+export default connect(mapStateToProps)(SendTokenConfirm);
