@@ -206,14 +206,14 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   handleChange = (value: Object) => {
     // first update the amount, then after state is updated check for errors
-    this.setState({ value, gettingFee: true }, () => {
-      this.checkFormInputErrors();
-      if (checkIfSmartWalletAccount(this.props.activeAccount)) {
-        this.updateTxFee();
-        return;
-      }
-      this.updateGasLimitAndTxFee();
-    });
+    this.setState({ value, gettingFee: true });
+    this.checkFormInputErrors();
+    if (checkIfSmartWalletAccount(this.props.activeAccount)) {
+      this.updateTxFee();
+      return;
+    }
+    const amount = parseFloat(get(value, 'amount', 0));
+    this.updateGasLimitAndTxFee(amount);
   };
 
   handleFormSubmit = async () => {
@@ -282,11 +282,8 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.checkFormInputErrors();
   };
 
-  getGasLimit = (amount?: number) => {
+  getGasLimit = (amount: number) => {
     // calculate either with amount in form or provided as param
-    if (!amount) {
-      amount = parseFloat(get(this.state, 'value.amount', 0));
-    }
     const {
       token: symbol,
       contractAddress,
@@ -328,8 +325,8 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.setState({ txFeeInWei, gettingFee: false });
   };
 
-  updateGasLimitAndTxFee = () => {
-    this.getGasLimit()
+  updateGasLimitAndTxFee = (amount: number) => {
+    this.getGasLimit(amount)
       .then(gasLimit => this.setState({ gasLimit }, () => this.updateTxFee()))
       .catch(() => null);
   };
