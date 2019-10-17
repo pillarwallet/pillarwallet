@@ -10461,6 +10461,11 @@ react-native-image-crop-picker@^0.23.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-crop-picker/-/react-native-image-crop-picker-0.23.1.tgz#26c1b899dbe4358b9f2c98369109a42a8141682a"
   integrity sha1-JsG4mdvkNYufLJg2kQmkKoFBaCo=
 
+react-native-image-view@^2.1.6:
+  version "2.1.6"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-view/-/react-native-image-view-2.1.6.tgz#1fcee9bffa84619b5003bbd792dc7c0806bfc427"
+  integrity sha1-H87pv/qEYZtQA7vXktx8CAa/xCc=
+
 react-native-intercom@12.3.0:
   version "12.3.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-intercom/-/react-native-intercom-12.3.0.tgz#8300a7d41046c55364ed25ea6b2e2fc8f73e4b33"
