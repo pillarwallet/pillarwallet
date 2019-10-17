@@ -98,7 +98,7 @@ class Welcome extends React.Component<Props, State> {
           <ButtonText
             buttonText="Restore wallet"
             onPress={this.navigateToWalletImportPage}
-            fontSize={fontSizes.medium}
+            fontSize={fontSizes.big}
           />
         </Footer>
       </Container>

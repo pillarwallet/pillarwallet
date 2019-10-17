@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Platform, TouchableNativeFeedback, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 import { Switch, Badge as NBBadge } from 'native-base';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -78,8 +78,8 @@ const Badge = styled(NBBadge)`
 `;
 
 const BadgeText = styled(BaseText)`
-  color: #fff;
-  font-size: ${fontSizes.extraExtraSmall};
+  color: ${baseColors.white};
+  font-size: ${fontSizes.small}px;
   text-align: center;
   width: 100%;
   padding: 0 2px;
@@ -87,12 +87,11 @@ const BadgeText = styled(BaseText)`
 
 const ItemLabel = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  font-size: 17px;
-  line-height: 24px;
+  ${fontStyles.big};
 `;
 
 const ItemValue = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   color: ${baseColors.coolGrey};
   flex-wrap: wrap;
   text-align: center;
@@ -102,7 +101,7 @@ const ItemValue = styled(BaseText)`
 `;
 
 const WarningIcon = styled(Icon)`
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.big}px;
   margin-right: 10px;
   color: ${baseColors.burningFire};
 `;

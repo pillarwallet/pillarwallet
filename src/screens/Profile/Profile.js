@@ -58,7 +58,7 @@ import { logScreenViewAction, logEventAction } from 'actions/analyticsActions';
 import { isProdEnv } from 'utils/environment';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
-import { fontSizes, fontTrackings, baseColors, spacing } from 'utils/variables';
+import { fontTrackings, baseColors, spacing, fontStyles } from 'utils/variables';
 import { delay } from 'utils/common';
 import ProfileSettingsItem from 'components/ListItem/SettingsItem';
 import Button from 'components/Button';
@@ -87,15 +87,14 @@ const ListSeparator = styled.View`
 `;
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.medium};
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
-  line-height: 20px;
   margin-bottom: ${spacing.medium}px;
 `;
 
 const SmallText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
 `;
@@ -108,7 +107,6 @@ const StyledWrapper = styled(Wrapper)`
 
 const Description = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
-  line-height: ${fontSizes.mediumLarge};
 `;
 
 const cityFormFields = [{
@@ -859,7 +857,7 @@ class Profile extends React.Component<Props, State> {
               onModalHide={() => this.setState({ showJoinBetaModal: false })}
             >
               <StyledWrapper regularPadding flex={1}>
-                <Description>
+                <Description small>
                   {
                     'By joining the beta program, you will be added to our Firebase Analytics data collection.' +
                     'Through this, Pillar will collect your username in order to enable beta features and monitor ' +
