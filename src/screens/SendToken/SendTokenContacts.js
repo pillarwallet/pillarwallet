@@ -264,10 +264,20 @@ class SendTokenContacts extends React.Component<Props, State> {
     const isSearchQueryProvided = !!(value && value.address.length);
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
-    let contactsToRender = [...localContacts];
+    const userAccounts = getInactiveUserAccounts(accounts).map(account => ({
+      ...account,
+      ethAddress: getAccountAddress(account),
+      username: getAccountName(account.type),
+      sortToTop: true,
+    }));
+
+    // asset transfer between user accounts only in regular, but not in PPN send flow
+    let contactsToRender = this.isPPNTransaction
+      ? [...localContacts]
+      : [...userAccounts, ...localContacts];
     if (isSearchQueryProvided) {
       const searchStr = value.address.toLowerCase();
-      contactsToRender = localContacts.filter(({ username, ethAddress }) => {
+      contactsToRender = contactsToRender.filter(({ username, ethAddress }) => {
         // $FlowFixMe
         const usernameFound = username.toLowerCase().includes(searchStr);
         if (value.address.length < 3) return usernameFound;
@@ -288,19 +298,14 @@ class SendTokenContacts extends React.Component<Props, State> {
           };
         })
         .sort((a, b) => {
-          if (a.hasSmartWallet === b.hasSmartWallet) return 0;
+          // keep as it is
+          if (a.hasSmartWallet === b.hasSmartWallet
+            || (a.sortToTop && a.sortToTop === b.sortToTop)) return 0;
+          // sort user accounts to top
+          if (a.sortToTop || b.sortToTop) return 1;
+          // sort smart wallet contacts to top
           return a.hasSmartWallet ? -1 : 1;
         });
-    }
-
-    // asset transfer between user accounts only in regular, but not in PPN send flow
-    if (!this.isPPNTransaction && !isSearchQueryProvided) {
-      const userAccounts = getInactiveUserAccounts(accounts).map(account => ({
-        ...account,
-        ethAddress: getAccountAddress(account),
-        username: getAccountName(account.type),
-      }));
-      contactsToRender = [...userAccounts, ...contactsToRender];
     }
 
     const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;
