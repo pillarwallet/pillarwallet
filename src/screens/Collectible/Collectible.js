@@ -38,7 +38,7 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
@@ -116,7 +116,7 @@ const ImageCloseIcon = (props: {onPress: () => void}) => {
         icon="close"
         color={baseColors.white}
         onPress={props.onPress}
-        fontSize={fontSizes.small}
+        fontSize={fontSizes.medium}
         horizontalAlign="center"
       />
     </IconWrapper>
