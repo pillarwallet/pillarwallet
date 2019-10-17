@@ -60,7 +60,7 @@ class PortfolioBalance extends React.PureComponent<Props> {
         {!!label &&
         <BaseText style={{
           color: baseColors.darkGray,
-          fontSize: fontSizes.small,
+          fontSize: fontSizes.medium,
           paddingTop: 10,
         }}
         >
@@ -68,7 +68,7 @@ class PortfolioBalance extends React.PureComponent<Props> {
         </BaseText>}
         <BaseText style={{
           color: UIColors.defaultTextColor,
-          fontSize: fontSizes.extraExtraLarge,
+          fontSize: fontSizes.giant,
         }}
         >
           {portfolioBalance}

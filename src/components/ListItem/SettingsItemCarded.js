@@ -22,10 +22,10 @@ import { Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { spacing, baseColors, fontSizes } from 'utils/variables';
+import { spacing, baseColors, fontSizes, fontStyles } from 'utils/variables';
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
-import { BaseText, BoldText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
 import { responsiveSize } from 'utils/ui';
@@ -72,27 +72,24 @@ const CardContent = styled.View`
   padding-right: 6px;
 `;
 
-const CardTitle = styled(BoldText)`
+const CardTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.medium}px;
+  ${fontStyles.big};
 `;
 
 const CardSubtitle = styled(BaseText)`
   color: ${baseColors.coolGrey};
-  font-size: 13px;
-  line-height: 15px;
-  margin-top: 4px;
+  ${fontStyles.medium};
 `;
 
 const CheckIcon = styled(Icon)`
-  font-size: ${responsiveSize(14)}px;
+  font-size: ${fontSizes.rRegular}px;
   color: ${baseColors.electricBlue};
   align-self: flex-start;
 `;
 
 const SettingsIcon = styled(Icon)`
-  font-size: ${fontSizes.extraLarge};
+  font-size: ${fontSizes.large}px;
   color: ${baseColors.malibu};
 `;
 
@@ -110,7 +107,7 @@ const CardImage = styled(CachedImage)`
   background-color: ${baseColors.darkGray};
 `;
 const SettingsLabel = styled(MediumText)`
-  font-size: ${responsiveSize(13)}px;
+  ${fontStyles.rRegular};
   color: ${baseColors.malibu};
   margin-top: 4px;
 `;

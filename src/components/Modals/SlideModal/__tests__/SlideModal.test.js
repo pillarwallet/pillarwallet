@@ -41,7 +41,7 @@ describe('Slide Modal', () => {
     const onModalHide = jest.fn();
     const component = renderer.create(<SlideModal title="title" isVisible onModalHide={onModalHide} />);
     const instance = component.root;
-    const button = instance.findByProps({ icon: 'close', fontSize: fontSizes.small });
+    const button = instance.findByProps({ icon: 'close', fontSize: fontSizes.medium });
     button.props.onPress();
     await delay(400);
     expect(onModalHide).toHaveBeenCalled();

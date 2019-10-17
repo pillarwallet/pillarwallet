@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { BoldText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import { baseColors } from 'utils/variables';
 
 type Props = {
@@ -35,7 +35,7 @@ const BadgeWrapper = styled.View`
   align-self: flex-start;
 `;
 
-const Label = styled(BoldText)`
+const Label = styled(MediumText)`
   font-size: 8px;
   color: ${baseColors.white};
 `;

@@ -38,7 +38,7 @@ import SlideModal from 'components/Modals/SlideModal';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { fontSizes, spacing, UIColors } from 'utils/variables';
+import { fontStyles, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { checkIfSmartWalletAccount } from 'utils/accounts';
@@ -77,14 +77,13 @@ const ActionsWrapper = styled.View`
 const SendTokenDetails = styled.View``;
 
 const SendTokenDetailsValue = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  margin-bottom: 8px;
+  ${fontStyles.medium};
 `;
 
 const HelperText = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  margin-bottom: ${spacing.rhythm / 2}px;
+  ${fontStyles.medium};
   color: ${UIColors.placeholderTextColor};
+  margin-left: 4px;
 `;
 
 const ButtonWrapper = styled.View`
@@ -110,6 +109,10 @@ const FooterInner = styled.View`
 const BackgroundWrapper = styled.View`
   background-color: ${UIColors.defaultBackgroundColor};
   flexGrow: 1;
+`;
+
+const TextRow = styled.View`
+  flex-direction: row;
 `;
 
 type Props = {
@@ -466,10 +469,12 @@ class SendTokenAmount extends React.Component<Props, State> {
             <ActionsWrapper>
               <SendTokenDetails>
                 <Label small>Available Balance</Label>
-                <SendTokenDetailsValue>
-                  {formattedBalance} {token}
+                <TextRow>
+                  <SendTokenDetailsValue>
+                    {formattedBalance} {token}
+                  </SendTokenDetailsValue>
                   <HelperText>{formattedBalanceInFiat}</HelperText>
-                </SendTokenDetailsValue>
+                </TextRow>
               </SendTokenDetails>
               {!calculatingMaxValue &&
                 <TouchableOpacity onPress={this.useMaxValue}>
@@ -483,10 +488,8 @@ class SendTokenAmount extends React.Component<Props, State> {
         {showTransactionSpeeds &&
           <SlideModal
             isVisible={showModal}
-            title="transaction speed"
-            onModalHide={() => {
-              this.setState({ showModal: false });
-            }}
+            title="Transaction speed"
+            onModalHide={() => { this.setState({ showModal: false }); }}
           >
             <Label>Choose your gas price.</Label>
             <Label>Faster transaction requires more fee.</Label>
