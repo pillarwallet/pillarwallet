@@ -20,7 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import Animation from 'components/Animation';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontStyles } from 'utils/variables';
 import { BoldText } from 'components/Typography';
 
 const Status = styled.View`
@@ -41,10 +41,9 @@ const StatusIcon = styled.View`
 `;
 
 const StatusText = styled(BoldText)`
+  ${fontStyles.tiny};
   color: ${baseColors.fruitSalad};
-  font-size: ${fontSizes.tiny}px;
   letter-spacing: 0.15px;
-  line-height: ${fontSizes.tiny}px;
   margin-top: 2px;
 `;
 

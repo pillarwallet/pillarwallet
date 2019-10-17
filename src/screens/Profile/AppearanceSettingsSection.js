@@ -121,7 +121,7 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
           <AssetsLayoutImage source={image} resizeMode="contain" />
           <BaseText
             style={{
-              fontSize: fontSizes.small,
+              fontSize: fontSizes.medium,
               color: baseColors.darkGray,
             }}
           >

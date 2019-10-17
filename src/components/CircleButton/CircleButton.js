@@ -63,7 +63,7 @@ const CircleButtonText = styled(BaseText)`
   color: ${props => props.disabled ? baseColors.mediumGray : baseColors.electricBlue};
   opacity: ${props => props.disabled ? 0.7 : 1};
   text-align: center;
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   letter-spacing: ${fontTrackings.tiny}px;
   margin-top: -6px;
 `;
@@ -106,7 +106,7 @@ const CircleButton = (props: Props) => {
           <Icon
             name={fontIcon}
             style={{
-              fontSize: fontSizes.medium,
+              fontSize: fontSizes.big,
               color: baseColors.electricBlue,
               alignSelf: 'center',
               ...fontIconStyle,
