@@ -718,8 +718,9 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txSenderAddress = get(event, 'payload.from.account.address', '');
       const txType = get(event, 'payload.transactionType', '');
       const txFound = txToListen.find(hash => hash.toLowerCase() === txHash);
+      const skipNotifications = [transactionTypes.TopUpErc20Approve];
 
-      if (txStatus === TRANSACTION_COMPLETED) {
+      if (txStatus === TRANSACTION_COMPLETED && !skipNotifications.includes(txType)) {
         let notificationMessage;
         if (txType === transactionTypes.TopUp) {
           notificationMessage = 'Your Pillar Tank was successfully funded!';
@@ -730,6 +731,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
           notificationMessage = 'Transaction was successfully sent!';
         }
+        console.log({ notificationMessage });
 
         if (notificationMessage) {
           Toast.show({
