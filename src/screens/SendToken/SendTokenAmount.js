@@ -206,13 +206,14 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   handleChange = (value: Object) => {
     // first update the amount, then after state is updated check for errors
-    this.setState({ value, gettingFee: true });
-    this.checkFormInputErrors();
-    if (checkIfSmartWalletAccount(this.props.activeAccount)) {
-      this.updateTxFee();
-      return;
-    }
-    this.updateGasLimitAndTxFee();
+    this.setState({ value, gettingFee: true }, () => {
+      this.checkFormInputErrors();
+      if (checkIfSmartWalletAccount(this.props.activeAccount)) {
+        this.updateTxFee();
+        return;
+      }
+      this.updateGasLimitAndTxFee();
+    });
   };
 
   handleFormSubmit = async () => {
@@ -284,7 +285,7 @@ class SendTokenAmount extends React.Component<Props, State> {
   getGasLimit = (amount?: number) => {
     // calculate either with amount in form or provided as param
     if (!amount) {
-      amount = parseFloat(get(this._form.getValue(), 'amount', 0));
+      amount = parseFloat(get(this.state, 'value.amount', 0));
     }
     const {
       token: symbol,
