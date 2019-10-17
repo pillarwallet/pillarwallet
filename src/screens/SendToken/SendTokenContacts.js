@@ -270,13 +270,10 @@ class SendTokenContacts extends React.Component<Props, State> {
       username: getAccountName(account.type),
     }));
 
-    const allContacts = this.isPPNTransaction
-      ? localContacts // no asset transfer between user accounts in PPN send flow
-      : [...userAccounts, ...localContacts];
-    let contactsToRender = [...allContacts];
+    let contactsToRender = [...localContacts];
     if (value && value.address.length) {
       const searchStr = value.address.toLowerCase();
-      contactsToRender = allContacts.filter(({ username, ethAddress }) => {
+      contactsToRender = localContacts.filter(({ username, ethAddress }) => {
         // $FlowFixMe
         const usernameFound = username.toLowerCase().includes(searchStr);
         if (value.address.length < 3) return usernameFound;
@@ -300,6 +297,11 @@ class SendTokenContacts extends React.Component<Props, State> {
           if (a.hasSmartWallet === b.hasSmartWallet) return 0;
           return a.hasSmartWallet ? -1 : 1;
         });
+    }
+
+    // asset transfer between user accounts only in regular, but not in PPN send flow
+    if (!this.isPPNTransaction) {
+      contactsToRender = [...userAccounts, ...contactsToRender];
     }
 
     const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;
