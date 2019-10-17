@@ -266,7 +266,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const userAccounts = getInactiveUserAccounts(accounts).map(account => ({
       ...account,
       ethAddress: getAccountAddress(account),
-      username: getAccountName(account.type),
+      username: getAccountName(account.type, accounts),
     }));
 
     const allContacts = this.isPPNTransaction

@@ -39,7 +39,7 @@ import { ScrollWrapper } from 'components/Layout';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getActiveAccount, getActiveAccountType } from 'utils/accounts';
+import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { responsiveSize } from 'utils/ui';
@@ -150,7 +150,6 @@ const IconWrapper = styled.View`
   width: ${iconRadius}px;
   border-radius: ${iconRadius / 2}px;
   background-color: ${baseColors.zircon};
-  margin-right: ${spacing.medium}px;
   align-items: center;
   justify-content: center;
 `;
@@ -346,7 +345,7 @@ class AccountsScreen extends React.Component<Props, State> {
       const accountItem = {
         id: `ACCOUNT_${id}`,
         type: 'ACCOUNT',
-        title: isSmartWallet ? 'Smart wallet' : 'Legacy wallet',
+        title: isSmartWallet ? 'Smart wallet' : getAccountName(ACCOUNT_TYPES.KEY_BASED, accounts),
         balance: walletBalance,
         isInitialised: true,
         mainAction: () => this.switchWallet(account),
@@ -429,7 +428,7 @@ class AccountsScreen extends React.Component<Props, State> {
         onPress={() => this.setState({ isLegacyWalletVisible: !isLegacyWalletVisible })}
         customToggle={(
           <BaseText style={{ marginRight: -10, color: baseColors.coolGrey }}>
-            Legacy Ethereum wallet (advanced)
+            Legacy wallet (advanced)
           </BaseText>
         )}
         toggleWrapperStyle={{
