@@ -261,17 +261,11 @@ class SendTokenContacts extends React.Component<Props, State> {
       accounts,
     } = this.props;
     const { isScanning, formStructure, value } = this.state;
-
+    const isSearchQueryProvided = !!(value && value.address.length);
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
-    const userAccounts = getInactiveUserAccounts(accounts).map(account => ({
-      ...account,
-      ethAddress: getAccountAddress(account),
-      username: getAccountName(account.type),
-    }));
-
     let contactsToRender = [...localContacts];
-    if (value && value.address.length) {
+    if (isSearchQueryProvided) {
       const searchStr = value.address.toLowerCase();
       contactsToRender = localContacts.filter(({ username, ethAddress }) => {
         // $FlowFixMe
@@ -300,7 +294,12 @@ class SendTokenContacts extends React.Component<Props, State> {
     }
 
     // asset transfer between user accounts only in regular, but not in PPN send flow
-    if (!this.isPPNTransaction) {
+    if (!this.isPPNTransaction && !isSearchQueryProvided) {
+      const userAccounts = getInactiveUserAccounts(accounts).map(account => ({
+        ...account,
+        ethAddress: getAccountAddress(account),
+        username: getAccountName(account.type),
+      }));
       contactsToRender = [...userAccounts, ...contactsToRender];
     }
 
@@ -338,7 +337,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           onCancel={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
-        {!!value && !!value.address.length &&
+        {isSearchQueryProvided &&
           <Footer keyboardVerticalOffset={35} backgroundColor={UIColors.defaultBackgroundColor}>
             <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
           </Footer>
