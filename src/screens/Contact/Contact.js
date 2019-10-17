@@ -433,7 +433,7 @@ class Contact extends React.Component<Props, State> {
                     onPress={() => this.onSendPress(displayContact)}
                   />
                   <CircleButton
-                    disabled={disableSend}
+                    disabled={!displayContact.status}
                     label="Chat"
                     icon={iconChat}
                     onPress={() => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT })}
