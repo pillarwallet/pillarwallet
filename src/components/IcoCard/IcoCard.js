@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol, formatMoney } from 'utils/common';
-import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors, lineHeights, fontStyles } from 'utils/variables';
 import Countdown from 'components/Countdown';
 import TruncatedText from 'components/TruncatedText';
 import Progress from 'components/Progress';
@@ -93,8 +93,7 @@ const TitleWrapper = styled.View`
 `;
 
 const Title = styled(MediumText)`
-  font-size: ${fontSizes.extraLarger};
-  line-height: ${fontSizes.extraExtraLarge};
+  ${fontStyles.large};
   color: ${baseColors.slateBlack};
   margin-right: 8px;
 `;
@@ -109,8 +108,7 @@ const Label = styled.View`
 `;
 
 const LabelText = styled(MediumText)`
-  font-size: ${fontSizes.tiny};
-  line-height: ${fontSizes.extraExtraSmall};
+  ${fontStyles.tiny};
   color: ${baseColors.pineGlade};
   margin-top: ${Platform.select({
     ios: 0,
@@ -128,16 +126,14 @@ const Column = styled.View`
 `;
 
 const ColumnLabel = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
-  line-height: ${fontSizes.small};
+  ${fontStyles.regular};
   letter-spacing: ${fontTrackings.tiny};
   color: ${baseColors.darkGray};
   margin-bottom: 2px;
 `;
 
 const ColumnValue = styled(MediumText)`
-  font-size: ${props => props.xl ? fontSizes.medium : fontSizes.extraSmall};
-  line-height: ${fontSizes.mediumLarge};
+  ${props => props.xl ? fontStyles.big : fontStyles.regular};
   color: ${baseColors.slateBlack};
   letter-spacing: ${fontTrackings.tiny};
   margin-top: 2px;
@@ -174,8 +170,8 @@ const IcoCard = (props: Props) => {
       return (
         <Countdown
           endDate={isPending ? startDate : endDate}
-          fontSize={fontSizes.medium}
-          lineHeight={fontSizes.mediumLarge}
+          fontSize={fontSizes.big}
+          lineHeight={lineHeights.big}
         />
       );
     }
@@ -262,7 +258,7 @@ const IcoCard = (props: Props) => {
                 <ColumnLabel>
                   {timerLabel}
                 </ColumnLabel>
-                <Countdown endDate={isPending ? startDate : endDate} lineHeight={fontSizes.mediumLarge} />
+                <Countdown endDate={isPending ? startDate : endDate} lineHeight={lineHeights.medium} />
               </Column>
             </Row>}
             {!!inner &&

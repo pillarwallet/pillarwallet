@@ -58,7 +58,7 @@ const InnerBackground = styled.View`
 `;
 
 const InnerUsername = styled(BaseText)`
-  font-size: ${props => props.initialsSize ? props.initialsSize : fontSizes.medium}px;
+  font-size: ${props => props.initialsSize ? props.initialsSize : fontSizes.big}px;
   color: ${baseColors.white};
 `;
 

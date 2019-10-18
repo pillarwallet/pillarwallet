@@ -43,13 +43,11 @@ import type { Transaction } from 'models/Transaction';
 // actions
 import {
   fetchInitialAssetsAction,
-  startAssetsSearchAction,
-  searchAssetsAction,
-  resetSearchAssetsResultAction,
   checkForMissedAssetsAction,
 } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import { labelUserAsLegacyAction } from 'actions/userActions';
 
 // constants
 import {
@@ -62,7 +60,7 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
-import { findKeyBasedAccount } from 'utils/accounts';
+import { findKeyBasedAccount, getAccountName } from 'utils/accounts';
 import { baseColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -85,24 +83,20 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetsLayout: string,
-  startAssetsSearch: Function,
-  searchAssets: Function,
-  resetSearchAssetsResult: Function,
   assetsSearchResults: Asset[],
   assetsSearchState: string,
-  addAsset: Function,
-  hideAsset: Function,
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
   blockchainNetworks: Object[],
   activeAccount: Account,
   logScreenView: (view: string, screen: string) => void,
-  fetchAllCollectiblesData: Function,
+  fetchAllCollectiblesData: () => void,
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
-  checkForMissedAssets: Function,
+  checkForMissedAssets: () => void,
+  labelUserAsLegacy: () => void,
   PPNTransactions: Transaction[],
 }
 
@@ -132,6 +126,7 @@ class AssetsScreen extends React.Component<Props, State> {
       assets,
       logScreenView,
       checkForMissedAssets,
+      labelUserAsLegacy,
     } = this.props;
 
     logScreenView('View assets list', 'Assets');
@@ -142,6 +137,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
     fetchAllCollectiblesData();
     checkForMissedAssets();
+    labelUserAsLegacy();
 
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ supportsBiometrics: !!supported }))
@@ -179,6 +175,7 @@ class AssetsScreen extends React.Component<Props, State> {
       activeAccount,
       availableStake,
       PPNTransactions,
+      accounts,
     } = this.props;
 
     const { type: walletType } = activeAccount;
@@ -188,7 +185,7 @@ class AssetsScreen extends React.Component<Props, State> {
     switch (activeBNetworkId) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
         return {
-          label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet',
+          label: getAccountName(walletType, accounts),
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
           customHeaderProps: {
@@ -302,7 +299,9 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    // HEADER PROPS
+    const { activeAccount } = this.props;
+    if (!activeAccount) return null;
+
     const screenInfo = this.getScreenInfo();
     const {
       label: headerButtonLabel,
@@ -381,11 +380,9 @@ const combinedMapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
-  startAssetsSearch: () => dispatch(startAssetsSearchAction()),
-  searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
-  resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
+  labelUserAsLegacy: () => dispatch(labelUserAsLegacyAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);

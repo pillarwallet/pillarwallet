@@ -20,6 +20,7 @@
 // This script runs at the beginning of all unit tests
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
 import { utils, HDNode } from 'ethers';
 import StorageMock from './asyncStorageMock';
@@ -77,6 +78,7 @@ jest.setMock('ethers', {
     id: utils.id,
     getAddress: utils.getAddress,
     formatUnits: utils.formatUnits,
+    parseUnits: utils.parseUnits,
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
@@ -245,6 +247,10 @@ jest.setMock('@smartwallet/sdk', {
     event$: {
       subscribe: jest.fn(),
     },
+    estimateAccountTransaction: () => Promise.resolve({
+      gasFee: new BN(70000),
+      signedGasPrice: { gasPrice: new BN(5000000000) },
+    }),
   }),
 });
 

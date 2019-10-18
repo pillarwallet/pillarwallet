@@ -35,7 +35,7 @@ import {
   LoadEarlier,
   Message,
 } from 'react-native-gifted-chat';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, lineHeights, appFont } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -72,6 +72,7 @@ type Props = {
   draft: ?string,
   logScreenView: Function,
   logEvent: Function,
+  isOnline: boolean,
 }
 
 type State = {
@@ -111,9 +112,9 @@ const renderDay = (props: Props) => (
     }}
     textStyle={{
       color: baseColors.darkGray,
-      fontWeight: '400',
-      fontSize: fontSizes.extraSmall,
-      fontFamily: 'Aktiv Grotesk App',
+      fontSize: fontSizes.small,
+      fontFamily: appFont.regular,
+      fontWeight: 'normal',
     }}
     dateFormat="LL"
   />
@@ -126,15 +127,13 @@ const renderTime = (props: Props) => {
       textStyle={{
         right: {
           color: baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
+          fontFamily: appFont.regular,
+          fontSize: fontSizes.small,
         },
         left: {
           color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
+          fontFamily: appFont.regular,
+          fontSize: fontSizes.small,
         },
       }}
       timeFormat="HH:mm"
@@ -161,7 +160,7 @@ const renderSend = (props: Props) => (
       name="send-message"
       style={{
         color: baseColors.brightBlue,
-        fontSize: fontSizes.extraLarge,
+        fontSize: fontSizes.large,
       }}
     />
   </Send>
@@ -267,7 +266,12 @@ class Chat extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isFetching, draft } = this.props;
+    const {
+      isFetching,
+      draft,
+      isOnline,
+      getChatByContact,
+    } = this.props;
     const { draft: prevDraft } = prevProps;
 
     if (this.state.isFetching && !isFetching) {
@@ -276,6 +280,11 @@ class Chat extends React.Component<Props, State> {
 
     if (!prevDraft && draft) {
       this.setState({ chatText: draft }); // eslint-disable-line
+    }
+
+    if (prevProps.isOnline !== isOnline && isOnline) {
+      const { contact } = this.state;
+      getChatByContact(contact.username, contact.id, contact.profileImage);
     }
   }
 
@@ -382,8 +391,9 @@ class Chat extends React.Component<Props, State> {
             android: 8,
           }),
           marginBottom: 5,
-          fontSize: fontSizes.extraSmall,
-          lineHeight: fontSizes.small,
+          fontSize: fontSizes.regular,
+          lineHeight: lineHeights.regular,
+          fontFamily: appFont.regular,
         }}
         placeholder="Type your message here"
       />
@@ -397,15 +407,13 @@ class Chat extends React.Component<Props, State> {
       textStyle={{
         left: {
           color: isWarning ? baseColors.white : baseColors.slateBlack,
-          fontSize: fontSizes.extraSmall,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
+          fontSize: fontSizes.regular,
+          fontFamily: appFont.regular,
         },
         right: {
           color: baseColors.slateBlack,
-          fontSize: fontSizes.extraSmall,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
+          fontSize: fontSizes.regular,
+          fontFamily: appFont.regular,
         },
       }}
       wrapperStyle={{
@@ -568,6 +576,7 @@ const mapStateToProps = ({
   user: { data: user },
   chat: { data: { messages, isFetching, chats }, draft },
   contacts: { data: contacts },
+  session: { data: { isOnline } },
 }) => ({
   user,
   messages,
@@ -575,6 +584,7 @@ const mapStateToProps = ({
   chats,
   contacts,
   draft,
+  isOnline,
 });
 
 const mapDispatchToProps = (dispatch) => ({

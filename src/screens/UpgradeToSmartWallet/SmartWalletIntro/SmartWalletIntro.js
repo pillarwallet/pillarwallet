@@ -27,13 +27,13 @@ import { CachedImage } from 'react-native-cached-image';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
-import { BoldText } from 'components/Typography';
+import { MediumText, BoldText } from 'components/Typography';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
 import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
 
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 // import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
 // import { getRate } from 'utils/assets';
@@ -63,14 +63,12 @@ const CustomWrapper = styled.View`
 
 const Title = styled(BoldText)`
   color: ${baseColors.persianBlue};
-  font-size: ${fontSizes.rJumbo}px;
-  line-height: ${fontSizes.rJumbo}px;
+  ${fontStyles.rJumbo};
 `;
 
-const BodyText = styled(BoldText)`
+const BodyText = styled(MediumText)`
   color: ${baseColors.persianBlue};
-  font-size: ${fontSizes.rMedium}px;
-  line-height: ${responsiveSize(22)}px;
+  ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
 `;
 
@@ -131,7 +129,6 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          rightItems: [{ userIcon: true }],
           floating: true,
           transparent: true,
         }}
@@ -161,7 +158,6 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
               block
               title={isDeploy ? 'Deploy' : 'Proceed'}
               onPress={() => { this.setState({ showDeployPayOptions: true }); }}
-              roundedCorners
               style={{
                 backgroundColor: baseColors.persianBlue,
                 marginTop: 40,

@@ -19,8 +19,8 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { baseColors, fontStyles } from 'utils/variables';
+import { BaseText, Paragraph } from 'components/Typography';
 
 type Props = {
   title: string,
@@ -34,15 +34,13 @@ const EmptySectionTextWrapper = styled.View`
 `;
 
 const EmptySectionTitle = styled(BaseText)`
-  font-size: ${fontSizes.large}px;
+  ${fontStyles.big};
   color: ${baseColors.slateBlack};
   margin-bottom: 6px;
   text-align: center;
 `;
 
-const EmptySectionText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
-  color: ${baseColors.darkGray};
+const EmptySectionText = styled(Paragraph)`
   text-align: center;
 `;
 
@@ -55,7 +53,7 @@ const EmptyStateParagraph = (props: Props) => {
   return (
     <EmptySectionTextWrapper>
       <EmptySectionTitle>{title}</EmptySectionTitle>
-      {!!bodyText && <EmptySectionText>{bodyText}</EmptySectionText>}
+      {!!bodyText && <EmptySectionText small light>{bodyText}</EmptySectionText>}
     </EmptySectionTextWrapper>
   );
 };

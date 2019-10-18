@@ -27,7 +27,7 @@ import t from 'tcomb-form-native';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { KAScrollView } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
 import ProfileImage from 'components/ProfileImage';
 import { TextLink } from 'components/Typography';
 import Camera from 'components/Camera';
@@ -189,7 +189,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           ],
         }}
       >
-        <KAScrollView>
+        <ScrollWrapper disableOnAndroid>
           <CameraButton onPress={this.openCamera}>
             <ImageWrapper>
               {!!profileImage && <ProfileImage
@@ -279,7 +279,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             value={{ phone }}
             getFormRef={node => { this._phoneForm = node; }}
           />}
-        </KAScrollView>
+        </ScrollWrapper>
 
         <Camera
           isVisible={visibleModal === 'camera'}

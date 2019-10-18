@@ -14,10 +14,6 @@ export const InputTemplate = (locals: Object) => {
     onBlur: locals.onBlur,
     value: locals.value,
     keyboardType: config.keyboardType || 'default',
-    style: {
-      fontSize: 24,
-      lineHeight: 0,
-    },
     placeholder: config.placeholder || '',
     ...config.inputProps,
   };

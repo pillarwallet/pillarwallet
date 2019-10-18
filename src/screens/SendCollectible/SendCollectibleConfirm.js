@@ -8,7 +8,7 @@ import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { ScrollWrapper } from 'components/Layout';
-import { Label, BoldText } from 'components/Typography';
+import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
@@ -53,8 +53,8 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+const Value = styled(MediumText)`
+  font-size: ${fontSizes.big}px;
 `;
 
 class SendCollectibleConfirm extends React.Component<Props, State> {
@@ -201,21 +201,21 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
             <Label>Balance in Rinkeby ETH (visible in dev and staging)</Label>
             <Value>{rinkebyETH} ETH</Value>
           </LabeledRow>}
-          {!!recipientUsername &&
-          <TextInput
-            inputProps={{
-              onChange: (text) => this.handleNoteChange(text),
-              value: this.state.note,
-              autoCapitalize: 'none',
-              multiline: true,
-              numberOfLines: 3,
-              placeholder: 'Add a note to this transaction',
-            }}
-            inputType="secondary"
-            labelBigger
-            noBorder
-            keyboardAvoidance
-          />
+          {session.isOnline && !!recipientUsername &&
+            <TextInput
+              inputProps={{
+                onChange: (text) => this.handleNoteChange(text),
+                value: this.state.note,
+                autoCapitalize: 'none',
+                multiline: true,
+                numberOfLines: 3,
+                placeholder: 'Add a note to this transaction',
+              }}
+              inputType="secondary"
+              labelBigger
+              noBorder
+              keyboardAvoidance
+            />
           }
         </ScrollWrapper>
       </ContainerWithHeader>

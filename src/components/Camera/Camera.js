@@ -313,7 +313,7 @@ class Camera extends React.Component<Props, State> {
           <IconButton
             icon="gallery"
             onPress={this.openGallery}
-            fontSize={fontSizes.extraLarge}
+            fontSize={fontSizes.large}
             color={baseColors.white}
           />
           <CameraButtonOuter onPress={this.takePicture} >
@@ -322,7 +322,7 @@ class Camera extends React.Component<Props, State> {
           <IconButton
             icon="flip"
             onPress={this.handleCameraFlip}
-            fontSize={fontSizes.extraLarge}
+            fontSize={fontSizes.large}
             color={baseColors.white}
           />
         </FooterInner>

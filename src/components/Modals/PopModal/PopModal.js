@@ -111,7 +111,7 @@ export default class PopModal extends React.Component<Props, *> {
             icon="close"
             color={baseColors.white}
             onPress={this.hideModal}
-            fontSize={fontSizes.small}
+            fontSize={fontSizes.medium}
             horizontalAlign="flex-end"
           />
           {bgColor2 &&

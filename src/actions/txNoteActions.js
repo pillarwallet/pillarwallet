@@ -116,6 +116,7 @@ export const getTxNoteByContactAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { isDecrypting } },
+      session: { data: { isOnline } },
     } = getState();
     if (isDecrypting) return;
     dispatch({
@@ -126,29 +127,39 @@ export const getTxNoteByContactAction = (username: string) => {
       username,
       ...connectionStateCheckParams,
     };
-    await chat.client.addContact(addContactParams, false).catch(e => {
-      if (e.code === 'ERR_ADD_CONTACT_FAILED') {
-        Toast.show({
-          message: e.message,
-          type: 'warning',
-          title: 'Cannot retrieve remote user',
-          autoClose: false,
-        });
-      }
-    });
+    if (!addContactParams.userId) {
+      Toast.show({
+        message: `Unable to retrieve tx note for ${username}`,
+        type: 'warning',
+      });
+      return;
+    }
+    if (isOnline) {
+      await chat.client.addContact(addContactParams, false).catch(e => {
+        if (e.code === 'ERR_ADD_CONTACT_FAILED') {
+          Toast.show({
+            message: e.message,
+            type: 'warning',
+            title: 'Cannot retrieve remote user',
+            autoClose: false,
+          });
+        }
+      });
 
-    const data = await chat.client.receiveNewMessagesByContact(username, 'tx-note')
-      .then(JSON.parse)
-      .catch(() => {});
-
-    if (data !== undefined && Object.keys(data).length) {
-      const { messages: newRemoteMessages } = data;
-      if (newRemoteMessages !== undefined && newRemoteMessages.length) {
-        const remotePromises = newRemoteMessages.map(async remoteMessage => {
-          const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
-          await chat.deleteMessage(rmUsername, rmServerTimestamp);
+      const data = await chat.client.receiveNewMessagesByContact(username, 'tx-note')
+        .then(JSON.parse)
+        .catch(() => {
         });
-        await Promise.all(remotePromises);
+
+      if (data !== undefined && Object.keys(data).length) {
+        const { messages: newRemoteMessages } = data;
+        if (newRemoteMessages !== undefined && newRemoteMessages.length) {
+          const remotePromises = newRemoteMessages.map(async remoteMessage => {
+            const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
+            await chat.deleteMessage(rmUsername, rmServerTimestamp);
+          });
+          await Promise.all(remotePromises);
+        }
       }
     }
 
@@ -168,6 +179,13 @@ export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, param
       username,
       ...connectionStateCheckParams,
     };
+    if (!addContactParams.userId) {
+      Toast.show({
+        message: `Can't send message to ${username}`,
+        type: 'warning',
+      });
+      return;
+    }
     try {
       await chat.client.addContact(addContactParams, true);
       await chat.sendMessage(tag, params, true);
@@ -192,6 +210,13 @@ export const decryptReceivedWebSocketTxNoteMessageAction = (message: Object) => 
       username,
       ...connectionStateCheckParams,
     };
+    if (!addContactParams.userId) {
+      Toast.show({
+        message: `Unable to retrieve tx note for ${username}`,
+        type: 'warning',
+      });
+      return;
+    }
     await chat.client.addContact(addContactParams, false).then(async () => {
       await chat.client.decryptSignalMessage('tx-note', JSON.stringify(message));
       await chat.deleteMessage(message.source, message.timestamp, message.requestId);

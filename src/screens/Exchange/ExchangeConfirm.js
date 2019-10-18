@@ -29,7 +29,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { Footer, ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
-import { BoldText, Label, Paragraph, TextLink } from 'components/Typography';
+import { Label, MediumText, Paragraph, TextLink } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 
@@ -62,8 +62,8 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium}
+const Value = styled(MediumText)`
+  font-size: ${fontSizes.big}px;
 `;
 
 const LabelSub = styled(Label)`
@@ -84,7 +84,6 @@ const ButtonWrapper = styled.View`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.extraSmall};
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;
@@ -304,10 +303,9 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           centerItems: [{ title: 'Confirm exchange' }],
           customOnBack: this.handleBack,
         }}
-        inset={{ bottom: 'never' }}
       >
         <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
-          <Paragraph style={{ marginBottom: 30, paddingTop: spacing.medium }}>
+          <Paragraph small style={{ marginBottom: spacing.medium, paddingTop: spacing.medium }}>
             {setTokenAllowance
               ? 'Review the details and enable asset as well as the cost of data transaction.'
               : 'Review the details and confirm the exchange as well as the cost of transaction.'
@@ -324,8 +322,8 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
                 <Label>You will receive</Label>
                 <Value>{`${receiveAmount} ${toAssetCode}`}</Value>
                 <LabelSub>
-                    Final amount may be higher or lower than expected at the end of a transaction.
-                    Crypto is volatile, the rate fluctuates.
+                  Final amount may be higher or lower than expected at the end of a transaction.
+                  Crypto is volatile, the rate fluctuates.
                 </LabelSub>
               </LabeledRow>
               <LabeledRow>
@@ -354,7 +352,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           </LabeledRow>
         </ScrollWrapper>
         <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
-          {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
+          {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <Button
               disabled={!session.isOnline || !!errorMessage}
@@ -365,7 +363,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         </Footer>
         <SlideModal
           isVisible={showFeeModal}
-          title="transaction speed"
+          title="Transaction speed"
           onModalHide={() => { this.setState({ showFeeModal: false }); }}
         >
           <Label>Choose your gas price.</Label>

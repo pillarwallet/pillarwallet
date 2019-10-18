@@ -24,6 +24,9 @@ import HTMLView from 'react-native-htmlview';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import Spinner from 'components/Spinner';
+import type { ScrollToProps } from 'components/Modals/SlideModal';
+import { StyleSheet } from 'react-native';
+import { fontSizes, lineHeights, baseColors, appFont } from 'utils/variables';
 
 type Props = {
   htmlEndpoint: string,
@@ -36,6 +39,9 @@ type Props = {
 type State = {
   isHtmlFetched: boolean,
   htmlData: string,
+  scrollOffset: ?number,
+  contentContainerHeight: ?number,
+  containerHeight: ?number,
 };
 
 type CustomNode = {
@@ -52,19 +58,46 @@ const ActivityIndicatorWrapper = styled.View`
 
 const commonTextStyle = {
   color: 'black',
-  fontFamily: 'Aktiv Grotesk App',
+  fontFamily: appFont.regular,
 };
 
+const boldStyle = { fontFamily: appFont.medium };
+
+const baseStyles = StyleSheet.create({
+  b: boldStyle,
+  strong: boldStyle,
+  a: {
+    ...boldStyle,
+    color: baseColors.electricBlue,
+    fontSize: fontSizes.regular,
+    lineHeight: lineHeights.regular,
+  },
+  li: { fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
+  p: { fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
+  h1: { ...boldStyle, fontSize: fontSizes.giant, lineHeight: lineHeights.giant },
+  h2: { ...boldStyle, fontSize: fontSizes.large, lineHeight: lineHeights.large },
+  h3: { ...boldStyle, fontSize: fontSizes.big, lineHeight: lineHeights.big },
+  h4: { ...boldStyle, fontSize: fontSizes.medium, lineHeight: lineHeights.medium },
+  h5: { ...boldStyle, fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
+  h6: { ...boldStyle, fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
+});
+
 export default class HTMLContentModal extends React.Component<Props, State> {
+  scrollViewRef: Object;
+
   static defaultProps = {
     fullScreenComponent: null,
   };
 
   constructor(props: Props) {
     super(props);
+    this.scrollViewRef = React.createRef();
     this.state = {
       isHtmlFetched: false,
       htmlData: '',
+      scrollOffset: undefined,
+      containerHeight: undefined,
+      contentContainerHeight: undefined,
     };
   }
 
@@ -97,6 +130,11 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     return undefined;
   }
 
+  handleScrollTo = (p: ScrollToProps) => {
+    const { y } = p;
+    this.scrollViewRef.props.scrollToPosition(0, y);
+  };
+
   render() {
     const {
       isVisible,
@@ -105,6 +143,9 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     const {
       htmlData,
       isHtmlFetched,
+      scrollOffset,
+      contentContainerHeight,
+      containerHeight,
     } = this.state;
 
     const animationInTiming = 400;
@@ -118,6 +159,11 @@ export default class HTMLContentModal extends React.Component<Props, State> {
         animationOut="slideOutDown"
         onBackButtonPress={modalHide}
         onModalHide={this.handleModalClose}
+        scrollOffset={scrollOffset}
+        onSwipeComplete={modalHide}
+        scrollOffsetMax={contentContainerHeight && containerHeight ? contentContainerHeight - containerHeight : null}
+        swipeDirection="down"
+        scrollTo={this.handleScrollTo}
         style={{
           margin: 0,
           justifyContent: 'flex-start',
@@ -131,10 +177,31 @@ export default class HTMLContentModal extends React.Component<Props, State> {
           </ActivityIndicatorWrapper>
           }
           {!!isHtmlFetched &&
-          <ScrollWrapper regularPadding>
+          <ScrollWrapper
+            regularPadding
+            scrollEventThrottle={16}
+            onScroll={(event) => {
+              const { contentOffset } = event.nativeEvent;
+              const { y } = contentOffset;
+              this.setState({
+                scrollOffset: y,
+              });
+            }}
+            innerRef={(ref) => { this.scrollViewRef = ref; }}
+            onLayout={(event) => {
+              const { height } = event.nativeEvent.layout;
+              if (!containerHeight || containerHeight !== height) {
+                this.setState({ containerHeight: height });
+              }
+            }}
+            onContentSizeChange={(contentWidth, contentHeight) => {
+              this.setState({ contentContainerHeight: contentHeight });
+            }}
+          >
             <HTMLView
               value={htmlData}
               textComponentProps={{ style: commonTextStyle }}
+              stylesheet={baseStyles}
               renderNode={this.renderNode}
               style={{ marginBottom: 10 }}
               paragraphBreak={null}

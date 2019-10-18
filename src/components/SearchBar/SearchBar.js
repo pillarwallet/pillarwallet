@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { UIColors, baseColors } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, appFont } from 'utils/variables';
 import { Animated, Keyboard, Platform } from 'react-native';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
@@ -52,7 +52,8 @@ const InputField = styled.TextInput`
   height: 42px;
   padding-left: 14px;
   color: ${baseColors.slateBlack};
-  font-size: 15px;
+  font-size: ${fontSizes.regular}px;
+  font-family: ${appFont.regular};
 `;
 
 const InputIcon = styled(IconButton)`

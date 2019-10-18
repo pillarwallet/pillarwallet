@@ -96,6 +96,8 @@ class App extends React.Component<Props, *> {
       executeDeepLink,
     } = this.props;
     checkDBConflicts();
+    const isOnline = await NetInfo.isConnected.fetch();
+    this.setOnlineStatus(isOnline); // set initial online status
     SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
@@ -113,10 +115,17 @@ class App extends React.Component<Props, *> {
     startListeningOnOpenNotification();
   }
 
-  handleConnectivityChange = isOnline => {
-    const { updateSessionNetworkStatus, updateOfflineQueueNetworkStatus } = this.props;
+  setOnlineStatus = isOnline => {
+    const {
+      updateSessionNetworkStatus,
+      updateOfflineQueueNetworkStatus,
+    } = this.props;
     updateSessionNetworkStatus(isOnline);
     updateOfflineQueueNetworkStatus(isOnline);
+  };
+
+  handleConnectivityChange = isOnline => {
+    this.setOnlineStatus(isOnline);
     if (!isOnline) {
       Toast.show({
         message: 'No active internet connection found!',

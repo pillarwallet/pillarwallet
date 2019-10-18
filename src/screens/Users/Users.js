@@ -27,20 +27,18 @@ import { connect } from 'react-redux';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
 import ProfileImage from 'components/ProfileImage';
+import { MediumText, Paragraph } from 'components/Typography';
+import { ListCard } from 'components/ListItem/ListCard';
 
 // utils
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
+import { responsiveSize } from 'utils/ui';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
 import { HOME, USER_SETTINGS } from 'constants/navigationConstants';
-
-// actions
-import { responsiveSize } from 'utils/ui';
-import { MediumText, BaseText } from 'components/Typography';
-import { ListCard } from 'components/ListItem/ListCard';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -49,15 +47,8 @@ type Props = {
 
 const SectionHeader = styled(MediumText)`
   color: ${baseColors.blueYonder};
-  font-size: 14px;
-  line-height: 17px;
+  ${fontStyles.regular};
   margin: ${spacing.mediumLarge}px 0;
-`;
-
-const EmptyState = styled(BaseText)`
-  color: ${baseColors.darkGray};
-  font-size: 15px;
-  line-height: 22px;
 `;
 
 const CardWrapper = styled.View`
@@ -93,7 +84,7 @@ class UsersScreen extends React.Component<Props> {
             userName={username}
             diameter={iconRadius}
             borderWidth={0}
-            textStyle={{ fontSize: fontSizes.medium }}
+            textStyle={{ fontSize: fontSizes.big }}
             noShadow
           />
         )}
@@ -119,11 +110,8 @@ class UsersScreen extends React.Component<Props> {
       <ContainerWithHeader
         color={baseColors.white}
         headerProps={{
-          leftItems: [
-            { userIcon: true },
-            { title: 'Users' },
-          ],
-          rightItems: [{ close: true, dismiss: true }],
+          leftItems: [{ close: true, dismiss: true }],
+          centerItems: [{ title: 'Users' }],
         }}
       >
         <SectionList
@@ -132,7 +120,7 @@ class UsersScreen extends React.Component<Props> {
           keyExtractor={(item) => item.id.toString()}
           style={{ width: '100%', flexGrow: 0 }}
           renderSectionFooter={({ section: { emptyStateMessage } }) => {
-            if (emptyStateMessage) return (<EmptyState>{emptyStateMessage}</EmptyState>);
+            if (emptyStateMessage) return (<Paragraph small light>{emptyStateMessage}</Paragraph>);
             return null;
           }}
           renderSectionHeader={({ section: { title } }) => (

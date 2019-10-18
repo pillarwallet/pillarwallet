@@ -71,9 +71,8 @@ import {
   formatFiat,
 } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
-import { responsiveSize } from 'utils/ui';
 import { getSmartWalletStatus } from 'utils/smartWallet';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -116,14 +115,14 @@ const AssetButtonsWrapper = styled.View`
 `;
 
 const TopPartWrapper = styled.View`
-  padding: 36px ${spacing.large}px;
+  padding: ${spacing.large}px;
   background-color: ${baseColors.snowWhite};
   border-bottom-width: 1;
   border-color: ${baseColors.mediumLightGray};
 `;
 
 const SectionTitle = styled(MediumText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   color: ${baseColors.blueYonder};
 `;
 
@@ -133,13 +132,13 @@ const TankBalanceWrapper = styled.View`
 `;
 
 const TankBalance = styled(BaseText)`
-  font-size: ${responsiveSize(36)}px;
+  font-size: ${fontSizes.giant}px;
   color: ${baseColors.slateBlack};
 `;
 
 const BlueText = styled(BaseText)`
   color: ${baseColors.electricBlue};
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   margin-right: ${spacing.medium}px;
 `;
 
@@ -380,7 +379,6 @@ class PPNView extends React.Component<Props, State> {
         {showSettleButton &&
           <FloatingButtonView>
             <Button
-              roundedCorners
               style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
               width="auto"
               title="Settle transactions"

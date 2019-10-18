@@ -19,17 +19,17 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
-import { BoldText, BaseText } from 'components/Typography';
+import { baseColors, spacing, fontStyles } from 'utils/variables';
+import { TextLink, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
 type Props = {
   label: string,
   value: any,
-  valueAdditionalText?: string,
   spacedOut?: boolean,
   valueAddon?: React.Node,
   showSpinner?: boolean,
+  onPress?: ?() => Promise<void>,
 }
 
 const ItemWrapper = styled.View`
@@ -40,60 +40,74 @@ const ItemWrapper = styled.View`
   width: 100%;
 `;
 
-const ItemLabel = styled(BaseText)`
+const ItemLabel = styled(MediumText)`
   text-align:center;
-  font-size: ${fontSizes.extraExtraSmall}px;
+  ${fontStyles.small};
   color: ${baseColors.darkGray};
-  font-weight: ${fontWeights.medium};
 `;
 
 const ItemValueHolder = styled.View`
-  border-bottom-width: 1px;
-  border-color: ${baseColors.gallery};
   flex-direction: row;
-  align-items: flex-end;
+  align-items: center;
   justify-content: flex-end;
   width: 100%;
-  height: 50px;
-  padding-right: ${spacing.mediumLarge}px;
+  min-height: 50px;
 `;
 
-const ItemValue = styled(BoldText)`
-  font-size: ${fontSizes.large}px;
-  font-weight: ${fontWeights.bold};
-  margin-bottom: ${spacing.medium}px;
+const ItemWrapperButton = styled.TouchableOpacity`
+  padding: 10px 0;
+  margin-top: -10px;
+`;
+
+const ItemValue = styled(MediumText)`
+  ${fontStyles.big};
   margin-top: ${props => props.spacedOut ? '8px' : '0'};
   padding-left: ${props => props.additionalMargin ? '10px' : 0};
   text-align: right;
   max-width: 230px;
+  margin-bottom: ${spacing.small}px;
+`;
+
+const Column = styled.View`
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding-right: ${spacing.mediumLarge}px;
+  border-bottom-width: 1px;
+  border-color: ${baseColors.gallery};
 `;
 
 const ListItemUnderlined = (props: Props) => {
   const {
     label,
     value,
-    valueAdditionalText,
     spacedOut,
     valueAddon,
     showSpinner,
+    onPress,
   } = props;
   return (
     <ItemWrapper>
       <ItemLabel>{label}</ItemLabel>
-      <ItemValueHolder>
-        {valueAddon}
-        <ItemValue
-          spacedOut={spacedOut}
-          additionalMargin={valueAddon}
-          ellipsizeMode="tail"
-          numberOfLines={1}
-        >
-          {value}
-        </ItemValue>
-        {!!valueAdditionalText && <ItemValue style={{ marginLeft: 4 }}>{valueAdditionalText}</ItemValue>}
-        {!!showSpinner &&
-        <Spinner width={20} height={20} style={{ marginBottom: 16, marginLeft: 10 }} />}
-      </ItemValueHolder>
+      <Column>
+        <ItemValueHolder>
+          {valueAddon}
+          <ItemValue
+            spacedOut={spacedOut}
+            additionalMargin={valueAddon}
+            ellipsizeMode="tail"
+            numberOfLines={3}
+          >
+            {value}
+          </ItemValue>
+          {!!showSpinner &&
+          <Spinner width={20} height={20} style={{ marginBottom: 16, marginLeft: 10 }} />}
+        </ItemValueHolder>
+        {!!onPress &&
+        <ItemWrapperButton onPress={onPress}>
+          <TextLink>Copy to clipboard</TextLink>
+        </ItemWrapperButton>}
+      </Column>
     </ItemWrapper>
   );
 };

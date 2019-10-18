@@ -48,7 +48,7 @@ import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
-import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import { Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -73,11 +73,11 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
 `;
 
 const ConnectionRequestBannerText = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  ${fontStyles.big};
 `;
 
 const ConnectionRequestBannerIcon = styled(NIcon)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.darkGray};
   margin-left: auto;
   margin-right: ${spacing.rhythm}px;
@@ -100,8 +100,8 @@ const ItemBadge = styled.View`
 `;
 
 const BadgeIcon = styled(Icon)`
-  font-size: ${props => props.fontSize || fontSizes.extraExtraSmall};
-  line-height: ${props => props.fontSize || fontSizes.extraExtraSmall};
+  font-size: ${props => props.fontSize || fontSizes.small}px;
+  line-height: ${props => props.fontSize || fontSizes.small}px;
   color: ${baseColors.white};
 `;
 
@@ -163,18 +163,19 @@ const ConnectionStatus = (props: ConnectionStatusProps) => {
 class PeopleScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
-
-  state = {
-    query: '',
-    showConfirmationModal: false,
-    manageContactType: '',
-    manageContactId: '',
-    forceHideRemoval: false,
-  };
+  scrollViewRef: ScrollView;
 
   constructor(props: Props) {
     super(props);
     this.handleContactsSearch = debounce(this.handleContactsSearch, 500);
+    this.scrollViewRef = React.createRef();
+    this.state = {
+      query: '',
+      showConfirmationModal: false,
+      manageContactType: '',
+      manageContactId: '',
+      forceHideRemoval: false,
+    };
   }
 
   componentDidMount() {
@@ -291,6 +292,11 @@ class PeopleScreen extends React.Component<Props, State> {
         sensitivity={10}
         close={this.state.forceHideRemoval}
         buttonWidth={80}
+        scroll={(shouldAllowScroll) => {
+          if (this.scrollViewRef && Object.keys(this.scrollViewRef).length) {
+            this.scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
+          }
+        }}
       >
         <ListItemWithImage
           label={item.username}
@@ -460,14 +466,13 @@ class PeopleScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         backgroundColor={baseColors.white}
-        headerProps={{
-          leftItems: [{ user: true }],
-        }}
+        headerProps={{ leftItems: [{ user: true }] }}
         inset={{ bottom: 0 }}
       >
         <ScrollView
           keyboardShouldPersistTaps="always"
           contentContainerStyle={{ flexGrow: 1 }}
+          ref={(ref) => { this.scrollViewRef = ref; }}
           onScroll={() => {
             if (inSearchMode) {
               Keyboard.dismiss();

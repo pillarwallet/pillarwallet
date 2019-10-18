@@ -152,7 +152,7 @@ class WalletSettings extends React.PureComponent<Props> {
     const account = findAccountById(accountId, accounts);
     if (!account) return null;
     const isSmartWallet = checkIfSmartWalletAccount(account);
-    const accountType = isSmartWallet ? 'Smart' : 'Key';
+    const accountType = isSmartWallet ? 'Smart' : 'Legacy';
     const settings = isSmartWallet
       ? [...smartWalletSettings, ...this.defaultSettings()]
       : [...this.keyWalletSettings(), ...this.defaultSettings()];
@@ -160,12 +160,7 @@ class WalletSettings extends React.PureComponent<Props> {
     return (
       <ContainerWithHeader
         color={baseColors.white}
-        headerProps={{
-          centerItems: [
-            { userIcon: true },
-            { title: `${user.username}'s ${accountType} wallet` },
-          ],
-        }}
+        headerProps={{ centerItems: [{ title: `${user.username}'s ${accountType} wallet` }] }}
         inset={{ bottom: 'never' }}
       >
         <FlatList

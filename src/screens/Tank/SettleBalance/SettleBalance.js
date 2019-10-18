@@ -49,9 +49,10 @@ import type { TxToSettle } from 'models/PaymentNetwork';
 // utils
 import {
   baseColors,
-  fontSizes,
+  fontStyles,
   spacing,
   UIColors,
+  fontSizes,
 } from 'utils/variables';
 import {
   formatFiat,
@@ -117,8 +118,8 @@ const BalanceWrapper = styled.View`
 `;
 
 const ValueInFiat = styled(BaseText)`
+  font-size: ${fontSizes.regular}px;
   color: ${baseColors.coolGrey};
-  font-size: ${fontSizes.extraExtraSmall}px;
 `;
 
 const SubtitleView = styled.View`
@@ -142,7 +143,7 @@ const SectionHeaderWrapper = styled.View`
 `;
 
 const SectionHeader = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   color: ${baseColors.darkGray};
 `;
 
@@ -264,7 +265,6 @@ class SettleBalance extends React.Component<Props, State> {
             {!!txToSettle.length && (
               <Button
                 small
-                roundedCorners
                 disabled={!session.isOnline}
                 title="Next"
                 onPress={this.goToConfirm}

@@ -382,6 +382,7 @@ SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddre
 };
 
 SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string, fromTimestamp?: string) {
+  if (!walletId) return Promise.resolve([]);
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.notification.list({
       walletId,
