@@ -31,6 +31,7 @@ type Props = {
   icon?: string,
   fontIcon?: string,
   fontIconStyle?: Object,
+  showIndicator?: boolean,
 }
 
 const CircleButtonIconWrapperColors = ['#ffffff', '#f2f4f9'];
@@ -68,6 +69,16 @@ const CircleButtonText = styled(BaseText)`
   margin-top: -6px;
 `;
 
+const Indicator = styled.View`
+  width: 12px;
+  height: 12px;
+  background-color: ${baseColors.sunYellow};
+  border-radius: 6px;
+  position: absolute;
+  top: 17px;
+  right: 17px;
+`;
+
 const actionButtonBackground = require('assets/images/bg_action_button.png');
 const actionButtonBackgroundDisabled = require('assets/images/bg_action_button_disabled.png');
 
@@ -80,6 +91,7 @@ const CircleButton = (props: Props) => {
     label,
     fontIcon,
     fontIconStyle,
+    showIndicator,
   } = props;
 
   return (
@@ -113,6 +125,7 @@ const CircleButton = (props: Props) => {
               opacity: disabled ? 0.3 : 1,
             }}
           />}
+          {showIndicator && <Indicator />}
         </CircleButtonIconWrapper>
 
       </ImageBackground>
