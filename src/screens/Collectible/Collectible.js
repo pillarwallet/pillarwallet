@@ -19,24 +19,26 @@
 */
 
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, TouchableOpacity } from 'react-native';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
+import ImageView from 'react-native-image-view';
 
 import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
+import IconButton from 'components/IconButton';
 import ActivityFeed from 'components/ActivityFeed';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
@@ -45,6 +47,7 @@ import { accountHistorySelector } from 'selectors/history';
 import type { Collectible } from 'models/Collectible';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -55,6 +58,10 @@ type Props = {
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
 };
+
+type State = {|
+  isImageViewVisible: boolean,
+|};
 
 const ActionButtonsWrapper = styled.View`
   flex: 1;
@@ -90,22 +97,86 @@ const CollectibleImage = styled(CachedImage)`
   margin-top: 30px;
 `;
 
+const IconWrapper = styled.View`
+  padding: 6px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const CloseIcon = styled(IconButton)`
+  height: 44px;
+  width: 58px;
+`;
+
+const ImageCloseIcon = (props: {onPress: () => void}) => {
+  return (
+    <IconWrapper>
+      <CloseIcon
+        icon="close"
+        color={baseColors.white}
+        onPress={props.onPress}
+        fontSize={fontSizes.medium}
+        horizontalAlign="center"
+      />
+    </IconWrapper>
+  );
+};
+
 const iconSend = require('assets/icons/icon_send.png');
 const genericCollectible = require('assets/images/no_logo.png');
 
-class CollectibleScreen extends React.Component<Props> {
-  shouldComponentUpdate(nextProps: Props) {
+class CollectibleScreen extends React.Component<Props, State> {
+  state = {
+    isImageViewVisible: false,
+  };
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isFocused = this.props.navigation.isFocused();
     if (!isFocused) {
       return false;
     }
-    const isEq = isEqual(this.props, nextProps);
-    return !isEq;
+
+    if (!isEqual(this.state, nextState) || !isEqual(this.props, nextProps)) {
+      return true;
+    }
+
+    return false;
   }
 
   goToSendTokenFlow = (assetData: Object) => {
     this.props.navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
   };
+
+  onTouchImage = () => {
+    this.setState({ isImageViewVisible: true });
+  }
+
+  onCloseImageView = () => {
+    this.setState({ isImageViewVisible: false });
+  }
+
+  renderImageView(collectible: Collectible) {
+    const { isImageViewVisible } = this.state;
+    const { image, name } = collectible;
+
+    const imageViewImages = [
+      {
+        source: { uri: image },
+        title: name,
+      },
+    ];
+
+    return (
+      <ImageView
+        images={imageViewImages}
+        imageIndex={0}
+        isVisible={isImageViewVisible}
+        onClose={this.onCloseImageView}
+        controls={{ close: ImageCloseIcon }}
+      />
+    );
+  }
 
   render() {
     const {
@@ -144,13 +215,16 @@ class CollectibleScreen extends React.Component<Props> {
 
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }} inset={{ bottom: 0 }}>
+        {this.renderImageView(assetData)}
         <ScrollWrapper>
-          <CollectibleImage
-            key={id.toString()}
-            source={{ uri: image }}
-            fallbackSource={genericCollectible}
-            resizeMode="contain"
-          />
+          <TouchableOpacity onPress={this.onTouchImage}>
+            <CollectibleImage
+              key={id.toString()}
+              source={{ uri: image }}
+              fallbackSource={genericCollectible}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
           <DataWrapper>
             {!!description &&
               <Paragraph small light>{description.replace(new RegExp('\\n\\n', 'g'), '\n')}</Paragraph>
@@ -184,7 +258,7 @@ class CollectibleScreen extends React.Component<Props> {
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   accounts: { data: accounts },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   contactsSmartAddresses,
   accounts,
@@ -196,7 +270,7 @@ const structuredSelector = createStructuredSelector({
   openSeaTxHistory: accountCollectiblesHistorySelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState) => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
