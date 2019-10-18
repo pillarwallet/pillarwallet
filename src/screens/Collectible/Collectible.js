@@ -38,6 +38,7 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 
+import { isIphoneX } from 'utils/common';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 
@@ -98,6 +99,7 @@ const CollectibleImage = styled(CachedImage)`
 `;
 
 const IconWrapper = styled.View`
+  margin-top: ${isIphoneX() ? '10px' : '0'};
   padding: 6px;
   flex-direction: row;
   align-items: center;
