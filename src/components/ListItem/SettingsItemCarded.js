@@ -74,7 +74,8 @@ const CardContent = styled.View`
 
 const CardTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  ${fontStyles.big};
+  font-size: ${fontSizes.big}px;
+  line-height: 24px;
 `;
 
 const CardSubtitle = styled(BaseText)`
@@ -83,20 +84,20 @@ const CardSubtitle = styled(BaseText)`
 `;
 
 const CheckIcon = styled(Icon)`
-  font-size: ${fontSizes.rRegular}px;
+  font-size: ${fontSizes.rSmall}px;
   color: ${baseColors.electricBlue};
   align-self: flex-start;
 `;
 
 const SettingsIcon = styled(Icon)`
-  font-size: ${fontSizes.large}px;
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.malibu};
 `;
 
 const IconWrapper = styled.View`
-  margin-right: ${spacing.medium}px;
   align-items: center;
   justify-content: center;
+  margin-right: ${responsiveSize(16)}px;
 `;
 
 const iconRadius = responsiveSize(52);
@@ -173,6 +174,8 @@ export const SettingsItemCarded = (props: Props) => {
     additionalWrapperStyle.width = screenWidth - sidePaddingsForWidth - buttonSideLength - cardsSpacing;
   }
 
+  const showIcon = !!icon || !!fallbackIcon || !!customIcon;
+
   return (
     <ItemWrapper>
       <ShadowedCard
@@ -193,10 +196,11 @@ export const SettingsItemCarded = (props: Props) => {
         onPress={onMainPress}
       >
         <CardRow>
+          {showIcon &&
           <IconWrapper>
             {(!!icon || !!fallbackIcon) && <CardImage source={{ uri: icon }} fallbackSource={fallbackIcon} />}
             {customIcon}
-          </IconWrapper>
+          </IconWrapper>}
           <CardContent>
             <CardTitle>{title}</CardTitle>
             {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
