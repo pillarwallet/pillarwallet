@@ -248,8 +248,8 @@ jest.setMock('@smartwallet/sdk', {
       subscribe: jest.fn(),
     },
     estimateAccountTransaction: () => Promise.resolve({
-      gasFee: new BN(21000),
-      signedGasPrice: { gasPrice: new BN(1000000000) },
+      gasFee: new BN(70000),
+      signedGasPrice: { gasPrice: new BN(5000000000) },
     }),
   }),
 });
