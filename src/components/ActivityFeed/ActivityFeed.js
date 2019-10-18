@@ -549,11 +549,9 @@ class ActivityFeed extends React.Component<Props, State> {
             offset: 70 * index,
             index,
           })}
-          maxToRenderPerBatch={initialNumToRender}
           onEndReachedThreshold={0.5}
           keyExtractor={this.getActivityFeedListKeyExtractor}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
-          removeClippedSubviews
           stickySectionHeadersEnabled={false}
           ListEmptyComponent={(
             <EmptyStateWrapper>
