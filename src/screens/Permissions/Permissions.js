@@ -61,7 +61,7 @@ const InnerSectionToggle = styled.View`
 `;
 
 const InnerSectionTitle = styled(BaseText)`
-  ${fontStyles.small};
+  ${fontStyles.medium};
   color: ${baseColors.electricBlue};
 `;
 
