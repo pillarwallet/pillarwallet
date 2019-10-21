@@ -99,7 +99,7 @@ const CollectibleImage = styled(CachedImage)`
 `;
 
 const IconWrapper = styled.View`
-  margin-top: ${isIphoneX() ? '30px' : '0'};
+  ${isIphoneX() && 'margin-top: 30px;'}
   margin-right: 6px;
   padding: 6px;
   flex-direction: row;
