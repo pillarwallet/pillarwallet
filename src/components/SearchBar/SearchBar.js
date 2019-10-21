@@ -34,7 +34,7 @@ const SearchHolder = styled.View`
 `;
 
 const CancelButton = styled.TouchableOpacity`
-  margin-right: 10px;
+  padding: 10px;
 `;
 
 const animatedInputFieldStyles = {
@@ -94,12 +94,17 @@ type EventLike = {
 };
 
 class SearchBar extends React.Component<Props, State> {
-  value = '';
+  value: string;
 
-  state = {
-    animShrink: new Animated.Value(100),
-    isFocused: false,
-  };
+  constructor(props: Props) {
+    super(props);
+    const { forceShowCloseButton } = props;
+    this.value = '';
+    this.state = {
+      animShrink: new Animated.Value(forceShowCloseButton ? 80 : 100),
+      isFocused: !!forceShowCloseButton,
+    };
+  }
 
   static defaultProps = {
     inputType: 'default',
