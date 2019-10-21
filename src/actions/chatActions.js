@@ -278,7 +278,7 @@ export const getChatByContactAction = (
       chat: { data: { chats: existingChats, webSocketMessages: { received: webSocketMessagesReceived } } },
     } = getState();
 
-    if (webSocketMessagesReceived !== undefined && webSocketMessagesReceived.length) {
+    if (!isEmpty(webSocketMessagesReceived)) {
       const webSocketPromises = webSocketMessagesReceived
         .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
         .map(async wsMessage => {
