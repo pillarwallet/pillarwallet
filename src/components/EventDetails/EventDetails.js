@@ -29,6 +29,7 @@ import { format as formatDate, differenceInSeconds } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
 import type { ScrollToProps } from 'components/Modals/SlideModal';
+import { CachedImage } from 'react-native-cached-image';
 
 // models
 import type { Transaction } from 'models/Transaction';
@@ -157,9 +158,17 @@ const EventBodyTitle = styled(MediumText)`
   text-align: center;
 `;
 
+const Icon = styled(CachedImage)`
+  width: 6px;
+  height: 12px;
+  margin-bottom: ${spacing.small}px;
+`;
+
 const viewTransactionOnBlockchain = (hash: string) => {
   Linking.openURL(TX_DETAILS_URL + hash);
 };
+
+const lightningIcon = require('assets/icons/icon_lightning_sm.png');
 
 class EventDetails extends React.Component<Props, State> {
   timer: ?IntervalID;
@@ -296,6 +305,8 @@ class EventDetails extends React.Component<Props, State> {
       assets,
       supportedAssets,
     } = this.props;
+    const { hideAmount, hideSender, isPPNAsset } = eventData;
+    let { txType } = eventData;
 
     if (eventType === TRANSACTION_EVENT) {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
@@ -346,40 +357,34 @@ class EventDetails extends React.Component<Props, State> {
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const freeTx = isPPNTransaction;
-      let showAmountReceived = true;
-      let showSender = true;
+      const showAmountReceived = !hideAmount;
+      const showSender = !hideSender;
       let showNote = true;
-      let showAmountTxType = false;
-      let txType = '';
       const listSettledAssets = (tag === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
 
       if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
-        showAmountReceived = false;
-        showSender = false;
         showNote = false;
-        showAmountTxType = true;
         txType = 'PLR Network settle';
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-        showSender = false;
         showNote = false;
-        showAmountTxType = true;
-        txType = 'TANK TOP UP';
+        txType = 'Tank Top Up';
       }
 
       const showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
 
       return (
         <EventBody>
-          {showAmountReceived &&
-          <ListItemUnderlined
-            label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
-            value={`${formatFullAmount(value)} ${asset}`}
-          />
-          }
-          {showAmountTxType &&
+          {txType &&
           <ListItemUnderlined
             label="TRANSACTION TYPE"
             value={txType}
+          />
+          }
+          {showAmountReceived &&
+          <ListItemUnderlined
+            label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
+            valueAddon={isPPNAsset ? <Icon source={lightningIcon} /> : null}
+            value={`${formatFullAmount(value)} ${asset}`}
           />
           }
           {showSender &&

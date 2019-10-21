@@ -25,7 +25,6 @@ import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // models
 import type { Transaction } from 'models/Transaction';
@@ -211,6 +210,7 @@ type State = {
 }
 
 const PPNIcon = require('assets/icons/icon_PPN.png');
+const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
 
 class ActivityFeed extends React.Component<Props, State> {
   eventDetailScrollViewRef: ?Object;
@@ -314,83 +314,125 @@ class ActivityFeed extends React.Component<Props, State> {
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
     const itemStatusIcon = notificationStatus === TX_PENDING_STATUS ? TX_PENDING_STATUS : '';
+    const trxData = {};
 
     if (type === TRANSACTION_EVENT) {
       const isReceived = addressesEqual(notification.to, activeAccountAddress);
       const address = isReceived ? notification.from : notification.to;
-      const {
-        decimals = 18,
-        iconUrl,
-      } = getAssetData(assets, supportedAssets, notification.asset);
+      const { decimals = 18 } = getAssetData(assets, supportedAssets, notification.asset);
       const value = formatUnits(notification.value, decimals);
       const formattedValue = formatAmount(value);
       let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
-      let directionIcon = isReceived ? 'received' : 'sent';
+      const directionIcon = isReceived ? 'received' : 'sent';
       let directionSymbol = isReceived ? '' : '-';
 
       if (formattedValue === '0') {
         directionSymbol = '';
       }
 
-      const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-
       const contact = findMatchingContact(address, contacts, contactsSmartAddresses) || {};
       const isContact = Object.keys(contact).length !== 0;
-      const itemImage = contact.profileImage || fullIconUrl;
       let itemValue = `${directionSymbol} ${formattedValue} ${notification.asset}`;
       let customAddon = null;
-      let itemImageSource = '';
+      let subtext = '';
       let rightColumnInnerStyle = {};
       let customAddonAlignLeft = false;
+      const imageProps = {};
 
       const tag = get(notification, 'tag', '');
       if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
+        imageProps.itemImageSource = PPNIcon;
+        trxData.hideAmount = true;
+        trxData.hideSender = true;
         return (
           <SettlementItem
             settleData={notification.extra}
-            onPress={() => this.selectEvent({ ...notification, value, contact }, type, notificationStatus)}
+            onPress={() => this.selectEvent({
+              ...notification,
+              value,
+              contact,
+              ...trxData,
+            }, type, notificationStatus)}
             type={feedType}
             asset={asset}
             isPending={notificationStatus === TX_PENDING_STATUS}
           />
         );
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-        nameOrAddress = 'PLR Network Top Up';
-        itemImageSource = PPNIcon;
-        directionIcon = '';
+        nameOrAddress = 'PLR Tank Top Up';
+        imageProps.itemImageSource = PPNIcon;
+        trxData.hideSender = true;
+        trxData.hideAmount = true;
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
-        nameOrAddress = 'PLR Network Withdrawal';
-        itemImageSource = PPNIcon;
-        directionIcon = '';
+        nameOrAddress = 'Withdrawal';
+        subtext = 'from PLR Network';
+        imageProps.itemImageSource = PPNIcon;
+        itemValue = '';
+        customAddon = (<TankAssetBalance
+          amount={`- ${formattedValue} ${notification.asset}`}
+          textStyle={{ color: baseColors.scarlet }}
+          monoColor
+        />);
+        trxData.txType = 'Withdrawal';
+        trxData.hideAmount = true;
+        trxData.hideSender = true;
       }
 
-      // centers line right addons side vertically if status is present
+      // centers line right addons side vertixcally if status is present
       if (!isEmpty(itemStatusIcon)) {
         rightColumnInnerStyle = { ...rightColumnInnerStyle, alignItems: 'center' };
       }
 
       const isPPNTransaction = get(notification, 'isPPNTransaction', false);
       if (isPPNTransaction) {
-        if (addressesEqual(notification.to, notification.from)) {
-          nameOrAddress = 'Transfer to own account';
-        }
-        itemValue = '';
         customAddonAlignLeft = true;
-        customAddon = (<TankAssetBalance
-          amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
-          textStyle={!isReceived ? { color: baseColors.scarlet } : null}
-          monoColor
-        />);
         rightColumnInnerStyle = { ...rightColumnInnerStyle, flexDirection: 'row' };
+        trxData.isPPNAsset = true;
+        if (!isContact) imageProps.itemImageSource = PPNIcon;
+        if (addressesEqual(notification.to, notification.from)) {
+          nameOrAddress = 'Deposit';
+          subtext = 'to Smart wallet';
+          itemValue = `${formattedValue} ${notification.asset}`;
+          trxData.txType = 'Deposit';
+          trxData.hideAmount = true;
+          trxData.hideSender = true;
+        } else {
+          itemValue = '';
+          customAddon = (<TankAssetBalance
+            amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
+            textStyle={!isReceived ? { color: baseColors.scarlet } : null}
+            monoColor
+          />);
+        }
+      }
+
+      // transaction to / from key wallet / smart wallet
+      if (notification.accountType) {
+        // TODO: add smart wallet icon for actions from / to smart wallet
+        imageProps.itemImageSource = keyWalletIcon;
+      }
+
+      if (!imageProps.itemImageSource) {
+        if ((!isContact || showArrowsOnly)) {
+          imageProps.iconName = directionIcon;
+          imageProps.iconColor = baseColors.slateBlack;
+        } else if (isContact) {
+          imageProps.avatarUrl = contact.profileImage;
+        }
       }
 
       return (
         <ListItemWithImage
-          onPress={() => this.selectEvent({ ...notification, value, contact }, type, notificationStatus)}
+          onPress={() => this.selectEvent({
+              ...notification,
+              value,
+              contact,
+              ...trxData,
+            }, type, notificationStatus)}
           label={nameOrAddress}
-          avatarUrl={itemImage}
+          subtext={subtext}
+          // avatarUrl={itemImage}
           navigateToProfile={isContact ? navigateToContact : null}
-          iconName={showArrowsOnly || !(itemImage || itemImageSource) ? directionIcon : ''}
           itemValue={itemValue}
           itemStatusIcon={itemStatusIcon}
           rightColumnInnerStyle={rightColumnInnerStyle}
@@ -398,8 +440,9 @@ class ActivityFeed extends React.Component<Props, State> {
           valueColor={isReceived ? baseColors.jadeGreen : baseColors.scarlet}
           imageUpdateTimeStamp={contact.lastUpdateTime || 0}
           customAddon={customAddon}
-          itemImageSource={itemImageSource}
-          noImageBorder
+          // itemImageSource={itemImageSource}
+          diameter={56}
+          {...imageProps}
         />
       );
     }
@@ -422,10 +465,12 @@ class ActivityFeed extends React.Component<Props, State> {
           imageAddonIconName={(Object.keys(contact).length === 0 || showArrowsOnly) && !invertAddon
             ? directionIcon.toLowerCase()
             : undefined}
+          iconColor={baseColors.slateBlack}
           iconName={invertAddon ? directionIcon.toLowerCase() : null}
           itemStatusIcon={itemStatusIcon}
           actionLabel={directionIcon}
           actionLabelColor={isReceived ? baseColors.jadeGreen : null}
+          diameter={56}
         />
       );
     }
@@ -457,6 +502,7 @@ class ActivityFeed extends React.Component<Props, State> {
         actionLabel={this.getRightLabel(notification.type)}
         labelAsButton={notification.type === TYPE_SENT}
         imageUpdateTimeStamp={notification.lastUpdateTime}
+        diameter={56}
       />
     );
   };

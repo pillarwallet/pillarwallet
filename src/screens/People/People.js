@@ -265,12 +265,8 @@ class PeopleScreen extends React.Component<Props, State> {
             icon={icon}
             iconSize="small"
             {...btnProps}
-            style={{
-              marginTop: 2,
-            }}
-            textStyle={{
-              marginTop: 9,
-            }}
+            style={{ marginTop: 2 }}
+            textStyle={{ marginTop: 9, fontSize: fontSizes.small }}
           />
         ),
         backgroundColor: baseColors.white,
@@ -309,6 +305,7 @@ class PeopleScreen extends React.Component<Props, State> {
           customAddon={(status === 'muted' || status === 'blocked') ? <ConnectionStatus status={status} /> : null}
           rightColumnInnerStyle={{ flexDirection: 'row-reverse', paddingTop: spacing.small }}
           noSeparator
+          hasShadow
         />
       </Swipeout>
     );

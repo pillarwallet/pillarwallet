@@ -68,14 +68,21 @@ type Props = {
   rightColumnInnerStyle?: Object,
   customAddonFullWidth?: React.Node,
   customAddonAlignLeft?: boolean,
-  imageColorFill?: string,
   customImage?: React.Node,
   imageDiameter?: number,
   balance?: Object,
   innerWrapperHorizontalAlign?: string,
-  noImageBorder?: boolean,
   itemImageSource?: string,
   wrapperOpacity?: number,
+  diameter?: number,
+  iconColor?: string,
+  hasShadow?: boolean,
+}
+
+type ImageWrapperProps = {
+  children: React.Node,
+  hasShadow?: boolean,
+  imageDiameter?: number,
 }
 
 const ItemWrapper = styled.View`
@@ -89,7 +96,6 @@ const InnerWrapper = styled.TouchableOpacity`
   align-items: ${props => props.horizontalAlign || 'center'};
   justify-content: center;
   padding: ${spacing.small}px ${spacing.large}px;
-  min-height: ${props => props.type === DEFAULT ? 70 : 84}px;
   width: 100%;
 `;
 
@@ -99,12 +105,10 @@ const Row = styled.View`
   justify-content: space-between;
 `;
 
-const ImageWrapper = styled.View`
+const ImageHolder = styled.View`
   padding-right: ${spacing.medium}px;
   justify-content: center;
   align-items: center;
-  width: 66px;
-  height: 54px;
 `;
 
 const InfoWrapper = styled.View`
@@ -125,7 +129,8 @@ const Column = styled.View`
 
 const ItemTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  ${fontStyles.medium};
+  font-size: ${fontSizes.medium}px;
+  line-height: 22px;
   letter-spacing: ${fontTrackings.small}px;
   width: 100%;
 `;
@@ -139,36 +144,32 @@ const ItemParagraph = styled(BaseText)`
 
 const ItemSubText = styled(BaseText)`
   color: ${baseColors.darkGray};
-  ${fontStyles.regular};
+  font-size: ${fontSizes.regular}px;
+  line-height: 18px;
 `;
 
 const IconCircle = styled.View`
   width: ${props => props.diameter || 52}px;
   height: ${props => props.diameter || 52}px;
   border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
-  background-color: ${props => props.fillColor ? props.fillColor : 'transparent'};
+  background-color: ${baseColors.white};
   align-items: center;
   justify-content: center;
   text-align: center;
-  ${props => props.bordered ? `border: 1px solid ${baseColors.white}` : ''};
+  border: 1px solid ${baseColors.mediumLightGray};
 `;
+
+// color: ${props => props.warm ? baseColors.tumbleweed : baseColors.offBlue};
 
 const ItemIcon = styled(Icon)`
   font-size: ${props => props.fontSize || 48}px;
-  color: ${props => props.warm ? baseColors.tumbleweed : baseColors.offBlue};
-`;
-
-const TokenImageWrapper = styled.View`
-  width: 54px;
-  height: 54px;
-  border-radius: 27px;
-  ${props => props.noImageBorder ? '' : `border: 2px solid ${baseColors.white};`}
+  color: ${props => props.iconColor || baseColors.electricBlue};
 `;
 
 const TokenImage = styled(CachedImage)`
-  width: ${props => props.noImageBorder ? 54 : 50}px;
-  height: ${props => props.noImageBorder ? 54 : 50}px;
-  border-radius: ${props => props.noImageBorder ? 27 : 25}px;
+  width: ${props => props.diameter || 54}px;
+  height: ${props => props.diameter || 54}px;
+  border-radius: ${props => props.diameter / 2 || 27}px;
 `;
 
 const TimeWrapper = styled.View`
@@ -262,6 +263,40 @@ const ImageAddonHolder = styled.View`
   right: 10px;
 `;
 
+const ImageWrapper = (props: ImageWrapperProps) => {
+  const {
+    children,
+    hasShadow,
+    imageDiameter,
+  } = props;
+
+  if (hasShadow) {
+    const shadowDiameter = imageDiameter || 54;
+    return (
+      <ImageHolder>
+        <Shadow
+          shadowColorAndroid="#38105baa"
+          heightAndroid={shadowDiameter}
+          widthAndroid={shadowDiameter}
+          heightIOS={shadowDiameter}
+          widthIOS={shadowDiameter}
+          shadowRadius={shadowDiameter / 2}
+          useSVGShadow
+          shadowOpacity={0.5}
+          shadowOffsetX={0}
+        >
+          {children}
+        </Shadow>
+      </ImageHolder>
+    );
+  }
+  return (
+    <ImageHolder>
+      {children}
+    </ImageHolder>
+  );
+};
+
 const ItemImage = (props: Props) => {
   const {
     label,
@@ -270,77 +305,28 @@ const ItemImage = (props: Props) => {
     itemImageUrl,
     fallbackSource,
     navigateToProfile,
-    type,
     imageUpdateTimeStamp,
-    imageColorFill,
     customImage,
-    imageDiameter,
     itemImageSource,
-    noImageBorder,
+    diameter,
+    iconColor,
   } = props;
 
   if (iconName) {
-    const warm = iconName === 'sent';
     return (
-      <IconCircle fillColor={warm ? baseColors.fairPink : baseColors.lightGray}>
-        <ItemIcon name={iconName} warm={warm} />
+      <IconCircle diameter={diameter}>
+        <ItemIcon name={iconName} color={iconColor} />
       </IconCircle>
     );
   }
-  if (customImage) {
-    const shadowDiameter = imageDiameter || 54;
-    return (
-      <Shadow
-        shadowColorAndroid="#38105baa"
-        heightAndroid={shadowDiameter}
-        widthAndroid={shadowDiameter}
-        heightIOS={shadowDiameter}
-        widthIOS={shadowDiameter}
-        shadowRadius={shadowDiameter / 2}
-        useSVGShadow
-      >
-        {customImage}
-      </Shadow>
-    );
-  }
+  if (customImage) return customImage;
+
   if (itemImageUrl) {
-    return (
-      <Shadow
-        shadowColorAndroid="#38105baa"
-        heightAndroid={54}
-        widthAndroid={54}
-        heightIOS={54}
-        widthIOS={54}
-        shadowRadius={24}
-      >
-        <TokenImageWrapper noImageBorder={noImageBorder}>
-          <TokenImage noImageBorder={noImageBorder} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
-        </TokenImageWrapper>
-      </Shadow>
-    );
+    return (<TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />);
   }
 
   if (itemImageSource) {
-    return (
-      <TokenImageWrapper noImageBorder={noImageBorder}>
-        <TokenImage noImageBorder={noImageBorder} source={itemImageSource} fallbackSource={fallbackSource} />
-      </TokenImageWrapper>
-    );
-  }
-
-  if (imageColorFill) {
-    return (
-      <Shadow
-        shadowColorAndroid="#38105baa"
-        heightAndroid={54}
-        widthAndroid={54}
-        heightIOS={48}
-        widthIOS={48}
-        shadowRadius={24}
-      >
-        <IconCircle fillColor={imageColorFill} />
-      </Shadow>
-    );
+    return (<TokenImage diameter={diameter} source={itemImageSource} fallbackSource={fallbackSource} />);
   }
 
   const updatedUserImageUrl = imageUpdateTimeStamp && avatarUrl ? `${avatarUrl}?t=${imageUpdateTimeStamp}` : avatarUrl;
@@ -350,10 +336,9 @@ const ItemImage = (props: Props) => {
       onPress={navigateToProfile}
       uri={updatedUserImageUrl}
       userName={label}
-      diameter={type === ACTION ? 52 : 50}
-      borderWidth={type === ACTION ? 0 : 2}
+      diameter={diameter || 52}
       textStyle={{ fontSize: fontSizes.big }}
-      noShadow={type === ACTION}
+      noShadow
     />
   );
 };
@@ -363,18 +348,18 @@ const ImageAddon = (props: Props) => {
     imageAddonIconName,
     imageAddonUrl,
     imageAddonName,
+    iconColor,
   } = props;
 
   if (imageAddonIconName) {
-    const warm = imageAddonIconName === 'sent';
     return (
       <ImageAddonHolder>
-        <IconCircle fillColor={warm ? baseColors.fairPink : baseColors.lightGray} diameter={22} bordered>
+        <IconCircle diameter={22}>
           <ItemIcon
             name={imageAddonIconName}
-            warm={warm}
-            fontSize={fontSizes.large}
-            style={{ position: 'absolute', top: -5, right: 4 }}
+            color={iconColor}
+            fontSize={30}
+            style={{ lineHeight: 30, width: 30 }}
           />
         </IconCircle>
       </ImageAddonHolder>
@@ -542,14 +527,15 @@ class ListItemWithImage extends React.Component<Props, {}> {
       innerWrapperHorizontalAlign,
       wrapperOpacity,
       customAddonAlignLeft,
+      hasShadow,
     } = this.props;
 
     const type = getType(this.props);
     return (
       <ItemWrapper wrapperOpacity={wrapperOpacity}>
         <InnerWrapper type={type} onPress={onPress} disabled={!onPress} horizontalAlign={innerWrapperHorizontalAlign}>
-          <ImageWrapper>
-            <ItemImage {...this.props} type={type} />
+          <ImageWrapper hasShadow={hasShadow}>
+            <ItemImage {...this.props} />
             {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
           </ImageWrapper>
           <View style={{ flex: 1 }}>
@@ -571,7 +557,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
                 </Row>
                 }
                 {!!subtext &&
-                <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
+                <ItemSubText numberOfLines={2}>{subtext}</ItemSubText>
                 }
               </Column>
               <Column rightColumn type={type} style={{ maxWidth: '50%' }}>
