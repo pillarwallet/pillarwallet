@@ -19,10 +19,15 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes, appFont } from 'utils/variables';
-import { Animated, Keyboard, Platform } from 'react-native';
+import { UIColors, baseColors, fontSizes, appFont, spacing } from 'utils/variables';
+import { Animated, Dimensions, Keyboard } from 'react-native';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
+
+const { width } = Dimensions.get('window');
+const componentWidth = width - (spacing.large * 2);
+const closeButtonWidth = 58;
+const inputShrinkSize = ((componentWidth - closeButtonWidth) * 100) / componentWidth;
 
 const SearchHolder = styled.View`
   margin-bottom: ${props => props.marginBottom || 20}px;
@@ -34,17 +39,16 @@ const SearchHolder = styled.View`
 `;
 
 const CancelButton = styled.TouchableOpacity`
-  padding: 10px;
+  width: ${closeButtonWidth + spacing.large}px;
+  align-items: flex-end;
+  padding: ${spacing.small}px ${spacing.large}px;
+  margin-right: -${spacing.large}px;
 `;
 
 const animatedInputFieldStyles = {
   height: 40,
   borderWidth: 1,
   borderRadius: 20,
-  alignItems: 'center',
-  justifyContent: 'space-around',
-  flexDirection: 'row',
-  paddingRight: Platform.OS === 'ios' ? 30 : 36,
 };
 
 const InputField = styled.TextInput`
@@ -101,7 +105,7 @@ class SearchBar extends React.Component<Props, State> {
     const { forceShowCloseButton } = props;
     this.value = '';
     this.state = {
-      animShrink: new Animated.Value(forceShowCloseButton ? 80 : 100),
+      animShrink: new Animated.Value(forceShowCloseButton ? inputShrinkSize : 100),
       isFocused: !!forceShowCloseButton,
     };
   }
@@ -159,7 +163,7 @@ class SearchBar extends React.Component<Props, State> {
     }
     this.setState({ isFocused: true });
     Animated.timing(this.state.animShrink, {
-      toValue: 80,
+      toValue: inputShrinkSize,
       duration: 250,
     }).start();
   };

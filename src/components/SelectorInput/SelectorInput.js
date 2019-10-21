@@ -183,7 +183,7 @@ const AddonText = styled(BaseText)`
 `;
 
 const SearchBarWrapper = styled.View`
-  padding: 0 ${spacing.mediumLarge}px;
+  padding: 0 ${spacing.large}px;
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${baseColors.mediumLightGray};
