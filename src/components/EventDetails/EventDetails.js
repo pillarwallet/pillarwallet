@@ -109,6 +109,7 @@ type Props = {
   getRef?: () => Object,
   getScrollOffset?: (number) => ScrollToProps,
   getMaxScrollOffset?: (number) => number,
+  accounts: Accounts,
 }
 
 type State = {
@@ -304,6 +305,7 @@ class EventDetails extends React.Component<Props, State> {
       txNotes,
       assets,
       supportedAssets,
+      accounts,
     } = this.props;
     const { hideAmount, hideSender, isPPNAsset } = eventData;
     let { txType } = eventData;
@@ -347,7 +349,7 @@ class EventDetails extends React.Component<Props, State> {
       const relatedAddress = isReceived ? from : to;
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
-      let relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || relatedAddress;
+      let relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type, accounts) || relatedAddress;
       if (addressesEqual(to, from)) {
         relatedUserTitle = 'My account';
       }
@@ -452,7 +454,7 @@ class EventDetails extends React.Component<Props, State> {
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
-      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
+      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type, accounts) || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
         : `${to.slice(0, 7)}…${to.slice(-7)}`);
       const relatedUserProfileImage = relatedUser.profileImage || null;
@@ -721,6 +723,7 @@ const mapStateToProps = ({
   txNotes,
   contactsSmartAddresses,
   inactiveAccounts: getInactiveUserAccounts(accounts),
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({

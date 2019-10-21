@@ -481,7 +481,7 @@ class HomeScreen extends React.Component<Props, State> {
             tabs={activityFeedTabs}
             activeTab={activeTab}
             hideTabs
-            initialNumToRender={6}
+            initialNumToRender={8}
             wrapperStyle={{ flexGrow: 1, opacity: tabIsChanging ? 0.5 : 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
           />

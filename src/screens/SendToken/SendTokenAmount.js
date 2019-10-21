@@ -28,6 +28,7 @@ import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import { ethToWei } from '@netgum/utils';
 
 // components
 import { Wrapper } from 'components/Layout';
@@ -161,7 +162,6 @@ class SendTokenAmount extends React.Component<Props, State> {
   _form: t.form;
   assetData: Object;
   formSubmitted: boolean = false;
-  enoughForFee: boolean = false;
   receiver: string;
   source: string;
 
@@ -224,9 +224,9 @@ class SendTokenAmount extends React.Component<Props, State> {
     if (submitPressed) return;
     this.formSubmitted = true;
     this.setState({ submitPressed: true });
-    const txFeeInWei = await this.getTxFeeInWei();
     const value = this._form.getValue();
     if (!value) return;
+    const txFeeInWei = await this.getTxFeeInWei();
     // $FlowFixMe
     let transactionPayload: TokenTransactionPayload = {
       to: this.receiver,
@@ -274,13 +274,13 @@ class SendTokenAmount extends React.Component<Props, State> {
       txFeeInWei = this.getTxFeeInWei(transactionSpeed, updatedState.gasLimit);
     }
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
-    this.enoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
     const amount = formatAmount(maxAmount);
     this.setState({
       ...updatedState,
       value: { amount },
       gettingFee: false,
       calculatingMaxValue: false,
+      txFeeInWei,
     });
     this.checkFormInputErrors();
   };
@@ -336,10 +336,10 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   getSmartWalletTxFeeInWei = (amount?: number): BigNumber => {
     const { gasInfo } = this.props;
-    const value = amount || get(this.state, 'value.amount');
+    const value = amount || get(this.state, 'value.amount', 0);
     return smartWalletService.estimateAccountTransaction({
       recipient: this.receiver,
-      value,
+      value: ethToWei(value),
     }, gasInfo).catch(() => 0);
   };
 

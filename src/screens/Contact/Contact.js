@@ -29,7 +29,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, UIColors } from 'utils/variables';
 import {
   syncContactAction,
   disconnectContactAction,
@@ -69,6 +69,7 @@ import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
 const iconSend = require('assets/icons/icon_send.png');
+const iconChat = require('assets/icons/icon_chat_contact.png');
 
 const CircleButtonsWrapper = styled.View`
   margin-top: ${Platform.select({
@@ -81,6 +82,7 @@ const CircleButtonsWrapper = styled.View`
   border-color: ${baseColors.mediumLightGray};
   justify-content: center;
   align-items: center;
+  flex-direction: row;
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -396,18 +398,7 @@ class Contact extends React.Component<Props, State> {
       <ContainerWithHeader
         backgroundColor={isAccepted ? baseColors.white : UIColors.defaultBackgroundColor}
         inset={{ bottom: 'never' }}
-        headerProps={{
-          centerItems: [{ title: contactUsername }],
-          rightItems: [displayContact.status
-            ? {
-                icon: 'chat',
-                onPress: () => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT }),
-                indicator: !!unreadChats.length,
-                color: baseColors.coolGrey,
-                fontSize: fontSizes.big,
-              }
-            : {}],
-        }}
+        headerProps={{ centerItems: [{ title: contactUsername }] }}
       >
         <ScrollWrapper
           refreshControl={
@@ -440,6 +431,13 @@ class Contact extends React.Component<Props, State> {
                     label="Send"
                     icon={iconSend}
                     onPress={() => this.onSendPress(displayContact)}
+                  />
+                  <CircleButton
+                    disabled={!displayContact.status}
+                    label="Chat"
+                    icon={iconChat}
+                    onPress={() => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT })}
+                    showIndicator={!!unreadChats.length}
                   />
                   {disableSend &&
                   <DeploymentView

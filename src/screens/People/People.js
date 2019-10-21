@@ -266,7 +266,7 @@ class PeopleScreen extends React.Component<Props, State> {
             iconSize="small"
             {...btnProps}
             style={{ marginTop: 2 }}
-            textStyle={{ marginTop: 9, fontSize: fontSizes.small }}
+            textStyle={{ marginTop: 6, fontSize: fontSizes.small }}
           />
         ),
         backgroundColor: baseColors.white,
