@@ -96,7 +96,7 @@ type Props = {
   userJoinedBeta: boolean,
 }
 
-const storage = new Storage('db');
+const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
 const SettingsModalTitle = styled(MediumText)`
