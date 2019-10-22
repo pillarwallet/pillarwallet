@@ -74,6 +74,7 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // selectors
 import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
@@ -211,6 +212,7 @@ type State = {
 
 const PPNIcon = require('assets/icons/icon_PPN.png');
 const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
+const smartWalletIcon = require('assets/icons/icon_smart-wallet.png');
 
 class ActivityFeed extends React.Component<Props, State> {
   eventDetailScrollViewRef: ?Object;
@@ -409,7 +411,9 @@ class ActivityFeed extends React.Component<Props, State> {
       // transaction to / from key wallet / smart wallet
       if (notification.accountType) {
         // TODO: add smart wallet icon for actions from / to smart wallet
-        imageProps.itemImageSource = keyWalletIcon;
+        imageProps.itemImageSource = notification.accountType === ACCOUNT_TYPES.KEY_BASED
+          ? keyWalletIcon
+          : smartWalletIcon;
       }
 
       if (!imageProps.itemImageSource) {
