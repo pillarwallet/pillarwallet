@@ -183,7 +183,7 @@ const AddonText = styled(BaseText)`
 `;
 
 const SearchBarWrapper = styled.View`
-  padding: 0 ${spacing.mediumLarge}px;
+  padding: 0 ${spacing.large}px;
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${baseColors.mediumLightGray};
@@ -457,7 +457,6 @@ export default class SelectorInput extends React.Component<Props, State> {
           showHeader
           onModalShow={this.focusInput}
           backgroundColor={baseColors.white}
-          avoidKeyboard
           noSwipeToDismiss
           noClose
           title={label}
@@ -511,12 +510,17 @@ export default class SelectorInput extends React.Component<Props, State> {
                   keyboardShouldPersistTaps="handled"
                   ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
                   initialNumToRender={10}
-                  maxToRenderPerBatch={5}
-                  removeClippedSubviews
                   viewabilityConfig={viewConfig}
                   ListHeaderComponent={
                     (showOptionsTitles && !!optionsTitle) && <OptionsHeader>{optionsTitle}</OptionsHeader>
                   }
+                  getItemLayout={(data, index) => ({
+                    length: 70,
+                    offset: 70 * index,
+                    index,
+                  })}
+                  windowSize={10}
+                  hideModalContentWhileAnimating
                 />
               }
               {(!filteredListData.length && !filteredHorizontalListData.length) &&
