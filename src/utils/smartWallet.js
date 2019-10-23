@@ -47,15 +47,8 @@ import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction } from './history';
 
 type IAccountTransaction = sdkInterfaces.IAccountTransaction;
+const AccountTransactionTypes = { ...sdkConstants.AccountTransactionTypes };
 
-const AccountTransactionTypes = {
-  AccountDeployment: 'AccountDeployment',
-  TopUp: 'TopUp',
-  TopUpErc20Approve: 'TopUpErc20Approve',
-  Withdrawal: 'Withdrawal',
-  Settlement: 'Settlement',
-  Erc20Transfer: 'Erc20Transfer',
-};
 
 const getMessage = (
   status: ?string,
