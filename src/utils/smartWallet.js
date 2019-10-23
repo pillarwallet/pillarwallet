@@ -28,6 +28,12 @@ import {
   TX_CONFIRMED_STATUS,
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
+import {
+  PAYMENT_NETWORK_ACCOUNT_TOPUP,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+} from 'constants/paymentNetworkConstants';
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -37,9 +43,19 @@ import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 
 import { getActiveAccount } from './accounts';
 import { getAssetDataByAddress } from './assets';
-import { formatUnits } from './common';
+import { isCaseInsensitiveMatch } from './common';
+import { buildHistoryTransaction } from './history';
 
 type IAccountTransaction = sdkInterfaces.IAccountTransaction;
+
+const AccountTransactionTypes = {
+  AccountDeployment: 'AccountDeployment',
+  TopUp: 'TopUp',
+  TopUpErc20Approve: 'TopUpErc20Approve',
+  Withdrawal: 'Withdrawal',
+  Settlement: 'Settlement',
+  Erc20Transfer: 'Erc20Transfer',
+};
 
 const getMessage = (
   status: ?string,
@@ -113,36 +129,97 @@ export const mapHistoryFromSmartWalletTransactions = (
   supportedAssets: Asset[],
   assets: Asset[],
 ): Transaction[] => smartWalletTransactions
-  .map((transaction) => {
+  .reduce((mapped, smartWalletTransaction) => {
     const {
       hash,
       from: fromDetails,
       to: toDetails,
-      updatedAt: createdAt, // SDK does not provide createdAt, only updatedAt
+      updatedAt, // SDK does not provide createdAt, only updatedAt
       state,
       tokenRecipient,
       tokenAddress,
       value: rawValue,
-    } = transaction;
-    const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
-    const status = state === TRANSACTION_COMPLETED ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS;
+      type,
+      paymentHash,
+      tokenValue,
+    } = smartWalletTransaction;
     const from = parseTransactionAddress(fromDetails);
     const to = tokenRecipient || parseTransactionAddress(toDetails);
-    const value = new BigNumber(rawValue.toString());
-    let asset = 'ETH';
-    if (tokenAddress) {
-      const { symbol } = getAssetDataByAddress(assets, supportedAssets, tokenAddress);
-      if (symbol) asset = symbol;
-    }
-    return {
+
+    // ignore some type transactions or if any address is empty
+    if (
+      type === AccountTransactionTypes.TopUpErc20Approve
+      || isEmpty(from)
+      || isEmpty(to)
+    ) return mapped;
+
+    const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
+    const status = state === TRANSACTION_COMPLETED ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS;
+    const value = new BigNumber((tokenValue || rawValue).toString());
+
+    let transaction = {
+      from,
       hash,
       to,
-      from,
-      createdAt,
-      status,
-      asset,
       value,
+      createdAt: +new Date(updatedAt) / 1000,
+      asset: 'ETH',
+      status,
     };
-  })
-  .filter(({ from, to }) => !isEmpty(from) && !isEmpty(to));
+
+    if (tokenAddress) {
+      const { symbol } = getAssetDataByAddress(assets, supportedAssets, tokenAddress);
+      if (symbol) transaction.asset = symbol;
+    }
+
+    if (type === AccountTransactionTypes.Settlement) {
+      // if it's settlement transaction check if it has already been added to history
+      const settlementTransaction = mapped.find(({ hash: _hash }) => isCaseInsensitiveMatch(_hash, hash));
+      const settlementExtra = {
+        symbol: transaction.asset,
+        value,
+        hash: paymentHash,
+      };
+      if (settlementTransaction) {
+        mapped = mapped.filter(({ hash: _hash }) => !isCaseInsensitiveMatch(_hash, hash));
+        transaction = {
+          ...settlementTransaction,
+          extra: [
+            ...(settlementTransaction.extra || []),
+            settlementExtra,
+          ],
+        };
+      } else {
+        // settlement has never been added
+        transaction = {
+          ...transaction,
+          value: '0',
+          tag: PAYMENT_NETWORK_TX_SETTLEMENT,
+          asset: PAYMENT_NETWORK_TX_SETTLEMENT,
+          extra: [settlementExtra],
+        };
+      }
+    } else if (type === AccountTransactionTypes.Withdrawal) {
+      transaction = {
+        ...transaction,
+        asset: PPN_TOKEN,
+        tag: PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+        // TODO: revisit extras once SDK back-end updates are deployed
+        // extra: {
+        //   paymentHash,
+        // },
+      };
+    } else if (type === AccountTransactionTypes.TopUp) {
+      transaction = {
+        ...transaction,
+        asset: PPN_TOKEN,
+        tag: PAYMENT_NETWORK_ACCOUNT_TOPUP,
+      };
+    }
+
+    const mappedTransaction = buildHistoryTransaction(transaction);
+    mapped.push(mappedTransaction);
+
+    return mapped;
+  }, []);
 

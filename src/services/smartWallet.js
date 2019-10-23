@@ -24,7 +24,6 @@ import {
   createSdk,
   Sdk,
   sdkConstants,
-  sdkInterfaces,
 } from '@smartwallet/sdk';
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';

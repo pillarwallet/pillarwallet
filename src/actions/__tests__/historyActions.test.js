@@ -25,6 +25,9 @@ import type { Assets } from 'models/Asset';
 import { buildHistoryTransaction } from 'utils/history';
 import { parseEthValue } from 'services/EthplorerSdk';
 
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type SDKWrapper from 'services/api';
+
 const walletAddress = 'wallet-address';
 const walletId = '12345';
 const bobAddress = 'bob-address';
@@ -156,14 +159,15 @@ const transformedImportedPlrTransaction = buildHistoryTransaction({
 describe('History Actions', () => {
   const transactionsHistoryStep = 10;
 
-  const api = {
+  // $FlowFixMe
+  const api: SDKWrapper = {
     fetchHistory: jest.fn(),
     fetchSupportedAssets: jest.fn(),
     importedEthTransactionHistory: jest.fn(),
     importedErc20TransactionHistory: jest.fn(),
   };
-  const dispatchMock = jest.fn();
-  const getState = jest.fn();
+  const dispatchMock: Dispatch = jest.fn();
+  const getState: GetState = jest.fn();
 
   afterEach(() => {
     dispatchMock.mockClear();

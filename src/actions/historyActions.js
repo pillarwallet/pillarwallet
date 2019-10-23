@@ -33,7 +33,10 @@ import {
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ETH } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import {
+  SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
+  SMART_WALLET_UPGRADE_STATUSES,
+} from 'constants/smartWalletConstants';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
   checkIfSmartWalletAccount,
@@ -47,6 +50,10 @@ import {
 import { addressesEqual } from 'utils/assets';
 import { mapHistoryFromSmartWalletTransactions } from 'utils/smartWallet';
 import smartWalletService from 'services/smartWallet';
+
+import type SDKWrapper from 'services/api';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
@@ -58,7 +65,7 @@ const TRANSACTIONS_HISTORY_STEP = 10;
 const currentProvider = getEthereumProvider(NETWORK_PROVIDER);
 
 const afterHistoryUpdatedAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       featureFlags: {
         data: {
@@ -72,7 +79,7 @@ const afterHistoryUpdatedAction = () => {
 };
 
 export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex: number = 0) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -82,13 +89,17 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
     const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
 
     let history = [];
+    let newLastSyncedId;
 
     if (isSmartWalletAccount) {
-      const { assets: { data: assets, supportedAssets } } = getState();
-      // TODO: add last synced ID
-      const smartWalletTransactions = await smartWalletService.getAccountTransactions();
+      const {
+        assets: { data: assets, supportedAssets },
+        smartWallet: { lastSyncedTransactionId },
+      } = getState();
+      const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
       const assetsData = Object.keys(assets[accountAddress]).map(id => assets[id]);
       history = mapHistoryFromSmartWalletTransactions(smartWalletTransactions, supportedAssets, assetsData);
+      newLastSyncedId = smartWalletTransactions[0].id;
     } else {
       history = await api.fetchHistory({
         address1: accountAddress,
@@ -117,12 +128,20 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
       payload: updatedHistory,
     });
 
+    if (newLastSyncedId) {
+      dispatch({
+        type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
+        payload: newLastSyncedId,
+      });
+      dispatch(saveDbAction('smartWallet', { lastSyncedTransactionId: newLastSyncedId }));
+    }
+
     dispatch(afterHistoryUpdatedAction());
   };
 };
 
 export const fetchContactTransactionsAction = (contactAddress: string, asset?: string = 'ALL') => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
@@ -156,7 +175,7 @@ export const fetchContactTransactionsAction = (contactAddress: string, asset?: s
 };
 
 export const fetchTransactionsHistoryNotificationsAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       appSettings: { data: { lastTxSyncDatetimes = {} } },
@@ -229,7 +248,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
 };
 
 export const fetchGasInfoAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const gasInfo = await api.fetchGasInfo();
     dispatch({
       type: SET_GAS_INFO,
@@ -239,7 +258,7 @@ export const fetchGasInfoAction = () => {
 };
 
 export const updateTransactionStatusAction = (hash: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       session: { data: { isOnline } },
     } = getState();
@@ -278,7 +297,7 @@ export const updateTransactionStatusAction = (hash: string) => {
 };
 
 export const restoreTransactionHistoryAction = (walletAddress: string, walletId: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const [allAssets, _erc20History, ethHistory] = await Promise.all([
       api.fetchSupportedAssets(walletId),
       api.importedErc20TransactionHistory(walletAddress),
@@ -356,7 +375,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
 
 
 export const startListeningForBalanceChangeAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       smartWallet: {
@@ -382,7 +401,7 @@ export const startListeningForBalanceChangeAction = () => {
 };
 
 export const stopListeningForBalanceChangeAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
     } = getState();
