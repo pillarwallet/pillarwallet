@@ -29,7 +29,7 @@ import {
 import styled from 'styled-components/native';
 import { format } from 'date-fns';
 import type { NavigationScreenProp } from 'react-navigation';
-import { baseColors, fontSizes, spacing, fontTrackings } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontTrackings, lineHeights, fontStyles } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Header from 'components/Header';
@@ -85,10 +85,9 @@ const ListRow = styled(View)`
 const ListRowItem = styled(BaseText)`
   width: 50%;
   padding-right: ${spacing.rhythm}px;
-  font-size: ${fontSizes.small}px;
   letter-spacing: ${fontTrackings.tiny}px;
-  line-height: ${fontSizes.medium}px;
   color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
+  ${fontStyles.medium};
 `;
 
 const SeparatorWrapper = styled(View)`
@@ -121,12 +120,11 @@ const ContactsWrapper = styled(View)`
 
 const ContactsLabel = styled(BaseText)`
   width: 40%;
-  font-size: ${fontSizes.small}px;
   letter-spacing: ${fontTrackings.tiny}px;
-  line-height: ${fontSizes.medium}px;
   color: ${baseColors.slateBlack};
   margin-top: 13px;
   padding-right: ${spacing.rhythm}px;
+  ${fontStyles.medium};
 `;
 
 const twitter = require('assets/icons/icon_twitter.png');
@@ -442,10 +440,10 @@ class ICOScreen extends React.Component<Props, {}> {
               {!!isPending &&
               <Countdown
                 endDate={plannedOpeningDate}
-                fontSize={fontSizes.medium}
+                fontSize={fontSizes.big}
                 fontColor={baseColors.white}
                 extendedDayLabel
-                lineHeight={fontSizes.large}
+                lineHeight={lineHeights.big}
               />}
             </Button>
           </ButtonWrapper>

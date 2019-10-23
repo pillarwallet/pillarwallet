@@ -88,6 +88,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   "flexShrink": 1,
                   "flexWrap": "wrap",
                   "justifyContent": "flex-start",
+                  "minHeight": 28,
                 },
                 Object {},
               ]
@@ -144,6 +145,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   "flexGrow": 4,
                   "flexShrink": 1,
                   "justifyContent": "center",
+                  "minHeight": 28,
                   "paddingBottom": 0,
                   "paddingLeft": 12,
                   "paddingRight": 12,
@@ -164,6 +166,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   "flexShrink": 1,
                   "flexWrap": "wrap",
                   "justifyContent": "flex-end",
+                  "minHeight": 28,
                 },
                 undefined,
               ]
@@ -842,23 +845,20 @@ exports[`Asset renders the Asset correctly 1`] = `
                 Array [
                   Object {
                     "color": "#0A1427",
-                    "fontFamily": "Aktiv Grotesk App",
-                    "fontWeight": "400",
-                    "includeFontPadding": false,
+                    "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
                       "color": "#0A1427",
-                      "fontFamily": "Aktiv Grotesk App",
-                      "fontWeight": "600",
-                      "includeFontPadding": false,
+                      "fontFamily": "EuclidCircularB-Medium",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
                         "color": "#0A1427",
-                        "fontSize": 34,
+                        "fontSize": 36,
+                        "lineHeight": 54,
                         "textAlign": "center",
                       },
                       undefined,
@@ -885,16 +885,14 @@ exports[`Asset renders the Asset correctly 1`] = `
                 Array [
                   Object {
                     "color": "#0A1427",
-                    "fontFamily": "Aktiv Grotesk App",
-                    "fontWeight": "400",
-                    "includeFontPadding": false,
+                    "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
                       "color": "#8B939E",
                       "fontSize": 12,
-                      "marginTop": 5,
+                      "lineHeight": 18,
                       "textAlign": "center",
                     },
                     undefined,
@@ -1043,9 +1041,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   Array [
                     Object {
                       "color": "#0A1427",
-                      "fontFamily": "Aktiv Grotesk App",
-                      "fontWeight": "400",
-                      "includeFontPadding": false,
+                      "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
@@ -1163,9 +1159,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   Array [
                     Object {
                       "color": "#0A1427",
-                      "fontFamily": "Aktiv Grotesk App",
-                      "fontWeight": "400",
-                      "includeFontPadding": false,
+                      "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
@@ -1283,9 +1277,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   Array [
                     Object {
                       "color": "#0A1427",
-                      "fontFamily": "Aktiv Grotesk App",
-                      "fontWeight": "400",
-                      "includeFontPadding": false,
+                      "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
@@ -1556,37 +1548,27 @@ exports[`Asset renders the Asset correctly 1`] = `
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontFamily": "Aktiv Grotesk App",
-                                "fontWeight": "400",
-                                "includeFontPadding": false,
+                                "fontFamily": "EuclidCircularB-Regular",
                                 "textAlignVertical": "center",
                               },
                               Array [
                                 Object {
                                   "color": "#0A1427",
-                                  "fontFamily": "Aktiv Grotesk App",
-                                  "fontWeight": "600",
-                                  "includeFontPadding": false,
+                                  "fontFamily": "EuclidCircularB-Medium",
                                   "textAlignVertical": "center",
                                 },
                                 Array [
                                   Object {
                                     "fontSize": 18,
-                                    "fontWeight": "700",
                                     "lineHeight": 28,
                                   },
-                                  Array [
-                                    Object {
-                                      "fontFamily": "Aktiv Grotesk App",
-                                    },
-                                    Object {},
-                                  ],
+                                  Object {},
                                 ],
                               ],
                             ]
                           }
                         >
-                          receive
+                          Receive
                         </Text>
                       </View>
                     </View>
@@ -1995,15 +1977,14 @@ exports[`Asset renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "400",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
                                 "color": "#007AFF",
                                 "fontSize": 16,
+                                "lineHeight": 24,
                               },
                               undefined,
                             ],
@@ -2018,14 +1999,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "Aktiv Grotesk App",
-                            "fontWeight": "400",
-                            "includeFontPadding": false,
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "fontSize": 18,
+                              "lineHeight": 28,
                             },
                             undefined,
                           ],
@@ -2096,8 +2076,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                           "marginTop": 0,
                           "opacity": 1,
                           "paddingBottom": 0,
-                          "paddingLeft": 50,
-                          "paddingRight": 50,
+                          "paddingLeft": 30,
+                          "paddingRight": 30,
                           "paddingTop": 0,
                           "shadowColor": "rgba(0,0,0,.12)",
                           "shadowOffset": Object {
@@ -2115,17 +2095,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "400",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontFamily": "Aktiv Grotesk App",
-                                "fontWeight": "600",
-                                "includeFontPadding": false,
+                                "fontFamily": "EuclidCircularB-Medium",
                                 "textAlignVertical": "center",
                               },
                               Array [
@@ -2285,14 +2261,17 @@ exports[`Asset renders the Asset correctly 1`] = `
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "Aktiv Grotesk App",
-                            "fontWeight": "400",
-                            "includeFontPadding": false,
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
-                          Object {
-                            "color": "#8B939E",
-                          },
+                          Array [
+                            Object {
+                              "color": "#8B939E",
+                              "fontSize": 14,
+                              "lineHeight": 22,
+                            },
+                            undefined,
+                          ],
                         ]
                       }
                     >
@@ -2680,31 +2659,21 @@ exports[`Asset renders the Asset correctly 1`] = `
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontFamily": "Aktiv Grotesk App",
-                                "fontWeight": "400",
-                                "includeFontPadding": false,
+                                "fontFamily": "EuclidCircularB-Regular",
                                 "textAlignVertical": "center",
                               },
                               Array [
                                 Object {
                                   "color": "#0A1427",
-                                  "fontFamily": "Aktiv Grotesk App",
-                                  "fontWeight": "600",
-                                  "includeFontPadding": false,
+                                  "fontFamily": "EuclidCircularB-Medium",
                                   "textAlignVertical": "center",
                                 },
                                 Array [
                                   Object {
                                     "fontSize": 18,
-                                    "fontWeight": "700",
                                     "lineHeight": 28,
                                   },
-                                  Array [
-                                    Object {
-                                      "fontFamily": "Aktiv Grotesk App",
-                                    },
-                                    Object {},
-                                  ],
+                                  Object {},
                                 ],
                               ],
                             ]
@@ -2807,9 +2776,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                     Array [
                       Object {
                         "color": "#0A1427",
-                        "fontFamily": "Aktiv Grotesk App",
-                        "fontWeight": "400",
-                        "includeFontPadding": false,
+                        "fontFamily": "EuclidCircularB-Regular",
                         "textAlignVertical": "center",
                       },
                       Array [
@@ -2817,12 +2784,12 @@ exports[`Asset renders the Asset correctly 1`] = `
                           "color": "#8B939E",
                           "flexWrap": "wrap",
                           "fontSize": 16,
+                          "lineHeight": 24,
                           "marginBottom": 5,
                           "textAlign": "left",
                         },
                         Array [
                           Object {
-                            "lineHeight": 20,
                             "paddingBottom": 80,
                           },
                           undefined,
@@ -2962,14 +2929,17 @@ exports[`Asset renders the Asset correctly 1`] = `
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "Aktiv Grotesk App",
-                            "fontWeight": "400",
-                            "includeFontPadding": false,
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
-                          Object {
-                            "color": "#8B939E",
-                          },
+                          Array [
+                            Object {
+                              "color": "#8B939E",
+                              "fontSize": 14,
+                              "lineHeight": 22,
+                            },
+                            undefined,
+                          ],
                         ]
                       }
                     >

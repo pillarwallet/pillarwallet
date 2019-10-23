@@ -19,6 +19,7 @@
 */
 
 import debounce from 'lodash.debounce';
+import isEmpty from 'lodash.isempty';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
@@ -341,6 +342,8 @@ export const stopListeningOnOpenNotificationAction = () => {
 
 export const startListeningChatWebSocketAction = () => {
   return async (dispatch: Function, getState: Function) => {
+    const { session: { data: { isOnline } } } = getState();
+    if (!isOnline) return;
     const chatWebSocket = chat.getWebSocketInstance();
     await chatWebSocket.listen();
     chatWebSocket.onOpen();
@@ -383,7 +386,7 @@ export const startListeningChatWebSocketAction = () => {
           });
         }
       }
-      if (typeof receivedSignalMessage !== 'undefined') {
+      if (!isEmpty(receivedSignalMessage)) {
         const messageTag = Array.isArray(messageRequest.headers)
           ? messageRequest.headers.find(entry => entry.match(/message-tag/g)).split(':')[1]
           : '';

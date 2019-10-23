@@ -37,6 +37,7 @@ import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Toast from 'components/Toast';
 
 // constants
 import {
@@ -77,7 +78,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { activeAccountSelector } from 'selectors';
 
 // utils
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors, spacing, fontStyles } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { getAccountAddress } from 'utils/accounts';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -118,6 +119,7 @@ type Props = {
   activeAccount: Account,
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
+  isOnline: boolean,
 };
 
 type State = {
@@ -145,9 +147,8 @@ const WalletConnectWrapper = styled.View`
 
 const ListHeader = styled(MediumText)`
   color: ${baseColors.blueYonder};
-  font-size: 14px;
-  line-height: 17px;
-  margin: ${spacing.mediumLarge}px ${spacing.large}px;
+  ${fontStyles.regular};
+  margin: ${spacing.medium}px ${spacing.large}px ${spacing.small}px;
 `;
 
 const BadgesWrapper = styled.View`
@@ -243,9 +244,18 @@ class HomeScreen extends React.Component<Props, State> {
     this.setState({ activeTab });
   };
 
-  openQRScanner = () => this.setState({
-    isScanning: true,
-  });
+  openQRScanner = () => {
+    const { isOnline } = this.props;
+    if (!isOnline) {
+      Toast.show({
+        message: 'Cannot use Connect while offline',
+        type: 'warning',
+        title: 'Warning',
+      });
+      return;
+    }
+    this.setState({ isScanning: true });
+  };
 
   closeQRScanner = () => this.setState({
     isScanning: false,
@@ -471,7 +481,7 @@ class HomeScreen extends React.Component<Props, State> {
             tabs={activityFeedTabs}
             activeTab={activeTab}
             hideTabs
-            initialNumToRender={6}
+            initialNumToRender={8}
             wrapperStyle={{ flexGrow: 1, opacity: tabIsChanging ? 0.5 : 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
           />
@@ -495,6 +505,7 @@ const mapStateToProps = ({
   badges: { data: badges },
   walletConnect: { connectors, pendingConnector },
   accounts: { data: accounts },
+  session: { data: { isOnline } },
 }) => ({
   contacts,
   user,
@@ -505,6 +516,7 @@ const mapStateToProps = ({
   pendingConnector,
   contactsSmartAddresses,
   accounts,
+  isOnline,
 });
 
 const structuredSelector = createStructuredSelector({

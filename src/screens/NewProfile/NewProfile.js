@@ -27,7 +27,7 @@ import debounce from 'lodash.debounce';
 
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText, BoldText, Paragraph, TextLink } from 'components/Typography';
+import { BaseText, MediumText, Paragraph, TextLink } from 'components/Typography';
 import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
@@ -37,7 +37,7 @@ import Checkbox from 'components/Checkbox';
 import { NextFooter } from 'components/Layout/NextFooter';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 
-import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
@@ -56,10 +56,8 @@ const UsernameWrapper = styled(Wrapper)`
   top: 2px;
 `;
 
-const Text = styled(BoldText)`
-  line-height: ${fontSizes.large};
-  font-size: ${fontSizes.large};
-  font-weight: ${fontWeights.bold};
+const Text = styled(MediumText)`
+  ${fontStyles.big};
   width: 100%;
   text-align: center;
   max-width: 230px;
@@ -76,14 +74,12 @@ const StyledWrapper = styled.View`
 `;
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: 20px;
+  ${fontStyles.regular};
   color: ${baseColors.coolGrey};
 `;
 
 const StyledTextLink = styled(TextLink)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: 20px;
+  ${fontStyles.regular};
   color: ${baseColors.rockBlue};
 `;
 
@@ -310,7 +306,7 @@ class NewProfile extends React.Component<Props, State> {
           diameter={PROFILE_IMAGE_WIDTH}
           style={{ marginBottom: 47 }}
           userName={apiUser.username}
-          initialsSize={fontSizes.extraGiant}
+          initialsSize={48}
         />
         <UsernameWrapper>
           <Text>Welcome back,</Text>

@@ -23,11 +23,8 @@ import { Sentry } from 'react-native-sentry';
 
 function Storage(name: string, opts: ?Object = {}) {
   this.name = name;
-  this.opts = {
-    auto_compaction: true,
-    ...opts,
-  };
-  this.db = new PouchDB(name, opts);
+  this.opts = { ...opts };
+  this.db = new PouchDB(this.name, this.opts);
 }
 
 Storage.prototype.get = function (id: string) {

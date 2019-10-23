@@ -37,7 +37,7 @@ import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 
 // components
-import { BaseText, BoldText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
@@ -45,7 +45,7 @@ import ProfileImage from 'components/ProfileImage';
 import Toast from 'components/Toast';
 
 // utils
-import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { spacing, baseColors, fontSizes, fontStyles } from 'utils/variables';
 import {
   formatFullAmount,
   noop,
@@ -108,6 +108,7 @@ type Props = {
   getRef?: () => Object,
   getScrollOffset?: (number) => ScrollToProps,
   getMaxScrollOffset?: (number) => number,
+  accounts: Accounts,
 }
 
 type State = {
@@ -150,9 +151,8 @@ const EventRow = styled.View`
   flex-wrap: wrap;
 `;
 
-const EventBodyTitle = styled(BaseText)`
-  font-size: ${fontSizes.large}px;
-  font-weight: ${fontWeights.medium};
+const EventBodyTitle = styled(MediumText)`
+  ${fontStyles.big};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   margin: 0 10px 2px;
   text-align: center;
@@ -296,6 +296,7 @@ class EventDetails extends React.Component<Props, State> {
       txNotes,
       assets,
       supportedAssets,
+      accounts,
     } = this.props;
 
     if (eventType === TRANSACTION_EVENT) {
@@ -337,7 +338,7 @@ class EventDetails extends React.Component<Props, State> {
       const relatedAddress = isReceived ? from : to;
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
-      let relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || relatedAddress;
+      let relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type, accounts) || relatedAddress;
       if (addressesEqual(to, from)) {
         relatedUserTitle = 'My account';
       }
@@ -392,7 +393,7 @@ class EventDetails extends React.Component<Props, State> {
               showProfileImage={showProfileImage}
               userName={relatedUserTitle}
               diameter={40}
-              initialsSize={fontSizes.extraSmall}
+              initialsSize={fontSizes.regular}
               style={{ marginBottom: 4 }}
               onPress={() => this.goToProfile(relatedUser)}
               noShadow
@@ -404,7 +405,7 @@ class EventDetails extends React.Component<Props, State> {
           {listSettledAssets &&
           <ListItemUnderlined
             label="ASSETS"
-            value={extra.map(item => <BoldText key={item.hash}> {item.value} {item.symbol}</BoldText>)}
+            value={extra.map(item => <MediumText key={item.hash}> {item.value} {item.symbol}</MediumText>)}
           />
           }
           {showFeeBlock &&
@@ -448,7 +449,7 @@ class EventDetails extends React.Component<Props, State> {
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
-      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
+      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type, accounts) || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
         : `${to.slice(0, 7)}…${to.slice(-7)}`);
       const relatedUserProfileImage = relatedUser.profileImage || null;
@@ -465,7 +466,7 @@ class EventDetails extends React.Component<Props, State> {
               showProfileImage={showProfileImage}
               userName={relatedUserTitle}
               diameter={40}
-              initialsSize={fontSizes.extraSmall}
+              initialsSize={fontSizes.regular}
               style={{ marginBottom: 4 }}
               onPress={() => this.goToProfile(relatedUser)}
               noShadow
@@ -503,7 +504,7 @@ class EventDetails extends React.Component<Props, State> {
             uri={userData.profileImage}
             userName={userData.username}
             diameter={40}
-            initialsSize={fontSizes.extraSmall}
+            initialsSize={fontSizes.regular}
             onPress={() => this.goToProfile(userData)}
             noShadow
             borderWidth={0}
@@ -717,6 +718,7 @@ const mapStateToProps = ({
   txNotes,
   contactsSmartAddresses,
   inactiveAccounts: getInactiveUserAccounts(accounts),
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({

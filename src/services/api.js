@@ -338,7 +338,16 @@ SDKWrapper.prototype.validateAddress = function (blockchainAddress: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
     .then(({ data }) => data)
-    .catch(() => ({}));
+    .catch(error => {
+      Sentry.captureMessage('Unable to restore user wallet', {
+        level: 'info',
+        extra: {
+          blockchainAddress,
+          error,
+        },
+      });
+      return {};
+    });
 };
 
 SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
