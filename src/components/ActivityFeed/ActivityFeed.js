@@ -213,7 +213,7 @@ type State = {
 
 const PPNIcon = require('assets/icons/icon_PPN.png');
 const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
-const smartWalletIcon = require('assets/icons/icon_smart-wallet.png');
+const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 const walletIcon = require('assets/icons/icon_wallet.png');
 
 class ActivityFeed extends React.Component<Props, State> {
