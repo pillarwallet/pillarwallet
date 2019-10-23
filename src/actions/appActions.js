@@ -70,6 +70,7 @@ import {
   INITIAL_FEATURE_FLAGS,
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
+import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 
 import { getWalletFromStorage } from 'utils/wallet';
 
@@ -169,6 +170,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { featureFlags = INITIAL_FEATURE_FLAGS } = await storage.get('featureFlags');
       dispatch({ type: SET_FEATURE_FLAGS, payload: featureFlags });
 
+      const { userEvents = [] } = await storage.get('userEvents');
+      dispatch({ type: SET_USER_EVENTS, payload: userEvents });
+
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
         type: UPDATE_PIN_ATTEMPTS,
@@ -205,6 +209,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       return;
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
+
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };

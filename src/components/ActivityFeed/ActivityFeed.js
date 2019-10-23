@@ -75,6 +75,7 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
 
 // selectors
 import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
@@ -213,6 +214,7 @@ type State = {
 const PPNIcon = require('assets/icons/icon_PPN.png');
 const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
 const smartWalletIcon = require('assets/icons/icon_smart-wallet.png');
+const walletIcon = require('assets/icons/icon_wallet.png');
 
 class ActivityFeed extends React.Component<Props, State> {
   eventDetailScrollViewRef: ?Object;
@@ -435,7 +437,6 @@ class ActivityFeed extends React.Component<Props, State> {
             }, type, notificationStatus)}
           label={nameOrAddress}
           subtext={subtext}
-          // avatarUrl={itemImage}
           navigateToProfile={isContact ? navigateToContact : null}
           itemValue={itemValue}
           itemStatusIcon={itemStatusIcon}
@@ -444,7 +445,6 @@ class ActivityFeed extends React.Component<Props, State> {
           valueColor={isReceived ? baseColors.jadeGreen : baseColors.scarlet}
           imageUpdateTimeStamp={contact.lastUpdateTime || 0}
           customAddon={customAddon}
-          // itemImageSource={itemImageSource}
           diameter={56}
           {...imageProps}
         />
@@ -487,6 +487,23 @@ class ActivityFeed extends React.Component<Props, State> {
         username: notification.username,
         profileImage: notification.avatar,
       });
+    }
+
+    if (type === USER_EVENT) {
+      const imageProps = {};
+      if (notification.subType === PPN_INIT_EVENT) {
+        imageProps.itemImageSource = PPNIcon;
+      } else if (notification.subType === WALLET_CREATE_EVENT) {
+        imageProps.iconSource = walletIcon;
+      }
+      return (
+        <ListItemWithImage
+          label={notification.eventTitle}
+          diameter={56}
+          actionLabel={notification.eventSubtitle}
+          {...imageProps}
+        />
+      );
     }
 
     return (

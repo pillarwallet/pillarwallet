@@ -132,6 +132,7 @@ import {
   isCaseInsensitiveMatch,
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
+import { getWalletsCreationEventsAction } from './userEventsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -506,6 +507,8 @@ export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions:
       });
       return Promise.reject();
     }
+
+    dispatch(getWalletsCreationEventsAction());
 
     const { address } = accounts[0];
     const addressedTransferTransactions = transferTransactions.map(transaction => {

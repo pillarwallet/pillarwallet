@@ -77,6 +77,7 @@ type Props = {
   diameter?: number,
   iconColor?: string,
   hasShadow?: boolean,
+  iconSource?: string,
 }
 
 type ImageWrapperProps = {
@@ -164,6 +165,11 @@ const IconCircle = styled.View`
 const ItemIcon = styled(Icon)`
   font-size: ${props => props.fontSize || 48}px;
   color: ${props => props.iconColor || baseColors.electricBlue};
+`;
+
+const IconImage = styled(CachedImage)`
+  width: 24px;
+  height: 24px;
 `;
 
 const TokenImage = styled(CachedImage)`
@@ -310,6 +316,7 @@ const ItemImage = (props: Props) => {
     itemImageSource,
     diameter,
     iconColor,
+    iconSource,
   } = props;
 
   if (iconName) {
@@ -319,6 +326,15 @@ const ItemImage = (props: Props) => {
       </IconCircle>
     );
   }
+
+  if (iconSource) {
+    return (
+      <IconCircle diameter={diameter}>
+        <IconImage source={iconSource} />
+      </IconCircle>
+    );
+  }
+
   if (customImage) return customImage;
 
   if (itemImageUrl) {

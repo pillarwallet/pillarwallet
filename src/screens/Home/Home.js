@@ -88,6 +88,7 @@ import type { Account, Accounts } from 'models/Account';
 import type { Badges } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
+import type { UserEvent } from 'models/userEvent';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -120,6 +121,7 @@ type Props = {
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
   isOnline: boolean,
+  userEvents: UserEvent[],
 };
 
 type State = {
@@ -316,6 +318,7 @@ class HomeScreen extends React.Component<Props, State> {
       connectors,
       contactsSmartAddresses,
       accounts,
+      userEvents,
     } = this.props;
 
     const {
@@ -352,7 +355,7 @@ class HomeScreen extends React.Component<Props, State> {
         tabImageNormal: allIconNormal,
         tabImageActive: allIconActive,
         onPress: () => this.setActiveTab(ALL),
-        data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts, ...invitations],
+        data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts, ...invitations, ...userEvents],
         emptyState: {
           title: 'Make your first step',
           bodyText: 'Your activity will appear here.',
@@ -506,6 +509,7 @@ const mapStateToProps = ({
   walletConnect: { connectors, pendingConnector },
   accounts: { data: accounts },
   session: { data: { isOnline } },
+  userEvents: { data: userEvents },
 }) => ({
   contacts,
   user,
@@ -517,6 +521,7 @@ const mapStateToProps = ({
   contactsSmartAddresses,
   accounts,
   isOnline,
+  userEvents,
 });
 
 const structuredSelector = createStructuredSelector({

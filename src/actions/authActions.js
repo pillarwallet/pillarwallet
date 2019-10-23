@@ -74,6 +74,7 @@ import SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
+import { getWalletsCreationEventsAction } from './userEventsActions';
 
 
 const Crashlytics = firebase.crashlytics();
@@ -257,6 +258,8 @@ export const loginAction = (
        * TODO: remove fetching from ethplorer when BCX is fixed or BCX2 is released
        */
       dispatch(restoreTransactionHistoryAction(getActiveAccountAddress(accounts), user.walletId));
+
+      dispatch(getWalletsCreationEventsAction());
 
       navigate(navigateToAppAction);
     } catch (e) {
