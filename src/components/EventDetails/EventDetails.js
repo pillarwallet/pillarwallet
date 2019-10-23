@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
+import { SafeAreaView } from 'react-navigation';
 import { Linking, Dimensions, ScrollView, Clipboard } from 'react-native';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
@@ -124,6 +125,7 @@ const ContentWrapper = styled.View`
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   overflow: hidden;
+  background-color: ${baseColors.snowWhite};
 `;
 
 const EventBody = styled.View`
@@ -708,7 +710,9 @@ class EventDetails extends React.Component<Props, State> {
         >
           {this.renderEventBody(eventType)}
         </ScrollView>
-        {this.renderEventButtons(eventType, eventStatus)}
+        <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
+          {this.renderEventButtons(eventType, eventStatus)}
+        </SafeAreaView>
       </ContentWrapper>
     );
   }
