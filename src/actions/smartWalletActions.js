@@ -269,7 +269,7 @@ export const deploySmartWalletAction = () => {
     await dispatch(fetchGasInfoAction());
     const gasInfo = get(getState(), 'history.gasInfo', {});
     const deployEstimateFee = await smartWalletService.estimateAccountDeployment(gasInfo);
-    const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee));
+    const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
     const balances = accountBalancesSelector(getState());
     const etherBalanceBN = new BigNumber(getBalance(balances, ETH));
     if (etherBalanceBN.lt(deployEstimateFeeBN)) {

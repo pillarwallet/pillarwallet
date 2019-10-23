@@ -24,8 +24,8 @@ import { SafeAreaView } from 'react-navigation';
 import merge from 'lodash.merge';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { BoldText, BaseText } from 'components/Typography';
+import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
+import { MediumText, BaseText } from 'components/Typography';
 
 type ToastOptions = {
   autoClose?: boolean,
@@ -111,6 +111,17 @@ const IconHolder = styled.View`
   padding-top: 2px;
 `;
 
+const ToastTitle = styled(MediumText)`
+  ${fontStyles.regular};
+  color: ${baseColors.slateBlack};
+  margin-bottom: 2px;
+`;
+
+const ToastBody = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${baseColors.darkGray};
+`;
+
 export default class Toast extends React.Component<{}, State> {
   timeout: TimeoutID;
 
@@ -192,10 +203,8 @@ export default class Toast extends React.Component<{}, State> {
 
     return (
       <View>
-        {!!title && <BoldText>{title}</BoldText>}
-        <BaseText style={{ color: baseColors.darkGray }}>
-          {message}
-        </BaseText>
+        {!!title && <ToastTitle>{title}</ToastTitle>}
+        <ToastBody>{message}</ToastBody>
       </View>
     );
   }
@@ -239,7 +248,7 @@ export default class Toast extends React.Component<{}, State> {
                 name={typeIcons[toastOptions.type]}
                 style={{
                   color: typeColors[toastOptions.type],
-                  fontSize: fontSizes.extraLarge,
+                  fontSize: fontSizes.large,
                 }}
               />
             </IconHolder>

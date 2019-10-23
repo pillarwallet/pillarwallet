@@ -82,10 +82,6 @@ const InputSwitchTemplate = (locals: Object) => {
     onChange: locals.onChange,
     value: locals.value,
     keyboardType: config.keyboardType || 'default',
-    style: {
-      fontSize: 24,
-      lineHeight: 0,
-    },
     placeholder: config.placeholder || '',
     fieldName,
     onBlur,

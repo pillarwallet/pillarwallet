@@ -61,6 +61,7 @@ import { RESET_SMART_WALLET } from 'constants/smartWalletConstants';
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
+import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // utils
 import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
@@ -189,6 +190,14 @@ const finishRegistration = async ({
 
   dispatch(fetchBadgesAction(false));
 
+  // user might be already joined to beta program before
+  if (isImported && userInfo.betaProgramParticipant) {
+    await dispatch(setUserJoinedBetaAction(true, true)); // 2nd true value sets to ignore toast success message
+  } else {
+    // we don't want to track by default, we will use this only when user applies for beta
+    dispatch(setFirebaseAnalyticsCollectionEnabled(false));
+  }
+
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
   if (smartWalletFeatureEnabled) {
     // create smart wallet account only for new wallets
@@ -260,6 +269,7 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] });
     dispatch({ type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] });
     dispatch({ type: SET_USER_SETTINGS, payload: {} });
+    dispatch({ type: SET_FEATURE_FLAGS, payload: {} });
 
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
@@ -349,14 +359,6 @@ export const registerWalletAction = () => {
       privateKey: wallet.privateKey,
       isImported,
     });
-
-    // user might be already joined to beta program before
-    if (userInfo.betaProgramParticipant) {
-      dispatch(setUserJoinedBetaAction(true, true)); // 2nd true value sets to ignore toast success message
-    } else {
-      // we don't want to track by default, we will use this only when user applies for beta
-      dispatch(setFirebaseAnalyticsCollectionEnabled(false));
-    }
 
     // STEP 6: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;

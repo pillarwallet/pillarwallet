@@ -31,7 +31,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import { LabelBadge } from 'components/LabelBadge';
 
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { ASSETS, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -76,13 +76,12 @@ const CustomWrapper = styled.View`
 
 const Title = styled(BoldText)`
   color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rJumbo}px;
+  ${fontStyles.rJumbo};
 `;
 
 const BodyText = styled(MediumText)`
   color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rMedium}px;
-  line-height: ${fontSizes.rExtraLarger}px;
+  ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
 `;
 
@@ -99,15 +98,14 @@ const ContentWrapper = styled.View`
   flex-wrap: wrap;
 `;
 
-const Label = styled(BoldText)`
+const Label = styled(MediumText)`
   color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rLarge}px;
+  ${fontStyles.rLarge};
 `;
 
-const Subtext = styled(BoldText)`
+const Subtext = styled(MediumText)`
   color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rMedium}px;
-  line-height: ${fontSizes.rExtraLarger}px;
+  ${fontStyles.rBig};
   margin-top: ${responsiveSize(10)}px;
 `;
 

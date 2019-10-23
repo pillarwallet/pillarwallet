@@ -170,7 +170,7 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
         userJoinedBeta,
       },
     });
-    dispatch(fetchFeatureFlagsAction());
+    await dispatch(fetchFeatureFlagsAction());
     if (ignoreSuccessToast) return;
     Toast.show({
       message,

@@ -78,7 +78,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { activeAccountSelector } from 'selectors';
 
 // utils
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors, spacing, fontStyles } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { getAccountAddress } from 'utils/accounts';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -147,9 +147,8 @@ const WalletConnectWrapper = styled.View`
 
 const ListHeader = styled(MediumText)`
   color: ${baseColors.blueYonder};
-  font-size: 14px;
-  line-height: 17px;
-  margin: ${spacing.mediumLarge}px ${spacing.large}px;
+  ${fontStyles.regular};
+  margin: ${spacing.medium}px ${spacing.large}px ${spacing.small}px;
 `;
 
 const BadgesWrapper = styled.View`
@@ -482,7 +481,7 @@ class HomeScreen extends React.Component<Props, State> {
             tabs={activityFeedTabs}
             activeTab={activeTab}
             hideTabs
-            initialNumToRender={6}
+            initialNumToRender={8}
             wrapperStyle={{ flexGrow: 1, opacity: tabIsChanging ? 0.5 : 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
           />

@@ -60,7 +60,7 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
-import { findKeyBasedAccount } from 'utils/accounts';
+import { findKeyBasedAccount, getAccountName } from 'utils/accounts';
 import { baseColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -175,6 +175,7 @@ class AssetsScreen extends React.Component<Props, State> {
       activeAccount,
       availableStake,
       PPNTransactions,
+      accounts,
     } = this.props;
 
     const { type: walletType } = activeAccount;
@@ -184,7 +185,7 @@ class AssetsScreen extends React.Component<Props, State> {
     switch (activeBNetworkId) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
         return {
-          label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Legacy wallet' : 'Smart wallet',
+          label: getAccountName(walletType, accounts),
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
           customHeaderProps: {

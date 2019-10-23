@@ -21,11 +21,11 @@ import * as React from 'react';
 import { StatusBar, View, TouchableOpacity } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import { connect } from 'react-redux';
 import ProfileImage from 'components/ProfileImage';
@@ -83,13 +83,10 @@ const HeaderRow = styled.View`
 
 const HeaderProfileImage = styled(ProfileImage)``;
 
-const HeaderTitle = styled(BaseText)`
-  line-height: ${fontSizes.extraSmall}px;
-  font-size: ${fontSizes.extraSmall}px;
+const HeaderTitle = styled(MediumText)`
+  ${fontStyles.regular};
   color: ${props => props.theme.color || UIColors.defaultTextColor};
-  font-weight: 500;
   text-align: ${props => props.centerText ? 'center' : 'left'};
-  max-height: 28px;
   margin-top: 2px;
 `;
 
@@ -105,6 +102,7 @@ const CenterItems = styled.View`
   align-items: center;
   justify-content: center;
   flex-direction: row;
+  min-height: 28px;
 `;
 
 const LeftItems = styled.View`
@@ -113,6 +111,7 @@ const LeftItems = styled.View`
   justify-content: flex-start;
   flex-direction: row;
   flex-wrap: wrap;
+  min-height: 28px;
 `;
 
 const RightItems = styled.View`
@@ -121,6 +120,7 @@ const RightItems = styled.View`
   justify-content: flex-end;
   flex-direction: row;
   flex-wrap: wrap;
+  min-height: 28px;
 `;
 
 const BackIcon = styled(IconButton)`
@@ -160,8 +160,7 @@ const TextButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.regular}px;
   color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
 `;
 
@@ -263,7 +262,7 @@ class HeaderBlock extends React.Component<Props> {
                 icon="back"
                 color={theme.iconColor || UIColors.defaultNavigationColor}
                 onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
-                fontSize={fontSizes.extraLarge}
+                fontSize={fontSizes.large}
                 horizontalAlign="flex-start"
               />)
           }
@@ -291,7 +290,7 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.title) {
       return (
-        <View style={commonStyle} key={item.title}>
+        <View style={{ ...commonStyle, flexDirection: 'row', flexWrap: 'wrap' }} key={item.title}>
           <HeaderTitle
             theme={theme}
             style={item.color ? { color: item.color } : {}}
@@ -310,7 +309,7 @@ class HeaderBlock extends React.Component<Props> {
             icon={item.icon}
             color={item.color || theme.rightActionIconColor || UIColors.defaultNavigationColor}
             onPress={item.onPress}
-            fontSize={item.fontSize || fontSizes.extraLarge}
+            fontSize={item.fontSize || fontSizes.large}
             horizontalAlign="flex-start"
           />
           {!!item.indicator && <Indicator />}
@@ -350,7 +349,7 @@ class HeaderBlock extends React.Component<Props> {
             icon="close"
             color={baseColors.slateBlack}
             onPress={() => item.dismiss ? navigation.dismiss() : navigation.goBack()}
-            fontSize={fontSizes.extraSmall}
+            fontSize={fontSizes.regular}
             horizontalAlign="flex-end"
           />
         </View>

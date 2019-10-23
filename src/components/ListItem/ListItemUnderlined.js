@@ -19,8 +19,8 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
-import { BoldText, BaseText, TextLink } from 'components/Typography';
+import { baseColors, spacing, fontStyles } from 'utils/variables';
+import { TextLink, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
 type Props = {
@@ -40,16 +40,15 @@ const ItemWrapper = styled.View`
   width: 100%;
 `;
 
-const ItemLabel = styled(BaseText)`
+const ItemLabel = styled(MediumText)`
   text-align:center;
-  font-size: ${fontSizes.extraExtraSmall}px;
+  ${fontStyles.small};
   color: ${baseColors.darkGray};
-  font-weight: ${fontWeights.medium};
 `;
 
 const ItemValueHolder = styled.View`
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-end;
   width: 100%;
   min-height: 50px;
@@ -60,19 +59,19 @@ const ItemWrapperButton = styled.TouchableOpacity`
   margin-top: -10px;
 `;
 
-const ItemValue = styled(BoldText)`
-  font-size: ${fontSizes.large}px;
-  font-weight: ${fontWeights.bold};
-  margin-bottom: ${spacing.medium}px;
+const ItemValue = styled(MediumText)`
+  ${fontStyles.big};
   margin-top: ${props => props.spacedOut ? '8px' : '0'};
   padding-left: ${props => props.additionalMargin ? '10px' : 0};
   text-align: right;
   max-width: 230px;
+  margin-bottom: ${spacing.small}px;
 `;
 
 const Column = styled.View`
   flex-direction: column;
   align-items: flex-end;
+  justify-content: flex-end;
   padding-right: ${spacing.mediumLarge}px;
   border-bottom-width: 1px;
   border-color: ${baseColors.gallery};

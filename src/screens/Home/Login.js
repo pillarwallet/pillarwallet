@@ -26,7 +26,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 // components
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
-import { Paragraph } from 'components/Typography';
+import { Paragraph, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 
@@ -38,12 +38,7 @@ import { approveLoginAttemptAction } from 'actions/deepLinkActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
 // utils
-import {
-  baseColors,
-  fontWeights,
-  fontSizes,
-  spacing,
-} from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -59,12 +54,10 @@ type State = {
 const Description = styled(Paragraph)`
   text-align: center;
   padding-bottom: ${spacing.rhythm}px;
-  line-height: ${fontSizes.mediumLarge};
 `;
 
-const DescriptionWarning = styled(Description)`
-  font-size: ${fontSizes.small};
-  font-weight: ${fontWeights.bold};
+const DescriptionWarning = styled(MediumText)`
+  ${fontStyles.medium};
   color: ${baseColors.burningFire};
 `;
 

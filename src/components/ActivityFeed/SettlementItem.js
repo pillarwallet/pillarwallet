@@ -49,7 +49,7 @@ const ListWrapper = styled.View`
 `;
 
 const ItemValue = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.jadeGreen};
   text-align: right;
 `;
