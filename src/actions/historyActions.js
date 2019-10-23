@@ -36,13 +36,17 @@ import { ETH } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
+  checkIfSmartWalletAccount,
   getAccountAddress,
+  getAccountId,
   getActiveAccount,
   getActiveAccountAddress,
   getActiveAccountId,
   getActiveAccountWalletId,
 } from 'utils/accounts';
 import { addressesEqual } from 'utils/assets';
+import { mapHistoryFromSmartWalletTransactions } from 'utils/smartWallet';
+import smartWalletService from 'services/smartWallet';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
@@ -70,15 +74,30 @@ const afterHistoryUpdatedAction = () => {
 export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { accounts: { data: accounts } } = getState();
-    const accountId = getActiveAccountId(accounts);
-    const accountAddress = getActiveAccountAddress(accounts);
 
-    const history = await api.fetchHistory({
-      address1: accountAddress,
-      asset,
-      nbTx: TRANSACTIONS_HISTORY_STEP,
-      fromIndex,
-    });
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) return;
+    const accountId = getAccountId(activeAccount);
+    const accountAddress = getAccountAddress(activeAccount);
+    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
+
+    let history = [];
+
+    if (isSmartWalletAccount) {
+      const { assets: { data: assets, supportedAssets } } = getState();
+      // TODO: add last synced ID
+      const smartWalletTransactions = await smartWalletService.getAccountTransactions();
+      const assetsData = Object.keys(assets[accountAddress]).map(id => assets[id]);
+      history = mapHistoryFromSmartWalletTransactions(smartWalletTransactions, supportedAssets, assetsData);
+    } else {
+      history = await api.fetchHistory({
+        address1: accountAddress,
+        asset,
+        nbTx: TRANSACTIONS_HISTORY_STEP,
+        fromIndex,
+      });
+    }
+
     if (!history.length) return;
 
     const { history: { data: currentHistory } } = getState();

@@ -153,3 +153,13 @@ export const getAssetData = (
   || supportedAssetsData.find(({ symbol }: Asset) => symbol === assetSymbol)
   || {};
 };
+
+export const getAssetDataByAddress = (
+  assetsData: Asset[],
+  supportedAssetsData: Asset[],
+  assetAddress: string,
+): Asset | Object => {
+  return assetsData.find(({ address }: Asset) => isCaseInsensitiveMatch(address, assetAddress))
+  || supportedAssetsData.find(({ address }: Asset) => isCaseInsensitiveMatch(address, assetAddress))
+  || {};
+};

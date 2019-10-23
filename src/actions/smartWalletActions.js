@@ -43,7 +43,8 @@ import {
   ADD_SMART_WALLET_RECOVERY_AGENTS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   SMART_WALLET_DEPLOYMENT_ERRORS,
-  SET_SMART_WALLET_LAST_SYNCED_HASH,
+  SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
+  SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
   RESET_SMART_WALLET,
   START_SMART_WALLET_DEPLOYMENT,
   RESET_SMART_WALLET_DEPLOYMENT,
@@ -610,11 +611,11 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { lastSyncedHash },
+      smartWallet: { lastSyncedPaymentId },
     } = getState();
 
     const accountId = getActiveAccountId(accounts);
-    const payments = await smartWalletService.getAccountPayments(lastSyncedHash);
+    const payments = await smartWalletService.getAccountPayments(lastSyncedPaymentId);
 
     // filter out already stored payments
     const { history: { data: currentHistory } } = getState();
@@ -651,12 +652,12 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
     });
 
     if (transformedNewPayments.length) {
-      const newLastSyncedHash = transformedNewPayments[0].hash;
+      const newLastSyncedId = newOrUpdatedPayments[0].id;
       dispatch({
-        type: SET_SMART_WALLET_LAST_SYNCED_HASH,
-        payload: newLastSyncedHash,
+        type: SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
+        payload: newLastSyncedId,
       });
-      await dispatch(saveDbAction('smartWallet', { lastSyncedHash: newLastSyncedHash }));
+      await dispatch(saveDbAction('smartWallet', { lastSyncedPaymentId: newLastSyncedId }));
     }
 
     // combine with account history & save

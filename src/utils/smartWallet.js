@@ -17,15 +17,29 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import isEmpty from 'lodash.isempty';
+import get from 'lodash.get';
+import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
+import BigNumber from 'bignumber.js';
+
 import { SMART_WALLET_DEPLOYMENT_ERRORS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
+import {
+  TX_CONFIRMED_STATUS,
+  TX_PENDING_STATUS,
+} from 'constants/historyConstants';
 
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Transaction } from 'models/Transaction';
+import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 
 import { getActiveAccount } from './accounts';
+import { getAssetDataByAddress } from './assets';
+import { formatUnits } from './common';
+
+type IAccountTransaction = sdkInterfaces.IAccountTransaction;
 
 const getMessage = (
   status: ?string,
@@ -83,15 +97,52 @@ export const getSmartWalletStatus = (
   };
 };
 
-export function isConnectedToSmartAccount(connectedAccountRecord: ?Object) {
-  return connectedAccountRecord && Object.keys(connectedAccountRecord).length;
-}
+export const isConnectedToSmartAccount = (connectedAccountRecord: ?Object) => !isEmpty(connectedAccountRecord);
 
-export function getDeployErrorMessage(errorType: string) {
-  return {
-    title: 'Smart Wallet deployment failed',
-    message: errorType === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
-      ? 'You need to top up your Smart Account first'
-      : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow',
-  };
-}
+export const getDeployErrorMessage = (errorType: string) => ({
+  title: 'Smart Wallet deployment failed',
+  message: errorType === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
+    ? 'You need to top up your Smart Account first'
+    : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow',
+});
+
+const parseTransactionAddress = details => get(details, 'account.address') || get(details, 'address', '');
+
+export const mapHistoryFromSmartWalletTransactions = (
+  smartWalletTransactions: IAccountTransaction[],
+  supportedAssets: Asset[],
+  assets: Asset[],
+): Transaction[] => smartWalletTransactions
+  .map((transaction) => {
+    const {
+      hash,
+      from: fromDetails,
+      to: toDetails,
+      updatedAt: createdAt, // SDK does not provide createdAt, only updatedAt
+      state,
+      tokenRecipient,
+      tokenAddress,
+      value: rawValue,
+    } = transaction;
+    const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
+    const status = state === TRANSACTION_COMPLETED ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS;
+    const from = parseTransactionAddress(fromDetails);
+    const to = tokenRecipient || parseTransactionAddress(toDetails);
+    const value = new BigNumber(rawValue.toString());
+    let asset = 'ETH';
+    if (tokenAddress) {
+      const { symbol } = getAssetDataByAddress(assets, supportedAssets, tokenAddress);
+      if (symbol) asset = symbol;
+    }
+    return {
+      hash,
+      to,
+      from,
+      createdAt,
+      status,
+      asset,
+      value,
+    };
+  })
+  .filter(({ from, to }) => !isEmpty(from) && !isEmpty(to));
+

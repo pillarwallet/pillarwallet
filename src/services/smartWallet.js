@@ -24,6 +24,7 @@ import {
   createSdk,
   Sdk,
   sdkConstants,
+  sdkInterfaces,
 } from '@smartwallet/sdk';
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
@@ -275,17 +276,41 @@ class SmartWallet {
     return this.sdk.searchAccount({ address });
   }
 
-  async getAccountPayments(lastSyncedHash: ?string, page?: number = 0) {
+  /**
+   * SDK API call results are sorted descending by creation date
+   * lastSyncedId is used to determine whether this page was already fetched
+   */
+  async getAccountPayments(lastSyncedId: ?string, page?: number = 0) {
     if (!this.sdkInitialized) return [];
     const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
     if (!data) return [];
 
     const items = data.items || [];
-    const foundLastSyncedTx = lastSyncedHash
-      ? items.find(({ hash }) => hash === lastSyncedHash)
+    const foundLastSyncedTx = lastSyncedId
+      ? items.find(({ id }) => id === lastSyncedId)
       : null;
     if (data.nextPage && !foundLastSyncedTx) {
-      return [...items, ...(await this.getAccountPayments(lastSyncedHash, page + 1))];
+      return [...items, ...(await this.getAccountPayments(lastSyncedId, page + 1))];
+    }
+
+    return items;
+  }
+  /**
+   * SDK API call results are sorted descending by creation date
+   * lastSyncedId is used to determine whether this page was already fetched
+   */
+  async getAccountTransactions(lastSyncedId: ?string, page?: number = 0) {
+    if (!this.sdkInitialized) return [];
+    // make sure getConnectedAccountTransactions passed hash is empty string
+    const data = await this.sdk.getConnectedAccountTransactions('', page).catch(this.handleError);
+    if (!data) return [];
+
+    const items = data.items || [];
+    const foundLastSyncedTx = lastSyncedId
+      ? items.find(({ id }) => id === lastSyncedId)
+      : null;
+    if (data.nextPage && !foundLastSyncedTx) {
+      return [...items, ...(await this.getAccountTransactions(lastSyncedId, page + 1))];
     }
 
     return items;
