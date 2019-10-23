@@ -21,10 +21,10 @@ import * as React from 'react';
 import { Dimensions } from 'react-native';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
-import { BoldText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
-import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
+import { spacing, fontTrackings, baseColors, fontStyles } from 'utils/variables';
 import AssetInfo from './AssetInfo';
 
 type Props = {
@@ -92,10 +92,9 @@ const NameWrapper = styled.View`
   padding-right: ${spacing.small}px;
 `;
 
-const Name = styled(BoldText)`
-  font-size: ${fontSizes.small};
+const Name = styled(MediumText)`
+  ${fontStyles.medium};
   letter-spacing: ${fontTrackings.small};
-  line-height: ${fontSizes.medium};
   color: ${baseColors.slateBlack};
   text-align-vertical: center;
 `;

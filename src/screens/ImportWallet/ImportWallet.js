@@ -38,13 +38,13 @@ import {
 } from 'constants/walletConstants';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText, BoldText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Tabs from 'components/Tabs';
 import Button from 'components/Button';
 import Icon from 'components/Icon';
-import { fontSizes, baseColors, spacing } from 'utils/variables';
+import { fontSizes, baseColors, spacing, fontStyles } from 'utils/variables';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -114,10 +114,10 @@ const Row = styled.View`
 `;
 
 const BackupWordText = styled(BaseText)`
+  ${fontStyles.regular};
   margin: 4px 2px;
   align-items: flex-start;
   color: ${baseColors.mediumGray};
-  font-size: ${fontSizes.extraSmall}px;
 `;
 
 const ScannerButton = styled.TouchableOpacity`
@@ -128,7 +128,7 @@ const ScannerButton = styled.TouchableOpacity`
 
 const ButtonText = styled(BaseText)`
   color: ${baseColors.electricBlue};
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.medium}px;
 `;
 
 const ButtonIcon = styled(CachedImage)`
@@ -143,14 +143,14 @@ const ButtonInner = styled.View`
   align-items: center;
 `;
 
-const ButtonLabel = styled(BoldText)`
+const ButtonLabel = styled(MediumText)`
   color: ${props => props.blue ? baseColors.electricBlue : baseColors.white};
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
   margin-bottom: 2px;
 `;
 
 const ButtonIconArrow = styled(Icon)`
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
   color: ${props => props.blue ? baseColors.electricBlue : baseColors.white};
   ${props => props.isOnLeft ? 'margin-right: 5px;' : 'margin-left: 5px;'}
   ${props => props.flip ? 'transform: rotate(180deg);' : ''}

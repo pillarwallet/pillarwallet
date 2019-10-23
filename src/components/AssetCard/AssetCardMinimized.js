@@ -22,10 +22,10 @@ import { TouchableOpacity, Animated, Easing, Dimensions } from 'react-native';
 import isEqual from 'lodash.isequal';
 import isEqualWith from 'lodash.isequalwith';
 import styled from 'styled-components/native';
-import { LightText, BaseText, BoldText } from 'components/Typography';
+import { LightText, BaseText, MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
-import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors, fontStyles, lineHeights } from 'utils/variables';
 import Icon from 'components/Icon';
 import Toast from 'components/Toast';
 
@@ -122,23 +122,20 @@ const AmountWrapper = styled.View`
   margin-top: ${props => props.extraSmall ? 4 : spacing.rhythm / 2}px;
 `;
 
-const Amount = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.small}px;
+const Amount = styled(MediumText)`
+  ${fontStyles.medium};
   color: ${baseColors.slateBlack};
   text-align: left;
 `;
 
 const FiatAmount = styled(LightText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  line-height: ${fontSizes.extraExtraSmall}px;
+  ${fontStyles.medium};
   color: ${baseColors.darkGray};
   text-align: left;
 `;
 
 const Disclaimer = styled(LightText)`
-  font-size: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
-  line-height: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
+  ${props => props.smallScreen ? fontStyles.small : fontStyles.regular};
   color: ${baseColors.burningFire};
   text-align: left;
 `;
@@ -153,13 +150,20 @@ const IconCircle = styled.View`
   justify-content: center;
 `;
 
-const Name = styled(BaseText)`
-  font-size: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
+const nameStyle = (props) => `
+  font-size: ${props.smallScreen ? fontSizes.small : fontSizes.regular}px;
+  line-height: ${props.smallScreen ? lineHeights.small : lineHeights.regular}px;
   letter-spacing: ${fontTrackings.small};
-  line-height: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
-  ${({ center }) => center ? 'width: 100%; text-align: center;' : ''}
-  font-weight: ${props => props.fontWeight ? props.fontWeight : 600};
+  ${props.center ? 'width: 100%; text-align: center;' : ''}
+`;
+
+const Name = styled(MediumText)`
+  ${props => nameStyle(props)};
+`;
+
+const NameRegular = styled(BaseText)`
+  ${props => nameStyle(props)};
 `;
 
 const DetailWrapper = styled.View`
@@ -288,7 +292,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
             />
           </CardRow>
           <CardRow justify="center">
-            <Name center numberOfLines={1} ellipsizeMode="tail" fontWeight={400}>{name}</Name>
+            <NameRegular center numberOfLines={1} ellipsizeMode="tail">{name}</NameRegular>
           </CardRow>
         </InnerWrapper>
       );
@@ -391,7 +395,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
               name="turn-off"
               style={{
                 color: baseColors.white,
-                fontSize: fontSizes.small,
+                fontSize: fontSizes.medium,
                 opacity: disabledRemove ? 0.5 : 1,
               }}
             />
