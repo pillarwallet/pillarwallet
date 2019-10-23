@@ -24,10 +24,14 @@ export type TxSettlementItem = {
   hash: string,
 };
 
-export type TransactionExtra = TxSettlementItem[];
+export type TxWithdrawalExtra = {
+  paymentHash: string,
+};
+
+export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra;
 
 export type Transaction = {
-  _id?: string,
+  _id: string,
   hash: string,
   to: string,
   from: string,

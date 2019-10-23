@@ -305,7 +305,7 @@ class SmartWallet {
    * SDK API call results are sorted descending by creation date
    * lastSyncedId is used to determine whether this page was already fetched
    */
-  async getAccountPayments(lastSyncedId: ?string, page?: number = 0) {
+  async getAccountPayments(lastSyncedId: ?number, page?: number = 0) {
     if (!this.sdkInitialized) return [];
     const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
     if (!data) return [];
@@ -324,7 +324,7 @@ class SmartWallet {
    * SDK API call results are sorted descending by creation date
    * lastSyncedId is used to determine whether this page was already fetched
    */
-  async getAccountTransactions(lastSyncedId: ?string, page?: number = 0) {
+  async getAccountTransactions(lastSyncedId: ?number, page?: number = 0) {
     if (!this.sdkInitialized) return [];
     // make sure getConnectedAccountTransactions passed hash is empty string
     const data = await this.sdk.getConnectedAccountTransactions('', page).catch(this.handleError);

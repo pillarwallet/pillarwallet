@@ -31,9 +31,9 @@ import {
 import {
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
-import { PPN_TOKEN } from 'configs/assetsConfig';
 
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -115,7 +115,7 @@ export const getDeployErrorMessage = (errorType: string) => ({
     : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow',
 });
 
-const parseTransactionAddress = details => get(details, 'account.address') || get(details, 'address', '');
+const extractAddress = details => get(details, 'account.address', '') || get(details, 'address', '');
 
 export const mapHistoryFromSmartWalletTransactions = (
   smartWalletTransactions: IAccountTransaction[],
@@ -136,19 +136,22 @@ export const mapHistoryFromSmartWalletTransactions = (
       paymentHash,
       tokenValue,
     } = smartWalletTransaction;
-    const from = parseTransactionAddress(fromDetails);
-    const to = tokenRecipient || parseTransactionAddress(toDetails);
+    const from = extractAddress(fromDetails);
 
-    // ignore some type transactions or if any address is empty
-    if (
-      type === AccountTransactionTypes.TopUpErc20Approve
-      || isEmpty(from)
-      || isEmpty(to)
-    ) return mapped;
+    let to = extractAddress(toDetails);
+    if (type === AccountTransactionTypes.Erc20Transfer) {
+      to = tokenRecipient || '';
+    }
+
+    // ignore some transaction types
+    if (type === AccountTransactionTypes.TopUpErc20Approve) return mapped;
 
     const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
+    // TODO: add support for failed transactions
     const status = state === TRANSACTION_COMPLETED ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS;
-    const value = new BigNumber((tokenValue || rawValue).toString());
+
+    let value = tokenAddress ? tokenValue : rawValue;
+    value = new BigNumber(value.toString());
 
     let transaction = {
       from,
@@ -162,7 +165,11 @@ export const mapHistoryFromSmartWalletTransactions = (
 
     if (tokenAddress) {
       const { symbol } = getAssetDataByAddress(assets, supportedAssets, tokenAddress);
-      if (symbol) transaction.asset = symbol;
+      if (symbol) {
+        transaction.asset = symbol;
+      } else {
+        return mapped; // skip non-supported assets
+      }
     }
 
     if (type === AccountTransactionTypes.Settlement) {
@@ -178,6 +185,7 @@ export const mapHistoryFromSmartWalletTransactions = (
         transaction = {
           ...settlementTransaction,
           extra: [
+            // $FlowFixMe
             ...(settlementTransaction.extra || []),
             settlementExtra,
           ],
@@ -195,18 +203,20 @@ export const mapHistoryFromSmartWalletTransactions = (
     } else if (type === AccountTransactionTypes.Withdrawal) {
       transaction = {
         ...transaction,
-        asset: PPN_TOKEN,
         tag: PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
-        // TODO: revisit extras once SDK back-end updates are deployed
-        // extra: {
-        //   paymentHash,
-        // },
+        extra: {
+          paymentHash,
+        },
       };
     } else if (type === AccountTransactionTypes.TopUp) {
       transaction = {
         ...transaction,
-        asset: PPN_TOKEN,
         tag: PAYMENT_NETWORK_ACCOUNT_TOPUP,
+      };
+    } else if (type === AccountTransactionTypes.AccountDeployment) {
+      transaction = {
+        ...transaction,
+        tag: PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
       };
     }
 
