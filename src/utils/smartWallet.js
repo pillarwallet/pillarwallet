@@ -20,7 +20,6 @@
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
-import { ZERO_ADDRESS } from '@netgum/utils';
 import BigNumber from 'bignumber.js';
 
 import { SMART_WALLET_DEPLOYMENT_ERRORS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
@@ -41,15 +40,16 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
+import { ETH } from 'constants/assetsConstants';
 
 import { getActiveAccount } from './accounts';
-import { getAssetDataByAddress } from './assets';
+import { getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction } from './history';
 
+
 type IAccountTransaction = sdkInterfaces.IAccountTransaction;
 const AccountTransactionTypes = { ...sdkConstants.AccountTransactionTypes };
-
 
 const getMessage = (
   status: ?string,
@@ -118,7 +118,7 @@ export const getDeployErrorMessage = (errorType: string) => ({
 
 const extractAddress = details => get(details, 'account.address', '') || get(details, 'address', '');
 
-export const mapHistoryFromSmartWalletTransactions = (
+export const parseSmartWalletTransactions = (
   smartWalletTransactions: IAccountTransaction[],
   supportedAssets: Asset[],
   assets: Asset[],
@@ -133,19 +133,36 @@ export const mapHistoryFromSmartWalletTransactions = (
       tokenRecipient,
       tokenAddress,
       value: rawValue,
-      type,
+      transactionType,
       paymentHash,
       tokenValue,
+      index,
+      gas: {
+        used: gasUsed,
+        price: gasPrice,
+      },
     } = smartWalletTransaction;
+
+    // NOTE: same transaction could have multiple records, those are different by index
+    // we always leave only one record with the biggest index number
+    const sameHashTransactions = smartWalletTransactions.filter(tx => isCaseInsensitiveMatch(tx.hash, hash));
+    if (sameHashTransactions.length > 1) { // don't count current transaction
+      const maxIndex = Math.max(...sameHashTransactions.map(tx => tx.index));
+      if (index < maxIndex) {
+        // don't store transactions with lover index
+        return mapped;
+      }
+    }
+
     const from = extractAddress(fromDetails);
 
     let to = extractAddress(toDetails);
-    if (type === AccountTransactionTypes.Erc20Transfer) {
+    if (transactionType === AccountTransactionTypes.Erc20Transfer) {
       to = tokenRecipient || '';
     }
 
     // ignore some transaction types
-    if (type === AccountTransactionTypes.TopUpErc20Approve) return mapped;
+    if (transactionType === AccountTransactionTypes.TopUpErc20Approve) return mapped;
 
     const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
     // TODO: add support for failed transactions
@@ -160,13 +177,14 @@ export const mapHistoryFromSmartWalletTransactions = (
       to,
       value,
       createdAt: +new Date(updatedAt) / 1000,
-      asset: 'ETH',
+      asset: ETH,
       status,
+      gasPrice: gasPrice.toNumber(),
+      gasLimit: gasUsed.toNumber(),
     };
 
-    // NOTE: ZERO_ADDRESS is being set as tokenAddress when you withdraw or settle ETH transactions
-    if (tokenAddress && tokenAddress !== ZERO_ADDRESS) {
-      const { symbol } = getAssetDataByAddress(assets, supportedAssets, tokenAddress);
+    if (tokenAddress) {
+      const symbol = getAssetSymbolByAddress(assets, supportedAssets, tokenAddress);
       if (symbol) {
         transaction.asset = symbol;
       } else {
@@ -174,35 +192,22 @@ export const mapHistoryFromSmartWalletTransactions = (
       }
     }
 
-    if (type === AccountTransactionTypes.Settlement) {
-      // if it's settlement transaction check if it has already been added to history
-      const settlementTransaction = mapped.find(({ hash: _hash }) => isCaseInsensitiveMatch(_hash, hash));
-      const settlementExtra = {
-        symbol: transaction.asset,
-        value,
-        hash: paymentHash,
+    if (transactionType === AccountTransactionTypes.Settlement) {
+      // get and process all transactions with the same hash
+      const extra = sameHashTransactions.map(tx => ({
+        symbol: getAssetSymbolByAddress(assets, supportedAssets, tx.tokenAddress) || ETH,
+        value: tx.tokenValue,
+        hash: tx.paymentHash,
+      }));
+
+      transaction = {
+        ...transaction,
+        value: '0',
+        tag: PAYMENT_NETWORK_TX_SETTLEMENT,
+        asset: PAYMENT_NETWORK_TX_SETTLEMENT,
+        extra,
       };
-      if (settlementTransaction) {
-        mapped = mapped.filter(({ hash: _hash }) => !isCaseInsensitiveMatch(_hash, hash));
-        transaction = {
-          ...settlementTransaction,
-          extra: [
-            // $FlowFixMe
-            ...(settlementTransaction.extra || []),
-            settlementExtra,
-          ],
-        };
-      } else {
-        // settlement has never been added
-        transaction = {
-          ...transaction,
-          value: '0',
-          tag: PAYMENT_NETWORK_TX_SETTLEMENT,
-          asset: PAYMENT_NETWORK_TX_SETTLEMENT,
-          extra: [settlementExtra],
-        };
-      }
-    } else if (type === AccountTransactionTypes.Withdrawal) {
+    } else if (transactionType === AccountTransactionTypes.Withdrawal) {
       transaction = {
         ...transaction,
         tag: PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
@@ -210,12 +215,12 @@ export const mapHistoryFromSmartWalletTransactions = (
           paymentHash,
         },
       };
-    } else if (type === AccountTransactionTypes.TopUp) {
+    } else if (transactionType === AccountTransactionTypes.TopUp) {
       transaction = {
         ...transaction,
         tag: PAYMENT_NETWORK_ACCOUNT_TOPUP,
       };
-    } else if (type === AccountTransactionTypes.AccountDeployment) {
+    } else if (transactionType === AccountTransactionTypes.AccountDeployment) {
       transaction = {
         ...transaction,
         tag: PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,

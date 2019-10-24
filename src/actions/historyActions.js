@@ -48,7 +48,7 @@ import {
   getActiveAccountAddress,
 } from 'utils/accounts';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
-import { mapHistoryFromSmartWalletTransactions } from 'utils/smartWallet';
+import { parseSmartWalletTransactions } from 'utils/smartWallet';
 import smartWalletService from 'services/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 
@@ -60,6 +60,7 @@ import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
+
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
@@ -100,7 +101,7 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
       const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
       const accountAssets = accountAssetsSelector(getState());
       const assetsList = getAssetsAsList(accountAssets);
-      history = mapHistoryFromSmartWalletTransactions(smartWalletTransactions, supportedAssets, assetsList);
+      history = parseSmartWalletTransactions(smartWalletTransactions, supportedAssets, assetsList);
       newLastSyncedId = smartWalletTransactions[0].id;
     } else {
       history = await api.fetchHistory({
