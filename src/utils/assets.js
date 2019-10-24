@@ -152,21 +152,21 @@ export const addressesEqual = (address1: ?string, address2: ?string): boolean =>
 };
 
 export const getAssetData = (
-  assetsData: Asset[],
+  userAssets: Asset[],
   supportedAssetsData: Asset[],
   assetSymbol: string,
 ): Asset | Object => {
-  return assetsData.find(({ symbol }: Asset) => symbol === assetSymbol)
+  return userAssets.find(({ symbol }: Asset) => symbol === assetSymbol)
   || supportedAssetsData.find(({ symbol }: Asset) => symbol === assetSymbol)
   || {};
 };
 
 export const getAssetDataByAddress = (
-  assetsData: Asset[],
+  userAssets: Asset[],
   supportedAssetsData: Asset[],
   assetAddress: string,
 ): Asset | Object => {
-  return assetsData.find(({ address }: Asset) => isCaseInsensitiveMatch(address, assetAddress))
+  return userAssets.find(({ address }: Asset) => isCaseInsensitiveMatch(address, assetAddress))
   || supportedAssetsData.find(({ address }: Asset) => isCaseInsensitiveMatch(address, assetAddress))
   || {};
 };
