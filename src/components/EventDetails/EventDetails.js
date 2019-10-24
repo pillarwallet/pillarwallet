@@ -323,7 +323,7 @@ class EventDetails extends React.Component<Props, State> {
         extra,
       } = txInfo;
 
-      const isReceived = addressesEqual(to, activeAccountAddress);
+      const isReceived = addressesEqual(to, activeAccountAddress) || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL;
       const toMyself = isReceived && addressesEqual(from, to);
       let transactionNote = note;
       if (txNotes && txNotes.length > 0) {
