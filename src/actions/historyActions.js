@@ -278,7 +278,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     if (!isOnline) return;
 
     const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) return;
+    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
 
     const txInfo = await api.fetchTxInfo(hash);
     const txReceipt = await api.fetchTransactionReceipt(hash);
@@ -315,7 +315,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
     const account = findAccountByAddress(walletAddress, accounts);
-    if (!account || !checkIfSmartWalletAccount(account)) return;
+    if (!account || checkIfSmartWalletAccount(account)) return;
 
     const [allAssets, _erc20History, ethHistory] = await Promise.all([
       api.fetchSupportedAssets(walletId),
