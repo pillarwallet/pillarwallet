@@ -23,6 +23,7 @@ import { SET_HISTORY, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/hi
 import { ETH, PLR } from 'constants/assetsConstants';
 import type { Assets } from 'models/Asset';
 import { buildHistoryTransaction } from 'utils/history';
+import { getAssetsAsList } from 'utils/assets';
 import { parseEthValue } from 'services/EthplorerSdk';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -241,7 +242,7 @@ describe('History Actions', () => {
         history: { data: {} },
         wallet: { data: mockWallet },
       }));
-      api.fetchSupportedAssets.mockImplementation(() => Promise.resolve(Object.values(mockAssetsByAccount)));
+      api.fetchSupportedAssets.mockImplementation(() => Promise.resolve(getAssetsAsList(mockAssetsByAccount)));
     });
 
     afterEach(() => {

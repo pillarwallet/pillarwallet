@@ -36,7 +36,7 @@ import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { addAssetsToSmartWalletUpgradeAction } from 'actions/smartWalletActions';
 import { formatAmount, parseNumber, isValidNumber } from 'utils/common';
-import { getBalance } from 'utils/assets';
+import { getAssetsAsList, getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
 import type { AssetTransfer, Assets, Balances } from 'models/Asset';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -181,7 +181,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
   render() {
     const { navigation, assets: allAssets, addedAssets } = this.props;
     const { query, errors, disableScroll } = this.state;
-    const assetsArray = Object.values(allAssets);
+    const assetsArray = getAssetsAsList(allAssets);
     const assets = assetsArray
       .filter((asset: any) => addedAssets.find((addedAsset: any) => asset.name === addedAsset.name));
     const filteredAssets = (!query || query.trim() === '' || query.length < 2)

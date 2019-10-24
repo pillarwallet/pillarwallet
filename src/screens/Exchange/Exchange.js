@@ -36,6 +36,7 @@ import { fiatCurrencies } from 'fixtures/assets';
 import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
 import {
   getAssetData,
+  getAssetsAsList,
   getBalance,
   getRate,
 } from 'utils/assets';
@@ -520,7 +521,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
     const { assets, supportedAssets } = this.props;
-    const assetsData = Object.keys(assets).map(id => assets[id]);
+    const assetsData = getAssetsAsList(assets);
     const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode)
       || getAssetData(assetsData, supportedAssets, fromAssetCode);
     const selectedAssetOptions = isFiatCurrency(fromAssetCode)

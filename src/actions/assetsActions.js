@@ -60,7 +60,7 @@ import type {
 import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { transformAssetsToObject } from 'utils/assets';
+import { getAssetsAsList, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -515,8 +515,7 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
 
     const newBalances = await api.fetchBalances({
       address: walletAddress,
-      // $FlowFixMe Object.values returns mixed type
-      assets: Object.values(accountAssets),
+      assets: getAssetsAsList(accountAssets),
     });
 
     if (!isEmpty(newBalances)) {
