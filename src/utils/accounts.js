@@ -109,3 +109,7 @@ export const findAccountById = (
 ): ?Account => {
   return accounts.find(({ id }) => id === accountId);
 };
+
+export const getAccountWalletId = (account: Account): string => {
+  return get(account, 'walletId', '');
+};

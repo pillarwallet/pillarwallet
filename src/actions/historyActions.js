@@ -42,10 +42,9 @@ import {
   checkIfSmartWalletAccount,
   getAccountAddress,
   getAccountId,
+  getAccountWalletId,
   getActiveAccount,
   getActiveAccountAddress,
-  getActiveAccountId,
-  getActiveAccountWalletId,
 } from 'utils/accounts';
 import { addressesEqual } from 'utils/assets';
 import { mapHistoryFromSmartWalletTransactions } from 'utils/smartWallet';
@@ -143,8 +142,12 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
 export const fetchContactTransactionsAction = (contactAddress: string, asset?: string = 'ALL') => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
-    const accountId = getActiveAccountId(accounts);
-    const accountAddress = getActiveAccountAddress(accounts);
+
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
+
+    const accountId = getAccountId(activeAccount);
+    const accountAddress = getAccountAddress(activeAccount);
 
     const history = await api.fetchHistory({
       address1: accountAddress,
@@ -180,8 +183,12 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       accounts: { data: accounts },
       appSettings: { data: { lastTxSyncDatetimes = {} } },
     } = getState();
-    const accountId = getActiveAccountId(accounts);
-    const walletId = getActiveAccountWalletId(accounts);
+
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
+
+    const accountId = getAccountId(activeAccount);
+    const walletId = getAccountWalletId(activeAccount);
     const lastTxSyncDatetime = lastTxSyncDatetimes[accountId] || 0;
 
     const d = new Date(lastTxSyncDatetime * 1000);
@@ -298,6 +305,10 @@ export const updateTransactionStatusAction = (hash: string) => {
 
 export const restoreTransactionHistoryAction = (walletAddress: string, walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const { accounts: { data: accounts } } = getState();
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
+
     const [allAssets, _erc20History, ethHistory] = await Promise.all([
       api.fetchSupportedAssets(walletId),
       api.importedErc20TransactionHistory(walletAddress),
