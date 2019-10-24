@@ -47,9 +47,10 @@ import {
   getActiveAccount,
   getActiveAccountAddress,
 } from 'utils/accounts';
-import { addressesEqual } from 'utils/assets';
+import { addressesEqual, getAssetsAsList } from 'utils/assets';
 import { mapHistoryFromSmartWalletTransactions } from 'utils/smartWallet';
 import smartWalletService from 'services/smartWallet';
+import { accountAssetsSelector } from 'selectors/assets';
 
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -93,12 +94,13 @@ export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex:
 
     if (isSmartWalletAccount) {
       const {
-        assets: { data: assets, supportedAssets },
+        assets: { supportedAssets },
         smartWallet: { lastSyncedTransactionId },
       } = getState();
       const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
-      const assetsData = Object.keys(assets[accountAddress]).map(id => assets[id]);
-      history = mapHistoryFromSmartWalletTransactions(smartWalletTransactions, supportedAssets, assetsData);
+      const accountAssets = accountAssetsSelector(getState());
+      const assetsList = getAssetsAsList(accountAssets);
+      history = mapHistoryFromSmartWalletTransactions(smartWalletTransactions, supportedAssets, assetsList);
       newLastSyncedId = smartWalletTransactions[0].id;
     } else {
       history = await api.fetchHistory({
