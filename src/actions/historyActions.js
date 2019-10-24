@@ -40,6 +40,7 @@ import {
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
   checkIfSmartWalletAccount,
+  findAccountByAddress,
   getAccountAddress,
   getAccountId,
   getAccountWalletId,
@@ -306,8 +307,8 @@ export const updateTransactionStatusAction = (hash: string) => {
 export const restoreTransactionHistoryAction = (walletAddress: string, walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
+    const account = findAccountByAddress(walletAddress, accounts);
+    if (!account || !checkIfSmartWalletAccount(account)) return;
 
     const [allAssets, _erc20History, ethHistory] = await Promise.all([
       api.fetchSupportedAssets(walletId),
