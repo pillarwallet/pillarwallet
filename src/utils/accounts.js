@@ -96,17 +96,11 @@ export const getAccountName = (accountType: AccountTypes, accounts: Accounts): s
   }
 };
 
-export const findAccountByAddress = (
-  address: string,
-  accounts: Accounts,
-): ?Account => {
+export const findAccountByAddress = (address: string, accounts: Accounts): ?Account => {
   return accounts.find(account => addressesEqual(address, getAccountAddress(account)));
 };
 
-export const findAccountById = (
-  accountId: string,
-  accounts: Accounts,
-): ?Account => {
+export const findAccountById = (accountId: string, accounts: Accounts): ?Account => {
   return accounts.find(({ id }) => id === accountId);
 };
 
