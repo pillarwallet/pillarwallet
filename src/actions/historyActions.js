@@ -268,10 +268,14 @@ export const fetchGasInfoAction = () => {
 export const updateTransactionStatusAction = (hash: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
+      accounts: { data: accounts },
       session: { data: { isOnline } },
     } = getState();
 
     if (!isOnline) return;
+
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) return;
 
     const txInfo = await api.fetchTxInfo(hash);
     const txReceipt = await api.fetchTransactionReceipt(hash);
