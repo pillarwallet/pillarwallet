@@ -49,6 +49,7 @@ import {
   SMART_WALLET_INTRO,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
+  SEND_SYNTHETICS_DEV,
 } from 'constants/navigationConstants';
 import {
   PAYMENT_COMPLETED,
@@ -358,6 +359,19 @@ class PPNView extends React.Component<Props, State> {
             label="Incoming balance"
             rightAddon={(<BlueText>{formatFiat(incomingBalanceInFiat, baseFiatCurrency)}</BlueText>)}
             onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
+            color={baseColors.slateBlack}
+            bordered
+          />}
+          {!!__DEV__ &&
+          <ListItemChevron
+            wrapperStyle={{
+              borderTopWidth: 0,
+              borderBottomWidth: 1,
+              borderColor: baseColors.mediumLightGray,
+            }}
+            chevronStyle={{ color: baseColors.darkGray }}
+            label="Send Synthetics DEV"
+            onPress={() => navigation.navigate(SEND_SYNTHETICS_DEV)}
             color={baseColors.slateBlack}
             bordered
           />}

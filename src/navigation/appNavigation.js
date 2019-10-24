@@ -93,6 +93,7 @@ import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/UpgradeToSmartWallet/SmartWalletIntro';
 import UnsettledAssets from 'screens/UnsettledAssets';
+import SendSynthetics from 'screens/SendSynthetics/SendSynthetics';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -204,6 +205,7 @@ import {
   TANK_WITHDRAWAL_FLOW,
   TANK_WITHDRAWAL,
   TANK_WITHDRAWAL_CONFIRM,
+  SEND_SYNTHETICS_DEV,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -574,6 +576,7 @@ const AppFlowNavigation = createStackNavigator(
     [CONTACT_INFO]: ConnectedContactInfo,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
+    [SEND_SYNTHETICS_DEV]: SendSynthetics,
   },
   modalTransition,
 );
