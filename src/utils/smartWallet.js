@@ -20,6 +20,7 @@
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
+import { ZERO_ADDRESS } from '@netgum/utils';
 import BigNumber from 'bignumber.js';
 
 import { SMART_WALLET_DEPLOYMENT_ERRORS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
@@ -163,7 +164,8 @@ export const mapHistoryFromSmartWalletTransactions = (
       status,
     };
 
-    if (tokenAddress) {
+    // NOTE: ZERO_ADDRESS is being set as tokenAddress when you withdraw or settle ETH transactions
+    if (tokenAddress && tokenAddress !== ZERO_ADDRESS) {
       const { symbol } = getAssetDataByAddress(assets, supportedAssets, tokenAddress);
       if (symbol) {
         transaction.asset = symbol;
