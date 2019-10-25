@@ -19,8 +19,12 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { FlatList, Platform } from 'react-native';
+import {
+  FlatList,
+  Platform,
+} from 'react-native';
 import isEqual from 'lodash.isequal';
+import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
@@ -39,24 +43,46 @@ import { ScrollWrapper } from 'components/Layout';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
-import { formatFiat, formatMoney } from 'utils/common';
+import {
+  getAccountName,
+  getActiveAccount,
+  getActiveAccountType,
+} from 'utils/accounts';
+import {
+  formatFiat,
+  formatMoney,
+} from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { responsiveSize } from 'utils/ui';
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import {
+  baseColors,
+  fontStyles,
+  spacing,
+} from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Assets, BalancesStore, Balances, Rates } from 'models/Asset';
-import type { Accounts, Account } from 'models/Account';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type {
+  Assets,
+  Balances,
+  BalancesStore,
+  Rates,
+} from 'models/Asset';
+import type {
+  Account,
+  Accounts,
+} from 'models/Account';
+import type {
+  Dispatch,
+  RootReducerState,
+} from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 
 // constants
 import {
-  PILLAR_NETWORK_INTRO,
   ASSETS,
+  PILLAR_NETWORK_INTRO,
   SMART_WALLET_INTRO,
   WALLET_SETTINGS,
 } from 'constants/navigationConstants';
@@ -341,8 +367,7 @@ class AccountsScreen extends React.Component<Props, State> {
         const thisAccountBalance = calculateBalanceInFiat(rates, accountBalances, fiatCurrency);
         walletBalance = formatFiat(thisAccountBalance, baseFiatCurrency);
       }
-
-      const accountItem = {
+      return {
         id: `ACCOUNT_${id}`,
         type: 'ACCOUNT',
         title: isSmartWallet ? 'Smart wallet' : getAccountName(ACCOUNT_TYPES.KEY_BASED, accounts),
@@ -355,7 +380,6 @@ class AccountsScreen extends React.Component<Props, State> {
         onSettingsPress: () => this.accountSettings(account),
         isSmartWallet,
       };
-      return accountItem;
     });
 
     if (showSmartWalletInitButton) {
@@ -475,6 +499,9 @@ class AccountsScreen extends React.Component<Props, State> {
 
     const walletsInList = isLegacyUser ? walletsToShow : [smartAccountCard];
 
+    // in case if undefined object comes to array (ref: Sentry issue ID 1292819194)
+    const accountsList = [undefined, ...walletsInList, ...networksToShow].filter(item => !isEmpty(item));
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -487,7 +514,7 @@ class AccountsScreen extends React.Component<Props, State> {
           contentContainerStyle={{ flexGrow: 1 }}
         >
           <FlatList
-            data={[...walletsInList, ...networksToShow]}
+            data={accountsList}
             keyExtractor={(item) => item.id || item.type}
             style={{ width: '100%', flexGrow: 0 }}
             contentContainerStyle={{ width: '100%', padding: spacing.large }}
