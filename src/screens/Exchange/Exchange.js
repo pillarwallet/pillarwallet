@@ -31,6 +31,7 @@ import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import get from 'lodash.get';
+import { InAppBrowser } from '@matt-block/react-native-in-app-browser';
 
 import { fiatCurrencies } from 'fixtures/assets';
 import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
@@ -79,8 +80,6 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
-
-import { InAppBrowser } from '@matt-block/react-native-in-app-browser';
 
 // partials
 import { ExchangeStatus } from './ExchangeStatus';
