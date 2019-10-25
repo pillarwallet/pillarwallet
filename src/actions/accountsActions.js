@@ -271,7 +271,6 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     await dispatch(initSmartWalletSdkAction(privateKey));
     await dispatch(connectSmartWalletAccountAction(activeAccountId));
     dispatch(fetchVirtualAccountBalanceAction());
-    dispatch(syncVirtualAccountTransactionsAction());
 
     if (blockchainNetwork) {
       dispatch({

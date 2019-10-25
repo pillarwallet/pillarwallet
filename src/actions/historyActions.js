@@ -60,7 +60,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
-import { checkAssetTransferTransactionsAction } from './smartWalletActions';
+import { checkAssetTransferTransactionsAction, syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 
 
@@ -132,6 +132,8 @@ export const fetchSmartWalletTransactionsAction = () => {
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) return;
+
+    await dispatch(syncVirtualAccountTransactionsAction());
 
     const accountId = getActiveAccountId(accounts);
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);

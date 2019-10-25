@@ -95,6 +95,7 @@ import { calculateGasEstimate, waitForTransaction } from 'services/assets';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+import { accountHistorySelector } from 'selectors/history';
 
 // actions
 import {
@@ -590,23 +591,23 @@ export const fetchVirtualAccountBalanceAction = () => {
   };
 };
 
-export const managePPNInitFlag = (payments: Object[]) => {
+export const managePPNInitFlagAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    if (!payments.length) return;
+    const accountHistory = accountHistorySelector(getState());
+    const hasPpnPayments = accountHistory.some(({ isPPNTransaction }) => isPPNTransaction);
+    if (!hasPpnPayments) return;
 
     await dispatch(fetchVirtualAccountBalanceAction());
-    const {
-      paymentNetwork: { availableStake },
-    } = getState();
+    const { paymentNetwork: { availableStake } } = getState();
 
-    if (availableStake || payments.length) {
+    if (availableStake || hasPpnPayments) {
       dispatch({ type: MARK_PLR_TANK_INITIALISED });
       dispatch(saveDbAction('isPLRTankInitialised', { isPLRTankInitialised: true }, true));
     }
   };
 };
 
-export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolean) => {
+export const syncVirtualAccountTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -664,9 +665,6 @@ export const syncVirtualAccountTransactionsAction = (manageTankInitFlag?: boolea
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
     dispatch({ type: SET_HISTORY, payload: updatedHistory });
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
-    if (manageTankInitFlag) {
-      dispatch(managePPNInitFlag(payments));
-    }
   };
 };
 
@@ -1398,7 +1396,6 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
       });
       dispatch(fetchAssetsBalancesAction());
       dispatch(fetchCollectiblesAction());
-      dispatch(syncVirtualAccountTransactionsAction(true));
     }
   };
 };
