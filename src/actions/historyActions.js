@@ -80,7 +80,7 @@ const afterHistoryUpdatedAction = () => {
   };
 };
 
-export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex: number = 0) => {
+export const fetchAssetTransactionsAction = (asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
 
