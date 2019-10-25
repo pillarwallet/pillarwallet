@@ -152,17 +152,16 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const { activeAccount } = this.props;
-    const activeAccountId = getAccountId(activeAccount);
-    const nextActiveAccountId = getAccountId(nextProps.activeAccount);
-    const isFocused = this.props.navigation.isFocused();
-
-    /**
-     * still allow component update if screen is out of focus, but accounts has changed
-     * this might happen while navigating between accounts and assets screen during account switch
-     */
-    if (!isFocused && nextActiveAccountId === activeAccountId) {
-      return false;
+    const { navigation, activeAccount } = this.props;
+    const isFocused = navigation.isFocused();
+    if (!isFocused) {
+      const activeAccountId = getAccountId(activeAccount);
+      const nextActiveAccountId = getAccountId(nextProps.activeAccount);
+      /**
+       * allow component update if screen is out of focus, but accounts has changed
+       * this might happen while navigating between accounts and assets screen during account switch
+       */
+      return activeAccountId !== nextActiveAccountId;
     }
 
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
