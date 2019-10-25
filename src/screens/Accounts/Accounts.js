@@ -19,10 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import {
-  FlatList,
-  Platform,
-} from 'react-native';
+import { FlatList, Platform } from 'react-native';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
@@ -43,40 +40,18 @@ import { ScrollWrapper } from 'components/Layout';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import {
-  getAccountName,
-  getActiveAccount,
-  getActiveAccountType,
-} from 'utils/accounts';
-import {
-  formatFiat,
-  formatMoney,
-} from 'utils/common';
+import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
+import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { responsiveSize } from 'utils/ui';
-import {
-  baseColors,
-  fontStyles,
-  spacing,
-} from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type {
-  Assets,
-  Balances,
-  BalancesStore,
-  Rates,
-} from 'models/Asset';
-import type {
-  Account,
-  Accounts,
-} from 'models/Account';
-import type {
-  Dispatch,
-  RootReducerState,
-} from 'reducers/rootReducer';
+import type { Assets, Balances, BalancesStore, Rates } from 'models/Asset';
+import type { Account, Accounts } from 'models/Account';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 
 // constants
