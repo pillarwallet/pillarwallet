@@ -500,7 +500,7 @@ class AccountsScreen extends React.Component<Props, State> {
     const walletsInList = isLegacyUser ? walletsToShow : [smartAccountCard];
 
     // in case if undefined object comes to array (ref: Sentry issue ID 1292819194)
-    const accountsList = [undefined, ...walletsInList, ...networksToShow].filter(item => !isEmpty(item));
+    const accountsList = [...walletsInList, ...networksToShow].filter(item => !isEmpty(item));
 
     return (
       <ContainerWithHeader
