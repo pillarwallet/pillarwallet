@@ -152,8 +152,9 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const { activeAccount } = this.props;
     const isFocused = this.props.navigation.isFocused();
-    if (!isFocused) {
+    if (!isFocused && isEqual(nextProps.activeAccount, activeAccount)) {
       return false;
     }
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
