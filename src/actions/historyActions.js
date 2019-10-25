@@ -39,6 +39,7 @@ import {
 } from 'constants/smartWalletConstants';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
+  checkIfKeyBasedAccount,
   checkIfSmartWalletAccount,
   findAccountByAddress,
   getAccountAddress,
@@ -46,11 +47,13 @@ import {
   getAccountWalletId,
   getActiveAccount,
   getActiveAccountAddress,
+  getActiveAccountId,
 } from 'utils/accounts';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
 import { parseSmartWalletTransactions } from 'utils/smartWallet';
 import smartWalletService from 'services/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
+import { accountHistorySelector } from 'selectors/history';
 
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -80,37 +83,22 @@ const afterHistoryUpdatedAction = () => {
   };
 };
 
+// NOTE: use this action for key based accounts only
 export const fetchAssetTransactionsAction = (asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
 
     const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount) return;
+    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
     const accountId = getAccountId(activeAccount);
     const accountAddress = getAccountAddress(activeAccount);
-    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
 
-    let history = [];
-    let newLastSyncedId;
-
-    if (isSmartWalletAccount) {
-      const {
-        assets: { supportedAssets },
-        smartWallet: { lastSyncedTransactionId },
-      } = getState();
-      const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
-      const accountAssets = accountAssetsSelector(getState());
-      const assetsList = getAssetsAsList(accountAssets);
-      history = parseSmartWalletTransactions(smartWalletTransactions, supportedAssets, assetsList);
-      newLastSyncedId = smartWalletTransactions[0].id;
-    } else {
-      history = await api.fetchHistory({
-        address1: accountAddress,
-        asset,
-        nbTx: TRANSACTIONS_HISTORY_STEP,
-        fromIndex,
-      });
-    }
+    const history = await api.fetchHistory({
+      address1: accountAddress,
+      asset,
+      nbTx: TRANSACTIONS_HISTORY_STEP,
+      fromIndex,
+    });
 
     if (!history.length) return;
 
@@ -131,7 +119,42 @@ export const fetchAssetTransactionsAction = (asset: string = 'ALL', fromIndex: n
       payload: updatedHistory,
     });
 
-    if (newLastSyncedId) {
+    dispatch(afterHistoryUpdatedAction());
+  };
+};
+
+export const fetchSmartWalletTransactionsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      assets: { supportedAssets },
+      smartWallet: { lastSyncedTransactionId },
+    } = getState();
+
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) return;
+
+    const accountId = getActiveAccountId(accounts);
+    const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
+    const accountAssets = accountAssetsSelector(getState());
+    const assetsList = getAssetsAsList(accountAssets);
+    const history = parseSmartWalletTransactions(smartWalletTransactions, supportedAssets, assetsList);
+
+    if (!history.length) return;
+
+    const { history: { data: currentHistory } } = getState();
+    const accountHistory = accountHistorySelector(getState());
+
+    // TODO: revise this
+    const pendingTransactions = history.filter(tx => tx.status === TX_PENDING_STATUS);
+    const minedTransactions = history.filter(tx => tx.status !== TX_PENDING_STATUS);
+
+    const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
+
+    if (smartWalletTransactions.length) {
+      const newLastSyncedId = smartWalletTransactions[0].id;
       dispatch({
         type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
         payload: newLastSyncedId,
@@ -139,11 +162,18 @@ export const fetchAssetTransactionsAction = (asset: string = 'ALL', fromIndex: n
       dispatch(saveDbAction('smartWallet', { lastSyncedTransactionId: newLastSyncedId }));
     }
 
+    dispatch(getExistingTxNotesAction());
+
+    dispatch({
+      type: SET_HISTORY,
+      payload: updatedHistory,
+    });
+
     dispatch(afterHistoryUpdatedAction());
   };
 };
 
-// NOTE: user this action for key based accounts only
+// NOTE: use this action for key based accounts only
 export const fetchContactTransactionsAction = (contactAddress: string, asset?: string = 'ALL') => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
@@ -182,7 +212,7 @@ export const fetchContactTransactionsAction = (contactAddress: string, asset?: s
   };
 };
 
-// NOTE: user this action for key based accounts only
+// NOTE: use this action for key based accounts only
 export const fetchTransactionsHistoryNotificationsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
@@ -313,7 +343,7 @@ export const updateTransactionStatusAction = (hash: string) => {
   };
 };
 
-// NOTE: user this action for key based accounts only
+// NOTE: use this action for key based accounts only
 export const restoreTransactionHistoryAction = (walletAddress: string, walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
@@ -395,6 +425,28 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
   };
 };
 
+/*
+ * Unified method to fetch tx history for key based and smart wallets
+ * For the key based wallet it uses ethplorer as a data provider
+ * For smart wallets data will be fetched through the Archanova SDK
+ */
+export const fetchTransactionsHistoryAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      user: { data: { walletId } },
+    } = getState();
+
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) return Promise.resolve();
+
+    if (checkIfKeyBasedAccount(activeAccount)) {
+      return dispatch(restoreTransactionHistoryAction(getAccountAddress(activeAccount), walletId));
+    }
+
+    return dispatch(fetchSmartWalletTransactionsAction());
+  };
+};
 
 export const startListeningForBalanceChangeAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {

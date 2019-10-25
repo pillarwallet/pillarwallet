@@ -83,7 +83,7 @@ import { saveDbAction } from 'actions/dbActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
-import { restoreTransactionHistoryAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import {
   setFirebaseAnalyticsCollectionEnabled,
@@ -206,11 +206,7 @@ const finishRegistration = async ({
     await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
   }
 
-  const { accounts: { data: accounts } } = getState();
-
-  await Promise.all(accounts.map(async acc => {
-    await dispatch(restoreTransactionHistoryAction(acc.id, userInfo.walletId));
-  }));
+  await dispatch(fetchTransactionsHistoryAction());
 
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
