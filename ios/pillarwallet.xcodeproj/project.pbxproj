@@ -54,6 +54,7 @@
 		EA4F15CCADAC44BFA9453C38 /* libRNOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 62DA123A58B3461382F464FA /* libRNOS.a */; };
 		FA315B5922256F1F008E0303 /* index.thread.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = FA315B2022256F1F008E0303 /* index.thread.jsbundle */; };
 		FF605FE09A7849F5A9AE9848 /* EuclidCircularB-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = C2E2A14F124842D889D80692 /* EuclidCircularB-Medium.otf */; };
+		920089821C1C4F02BB5B16CD /* libRNInAppBrowser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D7EBF760F774C03B1BAB347 /* libRNInAppBrowser.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -594,6 +595,8 @@
 		FA315B2022256F1F008E0303 /* index.thread.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = index.thread.jsbundle; sourceTree = "<group>"; };
 		FA590E7624BC4AF387932F39 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		FA5C5CBA22255FFB00ADDEA3 /* RNThread.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNThread.xcodeproj; path = "rn-libs/react-native-threads/ios/RNThread.xcodeproj"; sourceTree = "<group>"; };
+		113115949D7043F5B6F906FF /* RNInAppBrowser.xcodeproj */ = {isa = PBXFileReference; name = "RNInAppBrowser.xcodeproj"; path = "../node_modules/@matt-block/react-native-in-app-browser/ios/RNInAppBrowser.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		8D7EBF760F774C03B1BAB347 /* libRNInAppBrowser.a */ = {isa = PBXFileReference; name = "libRNInAppBrowser.a"; path = "libRNInAppBrowser.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -632,6 +635,7 @@
 				24514C1E3E3F49319CF25BAB /* libz.tbd in Frameworks */,
 				8018645422DF4DC3855F3A3D /* libRNThread.a in Frameworks */,
 				32F8060C4F084EB39FBDF2DF /* libRNCookieManagerIOS.a in Frameworks */,
+				920089821C1C4F02BB5B16CD /* libRNInAppBrowser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -916,6 +920,7 @@
 				3C6BE9948FEC483EA9345AC5 /* TcpSockets.xcodeproj */,
 				4C1E21202BBC4C8F979136AA /* SignalMessagingSwift.xcodeproj */,
 				25334DCD4E61499E917DAB94 /* RNCookieManagerIOS.xcodeproj */,
+				113115949D7043F5B6F906FF /* RNInAppBrowser.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1858,6 +1863,7 @@
 					"$(REACT_HEADERS_PATH)",
 					"$(SRCROOT)/rn-libs/react-native-threads/ios",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
+					"$(SRCROOT)/../node_modules/@matt-block/react-native-in-app-browser/ios/RNInAppBrowser",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1911,6 +1917,7 @@
 					"$(REACT_HEADERS_PATH)",
 					"$(SRCROOT)/rn-libs/react-native-threads/ios",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
+					"$(SRCROOT)/../node_modules/@matt-block/react-native-in-app-browser/ios/RNInAppBrowser",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -2079,6 +2086,7 @@
 					"$(REACT_HEADERS_PATH)",
 					"$(SRCROOT)/rn-libs/react-native-threads/ios",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
+					"$(SRCROOT)/../node_modules/@matt-block/react-native-in-app-browser/ios/RNInAppBrowser",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;

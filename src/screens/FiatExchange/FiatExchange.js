@@ -35,8 +35,6 @@ import { getActiveAccountAddress } from 'utils/accounts';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 
-import { wyreWidgetUrl } from 'services/sendwyre';
-
 type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
@@ -49,7 +47,6 @@ type Props = {
 type State = {
   error: string,
   provider: string,
-  wyreUrl: string,
   moonPayURL: string,
 };
 
@@ -57,7 +54,6 @@ class FiatExchange extends React.Component<Props, State> {
   state = {
     error: '',
     provider: '',
-    wyreUrl: '',
     moonPayURL: '',
   };
 
@@ -79,13 +75,6 @@ class FiatExchange extends React.Component<Props, State> {
 
     const destAddress = getActiveAccountAddress(accounts);
 
-    const wyreUrl = wyreWidgetUrl(
-      destAddress,
-      destCurrency,
-      sourceCurrency,
-      sourceAmount,
-    );
-
     const moonPayURL = `${MOONPAY_WIDGET_URL}`
       + `?apiKey=${MOONPAY_KEY}`
       + `&walletAddress=${destAddress}`
@@ -96,7 +85,6 @@ class FiatExchange extends React.Component<Props, State> {
       + `&externalCustomerId=${user.id}`;
 
     this.setState({
-      wyreUrl,
       provider,
       moonPayURL,
     });
@@ -110,6 +98,7 @@ class FiatExchange extends React.Component<Props, State> {
 
   sendWyreCallback = (event) => {
     const data = JSON.parse(event.nativeEvent.data);
+
     if (data) {
       this.props.navigation.goBack(null);
     }
@@ -120,22 +109,12 @@ class FiatExchange extends React.Component<Props, State> {
       error,
       provider,
       moonPayURL,
-      wyreUrl,
     } = this.state;
 
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: `${provider} Payment` }] }} >
         {!!error && <ErrorMessage>{error}</ErrorMessage>}
         <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
-          {
-            provider === 'SendWyre'
-            &&
-            <WebView
-              source={{ uri: wyreUrl }}
-              originWhitelist={['*']}
-              onMessage={this.sendWyreCallback}
-            />
-          }
           {
             provider === 'MoonPay'
             &&
