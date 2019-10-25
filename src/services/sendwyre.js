@@ -1,6 +1,7 @@
 // @flow
 
 import {
+  SENDWYRE_WIDGET_URL,
   SENDWYRE_ENVIRONMENT,
   SENDWYRE_ACCOUNT_ID,
   SENDWYRE_RETURN_URL,
@@ -13,7 +14,7 @@ export const wyreWidgetUrl = (
   sourceAmount: string,
 ): string => {
   const url =
-    `https://pay.sendwyre.com/purchase?destCurrency=${
+    `${SENDWYRE_WIDGET_URL}?destCurrency=${
       destCurrency
     }&env=${
       SENDWYRE_ENVIRONMENT
