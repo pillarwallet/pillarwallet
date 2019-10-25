@@ -143,6 +143,7 @@ export const fetchAssetTransactionsAction = (asset: string = 'ALL', fromIndex: n
   };
 };
 
+// NOTE: user this action for key based accounts only
 export const fetchContactTransactionsAction = (contactAddress: string, asset?: string = 'ALL') => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
@@ -181,6 +182,7 @@ export const fetchContactTransactionsAction = (contactAddress: string, asset?: s
   };
 };
 
+// NOTE: user this action for key based accounts only
 export const fetchTransactionsHistoryNotificationsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
@@ -311,6 +313,7 @@ export const updateTransactionStatusAction = (hash: string) => {
   };
 };
 
+// NOTE: user this action for key based accounts only
 export const restoreTransactionHistoryAction = (walletAddress: string, walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
