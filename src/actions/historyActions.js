@@ -41,7 +41,6 @@ import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } fr
 import {
   checkIfKeyBasedAccount,
   checkIfSmartWalletAccount,
-  findAccountByAddress,
   getAccountAddress,
   getAccountId,
   getAccountWalletId,
@@ -344,11 +343,16 @@ export const updateTransactionStatusAction = (hash: string) => {
 };
 
 // NOTE: use this action for key based accounts only
-export const restoreTransactionHistoryAction = (walletAddress: string, walletId: string) => {
+export const restoreTransactionHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { accounts: { data: accounts } } = getState();
-    const account = findAccountByAddress(walletAddress, accounts);
-    if (!account || checkIfSmartWalletAccount(account)) return;
+    const {
+      accounts: { data: accounts },
+      user: { data: { walletId } },
+    } = getState();
+
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
+    const walletAddress = getAccountAddress(activeAccount);
 
     const [allAssets, _erc20History, ethHistory] = await Promise.all([
       api.fetchSupportedAssets(walletId),
@@ -432,16 +436,13 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
  */
 export const fetchTransactionsHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      user: { data: { walletId } },
-    } = getState();
+    const { accounts: { data: accounts } } = getState();
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return Promise.resolve();
 
     if (checkIfKeyBasedAccount(activeAccount)) {
-      return dispatch(restoreTransactionHistoryAction(getAccountAddress(activeAccount), walletId));
+      return dispatch(restoreTransactionHistoryAction());
     }
 
     return dispatch(fetchSmartWalletTransactionsAction());
