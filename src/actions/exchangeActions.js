@@ -33,6 +33,8 @@ import {
   REMOVE_CONNECTED_EXCHANGE_PROVIDER,
   PROVIDER_SHAPESHIFT,
   MARK_NOTIFICATION_SEEN,
+  SET_PROVIDERS_META_DATA,
+  SET_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -53,6 +55,7 @@ const connectExchangeService = (state: RootReducerState) => {
     oAuthTokens: { data: oAuthTokens },
     exchange: { data: { connectedProviders } },
   } = state;
+
   const { extra: shapeshiftAccessToken } = connectedProviders
     .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {};
   // proceed with new instance only if one is not running and access token changed
@@ -77,13 +80,34 @@ export const takeOfferAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     connectExchangeService(getState());
+    const {
+      accounts: { data: accounts },
+      exchange: { exchangeSupportedAssets },
+    } = getState();
+
+    const fromAsset = exchangeSupportedAssets.find(a => a.symbol && a.symbol.replace(/\0.*$/g, '') === fromAssetCode);
+    const toAsset = exchangeSupportedAssets.find(a => a.symbol && a.symbol.replace(/\0.*$/g, '') === toAssetCode);
+
+    if (!fromAsset || !toAsset) {
+      Toast.show({
+        title: 'Exchange service failed',
+        type: 'warning',
+        message: 'Could not find asset',
+      });
+      callback({});
+      return;
+    }
+
+    const { address: fromAssetAddress, decimals: fromAssetDecimals } = fromAsset;
+    const { address: toAssetAddress } = toAsset;
     const offerRequest = {
       quantity: parseFloat(fromAmount),
       provider,
-      fromAssetCode,
-      toAssetCode,
+      fromAssetAddress,
+      toAssetAddress,
     };
     const order = await exchangeService.takeOffer(offerRequest);
+
     if (!order || !order.data || order.error) {
       let { message = 'Unable to request offer' } = order.error || {};
       if (message.toString().toLowerCase().includes('kyc')) {
@@ -100,25 +124,21 @@ export const takeOfferAction = (
     const { data: offerOrderData } = order;
     const {
       payToAddress,
-      payAmount,
+      payQuantity,
       transactionObj: {
         data: transactionObjData,
       } = {},
     }: OfferOrder = offerOrderData;
-    const {
-      accounts: { data: accounts },
-      assets: { supportedAssets },
-    } = getState();
-    const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
+
     const from = getActiveAccountAddress(accounts);
     const gasLimit = await calculateGasEstimate({
       from,
       to: payToAddress,
       data: transactionObjData,
-      amount: payAmount,
+      amount: payQuantity,
       symbol: fromAssetCode,
-      contractAddress: asset ? asset.address : '',
-      decimals: asset ? asset.decimals : 18,
+      contractAddress: fromAssetAddress || '',
+      decimals: parseInt(fromAssetDecimals, 10) || 18,
     });
     callback({
       ...offerOrderData,
@@ -139,6 +159,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId: userWalletId } },
+      // exchange: { exchangeSupportedAssets },
     } = getState();
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
@@ -149,6 +170,25 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
         fromAmount,
       },
     });
+
+    // const fromAsset = exchangeSupportedAssets
+    // .find(a => a.symbol && a.symbol.replace(/\0.*$/g, '') === fromAssetCode);
+    // const toAsset = exchangeSupportedAssets.find(a => a.symbol && a.symbol.replace(/\0.*$/g, '') === toAssetCode);
+
+    // if (!fromAsset || !toAsset) {
+    //   Toast.show({
+    //     title: 'Exchange service failed',
+    //     type: 'warning',
+    //     message: 'Could not find asset',
+    //   });
+    //   return;
+    // }
+    const toAddress = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
+    const fromAddress = '0x0000000000000000000000000000000000000000';
+
+    // const { address: fromAddress } = fromAsset;
+    // const { address: toAddress } = toAsset;
+
     connectExchangeService(getState());
     exchangeService.onOffers(offers =>
       offers
@@ -156,7 +196,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
         .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
     );
     // we're requesting although it will start delivering when connection is established
-    const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode, fromAmount);
+    const { error } = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount);
 
     const isTest = SENDWYRE_ENVIRONMENT === 'test';
 
@@ -446,5 +486,33 @@ export const markNotificationAsSeenAction = () => {
     dispatch({
       type: MARK_NOTIFICATION_SEEN,
     });
+  };
+};
+
+export const getMetaDataAction = () => {
+  return async (dispatch: Dispatch) => {
+    const metaData = await exchangeService.getMetaData();
+
+    // TODO: add to storage
+
+    dispatch({
+      type: SET_PROVIDERS_META_DATA,
+      payload: metaData,
+    });
+  };
+};
+
+export const getExchangeSupportedAssetsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      oAuthTokens: { data: oAuthTokens },
+    } = getState();
+    const prodAssets = await exchangeService.getProdAssets(oAuthTokens.accessToken);
+
+    dispatch({
+      type: SET_EXCHANGE_SUPPORTED_ASSETS,
+      payload: prodAssets,
+    });
+    // TODO: use supported assets if dev. Fetch exchange supported assets
   };
 };

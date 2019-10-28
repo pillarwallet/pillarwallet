@@ -30,8 +30,11 @@ import {
   REMOVE_CONNECTED_EXCHANGE_PROVIDER,
   SET_CONNECTED_EXCHANGE_PROVIDERS,
   MARK_NOTIFICATION_SEEN,
+  SET_PROVIDERS_META_DATA,
+  SET_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
-import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider, ProvidersMeta } from 'models/Offer';
+import type { Asset } from 'models/Asset';
 
 export type ExchangeReducerState = {
   data: {
@@ -43,7 +46,9 @@ export type ExchangeReducerState = {
     connectedProviders: ExchangeProvider[],
     hasNotification: boolean,
   },
-};
+  providersMeta: ProvidersMeta,
+  exchangeSupportedAssets: Asset[]
+}
 
 export type ExchangeReducerAction = {
   type: string,
@@ -58,6 +63,8 @@ const initialState = {
     connectedProviders: [],
     hasNotification: false,
   },
+  providersMeta: [],
+  exchangeSupportedAssets: [],
 };
 
 export default function exchangeReducer(
@@ -182,6 +189,16 @@ export default function exchangeReducer(
           ...state.data,
           hasNotification: false,
         },
+      };
+    case SET_PROVIDERS_META_DATA:
+      return {
+        ...state,
+        providersMeta: action.payload,
+      };
+    case SET_EXCHANGE_SUPPORTED_ASSETS:
+      return {
+        ...state,
+        exchangeSupportedAssets: action.payload,
       };
     default:
       return state;

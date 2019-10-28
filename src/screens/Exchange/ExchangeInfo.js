@@ -201,7 +201,8 @@ class ExchangeInfo extends React.Component<Props, State> {
     return (
       <ListItemWithImage
         label={getProviderDisplayName(exchangeProviderId)}
-        customImage={getProviderLogo(exchangeProviderId)}
+        customImage={
+          getProviderLogo(exchangeProviderId)}
         imageDiameter={44}
         subtext={`Connected ${dateToShow}`}
         customAddon={(

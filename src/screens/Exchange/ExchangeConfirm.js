@@ -25,6 +25,7 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
+import { EXCHANGE_URL } from 'react-native-dotenv';
 
 import { Footer, ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -41,13 +42,12 @@ import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import { formatAmount, getCurrencySymbol } from 'utils/common';
+import { formatAmount, formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
-import { getProviderDisplayName, getProviderLogo } from 'utils/exchange';
 
 import type { GasInfo } from 'models/GasInfo';
 import type { Asset, Balances, Rates } from 'models/Asset';
-import type { OfferOrder } from 'models/Offer';
+import type { OfferOrder, ProvidersMeta } from 'models/Offer';
 import type { TokenTransactionPayload } from 'models/Transaction';
 
 const FooterWrapper = styled.View`
@@ -107,10 +107,11 @@ type Props = {
   gasInfo: GasInfo,
   rates: Rates,
   baseFiatCurrency: string,
-  supportedAssets: Asset[],
+  exchangeSupportedAssets: Asset[],
   balances: Balances,
   executingExchangeTransaction: boolean,
   setDismissTransaction: Function,
+  providersMeta: ProvidersMeta,
 };
 
 type State = {
@@ -208,7 +209,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
   onConfirmTransactionPress = (offerOrder: OfferOrder) => {
     const {
       navigation,
-      supportedAssets,
     } = this.props;
     const {
       transactionSpeed,
@@ -216,8 +216,8 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     } = this.state;
 
     const {
-      payAmount,
-      fromAssetCode,
+      payQuantity,
+      fromAsset,
       payToAddress,
       transactionObj: {
         data,
@@ -226,8 +226,8 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       provider,
     } = offerOrder;
 
-    // going from previous screen, asset will always be present in reducer
-    const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
+    const { code: fromAssetCode, decimals, address: fromAssetAddress } = fromAsset;
+
     const gasPrice = this.getGasPriceWei(transactionSpeed);
     const txFeeInWei = gasPrice.mul(gasLimit);
 
@@ -235,11 +235,11 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       gasLimit,
       txFeeInWei,
       gasPrice,
-      amount: setTokenAllowance ? 0 : payAmount,
+      amount: setTokenAllowance ? 0 : payQuantity,
       to: payToAddress,
       symbol: fromAssetCode,
-      contractAddress: asset ? asset.address : '',
-      decimals: asset ? asset.decimals : 18,
+      contractAddress: fromAssetAddress || '',
+      decimals: parseInt(decimals, 10) || 18,
       data,
     };
 
@@ -275,27 +275,34 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       navigation,
       session,
       balances,
+      providersMeta,
     } = this.props;
 
     const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
     const {
-      receiveAmount,
-      payAmount,
-      toAssetCode,
-      fromAssetCode,
+      receiveQuantity,
+      payQuantity,
+      toAsset,
+      fromAsset,
       setTokenAllowance,
       provider,
     } = offerOrder;
+
+    const { code: fromAssetCode } = fromAsset;
+    const { code: toAssetCode } = toAsset;
+
 
     const txFeeInWei = this.getTxFeeInWei(transactionSpeed);
     const ethBalance = getBalance(balances, ETH);
     const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
     const enoughBalance = fromAssetCode === ETH
-      ? balanceInWei.sub(utils.parseUnits(payAmount.toString(), 'ether')).gte(txFeeInWei)
+      ? balanceInWei.sub(utils.parseUnits(payQuantity.toString(), 'ether')).gte(txFeeInWei)
       : balanceInWei.gte(txFeeInWei);
     const errorMessage = !enoughBalance && 'Not enough ETH for transaction fee';
-    const providerLogo = getProviderLogo(provider);
-    const providerName = getProviderDisplayName(provider);
+
+    const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
+    const { icon_large: providerIconPath, name: providerName } = providerInfo;
+    const providerLogo = providerIconPath ? `${EXCHANGE_URL}/v2.0${providerIconPath}` : null;
 
     return (
       <ContainerWithHeader
@@ -320,7 +327,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             <View>
               <LabeledRow>
                 <Label>You will receive</Label>
-                <Value>{`${receiveAmount} ${toAssetCode}`}</Value>
+                <Value>{`${formatMoney(receiveQuantity)} ${toAssetCode}`}</Value>
                 <LabelSub>
                   Final amount may be higher or lower than expected at the end of a transaction.
                   Crypto is volatile, the rate fluctuates.
@@ -328,12 +335,12 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               </LabeledRow>
               <LabeledRow>
                 <Label>You will pay</Label>
-                <Value>{`${payAmount} ${fromAssetCode}`}</Value>
+                <Value>{`${payQuantity} ${fromAssetCode}`}</Value>
               </LabeledRow>
               <LabeledRow>
                 <Label>Exchange</Label>
                 <ProviderWrapper>
-                  {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
+                  {!!providerLogo && <ProviderIcon source={{ uri: providerLogo }} resizeMode="contain" />}
                   <Value>{providerName}</Value>
                 </ProviderWrapper>
               </LabeledRow>
@@ -380,15 +387,15 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   history: { gasInfo },
-  assets: { supportedAssets },
-  exchange: { data: { executingTransaction: executingExchangeTransaction } },
+  exchange: { data: { executingTransaction: executingExchangeTransaction }, providersMeta, exchangeSupportedAssets },
 }) => ({
   session,
   rates,
   baseFiatCurrency,
   gasInfo,
-  supportedAssets,
   executingExchangeTransaction,
+  providersMeta,
+  exchangeSupportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({

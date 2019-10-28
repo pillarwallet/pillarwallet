@@ -18,12 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+type ExchangeOfferAsset = {
+  code: string,
+  decimals: string,
+  address: string,
+}
+
 export type Offer = {
   _id: string,
   provider: string,
   description: string,
-  fromAssetCode: string,
-  toAssetCode: string,
+  fromAsset: ExchangeOfferAsset,
+  toAsset: ExchangeOfferAsset,
   askRate: number | string,
   minQuantity: number,
   maxQuantity: number,
@@ -34,8 +40,8 @@ export type Offer = {
 export type OfferRequest = {
   quantity: number,
   provider: string,
-  fromAssetCode: string,
-  toAssetCode: string,
+  fromAssetAddress: string,
+  toAssetAddress: string,
 }
 
 export type TokenAllowanceRequest = {
@@ -45,10 +51,10 @@ export type TokenAllowanceRequest = {
 
 export type OfferOrder = {
   _id: string,
-  receiveAmount: string,
-  payAmount: string,
-  fromAssetCode: string,
-  toAssetCode: string,
+  receiveQuantity: string,
+  payQuantity: string,
+  fromAsset: ExchangeOfferAsset,
+  toAsset: ExchangeOfferAsset,
   payToAddress: string,
   transactionObj?: {
     data: string,
@@ -77,3 +83,18 @@ export type ExchangeProvider = {
   extra?: any,
 }
 
+type ProviderMeta = {
+  _id: string,
+  shim: string,
+  name: string,
+  url: string,
+  description: string,
+  icon_small: string,
+  icon_medium: string,
+  icon_large: string,
+  logo_small: string,
+  logo_medium: string,
+  logo_large: string,
+}
+
+export type ProvidersMeta = ProviderMeta[];
