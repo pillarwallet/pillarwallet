@@ -111,7 +111,7 @@ import {
   fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
-import { fetchGasInfoAction } from 'actions/historyActions';
+import { fetchGasInfoAction, fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 
 // types
 import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
@@ -726,6 +726,8 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           notificationMessage = 'Withdrawal process completed!';
         } else if (txType === transactionTypes.Settlement) {
           notificationMessage = 'Settlement process completed!';
+        } else if (txType === transactionTypes.Erc20Transfer) {
+          notificationMessage = 'New transaction received!';
         } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
           notificationMessage = 'Transaction was successfully sent!';
         }
@@ -761,6 +763,8 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
               payload: txHash,
             });
           }
+        } else {
+          dispatch(fetchSmartWalletTransactionsAction());
         }
         dispatch(fetchAssetsBalancesAction());
       }
