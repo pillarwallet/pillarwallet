@@ -673,7 +673,8 @@ class ExchangeScreen extends React.Component<Props, State> {
           offerOrder: {
             ...response,
             provider,
-            fromAssetCode,
+            fromAsset,
+            toAsset,
             setTokenAllowance: true,
           },
         });
@@ -806,12 +807,14 @@ class ExchangeScreen extends React.Component<Props, State> {
               }
               {!minOrMaxNeeded && !allowanceSet &&
               <CardButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
+                {!isSetAllowancePressed &&
                 <ButtonLabel color={storedAllowance ? baseColors.darkGray : baseColors.electricBlue} >
                   {storedAllowance
                     ? 'Pending'
                     : 'Enable'
                   }
-                </ButtonLabel>
+                </ButtonLabel>}
+                {!!isSetAllowancePressed && <Spinner width={20} height={20} />}
               </CardButton>
               }
               {!!isFiat && !!offerRestricted &&

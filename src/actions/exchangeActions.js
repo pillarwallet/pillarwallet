@@ -33,7 +33,7 @@ import {
   REMOVE_CONNECTED_EXCHANGE_PROVIDER,
   PROVIDER_SHAPESHIFT,
   MARK_NOTIFICATION_SEEN,
-  SET_PROVIDERS_META_DATA,
+  SET_EXCHANGE_PROVIDERS_META_DATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
@@ -183,8 +183,8 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     //   });
     //   return;
     // }
-    const toAddress = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
-    const fromAddress = '0x0000000000000000000000000000000000000000';
+    const fromAddress = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
+    const toAddress = '0x0000000000000000000000000000000000000000';
 
     // const { address: fromAddress } = fromAsset;
     // const { address: toAddress } = toAsset;
@@ -355,6 +355,7 @@ export const setTokenAllowanceAction = (
       toAssetAddress,
     };
     const response = await exchangeService.setTokenAllowance(allowanceRequest);
+
     if (!response || !response.data || response.error) {
       Toast.show({
         title: 'Exchange service failed',
@@ -501,7 +502,7 @@ export const getMetaDataAction = () => {
     // TODO: add to storage
 
     dispatch({
-      type: SET_PROVIDERS_META_DATA,
+      type: SET_EXCHANGE_PROVIDERS_META_DATA,
       payload: metaData,
     });
   };
@@ -513,10 +514,13 @@ export const getExchangeSupportedAssetsAction = () => {
       oAuthTokens: { data: oAuthTokens },
     } = getState();
     const prodAssets = await exchangeService.getProdAssets(oAuthTokens.accessToken);
+    const exchangeSupportedAssetsTickers = await exchangeService.getExchangeSupportedAssets();
+
+    const supportedAssets = prodAssets.filter(({ symbol }) => exchangeSupportedAssetsTickers.includes(symbol));
 
     dispatch({
       type: SET_EXCHANGE_SUPPORTED_ASSETS,
-      payload: prodAssets,
+      payload: supportedAssets,
     });
     // TODO: use supported assets if dev. Fetch exchange supported assets
   };

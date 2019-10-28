@@ -317,7 +317,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
           <Paragraph small style={{ marginBottom: spacing.medium, paddingTop: spacing.medium }}>
             {setTokenAllowance
-              ? 'Review the details and enable asset as well as the cost of data transaction.'
+              ? 'Review the details and enable asset as well as confirm the cost of data transaction.'
               : 'Review the details and confirm the exchange as well as the cost of transaction.'
             }
           </Paragraph>
