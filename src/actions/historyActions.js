@@ -52,7 +52,6 @@ import { addressesEqual, getAssetsAsList } from 'utils/assets';
 import { parseSmartWalletTransactions } from 'utils/smartWallet';
 import smartWalletService from 'services/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
-import { accountHistorySelector } from 'selectors/history';
 
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -82,6 +81,25 @@ const afterHistoryUpdatedAction = () => {
   };
 };
 
+const syncAccountHistory = (apiHistory, accountId, dispatch, getState) => {
+  const { history: { data: currentHistory } } = getState();
+  const accountHistory = currentHistory[accountId] || [];
+
+  const pendingTransactions = apiHistory.filter(tx => tx.status === TX_PENDING_STATUS);
+  const minedTransactions = apiHistory.filter(tx => tx.status !== TX_PENDING_STATUS);
+
+  const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
+  const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+  dispatch(saveDbAction('history', { history: updatedHistory }, true));
+
+  dispatch({
+    type: SET_HISTORY,
+    payload: updatedHistory,
+  });
+
+  dispatch(afterHistoryUpdatedAction());
+};
+
 // NOTE: use this action for key based accounts only
 export const fetchAssetTransactionsAction = (asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
@@ -101,24 +119,8 @@ export const fetchAssetTransactionsAction = (asset: string = 'ALL', fromIndex: n
 
     if (!history.length) return;
 
-    const { history: { data: currentHistory } } = getState();
-    const accountHistory = currentHistory[accountId] || [];
-
-    const pendingTransactions = history.filter(tx => tx.status === TX_PENDING_STATUS);
-    const minedTransactions = history.filter(tx => tx.status !== TX_PENDING_STATUS);
-
-    const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
-    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-    dispatch(saveDbAction('history', { history: updatedHistory }, true));
-
     dispatch(getExistingTxNotesAction());
-
-    dispatch({
-      type: SET_HISTORY,
-      payload: updatedHistory,
-    });
-
-    dispatch(afterHistoryUpdatedAction());
+    syncAccountHistory(history, accountId, dispatch, getState);
   };
 };
 
@@ -143,17 +145,6 @@ export const fetchSmartWalletTransactionsAction = () => {
 
     if (!history.length) return;
 
-    const { history: { data: currentHistory } } = getState();
-    const accountHistory = accountHistorySelector(getState());
-
-    // TODO: revise this
-    const pendingTransactions = history.filter(tx => tx.status === TX_PENDING_STATUS);
-    const minedTransactions = history.filter(tx => tx.status !== TX_PENDING_STATUS);
-
-    const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
-    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-    dispatch(saveDbAction('history', { history: updatedHistory }, true));
-
     if (smartWalletTransactions.length) {
       const newLastSyncedId = smartWalletTransactions[0].id;
       dispatch({
@@ -164,13 +155,7 @@ export const fetchSmartWalletTransactionsAction = () => {
     }
 
     dispatch(getExistingTxNotesAction());
-
-    dispatch({
-      type: SET_HISTORY,
-      payload: updatedHistory,
-    });
-
-    dispatch(afterHistoryUpdatedAction());
+    syncAccountHistory(history, accountId, dispatch, getState);
   };
 };
 
@@ -194,22 +179,7 @@ export const fetchContactTransactionsAction = (contactAddress: string, asset?: s
     });
     if (!history.length) return;
 
-    const { history: { data: currentHistory } } = getState();
-    const accountHistory = currentHistory[accountId] || [];
-
-    const pendingTransactions = history.filter(tx => tx.status === TX_PENDING_STATUS);
-    const minedTransactions = history.filter(tx => tx.status !== TX_PENDING_STATUS);
-
-    const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
-    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-    dispatch(saveDbAction('history', { history: updatedHistory }, true));
-
-    dispatch({
-      type: SET_HISTORY,
-      payload: updatedHistory,
-    });
-
-    dispatch(afterHistoryUpdatedAction());
+    syncAccountHistory(history, accountId, dispatch, getState);
   };
 };
 
