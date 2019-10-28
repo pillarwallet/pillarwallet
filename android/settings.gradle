@@ -1,4 +1,6 @@
 include ':app'
+include ':react-native-gesture-handler'
+project(':react-native-gesture-handler').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gesture-handler/android')
 include ':react-native-keychain'
 project(':react-native-keychain').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-keychain/android')
 include ':react-native-cookies'

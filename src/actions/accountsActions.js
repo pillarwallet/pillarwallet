@@ -25,7 +25,7 @@ import {
   ACCOUNT_TYPES,
 } from 'constants/accountsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import {
@@ -237,6 +237,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
     dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());
+    dispatch(checkForMissedAssetsAction());
   };
 };
 
