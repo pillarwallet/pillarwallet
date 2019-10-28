@@ -144,7 +144,7 @@ export default class ExchangeService {
   }
 
   setTokenAllowance(request: TokenAllowanceRequest) {
-    return fetch(buildApiUrl('orders/allowance'), {
+    return fetch(buildApiUrl('orders/allowance', '2.0'), {
       ...this.apiConfig,
       method: 'POST',
       body: JSON.stringify(request),

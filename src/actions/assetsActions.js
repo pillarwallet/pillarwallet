@@ -456,8 +456,8 @@ export const sendAssetAction = (
       };
 
     if (Object.keys(allowancePayload).length && tokenTx.hash) {
-      const { provider, assetCode } = allowancePayload;
-      dispatch(addExchangeAllowanceAction(provider, assetCode, tokenTx.hash));
+      const { provider, fromAssetCode, toAssetCode } = allowancePayload;
+      dispatch(addExchangeAllowanceAction(provider, fromAssetCode, toAssetCode, tokenTx.hash));
     }
 
     // send note

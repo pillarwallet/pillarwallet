@@ -660,10 +660,12 @@ class ExchangeScreen extends React.Component<Props, State> {
       _id,
       provider,
       fromAsset,
+      toAsset,
     } = offer;
-    const { code: fromAssetCode } = fromAsset;
+    const { address: fromAssetAddress, code: fromAssetCode } = fromAsset;
+    const { address: toAssetAddress } = toAsset;
     this.setState({ pressedTokenAllowanceId: _id }, () => {
-      setTokenAllowance(fromAssetCode, provider, (response) => {
+      setTokenAllowance(fromAssetCode, fromAssetAddress, toAssetAddress, provider, (response) => {
         this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
         if (!response || !Object.keys(response).length) return;
         setExecutingTransaction();
@@ -726,7 +728,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     let storedAllowance;
     if (!allowanceSet) {
       storedAllowance = exchangeAllowances.find(
-        ({ provider, assetCode }) => fromAssetCode === assetCode && provider === offerProvider,
+        ({ provider, fromAssetCode: _fromAssetCode, toAssetCode: _toAssetCode }) => _fromAssetCode === fromAssetCode
+          && _toAssetCode === toAssetCode && provider === offerProvider,
       );
       allowanceSet = storedAllowance && storedAllowance.enabled;
     }
@@ -749,9 +752,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
 
     const askRateBn = new BigNumber(askRate);
-
-    console.log('---->', { providersMeta });
-
     const amountToSell = parseFloat(selectedSellAmount);
     const minQuantityNumeric = parseFloat(minQuantity);
     const maxQuantityNumeric = parseFloat(maxQuantity);
@@ -1160,8 +1160,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   resetOffers: () => dispatch(resetOffersAction()),
   setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
-  setTokenAllowance: (assetCode, provider, callback) => dispatch(
-    setTokenAllowanceAction(assetCode, provider, callback),
+  setTokenAllowance: (formAssetCode, fromAssetAddress, toAssetAddress, provider, callback) => dispatch(
+    setTokenAllowanceAction(formAssetCode, fromAssetAddress, toAssetAddress, provider, callback),
   ),
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),

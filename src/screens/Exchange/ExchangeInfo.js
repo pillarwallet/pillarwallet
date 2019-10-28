@@ -166,7 +166,7 @@ class ExchangeInfo extends React.Component<Props, State> {
     const { exchangeAllowances } = this.props;
     const { openCollapseKey } = this.state;
     const fullIconUrl = `${SDK_PROVIDER}/${token.iconUrl}?size=3`;
-    const tokenAllowances = exchangeAllowances.filter(({ assetCode }) => assetCode === token.symbol);
+    const tokenAllowances = exchangeAllowances.filter(({ fromAssetCode }) => fromAssetCode === token.symbol);
     return (
       <CollapsibleListItem
         label={token.symbol}
@@ -182,7 +182,7 @@ class ExchangeInfo extends React.Component<Props, State> {
         collapseContent={
           <FlatList
             data={tokenAllowances}
-            keyExtractor={({ provider, assetCode }) => `${provider}-${assetCode}`}
+            keyExtractor={({ provider, fromAssetCode }) => `${provider}-${fromAssetCode}`}
             renderItem={this.renderProvider}
             initialNumToRender={8}
             onEndReachedThreshold={0.5}
@@ -223,7 +223,7 @@ class ExchangeInfo extends React.Component<Props, State> {
     } = this.props;
     const assetsArray = Object.keys(assets)
       .map(id => assets[id])
-      .filter(({ symbol }) => exchangeAllowances.find(({ assetCode }) => assetCode === symbol));
+      .filter(({ symbol }) => exchangeAllowances.find(({ fromAssetCode }) => fromAssetCode === symbol));
 
     return (
       <ContainerWithHeader

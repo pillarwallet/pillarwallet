@@ -218,6 +218,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const {
       payQuantity,
       fromAsset,
+      toAsset,
       payToAddress,
       transactionObj: {
         data,
@@ -227,6 +228,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     } = offerOrder;
 
     const { code: fromAssetCode, decimals, address: fromAssetAddress } = fromAsset;
+    const { code: toAssetCode } = toAsset;
 
     const gasPrice = this.getGasPriceWei(transactionSpeed);
     const txFeeInWei = gasPrice.mul(gasLimit);
@@ -247,7 +249,8 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       transactionPayload.extra = {
         allowance: {
           provider,
-          assetCode: fromAssetCode,
+          fromAssetCode,
+          toAssetCode,
         },
       };
     }

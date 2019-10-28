@@ -341,7 +341,9 @@ export const setDismissTransactionAction = () => ({
 });
 
 export const setTokenAllowanceAction = (
-  assetCode: string,
+  formAssetCode: string,
+  fromAssetAddress: string,
+  toAssetAddress: string,
   provider: string,
   callback: Function,
 ) => {
@@ -349,7 +351,8 @@ export const setTokenAllowanceAction = (
     connectExchangeService(getState());
     const allowanceRequest = {
       provider,
-      token: assetCode,
+      fromAssetAddress,
+      toAssetAddress,
     };
     const response = await exchangeService.setTokenAllowance(allowanceRequest);
     if (!response || !response.data || response.error) {
@@ -366,13 +369,13 @@ export const setTokenAllowanceAction = (
       accounts: { data: accounts },
       assets: { supportedAssets },
     } = getState();
-    const asset = supportedAssets.find(a => a.symbol === assetCode);
+    const asset = supportedAssets.find(a => a.symbol === formAssetCode);
     const from = getActiveAccountAddress(accounts);
     const gasLimit = await calculateGasEstimate({
       from,
       to: payToAddress,
       data,
-      symbol: assetCode,
+      symbol: formAssetCode,
       contractAddress: asset ? asset.address : '',
       decimals: asset ? asset.decimals : 18,
     });
@@ -389,22 +392,24 @@ export const setTokenAllowanceAction = (
 
 export const addExchangeAllowanceAction = (
   provider: string,
-  assetCode: string,
+  fromAssetCode: string,
+  toAssetCode: string,
   transactionHash: string,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { exchange: { data: { allowances: _allowances = [] } } } = getState();
     const allowance = {
       provider,
-      assetCode,
+      fromAssetCode,
+      toAssetCode,
       transactionHash,
       enabled: false,
     };
 
     // filter pending for current provider and asset match to override failed transactions
     const allowances = _allowances
-      .filter(({ provider: _provider, assetCode: _assetCode }) =>
-        assetCode !== _assetCode && provider !== _provider,
+      .filter(({ provider: _provider, fromAssetCode: _fromAssetCode, toAssetCode: _toAssetCode }) =>
+        fromAssetCode !== _fromAssetCode && toAssetCode !== _toAssetCode && provider !== _provider,
       );
 
     allowances.push(allowance);
@@ -463,14 +468,14 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
     );
     exchangeAllowances
       .filter(({ enabled }) => !enabled)
-      .map(({ transactionHash, assetCode }) => {  // eslint-disable-line
+      .map(({ transactionHash, fromAssetCode, toAssetCode }) => {  // eslint-disable-line
         const enabledAllowance = allHistory.find(
           // $FlowFixMe
           ({ hash, status }) => hash === transactionHash && status === TX_CONFIRMED_STATUS,
         );
         if (enabledAllowance) {
           Toast.show({
-            message: `${assetCode} token exchange was enabled`,
+            message: `${fromAssetCode} to ${toAssetCode} exchange was enabled`,
             type: 'success',
             title: 'Success',
             autoClose: true,

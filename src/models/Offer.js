@@ -45,7 +45,8 @@ export type OfferRequest = {
 }
 
 export type TokenAllowanceRequest = {
-  token: string,
+  fromAssetAddress: string,
+  toAssetAddress: string,
   provider: string,
 }
 
@@ -72,7 +73,8 @@ export type ExchangeSearchRequest = {
 
 export type Allowance = {
   provider: string,
-  assetCode: string,
+  fromAssetCode: string,
+  toAssetCode: string,
   transactionHash: string,
   enabled?: boolean,
 }
