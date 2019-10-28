@@ -81,7 +81,7 @@ import { signalInitAction } from 'actions/signalClientActions';
 import {
   initSmartWalletSdkAction,
   importSmartWalletAccountsAction,
-  managePPNInitFlag
+  managePPNInitFlagAction,
 } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
@@ -97,7 +97,6 @@ import { fetchBadgesAction } from 'actions/badgesActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { managePPNInitFlagAction } from './smartWalletActions';
 
 
 const storage = Storage.getInstance('db');

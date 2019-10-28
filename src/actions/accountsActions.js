@@ -33,7 +33,6 @@ import {
   initSmartWalletSdkAction,
   setSmartWalletUpgradeStatusAction,
   fetchVirtualAccountBalanceAction,
-  syncVirtualAccountTransactionsAction,
 } from 'actions/smartWalletActions';
 import { UPDATE_BALANCES, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
