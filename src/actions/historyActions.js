@@ -221,6 +221,10 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       appSettings: { data: { lastTxSyncDatetimes = {} } },
     } = getState();
 
+    // TODO: that's the only action that should be called for both types of accounts
+    // maybe we should move it to some other place?
+    await dispatch(checkForMissedAssetsAction());
+
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
 
@@ -237,8 +241,6 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     const historyNotifications = await api.fetchNotifications(walletId, types.join(' '), d.toISOString());
     const mappedHistoryNotifications = historyNotifications
       .map(({ payload, type, createdAt }) => ({ ...payload, type, createdAt }));
-
-    await dispatch(checkForMissedAssetsAction());
 
     const minedTransactions = mappedHistoryNotifications
       .filter(tx => tx.status !== TX_PENDING_STATUS)
