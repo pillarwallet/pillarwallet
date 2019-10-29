@@ -45,7 +45,7 @@ import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
 
 // utils
 import { createAlert } from 'utils/alerts';
-import { addressesEqual, getAssetData } from 'utils/assets';
+import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import {
   partial,
   formatAmount,
@@ -603,7 +603,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  assets: (state) => Object.values(accountAssetsSelector(state)),
+  assets: (state) => getAssetsAsList(accountAssetsSelector(state)),
   supportedAssets: supportedAssetsSelector,
 });
 

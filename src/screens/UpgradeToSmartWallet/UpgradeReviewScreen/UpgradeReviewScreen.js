@@ -69,7 +69,7 @@ import type { Collectible } from 'models/Collectible';
 // utils
 import { baseColors, spacing, fontStyles } from 'utils/variables';
 import { formatAmount, getGasPriceWei } from 'utils/common';
-import { getBalance } from 'utils/assets';
+import { getAssetsAsList, getBalance } from 'utils/assets';
 import { accountAssetsSelector } from 'selectors/assets';
 
 
@@ -220,7 +220,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       collectibles,
       recoveryAgents,
     } = this.props;
-    const assetsArray = Object.values(assets);
+    const assetsArray = getAssetsAsList(assets);
     const detailedAssets = transferAssets.map((transferAsset: any) => {
       const asset = assetsArray.find((_asset: any) => _asset.name === transferAsset.name);
       const transferFee = this.calculateTransferFee(transferAsset.gasLimit);
