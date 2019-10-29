@@ -38,7 +38,7 @@ export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
   }, {});
 };
 
-export const getAssetsAsList = (assetsObject: Assets = {}): Asset[] => {
+export const getAssetsAsList = (assetsObject: Assets): Asset[] => {
   return Object.keys(assetsObject).map(id => assetsObject[id]);
 };
 
