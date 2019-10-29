@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import { fetchTransactionsHistoryAction, restoreTransactionHistoryAction } from 'actions/historyActions';
+import { fetchAssetTransactionsAction, restoreTransactionHistoryAction } from 'actions/historyActions';
 import { SET_HISTORY, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { ETH, PLR } from 'constants/assetsConstants';
 import type { Assets } from 'models/Asset';
@@ -170,7 +170,7 @@ describe('History Actions', () => {
     dispatchMock.mockClear();
   });
 
-  describe('fetchTransactionsHistoryAction()', () => {
+  describe('fetchAssetTransactionsAction()', () => {
     afterEach(() => {
       getState.mockRestore();
       api.fetchHistory.mockRestore();
@@ -192,7 +192,7 @@ describe('History Actions', () => {
         }));
         api.fetchHistory.mockImplementation(() => Promise.resolve(transactions));
 
-        await fetchTransactionsHistoryAction(asset)(dispatchMock, getState, api);
+        await fetchAssetTransactionsAction(asset)(dispatchMock, getState, api);
       });
 
       it('should call the api.fetchHistory function', () => {
@@ -222,7 +222,7 @@ describe('History Actions', () => {
         }));
         api.fetchHistory.mockImplementation(() => Promise.resolve([]));
 
-        await fetchTransactionsHistoryAction()(dispatchMock, getState, api);
+        await fetchAssetTransactionsAction()(dispatchMock, getState, api);
       });
 
       it('should NOT call the dispatch function', () => {

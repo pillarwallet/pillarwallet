@@ -38,7 +38,7 @@ import DeploymentView from 'components/DeploymentView';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { fetchAssetTransactionsAction } from 'actions/historyActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
 // models
@@ -92,7 +92,7 @@ const activeModalResetState = {
 
 type Props = {
   fetchAssetsBalances: () => Function,
-  fetchTransactionsHistory: (asset: string, indexFrom?: number) => Function,
+  fetchAssetTransactions: (asset: string, indexFrom?: number) => Function,
   history: Transaction[],
   assets: Assets,
   balances: Balances,
@@ -192,9 +192,9 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, navigation, logScreenView } = this.props;
+    const { fetchAssetTransactions, navigation, logScreenView } = this.props;
     const { assetData: { token }, resetHideRemoval } = navigation.state.params;
-    fetchTransactionsHistory(token);
+    fetchAssetTransactions(token);
     if (resetHideRemoval) resetHideRemoval();
     logScreenView('View asset', 'Asset', `asset-${token}`);
   }
@@ -230,7 +230,7 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   handleScrollWrapperEndDrag = e => {
-    const { fetchTransactionsHistory, history } = this.props;
+    const { fetchAssetTransactions, history } = this.props;
     const {
       assetData: { token },
     } = this.props.navigation.state.params;
@@ -240,7 +240,7 @@ class AssetScreen extends React.Component<Props, State> {
     const indexFrom = history.filter(({ asset }) => asset === token).length;
 
     if (layoutHeight + offsetY + 200 >= contentHeight) {
-      fetchTransactionsHistory(token, indexFrom);
+      fetchAssetTransactions(token, indexFrom);
     }
   };
 
@@ -250,7 +250,7 @@ class AssetScreen extends React.Component<Props, State> {
       balances,
       paymentNetworkBalances,
       fetchAssetsBalances,
-      fetchTransactionsHistory,
+      fetchAssetTransactions,
       baseFiatCurrency,
       navigation,
       smartWalletState,
@@ -326,7 +326,7 @@ class AssetScreen extends React.Component<Props, State> {
               refreshing={false}
               onRefresh={() => {
                 fetchAssetsBalances();
-                fetchTransactionsHistory(token);
+                fetchAssetTransactions(token);
               }}
             />
           }
@@ -450,8 +450,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: () => {
     dispatch(fetchAssetsBalancesAction());
   },
-  fetchTransactionsHistory: (asset, indexFrom) => {
-    dispatch(fetchTransactionsHistoryAction(asset, indexFrom));
+  fetchAssetTransactions: (asset, indexFrom) => {
+    dispatch(fetchAssetTransactionsAction(asset, indexFrom));
   },
   logScreenView: (contentName: string, contentType: string, contentId: string) => {
     dispatch(logScreenViewAction(contentName, contentType, contentId));
