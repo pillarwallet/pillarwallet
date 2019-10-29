@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { FlatList, RefreshControl } from 'react-native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { EXCHANGE_URL, SDK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
@@ -171,12 +171,14 @@ class ExchangeInfo extends React.Component<Props, State> {
     const { dateConnected, id: exchangeProviderId } = provider;
     const dateToShow = formatDate(new Date(dateConnected), 'MM.DD.YY');
     const providerInfo = providersMeta.find(({ shim }) => shim === exchangeProviderId) || {};
+
     const { logo_large: providerLogoPath, name: providerName } = providerInfo;
+    const providerLogoUri = providerLogoPath ? `${EXCHANGE_URL}/v2.0${providerLogoPath}` : '';
 
     return (
       <ListItemWithImage
         label={providerName}
-        itemImageUrl={providerLogoPath}
+        itemImageUrl={providerLogoUri}
         fallbackSource={genericToken}
         imageDiameter={48}
         subtext={`Connected ${dateToShow}`}

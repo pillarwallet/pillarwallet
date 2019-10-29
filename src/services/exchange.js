@@ -67,12 +67,13 @@ export default class ExchangeService {
       const wsUrl = EXCHANGE_URL
         .replace(/(https:\/\/)/gi, 'wss://')
         .replace(/(http:\/\/)/gi, 'ws://');
-      this.io = new SocketIO(`${wsUrl}:443`, {
-        transports: ['polling'], // TODO: change back to 'websocket'
+      this.io = new SocketIO(`${wsUrl}:8080`, {
+        transports: ['websocket'],
         query: {
           token: accessToken,
         },
       });
+
       this.io.on('disconnect', () => {
         this.setConnected(false);
       });

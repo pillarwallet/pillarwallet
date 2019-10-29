@@ -98,8 +98,18 @@ export const takeOfferAction = (
       return;
     }
 
-    const { address: fromAssetAddress, decimals: fromAssetDecimals } = fromAsset;
-    const { address: toAssetAddress } = toAsset;
+    let { address: fromAssetAddress } = fromAsset;
+    const { decimals: fromAssetDecimals } = fromAsset;
+    let { address: toAssetAddress } = toAsset;
+
+    // we need PROD assets' addresses in order to get offers when on ropsten network
+    // as v2 requests require to provide addresses not tickers
+    if (NETWORK_PROVIDER === 'ropsten') {
+      const prodAssetsAddress = await exchangeService.getProdAssetsAddress();
+      fromAssetAddress = prodAssetsAddress[fromAssetCode];
+      toAssetAddress = prodAssetsAddress[toAssetCode];
+    }
+
     const offerRequest = {
       quantity: parseFloat(fromAmount),
       provider,
