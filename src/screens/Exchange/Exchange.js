@@ -31,17 +31,19 @@ import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import get from 'lodash.get';
+import { InAppBrowser } from '@matt-block/react-native-in-app-browser';
 
 import { fiatCurrencies } from 'fixtures/assets';
 import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
 import {
   getAssetData,
+  getAssetsAsList,
   getBalance,
   getRate,
 } from 'utils/assets';
 import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
-import { getActiveAccountType } from 'utils/accounts';
+import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
@@ -51,6 +53,8 @@ import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import DeploymentView from 'components/DeploymentView';
+
+import { wyreWidgetUrl } from 'services/sendwyre';
 
 import {
   searchOffersAction,
@@ -520,7 +524,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
     const { assets, supportedAssets } = this.props;
-    const assetsData = Object.keys(assets).map(id => assets[id]);
+    const assetsData = getAssetsAsList(assets);
     const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode)
       || getAssetData(assetsData, supportedAssets, fromAssetCode);
     const selectedAssetOptions = isFiatCurrency(fromAssetCode)
@@ -575,6 +579,24 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
+  openSendWyre(selectedSellAmount: string, offer: Offer) {
+    const { accounts } = this.props;
+    const destAddress = getActiveAccountAddress(accounts);
+
+    const { fromAssetCode, toAssetCode } = offer;
+
+    const wyreUrl = wyreWidgetUrl(
+      destAddress,
+      toAssetCode,
+      fromAssetCode,
+      selectedSellAmount,
+    );
+
+    InAppBrowser.open(wyreUrl).catch(error => {
+      console.error('InAppBrowser.error', error);
+    });
+  }
+
   onFiatOfferPress = (offer: Offer) => {
     const {
       navigation,
@@ -586,6 +608,12 @@ class ExchangeScreen extends React.Component<Props, State> {
         },
       },
     } = this.state;
+    const { provider } = offer;
+
+    if (provider === 'SendWyre') {
+      this.openSendWyre(selectedSellAmount, offer);
+      return;
+    }
 
     navigation.navigate(FIAT_EXCHANGE, {
       fiatOfferOrder: {

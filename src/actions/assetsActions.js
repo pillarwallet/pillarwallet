@@ -60,7 +60,7 @@ import type {
 import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { transformAssetsToObject } from 'utils/assets';
+import { getAssetsAsList, transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
@@ -521,8 +521,7 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
 
     const newBalances = await api.fetchBalances({
       address: walletAddress,
-      // $FlowFixMe Object.values returns mixed type
-      assets: Object.values(accountAssets),
+      assets: getAssetsAsList(accountAssets),
     });
 
     if (newBalances && newBalances.length) {
@@ -671,7 +670,9 @@ const getAllOwnedAssets = async (api: SDKWrapper, accountId: string, supportedAs
     addressErc20Tokens.forEach((token) => {
       const tokenTicker = get(token, 'tokenInfo.symbol', '');
       const supportedAsset = supportedAssets.find(asset => asset.symbol === tokenTicker);
-      if (supportedAsset && !accOwnedErc20Assets[tokenTicker]) accOwnedErc20Assets[tokenTicker] = supportedAsset;
+      if (supportedAsset && !accOwnedErc20Assets[tokenTicker]) {
+        accOwnedErc20Assets[tokenTicker] = supportedAsset;
+      }
     });
   }
   return accOwnedErc20Assets;
@@ -699,31 +700,23 @@ export const checkForMissedAssetsAction = () => {
       }
     }
 
-    const allSupportedAddedAssetsByAccount = accounts
+    const accountUpdatedAssets = accounts
       .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc))
-      .reduce((obj, { id, ...rest }) => {
-        obj[id] = rest;
-        return obj;
-      }, {});
+      .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
-    // check if some assets are not enabled
+    // check tx history if some assets are not enabled
     const ownedAssetsByAccount = await Promise.all(accounts.map(async (acc) => {
       const accountId = getAccountId(acc);
       const ownedAssets = await getAllOwnedAssets(api, accountId, walletSupportedAssets);
       return { id: accountId, ...ownedAssets };
     }));
 
-    const reducedOwnedAssetsByAccount = ownedAssetsByAccount.reduce((obj, { id, ...rest }) => {
-      obj[id] = rest;
-      return obj;
-    }, {});
+    const allAccountAssets = ownedAssetsByAccount
+      .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
-    const updatedAssets = Object.keys(allSupportedAddedAssetsByAccount).map((acc) => {
-      return { id: acc, ...allSupportedAddedAssetsByAccount[acc], ...reducedOwnedAssetsByAccount[acc] };
-    }).reduce((obj, { id, ...rest }) => {
-      obj[id] = rest;
-      return obj;
-    }, {});
+    const updatedAssets = Object.keys(accountUpdatedAssets)
+      .map((acc) => ({ id: acc, ...accountUpdatedAssets[acc], ...allAccountAssets[acc] }))
+      .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
     dispatch({
       type: UPDATE_ASSETS,

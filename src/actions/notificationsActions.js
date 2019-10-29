@@ -28,7 +28,7 @@ import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
   fetchTransactionsHistoryNotificationsAction,
-  fetchTransactionsHistoryAction,
+  fetchAssetTransactionsAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -179,7 +179,7 @@ export const startListeningNotificationsAction = () => {
         }
         if (data.type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
-          dispatch(fetchTransactionsHistoryAction(data.asset));
+          dispatch(fetchAssetTransactionsAction(data.asset));
           dispatch(fetchAssetsBalancesAction());
         }
         if (
@@ -220,7 +220,7 @@ export const startListeningNotificationsAction = () => {
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
-        dispatch(fetchTransactionsHistoryAction(notification.asset));
+        dispatch(fetchAssetTransactionsAction(notification.asset));
         dispatch(fetchAssetsBalancesAction());
       }
       if (notification.type === COLLECTIBLE) {
@@ -305,7 +305,7 @@ export const startListeningOnOpenNotificationAction = () => {
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
-          dispatch(fetchTransactionsHistoryAction(asset));
+          dispatch(fetchAssetTransactionsAction(asset));
           dispatch(fetchAssetsBalancesAction());
         }
         if (type === COLLECTIBLE) {
