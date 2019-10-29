@@ -475,6 +475,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   focusInputWithKeyboard = () => {
     setTimeout(() => {
+      if (!this.fromInputRef) return;
       this.fromInputRef.focus();
     }, 200);
   };
