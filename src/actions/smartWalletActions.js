@@ -79,8 +79,8 @@ import {
   SMART_WALLET_UNLOCK,
   ASSETS,
   SEND_TOKEN_AMOUNT,
-  PPN_SEND_TOKEN_AMOUNT,
   ACCOUNTS,
+  SEND_SYNTHETICS_SELECT,
 } from 'constants/navigationConstants';
 
 // configs
@@ -830,8 +830,9 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
       const txAmountFormatted = formatUnits(txAmount, decimals);
 
-      if (activeAccountAddress === txReceiverAddress
-        && txReceiverAddress !== txSenderAddress
+      // check if received transaction
+      if (isCaseInsensitiveMatch(activeAccountAddress, txReceiverAddress)
+        && !isCaseInsensitiveMatch(txReceiverAddress, txSenderAddress)
         && [PAYMENT_COMPLETED, PAYMENT_PROCESSED].includes(txStatus)) {
         const paymentInfo = `${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`;
         if (txStatus === PAYMENT_COMPLETED) {
@@ -1311,7 +1312,7 @@ export const navigateToSendTokenAmountAction = (navOptions: Object) => {
     });
 
     const ppnSendFlow = NavigationActions.navigate({
-      routeName: PPN_SEND_TOKEN_AMOUNT,
+      routeName: SEND_SYNTHETICS_SELECT,
       params: navOptions,
     });
 

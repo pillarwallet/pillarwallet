@@ -17,9 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import {
-  SYNTHETICS_URL,
-} from 'react-native-dotenv';
+import { SYNTHETICS_URL } from 'react-native-dotenv';
 
 type SyntheticsConfig = {
   accessToken: string,
@@ -29,7 +27,7 @@ const buildApiUrl = (path: string) => {
   return `${SYNTHETICS_URL}/${path}`;
 };
 
-export default class SyntheticsService {
+class SyntheticsService {
   apiConfig: Object;
 
   init(config: SyntheticsConfig) {
@@ -59,31 +57,36 @@ export default class SyntheticsService {
       method: 'POST',
       body,
     })
-      .then(response => response.json())
+      .then(this.handleResponse)
       .catch(error => ({ error }));
   }
 
-  commitTransaction(transactionId: string) {
+  commitTransaction(transactionId: string, transactionHash: string) {
     const urlPath = 'exchange/commit';
-    const body = JSON.stringify({ transactionId });
+    const body = JSON.stringify({ transactionId, transactionHash });
     return fetch(buildApiUrl(urlPath), {
       ...this.apiConfig,
       method: 'POST',
       body,
     })
-      .then(response => response.json())
+      .then(this.handleResponse)
       .catch(error => ({ error }));
   }
 
-  getDataFromLiquidityPool(transactionId: string) {
+  getDataFromLiquidityPool() {
     const urlPath = 'exchange/data';
-    const body = JSON.stringify({ transactionId });
-    return fetch(buildApiUrl(urlPath), {
-      ...this.apiConfig,
-      method: 'POST',
-      body,
-    })
-      .then(response => response.json())
+    return fetch(buildApiUrl(urlPath))
+      .then(this.handleResponse)
       .catch(error => ({ error }));
+  }
+
+  async handleResponse(responseResult: any) {
+    const response = await responseResult.json();
+    if (response.statusCode === 200) return response;
+    return Promise.reject(response);
   }
 }
+
+const syntheticsService = new SyntheticsService();
+
+export default syntheticsService;

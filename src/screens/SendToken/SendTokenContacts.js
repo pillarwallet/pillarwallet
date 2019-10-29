@@ -236,15 +236,16 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   navigateToNextScreen(ethAddress) {
+    const { navigation, navigateToSendTokenAmount } = this.props;
     if (this.assetData.tokenType === COLLECTIBLES) {
-      this.props.navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
+      navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
         assetData: this.assetData,
         receiver: ethAddress,
         source: 'Contact',
       });
       return;
     }
-    this.props.navigateToSendTokenAmount({
+    navigateToSendTokenAmount({
       assetData: this.assetData,
       receiver: ethAddress,
       source: 'Contact',
@@ -307,11 +308,18 @@ class SendTokenContacts extends React.Component<Props, State> {
         });
     }
 
-    const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;
+    const defaultAssetName = this.isPPNTransaction ? 'synthetic asset' : 'asset';
+    const tokenName = this.assetData.tokenType === COLLECTIBLES
+      ? this.assetData.name
+      : (this.assetData.token || defaultAssetName);
+    const headerTitle = `Send ${tokenName}`;
     const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
 
     return (
-      <ContainerWithHeader headerProps={{ centerItems: [{ title: `Send ${tokenName}` }] }} inset={{ bottom: 0 }}>
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: headerTitle }] }}
+        inset={{ bottom: 0 }}
+      >
         <FormWrapper>
           <Form
             ref={node => {

@@ -110,3 +110,11 @@ export type SmartWalletTransferTransaction = {
   asset: string,
   status: string,
 };
+
+export type SyntheticTransaction = {
+  transactionId: string,
+  fromAmount: number,
+  toAmount: number,
+  toAssetCode: string,
+  toAddress: string,
+}

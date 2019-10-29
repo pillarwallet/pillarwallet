@@ -21,7 +21,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -40,16 +39,15 @@ import Button from 'components/Button';
 import ActivityFeed from 'components/ActivityFeed';
 
 // constants
-import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   FUND_TANK,
-  SEND_TOKEN_FROM_ASSET_FLOW,
   SETTLE_BALANCE,
   SMART_WALLET_INTRO,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
-  SEND_SYNTHETICS_DEV,
+  SEND_TOKEN_CONTACTS,
 } from 'constants/navigationConstants';
 import {
   PAYMENT_COMPLETED,
@@ -59,14 +57,12 @@ import {
 
 // models
 import type { Accounts } from 'models/Account';
-import type { Asset, Assets, Balances } from 'models/Asset';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction } from 'models/Transaction';
 
 // utils
 import { getRate } from 'utils/assets';
-import { getAccountAddress } from 'utils/accounts';
 import {
   formatMoney,
   formatFiat,
@@ -76,31 +72,22 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 
 // selectors
-import { activeAccountSelector } from 'selectors';
 import {
   availableStakeSelector,
-  paymentNetworkAccountBalancesSelector,
   paymentNetworkNonZeroBalancesSelector,
   PPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
-import { accountAssetsSelector } from 'selectors/assets';
 
 
 type Props = {
   baseFiatCurrency: string,
-  assets: Assets,
   rates: Object,
-  balances: Balances,
-  paymentNetworkBalances: Balances,
-  activeAccount: Object,
   navigation: NavigationScreenProp<*>,
   availableStake: number,
-  supportedAssets: Asset[],
   assetsOnNetwork: Object,
   fetchVirtualAccountBalance: Function,
   accounts: Accounts,
   smartWalletState: Object,
-  availableToSettleTx: Object[],
   PPNTransactions: Transaction[],
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
@@ -159,51 +146,6 @@ const SETTLED = 'SETTLED';
 class PPNView extends React.Component<Props, State> {
   state = {
     activeTab: UNSETTLED,
-  };
-
-  goToSend = () => {
-    const {
-      navigation,
-      assets,
-      activeAccount,
-      baseFiatCurrency,
-      rates,
-      availableStake,
-    } = this.props;
-    const thisAsset = assets[PLR] || {};
-
-    const {
-      name,
-      symbol,
-      iconMonoUrl,
-      decimals,
-      iconUrl,
-      patternUrl,
-      address,
-      description,
-    } = thisAsset;
-    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const paymentNetworkBalanceFormatted = formatMoney(availableStake, 4);
-    const totalInFiat = availableStake * getRate(rates, PLR, fiatCurrency);
-    const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
-    const assetData = {
-      id: PLR,
-      name: name || symbol,
-      token: symbol,
-      amount: paymentNetworkBalanceFormatted,
-      balanceInFiat: formattedAmountInFiat,
-      address: getAccountAddress(activeAccount),
-      contractAddress: address,
-      icon: iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '',
-      iconColor: fullIconUrl,
-      patternIcon: patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl,
-      description,
-      decimals,
-      isSynthetic: true,
-      isListed: true,
-    };
-    navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
   setActiveTab = (activeTab) => {
@@ -343,7 +285,7 @@ class PPNView extends React.Component<Props, State> {
               <CircleButton
                 label="Send"
                 icon={iconSend}
-                onPress={this.goToSend}
+                onPress={() => navigation.navigate(SEND_TOKEN_CONTACTS)}
                 disabled={availableStake <= 0}
               />
             </AssetButtonsWrapper>
@@ -359,19 +301,6 @@ class PPNView extends React.Component<Props, State> {
             label="Incoming balance"
             rightAddon={(<BlueText>{formatFiat(incomingBalanceInFiat, baseFiatCurrency)}</BlueText>)}
             onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
-            color={baseColors.slateBlack}
-            bordered
-          />}
-          {!!__DEV__ &&
-          <ListItemChevron
-            wrapperStyle={{
-              borderTopWidth: 0,
-              borderBottomWidth: 1,
-              borderColor: baseColors.mediumLightGray,
-            }}
-            chevronStyle={{ color: baseColors.darkGray }}
-            label="Send Synthetics DEV"
-            onPress={() => navigation.navigate(SEND_SYNTHETICS_DEV)}
             color={baseColors.slateBlack}
             bordered
           />}
@@ -406,34 +335,24 @@ class PPNView extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
-  paymentNetwork: { balances, availableToSettleTx: { data: availableToSettleTx, isFetched } },
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
 }) => ({
   rates,
   baseFiatCurrency,
-  assetsLayout,
-  supportedAssets,
   smartWalletState,
   accounts,
-  balances,
-  availableToSettleTx,
-  isFetched,
   contacts,
   contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
   availableStake: availableStakeSelector,
-  activeAccount: activeAccountSelector,
   PPNTransactions: PPNTransactionsSelector,
-  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

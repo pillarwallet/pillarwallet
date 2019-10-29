@@ -19,30 +19,53 @@
 */
 import * as React from 'react';
 import { TextInput } from 'react-native';
+import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import t from 'tcomb-form-native';
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
+import debounce from 'lodash.debounce';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SelectorInput from 'components/SelectorInput';
+import Button from 'components/Button';
+import Spinner from 'components/Spinner';
 
-// utils
-import {
-  spacing,
-  UIColors,
-} from 'utils/variables';
+// actions
+import { initSyntheticsServiceAction } from 'actions/syntheticsActions';
+
+// utils, services
+import { spacing, UIColors } from 'utils/variables';
 import { isValidNumber } from 'utils/common';
+import { getAssetData } from 'utils/assets';
+import syntheticsService from 'services/synthetics';
 
-import type { Asset } from 'models/Asset';
+// constants
+import { ETH, PLR } from 'constants/assetsConstants';
+import { SEND_SYNTHETICS_CONFIRM } from 'constants/navigationConstants';
+
+// selectors
+import { accountAssetsSelector } from 'selectors/assets';
+
+// models
+import type { Asset, Assets } from 'models/Asset';
+import type { SyntheticTransaction } from 'models/Transaction';
 
 type Props = {
+  assets: Assets,
   supportedAssets: Asset[],
+  initSyntheticsService: Function,
+  navigation: NavigationScreenProp<*>,
 };
 
 type State = {
   formOptions: Object,
   value: Object,
+  submitPressed: boolean,
+  intentError: ?string,
 };
 
 const { Form } = t.form;
@@ -89,14 +112,15 @@ function SelectorInputTemplate(locals) {
   );
 }
 
-const generateFormStructure = () => {
+const generateFormStructure = (intentError: ?string) => {
   let amount;
 
   const FromOption = t.refinement(t.Object, ({ selector, input }) => {
     if (!selector
       || !Object.keys(selector).length
       || !input
-      || !isValidNumber(input)) return false;
+      || !isValidNumber(input)
+      || !!intentError) return false;
 
     const { decimals } = selector;
 
@@ -121,13 +145,15 @@ const generateFormStructure = () => {
     } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
       return 'Amount should not contain decimal places';
     }
-    return true;
+    return intentError || true;
   };
 
   return t.struct({
     fromInput: FromOption,
   });
 };
+
+const parseNumericAmount = value => Number(get(value, 'fromInput.input', 0));
 
 const BackgroundWrapper = styled.View`
   background-color: ${UIColors.defaultBackgroundColor};
@@ -139,13 +165,26 @@ const FormWrapper = styled.View`
   margin-top: ${spacing.large}px;
 `;
 
-class SendSynthetics extends React.Component<Props, State> {
-  exchangeForm: t.form;
+const FooterInner = styled.View`
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-end;
+  width: 100%;
+  padding: ${spacing.large}px;
+  background-color: ${UIColors.defaultBackgroundColor};
+`;
+
+class SendSyntheticsSelect extends React.Component<Props, State> {
+  syntheticsForm: t.form;
   fromInputRef: TextInput;
+  receiver: string;
 
   constructor(props: Props) {
     super(props);
+    this.receiver = this.props.navigation.getParam('receiver', '');
     this.state = {
+      intentError: null,
+      submitPressed: false,
       value: {
         fromInput: {
           selector: {},
@@ -183,52 +222,124 @@ class SendSynthetics extends React.Component<Props, State> {
         },
       },
     };
+    this.handleFormChange = debounce(this.handleFormChange, 500);
   }
 
   componentDidMount() {
     this.generateSupportedAssetsOptions();
+    this.props.initSyntheticsService();
   }
 
   generateSupportedAssetsOptions = () => {
     const { supportedAssets } = this.props;
     const assets = [...supportedAssets] // prevent mutation of param
       .sort((a, b) => a.symbol.localeCompare(b.symbol))
-      .map(({ symbol, iconUrl, ...rest }) => {
-        return {
-          key: symbol,
-          value: symbol,
-          icon: iconUrl,
-          iconUrl,
-          symbol,
-          ...rest,
-        };
-      });
+      .map(({ symbol, iconUrl, ...rest }) => ({
+        key: symbol,
+        value: symbol,
+        icon: iconUrl,
+        iconUrl,
+        symbol,
+        ...rest,
+      }));
+    const initialFormState = {
+      ...this.state.value,
+      fromInput: {
+        selector: assets.find(({ symbol }) => symbol === ETH) || {},
+        input: '',
+      },
+    };
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
     thisStateFormOptionsCopy.fields.fromInput.config.options = assets;
-    this.setState({
-      formOptions: thisStateFormOptionsCopy,
-    });
+    this.setState({ formOptions: thisStateFormOptionsCopy, value: initialFormState });
   };
 
   handleFormChange = (value: Object) => {
-    this.setState({ value });
-    this.exchangeForm.getValue();
+    const { intentError } = this.state;
+    let updatedState = { value };
+    if (intentError) updatedState = { ...updatedState, intentError: null };
+    this.setState(updatedState);
+    if (this.syntheticsForm) this.syntheticsForm.getValue(); // validates form
+  };
+
+  handleFormSubmit = () => {
+    const { submitPressed, value } = this.state;
+    if (submitPressed) return;
+    this.setState({ submitPressed: true, intentError: null }, () => {
+      const validation = this.syntheticsForm.validate();
+      const { errors = [] } = validation;
+      const assetCode = get(value, 'fromInput.selector.symbol');
+      if (errors.length || !assetCode) {
+        this.setState({ submitPressed: false });
+        return;
+      }
+      const amount = parseNumericAmount(value);
+      const { navigation, assets, supportedAssets } = this.props;
+      const assetsData = Object.keys(assets).map(id => assets[id]);
+      const assetData = getAssetData(assetsData, supportedAssets, PLR);
+      syntheticsService
+        .createExchangeIntent(this.receiver, amount, assetCode)
+        .then((result) => {
+          const { output: { transactionId, exchangeAmount } } = result;
+          this.setState({ submitPressed: false }, () => {
+            const syntheticTransaction: SyntheticTransaction = {
+              transactionId,
+              fromAmount: exchangeAmount,
+              toAmount: amount,
+              toAssetCode: assetCode,
+              toAddress: this.receiver,
+            };
+            navigation.navigate(SEND_SYNTHETICS_CONFIRM, {
+              syntheticTransaction,
+              assetData,
+            });
+          });
+        })
+        .catch(() => {
+          this.setState({
+            submitPressed: false,
+            intentError: 'Failed to calculate synthetics exchange',
+          });
+          this.syntheticsForm.getValue(); // validates form
+        });
+    });
   };
 
   render() {
     const {
       value,
       formOptions,
+      submitPressed,
+      intentError,
     } = this.state;
+    const inputValue = get(value, 'fromInput.input');
+    const showNextButton = !submitPressed && !isEmpty(inputValue);
+    const isNextButtonDisabled = parseNumericAmount(value) <= 0;
+    const nextButtonTitle = 'Next';
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Send synthetics (dev)' }] }}
+        headerProps={{ centerItems: [{ title: 'Send synthetic asset' }] }}
+        keyboardAvoidFooter={(
+          <FooterInner>
+            {showNextButton &&
+              <Button
+                disabled={isNextButtonDisabled}
+                small
+                flexRight
+                title={nextButtonTitle}
+                onPress={this.handleFormSubmit}
+              />
+            }
+            {submitPressed && <Spinner width={20} height={20} />}
+          </FooterInner>
+        )}
+        minAvoidHeight={200}
       >
         <BackgroundWrapper>
           <FormWrapper>
             <Form
-              ref={node => { this.exchangeForm = node; }}
-              type={generateFormStructure()}
+              ref={node => { this.syntheticsForm = node; }}
+              type={generateFormStructure(intentError)}
               options={formOptions}
               value={value}
               onChange={this.handleFormChange}
@@ -246,4 +357,17 @@ const mapStateToProps = ({
   supportedAssets,
 });
 
-export default connect(mapStateToProps)(SendSynthetics);
+const structuredSelector = createStructuredSelector({
+  assets: accountAssetsSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  initSyntheticsService: () => dispatch(initSyntheticsServiceAction()),
+});
+
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendSyntheticsSelect);

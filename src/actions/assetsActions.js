@@ -76,6 +76,7 @@ import { findMatchingContact } from 'utils/contacts';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
+import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
 import SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
@@ -388,6 +389,7 @@ export const sendAssetAction = (
           gasLimit: transaction.gasLimit,
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+          extra: transaction.extra || null,
         });
       }
     }
@@ -429,6 +431,10 @@ export const sendAssetAction = (
             historyTx,
           },
         });
+        const syntheticTransactionId = get(historyTx, 'extra.syntheticTransaction.transactionId');
+        if (syntheticTransactionId) {
+          dispatch(commitSyntheticsTransaction(syntheticTransactionId, historyTx.hash));
+        }
         const { history: { data: currentHistory } } = getState();
         const accountHistory = currentHistory[accountId] || [];
         const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
