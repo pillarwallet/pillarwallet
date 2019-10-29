@@ -352,6 +352,7 @@ class EventDetails extends React.Component<Props, State> {
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const freeTx = isPPNTransaction;
+      let showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
       let showAmountReceived = true;
       let showSender = true;
       let showNote = true;
@@ -375,9 +376,8 @@ class EventDetails extends React.Component<Props, State> {
         showNote = false;
         showTxType = true;
         txType = 'TANK WITHDRAWAL';
+        showFeeBlock = true;
       }
-
-      const showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
 
       return (
         <EventBody>
