@@ -39,7 +39,7 @@ import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
-import { getRate, getBalance } from 'utils/assets';
+import { getRate, getBalance, getAssetsAsList } from 'utils/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -148,7 +148,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     this.setState({ upgradeStarted: true });
     const gasPriceWei = getGasPriceWei(gasInfo);
     const gasPrice = gasPriceWei.toNumber();
-    const assetsArray = Object.values(assets);
+    const assetsArray = getAssetsAsList(assets);
     const transferTransactionsCombined = [
       ...transferCollectibles,
       ...transferAssets,
@@ -263,7 +263,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     const smartContractDeployFee =
       `${feeSmartContractDeployEthFormatted} ETH (${fiatSymbol}${feeSmartContractDeployFiatBN.toFixed(2)})`;
 
-    const assetsArray = Object.values(assets);
+    const assetsArray = getAssetsAsList(assets);
     const nonEmptyAssets = transferAssets.map((transferAsset: any) => {
       const asset: any = assetsArray.find((_asset: any) => _asset.name === transferAsset.name) || {};
       const { amount } = transferAsset;
