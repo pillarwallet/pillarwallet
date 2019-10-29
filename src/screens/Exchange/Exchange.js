@@ -488,11 +488,18 @@ class ExchangeScreen extends React.Component<Props, State> {
       oAuthAccessToken,
       resetOffers,
     } = this.props;
+    const {
+      value: {
+        fromInput: {
+          selector: { symbol },
+        } = {},
+      } = {},
+    } = this.state;
     if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets) {
       this.provideOptions();
     }
 
-    const fromAssetCode = navigation.getParam('fromAssetCode') || '';
+    const fromAssetCode = navigation.getParam('fromAssetCode') || symbol;
     const toAssetCode = navigation.getParam('toAssetCode') || '';
     if (fromAssetCode || toAssetCode) {
       this.setInitialSelection(fromAssetCode, toAssetCode);
@@ -1029,8 +1036,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     const blockView = !!Object.keys(sendingBlockedMessage).length
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
     const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
-    const isSelectedFiat = !!(Object.keys(fiatCurrencies.find(
-      (currency) => currency.symbol === selectedFromOption.symbol) || {}).length);
+    const isSelectedFiat = Object.keys(selectedFromOption).length &&
+      !!fiatCurrencies.find(({ symbol }) => symbol === selectedFromOption.symbol);
 
     const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed() && !isSelectedFiat;
 
