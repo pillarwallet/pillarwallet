@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Linking } from 'react-native';
-import { SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
+import { NETWORK_PROVIDER, SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
 import ExchangeService from 'services/exchange';
 import Toast from 'components/Toast';
 import {
@@ -85,8 +85,8 @@ export const takeOfferAction = (
       exchange: { exchangeSupportedAssets },
     } = getState();
 
-    const fromAsset = exchangeSupportedAssets.find(a => a.symbol && a.symbol.replace(/\0.*$/g, '') === fromAssetCode);
-    const toAsset = exchangeSupportedAssets.find(a => a.symbol && a.symbol.replace(/\0.*$/g, '') === toAssetCode);
+    const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
+    const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
 
     if (!fromAsset || !toAsset) {
       Toast.show({
@@ -159,7 +159,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId: userWalletId } },
-      // exchange: { exchangeSupportedAssets },
+      exchange: { exchangeSupportedAssets },
     } = getState();
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
@@ -170,33 +170,6 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
         fromAmount,
       },
     });
-
-    // const fromAsset = exchangeSupportedAssets
-    // .find(a => a.symbol && a.symbol.replace(/\0.*$/g, '') === fromAssetCode);
-    // const toAsset = exchangeSupportedAssets.find(a => a.symbol && a.symbol.replace(/\0.*$/g, '') === toAssetCode);
-
-    // if (!fromAsset || !toAsset) {
-    //   Toast.show({
-    //     title: 'Exchange service failed',
-    //     type: 'warning',
-    //     message: 'Could not find asset',
-    //   });
-    //   return;
-    // }
-    const fromAddress = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
-    const toAddress = '0x0000000000000000000000000000000000000000';
-
-    // const { address: fromAddress } = fromAsset;
-    // const { address: toAddress } = toAsset;
-
-    connectExchangeService(getState());
-    exchangeService.onOffers(offers =>
-      offers
-        .filter(({ askRate }) => !!askRate)
-        .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
-    );
-    // we're requesting although it will start delivering when connection is established
-    const { error } = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount);
 
     const isTest = SENDWYRE_ENVIRONMENT === 'test';
 
@@ -229,6 +202,37 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
         }).catch(() => null);
       }
     }
+
+    const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
+    const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
+
+    if (!fromAsset || !toAsset) {
+      Toast.show({
+        title: 'Exchange service failed',
+        type: 'warning',
+        message: 'Could not find asset',
+      });
+      return;
+    }
+
+    let { address: fromAddress } = fromAsset;
+    let { address: toAddress } = toAsset;
+
+    // we need PROD assets' addresses in order to get offers when on ropsten network
+    if (NETWORK_PROVIDER === 'ropsten') {
+      const prodAssetsAddress = await exchangeService.getProdAssetsAddress();
+      fromAddress = prodAssetsAddress[fromAssetCode];
+      toAddress = prodAssetsAddress[toAssetCode];
+    }
+
+    connectExchangeService(getState());
+    exchangeService.onOffers(offers =>
+      offers
+        .filter(({ askRate }) => !!askRate)
+        .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
+    );
+    // we're requesting although it will start delivering when connection is established
+    const { error } = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount);
 
     if (error) {
       const message = error.message || 'Unable to connect';
@@ -498,30 +502,30 @@ export const markNotificationAsSeenAction = () => {
 export const getMetaDataAction = () => {
   return async (dispatch: Dispatch) => {
     const metaData = await exchangeService.getMetaData();
-
-    // TODO: add to storage
-
     dispatch({
       type: SET_EXCHANGE_PROVIDERS_META_DATA,
       payload: metaData,
     });
+    dispatch(saveDbAction('exchangeProvidersInfo', { exchangeProvidersInfo: metaData }, true));
   };
 };
 
 export const getExchangeSupportedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      oAuthTokens: { data: oAuthTokens },
+      assets: { supportedAssets },
     } = getState();
-    const prodAssets = await exchangeService.getProdAssets(oAuthTokens.accessToken);
+
     const exchangeSupportedAssetsTickers = await exchangeService.getExchangeSupportedAssets();
 
-    const supportedAssets = prodAssets.filter(({ symbol }) => exchangeSupportedAssetsTickers.includes(symbol));
+    const exchangeSupportedAssets = supportedAssets
+      .filter(({ symbol }) => exchangeSupportedAssetsTickers.includes(symbol));
 
     dispatch({
       type: SET_EXCHANGE_SUPPORTED_ASSETS,
-      payload: supportedAssets,
+      payload: exchangeSupportedAssets,
     });
-    // TODO: use supported assets if dev. Fetch exchange supported assets
+
+    dispatch(saveDbAction('exchangeSupportedAssets', { exchangeSupportedAssets }, true));
   };
 };

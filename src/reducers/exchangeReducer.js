@@ -55,7 +55,7 @@ export type ExchangeReducerAction = {
   payload: any,
 };
 
-const initialState = {
+export const initialState = {
   data: {
     offers: [],
     executingTransaction: false,

@@ -173,7 +173,6 @@ type Props = {
   offers: Offer[],
   takeOffer: (string, string, number, string, Function) => Object,
   authorizeWithShapeshift: Function,
-  supportedAssets: Asset[],
   balances: Balances,
   resetOffers: Function,
   paymentNetworkBalances: Balances,
@@ -483,12 +482,12 @@ class ExchangeScreen extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const {
       assets,
-      supportedAssets,
+      exchangeSupportedAssets,
       navigation,
       oAuthAccessToken,
       resetOffers,
     } = this.props;
-    if (assets !== prevProps.assets || supportedAssets !== prevProps.supportedAssets) {
+    if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets) {
       this.provideOptions();
     }
 
@@ -516,10 +515,10 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   provideOptions = (initialRender: boolean = false) => {
-    const { assets, supportedAssets } = this.props;
+    const { assets, exchangeSupportedAssets } = this.props;
     const fiatOptionsFrom = this.generateFiatOptions();
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
-    const assetsOptionsBuying = this.generateSupportedAssetsOptions(supportedAssets);
+    const assetsOptionsBuying = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
     const initialAssetsOptionsBuying = initialRender
       ? assetsOptionsBuying.filter(({ value }) => value !== ETH)
       : assetsOptionsBuying;
@@ -534,10 +533,10 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
-    const { assets, supportedAssets } = this.props;
+    const { assets, exchangeSupportedAssets } = this.props;
     const assetsData = Object.keys(assets).map(id => assets[id]);
     const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode)
-      || getAssetData(assetsData, supportedAssets, fromAssetCode);
+      || getAssetData(assetsData, exchangeSupportedAssets, fromAssetCode);
     const selectedAssetOptions = isFiatCurrency(fromAssetCode)
       ? this.generateFiatOptions().find(({ symbol }) => symbol === fromAssetCode)
       : this.generateAssetsOptions({ [fromAssetCode]: fromAsset })[0];
@@ -549,7 +548,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       },
     };
     if (toAssetCode) {
-      const toAsset = getAssetData(assetsData, supportedAssets, toAssetCode);
+      const toAsset = getAssetData(assetsData, exchangeSupportedAssets, toAssetCode);
       if (toAsset) {
         const supportedAssetsOptions = this.generateSupportedAssetsOptions([toAsset]);
         initialFormState.toInput = {
@@ -940,7 +939,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   updateOptions = (value) => {
     const {
       assets,
-      supportedAssets,
+      exchangeSupportedAssets,
       rates,
       baseFiatCurrency,
     } = this.props;
@@ -963,7 +962,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       newOptionsFrom = optionsFrom.filter((option) => option.value !== selectedToOption.value);
     }
 
-    const optionsTo = this.generateSupportedAssetsOptions(supportedAssets);
+    const optionsTo = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
     let newOptionsTo = optionsTo;
     if (Object.keys(selectedFromOption).length) {
       newOptionsTo = optionsTo.filter((option) => option.value !== selectedFromOption.value);
@@ -1116,7 +1115,6 @@ const mapStateToProps = ({
     providersMeta,
     exchangeSupportedAssets,
   },
-  assets: { supportedAssets },
   rates: { data: rates },
   featureFlags: {
     data: {
@@ -1128,7 +1126,6 @@ const mapStateToProps = ({
 }) => ({
   baseFiatCurrency,
   offers,
-  supportedAssets,
   rates,
   exchangeSearchRequest,
   exchangeAllowances,

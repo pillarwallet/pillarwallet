@@ -40,10 +40,11 @@ import DeploymentView from 'components/DeploymentView';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 
 // models
 import type { Transaction } from 'models/Transaction';
-import type { Assets, Balances } from 'models/Asset';
+import type { Assets, Balances, Asset } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 
@@ -109,6 +110,8 @@ type Props = {
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
   contactsSmartAddresses: ContactSmartAddressData[],
+  getExchangeSupportedAssets: () => void,
+  exchangeSupportedAssets: Asset[],
 };
 
 type State = {
@@ -192,10 +195,17 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, navigation, logScreenView } = this.props;
+    const {
+      fetchTransactionsHistory,
+      navigation,
+      logScreenView,
+      getExchangeSupportedAssets,
+      exchangeSupportedAssets,
+    } = this.props;
     const { assetData: { token }, resetHideRemoval } = navigation.state.params;
     fetchTransactionsHistory(token);
     if (resetHideRemoval) resetHideRemoval();
+    if (!exchangeSupportedAssets.length) getExchangeSupportedAssets();
     logScreenView('View asset', 'Asset', `asset-${token}`);
   }
 
@@ -259,6 +269,7 @@ class AssetScreen extends React.Component<Props, State> {
       contacts,
       availableStake,
       contactsSmartAddresses,
+      exchangeSupportedAssets,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -302,6 +313,7 @@ class AssetScreen extends React.Component<Props, State> {
       return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
+    const isSupportedByExchange = !!exchangeSupportedAssets.find(({ symbol }) => symbol === token);
 
     return (
       <ContainerWithHeader
@@ -363,7 +375,7 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
-              onPressExchange={() => this.goToExchangeFlow(token)}
+              onPressExchange={isSupportedByExchange ? () => this.goToExchangeFlow(token) : null}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
@@ -423,6 +435,7 @@ const mapStateToProps = ({
       SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
     },
   },
+  exchange: { exchangeSupportedAssets },
 }) => ({
   contacts,
   rates,
@@ -431,6 +444,7 @@ const mapStateToProps = ({
   accounts,
   smartWalletFeatureEnabled,
   contactsSmartAddresses,
+  exchangeSupportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -456,6 +470,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   logScreenView: (contentName: string, contentType: string, contentId: string) => {
     dispatch(logScreenViewAction(contentName, contentType, contentId));
   },
+  getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);

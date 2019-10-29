@@ -187,20 +187,15 @@ export default class ExchangeService {
       .catch(() => []);
   }
 
-  getProdAssets(accessToken: ?string) {
-    if (!accessToken) return [];
-
-    // TODO: update to get supported assets
-    return fetch(buildApiUrl('assets'), buildAPIConfig(accessToken))
+  getProdAssetsAddress() {
+    return fetch(buildApiUrl('prod-assets'))
       .then(resp => resp.json())
-      .then(assets => assets || [])
       .catch(() => []);
   }
 
   getExchangeSupportedAssets() {
     return fetch(buildApiUrl('shims/assets', '1.0'))
       .then(resp => resp.json())
-      .then(assets => assets || [])
       .catch(() => []);
   }
 }
