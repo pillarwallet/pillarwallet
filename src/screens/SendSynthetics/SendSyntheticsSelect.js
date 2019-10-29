@@ -123,10 +123,9 @@ const generateFormStructure = (intentError: ?string) => {
       || !!intentError) return false;
 
     const { decimals } = selector;
-
     amount = parseFloat(input);
 
-    return !(decimals === 0 && amount.toString().indexOf('.') > -1);
+    return decimals !== 0 || !amount.toString().includes('.');
   });
 
   FromOption.getValidationErrorMessage = ({ selector, input }) => {
@@ -142,7 +141,7 @@ const generateFormStructure = (intentError: ?string) => {
       return false; // should still validate (to not trigger search if empty), yet error should not be visible to user
     } else if (parseFloat(input) < 0) {
       return 'Amount should be bigger than 0.';
-    } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+    } else if (decimals === 0 && amount.toString().includes('.')) {
       return 'Amount should not contain decimal places';
     }
     return intentError || true;
