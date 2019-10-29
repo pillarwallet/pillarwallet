@@ -385,6 +385,13 @@ class SmartWallet {
     return calculateEstimate(estimatedTransaction, gasInfo, defaultSpeed);
   }
 
+  getTransactionStatus(hash: string) {
+    if (!this.sdkInitialized) return null;
+    return this.sdk.getConnectedAccountTransaction(hash)
+      .then(({ state }) => state)
+      .catch(() => null);
+  }
+
   handleError(error: any) {
     console.error('SmartWallet handleError: ', error);
   }

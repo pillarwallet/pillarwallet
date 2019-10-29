@@ -19,6 +19,8 @@
 */
 import get from 'lodash.get';
 import orderBy from 'lodash.orderby';
+import { Sentry } from 'react-native-sentry';
+import { sdkConstants } from '@smartwallet/sdk';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { getEthereumProvider, uniqBy } from 'utils/common';
 import {
@@ -283,7 +285,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     if (!isOnline) return;
 
     const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
+    if (!activeAccount) return;
 
     const txInfo = await api.fetchTxInfo(hash);
     const txReceipt = await api.fetchTransactionReceipt(hash);
@@ -292,6 +294,25 @@ export const updateTransactionStatusAction = (hash: string) => {
 
     const nbConfirmations = lastBlockNumber - txReceipt.blockNumber;
     const status = txReceipt.status ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS;
+
+    if (checkIfSmartWalletAccount(activeAccount)) {
+      const sdkRawStatus = await smartWalletService.getTransactionStatus(hash);
+      const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
+      // TODO: add support for failed transactions
+      const sdkStatus = sdkRawStatus === TRANSACTION_COMPLETED ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS;
+      if (sdkStatus !== status) {
+        console.log('Wrong transaction status');
+        Sentry.captureMessage('Wrong transaction status', {
+          level: 'info',
+          extra: {
+            hash,
+            sdkStatus,
+            blockchainStatus: status,
+          },
+        });
+      }
+      return;
+    }
 
     const { history: { data: currentHistory } } = getState();
     const { updatedHistory } = updateHistoryRecord(
