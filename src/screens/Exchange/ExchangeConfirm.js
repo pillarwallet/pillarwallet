@@ -42,7 +42,7 @@ import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import { formatAmount, formatMoney, getCurrencySymbol } from 'utils/common';
+import { formatAmount, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderDisplayName, getProviderLogo } from 'utils/exchange';
 
@@ -333,7 +333,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             <View>
               <LabeledRow>
                 <Label>You will receive</Label>
-                <Value>{`${formatMoney(receiveQuantity)} ${toAssetCode}`}</Value>
+                <Value>{`${receiveQuantity} ${toAssetCode}`}</Value>
                 <LabelSub>
                   Final amount may be higher or lower than expected at the end of a transaction.
                   Crypto is volatile, the rate fluctuates.

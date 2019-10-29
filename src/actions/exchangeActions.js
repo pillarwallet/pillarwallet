@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Linking } from 'react-native';
-import { NETWORK_PROVIDER, SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
+import { SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
 import ExchangeService from 'services/exchange';
 import Toast from 'components/Toast';
 import {
@@ -104,7 +104,7 @@ export const takeOfferAction = (
 
     // we need PROD assets' addresses in order to get offers when on ropsten network
     // as v2 requests require to provide addresses not tickers
-    if (NETWORK_PROVIDER === 'ropsten') {
+    if (__DEV__) {
       const prodAssetsAddress = await exchangeService.getProdAssetsAddress();
       fromAssetAddress = prodAssetsAddress[fromAssetCode];
       toAssetAddress = prodAssetsAddress[toAssetCode];
@@ -229,7 +229,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
       // we need PROD assets' addresses in order to get offers when on ropsten network
       // as v2 requests require to provide addresses not tickers
-      if (NETWORK_PROVIDER === 'ropsten') {
+      if (__DEV__) {
         const prodAssetsAddress = await exchangeService.getProdAssetsAddress();
         fromAddress = prodAssetsAddress[fromAssetCode];
         toAddress = prodAssetsAddress[toAssetCode];

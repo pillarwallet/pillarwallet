@@ -364,7 +364,7 @@ function SelectorInputTemplate(locals) {
 
 /**
  * avoid text overlapping on many decimals,
- * full amount will be displayed n confirm screen
+ * full amount will be displayed in confirm screen
  * also show only 2 decimals for amounts above 1.00
  * to avoid same text overlapping in the other side
  */
@@ -650,7 +650,8 @@ class ExchangeScreen extends React.Component<Props, State> {
         navigation.navigate(EXCHANGE_CONFIRM, {
           offerOrder: {
             ...order,
-            receiveQuantity: amountToBuy,
+            receiveQuantity: amountToBuy, // this value should be provided by exchange, currently returning 0,
+            // hence we overwrite it with our calculation
             provider,
           },
         });
@@ -761,7 +762,6 @@ class ExchangeScreen extends React.Component<Props, State> {
         .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {});
     }
 
-    const askRateBn = new BigNumber(askRate);
     const amountToSell = parseFloat(selectedSellAmount);
     const minQuantityNumeric = parseFloat(minQuantity);
     const maxQuantityNumeric = parseFloat(maxQuantity);
@@ -797,7 +797,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             {!isFiat &&
             <CardColumn>
               <CardText label>Exchange rate</CardText>
-              <CardText>{formatMoney(askRateBn)}</CardText>
+              <CardText>{formatAmountDisplay(askRate)}</CardText>
             </CardColumn>
             }
             <CardInnerRow style={{ flexShrink: 1 }}>
