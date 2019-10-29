@@ -90,7 +90,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
-    const { navigation } = this.props;
+    const { navigation } = props;
     this.syntheticTransaction = navigation.getParam('syntheticTransaction');
     this.assetData = navigation.getParam('assetData', {});
   }

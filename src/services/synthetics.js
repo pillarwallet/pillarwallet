@@ -21,7 +21,7 @@ import { SYNTHETICS_URL } from 'react-native-dotenv';
 
 type SyntheticsConfig = {
   accessToken: string,
-}
+};
 
 const buildApiUrl = (path: string) => {
   return `${SYNTHETICS_URL}/${path}`;

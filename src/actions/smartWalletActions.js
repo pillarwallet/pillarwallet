@@ -831,8 +831,8 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txAmountFormatted = formatUnits(txAmount, decimals);
 
       // check if received transaction
-      if (isCaseInsensitiveMatch(activeAccountAddress, txReceiverAddress)
-        && !isCaseInsensitiveMatch(txReceiverAddress, txSenderAddress)
+      if (addressesEqual(activeAccountAddress, txReceiverAddress)
+        && !addressesEqual(txReceiverAddress, txSenderAddress)
         && [PAYMENT_COMPLETED, PAYMENT_PROCESSED].includes(txStatus)) {
         const paymentInfo = `${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`;
         if (txStatus === PAYMENT_COMPLETED) {

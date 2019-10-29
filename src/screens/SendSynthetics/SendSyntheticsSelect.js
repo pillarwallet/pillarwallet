@@ -40,7 +40,7 @@ import { initSyntheticsServiceAction } from 'actions/syntheticsActions';
 // utils, services
 import { spacing, UIColors } from 'utils/variables';
 import { isValidNumber } from 'utils/common';
-import { getAssetData } from 'utils/assets';
+import { getAssetData, getAssetsAsList } from 'utils/assets';
 import syntheticsService from 'services/synthetics';
 
 // constants
@@ -55,7 +55,7 @@ import type { Asset, Assets } from 'models/Asset';
 import type { SyntheticTransaction } from 'models/Transaction';
 
 type Props = {
-  assets: Assets,
+  accountAssets: Assets,
   supportedAssets: Asset[],
   initSyntheticsService: Function,
   navigation: NavigationScreenProp<*>,
@@ -181,7 +181,7 @@ class SendSyntheticsSelect extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.receiver = this.props.navigation.getParam('receiver', '');
+    this.receiver = props.navigation.getParam('receiver', '');
     this.state = {
       intentError: null,
       submitPressed: false,
@@ -274,8 +274,8 @@ class SendSyntheticsSelect extends React.Component<Props, State> {
         return;
       }
       const amount = parseNumericAmount(value);
-      const { navigation, assets, supportedAssets } = this.props;
-      const assetsData = Object.keys(assets).map(id => assets[id]);
+      const { navigation, accountAssets, supportedAssets } = this.props;
+      const assetsData = getAssetsAsList(accountAssets);
       const assetData = getAssetData(assetsData, supportedAssets, PLR);
       syntheticsService
         .createExchangeIntent(this.receiver, amount, assetCode)
@@ -358,7 +358,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  assets: accountAssetsSelector,
+  accountAssets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
