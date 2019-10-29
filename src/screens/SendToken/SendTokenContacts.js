@@ -28,6 +28,7 @@ import Separator from 'components/Separator';
 import { ACCOUNTS, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { CHAT } from 'constants/chatConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Container, Footer } from 'components/Layout';
@@ -71,6 +72,8 @@ type State = {
 };
 
 const qrCode = require('assets/images/qr.png');
+const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
+const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 const FormWrapper = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.large}px 6px;
@@ -224,13 +227,24 @@ class SendTokenContacts extends React.Component<Props, State> {
       username,
       hasSmartWallet,
       profileImage,
+      isUserAccount,
+      type,
     } = user;
+
+    const customProps = {};
+    if (isUserAccount) {
+      customProps.itemImageSource = type === ACCOUNT_TYPES.KEY_BASED ? keyWalletIcon : smartWalletIcon;
+      customProps.noImageBorder = true;
+    } else {
+      customProps.avatarUrl = profileImage;
+    }
+
     return (
       <ListItemWithImage
         onPress={() => this.onContactPress(user)}
         wrapperOpacity={this.isPPNTransaction && !hasSmartWallet ? 0.3 : 1}
         label={username}
-        avatarUrl={profileImage}
+        {...customProps}
       />
     );
   };
@@ -269,6 +283,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       ethAddress: getAccountAddress(account),
       username: getAccountName(account.type, accounts),
       sortToTop: true,
+      isUserAccount: true,
     }));
 
     // asset transfer between user accounts only in regular, but not in PPN send flow
