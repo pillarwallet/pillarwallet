@@ -499,10 +499,11 @@ class ExchangeScreen extends React.Component<Props, State> {
       this.provideOptions();
     }
 
-    const fromAssetCode = navigation.getParam('fromAssetCode') || symbol;
+    const fromAssetCode = navigation.getParam('fromAssetCode') || '';
     const toAssetCode = navigation.getParam('toAssetCode') || '';
     if (fromAssetCode || toAssetCode) {
-      this.setInitialSelection(fromAssetCode, toAssetCode);
+      const _fromAssetCode = fromAssetCode || symbol;
+      this.setInitialSelection(_fromAssetCode, toAssetCode);
       // reset to prevent nav value change over newly selected
       navigation.setParams({ fromAssetCode: null, toAssetCode: null });
     }
