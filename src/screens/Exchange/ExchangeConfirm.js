@@ -44,6 +44,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { formatAmount, formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
+import { getProviderDisplayName, getProviderLogo } from 'utils/exchange';
 
 import type { GasInfo } from 'models/GasInfo';
 import type { Asset, Balances, Rates } from 'models/Asset';
@@ -304,8 +305,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const errorMessage = !enoughBalance && 'Not enough ETH for transaction fee';
 
     const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
-    const { icon_large: providerIconPath, name: providerName } = providerInfo;
-    const providerLogo = providerIconPath ? `${EXCHANGE_URL}/v2.0${providerIconPath}` : null;
+    const { icon_large: providerIconPath, name } = providerInfo;
+    const providerLogoUri = providerIconPath && `${EXCHANGE_URL}/v2.0${providerIconPath}`;
+    const providerLogo = providerLogoUri ? { uri: providerLogoUri } : getProviderLogo(provider);
+    const providerName = name || getProviderDisplayName(provider);
 
     return (
       <ContainerWithHeader
@@ -343,7 +346,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               <LabeledRow>
                 <Label>Exchange</Label>
                 <ProviderWrapper>
-                  {!!providerLogo && <ProviderIcon source={{ uri: providerLogo }} resizeMode="contain" />}
+                  {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
                   <Value>{providerName}</Value>
                 </ProviderWrapper>
               </LabeledRow>

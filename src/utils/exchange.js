@@ -19,27 +19,12 @@
 */
 import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
-import {
-  PROVIDER_CHANGELLY,
-  PROVIDER_SHAPESHIFT,
-  PROVIDER_UNISWAP,
-  PROVIDER_ZEROX,
-  PROVIDER_MOONPAY,
-  PROVIDER_SENDWYRE,
-} from 'constants/exchangeConstants';
+import { PROVIDER_MOONPAY, PROVIDER_SENDWYRE } from 'constants/exchangeConstants';
 
 import { fiatCurrencies } from 'fixtures/assets';
 
 export const getProviderDisplayName = (provider?: string) => {
   switch (provider) {
-    case PROVIDER_SHAPESHIFT:
-      return 'ShapeShift';
-    case PROVIDER_UNISWAP:
-      return 'Uniswap';
-    case PROVIDER_ZEROX:
-      return '0x';
-    case PROVIDER_CHANGELLY:
-      return 'Changelly';
     case PROVIDER_SENDWYRE:
       return 'SendWyre';
     case PROVIDER_MOONPAY:
@@ -49,23 +34,11 @@ export const getProviderDisplayName = (provider?: string) => {
   }
 };
 
-const zeroxLogo = require('assets/images/exchangeProviders/logo_0x.png');
-const shapeshiftLogo = require('assets/images/exchangeProviders/logo_shapeshift.png');
-const uniswapLogo = require('assets/images/exchangeProviders/logo_uniswap.png');
-const changellyLogo = require('assets/images/exchangeProviders/logo_changelly.png');
 const sendWyreLogo = require('assets/images/exchangeProviders/logo_sendwyre.png');
 const moonPayLogo = require('assets/images/exchangeProviders/logo_moonpay.png');
 
 export const getProviderLogo = (provider?: string) => {
   switch (provider) {
-    case PROVIDER_SHAPESHIFT:
-      return shapeshiftLogo;
-    case PROVIDER_UNISWAP:
-      return uniswapLogo;
-    case PROVIDER_ZEROX:
-      return zeroxLogo;
-    case PROVIDER_CHANGELLY:
-      return changellyLogo;
     case PROVIDER_MOONPAY:
       return moonPayLogo;
     case PROVIDER_SENDWYRE:

@@ -201,56 +201,57 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
           }
         }).catch(() => null);
       }
-    }
+    } else {
+      const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
+      const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
 
-    const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
-    const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
-
-    if (!fromAsset || !toAsset) {
-      Toast.show({
-        title: 'Exchange service failed',
-        type: 'warning',
-        message: 'Could not find asset',
-      });
-      return;
-    }
-
-    let { address: fromAddress } = fromAsset;
-    let { address: toAddress } = toAsset;
-
-    // we need PROD assets' addresses in order to get offers when on ropsten network
-    if (NETWORK_PROVIDER === 'ropsten') {
-      const prodAssetsAddress = await exchangeService.getProdAssetsAddress();
-      fromAddress = prodAssetsAddress[fromAssetCode];
-      toAddress = prodAssetsAddress[toAssetCode];
-    }
-
-    connectExchangeService(getState());
-    exchangeService.onOffers(offers =>
-      offers
-        .filter(({ askRate }) => !!askRate)
-        .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
-    );
-    // we're requesting although it will start delivering when connection is established
-    const { error } = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount);
-
-    if (error) {
-      const message = error.message || 'Unable to connect';
-      if (message.toString().toLowerCase().startsWith('access token')) {
-        /**
-         * access token is expired or malformed,
-         * let's hit with user info endpoint to update access tokens
-         * or redirect to pin screen (logic being sdk init)
-         * after it's complete (access token's updated) let's dispatch same action again
-         * TODO: change SDK user info endpoint to simple SDK token refresh method when it is reachable within SDK
-         */
-        await api.userInfo(userWalletId).catch(() => null);
-      } else {
+      if (!fromAsset || !toAsset) {
         Toast.show({
           title: 'Exchange service failed',
           type: 'warning',
-          message,
+          message: 'Could not find asset',
         });
+        return;
+      }
+
+      let { address: fromAddress } = fromAsset;
+      let { address: toAddress } = toAsset;
+
+      // we need PROD assets' addresses in order to get offers when on ropsten network
+      // as v2 requests require to provide addresses not tickers
+      if (NETWORK_PROVIDER === 'ropsten') {
+        const prodAssetsAddress = await exchangeService.getProdAssetsAddress();
+        fromAddress = prodAssetsAddress[fromAssetCode];
+        toAddress = prodAssetsAddress[toAssetCode];
+      }
+
+      connectExchangeService(getState());
+      exchangeService.onOffers(offers =>
+        offers
+          .filter(({ askRate }) => !!askRate)
+          .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
+      );
+      // we're requesting although it will start delivering when connection is established
+      const { error } = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount);
+
+      if (error) {
+        const message = error.message || 'Unable to connect';
+        if (message.toString().toLowerCase().startsWith('access token')) {
+          /**
+           * access token is expired or malformed,
+           * let's hit with user info endpoint to update access tokens
+           * or redirect to pin screen (logic being sdk init)
+           * after it's complete (access token's updated) let's dispatch same action again
+           * TODO: change SDK user info endpoint to simple SDK token refresh method when it is reachable within SDK
+           */
+          await api.userInfo(userWalletId).catch(() => null);
+        } else {
+          Toast.show({
+            title: 'Exchange service failed',
+            type: 'warning',
+            message,
+          });
+        }
       }
     }
   };

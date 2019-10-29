@@ -24,7 +24,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
-import { CachedImage } from 'react-native-cached-image';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
@@ -36,12 +35,10 @@ import { baseColors, fontStyles, spacing, UIColors } from 'utils/variables';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
 import { EXCHANGE } from 'constants/navigationConstants';
-import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 
 import type { Assets } from 'models/Asset';
-import type { Allowance, ExchangeProvider } from 'models/Offer';
+import type { Allowance, ExchangeProvider, ProvidersMeta } from 'models/Offer';
 
-import { getProviderDisplayName } from 'utils/exchange';
 import Intercom from 'react-native-intercom';
 
 import { createStructuredSelector } from 'reselect';
@@ -54,6 +51,7 @@ type Props = {
   fetchTransactionsHistory: Function,
   disconnectExchangeProvider: Function,
   connectedProviders: ExchangeProvider[],
+  providersMeta: ProvidersMeta
 };
 
 type State = {
@@ -93,37 +91,7 @@ const DisconnectButtonLabel = styled(BaseText)`
   color: ${baseColors.blueViolet};
 `;
 
-const ProviderIconWrapper = styled.View`
-  width: 44px;
-  height: 44px;
-  border-radius: 22px;
-  background-color: ${props => props.backgroundFill ? props.backgroundFill : baseColors.darkGray};
-  align-items: center;
-  justify-content: center;
-`;
-
-const ProviderIcon = styled(CachedImage)`
-  width: 24px;
-  height: 24px;
-`;
-
-const shapeshiftLogo = require('assets/images/exchangeProviders/logo_shapeshift_white.png');
 const genericToken = require('assets/images/tokens/genericToken.png');
-
-const getProviderLogo = (provider: string) => {
-  switch (provider) {
-    case PROVIDER_SHAPESHIFT:
-      return (
-        <ProviderIconWrapper backgroundFill={baseColors.black}>
-          <ProviderIcon source={shapeshiftLogo} resizeMode="contain" style={{ marginTop: 0.5, marginLeft: 0.2 }} />
-        </ProviderIconWrapper>
-      );
-    default:
-      return (
-        <ProviderIconWrapper />
-      );
-  }
-};
 
 class ExchangeInfo extends React.Component<Props, State> {
   state = {
@@ -149,9 +117,13 @@ class ExchangeInfo extends React.Component<Props, State> {
   };
 
   renderProvider = ({ item: { provider, enabled: providerEnabled } }: Object) => {
+    const { providersMeta } = this.props;
+    const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
+    const { name: providerName } = providerInfo;
+
     return (
       <ProviderItem>
-        <ProviderName>{getProviderDisplayName(provider)}</ProviderName>
+        <ProviderName>{providerName}</ProviderName>
         <ProviderStatus isPending={!providerEnabled}>
           {providerEnabled
             ? 'Enabled'
@@ -195,15 +167,18 @@ class ExchangeInfo extends React.Component<Props, State> {
   };
 
   renderExchangeProvider = ({ item: provider }: Object) => {
-    const { disconnectExchangeProvider } = this.props;
+    const { disconnectExchangeProvider, providersMeta } = this.props;
     const { dateConnected, id: exchangeProviderId } = provider;
     const dateToShow = formatDate(new Date(dateConnected), 'MM.DD.YY');
+    const providerInfo = providersMeta.find(({ shim }) => shim === exchangeProviderId) || {};
+    const { logo_large: providerLogoPath, name: providerName } = providerInfo;
+
     return (
       <ListItemWithImage
-        label={getProviderDisplayName(exchangeProviderId)}
-        customImage={
-          getProviderLogo(exchangeProviderId)}
-        imageDiameter={44}
+        label={providerName}
+        itemImageUrl={providerLogoPath}
+        fallbackSource={genericToken}
+        imageDiameter={48}
         subtext={`Connected ${dateToShow}`}
         customAddon={(
           <DisconnectButton onPress={() => disconnectExchangeProvider(exchangeProviderId)}>
@@ -274,10 +249,11 @@ class ExchangeInfo extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  exchange: { data: { allowances: exchangeAllowances, connectedProviders } },
+  exchange: { data: { allowances: exchangeAllowances, connectedProviders }, providersMeta },
 }) => ({
   exchangeAllowances,
   connectedProviders,
+  providersMeta,
 });
 
 const structuredSelector = createStructuredSelector({

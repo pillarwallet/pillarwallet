@@ -40,7 +40,7 @@ import {
   getBalance,
   getRate,
 } from 'utils/assets';
-import { isFiatProvider, isFiatCurrency } from 'utils/exchange';
+import { isFiatProvider, isFiatCurrency, getProviderLogo } from 'utils/exchange';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 import { getActiveAccountType } from 'utils/accounts';
 
@@ -716,10 +716,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       toAsset,
       fromAsset,
       provider: offerProvider,
-      feeAmount, // TODO: is not return anymore
-      extraFeeAmount, // TODO: is not return anymore
-      quoteCurrencyAmount, // TODO: is not return anymore
-      offerRestricted, // TODO: is not return anymore ?
+      feeAmount,
+      extraFeeAmount,
+      quoteCurrencyAmount,
+      offerRestricted,
     } = offer;
     let { allowanceSet = true } = offer;
     const { code: toAssetCode } = toAsset;
@@ -741,7 +741,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
     const providerInfo = providersMeta.find(({ shim }) => shim === offerProvider) || {};
     const { icon_large: providerIconPath } = providerInfo;
-    const providerLogo = providerIconPath ? `${EXCHANGE_URL}/v2.0${providerIconPath}` : null;
+    const providerLogoUri = providerIconPath && `${EXCHANGE_URL}/v2.0${providerIconPath}`;
+    const providerLogo = providerLogoUri ? { uri: providerLogoUri } : getProviderLogo(offerProvider);
 
     const amountToBuyString = formatAmountDisplay(amountToBuy);
 
@@ -791,7 +792,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             </CardColumn>
             }
             <CardInnerRow style={{ flexShrink: 1 }}>
-              {!!providerLogo && <ProviderIcon source={{ uri: providerLogo }} resizeMode="contain" />}
+              {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
               {minOrMaxNeeded &&
               <CardButton onPress={() => this.setFromAmount(isBelowMin ? minQuantity : maxQuantity)}>
                 <ButtonLabel color={baseColors.electricBlue}>
@@ -1008,7 +1009,6 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const formStructure = generateFormStructure(balances);
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
-    // TODO: reorder offers
     const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
     if ((!!exchangeAllowances.length || !!connectedProviders.length)
       && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
