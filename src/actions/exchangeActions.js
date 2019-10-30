@@ -118,7 +118,7 @@ export const takeOfferAction = (
     };
     const order = await exchangeService.takeOffer(offerRequest);
 
-    if (!order || !order.data || order.error) {
+    if (!order || !order.data || !order.data.transactionObj || order.error) {
       let { message = 'Unable to request offer' } = order.error || {};
       if (message.toString().toLowerCase().includes('kyc')) {
         message = 'Shapeshift KYC must be complete in order to proceed';
