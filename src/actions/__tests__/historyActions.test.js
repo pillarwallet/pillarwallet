@@ -161,7 +161,7 @@ describe('History Actions', () => {
   const transactionsHistoryStep = 10;
 
   // $FlowFixMe
-  const api: SDKWrapper = {
+  const api: $Shape<SDKWrapper> = {
     fetchHistory: jest.fn(),
     fetchSupportedAssets: jest.fn(),
     importedEthTransactionHistory: jest.fn(),
