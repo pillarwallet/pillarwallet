@@ -41,10 +41,7 @@ import type { Accounts, Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 
 // actions
-import {
-  fetchInitialAssetsAction,
-  checkForMissedAssetsAction,
-} from 'actions/assetsActions';
+import { fetchInitialAssetsAction } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
@@ -95,7 +92,6 @@ type Props = {
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
-  checkForMissedAssets: () => void,
   labelUserAsLegacy: () => void,
   PPNTransactions: Transaction[],
 }
@@ -125,7 +121,6 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       assets,
       logScreenView,
-      checkForMissedAssets,
       labelUserAsLegacy,
     } = this.props;
 
@@ -136,19 +131,11 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     fetchAllCollectiblesData();
-    checkForMissedAssets();
     labelUserAsLegacy();
 
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ supportsBiometrics: !!supported }))
       .catch(() => null);
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { activeAccount, checkForMissedAssets } = this.props;
-    if (!isEqual(prevProps.activeAccount, activeAccount)) {
-      checkForMissedAssets();
-    }
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -387,7 +374,6 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
-  checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   labelUserAsLegacy: () => dispatch(labelUserAsLegacyAction()),

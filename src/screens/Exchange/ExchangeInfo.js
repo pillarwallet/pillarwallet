@@ -33,7 +33,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Separator from 'components/Separator';
 import { baseColors, fontStyles, spacing, UIColors } from 'utils/variables';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { fetchAssetTransactionsAction } from 'actions/historyActions';
 import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
 import { EXCHANGE } from 'constants/navigationConstants';
 import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
@@ -290,7 +290,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchTransactionsHistory: () => dispatch(
-    fetchTransactionsHistoryAction(),
+    fetchAssetTransactionsAction(),
   ),
   disconnectExchangeProvider: (id: string) => dispatch(
     disconnectExchangeProviderAction(id),
