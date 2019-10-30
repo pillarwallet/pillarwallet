@@ -90,10 +90,11 @@ import {
   setUserJoinedBetaAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
+import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
+import { labelUserAsLegacyAction } from 'actions/userActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-
 
 const storage = Storage.getInstance('db');
 
@@ -196,6 +197,8 @@ const finishRegistration = async ({
   } else {
     // we don't want to track by default, we will use this only when user applies for beta
     dispatch(setFirebaseAnalyticsCollectionEnabled(false));
+    // still fetch feature flags if there are any
+    await dispatch(fetchFeatureFlagsAction());
   }
 
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
@@ -205,6 +208,8 @@ const finishRegistration = async ({
     await dispatch(initSmartWalletSdkAction(privateKey));
     await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
   }
+
+  dispatch(labelUserAsLegacyAction());
 
   const { accounts: { data: accounts } } = getState();
 

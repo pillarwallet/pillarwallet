@@ -44,7 +44,6 @@ import type { Transaction } from 'models/Transaction';
 import { fetchInitialAssetsAction } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { labelUserAsLegacyAction } from 'actions/userActions';
 
 // constants
 import {
@@ -92,7 +91,6 @@ type Props = {
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
-  labelUserAsLegacy: () => void,
   PPNTransactions: Transaction[],
 }
 
@@ -121,7 +119,6 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       assets,
       logScreenView,
-      labelUserAsLegacy,
     } = this.props;
 
     logScreenView('View assets list', 'Assets');
@@ -131,7 +128,6 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     fetchAllCollectiblesData();
-    labelUserAsLegacy();
 
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ supportsBiometrics: !!supported }))
@@ -376,7 +372,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  labelUserAsLegacy: () => dispatch(labelUserAsLegacyAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);

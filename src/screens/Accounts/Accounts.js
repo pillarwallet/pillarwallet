@@ -21,7 +21,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { FlatList, Platform } from 'react-native';
 import isEqual from 'lodash.isequal';
-import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
@@ -310,6 +309,7 @@ class AccountsScreen extends React.Component<Props, State> {
     } = this.props;
 
     const visibleAccounts = this.visibleAccounts(accounts, smartWalletFeatureEnabled);
+
     const hasAccount = userHasSmartWallet(accounts);
     const showSmartWalletInitButton = !hasAccount && smartWalletFeatureEnabled;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -454,10 +454,9 @@ class AccountsScreen extends React.Component<Props, State> {
       .find(({ type, isSmartWallet }) => !!isSmartWallet || type === NEW_SMART_WALLET);
     const legacyAccountCard = walletsToShow.find(({ isSmartWallet }) => !isSmartWallet);
 
-    const walletsInList = isLegacyUser ? walletsToShow : [smartAccountCard];
+    const walletsInList = (isLegacyUser || !smartAccountCard) ? walletsToShow : [smartAccountCard];
 
-    // in case if undefined object comes to array (ref: Sentry issue ID 1292819194)
-    const accountsList = [...walletsInList, ...networksToShow].filter(item => !isEmpty(item));
+    const accountsList = [...walletsInList, ...networksToShow];
 
     return (
       <ContainerWithHeader
