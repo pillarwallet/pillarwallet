@@ -52,7 +52,7 @@ import {
   formatUnits,
 } from 'utils/common';
 import { createAlert } from 'utils/alerts';
-import { addressesEqual, getAssetData } from 'utils/assets';
+import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
 
@@ -330,7 +330,7 @@ class EventDetails extends React.Component<Props, State> {
       }
       const hasNote = transactionNote && transactionNote !== '';
       const isPending = status === TX_PENDING_STATUS;
-      const assetsData = Object.keys(assets).map(id => assets[id]);
+      const assetsData = getAssetsAsList(assets);
       const { decimals = 18 } = getAssetData(assetsData, supportedAssets, asset);
       const value = formatUnits(txInfo.value, decimals);
       const recipientContact = this.findMatchingContactOrAccount(to);

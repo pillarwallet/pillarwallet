@@ -23,18 +23,28 @@ type ExchangeOfferAsset = {
   decimals: string,
   address: string,
 }
-
 export type Offer = {
-  _id: string,
   provider: string,
+  _id: string,
   description: string,
   fromAsset: ExchangeOfferAsset,
   toAsset: ExchangeOfferAsset,
   askRate: number | string,
   minQuantity: number,
   maxQuantity: number,
-  allowanceSet?: boolean,
-  offerRestricted?: ?string,
+  allowanceSet: boolean,
+}
+export type fiatOffer = {
+  provider: string,
+  askRate: number | string,
+  fromAssetCode: string,
+  toAssetCode: string,
+  feeAmount: number | string,
+  extraFeeAmount: number | string,
+  quoteCurrencyAmount: number,
+  minQuantity: number,
+  maxQuantity: number,
+  offerRestricted: ?string,
 }
 
 export type OfferRequest = {

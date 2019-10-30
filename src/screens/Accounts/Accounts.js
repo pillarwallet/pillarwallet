@@ -42,7 +42,6 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
-import { responsiveSize } from 'utils/ui';
 import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 
@@ -144,19 +143,9 @@ const Wrapper = styled.View`
   align-items: center;
 `;
 
-const iconRadius = responsiveSize(52);
-const IconWrapper = styled.View`
-  height: ${iconRadius}px;
-  width: ${iconRadius}px;
-  border-radius: ${iconRadius / 2}px;
-  background-color: ${baseColors.zircon};
-  align-items: center;
-  justify-content: center;
-`;
-
 const IconImage = styled(CachedImage)`
-  height: ${iconRadius}px;
-  width: ${iconRadius}px;
+  height: 52px;
+  width: 52px;
 `;
 
 const FooterWrapper = styled.View`
@@ -174,6 +163,7 @@ const FooterParagraph = styled(BaseText)`
 
 const pillarNetworkIcon = require('assets/icons/icon_PPN.png');
 const ethereumWalletIcon = require('assets/icons/icon_ethereum_network.png');
+const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 class AccountsScreen extends React.Component<Props, State> {
   switchToWallet: ?Account = null;
@@ -295,11 +285,7 @@ class AccountsScreen extends React.Component<Props, State> {
         onMainPress={isInitialised ? mainAction : initialiseAction}
         onSettingsPress={onSettingsPress}
         isActive={isActive}
-        customIcon={(
-          <IconWrapper>
-            <IconImage source={iconSource} />
-          </IconWrapper>
-        )}
+        customIcon={<IconImage source={iconSource} />}
       />
     );
   };
@@ -351,7 +337,7 @@ class AccountsScreen extends React.Component<Props, State> {
         mainAction: () => this.switchWallet(account),
         initialiseAction: null,
         isActive: isActiveWallet,
-        iconSource: ethereumWalletIcon,
+        iconSource: isSmartWallet ? smartWalletIcon : ethereumWalletIcon,
         onSettingsPress: () => this.accountSettings(account),
         isSmartWallet,
       };
@@ -368,7 +354,7 @@ class AccountsScreen extends React.Component<Props, State> {
         mainAction: null,
         initialiseAction: () => { navigation.navigate(SMART_WALLET_INTRO); },
         isActive: false,
-        iconSource: ethereumWalletIcon,
+        iconSource: smartWalletIcon,
         onSettingsPress: null,
         isSmartWallet: true,
       });
@@ -449,11 +435,7 @@ class AccountsScreen extends React.Component<Props, State> {
             onSettingsPress={onSettingsPress}
             isActive={isActive}
             sidePaddingsForWidth={40}
-            customIcon={(
-              <IconWrapper>
-                <IconImage source={iconSource} />
-              </IconWrapper>
-            )}
+            customIcon={<IconImage source={iconSource} />}
           />
         }
       />

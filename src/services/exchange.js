@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { EXCHANGE_URL, MOONPAY_API_URL } from 'react-native-dotenv';
+import { EXCHANGE_URL, MOONPAY_API_URL, MOONPAY_KEY } from 'react-native-dotenv';
 import SocketIO from 'socket.io-client';
 
 import type { OfferRequest, TokenAllowanceRequest } from 'models/Offer';
@@ -170,7 +170,7 @@ export default class ExchangeService {
 
   getIPInformation() {
     if (!this.ipInfo) {
-      return fetch(`${MOONPAY_API_URL}/v2/ip_address`)
+      return fetch(`${MOONPAY_API_URL}/v3/ip_address?apiKey=${MOONPAY_KEY}`)
         .then(resp => resp.json())
         .then(data => {
           this.setIPInfo(data);
