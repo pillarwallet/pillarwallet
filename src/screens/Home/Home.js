@@ -52,7 +52,6 @@ import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 
 // actions
 import {
-  fetchTransactionsHistoryAction,
   fetchTransactionsHistoryNotificationsAction,
   restoreTransactionHistoryAction,
 } from 'actions/historyActions';
@@ -97,7 +96,6 @@ type Props = {
   history: Object[],
   user: Object,
   fetchTransactionsHistoryNotifications: Function,
-  fetchTransactionsHistory: () => Function,
   fetchInviteNotifications: Function,
   acceptInvitation: Function,
   cancelInvitation: Function,
@@ -186,16 +184,13 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, logScreenView, fetchBadges } = this.props;
+    const { logScreenView, fetchBadges } = this.props;
 
     logScreenView('View home', 'Home');
 
     if (Platform.OS === 'ios') {
       firebase.notifications().setBadge(0);
     }
-
-    // TODO: remove this when notifications service becomes reliable
-    fetchTransactionsHistory();
 
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
@@ -540,7 +535,6 @@ const mapDispatchToProps = (dispatch) => ({
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
-  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),

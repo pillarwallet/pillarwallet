@@ -30,14 +30,18 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
+import { addressesEqual } from 'utils/assets';
+import { getAccountName } from 'utils/accounts';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import type { ContactSmartAddressData } from 'models/Contacts';
+import type { Accounts } from 'models/Account';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   contacts: Object[],
   contactsSmartAddresses: ContactSmartAddressData[],
+  accounts: Accounts,
 };
 
 type State = {
@@ -92,6 +96,7 @@ class SendTokenConfirm extends React.Component<Props, State> {
       session,
       navigation,
       contactsSmartAddresses,
+      accounts,
     } = this.props;
     const {
       amount,
@@ -103,6 +108,7 @@ class SendTokenConfirm extends React.Component<Props, State> {
     const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
 
     const recipientUsername = getUserName(contact);
+    const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
@@ -124,6 +130,12 @@ class SendTokenConfirm extends React.Component<Props, State> {
           <LabeledRow>
             <Label>Recipient Username</Label>
             <Value>{recipientUsername}</Value>
+          </LabeledRow>
+          }
+          {!!userAccount &&
+          <LabeledRow>
+            <Label>Recipient</Label>
+            <Value>{getAccountName(userAccount.type, accounts)}</Value>
           </LabeledRow>
           }
           <LabeledRow>
@@ -159,10 +171,12 @@ class SendTokenConfirm extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   session: { data: session },
+  accounts: { data: accounts },
 }) => ({
   contacts,
   session,
   contactsSmartAddresses,
+  accounts,
 });
 
 export default connect(mapStateToProps)(SendTokenConfirm);
