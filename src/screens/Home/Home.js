@@ -201,10 +201,11 @@ class HomeScreen extends React.Component<Props, State> {
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const { activeAccount, navigation } = this.props;
+    const { activeAccount: nextActiveAccount } = nextProps;
     const isFocused = navigation.isFocused();
     if (!isFocused) {
-      const activeAccountId = getAccountId(activeAccount);
-      const nextActiveAccountId = getAccountId(nextProps.activeAccount);
+      const activeAccountId = activeAccount && getAccountId(activeAccount);
+      const nextActiveAccountId = nextActiveAccount && getAccountId(nextActiveAccount);
       // allow component update if screen is out of focus, but accounts has changed
       return activeAccountId !== nextActiveAccountId;
     }
