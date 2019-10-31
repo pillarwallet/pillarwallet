@@ -42,21 +42,20 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
-import { responsiveSize } from 'utils/ui';
 import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Assets, BalancesStore, Balances, Rates } from 'models/Asset';
-import type { Accounts, Account } from 'models/Account';
+import type { Assets, Balances, BalancesStore, Rates } from 'models/Asset';
+import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 
 // constants
 import {
-  PILLAR_NETWORK_INTRO,
   ASSETS,
+  PILLAR_NETWORK_INTRO,
   SMART_WALLET_INTRO,
   WALLET_SETTINGS,
 } from 'constants/navigationConstants';
@@ -144,19 +143,9 @@ const Wrapper = styled.View`
   align-items: center;
 `;
 
-const iconRadius = responsiveSize(52);
-const IconWrapper = styled.View`
-  height: ${iconRadius}px;
-  width: ${iconRadius}px;
-  border-radius: ${iconRadius / 2}px;
-  background-color: ${baseColors.zircon};
-  align-items: center;
-  justify-content: center;
-`;
-
 const IconImage = styled(CachedImage)`
-  height: ${iconRadius}px;
-  width: ${iconRadius}px;
+  height: 52px;
+  width: 52px;
 `;
 
 const FooterWrapper = styled.View`
@@ -174,6 +163,7 @@ const FooterParagraph = styled(BaseText)`
 
 const pillarNetworkIcon = require('assets/icons/icon_PPN.png');
 const ethereumWalletIcon = require('assets/icons/icon_ethereum_network.png');
+const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 class AccountsScreen extends React.Component<Props, State> {
   switchToWallet: ?Account = null;
@@ -295,11 +285,7 @@ class AccountsScreen extends React.Component<Props, State> {
         onMainPress={isInitialised ? mainAction : initialiseAction}
         onSettingsPress={onSettingsPress}
         isActive={isActive}
-        customIcon={(
-          <IconWrapper>
-            <IconImage source={iconSource} />
-          </IconWrapper>
-        )}
+        customIcon={<IconImage source={iconSource} />}
       />
     );
   };
@@ -323,6 +309,7 @@ class AccountsScreen extends React.Component<Props, State> {
     } = this.props;
 
     const visibleAccounts = this.visibleAccounts(accounts, smartWalletFeatureEnabled);
+
     const hasAccount = userHasSmartWallet(accounts);
     const showSmartWalletInitButton = !hasAccount && smartWalletFeatureEnabled;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -341,8 +328,7 @@ class AccountsScreen extends React.Component<Props, State> {
         const thisAccountBalance = calculateBalanceInFiat(rates, accountBalances, fiatCurrency);
         walletBalance = formatFiat(thisAccountBalance, baseFiatCurrency);
       }
-
-      const accountItem = {
+      return {
         id: `ACCOUNT_${id}`,
         type: 'ACCOUNT',
         title: isSmartWallet ? 'Smart wallet' : getAccountName(ACCOUNT_TYPES.KEY_BASED, accounts),
@@ -351,11 +337,10 @@ class AccountsScreen extends React.Component<Props, State> {
         mainAction: () => this.switchWallet(account),
         initialiseAction: null,
         isActive: isActiveWallet,
-        iconSource: ethereumWalletIcon,
+        iconSource: isSmartWallet ? smartWalletIcon : ethereumWalletIcon,
         onSettingsPress: () => this.accountSettings(account),
         isSmartWallet,
       };
-      return accountItem;
     });
 
     if (showSmartWalletInitButton) {
@@ -368,7 +353,7 @@ class AccountsScreen extends React.Component<Props, State> {
         mainAction: null,
         initialiseAction: () => { navigation.navigate(SMART_WALLET_INTRO); },
         isActive: false,
-        iconSource: ethereumWalletIcon,
+        iconSource: smartWalletIcon,
         onSettingsPress: null,
         isSmartWallet: true,
       });
@@ -449,11 +434,7 @@ class AccountsScreen extends React.Component<Props, State> {
             onSettingsPress={onSettingsPress}
             isActive={isActive}
             sidePaddingsForWidth={40}
-            customIcon={(
-              <IconWrapper>
-                <IconImage source={iconSource} />
-              </IconWrapper>
-            )}
+            customIcon={<IconImage source={iconSource} />}
           />
         }
       />
@@ -473,7 +454,9 @@ class AccountsScreen extends React.Component<Props, State> {
       .find(({ type, isSmartWallet }) => !!isSmartWallet || type === NEW_SMART_WALLET);
     const legacyAccountCard = walletsToShow.find(({ isSmartWallet }) => !isSmartWallet);
 
-    const walletsInList = isLegacyUser ? walletsToShow : [smartAccountCard];
+    const walletsInList = (isLegacyUser || !smartAccountCard) ? walletsToShow : [smartAccountCard];
+
+    const accountsList = [...walletsInList, ...networksToShow];
 
     return (
       <ContainerWithHeader
@@ -487,7 +470,7 @@ class AccountsScreen extends React.Component<Props, State> {
           contentContainerStyle={{ flexGrow: 1 }}
         >
           <FlatList
-            data={[...walletsInList, ...networksToShow]}
+            data={accountsList}
             keyExtractor={(item) => item.id || item.type}
             style={{ width: '100%', flexGrow: 0 }}
             contentContainerStyle={{ width: '100%', padding: spacing.large }}

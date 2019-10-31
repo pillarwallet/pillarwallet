@@ -794,7 +794,7 @@ SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string
 };
 
 SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: string, amount: number) {
-  const url = `${MOONPAY_API_URL}/v2/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
+  const url = `${MOONPAY_API_URL}/v3/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
   + `&baseCurrencyAmount=${amount}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
 
   return Promise.resolve()
