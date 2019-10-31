@@ -21,11 +21,11 @@ import * as React from 'react';
 import { Platform, View, Dimensions } from 'react-native';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
-import { LightText, BoldText } from 'components/Typography';
+import { LightText, MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { fontSizes, fontTrackings, baseColors, fontWeights, spacing } from 'utils/variables';
+import { fontTrackings, baseColors, spacing, fontStyles } from 'utils/variables';
 
 const { width } = Dimensions.get('window');
 
@@ -97,33 +97,36 @@ const AmountWrapper = styled.View`
 `;
 
 const Amount = styled(LightText)`
-  font-size: ${fontSizes.extraLarge};
-  line-height: ${fontSizes.extraLarge};
+  ${fontStyles.large};
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
   margin-right: ${props => props.innerCard ? '4px' : 0};
 `;
 
 const FiatAmount = styled(LightText)`
-  font-size: ${fontSizes.extraSmall};
-  line-height: 14px;
+  ${fontStyles.regular};
   color: #fff;
   margin-left: -2px;
   opacity: ${props => props.innerCard ? 0.7 : 1};
 `;
 
 const Disclaimer = styled(LightText)`
-  font-size: ${fontSizes.extraSmall};
-  line-height: 14px;
+  ${fontStyles.regular};
   color: ${baseColors.burningFire};
 `;
 
-const AmountToken = styled(LightText)`
-  font-size: ${props => props.innerCard ? fontSizes.extraLarge : fontSizes.medium};
-  font-weight: ${props => props.innerCard ? fontWeights.book : fontWeights.bold};
-  line-height: ${fontSizes.extraLarge};
-  color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
+const ammountTokenStyle = (props) => `
+  color: ${props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
+const AmountToken = styled(MediumText)`
+  ${fontStyles.big};
+  ${props => ammountTokenStyle(props)};
+`;
+
+const AmountTokenLight = styled(LightText)`
+  ${fontStyles.large};
+  ${props => ammountTokenStyle(props)};
+`;
 
 const DetailsWrapper = styled.View`
   justify-content: space-between;
@@ -148,11 +151,10 @@ const IconCircle = styled.View`
   justify-content: center;
 `;
 
-const Name = styled(BoldText)`
-  font-size: ${props => props.innerCard ? '34' : fontSizes.mediumLarge}px;
+const Name = styled(MediumText)`
+  ${props => props.innerCard ? fontStyles.giant : fontStyles.large};
   margin-top: ${props => props.innerCard ? '5px' : 0};
   letter-spacing: ${fontTrackings.medium};
-  line-height: ${props => props.innerCard ? '34' : fontSizes.mediumLarge};
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
@@ -214,7 +216,10 @@ class AssetCard extends React.Component<Props, {}> {
                 <View style={{ flexDirection: 'column' }}>
                   <AmountWrapper>
                     <Amount isListed={isListed} innerCard={innerCard}>{amount}</Amount>
-                    <AmountToken isListed={isListed} innerCard={innerCard}>{token}</AmountToken>
+                    {!innerCard
+                      ? <AmountToken isListed={isListed}>{token}</AmountToken>
+                      : <AmountTokenLight isListed={isListed}>{token}</AmountTokenLight>
+                    }
                   </AmountWrapper>
                   <View style={{ marginTop: 8 }}>
                     {disclaimer

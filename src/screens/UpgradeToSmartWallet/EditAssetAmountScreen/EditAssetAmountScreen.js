@@ -31,12 +31,12 @@ import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { BaseText } from 'components/Typography';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { addAssetsToSmartWalletUpgradeAction } from 'actions/smartWalletActions';
 import { formatAmount, parseNumber, isValidNumber } from 'utils/common';
-import { getBalance } from 'utils/assets';
+import { getAssetsAsList, getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
 import type { AssetTransfer, Assets, Balances } from 'models/Asset';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -68,7 +68,7 @@ const ErrorHolder = styled.View`
 
 const ErrorText = styled(BaseText)`
   color: ${baseColors.fireEngineRed};
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.medium};
   width: 100%;
   text-align: right;
 `;
@@ -142,7 +142,12 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
         customAddon={
           <View style={{ height: 70, justifyContent: 'center', minWidth: 180 }}>
             <TextInput
-              style={{ fontSize: fontSizes.medium, textAlign: 'right', maxWidth: 200 }}
+              style={{
+                fontSize: fontSizes.big,
+                textAlign: 'right',
+                maxWidth: 200,
+                fontFamily: appFont.regular,
+              }}
               onChangeText={text => this.handleAmountChange(text, item.name, assetBalance, item.decimals)}
               value={amount ? amount.toString() : ''}
               placeholder={formattedAssetBalance}
@@ -176,7 +181,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
   render() {
     const { navigation, assets: allAssets, addedAssets } = this.props;
     const { query, errors, disableScroll } = this.state;
-    const assetsArray = Object.values(allAssets);
+    const assetsArray = getAssetsAsList(allAssets);
     const assets = assetsArray
       .filter((asset: any) => addedAssets.find((addedAsset: any) => asset.name === addedAsset.name));
     const filteredAssets = (!query || query.trim() === '' || query.length < 2)

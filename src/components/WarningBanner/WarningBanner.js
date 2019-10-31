@@ -19,8 +19,8 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { fontSizes, baseColors, fontWeights } from 'utils/variables';
-import { BoldText } from 'components/Typography';
+import { fontStyles, baseColors } from 'utils/variables';
+import { MediumText } from 'components/Typography';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 
 const WarningBannerBackground = styled.View`
@@ -32,10 +32,9 @@ const WarningBannerBackground = styled.View`
   border-radius: ${props => props.rounded ? '8px' : 0};
 `;
 
-const WarningBannerText = styled(BoldText)`
+const WarningBannerText = styled(MediumText)`
   color: ${baseColors.white};
-  font-size: ${props => props.small ? fontSizes.extraSmall : fontSizes.small};
-  font-weight: ${fontWeights.bold};
+  ${props => props.small ? fontStyles.regular : fontStyles.medium};
 `;
 
 type Props = {

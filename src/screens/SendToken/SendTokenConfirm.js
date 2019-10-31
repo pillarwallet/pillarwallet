@@ -24,20 +24,24 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { ScrollWrapper } from 'components/Layout';
-import { Label, BoldText } from 'components/Typography';
+import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
+import { addressesEqual } from 'utils/assets';
+import { getAccountName } from 'utils/accounts';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import type { ContactSmartAddressData } from 'models/Contacts';
+import type { Accounts } from 'models/Account';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   contacts: Object[],
   contactsSmartAddresses: ContactSmartAddressData[],
+  accounts: Accounts,
 };
 
 type State = {
@@ -57,11 +61,11 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium}
+const Value = styled(MediumText)`
+  font-size: ${fontSizes.big}px;
 `;
 
-class SendTokenContacts extends React.Component<Props, State> {
+class SendTokenConfirm extends React.Component<Props, State> {
   source: string;
 
   constructor(props) {
@@ -92,6 +96,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       session,
       navigation,
       contactsSmartAddresses,
+      accounts,
     } = this.props;
     const {
       amount,
@@ -103,6 +108,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
 
     const recipientUsername = getUserName(contact);
+    const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
@@ -126,6 +132,12 @@ class SendTokenContacts extends React.Component<Props, State> {
             <Value>{recipientUsername}</Value>
           </LabeledRow>
           }
+          {!!userAccount &&
+          <LabeledRow>
+            <Label>Recipient</Label>
+            <Value>{getAccountName(userAccount.type, accounts)}</Value>
+          </LabeledRow>
+          }
           <LabeledRow>
             <Label>Recipient Address</Label>
             <Value>{to}</Value>
@@ -134,21 +146,21 @@ class SendTokenContacts extends React.Component<Props, State> {
             <Label>Est. Network Fee</Label>
             <Value>{txFeeInWei === 0 ? 'free' : `${utils.formatEther(txFeeInWei.toString())} ETH`}</Value>
           </LabeledRow>
-          {!!recipientUsername &&
-          <TextInput
-            inputProps={{
-              onChange: (text) => this.handleNoteChange(text),
-              value: this.state.note,
-              autoCapitalize: 'none',
-              multiline: true,
-              numberOfLines: 3,
-              placeholder: 'Add a note to this transaction',
-            }}
-            inputType="secondary"
-            labelBigger
-            noBorder
-            keyboardAvoidance
-          />
+          {session.isOnline && !!recipientUsername &&
+            <TextInput
+              inputProps={{
+                onChange: (text) => this.handleNoteChange(text),
+                value: this.state.note,
+                autoCapitalize: 'none',
+                multiline: true,
+                numberOfLines: 3,
+                placeholder: 'Add a note to this transaction',
+              }}
+              inputType="secondary"
+              labelBigger
+              noBorder
+              keyboardAvoidance
+            />
           }
         </ScrollWrapper>
       </ContainerWithHeader>
@@ -159,10 +171,12 @@ class SendTokenContacts extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   session: { data: session },
+  accounts: { data: accounts },
 }) => ({
   contacts,
   session,
   contactsSmartAddresses,
+  accounts,
 });
 
-export default connect(mapStateToProps)(SendTokenContacts);
+export default connect(mapStateToProps)(SendTokenConfirm);

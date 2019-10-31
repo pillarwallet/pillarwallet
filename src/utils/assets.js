@@ -37,6 +37,10 @@ export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
   }, {});
 };
 
+export const getAssetsAsList = (assetsObject: Assets): Asset[] => {
+  return Object.keys(assetsObject).map(id => assetsObject[id]);
+};
+
 export const getBalance = (balances: Balances = {}, asset: string): number => {
   const assetBalance = get(balances, asset);
   if (!assetBalance) {
@@ -86,7 +90,8 @@ export const calculateMaxAmount = (token: string, balance: number | string, txFe
     return +balance;
   }
 
-  const maxAmount = utils.parseUnits(balance, 'ether').sub(txFeeInWei);
+  // we need to convert txFeeInWei to BigNumber as ethers.js utils use different library for Big Numbers
+  const maxAmount = utils.parseUnits(balance, 'ether').sub(utils.bigNumberify(txFeeInWei.toString()));
   if (maxAmount.lt(0)) return 0;
 
   return new BigNumber(utils.formatEther(maxAmount)).toNumber();
@@ -95,7 +100,8 @@ export const calculateMaxAmount = (token: string, balance: number | string, txFe
 export const checkIfEnoughForFee = (balances: Balances, txFeeInWei: BigNumber): boolean => {
   if (!balances[ETH]) return false;
   const ethBalance = getBalance(balances, ETH);
-  const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
+  // we need to convert balanceInWei to BigNumber as ethers.js utils use different library for Big Numbers
+  const balanceInWei = new BigNumber(utils.parseUnits(ethBalance.toString(), 'ether'));
   return balanceInWei.gte(txFeeInWei);
 };
 

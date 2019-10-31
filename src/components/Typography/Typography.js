@@ -18,67 +18,63 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { UIColors, baseColors, fontStyles, appFont } from 'utils/variables';
 
 export const BaseText = styled.Text`
-  font-family: Aktiv Grotesk App;
-  font-weight: 400;
-  include-font-padding: false;
+  font-family: ${appFont.regular};
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;
 
 export const BoldText = styled(BaseText)`
-  font-family: Aktiv Grotesk App;
-  font-weight: 600;
-  include-font-padding: false;
+  font-family: ${appFont.bold};
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;
 
 export const LightText = styled(BaseText)`
-  font-family: Aktiv Grotesk App;
-  font-weight: 300;
-  include-font-padding: false;
+  font-family: ${appFont.light};
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;
 
 export const MediumText = styled(BaseText)`
-  font-family: Aktiv Grotesk App;
-  font-weight: 500;
-  include-font-padding: false;
+  font-family: ${appFont.medium};
   text-align-vertical: center;
   color: ${UIColors.defaultTextColor};
 `;
 
-
 export const Title = styled(BaseText)`
-  font-size: ${fontSizes.extraLarge};
+  ${fontStyles.large};
   margin: 20px 0;
-  font-weight: 700;
   padding: ${props => (props.padding ? '0 20px' : '0')};
   text-align: ${props => (props.align || 'left')};
 `;
 
 export const SubTitle = styled(BaseText)`
-  font-size: ${fontSizes.medium};
-  font-weight: 400;
+ ${fontStyles.big};
   color: ${UIColors.primary};
   text-align: ${props => (props.align || 'left')};
-  line-height: 24px;
   margin: ${props => props.margin || '0 0 20px'};
 `;
 
-export const SubHeading = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall};
-  font-weight: ${fontWeights.book};
+const subheadingStyle = `
   color: ${baseColors.darkGray};
   letter-spacing: 0.4;
 `;
 
+export const SubHeading = styled(LightText)`
+  ${fontStyles.small};
+  ${subheadingStyle}
+`;
+
+export const SubHeadingMedium = styled(MediumText)`
+  ${fontStyles.small};
+  ${subheadingStyle}
+`;
+
 export const Paragraph = styled(BaseText)`
-  font-size: ${props => props.small ? fontSizes.small : fontSizes.medium};
+  ${props => props.small ? fontStyles.medium : fontStyles.big};
   margin-bottom: ${props => props.small ? '5px' : '10px'};
   color: ${props => props.light ? baseColors.darkGray : UIColors.defaultTextColor};
   text-align: ${props => props.center ? 'center' : 'left'};
@@ -86,17 +82,17 @@ export const Paragraph = styled(BaseText)`
 `;
 
 export const TextLink = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  ${fontStyles.medium};
   color: ${UIColors.primary};
 `;
 
-export const Label = styled(BaseText)`
-  font-size: ${props => props.small ? fontSizes.small : fontSizes.extraSmall};
+export const Label = styled(MediumText)`
+  ${props => props.small ? fontStyles.medium : fontStyles.regular}px;
   color: ${props => props.color || baseColors.darkGray};
 `;
 
 export const HelpText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
+  ${fontStyles.regular};
   padding: 10px;
   color: grey;
 `;

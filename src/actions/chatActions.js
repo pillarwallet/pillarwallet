@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import isEmpty from 'lodash.isempty';
 import partition from 'lodash.partition';
 import ChatService from 'services/chat';
 import Toast from 'components/Toast';
@@ -68,12 +69,16 @@ export const getExistingChatsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
+      session: { data: { isOnline } },
     } = getState();
     const chats = await chat.client.getExistingMessages('chat').then(JSON.parse).catch(() => []);
     const filteredChats = chats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
-    const {
-      unread: unreadChats = {},
-    } = await chat.client.getUnreadMessagesCount('chat').then(JSON.parse).catch(() => ({}));
+    let unreadChats = {};
+    if (isOnline) {
+      ({ unread: unreadChats = {} } = await chat.client.getUnreadMessagesCount('chat')
+        .then(JSON.parse)
+        .catch(() => ({})));
+    }
     webSocketMessagesReceived.filter(wsMessage => wsMessage.tag === 'chat').forEach(wsMessage => {
       if (!unreadChats[wsMessage.source]) {
         unreadChats[wsMessage.source] = { count: 1, latest: wsMessage.timestamp };
@@ -105,6 +110,15 @@ export const getExistingChatsAction = () => {
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    const { session: { data: { isOnline } } } = getState();
+    if (!isOnline) {
+      Toast.show({
+        message: 'Cannot send message offline',
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
     try {
       const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
       const params = {
@@ -203,6 +217,7 @@ export const getChatByContactAction = (
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { isDecrypting } },
+      session: { data: { isOnline } },
     } = getState();
     if (isDecrypting) return;
     dispatch({
@@ -213,47 +228,57 @@ export const getChatByContactAction = (
       username,
       ...connectionStateCheckParams,
     };
-    await chat.client.addContact(addContactParams, false).catch(e => {
-      if (e.code === 'ERR_ADD_CONTACT_FAILED') {
-        Toast.show({
-          message: e.message,
-          type: 'warning',
-          title: 'Cannot retrieve remote user',
-          autoClose: false,
-        });
-      }
-    });
-    if (loadEarlier) {
-      // TODO: split message loading in bunches and load earlier on lick
-    }
 
-    const data = await chat.client.receiveNewMessagesByContact(username, 'chat')
-      .then(JSON.parse)
-      .catch(() => {});
-
-    if (data !== undefined && Object.keys(data).length) {
-      const { messages: newRemoteMessages } = data;
-      if (newRemoteMessages !== undefined && newRemoteMessages.length) {
-        const remotePromises = newRemoteMessages.map(async remoteMessage => {
-          const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
-          await chat.deleteMessage(rmUsername, rmServerTimestamp);
-          dispatch({
-            type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
-            payload: {
-              username: rmUsername,
-              timestamp: rmServerTimestamp,
-            },
+    if (isOnline) {
+      await chat.client.addContact(addContactParams, false).catch(e => {
+        if (e.code === 'ERR_ADD_CONTACT_FAILED') {
+          Toast.show({
+            message: e.message,
+            type: 'warning',
+            title: 'Cannot retrieve remote user',
+            autoClose: false,
           });
-        });
-        await Promise.all(remotePromises);
+        }
+      });
+
+      if (loadEarlier) {
+        // TODO: split message loading in bunches and load earlier on lick
       }
+
+      const data = await chat.client.receiveNewMessagesByContact(username, 'chat')
+        .then(JSON.parse)
+        .catch(() => {});
+
+      if (!isEmpty(data)) {
+        const { messages: newRemoteMessages } = data;
+        if (!isEmpty(newRemoteMessages)) {
+          const remotePromises = newRemoteMessages.map(async remoteMessage => {
+            const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
+            await chat.deleteMessage(rmUsername, rmServerTimestamp);
+            dispatch({
+              type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
+              payload: {
+                username: rmUsername,
+                timestamp: rmServerTimestamp,
+              },
+            });
+          });
+          await Promise.all(remotePromises);
+        }
+      }
+    } else {
+      Toast.show({
+        message: 'Cannot get new messages while offline',
+        type: 'warning',
+        autoClose: true,
+      });
     }
 
     const {
       chat: { data: { chats: existingChats, webSocketMessages: { received: webSocketMessagesReceived } } },
     } = getState();
 
-    if (webSocketMessagesReceived !== undefined && webSocketMessagesReceived.length) {
+    if (!isEmpty(webSocketMessagesReceived)) {
       const webSocketPromises = webSocketMessagesReceived
         .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
         .map(async wsMessage => {
@@ -275,6 +300,7 @@ export const getChatByContactAction = (
       type: CHAT_DECRYPTING_FINISHED,
     });
 
+    // will work offline
     const receivedMessages = await chat.client.getMessagesByContact(username, 'chat')
       .then(JSON.parse)
       .catch(() => []);

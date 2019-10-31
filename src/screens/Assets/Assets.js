@@ -41,13 +41,9 @@ import type { Accounts, Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 
 // actions
-import {
-  fetchInitialAssetsAction,
-  checkForMissedAssetsAction,
-} from 'actions/assetsActions';
+import { fetchInitialAssetsAction } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { labelUserAsLegacyAction } from 'actions/userActions';
 
 // constants
 import {
@@ -60,7 +56,7 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
-import { findKeyBasedAccount } from 'utils/accounts';
+import { findKeyBasedAccount, getAccountId, getAccountName } from 'utils/accounts';
 import { baseColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -95,8 +91,6 @@ type Props = {
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
-  checkForMissedAssets: () => void,
-  labelUserAsLegacy: () => void,
   PPNTransactions: Transaction[],
 }
 
@@ -125,8 +119,6 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       assets,
       logScreenView,
-      checkForMissedAssets,
-      labelUserAsLegacy,
     } = this.props;
 
     logScreenView('View assets list', 'Assets');
@@ -136,26 +128,25 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     fetchAllCollectiblesData();
-    checkForMissedAssets();
-    labelUserAsLegacy();
 
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ supportsBiometrics: !!supported }))
       .catch(() => null);
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const { activeAccount, checkForMissedAssets } = this.props;
-    if (!isEqual(prevProps.activeAccount, activeAccount)) {
-      checkForMissedAssets();
-    }
-  }
-
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isFocused = this.props.navigation.isFocused();
+    const { navigation, activeAccount } = this.props;
+    const isFocused = navigation.isFocused();
     if (!isFocused) {
-      return false;
+      const activeAccountId = getAccountId(activeAccount);
+      const nextActiveAccountId = getAccountId(nextProps.activeAccount);
+      /**
+       * allow component update if screen is out of focus, but accounts has changed
+       * this might happen while navigating between accounts and assets screen during account switch
+       */
+      return activeAccountId !== nextActiveAccountId;
     }
+
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
@@ -175,6 +166,7 @@ class AssetsScreen extends React.Component<Props, State> {
       activeAccount,
       availableStake,
       PPNTransactions,
+      accounts,
     } = this.props;
 
     const { type: walletType } = activeAccount;
@@ -184,7 +176,7 @@ class AssetsScreen extends React.Component<Props, State> {
     switch (activeBNetworkId) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
         return {
-          label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Legacy wallet' : 'Smart wallet',
+          label: getAccountName(walletType, accounts),
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
           customHeaderProps: {
@@ -298,7 +290,9 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    // HEADER PROPS
+    const { activeAccount } = this.props;
+    if (!activeAccount) return null;
+
     const screenInfo = this.getScreenInfo();
     const {
       label: headerButtonLabel,
@@ -376,10 +370,8 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
-  checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  labelUserAsLegacy: () => dispatch(labelUserAsLegacyAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);

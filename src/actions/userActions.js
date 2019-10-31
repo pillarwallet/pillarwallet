@@ -162,10 +162,17 @@ export const labelUserAsLegacyAction = () => {
       }
     }
 
+    const updatedUser = {
+      ...user,
+      isLegacyUser,
+    };
+
     dispatch({
       type: UPDATE_USER,
-      payload: { user: { ...user, isLegacyUser }, state: REGISTERED },
+      payload: { user: updatedUser, state: REGISTERED },
     });
+
+    dispatch(saveDbAction('user', { user: updatedUser }, true));
   };
 };
 

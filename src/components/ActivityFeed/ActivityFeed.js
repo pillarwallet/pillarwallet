@@ -45,14 +45,14 @@ import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
 
 // utils
 import { createAlert } from 'utils/alerts';
-import { addressesEqual, getAssetData } from 'utils/assets';
+import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import {
   partial,
   formatAmount,
   formatUnits,
   groupAndSortByDate,
 } from 'utils/common';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { findMatchingContact } from 'utils/contacts';
 
 // constants
@@ -91,7 +91,7 @@ const ActivityFeedWrapper = styled.View`
 `;
 
 const ActivityFeedHeader = styled.View`
-  padding: 0 ${spacing.mediumLarge}px;
+  padding: ${spacing.mediumLarge}px ${spacing.large}px 0;
   border-top-width: ${props => props.noBorder ? 0 : '1px'};
   border-top-color: ${baseColors.mediumLightGray};
 `;
@@ -102,7 +102,7 @@ const SectionHeaderWrapper = styled.View`
 `;
 
 const SectionHeader = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   color: ${baseColors.darkGray};
 `;
 
@@ -523,7 +523,7 @@ class ActivityFeed extends React.Component<Props, State> {
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
         {!!feedTitle &&
         <ActivityFeedHeader noBorder={noBorder}>
-          <Title subtitle title={feedTitle} />
+          <Title subtitle title={feedTitle} noMargin />
         </ActivityFeedHeader>}
         {tabs.length > 1 && !hideTabs &&
           <Tabs
@@ -549,11 +549,9 @@ class ActivityFeed extends React.Component<Props, State> {
             offset: 70 * index,
             index,
           })}
-          maxToRenderPerBatch={initialNumToRender}
           onEndReachedThreshold={0.5}
           keyExtractor={this.getActivityFeedListKeyExtractor}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
-          removeClippedSubviews
           stickySectionHeadersEnabled={false}
           ListEmptyComponent={(
             <EmptyStateWrapper>
@@ -605,7 +603,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  assets: (state) => Object.values(accountAssetsSelector(state)),
+  assets: (state) => getAssetsAsList(accountAssetsSelector(state)),
   supportedAssets: supportedAssetsSelector,
 });
 

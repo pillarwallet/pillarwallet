@@ -17,22 +17,60 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import ChatService from 'services/chat';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
+import { getActiveAccountAddress } from 'utils/accounts';
 
 const chat = new ChatService();
 
-export const signalInitAction = (credentials: Object) => {
+type SignalCredentials = {
+  accessToken: string,
+  refreshToken: string,
+  username: string,
+  userId: string,
+  walletId: string,
+  ethAddress: string,
+  fcmToken: string,
+}
+
+export const signalInitAction = (credentials?: SignalCredentials) => {
   return async (dispatch: Function, getState: Function) => {
-    if (typeof credentials.accessToken === 'undefined'
-      || credentials.accessToken === undefined) return;
-    const { session: { data: { isSignalInitiated } } } = getState();
-    if (isSignalInitiated) return;
-    dispatch(updateSignalInitiatedStateAction(true));
+    const { session: { data: { isSignalInitiated, isOnline } } } = getState();
+    if (!isOnline || isSignalInitiated) return;
+    if (!credentials) {
+      const {
+        user: {
+          data: {
+            id: userId,
+            username,
+            walletId,
+          },
+        },
+        session: { data: { fcmToken } },
+        oAuthTokens: { data: OAuthTokensObject },
+        accounts: { data: accounts },
+      } = getState();
+      const ethAddress = getActiveAccountAddress(accounts);
+      credentials = {
+        ...OAuthTokensObject,
+        userId,
+        username,
+        walletId,
+        ethAddress,
+        fcmToken,
+      };
+    }
+
+    const accessToken = get(credentials, 'accessToken');
+    if (isEmpty(accessToken)) return; // init will fail if there is no access token
+
+    const fcmToken = get(credentials, 'fcmToken');
     await chat.init(credentials)
       .then(() => chat.client.registerAccount())
-      .then(() => chat.client.setFcmId(credentials.fcmToken))
+      .then(() => fcmToken && chat.client.setFcmId(fcmToken))
+      .then(() => dispatch(updateSignalInitiatedStateAction(true)))
       .catch(() => null);
   };
 };

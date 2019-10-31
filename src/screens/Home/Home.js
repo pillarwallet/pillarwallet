@@ -37,6 +37,7 @@ import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Toast from 'components/Toast';
 
 // constants
 import {
@@ -51,7 +52,6 @@ import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 
 // actions
 import {
-  fetchTransactionsHistoryAction,
   fetchTransactionsHistoryNotificationsAction,
   restoreTransactionHistoryAction,
 } from 'actions/historyActions';
@@ -77,7 +77,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { activeAccountSelector } from 'selectors';
 
 // utils
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors, spacing, fontStyles } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { getAccountAddress } from 'utils/accounts';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -95,7 +95,6 @@ type Props = {
   history: Object[],
   user: Object,
   fetchTransactionsHistoryNotifications: Function,
-  fetchTransactionsHistory: () => Function,
   fetchInviteNotifications: Function,
   acceptInvitation: Function,
   cancelInvitation: Function,
@@ -118,6 +117,7 @@ type Props = {
   activeAccount: Account,
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
+  isOnline: boolean,
 };
 
 type State = {
@@ -145,9 +145,8 @@ const WalletConnectWrapper = styled.View`
 
 const ListHeader = styled(MediumText)`
   color: ${baseColors.blueYonder};
-  font-size: 14px;
-  line-height: 17px;
-  margin: ${spacing.mediumLarge}px ${spacing.large}px;
+  ${fontStyles.regular};
+  margin: ${spacing.medium}px ${spacing.large}px ${spacing.small}px;
 `;
 
 const BadgesWrapper = styled.View`
@@ -183,16 +182,13 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, logScreenView, fetchBadges } = this.props;
+    const { logScreenView, fetchBadges } = this.props;
 
     logScreenView('View home', 'Home');
 
     if (Platform.OS === 'ios') {
       firebase.notifications().setBadge(0);
     }
-
-    // TODO: remove this when notifications service becomes reliable
-    fetchTransactionsHistory();
 
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
@@ -243,9 +239,18 @@ class HomeScreen extends React.Component<Props, State> {
     this.setState({ activeTab });
   };
 
-  openQRScanner = () => this.setState({
-    isScanning: true,
-  });
+  openQRScanner = () => {
+    const { isOnline } = this.props;
+    if (!isOnline) {
+      Toast.show({
+        message: 'Cannot use Connect while offline',
+        type: 'warning',
+        title: 'Warning',
+      });
+      return;
+    }
+    this.setState({ isScanning: true });
+  };
 
   closeQRScanner = () => this.setState({
     isScanning: false,
@@ -471,7 +476,7 @@ class HomeScreen extends React.Component<Props, State> {
             tabs={activityFeedTabs}
             activeTab={activeTab}
             hideTabs
-            initialNumToRender={6}
+            initialNumToRender={8}
             wrapperStyle={{ flexGrow: 1, opacity: tabIsChanging ? 0.5 : 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
           />
@@ -495,6 +500,7 @@ const mapStateToProps = ({
   badges: { data: badges },
   walletConnect: { connectors, pendingConnector },
   accounts: { data: accounts },
+  session: { data: { isOnline } },
 }) => ({
   contacts,
   user,
@@ -505,6 +511,7 @@ const mapStateToProps = ({
   pendingConnector,
   contactsSmartAddresses,
   accounts,
+  isOnline,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -523,7 +530,6 @@ const mapDispatchToProps = (dispatch) => ({
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
-  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),

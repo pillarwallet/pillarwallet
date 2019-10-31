@@ -33,12 +33,12 @@ import SlideModal from 'components/Modals/SlideModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
-import { BoldText, BaseText, Paragraph } from 'components/Typography';
+import { BaseText, Paragraph, MediumText } from 'components/Typography';
 import DeploymentView from 'components/DeploymentView';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { fetchAssetTransactionsAction } from 'actions/historyActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
 // models
@@ -54,7 +54,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // utils
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, spacing, fontSizes, fontStyles } from 'utils/variables';
 import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
@@ -92,7 +92,7 @@ const activeModalResetState = {
 
 type Props = {
   fetchAssetsBalances: () => Function,
-  fetchTransactionsHistory: (asset: string, indexFrom?: number) => Function,
+  fetchAssetTransactions: (asset: string, indexFrom?: number) => Function,
   history: Transaction[],
   assets: Assets,
   balances: Balances,
@@ -149,21 +149,20 @@ const ValueWrapper = styled.View`
   align-items: center;
 `;
 
-const TokenValue = styled(BoldText)`
-  font-size: ${fontSizes.semiGiant}px;
+const TokenValue = styled(MediumText)`
+  ${fontStyles.giant};
   text-align: center;
   color: ${props => props.isSynthetic ? baseColors.electricBlueIntense : baseColors.slateBlack};
 `;
 
 const ValueInFiat = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
+  ${fontStyles.small};
   text-align: center;
   color: ${baseColors.darkGray};
-  margin-top: 5px;
 `;
 
 const Disclaimer = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   text-align: center;
   color: ${baseColors.burningFire};
   margin-top: 5px;
@@ -171,7 +170,6 @@ const Disclaimer = styled(BaseText)`
 
 const Description = styled(Paragraph)`
   padding-bottom: 80px;
-  line-height: ${fontSizes.mediumLarge};
 `;
 
 const ValuesWrapper = styled.View`
@@ -194,9 +192,9 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, navigation, logScreenView } = this.props;
+    const { fetchAssetTransactions, navigation, logScreenView } = this.props;
     const { assetData: { token }, resetHideRemoval } = navigation.state.params;
-    fetchTransactionsHistory(token);
+    fetchAssetTransactions(token);
     if (resetHideRemoval) resetHideRemoval();
     logScreenView('View asset', 'Asset', `asset-${token}`);
   }
@@ -232,7 +230,7 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   handleScrollWrapperEndDrag = e => {
-    const { fetchTransactionsHistory, history } = this.props;
+    const { fetchAssetTransactions, history } = this.props;
     const {
       assetData: { token },
     } = this.props.navigation.state.params;
@@ -242,7 +240,7 @@ class AssetScreen extends React.Component<Props, State> {
     const indexFrom = history.filter(({ asset }) => asset === token).length;
 
     if (layoutHeight + offsetY + 200 >= contentHeight) {
-      fetchTransactionsHistory(token, indexFrom);
+      fetchAssetTransactions(token, indexFrom);
     }
   };
 
@@ -252,7 +250,7 @@ class AssetScreen extends React.Component<Props, State> {
       balances,
       paymentNetworkBalances,
       fetchAssetsBalances,
-      fetchTransactionsHistory,
+      fetchAssetTransactions,
       baseFiatCurrency,
       navigation,
       smartWalletState,
@@ -316,7 +314,7 @@ class AssetScreen extends React.Component<Props, State> {
               onPress: () => { this.setState({ showDescriptionModal: true }); },
             },
           ],
-          rightIconsSize: fontSizes.extraLarge,
+          rightIconsSize: fontSizes.large,
         }}
         backgroundColor={baseColors.white}
         inset={{ bottom: 0 }}
@@ -328,7 +326,7 @@ class AssetScreen extends React.Component<Props, State> {
               refreshing={false}
               onRefresh={() => {
                 fetchAssetsBalances();
-                fetchTransactionsHistory(token);
+                fetchAssetTransactions(token);
               }}
             />
           }
@@ -381,7 +379,7 @@ class AssetScreen extends React.Component<Props, State> {
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
           <ActivityFeed
-            feedTitle="transactions."
+            feedTitle="Transactions"
             navigation={navigation}
             backgroundColor={baseColors.white}
             showArrowsOnly
@@ -452,8 +450,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: () => {
     dispatch(fetchAssetsBalancesAction());
   },
-  fetchTransactionsHistory: (asset, indexFrom) => {
-    dispatch(fetchTransactionsHistoryAction(asset, indexFrom));
+  fetchAssetTransactions: (asset, indexFrom) => {
+    dispatch(fetchAssetTransactionsAction(asset, indexFrom));
   },
   logScreenView: (contentName: string, contentType: string, contentId: string) => {
     dispatch(logScreenViewAction(contentName, contentType, contentId));
