@@ -78,6 +78,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 // utils
 import { baseColors, spacing, fontStyles } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
+import { getAccountAddress, getAccountId } from 'utils/accounts';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
 // types
@@ -199,10 +200,15 @@ class HomeScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isFocused = this.props.navigation.isFocused();
+    const { activeAccount, navigation } = this.props;
+    const isFocused = navigation.isFocused();
     if (!isFocused) {
-      return false;
+      const activeAccountId = getAccountId(activeAccount);
+      const nextActiveAccountId = getAccountId(nextProps.activeAccount);
+      // allow component update if screen is out of focus, but accounts has changed
+      return activeAccountId !== nextActiveAccountId;
     }
+
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
