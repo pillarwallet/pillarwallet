@@ -70,6 +70,7 @@ import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsAction
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
+import { labelUserAsLegacyAction } from 'actions/userActions';
 import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -189,6 +190,8 @@ export const loginAction = (
         // to get exchange supported assets in order to show only supported assets on exchange selectors
         // and show exchange button on supported asset screen only
         dispatch(getExchangeSupportedAssetsAction());
+
+        dispatch(labelUserAsLegacyAction());
       } else {
         api.init();
       }
