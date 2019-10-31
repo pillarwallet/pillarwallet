@@ -29,3 +29,12 @@ export type SelfAwardBadgeResponse = {
   result: string,
   message: string,
 };
+
+export type BadgeRewardEvent = {
+  id: string,
+  type: string,
+  name: string,
+  createdAt: number,
+  badgeId: string,
+  imageUrl: string,
+};

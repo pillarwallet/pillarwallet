@@ -75,9 +75,11 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   COLLECTIBLE,
   CHAT,
+  BADGE,
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -137,7 +139,7 @@ const EventProfileImage = styled(ProfileImage)`
 `;
 
 const ButtonsWrapper = styled.View`
-  padding: 6px ${spacing.large}px ${spacing.large}px;
+  padding: 6px ${spacing.mediumLarge}px ${spacing.large}px;
   background-color: ${baseColors.snowWhite};
 `;
 
@@ -268,6 +270,15 @@ class EventDetails extends React.Component<Props, State> {
     } = this.props;
     onClose();
     navigation.navigate(COLLECTIBLE, { assetData });
+  };
+
+  goToBadge = (badgeId: string) => {
+    const {
+      navigation,
+      onClose,
+    } = this.props;
+    onClose();
+    navigation.navigate(BADGE, { id: badgeId });
   };
 
   sendTokensToUser = (contact) => {
@@ -496,6 +507,19 @@ class EventDetails extends React.Component<Props, State> {
       );
     }
 
+    if (eventType === BADGE_REWARD_EVENT) {
+      const { name } = eventData;
+
+      return (
+        <EventBody>
+          <ListItemUnderlined
+            label="RECEIVED BADGE"
+            value={name}
+          />
+        </EventBody>
+      );
+    }
+
     const userData = {
       username: eventData.username,
       name: eventData.firstName,
@@ -549,6 +573,20 @@ class EventDetails extends React.Component<Props, State> {
         );
       }
       return null;
+    }
+
+    if (eventType === BADGE_REWARD_EVENT) {
+      const { badgeId } = eventData;
+      return (
+        <ButtonsWrapper>
+          <EventButton
+            block
+            title="See the badge"
+            primaryInverted
+            onPress={() => this.goToBadge(badgeId)}
+          />
+        </ButtonsWrapper>
+      );
     }
 
     const userData = {
@@ -655,6 +693,23 @@ class EventDetails extends React.Component<Props, State> {
           onIconPress={Object.keys(assetData).length ? () => this.goToCollectible(assetData) : noop}
           imageKey={name}
           touchDisabled={!Object.keys(assetData).length}
+        />
+      );
+    }
+
+    if (eventType === BADGE_REWARD_EVENT) {
+      const { name, imageUrl, badgeId } = eventData;
+
+      return (
+        <EventHeader
+          eventType={BADGE_REWARD_EVENT}
+          eventTime={eventTime}
+          onClose={onClose}
+          iconUrl={imageUrl}
+          onIconPress={() => this.goToBadge(badgeId)}
+          imageKey={name}
+          imageDiameter={70}
+          imageWrapperStyle={{ backgroundColor: 'transparent' }}
         />
       );
     }

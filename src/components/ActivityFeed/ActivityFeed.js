@@ -76,6 +76,7 @@ import {
 } from 'constants/paymentNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
+import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
 // selectors
 import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
@@ -502,6 +503,20 @@ class ActivityFeed extends React.Component<Props, State> {
           diameter={56}
           actionLabel={notification.eventSubtitle}
           {...imageProps}
+        />
+      );
+    }
+
+    if (type === BADGE_REWARD_EVENT) {
+      const { name, imageUrl } = notification;
+      return (
+        <ListItemWithImage
+          label={name}
+          diameter={70}
+          actionLabel="Collected"
+          onPress={() => this.selectEvent({ ...notification }, type, notificationStatus)}
+          itemImageUrl={imageUrl}
+          imageWrapperStyle={{ marginLeft: -6, paddingRight: 5 }}
         />
       );
     }

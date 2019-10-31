@@ -32,18 +32,21 @@ import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
 } from 'constants/invitationsConstants';
+import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 type Props = {
   onClose: Function,
   eventType?: string,
-  eventStatus: string,
+  eventStatus?: string,
   eventTime: string,
   iconUrl?: string,
   onIconPress?: Function,
   imageKey?: string,
   touchDisabled?: boolean,
+  imageDiameter?: number,
+  imageWrapperStyle?: Object,
 }
 
 const getEventInfo = (eventType, eventStatus) => {
@@ -88,6 +91,13 @@ const getEventInfo = (eventType, eventStatus) => {
   if (eventType === COLLECTIBLE_TRANSACTION) {
     return {
       title: eventStatus === COLLECTIBLE_SENT ? 'Collectible sent' : 'Collectible received',
+      background: baseColors.shark,
+      iconName: null,
+    };
+  }
+  if (eventType === BADGE_REWARD_EVENT) {
+    return {
+      title: 'Badge received',
       background: baseColors.shark,
       iconName: null,
     };
@@ -145,14 +155,14 @@ const EventIcon = styled(Icon)`
 `;
 
 const EventImage = styled(CachedImage)`
-  width: 58px;
-  height: 58px;
+  width: ${props => props.imageDiameter || 58}px;
+  height: ${props => props.imageDiameter || 58}px;
 `;
 
 const ImageTouchable = styled.TouchableOpacity`
-  width: 58px;
-  height: 58px;
-  border-radius: 29px;
+  width: ${props => props.imageDiameter || 58}px;
+  height: ${props => props.imageDiameter || 58}px;
+  border-radius: ${props => props.imageDiameter ? props.imageDiameter / 2 : 29}px;
   overflow: hidden;
   margin-top: 12px;
   justify-content: center;
@@ -170,11 +180,13 @@ const EventHeader = (props: Props) => {
     onIconPress,
     imageKey,
     touchDisabled,
+    imageDiameter,
+    imageWrapperStyle,
   } = props;
 
   const thisEvent = getEventInfo(eventType, eventStatus);
   // in case iconUrl is an empty string, but it's an COLLECTIBLE TRX event
-  const showImage = iconUrl || eventType === COLLECTIBLE_TRANSACTION;
+  const showImage = iconUrl || eventType === COLLECTIBLE_TRANSACTION || eventType === BADGE_REWARD_EVENT;
 
   return (
     <Wrapper background={thisEvent.background}>
@@ -195,12 +207,18 @@ const EventHeader = (props: Props) => {
         }}
       />}
       {!!showImage &&
-        <ImageTouchable onPress={onIconPress} disabled={touchDisabled}>
+        <ImageTouchable
+          onPress={onIconPress}
+          disabled={touchDisabled}
+          imageDiameter={imageDiameter}
+          style={imageWrapperStyle}
+        >
           <EventImage
             key={imageKey}
             source={{ uri: iconUrl }}
             fallbackSource={genericToken}
             resizeMode="contain"
+            imageDiameter={imageDiameter}
           />
         </ImageTouchable>}
     </Wrapper>

@@ -78,12 +78,14 @@ type Props = {
   iconColor?: string,
   hasShadow?: boolean,
   iconSource?: string,
+  imageWrapperStyle?: Object,
 }
 
 type ImageWrapperProps = {
   children: React.Node,
   hasShadow?: boolean,
   imageDiameter?: number,
+  imageWrapperStyle?: Object,
 }
 
 const ItemWrapper = styled.View`
@@ -274,12 +276,13 @@ const ImageWrapper = (props: ImageWrapperProps) => {
     children,
     hasShadow,
     imageDiameter,
+    imageWrapperStyle,
   } = props;
 
   if (hasShadow) {
     const shadowDiameter = imageDiameter || 54;
     return (
-      <ImageHolder>
+      <ImageHolder style={imageWrapperStyle}>
         <Shadow
           shadowColorAndroid="#38105baa"
           heightAndroid={shadowDiameter}
@@ -297,7 +300,7 @@ const ImageWrapper = (props: ImageWrapperProps) => {
     );
   }
   return (
-    <ImageHolder>
+    <ImageHolder style={imageWrapperStyle}>
       {children}
     </ImageHolder>
   );
@@ -544,13 +547,14 @@ class ListItemWithImage extends React.Component<Props, {}> {
       wrapperOpacity,
       customAddonAlignLeft,
       hasShadow,
+      imageWrapperStyle,
     } = this.props;
 
     const type = getType(this.props);
     return (
       <ItemWrapper wrapperOpacity={wrapperOpacity}>
         <InnerWrapper type={type} onPress={onPress} disabled={!onPress} horizontalAlign={innerWrapperHorizontalAlign}>
-          <ImageWrapper hasShadow={hasShadow}>
+          <ImageWrapper hasShadow={hasShadow} imageWrapperStyle={imageWrapperStyle}>
             <ItemImage {...this.props} />
             {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
           </ImageWrapper>

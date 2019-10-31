@@ -63,7 +63,7 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import { fetchBadgesAction } from 'actions/badgesActions';
+import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import {
   requestSessionAction,
   cancelWaitingRequestAction,
@@ -84,7 +84,7 @@ import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
 // types
 import type { Account, Accounts } from 'models/Account';
-import type { Badges } from 'models/Badge';
+import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
@@ -120,6 +120,8 @@ type Props = {
   accounts: Accounts,
   isOnline: boolean,
   userEvents: UserEvent[],
+  fetchBadgeAwardHistory: () => void,
+  badgesEvents: BadgeRewardEvent[],
 };
 
 type State = {
@@ -184,7 +186,7 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { logScreenView, fetchBadges } = this.props;
+    const { logScreenView, fetchBadges, fetchBadgeAwardHistory } = this.props;
 
     logScreenView('View home', 'Home');
 
@@ -196,6 +198,7 @@ class HomeScreen extends React.Component<Props, State> {
       this.props.setUnreadNotificationsStatus(false);
     });
     fetchBadges();
+    fetchBadgeAwardHistory();
   }
 
   componentWillUnmount() {
@@ -314,6 +317,7 @@ class HomeScreen extends React.Component<Props, State> {
       contactsSmartAddresses,
       accounts,
       userEvents,
+      badgesEvents,
     } = this.props;
 
     const {
@@ -350,7 +354,14 @@ class HomeScreen extends React.Component<Props, State> {
         tabImageNormal: allIconNormal,
         tabImageActive: allIconActive,
         onPress: () => this.setActiveTab(ALL),
-        data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts, ...invitations, ...userEvents],
+        data: [
+          ...transactionsOnMainnet,
+          ...mappedCTransactions,
+          ...mappedContacts,
+          ...invitations,
+          ...userEvents,
+          ...badgesEvents,
+        ],
         emptyState: {
           title: 'Make your first step',
           bodyText: 'Your activity will appear here.',
@@ -500,7 +511,7 @@ const mapStateToProps = ({
   user: { data: user },
   invitations: { data: invitations },
   notifications: { intercomNotificationsCount },
-  badges: { data: badges },
+  badges: { data: badges, badgesEvents },
   walletConnect: { connectors, pendingConnector },
   accounts: { data: accounts },
   session: { data: { isOnline } },
@@ -511,6 +522,7 @@ const mapStateToProps = ({
   invitations,
   intercomNotificationsCount,
   badges,
+  badgesEvents,
   connectors,
   pendingConnector,
   contactsSmartAddresses,
@@ -546,6 +558,7 @@ const mapDispatchToProps = (dispatch) => ({
   restoreTransactionHistory: (walletAddress: string, walletId: string) => dispatch(
     restoreTransactionHistoryAction(walletAddress, walletId),
   ),
+  fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
