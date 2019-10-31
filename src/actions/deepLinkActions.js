@@ -22,6 +22,7 @@ import { Alert } from 'react-native';
 import url from 'url';
 import Toast from 'components/Toast';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { updateNavigationLastScreenState, navigate } from 'services/navigation';
 import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
 import { LOGIN, CONFIRM_CLAIM, HOME } from 'constants/navigationConstants';
@@ -59,7 +60,9 @@ const beginApproveLogin = (query: ApproveLoginQuery) => {
 
 export const executeDeepLinkAction = (deepLink: string) => {
   return async (dispatch: Dispatch) => {
-    const { host, protocol, query = {} } = url.parse(deepLink, true) || {};
+    const params = url.parse(deepLink, true);
+    if (isEmpty(params)) return;
+    const { host, protocol, query = {} } = params;
     if (!allowedDeepLinkProtocols.includes(protocol)) return;
     switch (host) {
       case 'referral':
