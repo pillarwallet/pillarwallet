@@ -103,7 +103,7 @@ type Props = {
   resetHideRemoval?: Function,
   smartWalletState: Object,
   accounts: Accounts,
-  activeAccount: Account,
+  activeAccount: ?Account,
   paymentNetworkBalances: Balances,
   smartWalletFeatureEnabled: boolean,
   history: Array<*>,

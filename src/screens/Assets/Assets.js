@@ -85,7 +85,7 @@ type Props = {
   accounts: Accounts,
   smartWalletState: Object,
   blockchainNetworks: Object[],
-  activeAccount: Account,
+  activeAccount: ?Account,
   logScreenView: (view: string, screen: string) => void,
   fetchAllCollectiblesData: () => void,
   useBiometrics: boolean,
@@ -138,8 +138,8 @@ class AssetsScreen extends React.Component<Props, State> {
     const { navigation, activeAccount } = this.props;
     const isFocused = navigation.isFocused();
     if (!isFocused) {
-      const activeAccountId = getAccountId(activeAccount);
-      const nextActiveAccountId = getAccountId(nextProps.activeAccount);
+      const activeAccountId = activeAccount && getAccountId(activeAccount);
+      const nextActiveAccountId = nextProps.activeAccount && getAccountId(nextProps.activeAccount);
       /**
        * allow component update if screen is out of focus, but accounts has changed
        * this might happen while navigating between accounts and assets screen during account switch
@@ -169,7 +169,7 @@ class AssetsScreen extends React.Component<Props, State> {
       accounts,
     } = this.props;
 
-    const { type: walletType } = activeAccount;
+    const { type: walletType } = activeAccount || {};
     const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
     const { id: activeBNetworkId, title: activeBNetworkTitle } = activeBNetwork;
 

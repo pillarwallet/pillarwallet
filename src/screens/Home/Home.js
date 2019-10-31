@@ -112,7 +112,7 @@ type Props = {
   connectors: Connector[],
   pendingConnector?: Connector,
   logScreenView: (view: string, screen: string) => void,
-  activeAccount: Account,
+  activeAccount: ?Account,
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
   isOnline: boolean,
