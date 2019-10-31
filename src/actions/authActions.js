@@ -53,7 +53,7 @@ import { navigate, getNavigationState, getNavigationPathAndParamsState } from 's
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
-import { getActiveAccountAddress, findKeyBasedAccount, getAccountId } from 'utils/accounts';
+import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
@@ -65,7 +65,7 @@ import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
 import { updatePinAttemptsAction } from 'actions/walletActions';
-import { restoreTransactionHistoryAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
@@ -219,6 +219,8 @@ export const loginAction = (
         dispatch(setupSentryAction(user, wallet));
       }
 
+      dispatch(fetchTransactionsHistoryAction());
+
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
@@ -254,12 +256,6 @@ export const loginAction = (
       if (keyBasedAccount) {
         toastWalletBackup(isWalletBackedUp, getAccountId(keyBasedAccount));
       }
-
-      /**
-       * this is used only to avoid BCX fetching issues,
-       * TODO: remove fetching from ethplorer when BCX is fixed or BCX2 is released
-       */
-      dispatch(restoreTransactionHistoryAction(getActiveAccountAddress(accounts), user.walletId));
 
       navigate(navigateToAppAction);
     } catch (e) {

@@ -52,8 +52,8 @@ import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 
 // actions
 import {
+  fetchTransactionsHistoryAction,
   fetchTransactionsHistoryNotificationsAction,
-  restoreTransactionHistoryAction,
 } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -74,7 +74,6 @@ import { executeDeepLinkAction } from 'actions/deepLinkActions';
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
-import { activeAccountSelector } from 'selectors';
 
 // utils
 import { baseColors, spacing, fontStyles } from 'utils/variables';
@@ -94,6 +93,7 @@ type Props = {
   invitations: Object[],
   history: Object[],
   user: Object,
+  fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   acceptInvitation: Function,
@@ -113,8 +113,7 @@ type Props = {
   connectors: Connector[],
   pendingConnector?: Connector,
   logScreenView: (view: string, screen: string) => void,
-  restoreTransactionHistory: (walletAddress: string, walletId: string) => void,
-  activeAccount: Account,
+  activeAccount: ?Account,
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
   isOnline: boolean,
@@ -221,20 +220,14 @@ class HomeScreen extends React.Component<Props, State> {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
       fetchAllCollectiblesData,
-      restoreTransactionHistory,
-      activeAccount,
+      fetchTransactionsHistory,
       fetchBadges,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
     fetchAllCollectiblesData();
     fetchBadges();
-
-    /**
-     * this is used only to avoid BCX fetching issues,
-     * TODO: remove fetching from ethplorer when BCX is fixed or BCX2 is released
-     */
-    restoreTransactionHistory(getAccountAddress(activeAccount), activeAccount.walletId);
+    fetchTransactionsHistory();
   };
 
   setActiveTab = (activeTab) => {
@@ -522,7 +515,6 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   openSeaTxHistory: accountCollectiblesHistorySelector,
-  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -534,6 +526,7 @@ const mapDispatchToProps = (dispatch) => ({
   cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
@@ -543,9 +536,6 @@ const mapDispatchToProps = (dispatch) => ({
   cancelWaitingRequest: () => dispatch(cancelWaitingRequestAction()),
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
-  restoreTransactionHistory: (walletAddress: string, walletId: string) => dispatch(
-    restoreTransactionHistoryAction(walletAddress, walletId),
-  ),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);

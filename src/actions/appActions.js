@@ -58,7 +58,8 @@ import {
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   SET_SMART_WALLET_UPGRADE_STATUS,
-  SET_SMART_WALLET_LAST_SYNCED_HASH,
+  SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
+  SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
 } from 'constants/smartWalletConstants';
 import {
   UPDATE_PAYMENT_NETWORK_BALANCES,
@@ -189,13 +190,15 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
         upgradeStatus = null,
         accounts: smartAccounts = [],
         deploymentData = {},
-        lastSyncedHash = null,
+        lastSyncedPaymentId = null,
+        lastSyncedTransactionId = null,
       } = await storage.get('smartWallet');
       dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
       dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
       dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: smartAccounts });
       dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
-      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_HASH, payload: lastSyncedHash });
+      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
+      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 

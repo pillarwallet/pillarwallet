@@ -19,6 +19,7 @@
 */
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
+import { ZERO_ADDRESS } from '@netgum/utils';
 import type {
   Asset,
   Assets,
@@ -151,11 +152,34 @@ export const addressesEqual = (address1: ?string, address2: ?string): boolean =>
 };
 
 export const getAssetData = (
-  assetsData: Asset[],
+  userAssets: Asset[],
   supportedAssetsData: Asset[],
   assetSymbol: string,
 ): Asset | Object => {
-  return assetsData.find(({ symbol }: Asset) => symbol === assetSymbol)
+  return userAssets.find(({ symbol }: Asset) => symbol === assetSymbol)
   || supportedAssetsData.find(({ symbol }: Asset) => symbol === assetSymbol)
   || {};
+};
+
+export const getAssetDataByAddress = (
+  userAssets: Asset[],
+  supportedAssetsData: Asset[],
+  assetAddress: string,
+): Asset | Object => {
+  return userAssets.find(({ address }: Asset) => isCaseInsensitiveMatch(address, assetAddress))
+  || supportedAssetsData.find(({ address }: Asset) => isCaseInsensitiveMatch(address, assetAddress))
+  || {};
+};
+
+export const getAssetSymbolByAddress = (assets: Asset[], supportedAssets: Asset[], address: ?string): ?string => {
+  let assetSymbol = null;
+  if (!address) return assetSymbol;
+
+  // NOTE: ZERO_ADDRESS usually means it's ETH transaction
+  if (address === ZERO_ADDRESS) return ETH;
+
+  const { symbol } = getAssetDataByAddress(assets, supportedAssets, address);
+  if (symbol) assetSymbol = symbol;
+
+  return assetSymbol;
 };
