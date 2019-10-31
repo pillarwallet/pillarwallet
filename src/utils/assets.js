@@ -38,12 +38,6 @@ export const sortAssetsArray = (assets: Asset[]): Asset[] => {
   return assets.sort(sortAssetsFn);
 };
 
-export const sortAssets = (assets: Assets): Asset[] => {
-  const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-
-  return sortAssetsArray(assetsList);
-};
-
 export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
   return assetsArray.reduce((memo, asset) => {
     memo[asset.symbol] = asset;
@@ -53,6 +47,12 @@ export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
 
 export const getAssetsAsList = (assetsObject: Assets): Asset[] => {
   return Object.keys(assetsObject).map(id => assetsObject[id]);
+};
+
+export const sortAssets = (assets: Assets): Asset[] => {
+  const assetsList = getAssetsAsList(assets);
+
+  return sortAssetsArray(assetsList);
 };
 
 export const getBalance = (balances: Balances = {}, asset: string): number => {
