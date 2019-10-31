@@ -78,7 +78,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 // utils
 import { baseColors, spacing, fontStyles } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
-import { getAccountAddress, getAccountId } from 'utils/accounts';
+import { getAccountId } from 'utils/accounts';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
 // types
