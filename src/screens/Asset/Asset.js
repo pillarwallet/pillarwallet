@@ -232,7 +232,7 @@ class AssetScreen extends React.Component<Props, State> {
 
   handleScrollWrapperEndDrag = e => {
     const { fetchAssetTransactions, history, activeAccount } = this.props;
-    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
+    if (checkIfSmartWalletAccount(activeAccount)) return;
 
     const { assetData: { token } } = this.props.navigation.state.params;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;

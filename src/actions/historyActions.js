@@ -64,7 +64,6 @@ import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction, syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 
-
 const TRANSACTIONS_HISTORY_STEP = 10;
 
 const currentProvider = getEthereumProvider(NETWORK_PROVIDER);

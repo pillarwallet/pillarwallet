@@ -24,7 +24,7 @@ export type TxSettlementItem = {
   hash: string,
 };
 
-export type TxWithdrawalExtra = {
+type TxWithdrawalExtra = {
   paymentHash: string,
 };
 

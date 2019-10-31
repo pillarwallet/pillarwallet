@@ -160,7 +160,6 @@ const transformedImportedPlrTransaction = buildHistoryTransaction({
 describe('History Actions', () => {
   const transactionsHistoryStep = 10;
 
-  // $FlowFixMe
   const api: $Shape<SDKWrapper> = {
     fetchHistory: jest.fn(),
     fetchSupportedAssets: jest.fn(),

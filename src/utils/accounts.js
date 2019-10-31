@@ -80,11 +80,11 @@ export const getActiveAccountWalletId = (accounts: Accounts): string => {
 };
 
 export const checkIfSmartWalletAccount = (account: Account): boolean => {
-  return account.type === ACCOUNT_TYPES.SMART_WALLET;
+  return !!account && account.type === ACCOUNT_TYPES.SMART_WALLET;
 };
 
 export const checkIfKeyBasedAccount = (account: Account): boolean => {
-  return account.type === ACCOUNT_TYPES.KEY_BASED;
+  return !!account && account.type === ACCOUNT_TYPES.KEY_BASED;
 };
 
 export const getAccountName = (accountType: AccountTypes, accounts: Accounts): string => {
