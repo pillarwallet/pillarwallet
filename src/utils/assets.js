@@ -51,6 +51,10 @@ export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
   }, {});
 };
 
+export const getAssetsAsList = (assetsObject: Assets): Asset[] => {
+  return Object.keys(assetsObject).map(id => assetsObject[id]);
+};
+
 export const getBalance = (balances: Balances = {}, asset: string): number => {
   const assetBalance = get(balances, asset);
   if (!assetBalance) {

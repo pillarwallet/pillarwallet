@@ -338,7 +338,16 @@ SDKWrapper.prototype.validateAddress = function (blockchainAddress: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
     .then(({ data }) => data)
-    .catch(() => ({}));
+    .catch(error => {
+      Sentry.captureMessage('Unable to restore user wallet', {
+        level: 'info',
+        extra: {
+          blockchainAddress,
+          error,
+        },
+      });
+      return {};
+    });
 };
 
 SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
@@ -785,7 +794,7 @@ SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string
 };
 
 SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: string, amount: number) {
-  const url = `${MOONPAY_API_URL}/v2/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
+  const url = `${MOONPAY_API_URL}/v3/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
   + `&baseCurrencyAmount=${amount}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
 
   return Promise.resolve()

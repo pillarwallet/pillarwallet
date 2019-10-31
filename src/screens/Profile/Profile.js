@@ -70,7 +70,7 @@ import ReferralCodeModal from './ReferralCodeModal';
 import AppearanceSettingsSection from './AppearanceSettingsSection';
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
-const storage = new Storage('db');
+const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
 const ListWrapper = styled.View`
