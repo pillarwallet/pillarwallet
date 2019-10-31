@@ -173,9 +173,9 @@ export const parseSmartWalletTransactions = (
     value = new BigNumber(value.toString());
 
     let transaction = {
-      from,
+      from: from || '',
+      to: to || '',
       hash,
-      to,
       value,
       createdAt: +new Date(updatedAt) / 1000,
       asset: ETH,
