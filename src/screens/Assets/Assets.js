@@ -44,7 +44,6 @@ import type { Transaction } from 'models/Transaction';
 import { fetchInitialAssetsAction } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { labelUserAsLegacyAction } from 'actions/userActions';
 
 // constants
 import {
@@ -57,7 +56,7 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
-import { findKeyBasedAccount, getAccountName } from 'utils/accounts';
+import { findKeyBasedAccount, getAccountId, getAccountName } from 'utils/accounts';
 import { baseColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -92,7 +91,6 @@ type Props = {
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
-  labelUserAsLegacy: () => void,
   PPNTransactions: Transaction[],
 }
 
@@ -121,7 +119,6 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       assets,
       logScreenView,
-      labelUserAsLegacy,
     } = this.props;
 
     logScreenView('View assets list', 'Assets');
@@ -131,7 +128,6 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     fetchAllCollectiblesData();
-    labelUserAsLegacy();
 
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ supportsBiometrics: !!supported }))
@@ -139,10 +135,18 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isFocused = this.props.navigation.isFocused();
+    const { navigation, activeAccount } = this.props;
+    const isFocused = navigation.isFocused();
     if (!isFocused) {
-      return false;
+      const activeAccountId = getAccountId(activeAccount);
+      const nextActiveAccountId = getAccountId(nextProps.activeAccount);
+      /**
+       * allow component update if screen is out of focus, but accounts has changed
+       * this might happen while navigating between accounts and assets screen during account switch
+       */
+      return activeAccountId !== nextActiveAccountId;
     }
+
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
@@ -368,7 +372,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  labelUserAsLegacy: () => dispatch(labelUserAsLegacyAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);

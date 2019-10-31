@@ -69,6 +69,7 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
+import { labelUserAsLegacyAction } from 'actions/userActions';
 import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -184,6 +185,8 @@ export const loginAction = (
         if (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
+
+        dispatch(labelUserAsLegacyAction());
       } else {
         api.init();
       }
