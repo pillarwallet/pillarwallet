@@ -33,17 +33,17 @@ executors:
     docker:
       - image: circleci/openjdk:8-node-browsers
 
-  node12-executor:
+  node10-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: circleci/node:12.12.0
+      - image: circleci/node:10.15.0
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
       _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
-      resource_class: medium
-      shell: /bin/bash --login -o pipefail
+    resource_class: medium
+    shell: /bin/bash --login -o pipefail
 
 aliases:
   - &restore_pod_cache
@@ -165,7 +165,7 @@ aliases:
 
 jobs:
   build-and-test:
-    executor: node12-executor
+    executor: node10-executor
     steps:
       - checkout
       - run:
