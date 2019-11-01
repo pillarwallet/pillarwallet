@@ -47,9 +47,8 @@ export default class ChatWebSocket {
   }
 
   listen() {
-    if (this.isRunning()) this.ws.close();
-    this.setRunning(false);
-    if (this.credentials.host === undefined) return;
+    this.stop();
+    if (!this.credentials.host || !this.credentials.accessToken) return;
     const wsUrl = `${this.credentials.host
       .replace(/(https:\/\/)/gi, 'wss://')
       .replace(/(http:\/\/)/gi, 'ws://')}/v1/websocket/`;
@@ -113,7 +112,11 @@ export default class ChatWebSocket {
 
   send(data: Uint8Array, callback?: Function) {
     if (!this.isRunning()) return;
-    this.ws.send(data);
+    try {
+      this.ws.send(data);
+    } catch (e) {
+      //
+    }
     if (typeof callback === 'function') callback();
   }
 
