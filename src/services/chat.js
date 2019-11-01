@@ -32,7 +32,7 @@ export default class Chat {
     this.client = SignalClient;
   }
 
-  async init(credentials: Object) {
+  init(credentials: Object) {
     credentials.host = SIGNAL_SERVER_HOST;
     webSocketInstance = new ChatWebSocketService(credentials);
 
@@ -61,7 +61,26 @@ export default class Chat {
     const chatWebSocket = this.getWebSocketInstance();
     if (chatWebSocket.isRunning()) {
       const { username, message } = payload;
-      const apiBody = await SignalClient.prepareApiBody(tag, payload);
+      let apiBody;
+      try {
+        apiBody = await SignalClient.prepareApiBody(tag, payload);
+      } catch (e) {
+        // API body might fail due session malfunction, try re-establish session with contact
+        const {
+          userId,
+          targetUserId,
+          sourceIdentityKey,
+          targetIdentityKey,
+        } = payload;
+        await SignalClient.addContact({
+          username,
+          userId,
+          targetUserId,
+          sourceIdentityKey,
+          targetIdentityKey,
+        }, true).catch(() => {});
+        apiBody = await SignalClient.prepareApiBody(tag, payload);
+      }
       const requestId = (new Date()).getTime();
       const request = chatWebSocket.prepareRequest(
         requestId,

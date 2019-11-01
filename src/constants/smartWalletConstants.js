@@ -17,6 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import get from 'lodash.get';
+import { sdkConstants } from '@smartwallet/sdk';
+
 export const RESET_SMART_WALLET = 'RESET_SMART_WALLET';
 export const SET_SMART_WALLET_SDK_INIT = 'SET_SMART_WALLET_SDK_INIT';
 export const SET_SMART_WALLET_ACCOUNTS = 'SET_SMART_WALLET_ACCOUNTS';
@@ -43,3 +46,5 @@ export const SMART_WALLET_DEPLOYMENT_ERRORS = {
 };
 export const SET_ASSET_TRANSFER_GAS_LIMIT = 'SET_ASSET_TRANSFER_GAS_LIMIT';
 export const SET_COLLECTIBLE_TRANSFER_GAS_LIMIT = 'SET_COLLECTIBLE_TRANSFER_GAS_LIMIT';
+export const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
+export const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');

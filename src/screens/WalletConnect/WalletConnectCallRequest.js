@@ -20,20 +20,19 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils, Interface } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import { Footer, ScrollWrapper } from 'components/Layout';
-import { Label, BoldText, Paragraph } from 'components/Typography';
+import { Label, Paragraph, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
-import { onWalletConnectRejectCallRequest } from 'actions/walletConnectActions';
+import { rejectCallRequestAction } from 'actions/walletConnectActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { spacing, fontSizes, baseColors, UIColors } from 'utils/variables';
+import { spacing, fontSizes, baseColors, UIColors, fontStyles } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { getBalance } from 'utils/assets';
 import { calculateGasEstimate } from 'services/assets';
@@ -41,16 +40,19 @@ import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import { ETH } from 'constants/assetsConstants';
-import type { Asset, Balances } from 'models/Asset';
-import type { JsonRpcRequest } from 'models/JsonRpc';
-import type { TokenTransactionPayload } from 'models/Transaction';
-import type { GasInfo } from 'models/GasInfo';
 import { accountBalancesSelector } from 'selectors/balances';
 import { activeAccountAddressSelector } from 'selectors';
 
+import type { Asset, Balances } from 'models/Asset';
+import type { NavigationScreenProp } from 'react-navigation';
+import type { TokenTransactionPayload } from 'models/Transaction';
+import type { GasInfo } from 'models/GasInfo';
+import type { CallRequest } from 'models/WalletConnect';
+
 type Props = {
   navigation: NavigationScreenProp<*>,
-  rejectCallRequest: (peerId: string, callId: string) => Function,
+  rejectCallRequest: (callId: number) => void,
+  requests: CallRequest[],
   session: Object,
   contacts: Object[],
   supportedAssets: Asset[],
@@ -74,17 +76,16 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+const Value = styled(MediumText)`
+  font-size: ${fontSizes.big}px;
 `;
 
 const LabelSub = styled(Label)`
-  font-size: ${fontSizes.tiny};
+  ${fontStyles.tiny};
 `;
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.extraSmall};
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;
@@ -97,6 +98,8 @@ const OptionButton = styled(Button)`
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 class WalletConnectCallRequestScreen extends React.Component<Props, State> {
+  request: ?CallRequest = null;
+
   state = {
     note: null,
     gasLimit: 0,
@@ -104,11 +107,18 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     this.props.fetchGasInfo();
-    const { navigation, activeAccountAddress } = this.props;
+    const { navigation, activeAccountAddress, requests } = this.props;
 
-    const payload = navigation.getParam('payload', {});
-    if (['eth_sendTransaction', 'eth_signTransaction'].includes(payload.method)) {
-      calculateGasEstimate({ ...this.parseTransaction(payload), from: activeAccountAddress })
+    const requestCallId = +navigation.getParam('callId', 0);
+    const request = requests.find(({ callId }) => callId === requestCallId);
+    if (!request) {
+      return;
+    }
+
+    this.request = request;
+
+    if (['eth_sendTransaction', 'eth_signTransaction'].includes(request.method)) {
+      calculateGasEstimate({ ...this.transactionDetails(), from: activeAccountAddress })
         .then(gasLimit => this.setState({ gasLimit }))
         .catch(() => null);
     }
@@ -133,10 +143,15 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     }
   };
 
-  parseTransaction = (payload: JsonRpcRequest) => {
+  transactionDetails = () => {
+    const { request } = this;
+    if (!request) {
+      return {};
+    }
+
     const { supportedAssets } = this.props;
-    const { value = 0, data } = payload.params[0];
-    let { to = '' } = payload.params[0];
+    const { value = 0, data } = request.params[0];
+    let { to = '' } = request.params[0];
     let amount = utils.formatEther(utils.bigNumberify(value).toString());
     const asset = supportedAssets.find(
       ({ address: assetAddress = '' }) => assetAddress.toLowerCase() === to.toLowerCase(),
@@ -167,13 +182,13 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     };
   };
 
-  getTokenTransactionPayload = (payload: JsonRpcRequest): {
+  getTokenTransactionPayload = (): {
     unsupportedAction: boolean,
     transaction: TokenTransactionPayload,
   } => {
     const { gasInfo } = this.props;
     const { gasLimit } = this.state;
-    const transaction = this.parseTransaction(payload);
+    const transaction = this.transactionDetails();
     const { contractAddress, isTokenTransfer } = transaction;
 
     /**
@@ -205,33 +220,35 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     Keyboard.dismiss();
-    const { navigation } = this.props;
-    const payload = navigation.getParam('payload', {});
-    const peerId = navigation.getParam('peerId', {});
 
-    switch (payload.method) {
+    const { request } = this;
+    if (!request) {
+      return;
+    }
+
+    const { navigation } = this.props;
+
+    switch (request.method) {
       case 'eth_sendTransaction':
       case 'eth_signTransaction':
         const {
           transaction: transactionPayload,
-        } = this.getTokenTransactionPayload(payload);
+        } = this.getTokenTransactionPayload();
 
         navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
-          peerId,
-          payload,
+          callId: request.callId,
           transactionPayload,
         });
-
         break;
+
       case 'eth_sign':
       case 'personal_sign':
         navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
-          peerId,
-          payload,
+          callId: request.callId,
           transactionPayload: null,
         });
-
         break;
+
       default:
         break;
     }
@@ -242,23 +259,31 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   }
 
   handleDismissal = () => {
+    const { request } = this;
     const { navigation, rejectCallRequest } = this.props;
+
+    if (request) {
+      rejectCallRequest(request.callId);
+    }
+
     navigation.dismiss();
-    const peerId = navigation.getParam('peerId', {});
-    const payload = navigation.getParam('payload', {});
-    rejectCallRequest(peerId, payload.id);
   };
 
   render() {
     const {
       contacts,
-      navigation,
       balances,
+      session,
     } = this.props;
     const { gasLimit } = this.state;
 
-    const payload = navigation.getParam('payload', {});
-    const { icon, name } = navigation.getParam('peerMeta', {});
+    const { request } = this;
+    const {
+      icon,
+      name,
+      method,
+      params = [],
+    } = request || {};
 
     let type = 'Call';
     let body = null;
@@ -266,7 +291,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     let message = '';
     let errorMessage;
 
-    switch (payload.method) {
+    switch (method) {
       case 'eth_sendTransaction':
       case 'eth_signTransaction':
         type = 'Transaction';
@@ -280,7 +305,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             symbol,
             txFeeInWei,
           },
-        } = this.getTokenTransactionPayload(payload);
+        } = this.getTokenTransactionPayload();
 
         if (unsupportedAction) {
           errorMessage = 'This data transaction or token is not supported in Pillar Wallet yet';
@@ -351,7 +376,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 <Value>{data}</Value>
               </LabeledRow>
             )}
-            {!!recipientUsername && (
+            {session.isOnline && !!recipientUsername &&
               <TextInput
                 inputProps={{
                   onChange: text => this.handleNoteChange(text),
@@ -366,15 +391,15 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 noBorder
                 keyboardAvoidance
               />
-            )}
+            }
           </ScrollWrapper>
         );
         break;
       case 'eth_sign':
         type = 'Message';
 
-        address = payload.params[0]; // eslint-disable-line
-        message = payload.params[1]; // eslint-disable-line
+        address = params[0]; // eslint-disable-line
+        message = params[1]; // eslint-disable-line
         body = (
           <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
             <LabeledRow>
@@ -391,8 +416,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       case 'personal_sign':
         type = 'Message';
 
-        address = payload.params[1]; // eslint-disable-line
-        message = utils.toUtf8String(payload.params[0]);
+        address = params[1]; // eslint-disable-line
+        message = utils.toUtf8String(params[0]);
         body = (
           <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
             <LabeledRow>
@@ -407,6 +432,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         );
         break;
       default:
+        type = 'Unsupported';
+        errorMessage = 'We are sorry, but we do not support this action yet.';
         break;
     }
 
@@ -419,19 +446,19 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       >
         {body}
         <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
-          {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
+          {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <OptionButton
               primaryInverted
               onPress={this.handleFormSubmit}
               disabled={!!errorMessage || (type === 'Transaction' && !gasLimit)}
-              textStyle={{ fontWeight: 'normal' }}
+              regularText
               title={`Approve ${type}`}
             />
             <OptionButton
               dangerInverted
               onPress={this.handleDismissal}
-              textStyle={{ fontWeight: 'normal' }}
+              regularText
               title="Reject"
             />
           </FooterWrapper>
@@ -445,11 +472,13 @@ const mapStateToProps = ({
   assets: { supportedAssets },
   contacts: { data: contacts },
   session: { data: session },
+  walletConnect: { requests },
   history: { gasInfo },
 }) => ({
   contacts,
   session,
   supportedAssets,
+  requests,
   gasInfo,
 });
 
@@ -464,9 +493,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  rejectCallRequest: (peerId: string, callId: string) => {
-    dispatch(onWalletConnectRejectCallRequest(peerId, callId));
-  },
+  rejectCallRequest: (callId: number) => dispatch(rejectCallRequestAction(callId)),
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 

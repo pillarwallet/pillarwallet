@@ -24,6 +24,7 @@ import {
   UPDATE_CONTACTS,
 } from 'constants/contactsConstants';
 import Toast from 'components/Toast';
+import { initialState } from 'reducers/rootReducer';
 import * as chatActions from '../chatActions';
 import * as dbActions from '../dbActions';
 import * as actions from '../contactsActions';
@@ -86,6 +87,7 @@ describe('Contacts Actions', () => {
 
   const getStateMock = () => {
     return {
+      ...initialState,
       user: {
         data: {
           walletId: 'some-wallet-current-user',
@@ -100,6 +102,7 @@ describe('Contacts Actions', () => {
 
   const getStateMockNoAccessToken = () => {
     return {
+      ...initialState,
       user: {
         data: {
           id: 'current-user-id',
@@ -197,6 +200,7 @@ describe('Contacts Actions', () => {
     xit('should return and do nothing if accessToken does not exist', async () => {
       const stateWithNoAccessToken = () => {
         return {
+          ...initialState,
           user: { data: { walletId: 'some-wallet-id' } },
           contacts: { data: mockLocalContacts },
           accessTokens: {

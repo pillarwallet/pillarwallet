@@ -25,19 +25,19 @@ import {
 } from 'constants/featureFlagsConstants';
 
 export async function getRemoteFeatureFlags() {
-  const isDev = isTest || __DEV__;
-  if (isDev) firebase.config().enableDeveloperMode();
-  const cacheFor = isDev ? 0 : 3600; // 1 hour cache, 0 for non-cached results
+  if (isTest) return INITIAL_FEATURE_FLAGS;
+  if (__DEV__) firebase.config().enableDeveloperMode();
   const firebaseConfig = firebase.config();
-  await firebaseConfig.fetch(cacheFor).catch(() => null); // retrieve cached or fetch new if cache expired
+  firebaseConfig.setDefaults(INITIAL_FEATURE_FLAGS);
+  await firebaseConfig.fetch(0).catch(() => null); // 0 – try no caching, though Firebase can still throttle requests
   await firebaseConfig.activateFetched().catch(() => null);
   const featureFlagKeys = Object.keys(INITIAL_FEATURE_FLAGS || {});
-  const fetchedFlags = await firebaseConfig.getValues(featureFlagKeys).catch(() => {});
+  const fetchedFlags = await firebaseConfig.getValues(featureFlagKeys).catch(() => ({}));
   const mappedFeatureFlags = Object.keys(fetchedFlags).reduce((flags, flagKey) => ({
     ...flags,
     [flagKey]: !!fetchedFlags[flagKey].val(),
   }), {});
-  return isDev
+  return __DEV__
     ? { ...mappedFeatureFlags, ...DEVELOPMENT_FEATURE_FLAGS }
     : mappedFeatureFlags;
 }

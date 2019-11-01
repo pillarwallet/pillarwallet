@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
@@ -27,6 +28,7 @@ import { BaseText } from 'components/Typography';
 
 // services
 import { updateNavigationLastScreenState } from 'services/navigation';
+import Storage from 'services/storage';
 
 // screens
 import AssetsScreen from 'screens/Assets';
@@ -77,6 +79,8 @@ import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
 import SettleBalanceConfrimScreen from 'screens/Tank/SettleBalanceConfirm';
+import TankWithdrawalScreen from 'screens/Tank/TankWithdrawal';
+import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
 import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
@@ -89,6 +93,7 @@ import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/UpgradeToSmartWallet/SmartWalletIntro';
+import UnsettledAssets from 'screens/UnsettledAssets';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -115,6 +120,7 @@ import { getExistingChatsAction } from 'actions/chatActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
+import { signalInitAction } from 'actions/signalClientActions';
 
 // constants
 import {
@@ -195,6 +201,10 @@ import {
   SMART_WALLET_INTRO,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
+  UNSETTLED_ASSETS,
+  TANK_WITHDRAWAL_FLOW,
+  TANK_WITHDRAWAL,
+  TANK_WITHDRAWAL_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -229,13 +239,13 @@ const StackNavigatorModalConfig = {
       easing: Easing.step0,
     },
   }),
-  navigationOptions: {
+  defaultNavigationOptions: {
     header: null,
   },
 };
 
 const StackNavigatorConfig = {
-  navigationOptions: {
+  defaultNavigationOptions: {
     header: null,
     gesturesEnabled: true,
   },
@@ -258,11 +268,12 @@ const assetsFlow = createStackNavigator(
     [CONTACT]: ContactScreen,
     [WALLET_SETTINGS]: WalletSettingsScreen,
     [SETTINGS]: SettingsScreen,
+    [UNSETTLED_ASSETS]: UnsettledAssets,
   },
   StackNavigatorConfig,
 );
 
-assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
+assetsFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // EXCHANGE FLOW
 const exchangeFlow = createStackNavigator({
@@ -273,7 +284,7 @@ const exchangeFlow = createStackNavigator({
   [FIAT_CRYPTO]: FiatCryptoScreen,
 }, StackNavigatorConfig);
 
-exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
+exchangeFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
@@ -285,7 +296,7 @@ const peopleFlow = createStackNavigator({
   [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
 
-peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
+peopleFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
@@ -312,7 +323,7 @@ const homeFlow = createStackNavigator({
   [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
 
-homeFlow.navigationOptions = hideTabNavigatorOnChildView;
+homeFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => ({ focused }) => {
   const notificationColor = warningNotification ? baseColors.burningFire : baseColors.sunYellow;
@@ -347,7 +358,7 @@ const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => 
 const tabBarLabel = labelText => ({ focused, tintColor }) => (
   <BaseText
     style={{
-      fontSize: fontSizes.extraExtraSmall,
+      fontSize: fontSizes.regular,
       color: focused ? tintColor : baseColors.mediumGray,
       textAlign: 'center',
     }}
@@ -490,7 +501,7 @@ const smartWalletUpgradeFlow = createStackNavigator({
   [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
-smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
+smartWalletUpgradeFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // PPN SEND TOKEN FROM ASSET FLOW
 const ppnSendTokenFromAssetFlow = createStackNavigator(
@@ -509,7 +520,7 @@ const manageWalletsFlow = createStackNavigator({
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
 }, StackNavigatorConfig);
 
-manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
+manageWalletsFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // MANAGE USERS FLOW
 const manageUsersFlow = createStackNavigator({
@@ -518,7 +529,7 @@ const manageUsersFlow = createStackNavigator({
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
-manageUsersFlow.navigationOptions = hideTabNavigatorOnChildView;
+manageUsersFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // TANK FLOWS
 const tankSettleFlow = createStackNavigator({
@@ -526,14 +537,21 @@ const tankSettleFlow = createStackNavigator({
   [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfrimScreen,
 }, StackNavigatorConfig);
 
-tankSettleFlow.navigationOptions = hideTabNavigatorOnChildView;
+tankSettleFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 const tankFundFlow = createStackNavigator({
   [FUND_TANK]: FundTankScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
 }, StackNavigatorConfig);
 
-tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
+tankFundFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
+
+const tankWithdrawalFlow = createStackNavigator({
+  [TANK_WITHDRAWAL]: TankWithdrawalScreen,
+  [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
+}, StackNavigatorConfig);
+
+tankWithdrawalFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -551,6 +569,7 @@ const AppFlowNavigation = createStackNavigator(
     [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
     [TANK_SETTLE_FLOW]: tankSettleFlow,
     [TANK_FUND_FLOW]: tankFundFlow,
+    [TANK_WITHDRAWAL_FLOW]: tankWithdrawalFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
     [MANAGE_USERS_FLOW]: manageUsersFlow,
     [CONTACT_INFO]: ConnectedContactInfo,
@@ -590,6 +609,8 @@ type Props = {
   isBrowsingWebView: boolean,
   startListeningForBalanceChange: Function,
   stopListeningForBalanceChange: Function,
+  isOnline: boolean,
+  initSignal: Function,
 }
 
 type State = {
@@ -597,6 +618,7 @@ type State = {
 };
 
 let lockTimer;
+const storage = Storage.getInstance('db');
 
 class AppFlow extends React.Component<Props, State> {
   state = {
@@ -635,11 +657,25 @@ class AppFlow extends React.Component<Props, State> {
       userState,
       wallet,
       removePrivateKeyFromMemory,
+      isOnline,
+      startListeningChatWebSocket,
+      stopListeningChatWebSocket,
+      initSignal,
     } = this.props;
-    const { notifications: prevNotifications } = prevProps;
+    const { notifications: prevNotifications, isOnline: prevIsOnline } = prevProps;
 
     if (userState === REGISTERED && wallet.privateKey) {
       removePrivateKeyFromMemory();
+    }
+
+    if (prevIsOnline !== isOnline) {
+      if (isOnline) {
+        // try initializing Signal in case of user user logged to wallet while being offline and then switched
+        initSignal();
+        startListeningChatWebSocket();
+      } else {
+        stopListeningChatWebSocket();
+      }
     }
 
     if (notifications.length !== prevNotifications.length) {
@@ -703,6 +739,7 @@ class AppFlow extends React.Component<Props, State> {
         stopListeningIntercomNotifications();
         updateSignalInitiatedState(false);
         stopListeningForBalanceChange();
+        storage.close();
       }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
@@ -761,6 +798,7 @@ const mapStateToProps = ({
       SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
     },
   },
+  session: { data: { isOnline } },
 }) => ({
   profileImage,
   userState,
@@ -773,6 +811,7 @@ const mapStateToProps = ({
   isPickingImage,
   smartWalletFeatureEnabled,
   isBrowsingWebView,
+  isOnline,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -796,6 +835,7 @@ const mapDispatchToProps = dispatch => ({
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   startListeningForBalanceChange: () => dispatch(startListeningForBalanceChangeAction()),
   stopListeningForBalanceChange: () => dispatch(stopListeningForBalanceChangeAction()),
+  initSignal: () => dispatch(signalInitAction()),
 });
 
 const ConnectedAppFlow = connect(
@@ -803,6 +843,6 @@ const ConnectedAppFlow = connect(
   mapDispatchToProps,
 )(AppFlow);
 ConnectedAppFlow.router = AppFlowNavigation.router;
-ConnectedAppFlow.navigationOptions = AppFlowNavigation.navigationOptions;
+ConnectedAppFlow.defaultNavigationOptions = AppFlowNavigation.defaultNavigationOptions;
 
 export default ConnectedAppFlow;

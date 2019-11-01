@@ -22,7 +22,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { availableStakeSelector } from 'selectors/paymentNetwork';
+import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
 import * as Keychain from 'react-native-keychain';
 
 // components
@@ -33,20 +33,15 @@ import Button from 'components/Button';
 import { Container } from 'components/Layout';
 
 // types
-import type { Assets, Asset, AssetsByAccount } from 'models/Asset';
+import type { Assets, Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts, Account } from 'models/Account';
+import type { Transaction } from 'models/Transaction';
 
 // actions
-import {
-  fetchInitialAssetsAction,
-  startAssetsSearchAction,
-  searchAssetsAction,
-  resetSearchAssetsResultAction,
-  checkForMissedAssetsAction,
-} from 'actions/assetsActions';
+import { fetchInitialAssetsAction } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
@@ -55,12 +50,13 @@ import {
   FETCH_INITIAL_FAILED,
   FETCHED,
 } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
+import { findKeyBasedAccount, getAccountId, getAccountName } from 'utils/accounts';
 import { baseColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -83,25 +79,19 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetsLayout: string,
-  startAssetsSearch: Function,
-  searchAssets: Function,
-  resetSearchAssetsResult: Function,
   assetsSearchResults: Asset[],
   assetsSearchState: string,
-  addAsset: Function,
-  hideAsset: Function,
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
   blockchainNetworks: Object[],
   activeAccount: Account,
   logScreenView: (view: string, screen: string) => void,
-  fetchAllCollectiblesData: Function,
+  fetchAllCollectiblesData: () => void,
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
-  checkForMissedAssets: Function,
-  allAssets: AssetsByAccount,
+  PPNTransactions: Transaction[],
 }
 
 type State = {
@@ -117,14 +107,11 @@ const VIEWS = {
 };
 
 class AssetsScreen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      showKeyWalletInsight: true,
-      showSmartWalletInsight: false,
-      supportsBiometrics: false,
-    };
-  }
+  state = {
+    showKeyWalletInsight: true,
+    showSmartWalletInsight: false,
+    supportsBiometrics: false,
+  };
 
   componentDidMount() {
     const {
@@ -132,8 +119,6 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       assets,
       logScreenView,
-      checkForMissedAssets,
-      allAssets,
     } = this.props;
 
     logScreenView('View assets list', 'Assets');
@@ -143,25 +128,25 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     fetchAllCollectiblesData();
-    checkForMissedAssets(allAssets);
 
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ supportsBiometrics: !!supported }))
       .catch(() => null);
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const { activeAccount, checkForMissedAssets, allAssets } = this.props;
-    if (!isEqual(prevProps.activeAccount, activeAccount)) {
-      checkForMissedAssets(allAssets);
-    }
-  }
-
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isFocused = this.props.navigation.isFocused();
+    const { navigation, activeAccount } = this.props;
+    const isFocused = navigation.isFocused();
     if (!isFocused) {
-      return false;
+      const activeAccountId = getAccountId(activeAccount);
+      const nextActiveAccountId = getAccountId(nextProps.activeAccount);
+      /**
+       * allow component update if screen is out of focus, but accounts has changed
+       * this might happen while navigating between accounts and assets screen during account switch
+       */
+      return activeAccountId !== nextActiveAccountId;
     }
+
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
@@ -180,6 +165,8 @@ class AssetsScreen extends React.Component<Props, State> {
       blockchainNetworks,
       activeAccount,
       availableStake,
+      PPNTransactions,
+      accounts,
     } = this.props;
 
     const { type: walletType } = activeAccount;
@@ -189,7 +176,7 @@ class AssetsScreen extends React.Component<Props, State> {
     switch (activeBNetworkId) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
         return {
-          label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet',
+          label: getAccountName(walletType, accounts),
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
           customHeaderProps: {
@@ -199,35 +186,28 @@ class AssetsScreen extends React.Component<Props, State> {
           customHeaderButtonProps: {},
         };
       default:
+        const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === PAYMENT_COMPLETED);
         return {
           label: activeBNetworkTitle,
           action: () => navigation.navigate(ACCOUNTS),
           screenView: VIEWS.PPN_VIEW,
           customHeaderProps: {},
-          customHeaderButtonProps: { isActive: availableStake > 0 },
+          customHeaderButtonProps: { isActive: availableStake > 0 || hasUnsettledTx },
         };
     }
   };
 
-  renderView = (viewType: string) => {
+  getInsightsList = () => {
     const {
-      assets,
-      assetsState,
-      fetchInitialAssets,
       accounts,
-      smartWalletState,
       backupStatus,
       navigation,
       useBiometrics,
     } = this.props;
-    const {
-      showKeyWalletInsight,
-      showSmartWalletInsight,
-      supportsBiometrics,
-    } = this.state;
+    const { supportsBiometrics } = this.state;
 
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-    const keyBasedWallet = accounts.find((item) => item.type === ACCOUNT_TYPES.KEY_BASED);
+    const keyBasedAccount = findKeyBasedAccount(accounts) || {};
 
     const keyWalletInsights = [
       {
@@ -235,7 +215,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: 'Backup wallet',
         status: isBackedUp,
         onPress: !isBackedUp
-          ? () => navigation.navigate(WALLET_SETTINGS, { wallet: keyBasedWallet })
+          ? () => navigation.navigate(WALLET_SETTINGS, { accountId: keyBasedAccount.id })
           : null,
       },
       {
@@ -245,16 +225,30 @@ class AssetsScreen extends React.Component<Props, State> {
       },
     ];
 
-    const visibleKeyWalletInsights = supportsBiometrics
-      ? [...keyWalletInsights, {
+    if (supportsBiometrics) {
+      const biometricsInsight = {
         key: 'biometric',
         title: 'Enable biometric login (optional)',
         status: useBiometrics,
         onPress: !useBiometrics
           ? () => navigation.navigate(SETTINGS)
           : null,
-      }]
-      : keyWalletInsights;
+      };
+      return [...keyWalletInsights, biometricsInsight];
+    }
+
+    return keyWalletInsights;
+  };
+
+  renderView = (viewType: string) => {
+    const {
+      assets,
+      assetsState,
+      fetchInitialAssets,
+      accounts,
+      smartWalletState,
+    } = this.props;
+    const { showKeyWalletInsight, showSmartWalletInsight } = this.state;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
@@ -287,7 +281,7 @@ class AssetsScreen extends React.Component<Props, State> {
           <WalletView
             showInsight={showKeyWalletInsight}
             hideInsight={() => this.hideWalletInsight('KEY')}
-            insightList={visibleKeyWalletInsights}
+            insightList={this.getInsightsList()}
             insightsTitle="Never lose your funds"
           />);
       default:
@@ -296,7 +290,9 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    // HEADER PROPS
+    const { activeAccount } = this.props;
+    if (!activeAccount) return null;
+
     const screenInfo = this.getScreenInfo();
     const {
       label: headerButtonLabel,
@@ -334,7 +330,6 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   wallet: { data: wallet, backupStatus },
   assets: {
-    data: allAssets,
     assetsState,
     assetsSearchState,
     assetsSearchResults,
@@ -348,7 +343,6 @@ const mapStateToProps = ({
   wallet,
   backupStatus,
   accounts,
-  allAssets,
   assetsState,
   assetsSearchState,
   assetsSearchResults,
@@ -366,6 +360,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   availableStake: availableStakeSelector,
+  PPNTransactions: PPNTransactionsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -375,10 +370,6 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
-  checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
-  startAssetsSearch: () => dispatch(startAssetsSearchAction()),
-  searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
-  resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });

@@ -50,7 +50,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
     horizontal={false}
     initialNumToRender={7}
     keyExtractor={[Function]}
-    maxToRenderPerBatch={7}
+    maxToRenderPerBatch={10}
     onContentSizeChange={[Function]}
     onEndReachedThreshold={0.5}
     onLayout={[Function]}
@@ -58,7 +58,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
     onScroll={[Function]}
     onScrollBeginDrag={[Function]}
     onScrollEndDrag={[Function]}
-    removeClippedSubviews={true}
     renderItem={[Function]}
     renderSectionHeader={[Function]}
     scrollEventThrottle={50}
@@ -118,15 +117,14 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               Array [
                 Object {
                   "color": "#0A1427",
-                  "fontFamily": "Aktiv Grotesk App",
-                  "fontWeight": "400",
-                  "includeFontPadding": false,
+                  "fontFamily": "EuclidCircularB-Regular",
                   "textAlignVertical": "center",
                 },
                 Array [
                   Object {
                     "color": "#8B939E",
                     "fontSize": 14,
+                    "lineHeight": 22,
                   },
                   undefined,
                 ],
@@ -280,17 +278,13 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "Aktiv Grotesk App",
-                            "fontWeight": "400",
-                            "includeFontPadding": false,
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "600",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Medium",
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -298,6 +292,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                                 "color": "#0A1427",
                                 "fontSize": 16,
                                 "letterSpacing": 0.2,
+                                "lineHeight": 24,
                                 "width": "100%",
                               },
                               undefined,
@@ -333,7 +328,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   <View
                     style={
                       Array [
-                        undefined,
+                        Object {},
                         Object {
                           "flexWrap": "wrap",
                         },
@@ -352,6 +347,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                             "marginTop": 0,
                           },
                           Object {
+                            "alignItems": "center",
                             "flexWrap": "wrap",
                             "justifyContent": "flex-end",
                           },
@@ -366,15 +362,14 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "400",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
                                 "color": "#FD3300",
                                 "fontSize": 18,
+                                "lineHeight": 28,
                                 "textAlign": "right",
                               },
                               undefined,
@@ -457,7 +452,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
     horizontal={false}
     initialNumToRender={7}
     keyExtractor={[Function]}
-    maxToRenderPerBatch={7}
+    maxToRenderPerBatch={10}
     onContentSizeChange={[Function]}
     onEndReachedThreshold={0.5}
     onLayout={[Function]}
@@ -465,7 +460,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
     onScroll={[Function]}
     onScrollBeginDrag={[Function]}
     onScrollEndDrag={[Function]}
-    removeClippedSubviews={true}
     renderItem={[Function]}
     renderSectionHeader={[Function]}
     scrollEventThrottle={50}
@@ -525,15 +519,14 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               Array [
                 Object {
                   "color": "#0A1427",
-                  "fontFamily": "Aktiv Grotesk App",
-                  "fontWeight": "400",
-                  "includeFontPadding": false,
+                  "fontFamily": "EuclidCircularB-Regular",
                   "textAlignVertical": "center",
                 },
                 Array [
                   Object {
                     "color": "#8B939E",
                     "fontSize": 14,
+                    "lineHeight": 22,
                   },
                   undefined,
                 ],
@@ -687,17 +680,13 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "Aktiv Grotesk App",
-                            "fontWeight": "400",
-                            "includeFontPadding": false,
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "600",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Medium",
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -705,6 +694,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                                 "color": "#0A1427",
                                 "fontSize": 16,
                                 "letterSpacing": 0.2,
+                                "lineHeight": 24,
                                 "width": "100%",
                               },
                               undefined,
@@ -740,7 +730,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   <View
                     style={
                       Array [
-                        undefined,
+                        Object {},
                         Object {
                           "flexWrap": "wrap",
                         },
@@ -759,6 +749,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                             "marginTop": 0,
                           },
                           Object {
+                            "alignItems": "center",
                             "flexWrap": "wrap",
                             "justifyContent": "flex-end",
                           },
@@ -773,15 +764,14 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "Aktiv Grotesk App",
-                              "fontWeight": "400",
-                              "includeFontPadding": false,
+                              "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
                                 "color": "#FD3300",
                                 "fontSize": 18,
+                                "lineHeight": 28,
                                 "textAlign": "right",
                               },
                               undefined,

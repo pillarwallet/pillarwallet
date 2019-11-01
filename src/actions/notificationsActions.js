@@ -19,6 +19,7 @@
 */
 
 import debounce from 'lodash.debounce';
+import isEmpty from 'lodash.isempty';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
@@ -27,7 +28,7 @@ import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
   fetchTransactionsHistoryNotificationsAction,
-  fetchTransactionsHistoryAction,
+  fetchAssetTransactionsAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -178,7 +179,7 @@ export const startListeningNotificationsAction = () => {
         }
         if (data.type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
-          dispatch(fetchTransactionsHistoryAction(data.asset));
+          dispatch(fetchAssetTransactionsAction(data.asset));
           dispatch(fetchAssetsBalancesAction());
         }
         if (
@@ -219,7 +220,7 @@ export const startListeningNotificationsAction = () => {
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
-        dispatch(fetchTransactionsHistoryAction(notification.asset));
+        dispatch(fetchAssetTransactionsAction(notification.asset));
         dispatch(fetchAssetsBalancesAction());
       }
       if (notification.type === COLLECTIBLE) {
@@ -304,7 +305,7 @@ export const startListeningOnOpenNotificationAction = () => {
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
-          dispatch(fetchTransactionsHistoryAction(asset));
+          dispatch(fetchAssetTransactionsAction(asset));
           dispatch(fetchAssetsBalancesAction());
         }
         if (type === COLLECTIBLE) {
@@ -341,6 +342,8 @@ export const stopListeningOnOpenNotificationAction = () => {
 
 export const startListeningChatWebSocketAction = () => {
   return async (dispatch: Function, getState: Function) => {
+    const { session: { data: { isOnline } } } = getState();
+    if (!isOnline) return;
     const chatWebSocket = chat.getWebSocketInstance();
     await chatWebSocket.listen();
     chatWebSocket.onOpen();
@@ -383,7 +386,7 @@ export const startListeningChatWebSocketAction = () => {
           });
         }
       }
-      if (typeof receivedSignalMessage !== 'undefined') {
+      if (!isEmpty(receivedSignalMessage)) {
         const messageTag = Array.isArray(messageRequest.headers)
           ? messageRequest.headers.find(entry => entry.match(/message-tag/g)).split(':')[1]
           : '';

@@ -27,22 +27,18 @@ export const makeApiCall = (data: Object) => {
   };
 };
 
-export const updateOfflineQueueNetworkStatusAction = (isOnline: boolean) => {
-  return {
-    type: isOnline ? ONLINE : OFFLINE,
-  };
-};
+export const updateOfflineQueueNetworkStatusAction = (isOnline: boolean) => ({
+  type: isOnline ? ONLINE : OFFLINE,
+});
 
-export const offlineApiCall = (method: string, ...params: any) => {
-  return {
-    type: OFFLINE_API_CALL,
-    payload: {
-      method,
-      params,
-    },
-    meta: {
-      queueIfOffline: true,
-      timestamp: +new Date(),
-    },
-  };
-};
+export const offlineApiCall = (method: string, ...params: any) => ({
+  type: OFFLINE_API_CALL,
+  payload: {
+    method,
+    params,
+  },
+  meta: {
+    queueIfOffline: true,
+    timestamp: +new Date(),
+  },
+});

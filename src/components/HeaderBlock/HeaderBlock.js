@@ -18,14 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StatusBar, View, FlatList, TouchableOpacity } from 'react-native';
+import { StatusBar, View, TouchableOpacity } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import { connect } from 'react-redux';
 import ProfileImage from 'components/ProfileImage';
@@ -65,8 +65,9 @@ const Wrapper = styled.View`
 `;
 
 const HeaderContentWrapper = styled.View`
-  padding: ${spacing.large}px;
+  padding: 15px ${spacing.large}px;
   width: 100%;
+  min-height: 58px;
 `;
 
 const SafeArea = styled(SafeAreaView)`
@@ -82,13 +83,11 @@ const HeaderRow = styled.View`
 
 const HeaderProfileImage = styled(ProfileImage)``;
 
-const HeaderTitle = styled(BaseText)`
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
+const HeaderTitle = styled(MediumText)`
+  ${fontStyles.regular};
   color: ${props => props.theme.color || UIColors.defaultTextColor};
-  font-weight: 500;
   text-align: ${props => props.centerText ? 'center' : 'left'};
-  padding: 5px 0;
+  margin-top: 2px;
 `;
 
 const UserButton = styled.TouchableOpacity`
@@ -103,6 +102,7 @@ const CenterItems = styled.View`
   align-items: center;
   justify-content: center;
   flex-direction: row;
+  min-height: 28px;
 `;
 
 const LeftItems = styled.View`
@@ -111,6 +111,16 @@ const LeftItems = styled.View`
   justify-content: flex-start;
   flex-direction: row;
   flex-wrap: wrap;
+  min-height: 28px;
+`;
+
+const RightItems = styled.View`
+  flex: ${props => props.sideFlex || 1};
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: row;
+  flex-wrap: wrap;
+  min-height: 28px;
 `;
 
 const BackIcon = styled(IconButton)`
@@ -129,6 +139,12 @@ const ActionIcon = styled(IconButton)`
   padding: 5px 10px;
 `;
 
+const CloseIcon = styled(IconButton)`
+  position: relative;
+  align-self: center;
+  padding: 20px;
+`;
+
 const TextButton = styled.TouchableOpacity`
   padding: 5px 0;
   flex-direction: row;
@@ -144,13 +160,8 @@ const TextButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.regular}px;
   color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
-`;
-
-const Separator = styled.View`
-  width: ${spacing.small}px;
 `;
 
 const Indicator = styled.View`
@@ -225,6 +236,10 @@ const getTheme = (props: Props) => {
   return themes().default;
 };
 
+const LEFT = 'LEFT';
+const CENTER = 'CENTER';
+const RIGHT = 'RIGHT';
+
 class HeaderBlock extends React.Component<Props> {
   renderHeaderContent = (theme: Object) => {
     const {
@@ -241,64 +256,60 @@ class HeaderBlock extends React.Component<Props> {
       <HeaderRow>
         <LeftItems sideFlex={sideFlex} style={!centerItems.length && !rightItems.length ? { flexGrow: 2 } : {}}>
           {(leftItems.length || !!noBack)
-            ? leftItems.map((item) => this.renderSideItems(item, theme))
+            ? leftItems.map((item) => this.renderSideItems(item, theme, LEFT))
             : (
               <BackIcon
                 icon="back"
                 color={theme.iconColor || UIColors.defaultNavigationColor}
                 onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
-                fontSize={fontSizes.extraLarge}
+                fontSize={fontSizes.large}
                 horizontalAlign="flex-start"
               />)
           }
         </LeftItems>
         {!!centerItems.length &&
         <CenterItems>
-          {centerItems.map((item) => this.renderSideItems(item, theme, 'CENTER'))}
+          {centerItems.map((item) => this.renderSideItems(item, theme, CENTER))}
         </CenterItems>
         }
         {(!!centerItems.length || !!rightItems.length) &&
-        <FlatList
-          keyExtractor={(item) => item.key || item.label || item.title || item.icon || 'close'}
-          data={rightItems}
-          renderItem={({ item }) => this.renderSideItems(item, theme)}
-          ItemSeparatorComponent={() => <Separator />}
-          horizontal
-          contentContainerStyle={{ justifyContent: 'flex-end', flexGrow: 1 }}
-          style={{ flex: sideFlex || 1 }}
-          scrollEnabled={false}
-        />}
+          <RightItems sideFlex={sideFlex}>
+            {rightItems.map((item) => this.renderSideItems(item, theme, RIGHT))}
+          </RightItems>
+        }
       </HeaderRow>
     );
   };
 
   renderSideItems = (item, theme, type = '') => {
     const { navigation } = this.props;
+    const commonStyle = {};
+    if (type === RIGHT) commonStyle.marginLeft = spacing.small;
     if (item.user || item.userIcon) {
       return this.renderUser(theme, !item.userIcon);
     }
     if (item.title) {
       return (
-        <HeaderTitle
-          theme={theme}
-          key={item.title}
-          style={item.color ? { color: item.color } : {}}
-          onPress={item.onPress}
-          centerText={type === 'CENTER'}
-        >
-          {item.title}
-        </HeaderTitle>
+        <View style={{ ...commonStyle, flexDirection: 'row', flexWrap: 'wrap' }} key={item.title}>
+          <HeaderTitle
+            theme={theme}
+            style={item.color ? { color: item.color } : {}}
+            onPress={item.onPress}
+            centerText={type === CENTER}
+          >
+            {item.title}
+          </HeaderTitle>
+        </View>
       );
     }
     if (item.icon) {
       return (
-        <View style={{ marginRight: -10 }}>
+        <View style={{ marginRight: -10, ...commonStyle }} key={item.icon}>
           <ActionIcon
-            key={item.icon}
             icon={item.icon}
             color={item.color || theme.rightActionIconColor || UIColors.defaultNavigationColor}
             onPress={item.onPress}
-            fontSize={item.fontSize || fontSizes.extraLarge}
+            fontSize={item.fontSize || fontSizes.large}
             horizontalAlign="flex-start"
           />
           {!!item.indicator && <Indicator />}
@@ -307,7 +318,7 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.iconSource) {
       return (
-        <TouchableOpacity onPress={item.onPress}>
+        <TouchableOpacity onPress={item.onPress} key={item.key || item.iconSource} style={commonStyle}>
           <IconImage source={item.iconSource} />
           {!!item.indicator && <Indicator />}
         </TouchableOpacity>
@@ -315,31 +326,40 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.label) {
       return (
-        <TextButton onPress={item.onPress} key={item.label} bordered={item.bordered} theme={theme}>
+        <TextButton onPress={item.onPress} key={item.label} bordered={item.bordered} theme={theme} style={commonStyle}>
           <ButtonLabel theme={theme}>{item.label}</ButtonLabel>
           {item.addon}
         </TextButton>
       );
     }
     if (item.close) {
+      const wrapperStyle = {};
+      if (type === LEFT) {
+        wrapperStyle.marginLeft = -20;
+        wrapperStyle.marginRight = -(20 - spacing.small);
+      }
+      if (type === RIGHT) {
+        wrapperStyle.marginRight = -20;
+        wrapperStyle.marginLeft = -(20 - spacing.small);
+      }
+
       return (
-        <View style={{ marginRight: -10 }}>
-          <ActionIcon
-            key="close"
+        <View style={{ ...wrapperStyle, marginTop: -20, marginBottom: -20 }} key="close">
+          <CloseIcon
             icon="close"
             color={baseColors.slateBlack}
             onPress={() => item.dismiss ? navigation.dismiss() : navigation.goBack()}
-            fontSize={fontSizes.extraSmall}
+            fontSize={fontSizes.regular}
             horizontalAlign="flex-end"
           />
         </View>
       );
     }
     if (item.actionButton) {
-      return (<HeaderActionButton {...item.actionButton} theme={theme} />);
+      return (<HeaderActionButton {...item.actionButton} theme={theme} wrapperStyle={commonStyle} />);
     }
     if (item.custom) {
-      return <View key={item.key || 'custom'}>{item.custom}</View>;
+      return <View key={item.key || 'custom'} style={commonStyle}>{item.custom}</View>;
     }
     return null;
   };

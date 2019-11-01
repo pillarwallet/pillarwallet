@@ -38,11 +38,15 @@ export function mapTransactionsHistory(
         || findMatchingContact(from, contacts, contactsSmartAddresses);
 
       // apply to wallet accounts only if received from other account address
-      const account = !contact && findAccountByAddress(from, getInactiveUserAccounts(accounts));
+      const account = !contact
+        && (findAccountByAddress(from, getInactiveUserAccounts(accounts))
+          || findAccountByAddress(to, getInactiveUserAccounts(accounts))
+        );
 
       const username = account
-        ? getAccountName(account.type)
+        ? getAccountName(account.type, accounts)
         : getUserName(contact);
+
       return {
         username,
         to,

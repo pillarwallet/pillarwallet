@@ -26,10 +26,13 @@ import firebase from 'react-native-firebase';
 
 import Toast from 'components/Toast';
 import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
+import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import {
   setKeychainDataObject,
   resetKeychainDataObject,
 } from 'utils/keychain';
+
+import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
@@ -139,7 +142,7 @@ export const setFirebaseAnalyticsCollectionEnabled = (enabled: boolean) => {
 };
 
 export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessToast: boolean = false) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { username, walletId } },
       accounts: { data: accounts },
@@ -167,6 +170,7 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
         userJoinedBeta,
       },
     });
+    await dispatch(fetchFeatureFlagsAction());
     if (ignoreSuccessToast) return;
     Toast.show({
       message,

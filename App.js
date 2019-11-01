@@ -37,7 +37,6 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
-import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
@@ -65,7 +64,6 @@ type Props = {
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
   executeDeepLink: Function,
-  fetchFeatureFlags: Function,
 }
 
 class App extends React.Component<Props, *> {
@@ -96,10 +94,10 @@ class App extends React.Component<Props, *> {
       startListeningOnOpenNotification,
       checkDBConflicts,
       executeDeepLink,
-      fetchFeatureFlags,
     } = this.props;
-    await fetchFeatureFlags(); // feature flags are put into reducer state before any usage
     checkDBConflicts();
+    const isOnline = await NetInfo.isConnected.fetch();
+    this.setOnlineStatus(isOnline); // set initial online status
     SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
@@ -117,10 +115,17 @@ class App extends React.Component<Props, *> {
     startListeningOnOpenNotification();
   }
 
-  handleConnectivityChange = isOnline => {
-    const { updateSessionNetworkStatus, updateOfflineQueueNetworkStatus } = this.props;
+  setOnlineStatus = isOnline => {
+    const {
+      updateSessionNetworkStatus,
+      updateOfflineQueueNetworkStatus,
+    } = this.props;
     updateSessionNetworkStatus(isOnline);
     updateOfflineQueueNetworkStatus(isOnline);
+  };
+
+  handleConnectivityChange = isOnline => {
+    this.setOnlineStatus(isOnline);
     if (!isOnline) {
       Toast.show({
         message: 'No active internet connection found!',
@@ -167,7 +172,6 @@ const mapDispatchToProps = (dispatch) => ({
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
-  fetchFeatureFlags: () => dispatch(fetchFeatureFlagsAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);

@@ -20,12 +20,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { FlatList, RefreshControl } from 'react-native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
-import { format as formatDate } from 'date-fns';
 
 // actions
 import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
@@ -34,7 +32,6 @@ import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Label, BaseText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
-import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import Checkbox from 'components/Checkbox';
@@ -50,13 +47,27 @@ import type { Assets, Balances, Rates } from 'models/Asset';
 import type { TxToSettle } from 'models/PaymentNetwork';
 
 // utils
-import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { formatFiat, formatAmount } from 'utils/common';
+import {
+  baseColors,
+  fontStyles,
+  spacing,
+  UIColors,
+  fontSizes,
+} from 'utils/variables';
+import {
+  formatFiat,
+  formatAmount,
+  groupAndSortByDate,
+} from 'utils/common';
 import { getRate } from 'utils/assets';
 
 import { createStructuredSelector } from 'reselect';
 import { accountAssetsSelector } from 'selectors/assets';
-
+import { findMatchingContact } from 'utils/contacts';
+import type {
+  ApiUser,
+  ContactSmartAddressData,
+} from 'models/Contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -70,6 +81,8 @@ type Props = {
   availableToSettleTx: Object[],
   isFetched: boolean,
   fetchAvailableTxToSettle: Function,
+  contacts: ApiUser[],
+  contactsSmartAddresses: ContactSmartAddressData[],
 };
 
 type State = {
@@ -105,11 +118,34 @@ const BalanceWrapper = styled.View`
 `;
 
 const ValueInFiat = styled(BaseText)`
+  font-size: ${fontSizes.regular}px;
   color: ${baseColors.coolGrey};
-  font-size: ${fontSizes.extraExtraSmall}px;
 `;
 
-const genericToken = require('assets/images/tokens/genericToken.png');
+const SubtitleView = styled.View`
+  background-color: ${UIColors.defaultBackgroundColor};
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 30px ${spacing.rhythm}px;
+  border-bottom-width: 1px;
+  border-color: ${baseColors.mediumLightGray};
+`;
+
+const UnsettledTransactionsList = styled.SectionList`
+  width: 100%;
+  flex: 1;
+`;
+
+const SectionHeaderWrapper = styled.View`
+  width: 100%;
+  padding: ${spacing.small}px ${spacing.large}px;
+`;
+
+const SectionHeader = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${baseColors.darkGray};
+`;
 
 class SettleBalance extends React.Component<Props, State> {
   state = {
@@ -121,11 +157,18 @@ class SettleBalance extends React.Component<Props, State> {
   }
 
   renderItem = ({ item }) => {
+    const {
+      baseFiatCurrency,
+      assets,
+      rates,
+      contacts,
+      contactsSmartAddresses,
+    } = this.props;
     const { txToSettle } = this.state;
-    const { baseFiatCurrency, assets, rates } = this.props;
 
     const tokenSymbol = get(item, 'token.symbol', ETH);
     const value = get(item, 'value', new BigNumber(0));
+    const senderAddress = get(item, 'senderAddress', '');
 
     const assetInfo = {
       ...(assets[tokenSymbol] || {}),
@@ -135,34 +178,40 @@ class SettleBalance extends React.Component<Props, State> {
       createdAt: item.createdAt,
     };
 
-    const fullIconUrl = `${SDK_PROVIDER}/${assetInfo.iconUrl}?size=3`;
+    const contact = findMatchingContact(senderAddress, contacts, contactsSmartAddresses) || {};
+    const itemImage = contact.profileImage || '';
+    const nameOrAddress = contact.username || `${senderAddress.slice(0, 6)}…${senderAddress.slice(-6)}`;
     const formattedAmount = formatAmount(assetInfo.value.toString());
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const totalInFiat = assetInfo.value.toNumber() * getRate(rates, assetInfo.symbol, fiatCurrency);
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
-    const isToday = new Date().toDateString() === item.createdAt.toDateString();
-    const time = isToday
-      ? `Today at ${formatDate(item.createdAt, 'HH:mm')}`
-      : formatDate(item.createdAt, 'MMMM D, YYYY HH:mm');
-
+    const isChecked = txToSettle.some(({ hash }) => hash === assetInfo.hash);
+    const isDisabled = !isChecked && txToSettle.length === MAX_TX_TO_SETTLE;
+    // const itemValue = `${formattedValue} ${notification.asset}`;
     return (
       <ListItemWithImage
-        label={assetInfo.name}
-        subtext={time}
-        itemImageUrl={fullIconUrl || genericToken}
-        fallbackSource={genericToken}
         onPress={() => this.toggleItemToTransfer(assetInfo)}
+        label={nameOrAddress}
+        avatarUrl={itemImage}
+        valueColor={baseColors.jadeGreen}
+        imageUpdateTimeStamp={contact.lastUpdateTime || 0}
+        noImageBorder
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
-              <TankAssetBalance amount={formattedAmount} monoColor />
+              <TankAssetBalance
+                amount={formattedAmount}
+                token={tokenSymbol}
+                monoColor
+              />
               <ValueInFiat>
                 {formattedAmountInFiat}
               </ValueInFiat>
             </BalanceWrapper>
             <Checkbox
               onPress={() => this.toggleItemToTransfer(assetInfo)}
-              checked={!!txToSettle.find(({ hash }) => hash === assetInfo.hash)}
+              checked={isChecked}
+              disabled={isDisabled}
               rounded
               wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
             />
@@ -182,7 +231,7 @@ class SettleBalance extends React.Component<Props, State> {
       Toast.show({
         message: `You can settle only ${MAX_TX_TO_SETTLE} transactions at once`,
         type: 'info',
-        title: 'Error',
+        title: 'Warning',
       });
       return;
     } else {
@@ -205,10 +254,11 @@ class SettleBalance extends React.Component<Props, State> {
     } = this.props;
     const { txToSettle } = this.state;
     const showSpinner = !isFetched;
-
+    const formattedFeedData = groupAndSortByDate(availableToSettleTx, 0);
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Settle balances' }] }}
+        headerProps={{ centerItems: [{ title: 'Settle transactions' }] }}
+        backgroundColor={baseColors.white}
         keyboardAvoidFooter={(
           <FooterInner style={{ alignItems: 'center' }}>
             <Label>&nbsp;</Label>
@@ -224,20 +274,32 @@ class SettleBalance extends React.Component<Props, State> {
         )}
       >
         {showSpinner && <LoadingSpinner />}
-        {!showSpinner && (
+        {!showSpinner &&
           <React.Fragment>
-            <Paragraph light small center style={{ paddingTop: 15 }}>
-              You can settle up to {MAX_TX_TO_SETTLE} transactions at once
-            </Paragraph>
-            <FlatList
-              keyExtractor={item => item.hash}
-              data={availableToSettleTx}
+            <SubtitleView>
+              <Paragraph light small>Transactions available to settle</Paragraph>
+              <Paragraph style={{ textAlign: 'right' }} small>{txToSettle.length} of {MAX_TX_TO_SETTLE}</Paragraph>
+            </SubtitleView>
+            <UnsettledTransactionsList
+              sections={formattedFeedData}
+              initialNumToRender={6}
+              renderSectionHeader={({ section }) => (
+                <SectionHeaderWrapper>
+                  <SectionHeader>{section.title}</SectionHeader>
+                </SectionHeaderWrapper>
+              )}
               renderItem={this.renderItem}
-              ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-              contentContainerStyle={{
-                flexGrow: 1,
-                paddingTop: 10,
-              }}
+              getItemLayout={(data, index) => ({
+                length: 70,
+                offset: 70 * index,
+                index,
+              })}
+              maxToRenderPerBatch={7}
+              onEndReachedThreshold={0.5}
+              keyExtractor={item => item.hash}
+              contentContainerStyle={{ flexGrow: 1, paddingTop: 10 }}
+              removeClippedSubviews
+              stickySectionHeadersEnabled={false}
               refreshControl={
                 <RefreshControl
                   refreshing={false}
@@ -247,7 +309,8 @@ class SettleBalance extends React.Component<Props, State> {
                 />
               }
             />
-          </React.Fragment>)}
+          </React.Fragment>
+        }
       </ContainerWithHeader>
     );
   }
@@ -258,12 +321,15 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
   paymentNetwork: { availableToSettleTx: { data: availableToSettleTx, isFetched } },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
 }) => ({
   rates,
   baseFiatCurrency,
   session,
   availableToSettleTx,
   isFetched,
+  contacts,
+  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({

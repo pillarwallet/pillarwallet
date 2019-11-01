@@ -30,7 +30,7 @@ import { ensureSmartAccountConnectedAction } from 'actions/smartWalletActions';
 
 // components
 import { ScrollWrapper, Container } from 'components/Layout';
-import { BoldText, BaseText, MediumText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/Typography';
 import Tank from 'components/Tank';
 import Button from 'components/Button';
 import IconButton from 'components/IconButton';
@@ -53,7 +53,7 @@ import type { Balances } from 'models/Asset';
 
 // utils
 import { getRate } from 'utils/assets';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles } from 'utils/variables';
 import { delay, formatMoney, formatFiat } from 'utils/common';
 
 
@@ -110,9 +110,9 @@ const ColumnInner = styled.View`
   flex-direction: column;
 `;
 
-const BoldTitle = styled(BoldText)`
+const BoldTitle = styled(MediumText)`
   color: ${baseColors.white};
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.big};
 `;
 
 const Status = styled.View`
@@ -132,20 +132,20 @@ const StatusIcon = styled.View`
 
 const StatusText = styled(BaseText)`
   color: ${props => props.active ? baseColors.emerald : baseColors.fireEngineRed};
-  font-size: ${fontSizes.extraExtraSmall}px;
+  font-size: ${fontSizes.small}px;
   letter-spacing: 0.15px;
 `;
 
 const ValueLabel = styled(BaseText)`
   color: ${props => props.total ? baseColors.caribbeanGreen : baseColors.lavenderBlue};
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   margin-bottom: 5px;
   opacity: ${props => props.light ? 0.7 : 1};
 `;
 
 const ValueText = styled(MediumText)`
   color: ${props => props.total ? baseColors.caribbeanGreen : baseColors.lavenderBlue};
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
 `;
 
 const TankHolder = styled.View`
@@ -292,7 +292,7 @@ class TankDetails extends React.Component<Props, State> {
           icon="close"
           color={baseColors.coolGrey}
           onPress={() => navigation.goBack(null)}
-          fontSize={fontSizes.small}
+          fontSize={fontSizes.medium}
           horizontalAlign="flex-end"
         />
         <ScrollWrapper contentContainerStyle={{ paddingHorizontal: 30, paddingTop: 70 }}>
@@ -379,7 +379,7 @@ class TankDetails extends React.Component<Props, State> {
             <ValueText style={{ color: baseColors.hoki }}>
               {`${usedFormattedAmount} ${PPN_TOKEN}`}
             </ValueText>
-            <ValueLabel style={{ color: baseColors.hoki, fontSize: fontSizes.extraExtraSmall }}>Used</ValueLabel>
+            <ValueLabel style={{ color: baseColors.hoki, fontSize: fontSizes.small }}>Used</ValueLabel>
           </ColumnAnimated>
           <FooterWrapper>
             <Button

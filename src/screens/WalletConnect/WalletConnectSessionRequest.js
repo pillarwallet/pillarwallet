@@ -25,16 +25,16 @@ import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Footer, ScrollWrapper } from 'components/Layout';
-import { Label, BoldText } from 'components/Typography';
+import { Label, MediumText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import { spacing, fontSizes } from 'utils/variables';
-import { onWalletConnectSessionApproval, onWalletConnectSessionRejection } from 'actions/walletConnectActions';
+import { approveSessionAction, rejectSessionAction } from 'actions/walletConnectActions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  onWalletConnectSessionApproval: Function,
-  onWalletConnectSessionRejection: Function,
+  approveSession: Function,
+  rejectSession: Function,
 };
 
 const FooterWrapper = styled.View`
@@ -46,8 +46,8 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+const Value = styled(MediumText)`
+  font-size: ${fontSizes.big}px;
 `;
 
 const OptionButton = styled(Button)`
@@ -59,18 +59,18 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 class WalletConnectSessionRequestScreen extends React.Component<Props> {
   handleSessionApproval = () => {
-    const { navigation } = this.props;
+    const { navigation, approveSession } = this.props;
     const peerId = navigation.getParam('peerId', {});
     Keyboard.dismiss();
-    this.props.onWalletConnectSessionApproval(peerId);
+    approveSession(peerId);
     navigation.goBack(null);
   };
 
   handleSessionRejection = () => {
-    const { navigation } = this.props;
+    const { navigation, rejectSession } = this.props;
     const peerId = navigation.getParam('peerId', {});
     Keyboard.dismiss();
-    this.props.onWalletConnectSessionRejection(peerId);
+    rejectSession(peerId);
     navigation.goBack(null);
   };
 
@@ -129,13 +129,13 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
             <OptionButton
               primaryInverted
               onPress={this.handleSessionApproval}
-              textStyle={{ fontWeight: 'normal' }}
+              regularText
               title="Approve"
             />
             <OptionButton
               dangerInverted
               onPress={this.handleSessionRejection}
-              textStyle={{ fontWeight: 'normal' }}
+              regularText
               title="Reject"
             />
           </FooterWrapper>
@@ -146,8 +146,8 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
 }
 
 const mapDispatchToProps = dispatch => ({
-  onWalletConnectSessionApproval: peerId => dispatch(onWalletConnectSessionApproval(peerId)),
-  onWalletConnectSessionRejection: peerId => dispatch(onWalletConnectSessionRejection(peerId)),
+  approveSession: peerId => dispatch(approveSessionAction(peerId)),
+  rejectSession: peerId => dispatch(rejectSessionAction(peerId)),
 });
 
 export default connect(

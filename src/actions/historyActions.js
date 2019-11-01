@@ -42,6 +42,7 @@ import {
   getActiveAccountId,
   getActiveAccountWalletId,
 } from 'utils/accounts';
+import { addressesEqual } from 'utils/assets';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
@@ -66,7 +67,7 @@ const afterHistoryUpdatedAction = () => {
   };
 };
 
-export const fetchTransactionsHistoryAction = (asset: string = 'ALL', fromIndex: number = 0) => {
+export const fetchAssetTransactionsAction = (asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { accounts: { data: accounts } } = getState();
     const accountId = getActiveAccountId(accounts);
@@ -289,7 +290,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
       // 3) filter out unsupported tokens
       .filter(tx => {
         const tokenAddress = get(tx, 'tokenInfo.address');
-        const tokenSupported = allAssets.find(el => el.address === tokenAddress);
+        const tokenSupported = allAssets.find(el => addressesEqual(el.address, tokenAddress));
         return !!tokenAddress && tokenSupported;
       });
 
@@ -307,7 +308,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
       })),
       ...erc20Transactions.map(tx => {
         const tokenAddress = get(tx, 'tokenInfo.address');
-        const assetInfo = allAssets.find(el => el.address === tokenAddress) || {};
+        const assetInfo = allAssets.find(el => addressesEqual(el.address, tokenAddress)) || {};
         return buildHistoryTransaction({
           asset: assetInfo.symbol,
           createdAt: tx.timestamp,

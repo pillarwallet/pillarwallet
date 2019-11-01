@@ -21,36 +21,38 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Linking } from 'react-native';
+import { Linking, Dimensions, ScrollView, Clipboard } from 'react-native';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
+import type { ScrollToProps } from 'components/Modals/SlideModal';
 
 // models
 import type { Transaction } from 'models/Transaction';
-import type { Assets } from 'models/Asset';
+import type { Assets, Asset } from 'models/Asset';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 
 // components
-import { BaseText, BoldText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
 import ProfileImage from 'components/ProfileImage';
+import Toast from 'components/Toast';
 
 // utils
-import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { spacing, baseColors, fontSizes, fontStyles } from 'utils/variables';
 import {
   formatFullAmount,
   noop,
   formatUnits,
 } from 'utils/common';
 import { createAlert } from 'utils/alerts';
-import { addressesEqual } from 'utils/assets';
+import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
 
@@ -77,7 +79,7 @@ import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'co
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
-import { activeAccountAddressSelector } from 'selectors';
+import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // local components
@@ -102,14 +104,29 @@ type Props = {
   activeAccountAddress: string,
   contactsSmartAddresses: ContactSmartAddressData[],
   inactiveAccounts: Accounts,
+  supportedAssets: Asset[],
+  getRef?: () => Object,
+  getScrollOffset?: (number) => ScrollToProps,
+  getMaxScrollOffset?: (number) => number,
+  accounts: Accounts,
 }
+
+type State = {
+  containerHeight: ?number,
+}
+
+const { height: screenHeight } = Dimensions.get('window');
 
 const ContentWrapper = styled.View`
   width: 100%;
+  maxHeight: ${screenHeight * 0.8}px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  overflow: hidden;
 `;
 
 const EventBody = styled.View`
-  padding: 0 ${spacing.mediumLarge}px 40px;
+  padding: 0 ${spacing.mediumLarge}px;
   background-color: ${baseColors.snowWhite};
 `;
 
@@ -117,7 +134,8 @@ const EventProfileImage = styled(ProfileImage)`
 `;
 
 const ButtonsWrapper = styled.View`
-  margin-top: 6px;
+  padding: 6px ${spacing.large}px ${spacing.large}px;
+  background-color: ${baseColors.snowWhite};
 `;
 
 const EventButton = styled(Button)`
@@ -133,9 +151,8 @@ const EventRow = styled.View`
   flex-wrap: wrap;
 `;
 
-const EventBodyTitle = styled(BaseText)`
-  font-size: ${fontSizes.large}px;
-  font-weight: ${fontWeights.medium};
+const EventBodyTitle = styled(MediumText)`
+  ${fontStyles.big};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   margin: 0 10px 2px;
   text-align: center;
@@ -145,11 +162,15 @@ const viewTransactionOnBlockchain = (hash: string) => {
   Linking.openURL(TX_DETAILS_URL + hash);
 };
 
-class EventDetails extends React.Component<Props, {}> {
+class EventDetails extends React.Component<Props, State> {
   timer: ?IntervalID;
   timeout: ?TimeoutID;
   // HACK: we need to cache the tx data for smart wallet migration process
   cachedTxInfo = {};
+
+  state = {
+    containerHeight: undefined,
+  };
 
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
@@ -267,18 +288,17 @@ class EventDetails extends React.Component<Props, {}> {
       || {};
   };
 
-  renderEventBody = (eventType, eventStatus) => {
+  renderEventBody = (eventType) => {
     const {
       eventData,
       activeAccountAddress,
-      onClose,
       history,
       txNotes,
       assets,
-      contacts,
-      contactsSmartAddresses = [],
+      supportedAssets,
+      accounts,
     } = this.props;
-    let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
+
     if (eventType === TRANSACTION_EVENT) {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
       if (!txInfo) {
@@ -290,7 +310,6 @@ class EventDetails extends React.Component<Props, {}> {
         to,
         from,
         asset,
-        hash,
         gasUsed,
         gasPrice,
         status,
@@ -311,40 +330,27 @@ class EventDetails extends React.Component<Props, {}> {
       }
       const hasNote = transactionNote && transactionNote !== '';
       const isPending = status === TX_PENDING_STATUS;
-      const assetsData = Object.keys(assets).map(id => assets[id]);
-      const { decimals = 18 } = assetsData.find(({ symbol }) => symbol === asset) || {};
+      const assetsData = getAssetsAsList(assets);
+      const { decimals = 18 } = getAssetData(assetsData, supportedAssets, asset);
       const value = formatUnits(txInfo.value, decimals);
-      const recipientContact = findMatchingContact(to, contacts, contactsSmartAddresses) || {};
-      // apply to wallet accounts only if received from other account address
+      const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);
+      const relatedAddress = isReceived ? from : to;
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
-      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
-        ? `${from.slice(0, 7)}…${from.slice(-7)}`
-        : `${to.slice(0, 7)}…${to.slice(-7)}`);
+      let relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type, accounts) || relatedAddress;
+      if (addressesEqual(to, from)) {
+        relatedUserTitle = 'My account';
+      }
       const relatedUserProfileImage = relatedUser.profileImage || null;
       // $FlowFixMe
       const showProfileImage = !relatedUser.type;
-
-      if (isPending) {
-        const pendingTimeInSeconds = differenceInSeconds(new Date(), new Date(eventData.createdAt * 1000));
-        const ph = Math.floor(pendingTimeInSeconds / 3600);
-        const pm = Math.floor((pendingTimeInSeconds % 3600) / 60);
-        const ps = Math.floor((pendingTimeInSeconds % 3600) % 60);
-
-        const pendingHours = ph > 0 ? `${ph} H ` : '';
-        const pendingMinutes = pm > 0 ? `${pm} MIN ` : '';
-        const pendingSeconds = ps > 0 ? `${ps} SEC` : '';
-
-        eventTime = `${pendingHours}${pendingMinutes}${pendingSeconds} AGO`;
-      }
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const freeTx = isPPNTransaction;
       let showAmountReceived = true;
       let showSender = true;
       let showNote = true;
-      let showViewOnBlockchain = true;
       let showAmountTxType = false;
       let txType = '';
       const listSettledAssets = (tag === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
@@ -362,80 +368,59 @@ class EventDetails extends React.Component<Props, {}> {
         txType = 'TANK TOP UP';
       }
 
-      if (isPPNTransaction) {
-        showViewOnBlockchain = false;
-      }
+      const showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
 
       return (
-        <React.Fragment>
-          <EventHeader
-            eventType={TRANSACTION_EVENT}
-            eventStatus={status}
-            eventTime={eventTime}
-            onClose={onClose}
+        <EventBody>
+          {showAmountReceived &&
+          <ListItemUnderlined
+            label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
+            value={`${formatFullAmount(value)} ${asset}`}
           />
-          <EventBody>
-            {showAmountReceived &&
-            <ListItemUnderlined
-              label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
-              value={formatFullAmount(value)}
-              valueAdditionalText={asset}
-            />
-            }
-            {showAmountTxType &&
-            <ListItemUnderlined
-              label="TRANSACTION TYPE"
-              value={txType}
-            />
-            }
-            {showSender &&
-            <ListItemUnderlined
-              label={isReceived ? 'SENDER' : 'RECIPIENT'}
-              value={relatedUserTitle}
-              valueAddon={(!!relatedUser.username && <EventProfileImage
-                uri={relatedUserProfileImage}
-                showProfileImage={showProfileImage}
-                userName={relatedUserTitle}
-                diameter={40}
-                initialsSize={fontSizes.extraSmall}
-                style={{ marginBottom: 4 }}
-                onPress={() => this.goToProfile(relatedUser)}
-                noShadow
-                borderWidth={0}
-              />)}
-            />
-            }
-            {listSettledAssets &&
-            <ListItemUnderlined
-              label="ASSETS"
-              value={extra.map(item => <BoldText key={item.hash}> {item.value} {item.symbol}</BoldText>)}
-            />
-            }
-            {(toMyself || !isReceived) && !isPending && (freeTx || !!fee) &&
-            <ListItemUnderlined
-              label="TRANSACTION FEE"
-              value={freeTx ? 'free' : utils.formatEther(fee.toString())}
-              valueAdditionalText={freeTx ? '' : 'ETH'}
-            />
-            }
-            {!!hasNote && showNote &&
-            <ListItemParagraph
-              label="NOTE"
-              value={transactionNote}
-            />
-            }
-            {showViewOnBlockchain &&
-            <ButtonsWrapper>
-              <EventButton
-                block
-                title="View on the blockchain"
-                primaryInverted
-                onPress={() => viewTransactionOnBlockchain(hash)}
-              />
-            </ButtonsWrapper>
-            }
-          </EventBody>
-        </React.Fragment>
+          }
+          {showAmountTxType &&
+          <ListItemUnderlined
+            label="TRANSACTION TYPE"
+            value={txType}
+          />
+          }
+          {showSender &&
+          <ListItemUnderlined
+            label={isReceived ? 'SENDER' : 'RECIPIENT'}
+            value={relatedUserTitle}
+            valueAddon={(!!relatedUser.username && <EventProfileImage
+              uri={relatedUserProfileImage}
+              showProfileImage={showProfileImage}
+              userName={relatedUserTitle}
+              diameter={40}
+              initialsSize={fontSizes.regular}
+              style={{ marginBottom: 4 }}
+              onPress={() => this.goToProfile(relatedUser)}
+              noShadow
+              borderWidth={0}
+            />)}
+            onPress={Object.keys(relatedUser).length ? null : () => this.writeToClipboard(relatedUserTitle)}
+          />
+          }
+          {listSettledAssets &&
+          <ListItemUnderlined
+            label="ASSETS"
+            value={extra.map(item => <MediumText key={item.hash}> {item.value} {item.symbol}</MediumText>)}
+          />
+          }
+          {showFeeBlock &&
+          <ListItemUnderlined
+            label="TRANSACTION FEE"
+            value={freeTx ? 'free' : `${utils.formatEther(fee.toString())} ETH`}
+          />
+          }
+          {!!hasNote && showNote &&
+          <ListItemParagraph
+            label="NOTE"
+            value={transactionNote}
+          />
+          }
+        </EventBody>
       );
     }
 
@@ -444,18 +429,12 @@ class EventDetails extends React.Component<Props, {}> {
         to,
         from,
         note,
-        icon,
-        assetData = {},
         gasUsed,
         gasPrice,
-        hash,
       } = eventData;
-
-      const { name = '' } = assetData;
 
       const isReceived = addressesEqual(to, activeAccountAddress);
       const toMyself = isReceived && addressesEqual(from, to);
-      const status = isReceived ? COLLECTIBLE_RECEIVED : COLLECTIBLE_SENT;
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       let transactionNote = note;
 
@@ -466,12 +445,11 @@ class EventDetails extends React.Component<Props, {}> {
         }
       }
       const hasNote = transactionNote && transactionNote !== '';
-      const recipientContact = findMatchingContact(to, contacts, contactsSmartAddresses) || {};
-      // apply to wallet accounts only if received from other account address
+      const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
       // $FlowFixMe
-      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type) || (isReceived
+      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type, accounts) || (isReceived
         ? `${from.slice(0, 7)}…${from.slice(-7)}`
         : `${to.slice(0, 7)}…${to.slice(-7)}`);
       const relatedUserProfileImage = relatedUser.profileImage || null;
@@ -479,56 +457,35 @@ class EventDetails extends React.Component<Props, {}> {
       const showProfileImage = !relatedUser.type;
 
       return (
-        <React.Fragment>
-          <EventHeader
-            eventType={COLLECTIBLE_TRANSACTION}
-            eventStatus={status}
-            eventTime={eventTime}
-            onClose={onClose}
-            iconUrl={icon}
-            onIconPress={Object.keys(assetData).length ? () => this.goToCollectible(assetData) : noop}
-            imageKey={name}
-            touchDisabled={!Object.keys(assetData).length}
+        <EventBody>
+          <ListItemUnderlined
+            label={isReceived ? 'SENDER' : 'RECIPIENT'}
+            value={relatedUserTitle}
+            valueAddon={(!!relatedUser.username && <EventProfileImage
+              uri={relatedUserProfileImage}
+              showProfileImage={showProfileImage}
+              userName={relatedUserTitle}
+              diameter={40}
+              initialsSize={fontSizes.regular}
+              style={{ marginBottom: 4 }}
+              onPress={() => this.goToProfile(relatedUser)}
+              noShadow
+              borderWidth={0}
+            />)}
           />
-          <EventBody>
-            <ListItemUnderlined
-              label={isReceived ? 'SENDER' : 'RECIPIENT'}
-              value={relatedUserTitle}
-              valueAddon={(!!relatedUser.username && <EventProfileImage
-                uri={relatedUserProfileImage}
-                showProfileImage={showProfileImage}
-                userName={relatedUserTitle}
-                diameter={40}
-                initialsSize={fontSizes.extraSmall}
-                style={{ marginBottom: 4 }}
-                onPress={() => this.goToProfile(relatedUser)}
-                noShadow
-                borderWidth={0}
-              />)}
-            />
-            {(toMyself || !isReceived) && !!fee &&
-            <ListItemUnderlined
-              label="TRANSACTION FEE"
-              value={utils.formatEther(fee.toString())}
-              valueAdditionalText="ETH"
-            />
-            }
-            {!!hasNote &&
-            <ListItemParagraph
-              label="NOTE"
-              value={transactionNote}
-            />
-            }
-            <ButtonsWrapper>
-              <EventButton
-                block
-                title="View on the blockchain"
-                primaryInverted
-                onPress={() => viewTransactionOnBlockchain(hash)}
-              />
-            </ButtonsWrapper>
-          </EventBody>
-        </React.Fragment>
+          {(toMyself || !isReceived) && !!fee &&
+          <ListItemUnderlined
+            label="TRANSACTION FEE"
+            value={`${utils.formatEther(fee.toString())} ETH`}
+          />
+          }
+          {!!hasNote &&
+          <ListItemParagraph
+            label="NOTE"
+            value={transactionNote}
+          />
+          }
+        </EventBody>
       );
     }
 
@@ -541,73 +498,212 @@ class EventDetails extends React.Component<Props, {}> {
     };
 
     return (
-      <React.Fragment>
-        <EventHeader
-          eventType={eventType}
-          eventStatus={eventStatus}
-          eventTime={eventTime}
-          onClose={onClose}
-        />
-        <EventBody>
-          <EventRow>
-            <EventProfileImage
-              uri={userData.profileImage}
-              userName={userData.username}
-              diameter={40}
-              initialsSize={fontSizes.extraSmall}
-              onPress={() => this.goToProfile(userData)}
-              noShadow
-              borderWidth={0}
-            />
-            <EventBodyTitle>
-              @{userData.username}
-            </EventBodyTitle>
-          </EventRow>
-          {eventStatus === TYPE_RECEIVED &&
+      <EventBody>
+        <EventRow>
+          <EventProfileImage
+            uri={userData.profileImage}
+            userName={userData.username}
+            diameter={40}
+            initialsSize={fontSizes.regular}
+            onPress={() => this.goToProfile(userData)}
+            noShadow
+            borderWidth={0}
+          />
+          <EventBodyTitle>
+            @{userData.username}
+          </EventBodyTitle>
+        </EventRow>
+      </EventBody>
+    );
+  };
+
+  renderEventButtons = (eventType, eventStatus) => {
+    const { eventData, history } = this.props;
+
+    if (eventType === TRANSACTION_EVENT || eventType === COLLECTIBLE_TRANSACTION) {
+      let txInfo = history.find(tx => tx.hash === eventData.hash);
+      if (!txInfo) {
+        txInfo = this.cachedTxInfo || {};
+      } else {
+        this.cachedTxInfo = txInfo;
+      }
+      const { hash, isPPNTransaction } = txInfo;
+
+      if (!isPPNTransaction) {
+        return (
           <ButtonsWrapper>
             <EventButton
               block
-              title="Accept request"
+              title="View on the blockchain"
               primaryInverted
-              onPress={this.handleAcceptConnection}
-            />
-            <EventButton
-              block
-              title="Decline"
-              dangerInverted
-              onPress={() => {
-                this.handleRejectConnection(userData);
-              }}
+              onPress={() => viewTransactionOnBlockchain(hash)}
             />
           </ButtonsWrapper>
-          }
-          {eventStatus === TYPE_SENT &&
-          <ButtonsWrapper>
-            <EventButton
-              block
-              title="Cancel request"
-              dangerInverted
-              onPress={this.handleCancelConnection}
-            />
-          </ButtonsWrapper>
-          }
-          {eventStatus === TYPE_ACCEPTED &&
-          <ButtonsWrapper>
-            <EventButton block title="Send assets" primaryInverted onPress={() => this.sendTokensToUser(userData)} />
-            <EventButton block title="Send message" primaryInverted onPress={() => this.goToChatWithUser(userData)} />
-          </ButtonsWrapper>
-          }
-        </EventBody>
+        );
+      }
+      return null;
+    }
+
+    const userData = {
+      username: eventData.username,
+      name: eventData.firstName,
+      lastName: eventData.lastName,
+      profileImage: eventData.profileImage,
+      ethAddress: eventData.ethAddress,
+    };
+
+    return (
+      <React.Fragment>
+        {eventStatus === TYPE_RECEIVED &&
+        <ButtonsWrapper>
+          <EventButton
+            block
+            title="Accept request"
+            primaryInverted
+            onPress={this.handleAcceptConnection}
+          />
+          <EventButton
+            block
+            title="Decline"
+            dangerInverted
+            onPress={() => this.handleRejectConnection(userData)}
+          />
+        </ButtonsWrapper>
+        }
+        {eventStatus === TYPE_SENT &&
+        <ButtonsWrapper>
+          <EventButton
+            block
+            title="Cancel request"
+            dangerInverted
+            onPress={this.handleCancelConnection}
+          />
+        </ButtonsWrapper>
+        }
+        {eventStatus === TYPE_ACCEPTED &&
+        <ButtonsWrapper>
+          <EventButton block title="Send assets" primaryInverted onPress={() => this.sendTokensToUser(userData)} />
+          <EventButton block title="Send message" primaryInverted onPress={() => this.goToChatWithUser(userData)} />
+        </ButtonsWrapper>
+        }
       </React.Fragment>
     );
   };
 
+  renderEventHeader = (eventType, eventStatus) => {
+    const {
+      eventData,
+      activeAccountAddress,
+      onClose,
+      history,
+    } = this.props;
+    let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
+
+    if (eventType === TRANSACTION_EVENT) {
+      let txInfo = history.find(tx => tx.hash === eventData.hash);
+      if (!txInfo) {
+        txInfo = this.cachedTxInfo || {};
+      } else {
+        this.cachedTxInfo = txInfo;
+      }
+      const { status } = txInfo;
+      const isPending = status === TX_PENDING_STATUS;
+
+      if (isPending) {
+        const pendingTimeInSeconds = differenceInSeconds(new Date(), new Date(eventData.createdAt * 1000));
+        const ph = Math.floor(pendingTimeInSeconds / 3600);
+        const pm = Math.floor((pendingTimeInSeconds % 3600) / 60);
+        const ps = Math.floor((pendingTimeInSeconds % 3600) % 60);
+
+        const pendingHours = ph > 0 ? `${ph} H ` : '';
+        const pendingMinutes = pm > 0 ? `${pm} MIN ` : '';
+        const pendingSeconds = ps > 0 ? `${ps} SEC` : '';
+        eventTime = `${pendingHours}${pendingMinutes}${pendingSeconds} AGO`;
+      }
+
+      return (
+        <EventHeader
+          eventType={TRANSACTION_EVENT}
+          eventStatus={status}
+          eventTime={eventTime}
+          onClose={onClose}
+        />
+      );
+    }
+
+    if (eventType === COLLECTIBLE_TRANSACTION) {
+      const { to, icon, assetData = {} } = eventData;
+      const { name = '' } = assetData;
+
+      const isReceived = addressesEqual(to, activeAccountAddress);
+      const status = isReceived ? COLLECTIBLE_RECEIVED : COLLECTIBLE_SENT;
+
+      return (
+        <EventHeader
+          eventType={COLLECTIBLE_TRANSACTION}
+          eventStatus={status}
+          eventTime={eventTime}
+          onClose={onClose}
+          iconUrl={icon}
+          onIconPress={Object.keys(assetData).length ? () => this.goToCollectible(assetData) : noop}
+          imageKey={name}
+          touchDisabled={!Object.keys(assetData).length}
+        />
+      );
+    }
+
+    return (
+      <EventHeader
+        eventType={eventType}
+        eventStatus={eventStatus}
+        eventTime={eventTime}
+        onClose={onClose}
+      />
+    );
+  };
+
+  writeToClipboard = async (valueToSet) => {
+    await Clipboard.setString(valueToSet);
+    Toast.show({ message: 'Address copied to clipboard', type: 'success', title: 'Success' });
+  };
+
   render() {
-    const { eventType, eventStatus } = this.props;
+    const {
+      eventType,
+      eventStatus,
+      getScrollOffset,
+      getRef,
+      getMaxScrollOffset,
+    } = this.props;
+    const { containerHeight } = this.state;
 
     return (
       <ContentWrapper>
-        {this.renderEventBody(eventType, eventStatus)}
+        {this.renderEventHeader(eventType, eventStatus)}
+        <ScrollView
+          style={{ flexGrow: 1 }}
+          onScroll={(event) => {
+            const { contentOffset } = event.nativeEvent;
+            const { y } = contentOffset;
+            if (getScrollOffset) getScrollOffset(y);
+          }}
+          onLayout={(event) => {
+            const { height } = event.nativeEvent.layout;
+            if (!containerHeight || containerHeight !== height) {
+              this.setState({ containerHeight: height });
+            }
+          }}
+          onContentSizeChange={(contentWidth, contentHeight) => {
+            if (getMaxScrollOffset && containerHeight) getMaxScrollOffset(containerHeight - contentHeight);
+          }}
+          scrollEventThrottle={16}
+          ref={getRef}
+          scrollToOverflowEnabled={false}
+          bounces={false}
+        >
+          {this.renderEventBody(eventType)}
+        </ScrollView>
+        {this.renderEventButtons(eventType, eventStatus)}
       </ContentWrapper>
     );
   }
@@ -622,12 +718,14 @@ const mapStateToProps = ({
   txNotes,
   contactsSmartAddresses,
   inactiveAccounts: getInactiveUserAccounts(accounts),
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   activeAccountAddress: activeAccountAddressSelector,
   assets: accountAssetsSelector,
+  supportedAssets: supportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

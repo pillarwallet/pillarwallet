@@ -39,7 +39,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing, UIColors } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
@@ -69,14 +69,15 @@ const ActionsWrapper = styled.View`
 const SendTokenDetails = styled.View``;
 
 const SendTokenDetailsValue = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   margin-bottom: 8px;
 `;
 
 const HelperText = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  ${fontStyles.medium};
   margin-bottom: ${spacing.rhythm / 2}px;
   color: ${UIColors.placeholderTextColor};
+  margin-left: 4px;
 `;
 
 const FooterInner = styled.View`
@@ -85,6 +86,10 @@ const FooterInner = styled.View`
   align-items: flex-end;
   width: 100%;
   padding: ${spacing.large}px;
+`;
+
+const TextRow = styled.View`
+  flex-direction: row;
 `;
 
 type Props = {
@@ -170,8 +175,8 @@ class FundTank extends React.Component<Props, State> {
       navigation,
     } = this.props;
 
-    const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
-    const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const { symbol: token, iconMonoUrl, decimals } = assets[PPN_TOKEN] || {};
+    const icon = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const isInitFlow = navigation.getParam('isInitFlow', false);
 
@@ -200,16 +205,7 @@ class FundTank extends React.Component<Props, State> {
 
     // form
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
-    const formFields = getAmountFormFields({
-      icon,
-      currency: token,
-      valueInFiatOutput,
-      customProps: {
-        noTint: true,
-        floatingImageStyle: { marginRight: 3 },
-        white: true,
-      },
-    });
+    const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
 
     return (
       <ContainerWithHeader
@@ -242,10 +238,12 @@ class FundTank extends React.Component<Props, State> {
           <ActionsWrapper>
             <SendTokenDetails>
               <Label small>Available Balance</Label>
-              <SendTokenDetailsValue>
-                {formattedBalance} {token}
+              <TextRow>
+                <SendTokenDetailsValue>
+                  {formattedBalance} {token}
+                </SendTokenDetailsValue>
                 <HelperText>{formattedBalanceInFiat}</HelperText>
-              </SendTokenDetailsValue>
+              </TextRow>
             </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
               <TextLink>Send All</TextLink>

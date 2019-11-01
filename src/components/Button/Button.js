@@ -21,10 +21,10 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Button as NBButton } from 'native-base';
 import debounce from 'lodash.debounce';
-import { BoldText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
-import { UIColors, baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 
 type Props = {
@@ -57,8 +57,7 @@ type Props = {
   textStyle?: ?Object,
   style?: Object,
   isLoading?: boolean,
-  primarySquare?: boolean,
-  primarySquareDisabled?: boolean,
+  regularText?: boolean,
 };
 
 type State = {
@@ -70,39 +69,19 @@ type ButtonNextProps = {
   disabled?: boolean,
 };
 
-const primaryTheme = {
-  background: baseColors.electricBlue,
-  color: baseColors.white,
-  borderColor: UIColors.defaultBorderColor,
-  borderWidth: 0,
-  shadow: true,
-};
-
-const primaryInvertedTheme = {
-  background: baseColors.white,
-  color: baseColors.electricBlue,
-  borderColor: baseColors.veryLightBlue,
-  borderWidth: '1px',
-};
-
 const themes = {
-  primary: primaryTheme,
-  primarySquare: {
-    ...primaryTheme,
-    borderRadius: 6,
-  },
-  primarySquareDisabled: {
-    borderColor: baseColors.veryLightBlue,
-    background: 'rgba(0, 122, 255, 0.3)',
+  primary: {
+    background: baseColors.electricBlue,
     color: baseColors.white,
+    borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
-    shadow: false,
-    borderRadius: 6,
+    shadow: true,
   },
-  primaryInverted: primaryInvertedTheme,
-  primaryInvertedSquare: {
-    ...primaryInvertedTheme,
-    borderRadius: 6,
+  primaryInverted: {
+    background: baseColors.white,
+    color: baseColors.electricBlue,
+    borderColor: baseColors.veryLightBlue,
+    borderWidth: '1px',
   },
   dangerInverted: {
     background: baseColors.white,
@@ -176,15 +155,6 @@ const themes = {
     borderRadius: 0,
     iconHorizontalMargin: 0,
   },
-  roundedCorners: {
-    background: baseColors.electricBlue,
-    color: baseColors.white,
-    borderColor: 'transparent',
-    borderWidth: 0,
-    flexDirection: 'row',
-    borderRadius: 6,
-    iconHorizontalMargin: 0,
-  },
 };
 
 const getButtonHeight = (props) => {
@@ -217,18 +187,18 @@ const getButtonPadding = (props) => {
   } else if (props.square) {
     return '4px';
   }
-  return `${spacing.rhythm * 2.5}px`;
+  return `${spacing.rhythm * 1.5}px`;
 };
 
 const getButtonFontSize = (props) => {
   if (props.listItemButton) {
-    return `${fontSizes.small}px`;
+    return `${fontSizes.regular}px`;
   } else if (props.small) {
-    return `${fontSizes.extraSmall}px`;
+    return `${fontSizes.regular}px`;
   } else if (props.extraSmall) {
-    return `${fontSizes.extraExtraSmall}px`;
+    return `${fontSizes.small}px`;
   }
-  return `${fontSizes.medium}px`;
+  return `${fontSizes.big}px`;
 };
 
 const ButtonIcon = styled(Icon)`
@@ -251,9 +221,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   margin-bottom: ${props => props.marginBottom || '0px'};
   margin-left: ${props => props.marginLeft || '0px'};
   margin-right: ${props => props.marginRight || '0px'};
-  border-radius: ${props => props.theme.borderRadius || props.theme.borderRadius === 0
-    ? props.theme.borderRadius
-    : 40}px;
+  border-radius: ${props => props.theme.borderRadius || props.borderRadius || 0}px;
   width: ${props => getButtonWidth(props)};
   height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'};
@@ -265,14 +233,17 @@ const ButtonWrapper = styled.TouchableOpacity`
   ${props => props.theme.shadow ? 'elevation: 1;' : ''}
 `;
 
-const ButtonText = styled(BoldText)`
-  color: ${props => props.theme.color};
-  font-size: ${props => getButtonFontSize(props)};
-  margin-bottom: ${props => props.extraSmall ? '2px' : 0};
-  ${props => props.listItemButton || props.extraSmall ? `font-weight: ${fontWeights.book};` : ''}
-  ${props => props.listItemButton || props.extraSmall
-    ? 'font-family: Aktiv Grotesk App;'
-    : ''}
+const buttonTextStyle = (props) => `
+  color: ${props.theme.color};
+  font-size: ${getButtonFontSize(props)};
+  margin-bottom: ${props.extraSmall ? '2px' : 0};`;
+
+const ButtonText = styled(MediumText)`
+  ${props => buttonTextStyle(props)};
+`;
+
+const ButtonTextRegular = styled(BaseText)`
+  ${props => buttonTextStyle(props)};
 `;
 
 const ButtonMiniWrapper = styled(NBButton)`
@@ -284,8 +255,8 @@ const ButtonMiniWrapper = styled(NBButton)`
   width: auto;
 `;
 
-const ButtonMiniText = styled(BoldText)`
-  font-size: 14px;
+const ButtonMiniText = styled(MediumText)`
+  font-size: ${fontSizes.regular}px;
   letter-spacing: 0.3;
   color: #fff;
 `;
@@ -300,7 +271,7 @@ const ButtonNextWrapper = styled.TouchableOpacity`
 `;
 
 const NextIcon = styled(Icon)`
-  font-size: ${fontSizes.extraLarge}px;
+  font-size: ${fontSizes.large}px;
   color: ${baseColors.white};
   transform: rotate(180deg);
 `;
@@ -312,9 +283,6 @@ const getTheme = (props: Props) => {
 
   if (props.secondaryTransparent && props.disabled) {
     return themes.secondaryTransparentDisabled;
-  }
-  if (props.primarySquare && props.disabled) {
-    return themes.primarySquareDisabled;
   }
 
   const propsKeys = Object.keys(props);
@@ -336,7 +304,7 @@ const getTheme = (props: Props) => {
 class Button extends React.Component<Props, State> {
   static defaultProps = {
     debounceTime: 400,
-  }
+  };
 
   state = { shouldIgnoreTap: false };
   ignoreTapTimeout = null;
@@ -355,7 +323,32 @@ class Button extends React.Component<Props, State> {
     this.ignoreTapTimeout = setTimeout(() => {
       this.setState({ shouldIgnoreTap: false });
     }, 1000);
-  }
+  };
+
+  renderButtonText = (theme: Object) => {
+    const {
+      small,
+      extraSmall,
+      listItemButton,
+      textStyle,
+      title,
+      regularText,
+    } = this.props;
+
+    if (listItemButton || extraSmall || regularText) {
+      return (
+        <ButtonTextRegular theme={theme} small={small} style={textStyle}>
+          {title}
+        </ButtonTextRegular>
+      );
+    }
+
+    return (
+      <ButtonText theme={theme} small={small} style={textStyle}>
+        {title}
+      </ButtonText>
+    );
+  };
 
   render() {
     const theme = getTheme(this.props);
@@ -373,6 +366,7 @@ class Button extends React.Component<Props, State> {
         theme={theme}
         onPress={debounce(this.handlePress, this.props.debounceTime, { leading: true, trailing: false })}
         disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap || isLoading}
+        borderRadius={this.props.small ? 3 : 6}
         style={isLoading ? { ...style, backgroundColor: 'transparent' } : style}
 
       >
@@ -385,16 +379,7 @@ class Button extends React.Component<Props, State> {
             theme={theme}
           />
         }
-        {!!this.props.title && !isLoading &&
-        <ButtonText
-          theme={theme}
-          small={this.props.small}
-          extraSmall={this.props.extraSmall}
-          listItemButton={this.props.listItemButton}
-          style={this.props.textStyle}
-        >
-          {this.props.title}
-        </ButtonText>}
+        {!!this.props.title && !isLoading && this.renderButtonText(theme)}
         {children}
       </ButtonWrapper>
     );

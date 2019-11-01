@@ -19,6 +19,7 @@
 */
 import { Sentry } from 'react-native-sentry';
 import get from 'lodash.get';
+import orderBy from 'lodash.orderby';
 import { BigNumber } from 'bignumber.js';
 import * as ethUtil from 'ethereumjs-util';
 import {
@@ -32,6 +33,7 @@ import {
   DeviceEventEmitter,
 } from 'react-native';
 import { providers, utils } from 'ethers';
+import { format as formatDate } from 'date-fns';
 import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 import type { GasInfo } from 'models/GasInfo';
 import {
@@ -196,7 +198,7 @@ export const getiOSNavbarHeight = (): number => {
 
 export const modalTransition = {
   mode: 'modal',
-  navigationOptions: {
+  defaultNavigationOptions: {
     header: null,
   },
   transitionConfig: () => ({
@@ -338,6 +340,41 @@ export const formatUnits = (val: string = '0', decimals: number) => {
   }
 
   return formattedUnits;
+};
+
+type GroupedAndSortedData = {
+  title: string,
+  date: string,
+  data: any[],
+};
+
+// all default values makes common sense and usage
+export const groupAndSortByDate = (
+  data: any[],
+  timestampMultiplier?: number = 1000,
+  dateField?: string = 'createdAt',
+  sortDirection?: string = 'desc',
+): GroupedAndSortedData[] => {
+  const grouped = [];
+  orderBy(data, [dateField], [sortDirection]).forEach(listItem => {
+    const dateValue = timestampMultiplier
+      ? listItem[dateField] * timestampMultiplier
+      : listItem[dateField];
+    const itemCreatedDate = new Date(dateValue);
+    const formattedDate = formatDate(itemCreatedDate, 'MMM D YYYY');
+    // don't show the year if the event happened this year
+    const titleDateFormat = itemCreatedDate.getFullYear() === new Date().getFullYear()
+      ? 'MMM D'
+      : 'MMM D YYYY';
+    const sectionTitle = formatDate(itemCreatedDate, titleDateFormat);
+    const existingSection = grouped.find(({ date }) => date === formattedDate);
+    if (!existingSection) {
+      grouped.push({ title: sectionTitle, date: formattedDate, data: [{ ...listItem }] });
+    } else {
+      existingSection.data.push({ ...listItem });
+    }
+  });
+  return grouped;
 };
 
 export const isCaseInsensitiveMatch = (a: string, b: string): boolean => {

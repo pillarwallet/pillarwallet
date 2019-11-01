@@ -38,7 +38,7 @@ import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
 
 // components
 import { Wrapper } from 'components/Layout';
-import { BaseText, BoldText, Paragraph } from 'components/Typography';
+import { BaseText, MediumText, Paragraph } from 'components/Typography';
 import Toast from 'components/Toast';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
@@ -61,7 +61,7 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 
 // utils
 import { isProdEnv } from 'utils/environment';
-import { baseColors, fontSizes, fontTrackings, fontWeights, spacing } from 'utils/variables';
+import { baseColors, fontTrackings, spacing, fontStyles } from 'utils/variables';
 
 // partials
 import { SettingsSection } from './SettingsSection';
@@ -96,38 +96,31 @@ type Props = {
   userJoinedBeta: boolean,
 }
 
-const storage = new Storage('db');
+const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
-const SettingsModalTitle = styled(BoldText)`
-  line-height: ${fontSizes.medium};
-  font-size: ${fontSizes.medium};
-  font-weight: ${fontWeights.bold};
+const SettingsModalTitle = styled(MediumText)`
+  ${fontStyles.big};
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 
 const StyledWrapper = styled(Wrapper)`
   justify-content: space-between;
   padding-bottom: ${spacing.rhythm}px;
-  margin-top: 25px;
+  margin-top: ${spacing.medium}px;
 `;
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.medium};
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
-  line-height: 20px;
   margin-bottom: ${spacing.medium}px;
 `;
 
 const SmallText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
-`;
-
-const Description = styled(Paragraph)`
-  line-height: ${fontSizes.mediumLarge};
 `;
 
 const formSecurityItems = (that, showBiometricsSelector) => {
@@ -397,9 +390,7 @@ class Settings extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: 'General settings' }],
-        }}
+        headerProps={{ centerItems: [{ title: 'General settings' }] }}
       >
         <ScrollView
           contentContainerStyle={{ padding: spacing.large, paddingTop: 0 }}
@@ -496,7 +487,7 @@ class Settings extends React.Component<Props, State> {
           isVisible={visibleModal === 'systemInfo'}
           fullScreen
           showHeader
-          title="system info"
+          title="System info"
           onModalHide={() => this.setState({ visibleModal: null })}
         >
           <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
@@ -560,16 +551,14 @@ class Settings extends React.Component<Props, State> {
           onModalHide={() => this.setState({ visibleModal: null })}
           backgroundColor={baseColors.lightGray}
           avoidKeyboard
+          title="Usage analytics"
         >
           <Wrapper regularPadding flex={1}>
-            <SettingsModalTitle>
-              Usage analytics
-            </SettingsModalTitle>
-
             <StyledWrapper>
               <Checkbox
                 checked={!optOutTracking}
                 onPress={() => this.handleToggleOptOutTracking()}
+                wrapperStyle={{ marginBottom: spacing.large }}
               >
                 <CheckboxText>
                   I&apos;m happy to share anonymous application usage statistics
@@ -597,15 +586,14 @@ class Settings extends React.Component<Props, State> {
           onModalHide={() => this.setState({ visibleModal: null })}
         >
           <StyledWrapper regularPadding flex={1}>
-            <Description small>
+            <Paragraph small>
               By choosing to upgrade your wallet, you will be added to our Firebase Analytics data collection.
               Through this, Pillar will collect your username in order to enable new features and monitor your new
               wallet experience for any bugs and/or crashes.
               You can choose to leave the Smart Wallet Early Access program and Firebase Analytics collection any time
               via the &quot;System&quot; under Settings.
-            </Description>
+            </Paragraph>
             <Button
-              roundedCorners
               title="Opt in"
               onPress={() => this.setState({ visibleModal: null, joinBetaPressed: true })}
               style={{
@@ -628,21 +616,20 @@ class Settings extends React.Component<Props, State> {
         >
           <StyledWrapper regularPadding flex={1}>
             <View>
-              <Description small>
+              <Paragraph small>
                 By confirming, you will leave the Smart Wallet Early Access program. As a result, your access to the
                 Smart Wallet, Pillar Payment Network and any funds stored on them will be lost.
-              </Description>
-              <Description small>
+              </Paragraph>
+              <Paragraph small>
                 We strongly recommend that you transfer all assets from the Smart Wallet and Pillar Network to your Key
                 Based Wallet before leaving this Program.
-              </Description>
-              <Description small>
+              </Paragraph>
+              <Paragraph small>
                 If you wish to re-gain early access to Smart Wallet (and re-gain access to the funds on your Smart
                 Wallet), you will need to apply again.
-              </Description>
+              </Paragraph>
             </View>
             <Button
-              roundedCorners
               title="Leave Program"
               onPress={() => { this.setState({ visibleModal: null, leaveBetaPressed: true }); }}
               style={{ marginBottom: 13 }}

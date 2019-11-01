@@ -22,7 +22,6 @@ import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { NavigationActions } from 'react-navigation';
-import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
@@ -31,6 +30,9 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import { killWalletConnectSessionByUrl } from 'actions/walletConnectActions';
 import { navigate } from 'services/navigation';
+
+import type { NavigationScreenProp } from 'react-navigation';
+import type { CallRequest } from 'models/WalletConnect';
 
 export const SheetContentWrapper = styled.View`
   flex: 1;
@@ -65,12 +67,12 @@ export const filterSessionsByUrl = (connectors: any[]) => {
   return sessions;
 };
 
-class MeScreen extends React.Component<Props, State> {
+class ManageDetailsSessions extends React.Component<Props, State> {
   state = {
     activeTab: ACTIVE,
   };
 
-  getRequestLabel = (payload: any) => {
+  getRequestLabel = (payload: CallRequest) => {
     let label = 'Transaction Request';
 
     switch (payload.method) {
@@ -92,82 +94,84 @@ class MeScreen extends React.Component<Props, State> {
     return label;
   };
 
-  onSessionButtonPress = item => {
-    const {
-      peerMeta: { url },
-    } = item;
-    if (this.state.activeTab === ACTIVE) {
-      this.props.killWalletConnectSessionByUrl(url);
-    } else {
-      this.onSessionItemPress(item);
-    }
+  onRequestItemPress = (request: CallRequest) => {
+    navigate(
+      NavigationActions.navigate({
+        routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
+        params: { callId: request.callId, goBackDismiss: true },
+      }),
+    );
   };
 
-  onSessionItemPress = item => {
-    const { activeTab } = this.state;
-    if (activeTab === REQUESTS) {
-      navigate(
-        NavigationActions.navigate({
-          routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
-          params: item,
-        }),
-      );
-    }
-  };
+  defaultListProps(count: number) {
+    const emptyStyle = {
+      justifyContent: 'center',
+      alignItems: 'center',
+      flex: 1,
+    };
+
+    return {
+      initialNumToRender: 8,
+      style: { flex: 1 },
+      contentContainerStyle: count ? {} : emptyStyle,
+    };
+  }
 
   renderSessionItem = ({ item }) => {
-    const { activeTab } = this.state;
     const { peerMeta = {} } = item;
-    const { name, icons } = peerMeta;
-    const label = activeTab === ACTIVE ? name : this.getRequestLabel(item.payload);
+    const { name, icons, url } = peerMeta;
+
     return (
       <ListItemWithImage
-        label={label}
+        label={name}
         avatarUrl={icons[0]}
-        buttonAction={() => this.onSessionButtonPress(item)}
-        buttonActionLabel={activeTab === ACTIVE ? 'Disconnect' : 'Open'}
-        onPress={() => this.onSessionItemPress(item)}
+        buttonAction={() => this.props.killWalletConnectSessionByUrl(url)}
+        buttonActionLabel="Disconnect"
       />
     );
   };
 
-  renderSheetContent() {
-    const { activeTab } = this.state;
-    const { connectors, requests } = this.props;
+  renderRequestItem = ({ item }) => {
+    const { icon } = item;
 
-    let data = [];
-    let emptyTitle = '';
+    return (
+      <ListItemWithImage
+        buttonActionLabel="Open"
+        label={this.getRequestLabel(item)}
+        avatarUrl={icon}
+        buttonAction={() => this.onRequestItemPress(item)}
+        onPress={() => this.onRequestItemPress(item)}
+      />
+    );
+  }
 
-    switch (activeTab) {
-      case ACTIVE:
-        data = filterSessionsByUrl(connectors);
-        emptyTitle = 'No Active Sessions';
-        break;
-      case REQUESTS:
-        data = filterSessionsByUrl(requests);
-        emptyTitle = 'No Pending Requests';
-        break;
-      default:
-        break;
-    }
+  renderRequestsList() {
+    const { requests } = this.props;
+    const listProps = this.defaultListProps(requests.length);
 
     return (
       <FlatList
-        data={data}
+        {...listProps}
+        data={requests}
+        keyExtractor={({ url }) => `walletconnect-request-${url}`}
+        renderItem={this.renderRequestItem}
+        ListEmptyComponent={<EmptyStateParagraph title="No Pending Requests" />}
+      />
+    );
+  }
+
+  renderSessionsList() {
+    const { connectors } = this.props;
+    const filtered = filterSessionsByUrl(connectors);
+    const listProps = this.defaultListProps(filtered.length);
+
+    return (
+      <FlatList
+        {...listProps}
+        data={filtered}
         keyExtractor={({ peerMeta }) => `walletconnect-session-${peerMeta.url}`}
         renderItem={this.renderSessionItem}
-        initialNumToRender={8}
-        style={{ flex: 1 }}
-        contentContainerStyle={
-          !data.length
-            ? {
-                justifyContent: 'center',
-                alignItems: 'center',
-                flex: 1,
-              }
-            : {}
-        }
-        ListEmptyComponent={<EmptyStateParagraph title={emptyTitle} />}
+        ListEmptyComponent={<EmptyStateParagraph title="No Active Sessions" />}
       />
     );
   }
@@ -188,6 +192,9 @@ class MeScreen extends React.Component<Props, State> {
         onPress: () => this.setActiveTab(REQUESTS),
       },
     ];
+    const content = activeTab === ACTIVE
+      ? this.renderSessionsList()
+      : this.renderRequestsList();
 
     return (
       <ContainerWithHeader
@@ -195,10 +202,11 @@ class MeScreen extends React.Component<Props, State> {
         headerProps={{
           centerItems: [{ title: 'Manage Sessions' }],
           rightItems: [{ label: 'Support', onPress: () => Intercom.displayMessenger() }],
+          sideFlex: 2,
         }}
       >
         <Tabs initialActiveTab={activeTab} tabs={sessionTabs} />
-        <SheetContentWrapper>{this.renderSheetContent()}</SheetContentWrapper>
+        <SheetContentWrapper>{content}</SheetContentWrapper>
       </ContainerWithHeader>
     );
   }
@@ -217,4 +225,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(MeScreen);
+)(ManageDetailsSessions);

@@ -48,7 +48,11 @@ import EthplorerSdk from 'services/EthplorerSdk';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
-import type { ConnectionIdentityKeyMap, ConnectionUpdateIdentityKeys } from 'models/Connections';
+import type {
+  ConnectionIdentityKeyMap,
+  ConnectionUpdateIdentityKeys,
+  ConnectionPatchIdentityKeys,
+} from 'models/Connections';
 import { getLimitedData } from 'utils/opensea';
 import { uniqBy } from 'utils/common';
 
@@ -96,10 +100,10 @@ type MapContactsAddresses = Array<{
   },
 }>;
 
-const BCXSdk = new BCX({ apiUrl: BCX_URL });
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
 export default function SDKWrapper() {
+  this.BCXSdk = null;
   this.pillarWalletSdk = null;
 }
 
@@ -108,6 +112,7 @@ SDKWrapper.prototype.init = function (
   oAuthTokensStored?: ?OAuthTokens,
   onOAuthTokensFailed?: ?Function,
 ) {
+  this.BCXSdk = new BCX({ apiUrl: BCX_URL });
   this.pillarWalletSdk = new PillarSdk({
     apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
     notificationsUrl: NOTIFICATIONS_URL,
@@ -333,7 +338,16 @@ SDKWrapper.prototype.validateAddress = function (blockchainAddress: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
     .then(({ data }) => data)
-    .catch(() => ({}));
+    .catch(error => {
+      Sentry.captureMessage('Unable to restore user wallet', {
+        level: 'info',
+        extra: {
+          blockchainAddress,
+          error,
+        },
+      });
+      return {};
+    });
 };
 
 SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
@@ -377,6 +391,7 @@ SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddre
 };
 
 SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string, fromTimestamp?: string) {
+  if (!walletId) return Promise.resolve([]);
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.notification.list({
       walletId,
@@ -433,7 +448,7 @@ SDKWrapper.prototype.fetchICOFundingInstructions = function (walletId, currency)
 };
 
 SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
-  return BCXSdk.txHistory(payload)
+  return this.BCXSdk.txHistory(payload)
     .then(({ txHistory: { txHistory } }) => txHistory)
     .then(history => {
       return history.map(({
@@ -454,7 +469,7 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
 };
 
 SDKWrapper.prototype.fetchGasInfo = function () {
-  return BCXSdk.gasStation()
+  return this.BCXSdk.gasStation()
     .then(data => ({
       min: data.safeLow,
       avg: data.standard,
@@ -480,7 +495,7 @@ SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePaylo
   return fetchAssetBalances(assets, address);
   // const promises = assets.map(async ({ symbol, address: contractAddress }) => {
   //   const payload = { contractAddress, address, asset: symbol };
-  //   const { balance: response } = await BCXSdk.getBalance(payload);
+  //   const { balance: response } = await this.BCXSdk.getBalance(payload);
   //   return { balance: response.balance, symbol: response.ticker };
   // });
   // return Promise.all(promises).catch(() => []);
@@ -740,6 +755,13 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
     .catch(() => false);
 };
 
+SDKWrapper.prototype.patchIdentityKeys = function (updatedIdentityKeys: ConnectionPatchIdentityKeys) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
+    .then(({ data }) => data)
+    .catch(() => false);
+};
+
 SDKWrapper.prototype.getContactsSmartAddresses = function (walletId: string, contacts: MapContactsAddresses) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.mapContactsAddresses({ walletId, contacts }))
@@ -772,7 +794,7 @@ SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string
 };
 
 SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: string, amount: number) {
-  const url = `${MOONPAY_API_URL}/v2/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
+  const url = `${MOONPAY_API_URL}/v3/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
   + `&baseCurrencyAmount=${amount}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
 
   return Promise.resolve()

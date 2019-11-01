@@ -20,6 +20,7 @@
 import get from 'lodash.get';
 import type { Account, Accounts, AccountTypes } from 'models/Account';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { userHasSmartWallet } from 'utils/smartWallet';
 import { addressesEqual } from './assets';
 
 export const getActiveAccount = (accounts: Accounts): ?Account => {
@@ -82,13 +83,13 @@ export const checkIfSmartWalletAccount = (account: Account): boolean => {
   return account.type === ACCOUNT_TYPES.SMART_WALLET;
 };
 
-export const getAccountName = (accountType: AccountTypes): string => {
+export const getAccountName = (accountType: AccountTypes, accounts: Accounts): string => {
   switch (accountType) {
     case ACCOUNT_TYPES.SMART_WALLET:
       return 'Smart Wallet';
 
     case ACCOUNT_TYPES.KEY_BASED:
-      return 'Key Based account';
+      return userHasSmartWallet(accounts) ? 'Legacy wallet' : 'Key Based wallet';
 
     default:
       return '';
@@ -100,4 +101,11 @@ export const findAccountByAddress = (
   accounts: Accounts,
 ): ?Account => {
   return accounts.find(account => addressesEqual(address, getAccountAddress(account)));
+};
+
+export const findAccountById = (
+  accountId: string,
+  accounts: Accounts,
+): ?Account => {
+  return accounts.find(({ id }) => id === accountId);
 };

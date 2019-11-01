@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, brandColors, UIColors, fontSizes } from 'utils/variables';
+import { baseColors, brandColors, UIColors, fontSizes, fontStyles } from 'utils/variables';
 import { BaseText, BoldText } from 'components/Typography';
 
 type Props = {
@@ -48,18 +48,18 @@ const ProfileCardAvatar = styled.View`
 `;
 
 const ProfileCardAvatarText = styled(BoldText)`
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.snowWhite};
 `;
 
 const ProfileCardName = styled(BaseText)`
-  font-size: ${fontSizes.large};
+  ${fontStyles.big};
   color: ${UIColors.defaultTextColor};
   margin-bottom: 10px;
 `;
 
 const ProfileCardEmail = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  ${fontStyles.medium};
   color: ${UIColors.defaultTextColor};
 `;
 

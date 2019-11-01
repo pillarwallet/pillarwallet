@@ -19,8 +19,8 @@
 */
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { BoldText, BaseText } from 'components/Typography';
-import { fontTrackings, baseColors, fontSizes, spacing } from 'utils/variables';
+import { MediumText, BaseText } from 'components/Typography';
+import { fontTrackings, baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
@@ -114,17 +114,17 @@ const Wrapper = styled.View`
 const CloseIcon = styled(IconButton)`
   position: absolute;
   height: 24px;
-  width: 24px;
+  width: 48px;
   top: ${Platform.select({
     ios: '20px',
     android: '19px',
   })}
-  right: 12px;
+  right: 0;
   opacity: 0.7;
 `;
 
-const EventTitle = styled(BoldText)`
-  font-size: ${fontSizes.mediumLarge}px;
+const EventTitle = styled(MediumText)`
+  ${fontStyles.large};
   letter-spacing: ${fontTrackings.tiny}px;
   color: ${baseColors.white};
   margin: 2px 0;
@@ -132,7 +132,7 @@ const EventTitle = styled(BoldText)`
 `;
 
 const EventSubtitle = styled(BaseText)`
-  font-size: ${fontSizes.tiny}px;
+  ${fontStyles.tiny};
   letter-spacing: ${fontTrackings.mediumLarge}px;
   color: ${baseColors.white};
   margin: 2px 0;
@@ -182,7 +182,7 @@ const EventHeader = (props: Props) => {
         icon="close"
         color={baseColors.white}
         onPress={onClose}
-        fontSize={fontSizes.small}
+        fontSize={fontSizes.medium}
       />
       <EventTitle>{thisEvent.title}</EventTitle>
       <EventSubtitle>{eventTime}</EventSubtitle>

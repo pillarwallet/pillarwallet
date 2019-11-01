@@ -37,7 +37,7 @@ const SectionHeader = styled.View`
   padding: ${spacing.small}px;
   justify-content: space-between;
   align-items: center;
-  padding: 0 ${spacing.mediumLarge}px 0 ${spacing.mediumLarge}px;
+  padding: 0 ${spacing.mediumLarge}px;
 `;
 
 const SectionHeaderAddon = styled.View`

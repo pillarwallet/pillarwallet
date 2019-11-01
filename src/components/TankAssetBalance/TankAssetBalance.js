@@ -38,7 +38,7 @@ const Wrapper = styled.View`
 
 const BalanceInTank = styled(BaseText)`
   color: ${baseColors.electricBlueIntense};
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
 `;
 
 const Icon = styled(CachedImage)`

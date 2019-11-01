@@ -24,8 +24,8 @@ import { CachedImage } from 'react-native-cached-image';
 import isEqualWith from 'lodash.isequalwith';
 import Icon from 'components/Icon';
 import IconButton from 'components/IconButton';
-import { BaseText, BoldText } from 'components/Typography';
-import { baseColors, fontSizes, spacing, fontWeights, fontTrackings } from 'utils/variables';
+import { BaseText, MediumText } from 'components/Typography';
+import { baseColors, fontSizes, spacing, fontTrackings, fontStyles } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
 import { Shadow } from 'components/Shadow';
@@ -67,6 +67,7 @@ type Props = {
   imageUpdateTimeStamp?: number,
   rightColumnInnerStyle?: Object,
   customAddonFullWidth?: React.Node,
+  customAddonAlignLeft?: boolean,
   imageColorFill?: string,
   customImage?: React.Node,
   imageDiameter?: number,
@@ -122,27 +123,23 @@ const Column = styled.View`
   min-height: 54px;
 `;
 
-const ItemTitle = styled(BoldText)`
+const ItemTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.medium};
   letter-spacing: ${fontTrackings.small}px;
   width: 100%;
 `;
 
 const ItemParagraph = styled(BaseText)`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: ${fontSizes.mediumLarge}px;
+  ${fontStyles.regular};
   letter-spacing: ${fontTrackings.tiny}px;
-  margin-top: 4px;
   flex: 1;
 `;
 
 const ItemSubText = styled(BaseText)`
   color: ${baseColors.darkGray};
-  font-size: 13px;
-  line-height: ${fontSizes.small}
-  margin-top: 4px;
+  ${fontStyles.regular};
 `;
 
 const IconCircle = styled.View`
@@ -157,7 +154,7 @@ const IconCircle = styled.View`
 `;
 
 const ItemIcon = styled(Icon)`
-  font-size: ${props => props.fontSize || fontSizes.extraGiant};
+  font-size: ${props => props.fontSize || 48}px;
   color: ${props => props.warm ? baseColors.tumbleweed : baseColors.offBlue};
 `;
 
@@ -180,9 +177,8 @@ const TimeWrapper = styled.View`
 `;
 
 const TimeSent = styled(BaseText)`
-  color: ${baseColors.darkGray}
-  font-size: ${fontSizes.extraSmall};
-  line-height: ${fontSizes.small};
+  color: ${baseColors.darkGray};
+  ${fontStyles.regular};
   text-align-vertical: bottom;
 `;
 
@@ -198,21 +194,21 @@ const ItemBadge = styled.View`
 `;
 
 const UnreadNumber = styled(BaseText)`
-  color: #ffffff;
-  font-size: 10px;
+  color: ${baseColors.white};
+  font-size: ${fontSizes.tiny}px;
   align-self: center;
   width: 20px;
   text-align: center;
 `;
 
 const ItemValue = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  ${fontStyles.big};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   text-align: right;
 `;
 
-const ItemValueBold = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+const ItemValueBold = styled(MediumText)`
+  ${fontStyles.big};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
   text-align: right;
 `;
@@ -220,7 +216,7 @@ const ItemValueBold = styled(BoldText)`
 const ItemValueStatus = styled(Icon)`
   margin-left: 7px;
   color: ${baseColors.mediumGray};
-  font-size: ${fontSizes.medium};
+  ${fontStyles.big};
 `;
 
 const IndicatorsRow = styled.View`
@@ -234,11 +230,10 @@ const ActionLabel = styled.View`
   ${props => props.button ? `border: 1px solid ${baseColors.veryLightBlue}` : ''}
   ${props => props.button ? 'border-radius: 40px;' : ''}
   ${props => props.button ? 'height: 34px;' : ''}
-  ${props => props.button ? `font-weight: ${fontWeights.medium};` : ''}
 `;
 
 const ActionLabelText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.medium};
   color: ${props => props.color ? props.color : baseColors.darkGray};
   margin-left: auto;
   margin-bottom: ${props => props.button ? '2px' : 0};
@@ -357,7 +352,7 @@ const ItemImage = (props: Props) => {
       userName={label}
       diameter={type === ACTION ? 52 : 50}
       borderWidth={type === ACTION ? 0 : 2}
-      textStyle={{ fontSize: fontSizes.medium }}
+      textStyle={{ fontSize: fontSizes.big }}
       noShadow={type === ACTION}
     />
   );
@@ -378,7 +373,7 @@ const ImageAddon = (props: Props) => {
           <ItemIcon
             name={imageAddonIconName}
             warm={warm}
-            fontSize={fontSizes.extraLarger}
+            fontSize={fontSizes.large}
             style={{ position: 'absolute', top: -5, right: 4 }}
           />
         </IconCircle>
@@ -395,7 +390,7 @@ const ImageAddon = (props: Props) => {
         diameter={22}
         borderWidth={2}
         noShadow
-        initialsSize={fontSizes.extraExtraSmall}
+        initialsSize={fontSizes.small}
       />
     </ImageAddonHolder>
   );
@@ -417,16 +412,15 @@ const Addon = (props: Props) => {
     acceptInvitation,
     balance,
   } = props;
-
-  if (itemValue) {
+  if (itemValue || itemStatusIcon) {
     return (
-      <Wrapper horizontal style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-        <ItemValue color={valueColor} numberOfLines={2} ellipsizeMode="tail">
-          {itemValue}
-        </ItemValue>
-        {!!itemStatusIcon &&
-          <ItemValueStatus name={itemStatusIcon} />
+      <Wrapper horizontal style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end' }}>
+        {!!itemValue &&
+          <ItemValue color={valueColor} numberOfLines={2} ellipsizeMode="tail">
+            {itemValue}
+          </ItemValue>
         }
+        {!!itemStatusIcon && <ItemValueStatus name={itemStatusIcon} />}
       </Wrapper>
     );
   }
@@ -472,7 +466,7 @@ const Addon = (props: Props) => {
           color={baseColors.darkGray}
           margin={0}
           icon="close"
-          fontSize={fontSizes.extraSmall}
+          fontSize={fontSizes.regular}
           onPress={rejectInvitation}
         />
         <ActionCircleButton
@@ -480,7 +474,7 @@ const Addon = (props: Props) => {
           margin={0}
           accept
           icon="check"
-          fontSize={fontSizes.extraSmall}
+          fontSize={fontSizes.regular}
           onPress={acceptInvitation}
         />
       </ButtonIconWrapper>
@@ -547,6 +541,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
       customAddonFullWidth,
       innerWrapperHorizontalAlign,
       wrapperOpacity,
+      customAddonAlignLeft,
     } = this.props;
 
     const type = getType(this.props);
@@ -581,8 +576,9 @@ class ListItemWithImage extends React.Component<Props, {}> {
               </Column>
               <Column rightColumn type={type} style={{ maxWidth: '50%' }}>
                 <View style={[rightColumnInnerStyle, { flexWrap: 'wrap' }]}>
+                  {!!customAddonAlignLeft && customAddon}
                   <Addon {...this.props} type={type} />
-                  {customAddon}
+                  {!customAddonAlignLeft && customAddon}
                   {children}
                 </View>
               </Column>

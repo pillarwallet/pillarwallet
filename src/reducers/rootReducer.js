@@ -28,6 +28,7 @@ import offlineQueueReducer from './offlineQueueReducer';
 import walletReducer from './walletReducer';
 import smartWalletReducer from './smartWalletReducer';
 import walletConnectReducer from './walletConnectReducer';
+import walletConnectSessionsReducer from './walletConnectSessionsReducer';
 import assetsReducer from './assetsReducer';
 import appSettingsReducer from './appSettingsReducer';
 import ratesReducer from './ratesReducer';
@@ -59,7 +60,11 @@ import userSettingsReducer from './userSettingsReducer';
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
 import type { WalletReducerState } from './walletReducer';
 import type { SmartWalletReducerState, SmartWalletReducerAction } from './smartWalletReducer';
-import type { WalletConnectReducerState } from './walletConnectReducer';
+import type { WalletConnectReducerState, WalletConnectReducerAction } from './walletConnectReducer';
+import type {
+  WalletConnectSessionsReducerAction,
+  WalletConnectSessionsReducerState,
+} from './walletConnectSessionsReducer';
 import type { AssetsReducerState } from './assetsReducer';
 import type { AppSettingsReducerAction, AppSettingsReducerState } from './appSettingsReducer';
 import type { RatesReducerState } from './ratesReducer';
@@ -92,6 +97,7 @@ export type RootReducerState = {|
   wallet: WalletReducerState,
   smartWallet: SmartWalletReducerState,
   walletConnect: WalletConnectReducerState,
+  walletConnectSessions: WalletConnectSessionsReducerState,
   assets: AssetsReducerState,
   appSettings: AppSettingsReducerState,
   rates: RatesReducerState,
@@ -133,6 +139,8 @@ type RootReducerAction =
   | HistoryAction
   | PaymentNetworkAction
   | SmartWalletReducerAction
+  | WalletConnectReducerAction
+  | WalletConnectSessionsReducerAction
   | UserSettingsReducerAction
   | DbAction;
 
@@ -151,6 +159,7 @@ const appReducer = combineReducers({
   wallet: walletReducer,
   smartWallet: smartWalletReducer,
   walletConnect: walletConnectReducer,
+  walletConnectSessions: walletConnectSessionsReducer,
   assets: assetsReducer,
   appSettings: appSettingsReducer,
   rates: ratesReducer,
@@ -179,7 +188,7 @@ const appReducer = combineReducers({
   userSettings: userSettingsReducer,
 });
 
-const initialState = appReducer(undefined, {});
+export const initialState = appReducer(undefined, {});
 
 const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
   if (action.type === LOG_OUT) {

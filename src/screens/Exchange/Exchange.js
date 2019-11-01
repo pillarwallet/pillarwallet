@@ -18,8 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import { FlatList, TextInput, View } from 'react-native';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
@@ -31,13 +31,19 @@ import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import get from 'lodash.get';
+import { InAppBrowser } from '@matt-block/react-native-in-app-browser';
 
 import { fiatCurrencies } from 'fixtures/assets';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import { getBalance, getRate } from 'utils/assets';
+import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
+import {
+  getAssetData,
+  getAssetsAsList,
+  getBalance,
+  getRate,
+} from 'utils/assets';
 import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
-import { getActiveAccountType } from 'utils/accounts';
+import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
@@ -47,6 +53,8 @@ import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import DeploymentView from 'components/DeploymentView';
+
+import { wyreWidgetUrl } from 'services/sendwyre';
 
 import {
   searchOffersAction,
@@ -108,8 +116,7 @@ const CardColumn = styled.View`
 `;
 
 const CardText = styled(BaseText)`
-  line-height: 18px;
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   letter-spacing: 0.18px;
   color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
   flex-wrap: wrap;
@@ -130,7 +137,7 @@ const CardButton = styled.TouchableOpacity`
 
 const ButtonLabel = styled(BaseText)`
   color: ${props => props.color ? props.color : baseColors.slateBlack};
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.regular}px;
 `;
 
 const FormWrapper = styled.View`
@@ -154,7 +161,7 @@ const CardNote = styled(BaseText)`
   padding: 4px 0;
   margin-left: 10px;
   color: ${props => props.color ? props.color : baseColors.slateBlack};
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
 `;
 
 type Props = {
@@ -370,10 +377,13 @@ function formatAmountDisplay(value: number | string) {
 
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
-  fromInputRef: ?Object;
+  fromInputRef: TextInput;
+  listeners: NavigationEventSubscription[];
 
   constructor(props: Props) {
     super(props);
+    this.fromInputRef = React.createRef();
+    this.listeners = [];
     this.state = {
       shapeshiftAuthPressed: false,
       pressedOfferId: '',
@@ -436,14 +446,28 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { exchangeSearchRequest = {}, baseFiatCurrency } = this.props;
-    this.provideOptions();
+    const { exchangeSearchRequest = {}, baseFiatCurrency, navigation } = this.props;
+    this.provideOptions(true);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const defaultFrom = this.checkIfAssetsExchangeIsAllowed() ? ETH : fiatCurrency;
     const { fromAssetCode = defaultFrom, toAssetCode, fromAmount } = exchangeSearchRequest;
     this.setInitialSelection(fromAssetCode, toAssetCode, fromAmount);
+    this.listeners = [
+      navigation.addListener('didFocus', this.focusInputWithKeyboard),
+      navigation.addListener('didBlur', () => this.fromInputRef.blur()),
+    ];
   }
+
+  componentWillUnmount() {
+    this.listeners.forEach(listener => listener.remove());
+  }
+
+  focusInputWithKeyboard = () => {
+    setTimeout(() => {
+      this.fromInputRef.focus();
+    }, 200);
+  };
 
   componentDidUpdate(prevProps: Props) {
     const {
@@ -480,12 +504,14 @@ class ExchangeScreen extends React.Component<Props, State> {
       || (isSmartWallet && smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
   };
 
-  provideOptions = () => {
+  provideOptions = (initialRender: boolean = false) => {
     const { assets, supportedAssets } = this.props;
     const fiatOptionsFrom = this.generateFiatOptions();
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(supportedAssets);
-    const initialAssetsOptionsBuying = assetsOptionsBuying.filter((option) => option.value !== ETH);
+    const initialAssetsOptionsBuying = initialRender
+      ? assetsOptionsBuying.filter(({ value }) => value !== ETH)
+      : assetsOptionsBuying;
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
     thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
     thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = fiatOptionsFrom;
@@ -498,7 +524,9 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
     const { assets, supportedAssets } = this.props;
-    const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode) || assets[fromAssetCode];
+    const assetsData = getAssetsAsList(assets);
+    const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode)
+      || getAssetData(assetsData, supportedAssets, fromAssetCode);
     const selectedAssetOptions = isFiatCurrency(fromAssetCode)
       ? this.generateFiatOptions().find(({ symbol }) => symbol === fromAssetCode)
       : this.generateAssetsOptions({ [fromAssetCode]: fromAsset })[0];
@@ -510,7 +538,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       },
     };
     if (toAssetCode) {
-      const toAsset = supportedAssets.find(({ symbol }) => symbol === toAssetCode);
+      const toAsset = getAssetData(assetsData, supportedAssets, toAssetCode);
       if (toAsset) {
         const supportedAssetsOptions = this.generateSupportedAssetsOptions([toAsset]);
         initialFormState.toInput = {
@@ -551,6 +579,24 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
+  openSendWyre(selectedSellAmount: string, offer: Offer) {
+    const { accounts } = this.props;
+    const destAddress = getActiveAccountAddress(accounts);
+
+    const { fromAssetCode, toAssetCode } = offer;
+
+    const wyreUrl = wyreWidgetUrl(
+      destAddress,
+      toAssetCode,
+      fromAssetCode,
+      selectedSellAmount,
+    );
+
+    InAppBrowser.open(wyreUrl).catch(error => {
+      console.error('InAppBrowser.error', error);
+    });
+  }
+
   onFiatOfferPress = (offer: Offer) => {
     const {
       navigation,
@@ -562,6 +608,12 @@ class ExchangeScreen extends React.Component<Props, State> {
         },
       },
     } = this.state;
+    const { provider } = offer;
+
+    if (provider === 'SendWyre') {
+      this.openSendWyre(selectedSellAmount, offer);
+      return;
+    }
 
     navigation.navigate(FIAT_EXCHANGE, {
       fiatOfferOrder: {
@@ -826,25 +878,23 @@ class ExchangeScreen extends React.Component<Props, State> {
   generateAssetsOptions = (assets) => {
     const { balances, paymentNetworkBalances } = this.props;
     const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-    const nonEmptyAssets = assetsList.filter(({ symbol }): any => {
-      return getBalance(balances, symbol) !== 0 || symbol === ETH;
-    });
-    const alphabeticalAssets = nonEmptyAssets.sort((a, b) => a.symbol.localeCompare(b.symbol));
-    return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) => {
-      const assetBalance = formatAmount(getBalance(balances, symbol));
-      const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
-
-      return ({
-        key: symbol,
-        value: symbol,
-        icon: iconUrl,
-        iconUrl,
-        symbol,
-        ...rest,
-        assetBalance,
-        paymentNetworkBalance,
+    return assetsList
+      .filter(({ symbol }) => getBalance(balances, symbol) !== 0 || symbol === ETH)
+      .sort((a, b) => a.symbol.localeCompare(b.symbol))
+      .map(({ symbol, iconUrl, ...rest }) => {
+        const assetBalance = formatAmount(getBalance(balances, symbol));
+        const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
+        return ({
+          key: symbol,
+          value: symbol,
+          icon: iconUrl,
+          iconUrl,
+          symbol,
+          ...rest,
+          assetBalance,
+          paymentNetworkBalance,
+        });
       });
-    });
   };
 
   generateFiatOptions = () => fiatCurrencies.map(({ symbol, iconUrl, ...rest }) => ({
@@ -859,24 +909,25 @@ class ExchangeScreen extends React.Component<Props, State> {
   }));
 
   generateSupportedAssetsOptions = (assets) => {
+    if (!Array.isArray(assets)) return [];
     const { balances, paymentNetworkBalances } = this.props;
-    const alphabeticalSupportedAssets = (assets || []).sort((a, b) => a.symbol.localeCompare(b.symbol));
-    return alphabeticalSupportedAssets.map(({ symbol, iconUrl, ...rest }) => {
-      const rawAssetBalance = getBalance(balances, symbol);
-      const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
-      const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
-
-      return ({
-        key: symbol,
-        value: symbol,
-        icon: iconUrl,
-        iconUrl,
-        symbol,
-        ...rest,
-        assetBalance,
-        paymentNetworkBalance,
+    return [...assets] // prevent mutation of param
+      .sort((a, b) => a.symbol.localeCompare(b.symbol))
+      .map(({ symbol, iconUrl, ...rest }) => {
+        const rawAssetBalance = getBalance(balances, symbol);
+        const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
+        const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
+        return {
+          key: symbol,
+          value: symbol,
+          icon: iconUrl,
+          iconUrl,
+          symbol,
+          ...rest,
+          assetBalance,
+          paymentNetworkBalance,
+        };
       });
-    });
   };
 
   handleFormChange = (value: Object) => {
@@ -996,6 +1047,8 @@ class ExchangeScreen extends React.Component<Props, State> {
         <DeploymentView
           message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
           buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
+          buttonLabel="Retry"
+          forceRetry={!!deploymentData.error}
         />}
         {!blockView &&
         <ScrollWrapper

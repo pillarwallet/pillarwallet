@@ -21,7 +21,7 @@ import * as React from 'react';
 import { TouchableNativeFeedback, Platform, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 
 import Icon from 'components/Icon';
@@ -58,6 +58,11 @@ const ContentWrapper = styled.View`
   align-items: center;
 `;
 
+const AddonWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
 const ListItem = styled.View`
   ${props => props.bordered
     ? `
@@ -69,14 +74,12 @@ const ListItem = styled.View`
 `;
 
 const ItemLabel = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  line-height: ${fontSizes.small};
+  ${fontStyles.medium};
   color: ${props => props.color ? props.color : baseColors.electricBlue};
 `;
 
 const SubText = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall};
-  line-height: ${fontSizes.extraExtraSmall};
+  ${fontStyles.small};
   color: ${props => props.color ? props.color : baseColors.darkGray};
   margin-top: 4px;
 `;
@@ -127,6 +130,8 @@ type Props = {
   subtext?: string,
   subtextAddon?: React.Node,
   wrapperStyle?: Object,
+  chevronStyle?: Object,
+  rightAddon?: React.Node,
 }
 
 export const ListItemChevron = (props: Props) => {
@@ -139,6 +144,8 @@ export const ListItemChevron = (props: Props) => {
     color,
     subtext,
     wrapperStyle,
+    chevronStyle,
+    rightAddon,
   } = props;
   return (
     <ListItem bordered={bordered} style={wrapperStyle}>
@@ -157,13 +164,17 @@ export const ListItemChevron = (props: Props) => {
               </Row>}
             </TextWrapper>
           </ContentWrapper>
-          <Icon
-            name="chevron-right"
-            style={{
-              fontSize: fontSizes.extraExtraSmall,
-              color: color || baseColors.electricBlue,
-            }}
-          />
+          <AddonWrapper>
+            {rightAddon}
+            <Icon
+              name="chevron-right"
+              style={{
+                fontSize: fontSizes.small,
+                color: color || baseColors.electricBlue,
+                ...chevronStyle,
+              }}
+            />
+          </AddonWrapper>
         </ItemRow>
       </ButtonWrapper>
     </ListItem>
