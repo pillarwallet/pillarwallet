@@ -2,7 +2,6 @@ version: 2.1
 
 orbs:
   slack: circleci/slack@2.3.0
-  node: circleci/node@1.1
 
 executors:
   ios-executor:
@@ -33,6 +32,15 @@ executors:
     working_directory: ~/pillarwallet
     docker:
       - image: circleci/openjdk:8-node-browsers
+
+  node10-executor:
+    working_directory: ~/pillarwallet
+    docker:
+      - image: circleci/node:10.14
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
+    resource_class: large
+    shell: /bin/bash --login -o pipefail
 
 aliases:
   - &restore_pod_cache
@@ -154,9 +162,7 @@ aliases:
 
 jobs:
   build-and-test:
-    executor:
-      name: node/default
-      tag: '10.4'
+    executor: node10-executor
     steps:
       - checkout
       - run:
