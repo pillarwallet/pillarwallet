@@ -56,7 +56,7 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
-import { findKeyBasedAccount, getAccountId, getAccountName } from 'utils/accounts';
+import { findKeyBasedAccount, getAccountName } from 'utils/accounts';
 import { baseColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -107,6 +107,7 @@ const VIEWS = {
 };
 
 class AssetsScreen extends React.Component<Props, State> {
+  forceRender = false;
   state = {
     showKeyWalletInsight: true,
     showSmartWalletInsight: false,
@@ -135,19 +136,20 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const { navigation, activeAccount } = this.props;
+    const { navigation } = this.props;
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     const isFocused = navigation.isFocused();
+
     if (!isFocused) {
-      const activeAccountId = getAccountId(activeAccount);
-      const nextActiveAccountId = getAccountId(nextProps.activeAccount);
-      /**
-       * allow component update if screen is out of focus, but accounts has changed
-       * this might happen while navigating between accounts and assets screen during account switch
-       */
-      return activeAccountId !== nextActiveAccountId;
+      if (!isEq) this.forceRender = true;
+      return false;
     }
 
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    if (this.forceRender) {
+      this.forceRender = false;
+      return true;
+    }
+
     return !isEq;
   }
 
