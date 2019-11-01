@@ -45,7 +45,7 @@ import syntheticsService from 'services/synthetics';
 
 // constants
 import { ETH, PLR } from 'constants/assetsConstants';
-import { SEND_SYNTHETICS_CONFIRM } from 'constants/navigationConstants';
+import { SEND_SYNTHETIC_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -173,7 +173,7 @@ const FooterInner = styled.View`
   background-color: ${UIColors.defaultBackgroundColor};
 `;
 
-class SendSyntheticsSelect extends React.Component<Props, State> {
+class SendSyntheticAsset extends React.Component<Props, State> {
   syntheticsForm: t.form;
   fromInputRef: TextInput;
   receiver: string;
@@ -288,7 +288,7 @@ class SendSyntheticsSelect extends React.Component<Props, State> {
               toAssetCode: assetCode,
               toAddress: this.receiver,
             };
-            navigation.navigate(SEND_SYNTHETICS_CONFIRM, {
+            navigation.navigate(SEND_SYNTHETIC_CONFIRM, {
               syntheticTransaction,
               assetData,
             });
@@ -321,13 +321,13 @@ class SendSyntheticsSelect extends React.Component<Props, State> {
         keyboardAvoidFooter={(
           <FooterInner>
             {showNextButton &&
-              <Button
-                disabled={isNextButtonDisabled}
-                small
-                flexRight
-                title={nextButtonTitle}
-                onPress={this.handleFormSubmit}
-              />
+            <Button
+              disabled={isNextButtonDisabled}
+              small
+              flexRight
+              title={nextButtonTitle}
+              onPress={this.handleFormSubmit}
+            />
             }
             {submitPressed && <Spinner width={20} height={20} />}
           </FooterInner>
@@ -369,4 +369,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   initSyntheticsService: () => dispatch(initSyntheticsServiceAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendSyntheticsSelect);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendSyntheticAsset);

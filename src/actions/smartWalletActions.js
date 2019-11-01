@@ -53,12 +53,13 @@ import {
   PAYMENT_PROCESSED,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
+import { ETH, PLR, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 
 import {
   TX_PENDING_STATUS,
   TX_CONFIRMED_STATUS,
-  SET_HISTORY, ADD_TRANSACTION,
+  SET_HISTORY,
+  ADD_TRANSACTION,
 } from 'constants/historyConstants';
 import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
@@ -80,7 +81,8 @@ import {
   ASSETS,
   SEND_TOKEN_AMOUNT,
   ACCOUNTS,
-  SEND_SYNTHETICS_SELECT,
+  SEND_SYNTHETIC_AMOUNT,
+  PPN_SEND_TOKEN_AMOUNT,
 } from 'constants/navigationConstants';
 
 // configs
@@ -120,6 +122,7 @@ import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/Smar
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { TransactionsStore } from 'models/Transaction';
+import type { SendNavigateOptions } from 'models/Navigation';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
@@ -1300,7 +1303,7 @@ export const cleanSmartWalletAccountsAction = () => {
   };
 };
 
-export const navigateToSendTokenAmountAction = (navOptions: Object) => {
+export const navigateToSendTokenAmountAction = (navOptions: SendNavigateOptions) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       blockchainNetwork: { data: blockchainNetworks },
@@ -1311,8 +1314,13 @@ export const navigateToSendTokenAmountAction = (navOptions: Object) => {
       params: navOptions,
     });
 
+    const tokenSymbol = get(navOptions, 'assetData.symbol');
+    const ppnRouteName = tokenSymbol === PLR
+      ? PPN_SEND_TOKEN_AMOUNT
+      : SEND_SYNTHETIC_AMOUNT;
+
     const ppnSendFlow = NavigationActions.navigate({
-      routeName: SEND_SYNTHETICS_SELECT,
+      routeName: ppnRouteName,
       params: navOptions,
     });
 

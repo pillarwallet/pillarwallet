@@ -47,7 +47,7 @@ import {
   SMART_WALLET_INTRO,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
-  SEND_TOKEN_CONTACTS,
+  SEND_SYNTHETIC_ASSET,
 } from 'constants/navigationConstants';
 import {
   PAYMENT_COMPLETED,
@@ -285,7 +285,7 @@ class PPNView extends React.Component<Props, State> {
               <CircleButton
                 label="Send"
                 icon={iconSend}
-                onPress={() => navigation.navigate(SEND_TOKEN_CONTACTS)}
+                onPress={() => navigation.navigate(SEND_SYNTHETIC_ASSET)}
                 disabled={availableStake <= 0}
               />
             </AssetButtonsWrapper>

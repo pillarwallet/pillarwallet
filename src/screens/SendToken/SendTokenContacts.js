@@ -24,30 +24,43 @@ import { Keyboard, Alert } from 'react-native';
 import isEmpty from 'lodash.isempty';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
+import type { NavigationScreenProp } from 'react-navigation';
+
+// components
 import Separator from 'components/Separator';
-import { ACCOUNTS, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
-import { COLLECTIBLES } from 'constants/assetsConstants';
-import { CHAT } from 'constants/chatConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Spinner from 'components/Spinner';
+
+// constants
+import { ACCOUNTS, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { COLLECTIBLES } from 'constants/assetsConstants';
+import { CHAT } from 'constants/chatConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+
+// actions
 import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
+
+// utils
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress, isCaseInsensitiveMatch } from 'utils/common';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
+
+// selectors
+import { activeAccountSelector } from 'selectors';
+
+// models
 import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
-import { activeAccountSelector } from 'selectors';
+import type { SendNavigateOptions } from 'models/Navigation';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -400,7 +413,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  navigateToSendTokenAmount: (options) => dispatch(navigateToSendTokenAmountAction(options)),
+  navigateToSendTokenAmount: (options: SendNavigateOptions) => dispatch(navigateToSendTokenAmountAction(options)),
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 

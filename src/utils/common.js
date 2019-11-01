@@ -380,3 +380,25 @@ export const groupAndSortByDate = (
 export const isCaseInsensitiveMatch = (a: string, b: string): boolean => {
   return a.toLowerCase() === b.toLowerCase();
 };
+
+export const makePromiseCancelable = (promise: Promise<any>) => {
+  let isCancelled = false;
+
+  const wrappedPromise = new Promise((resolve, reject) => {
+    const cancelledErrorPayload = { isCanceled: true };
+    promise
+      .then((res) => isCancelled
+        ? reject(cancelledErrorPayload)
+        : resolve(res),
+      )
+      .catch((err) => isCancelled
+        ? reject(cancelledErrorPayload)
+        : reject(err),
+      );
+  });
+
+  return {
+    request: () => wrappedPromise,
+    cancel: () => { isCancelled = true; },
+  };
+};
