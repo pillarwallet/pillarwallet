@@ -284,6 +284,7 @@ describe('ConnectionKeyPair actions', () => {
   });
 
   beforeEach(() => {
+    jest.useFakeTimers();
     const connectionKeyPairsStoreMock = {
       connectionKeyPairs: {
         data: [...connectionKeyPairsMock],
