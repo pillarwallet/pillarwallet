@@ -153,7 +153,7 @@ aliases:
 
 jobs:
   build-and-test:
-    executor: ios-executor
+    executor: node8-executor
     steps:
       - checkout
       - run:
