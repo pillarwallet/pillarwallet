@@ -97,8 +97,9 @@ export function signPersonalMessage(message: string, wallet: Object): Promise<st
 }
 
 // we use basic AsyncStorage implementation just to prevent backup being stored in same manner
-export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Object) {
+export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Object, api: Object) {
   let { wallet = {} } = await storage.get('wallet');
+  const { user = {} } = await storage.get('user');
   const walletBackup = await AsyncStorage.getItem(WALLET_STORAGE_BACKUP_KEY);
   const isWalletEmpty = isEmpty(wallet);
   // wallet timestamp missing causes welcome screen
@@ -145,6 +146,30 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     // wallet has changed or backup does not exist, let's update it
     await AsyncStorage.setItem(WALLET_STORAGE_BACKUP_KEY, walletAsString);
   }
+
+  if (isEmpty(user) || !user.username || !user.walletId) {
+    console.log('EMPTY USER OBJECT DETECTED');
+    if (!isEmpty(wallet)) {
+      console.log('RESTORING USER FROM API');
+      api.init();
+      const apiUser = await api.validateAddress(wallet.address);
+      if (apiUser.walletId) {
+        const saveUser = {
+          id: apiUser.id,
+          walletId: apiUser.walletId,
+          username: apiUser.username,
+          profileLargeImage: apiUser.profileImage,
+        };
+        await dispatch(saveDbAction('user', { saveUser }, true));
+        console.log('RESTORED FROM API');
+      } else {
+        console.log('UNABLE TO RESTORE USER FROM API');
+      }
+    } else {
+      console.log('WALLET OBJECT IS STILL EMPTY');
+    }
+  }
+
   return {
     wallet,
     walletTimestamp,
