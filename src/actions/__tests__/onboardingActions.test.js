@@ -195,6 +195,7 @@ describe('Wallet actions', () => {
         },
       },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
+      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false } },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
@@ -260,6 +261,7 @@ describe('Wallet actions', () => {
         },
       },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
+      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false } },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
       { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
@@ -337,6 +339,7 @@ describe('Wallet actions', () => {
         },
       },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
+      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false } },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 

@@ -47,15 +47,15 @@ import { calculateBalanceInFiat } from 'utils/assets';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Assets, BalancesStore, Balances, Rates } from 'models/Asset';
-import type { Accounts, Account } from 'models/Account';
+import type { Assets, Balances, BalancesStore, Rates } from 'models/Asset';
+import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 
 // constants
 import {
-  PILLAR_NETWORK_INTRO,
   ASSETS,
+  PILLAR_NETWORK_INTRO,
   SMART_WALLET_INTRO,
   WALLET_SETTINGS,
 } from 'constants/navigationConstants';
@@ -167,6 +167,7 @@ const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 class AccountsScreen extends React.Component<Props, State> {
   switchToWallet: ?Account = null;
+  forceRender = false;
 
   constructor(props) {
     super(props);
@@ -181,11 +182,19 @@ class AccountsScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     const isFocused = this.props.navigation.isFocused();
+
     if (!isFocused) {
+      if (!isEq) this.forceRender = true;
       return false;
     }
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+
+    if (this.forceRender) {
+      this.forceRender = false;
+      return true;
+    }
+
     return !isEq;
   }
 
@@ -309,6 +318,7 @@ class AccountsScreen extends React.Component<Props, State> {
     } = this.props;
 
     const visibleAccounts = this.visibleAccounts(accounts, smartWalletFeatureEnabled);
+
     const hasAccount = userHasSmartWallet(accounts);
     const showSmartWalletInitButton = !hasAccount && smartWalletFeatureEnabled;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -327,8 +337,7 @@ class AccountsScreen extends React.Component<Props, State> {
         const thisAccountBalance = calculateBalanceInFiat(rates, accountBalances, fiatCurrency);
         walletBalance = formatFiat(thisAccountBalance, baseFiatCurrency);
       }
-
-      const accountItem = {
+      return {
         id: `ACCOUNT_${id}`,
         type: 'ACCOUNT',
         title: isSmartWallet ? 'Smart wallet' : getAccountName(ACCOUNT_TYPES.KEY_BASED, accounts),
@@ -341,7 +350,6 @@ class AccountsScreen extends React.Component<Props, State> {
         onSettingsPress: () => this.accountSettings(account),
         isSmartWallet,
       };
-      return accountItem;
     });
 
     if (showSmartWalletInitButton) {
@@ -455,7 +463,9 @@ class AccountsScreen extends React.Component<Props, State> {
       .find(({ type, isSmartWallet }) => !!isSmartWallet || type === NEW_SMART_WALLET);
     const legacyAccountCard = walletsToShow.find(({ isSmartWallet }) => !isSmartWallet);
 
-    const walletsInList = isLegacyUser ? walletsToShow : [smartAccountCard];
+    const walletsInList = (isLegacyUser || !smartAccountCard) ? walletsToShow : [smartAccountCard];
+
+    const accountsList = [...walletsInList, ...networksToShow];
 
     return (
       <ContainerWithHeader
@@ -469,7 +479,7 @@ class AccountsScreen extends React.Component<Props, State> {
           contentContainerStyle={{ flexGrow: 1 }}
         >
           <FlatList
-            data={[...walletsInList, ...networksToShow]}
+            data={accountsList}
             keyExtractor={(item) => item.id || item.type}
             style={{ width: '100%', flexGrow: 0 }}
             contentContainerStyle={{ width: '100%', padding: spacing.large }}
