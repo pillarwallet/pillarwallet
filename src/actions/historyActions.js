@@ -19,7 +19,6 @@
 */
 import get from 'lodash.get';
 import orderBy from 'lodash.orderby';
-import isEmpty from 'lodash.isempty';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { Sentry } from 'react-native-sentry';
 
@@ -274,7 +273,7 @@ export const restoreTransactionHistoryAction = (walletAddress: string, walletId:
       api.importedEthTransactionHistory(walletAddress),
     ]);
 
-    if (isEmpty(allAssets)) return;
+    if (!allAssets || !allAssets.length) return;
     if (!Array.isArray(allAssets)) {
       // sentry issue ID 1308336621
       Sentry.captureMessage('Wrong allAssets type received from back-end', { extra: { allAssets } });
