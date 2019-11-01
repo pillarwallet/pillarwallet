@@ -107,6 +107,7 @@ const VIEWS = {
 };
 
 class AssetsScreen extends React.Component<Props, State> {
+  forceRender = false;
   state = {
     showKeyWalletInsight: true,
     showSmartWalletInsight: false,
@@ -135,19 +136,20 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const { navigation, activeAccount } = this.props;
+    const { navigation } = this.props;
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     const isFocused = navigation.isFocused();
+
+    if (!isEq) this.forceRender = true;
+
     if (!isFocused) {
-      const activeAccountId = getAccountId(activeAccount);
-      const nextActiveAccountId = getAccountId(nextProps.activeAccount);
-      /**
-       * allow component update if screen is out of focus, but accounts has changed
-       * this might happen while navigating between accounts and assets screen during account switch
-       */
-      return activeAccountId !== nextActiveAccountId;
+      return false;
+    }
+    if (this.forceRender) {
+      this.forceRender = false;
+      return true;
     }
 
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
 

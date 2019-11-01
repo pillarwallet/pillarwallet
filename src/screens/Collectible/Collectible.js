@@ -130,21 +130,26 @@ const iconSend = require('assets/icons/icon_send.png');
 const genericCollectible = require('assets/images/no_logo.png');
 
 class CollectibleScreen extends React.Component<Props, State> {
+  forceRender = false;
   state = {
     isImageViewVisible: false,
   };
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     const isFocused = this.props.navigation.isFocused();
+
+    if (!isEq) this.forceRender = true;
+
     if (!isFocused) {
       return false;
     }
-
-    if (!isEqual(this.state, nextState) || !isEqual(this.props, nextProps)) {
+    if (this.forceRender) {
+      this.forceRender = false;
       return true;
     }
 
-    return false;
+    return !isEq;
   }
 
   goToSendTokenFlow = (assetData: Object) => {

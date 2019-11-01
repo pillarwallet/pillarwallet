@@ -167,6 +167,7 @@ const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 class AccountsScreen extends React.Component<Props, State> {
   switchToWallet: ?Account = null;
+  forceRender = false;
 
   constructor(props) {
     super(props);
@@ -181,11 +182,19 @@ class AccountsScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     const isFocused = this.props.navigation.isFocused();
+
+    if (!isEq) this.forceRender = true;
+
     if (!isFocused) {
       return false;
     }
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    if (this.forceRender) {
+      this.forceRender = false;
+      return true;
+    }
+
     return !isEq;
   }
 

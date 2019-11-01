@@ -63,12 +63,23 @@ const filterIcosByStatus = (icos: ICOT[], status: string) => (
 );
 
 class MarketScreen extends React.Component<Props> {
+  forceRender = false;
+
   shouldComponentUpdate(nextProps: Props) {
+    const isEq = isEqual(this.props, nextProps);
     const isFocused = this.props.navigation.isFocused();
+
+    if (!isEq) this.forceRender = true;
+
     if (!isFocused) {
       return false;
     }
-    return !isEqual(this.props, nextProps);
+    if (this.forceRender) {
+      this.forceRender = false;
+      return true;
+    }
+
+    return !isEq;
   }
 
   renderICOs = ({ item }: Object) => {
