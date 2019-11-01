@@ -20,7 +20,7 @@ executors:
     working_directory: ~/pillarwallet
     resource_class: large
     docker:
-      - image: circleci/android:api-26-node8-alpha
+      - image: circleci/android:api-29-node
     environment:
       TERM: dumb
       _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
@@ -854,7 +854,7 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
+                  - chore/update_android-api-image
       - stage_ios:
           requires:
             - build-and-test
