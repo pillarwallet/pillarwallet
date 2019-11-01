@@ -29,8 +29,6 @@ import WalletConnectMock from './walletConnectMock';
 
 process.env.IS_TEST = 'TEST';
 
-jest.useFakeTimers();
-
 jest.mock('NativeAnimatedHelper');
 
 Enzyme.configure({ adapter: new Adapter() });
