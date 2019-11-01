@@ -185,11 +185,11 @@ class AccountsScreen extends React.Component<Props, State> {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     const isFocused = this.props.navigation.isFocused();
 
-    if (!isEq) this.forceRender = true;
-
     if (!isFocused) {
+      if (!isEq) this.forceRender = true;
       return false;
     }
+
     if (this.forceRender) {
       this.forceRender = false;
       return true;

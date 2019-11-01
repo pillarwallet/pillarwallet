@@ -63,11 +63,11 @@ class UsersScreen extends React.Component<Props> {
     const isEq = isEqual(this.props, nextProps);
     const isFocused = this.props.navigation.isFocused();
 
-    if (!isEq) this.forceRender = true;
-
     if (!isFocused) {
+      if (!isEq) this.forceRender = true;
       return false;
     }
+
     if (this.forceRender) {
       this.forceRender = false;
       return true;
