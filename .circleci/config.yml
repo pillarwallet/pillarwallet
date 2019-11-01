@@ -184,7 +184,7 @@ jobs:
       - *node_save_cache
       - run:
           name: Run validation
-          command: CI=true yarn validate
+          command: yarn validate --maxWorkers=10 --forceExit
 
   hockeyapp_ios:
     executor: ios-executor
