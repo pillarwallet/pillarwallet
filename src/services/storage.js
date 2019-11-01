@@ -28,9 +28,9 @@ function Storage(name: string, opts: ?Object = {}) {
 }
 
 Storage.prototype.connect = function () {
-  console.log(`Connecting to the database ${this.name}`);
   this.needToReconnect = false;
   this.dbInstance = new PouchDB(this.name, this.opts);
+  console.log(`Connected to the database ${this.name}`);
 };
 
 Storage.prototype.db = function () {
