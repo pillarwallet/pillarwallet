@@ -34,15 +34,6 @@ executors:
     docker:
       - image: circleci/openjdk:8-node-browsers
 
-  node10-executor:
-    name: node/default
-    tag: '10.4'
-    working_directory: ~/pillarwallet
-    environment:
-      NODE_OPTIONS: "--max-old-space-size=4096"
-    resource_class: medium
-    shell: /bin/bash --login -o pipefail
-
 aliases:
   - &restore_pod_cache
     restore_cache:
@@ -163,7 +154,9 @@ aliases:
 
 jobs:
   build-and-test:
-    executor: node10-executor
+    executor:
+      name: node/default
+      tag: '10.4'
     steps:
       - checkout
       - run:
