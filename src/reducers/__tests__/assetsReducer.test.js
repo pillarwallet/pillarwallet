@@ -17,11 +17,19 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_ASSET, UPDATE_ASSETS_STATE, FETCHING, ETH } from 'constants/assetsConstants';
-import reducer from '../assetsReducer';
+import {
+  UPDATE_ASSET,
+  UPDATE_ASSETS_STATE,
+  UPDATE_SUPPORTED_ASSETS,
+  FETCHING,
+  ETH,
+} from 'constants/assetsConstants';
+import reducer from 'reducers/assetsReducer';
+
+import type { Asset } from 'models/Asset';
 
 describe('Assets reducer', () => {
-  it('should handle UPDATE_ASSET', () => {
+  it('handles UPDATE_ASSET', () => {
     const updateAction = { type: UPDATE_ASSET, payload: { symbol: ETH, balance: 5 } };
     const expectedAssets = {
       data: {
@@ -34,8 +42,40 @@ describe('Assets reducer', () => {
     expect(reducer(undefined, updateAction)).toMatchObject(expectedAssets);
   });
 
-  it('should handle UPDATE_ASSET_STATE', () => {
+  it('handles UPDATE_ASSET_STATE', () => {
     const updateAction = { type: UPDATE_ASSETS_STATE, payload: FETCHING };
     expect(reducer(undefined, updateAction)).toMatchObject({ assetsState: FETCHING });
+  });
+
+  it('sorts supported assets', () => {
+    const newAsset = (symbol: string): Asset => ({
+      symbol,
+      name: symbol,
+      address: '0x0000',
+      description: '',
+      iconUrl: '',
+      iconMonoUrl: '',
+      wallpaperUrl: '',
+      decimals: 10,
+    });
+
+    const updateAction = {
+      type: UPDATE_SUPPORTED_ASSETS,
+      payload: [
+        newAsset('BCA'),
+        newAsset('CDA'),
+        newAsset('BBA'),
+        newAsset('ABC'),
+      ],
+    };
+
+    const state = reducer(undefined, updateAction);
+
+    expect(state.supportedAssets.map(({ symbol }) => symbol)).toEqual([
+      'ABC',
+      'BBA',
+      'BCA',
+      'CDA',
+    ]);
   });
 });
