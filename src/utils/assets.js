@@ -31,6 +31,14 @@ import get from 'lodash.get';
 import { ETH } from 'constants/assetsConstants';
 import { formatAmount, isCaseInsensitiveMatch } from 'utils/common';
 
+const sortAssetsFn = (a: Asset, b: Asset): number => {
+  return a.symbol.localeCompare(b.symbol);
+};
+
+export const sortAssetsArray = (assets: Asset[]): Asset[] => {
+  return assets.sort(sortAssetsFn);
+};
+
 export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
   return assetsArray.reduce((memo, asset) => {
     memo[asset.symbol] = asset;
@@ -40,6 +48,12 @@ export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
 
 export const getAssetsAsList = (assetsObject: Assets): Asset[] => {
   return Object.keys(assetsObject).map(id => assetsObject[id]);
+};
+
+export const sortAssets = (assets: Assets): Asset[] => {
+  const assetsList = getAssetsAsList(assets);
+
+  return sortAssetsArray(assetsList);
 };
 
 export const getBalance = (balances: Balances = {}, asset: string): number => {
