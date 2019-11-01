@@ -432,6 +432,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         );
         break;
       default:
+        type = 'Unsupported';
+        errorMessage = 'We are sorry, but we do not support this action yet.';
         break;
     }
 

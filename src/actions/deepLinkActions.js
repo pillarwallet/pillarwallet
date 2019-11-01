@@ -17,52 +17,36 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
 import url from 'url';
 import Toast from 'components/Toast';
-import {
-  updateNavigationLastScreenState,
-  navigate,
-  getNavigationPathAndParamsState,
-} from 'services/navigation';
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
+import { updateNavigationLastScreenState, navigate } from 'services/navigation';
 import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
-import {
-  AUTH_FLOW,
-  LOGIN,
-  CONFIRM_CLAIM,
-  HOME,
-} from 'constants/navigationConstants';
-import SDKWrapper from 'services/api';
+import { LOGIN, CONFIRM_CLAIM, HOME } from 'constants/navigationConstants';
+import { isNavigationAllowed } from 'utils/navigation';
+
+import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 type ApproveLoginQuery = {
   loginToken?: string,
 };
 
-const canNavigateNow = (): boolean => {
-  const pathAndParams = getNavigationPathAndParamsState();
-
-  if (!pathAndParams) {
-    return false;
-  }
-
-  const pathParts = pathAndParams.path.split('/');
-  const currentFlow = pathParts[0];
-
-  return currentFlow !== AUTH_FLOW;
-};
+const allowedDeepLinkProtocols = [
+  'pillarwallet:',
+];
 
 const beginApproveLogin = (query: ApproveLoginQuery) => {
   const { loginToken: loginAttemptToken } = query;
 
-  if (!canNavigateNow()) {
+  if (!isNavigationAllowed()) {
     updateNavigationLastScreenState({
       lastActiveScreen: LOGIN,
       lastActiveScreenParams: { loginAttemptToken },
     });
-
     return;
   }
 
@@ -76,29 +60,28 @@ const beginApproveLogin = (query: ApproveLoginQuery) => {
 
 export const executeDeepLinkAction = (deepLink: string) => {
   return async (dispatch: Dispatch) => {
-    const params: Object = url.parse(deepLink, true);
-    if (params.protocol !== 'pillarwallet:') return;
-    switch (params.host) {
+    const params = url.parse(deepLink, true);
+    if (isEmpty(params)) return;
+    const { host, protocol, query = {} } = params;
+    if (!allowedDeepLinkProtocols.includes(protocol)) return;
+    switch (host) {
       case 'referral':
-        if (params.query && params.query.code) {
+        const referralCode = get(query, 'code');
+        if (referralCode) {
           updateNavigationLastScreenState({
             lastActiveScreen: CONFIRM_CLAIM,
-            lastActiveScreenParams: { code: params.query.code },
+            lastActiveScreenParams: { code: referralCode },
           });
         } else {
           Alert.alert('Invalid link', 'Referral code is missing');
         }
         break;
       case 'approve':
-        const {
-          query = { },
-        } = params;
-
         beginApproveLogin(query);
-
         break;
       case 'shapeshift':
-        const { query: { status: authStatus, auth: shapeshiftTokenHash } } = params;
+        const shapeshiftTokenHash = get(query, 'auth');
+        const authStatus = get(query, 'status');
         if (!authStatus || !shapeshiftTokenHash) break;
         dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
         break;
