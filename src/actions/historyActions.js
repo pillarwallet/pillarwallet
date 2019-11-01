@@ -22,7 +22,8 @@ import orderBy from 'lodash.orderby';
 import { Sentry } from 'react-native-sentry';
 import { sdkConstants } from '@smartwallet/sdk';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
-import { getEthereumProvider, uniqBy } from 'utils/common';
+
+// constants
 import {
   SET_HISTORY,
   TRANSACTION_PENDING_EVENT,
@@ -39,6 +40,8 @@ import {
   SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
   SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
+
+// utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
   checkIfKeyBasedAccount,
@@ -51,13 +54,18 @@ import {
   getActiveAccountId,
 } from 'utils/accounts';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
+import { getEthereumProvider, uniqBy } from 'utils/common';
 import { parseSmartWalletTransactions } from 'utils/smartWallet';
+
+// services
 import smartWalletService from 'services/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 
+// types
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
+// actions
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
@@ -353,7 +361,13 @@ export const restoreTransactionHistoryAction = () => {
       api.importedErc20TransactionHistory(walletAddress),
       api.importedEthTransactionHistory(walletAddress),
     ]);
+
     if (!allAssets || !allAssets.length) return;
+    if (!Array.isArray(allAssets)) {
+      // sentry issue ID 1308336621
+      Sentry.captureMessage('Wrong allAssets type received from back-end', { extra: { allAssets } });
+      return;
+    }
 
     const erc20History = _erc20History.filter(tx => {
       const hashExists = ethHistory.find(el => el.hash === tx.transactionHash);

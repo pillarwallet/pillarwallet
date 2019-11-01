@@ -169,6 +169,7 @@ const iconConnect = require('assets/icons/icon_receive.png');
 
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
+  forceRender = false;
 
   state = {
     showCamera: false,
@@ -200,17 +201,19 @@ class HomeScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const { activeAccount, navigation } = this.props;
-    const { activeAccount: nextActiveAccount } = nextProps;
-    const isFocused = navigation.isFocused();
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    const isFocused = this.props.navigation.isFocused();
+
     if (!isFocused) {
-      const activeAccountId = activeAccount && getAccountId(activeAccount);
-      const nextActiveAccountId = nextActiveAccount && getAccountId(nextActiveAccount);
-      // allow component update if screen is out of focus, but accounts has changed
-      return activeAccountId !== nextActiveAccountId;
+      if (!isEq) this.forceRender = true;
+      return false;
     }
 
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    if (this.forceRender) {
+      this.forceRender = false;
+      return true;
+    }
+
     return !isEq;
   }
 
