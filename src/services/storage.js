@@ -29,13 +29,13 @@ function Storage(name: string, opts: ?Object = {}) {
 
 Storage.prototype.connect = function () {
   this.needToReconnect = false;
-  this.dbInstance = new PouchDB(this.name, this.opts);
+  this.connection = new PouchDB(this.name, this.opts);
   console.log(`Connected to the database ${this.name}`);
 };
 
 Storage.prototype.db = function () {
   if (this.needToReconnect) this.connect();
-  return this.dbInstance;
+  return this.connection;
 };
 
 Storage.prototype.get = function (id: string) {
