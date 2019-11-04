@@ -28,12 +28,12 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import {
   connectSmartWalletAccountAction,
   initSmartWalletSdkAction,
   setSmartWalletUpgradeStatusAction,
   fetchVirtualAccountBalanceAction,
-  syncVirtualAccountTransactionsAction,
 } from 'actions/smartWalletActions';
 import { UPDATE_BALANCES, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -238,6 +238,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
     dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());
+    dispatch(fetchTransactionsHistoryAction());
     dispatch(checkForMissedAssetsAction());
   };
 };
@@ -272,7 +273,6 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     await dispatch(initSmartWalletSdkAction(privateKey));
     await dispatch(connectSmartWalletAccountAction(activeAccountId));
     dispatch(fetchVirtualAccountBalanceAction());
-    dispatch(syncVirtualAccountTransactionsAction());
 
     if (blockchainNetwork) {
       dispatch({
