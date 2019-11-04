@@ -518,7 +518,7 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
       assets: getAssetsAsList(accountAssets),
     });
 
-    if (newBalances && newBalances.length) {
+    if (!isEmpty(newBalances)) {
       const transformedBalances = transformAssetsToObject(newBalances);
       const updatedBalances = {
         ...balances,

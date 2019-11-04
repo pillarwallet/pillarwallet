@@ -85,7 +85,7 @@ type Props = {
   accounts: Accounts,
   smartWalletState: Object,
   blockchainNetworks: Object[],
-  activeAccount: Account,
+  activeAccount: ?Account,
   logScreenView: (view: string, screen: string) => void,
   fetchAllCollectiblesData: () => void,
   useBiometrics: boolean,
@@ -171,7 +171,7 @@ class AssetsScreen extends React.Component<Props, State> {
       accounts,
     } = this.props;
 
-    const { type: walletType } = activeAccount;
+    const { type: walletType } = activeAccount || {};
     const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
     const { id: activeBNetworkId, title: activeBNetworkTitle } = activeBNetwork;
 
