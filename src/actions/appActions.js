@@ -60,7 +60,8 @@ import {
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   SET_SMART_WALLET_UPGRADE_STATUS,
-  SET_SMART_WALLET_LAST_SYNCED_HASH,
+  SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
+  SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
 } from 'constants/smartWalletConstants';
 import {
   UPDATE_PAYMENT_NETWORK_BALANCES,
@@ -80,7 +81,7 @@ const BACKGROUND = 'background';
 const ANDROID = 'android';
 
 export const initAppAndRedirectAction = (appState: string, platform: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
 
@@ -91,7 +92,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
 
     // $FlowFixMe
-    const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings);
+    const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings, api);
 
     if (walletTimestamp) {
       const accounts = await loadAndMigrate('accounts', dispatch, getState);
@@ -196,13 +197,15 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
         upgradeStatus = null,
         accounts: smartAccounts = [],
         deploymentData = {},
-        lastSyncedHash = null,
+        lastSyncedPaymentId = null,
+        lastSyncedTransactionId = null,
       } = await storage.get('smartWallet');
       dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
       dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
       dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: smartAccounts });
       dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
-      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_HASH, payload: lastSyncedHash });
+      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
+      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 

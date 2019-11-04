@@ -42,12 +42,6 @@ import { fetchAssetTransactionsAction } from 'actions/historyActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 
-// models
-import type { Transaction } from 'models/Transaction';
-import type { Assets, Balances, Asset } from 'models/Asset';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts } from 'models/Account';
-
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
@@ -55,6 +49,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // utils
+import { checkIfSmartWalletAccount } from 'utils/accounts';
 import { baseColors, spacing, fontSizes, fontStyles } from 'utils/variables';
 import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
@@ -65,6 +60,7 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import assetsConfig from 'configs/assetsConfig';
 
 // selectors
+import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import {
@@ -74,6 +70,10 @@ import {
 import { accountAssetsSelector } from 'selectors/assets';
 
 // types
+import type { Transaction } from 'models/Transaction';
+import type { Assets, Balances, Asset } from 'models/Asset';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddressData } from 'models/Contacts';
 
 // local components
@@ -104,6 +104,7 @@ type Props = {
   resetHideRemoval?: Function,
   smartWalletState: Object,
   accounts: Accounts,
+  activeAccount: ?Account,
   paymentNetworkBalances: Balances,
   smartWalletFeatureEnabled: boolean,
   history: Array<*>,
@@ -249,10 +250,10 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   handleScrollWrapperEndDrag = e => {
-    const { fetchAssetTransactions, history } = this.props;
-    const {
-      assetData: { token },
-    } = this.props.navigation.state.params;
+    const { fetchAssetTransactions, history, activeAccount } = this.props;
+    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
+
+    const { assetData: { token } } = this.props.navigation.state.params;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
     const contentHeight = e.nativeEvent.contentSize.height;
     const offsetY = e.nativeEvent.contentOffset.y;
@@ -462,6 +463,7 @@ const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   availableStake: availableStakeSelector,
   assets: accountAssetsSelector,
+  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
