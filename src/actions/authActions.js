@@ -185,8 +185,6 @@ export const loginAction = (
         if (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
-
-        dispatch(labelUserAsLegacyAction());
       } else {
         api.init();
       }
@@ -199,6 +197,10 @@ export const loginAction = (
         type: UPDATE_USER,
         payload: { user, state: userState },
       });
+
+      if (userState === REGISTERED) {
+        dispatch(labelUserAsLegacyAction());
+      }
 
       const { address } = wallet;
       dispatch({
