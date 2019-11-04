@@ -24,13 +24,22 @@ import { Sentry } from 'react-native-sentry';
 function Storage(name: string, opts: ?Object = {}) {
   this.name = name;
   this.opts = { ...opts };
-  this.needToReconnect = false;
-  this.db = new PouchDB(this.name, this.opts);
+  this.connect();
 }
 
+Storage.prototype.connect = function () {
+  this.needToReconnect = false;
+  this.connection = new PouchDB(this.name, this.opts);
+  console.log(`Connected to the database ${this.name}`);
+};
+
+Storage.prototype.db = function () {
+  if (this.needToReconnect) this.connect();
+  return this.connection;
+};
+
 Storage.prototype.get = function (id: string) {
-  if (this.needToReconnect) this.reconnect();
-  return this.db.get(id).catch(() => ({}));
+  return this.db().get(id).catch(() => ({}));
 };
 
 Storage.prototype.getConflicts = function (): Promise<String[]> {
@@ -46,8 +55,8 @@ Storage.prototype.getConflicts = function (): Promise<String[]> {
 Storage.prototype.repair = async function () {
   const docs = await this.getAllDocs().then(({ rows }) => rows.map(({ doc }) => doc));
   if (!docs.length) return Promise.resolve();
-  await this.db.destroy();
-  this.db = new PouchDB(this.name, this.opts);
+  await this.db().destroy();
+  this.connect();
   const promises = docs.map(doc => {
     const {
       _id,
@@ -62,8 +71,7 @@ Storage.prototype.repair = async function () {
 
 const activeDocs = {};
 Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
-  if (this.needToReconnect) this.reconnect();
-  return this.db.get(id)
+  return this.db().get(id)
     .catch(err => {
       if (err.status !== 404) {
         throw err;
@@ -94,7 +102,7 @@ Storage.prototype.save = function (id: string, data: Object, forceRewrite: boole
           },
           data,
         );
-      return this.db.put(record, options);
+      return this.db().put(record, options);
     })
     .then(doc => {
       activeDocs[id] = false;
@@ -115,19 +123,15 @@ Storage.prototype.save = function (id: string, data: Object, forceRewrite: boole
 };
 
 Storage.prototype.getAllDocs = function () {
-  return this.db.allDocs({ conflicts: true });
-};
-
-Storage.prototype.viewCleanup = function () {
-  return this.db.viewCleanup();
+  return this.db().allDocs({ conflicts: true });
 };
 
 Storage.prototype.removeAll = function () {
-  return this.db.allDocs().then(result => {
+  return this.db().allDocs().then(result => {
     return Promise.all(result.rows.map(row => {
-      return this.db.remove(row.id, row.value.rev);
+      return this.db().remove(row.id, row.value.rev);
     }));
-  }).then(() => this.db.compact());
+  }).then(() => this.db().compact());
 };
 
 Storage.getInstance = function (name: string, opts: ?Object) {
@@ -138,13 +142,9 @@ Storage.getInstance = function (name: string, opts: ?Object) {
   return this._instances[name];
 };
 
-Storage.prototype.reconnect = function () {
-  this.needToReconnect = false;
-  this.db = new PouchDB(this.name, this.opts);
-};
-
 Storage.prototype.close = function () {
-  this.db.close();
+  console.log('Closing db connection');
+  this.db().close();
   this.needToReconnect = true;
 };
 
