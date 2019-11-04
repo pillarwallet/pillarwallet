@@ -134,11 +134,6 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     // only wallet timestamp was missing, let's update it to storage
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: walletTimestamp } }));
   }
-  // we check for previous value of `appSettings.wallet` as by this point `walletTimestamp` can be already set
-  // in tis piece we report a case if either wallet was empty or wallet timestamp AND we additionally check+
-  // if walletBackup is present because this would conflict with onboarding flow and will report to sentry
-  // because both wallet and wallet timestamp will be empty
-  if (walletBackup && (isWalletEmpty || !appSettings.wallet)) reportToSentry('Wallet login issue spotted');
 
   const walletAsString = !isWalletEmpty && JSON.stringify(wallet);
   // check backup and store if needed
@@ -161,7 +156,7 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
           profileLargeImage: apiUser.profileImage,
         };
         await dispatch(saveDbAction('user', { saveUser }, true));
-        console.log('RESTORED FROM API');
+        console.log('USER RESTORED FROM API');
       } else {
         console.log('UNABLE TO RESTORE USER FROM API');
       }
@@ -169,6 +164,12 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
       console.log('WALLET OBJECT IS STILL EMPTY');
     }
   }
+
+  // we check for previous value of `appSettings.wallet` as by this point `walletTimestamp` can be already set.
+  // in this piece we report a case if either wallet was empty or wallet timestamp AND we additionally check
+  // if walletBackup is present because this would conflict with onboarding flow and will report to sentry
+  // because both wallet and wallet timestamp will be empty
+  if (walletBackup && (isWalletEmpty || !appSettings.wallet)) reportToSentry('Wallet login issue spotted');
 
   return {
     wallet,
