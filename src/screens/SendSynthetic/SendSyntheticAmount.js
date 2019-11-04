@@ -94,7 +94,7 @@ const generateFormStructure = (intentError: ?string, maxAmount: number, decimals
     amount = parseNumber(amount.toString());
 
     if (amount > maxAmount) {
-      return 'Amount should not exceed the available synthetic asset liquidity';
+      return 'Amount should not exceed the max available';
     } else if (decimals === 0 && amount.toString().includes('.')) {
       return 'Amount should not contain decimal places';
     }
