@@ -164,6 +164,7 @@ class PeopleScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
   scrollViewRef: ScrollView;
+  forceRender = false;
 
   constructor(props: Props) {
     super(props);
@@ -199,11 +200,19 @@ class PeopleScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     const isFocused = this.props.navigation.isFocused();
+
     if (!isFocused) {
+      if (!isEq) this.forceRender = true;
       return false;
     }
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+
+    if (this.forceRender) {
+      this.forceRender = false;
+      return true;
+    }
+
     return !isEq;
   }
 

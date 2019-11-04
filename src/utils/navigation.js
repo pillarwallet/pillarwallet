@@ -17,11 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { getNavigationPathAndParamsState } from 'services/navigation';
+import { AUTH_FLOW } from 'constants/navigationConstants';
 
-export const UPDATE_ACCOUNTS = 'UPDATE_ACCOUNTS';
-export const ADD_ACCOUNT = 'ADD_ACCOUNT';
-export const ACCOUNT_TYPES = {
-  KEY_BASED: 'KEY_BASED',
-  SMART_WALLET: 'SMART_WALLET',
-  BITCOIN_WALLET: 'BITCOIN_WALLET',
+export const isNavigationAllowed = (): boolean => {
+  const pathAndParams = getNavigationPathAndParamsState();
+
+  if (!pathAndParams) {
+    return false;
+  }
+
+  const pathParts = pathAndParams.path.split('/');
+  const currentFlow = pathParts[0];
+
+  return currentFlow !== AUTH_FLOW;
 };

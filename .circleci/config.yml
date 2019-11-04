@@ -20,7 +20,7 @@ executors:
     working_directory: ~/pillarwallet
     resource_class: large
     docker:
-      - image: circleci/android:api-26-node8-alpha
+      - image: circleci/android:api-29-node
     environment:
       TERM: dumb
       _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
@@ -32,6 +32,15 @@ executors:
     working_directory: ~/pillarwallet
     docker:
       - image: circleci/openjdk:8-node-browsers
+
+  node10-executor:
+    working_directory: ~/pillarwallet
+    docker:
+      - image: circleci/node:10.14
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
+    resource_class: large
+    shell: /bin/bash --login -o pipefail
 
 aliases:
   - &restore_pod_cache
@@ -153,7 +162,7 @@ aliases:
 
 jobs:
   build-and-test:
-    executor: ios-executor
+    executor: node10-executor
     steps:
       - checkout
       - run:

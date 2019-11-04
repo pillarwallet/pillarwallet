@@ -69,6 +69,7 @@ import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
+import { labelUserAsLegacyAction } from 'actions/userActions';
 import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -197,6 +198,10 @@ export const loginAction = (
         type: UPDATE_USER,
         payload: { user, state: userState },
       });
+
+      if (userState === REGISTERED) {
+        dispatch(labelUserAsLegacyAction());
+      }
 
       const { address } = wallet;
       dispatch({

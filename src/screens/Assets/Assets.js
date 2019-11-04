@@ -44,7 +44,6 @@ import type { Transaction } from 'models/Transaction';
 import { fetchInitialAssetsAction } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { labelUserAsLegacyAction } from 'actions/userActions';
 
 // constants
 import {
@@ -92,7 +91,6 @@ type Props = {
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
-  labelUserAsLegacy: () => void,
   PPNTransactions: Transaction[],
 }
 
@@ -109,6 +107,7 @@ const VIEWS = {
 };
 
 class AssetsScreen extends React.Component<Props, State> {
+  forceRender = false;
   state = {
     showKeyWalletInsight: true,
     showSmartWalletInsight: false,
@@ -121,7 +120,6 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       assets,
       logScreenView,
-      labelUserAsLegacy,
     } = this.props;
 
     logScreenView('View assets list', 'Assets');
@@ -131,7 +129,6 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     fetchAllCollectiblesData();
-    labelUserAsLegacy();
 
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ supportsBiometrics: !!supported }))
@@ -139,11 +136,20 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isFocused = this.props.navigation.isFocused();
+    const { navigation } = this.props;
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    const isFocused = navigation.isFocused();
+
     if (!isFocused) {
+      if (!isEq) this.forceRender = true;
       return false;
     }
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+
+    if (this.forceRender) {
+      this.forceRender = false;
+      return true;
+    }
+
     return !isEq;
   }
 
@@ -368,7 +374,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  labelUserAsLegacy: () => dispatch(labelUserAsLegacyAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);

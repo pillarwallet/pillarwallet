@@ -40,6 +40,7 @@ import {
   getAssetsAsList,
   getBalance,
   getRate,
+  sortAssets,
 } from 'utils/assets';
 import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
@@ -71,6 +72,7 @@ import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from '
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -167,7 +169,7 @@ const CardNote = styled(BaseText)`
 type Props = {
   rates: Rates,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   user: Object,
   assets: Assets,
   searchOffers: (string, string, number) => void,
@@ -185,7 +187,7 @@ type Props = {
   connectedProviders: ExchangeProvider[],
   hasUnreadExchangeNotification: boolean,
   markNotificationAsSeen: Function,
-  oAuthAccessToken: string,
+  oAuthAccessToken: ?string,
   accounts: Accounts,
   smartWalletState: Object,
   deploySmartWallet: Function,
@@ -875,12 +877,11 @@ class ExchangeScreen extends React.Component<Props, State> {
     );
   };
 
-  generateAssetsOptions = (assets) => {
+  generateAssetsOptions = (assets: Assets) => {
     const { balances, paymentNetworkBalances } = this.props;
-    const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-    return assetsList
+
+    return sortAssets(assets)
       .filter(({ symbol }) => getBalance(balances, symbol) !== 0 || symbol === ETH)
-      .sort((a, b) => a.symbol.localeCompare(b.symbol))
       .map(({ symbol, iconUrl, ...rest }) => {
         const assetBalance = formatAmount(getBalance(balances, symbol));
         const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
@@ -908,11 +909,10 @@ class ExchangeScreen extends React.Component<Props, State> {
     paymentNetworkBalance: null,
   }));
 
-  generateSupportedAssetsOptions = (assets) => {
+  generateSupportedAssetsOptions = (assets: Asset[]) => {
     if (!Array.isArray(assets)) return [];
     const { balances, paymentNetworkBalances } = this.props;
     return [...assets] // prevent mutation of param
-      .sort((a, b) => a.symbol.localeCompare(b.symbol))
       .map(({ symbol, iconUrl, ...rest }) => {
         const rawAssetBalance = getBalance(balances, symbol);
         const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
@@ -1123,7 +1123,7 @@ const mapStateToProps = ({
   },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   offers,
   supportedAssets,
