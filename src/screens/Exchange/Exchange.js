@@ -31,7 +31,6 @@ import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import get from 'lodash.get';
-import { EXCHANGE_URL } from 'react-native-dotenv';
 import { InAppBrowser } from '@matt-block/react-native-in-app-browser';
 
 import { fiatCurrencies } from 'fixtures/assets';
@@ -43,7 +42,7 @@ import {
   getRate,
   sortAssets,
 } from 'utils/assets';
-import { isFiatProvider, isFiatCurrency, getProviderLogo } from 'utils/exchange';
+import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
 
@@ -779,10 +778,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const isTakeOfferPressed = pressedOfferId === offerId;
     const isSetAllowancePressed = pressedTokenAllowanceId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
-    const providerInfo = providersMeta.find(({ shim }) => shim === offerProvider) || {};
-    const { icon_large: providerIconPath } = providerInfo;
-    const providerLogoUri = providerIconPath && `${EXCHANGE_URL}/v2.0${providerIconPath}`;
-    const providerLogo = providerLogoUri ? { uri: providerLogoUri } : getProviderLogo(offerProvider);
+    const providerLogo = getOfferProviderLogo(providersMeta, offerProvider);
 
     const amountToBuyString = formatAmountDisplay(amountToBuy);
 

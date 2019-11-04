@@ -25,7 +25,6 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
-import { EXCHANGE_URL } from 'react-native-dotenv';
 
 import { Footer, ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -44,7 +43,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
-import { getProviderDisplayName, getProviderLogo } from 'utils/exchange';
+import { getProviderDisplayName, getOfferProviderLogo } from 'utils/exchange';
 
 import type { GasInfo } from 'models/GasInfo';
 import type { Asset, Balances, Rates } from 'models/Asset';
@@ -305,10 +304,9 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const errorMessage = !enoughBalance && 'Not enough ETH for transaction fee';
 
     const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
-    const { icon_large: providerIconPath, name } = providerInfo;
-    const providerLogoUri = providerIconPath && `${EXCHANGE_URL}/v2.0${providerIconPath}`;
-    const providerLogo = providerLogoUri ? { uri: providerLogoUri } : getProviderLogo(provider);
+    const { name } = providerInfo;
     const providerName = name || getProviderDisplayName(provider);
+    const providerLogo = getOfferProviderLogo(providersMeta, provider);
 
     return (
       <ContainerWithHeader

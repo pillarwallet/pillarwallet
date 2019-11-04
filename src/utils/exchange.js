@@ -19,8 +19,9 @@
 */
 import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
+import { EXCHANGE_URL } from 'react-native-dotenv';
 import { PROVIDER_MOONPAY, PROVIDER_SENDWYRE } from 'constants/exchangeConstants';
-
+import type { ProvidersMeta } from 'models/Offer';
 import { fiatCurrencies } from 'fixtures/assets';
 
 export const getProviderDisplayName = (provider?: string) => {
@@ -37,7 +38,7 @@ export const getProviderDisplayName = (provider?: string) => {
 const sendWyreLogo = require('assets/images/exchangeProviders/logo_sendwyre.png');
 const moonPayLogo = require('assets/images/exchangeProviders/logo_moonpay.png');
 
-export const getProviderLogo = (provider?: string) => {
+export const getLocallyStoredProviderLogo = (provider?: string) => {
   switch (provider) {
     case PROVIDER_MOONPAY:
       return moonPayLogo;
@@ -46,6 +47,16 @@ export const getProviderLogo = (provider?: string) => {
     default:
       return '';
   }
+};
+
+export const getOfferProviderLogo = (providersMeta: ProvidersMeta, offerProvider?: string) => {
+  if (!offerProvider) return '';
+  const providerInfo = providersMeta.find(({ shim }) => shim === offerProvider);
+  if (providerInfo) {
+    const { icon_large: providerIconPath } = providerInfo;
+    return { uri: `${EXCHANGE_URL}/v2.0${providerIconPath}` };
+  }
+  return getLocallyStoredProviderLogo(offerProvider);
 };
 
 export const isFiatProvider = (provider: string) => {
