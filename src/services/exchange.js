@@ -32,15 +32,13 @@ const buildApiUrl = (path: string, version?: string) => {
   return `${EXCHANGE_URL}/${path}`;
 };
 
-const buildAPIConfig = (accessToken: string) => {
-  return {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-  };
-};
+const buildAPIConfig = (accessToken: string) => ({
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+});
 
 export default class ExchangeService {
   io: SocketIO;

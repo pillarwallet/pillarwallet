@@ -71,7 +71,7 @@ import {
 } from 'actions/exchangeActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
-import type { Offer, fiatOffer, ExchangeSearchRequest, Allowance, ExchangeProvider, ProvidersMeta } from 'models/Offer';
+import type { Offer, FiatOffer, ExchangeSearchRequest, Allowance, ExchangeProvider, ProvidersMeta } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
@@ -604,7 +604,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  openSendWyre(selectedSellAmount: string, offer: fiatOffer) {
+  openSendWyre(selectedSellAmount: string, offer: FiatOffer) {
     const { accounts } = this.props;
     const destAddress = getActiveAccountAddress(accounts);
 
@@ -622,7 +622,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   }
 
-  onFiatOfferPress = (offer: fiatOffer) => {
+  onFiatOfferPress = (offer: FiatOffer) => {
     const {
       navigation,
     } = this.props;

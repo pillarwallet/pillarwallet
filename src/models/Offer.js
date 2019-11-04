@@ -34,7 +34,7 @@ export type Offer = {
   maxQuantity: number,
   allowanceSet: boolean,
 }
-export type fiatOffer = {
+export type FiatOffer = {
   provider: string,
   askRate: number | string,
   fromAssetCode: string,
