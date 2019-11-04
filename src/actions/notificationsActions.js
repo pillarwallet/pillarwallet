@@ -43,6 +43,7 @@ import {
   addContactAndSendWebSocketTxNoteMessageAction,
   decryptReceivedWebSocketTxNoteMessageAction,
 } from 'actions/txNoteActions';
+import { fetchBadgesAction } from 'actions/badgesActions';
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
 import {
@@ -54,6 +55,7 @@ import {
   SIGNAL,
   BCX,
   COLLECTIBLE,
+  BADGE,
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT } from 'constants/navigationConstants';
 import {
@@ -155,6 +157,7 @@ export const startListeningNotificationsAction = () => {
     if (SOCKET && SOCKET.socket && SOCKET.socket.readyState === 1) {
       SOCKET.onMessage(async response => {
         const data = JSON.parse(response.data.msg);
+
         if (data.type === CONNECTION_REQUESTED_EVENT) {
           dispatch(fetchInviteNotificationsAction());
         }
@@ -182,10 +185,14 @@ export const startListeningNotificationsAction = () => {
           dispatch(fetchAssetTransactionsAction(data.asset));
           dispatch(fetchAssetsBalancesAction());
         }
+        if (data.type === BADGE) {
+          dispatch(fetchBadgesAction(false));
+        }
         if (
           data.type === CONNECTION_REQUESTED_EVENT ||
           data.type === CONNECTION_COLLECTIBLE_EVENT ||
-          data.type === BCX
+          data.type === BCX ||
+          data.type === BADGE
         ) {
           const payload = {
             title: response.notification.title,
@@ -225,6 +232,9 @@ export const startListeningNotificationsAction = () => {
       }
       if (notification.type === COLLECTIBLE) {
         dispatch(fetchAllCollectiblesDataAction());
+      }
+      if (notification.type === BADGE) {
+        dispatch(fetchBadgesAction());
       }
       if (notification.type === SIGNAL) {
         dispatch(getExistingChatsAction());
@@ -317,6 +327,11 @@ export const startListeningOnOpenNotificationAction = () => {
         if (type === SIGNAL) {
           dispatch(getExistingChatsAction());
         }
+
+        if (type === BADGE) {
+          dispatch(fetchBadgesAction(false));
+        }
+
         const routeName = notificationRoute || HOME;
         const navigateToAppAction = NavigationActions.navigate({
           routeName: APP_FLOW,

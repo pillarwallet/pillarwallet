@@ -87,20 +87,21 @@ export const fetchBadgeAwardHistoryAction = () => {
       user: { data: { walletId } },
     } = getState();
     const badgeAwardEvents = await api.fetchNotifications(walletId, BADGE_REWARD_EVENT) || [];
-    const formattedBadgeAwardEvents = badgeAwardEvents
+    const badgeAwardEventsWithRequiredData = badgeAwardEvents.filter(({ payload }) => !!payload.name);
+    const formattedBadgeAwardEvents = badgeAwardEventsWithRequiredData
       .map(({
         _id,
         type,
         payload,
         createdAt,
       }) => {
+        const { name, imageUrl, id } = payload;
         return {
           _id,
           type,
-          name: payload.badgeType,
-          imageUrl: payload.imageUrl || 'https://s3.eu-west-2.amazonaws.com/pillar-qa-badges-images-eu-west-2-861741397496/new-wallet_180%403x.png',
-          // TODO, remove fallback when image is returned from backend
-          badgeId: payload.id || '1553717906', // TODO, remove fallback when id is returned from backend
+          name,
+          imageUrl,
+          badgeId: id,
           createdAt,
         };
       });
