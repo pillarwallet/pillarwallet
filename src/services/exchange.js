@@ -65,7 +65,7 @@ export default class ExchangeService {
       const wsUrl = EXCHANGE_URL
         .replace(/(https:\/\/)/gi, 'wss://')
         .replace(/(http:\/\/)/gi, 'ws://');
-      this.io = new SocketIO(`${wsUrl}:8080`, {
+      this.io = new SocketIO(`${wsUrl}:443`, {
         transports: ['websocket'],
         query: {
           token: accessToken,
