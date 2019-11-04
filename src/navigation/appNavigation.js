@@ -204,6 +204,7 @@ import {
   SMART_WALLET_INTRO,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
+  PPN_SEND_SYNTHETIC_ASSET_FLOW,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL_FLOW,
   TANK_WITHDRAWAL,
@@ -517,6 +518,19 @@ const ppnSendTokenFromAssetFlow = createStackNavigator(
   StackNavigatorModalConfig,
 );
 
+// PPN SEND SYNTHETIC ASSET FULL FLOW
+const ppnSendSyntheticAssetFlow = createStackNavigator(
+  {
+    [SEND_SYNTHETIC_ASSET]: SendSyntheticAsset,
+    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+    [SEND_SYNTHETIC_AMOUNT]: SendSyntheticAmount,
+    [SEND_SYNTHETIC_CONFIRM]: SendSyntheticConfirm,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorModalConfig,
+);
+
 // MANAGE WALLETS FLOW
 const manageWalletsFlow = createStackNavigator({
   [ACCOUNTS]: AccountsScreen,
@@ -565,6 +579,7 @@ const AppFlowNavigation = createStackNavigator(
     [TAB_NAVIGATION]: tabNavigation,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
+    [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
     [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
     [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
@@ -581,9 +596,6 @@ const AppFlowNavigation = createStackNavigator(
     [CONTACT_INFO]: ConnectedContactInfo,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
-    [SEND_SYNTHETIC_ASSET]: SendSyntheticAsset,
-    [SEND_SYNTHETIC_CONFIRM]: SendSyntheticConfirm,
-    [SEND_SYNTHETIC_AMOUNT]: SendSyntheticAmount,
   },
   modalTransition,
 );

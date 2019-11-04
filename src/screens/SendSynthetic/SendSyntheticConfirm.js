@@ -49,7 +49,7 @@ import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  session: Object,
+  isOnline: boolean,
   baseFiatCurrency: string,
   supportedAssets: Asset[],
   availableStake: number,
@@ -128,7 +128,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      session,
+      isOnline,
       availableStake,
       contacts,
       contactsSmartAddresses,
@@ -143,7 +143,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
     let errorMessage;
     if (availableStake < fromAmount) errorMessage = 'Not enough PLR in tank';
-    else if (!session.isOnline) errorMessage = 'Cannot send while offline';
+    else if (!isOnline) errorMessage = 'Cannot send while offline';
 
     const contact = findMatchingContact(toAddress, contacts, contactsSmartAddresses);
     const recipientUsername = getUserName(contact);
@@ -176,7 +176,11 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               <Value>{`${fromAmount} PLR`}</Value>
             </LabeledRow>
           </View>
-          {session.isOnline && !!recipientUsername &&
+          <LabeledRow>
+            <Label>Est. Network Fee</Label>
+            <Value>free</Value>
+          </LabeledRow>
+          {isOnline && !!recipientUsername &&
             <TextInput
               inputProps={{
                 onChange: (text) => this.handleNoteChange(text),
@@ -209,12 +213,12 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  session: { data: session },
+  session: { data: { isOnline } },
   appSettings: { data: { baseFiatCurrency } },
   assets: { supportedAssets },
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
 }) => ({
-  session,
+  isOnline,
   baseFiatCurrency,
   supportedAssets,
   contacts,
