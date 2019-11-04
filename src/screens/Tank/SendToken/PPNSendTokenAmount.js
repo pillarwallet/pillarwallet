@@ -23,6 +23,8 @@ import { TouchableOpacity, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import { SDK_PROVIDER } from 'react-native-dotenv';
+
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -142,8 +144,8 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
       gasPrice: 0,
       txFeeInWei: 0,
       usePPN: true,
-      symbol: this.assetData.token,
-      contractAddress: this.assetData.contractAddress,
+      symbol: this.assetData.symbol,
+      contractAddress: this.assetData.address,
       decimals: this.assetData.decimals,
     };
 
@@ -172,7 +174,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
       baseFiatCurrency,
     } = this.props;
 
-    const { token, icon, decimals } = this.assetData;
+    const { symbol, iconMonoUrl, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     // balance
@@ -194,12 +196,13 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
+    const icon = `${SDK_PROVIDER}/${iconMonoUrl}?size=3`;
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
-    const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
+    const formFields = getAmountFormFields({ icon, currency: symbol, valueInFiatOutput });
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: `Send ${this.assetData.token} via PPN` }] }}
+        headerProps={{ centerItems: [{ title: `Send ${this.assetData.symbol} via PPN` }] }}
         keyboardAvoidFooter={
           <FooterWrapper>
             {!!value && !!parseFloat(value.amount) &&
@@ -229,7 +232,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
                 <Label small>Available Balance</Label>
                 <TextRow>
                   <SendTokenDetailsValue>
-                    {formattedBalance} {token}
+                    {formattedBalance} {symbol}
                   </SendTokenDetailsValue>
                   <HelperText>{formattedBalanceInFiat}</HelperText>
                 </TextRow>

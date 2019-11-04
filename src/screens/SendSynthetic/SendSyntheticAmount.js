@@ -18,10 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TextInput } from 'react-native';
+import { Keyboard, TouchableOpacity } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import t from 'tcomb-form-native';
 import get from 'lodash.get';
@@ -30,117 +31,70 @@ import debounce from 'lodash.debounce';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
+import { BaseText, Label, TextLink } from 'components/Typography';
+import { Wrapper } from 'components/Layout';
 
 // actions
 import { initSyntheticsServiceAction } from 'actions/syntheticsActions';
 
 // utils, services
-import { spacing, UIColors } from 'utils/variables';
-import { isValidNumber } from 'utils/common';
-import { getAssetData, getAssetsAsList } from 'utils/assets';
+import { fontStyles, spacing, UIColors } from 'utils/variables';
+import { formatAmount, formatFiat, isValidNumber, parseNumber } from 'utils/common';
+import { getAssetData, getAssetsAsList, getRate } from 'utils/assets';
 import syntheticsService from 'services/synthetics';
+import { getAmountFormFields } from 'utils/formHelpers';
 
 // constants
-import { ETH, PLR } from 'constants/assetsConstants';
-import { SEND_SYNTHETIC_CONFIRM } from 'constants/navigationConstants';
+import { defaultFiatCurrency, PLR } from 'constants/assetsConstants';
+import { SEND_SYNTHETIC_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models
-import type { Asset, Assets } from 'models/Asset';
-import type { SyntheticTransaction } from 'models/Transaction';
+import type { Asset, Assets, Rates } from 'models/Asset';
+import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 
 type Props = {
   accountAssets: Assets,
   supportedAssets: Asset[],
   initSyntheticsService: Function,
   navigation: NavigationScreenProp<*>,
+  rates: Rates,
+  baseFiatCurrency: string,
+  isOnline: boolean,
 };
 
 type State = {
-  formOptions: Object,
-  value: Object,
+  value: ?{ amount: ?string },
   submitPressed: boolean,
   intentError: ?string,
+  inputHasError: boolean,
 };
 
 const { Form } = t.form;
 
-function SelectorInputTemplate(locals) {
-  const {
-    config: {
-      label,
-      hasInput,
-      wrapperStyle,
-      placeholderSelector,
-      placeholderInput,
-      options,
-      inputAddonText,
-      inputRef,
-      onSelectorOpen,
-    },
-  } = locals;
-  const errorMessage = locals.error;
-  const inputProps = {
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    keyboardType: locals.keyboardType,
-    autoCapitalize: locals.autoCapitalize,
-    maxLength: 42,
-    label,
-    placeholderSelector,
-    placeholder: placeholderInput,
-    onSelectorOpen,
-  };
+const generateFormStructure = (intentError: ?string, maxAmount: number, decimals: number) => {
+  const Amount = t.refinement(t.String, (amount): boolean => {
+    if (!isValidNumber(amount.toString()) || !!intentError) return false;
 
-  return (
-    <SelectorInput
-      inputProps={inputProps}
-      options={options}
-      optionsTitle="Assets"
-      errorMessage={errorMessage}
-      hasInput={hasInput}
-      wrapperStyle={wrapperStyle}
-      value={locals.value}
-      inputAddonText={inputAddonText}
-      inputRef={inputRef}
-    />
-  );
-}
+    if (decimals === 0 && amount.toString().includes('.')) return false;
+    amount = parseFloat(amount.toString());
 
-const generateFormStructure = (intentError: ?string) => {
-  let amount;
-
-  const FromOption = t.refinement(t.Object, ({ selector, input }) => {
-    if (!selector
-      || !Object.keys(selector).length
-      || !input
-      || !isValidNumber(input)
-      || !!intentError) return false;
-
-    const { decimals } = selector;
-    amount = parseFloat(input);
-
-    return decimals !== 0 || !amount.toString().includes('.');
+    return (decimals !== 0 || !amount.toString().includes('.')) && amount <= maxAmount;
   });
 
-  FromOption.getValidationErrorMessage = ({ selector, input }) => {
-    const { decimals } = selector;
-
-    if (!isValidNumber(input.toString())) {
+  Amount.getValidationErrorMessage = (amount) => {
+    if (!isValidNumber(amount.toString())) {
       return 'Incorrect number entered.';
     }
 
-    if (!Object.keys(selector).length) {
-      return 'Asset should be selected.';
-    } else if (!input) {
-      return false; // should still validate (to not trigger search if empty), yet error should not be visible to user
-    } else if (parseFloat(input) < 0) {
-      return 'Amount should be bigger than 0.';
+    amount = parseNumber(amount.toString());
+
+    if (amount > maxAmount) {
+      return 'Amount should not exceed the available synthetic asset liquidity';
     } else if (decimals === 0 && amount.toString().includes('.')) {
       return 'Amount should not contain decimal places';
     }
@@ -148,20 +102,15 @@ const generateFormStructure = (intentError: ?string) => {
   };
 
   return t.struct({
-    fromInput: FromOption,
+    amount: Amount,
   });
 };
 
-const parseNumericAmount = value => Number(get(value, 'fromInput.input', 0));
+const parseNumericAmount = value => parseNumber(get(value, 'amount', 0));
 
 const BackgroundWrapper = styled.View`
   background-color: ${UIColors.defaultBackgroundColor};
   flex: 1;
-`;
-
-const FormWrapper = styled.View`
-  padding: 0 ${spacing.large}px;
-  margin-top: ${spacing.large}px;
 `;
 
 const FooterInner = styled.View`
@@ -173,114 +122,120 @@ const FooterInner = styled.View`
   background-color: ${UIColors.defaultBackgroundColor};
 `;
 
+const SendTokenDetails = styled.View``;
+
+const SendTokenDetailsValue = styled(BaseText)`
+  ${fontStyles.medium};
+`;
+
+const ActionsWrapper = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const HelperText = styled(BaseText)`
+  ${fontStyles.medium};
+  color: ${UIColors.placeholderTextColor};
+  margin-left: 4px;
+`;
+
+const TextRow = styled.View`
+  flex-direction: row;
+`;
+
 class SendSyntheticAsset extends React.Component<Props, State> {
   syntheticsForm: t.form;
-  fromInputRef: TextInput;
   receiver: string;
+  source: string;
+  assetData: Asset;
+  assetBalance: number;
 
   constructor(props: Props) {
     super(props);
+    this.source = props.navigation.getParam('source', '');
     this.receiver = props.navigation.getParam('receiver', '');
+    this.assetData = props.navigation.getParam('assetData', {});
+    this.assetBalance = get(this.assetData, 'balance', 0);
+    const intentError = !this.assetBalance
+      ? 'Asset has no available liquidity'
+      : null;
     this.state = {
-      intentError: null,
+      intentError,
       submitPressed: false,
-      value: {
-        fromInput: {
-          selector: {},
-          input: '',
-        },
-      },
-      formOptions: {
-        fields: {
-          fromInput: {
-            keyboardType: 'decimal-pad',
-            autoCapitalize: 'words',
-            template: SelectorInputTemplate,
-            config: {
-              label: 'Synthetic asset to send',
-              hasInput: true,
-              options: [],
-              horizontalOptions: [],
-              placeholderSelector: 'select',
-              placeholderInput: '0',
-              inputRef: (ref) => { this.fromInputRef = ref; },
-            },
-            transformer: {
-              parse: (value) => {
-                let formattedAmount = value.input;
-                if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
-                return { ...value, input: formattedAmount };
-              },
-              format: (value) => {
-                let formattedAmount = value.input;
-                if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
-                return { ...value, input: formattedAmount };
-              },
-            },
-          },
-        },
-      },
+      value: null,
+      inputHasError: false,
     };
     this.handleFormChange = debounce(this.handleFormChange, 500);
   }
 
   componentDidMount() {
-    this.generateSupportedAssetsOptions();
     this.props.initSyntheticsService();
   }
 
-  generateSupportedAssetsOptions = () => {
-    const { supportedAssets } = this.props;
-    const assets = [...supportedAssets] // prevent mutation of param
-      .sort((a, b) => a.symbol.localeCompare(b.symbol))
-      .map(({ symbol, iconUrl, ...rest }) => ({
-        key: symbol,
-        value: symbol,
-        icon: iconUrl,
-        iconUrl,
-        symbol,
-        ...rest,
-      }));
-    const initialFormState = {
-      ...this.state.value,
-      fromInput: {
-        selector: assets.find(({ symbol }) => symbol === ETH) || {},
-        input: '',
-      },
-    };
-    const thisStateFormOptionsCopy = { ...this.state.formOptions };
-    thisStateFormOptionsCopy.fields.fromInput.config.options = assets;
-    this.setState({ formOptions: thisStateFormOptionsCopy, value: initialFormState });
+
+  checkFormInputErrors = () => {
+    if (!this.syntheticsForm) return;
+    const { inputHasError } = this.state;
+    if (!isEmpty(get(this.syntheticsForm.validate(), 'errors'))) {
+      this.setState({ inputHasError: true });
+    } else if (inputHasError) {
+      this.setState({ inputHasError: false });
+    }
   };
 
   handleFormChange = (value: Object) => {
     const { intentError } = this.state;
     let updatedState = { value };
+
+    // reset intent error on value change
     if (intentError) updatedState = { ...updatedState, intentError: null };
     this.setState(updatedState);
-    if (this.syntheticsForm) this.syntheticsForm.getValue(); // validates form
+
+    this.checkFormInputErrors(); // validates form
+  };
+
+  formSubmitComplete = (callback?: Function = () => {}) => {
+    this.setState({ submitPressed: false }, callback);
   };
 
   handleFormSubmit = () => {
     const { submitPressed, value } = this.state;
     if (submitPressed) return;
     this.setState({ submitPressed: true, intentError: null }, () => {
-      const validation = this.syntheticsForm.validate();
-      const { errors = [] } = validation;
-      const assetCode = get(value, 'fromInput.selector.symbol');
-      if (errors.length || !assetCode) {
-        this.setState({ submitPressed: false });
+      const { navigation } = this.props;
+      const amount = parseNumericAmount(value);
+      Keyboard.dismiss();
+      const { symbol: assetCode, address: contractAddress, decimals } = this.assetData;
+      if (assetCode === PLR) {
+        // go through regular confirm as PLR is staked by the user already so he owns it
+        const transactionPayload: TokenTransactionPayload = {
+          to: this.receiver,
+          amount,
+          gasLimit: 0,
+          gasPrice: 0,
+          txFeeInWei: 0,
+          usePPN: true,
+          symbol: assetCode,
+          contractAddress,
+          decimals,
+        };
+        this.formSubmitComplete(() => {
+          navigation.navigate(SEND_TOKEN_CONFIRM, {
+            transactionPayload,
+            source: this.source,
+          });
+        });
         return;
       }
-      const amount = parseNumericAmount(value);
-      const { navigation, accountAssets, supportedAssets } = this.props;
+      const { accountAssets, supportedAssets } = this.props;
       const assetsData = getAssetsAsList(accountAssets);
       const assetData = getAssetData(assetsData, supportedAssets, PLR);
       syntheticsService
         .createExchangeIntent(this.receiver, amount, assetCode)
         .then((result) => {
           const { output: { transactionId, exchangeAmount } } = result;
-          this.setState({ submitPressed: false }, () => {
+          this.formSubmitComplete(() => {
             const syntheticTransaction: SyntheticTransaction = {
               transactionId,
               fromAmount: exchangeAmount,
@@ -288,9 +243,11 @@ class SendSyntheticAsset extends React.Component<Props, State> {
               toAssetCode: assetCode,
               toAddress: this.receiver,
             };
+            Keyboard.dismiss();
             navigation.navigate(SEND_SYNTHETIC_CONFIRM, {
               syntheticTransaction,
               assetData,
+              source: this.source,
             });
           });
         })
@@ -304,20 +261,53 @@ class SendSyntheticAsset extends React.Component<Props, State> {
     });
   };
 
+  useMaxValue = () => {
+    const amount = formatAmount(this.assetBalance);
+    this.setState({ value: { amount } });
+  };
+
   render() {
+    const { rates, baseFiatCurrency, isOnline } = this.props;
     const {
       value,
-      formOptions,
       submitPressed,
       intentError,
+      inputHasError,
     } = this.state;
-    const inputValue = get(value, 'fromInput.input');
-    const showNextButton = !submitPressed && !isEmpty(inputValue);
-    const isNextButtonDisabled = parseNumericAmount(value) <= 0;
+
+    // asset data
+    const { symbol, decimals, iconMonoUrl } = this.assetData;
+
+    // balance
+    const balanceFormatted = formatAmount(this.assetBalance);
+    const balanceTitle = `Available ${symbol === PLR ? 'balance' : 'liquidity'}`;
+
+    // value
+    const currentAmount = parseNumericAmount(value);
+    const showNextButton = !submitPressed && !isEmpty(value);
+
+    // value in fiat
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const valueInFiat = currentAmount * getRate(rates, symbol, fiatCurrency);
+    const valueInFiatFormatted = formatFiat(valueInFiat, baseFiatCurrency);
+    const totalInFiat = this.assetBalance * getRate(rates, symbol, fiatCurrency);
+    const totalInFiatFormatted = formatFiat(totalInFiat, baseFiatCurrency);
+
+    // form
+    const icon = `${SDK_PROVIDER}/${iconMonoUrl}?size=3`;
+    const formStructure = generateFormStructure(intentError, this.assetBalance, decimals);
+    const formFields = getAmountFormFields({ icon, currency: symbol, valueInFiatFormatted });
+
+    // submit button
+    const isNextButtonDisabled = inputHasError
+      || parseNumericAmount(value) <= 0
+      || !isOnline
+      || !!intentError;
     const nextButtonTitle = 'Next';
+
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Send synthetic asset' }] }}
+        headerProps={{ centerItems: [{ title: `Send synthetic ${symbol}` }] }}
         keyboardAvoidFooter={(
           <FooterInner>
             {showNextButton &&
@@ -335,15 +325,29 @@ class SendSyntheticAsset extends React.Component<Props, State> {
         minAvoidHeight={200}
       >
         <BackgroundWrapper>
-          <FormWrapper>
+          <Wrapper regularPadding>
             <Form
               ref={node => { this.syntheticsForm = node; }}
-              type={generateFormStructure(intentError)}
-              options={formOptions}
+              type={formStructure}
+              options={formFields}
               value={value}
               onChange={this.handleFormChange}
             />
-          </FormWrapper>
+            <ActionsWrapper>
+              <SendTokenDetails>
+                <Label small>{balanceTitle}</Label>
+                <TextRow>
+                  <SendTokenDetailsValue>
+                    {balanceFormatted} {symbol}
+                  </SendTokenDetailsValue>
+                  <HelperText>{totalInFiatFormatted}</HelperText>
+                </TextRow>
+              </SendTokenDetails>
+              <TouchableOpacity onPress={this.useMaxValue}>
+                <TextLink>Send All</TextLink>
+              </TouchableOpacity>
+            </ActionsWrapper>
+          </Wrapper>
         </BackgroundWrapper>
       </ContainerWithHeader>
     );
@@ -352,8 +356,14 @@ class SendSyntheticAsset extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { supportedAssets },
+  rates: { data: rates },
+  appSettings: { data: { baseFiatCurrency } },
+  session: { data: { isOnline } },
 }) => ({
   supportedAssets,
+  rates,
+  baseFiatCurrency,
+  isOnline,
 });
 
 const structuredSelector = createStructuredSelector({

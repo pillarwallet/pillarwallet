@@ -53,7 +53,7 @@ import {
   PAYMENT_PROCESSED,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { ETH, PLR, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
+import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 
 import {
   TX_PENDING_STATUS,
@@ -82,7 +82,6 @@ import {
   SEND_TOKEN_AMOUNT,
   ACCOUNTS,
   SEND_SYNTHETIC_AMOUNT,
-  PPN_SEND_TOKEN_AMOUNT,
 } from 'constants/navigationConstants';
 
 // configs
@@ -1314,13 +1313,8 @@ export const navigateToSendTokenAmountAction = (navOptions: SendNavigateOptions)
       params: navOptions,
     });
 
-    const tokenSymbol = get(navOptions, 'assetData.symbol');
-    const ppnRouteName = tokenSymbol === PLR
-      ? PPN_SEND_TOKEN_AMOUNT
-      : SEND_SYNTHETIC_AMOUNT;
-
     const ppnSendFlow = NavigationActions.navigate({
-      routeName: ppnRouteName,
+      routeName: SEND_SYNTHETIC_AMOUNT,
       params: navOptions,
     });
 

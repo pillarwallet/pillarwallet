@@ -56,12 +56,14 @@ import type { Asset, Assets } from 'models/Asset';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
+import { availableStakeSelector } from 'selectors/paymentNetwork';
 
 type Props = {
   accountAssets: Assets,
   supportedAssets: Asset[],
   initSyntheticsService: Function,
   navigation: NavigationScreenProp<*>,
+  availableStake: number,
 };
 
 type State = {
@@ -91,9 +93,13 @@ class SendSyntheticAsset extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { accountAssets, supportedAssets } = props;
+    const { accountAssets, supportedAssets, availableStake } = props;
     const assetsData = getAssetsAsList(accountAssets);
-    this.defaultSyntheticAsset = getAssetData(assetsData, supportedAssets, PLR);
+    this.defaultSyntheticAsset = {
+      ...getAssetData(assetsData, supportedAssets, PLR),
+      balance: availableStake,
+      isSynthetic: true,
+    };
   }
 
   componentDidMount() {
@@ -115,10 +121,14 @@ class SendSyntheticAsset extends React.Component<Props, State> {
         const syntheticAssets = get(result, 'output.balanceResults', []);
         const availableAssets = syntheticAssets.reduce((availableList, syntheticAsset) => {
           const assetSymbol = get(syntheticAsset, 'token.symbol');
-          const assetBalance = get(syntheticAsset, 'value', 0);
+          const assetBalance = Number(get(syntheticAsset, 'value', 0));
           const assetData = getAssetData(assetsData, supportedAssets, assetSymbol);
           if (!isEmpty(assetData) && assetBalance > 0) {
-            availableList.push(assetData);
+            availableList.push({
+              ...assetData,
+              balance: assetBalance,
+              isSynthetic: true,
+            });
           }
           return availableList;
         }, []);
@@ -145,14 +155,10 @@ class SendSyntheticAsset extends React.Component<Props, State> {
     if (assetsConfig[item.symbol] && !assetsConfig[item.symbol].send) return null;
 
     const { navigation } = this.props;
-    const assetData = {
-      ...item,
-      isSynthetic: true,
-    };
 
     return (
       <ListItemWithImage
-        onPress={() => navigation.navigate(SEND_TOKEN_CONTACTS, { assetData })}
+        onPress={() => navigation.navigate(SEND_TOKEN_CONTACTS, { assetData: item })}
         label={item.name}
         subtext={item.symbol}
         itemImageUrl={`${SDK_PROVIDER}/${item.iconUrl}?size=3`}
@@ -218,6 +224,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   accountAssets: accountAssetsSelector,
+  availableStake: availableStakeSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
