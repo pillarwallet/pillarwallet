@@ -80,7 +80,7 @@ const BACKGROUND = 'background';
 const ANDROID = 'android';
 
 export const initAppAndRedirectAction = (appState: string, platform: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
 
@@ -91,7 +91,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
 
     // $FlowFixMe
-    const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings);
+    const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings, api);
 
     if (walletTimestamp) {
       const accounts = await loadAndMigrate('accounts', dispatch, getState);
