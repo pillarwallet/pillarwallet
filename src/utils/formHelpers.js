@@ -35,7 +35,7 @@ export function makeAmountForm(
   const Amount = t.refinement(t.String, (amount): boolean => {
     if (!isValidNumber(amount.toString())) return false;
 
-    if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+    if (decimals === 0 && amount.toString().includes('.')) {
       return false;
     }
 
@@ -68,8 +68,8 @@ export function makeAmountForm(
        */
       return null;
     } else if (amount < minAmount) {
-      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
-    } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+      return `Amount should be greater than ${minAmount} ETH)`;
+    } else if (decimals === 0 && amount.toString().includes('.')) {
       return 'Amount should not contain decimal places';
     }
     return 'Amount should be specified.';
