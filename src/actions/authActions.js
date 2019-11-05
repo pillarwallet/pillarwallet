@@ -190,8 +190,6 @@ export const loginAction = (
         // to get exchange supported assets in order to show only supported assets on exchange selectors
         // and show exchange button on supported asset screen only
         dispatch(getExchangeSupportedAssetsAction());
-
-        dispatch(labelUserAsLegacyAction());
       } else {
         api.init();
       }
