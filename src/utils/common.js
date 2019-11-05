@@ -56,16 +56,36 @@ export const getRandomInt = (min: number, max: number): number => {
   return Math.floor(Math.random() * ((max - min) + 1)) + min;
 };
 
-export const decodeETHAddress = (encodedAddress: string): string => {
-  if (!encodedAddress || !encodedAddress.startsWith('ethereum:')) {
-    return encodedAddress;
-  }
+/**
+ * Extracts the address part from a string on the form of '[prefix]:[address]'
+ *
+ * Examples:
+ *   decodeAddress('ethereum', 'ethereum:0xaddress') -> 0xaddress
+ *   decodeAddress( 'bitcoin',  'bitcoin:1address' ) -> 1address
+ *
+ * @param prefix         String the prefix part
+ * @param encodedAddress String the '[prefx]:[address]' string
+ *
+ * @return String the address part
+ */
+const decodeAddress = (prefix: string, encodedAddress?: string): string => {
+  if (!encodedAddress || encodedAddress === '') return '';
 
-  if (encodedAddress.length >= 51) {
-    return encodedAddress.substr(9, 42);
+  const len = prefix.length + 1;
+
+  if (encodedAddress.substr(0, len) === `${prefix}:`) {
+    return encodedAddress.substr(len);
   }
 
   return encodedAddress;
+};
+
+export const decodeBTCAddress = (encodedAddress: string): string => {
+  return decodeAddress('bitcoin', encodedAddress);
+};
+
+export const decodeETHAddress = (encodedAddress: string): string => {
+  return decodeAddress('ethereum', encodedAddress);
 };
 
 export const pipe = (...fns: Function[]) => {
