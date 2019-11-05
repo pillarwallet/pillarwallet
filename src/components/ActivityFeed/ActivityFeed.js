@@ -345,6 +345,7 @@ class ActivityFeed extends React.Component<Props, State> {
       let rightColumnInnerStyle = {};
       let customAddonAlignLeft = false;
       const imageProps = {};
+
       if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
         imageProps.itemImageSource = PPNIcon;
         trxData.hideAmount = true;
