@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Share, RefreshControl } from 'react-native';
 import isEqual from 'lodash.isequal';
+import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
@@ -69,12 +70,13 @@ import {
 } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
-// types
+// models, types
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances, Asset } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddressData } from 'models/Contacts';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // local components
 import ReceiveModal from './ReceiveModal';
@@ -207,7 +209,7 @@ class AssetScreen extends React.Component<Props, State> {
     const { assetData: { token }, resetHideRemoval } = navigation.state.params;
     fetchAssetTransactions(token);
     if (resetHideRemoval) resetHideRemoval();
-    if (!exchangeSupportedAssets.length) getExchangeSupportedAssets();
+    if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
     logScreenView('View asset', 'Asset', `asset-${token}`);
   }
 
@@ -323,7 +325,7 @@ class AssetScreen extends React.Component<Props, State> {
       return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
-    const isSupportedByExchange = !!exchangeSupportedAssets.find(({ symbol }) => symbol === token);
+    const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
 
     return (
       <ContainerWithHeader
@@ -446,7 +448,7 @@ const mapStateToProps = ({
     },
   },
   exchange: { exchangeSupportedAssets },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   rates,
   baseFiatCurrency,
@@ -471,7 +473,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   fetchAssetsBalances: () => {
     dispatch(fetchAssetsBalancesAction());
   },
