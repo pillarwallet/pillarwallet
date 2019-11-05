@@ -42,15 +42,16 @@ import { findMatchingContact, getUserName } from 'utils/contacts';
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 
-// models
+// models, types
 import type { Asset } from 'models/Asset';
 import type { SyntheticTransaction } from 'models/Transaction';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   isOnline: boolean,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   supportedAssets: Asset[],
   availableStake: number,
   contacts: ApiUser[],
@@ -217,7 +218,7 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   assets: { supportedAssets },
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   isOnline,
   baseFiatCurrency,
   supportedAssets,

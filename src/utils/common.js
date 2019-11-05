@@ -384,21 +384,17 @@ export const isCaseInsensitiveMatch = (a: string, b: string): boolean => {
 export const makePromiseCancelable = (promise: Promise<any>) => {
   let isCancelled = false;
 
-  const wrappedPromise = new Promise((resolve, reject) => {
-    const cancelledErrorPayload = { isCanceled: true };
-    promise
-      .then((res) => isCancelled
-        ? reject(cancelledErrorPayload)
-        : resolve(res),
-      )
-      .catch((err) => isCancelled
-        ? reject(cancelledErrorPayload)
-        : reject(err),
-      );
+  const cancelablePromise = new Promise((resolve, reject) => {
+    const cancelResolver = () => reject(new Error({ isCanceled: true }));
+    if (isCancelled) {
+      promise.then(cancelResolver).catch(cancelResolver);
+    } else {
+      promise.then(resolve).catch(reject);
+    }
   });
 
   return {
-    request: () => wrappedPromise,
-    cancel: () => { isCancelled = true; },
+    request: () => cancelablePromise, // returns original promise wrapped with cancel check
+    cancel: () => { isCancelled = true; }, // isCancelled sets promise to be cancelled
   };
 };

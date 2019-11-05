@@ -56,11 +56,12 @@ import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 // selectors
 import { activeAccountSelector } from 'selectors';
 
-// models
+// models, types
 import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { SendNavigateOptions } from 'models/Navigation';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -393,7 +394,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   session: { data: { contactsSmartAddressesSynced, isOnline } },
   blockchainNetwork: { data: blockchainNetworks },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   accounts,
   localContacts,
   wallet,
@@ -412,7 +413,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   navigateToSendTokenAmount: (options: SendNavigateOptions) => dispatch(navigateToSendTokenAmountAction(options)),
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });

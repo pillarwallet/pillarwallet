@@ -53,17 +53,18 @@ import { SEND_SYNTHETIC_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigation
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 
-// models
+// models, types
 import type { Asset, Assets, Rates } from 'models/Asset';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   accountAssets: Assets,
   supportedAssets: Asset[],
-  initSyntheticsService: Function,
+  initSyntheticsService: () => void,
   navigation: NavigationScreenProp<*>,
   rates: Rates,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   isOnline: boolean,
 };
 
@@ -78,7 +79,7 @@ const { Form } = t.form;
 
 const generateFormStructure = (intentError: ?string, maxAmount: number, decimals: number) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
-    if (!isValidNumber(amount.toString()) || !!intentError) return false;
+    if (!isValidNumber(amount.toString()) || intentError) return false;
 
     if (decimals === 0 && amount.toString().includes('.')) return false;
     amount = parseFloat(amount.toString());
@@ -153,9 +154,10 @@ class SendSyntheticAsset extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.source = props.navigation.getParam('source', '');
-    this.receiver = props.navigation.getParam('receiver', '');
-    this.assetData = props.navigation.getParam('assetData', {});
+    const { navigation: { getParam: getNavigationParam } } = props;
+    this.source = getNavigationParam('source', '');
+    this.receiver = getNavigationParam('receiver', '');
+    this.assetData = getNavigationParam('assetData', {});
     this.assetBalance = get(this.assetData, 'balance', 0);
     const intentError = !this.assetBalance
       ? 'Asset has no available liquidity'
@@ -359,7 +361,7 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   session: { data: { isOnline } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   supportedAssets,
   rates,
   baseFiatCurrency,
@@ -375,7 +377,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   initSyntheticsService: () => dispatch(initSyntheticsServiceAction()),
 });
 

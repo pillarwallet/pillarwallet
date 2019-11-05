@@ -50,18 +50,19 @@ import { PLR } from 'constants/assetsConstants';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
+import { availableStakeSelector } from 'selectors/paymentNetwork';
 
-// models
+// models, types
 import type { Asset, Assets } from 'models/Asset';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
-import { availableStakeSelector } from 'selectors/paymentNetwork';
 
 type Props = {
   accountAssets: Assets,
   supportedAssets: Asset[],
-  initSyntheticsService: Function,
+  initSyntheticsService: () => void,
   navigation: NavigationScreenProp<*>,
   availableStake: number,
 };
@@ -218,7 +219,7 @@ class SendSyntheticAsset extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { supportedAssets },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   supportedAssets,
 });
 
@@ -232,7 +233,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   initSyntheticsService: () => dispatch(initSyntheticsServiceAction()),
 });
 

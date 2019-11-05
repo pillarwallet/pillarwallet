@@ -40,7 +40,6 @@ export const initSyntheticsServiceAction = () => {
 export const commitSyntheticsTransaction = (transactionId: string, paymentHash: string) => {
   return (dispatch: Dispatch) => {
     dispatch(initSyntheticsServiceAction());
-    console.log('syntheticTransactionId: ', transactionId);
     syntheticsService
       .commitTransaction(transactionId, paymentHash)
       .catch(() => {
