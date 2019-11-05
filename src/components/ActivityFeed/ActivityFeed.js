@@ -322,7 +322,9 @@ class ActivityFeed extends React.Component<Props, State> {
     const trxData = {};
 
     if (type === TRANSACTION_EVENT) {
-      const isReceived = addressesEqual(notification.to, activeAccountAddress);
+      const tag = get(notification, 'tag', '');
+      const isReceived = addressesEqual(notification.to, activeAccountAddress)
+        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL;
       const address = isReceived ? notification.from : notification.to;
       const { decimals = 18 } = getAssetData(assets, supportedAssets, notification.asset);
       const value = formatUnits(notification.value, decimals);
@@ -343,12 +345,11 @@ class ActivityFeed extends React.Component<Props, State> {
       let rightColumnInnerStyle = {};
       let customAddonAlignLeft = false;
       const imageProps = {};
-
-      const tag = get(notification, 'tag', '');
       if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
         imageProps.itemImageSource = PPNIcon;
         trxData.hideAmount = true;
         trxData.hideSender = true;
+        trxData.txType = 'PLR Network settle';
         return (
           <SettlementItem
             settleData={notification.extra}
@@ -368,6 +369,7 @@ class ActivityFeed extends React.Component<Props, State> {
         imageProps.itemImageSource = PPNIcon;
         trxData.hideSender = true;
         trxData.hideAmount = true;
+        trxData.txType = 'PLR Tank Top Up';
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
         nameOrAddress = 'Withdrawal';
         subtext = 'from PLR Network';

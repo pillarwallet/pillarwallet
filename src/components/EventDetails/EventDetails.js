@@ -78,8 +78,12 @@ import {
   BADGE,
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
-import { PAYMENT_NETWORK_ACCOUNT_TOPUP, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
+import {
+  PAYMENT_NETWORK_ACCOUNT_TOPUP,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+} from 'constants/paymentNetworkConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -320,8 +324,12 @@ class EventDetails extends React.Component<Props, State> {
       supportedAssets,
       accounts,
     } = this.props;
-    const { hideAmount, hideSender, isPPNAsset } = eventData;
-    let { txType } = eventData;
+    const {
+      hideAmount,
+      hideSender,
+      isPPNAsset,
+      txType,
+    } = eventData;
 
     if (eventType === TRANSACTION_EVENT) {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
@@ -343,7 +351,7 @@ class EventDetails extends React.Component<Props, State> {
         extra,
       } = txInfo;
 
-      const isReceived = addressesEqual(to, activeAccountAddress);
+      const isReceived = addressesEqual(to, activeAccountAddress) || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL;
       const toMyself = isReceived && addressesEqual(from, to);
       let transactionNote = note;
       if (txNotes && txNotes.length > 0) {
@@ -372,18 +380,15 @@ class EventDetails extends React.Component<Props, State> {
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const freeTx = isPPNTransaction;
+
+      const showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
       let showNote = true;
       const listSettledAssets = (tag === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
 
-      if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
+      if (tag === PAYMENT_NETWORK_TX_SETTLEMENT || tag === PAYMENT_NETWORK_ACCOUNT_TOPUP ||
+        tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
         showNote = false;
-        txType = 'PLR Network settle';
-      } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-        showNote = false;
-        txType = 'Tank Top Up';
       }
-
-      const showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
 
       return (
         <EventBody>

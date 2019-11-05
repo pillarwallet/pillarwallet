@@ -27,6 +27,7 @@ import { Alert } from 'react-native';
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
+  fetchSmartWalletTransactionsAction,
   fetchTransactionsHistoryNotificationsAction,
   fetchAssetTransactionsAction,
 } from 'actions/historyActions';
@@ -74,6 +75,7 @@ import {
 import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
 import ChatService from 'services/chat';
 import { SOCKET } from 'services/sockets';
+
 
 const storage = Storage.getInstance('db');
 
@@ -142,6 +144,7 @@ export const setUnreadChatNotificationsStatusAction = (status: boolean) => {
 export const fetchAllNotificationsAction = () => {
   return async (dispatch: Function) => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
+    dispatch(fetchSmartWalletTransactionsAction());
     dispatch(fetchInviteNotificationsAction());
     dispatch(fetchAllCollectiblesDataAction());
   };
@@ -182,6 +185,7 @@ export const startListeningNotificationsAction = () => {
         }
         if (data.type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
+          dispatch(fetchSmartWalletTransactionsAction());
           dispatch(fetchAssetTransactionsAction(data.asset));
           dispatch(fetchAssetsBalancesAction());
         }
@@ -227,6 +231,7 @@ export const startListeningNotificationsAction = () => {
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
+        dispatch(fetchSmartWalletTransactionsAction());
         dispatch(fetchAssetTransactionsAction(notification.asset));
         dispatch(fetchAssetsBalancesAction());
       }
@@ -315,6 +320,7 @@ export const startListeningOnOpenNotificationAction = () => {
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
+          dispatch(fetchSmartWalletTransactionsAction());
           dispatch(fetchAssetTransactionsAction(asset));
           dispatch(fetchAssetsBalancesAction());
         }
