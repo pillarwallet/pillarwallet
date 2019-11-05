@@ -18,30 +18,41 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import Intercom from 'react-native-intercom';
 import { FlatList, RefreshControl } from 'react-native';
 import { EXCHANGE_URL, SDK_PROVIDER } from 'react-native-dotenv';
-import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
+import { createStructuredSelector } from 'reselect';
+import isEmpty from 'lodash.isempty';
+import type { NavigationScreenProp } from 'react-navigation';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import { BaseText, MediumText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Separator from 'components/Separator';
-import { baseColors, fontStyles, spacing, UIColors } from 'utils/variables';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
+
+// constants
 import { EXCHANGE } from 'constants/navigationConstants';
 
+// actions
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
+
+// utils
+import { baseColors, fontStyles, spacing, UIColors } from 'utils/variables';
+import { getProviderDisplayName } from 'utils/exchange';
+
+// models, types
 import type { Assets } from 'models/Asset';
 import type { Allowance, ExchangeProvider, ProvidersMeta } from 'models/Offer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
-import Intercom from 'react-native-intercom';
-
-import { createStructuredSelector } from 'reselect';
+// selectors
 import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
@@ -102,7 +113,8 @@ class ExchangeInfo extends React.Component<Props, State> {
     const { navigation, exchangeAllowances, connectedProviders } = this.props;
     // Navigating from empty settings screen automatically
     if ((prevProps.exchangeAllowances !== exchangeAllowances || prevProps.connectedProviders !== connectedProviders)
-      && !(exchangeAllowances.length || connectedProviders.length)) {
+      && isEmpty(exchangeAllowances)
+      && isEmpty(connectedProviders)) {
       navigation.navigate(EXCHANGE);
     }
   }
@@ -119,8 +131,8 @@ class ExchangeInfo extends React.Component<Props, State> {
   renderProvider = ({ item: { provider, enabled: providerEnabled } }: Object) => {
     const { providersMeta } = this.props;
     const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
-    const { name: providerName } = providerInfo;
-
+    const { name } = providerInfo;
+    const providerName = name || getProviderDisplayName(provider);
     return (
       <ProviderItem>
         <ProviderName>{providerName}</ProviderName>
@@ -212,7 +224,7 @@ class ExchangeInfo extends React.Component<Props, State> {
         inset={{ bottom: 'never' }}
       >
         <ScrollWrapper color={UIColors.defaultBackgroundColor}>
-          {!!connectedProviders.length &&
+          {!isEmpty(connectedProviders) &&
           <React.Fragment>
             <SectionTitle>Connected exchanges:</SectionTitle>
             <FlatList
@@ -224,7 +236,7 @@ class ExchangeInfo extends React.Component<Props, State> {
               style={{ width: '100%' }}
             />
           </React.Fragment>}
-          {!!assetsArray.length &&
+          {!isEmpty(assetsArray) &&
             <React.Fragment>
               <SectionTitle>Enabled exchange assets:</SectionTitle>
               <FlatList
@@ -252,7 +264,7 @@ class ExchangeInfo extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   exchange: { data: { allowances: exchangeAllowances, connectedProviders }, providersMeta },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   exchangeAllowances,
   connectedProviders,
   providersMeta,
@@ -267,7 +279,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   disconnectExchangeProvider: (id: string) => dispatch(
     disconnectExchangeProviderAction(id),
