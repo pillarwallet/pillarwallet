@@ -19,6 +19,8 @@
 */
 import { Linking } from 'react-native';
 import { SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import ExchangeService from 'services/exchange';
 import Toast from 'components/Toast';
 import {
@@ -117,8 +119,8 @@ export const takeOfferAction = (
       toAssetAddress,
     };
     const order = await exchangeService.takeOffer(offerRequest);
-
-    if (!order || !order.data || !order.data.transactionObj || order.error) {
+    const offerOrderData = get(order, 'data');
+    if (isEmpty(offerOrderData) || order.error) {
       let { message = 'Unable to request offer' } = order.error || {};
       if (message.toString().toLowerCase().includes('kyc')) {
         message = 'Shapeshift KYC must be complete in order to proceed';
@@ -131,20 +133,17 @@ export const takeOfferAction = (
       callback({}); // let's return callback to dismiss loading spinner on offer card button
       return;
     }
-    const { data: offerOrderData } = order;
     const {
       payToAddress,
       payQuantity,
-      transactionObj: {
-        data: transactionObjData,
-      } = {},
     }: OfferOrder = offerOrderData;
+    const transactionDataString = get(offerOrderData, 'transactionObj.data');
 
     const from = getActiveAccountAddress(accounts);
     const gasLimit = await calculateGasEstimate({
       from,
       to: payToAddress,
-      data: transactionObjData,
+      data: transactionDataString,
       amount: payQuantity,
       symbol: fromAssetCode,
       contractAddress: fromAssetAddress || '',
