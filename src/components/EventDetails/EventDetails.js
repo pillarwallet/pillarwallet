@@ -278,7 +278,7 @@ class EventDetails extends React.Component<Props, State> {
       onClose,
     } = this.props;
     onClose();
-    navigation.navigate(BADGE, { id: badgeId });
+    navigation.navigate(BADGE, { badgeId });
   };
 
   sendTokensToUser = (contact) => {

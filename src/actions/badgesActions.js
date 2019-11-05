@@ -106,5 +106,6 @@ export const fetchBadgeAwardHistoryAction = () => {
         };
       });
     dispatch({ type: SET_BADGE_AWARD_EVENTS, payload: formattedBadgeAwardEvents });
+    dispatch(saveDbAction('badgeAwardEvents', { badgeAwardEvents: formattedBadgeAwardEvents }, true));
   };
 };

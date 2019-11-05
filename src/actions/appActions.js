@@ -44,7 +44,7 @@ import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
-import { UPDATE_BADGES, SET_CONTACTS_BADGES } from 'constants/badgesConstants';
+import { UPDATE_BADGES, SET_CONTACTS_BADGES, SET_BADGE_AWARD_EVENTS } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import {
@@ -144,6 +144,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { contactsBadges = {} } = await storage.get('contactsBadges');
       dispatch({ type: SET_CONTACTS_BADGES, payload: contactsBadges });
+
+      const { badgeAwardEvents = [] } = await storage.get('badgeAwardEvents');
+      dispatch({ type: SET_BADGE_AWARD_EVENTS, payload: badgeAwardEvents });
 
       const { paymentNetworkBalances = {} } = await storage.get('paymentNetworkBalances');
       dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });

@@ -300,7 +300,7 @@ class HomeScreen extends React.Component<Props, State> {
     return (
       <BadgeTouchableItem
         data={item}
-        onPress={() => navigation.navigate(BADGE, { id: item.id })}
+        onPress={() => navigation.navigate(BADGE, { badgeId: item.badgeId })}
       />
     );
   };

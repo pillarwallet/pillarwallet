@@ -2,6 +2,7 @@
 
 export type Badge = {
   id: number,
+  badgeId: string,
   balance: number,
   name?: string,
   imageUrl?: string,
