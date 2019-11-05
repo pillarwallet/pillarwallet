@@ -162,8 +162,6 @@ const IconCircle = styled.View`
   border: 1px solid ${baseColors.mediumLightGray};
 `;
 
-// color: ${props => props.warm ? baseColors.tumbleweed : baseColors.offBlue};
-
 const ItemIcon = styled(Icon)`
   font-size: ${props => props.fontSize || 48}px;
   color: ${props => props.iconColor || baseColors.electricBlue};

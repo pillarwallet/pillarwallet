@@ -413,7 +413,6 @@ class ActivityFeed extends React.Component<Props, State> {
 
       // transaction to / from key wallet / smart wallet
       if (notification.accountType) {
-        // TODO: add smart wallet icon for actions from / to smart wallet
         imageProps.itemImageSource = notification.accountType === ACCOUNT_TYPES.KEY_BASED
           ? keyWalletIcon
           : smartWalletIcon;

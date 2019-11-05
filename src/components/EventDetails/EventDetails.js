@@ -372,8 +372,6 @@ class EventDetails extends React.Component<Props, State> {
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const freeTx = isPPNTransaction;
-      const showAmountReceived = !hideAmount;
-      const showSender = !hideSender;
       let showNote = true;
       const listSettledAssets = (tag === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
 
@@ -395,14 +393,14 @@ class EventDetails extends React.Component<Props, State> {
             value={txType}
           />
           }
-          {showAmountReceived &&
+          {!hideAmount &&
           <ListItemUnderlined
             label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
             valueAddon={isPPNAsset ? <Icon source={lightningIcon} /> : null}
             value={`${formatFullAmount(value)} ${asset}`}
           />
           }
-          {showSender &&
+          {!hideSender &&
           <ListItemUnderlined
             label={isReceived ? 'SENDER' : 'RECIPIENT'}
             value={relatedUserTitle}
