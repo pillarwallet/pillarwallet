@@ -126,7 +126,7 @@ export type RootReducerState = {|
   featureFlags: FeatureFlagsReducerState,
   blockchainNetwork: BlockchainNetworkReducerState,
   userSettings: UserSettingsReducerState,
-  bitcoinReducer: BitcoinReducerState,
+  bitcoin: BitcoinReducerState,
 |};
 
 type RootReducerAction =

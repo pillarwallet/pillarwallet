@@ -34,10 +34,8 @@ import {
 import Storage from 'services/storage';
 import type { BitcoinReducerAction } from 'reducers/bitcoinReducer';
 import type { Wallet } from 'models/Wallet';
-import type {
-  BitcoinAddress,
-  BitcoinTransactionPlan,
-} from 'models/Bitcoin';
+import type { BitcoinTransactionPlan } from 'models/Bitcoin';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 import Toast from 'components/Toast';
 import { saveDbAction } from './dbActions';
 
@@ -56,7 +54,7 @@ const loadDb = async (): Promise<BitcoinStore> => {
 };
 
 export const initializeBitcoinWalletAction = (wallet: Wallet) => {
-  return async (dispatch: (action: BitcoinReducerAction) => void) => {
+  return async (dispatch: Dispatch) => {
     const root = await rootFromMnemonic(wallet.mnemonic);
     const keyPair = root.derivePath(wallet.path);
 
@@ -71,7 +69,7 @@ export const initializeBitcoinWalletAction = (wallet: Wallet) => {
 };
 
 export const loadBitcoinAddresses = () => {
-  return async (dispatch: (action: BitcoinReducerAction) => void) => {
+  return async (dispatch: Dispatch) => {
     const { keys = {} } = await loadDb();
 
     const loaded: string[] = Object.keys(keys);
@@ -134,12 +132,10 @@ export const sendTransactionAction = (plan: BitcoinTransactionPlan) => {
 };
 
 export const refreshAddressBalanceAction = (address: string, force: boolean) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { bitcoin: { data: { addresses } } } = getState();
 
-    const matchingAddress: BitcoinAddress = addresses.find(
-      ({ address: addr }) => addr === address,
-    );
+    const matchingAddress = addresses.find(({ address: addr }) => addr === address);
     if (!matchingAddress) {
       return;
     }
