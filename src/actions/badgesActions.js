@@ -86,7 +86,7 @@ export const fetchBadgeAwardHistoryAction = () => {
     const {
       user: { data: { walletId } },
     } = getState();
-    const badgeAwardEvents = await api.fetchNotifications(walletId, BADGE_REWARD_EVENT) || [];
+    const badgeAwardEvents = await api.fetchNotifications(walletId, BADGE_REWARD_EVENT);
     const badgeAwardEventsWithRequiredData = badgeAwardEvents.filter(({ payload }) => !!payload.name);
     const formattedBadgeAwardEvents = badgeAwardEventsWithRequiredData
       .map(({

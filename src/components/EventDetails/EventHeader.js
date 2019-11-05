@@ -162,7 +162,7 @@ const EventImage = styled(CachedImage)`
 const ImageTouchable = styled.TouchableOpacity`
   width: ${props => props.imageDiameter || 58}px;
   height: ${props => props.imageDiameter || 58}px;
-  border-radius: ${props => props.imageDiameter ? props.imageDiameter / 2 : 29}px;
+  border-radius: ${props => props.imageDiameter / 2 || 29}px;
   overflow: hidden;
   margin-top: 12px;
   justify-content: center;

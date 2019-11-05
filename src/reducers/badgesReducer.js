@@ -35,7 +35,7 @@ export type BadgesReducerState = {
     [contactId: string]: Badges,
   },
   isFetchingBadges: boolean,
-  badgesEvents: BadgeRewardEvent[]
+  badgesEvents: BadgeRewardEvent[],
 };
 
 export type BadgesReducerAction = {

@@ -386,7 +386,7 @@ class ActivityFeed extends React.Component<Props, State> {
         trxData.hideSender = true;
       }
 
-      // centers line right addons side vertixcally if status is present
+      // centers line right addons side vertically if status is present
       if (!isEmpty(itemStatusIcon)) {
         rightColumnInnerStyle = { ...rightColumnInnerStyle, alignItems: 'center' };
       }
@@ -422,7 +422,7 @@ class ActivityFeed extends React.Component<Props, State> {
       }
 
       if (!imageProps.itemImageSource) {
-        if ((!isContact || showArrowsOnly)) {
+        if (!isContact || showArrowsOnly) {
           imageProps.iconName = directionIcon;
           imageProps.iconColor = baseColors.slateBlack;
         } else if (isContact) {
