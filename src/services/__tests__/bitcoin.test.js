@@ -101,12 +101,12 @@ describe('bitcoin service', () => {
     it('works', async () => {
       const targetRoot = await rootFromMnemonic('target mnemonic', network);
       const targets: BitcoinTransactionTarget[] = [
-        { address: keyPairAddress(targetRoot), value: 400000 },
+        { address: keyPairAddress(targetRoot) || '', value: 400000 },
       ];
 
       const root = await rootFromMnemonic(mnemonic, network);
 
-      const changeAddress = keyPairAddress(root);
+      const changeAddress = keyPairAddress(root) || '';
       const plan = collectOutputs(targets, SPEED_TYPES.SLOW, utxos, () => changeAddress);
 
       const rawTransaction = transactionFromPlan(plan, () => {

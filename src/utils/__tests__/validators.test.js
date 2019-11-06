@@ -34,6 +34,16 @@ import {
   rootFromMnemonic,
 } from 'services/bitcoin';
 
+const newBTCAddress = (keyPair) => {
+  const address = keyPairAddress(keyPair);
+
+  if (!address) {
+    throw Error('cannot generate address');
+  }
+
+  return address;
+};
+
 describe('Validators', () => {
   describe('validatePin', () => {
     it('should validate the length of provided pincode', () => {
@@ -79,7 +89,7 @@ describe('Validators', () => {
         const root = await rootFromMnemonic(mnemonic, 'testnet');
         const keyPair = root.derivePath("m/49'/1/0");
 
-        const address = keyPairAddress(keyPair);
+        const address = newBTCAddress(keyPair);
 
         const isValid = isValidBTCAddress(address, 'testnet');
         expect(isValid).toBeTruthy();
@@ -89,7 +99,7 @@ describe('Validators', () => {
         const root = await rootFromMnemonic(mnemonic, 'bitcoin');
         const keyPair = root.derivePath("m/49'/1/0");
 
-        const address = keyPairAddress(keyPair);
+        const address = newBTCAddress(keyPair);
 
         const isValid = isValidBTCAddress(address, 'testnet');
         expect(isValid).toBeFalsy();
@@ -101,7 +111,7 @@ describe('Validators', () => {
         const root = await rootFromMnemonic(mnemonic, 'testnet');
         const keyPair = root.derivePath("m/49'/1/0");
 
-        const address = keyPairAddress(keyPair);
+        const address = newBTCAddress(keyPair);
 
         const isValid = isValidBTCAddress(address, 'bitcoin');
         expect(isValid).toBeFalsy();
@@ -111,7 +121,7 @@ describe('Validators', () => {
         const root = await rootFromMnemonic(mnemonic, 'bitcoin');
         const keyPair = root.derivePath("m/49'/1/0");
 
-        const address = keyPairAddress(keyPair);
+        const address = newBTCAddress(keyPair);
 
         const isValid = isValidBTCAddress(address, 'bitcoin');
         expect(isValid).toBeTruthy();
