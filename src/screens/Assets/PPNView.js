@@ -41,7 +41,7 @@ import ActivityFeed from 'components/ActivityFeed';
 
 // constants
 import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { TRANSACTION_EVENT, TX_PENDING_STATUS } from 'constants/historyConstants';
 import {
   FUND_TANK,
   SEND_TOKEN_FROM_ASSET_FLOW,
@@ -55,6 +55,7 @@ import {
   PAYMENT_PROCESSED,
   SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
+import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -69,6 +70,7 @@ import { getAccountAddress } from 'utils/accounts';
 import {
   formatMoney,
   formatFiat,
+  isCaseInsensitiveMatch,
 } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { getSmartWalletStatus } from 'utils/smartWallet';
@@ -83,6 +85,7 @@ import {
   PPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
+import { accountHistorySelector } from 'selectors/history';
 
 
 type Props = {
@@ -103,6 +106,7 @@ type Props = {
   PPNTransactions: Transaction[],
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
+  history: Object[],
 }
 
 type State = {
@@ -223,6 +227,7 @@ class PPNView extends React.Component<Props, State> {
       contactsSmartAddresses,
       baseFiatCurrency,
       rates,
+      history,
     } = this.props;
 
     let incomingBalanceInFiat = 0;
@@ -239,8 +244,8 @@ class PPNView extends React.Component<Props, State> {
 
     const availableFormattedAmount = formatMoney(availableStake, 4);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const { upgrade: { status } } = smartWalletState;
-    const sendingBlockedMessage = status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+    const { upgrade: { status: smartWalletUpgradeStatus } } = smartWalletState;
+    const sendingBlockedMessage = smartWalletUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       ? {
         title: 'To top up PLR Tank or Settle transactions, deploy Smart Wallet first',
         message: 'You will have to pay a small fee',
@@ -257,16 +262,24 @@ class PPNView extends React.Component<Props, State> {
     );
 
     const PPNTransactionsGrouped = PPNTransactionsMapped.reduce((filtered, transaction) => {
-      const { stateInPPN } = transaction;
+      const { stateInPPN, hash } = transaction;
       const { settled, unsettled } = filtered;
       switch (stateInPPN) {
         case PAYMENT_PROCESSED:
-          filtered.settled = settled
-            .concat(transaction);
+          filtered.settled = settled.concat(transaction);
           break;
         case PAYMENT_COMPLETED:
-          filtered.unsettled = unsettled
-            .concat(transaction);
+          const settleIsPending = history.some(
+            ({ tag, status, extra }) => status === TX_PENDING_STATUS
+              && tag === PAYMENT_NETWORK_TX_SETTLEMENT
+              // we can also check if array not empty, but extra is free
+              // param and Array.isArray check would also mean we can go with
+              // further Array.some method without any fear of crash
+              && Array.isArray(extra)
+              && extra.some(({ hash: settledHash }) => isCaseInsensitiveMatch(settledHash, hash)),
+          );
+          if (settleIsPending) break;
+          filtered.unsettled = unsettled.concat(transaction);
           break;
         default:
           break;
@@ -420,6 +433,7 @@ const structuredSelector = createStructuredSelector({
   activeAccount: activeAccountSelector,
   PPNTransactions: PPNTransactionsSelector,
   assets: accountAssetsSelector,
+  history: accountHistorySelector,
 });
 
 const combinedMapStateToProps = (state) => ({
