@@ -1,6 +1,8 @@
 // @flow
 import { self } from 'react-native-threads';
-import { HDNode } from 'ethers';
+import { utils } from 'ethers';
+
+const { HDNode } = utils;
 
 // listen for messages
 self.onmessage = (message) => {

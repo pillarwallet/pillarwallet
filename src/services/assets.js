@@ -137,14 +137,13 @@ export async function transferERC721(options: ERC721TransferOptions) {
     from,
     to,
     tokenId,
-    wallet,
+    wallet: walletInstance,
     nonce,
     gasLimit,
     gasPrice,
     signOnly = false,
   } = options;
-  wallet.provider = getEthereumProvider(COLLECTIBLES_NETWORK);
-
+  const wallet = walletInstance.connect(getEthereumProvider(COLLECTIBLES_NETWORK));
   let contract;
   const code = await wallet.provider.getCode(contractAddress);
   const contractTransferMethod = getERC721ContractTransferMethod(code);

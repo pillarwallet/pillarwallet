@@ -17,8 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { ethers, utils, providers } from 'ethers';
 import DeviceInfo from 'react-native-device-info';
-import ethers, { providers } from 'ethers';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
 import { Sentry } from 'react-native-sentry';
@@ -26,7 +26,7 @@ import { isHexString } from '@walletconnect/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { AsyncStorage } from 'react-native';
 
-import { getRandomInt, ethSign } from 'utils/common';
+import { getRandomInt, ethSign, getEthereumProvider } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
 import { WALLET_STORAGE_BACKUP_KEY } from 'constants/walletConstants';
@@ -35,7 +35,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 const storage = Storage.getInstance('db');
 
 export function generateMnemonicPhrase(mnemonicPhrase?: string) {
-  return mnemonicPhrase || ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
+  return mnemonicPhrase || utils.HDNode.entropyToMnemonic(utils.randomBytes(16));
 }
 
 export function generateWordsToValidate(numWordsToGenerate: number, maxWords: number) {
@@ -175,4 +175,13 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     wallet,
     walletTimestamp,
   };
+}
+
+export async function decryptWallet(encryptedWallet: Object, saltedPin: string, options?: Object) {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  let wallet = await ethers.Wallet.RNfromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin, options);
+  if (wallet) {
+    wallet = wallet.connect(provider);
+  }
+  return wallet;
 }

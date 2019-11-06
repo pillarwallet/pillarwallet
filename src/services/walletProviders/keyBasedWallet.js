@@ -1,6 +1,6 @@
 // @flow
 
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 
 import { ETH } from 'constants/assetsConstants';
@@ -24,8 +24,8 @@ export default class KeyBasedWalletProvider {
   wallet: Object;
 
   constructor(privateKey: string) {
-    this.wallet = new ethers.Wallet(privateKey);
-    this.wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
+    const provider = getEthereumProvider(NETWORK_PROVIDER);
+    this.wallet = new ethers.Wallet(privateKey, provider);
   }
 
   async transferERC721(account: Account, transaction: CollectibleTransactionPayload, state: Object) {

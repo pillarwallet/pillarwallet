@@ -153,7 +153,7 @@ const initialState = {
   featureFlags: { data: INITIAL_FEATURE_FLAGS },
 };
 
-describe('Wallet actions', () => {
+describe('Assets actions', () => {
   let store;
   beforeEach(() => {
     store = mockStore(initialState);

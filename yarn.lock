@@ -1128,6 +1128,11 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-12.0.0.tgz#d11813b9c0ff8aaca29f04cbc12817f4c7d656e5"
   integrity sha1-0RgTucD/iqyinwTLwSgX9MfWVuU=
 
+"@types/node@^10.3.2":
+  version "10.14.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.14.4.tgz#1c586b991457cbb58fef51bc4e0cfcfa347714b5"
+  integrity sha1-HFhrmRRXy7WP71G8Tgz8+jR3FLU=
+
 "@types/uuid@3.4.4":
   version "3.4.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/uuid/-/uuid-3.4.4.tgz#7af69360fa65ef0decb41fd150bf4ca5c0cefdf5"
@@ -4562,18 +4567,18 @@ ethereumjs-wallet@^0.6.0:
     utf8 "^3.0.0"
     uuid "^3.3.2"
 
-"ethers@https://github.com/pillarwallet/ethers.js#master":
-  version "3.0.22"
-  resolved "https://github.com/pillarwallet/ethers.js#59971664fb918f785b2423e22595349195097abf"
+"ethers@https://github.com/jsidorenko/ethers.js#master":
+  version "4.0.28"
+  resolved "https://github.com/jsidorenko/ethers.js#3cba34f00d0522e57961a4ca095ddffde5389e92"
   dependencies:
+    "@types/node" "^10.3.2"
     aes-js "3.0.0"
     bn.js "^4.4.0"
     elliptic "6.3.3"
-    hash.js "^1.0.0"
-    inherits "2.0.1"
+    hash.js "1.1.3"
     js-sha3 "0.5.7"
-    react-native-scrypt "1.0.0"
-    scrypt-js "2.0.3"
+    react-native-scrypt "^1.0.0"
+    scrypt-js "2.0.4"
     setimmediate "1.0.4"
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
@@ -5689,6 +5694,14 @@ hash-base@^3.0.0:
   dependencies:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
+
+hash.js@1.1.3:
+  version "1.1.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/hash.js/-/hash.js-1.1.3.tgz#340dedbe6290187151c1ea1d777a3448935df846"
+  integrity sha1-NA3tvmKQGHFRweodd3o0SJNd+EY=
+  dependencies:
+    inherits "^2.0.3"
+    minimalistic-assert "^1.0.0"
 
 hash.js@^1.0.0, hash.js@^1.0.3:
   version "1.1.7"
@@ -10706,7 +10719,7 @@ react-native-safe-module@^1.1.0:
   dependencies:
     debounce "^1.2.0"
 
-react-native-scrypt@1.0.0, react-native-scrypt@^1.0.0:
+react-native-scrypt@^1.0.0:
   version "1.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-scrypt/-/react-native-scrypt-1.0.0.tgz#c397c951fa53b0a6b82f6da980bb3b090cd961e4"
   integrity sha1-w5fJUfpTsKa4L22pgLs7CQzZYeQ=
@@ -11848,10 +11861,10 @@ schema-utils@^0.4.4, schema-utils@^0.4.5:
     ajv "^6.1.0"
     ajv-keywords "^3.1.0"
 
-scrypt-js@2.0.3:
-  version "2.0.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/scrypt-js/-/scrypt-js-2.0.3.tgz#bb0040be03043da9a012a2cea9fc9f852cfc87d4"
-  integrity sha1-uwBAvgMEPamgEqLOqfyfhSz8h9Q=
+scrypt-js@2.0.4:
+  version "2.0.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/scrypt-js/-/scrypt-js-2.0.4.tgz#32f8c5149f0797672e551c07e230f834b6af5f16"
+  integrity sha1-MvjFFJ8Hl2cuVRwH4jD4NLavXxY=
 
 scrypt.js@^0.3.0:
   version "0.3.0"

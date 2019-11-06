@@ -17,8 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { HDNode } from 'ethers';
+import { utils } from 'ethers';
 import { generateHDKeyPair, generateKeyPairPool } from '../keyPairGenerator';
+
+const { HDNode } = utils;
 
 const MOCK_MNEMONIC = 'spoon what cliff giraffe suffer ski option light bounce hunt senior choose';
 const MOCK_PRIVKEY = '0x0123456789012345678901234567890123456789012345678901234567890123';
