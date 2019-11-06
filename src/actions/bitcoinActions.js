@@ -79,6 +79,16 @@ export const initializeBitcoinWalletAction = (wallet: Wallet) => {
     const keyPair = root.derivePath(wallet.path);
 
     const address = keyPairAddress(keyPair);
+    if (!address) {
+      Toast.show({
+        message: 'There was an error creating your Bitcoin wallet',
+        type: 'warning',
+        title: 'Cannot initialize Bitcoin',
+        autoClose: false,
+      });
+
+      return;
+    }
 
     dispatch(saveDb({
       keys: { [address]: exportKeyPair(keyPair) },

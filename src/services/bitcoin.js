@@ -144,13 +144,17 @@ export const rootFromMnemonic = async (mnemonic: string, networkName?: string): 
   return bip32.fromSeed(seed, selectNetwork(networkName));
 };
 
-export const keyPairAddress = (keyPair: ECPair): string => {
-  const { address } = payments.p2pkh({
-    pubkey: keyPair.publicKey,
-    network: keyPair.network,
-  });
+export const keyPairAddress = (keyPair: ECPair): ?string => {
+  try {
+    const { address } = payments.p2pkh({
+      pubkey: keyPair.publicKey,
+      network: keyPair.network,
+    });
 
-  return address;
+    return address;
+  } catch (e) {
+    return null;
+  }
 };
 
 export const importKeyPair = (s: string, networkName?: string): ECPair => {
