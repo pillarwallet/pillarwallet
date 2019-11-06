@@ -83,6 +83,10 @@ export const checkIfSmartWalletAccount = (account: Account): boolean => {
   return account.type === ACCOUNT_TYPES.SMART_WALLET;
 };
 
+export const checkIfKeyBasedAccount = (account: Account): boolean => {
+  return account.type === ACCOUNT_TYPES.KEY_BASED;
+};
+
 export const getAccountName = (accountType: AccountTypes, accounts: Accounts): string => {
   switch (accountType) {
     case ACCOUNT_TYPES.SMART_WALLET:
@@ -96,16 +100,14 @@ export const getAccountName = (accountType: AccountTypes, accounts: Accounts): s
   }
 };
 
-export const findAccountByAddress = (
-  address: string,
-  accounts: Accounts,
-): ?Account => {
+export const findAccountByAddress = (address: string, accounts: Accounts): ?Account => {
   return accounts.find(account => addressesEqual(address, getAccountAddress(account)));
 };
 
-export const findAccountById = (
-  accountId: string,
-  accounts: Accounts,
-): ?Account => {
+export const findAccountById = (accountId: string, accounts: Accounts): ?Account => {
   return accounts.find(({ id }) => id === accountId);
+};
+
+export const getAccountWalletId = (account: Account): string => {
+  return get(account, 'walletId', '');
 };

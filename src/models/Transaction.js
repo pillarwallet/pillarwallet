@@ -24,7 +24,11 @@ export type TxSettlementItem = {
   hash: string,
 };
 
-export type TransactionExtra = TxSettlementItem[];
+type TxWithdrawalExtra = {
+  paymentHash: string,
+};
+
+export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra;
 
 export type Transaction = {
   _id: string,
@@ -33,14 +37,14 @@ export type Transaction = {
   from: string,
   createdAt: number,
   asset: string,
-  nbConfirmations: number,
-  gasUsed: number,
-  gasPrice: number,
+  nbConfirmations?: number,
+  gasUsed?: number,
+  gasPrice?: number,
   status: string,
   value: string,
   note?: ?string,
   signOnly?: ?boolean,
-  isPPNTransaction: boolean,
+  isPPNTransaction?: boolean,
   tag?: string,
   extra?: TransactionExtra,
   stateInPPN?: string,

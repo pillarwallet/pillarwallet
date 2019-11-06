@@ -133,7 +133,7 @@ type Props = {
   transactionSpeed: string,
   updateAppSettings: Function,
   activeAccountAddress: string,
-  activeAccount: Account,
+  activeAccount: ?Account,
 };
 
 type State = {
@@ -208,10 +208,11 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   handleChange = (value: Object) => {
+    const { activeAccount } = this.props;
     // first update the amount, then after state is updated check for errors
     this.setState({ value, gettingFee: true });
     this.checkFormInputErrors();
-    if (checkIfSmartWalletAccount(this.props.activeAccount)) {
+    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
       this.updateTxFee();
       return;
     }
@@ -237,7 +238,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       decimals: this.assetData.decimals,
     };
     const { navigation, activeAccount } = this.props;
-    if (!checkIfSmartWalletAccount(activeAccount)) {
+    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
       const { gasLimit } = this.state;
       const transactionSpeed = this.getTxSpeed();
       const gasPrice = txFeeInWei.div(gasLimit).toNumber();
@@ -266,7 +267,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const balance = getBalance(balances, token);
     const updatedState = {};
     let txFeeInWei;
-    if (checkIfSmartWalletAccount(activeAccount)) {
+    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
       txFeeInWei = await this.getSmartWalletTxFeeInWei(balance);
     } else {
       updatedState.gasLimit = await this.getGasLimit(balance); // calculate gas limit for max available balance
@@ -310,7 +311,7 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   getTxFeeInWei = (txSpeed?: string, gasLimit?: number): BigNumber => {
     const { gasInfo, activeAccount } = this.props;
-    if (checkIfSmartWalletAccount(activeAccount)) {
+    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
       return this.getSmartWalletTxFeeInWei();
     }
     txSpeed = txSpeed || this.getTxSpeed();
@@ -345,7 +346,7 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   renderTxSpeedButtons = () => {
     const { rates, baseFiatCurrency, activeAccount } = this.props;
-    if (checkIfSmartWalletAccount(activeAccount)) return null;
+    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) return null;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
@@ -393,7 +394,8 @@ class SendTokenAmount extends React.Component<Props, State> {
       activeAccount,
     } = this.props;
 
-    const showTransactionSpeeds = !inputHasError && !!gasLimit && !checkIfSmartWalletAccount(activeAccount);
+    const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
+    const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount;
     const transactionSpeed = showTransactionSpeeds && this.getTxSpeed();
     const { token, icon, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;

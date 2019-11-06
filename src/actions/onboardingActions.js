@@ -78,12 +78,16 @@ import SDKWrapper from 'services/api';
 
 // actions
 import { signalInitAction } from 'actions/signalClientActions';
-import { initSmartWalletSdkAction, importSmartWalletAccountsAction } from 'actions/smartWalletActions';
+import {
+  initSmartWalletSdkAction,
+  importSmartWalletAccountsAction,
+  managePPNInitFlagAction,
+} from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
-import { restoreTransactionHistoryAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import {
   setFirebaseAnalyticsCollectionEnabled,
@@ -209,13 +213,12 @@ const finishRegistration = async ({
     await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
   }
 
+  await dispatch(fetchTransactionsHistoryAction());
   dispatch(labelUserAsLegacyAction());
 
-  const { accounts: { data: accounts } } = getState();
-
-  await Promise.all(accounts.map(async acc => {
-    await dispatch(restoreTransactionHistoryAction(acc.id, userInfo.walletId));
-  }));
+  if (smartWalletFeatureEnabled) {
+    dispatch(managePPNInitFlagAction());
+  }
 
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 

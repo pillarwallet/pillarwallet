@@ -316,7 +316,9 @@ class ActivityFeed extends React.Component<Props, State> {
     const itemStatusIcon = notificationStatus === TX_PENDING_STATUS ? TX_PENDING_STATUS : '';
 
     if (type === TRANSACTION_EVENT) {
-      const isReceived = addressesEqual(notification.to, activeAccountAddress);
+      const tag = get(notification, 'tag', '');
+      const isReceived = addressesEqual(notification.to, activeAccountAddress)
+        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL;
       const address = isReceived ? notification.from : notification.to;
       const {
         decimals = 18,
@@ -343,7 +345,6 @@ class ActivityFeed extends React.Component<Props, State> {
       let rightColumnInnerStyle = {};
       let customAddonAlignLeft = false;
 
-      const tag = get(notification, 'tag', '');
       if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
         return (
           <SettlementItem

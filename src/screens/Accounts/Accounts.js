@@ -55,6 +55,7 @@ import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 // constants
 import {
   ASSETS,
+  BITCOIN_NETWORK_INTRO,
   PILLAR_NETWORK_INTRO,
   SMART_WALLET_INTRO,
   WALLET_SETTINGS,
@@ -113,7 +114,7 @@ type Props = {|
   setActiveBlockchainNetwork: Function,
   blockchainNetworks: BlockchainNetwork[],
   assets: Assets,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   smartWalletFeatureEnabled: boolean,
   availableStake: number,
   isTankInitialised: boolean,
@@ -371,6 +372,22 @@ class AccountsScreen extends React.Component<Props, State> {
     return wallets;
   }
 
+  setBTCAsActiveNetwork() {
+    // const { setActiveBlockchainNetwork, navigation, accounts } = this.props;
+    // const activeAccount = getActiveAccount(accounts) || { type: '' };
+    //
+    // if (activeAccount.type === ACCOUNT_TYPES.BITCOIN_WALLET) {
+    //   setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
+    //   navigation.navigate(ASSETS);
+    // } else {
+    //   this.setState({ showPinModal: true });
+    // }
+  }
+
+  initialiseBTC = () => {
+    this.props.navigation.navigate(BITCOIN_NETWORK_INTRO);
+  }
+
   networks(): NetworkItem[] {
     const networks: NetworkItem[] = [];
 
@@ -382,13 +399,16 @@ class AccountsScreen extends React.Component<Props, State> {
       accounts,
     } = this.props;
 
-    const ppnNetwork = blockchainNetworks.find((network) => network.id === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
-    const availableStakeFormattedAmount = formatMoney(availableStake);
+    const ppnNetwork = blockchainNetworks.find(
+      (network) => network.id === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK,
+    );
     const hasAccount = userHasSmartWallet(accounts);
     const hasSmartWallet = hasAccount && smartWalletFeatureEnabled;
 
     if (smartWalletFeatureEnabled && ppnNetwork) {
       const { title, isActive } = ppnNetwork;
+      const availableStakeFormattedAmount = formatMoney(availableStake);
+
       networks.push({
         id: `NETWORK_${ppnNetwork.id}`,
         type: 'NETWORK',
@@ -399,6 +419,25 @@ class AccountsScreen extends React.Component<Props, State> {
         initialiseAction: this.initialisePPN,
         isActive,
         iconSource: pillarNetworkIcon,
+        onSettingsPress: null,
+      });
+    }
+
+    const bitcoinNetwork = blockchainNetworks.find(
+      (network) => network.isAvailable && network.id === BLOCKCHAIN_NETWORK_TYPES.BITCOIN,
+    );
+
+    if (bitcoinNetwork) {
+      networks.push({
+        id: 'NETWORK_BTC',
+        type: 'NETWORK',
+        title: bitcoinNetwork.title,
+        isInitialised: false,
+        isActive: bitcoinNetwork.isActive,
+        balance: 'N/A',
+        iconSource: pillarNetworkIcon, // TODO: Bitcoin icon
+        mainAction: this.setBTCAsActiveNetwork,
+        initialiseAction: this.initialiseBTC,
         onSettingsPress: null,
       });
     }
@@ -526,7 +565,7 @@ const mapStateToProps = ({
   balances: { data: balances },
   rates: { data: rates },
   user: { data: user },
-}: RootReducerState) => ({
+}: RootReducerState): $Shape<Props> => ({
   accounts,
   blockchainNetworks,
   isTankInitialised,
