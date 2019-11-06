@@ -19,31 +19,49 @@
 */
 import {
   UPDATE_BITCOIN_BALANCE,
+  CREATED_BITCOIN_ADDRESS,
   SET_BITCOIN_ADDRESSES,
 } from 'constants/bitcoinConstants';
-import reducer from 'reducers/bitcoinReducer';
-import type { BitcoinReducerState, BitcoinReducerAction } from 'reducers/bitcoinReducer';
+import reducer, { initialState } from 'reducers/bitcoinReducer';
+import type { BitcoinReducerAction } from 'reducers/bitcoinReducer';
 
 describe('Bitcoin reducer', () => {
+  describe(CREATED_BITCOIN_ADDRESS, () => {
+    const address = '<address>';
+
+    it('adds the address to the store', () => {
+      const state = reducer(initialState, {
+        type: SET_BITCOIN_ADDRESSES,
+        addresses: [address],
+      });
+
+      const address2 = '<address 2>';
+      const createdAddress: BitcoinReducerAction = {
+        type: CREATED_BITCOIN_ADDRESS,
+        address: address2,
+      };
+
+      expect(reducer(state, createdAddress)).toMatchObject({
+        data: {
+          addresses: [
+            { address, updatedAt: 0 },
+            { address: address2, updatedAt: 0 },
+          ],
+        },
+      });
+    });
+  });
+
   describe(SET_BITCOIN_ADDRESSES, () => {
     const address = '<address>';
 
     it('stores the address', () => {
-      const state: BitcoinReducerState = {
-        data: {
-          addresses: [],
-          unspentTransactions: [],
-        },
-      };
-
       const setAddress: BitcoinReducerAction = {
         type: SET_BITCOIN_ADDRESSES,
-        payload: {
-          addresses: [address],
-        },
+        addresses: [address],
       };
 
-      expect(reducer(state, setAddress)).toMatchObject({
+      expect(reducer(initialState, setAddress)).toMatchObject({
         data: {
           addresses: [{ address, updatedAt: 0 }],
         },
@@ -67,36 +85,26 @@ describe('Bitcoin reducer', () => {
       };
       const update: BitcoinReducerAction = {
         type: UPDATE_BITCOIN_BALANCE,
-        payload: {
-          address,
-          unspentTransactions: [utxo],
-        },
+        address,
+        unspentTransactions: [utxo],
       };
 
       describe('for an unexistent address', () => {
-        const state: BitcoinReducerState = {
-          data: {
-            addresses: [],
-            unspentTransactions: [],
-          },
-        };
-
         it('does not add the transactions', () => {
-          expect(reducer(state, update)).toMatchObject({
+          expect(reducer(initialState, update)).toMatchObject({
             data: { unspentTransactions: [] },
           });
         });
       });
 
       describe('for an existing address', () => {
-        const state: BitcoinReducerState = {
-          data: {
-            addresses: [{ address, updatedAt: 0 }],
-            unspentTransactions: [],
-          },
-        };
-
         it('adds the transactions', () => {
+          const setAddress: BitcoinReducerAction = {
+            type: SET_BITCOIN_ADDRESSES,
+            addresses: [address],
+          };
+          const state = reducer(initialState, setAddress);
+
           expect(reducer(state, update)).toMatchObject({
             data: { unspentTransactions: [utxo] },
           });

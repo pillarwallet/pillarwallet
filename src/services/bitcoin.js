@@ -52,6 +52,12 @@ const feeRateFromSpeed = (speed: string): number => {
   }
 };
 
+const selectNetwork = (networkName: ?string) => {
+  return networkName ? networks[networkName] : NETWORK;
+};
+
+export const exportKeyPair = (keyPair: ECPair): string => keyPair.toWIF();
+
 export const collectOutputs = (
   targets: BitcoinTransactionTarget[],
   speed: string,
@@ -67,22 +73,28 @@ export const collectOutputs = (
     fee,
   } = coinselect(utxos, targets, feeRate);
 
-  const isValid = !!(inputs && outputs);
+  if (!inputs || !outputs) {
+    return {
+      fee,
+      isValid: false,
+      inputs: [],
+      outputs: [],
+    };
+  }
 
-  const planOutputs = isValid ? outputs.map(out => {
+  const planOutputs = outputs.map(out => {
     if (out.address) {
       return { ...out, isChange: false };
     }
     const address = changeAddress(out.value);
 
     return { ...out, address, isChange: true };
-  }) : [];
-  const planInputs = isValid ? inputs : [];
+  });
 
   return {
     fee,
-    isValid,
-    inputs: planInputs,
+    isValid: true,
+    inputs,
     outputs: planOutputs,
   };
 };
@@ -99,9 +111,7 @@ export const transactionFromPlan = (
   inputSigner: (address: string) => ECPair,
   networkName?: string,
 ): string => {
-  const network = networkName ? networks[networkName] : NETWORK;
-
-  const txb = new TransactionBuilder(network);
+  const txb = new TransactionBuilder(selectNetwork(networkName));
   txb.setVersion(1);
 
   plan.inputs.forEach(utxo => {
@@ -129,10 +139,9 @@ export const transactionFromPlan = (
 };
 
 export const rootFromMnemonic = async (mnemonic: string, networkName?: string): ECPair => {
-  const network = networkName ? networks[networkName] : NETWORK;
   const seed = await bip39.mnemonicToSeed(mnemonic);
 
-  return bip32.fromSeed(seed, network);
+  return bip32.fromSeed(seed, selectNetwork(networkName));
 };
 
 export const keyPairAddress = (keyPair: ECPair): string => {
@@ -145,13 +154,7 @@ export const keyPairAddress = (keyPair: ECPair): string => {
 };
 
 export const importKeyPair = (s: string, networkName?: string): ECPair => {
-  const network = networkName ? networks[networkName] : NETWORK;
-
-  return ECPair.fromWIF(s, network);
-};
-
-export const exportKeyPair = (keyPair: ECPair): string => {
-  return keyPair.toWIF();
+  return ECPair.fromWIF(s, selectNetwork(networkName));
 };
 
 export const getAddressUtxos = (address: string): Promise<BitcoinUtxo[]> => {

@@ -20,6 +20,7 @@
 
 import type { BitcoinAddress, BitcoinUtxo } from 'models/Bitcoin';
 import {
+  CREATED_BITCOIN_ADDRESS,
   UPDATE_BITCOIN_BALANCE,
   SET_BITCOIN_ADDRESSES,
 } from 'constants/bitcoinConstants';
@@ -31,18 +32,28 @@ export type BitcoinReducerState = {
   },
 };
 
-type BitcoinReducerActionPayload = {
-  addresses?: string[],
-  address?: string,
-  unspentTransactions?: BitcoinUtxo[],
+export type UpdateBitcoinBalanceAction = {
+  type: 'UPDATE_BITCOIN_BALANCE',
+  address: string,
+  unspentTransactions: BitcoinUtxo[],
 };
 
-export type BitcoinReducerAction = {
-  type: string,
-  payload?: BitcoinReducerActionPayload,
+export type SetBitcoinAddressesAction = {
+  type: 'SET_BITCOIN_ADDRESSES',
+  addresses: string[],
 };
 
-const initialState = {
+export type CreatedBitcoinAddressAction = {
+  type: 'CREATED_BITCOIN_ADDRESS',
+  address: string,
+};
+
+export type BitcoinReducerAction =
+  | UpdateBitcoinBalanceAction
+  | SetBitcoinAddressesAction
+  | CreatedBitcoinAddressAction;
+
+export const initialState = {
   data: {
     addresses: [],
     unspentTransactions: [],
@@ -51,18 +62,17 @@ const initialState = {
 
 const updateBalance = (
   state: BitcoinReducerState,
-  payload: BitcoinReducerActionPayload,
+  action: UpdateBitcoinBalanceAction,
 ): BitcoinReducerState => {
-  const { unspentTransactions = [], address = '' } = payload;
+  console.log({ state, action });
+  const { unspentTransactions, address } = action;
   const { data: { addresses, unspentTransactions: transactions } } = state;
 
   const filteredTransactions: BitcoinUtxo[] = transactions.filter(
     ({ address: txAddress }) => address !== txAddress,
   );
 
-  const matchingAddress: ?BitcoinAddress = addresses.find(
-    ({ address: addr }) => addr === address,
-  );
+  const matchingAddress = addresses.find(({ address: addr }) => addr === address);
   if (!matchingAddress) {
     return state;
   }
@@ -83,9 +93,10 @@ const updateBalance = (
 
 const setAddresses = (
   state: BitcoinReducerState,
-  payload: BitcoinReducerActionPayload,
+  action: SetBitcoinAddressesAction,
 ): BitcoinReducerState => {
-  const { addresses = [], unspentTransactions = [] } = payload;
+  const { addresses } = action;
+  const { data } = state;
 
   const addressesInfo: BitcoinAddress[] = addresses.map(
     address => ({ address, updatedAt: 0 }),
@@ -93,48 +104,49 @@ const setAddresses = (
 
   return {
     ...state,
-    data: { addresses: addressesInfo, unspentTransactions },
+    data: {
+      ...data,
+      addresses: addressesInfo,
+    },
   };
 };
 
-// const createAddress = (
-//   state: BitcoinReducerState,
-//   payload: BitcoinReducerActionPayload,
-// ): BitcoinReducerState => {
-//   const { address = '' } = payload;
-//   const { data: { addresses, unspentTransactions } } = state;
-//
-//   if (!address) {
-//     return { ...state, isCreatingAddress: false };
-//   }
-//
-//   return {
-//     ...state,
-//     data: {
-//       addresses: [
-//         ...addresses,
-//         { address, updatedAt: 0 },
-//       ],
-//       unspentTransactions,
-//     },
-//   };
-// };
+const createdAddress = (
+  state: BitcoinReducerState,
+  action: CreatedBitcoinAddressAction,
+): BitcoinReducerState => {
+  const { address = '' } = action;
+  const { data: { addresses, unspentTransactions } } = state;
+
+  if (!address) {
+    return { ...state, isCreatingAddress: false };
+  }
+
+  return {
+    ...state,
+    data: {
+      addresses: [
+        ...addresses,
+        { address, updatedAt: 0 },
+      ],
+      unspentTransactions,
+    },
+  };
+};
 
 const bitcoinReducer = (
   state: BitcoinReducerState = initialState,
   action: BitcoinReducerAction,
 ): BitcoinReducerState => {
-  const { type, payload = {} } = action;
-
-  switch (type) {
+  switch (action.type) {
     case SET_BITCOIN_ADDRESSES:
-      return setAddresses(state, payload);
+      return setAddresses(state, action);
 
-    // case CREATED_BITCOIN_ADDRESS:
-    //   return createAddress(state, payload);
+    case CREATED_BITCOIN_ADDRESS:
+      return createdAddress(state, action);
 
     case UPDATE_BITCOIN_BALANCE:
-      return updateBalance(state, payload);
+      return updateBalance(state, action);
 
     default:
       return state;

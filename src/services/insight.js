@@ -19,10 +19,6 @@
 */
 import { BITCOIN_INSIGHT_URL } from 'constants/bitcoinConstants';
 
-const successfulResponse = (response): boolean => {
-  return response.ok && response.status >= 200 && response.status < 300;
-};
-
 export const sendRawTransactionToNode = async (rawtx: string) => {
   return fetch(`${BITCOIN_INSIGHT_URL}/tx/send`, {
     method: 'POST',
@@ -33,7 +29,7 @@ export const sendRawTransactionToNode = async (rawtx: string) => {
     body: JSON.stringify({ rawtx }),
   })
     .then(response => {
-      if (!successfulResponse(response)) {
+      if (!response.ok) {
         return new Error('failed');
       }
       return response;

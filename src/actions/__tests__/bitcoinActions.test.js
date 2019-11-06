@@ -63,10 +63,8 @@ describe('Bitcoin actions', () => {
         const utxos = await getAddressUtxos(address);
         expect(actions[0]).toMatchObject({
           type: UPDATE_BITCOIN_BALANCE,
-          payload: {
-            address,
-            unspentTransactions: utxos,
-          },
+          address,
+          unspentTransactions: utxos,
         });
       });
     });

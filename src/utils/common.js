@@ -19,6 +19,7 @@
 */
 import { Sentry } from 'react-native-sentry';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import orderBy from 'lodash.orderby';
 import { BigNumber } from 'bignumber.js';
 import * as ethUtil from 'ethereumjs-util';
@@ -39,6 +40,8 @@ import type { GasInfo } from 'models/GasInfo';
 import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
+  ETHEREUM_ADDRESS_PREFIX,
+  BITCOIN_ADDRESS_PREFIX,
 } from 'constants/assetsConstants';
 
 const WWW_URL_PATTERN = /^www\./i;
@@ -68,12 +71,12 @@ export const getRandomInt = (min: number, max: number): number => {
  *
  * @return String the address part
  */
-const decodeAddress = (prefix: string, encodedAddress?: string): string => {
-  if (!encodedAddress || encodedAddress === '') return '';
+const decodeAddress = (prefix: string, encodedAddress: string): string => {
+  if (isEmpty(encodedAddress)) return '';
 
   const len = prefix.length + 1;
 
-  if (encodedAddress.substr(0, len) === `${prefix}:`) {
+  if (encodedAddress.startsWith(`${prefix}:`)) {
     return encodedAddress.substr(len);
   }
 
@@ -81,11 +84,11 @@ const decodeAddress = (prefix: string, encodedAddress?: string): string => {
 };
 
 export const decodeBTCAddress = (encodedAddress: string): string => {
-  return decodeAddress('bitcoin', encodedAddress);
+  return decodeAddress(BITCOIN_ADDRESS_PREFIX, encodedAddress);
 };
 
 export const decodeETHAddress = (encodedAddress: string): string => {
-  return decodeAddress('ethereum', encodedAddress);
+  return decodeAddress(ETHEREUM_ADDRESS_PREFIX, encodedAddress);
 };
 
 export const pipe = (...fns: Function[]) => {

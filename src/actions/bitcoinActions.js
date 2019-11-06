@@ -17,6 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import Toast from 'components/Toast';
+import {
+  UPDATE_BITCOIN_BALANCE,
+  REFRESH_THRESHOLD,
+  SET_BITCOIN_ADDRESSES,
+} from 'constants/bitcoinConstants';
 import {
   keyPairAddress,
   getAddressUtxos,
@@ -26,18 +32,18 @@ import {
   transactionFromPlan,
   sendRawTransaction,
 } from 'services/bitcoin';
-import {
-  UPDATE_BITCOIN_BALANCE,
-  REFRESH_THRESHOLD,
-  SET_BITCOIN_ADDRESSES,
-} from 'constants/bitcoinConstants';
 import Storage from 'services/storage';
-import type { BitcoinReducerAction } from 'reducers/bitcoinReducer';
-import type { Wallet } from 'models/Wallet';
-import type { BitcoinTransactionPlan } from 'models/Bitcoin';
+
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import Toast from 'components/Toast';
-import { saveDbAction } from './dbActions';
+import type {
+  BitcoinReducerAction,
+  SetBitcoinAddressesAction,
+  UpdateBitcoinBalanceAction,
+} from 'reducers/bitcoinReducer';
+import type { Wallet } from 'models/Wallet';
+import type { BitcoinTransactionPlan, BitcoinUtxo } from 'models/Bitcoin';
+
+import { saveDbAction } from 'actions/dbActions';
 
 const storage = Storage.getInstance('db');
 
@@ -53,6 +59,20 @@ const loadDb = async (): Promise<BitcoinStore> => {
   return storage.get('bitcoin');
 };
 
+const setBitcoinAddresses = (addresses: string[]): SetBitcoinAddressesAction => ({
+  type: SET_BITCOIN_ADDRESSES,
+  addresses,
+});
+
+const updateBitcoinBalance = (
+  address: string,
+  unspentTransactions: BitcoinUtxo[],
+): UpdateBitcoinBalanceAction => ({
+  type: UPDATE_BITCOIN_BALANCE,
+  address,
+  unspentTransactions,
+});
+
 export const initializeBitcoinWalletAction = (wallet: Wallet) => {
   return async (dispatch: Dispatch) => {
     const root = await rootFromMnemonic(wallet.mnemonic);
@@ -64,7 +84,7 @@ export const initializeBitcoinWalletAction = (wallet: Wallet) => {
       keys: { [address]: exportKeyPair(keyPair) },
     }));
 
-    dispatch({ type: SET_BITCOIN_ADDRESSES, payload: { addresses: [address] } });
+    dispatch(setBitcoinAddresses([address]));
   };
 };
 
@@ -74,22 +94,14 @@ export const loadBitcoinAddresses = () => {
 
     const loaded: string[] = Object.keys(keys);
 
-    dispatch({ type: SET_BITCOIN_ADDRESSES, payload: { addresses: loaded } });
-
-    return loaded;
+    dispatch(setBitcoinAddresses(loaded));
   };
 };
 
 const fetchBalanceAction = async (address: string): Promise<BitcoinReducerAction> => {
   const unspentTransactions = await getAddressUtxos(address);
 
-  return {
-    type: UPDATE_BITCOIN_BALANCE,
-    payload: {
-      address,
-      unspentTransactions,
-    },
-  };
+  return updateBitcoinBalance(address, unspentTransactions);
 };
 
 const transactionSendingFailed = () => {
@@ -105,11 +117,10 @@ export const sendTransactionAction = (plan: BitcoinTransactionPlan) => {
   return async () => {
     const { keys = {} } = await loadDb();
 
-    const rawTransaction = transactionFromPlan(plan, (address: string) => {
-      const wif = keys[address];
-
-      return importKeyPair(wif);
-    });
+    const rawTransaction = transactionFromPlan(
+      plan,
+      (address: string) => importKeyPair(keys[address]),
+    );
 
     sendRawTransaction(rawTransaction)
       .then((txid) => {
@@ -125,9 +136,7 @@ export const sendTransactionAction = (plan: BitcoinTransactionPlan) => {
           autoClose: true,
         });
       })
-      .catch(() => {
-        transactionSendingFailed();
-      });
+      .catch(transactionSendingFailed);
   };
 };
 

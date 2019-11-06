@@ -40,6 +40,9 @@ export const USD = 'USD';
 export const HOT = 'HOT';
 export const HOLO = 'HOLO';
 
+export const ETHEREUM_ADDRESS_PREFIX = 'ethereum';
+export const BITCOIN_ADDRESS_PREFIX = 'bitcoin';
+
 export const supportedFiatCurrencies = [GBP, EUR, USD];
 export const defaultFiatCurrency = GBP;
 

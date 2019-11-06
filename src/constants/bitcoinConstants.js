@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 export const SET_BITCOIN_ADDRESSES = 'SET_BITCOIN_ADDRESSES';
+export const CREATED_BITCOIN_ADDRESS = 'CREATED_BITCOIN_ADDRESS';
 export const DEFAULT_BTC_NETWORK = process.env.BITCOIN_NETWORK || 'testnet';
 export const BITCOIN_INSIGHT_URL = process.env.BITCOIN_INSIGHT_URL || '';
 export const UPDATE_BITCOIN_BALANCE = 'UPDATE_BITCOIN_BALANCE';
