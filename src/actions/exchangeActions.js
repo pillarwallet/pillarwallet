@@ -35,7 +35,7 @@ import {
   REMOVE_CONNECTED_EXCHANGE_PROVIDER,
   PROVIDER_SHAPESHIFT,
   MARK_NOTIFICATION_SEEN,
-  SET_EXCHANGE_PROVIDERS_META_DATA,
+  SET_EXCHANGE_PROVIDERS_METADATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
@@ -513,7 +513,7 @@ export const getMetaDataAction = () => {
   return async (dispatch: Dispatch) => {
     const metaData = await exchangeService.getMetaData();
     dispatch({
-      type: SET_EXCHANGE_PROVIDERS_META_DATA,
+      type: SET_EXCHANGE_PROVIDERS_METADATA,
       payload: metaData,
     });
     dispatch(saveDbAction('exchangeProvidersInfo', { exchangeProvidersInfo: metaData }, true));

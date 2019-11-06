@@ -51,7 +51,7 @@ import {
   SET_EXCHANGE_ALLOWANCES,
   SET_CONNECTED_EXCHANGE_PROVIDERS,
   SET_EXCHANGE_SUPPORTED_ASSETS,
-  SET_EXCHANGE_PROVIDERS_META_DATA,
+  SET_EXCHANGE_PROVIDERS_METADATA,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -169,7 +169,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
 
       const { exchangeProvidersInfo = [] } = await storage.get('exchangeProvidersInfo');
-      dispatch({ type: SET_EXCHANGE_PROVIDERS_META_DATA, payload: exchangeProvidersInfo });
+      dispatch({ type: SET_EXCHANGE_PROVIDERS_METADATA, payload: exchangeProvidersInfo });
 
       const { userSettings = {} } = await storage.get('userSettings');
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
