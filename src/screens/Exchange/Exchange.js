@@ -267,15 +267,12 @@ const generateFormStructure = (balances: Balances) => {
 
     const { symbol, decimals } = selector;
 
-    const isFiat = isFiatCurrency(symbol);
+    if (isFiatCurrency(symbol)) return true;
 
     amount = parseFloat(input);
 
-    if (decimals === 0 && amount.toString().indexOf('.') > -1 && !isFiat) {
-      return false;
-    } else if (isFiat) {
-      return true;
-    }
+    if (decimals === 0 && amount.toString().includes('.')) return false;
+
     balance = getBalance(balances, symbol);
     maxAmount = calculateMaxAmount(symbol, balance);
 
@@ -291,19 +288,33 @@ const generateFormStructure = (balances: Balances) => {
       return 'Incorrect number entered.';
     }
 
-    if (isEmpty(selector)) {
+    const numericAmount = parseFloat(input || 0);
+
+    if (!Object.keys(selector).length) {
       return 'Asset should be selected.';
-    } else if (!input) {
-      return false; // should still validate (to not trigger search if empty), yet error should not be visible to user
-    } else if (parseFloat(input) < 0) {
+    } else if (numericAmount === 0) {
+      /**
+       * 0 is the first number that can be typed therefore we don't want
+       * to show any error message on the input, however,
+       * the form validation would still not go through,
+       * but it's obvious that you cannot send 0 amount
+       */
+      return null;
+    } else if (numericAmount < 0) {
       return 'Amount should be bigger than 0.';
-    } else if (amount > maxAmount && !isFiat) {
+    }
+
+    // all possible fiat validation is done
+    if (isFiat) return true;
+
+    if (amount > maxAmount) {
       return `Amount should not be bigger than your balance - ${balance} ${symbol}.`;
-    } else if (amount < MIN_TX_AMOUNT && !isFiat) {
+    } else if (amount < MIN_TX_AMOUNT) {
       return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH).';
-    } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+    } else if (decimals === 0 && amount.toString().includes('.')) {
       return 'Amount should not contain decimal places';
     }
+
     return true;
   };
 
