@@ -137,7 +137,7 @@ import {
   formatMoney,
   formatUnits,
   isCaseInsensitiveMatch,
-  parseAmountToWei,
+  parseTokenAmount,
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getWalletsCreationEventsAction } from './userEventsActions';
@@ -1209,7 +1209,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
       const accountAddress = getActiveAccountAddress(accounts);
       const settlementData = txToSettle.map(({ symbol, value, hash }) => {
         const { decimals = 18 } = getAssetData(accountAssetsData, supportedAssets, symbol);
-        const parsedValue = parseAmountToWei(value, decimals);
+        const parsedValue = parseTokenAmount(value, decimals);
         return { symbol, value: parsedValue, hash };
       });
 

@@ -31,7 +31,7 @@ import {
   formatUnits,
   formatFiat,
   extractJwtPayload,
-  parseAmountToWei,
+  parseTokenAmount,
 } from '../common';
 
 describe('Common utils', () => {
@@ -224,14 +224,14 @@ describe('Common utils', () => {
     });
   });
 
-  describe('parseAmountToWei', () => {
+  describe('parseTokenAmount', () => {
     it('should parse from 0.1 as 100000000000000000 with 18 decimals', () => {
       const expectedValue = 100000000000000000;
-      expect(parseAmountToWei('0.1', 18)).toBe(expectedValue);
+      expect(parseTokenAmount('0.1', 18)).toBe(expectedValue);
     });
     it('should parse from 100 as 100 with 0 decimals', () => {
       const expectedValue = 100;
-      expect(parseAmountToWei('100', 0)).toBe(expectedValue);
+      expect(parseTokenAmount('100', 0)).toBe(expectedValue);
     });
   });
 });

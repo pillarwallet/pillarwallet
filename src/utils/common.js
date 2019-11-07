@@ -136,9 +136,12 @@ export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
 };
 
-export const parseAmountToWei = (amount: string | number, decimals: number): number => {
-  if (decimals === 0) return Math.floor(+(utils.bigNumberify(amount).toString()));
-  return Math.floor(+(utils.parseUnits(amount.toString(), decimals).toString()));
+export const parseTokenAmount = (amount: number | string, decimals: number): number => {
+  const formatted = amount.toString();
+  const parsed = decimals > 0
+    ? utils.parseUnits(formatted, decimals)
+    : utils.bigNumberify(formatted);
+  return Math.floor(+parsed.toString());
 };
 
 export const getCurrencySymbol = (currency: string): string => {
