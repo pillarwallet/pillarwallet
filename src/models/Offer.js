@@ -39,8 +39,8 @@ export type Offer = {
 export type FiatOffer = {
   provider: string,
   askRate: number | string,
-  fromAssetCode: string,
-  toAssetCode: string,
+  fromAsset: { code: string },
+  toAsset: { code: string },
   feeAmount: number | string,
   extraFeeAmount: number | string,
   quoteCurrencyAmount: number,
