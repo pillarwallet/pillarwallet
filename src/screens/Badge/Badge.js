@@ -44,17 +44,17 @@ const Description = styled(Paragraph)`
 class Badge extends React.Component<Props, {}> {
   shouldComponentUpdate(nextProps: Props) {
     const { navigation } = this.props;
-    const oldBadgeId = navigation.getParam('id', null);
-    const newBadgeId = nextProps.navigation.getParam('id', null);
+    const oldBadgeId = navigation.getParam('badgeId', null);
+    const newBadgeId = nextProps.navigation.getParam('badgeId', null);
     return oldBadgeId !== newBadgeId;
   }
 
   render() {
     const { navigation, badges } = this.props;
-    const badgeId = Number(navigation.getParam('id', 0));
+    const badgeId = navigation.getParam('badgeId', null);
     const passedBadge = navigation.getParam('badge', null);
     const hideDescription = navigation.getParam('hideDescription', false);
-    const badge = passedBadge || badges.find(({ id }) => id === badgeId) || {};
+    const badge = passedBadge || badges.find(({ badgeId: _badgeId }) => _badgeId === badgeId) || {};
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: badge.name || 'Unknown badge' }] }}>
         <ScrollWrapper color={UIColors.defaultBackgroundColor}>

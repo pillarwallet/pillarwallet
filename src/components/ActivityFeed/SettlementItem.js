@@ -96,10 +96,10 @@ export const SettlementItem = (props: Props) => {
               {valuesArray.map(({ symbol, value }) => <ItemValue key={symbol}>{`${value} ${symbol}`}</ItemValue>)}
             </ListWrapper>)}
           innerWrapperHorizontalAlign="flex-start"
-          noImageBorder
           itemStatusIcon={itemStatusIcon}
           customAddonAlignLeft={customAddonAlignLeft}
           rightColumnInnerStyle={rightColumnInnerStyle}
+          diameter={56}
         />
       }
       {(!type || type === SYNTHETIC) &&
@@ -113,17 +113,17 @@ export const SettlementItem = (props: Props) => {
               {ppnTransactions.map(({ symbol, value, hash }) => (
                 <TankAssetBalance
                   key={hash}
-                  amount={`-${value} ${symbol}`}
+                  amount={`- ${value} ${symbol}`}
                   monoColor
                   textStyle={{ color: baseColors.scarlet }}
                 />
               ))}
             </ListWrapper>)}
           innerWrapperHorizontalAlign="flex-start"
-          noImageBorder
           itemStatusIcon={itemStatusIcon}
           customAddonAlignLeft={customAddonAlignLeft}
           rightColumnInnerStyle={rightColumnInnerStyle}
+          diameter={56}
         />
       }
     </React.Fragment>

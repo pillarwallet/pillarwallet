@@ -63,7 +63,7 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import { fetchBadgesAction } from 'actions/badgesActions';
+import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import {
   requestSessionAction,
   cancelWaitingRequestAction,
@@ -82,9 +82,10 @@ import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
 // types
 import type { Account, Accounts } from 'models/Account';
-import type { Badges } from 'models/Badge';
+import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
+import type { UserEvent } from 'models/userEvent';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -116,6 +117,9 @@ type Props = {
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
   isOnline: boolean,
+  userEvents: UserEvent[],
+  fetchBadgeAwardHistory: () => void,
+  badgesEvents: BadgeRewardEvent[],
 };
 
 type State = {
@@ -181,7 +185,7 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { logScreenView, fetchBadges } = this.props;
+    const { logScreenView, fetchBadges, fetchBadgeAwardHistory } = this.props;
 
     logScreenView('View home', 'Home');
 
@@ -193,6 +197,7 @@ class HomeScreen extends React.Component<Props, State> {
       this.props.setUnreadNotificationsStatus(false);
     });
     fetchBadges();
+    fetchBadgeAwardHistory();
   }
 
   componentWillUnmount() {
@@ -287,7 +292,7 @@ class HomeScreen extends React.Component<Props, State> {
     return (
       <BadgeTouchableItem
         data={item}
-        onPress={() => navigation.navigate(BADGE, { id: item.id })}
+        onPress={() => navigation.navigate(BADGE, { badgeId: item.badgeId })}
       />
     );
   };
@@ -312,6 +317,8 @@ class HomeScreen extends React.Component<Props, State> {
       connectors,
       contactsSmartAddresses,
       accounts,
+      userEvents,
+      badgesEvents,
     } = this.props;
 
     const {
@@ -348,7 +355,14 @@ class HomeScreen extends React.Component<Props, State> {
         tabImageNormal: allIconNormal,
         tabImageActive: allIconActive,
         onPress: () => this.setActiveTab(ALL),
-        data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts, ...invitations],
+        data: [
+          ...transactionsOnMainnet,
+          ...mappedCTransactions,
+          ...mappedContacts,
+          ...invitations,
+          ...userEvents,
+          ...badgesEvents,
+        ],
         emptyState: {
           title: 'Make your first step',
           bodyText: 'Your activity will appear here.',
@@ -498,21 +512,24 @@ const mapStateToProps = ({
   user: { data: user },
   invitations: { data: invitations },
   notifications: { intercomNotificationsCount },
-  badges: { data: badges },
+  badges: { data: badges, badgesEvents },
   walletConnect: { connectors, pendingConnector },
   accounts: { data: accounts },
   session: { data: { isOnline } },
+  userEvents: { data: userEvents },
 }) => ({
   contacts,
   user,
   invitations,
   intercomNotificationsCount,
   badges,
+  badgesEvents,
   connectors,
   pendingConnector,
   contactsSmartAddresses,
   accounts,
   isOnline,
+  userEvents,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -539,6 +556,7 @@ const mapDispatchToProps = (dispatch) => ({
   cancelWaitingRequest: () => dispatch(cancelWaitingRequestAction()),
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+  fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);

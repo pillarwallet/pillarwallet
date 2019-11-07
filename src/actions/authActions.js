@@ -76,6 +76,7 @@ import SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
+import { getWalletsCreationEventsAction } from './userEventsActions';
 
 
 const Crashlytics = firebase.crashlytics();
@@ -190,8 +191,6 @@ export const loginAction = (
         // to get exchange supported assets in order to show only supported assets on exchange selectors
         // and show exchange button on supported asset screen only
         dispatch(getExchangeSupportedAssetsAction());
-
-        dispatch(labelUserAsLegacyAction());
       } else {
         api.init();
       }
@@ -266,6 +265,7 @@ export const loginAction = (
         toastWalletBackup(isWalletBackedUp, getAccountId(keyBasedAccount));
       }
 
+      dispatch(getWalletsCreationEventsAction());
       navigate(navigateToAppAction);
     } catch (e) {
       dispatch(updatePinAttemptsAction(true));

@@ -399,7 +399,7 @@ SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: stri
       type,
     }))
     .then(({ data }) => data)
-    .then(({ notifications }) => notifications)
+    .then(({ notifications }) => notifications || [])
     .then(notifications => {
       return notifications.map(notification => {
         if (!isTransactionEvent(notification.type)) return notification;

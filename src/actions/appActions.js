@@ -44,14 +44,14 @@ import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
-import { UPDATE_BADGES, SET_CONTACTS_BADGES } from 'constants/badgesConstants';
+import { UPDATE_BADGES, SET_CONTACTS_BADGES, SET_BADGE_AWARD_EVENTS } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import {
   SET_EXCHANGE_ALLOWANCES,
   SET_CONNECTED_EXCHANGE_PROVIDERS,
   SET_EXCHANGE_SUPPORTED_ASSETS,
-  SET_EXCHANGE_PROVIDERS_META_DATA,
+  SET_EXCHANGE_PROVIDERS_METADATA,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
@@ -74,6 +74,8 @@ import {
   INITIAL_FEATURE_FLAGS,
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
+import { SET_USER_EVENTS } from 'constants/userEventsConstants';
+
 import { getWalletFromStorage } from 'utils/wallet';
 
 const storage = Storage.getInstance('db');
@@ -153,6 +155,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { contactsBadges = {} } = await storage.get('contactsBadges');
       dispatch({ type: SET_CONTACTS_BADGES, payload: contactsBadges });
 
+      const { badgeAwardEvents = [] } = await storage.get('badgeAwardEvents');
+      dispatch({ type: SET_BADGE_AWARD_EVENTS, payload: badgeAwardEvents });
+
       const { paymentNetworkBalances = {} } = await storage.get('paymentNetworkBalances');
       dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });
 
@@ -173,13 +178,16 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
 
       const { exchangeProvidersInfo = [] } = await storage.get('exchangeProvidersInfo');
-      dispatch({ type: SET_EXCHANGE_PROVIDERS_META_DATA, payload: exchangeProvidersInfo });
+      dispatch({ type: SET_EXCHANGE_PROVIDERS_METADATA, payload: exchangeProvidersInfo });
 
       const { userSettings = {} } = await storage.get('userSettings');
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
       const { featureFlags = INITIAL_FEATURE_FLAGS } = await storage.get('featureFlags');
       dispatch({ type: SET_FEATURE_FLAGS, payload: featureFlags });
+
+      const { userEvents = [] } = await storage.get('userEvents');
+      dispatch({ type: SET_USER_EVENTS, payload: userEvents });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
@@ -219,6 +227,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       return;
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
+
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };

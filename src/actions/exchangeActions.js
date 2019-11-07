@@ -19,6 +19,8 @@
 */
 import { Linking } from 'react-native';
 import { SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import ExchangeService from 'services/exchange';
 import Toast from 'components/Toast';
 import {
@@ -33,7 +35,7 @@ import {
   REMOVE_CONNECTED_EXCHANGE_PROVIDER,
   PROVIDER_SHAPESHIFT,
   MARK_NOTIFICATION_SEEN,
-  SET_EXCHANGE_PROVIDERS_META_DATA,
+  SET_EXCHANGE_PROVIDERS_METADATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
@@ -118,8 +120,8 @@ export const takeOfferAction = (
       toAssetAddress,
     };
     const order = await exchangeService.takeOffer(offerRequest);
-
-    if (!order || !order.data || !order.data.transactionObj || order.error) {
+    const offerOrderData = get(order, 'data');
+    if (isEmpty(offerOrderData) || order.error) {
       let { message = 'Unable to request offer' } = order.error || {};
       if (message.toString().toLowerCase().includes('kyc')) {
         message = 'Shapeshift KYC must be complete in order to proceed';
@@ -132,20 +134,17 @@ export const takeOfferAction = (
       callback({}); // let's return callback to dismiss loading spinner on offer card button
       return;
     }
-    const { data: offerOrderData } = order;
     const {
       payToAddress,
       payQuantity,
-      transactionObj: {
-        data: transactionObjData,
-      } = {},
     }: OfferOrder = offerOrderData;
+    const transactionDataString = get(offerOrderData, 'transactionObj.data');
 
     const from = getActiveAccountAddress(accounts);
     const gasLimit = await calculateGasEstimate({
       from,
       to: payToAddress,
-      data: transactionObjData,
+      data: transactionDataString,
       amount: payQuantity,
       symbol: fromAssetCode,
       contractAddress: fromAssetAddress || '',
@@ -515,7 +514,7 @@ export const getMetaDataAction = () => {
   return async (dispatch: Dispatch) => {
     const metaData = await exchangeService.getMetaData();
     dispatch({
-      type: SET_EXCHANGE_PROVIDERS_META_DATA,
+      type: SET_EXCHANGE_PROVIDERS_METADATA,
       payload: metaData,
     });
     dispatch(saveDbAction('exchangeProvidersInfo', { exchangeProvidersInfo: metaData }, true));

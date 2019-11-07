@@ -23,6 +23,7 @@ type ExchangeOfferAsset = {
   decimals: string,
   address: string,
 }
+
 export type Offer = {
   provider: string,
   _id: string,
@@ -34,6 +35,7 @@ export type Offer = {
   maxQuantity: number,
   allowanceSet: boolean,
 }
+
 export type FiatOffer = {
   provider: string,
   askRate: number | string,

@@ -30,7 +30,7 @@ import {
   REMOVE_CONNECTED_EXCHANGE_PROVIDER,
   SET_CONNECTED_EXCHANGE_PROVIDERS,
   MARK_NOTIFICATION_SEEN,
-  SET_EXCHANGE_PROVIDERS_META_DATA,
+  SET_EXCHANGE_PROVIDERS_METADATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
@@ -193,7 +193,7 @@ export default function exchangeReducer(
           hasNotification: false,
         },
       };
-    case SET_EXCHANGE_PROVIDERS_META_DATA:
+    case SET_EXCHANGE_PROVIDERS_METADATA:
       return {
         ...state,
         providersMeta: action.payload,

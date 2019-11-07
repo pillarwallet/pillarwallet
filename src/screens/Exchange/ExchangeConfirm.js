@@ -26,6 +26,7 @@ import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
 
+// components
 import { Footer, ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
@@ -33,22 +34,27 @@ import { Label, MediumText, Paragraph, TextLink } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 
+// constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
+// actions
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
+// utils
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderDisplayName, getOfferProviderLogo } from 'utils/exchange';
 
+// models, types
 import type { GasInfo } from 'models/GasInfo';
 import type { Asset, Balances, Rates } from 'models/Asset';
 import type { OfferOrder, ProvidersMeta } from 'models/Offer';
 import type { TokenTransactionPayload } from 'models/Transaction';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 const FooterWrapper = styled.View`
   flex-direction: row;
@@ -106,7 +112,7 @@ type Props = {
   fetchGasInfo: Function,
   gasInfo: GasInfo,
   rates: Rates,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   exchangeSupportedAssets: Asset[],
   balances: Balances,
   executingExchangeTransaction: boolean,
@@ -392,7 +398,7 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   history: { gasInfo },
   exchange: { data: { executingTransaction: executingExchangeTransaction }, providersMeta, exchangeSupportedAssets },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   session,
   rates,
   baseFiatCurrency,
@@ -411,7 +417,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
 });
