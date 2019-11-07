@@ -363,6 +363,8 @@ class ActivityFeed extends React.Component<Props, State> {
             type={feedType}
             asset={asset}
             isPending={notificationStatus === TX_PENDING_STATUS}
+            supportedAssets={supportedAssets}
+            accountAssets={assets}
           />
         );
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {

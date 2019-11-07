@@ -52,6 +52,7 @@ import {
   formatFullAmount,
   noop,
   formatUnits,
+  formatAmount,
 } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
@@ -426,7 +427,11 @@ class EventDetails extends React.Component<Props, State> {
           {listSettledAssets &&
           <ListItemUnderlined
             label="ASSETS"
-            value={extra.map(item => <MediumText key={item.hash}> {item.value} {item.symbol}</MediumText>)}
+            value={extra.map(({ symbol, value: rawValue, hash }) => {
+              const { decimals: assetDecimals = 18 } = getAssetData(assetsData, supportedAssets, symbol);
+              const formattedValue = +formatAmount(formatUnits(rawValue.toString(), assetDecimals));
+              return <MediumText key={hash}> {formattedValue} {symbol}</MediumText>;
+            })}
           />
           }
           {showFeeBlock &&

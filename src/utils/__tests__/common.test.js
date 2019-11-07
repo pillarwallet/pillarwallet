@@ -31,6 +31,7 @@ import {
   formatUnits,
   formatFiat,
   extractJwtPayload,
+  parseTokenAmount,
 } from '../common';
 
 describe('Common utils', () => {
@@ -220,6 +221,17 @@ describe('Common utils', () => {
     it('should show just 0 (without decimals) if value is less than 0', () => {
       const expectedValue = '£ 0';
       expect(formatFiat('0.00')).toBe(expectedValue);
+    });
+  });
+
+  describe('parseTokenAmount', () => {
+    it('should parse from 0.1 as 100000000000000000 with 18 decimals', () => {
+      const expectedValue = 100000000000000000;
+      expect(parseTokenAmount('0.1', 18)).toBe(expectedValue);
+    });
+    it('should parse from 100 as 100 with 0 decimals', () => {
+      const expectedValue = 100;
+      expect(parseTokenAmount('100', 0)).toBe(expectedValue);
     });
   });
 });

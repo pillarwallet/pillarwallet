@@ -26,6 +26,9 @@ import { BaseText } from 'components/Typography';
 import TankAssetBalance from 'components/TankAssetBalance';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
+import { getAssetData } from 'utils/assets';
+import { formatAmount, formatUnits } from 'utils/common';
+import type { Asset } from 'models/Asset';
 
 const ppnIcon = require('assets/icons/icon_PPN.png');
 
@@ -41,6 +44,8 @@ type Props = {
   asset?: string,
   onPress: Function,
   isPending?: boolean,
+  accountAssets: Asset[],
+  supportedAssets: Asset[],
 }
 
 const ListWrapper = styled.View`
@@ -61,20 +66,24 @@ export const SettlementItem = (props: Props) => {
     asset,
     onPress,
     isPending,
+    accountAssets,
+    supportedAssets,
   } = props;
   const ppnTransactions = asset
     ? settleData.filter(({ symbol }) => symbol === asset)
     : settleData;
 
   const valueByAsset: Object = {};
-  ppnTransactions.forEach((trx) => {
-    const key = trx.symbol;
-    const value = +trx.value;
-    if (!valueByAsset[key]) {
-      valueByAsset[key] = { ...trx, value };
+  const formattedPPNTransactions = ppnTransactions.map((trx) => {
+    const { symbol, value: rawValue } = trx;
+    const { decimals = 18 } = getAssetData(accountAssets, supportedAssets, symbol);
+    const value = +formatAmount(formatUnits(rawValue.toString(), decimals));
+    if (!valueByAsset[symbol]) {
+      valueByAsset[symbol] = { ...trx, value };
     } else {
-      valueByAsset[key].value += value;
+      valueByAsset[symbol].value += value;
     }
+    return { ...trx, value };
   });
 
   const valuesArray = Object.keys(valueByAsset).map((key) => valueByAsset[key]);
@@ -110,7 +119,7 @@ export const SettlementItem = (props: Props) => {
           subtext="from PLR Network"
           customAddon={(
             <ListWrapper>
-              {ppnTransactions.map(({ symbol, value, hash }) => (
+              {formattedPPNTransactions.map(({ symbol, value, hash }) => (
                 <TankAssetBalance
                   key={hash}
                   amount={`- ${value} ${symbol}`}
