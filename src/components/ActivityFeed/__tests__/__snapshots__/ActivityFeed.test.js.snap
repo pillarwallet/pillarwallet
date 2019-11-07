@@ -163,7 +163,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "center",
-                "minHeight": 84,
                 "opacity": 1,
                 "paddingBottom": 8,
                 "paddingLeft": 20,
@@ -178,27 +177,28 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "height": 54,
                     "justifyContent": "center",
                     "paddingRight": 12,
-                    "width": 66,
                   },
                   undefined,
                 ]
               }
             >
               <View
-                fillColor="#f7ebe6"
+                diameter={56}
                 style={
                   Array [
                     Object {
                       "alignItems": "center",
-                      "backgroundColor": "#f7ebe6",
-                      "borderRadius": 26,
-                      "height": 52,
+                      "backgroundColor": "#ffffff",
+                      "borderColor": "#EDEDED",
+                      "borderRadius": 28,
+                      "borderStyle": "solid",
+                      "borderWidth": 1,
+                      "height": 56,
                       "justifyContent": "center",
                       "textAlign": "center",
-                      "width": 52,
+                      "width": 56,
                     },
                     undefined,
                   ]
@@ -209,7 +209,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   style={
                     Array [
                       Object {
-                        "color": "#db9a84",
+                        "color": "#007AFF",
                         "fontSize": 48,
                       },
                       undefined,
@@ -292,7 +292,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                                 "color": "#0A1427",
                                 "fontSize": 16,
                                 "letterSpacing": 0.2,
-                                "lineHeight": 24,
+                                "lineHeight": 22,
                                 "width": "100%",
                               },
                               undefined,
@@ -565,7 +565,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "center",
-                "minHeight": 84,
                 "opacity": 1,
                 "paddingBottom": 8,
                 "paddingLeft": 20,
@@ -580,27 +579,28 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "height": 54,
                     "justifyContent": "center",
                     "paddingRight": 12,
-                    "width": 66,
                   },
                   undefined,
                 ]
               }
             >
               <View
-                fillColor="#f7ebe6"
+                diameter={56}
                 style={
                   Array [
                     Object {
                       "alignItems": "center",
-                      "backgroundColor": "#f7ebe6",
-                      "borderRadius": 26,
-                      "height": 52,
+                      "backgroundColor": "#ffffff",
+                      "borderColor": "#EDEDED",
+                      "borderRadius": 28,
+                      "borderStyle": "solid",
+                      "borderWidth": 1,
+                      "height": 56,
                       "justifyContent": "center",
                       "textAlign": "center",
-                      "width": 52,
+                      "width": 56,
                     },
                     undefined,
                   ]
@@ -611,7 +611,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   style={
                     Array [
                       Object {
-                        "color": "#db9a84",
+                        "color": "#007AFF",
                         "fontSize": 48,
                       },
                       undefined,
@@ -694,7 +694,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                                 "color": "#0A1427",
                                 "fontSize": 16,
                                 "letterSpacing": 0.2,
-                                "lineHeight": 24,
+                                "lineHeight": 22,
                                 "width": "100%",
                               },
                               undefined,

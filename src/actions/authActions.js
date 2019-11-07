@@ -76,6 +76,7 @@ import SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
+import { getWalletsCreationEventsAction } from './userEventsActions';
 
 
 const Crashlytics = firebase.crashlytics();
@@ -264,6 +265,7 @@ export const loginAction = (
         toastWalletBackup(isWalletBackedUp, getAccountId(keyBasedAccount));
       }
 
+      dispatch(getWalletsCreationEventsAction());
       navigate(navigateToAppAction);
     } catch (e) {
       dispatch(updatePinAttemptsAction(true));

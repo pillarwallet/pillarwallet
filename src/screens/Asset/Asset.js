@@ -406,7 +406,6 @@ class AssetScreen extends React.Component<Props, State> {
             feedTitle="Transactions"
             navigation={navigation}
             backgroundColor={baseColors.white}
-            showArrowsOnly
             noBorder
             feedData={relatedTransactions}
             feedType={isSynthetic ? SYNTHETIC : NONSYNTHETIC}
