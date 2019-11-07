@@ -137,6 +137,7 @@ export const formatFullAmount = (amount: string | number): string => {
 };
 
 export const parseAmountToWei = (amount: string | number, decimals: number): number => {
+  if (decimals === 0) return Math.floor(+(utils.bigNumberify(amount).toString()));
   return Math.floor(+(utils.parseUnits(amount.toString(), decimals).toString()));
 };
 
