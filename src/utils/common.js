@@ -137,7 +137,7 @@ export const formatFullAmount = (amount: string | number): string => {
 };
 
 export const parseAmountToWei = (amount: string | number, decimals: number): number => {
-  return Math.floor(+(utils.parseUnits(amount.toString(), decimals)).toString());
+  return Math.floor(+(utils.parseUnits(amount.toString(), decimals).toString()));
 };
 
 export const getCurrencySymbol = (currency: string): string => {
