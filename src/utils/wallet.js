@@ -76,7 +76,7 @@ export function catchTransactionError(e: Object, type: string, tx: Object) {
 
 // handle eth_signTransaction
 export function signTransaction(trx: Object, wallet: Object): Promise<string> {
-  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
   if (trx && trx.from) {
     delete trx.from;
   }
@@ -85,14 +85,14 @@ export function signTransaction(trx: Object, wallet: Object): Promise<string> {
 
 // handle eth_sign
 export function signMessage(message: any, wallet: Object): string {
-  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
   // TODO: this method needs to be replaced when ethers.js is migrated to v4.0
   return ethSign(message, wallet.privateKey);
 }
 
 // handle personal_sign
 export function signPersonalMessage(message: string, wallet: Object): Promise<string> {
-  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
   return wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
 }
 

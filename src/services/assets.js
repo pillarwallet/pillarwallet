@@ -91,7 +91,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
   } = options;
   let { data, to } = options;
 
-  wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
+  wallet.connect(getEthereumProvider(NETWORK_PROVIDER));
 
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
   const contractAmount = parseContractAmount(amount, defaultDecimals);
@@ -220,7 +220,7 @@ export async function transferETH(options: ETHTransferOptions) {
     nonce,
     data,
   };
-  wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
+  wallet.connect(getEthereumProvider(NETWORK_PROVIDER));
   if (!signOnly) return wallet.sendTransaction(trx);
   const signedHash = await wallet.sign(trx);
   return { signedHash, value };
