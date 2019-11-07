@@ -555,7 +555,6 @@ const getFiatExchangeSupportedAssetsAction = () => {
     const fiatExchangeSupportedAssets = supportedAssets
       .filter(({ symbol }) => providersSupportedAssetsTickers.includes(symbol));
 
-
     dispatch({
       type: SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
       payload: fiatExchangeSupportedAssets,
