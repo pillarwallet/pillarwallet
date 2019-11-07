@@ -27,9 +27,18 @@ const executeCallback = (data?: any, callback?: Function) => {
   if (typeof callback === 'function') callback(data);
 };
 
-const buildApiUrl = (path: string) => {
+const buildApiUrl = (path: string, version?: string) => {
+  if (version) return `${EXCHANGE_URL}/v${version}/${path}`;
   return `${EXCHANGE_URL}/${path}`;
 };
+
+const buildAPIConfig = (accessToken: string) => ({
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+});
 
 export default class ExchangeService {
   io: SocketIO;
@@ -45,13 +54,7 @@ export default class ExchangeService {
       shapeshiftAccessToken,
     };
     try {
-      this.apiConfig = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      };
+      this.apiConfig = buildAPIConfig(accessToken);
       if (!!shapeshiftAccessToken
         && shapeshiftAccessToken !== '') {
         this.apiConfig.headers = {
@@ -68,6 +71,7 @@ export default class ExchangeService {
           token: accessToken,
         },
       });
+
       this.io.on('disconnect', () => {
         this.setConnected(false);
       });
@@ -120,16 +124,16 @@ export default class ExchangeService {
     this.io.off('offers');
   }
 
-  requestOffers(fromAssetCode: string, toAssetCode: string, quantity: number) {
-    const urlPath = `offers?name=${fromAssetCode}-${toAssetCode}&quantity=${quantity}`;
-    return fetch(buildApiUrl(urlPath), this.apiConfig)
+  requestOffers(fromAssetAddress: string, toAssetAddress: string, quantity: number) {
+    const urlPath = `offers?fromAssetAddress=${fromAssetAddress}&toAssetAddress=${toAssetAddress}&quantity=${quantity}`;
+    return fetch(buildApiUrl(urlPath, '2.0'), this.apiConfig)
       .then(response => response.text())
       .then(response => response.toLowerCase() === 'ok' ? {} : JSON.parse(response))
       .catch(error => ({ error }));
   }
 
   takeOffer(order: OfferRequest) {
-    return fetch(buildApiUrl('orders'), {
+    return fetch(buildApiUrl('orders', '2.0'), {
       ...this.apiConfig,
       method: 'POST',
       body: JSON.stringify(order),
@@ -139,7 +143,7 @@ export default class ExchangeService {
   }
 
   setTokenAllowance(request: TokenAllowanceRequest) {
-    return fetch(buildApiUrl('orders/allowance'), {
+    return fetch(buildApiUrl('orders/allowance', '2.0'), {
       ...this.apiConfig,
       method: 'POST',
       body: JSON.stringify(request),
@@ -173,5 +177,24 @@ export default class ExchangeService {
         .catch(() => ({}));
     }
     return Promise.resolve(this.ipInfo);
+  }
+
+  getMetaData() {
+    return fetch(buildApiUrl('shims/meta', '2.0'))
+      .then(resp => resp.json())
+      .then(({ data }) => data.items || [])
+      .catch(() => []);
+  }
+
+  getProdAssetsAddress() {
+    return fetch(buildApiUrl('prod-assets'))
+      .then(resp => resp.json())
+      .catch(() => []);
+  }
+
+  getExchangeSupportedAssets() {
+    return fetch(buildApiUrl('shims/assets', '1.0'))
+      .then(resp => resp.json())
+      .catch(() => []);
   }
 }

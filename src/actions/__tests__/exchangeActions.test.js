@@ -28,6 +28,7 @@ import {
   PROVIDER_MOONPAY,
   PROVIDER_SENDWYRE,
 } from 'constants/exchangeConstants';
+import { ETH } from 'constants/assetsConstants';
 import { searchOffersAction } from 'actions/exchangeActions';
 
 const walletId = 'walletId';
@@ -39,6 +40,20 @@ const connectedProvidersMock = [
   {
     extra: 'shapeshiftAccessToken',
     id: PROVIDER_SHAPESHIFT,
+  },
+];
+
+const exchangeSupportedAssetsMock = [
+  {
+    symbol: ETH,
+    name: 'ethereum',
+    balance: 1,
+    address: '',
+    description: '',
+    iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+    decimals: 18,
   },
 ];
 
@@ -93,7 +108,10 @@ describe('Exchange Actions tests', () => {
     const exchangeStoreMock = {
       user: { data: { walletId } },
       oAuthTokens: { data: { oAuthTokens: oAuthTokensMock } },
-      exchange: { data: { connectedProviders: connectedProvidersMock } },
+      exchange: {
+        data: { connectedProviders: connectedProvidersMock },
+        exchangeSupportedAssets: exchangeSupportedAssetsMock,
+      },
     };
     store = mockStore({ ...exchangeStoreMock });
   });
