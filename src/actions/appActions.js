@@ -50,6 +50,8 @@ import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueu
 import {
   SET_EXCHANGE_ALLOWANCES,
   SET_CONNECTED_EXCHANGE_PROVIDERS,
+  SET_EXCHANGE_SUPPORTED_ASSETS,
+  SET_EXCHANGE_PROVIDERS_METADATA,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -71,7 +73,6 @@ import {
   INITIAL_FEATURE_FLAGS,
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
-
 import { getWalletFromStorage } from 'utils/wallet';
 
 const storage = Storage.getInstance('db');
@@ -102,6 +103,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { supportedAssets = [] } = await storage.get('supportedAssets');
       dispatch({ type: UPDATE_SUPPORTED_ASSETS, payload: supportedAssets });
+
+      const { exchangeSupportedAssets = [] } = await storage.get('exchangeSupportedAssets');
+      dispatch({ type: SET_EXCHANGE_SUPPORTED_ASSETS, payload: exchangeSupportedAssets });
 
       const balances = await loadAndMigrate('balances', dispatch, getState);
       dispatch({ type: UPDATE_BALANCES, payload: balances });
@@ -163,6 +167,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { connectedProviders = [] } = await storage.get('exchangeProviders');
       dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
+
+      const { exchangeProvidersInfo = [] } = await storage.get('exchangeProvidersInfo');
+      dispatch({ type: SET_EXCHANGE_PROVIDERS_METADATA, payload: exchangeProvidersInfo });
 
       const { userSettings = {} } = await storage.get('userSettings');
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
