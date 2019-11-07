@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Share, RefreshControl } from 'react-native';
 import isEqual from 'lodash.isequal';
+import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
@@ -40,12 +41,7 @@ import DeploymentView from 'components/DeploymentView';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAssetTransactionsAction } from 'actions/historyActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-
-// models
-import type { Transaction } from 'models/Transaction';
-import type { Assets, Balances } from 'models/Asset';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts } from 'models/Account';
+import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
@@ -54,6 +50,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // utils
+import { checkIfSmartWalletAccount } from 'utils/accounts';
 import { baseColors, spacing, fontSizes, fontStyles } from 'utils/variables';
 import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
@@ -64,6 +61,7 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import assetsConfig from 'configs/assetsConfig';
 
 // selectors
+import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import {
@@ -72,8 +70,13 @@ import {
 } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
-// types
+// models, types
+import type { Transaction } from 'models/Transaction';
+import type { Assets, Balances, Asset } from 'models/Asset';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddressData } from 'models/Contacts';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // local components
 import ReceiveModal from './ReceiveModal';
@@ -103,12 +106,15 @@ type Props = {
   resetHideRemoval?: Function,
   smartWalletState: Object,
   accounts: Accounts,
+  activeAccount: ?Account,
   paymentNetworkBalances: Balances,
   smartWalletFeatureEnabled: boolean,
   history: Array<*>,
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
   contactsSmartAddresses: ContactSmartAddressData[],
+  getExchangeSupportedAssets: () => void,
+  exchangeSupportedAssets: Asset[],
 };
 
 type State = {
@@ -193,10 +199,17 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchAssetTransactions, navigation, logScreenView } = this.props;
+    const {
+      fetchAssetTransactions,
+      navigation,
+      logScreenView,
+      getExchangeSupportedAssets,
+      exchangeSupportedAssets,
+    } = this.props;
     const { assetData: { token }, resetHideRemoval } = navigation.state.params;
     fetchAssetTransactions(token);
     if (resetHideRemoval) resetHideRemoval();
+    if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
     logScreenView('View asset', 'Asset', `asset-${token}`);
   }
 
@@ -239,10 +252,10 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   handleScrollWrapperEndDrag = e => {
-    const { fetchAssetTransactions, history } = this.props;
-    const {
-      assetData: { token },
-    } = this.props.navigation.state.params;
+    const { fetchAssetTransactions, history, activeAccount } = this.props;
+    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
+
+    const { assetData: { token } } = this.props.navigation.state.params;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
     const contentHeight = e.nativeEvent.contentSize.height;
     const offsetY = e.nativeEvent.contentOffset.y;
@@ -268,6 +281,7 @@ class AssetScreen extends React.Component<Props, State> {
       contacts,
       availableStake,
       contactsSmartAddresses,
+      exchangeSupportedAssets,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -311,6 +325,7 @@ class AssetScreen extends React.Component<Props, State> {
       return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
+    const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
 
     return (
       <ContainerWithHeader
@@ -372,7 +387,7 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
-              onPressExchange={() => this.goToExchangeFlow(token)}
+              onPressExchange={isSupportedByExchange ? () => this.goToExchangeFlow(token) : null}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
@@ -391,7 +406,6 @@ class AssetScreen extends React.Component<Props, State> {
             feedTitle="Transactions"
             navigation={navigation}
             backgroundColor={baseColors.white}
-            showArrowsOnly
             noBorder
             feedData={relatedTransactions}
             feedType={isSynthetic ? SYNTHETIC : NONSYNTHETIC}
@@ -432,7 +446,8 @@ const mapStateToProps = ({
       SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
     },
   },
-}) => ({
+  exchange: { exchangeSupportedAssets },
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   rates,
   baseFiatCurrency,
@@ -440,6 +455,7 @@ const mapStateToProps = ({
   accounts,
   smartWalletFeatureEnabled,
   contactsSmartAddresses,
+  exchangeSupportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -448,6 +464,7 @@ const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   availableStake: availableStakeSelector,
   assets: accountAssetsSelector,
+  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -455,7 +472,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   fetchAssetsBalances: () => {
     dispatch(fetchAssetsBalancesAction());
   },
@@ -465,6 +482,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   logScreenView: (contentName: string, contentType: string, contentId: string) => {
     dispatch(logScreenViewAction(contentName, contentType, contentId));
   },
+  getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);

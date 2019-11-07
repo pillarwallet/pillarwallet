@@ -52,8 +52,8 @@ import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 
 // actions
 import {
+  fetchTransactionsHistoryAction,
   fetchTransactionsHistoryNotificationsAction,
-  restoreTransactionHistoryAction,
 } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -63,7 +63,7 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import { fetchBadgesAction } from 'actions/badgesActions';
+import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import {
   requestSessionAction,
   cancelWaitingRequestAction,
@@ -74,19 +74,18 @@ import { executeDeepLinkAction } from 'actions/deepLinkActions';
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
-import { activeAccountSelector } from 'selectors';
 
 // utils
 import { baseColors, spacing, fontStyles } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
-import { getAccountAddress } from 'utils/accounts';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
 // types
 import type { Account, Accounts } from 'models/Account';
-import type { Badges } from 'models/Badge';
+import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
+import type { UserEvent } from 'models/userEvent';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -94,6 +93,7 @@ type Props = {
   invitations: Object[],
   history: Object[],
   user: Object,
+  fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   acceptInvitation: Function,
@@ -113,11 +113,13 @@ type Props = {
   connectors: Connector[],
   pendingConnector?: Connector,
   logScreenView: (view: string, screen: string) => void,
-  restoreTransactionHistory: (walletAddress: string, walletId: string) => void,
-  activeAccount: Account,
+  activeAccount: ?Account,
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
   isOnline: boolean,
+  userEvents: UserEvent[],
+  fetchBadgeAwardHistory: () => void,
+  badgesEvents: BadgeRewardEvent[],
 };
 
 type State = {
@@ -183,7 +185,7 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { logScreenView, fetchBadges } = this.props;
+    const { logScreenView, fetchBadges, fetchBadgeAwardHistory } = this.props;
 
     logScreenView('View home', 'Home');
 
@@ -195,6 +197,7 @@ class HomeScreen extends React.Component<Props, State> {
       this.props.setUnreadNotificationsStatus(false);
     });
     fetchBadges();
+    fetchBadgeAwardHistory();
   }
 
   componentWillUnmount() {
@@ -225,20 +228,14 @@ class HomeScreen extends React.Component<Props, State> {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
       fetchAllCollectiblesData,
-      restoreTransactionHistory,
-      activeAccount,
+      fetchTransactionsHistory,
       fetchBadges,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
     fetchAllCollectiblesData();
     fetchBadges();
-
-    /**
-     * this is used only to avoid BCX fetching issues,
-     * TODO: remove fetching from ethplorer when BCX is fixed or BCX2 is released
-     */
-    restoreTransactionHistory(getAccountAddress(activeAccount), activeAccount.walletId);
+    fetchTransactionsHistory();
   };
 
   setActiveTab = (activeTab) => {
@@ -295,7 +292,7 @@ class HomeScreen extends React.Component<Props, State> {
     return (
       <BadgeTouchableItem
         data={item}
-        onPress={() => navigation.navigate(BADGE, { id: item.id })}
+        onPress={() => navigation.navigate(BADGE, { badgeId: item.badgeId })}
       />
     );
   };
@@ -320,6 +317,8 @@ class HomeScreen extends React.Component<Props, State> {
       connectors,
       contactsSmartAddresses,
       accounts,
+      userEvents,
+      badgesEvents,
     } = this.props;
 
     const {
@@ -356,7 +355,14 @@ class HomeScreen extends React.Component<Props, State> {
         tabImageNormal: allIconNormal,
         tabImageActive: allIconActive,
         onPress: () => this.setActiveTab(ALL),
-        data: [...transactionsOnMainnet, ...mappedCTransactions, ...mappedContacts, ...invitations],
+        data: [
+          ...transactionsOnMainnet,
+          ...mappedCTransactions,
+          ...mappedContacts,
+          ...invitations,
+          ...userEvents,
+          ...badgesEvents,
+        ],
         emptyState: {
           title: 'Make your first step',
           bodyText: 'Your activity will appear here.',
@@ -506,27 +512,29 @@ const mapStateToProps = ({
   user: { data: user },
   invitations: { data: invitations },
   notifications: { intercomNotificationsCount },
-  badges: { data: badges },
+  badges: { data: badges, badgesEvents },
   walletConnect: { connectors, pendingConnector },
   accounts: { data: accounts },
   session: { data: { isOnline } },
+  userEvents: { data: userEvents },
 }) => ({
   contacts,
   user,
   invitations,
   intercomNotificationsCount,
   badges,
+  badgesEvents,
   connectors,
   pendingConnector,
   contactsSmartAddresses,
   accounts,
   isOnline,
+  userEvents,
 });
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   openSeaTxHistory: accountCollectiblesHistorySelector,
-  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -538,6 +546,7 @@ const mapDispatchToProps = (dispatch) => ({
   cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
@@ -547,9 +556,7 @@ const mapDispatchToProps = (dispatch) => ({
   cancelWaitingRequest: () => dispatch(cancelWaitingRequestAction()),
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
-  restoreTransactionHistory: (walletAddress: string, walletId: string) => dispatch(
-    restoreTransactionHistoryAction(walletAddress, walletId),
-  ),
+  fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);

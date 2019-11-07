@@ -60,7 +60,7 @@ type Props = {
   contactsSmartAddresses: ContactSmartAddressData[],
   isOnline: boolean,
   blockchainNetworks: BlockchainNetwork[],
-  activeAccount: Account,
+  activeAccount: ?Account,
 };
 
 type State = {

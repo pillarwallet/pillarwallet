@@ -53,7 +53,7 @@ import { navigate, getNavigationState, getNavigationPathAndParamsState } from 's
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
-import { getActiveAccountAddress, findKeyBasedAccount, getAccountId } from 'utils/accounts';
+import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
@@ -65,16 +65,18 @@ import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
 import { updatePinAttemptsAction } from 'actions/walletActions';
-import { restoreTransactionHistoryAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
+import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
 import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
+import { getWalletsCreationEventsAction } from './userEventsActions';
 
 
 const Crashlytics = firebase.crashlytics();
@@ -185,6 +187,10 @@ export const loginAction = (
         if (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
+
+        // to get exchange supported assets in order to show only supported assets on exchange selectors
+        // and show exchange button on supported asset screen only
+        dispatch(getExchangeSupportedAssetsAction());
       } else {
         api.init();
       }
@@ -220,6 +226,8 @@ export const loginAction = (
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
       }
+
+      dispatch(fetchTransactionsHistoryAction());
 
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
@@ -257,12 +265,7 @@ export const loginAction = (
         toastWalletBackup(isWalletBackedUp, getAccountId(keyBasedAccount));
       }
 
-      /**
-       * this is used only to avoid BCX fetching issues,
-       * TODO: remove fetching from ethplorer when BCX is fixed or BCX2 is released
-       */
-      dispatch(restoreTransactionHistoryAction(getActiveAccountAddress(accounts), user.walletId));
-
+      dispatch(getWalletsCreationEventsAction());
       navigate(navigateToAppAction);
     } catch (e) {
       dispatch(updatePinAttemptsAction(true));

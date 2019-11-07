@@ -27,6 +27,7 @@ import { Alert } from 'react-native';
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
+  fetchSmartWalletTransactionsAction,
   fetchTransactionsHistoryNotificationsAction,
   fetchAssetTransactionsAction,
 } from 'actions/historyActions';
@@ -43,6 +44,7 @@ import {
   addContactAndSendWebSocketTxNoteMessageAction,
   decryptReceivedWebSocketTxNoteMessageAction,
 } from 'actions/txNoteActions';
+import { fetchBadgesAction } from 'actions/badgesActions';
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
 import {
@@ -54,6 +56,7 @@ import {
   SIGNAL,
   BCX,
   COLLECTIBLE,
+  BADGE,
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT } from 'constants/navigationConstants';
 import {
@@ -72,6 +75,7 @@ import {
 import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
 import ChatService from 'services/chat';
 import { SOCKET } from 'services/sockets';
+
 
 const storage = Storage.getInstance('db');
 
@@ -140,6 +144,7 @@ export const setUnreadChatNotificationsStatusAction = (status: boolean) => {
 export const fetchAllNotificationsAction = () => {
   return async (dispatch: Function) => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
+    dispatch(fetchSmartWalletTransactionsAction());
     dispatch(fetchInviteNotificationsAction());
     dispatch(fetchAllCollectiblesDataAction());
   };
@@ -155,6 +160,7 @@ export const startListeningNotificationsAction = () => {
     if (SOCKET && SOCKET.socket && SOCKET.socket.readyState === 1) {
       SOCKET.onMessage(async response => {
         const data = JSON.parse(response.data.msg);
+
         if (data.type === CONNECTION_REQUESTED_EVENT) {
           dispatch(fetchInviteNotificationsAction());
         }
@@ -179,13 +185,18 @@ export const startListeningNotificationsAction = () => {
         }
         if (data.type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
+          dispatch(fetchSmartWalletTransactionsAction());
           dispatch(fetchAssetTransactionsAction(data.asset));
           dispatch(fetchAssetsBalancesAction());
+        }
+        if (data.type === BADGE) {
+          dispatch(fetchBadgesAction(false));
         }
         if (
           data.type === CONNECTION_REQUESTED_EVENT ||
           data.type === CONNECTION_COLLECTIBLE_EVENT ||
-          data.type === BCX
+          data.type === BCX ||
+          data.type === BADGE
         ) {
           const payload = {
             title: response.notification.title,
@@ -220,11 +231,15 @@ export const startListeningNotificationsAction = () => {
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
+        dispatch(fetchSmartWalletTransactionsAction());
         dispatch(fetchAssetTransactionsAction(notification.asset));
         dispatch(fetchAssetsBalancesAction());
       }
       if (notification.type === COLLECTIBLE) {
         dispatch(fetchAllCollectiblesDataAction());
+      }
+      if (notification.type === BADGE) {
+        dispatch(fetchBadgesAction());
       }
       if (notification.type === SIGNAL) {
         dispatch(getExistingChatsAction());
@@ -305,6 +320,7 @@ export const startListeningOnOpenNotificationAction = () => {
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
+          dispatch(fetchSmartWalletTransactionsAction());
           dispatch(fetchAssetTransactionsAction(asset));
           dispatch(fetchAssetsBalancesAction());
         }
@@ -317,6 +333,11 @@ export const startListeningOnOpenNotificationAction = () => {
         if (type === SIGNAL) {
           dispatch(getExistingChatsAction());
         }
+
+        if (type === BADGE) {
+          dispatch(fetchBadgesAction(false));
+        }
+
         const routeName = notificationRoute || HOME;
         const navigateToAppAction = NavigationActions.navigate({
           routeName: APP_FLOW,
