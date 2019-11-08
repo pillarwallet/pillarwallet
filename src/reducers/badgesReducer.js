@@ -25,8 +25,9 @@ import {
   SET_CONTACTS_BADGES,
   FETCHING_CONTACTS_BADGES,
   STOP_FETCHING_CONTACTS_BADGES,
+  SET_BADGE_AWARD_EVENTS,
 } from 'constants/badgesConstants';
-import type { Badges } from 'models/Badge';
+import type { Badges, BadgeRewardEvent } from 'models/Badge';
 
 export type BadgesReducerState = {
   data: Badges,
@@ -34,6 +35,7 @@ export type BadgesReducerState = {
     [contactId: string]: Badges,
   },
   isFetchingBadges: boolean,
+  badgesEvents: BadgeRewardEvent[],
 };
 
 export type BadgesReducerAction = {
@@ -44,6 +46,7 @@ export type BadgesReducerAction = {
 const initialState = {
   data: [],
   contactsBadges: {},
+  badgesEvents: [],
   isFetchingBadges: false,
 };
 
@@ -84,6 +87,11 @@ export default function badgesReducer(
         ...state,
         contactsBadges: action.payload,
         isFetchingBadges: false,
+      };
+    case SET_BADGE_AWARD_EVENTS:
+      return {
+        ...state,
+        badgesEvents: action.payload,
       };
     default:
       return state;

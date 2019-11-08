@@ -47,10 +47,13 @@ export function mapTransactionsHistory(
         ? getAccountName(account.type, accounts)
         : getUserName(contact);
 
+      const accountType = account ? account.type : null;
+
       return {
         username,
         to,
         from,
+        accountType,
         ...rest,
       };
     });

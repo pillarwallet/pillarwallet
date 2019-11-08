@@ -56,6 +56,7 @@ import featureFlagsReducer from './featureFlagsReducer';
 import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
 import bitcoinReducer from './bitcoinReducer';
+import userEventsReducer from './userEventsReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -93,6 +94,7 @@ import type { FeatureFlagsReducerState, FeatureFlagsReducerAction } from './feat
 import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
 import type { BitcoinReducerAction, BitcoinReducerState } from './bitcoinReducer';
+import type { UserEventsReducerAction, UserEventsReducerState } from './userEventsReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -127,6 +129,7 @@ export type RootReducerState = {|
   blockchainNetwork: BlockchainNetworkReducerState,
   userSettings: UserSettingsReducerState,
   bitcoin: BitcoinReducerState,
+  userEvents: UserEventsReducerState,
 |};
 
 type RootReducerAction =
@@ -146,6 +149,7 @@ type RootReducerAction =
   | WalletConnectSessionsReducerAction
   | UserSettingsReducerAction
   | BitcoinReducerAction
+  | UserEventsReducerAction
   | DbAction;
 
 export type GetState = () => RootReducerState;
@@ -191,6 +195,7 @@ const appReducer = combineReducers({
   blockchainNetwork: blockchainNetworkReducer,
   userSettings: userSettingsReducer,
   bitcoin: bitcoinReducer,
+  userEvents: userEventsReducer,
 });
 
 export const initialState = appReducer(undefined, {});

@@ -127,7 +127,7 @@ const SubtitleView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 30px ${spacing.rhythm}px;
+  padding: 30px ${spacing.rhythm}px 25px;
   border-bottom-width: 1px;
   border-color: ${baseColors.mediumLightGray};
 `;
@@ -195,7 +195,6 @@ class SettleBalance extends React.Component<Props, State> {
         avatarUrl={itemImage}
         valueColor={baseColors.jadeGreen}
         imageUpdateTimeStamp={contact.lastUpdateTime || 0}
-        noImageBorder
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
@@ -278,7 +277,9 @@ class SettleBalance extends React.Component<Props, State> {
           <React.Fragment>
             <SubtitleView>
               <Paragraph light small>Transactions available to settle</Paragraph>
-              <Paragraph style={{ textAlign: 'right' }} small>{txToSettle.length} of {MAX_TX_TO_SETTLE}</Paragraph>
+              <Paragraph style={{ textAlign: 'right', marginLeft: 4 }} small>
+                {txToSettle.length} of {MAX_TX_TO_SETTLE}
+              </Paragraph>
             </SubtitleView>
             <UnsettledTransactionsList
               sections={formattedFeedData}

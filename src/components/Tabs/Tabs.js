@@ -111,7 +111,7 @@ const TabItemIcon = styled(Icon)`
 `;
 
 const TabItemText = styled(MediumText)`
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.regular}px;
   color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
 `;
 
