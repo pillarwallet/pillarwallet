@@ -97,7 +97,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
   const contractAmount = parseContractAmount(amount, defaultDecimals);
 
   if (!data) {
-    ({ data } = await contract.interface.functions.transfer.apply(null, [to, contractAmount]) || {});
+    data = await contract.interface.functions.transfer.encode([to, contractAmount]).catch(() => null);
     to = contractAddress;
   }
 
@@ -150,7 +150,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
 
   // used if signOnly
   let contractSignedTransaction;
-  let contractMethodApplied;
+  let data;
   if (signOnly) {
     contractSignedTransaction = {
       gasLimit,
@@ -164,27 +164,18 @@ export async function transferERC721(options: ERC721TransferOptions) {
     case 'safeTransferFrom':
       contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
       if (!signOnly) return contract.safeTransferFrom(from, to, tokenId, { nonce });
-      contractMethodApplied = await contract.interface.functions.safeTransferFrom.apply(null, [from, to, tokenId]);
-      return wallet.sign({
-        ...contractSignedTransaction,
-        data: contractMethodApplied.data,
-      });
+      data = await contract.interface.functions.safeTransferFrom.encode([from, to, tokenId]).catch(() => null);
+      return wallet.sign({ ...contractSignedTransaction, data });
     case 'transfer':
       contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
       if (!signOnly) return contract.transfer(to, tokenId, { nonce });
-      contractMethodApplied = await contract.interface.functions.transfer.apply(null, [to, tokenId]);
-      return wallet.sign({
-        ...contractSignedTransaction,
-        data: contractMethodApplied.data,
-      });
+      data = await contract.interface.functions.transfer.encode([to, tokenId]).catch(() => null);
+      return wallet.sign({ ...contractSignedTransaction, data });
     case 'transferFrom':
       contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
       if (!signOnly) return contract.transferFrom(from, to, tokenId, { nonce });
-      contractMethodApplied = await contract.interface.functions.transferFrom.apply(null, [from, to, tokenId]);
-      return wallet.sign({
-        ...contractSignedTransaction,
-        data: contractMethodApplied.data,
-      });
+      data = await contract.interface.functions.transferFrom.encode([from, to, tokenId]).catch(() => null);
+      return wallet.sign({ ...contractSignedTransaction, data });
     default:
   }
 
@@ -323,36 +314,39 @@ export async function calculateGasEstimate(transaction: Object) {
   const value = symbol === ETH
     ? utils.parseEther(amount.toString())
     : '0x';
-  if (tokenId) {
-    let contract;
-    const code = await provider.getCode(contractAddress);
-    const contractTransferMethod = getERC721ContractTransferMethod(code);
-    switch (contractTransferMethod) {
-      case 'safeTransferFrom':
-        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, provider);
-        ({ data } = await contract.interface.functions.safeTransferFrom.apply(null, [from, to, tokenId]));
-        break;
-      case 'transfer':
-        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, provider);
-        ({ data } = await contract.interface.functions.transfer.apply(null, [to, tokenId]));
-        break;
-      case 'transferFrom':
-        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, provider);
-        ({ data } = await contract.interface.functions.transferFrom.apply(null, [from, to, tokenId]));
-        break;
-      default:
-        return DEFAULT_GAS_LIMIT;
+  try {
+    if (tokenId) {
+      let contract;
+      const code = await provider.getCode(contractAddress);
+      const contractTransferMethod = getERC721ContractTransferMethod(code);
+      switch (contractTransferMethod) {
+        case 'safeTransferFrom':
+          contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, provider);
+          data = await contract.interface.functions.safeTransferFrom.encode([from, to, tokenId]);
+          break;
+        case 'transfer':
+          contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, provider);
+          data = await contract.interface.functions.transfer.encode([to, tokenId]);
+          break;
+        case 'transferFrom':
+          contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, provider);
+          data = await contract.interface.functions.transferFrom.encode([from, to, tokenId]);
+          break;
+        default:
+          return DEFAULT_GAS_LIMIT;
+      }
+    } else if (!data && contractAddress && symbol !== ETH) {
+      /**
+       * we check `symbol !== ETH` because our assets list also includes ETH contract address
+       * so want to check if it's also not ETH send flow
+       */
+      const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
+      const contractAmount = parseContractAmount(amount, defaultDecimals);
+      data = await contract.interface.functions.transfer.encode([to, contractAmount]);
+      to = contractAddress;
     }
-  } else if (!data && contractAddress && symbol !== ETH) {
-    /**
-     * we check `symbol !== ETH` because our assets list also includes ETH contract address
-     * so want to check if it's also not ETH send flow
-     */
-    const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
-    const contractAmount = parseContractAmount(amount, defaultDecimals);
-
-    ({ data } = await contract.interface.functions.transfer.apply(null, [to, contractAmount]) || {});
-    to = contractAddress;
+  } catch (e) {
+    return DEFAULT_GAS_LIMIT;
   }
   // all parameters are required in order to estimate gas limit precisely
   return provider.estimateGas({
