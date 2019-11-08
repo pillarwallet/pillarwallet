@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { getInitials } from 'utils/contacts';
-import { BaseText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 
 const CircleImage = styled(CachedImage)`
@@ -57,8 +57,8 @@ const InnerBackground = styled.View`
   align-items: center;
 `;
 
-const InnerUsername = styled(BaseText)`
-  font-size: ${props => props.initialsSize ? props.initialsSize : fontSizes.big}px;
+const InnerUsername = styled(MediumText)`
+  font-size: ${props => props.initialsSize ? props.initialsSize : fontSizes.medium}px;
   color: ${baseColors.white};
 `;
 

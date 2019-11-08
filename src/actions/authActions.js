@@ -68,12 +68,14 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
+import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
 import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
+import { getWalletsCreationEventsAction } from './userEventsActions';
 
 
 const Crashlytics = firebase.crashlytics();
@@ -180,6 +182,10 @@ export const loginAction = (
         if (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
+
+        // to get exchange supported assets in order to show only supported assets on exchange selectors
+        // and show exchange button on supported asset screen only
+        dispatch(getExchangeSupportedAssetsAction());
       } else {
         api.init();
       }
@@ -254,6 +260,7 @@ export const loginAction = (
         toastWalletBackup(isWalletBackedUp, getAccountId(keyBasedAccount));
       }
 
+      dispatch(getWalletsCreationEventsAction());
       navigate(navigateToAppAction);
     } catch (e) {
       dispatch(updatePinAttemptsAction(true));

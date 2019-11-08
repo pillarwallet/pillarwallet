@@ -18,37 +18,56 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+type ExchangeOfferAsset = {
+  code: string,
+  decimals: string,
+  address: string,
+}
+
 export type Offer = {
-  _id: string,
   provider: string,
+  _id: string,
   description: string,
-  fromAssetCode: string,
-  toAssetCode: string,
+  fromAsset: ExchangeOfferAsset,
+  toAsset: ExchangeOfferAsset,
   askRate: number | string,
   minQuantity: number,
   maxQuantity: number,
-  allowanceSet?: boolean,
-  offerRestricted?: ?string,
+  allowanceSet: boolean,
+}
+
+export type FiatOffer = {
+  provider: string,
+  askRate: number | string,
+  fromAsset: { code: string },
+  toAsset: { code: string },
+  feeAmount: number | string,
+  extraFeeAmount: number | string,
+  quoteCurrencyAmount: number,
+  minQuantity: number,
+  maxQuantity: number,
+  offerRestricted: ?string,
 }
 
 export type OfferRequest = {
   quantity: number,
   provider: string,
-  fromAssetCode: string,
-  toAssetCode: string,
+  fromAssetAddress: string,
+  toAssetAddress: string,
 }
 
 export type TokenAllowanceRequest = {
-  token: string,
+  fromAssetAddress: string,
+  toAssetAddress: string,
   provider: string,
 }
 
 export type OfferOrder = {
   _id: string,
-  receiveAmount: string,
-  payAmount: string,
-  fromAssetCode: string,
-  toAssetCode: string,
+  receiveQuantity: string,
+  payQuantity: string,
+  fromAsset: ExchangeOfferAsset,
+  toAsset: ExchangeOfferAsset,
   payToAddress: string,
   transactionObj?: {
     data: string,
@@ -66,7 +85,8 @@ export type ExchangeSearchRequest = {
 
 export type Allowance = {
   provider: string,
-  assetCode: string,
+  fromAssetCode: string,
+  toAssetCode: string,
   transactionHash: string,
   enabled?: boolean,
 }
@@ -77,3 +97,18 @@ export type ExchangeProvider = {
   extra?: any,
 }
 
+type ProviderMeta = {
+  _id: string,
+  shim: string,
+  name: string,
+  url: string,
+  description: string,
+  icon_small: string,
+  icon_medium: string,
+  icon_large: string,
+  logo_small: string,
+  logo_medium: string,
+  logo_large: string,
+}
+
+export type ProvidersMeta = ProviderMeta[];

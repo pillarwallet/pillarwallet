@@ -399,7 +399,7 @@ SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: stri
       type,
     }))
     .then(({ data }) => data)
-    .then(({ notifications }) => notifications)
+    .then(({ notifications }) => notifications || [])
     .then(notifications => {
       return notifications.map(notification => {
         if (!isTransactionEvent(notification.type)) return notification;
@@ -812,8 +812,8 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
         return {
           provider: 'MoonPay',
           askRate: totalAmount,
-          fromAssetCode: fromAsset,
-          toAssetCode: toAsset,
+          fromAsset: { code: fromAsset },
+          toAsset: { code: toAsset },
           feeAmount,
           extraFeeAmount,
           quoteCurrencyAmount,
@@ -836,8 +836,8 @@ SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset:
         return {
           provider: 'SendWyre',
           askRate: amount,
-          fromAssetCode: fromAsset,
-          toAssetCode: toAsset,
+          fromAsset: { code: fromAsset },
+          toAsset: { code: toAsset },
           feeAmount: '',
           extraFeeAmount: '',
           quoteCurrencyAmount: amount * data[fromAsset + toAsset],
