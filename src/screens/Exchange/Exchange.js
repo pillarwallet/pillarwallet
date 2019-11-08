@@ -512,7 +512,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const toAssetSymbol = get(this.state, 'value.toInput.selector.symbol');
     const prevToAssetSymbol = get(prevState, 'value.toInput.selector.symbol');
 
-    // update from and to options when (supported) assets changes or user selects option
+    // update from and to options when (supported) assets changes or user selects an option
     if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets
       || fiatExchangeSupportedAssets !== prevProps.fiatExchangeSupportedAssets
       || fromAssetSymbol !== prevFromAssetSymbol || toAssetSymbol !== prevToAssetSymbol) {

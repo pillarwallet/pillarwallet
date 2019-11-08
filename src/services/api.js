@@ -834,7 +834,6 @@ SDKWrapper.prototype.fetchMoonPaySupportedAssetsTickers = function () {
     .then(() => fetch(url))
     .then(resp => resp.json())
     .then(data => {
-      // TODO: check if USA supported?
       return data.filter(({ isSuspended, code }) => !isSuspended && !!code).map(({ code }) => code.toUpperCase());
     })
     .catch(() => []);
@@ -871,7 +870,7 @@ SDKWrapper.prototype.fetchSendWyreSupportedAssetsTickers = function () {
     .then(data => {
       const exchangePairs = Object.keys(data);
       const exchangePairsWithSupportedFiatAsFirstItem = exchangePairs.filter((pair) =>
-        (pair.startsWith('USD') && !pair.startsWith('USDC')) || pair.startsWith('EUR') || pair.startsWith('GP'));
+        (pair.startsWith('USD') && !pair.startsWith('USDC')) || pair.startsWith('EUR') || pair.startsWith('GBP'));
 
       return exchangePairsWithSupportedFiatAsFirstItem.map((key) => key.substring(3));
     })
