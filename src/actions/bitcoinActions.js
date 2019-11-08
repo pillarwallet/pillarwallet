@@ -44,6 +44,7 @@ import type {
 } from 'reducers/bitcoinReducer';
 import type { EthereumWallet } from 'models/Wallet';
 import type {
+  BitcoinAddress,
   BitcoinTransactionPlan,
   BitcoinUtxo,
   BitcoinStore,
@@ -54,10 +55,10 @@ import { saveDbAction } from 'actions/dbActions';
 const storage = Storage.getInstance('db');
 
 const saveDb = (data: BitcoinStore) => {
-  return saveDbAction('bitcoin', data, true); // TODO: +true+ required?
+  return saveDbAction('bitcoin', data);
 };
 
-const loadDb = async (): Promise<BitcoinStore> => {
+const loadDb = async (): BitcoinStore => {
   return storage.get('bitcoin');
 };
 
@@ -116,14 +117,22 @@ export const loadBitcoinAddresses = () => {
 
     const loaded: string[] = Object.keys(keys);
 
-    dispatch(setBitcoinAddresses(loaded));
+    if (loaded.length) {
+      dispatch(setBitcoinAddresses(loaded));
+    }
   };
 };
 
-const fetchBalanceAction = async (address: string): Promise<BitcoinReducerAction> => {
-  const unspentTransactions = await getAddressUtxos(address);
+const outdatedAddresses = (addresses: BitcoinAddress[]): BitcoinAddress[] => {
+  const threshold = Date.now() - REFRESH_THRESHOLD;
 
-  return updateBitcoinBalance(address, unspentTransactions);
+  return addresses.filter(({ updatedAt }) => updatedAt <= threshold);
+};
+
+const fetchBalanceAction = (address: string): Promise<BitcoinReducerAction> => {
+  return getAddressUtxos(address)
+    .then(unspentTransactions => updateBitcoinBalance(address, unspentTransactions))
+    .catch(error => error);
 };
 
 const transactionSendingFailed = () => {
@@ -132,6 +141,24 @@ const transactionSendingFailed = () => {
     type: 'warning',
     title: 'Transaction could not be sent',
     autoClose: false,
+  });
+};
+
+const fetchBalanceFailed = () => {
+  Toast.show({
+    message: 'There was an error fetching the Bitcoin balance',
+    type: 'warning',
+    title: 'Cannot fetch balance',
+    autoClose: false,
+  });
+};
+
+const transactionSent = () => {
+  Toast.show({
+    message: 'The transaction was sent to the Bitcoin network',
+    type: 'success',
+    title: 'Transaction sent',
+    autoClose: true,
   });
 };
 
@@ -151,31 +178,25 @@ export const sendTransactionAction = (plan: BitcoinTransactionPlan) => {
           return;
         }
 
-        Toast.show({
-          message: 'The transaction was sent to the Bitcoin network',
-          type: 'success',
-          title: 'Transaction sent',
-          autoClose: true,
-        });
+        transactionSent();
       })
       .catch(transactionSendingFailed);
   };
 };
 
-export const refreshAddressBalanceAction = (address: string, force: boolean) => {
+export const refreshBitcoinBalanceAction = (force: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { bitcoin: { data: { addresses } } } = getState();
 
-    const matchingAddress = addresses.find(({ address: addr }) => addr === address);
-    if (!matchingAddress) {
+    const addressesToUpdate = force ? addresses : outdatedAddresses(addresses);
+    if (!addressesToUpdate.length) {
       return;
     }
 
-    if (!force && ((Date.now() - matchingAddress.updatedAt) < REFRESH_THRESHOLD)) {
-      return;
-    }
-    const fetchBalance = await fetchBalanceAction(address);
-
-    dispatch(fetchBalance);
+    await Promise.all(addressesToUpdate.map(({ address }) => {
+      return fetchBalanceAction(address)
+        .then(action => dispatch(action))
+        .catch(fetchBalanceFailed);
+    }));
   };
 };

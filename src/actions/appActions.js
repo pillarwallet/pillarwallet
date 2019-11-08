@@ -74,6 +74,8 @@ import {
 } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 
+import { loadBitcoinAddresses } from 'actions/bitcoinActions';
+
 import { getWalletFromStorage } from 'utils/wallet';
 
 const storage = Storage.getInstance('db');
@@ -196,6 +198,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       });
 
       await loadAndMigrate('history', dispatch, getState);
+
+      dispatch(loadBitcoinAddresses());
 
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });

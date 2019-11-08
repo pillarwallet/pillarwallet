@@ -17,15 +17,34 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { unspentAmount, btcToSatoshis } from 'utils/bitcoin';
+import type { BitcoinUtxo } from 'models/Bitcoin';
 
-export const SET_FEATURE_FLAGS = 'SET_FEATURE_FLAGS';
-export const ENABLE_FEATURE_FLAG = 'ENABLE_FEATURE_FLAG';
-export const DISABLE_FEATURE_FLAG = 'DISABLE_FEATURE_FLAG';
-export const INITIAL_FEATURE_FLAGS = {
-  SMART_WALLET_ENABLED: false,
-  BITCOIN_ENABLED: false,
+const buildUtxo = (values: $Shape<BitcoinUtxo>): BitcoinUtxo => {
+  return {
+    address: '<address>',
+    txid: '<txid>',
+    vout: 0,
+    scriptPubKey: '',
+    amount: 1.0,
+    satoshis: btcToSatoshis(1.0),
+    height: 0,
+    confirmations: 10,
+    ...values,
+  };
 };
-export const DEVELOPMENT_FEATURE_FLAGS = {
-  SMART_WALLET_ENABLED: true,
-  BITCOIN_ENABLED: false,
-};
+
+describe('Bitcoin utils', () => {
+  describe('unspentAmount', () => {
+    it('returns the total in satoshis', () => {
+      const transactions: BitcoinUtxo[] = [
+        buildUtxo({ satoshis: 1000 }),
+        buildUtxo({ satoshis: 500 }),
+      ];
+
+      const balance = unspentAmount(transactions);
+
+      expect(balance).toEqual(1500);
+    });
+  });
+});

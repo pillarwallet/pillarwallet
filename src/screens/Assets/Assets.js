@@ -67,6 +67,7 @@ import { activeAccountSelector } from 'selectors';
 
 // local components
 import PPNView from 'screens/Assets/PPNView';
+import BTCView from 'screens/Assets/BTCView';
 import WalletView from 'screens/Assets/WalletView';
 
 type Props = {
@@ -104,6 +105,7 @@ const VIEWS = {
   KEY_WALLET_VIEW: 'KEY_WALLET_VIEW',
   SMART_WALLET_VIEW: 'SMART_WALLET_VIEW',
   PPN_VIEW: 'PPN_VIEW',
+  BTC_VIEW: 'BTC_VIEW',
 };
 
 class AssetsScreen extends React.Component<Props, State> {
@@ -187,6 +189,19 @@ class AssetsScreen extends React.Component<Props, State> {
           },
           customHeaderButtonProps: {},
         };
+
+      case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
+        return {
+          label: 'Bitcoin network',
+          action: () => navigation.navigate(ACCOUNTS), // TODO: ???
+          screenView: VIEWS.BTC_VIEW,
+          customHeaderProps: {
+            // background: walletType === ACCOUNT_TYPES.KEY_BASED ? baseColors.tomato : baseColors.neonBlue,
+            // light: true,
+          },
+          customHeaderButtonProps: { isActive: true }, // TODO: ???
+        };
+
       default:
         const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === PAYMENT_COMPLETED);
         return {
@@ -269,6 +284,8 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     switch (viewType) {
+      case VIEWS.BTC_VIEW:
+        return <BTCView />;
       case VIEWS.PPN_VIEW:
         return <PPNView />;
       case VIEWS.SMART_WALLET_VIEW:

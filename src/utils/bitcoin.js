@@ -17,15 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { MIN_CONFIRMATIONS } from 'constants/bitcoinConstants';
+import type { BitcoinUtxo } from 'models/Bitcoin';
 
-export const SET_FEATURE_FLAGS = 'SET_FEATURE_FLAGS';
-export const ENABLE_FEATURE_FLAG = 'ENABLE_FEATURE_FLAG';
-export const DISABLE_FEATURE_FLAG = 'DISABLE_FEATURE_FLAG';
-export const INITIAL_FEATURE_FLAGS = {
-  SMART_WALLET_ENABLED: false,
-  BITCOIN_ENABLED: false,
+export const satoshisToBtc = (satoshis: number): number => satoshis * 0.00000001;
+export const btcToSatoshis = (btc: number): number => btc * 100000000;
+
+export const unspentAmount = (unspent: BitcoinUtxo[]): number => {
+  return unspent.reduce((acc: number, transaction: BitcoinUtxo): number => {
+    if (transaction.confirmations < MIN_CONFIRMATIONS) {
+      return acc;
+    }
+    return acc + transaction.satoshis;
+  }, 0);
 };
-export const DEVELOPMENT_FEATURE_FLAGS = {
-  SMART_WALLET_ENABLED: true,
-  BITCOIN_ENABLED: false,
-};
+
