@@ -640,7 +640,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { accounts } = this.props;
     const destAddress = getActiveAccountAddress(accounts);
 
-    const { fromAssetCode, toAssetCode } = offer;
+    const { fromAsset, toAsset } = offer;
+    const { code: fromAssetCode } = fromAsset;
+    const { code: toAssetCode } = toAsset;
 
     const wyreUrl = wyreWidgetUrl(
       destAddress,

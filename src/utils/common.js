@@ -136,6 +136,14 @@ export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
 };
 
+export const parseTokenAmount = (amount: number | string, decimals: number): number => {
+  const formatted = amount.toString();
+  const parsed = decimals > 0
+    ? utils.parseUnits(formatted, decimals)
+    : utils.bigNumberify(formatted);
+  return Math.floor(+parsed.toString());
+};
+
 export const getCurrencySymbol = (currency: string): string => {
   return CURRENCY_SYMBOLS[currency] || '';
 };

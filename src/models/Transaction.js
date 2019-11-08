@@ -20,7 +20,7 @@
 
 export type TxSettlementItem = {
   symbol: string,
-  value: string,
+  value: string | number,
   hash: string,
 };
 

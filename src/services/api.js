@@ -812,8 +812,8 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
         return {
           provider: 'MoonPay',
           askRate: totalAmount,
-          fromAssetCode: fromAsset,
-          toAssetCode: toAsset,
+          fromAsset: { code: fromAsset },
+          toAsset: { code: toAsset },
           feeAmount,
           extraFeeAmount,
           quoteCurrencyAmount,
@@ -848,8 +848,8 @@ SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset:
         return {
           provider: 'SendWyre',
           askRate: amount,
-          fromAssetCode: fromAsset,
-          toAssetCode: toAsset,
+          fromAsset: { code: fromAsset },
+          toAsset: { code: toAsset },
           feeAmount: '',
           extraFeeAmount: '',
           quoteCurrencyAmount: amount * data[fromAsset + toAsset],
