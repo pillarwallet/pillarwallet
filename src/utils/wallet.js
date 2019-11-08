@@ -147,7 +147,7 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     if (!isEmpty(wallet)) {
       console.log('RESTORING USER FROM API');
       api.init();
-      const apiUser = await api.validateAddress(wallet.address);
+      const apiUser = await api.validateAddress(normalizeWalletAddress(wallet.address));
       if (apiUser.walletId) {
         const saveUser = {
           id: apiUser.id,
