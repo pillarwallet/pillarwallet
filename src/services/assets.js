@@ -23,7 +23,7 @@ import cryptocompare from 'cryptocompare';
 import { Sentry } from 'react-native-sentry';
 
 import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
-import { getEthereumProvider, parseTokenAmount } from 'utils/common';
+import { getEthereumProvider, parseTokenBigNumberAmount } from 'utils/common';
 
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
@@ -90,7 +90,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
 
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
-  const contractAmount = utils.hexlify(parseTokenAmount(amount, defaultDecimals));
+  const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
 
   if (!data) {
     ({ data } = await contract.interface.functions.transfer.apply(null, [to, contractAmount]) || {});
@@ -346,7 +346,7 @@ export async function calculateGasEstimate(transaction: Object) {
      * so want to check if it's also not ETH send flow
      */
     const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
-    const contractAmount = utils.hexlify(parseTokenAmount(amount, defaultDecimals));
+    const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
 
     ({ data } = await contract.interface.functions.transfer.apply(null, [to, contractAmount]) || {});
     to = contractAddress;
