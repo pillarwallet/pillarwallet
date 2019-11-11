@@ -91,7 +91,7 @@ export const fetchAvailableSyntheticAssetsAction = () => {
     // PLR is default available
     const defaultAvailableSyntheticAssets = [{
       ...getAssetData(assetsData, supportedAssets, PLR),
-      balance: availableStake,
+      amount: availableStake,
       isSynthetic: true,
     }];
 
@@ -102,7 +102,7 @@ export const fetchAvailableSyntheticAssetsAction = () => {
       if (!isEmpty(assetData) && assetBalance > 0) {
         availableList.push({
           ...assetData,
-          balance: assetBalance,
+          amount: assetBalance,
           isSynthetic: true,
         });
       }

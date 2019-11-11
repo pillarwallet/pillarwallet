@@ -157,7 +157,7 @@ class SendSyntheticAsset extends React.Component<Props, State> {
     this.source = getNavigationParam('source', '');
     this.receiver = getNavigationParam('receiver', '');
     this.assetData = getNavigationParam('assetData', {});
-    this.assetBalance = get(this.assetData, 'balance', 0);
+    this.assetBalance = get(this.assetData, 'amount', 0);
     const intentError = !this.assetBalance
       ? 'Asset has no available liquidity'
       : null;

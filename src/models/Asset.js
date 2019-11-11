@@ -29,7 +29,6 @@ export type Asset = {
   patternUrl?: string,
   decimals: number,
   amount?: number,
-  balance?: number,
 };
 
 export type Assets = {
