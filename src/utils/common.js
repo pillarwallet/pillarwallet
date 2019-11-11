@@ -64,7 +64,7 @@ export const getRandomInt = (min: number, max: number): number => {
  *
  * Examples:
  *   decodeAddress('ethereum', 'ethereum:0xaddress') -> 0xaddress
- *   decodeAddress( 'bitcoin',  'bitcoin:1address' ) -> 1address
+ *   decodeAddress('bitcoin', 'bitcoin:1address') -> 1address
  *
  * @param prefix         String the prefix part
  * @param encodedAddress String the '[prefx]:[address]' string
