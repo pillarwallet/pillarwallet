@@ -239,3 +239,21 @@ export const parseSmartWalletTransactions = (
     return mapped;
   }, []);
 
+
+export const isHiddenUnsettledTransaction = (
+  paymentHash: string,
+  history: Object[],
+): boolean => history
+  .filter(({ status }) => status === TX_PENDING_STATUS)
+  .some(({ tag, extra }) => (
+    // first check for withdrawal that consists of 2 transactions of which one is through payment network
+    tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+    // another check for transactions that were already settled, but pending
+    || (tag === PAYMENT_NETWORK_TX_SETTLEMENT
+      // we can also check if array not empty, but extra is free
+      // param and Array.isArray check would also mean we can go with
+      // further Array.some method without any fear of crash
+      && Array.isArray(extra)
+      && extra.some(({ hash: settledHash }) => isCaseInsensitiveMatch(settledHash, paymentHash))
+    )
+  ));

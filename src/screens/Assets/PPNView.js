@@ -41,7 +41,7 @@ import ActivityFeed from 'components/ActivityFeed';
 
 // constants
 import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
-import { TRANSACTION_EVENT, TX_PENDING_STATUS } from 'constants/historyConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   FUND_TANK,
   SEND_TOKEN_FROM_ASSET_FLOW,
@@ -51,7 +51,6 @@ import {
   TANK_WITHDRAWAL,
 } from 'constants/navigationConstants';
 import { PAYMENT_COMPLETED, PAYMENT_PROCESSED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -63,9 +62,9 @@ import type { Transaction } from 'models/Transaction';
 // utils
 import { getRate } from 'utils/assets';
 import { getAccountAddress } from 'utils/accounts';
-import { formatMoney, formatFiat, isCaseInsensitiveMatch } from 'utils/common';
+import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus, isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 
 // selectors
@@ -261,21 +260,7 @@ class PPNView extends React.Component<Props, State> {
           filtered.settled = settled.concat(transaction);
           break;
         case PAYMENT_COMPLETED:
-          const settleIsPending = history
-            .filter(({ status }) => status === TX_PENDING_STATUS)
-            .some(({ tag, extra }) => {
-              // first check for transactions that were already settled, but pending
-              if (tag === PAYMENT_NETWORK_TX_SETTLEMENT
-                // we can also check if array not empty, but extra is free
-                // param and Array.isArray check would also mean we can go with
-                // further Array.some method without any fear of crash
-                && Array.isArray(extra)
-                && extra.some(({ hash: settledHash }) => isCaseInsensitiveMatch(settledHash, hash))
-              ) return true;
-              // another check for withdrawal that consists of 2 transactions of which one is through payment network
-              return tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL && isCaseInsensitiveMatch(extra.paymentHash, hash);
-            });
-          if (!settleIsPending) filtered.unsettled = unsettled.concat(transaction);
+          if (!isHiddenUnsettledTransaction(hash, history)) filtered.unsettled = unsettled.concat(transaction);
           break;
         default:
           break;
