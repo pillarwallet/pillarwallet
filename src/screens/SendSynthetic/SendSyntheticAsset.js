@@ -21,10 +21,7 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
@@ -33,43 +30,29 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import { Container, Wrapper } from 'components/Layout';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import { getAssetData, getAssetsAsList } from 'utils/assets';
 import Spinner from 'components/Spinner';
 
 // actions
-import { initSyntheticsServiceAction } from 'actions/syntheticsActions';
+import { fetchAvailableSyntheticAssetsAction } from 'actions/syntheticsActions';
 
 // utils, services
 import { spacing, UIColors } from 'utils/variables';
-import syntheticsService from 'services/synthetics';
-import { makePromiseCancelable } from 'utils/common';
 
 // constants
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
-import { PLR } from 'constants/assetsConstants';
-
-// selectors
-import { accountAssetsSelector } from 'selectors/assets';
-import { availableStakeSelector } from 'selectors/paymentNetwork';
 
 // models, types
-import type { Asset, Assets } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Asset } from 'models/Asset';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
 
 type Props = {
-  accountAssets: Assets,
-  supportedAssets: Asset[],
-  initSyntheticsService: () => void,
   navigation: NavigationScreenProp<*>,
-  availableStake: number,
-};
-
-type State = {
-  loadingAssets: boolean,
-  availableAssets: [],
+  fetchAvailableSyntheticAssets: () => void,
+  availableSyntheticAssets: Asset[],
+  isFetchingSyntheticAssets: boolean,
 };
 
 const InnerWrapper = styled(Wrapper)`
@@ -84,72 +67,10 @@ const ContentBackground = styled(Wrapper)`
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-class SendSyntheticAsset extends React.Component<Props, State> {
-  state = {
-    loadingAssets: true,
-    availableAssets: [],
-  };
-  defaultSyntheticAsset: Asset;
-  syntheticServicePromise;
-
-  constructor(props: Props) {
-    super(props);
-    const { accountAssets, supportedAssets, availableStake } = props;
-    const assetsData = getAssetsAsList(accountAssets);
-    this.defaultSyntheticAsset = {
-      ...getAssetData(assetsData, supportedAssets, PLR),
-      balance: availableStake,
-      isSynthetic: true,
-    };
-  }
-
+class SendSyntheticAsset extends React.Component<Props> {
   componentDidMount() {
-    this.props.initSyntheticsService();
-    this.getAvailableSyntheticsAssets();
+    this.props.fetchAvailableSyntheticAssets();
   }
-
-  componentWillUnmount() {
-    this.cancelSyntheticServiceRequest();
-  }
-
-  getAvailableSyntheticsAssets = () => {
-    const { supportedAssets, accountAssets } = this.props;
-    const assetsData = getAssetsAsList(accountAssets);
-    this.syntheticServicePromise = makePromiseCancelable(syntheticsService.getDataFromLiquidityPool());
-    this.syntheticServicePromise
-      .request()
-      .then((result) => {
-        const syntheticAssets = get(result, 'output.balanceResults', []);
-        const availableAssets = syntheticAssets.reduce((availableList, syntheticAsset) => {
-          const assetSymbol = get(syntheticAsset, 'token.symbol');
-          const assetBalance = Number(get(syntheticAsset, 'value', 0));
-          const assetData = getAssetData(assetsData, supportedAssets, assetSymbol);
-          if (!isEmpty(assetData) && assetBalance > 0) {
-            availableList.push({
-              ...assetData,
-              balance: assetBalance,
-              isSynthetic: true,
-            });
-          }
-          return availableList;
-        }, []);
-        this.setState({ availableAssets, loadingAssets: false });
-      })
-      .catch(({ isCanceled }) => {
-        if (!isCanceled) this.setState({ loadingAssets: false });
-      });
-  };
-
-  cancelSyntheticServiceRequest = () => {
-    if (this.syntheticServicePromise) this.syntheticServicePromise.cancel();
-  };
-
-  refreshAvailableSyntheticAssets = () => {
-    this.setState({ loadingAssets: true }, () => {
-      this.cancelSyntheticServiceRequest();
-      this.getAvailableSyntheticsAssets();
-    });
-  };
 
   renderAsset = ({ item }) => {
     // asset should not render
@@ -170,12 +91,11 @@ class SendSyntheticAsset extends React.Component<Props, State> {
   };
 
   render() {
-    const { loadingAssets, availableAssets } = this.state;
-
-    const availableAssetsWithDefaultAsset = [
-      this.defaultSyntheticAsset,
-      ...availableAssets,
-    ];
+    const {
+      fetchAvailableSyntheticAssets,
+      availableSyntheticAssets,
+      isFetchingSyntheticAssets,
+    } = this.props;
 
     return (
       <ContainerWithHeader
@@ -184,15 +104,15 @@ class SendSyntheticAsset extends React.Component<Props, State> {
       >
         <ContentBackground>
           <InnerWrapper>
-            {loadingAssets && <Container center><Spinner /></Container>}
-            {!loadingAssets &&
+            {isFetchingSyntheticAssets && <Container center><Spinner /></Container>}
+            {!isFetchingSyntheticAssets &&
               <FlatList
                 keyExtractor={item => item.symbol}
-                data={availableAssetsWithDefaultAsset}
+                data={availableSyntheticAssets}
                 renderItem={this.renderAsset}
                 ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-                refreshing={false}
-                onRefresh={this.refreshAvailableSyntheticAssets}
+                refreshing={isFetchingSyntheticAssets}
+                onRefresh={() => fetchAvailableSyntheticAssets()}
                 ListEmptyComponent={
                   <Wrapper
                     fullScreen
@@ -218,23 +138,17 @@ class SendSyntheticAsset extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
+  synthetics: {
+    data: availableSyntheticAssets,
+    isFetching: isFetchingSyntheticAssets,
+  },
 }: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
-});
-
-const structuredSelector = createStructuredSelector({
-  accountAssets: accountAssetsSelector,
-  availableStake: availableStakeSelector,
-});
-
-const combinedMapStateToProps = (state) => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
+  availableSyntheticAssets,
+  isFetchingSyntheticAssets,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  initSyntheticsService: () => dispatch(initSyntheticsServiceAction()),
+  fetchAvailableSyntheticAssets: () => dispatch(fetchAvailableSyntheticAssetsAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendSyntheticAsset);
+export default connect(mapStateToProps, mapDispatchToProps)(SendSyntheticAsset);

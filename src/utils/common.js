@@ -393,28 +393,6 @@ export const isCaseInsensitiveMatch = (a: string, b: string): boolean => {
   return a.toLowerCase() === b.toLowerCase();
 };
 
-export const makePromiseCancelable = (promise: Promise<any>) => {
-  let isCancelled = false;
-
-  const cancellablePromise = new Promise((resolve, reject) => {
-    const cancelledErrorPayload = { isCanceled: true };
-    promise
-      .then((res) => isCancelled
-        ? reject(cancelledErrorPayload)
-        : resolve(res),
-      )
-      .catch((err) => isCancelled
-        ? reject(cancelledErrorPayload)
-        : reject(err),
-      );
-  });
-
-  return {
-    request: () => cancellablePromise, // original promise, but as cancellable
-    cancel: () => { isCancelled = true; }, // sets internal var to cancel original promise
-  };
-};
-
 // number with decimals is valid if it has decimals else if not then it should not contain any decimal pointer
 export const isValidNumberDecimals = (
   number: number | string,

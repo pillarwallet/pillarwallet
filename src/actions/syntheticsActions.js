@@ -18,9 +18,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Sentry } from 'react-native-sentry';
-import type { Dispatch, GetState } from 'reducers/rootReducer';
-import syntheticsService from 'services/synthetics';
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
+
+// components
 import Toast from 'components/Toast';
+
+// constants
+import { PLR } from 'constants/assetsConstants';
+import {
+  SET_AVAILABLE_SYNTHETIC_ASSETS,
+  SET_SYNTHETIC_ASSETS_FETCHING,
+} from 'constants/syntheticsConstants';
+
+// utils, services
+import { getAssetData, getAssetsAsList } from 'utils/assets';
+import syntheticsService from 'services/synthetics';
+
+// types
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { accountAssetsSelector } from 'selectors/assets';
 
 export const initSyntheticsServiceAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
@@ -51,5 +68,47 @@ export const commitSyntheticsTransaction = (transactionId: string, paymentHash: 
           autoClose: false,
         });
       });
+  };
+};
+
+export const fetchAvailableSyntheticAssetsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch({ type: SET_SYNTHETIC_ASSETS_FETCHING, payload: true });
+
+    dispatch(initSyntheticsServiceAction());
+
+    const {
+      paymentNetwork: { availableStake },
+      assets: { supportedAssets },
+    } = getState();
+
+    const accountAssets = accountAssetsSelector(getState());
+    const assetsData = getAssetsAsList(accountAssets);
+
+    const result = await syntheticsService.getDataFromLiquidityPool().catch(() => []);
+    const syntheticAssets = get(result, 'output.liquidityPools', []);
+
+    // PLR is default available
+    const defaultAvailableSyntheticAssets = [{
+      ...getAssetData(assetsData, supportedAssets, PLR),
+      balance: availableStake,
+      isSynthetic: true,
+    }];
+
+    const availableAssets = syntheticAssets.reduce((availableList, syntheticAsset) => {
+      const assetSymbol = get(syntheticAsset, 'token.symbol');
+      const assetBalance = Number(get(syntheticAsset, 'value', 0));
+      const assetData = getAssetData(assetsData, supportedAssets, assetSymbol);
+      if (!isEmpty(assetData) && assetBalance > 0) {
+        availableList.push({
+          ...assetData,
+          balance: assetBalance,
+          isSynthetic: true,
+        });
+      }
+      return availableList;
+    }, defaultAvailableSyntheticAssets);
+
+    dispatch({ type: SET_AVAILABLE_SYNTHETIC_ASSETS, payload: availableAssets });
   };
 };
