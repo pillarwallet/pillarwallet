@@ -147,7 +147,7 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     if (!isEmpty(wallet)) {
       console.log('RESTORING USER FROM API');
       api.init();
-      const apiUser = await api.validateAddress(wallet.address);
+      const apiUser = await api.validateAddress(normalizeWalletAddress(wallet.address));
       if (apiUser.walletId) {
         const saveUser = {
           id: apiUser.id,
@@ -166,8 +166,8 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
   }
 
   // we check for previous value of `appSettings.wallet` as by this point `walletTimestamp` can be already set.
-  // in this piece we report a case if either wallet was empty or wallet timestamp AND we additionally check
-  // if walletBackup is present because this would conflict with onboarding flow and will report to sentry
+  // in that part we report a case if either wallet was empty or wallet timestamp AND we additionally check
+  // if the walletBackup is present because this would conflict with onboarding flow and will report to sentry
   // because both wallet and wallet timestamp will be empty
   if (walletBackup && (isWalletEmpty || !appSettings.wallet)) reportToSentry('Wallet login issue spotted');
 

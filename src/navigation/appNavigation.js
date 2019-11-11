@@ -273,7 +273,7 @@ const assetsFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-assetsFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
+assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // EXCHANGE FLOW
 const exchangeFlow = createStackNavigator({
@@ -284,7 +284,7 @@ const exchangeFlow = createStackNavigator({
   [FIAT_CRYPTO]: FiatCryptoScreen,
 }, StackNavigatorConfig);
 
-exchangeFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
+exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
@@ -296,7 +296,7 @@ const peopleFlow = createStackNavigator({
   [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
 
-peopleFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
+peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
@@ -323,7 +323,7 @@ const homeFlow = createStackNavigator({
   [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
 
-homeFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
+homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => ({ focused }) => {
   const notificationColor = warningNotification ? baseColors.burningFire : baseColors.sunYellow;
@@ -501,7 +501,7 @@ const smartWalletUpgradeFlow = createStackNavigator({
   [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
-smartWalletUpgradeFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
+smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // PPN SEND TOKEN FROM ASSET FLOW
 const ppnSendTokenFromAssetFlow = createStackNavigator(
@@ -520,7 +520,7 @@ const manageWalletsFlow = createStackNavigator({
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
 }, StackNavigatorConfig);
 
-manageWalletsFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
+manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // MANAGE USERS FLOW
 const manageUsersFlow = createStackNavigator({
@@ -529,7 +529,7 @@ const manageUsersFlow = createStackNavigator({
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
-manageUsersFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
+manageUsersFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // TANK FLOWS
 const tankSettleFlow = createStackNavigator({
@@ -537,21 +537,21 @@ const tankSettleFlow = createStackNavigator({
   [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
 }, StackNavigatorConfig);
 
-tankSettleFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
+tankSettleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tankFundFlow = createStackNavigator({
   [FUND_TANK]: FundTankScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
 }, StackNavigatorConfig);
 
-tankFundFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
+tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tankWithdrawalFlow = createStackNavigator({
   [TANK_WITHDRAWAL]: TankWithdrawalScreen,
   [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
 }, StackNavigatorConfig);
 
-tankWithdrawalFlow.defaultNavigationOptions = hideTabNavigatorOnChildView;
+tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
