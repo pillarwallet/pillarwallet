@@ -863,13 +863,13 @@ workflows:
             branches:
               only:
                   - develop
-#      - stage_ios:
-#          requires:
-#            - build-and-test
-#          filters:
-#            branches:
-#              only:
-#                  - fix/android-pipeline-fixes-pt2
+      - stage_ios:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                  - fix/android-pipeline-fixes-pt2
       - stage_android:
           requires:
             - build-and-test
@@ -879,16 +879,16 @@ workflows:
                   - fix/android-pipeline-fixes-pt2
       - slack-prod-approval:
           requires:
-#            - stage_ios
+            - stage_ios
             - stage_android
       - release_to_prod:
           type: approval
           requires:
-#            - stage_ios
+            - stage_ios
             - stage_android
-#      - prod_ios:
-#          requires:
-#            - release_to_prod
+      - prod_ios:
+          requires:
+            - release_to_prod
       - prod_android:
           requires:
             - release_to_prod
