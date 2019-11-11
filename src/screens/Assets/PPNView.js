@@ -275,8 +275,7 @@ class PPNView extends React.Component<Props, State> {
               // another check for withdrawal that consists of 2 transactions of which one is through payment network
               return tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL && isCaseInsensitiveMatch(extra.paymentHash, hash);
             });
-          if (settleIsPending) break;
-          filtered.unsettled = unsettled.concat(transaction);
+          if (!settleIsPending) filtered.unsettled = unsettled.concat(transaction);
           break;
         default:
           break;
