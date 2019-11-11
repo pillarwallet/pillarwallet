@@ -24,8 +24,8 @@ import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
-import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
@@ -50,12 +50,8 @@ import {
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
 } from 'constants/navigationConstants';
-import {
-  PAYMENT_COMPLETED,
-  PAYMENT_PROCESSED,
-  SMART_WALLET_UPGRADE_STATUSES,
-} from 'constants/smartWalletConstants';
-import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import { PAYMENT_COMPLETED, PAYMENT_PROCESSED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL, PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -67,11 +63,7 @@ import type { Transaction } from 'models/Transaction';
 // utils
 import { getRate } from 'utils/assets';
 import { getAccountAddress } from 'utils/accounts';
-import {
-  formatMoney,
-  formatFiat,
-  isCaseInsensitiveMatch,
-} from 'utils/common';
+import { formatMoney, formatFiat, isCaseInsensitiveMatch } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
@@ -269,15 +261,20 @@ class PPNView extends React.Component<Props, State> {
           filtered.settled = settled.concat(transaction);
           break;
         case PAYMENT_COMPLETED:
-          const settleIsPending = history.some(
-            ({ tag, status, extra }) => status === TX_PENDING_STATUS
-              && tag === PAYMENT_NETWORK_TX_SETTLEMENT
-              // we can also check if array not empty, but extra is free
-              // param and Array.isArray check would also mean we can go with
-              // further Array.some method without any fear of crash
-              && Array.isArray(extra)
-              && extra.some(({ hash: settledHash }) => isCaseInsensitiveMatch(settledHash, hash)),
-          );
+          const settleIsPending = history
+            .filter(({ status }) => status === TX_PENDING_STATUS)
+            .some(({ tag, extra }) => {
+              // first check for transactions that were already settled, but pending
+              if (tag === PAYMENT_NETWORK_TX_SETTLEMENT
+                // we can also check if array not empty, but extra is free
+                // param and Array.isArray check would also mean we can go with
+                // further Array.some method without any fear of crash
+                && Array.isArray(extra)
+                && extra.some(({ hash: settledHash }) => isCaseInsensitiveMatch(settledHash, hash))
+              ) return true;
+              // another check for withdrawal that consists of 2 transactions of which one is through payment network
+              return tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL && isCaseInsensitiveMatch(extra.paymentHash, hash);
+            });
           if (settleIsPending) break;
           filtered.unsettled = unsettled.concat(transaction);
           break;
