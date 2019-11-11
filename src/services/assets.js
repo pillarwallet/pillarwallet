@@ -21,13 +21,16 @@ import { Contract, utils } from 'ethers';
 import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import { Sentry } from 'react-native-sentry';
+
 import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
-import type { Asset } from 'models/Asset';
+import { getEthereumProvider, parseTokenBigNumberAmount } from 'utils/common';
+
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
-import { getEthereumProvider } from 'utils/common';
+
+import type { Asset } from 'models/Asset';
 
 type Address = string;
 
@@ -71,13 +74,6 @@ function contractHasMethod(contractCode, encodedMethodName) {
   return contractCode.includes(encodedMethodName);
 }
 
-function parseContractAmount(amount: number | string, decimals: number) {
-  const formatted = amount.toString();
-  return decimals > 0
-    ? utils.parseUnits(formatted, decimals)
-    : utils.bigNumberify(formatted);
-}
-
 export async function transferERC20(options: ERC20TransferOptions) {
   const {
     contractAddress,
@@ -94,7 +90,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
   wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
 
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
-  const contractAmount = parseContractAmount(amount, defaultDecimals);
+  const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
 
   if (!data) {
     ({ data } = await contract.interface.functions.transfer.apply(null, [to, contractAmount]) || {});
@@ -350,7 +346,7 @@ export async function calculateGasEstimate(transaction: Object) {
      * so want to check if it's also not ETH send flow
      */
     const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
-    const contractAmount = parseContractAmount(amount, defaultDecimals);
+    const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
 
     ({ data } = await contract.interface.functions.transfer.apply(null, [to, contractAmount]) || {});
     to = contractAddress;

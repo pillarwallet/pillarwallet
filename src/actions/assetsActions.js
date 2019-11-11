@@ -61,7 +61,7 @@ import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { getAssetsAsList, transformAssetsToObject } from 'utils/assets';
-import { delay, noop, uniqBy } from 'utils/common';
+import { delay, noop, parseTokenAmount, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccountAddress,
@@ -153,7 +153,7 @@ export const sendSignedAssetTransactionAction = (transaction: any) => {
         };
         dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
       } else {
-        const value = parseFloat(transactionDetails.amount) * (10 ** transactionDetails.decimals);
+        const value = parseTokenAmount(transactionDetails.amount, transactionDetails.decimals);
         historyTx = buildHistoryTransaction({
           from: accountAddress,
           to: transactionDetails.to,
@@ -382,7 +382,7 @@ export const sendAssetAction = (
         historyTx = buildHistoryTransaction({
           ...tokenTx,
           asset: symbol,
-          value: parseFloat(amount) * (10 ** decimals),
+          value: parseTokenAmount(amount, decimals),
           to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
           note,
           gasPrice: transaction.gasPrice,
@@ -462,8 +462,8 @@ export const sendAssetAction = (
       };
 
     if (Object.keys(allowancePayload).length && tokenTx.hash) {
-      const { provider, assetCode } = allowancePayload;
-      dispatch(addExchangeAllowanceAction(provider, assetCode, tokenTx.hash));
+      const { provider, fromAssetCode, toAssetCode } = allowancePayload;
+      dispatch(addExchangeAllowanceAction(provider, fromAssetCode, toAssetCode, tokenTx.hash));
     }
 
     // send note

@@ -65,11 +65,13 @@ class FiatExchange extends React.Component<Props, State> {
     const {
       fiatOfferOrder: {
         provider,
-        fromAssetCode: sourceCurrency,
-        toAssetCode: destCurrency,
+        fromAsset,
+        toAsset,
         amount: sourceAmount,
       },
     } = navigation.state.params;
+    const { code: sourceCurrency } = fromAsset;
+    const { code: destCurrency } = toAsset;
 
     const { email = '' } = user;
 

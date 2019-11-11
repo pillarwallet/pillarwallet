@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
+import { SafeAreaView } from 'react-navigation';
 import { Linking, Dimensions, ScrollView, Clipboard } from 'react-native';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
@@ -29,6 +30,7 @@ import { format as formatDate, differenceInSeconds } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
 import type { ScrollToProps } from 'components/Modals/SlideModal';
+import { CachedImage } from 'react-native-cached-image';
 
 // models
 import type { Transaction } from 'models/Transaction';
@@ -50,6 +52,7 @@ import {
   formatFullAmount,
   noop,
   formatUnits,
+  formatAmount,
 } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
@@ -73,8 +76,10 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   COLLECTIBLE,
   CHAT,
+  BADGE,
 } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
+import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
@@ -127,6 +132,7 @@ const ContentWrapper = styled.View`
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   overflow: hidden;
+  background-color: ${baseColors.snowWhite};
 `;
 
 const EventBody = styled.View`
@@ -138,7 +144,7 @@ const EventProfileImage = styled(ProfileImage)`
 `;
 
 const ButtonsWrapper = styled.View`
-  padding: 6px ${spacing.large}px ${spacing.large}px;
+  padding: 6px ${spacing.mediumLarge}px ${spacing.large}px;
   background-color: ${baseColors.snowWhite};
 `;
 
@@ -162,9 +168,17 @@ const EventBodyTitle = styled(MediumText)`
   text-align: center;
 `;
 
+const Icon = styled(CachedImage)`
+  width: 6px;
+  height: 12px;
+  margin-bottom: ${spacing.small}px;
+`;
+
 const viewTransactionOnBlockchain = (hash: string) => {
   Linking.openURL(TX_DETAILS_URL + hash);
 };
+
+const lightningIcon = require('assets/icons/icon_lightning_sm.png');
 
 class EventDetails extends React.Component<Props, State> {
   timer: ?IntervalID;
@@ -263,6 +277,15 @@ class EventDetails extends React.Component<Props, State> {
     navigation.navigate(COLLECTIBLE, { assetData });
   };
 
+  goToBadge = (badgeId: string) => {
+    const {
+      navigation,
+      onClose,
+    } = this.props;
+    onClose();
+    navigation.navigate(BADGE, { badgeId });
+  };
+
   sendTokensToUser = (contact) => {
     const {
       navigation,
@@ -302,6 +325,12 @@ class EventDetails extends React.Component<Props, State> {
       supportedAssets,
       accounts,
     } = this.props;
+    const {
+      hideAmount,
+      hideSender,
+      isPPNAsset,
+      txType,
+    } = eventData;
 
     if (eventType === TRANSACTION_EVENT) {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
@@ -352,48 +381,32 @@ class EventDetails extends React.Component<Props, State> {
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const freeTx = isPPNTransaction;
-      let showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
-      let showAmountReceived = true;
-      let showSender = true;
+
+      const showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
       let showNote = true;
-      let showTxType = false;
-      let txType = '';
       const listSettledAssets = (tag === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
 
-      if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
-        showAmountReceived = false;
-        showSender = false;
+      if (tag === PAYMENT_NETWORK_TX_SETTLEMENT || tag === PAYMENT_NETWORK_ACCOUNT_TOPUP ||
+        tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
         showNote = false;
-        showTxType = true;
-        txType = 'PLR Network settle';
-      } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-        showSender = false;
-        showNote = false;
-        showTxType = true;
-        txType = 'TANK TOP UP';
-      } else if (tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
-        showSender = false;
-        showNote = false;
-        showTxType = true;
-        txType = 'TANK WITHDRAWAL';
-        showFeeBlock = true;
       }
 
       return (
         <EventBody>
-          {showAmountReceived &&
-          <ListItemUnderlined
-            label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
-            value={`${formatFullAmount(value)} ${asset}`}
-          />
-          }
-          {showTxType &&
+          {txType &&
           <ListItemUnderlined
             label="TRANSACTION TYPE"
             value={txType}
           />
           }
-          {showSender &&
+          {!hideAmount &&
+          <ListItemUnderlined
+            label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
+            valueAddon={isPPNAsset ? <Icon source={lightningIcon} /> : null}
+            value={`${formatFullAmount(value)} ${asset}`}
+          />
+          }
+          {!hideSender &&
           <ListItemUnderlined
             label={isReceived ? 'SENDER' : 'RECIPIENT'}
             value={relatedUserTitle}
@@ -414,7 +427,11 @@ class EventDetails extends React.Component<Props, State> {
           {listSettledAssets &&
           <ListItemUnderlined
             label="ASSETS"
-            value={extra.map(item => <MediumText key={item.hash}> {item.value} {item.symbol}</MediumText>)}
+            value={extra.map(({ symbol, value: rawValue, hash }) => {
+              const { decimals: assetDecimals = 18 } = getAssetData(assetsData, supportedAssets, symbol);
+              const formattedValue = +formatAmount(formatUnits(rawValue.toString(), assetDecimals));
+              return <MediumText key={hash}> {formattedValue} {symbol}</MediumText>;
+            })}
           />
           }
           {showFeeBlock &&
@@ -498,6 +515,19 @@ class EventDetails extends React.Component<Props, State> {
       );
     }
 
+    if (eventType === BADGE_REWARD_EVENT) {
+      const { name } = eventData;
+
+      return (
+        <EventBody>
+          <ListItemUnderlined
+            label="RECEIVED BADGE"
+            value={name}
+          />
+        </EventBody>
+      );
+    }
+
     const userData = {
       username: eventData.username,
       name: eventData.firstName,
@@ -551,6 +581,20 @@ class EventDetails extends React.Component<Props, State> {
         );
       }
       return null;
+    }
+
+    if (eventType === BADGE_REWARD_EVENT) {
+      const { badgeId } = eventData;
+      return (
+        <ButtonsWrapper>
+          <EventButton
+            block
+            title="See the badge"
+            primaryInverted
+            onPress={() => this.goToBadge(badgeId)}
+          />
+        </ButtonsWrapper>
+      );
     }
 
     const userData = {
@@ -661,6 +705,23 @@ class EventDetails extends React.Component<Props, State> {
       );
     }
 
+    if (eventType === BADGE_REWARD_EVENT) {
+      const { name, imageUrl, badgeId } = eventData;
+
+      return (
+        <EventHeader
+          eventType={BADGE_REWARD_EVENT}
+          eventTime={eventTime}
+          onClose={onClose}
+          iconUrl={imageUrl}
+          onIconPress={() => this.goToBadge(badgeId)}
+          imageKey={name}
+          imageDiameter={70}
+          imageWrapperStyle={{ backgroundColor: 'transparent' }}
+        />
+      );
+    }
+
     return (
       <EventHeader
         eventType={eventType}
@@ -712,7 +773,9 @@ class EventDetails extends React.Component<Props, State> {
         >
           {this.renderEventBody(eventType)}
         </ScrollView>
-        {this.renderEventButtons(eventType, eventStatus)}
+        <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
+          {this.renderEventButtons(eventType, eventStatus)}
+        </SafeAreaView>
       </ContentWrapper>
     );
   }

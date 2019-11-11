@@ -62,6 +62,7 @@ import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { WALLET_IMPORT_EVENT } from 'constants/userEventsConstants';
 
 // utils
 import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
@@ -94,6 +95,7 @@ import {
   setUserJoinedBetaAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
+import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
 
@@ -368,7 +370,11 @@ export const registerWalletAction = () => {
       isImported,
     });
 
-    // STEP 6: all done, navigate to the home screen
+    // STEP 6: add wallet created / imported events
+    dispatch(getWalletsCreationEventsAction());
+    if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
+
+    // STEP 7: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;
     navigateToAppFlow(isWalletBackedUp, getState);
   };

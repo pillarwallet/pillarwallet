@@ -128,13 +128,21 @@ import type { SendNavigateOptions } from 'models/Navigation';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
 import { isConnectedToSmartAccount } from 'utils/smartWallet';
-import { addressesEqual, getBalance, getPPNTokenAddress } from 'utils/assets';
+import {
+  addressesEqual,
+  getAssetData,
+  getAssetsAsList,
+  getBalance,
+  getPPNTokenAddress,
+} from 'utils/assets';
 import {
   formatMoney,
   formatUnits,
   isCaseInsensitiveMatch,
+  parseTokenAmount,
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
+import { getWalletsCreationEventsAction } from './userEventsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -509,6 +517,8 @@ export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions:
       });
       return Promise.reject();
     }
+
+    dispatch(getWalletsCreationEventsAction());
 
     const { address } = accounts[0];
     const addressedTransferTransactions = transferTransactions.map(transaction => {
@@ -1192,14 +1202,19 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
       });
 
     if (txHash) {
-      const { accounts: { data: accounts } } = getState();
+      const {
+        accounts: { data: accounts },
+        assets: { supportedAssets },
+      } = getState();
+      const accountAssets = accountAssetsSelector(getState());
+      const accountAssetsData = getAssetsAsList(accountAssets);
       const accountId = getActiveAccountId(accounts);
       const accountAddress = getActiveAccountAddress(accounts);
-      const settlementData = txToSettle.map(({ symbol, value, hash }) => ({
-        symbol,
-        value: value.toString(),
-        hash,
-      }));
+      const settlementData = txToSettle.map(({ symbol, value, hash }) => {
+        const { decimals = 18 } = getAssetData(accountAssetsData, supportedAssets, symbol);
+        const parsedValue = parseTokenAmount(value, decimals);
+        return { symbol, value: parsedValue, hash };
+      });
 
       const historyTx = buildHistoryTransaction({
         from: accountAddress,
