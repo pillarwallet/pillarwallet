@@ -29,7 +29,8 @@ platform :android do
       package_name: 'com.pillarproject.wallet.staging',
       skip_upload_aab: true,
       skip_upload_images: true,
-      skip_upload_screenshots: true
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true
     )
   end
 
@@ -45,7 +46,8 @@ platform :android do
       package_name: 'com.pillarproject.wallet',
       skip_upload_aab: true,
       skip_upload_images: true,
-      skip_upload_screenshots: true
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true
     )
   end
 
@@ -61,7 +63,8 @@ platform :android do
     package_name: 'com.pillarproject.wallet',
     skip_upload_aab: true,
     skip_upload_images: true,
-    skip_upload_screenshots: true
+    skip_upload_screenshots: true,
+    skip_upload_changelogs: true
 	)
   end
 
@@ -77,7 +80,8 @@ platform :android do
     package_name: 'com.pillarproject.wallet',
     skip_upload_aab: true,
     skip_upload_images: true,
-    skip_upload_screenshots: true
+    skip_upload_screenshots: true,
+    skip_upload_changelogs: true
   )
   end
 
