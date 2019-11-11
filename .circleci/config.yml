@@ -871,14 +871,14 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                  - fix/android-pipeline-fixes-pt2
       - stage_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - master
+                  - fix/android-pipeline-fixes-pt2
       - slack-prod-approval:
           requires:
             - stage_ios
