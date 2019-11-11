@@ -20,7 +20,7 @@ executors:
     working_directory: ~/pillarwallet
     resource_class: large
     docker:
-      - image: circleci/api-28-node8-alpha
+      - image: circleci/android:api-28-node8-alpha
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       TERM: dumb
