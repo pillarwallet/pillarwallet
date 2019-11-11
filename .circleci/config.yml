@@ -20,11 +20,12 @@ executors:
     working_directory: ~/pillarwallet
     resource_class: large
     docker:
-      - image: circleci/android:api-29-node
+      - image: circleci/android:api-28-node8-alpha
     environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
       TERM: dumb
-      _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -Dfile.encoding=UTF-8"'
+      _JAVA_OPTIONS: "-Xmx4096m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx4096m -Dfile.encoding=UTF-8"'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
 
