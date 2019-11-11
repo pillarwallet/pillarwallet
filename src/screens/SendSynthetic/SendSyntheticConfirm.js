@@ -100,6 +100,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const { note } = this.state;
     const { fromAmount } = this.syntheticTransaction;
     const { symbol, decimals, address: contractAddress } = this.assetData;
+    const syntheticTransaction = { ...this.syntheticTransaction };
     const transactionPayload = {
       amount: fromAmount,
       to: SYNTHETICS_CONTRACT_ADDRESS,
@@ -108,9 +109,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       decimals,
       note,
       usePPN: true,
-      extra: {
-        syntheticTransaction: this.syntheticTransaction,
-      },
+      extra: { syntheticTransaction },
     };
     this.props.navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,

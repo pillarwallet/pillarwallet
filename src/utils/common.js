@@ -414,3 +414,9 @@ export const makePromiseCancelable = (promise: Promise<any>) => {
     cancel: () => { isCancelled = true; }, // sets internal var to cancel original promise
   };
 };
+
+// number with decimals is valid if it has decimals else if not then it should not contain any decimal pointer
+export const isValidNumberDecimals = (
+  number: number | string,
+  decimals: number,
+) => decimals !== 0 || !number.toString().includes('.');

@@ -41,7 +41,7 @@ import { initSyntheticsServiceAction } from 'actions/syntheticsActions';
 
 // utils, services
 import { fontStyles, spacing, UIColors } from 'utils/variables';
-import { formatAmount, formatFiat, isValidNumber, parseNumber } from 'utils/common';
+import { formatAmount, formatFiat, isValidNumber, isValidNumberDecimals, parseNumber } from 'utils/common';
 import { getAssetData, getAssetsAsList, getRate } from 'utils/assets';
 import syntheticsService from 'services/synthetics';
 import { getAmountFormFields } from 'utils/formHelpers';
@@ -79,27 +79,26 @@ const { Form } = t.form;
 
 const generateFormStructure = (intentError: ?string, maxAmount: number, decimals: number) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
-    if (!isValidNumber(amount.toString()) || intentError) return false;
+    amount = amount.toString();
 
-    if (decimals === 0 && amount.toString().includes('.')) return false;
-    amount = parseFloat(amount.toString());
-
-    return (decimals !== 0 || !amount.toString().includes('.')) && amount <= maxAmount;
+    return isValidNumber(amount)
+      && isValidNumberDecimals(amount, decimals)
+      && !intentError
+      && parseFloat(amount) <= maxAmount;
   });
 
   Amount.getValidationErrorMessage = (amount) => {
-    if (!isValidNumber(amount.toString())) {
+    amount = amount.toString();
+
+    if (!isValidNumber(amount)) {
       return 'Incorrect number entered.';
-    }
-
-    amount = parseNumber(amount.toString());
-
-    if (amount > maxAmount) {
+    } else if (parseNumber(amount) > maxAmount) {
       return 'Amount should not exceed the max available';
-    } else if (decimals === 0 && amount.toString().includes('.')) {
+    } else if (!isValidNumberDecimals(amount, decimals)) {
       return 'Amount should not contain decimal places';
     }
-    return intentError || true;
+
+    return intentError;
   };
 
   return t.struct({
