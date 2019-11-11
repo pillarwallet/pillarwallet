@@ -290,9 +290,6 @@
     "tls": false
   },
   "metro": {
-    "maxWorkers": 4,
-    "server": {
-      "port": 8085
-    }
+    "maxWorkers": 4
   }
 }
