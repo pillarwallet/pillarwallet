@@ -159,11 +159,15 @@ export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
 };
 
-export const parseTokenAmount = (amount: number | string, decimals: number): number => {
+export const parseTokenBigNumberAmount = (amount: number | string, decimals: number): utils.BigNumber => {
   const formatted = amount.toString();
-  const parsed = decimals > 0
+  return decimals > 0
     ? utils.parseUnits(formatted, decimals)
     : utils.bigNumberify(formatted);
+};
+
+export const parseTokenAmount = (amount: number | string, decimals: number): number => {
+  const parsed = parseTokenBigNumberAmount(amount, decimals);
   return Math.floor(+parsed.toString());
 };
 
