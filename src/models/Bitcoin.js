@@ -18,6 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+export type BitcoinStore = {
+  keys?: { [key: string]: string },
+};
+
 export type BitcoinTransactionTarget = {
   address: string,
   value: number,

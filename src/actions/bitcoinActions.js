@@ -41,15 +41,15 @@ import type {
   UpdateBitcoinBalanceAction,
 } from 'reducers/bitcoinReducer';
 import type { Wallet } from 'models/Wallet';
-import type { BitcoinTransactionPlan, BitcoinUtxo } from 'models/Bitcoin';
+import type {
+  BitcoinTransactionPlan,
+  BitcoinUtxo,
+  BitcoinStore,
+} from 'models/Bitcoin';
 
 import { saveDbAction } from 'actions/dbActions';
 
 const storage = Storage.getInstance('db');
-
-type BitcoinStore = {
-  keys?: { [key: string]: string },
-};
 
 const saveDb = (data: BitcoinStore) => {
   return saveDbAction('bitcoin', data, true); // TODO: +true+ required?
