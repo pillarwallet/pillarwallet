@@ -1117,8 +1117,6 @@ export const fetchAvailableTxToSettleAction = () => {
     const payments = await smartWalletService.getAccountPaymentsToSettle(activeAccountAddress);
 
     const txToSettle = payments
-      // hiding unsettled transactions that were just settled and are pending
-      // hiding withdraw payment transaction if withdraw is pending
       .filter(({ hash }) => !isHiddenUnsettledTransaction(hash, accountHistory))
       .map((item) => {
         const { decimals = 18 } = accountAssets[item.token] || {};
