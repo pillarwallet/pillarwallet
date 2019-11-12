@@ -260,6 +260,8 @@ class PPNView extends React.Component<Props, State> {
           filtered.settled = settled.concat(transaction);
           break;
         case PAYMENT_COMPLETED:
+          // hiding unsettled transactions that were just settled and are pending
+          // hiding withdraw payment transaction if withdraw is pending
           if (!isHiddenUnsettledTransaction(hash, history)) filtered.unsettled = unsettled.concat(transaction);
           break;
         default:

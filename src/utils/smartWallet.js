@@ -244,10 +244,10 @@ export const isHiddenUnsettledTransaction = (
   paymentHash: string,
   history: Object[],
 ): boolean => history
-  .filter(({ status }) => status === TX_PENDING_STATUS)
+  .filter(({ status, extra }) => status === TX_PENDING_STATUS && !isEmpty(extra))
   .some(({ tag, extra }) => (
     // first check for withdrawal that consists of 2 transactions of which one is through payment network
-    tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+    (tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL && isCaseInsensitiveMatch(extra.paymentHash, paymentHash))
     // another check for transactions that were already settled, but pending
     || (tag === PAYMENT_NETWORK_TX_SETTLEMENT
       // we can also check if array not empty, but extra is free
