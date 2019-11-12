@@ -805,18 +805,17 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
     .then(data => {
       if (data.totalAmount) {
         const {
-          totalAmount,
           feeAmount,
           extraFeeAmount,
           quoteCurrencyAmount,
         } = data;
 
-        const totalAmountProvided = (totalAmount / amountToGetOffer) * amount;
         const extraFeeAmountForAmountProvided = (extraFeeAmount / amountToGetOffer) * amount;
+        const totalAmount = amount + feeAmount + extraFeeAmountForAmountProvided;
 
         return {
           provider: 'MoonPay',
-          askRate: totalAmountProvided,
+          askRate: totalAmount,
           fromAsset: { code: fromAsset },
           toAsset: { code: toAsset },
           feeAmount,
