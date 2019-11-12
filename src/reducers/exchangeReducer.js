@@ -32,6 +32,7 @@ import {
   MARK_NOTIFICATION_SEEN,
   SET_EXCHANGE_PROVIDERS_METADATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
+  SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider, ProvidersMeta } from 'models/Offer';
 import type { Asset } from 'models/Asset';
@@ -47,7 +48,8 @@ export type ExchangeReducerState = {
     hasNotification: boolean,
   },
   providersMeta: ProvidersMeta,
-  exchangeSupportedAssets: Asset[]
+  exchangeSupportedAssets: Asset[],
+  fiatExchangeSupportedAssets: Asset[],
 }
 
 export type ExchangeReducerAction = {
@@ -65,6 +67,7 @@ export const initialState = {
   },
   providersMeta: [],
   exchangeSupportedAssets: [],
+  fiatExchangeSupportedAssets: [],
 };
 
 export default function exchangeReducer(
@@ -199,6 +202,11 @@ export default function exchangeReducer(
       return {
         ...state,
         exchangeSupportedAssets: action.payload,
+      };
+    case SET_FIAT_EXCHANGE_SUPPORTED_ASSETS:
+      return {
+        ...state,
+        fiatExchangeSupportedAssets: action.payload,
       };
     default:
       return state;

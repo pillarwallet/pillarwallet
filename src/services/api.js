@@ -827,6 +827,16 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
     .catch(() => ({ error: true }));
 };
 
+SDKWrapper.prototype.fetchMoonPaySupportedAssetsTickers = function () {
+  const url = `${MOONPAY_API_URL}/v3/currencies`;
+  return fetch(url)
+    .then(resp => resp.json())
+    .then(data => {
+      return data.filter(({ isSuspended, code }) => !isSuspended && !!code).map(({ code }) => code.toUpperCase());
+    })
+    .catch(() => []);
+};
+
 SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset: string, amount: number) {
   return Promise.resolve()
     .then(() => fetch(`${SENDWYRE_API_URL}/v3/rates?as=MULTIPLIER`))
@@ -849,4 +859,17 @@ SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset:
       return { error: true };
     })
     .catch(() => ({ error: true }));
+};
+
+SDKWrapper.prototype.fetchSendWyreSupportedAssetsTickers = function () {
+  return fetch(`${SENDWYRE_API_URL}/v3/rates`)
+    .then(resp => resp.json())
+    .then(data => {
+      const exchangePairs = Object.keys(data);
+      const exchangePairsWithSupportedFiatAsFirstItem = exchangePairs.filter((pair) =>
+        (pair.startsWith('USD') && !pair.startsWith('USDC')) || pair.startsWith('EUR') || pair.startsWith('GBP'));
+
+      return exchangePairsWithSupportedFiatAsFirstItem.map((key) => key.substring(3));
+    })
+    .catch(() => []);
 };
