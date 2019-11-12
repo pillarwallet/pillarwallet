@@ -810,13 +810,15 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const isFiat = isFiatProvider(offerProvider);
 
+    const disableFiatExchange = isFiat && (minOrMaxNeeded || !!offerRestricted);
+
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
         contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
       >
         <CardWrapper
-          disabled={isTakeButtonDisabled || disableNonFiatExchange}
+          disabled={isTakeButtonDisabled || disableNonFiatExchange || disableFiatExchange}
           onPress={() => isFiat ? this.onFiatOfferPress(offer) : this.onOfferPress(offer)}
         >
           <CardRow withBorder alignTop>
@@ -892,6 +894,7 @@ class ExchangeScreen extends React.Component<Props, State> {
                 title={isTakeOfferPressed ? '' : `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`}
                 small
                 onPress={() => this.onFiatOfferPress(offer)}
+                disabled={disableFiatExchange}
               >
                 {isTakeOfferPressed && <Spinner width={20} height={20} />}
               </Button>

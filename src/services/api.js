@@ -794,8 +794,10 @@ SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string
 };
 
 SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: string, amount: number) {
+  const minAmount = 20;
+  const amountToGetOffer = amount < minAmount ? minAmount : amount;
   const url = `${MOONPAY_API_URL}/v3/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
-  + `&baseCurrencyAmount=${amount}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
+  + `&baseCurrencyAmount=${amountToGetOffer}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
 
   return Promise.resolve()
     .then(() => fetch(url))
@@ -809,16 +811,19 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
           quoteCurrencyAmount,
         } = data;
 
+        const totalAmountProvided = (totalAmount / amountToGetOffer) * amount;
+        const extraFeeAmountForAmountProvided = (extraFeeAmount / amountToGetOffer) * amount;
+
         return {
           provider: 'MoonPay',
-          askRate: totalAmount,
+          askRate: totalAmountProvided,
           fromAsset: { code: fromAsset },
           toAsset: { code: toAsset },
           feeAmount,
-          extraFeeAmount,
+          extraFeeAmount: extraFeeAmountForAmountProvided,
           quoteCurrencyAmount,
           _id: 'moonpay',
-          minQuantity: 20,
+          minQuantity: minAmount,
           maxQuantity: 9999999,
         };
       }
