@@ -23,8 +23,8 @@ import { RefreshControl, ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
-import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
@@ -49,11 +49,7 @@ import {
   TANK_WITHDRAWAL,
   SEND_SYNTHETIC_ASSET,
 } from 'constants/navigationConstants';
-import {
-  PAYMENT_COMPLETED,
-  PAYMENT_PROCESSED,
-  SMART_WALLET_UPGRADE_STATUSES,
-} from 'constants/smartWalletConstants';
+import { PAYMENT_COMPLETED, PAYMENT_PROCESSED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -63,12 +59,9 @@ import type { Transaction } from 'models/Transaction';
 
 // utils
 import { getRate } from 'utils/assets';
-import {
-  formatMoney,
-  formatFiat,
-} from 'utils/common';
+import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus, isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 
 // selectors
@@ -77,6 +70,8 @@ import {
   paymentNetworkNonZeroBalancesSelector,
   PPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
+import { accountAssetsSelector } from 'selectors/assets';
+import { accountHistorySelector } from 'selectors/history';
 
 
 type Props = {
@@ -91,6 +86,7 @@ type Props = {
   PPNTransactions: Transaction[],
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
+  history: Object[],
 }
 
 type State = {
@@ -166,6 +162,7 @@ class PPNView extends React.Component<Props, State> {
       contactsSmartAddresses,
       baseFiatCurrency,
       rates,
+      history,
     } = this.props;
 
     let incomingBalanceInFiat = 0;
@@ -182,8 +179,8 @@ class PPNView extends React.Component<Props, State> {
 
     const availableFormattedAmount = formatMoney(availableStake, 4);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const { upgrade: { status } } = smartWalletState;
-    const sendingBlockedMessage = status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+    const { upgrade: { status: smartWalletUpgradeStatus } } = smartWalletState;
+    const sendingBlockedMessage = smartWalletUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       ? {
         title: 'To top up PLR Tank or Settle transactions, deploy Smart Wallet first',
         message: 'You will have to pay a small fee',
@@ -200,16 +197,14 @@ class PPNView extends React.Component<Props, State> {
     );
 
     const PPNTransactionsGrouped = PPNTransactionsMapped.reduce((filtered, transaction) => {
-      const { stateInPPN } = transaction;
+      const { stateInPPN, hash } = transaction;
       const { settled, unsettled } = filtered;
       switch (stateInPPN) {
         case PAYMENT_PROCESSED:
-          filtered.settled = settled
-            .concat(transaction);
+          filtered.settled = settled.concat(transaction);
           break;
         case PAYMENT_COMPLETED:
-          filtered.unsettled = unsettled
-            .concat(transaction);
+          if (!isHiddenUnsettledTransaction(hash, history)) filtered.unsettled = unsettled.concat(transaction);
           break;
         default:
           break;
@@ -353,6 +348,8 @@ const structuredSelector = createStructuredSelector({
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
   availableStake: availableStakeSelector,
   PPNTransactions: PPNTransactionsSelector,
+  assets: accountAssetsSelector,
+  history: accountHistorySelector,
 });
 
 const combinedMapStateToProps = (state) => ({

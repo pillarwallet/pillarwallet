@@ -80,7 +80,7 @@ import { baseColors, spacing, fontStyles } from 'utils/variables';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
-// types
+// models, types
 import type { Account, Accounts } from 'models/Account';
 import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
@@ -91,7 +91,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
   invitations: Object[],
-  history: Object[],
   user: Object,
   fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
@@ -104,7 +103,7 @@ type Props = {
   intercomNotificationsCount: number,
   fetchAllCollectiblesData: Function,
   openSeaTxHistory: Object[],
-  history: Array<*>,
+  history: Object[],
   requestWalletConnectSession: (uri: string) => void,
   executeDeepLink: (uri: string) => void,
   cancelWaitingRequest: () => void,

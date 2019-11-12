@@ -37,6 +37,7 @@ import {
   MARK_NOTIFICATION_SEEN,
   SET_EXCHANGE_PROVIDERS_METADATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
+  SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -520,7 +521,7 @@ export const getMetaDataAction = () => {
   };
 };
 
-export const getExchangeSupportedAssetsAction = () => {
+const getCryptoExchangeSupportedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       assets: { supportedAssets },
@@ -539,3 +540,35 @@ export const getExchangeSupportedAssetsAction = () => {
     dispatch(saveDbAction('exchangeSupportedAssets', { exchangeSupportedAssets }, true));
   };
 };
+
+const getFiatExchangeSupportedAssetsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      assets: { supportedAssets },
+    } = getState();
+
+    const moonPaySupportedAssets = await api.fetchMoonPaySupportedAssetsTickers();
+    const sendWyreSupportedAssets = await api.fetchSendWyreSupportedAssetsTickers();
+
+    const providersSupportedAssetsTickers = [...new Set([...moonPaySupportedAssets, ...sendWyreSupportedAssets])];
+
+    const fiatExchangeSupportedAssets = supportedAssets
+      .filter(({ symbol }) => providersSupportedAssetsTickers.includes(symbol));
+
+    dispatch({
+      type: SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
+      payload: fiatExchangeSupportedAssets,
+    });
+
+    dispatch(saveDbAction('fiatExchangeSupportedAssets', { fiatExchangeSupportedAssets }, true));
+  };
+};
+
+
+export const getExchangeSupportedAssetsAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(getCryptoExchangeSupportedAssetsAction());
+    dispatch(getFiatExchangeSupportedAssetsAction());
+  };
+};
+
