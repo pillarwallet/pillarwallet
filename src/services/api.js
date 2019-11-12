@@ -829,9 +829,7 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
 
 SDKWrapper.prototype.fetchMoonPaySupportedAssetsTickers = function () {
   const url = `${MOONPAY_API_URL}/v3/currencies`;
-
-  return Promise.resolve()
-    .then(() => fetch(url))
+  return fetch(url)
     .then(resp => resp.json())
     .then(data => {
       return data.filter(({ isSuspended, code }) => !isSuspended && !!code).map(({ code }) => code.toUpperCase());
@@ -864,8 +862,7 @@ SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset:
 };
 
 SDKWrapper.prototype.fetchSendWyreSupportedAssetsTickers = function () {
-  return Promise.resolve()
-    .then(() => fetch(`${SENDWYRE_API_URL}/v3/rates`))
+  return fetch(`${SENDWYRE_API_URL}/v3/rates`)
     .then(resp => resp.json())
     .then(data => {
       const exchangePairs = Object.keys(data);
