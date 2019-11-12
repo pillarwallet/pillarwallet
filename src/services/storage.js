@@ -49,26 +49,6 @@ Storage.prototype.getConflicts = function (): Promise<String[]> {
     ));
 };
 
-/**
- * V1 db repairment by dropping the whole db and re-populating it with the old data.
- */
-Storage.prototype.repair = async function () {
-  const docs = await this.getAllDocs().then(({ rows }) => rows.map(({ doc }) => doc));
-  if (!docs.length) return Promise.resolve();
-  await this.db().destroy();
-  this.connect();
-  const promises = docs.map(doc => {
-    const {
-      _id,
-      _rev,
-      _conflicts,
-      ...data
-    } = doc;
-    return this.save(_id, data).catch(() => null);
-  });
-  return Promise.all(promises);
-};
-
 const activeDocs = {};
 Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
   return this.db().get(id)

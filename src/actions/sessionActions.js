@@ -27,16 +27,6 @@ export const updateSessionNetworkStatusAction = (isOnline: boolean) => ({
   payload: { isOnline },
 });
 
-export const checkDBConflictsAction = () => {
-  return async (dispatch: Function) => {
-    const dbConflicts = await storage.getConflicts();
-    dispatch({
-      type: UPDATE_SESSION,
-      payload: { hasDBConflicts: !!dbConflicts.length },
-    });
-  };
-};
-
 export const updateSignalInitiatedStateAction = (isSignalInitiated: boolean) => {
   return async (dispatch: Function) => {
     dispatch({

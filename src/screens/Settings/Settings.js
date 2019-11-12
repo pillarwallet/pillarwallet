@@ -33,7 +33,6 @@ import {
   setUserJoinedBetaAction,
 } from 'actions/appSettingsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { repairStorageAction } from 'actions/appActions';
 import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
 
 // components
@@ -82,8 +81,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
   intercomNotificationsCount: number,
-  repairStorage: Function,
-  hasDBConflicts: boolean,
   cleanSmartWalletAccounts: Function,
   changeUseBiometrics: (enabled: boolean, privateKey: ?string) => Function,
   resetIncorrectPassword: () => Function,
@@ -160,16 +157,7 @@ const formSupportItems = (that) => {
 };
 
 const formDebbugItems = (that) => {
-  const { repairStorage, hasDBConflicts } = that.props;
   const debugItems = [];
-
-  if (hasDBConflicts) {
-    debugItems.push({
-      key: 'repairDB',
-      title: 'Repair Local Storage',
-      onPress: repairStorage,
-    });
-  }
 
   if (__DEV__) {
     debugItems.push({
@@ -653,7 +641,6 @@ const mapStateToProps = ({
     data: appSettings,
   },
   notifications: { intercomNotificationsCount },
-  session: { data: { hasDBConflicts } },
   wallet: { backupStatus },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
@@ -662,7 +649,6 @@ const mapStateToProps = ({
   intercomNotificationsCount,
   appSettings,
   optOutTracking,
-  hasDBConflicts,
   backupStatus,
   useBiometrics,
   smartWalletFeatureEnabled,
@@ -673,7 +659,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   changeUseBiometrics: (enabled, privateKey) => dispatch(changeUseBiometricsAction(enabled, privateKey)),
-  repairStorage: () => dispatch(repairStorageAction()),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
   setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
