@@ -18,6 +18,7 @@ import com.facebook.react.modules.systeminfo.AndroidInfoModule;
 import com.facebook.react.modules.vibration.VibrationModule;
 import com.facebook.react.modules.websocket.WebSocketModule;
 import com.facebook.react.uimanager.ViewManager;
+import com.bitgo.randombytes.RandomBytesModule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +52,8 @@ public class ThreadBaseReactPackage implements ReactPackage {
                 new NetInfoModule(catalystApplicationContext),
                 new VibrationModule(catalystApplicationContext),
                 new WebSocketModule(catalystApplicationContext),
-                new ThreadSelfModule(catalystApplicationContext)
+                new ThreadSelfModule(catalystApplicationContext),
+                new RandomBytesModule(catalystApplicationContext)
         );
     }
 

@@ -37,5 +37,6 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
+    implementation project(':react-native-randombytes')
 }
 
