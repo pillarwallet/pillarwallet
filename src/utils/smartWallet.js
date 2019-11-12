@@ -25,10 +25,7 @@ import { utils } from 'ethers';
 
 import { SMART_WALLET_DEPLOYMENT_ERRORS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import {
-  TX_CONFIRMED_STATUS,
-  TX_PENDING_STATUS,
-} from 'constants/historyConstants';
+import { TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
@@ -38,7 +35,7 @@ import {
 
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Transaction } from 'models/Transaction';
+import type { Transaction, TransactionExtra } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import { ETH } from 'constants/assetsConstants';
@@ -239,3 +236,21 @@ export const parseSmartWalletTransactions = (
     return mapped;
   }, []);
 
+export const transactionExtraContainsPaymentHash = (paymentHash: string, extra: TransactionExtra): boolean => {
+  if (isEmpty(extra)) return false;
+  // extra can be either object or array
+  return (!Array.isArray(extra) && isCaseInsensitiveMatch(extra.paymentHash, paymentHash))
+    || (Array.isArray(extra) && extra.some(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)));
+};
+
+// hiding unsettled transactions that were just settled and are pending
+// hiding withdraw payment transaction if withdraw is pending
+export const isHiddenUnsettledTransaction = (
+  paymentHash: string,
+  history: Object[],
+): boolean => history
+  .filter(({ status }) => status === TX_PENDING_STATUS)
+  .some(({ tag, extra }) =>
+    [PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL, PAYMENT_NETWORK_TX_SETTLEMENT].includes(tag)
+      && transactionExtraContainsPaymentHash(paymentHash, extra),
+  );
