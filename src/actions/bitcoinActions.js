@@ -22,6 +22,7 @@ import {
   UPDATE_BITCOIN_BALANCE,
   REFRESH_THRESHOLD,
   SET_BITCOIN_ADDRESSES,
+  BITCOIN_WALLET_CREATION_FAILED,
 } from 'constants/bitcoinConstants';
 import {
   keyPairAddress,
@@ -39,8 +40,9 @@ import type {
   BitcoinReducerAction,
   SetBitcoinAddressesAction,
   UpdateBitcoinBalanceAction,
+  BitcoinWalletCreationFailedAction,
 } from 'reducers/bitcoinReducer';
-import type { Wallet } from 'models/Wallet';
+import type { EthereumWallet } from 'models/Wallet';
 import type {
   BitcoinTransactionPlan,
   BitcoinUtxo,
@@ -73,10 +75,20 @@ const updateBitcoinBalance = (
   unspentTransactions,
 });
 
-export const initializeBitcoinWalletAction = (wallet: Wallet) => {
+const bitcoinWalletCreationFailed = (): BitcoinWalletCreationFailedAction => ({
+  type: BITCOIN_WALLET_CREATION_FAILED,
+});
+
+export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
   return async (dispatch: Dispatch) => {
-    const root = await rootFromMnemonic(wallet.mnemonic);
-    const keyPair = root.derivePath(wallet.path);
+    const { mnemonic, path } = wallet;
+    if (!mnemonic) {
+      dispatch(bitcoinWalletCreationFailed());
+      return;
+    }
+
+    const root = await rootFromMnemonic(mnemonic);
+    const keyPair = root.derivePath(path);
 
     const address = keyPairAddress(keyPair);
     if (!address) {

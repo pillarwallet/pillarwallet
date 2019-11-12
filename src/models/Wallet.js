@@ -18,8 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type Wallet = {
-  mnemonic: string,
+export type EthereumWallet = {
+  mnemonic?: string,
   address: string,
   path: string,
   privateKey: string,

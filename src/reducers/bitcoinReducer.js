@@ -23,6 +23,7 @@ import {
   CREATED_BITCOIN_ADDRESS,
   UPDATE_BITCOIN_BALANCE,
   SET_BITCOIN_ADDRESSES,
+  BITCOIN_WALLET_CREATION_FAILED,
 } from 'constants/bitcoinConstants';
 
 export type BitcoinReducerState = {
@@ -30,6 +31,7 @@ export type BitcoinReducerState = {
     addresses: BitcoinAddress[],
     unspentTransactions: BitcoinUtxo[],
   },
+  creationFailed?: boolean,
 };
 
 export type UpdateBitcoinBalanceAction = {
@@ -48,10 +50,15 @@ export type CreatedBitcoinAddressAction = {
   address: string,
 };
 
+export type BitcoinWalletCreationFailedAction = {
+  type: 'BITCOIN_WALLET_CREATION_FAILED',
+};
+
 export type BitcoinReducerAction =
   | UpdateBitcoinBalanceAction
   | SetBitcoinAddressesAction
-  | CreatedBitcoinAddressAction;
+  | CreatedBitcoinAddressAction
+  | BitcoinWalletCreationFailedAction;
 
 export const initialState = {
   data: {
@@ -64,7 +71,6 @@ const updateBalance = (
   state: BitcoinReducerState,
   action: UpdateBitcoinBalanceAction,
 ): BitcoinReducerState => {
-  console.log({ state, action });
   const { unspentTransactions, address } = action;
   const { data: { addresses, unspentTransactions: transactions } } = state;
 
@@ -147,6 +153,9 @@ const bitcoinReducer = (
 
     case UPDATE_BITCOIN_BALANCE:
       return updateBalance(state, action);
+
+    case BITCOIN_WALLET_CREATION_FAILED:
+      return { ...state, creationFailed: true };
 
     default:
       return state;
