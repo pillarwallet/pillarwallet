@@ -86,6 +86,7 @@ import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
+import Walkthrough from 'components/Walkthrough';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -402,6 +403,24 @@ class HomeScreen extends React.Component<Props, State> {
 
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
 
+    const steps = [{
+      x: 10,
+      y: -25,
+      label: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi massa diam, dapibus in dictum eu,' +
+        'laoreet at nunc. Aenean tempus volutpat nisi non cursus.',
+    }, {
+      x: 240,
+      y: 60,
+      label: 'Aenean porttitor, orci in commodo volutpat, libero elit sodales augue, ut tempor turpis libero. ' +
+        'Suspendisse imperdiet ullamcorper nisi.',
+    },
+    {
+      x: 95,
+      y: 220,
+      label: 'Praesent vel ultricies felis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ' +
+        'tempus sapien.',
+    }];
+
     return (
       <ContainerWithHeader
         backgroundColor={baseColors.white}
@@ -496,6 +515,7 @@ class HomeScreen extends React.Component<Props, State> {
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </ScrollView>
+        <Walkthrough steps={steps} />
         <QRCodeScanner
           validator={this.validateQRCode}
           isActive={isScanning}
