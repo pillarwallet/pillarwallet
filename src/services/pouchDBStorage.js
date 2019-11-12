@@ -24,28 +24,28 @@ import PouchDB from 'pouchdb-react-native';
 import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
 
-function Storage(name: string, opts: ?Object = {}) {
+function PouchDBStorage(name: string, opts: ?Object = {}) {
   this.name = name;
   this.opts = { ...opts };
   this.connect();
 }
 
-Storage.prototype.connect = function () {
+PouchDBStorage.prototype.connect = function () {
   this.needToReconnect = false;
   this.connection = new PouchDB(this.name, this.opts);
   console.log(`Connected to the database ${this.name}`);
 };
 
-Storage.prototype.db = function () {
+PouchDBStorage.prototype.db = function () {
   if (this.needToReconnect) this.connect();
   return this.connection;
 };
 
-Storage.prototype.get = function (id: string) {
+PouchDBStorage.prototype.get = function (id: string) {
   return this.db().get(id).catch(() => ({}));
 };
 
-Storage.prototype.getConflicts = function (): Promise<String[]> {
+PouchDBStorage.prototype.getConflicts = function (): Promise<String[]> {
   return this.getAllDocs()
     .then(({ rows }) => (
       rows.map(({ doc }) => doc._conflicts).reduce((memo, item) => memo.concat(item), [])
@@ -55,7 +55,7 @@ Storage.prototype.getConflicts = function (): Promise<String[]> {
 /**
  * V1 db repairment by dropping the whole db and re-populating it with the old data.
  */
-Storage.prototype.repair = async function () {
+PouchDBStorage.prototype.repair = async function () {
   const docs = await this.getAllDocs().then(({ rows }) => rows.map(({ doc }) => doc));
   if (!docs.length) return Promise.resolve();
   await this.db().destroy();
@@ -73,7 +73,7 @@ Storage.prototype.repair = async function () {
 };
 
 const activeDocs = {};
-Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
+PouchDBStorage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
   return this.db().get(id)
     .catch(err => {
       if (err.status !== 404) {
@@ -125,11 +125,11 @@ Storage.prototype.save = function (id: string, data: Object, forceRewrite: boole
     });
 };
 
-Storage.prototype.getAllDocs = function () {
+PouchDBStorage.prototype.getAllDocs = function () {
   return this.db().allDocs({ conflicts: true });
 };
 
-Storage.prototype.removeAll = function () {
+PouchDBStorage.prototype.removeAll = function () {
   return this.db().allDocs().then(result => {
     return Promise.all(result.rows.map(row => {
       return this.db().remove(row.id, row.value.rev);
@@ -137,18 +137,18 @@ Storage.prototype.removeAll = function () {
   }).then(() => this.db().compact());
 };
 
-Storage.getInstance = function (name: string, opts: ?Object) {
+PouchDBStorage.getInstance = function (name: string, opts: ?Object) {
   if (!this._instances) {
     this._instances = {};
   }
-  this._instances[name] = this._instances[name] || new Storage(name, opts);
+  this._instances[name] = this._instances[name] || new PouchDBStorage(name, opts);
   return this._instances[name];
 };
 
-Storage.prototype.close = function () {
+PouchDBStorage.prototype.close = function () {
   console.log('Closing db connection');
   this.db().close();
   this.needToReconnect = true;
 };
 
-export default Storage;
+export default PouchDBStorage;
