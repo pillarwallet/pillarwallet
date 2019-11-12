@@ -52,6 +52,7 @@ import {
   SET_CONNECTED_EXCHANGE_PROVIDERS,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_EXCHANGE_PROVIDERS_METADATA,
+  SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -108,6 +109,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { exchangeSupportedAssets = [] } = await storage.get('exchangeSupportedAssets');
       dispatch({ type: SET_EXCHANGE_SUPPORTED_ASSETS, payload: exchangeSupportedAssets });
+
+      const { fiatExchangeSupportedAssets = [] } = await storage.get('fiatExchangeSupportedAssets');
+      dispatch({ type: SET_FIAT_EXCHANGE_SUPPORTED_ASSETS, payload: fiatExchangeSupportedAssets });
 
       const balances = await loadAndMigrate('balances', dispatch, getState);
       dispatch({ type: UPDATE_BALANCES, payload: balances });
