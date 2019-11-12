@@ -239,7 +239,7 @@ export const parseSmartWalletTransactions = (
 export const transactionExtraContainsPaymentHash = (paymentHash: string, extra: TransactionExtra): boolean => {
   if (isEmpty(extra)) return false;
   // extra can be either object or array
-  return (!Array.isArray(extra) && !isCaseInsensitiveMatch(extra.paymentHash, paymentHash))
+  return (!Array.isArray(extra) && isCaseInsensitiveMatch(extra.paymentHash, paymentHash))
     || (Array.isArray(extra) && extra.some(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)));
 };
 
