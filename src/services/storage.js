@@ -28,13 +28,11 @@ function Storage(name: string, opts: ?Object = {}) {
 }
 
 Storage.prototype.connect = function () {
-  this.needToReconnect = false;
   this.connection = new PouchDB(this.name, this.opts);
   console.log(`Connected to the database ${this.name}`);
 };
 
 Storage.prototype.db = function () {
-  if (this.needToReconnect) this.connect();
   return this.connection;
 };
 
@@ -120,12 +118,6 @@ Storage.getInstance = function (name: string, opts: ?Object) {
   }
   this._instances[name] = this._instances[name] || new Storage(name, opts);
   return this._instances[name];
-};
-
-Storage.prototype.close = function () {
-  console.log('Closing db connection');
-  this.db().close();
-  this.needToReconnect = true;
 };
 
 export default Storage;
