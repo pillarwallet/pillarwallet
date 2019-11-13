@@ -23,6 +23,7 @@ import {
   delay,
   formatAmount,
   decodeETHAddress,
+  decodeBTCAddress,
   pipe,
   parseNumber,
   isValidNumber,
@@ -65,6 +66,13 @@ describe('Common utils', () => {
     it('returns ETH address from string provided', () => {
       const expectedAddress = '0xf74b153d202ab7368aca04efb71cb3c8c316b514';
       expect(decodeETHAddress('ethereum:0xf74b153d202ab7368aca04efb71cb3c8c316b514')).toBe(expectedAddress);
+    });
+  });
+
+  describe('decodeBTCAddress', () => {
+    it('returns address from string provided', () => {
+      const expectedAddress = 'BITCOIN_ADDRESS';
+      expect(decodeBTCAddress('bitcoin:BITCOIN_ADDRESS')).toBe(expectedAddress);
     });
   });
 

@@ -20,13 +20,29 @@
 import {
   validatePin,
   isValidETHAddress,
+  isValidBTCAddress,
   hasAllValues,
   isValidFullname,
   isValidEmail,
   isValidName,
   isValidCityName,
   isValidUKPhone,
-} from '../validators';
+} from 'utils/validators';
+
+import {
+  keyPairAddress,
+  rootFromMnemonic,
+} from 'services/bitcoin';
+
+const newBTCAddress = (keyPair) => {
+  const address = keyPairAddress(keyPair);
+
+  if (!address) {
+    throw Error('cannot generate address');
+  }
+
+  return address;
+};
 
 describe('Validators', () => {
   describe('validatePin', () => {
@@ -52,6 +68,64 @@ describe('Validators', () => {
     it('should return false for the invvalid ETH address', () => {
       const isValid = isValidETHAddress('Jon Snow');
       expect(isValid).toBeFalsy();
+    });
+  });
+
+  describe('isValidBTCAddress', () => {
+    const mnemonic = 'some super random words';
+
+    describe('for testnet', () => {
+      it('does not accept ETH addresses', () => {
+        const isValid = isValidBTCAddress('0xb0604b2d7FBD6cD53f00fA001504135b7aEC9B4D');
+        expect(isValid).toBeFalsy();
+      });
+
+      it('does not accept invalid addresses', () => {
+        const isValid = isValidETHAddress('Jon Snow');
+        expect(isValid).toBeFalsy();
+      });
+
+      it('accepts testnet address', async () => {
+        const root = await rootFromMnemonic(mnemonic, 'testnet');
+        const keyPair = root.derivePath("m/49'/1/0");
+
+        const address = newBTCAddress(keyPair);
+
+        const isValid = isValidBTCAddress(address, 'testnet');
+        expect(isValid).toBeTruthy();
+      });
+
+      it('does not accept bitcoin address', async () => {
+        const root = await rootFromMnemonic(mnemonic, 'bitcoin');
+        const keyPair = root.derivePath("m/49'/1/0");
+
+        const address = newBTCAddress(keyPair);
+
+        const isValid = isValidBTCAddress(address, 'testnet');
+        expect(isValid).toBeFalsy();
+      });
+    });
+
+    describe('for bitcoin network', () => {
+      it('does not accept testnet address', async () => {
+        const root = await rootFromMnemonic(mnemonic, 'testnet');
+        const keyPair = root.derivePath("m/49'/1/0");
+
+        const address = newBTCAddress(keyPair);
+
+        const isValid = isValidBTCAddress(address, 'bitcoin');
+        expect(isValid).toBeFalsy();
+      });
+
+      it('accepts bitcoin address', async () => {
+        const root = await rootFromMnemonic(mnemonic, 'bitcoin');
+        const keyPair = root.derivePath("m/49'/1/0");
+
+        const address = newBTCAddress(keyPair);
+
+        const isValid = isValidBTCAddress(address, 'bitcoin');
+        expect(isValid).toBeTruthy();
+      });
     });
   });
 
