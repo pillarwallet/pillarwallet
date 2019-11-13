@@ -20,6 +20,9 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
+import PouchDBStorage from './pouchDBStorage';
+
+const STORAGE_SETTINGS_KEY = 'storageSettings';
 
 function Storage(name: string) {
   this.name = name;
@@ -30,10 +33,11 @@ Storage.prototype.getKey = function (id: string) {
   return this.prefix + id;
 };
 
-Storage.prototype.get = function (id: string) {
-  return AsyncStorage.getItem(this.getKey(id))
+Storage.prototype.get = async function (id: string) {
+  const data = await AsyncStorage.getItem(this.getKey(id))
     .then(JSON.parse)
-    .catch(() => ({}));
+    .catch(() => {});
+  return data || {};
 };
 
 const activeDocs = {};
@@ -76,9 +80,48 @@ Storage.prototype.getAllKeys = function () {
     .catch(() => []);
 };
 
+Storage.prototype.getAll = function () {
+  return this.getAllKeys()
+    .then(keys => AsyncStorage.multiGet(keys)) // [ ['user', 'userValue'], ['key', 'keyValue'] ]
+    .then(values => values.map(([_key, _value]) => ({ [_key]: JSON.parse(_value) }))) // [{ user: 'userValue' }, ...]
+    .catch(() => []);
+};
+
 Storage.prototype.removeAll = async function () {
-  const keys = await this.getAllKeys();
+  const keys = await this.getAllKeys()
+    .then(data => data.filter(key => key !== STORAGE_SETTINGS_KEY));
   return AsyncStorage.multiRemove(keys);
+};
+
+Storage.prototype.migrateFromPouchDB = async function () {
+  const { storageSettings = {} } = await this.get(STORAGE_SETTINGS_KEY);
+  if (storageSettings.pouchDBMigrated) return Promise.resolve();
+
+  try {
+    const pouchDBStorage = PouchDBStorage.getInstance('db');
+    const pouchDocs = await pouchDBStorage.getAllDocs()
+      .then(({ rows }) => rows.map(({ doc }) => doc));
+
+    await Promise.all(pouchDocs.map((doc) => {
+      const {
+        _id,
+        _conflicts,
+        _rev,
+        ...rest
+      } = doc;
+      return this.save(_id, { ...rest });
+    }));
+
+    await this.save(STORAGE_SETTINGS_KEY, {
+      storageSettings: {
+        ...storageSettings,
+        pouchDBMigrated: true,
+      },
+    }, true);
+  } catch (e) {
+    console.log(e);
+  }
+  return Promise.resolve();
 };
 
 Storage.getInstance = function (name: string) {
