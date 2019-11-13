@@ -131,8 +131,11 @@ export default class HTMLContentModal extends React.Component<Props, State> {
   }
 
   handleScrollTo = (p: ScrollToProps) => {
+    const { scrollOffset } = this.state;
     const { y } = p;
+    if (y === null || scrollOffset) return;
     this.scrollViewRef.props.scrollToPosition(0, y);
+    this.setState({ scrollOffset: y });
   };
 
   render() {
@@ -179,13 +182,12 @@ export default class HTMLContentModal extends React.Component<Props, State> {
           {!!isHtmlFetched &&
           <ScrollWrapper
             regularPadding
-            scrollEventThrottle={16}
+            scrollEventThrottle={50}
+            // scrollEventThrottle={16}
             onScroll={(event) => {
               const { contentOffset } = event.nativeEvent;
               const { y } = contentOffset;
-              this.setState({
-                scrollOffset: y,
-              });
+              this.setState({ scrollOffset: y });
             }}
             innerRef={(ref) => { this.scrollViewRef = ref; }}
             onLayout={(event) => {
