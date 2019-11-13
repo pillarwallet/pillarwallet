@@ -46,6 +46,7 @@ import {
 } from 'services/assets';
 import EthplorerSdk from 'services/EthplorerSdk';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
+import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
 import type {
@@ -794,8 +795,7 @@ SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string
 };
 
 SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: string, amount: number) {
-  const minAmount = 20;
-  const amountToGetOffer = amount < minAmount ? minAmount : amount;
+  const amountToGetOffer = amount < MIN_MOONPAY_FIAT_VALUE ? MIN_MOONPAY_FIAT_VALUE : amount;
   const url = `${MOONPAY_API_URL}/v3/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
   + `&baseCurrencyAmount=${amountToGetOffer}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
 
@@ -822,7 +822,7 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
           extraFeeAmount: extraFeeAmountForAmountProvided,
           quoteCurrencyAmount,
           _id: 'moonpay',
-          minQuantity: minAmount,
+          minQuantity: MIN_MOONPAY_FIAT_VALUE,
           maxQuantity: 9999999,
         };
       }
