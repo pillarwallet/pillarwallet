@@ -93,7 +93,11 @@ export async function transferERC20(options: ERC20TransferOptions) {
   const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
 
   if (!data) {
-    data = await contract.interface.functions.transfer.encode([to, contractAmount]).catch(() => null);
+    try {
+      data = await contract.interface.functions.transfer.encode([to, contractAmount]);
+    } catch (e) {
+      //
+    }
     to = contractAddress;
   }
 
