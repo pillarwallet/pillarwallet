@@ -1123,15 +1123,15 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.14.6.tgz#9cbfcb62c50947217f4d88d4d274cc40c22625a9"
   integrity sha1-nL/LYsUJRyF/TYjU0nTMQMImJak=
 
-"@types/node@^12.0.0":
-  version "12.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-12.0.0.tgz#d11813b9c0ff8aaca29f04cbc12817f4c7d656e5"
-  integrity sha1-0RgTucD/iqyinwTLwSgX9MfWVuU=
-
 "@types/node@^10.3.2":
   version "10.14.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.14.4.tgz#1c586b991457cbb58fef51bc4e0cfcfa347714b5"
   integrity sha1-HFhrmRRXy7WP71G8Tgz8+jR3FLU=
+
+"@types/node@^12.0.0":
+  version "12.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-12.0.0.tgz#d11813b9c0ff8aaca29f04cbc12817f4c7d656e5"
+  integrity sha1-0RgTucD/iqyinwTLwSgX9MfWVuU=
 
 "@types/uuid@3.4.4":
   version "3.4.4"
@@ -4567,9 +4567,9 @@ ethereumjs-wallet@^0.6.0:
     utf8 "^3.0.0"
     uuid "^3.3.2"
 
-"ethers@https://github.com/jsidorenko/ethers.js#master":
-  version "4.0.28"
-  resolved "https://github.com/jsidorenko/ethers.js#3cba34f00d0522e57961a4ca095ddffde5389e92"
+"ethers@https://github.com/alazarevski/ethers.js#master":
+  version "4.0.39"
+  resolved "https://github.com/alazarevski/ethers.js#7b2fa3d3b7aa11640de5c5a6440b8345f16e9622"
   dependencies:
     "@types/node" "^10.3.2"
     aes-js "3.0.0"

@@ -1,4 +1,5 @@
 // @flow
+import 'ethers/dist/shims.js';
 import { self } from 'react-native-threads';
 import { utils } from 'ethers';
 

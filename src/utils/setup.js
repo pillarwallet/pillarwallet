@@ -27,7 +27,8 @@ YellowBox.ignoreWarnings([
   'Module Intercom',
   'Class EX',
   // TODO: try removing after moving exchange to websocket transport
-  'Unrecognized WebSocket connection option(s)'
+  'Unrecognized WebSocket connection option(s)',
+  'Setting a timer'
 ]);
 import 'utils/shim';
 import'crypto';

@@ -14,9 +14,11 @@ import android.util.Base64;
 
 public class RandomBytesModule extends ReactContextBaseJavaModule {
   private static final String SEED_KEY = "seed";
+  private SecureRandom secureRandom;
 
   public RandomBytesModule(ReactApplicationContext reactContext) {
     super(reactContext);
+    secureRandom = new SecureRandom();
   }
 
   @Override
@@ -37,9 +39,8 @@ public class RandomBytesModule extends ReactContextBaseJavaModule {
   }
 
   private String getRandomBytes(int size) {
-    SecureRandom sr = new SecureRandom();
     byte[] output = new byte[size];
-    sr.nextBytes(output);
+    secureRandom.nextBytes(output);
     return Base64.encodeToString(output, Base64.NO_WRAP);
   }
 }
