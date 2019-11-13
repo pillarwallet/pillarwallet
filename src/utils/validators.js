@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { utils } from 'ethers';
+import addressValidation from 'wallet-address-validator';
+import { DEFAULT_BTC_NETWORK } from 'constants/bitcoinConstants';
 
 export const validatePin = (pin: string, confirmationPin?: string): string => {
   if (pin.length !== 6) {
@@ -30,7 +32,20 @@ export const validatePin = (pin: string, confirmationPin?: string): string => {
   return '';
 };
 
-export function isValidETHAddress(address: string): boolean {
+export const isValidBTCAddress = (address: string, network?: string): boolean => {
+  const useNetwork = network || DEFAULT_BTC_NETWORK;
+
+  switch (useNetwork) {
+    case 'bitcoin':
+      return addressValidation.validate(address, 'bitcoin', 'prod');
+    case 'testnet':
+      return addressValidation.validate(address, 'bitcoin', 'testnet');
+    default:
+      return false;
+  }
+};
+
+export const isValidETHAddress = (address: string): boolean => {
   let result = true;
   try {
     utils.getAddress(address);
@@ -38,7 +53,7 @@ export function isValidETHAddress(address: string): boolean {
     result = false;
   }
   return result;
-}
+};
 
 export function hasAllValues(object: ?Object) {
   // No param reassign makes eslint sad
