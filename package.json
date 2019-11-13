@@ -293,5 +293,8 @@
     "timers": "timers-browserify",
     "tty": "tty-browserify",
     "tls": false
+  },
+  "metro": {
+    "maxWorkers": 4
   }
 }

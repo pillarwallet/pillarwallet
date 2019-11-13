@@ -93,6 +93,7 @@ import { navigate } from 'services/navigation';
 import { calculateGasEstimate, waitForTransaction } from 'services/assets';
 
 // selectors
+import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
@@ -125,7 +126,7 @@ import type { TransactionsStore } from 'models/Transaction';
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
-import { isConnectedToSmartAccount } from 'utils/smartWallet';
+import { isConnectedToSmartAccount, isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import {
   addressesEqual,
   getAssetData,
@@ -1108,25 +1109,26 @@ export const fetchAvailableTxToSettleAction = () => {
       return;
     }
 
-    const {
-      accounts: { data: accounts },
-    } = getState();
-    const activeAccountAddress = getActiveAccountAddress(accounts);
+    const activeAccountAddress = activeAccountAddressSelector(getState());
+    const accountHistory = accountHistorySelector(getState());
     const accountAssets = accountAssetsSelector(getState());
+
     dispatch({ type: START_FETCHING_AVAILABLE_TO_SETTLE_TX });
     const payments = await smartWalletService.getAccountPaymentsToSettle(activeAccountAddress);
 
-    const txToSettle = payments.map(item => {
-      const { decimals = 18 } = accountAssets[item.token] || {};
-      const senderAddress = get(item, 'sender.account.address', '');
-      return {
-        token: item.token,
-        hash: item.hash,
-        value: new BigNumber(formatUnits(item.value, decimals)),
-        createdAt: item.updatedAt,
-        senderAddress,
-      };
-    });
+    const txToSettle = payments
+      .filter(({ hash }) => !isHiddenUnsettledTransaction(hash, accountHistory))
+      .map((item) => {
+        const { decimals = 18 } = accountAssets[item.token] || {};
+        const senderAddress = get(item, 'sender.account.address', '');
+        return {
+          token: item.token,
+          hash: item.hash,
+          value: new BigNumber(formatUnits(item.value, decimals)),
+          createdAt: item.updatedAt,
+          senderAddress,
+        };
+      });
     dispatch({
       type: SET_AVAILABLE_TO_SETTLE_TX,
       payload: txToSettle,
