@@ -17,106 +17,75 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import PouchDB from 'pouchdb-react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
 
-function Storage(name: string, opts: ?Object = {}) {
+function Storage(name: string) {
   this.name = name;
-  this.opts = { ...opts };
-  this.connect();
+  this.prefix = `wallet-storage:${this.name}:`;
 }
 
-Storage.prototype.connect = function () {
-  this.connection = new PouchDB(this.name, this.opts);
-  console.log(`Connected to the database ${this.name}`);
-};
-
-Storage.prototype.db = function () {
-  return this.connection;
+Storage.prototype.getKey = function (id: string) {
+  return this.prefix + id;
 };
 
 Storage.prototype.get = function (id: string) {
-  return this.db().get(id).catch(() => ({}));
-};
-
-Storage.prototype.getConflicts = function (): Promise<String[]> {
-  return this.getAllDocs()
-    .then(({ rows }) => (
-      rows.map(({ doc }) => doc._conflicts).reduce((memo, item) => memo.concat(item), [])
-    ));
+  return AsyncStorage.getItem(this.getKey(id))
+    .then(JSON.parse)
+    .catch(() => ({}));
 };
 
 const activeDocs = {};
-Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
-  return this.db().get(id)
-    .catch(err => {
-      if (err.status !== 404) {
-        throw err;
-      }
-      return {};
-    })
-    .then(doc => {
-      if (activeDocs[id]) {
-        Sentry.captureMessage('Race condition spotted', {
-          extra: {
-            id,
-            data,
-            forceRewrite,
-          },
-        });
-      }
+Storage.prototype.save = async function (id: string, data: Object, forceRewrite: boolean = false) {
+  const currentValue = await this.get(id);
+  const key = this.getKey(id);
 
-      activeDocs[id] = true;
-      const options = { force: forceRewrite };
-      const record = forceRewrite
-        ? { _id: id, _rev: doc._rev, ...data }
-        : merge(
-          {},
-          doc,
-          {
-            _id: id,
-            _rev: doc._rev,
-          },
-          data,
-        );
-      return this.db().put(record, options);
-    })
-    .then(doc => {
-      activeDocs[id] = false;
-      return doc;
+  if (activeDocs[key]) {
+    Sentry.captureMessage('Race condition spotted', {
+      extra: {
+        id,
+        data,
+        forceRewrite,
+      },
+    });
+  }
+
+  activeDocs[key] = true;
+
+  const newValue = forceRewrite ? data : merge({}, currentValue, data);
+  return AsyncStorage
+    .setItem(key, JSON.stringify(newValue))
+    .then(() => {
+      activeDocs[key] = false;
     })
     .catch((err) => {
-      if (err.status !== 409) {
-        Sentry.captureException({
-          id,
-          data,
-          err,
-        });
-        throw err;
-      }
-      activeDocs[id] = false;
-      return this.save(id, data, forceRewrite);
+      Sentry.captureException({
+        id,
+        data,
+        err,
+      });
+      activeDocs[key] = false;
     });
 };
 
-Storage.prototype.getAllDocs = function () {
-  return this.db().allDocs({ conflicts: true });
+Storage.prototype.getAllKeys = function () {
+  return AsyncStorage
+    .getAllKeys()
+    .then(keys => keys.filter(key => key.startsWith(this.prefix)))
+    .catch(() => []);
 };
 
-Storage.prototype.removeAll = function () {
-  return this.db().allDocs().then(result => {
-    return Promise.all(result.rows.map(row => {
-      return this.db().remove(row.id, row.value.rev);
-    }));
-  }).then(() => this.db().compact());
+Storage.prototype.removeAll = async function () {
+  const keys = await this.getAllKeys();
+  return AsyncStorage.multiRemove(keys);
 };
 
-Storage.getInstance = function (name: string, opts: ?Object) {
+Storage.getInstance = function (name: string) {
   if (!this._instances) {
     this._instances = {};
   }
-  this._instances[name] = this._instances[name] || new Storage(name, opts);
+  this._instances[name] = this._instances[name] || new Storage(name);
   return this._instances[name];
 };
 
