@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import ethers from 'ethers';
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
@@ -43,7 +43,7 @@ import {
 } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
@@ -392,7 +392,7 @@ export const logoutAction = () => {
     Intercom.logout();
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
     dispatch({ type: LOG_OUT });
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
+    dispatch({ type: RESET_APP_SETTINGS, payload: {} });
     chat.client.resetAccount().catch(() => null);
     clearWebViewCookies();
     await firebase.iid().delete().catch(() => {});
