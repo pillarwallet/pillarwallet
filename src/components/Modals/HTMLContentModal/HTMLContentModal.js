@@ -22,6 +22,7 @@ import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import { StyleSheet, ScrollView } from 'react-native';
 import HTMLView from 'react-native-htmlview';
+import get from 'lodash.get';
 
 // components
 import { Container } from 'components/Layout';
@@ -33,7 +34,6 @@ import { fontSizes, lineHeights, baseColors, appFont } from 'utils/variables';
 
 // types
 import type { ScrollToProps } from 'components/Modals/SlideModal';
-
 
 type Props = {
   htmlEndpoint: string,
@@ -138,9 +138,8 @@ export default class HTMLContentModal extends React.Component<Props, State> {
   };
 
   handleContentOnScroll = (event: Object) => {
-    const { contentOffset } = event.nativeEvent;
-    const { y } = contentOffset;
-    this.setState({ scrollOffset: y });
+    const contentOffsetY = get(event, 'nativeEvent.contentOffset.y');
+    this.setState({ scrollOffset: contentOffsetY });
   };
 
   handleContentOnLayout = (event: Object) => {
@@ -151,8 +150,8 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     }
   };
 
-  handleOnContentSizeChange = (contentWidth: number, contentHeight: number) => {
-    this.setState({ contentContainerHeight: contentHeight });
+  handleOnContentSizeChange = (width: number, height: number) => {
+    this.setState({ contentContainerHeight: height });
   };
 
   render() {
@@ -220,4 +219,3 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     );
   }
 }
-
