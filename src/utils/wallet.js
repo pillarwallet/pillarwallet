@@ -149,13 +149,13 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
       api.init();
       const apiUser = await api.validateAddress(normalizeWalletAddress(wallet.address));
       if (apiUser.walletId) {
-        const saveUser = {
+        const restoredUser = {
           id: apiUser.id,
           walletId: apiUser.walletId,
           username: apiUser.username,
           profileLargeImage: apiUser.profileImage,
         };
-        await dispatch(saveDbAction('user', { saveUser }, true));
+        await dispatch(saveDbAction('user', { user: restoredUser }, true));
         console.log('USER RESTORED FROM API');
       } else {
         console.log('UNABLE TO RESTORE USER FROM API');
