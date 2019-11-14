@@ -30,7 +30,7 @@ import styled from 'styled-components/native';
 import { setTopLevelNavigator } from 'services/navigation';
 import { SENTRY_DSN, BUILD_TYPE } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
-import { updateSessionNetworkStatusAction, checkDBConflictsAction } from 'actions/sessionActions';
+import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
 import {
   startListeningOnOpenNotificationAction,
@@ -60,7 +60,6 @@ type Props = {
   fetchAppSettingsAndRedirect: Function,
   updateSessionNetworkStatus: Function,
   updateOfflineQueueNetworkStatus: Function,
-  checkDBConflicts: Function,
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
   executeDeepLink: Function,
@@ -92,10 +91,8 @@ class App extends React.Component<Props, *> {
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
-      checkDBConflicts,
       executeDeepLink,
     } = this.props;
-    checkDBConflicts();
     const isOnline = await NetInfo.isConnected.fetch();
     this.setOnlineStatus(isOnline); // set initial online status
     SplashScreen.hide();
@@ -168,7 +165,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(initAppAndRedirectAction(appState, platform)),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),
   updateOfflineQueueNetworkStatus: (isOnline: boolean) => dispatch(updateOfflineQueueNetworkStatusAction(isOnline)),
-  checkDBConflicts: () => dispatch(checkDBConflictsAction()),
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),

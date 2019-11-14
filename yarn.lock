@@ -959,6 +959,11 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
+"@react-native-community/async-storage@^1.6.2":
+  version "1.6.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@react-native-community/async-storage/-/async-storage-1.6.2.tgz#a19ca7149c4dfe8216f2330e6b1ebfe2d075ef92"
+  integrity sha1-oZynFJxN/oIW8jMOax6/4tB175I=
+
 "@react-native-community/cli@^1.2.1":
   version "1.9.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@react-native-community/cli/-/cli-1.9.2.tgz#d033ab141df3a476e628aecd9c99534b5cb0d63e"

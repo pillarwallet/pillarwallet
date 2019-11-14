@@ -48,11 +48,9 @@ describe('DB actions', () => {
     }, 10);
   });
 
-  it('DB should not have any conflicts and the userId should be equal to the latest count value', async () => {
+  it('The userId should be equal to the latest count value', async () => {
     await delay(5000);
-    const conflicts = await storage.getConflicts();
     const { appSettings: { userId } } = await storage.get('app_settings');
-    expect(conflicts).toHaveLength(0);
     expect(userId).toEqual(count);
   });
 });
