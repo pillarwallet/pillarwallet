@@ -99,7 +99,7 @@ Storage.prototype.getAll = function () {
 
 Storage.prototype.removeAll = async function () {
   const keys = await this.getAllKeys()
-    .then(data => data.filter(key => key !== STORAGE_SETTINGS_KEY));
+    .then(data => data.filter(key => key !== this.getKey(STORAGE_SETTINGS_KEY)));
   return AsyncStorage.multiRemove(keys);
 };
 
@@ -108,6 +108,7 @@ Storage.prototype.migrateFromPouchDB = async function () {
   if (storageSettings.pouchDBMigrated) return Promise.resolve();
 
   try {
+    console.log('Migrating data'); // eslint-disable-line
     const pouchDBStorage = PouchDBStorage.getInstance('db');
     const pouchDocs = await pouchDBStorage.getAllDocs()
       .then(({ rows }) => rows.map(({ doc }) => doc));
