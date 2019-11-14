@@ -30,7 +30,7 @@ import Header from 'components/Header';
 import Spinner from 'components/Spinner';
 
 // utils
-import { fontSizes, lineHeights, baseColors, appFont } from 'utils/variables';
+import { fontSizes, lineHeights, baseColors, appFont, spacing } from 'utils/variables';
 
 // types
 import type { ScrollToProps } from 'components/Modals/SlideModal';
@@ -197,10 +197,10 @@ export default class HTMLContentModal extends React.Component<Props, State> {
           {!!isHtmlFetched &&
             // do not put ScrollView as styled component or ref.scrollTo will fail
             <ScrollView
-              paddingHorizontal={20}
+              paddingHorizontal={spacing.rhythm}
               ref={this.scrollViewRef}
               onScroll={this.handleContentOnScroll}
-              scrollEventThrottle={16}
+              scrollEventThrottle={16} // inherited from ScrollWrapper component
               onLayout={this.handleContentOnLayout}
               onContentSizeChange={this.handleOnContentSizeChange}
             >
