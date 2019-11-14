@@ -61,6 +61,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import WalkthroughItem from 'components/Walkthrough/WalkthroughItem';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -360,13 +361,15 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <SearchBlock
-          headerProps={{ title: 'people' }}
-          searchInputPlaceholder="Search or add people"
-          onSearchChange={(q) => this.handleSearchChange(q)}
-          itemSearchState={!!contactState}
-          wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
-        />
+        <WalkthroughItem type="TEST" walkthroughId="2">
+          <SearchBlock
+            headerProps={{ title: 'people' }}
+            searchInputPlaceholder="Search or add people"
+            onSearchChange={(q) => this.handleSearchChange(q)}
+            itemSearchState={!!contactState}
+            wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+          />
+        </WalkthroughItem>
         {!inSearchMode && !!pendingConnectionRequests &&
         <ConnectionRequestBanner
           onPress={this.handleConnectionsRequestBannerPress}
@@ -430,6 +433,11 @@ class PeopleScreen extends React.Component<Props, State> {
             }
           </View>
           }
+          <WalkthroughItem type="TEST" walkthroughId="1">
+            <EmptyStateParagraph
+              title="Test"
+            />
+          </WalkthroughItem>
         </InnerWrapper>
       </React.Fragment>
     );

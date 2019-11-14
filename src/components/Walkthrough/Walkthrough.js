@@ -2,11 +2,14 @@
 import * as React from 'react';
 import { Dimensions, StyleSheet, Animated, SafeAreaView } from 'react-native';
 import styled from 'styled-components/native';
+import { connect } from 'react-redux';
 import { Svg, Path } from 'react-native-svg';
 import SVGPath from 'art/modes/svg/path';
 import Button from 'components/Button';
 import { Paragraph } from 'components/Typography';
 import { baseColors, spacing } from 'utils/variables';
+import { endWalkthroughAction, setWaitingForStepIdAction } from 'actions/walkthroughsActions';
+import type { Steps } from 'reducers/walkthroughsReducer';
 
 const { width, height } = Dimensions.get('window');
 const radius = 60;
@@ -26,18 +29,18 @@ const overlay = SVGPath()
   .counterArcTo(xc, yc - radius, radius)
   .counterArcTo(xc - radius, yc, radius);
 
-type Step = {
-  x: number;
-  y: number;
-  label: string;
-}
-
 type Props = {
-  steps: Step[];
+  steps: Steps;
+  waitingForStepId: string,
+  endWalkthrough: () => void,
+  setWaitingForStepId: (id: string) => void,
 }
 
 type State = {
-  index: number
+  index: number,
+  isActiveWalkthrough: boolean,
+  buttonText?: string,
+  label: string,
 }
 
 
@@ -62,48 +65,85 @@ const WhiteParagraph = styled(Paragraph)`
 
 const ContainerAnimated = Animated.createAnimatedComponent(Container);
 
-export default class Walkthrough extends React.PureComponent<Props, State> {
+class Walkthrough extends React.Component<Props, State> {
   x = new Animated.Value(0);
 
   y = new Animated.Value(0);
 
   state = {
     index: -1,
+    isActiveWalkthrough: false,
+    label: '',
+    buttonText: '',
   };
 
   componentDidMount() {
-    this.nextStep();
+    this.initWalkthrough();
   }
+
+  componentDidUpdate(prevProps: Props) {
+    const { steps, waitingForStepId } = this.props;
+    const { isActiveWalkthrough } = this.state;
+    if (!!prevProps.steps && steps && !isActiveWalkthrough) {
+      this.initWalkthrough();
+    }
+
+    if (waitingForStepId && prevProps.steps.length < steps.length) {
+      this.proceedWithNewlyAddedStep();
+    }
+  }
+
+  initWalkthrough = () => {
+    this.setState({ isActiveWalkthrough: true });
+    this.nextStep();
+  };
 
   nextStep = () => {
     const { x, y } = this;
-    const { steps } = this.props;
+    const { steps, endWalkthrough, setWaitingForStepId } = this.props;
     const { index } = this.state;
-    if (index + 1 >= steps.length) {
-      this.setState({ index: -1 });
+    const currentStep = steps[index];
+    // if (index + 1 >= steps.length) { // TODO: reuse when all steps will be passed in at init
+    if (currentStep && currentStep.isLast) {
+      this.setState({ index: -1, isActiveWalkthrough: false });
+      endWalkthrough();
     } else {
-      this.setState({ index: index + 1 });
       const step = steps[index + 1];
-      Animated.parallel([
-        Animated.timing(x, {
-          toValue: step.x,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(y, {
-          toValue: step.y,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      if (currentStep) {
+        const { action: additionalStepAction } = currentStep;
+        if (additionalStepAction) additionalStepAction();
+      }
+      if (step) {
+        const { label, buttonText } = step;
+        this.setState({ index: index + 1, label, buttonText });
+        Animated.parallel([
+          Animated.timing(x, {
+            toValue: step.x,
+            duration: 500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(y, {
+            toValue: step.y,
+            duration: 500,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      } else {
+        setWaitingForStepId(`${index + 1}`); // TODO: pass in next item id
+      }
     }
+  };
+
+  proceedWithNewlyAddedStep = () => {
+    const { setWaitingForStepId } = this.props;
+    setWaitingForStepId('');
+
+    this.nextStep();
   };
 
   render() {
     const { x, y } = this;
-    const { steps } = this.props;
-    const { index } = this.state;
-    const step = steps[index];
+    const { index, buttonText, label } = this.state;
     const translateX = Animated.add(x, new Animated.Value((-width / 2) + radius));
     const translateY = Animated.add(y, new Animated.Value((-height / 2) + radius));
     if (index === -1) {
@@ -129,11 +169,26 @@ export default class Walkthrough extends React.PureComponent<Props, State> {
         </ContainerAnimated>
         <Content>
           <SafeAreaView>
-            <WhiteParagraph small>{step.label}</WhiteParagraph>
-            <Button title="Next" onPress={this.nextStep} />
+            <WhiteParagraph small>{label}</WhiteParagraph>
+            <Button title={buttonText || 'Next'} onPress={this.nextStep} />
           </SafeAreaView>
         </Content>
       </React.Fragment>
     );
   }
 }
+
+
+const mapStateToProps = ({
+  walkthroughs: { waitingForStepId },
+}) => ({
+  waitingForStepId,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  endWalkthrough: () => dispatch(endWalkthroughAction()),
+  setWaitingForStepId: (id: string) => dispatch(setWaitingForStepIdAction(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Walkthrough);
+

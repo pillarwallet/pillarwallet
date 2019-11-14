@@ -41,9 +41,11 @@ import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
+import Walkthrough from 'components/Walkthrough';
 import type { RootReducerState } from 'reducers/rootReducer';
 
 import configureStore from './src/configureStore';
+import type { Steps } from './src/reducers/walkthroughsReducer';
 
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
@@ -64,6 +66,7 @@ type Props = {
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
   executeDeepLink: Function,
+  activeWalkthroughSteps: Steps,
 }
 
 class App extends React.Component<Props, *> {
@@ -146,21 +149,28 @@ class App extends React.Component<Props, *> {
   };
 
   render() {
-    const { isFetched } = this.props;
+    const { isFetched, activeWalkthroughSteps } = this.props;
     if (!isFetched) return null;
     return (
-      <RootNavigation
-        ref={(node) => {
-          if (!node) return;
-          setTopLevelNavigator(node);
-        }}
-      />
+      <React.Fragment>
+        <RootNavigation
+          ref={(node) => {
+            if (!node) return;
+            setTopLevelNavigator(node);
+          }}
+        />
+        {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
+      </React.Fragment>
     );
   }
 }
 
-const mapStateToProps = ({ appSettings: { isFetched } }: RootReducerState) => ({
+const mapStateToProps = ({
+  appSettings: { isFetched },
+  walkthroughs: { steps: activeWalkthroughSteps },
+}: RootReducerState) => ({
   isFetched,
+  activeWalkthroughSteps,
 });
 
 const mapDispatchToProps = (dispatch) => ({

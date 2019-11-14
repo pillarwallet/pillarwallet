@@ -70,6 +70,7 @@ import {
 } from 'actions/walletConnectActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
+import { initWalkthroughAction } from 'actions/walkthroughsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -86,7 +87,6 @@ import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
-import Walkthrough from 'components/Walkthrough';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -121,6 +121,8 @@ type Props = {
   userEvents: UserEvent[],
   fetchBadgeAwardHistory: () => void,
   badgesEvents: BadgeRewardEvent[],
+
+  initWalkthrough: Function,
 };
 
 type State = {
@@ -131,6 +133,7 @@ type State = {
   scrollY: Animated.Value,
   isScanning: boolean,
   tabIsChanging: boolean,
+  steps: Object[],
 };
 
 const BalanceWrapper = styled.View`
@@ -171,9 +174,15 @@ const transactionsIconNormal = require('assets/icons/transactions_normal.png');
 const transactionsIconActive = require('assets/icons/transactions_active.png');
 const iconConnect = require('assets/icons/icon_receive.png');
 
+const measure = async (ref: View) =>
+  new Promise(resolve => ref.measureInWindow((x, y, w, h) => resolve({
+    x, y, width: w, height: h,
+  })));
+
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
   forceRender = false;
+  balance = React.createRef();
 
   state = {
     showCamera: false,
@@ -183,6 +192,7 @@ class HomeScreen extends React.Component<Props, State> {
     usernameWidth: 0,
     isScanning: false,
     tabIsChanging: false,
+    steps: [],
   };
 
   componentDidMount() {
@@ -199,6 +209,7 @@ class HomeScreen extends React.Component<Props, State> {
     });
     fetchBadges();
     fetchBadgeAwardHistory();
+    setTimeout(() => this.setSteps(), 1000);
   }
 
   componentWillUnmount() {
@@ -224,6 +235,22 @@ class HomeScreen extends React.Component<Props, State> {
 
   closeCamera = () => this.setState({ showCamera: false });
 
+  setSteps = async () => {
+    const balance = measure(this.balance);
+    const { navigation } = this.props;
+    const measures = await Promise.all([balance]);
+
+    const steps = [{
+      x: measures[0].x,
+      y: measures[0].y,
+      label: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi massa diam, dapibus in dictum eu,' +
+        'laoreet at nunc. Aenean tempus volutpat nisi non cursus.',
+      buttonText: 'Go to People',
+      action: () => navigation.navigate('PEOPLE'),
+    }];
+    this.setState({ steps });
+  };
+
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
@@ -247,6 +274,9 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   openQRScanner = () => {
+    const { initWalkthrough } = this.props;
+    const { steps } = this.state;
+    initWalkthrough('TEST', steps);
     const { isOnline } = this.props;
     if (!isOnline) {
       Toast.show({
@@ -254,9 +284,10 @@ class HomeScreen extends React.Component<Props, State> {
         type: 'warning',
         title: 'Warning',
       });
-      return;
+      // return;
     }
-    this.setState({ isScanning: true });
+    // TODO: uncomment when finish with testing
+    // this.setState({ isScanning: true });
   };
 
   closeQRScanner = () => this.setState({
@@ -403,24 +434,6 @@ class HomeScreen extends React.Component<Props, State> {
 
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
 
-    const steps = [{
-      x: 10,
-      y: -25,
-      label: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi massa diam, dapibus in dictum eu,' +
-        'laoreet at nunc. Aenean tempus volutpat nisi non cursus.',
-    }, {
-      x: 240,
-      y: 60,
-      label: 'Aenean porttitor, orci in commodo volutpat, libero elit sodales augue, ut tempor turpis libero. ' +
-        'Suspendisse imperdiet ullamcorper nisi.',
-    },
-    {
-      x: 95,
-      y: 220,
-      label: 'Praesent vel ultricies felis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ' +
-        'tempus sapien.',
-    }];
-
     return (
       <ContainerWithHeader
         backgroundColor={baseColors.white}
@@ -461,7 +474,7 @@ class HomeScreen extends React.Component<Props, State> {
               onRefresh={this.refreshScreenData}
             />}
         >
-          <BalanceWrapper>
+          <BalanceWrapper innerRef={(ref) => { this.balance = ref; }}>
             <PortfolioBalance />
           </BalanceWrapper>
           <WalletConnectWrapper>
@@ -515,7 +528,6 @@ class HomeScreen extends React.Component<Props, State> {
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </ScrollView>
-        <Walkthrough steps={steps} />
         <QRCodeScanner
           validator={this.validateQRCode}
           isActive={isScanning}
@@ -577,6 +589,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
+  initWalkthrough: (type, steps) => dispatch(initWalkthroughAction(type, steps)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
