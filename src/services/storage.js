@@ -27,6 +27,7 @@ const STORAGE_SETTINGS_KEY = 'storageSettings';
 function Storage(name: string) {
   this.name = name;
   this.prefix = `wallet-storage:${this.name}:`;
+  this.activeDocs = {};
 }
 
 Storage.prototype.getKey = function (id: string) {
@@ -40,36 +41,45 @@ Storage.prototype.get = async function (id: string) {
   return data || {};
 };
 
-const activeDocs = {};
-Storage.prototype.save = async function (id: string, data: Object, forceRewrite: boolean = false) {
+Storage.prototype.mergeValue = async function (id: string, data: Object): Object {
   const currentValue = await this.get(id);
+  return merge({}, currentValue, data);
+};
+
+Storage.prototype.save = async function (id: string, data: Object, forceRewrite: boolean = false) {
+  const newValue = forceRewrite ? data : await this.mergeValue(id, data);
   const key = this.getKey(id);
 
-  if (activeDocs[key]) {
-    Sentry.captureMessage('Race condition spotted', {
-      extra: {
-        id,
-        data,
-        forceRewrite,
-      },
-    });
+  if (this.activeDocs[key]) {
+    const errorMessge = 'Race condition spotted';
+    const errorData = {
+      id,
+      data,
+      forceRewrite,
+    };
+    Sentry.captureMessage(errorMessge, { extra: errorData });
+    if (__DEV__) {
+      console.log(errorMessge, errorData);
+    }
   }
 
-  activeDocs[key] = true;
+  this.activeDocs[key] = true;
 
-  const newValue = forceRewrite ? data : merge({}, currentValue, data);
   return AsyncStorage
     .setItem(key, JSON.stringify(newValue))
     .then(() => {
-      activeDocs[key] = false;
+      this.activeDocs[key] = false;
     })
-    .catch((err) => {
+    .catch(err => {
       Sentry.captureException({
         id,
         data,
         err,
       });
-      activeDocs[key] = false;
+      if (__DEV__) {
+        console.log(id, err);
+      }
+      this.activeDocs[key] = false;
     });
 };
 
