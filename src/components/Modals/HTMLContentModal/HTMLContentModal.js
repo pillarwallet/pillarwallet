@@ -20,17 +20,23 @@
 import * as React from 'react';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
+import { StyleSheet, ScrollView } from 'react-native';
 import HTMLView from 'react-native-htmlview';
-import { Container, ScrollWrapper } from 'components/Layout';
+
+// components
+import { Container } from 'components/Layout';
 import Header from 'components/Header';
 import Spinner from 'components/Spinner';
-import type { ScrollToProps } from 'components/Modals/SlideModal';
-import { StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Platform } from 'react-native';
+
+// utils
 import { fontSizes, lineHeights, baseColors, appFont } from 'utils/variables';
+
+// types
+import type { ScrollToProps } from 'components/Modals/SlideModal';
+
 
 type Props = {
   htmlEndpoint: string,
-  fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
   isVisible: boolean,
   modalHide: Function,
@@ -83,11 +89,7 @@ const baseStyles = StyleSheet.create({
 });
 
 export default class HTMLContentModal extends React.Component<Props, State> {
-  scrollViewRef: Object;
-
-  static defaultProps = {
-    fullScreenComponent: null,
-  };
+  scrollViewRef: React.ElementRef<ScrollView>;
 
   constructor(props: Props) {
     super(props);
@@ -95,9 +97,9 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     this.state = {
       isHtmlFetched: false,
       htmlData: '',
-      scrollOffset: 1,
-      containerHeight: undefined,
-      contentContainerHeight: undefined,
+      scrollOffset: 0,
+      containerHeight: 0,
+      contentContainerHeight: 0,
     };
   }
 
@@ -122,20 +124,35 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     this.setState({ isHtmlFetched: false });
   };
 
-  renderNode(node: CustomNode) {
+  renderNode = (node: CustomNode) => {
     if (node.name === 'iframe' || node.name === 'script') {
       return null;
     }
     // If the function returns undefined (not null), the default renderer will be used for that node.
     return undefined;
-  }
+  };
 
-  handleScrollTo = (p: ScrollToProps) => {
-    const { scrollOffset } = this.state;
-    console.log('handleScrollTo');
-    const { y } = p;
-    if (y === null || scrollOffset) return;
-    this.scrollViewRef.props.scrollToPosition(0, y);
+  handleModalScrollTo = (p: ScrollToProps) => {
+    if (!p || !this.scrollViewRef.current) return;
+    this.scrollViewRef.current.scrollTo(p);
+  };
+
+  handleContentOnScroll = (event: Object) => {
+    const { contentOffset } = event.nativeEvent;
+    const { y } = contentOffset;
+    this.setState({ scrollOffset: y });
+  };
+
+  handleContentOnLayout = (event: Object) => {
+    const { containerHeight } = this.state;
+    const { height } = event.nativeEvent.layout;
+    if (!containerHeight || containerHeight !== height) {
+      this.setState({ containerHeight: height });
+    }
+  };
+
+  handleOnContentSizeChange = (contentWidth: number, contentHeight: number) => {
+    this.setState({ contentContainerHeight: contentHeight });
   };
 
   render() {
@@ -153,17 +170,6 @@ export default class HTMLContentModal extends React.Component<Props, State> {
 
     const animationInTiming = 400;
     const animationOutTiming = 400;
-    const modalHTMLContent = (
-      <HTMLView
-        value={htmlData}
-        textComponentProps={{ style: commonTextStyle }}
-        stylesheet={baseStyles}
-        renderNode={this.renderNode}
-        style={{ marginBottom: 10 }}
-        paragraphBreak={null}
-      />
-    );
-    const isPlatformIOS = Platform.OS === 'ios';
 
     return (
       <Modal
@@ -178,12 +184,9 @@ export default class HTMLContentModal extends React.Component<Props, State> {
         onSwipeComplete={modalHide}
         scrollOffsetMax={contentContainerHeight && containerHeight ? contentContainerHeight - containerHeight : null}
         swipeDirection="down"
-        nestedScrollEnabled
-        scrollTo={isPlatformIOS && this.handleScrollTo}
-        style={{
-          margin: 0,
-          justifyContent: 'flex-start',
-        }}
+        scrollTo={this.handleModalScrollTo}
+        propagateSwipe
+        style={{ margin: 0, justifyContent: 'flex-start' }}
       >
         <Container>
           <Header onClose={modalHide} />
@@ -193,38 +196,24 @@ export default class HTMLContentModal extends React.Component<Props, State> {
             </ActivityIndicatorWrapper>
           }
           {!!isHtmlFetched &&
-            <ScrollWrapper
-              regularPadding
-              nestedScrollEnabled
+            // do not put ScrollView as styled component or ref.scrollTo will fail
+            <ScrollView
+              paddingHorizontal={20}
+              ref={this.scrollViewRef}
+              onScroll={this.handleContentOnScroll}
               scrollEventThrottle={16}
-              onScroll={(event) => {
-                if (!isPlatformIOS) return;
-                const { contentOffset } = event.nativeEvent;
-                const { y } = contentOffset;
-                this.setState({ scrollOffset: y });
-              }}
-              innerRef={(ref) => {
-                this.scrollViewRef = ref;
-              }}
-              onLayout={(event) => {
-                const { height } = event.nativeEvent.layout;
-                if (!containerHeight || containerHeight !== height) {
-                  this.setState({ containerHeight: height });
-                }
-              }}
-              onContentSizeChange={(contentWidth, contentHeight) => {
-                this.setState({ contentContainerHeight: contentHeight });
-              }}
+              onLayout={this.handleContentOnLayout}
+              onContentSizeChange={this.handleOnContentSizeChange}
             >
-              {/*{isPlatformIOS && modalHTMLContent}*/}
-              {/*{!isPlatformIOS &&*/}
-                <TouchableOpacity>
-                  <TouchableWithoutFeedback>
-                    {modalHTMLContent}
-                  </TouchableWithoutFeedback>
-                </TouchableOpacity>
-              {/*}*/}
-            </ScrollWrapper>
+              <HTMLView
+                value={htmlData}
+                textComponentProps={{ style: commonTextStyle }}
+                stylesheet={baseStyles}
+                renderNode={this.renderNode}
+                style={{ marginBottom: 10 }}
+                paragraphBreak={null}
+              />
+            </ScrollView>
           }
         </Container>
       </Modal>
