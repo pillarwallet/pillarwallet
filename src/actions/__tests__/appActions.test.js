@@ -21,7 +21,10 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import Storage from 'services/storage';
 import { initAppAndRedirectAction } from '../appActions';
+
+const storage = Storage.getInstance('db');
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 describe('App actions', () => {
@@ -31,12 +34,13 @@ describe('App actions', () => {
   });
 
   it(`initAppAndRedirectAction - should trigger the app settings updated 
-  with any redirection due to the empty storage`, () => {
+  with any redirection due to the empty storage`, async () => {
+    await storage.save('storageSettings', { storageSettings: { pouchDBMigrated: true } });
     const expectedActions = [
       { type: UPDATE_APP_SETTINGS, payload: {} },
     ];
 
-    return store.dispatch(initAppAndRedirectAction('ios', 'active'))
+    return store.dispatch(initAppAndRedirectAction('active', 'ios'))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

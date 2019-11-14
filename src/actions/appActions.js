@@ -36,8 +36,6 @@ import {
 import { SET_CONTACTS_SMART_ADDRESSES, UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
-import { UPDATE_SESSION } from 'constants/sessionConstants';
-import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { UPDATE_WALLET_IMPORT_STATE, UPDATE_PIN_ATTEMPTS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -88,8 +86,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
 
-    // TEMP: remove after we move to AsyncStorage
-    await storage.repair();
+    await storage.migrateFromPouchDB();
 
     // $FlowFixMe
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
@@ -243,22 +240,6 @@ export const setupSentryAction = (user: Object, wallet: Object) => {
         walletId,
         ethAddress: address,
       },
-    });
-  };
-};
-
-export const repairStorageAction = () => {
-  return async (dispatch: Function) => {
-    await storage.repair();
-    dispatch({
-      type: ADD_NOTIFICATION,
-      payload: {
-        message: 'Local storage repaired',
-      },
-    });
-    dispatch({
-      type: UPDATE_SESSION,
-      payload: { hasDBConflicts: false },
     });
   };
 };

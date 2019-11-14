@@ -24,7 +24,7 @@ import isEmpty from 'lodash.isempty';
 import { Sentry } from 'react-native-sentry';
 import { isHexString } from '@walletconnect/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import { getRandomInt, ethSign } from 'utils/common';
 import Storage from 'services/storage';
