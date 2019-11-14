@@ -59,7 +59,7 @@ Storage.prototype.save = async function (id: string, data: Object, forceRewrite:
     };
     Sentry.captureMessage(errorMessge, { extra: errorData });
     if (__DEV__) {
-      console.log(errorMessge, errorData);
+      console.log(errorMessge, errorData); // eslint-disable-line
     }
   }
 
@@ -77,7 +77,7 @@ Storage.prototype.save = async function (id: string, data: Object, forceRewrite:
         err,
       });
       if (__DEV__) {
-        console.log(id, err);
+        console.log(id, err); // eslint-disable-line
       }
       this.activeDocs[key] = false;
     });
@@ -129,7 +129,13 @@ Storage.prototype.migrateFromPouchDB = async function () {
       },
     }, true);
   } catch (e) {
-    console.log(e);
+    Sentry.captureException({
+      text: 'DB migration to AsyncStorage failed',
+      e,
+    });
+    if (__DEV__) {
+      console.log(e); // eslint-disable-line
+    }
   }
   return Promise.resolve();
 };
