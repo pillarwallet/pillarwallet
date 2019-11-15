@@ -187,6 +187,10 @@ describe('Common utils', () => {
       const result = formatUnits('0.0001', 18);
       expect(result).toEqual('0.0');
     });
+    it('should format error input 0.0001 correctly', () => {
+      const result = formatUnits('0.0001', 0);
+      expect(result).toEqual('0');
+    });
     it('should format 0xc420d9d8e4003a8000 correctly', () => {
       const result = formatUnits('0xc420d9d8e4003a8000', 18);
       expect(result).toEqual('3617.929');
@@ -201,7 +205,15 @@ describe('Common utils', () => {
     });
     it('should format 40000000 correctly with 0 decimals', () => {
       const result = formatUnits('40000000', 0);
-      expect(result).toEqual('40000000.0');
+      expect(result).toEqual('40000000');
+    });
+    it('should format 40000999.9 correctly with 0 decimals', () => {
+      const result = formatUnits('40000999.9', 0);
+      expect(result).toEqual('40000999');
+    });
+    it('should format 40000999.9 correctly with 18 decimals', () => {
+      const result = formatUnits('40000999.9', 18);
+      expect(result).toEqual('0.000000000040000999');
     });
   });
 
