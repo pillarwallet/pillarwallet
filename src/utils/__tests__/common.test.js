@@ -215,6 +215,14 @@ describe('Common utils', () => {
       const result = formatUnits('40000999.9', 18);
       expect(result).toEqual('0.000000000040000999');
     });
+    it('should format 3.91071936104e+21 correctly with 18 decimals', () => {
+      const result = formatUnits('3.91071936104e+21', 18);
+      expect(result).toEqual('3910.71936104');
+    });
+    it('should format 3.91071936104e+21 correctly with 0 decimals', () => {
+      const result = formatUnits('3.91071936104e+21', 0);
+      expect(result).toEqual('3910719361040000000000');
+    });
   });
 
   describe('formatFiat', () => {
