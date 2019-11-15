@@ -216,7 +216,6 @@ class BitcoinNetworkIntro extends React.Component<Props, State> {
                 backgroundColor: baseColors.pomegranate,
                 marginTop: 40,
                 marginBottom: 20,
-                opacity: 1, // TODO: remove
               }}
               textStyle={{ color: baseColors.ultramarine }}
               isLoading={processingCreate}
@@ -241,13 +240,6 @@ class BitcoinNetworkIntro extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (): $Shape<Props> => ({});
-// const mapStateToProps = ({
-//   // accounts: { data: accounts },
-//   // smartWallet: smartWalletState,
-// }: RootReducerState): $Shape<Props> => ({
-//   // accounts,
-//   // smartWalletState,
-// });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
