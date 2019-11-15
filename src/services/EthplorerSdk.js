@@ -33,7 +33,7 @@ import type {
 } from 'models/EthplorerSdkTypes';
 
 export function parseEthValue(value: number): string {
-  let parsed = new BigNumber(value * (10 ** 18));
+  let parsed = new BigNumber(10 ** 18).multipliedBy(value);
   /**
    * ethplorer might return number values in format such as `1e-22`
    * and this would result as number with decimals when converting to wei
@@ -41,9 +41,9 @@ export function parseEthValue(value: number): string {
    * convert the number again (can be 2 times)
    */
   if (parsed.lt(1)) {
-    parsed = new BigNumber(parsed * (10 ** 18));
+    parsed = new BigNumber(10 ** 18).multipliedBy(parsed);
     if (parsed.lt(1)) {
-      parsed = new BigNumber(parsed * (10 ** 18));
+      parsed = new BigNumber(10 ** 18).multipliedBy(parsed);
     }
   }
 
