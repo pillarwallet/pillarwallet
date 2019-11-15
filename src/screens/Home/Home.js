@@ -176,7 +176,7 @@ const iconConnect = require('assets/icons/icon_receive.png');
 
 const measure = async (ref: View) =>
   new Promise(resolve => ref.measureInWindow((x, y, w, h) => resolve({
-    x, y, width: w, height: h,
+    x, y, w, h,
   })));
 
 class HomeScreen extends React.Component<Props, State> {
@@ -243,6 +243,8 @@ class HomeScreen extends React.Component<Props, State> {
     const steps = [{
       x: measures[0].x,
       y: measures[0].y,
+      width: measures[0].w,
+      height: measures[0].h,
       label: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi massa diam, dapibus in dictum eu,' +
         'laoreet at nunc. Aenean tempus volutpat nisi non cursus.',
       buttonText: 'Go to People',

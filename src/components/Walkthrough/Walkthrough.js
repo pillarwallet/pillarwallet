@@ -1,33 +1,32 @@
 // @flow
 import * as React from 'react';
-import { Dimensions, StyleSheet, Animated, SafeAreaView } from 'react-native';
+import { Dimensions, StyleSheet, Animated, SafeAreaView, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { Svg, Path } from 'react-native-svg';
-import SVGPath from 'art/modes/svg/path';
+import ExtraDimensions from 'react-native-extra-dimensions-android';
 import Button from 'components/Button';
 import { Paragraph } from 'components/Typography';
 import { baseColors, spacing } from 'utils/variables';
+import { getiOSNavbarHeight } from 'utils/common';
 import { endWalkthroughAction, setWaitingForStepIdAction } from 'actions/walkthroughsActions';
 import type { Steps } from 'reducers/walkthroughsReducer';
+import AnimatedSvgPath from './AnimatedSvgPath';
 
-const { width, height } = Dimensions.get('window');
-const radius = 60;
-const xc = (width * 3) / 2;
-const yc = (height * 3) / 2;
-const overlay = SVGPath()
-  .moveTo(0, 0)
-  .lineTo(width * 3, 0)
-  .lineTo(width * 3, height * 3)
-  .lineTo(0, height * 3)
-  .lineTo(0, 0)
-  .close()
+const { width, height: h } = Dimensions.get('window');
+const height = Platform.OS === 'android'
+  ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
+  : h - getiOSNavbarHeight();
 
-  .moveTo(xc - radius, yc)
-  .counterArcTo(xc, yc + radius, radius)
-  .counterArcTo(xc + radius, yc, radius)
-  .counterArcTo(xc, yc - radius, radius)
-  .counterArcTo(xc - radius, yc, radius);
+type Size = {
+  x: Animated.Value,
+  y: Animated.Value,
+}
+
+type Position = {
+  x: Animated.Value,
+  y: Animated.Value,
+}
 
 type Props = {
   steps: Steps;
@@ -41,15 +40,21 @@ type State = {
   isActiveWalkthrough: boolean,
   buttonText?: string,
   label: string,
+  size: Size,
+  position: Position
 }
+
+const getSvgPath = ({ size, position }): string =>
+  `M0,0H${width}V${height}H0V0ZM${position.x._value},${position.y._value}H${position.x._value + size.x._value}V
+  ${position.y._value + size.y._value}H${position.x._value}V${position.y._value}Z`;
 
 
 const Container = styled.View`
   position: absolute;
-  top: -${height}px;
-  left: -${width}px;
-  width: ${width * 3}px;
-  height: ${height * 3}px;
+  top: 0px;
+  left: 0px;
+  width: ${width}px;
+  height: ${height}px;
 `;
 
 const Content = styled.View`
@@ -62,20 +67,23 @@ const WhiteParagraph = styled(Paragraph)`
   color: ${baseColors.white};
 `;
 
-
-const ContainerAnimated = Animated.createAnimatedComponent(Container);
-
 class Walkthrough extends React.Component<Props, State> {
-  x = new Animated.Value(0);
+  mask: Path;
 
-  y = new Animated.Value(0);
+  constructor(props) {
+    super(props);
 
-  state = {
-    index: -1,
-    isActiveWalkthrough: false,
-    label: '',
-    buttonText: '',
-  };
+    this.state = {
+      index: -1,
+      isActiveWalkthrough: false,
+      label: '',
+      buttonText: '',
+      size: new Animated.ValueXY({ x: 150, y: 100 }),
+      position: new Animated.ValueXY({ x: 10, y: 50 }),
+    };
+
+    this.state.position.addListener(this.animationListener);
+  }
 
   componentDidMount() {
     this.initWalkthrough();
@@ -99,7 +107,6 @@ class Walkthrough extends React.Component<Props, State> {
   };
 
   nextStep = () => {
-    const { x, y } = this;
     const { steps, endWalkthrough, setWaitingForStepId } = this.props;
     const { index } = this.state;
     const currentStep = steps[index];
@@ -114,24 +121,34 @@ class Walkthrough extends React.Component<Props, State> {
         if (additionalStepAction) additionalStepAction();
       }
       if (step) {
-        const { label, buttonText } = step;
+        const {
+          label,
+          buttonText,
+          x: stepXPosition,
+          y: stepYPosition,
+          width: stepItemWidth,
+          height: stepItemHeight,
+        } = step;
         this.setState({ index: index + 1, label, buttonText });
-        Animated.parallel([
-          Animated.timing(x, {
-            toValue: step.x,
-            duration: 500,
-            useNativeDriver: true,
-          }),
-          Animated.timing(y, {
-            toValue: step.y,
-            duration: 500,
-            useNativeDriver: true,
-          }),
-        ]).start();
+        const adjustedY = Platform.OS === 'ios' ? stepYPosition : stepYPosition + ExtraDimensions.getStatusBarHeight();
+        this.animate({ x: stepItemWidth, y: stepItemHeight }, { x: stepXPosition, y: adjustedY });
       } else {
         setWaitingForStepId(`${index + 1}`); // TODO: pass in next item id
       }
     }
+  };
+
+  animate = (size: Size, position: Position): void => {
+    Animated.parallel([
+      Animated.timing(this.state.size, {
+        toValue: size,
+        duration: 500,
+      }),
+      Animated.timing(this.state.position, {
+        toValue: position,
+        duration: 500,
+      }),
+    ]).start();
   };
 
   proceedWithNewlyAddedStep = () => {
@@ -141,32 +158,38 @@ class Walkthrough extends React.Component<Props, State> {
     this.nextStep();
   };
 
+  animationListener = (): void => {
+    const d = getSvgPath({
+      size: this.state.size,
+      position: this.state.position,
+    });
+    if (this.mask) {
+      this.mask.setNativeProps({ d });
+    }
+  };
+
   render() {
-    const { x, y } = this;
     const { index, buttonText, label } = this.state;
-    const translateX = Animated.add(x, new Animated.Value((-width / 2) + radius));
-    const translateY = Animated.add(y, new Animated.Value((-height / 2) + radius));
     if (index === -1) {
       return null;
     }
     return (
       <React.Fragment>
-        <ContainerAnimated
-          style={{
-            transform: [
-              { translateX },
-              { translateY },
-            ],
-          }}
-        >
+        <Container>
           <Svg style={StyleSheet.absoluteFill}>
-            <Path
-              d={overlay.toSVG()}
+            <AnimatedSvgPath
+              ref={(ref) => { this.mask = ref; }}
               fill={baseColors.slateBlack}
               opacity={0.85}
+              fillRule="evenodd"
+              strokeWidth={1}
+              d={getSvgPath({
+                size: this.state.size,
+                position: this.state.position,
+              })}
             />
           </Svg>
-        </ContainerAnimated>
+        </Container>
         <Content>
           <SafeAreaView>
             <WhiteParagraph small>{label}</WhiteParagraph>

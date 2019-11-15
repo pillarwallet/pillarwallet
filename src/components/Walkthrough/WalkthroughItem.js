@@ -10,8 +10,8 @@ import type { Steps } from 'reducers/walkthroughsReducer';
 type Position = {
   x: number,
   y: number,
-  width: number,
-  height: number,
+  w: number,
+  h: number,
 }
 
 type Props = {
@@ -25,7 +25,7 @@ type Props = {
 
 const measure = async (ref: View): Promise<Position> =>
   new Promise(resolve => ref.measureInWindow((x, y, w, h) => resolve({
-    x, y, width: w, height: h,
+    x, y, w, h,
   })));
 
 class WalkthroughItem extends React.PureComponent<Props> {
@@ -40,6 +40,8 @@ class WalkthroughItem extends React.PureComponent<Props> {
       {
         x: measures[0].x,
         y: measures[0].y,
+        width: measures[0].w,
+        height: measures[0].h,
         label: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi massa diam, dapibus in dictum eu,' +
           'laoreet at nunc. Aenean tempus volutpat nisi non cursus.',
         buttonText: 'test',

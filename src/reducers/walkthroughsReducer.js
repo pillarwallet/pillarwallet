@@ -29,6 +29,8 @@ import {
 type Step = {
   x: number;
   y: number;
+  width: number;
+  height: number;
   label: string;
   buttonText?: string;
   isLast?: boolean; // TODO: remove when won't be used
