@@ -354,7 +354,7 @@ describe('History Actions', () => {
       });
 
       it('should handle the 0.00104898 eth value that api could return', () => {
-        expect(parseEthValue(0.00104898)).toBe('1048979999999999');
+        expect(parseEthValue(0.00104898)).toBe('1048980000000000');
       });
 
       it('should handle the 1.0 eth value that api could return', () => {
