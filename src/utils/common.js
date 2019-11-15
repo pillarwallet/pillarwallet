@@ -364,9 +364,9 @@ export const formatUnits = (val: string = '0', decimals: number) => {
   let preparedValue = null; // null for sentry reports
   let valueWithoutDecimals = null; // null for sentry reports
   try {
-    // check if val is number or other format might be hex
+    // check if val is exact number or other format (might be hex, exponential, etc.)
     preparedValue = isValidNumber(val) ? Math.floor(+val) : val;
-    // parse number as BigNumber and string expresion without decimals
+    // parse number as BigNumber and get as string expresion without decimals
     valueWithoutDecimals = new BigNumber(preparedValue.toString()).toFixed();
     if (decimals === 0) {
       // check additionally if string contains decimal pointer
