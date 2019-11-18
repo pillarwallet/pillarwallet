@@ -360,20 +360,34 @@ export const getGasPriceWei = (gasInfo: GasInfo): BigNumber => {
 };
 
 export const formatUnits = (val: string = '0', decimals: number) => {
-  let formattedUnits = '0.0';
+  let formattedUnits = decimals === 0 ? '0' : '0.0';
+  let preparedValue = null; // null for sentry reports
+  let valueWithoutDecimals = null; // null for sentry reports
   try {
-    formattedUnits = utils.formatUnits(new BigNumber(val.toString()).toFixed(), decimals);
+    // check if val is exact number or other format (might be hex, exponential, etc.)
+    preparedValue = isValidNumber(val) ? Math.floor(+val) : val;
+    // parse number as BigNumber and get as string expresion without decimals
+    valueWithoutDecimals = new BigNumber(preparedValue.toString()).toFixed();
+    if (decimals === 0) {
+      // check additionally if string contains decimal pointer
+      // because converting exponential numbers back to number will result as exponential expression again
+      if (valueWithoutDecimals.includes('.')) return Math.floor(valueWithoutDecimals).toFixed();
+      // else return as it is
+      return valueWithoutDecimals;
+    }
+    formattedUnits = utils.formatUnits(valueWithoutDecimals, decimals);
   } catch (e) {
     Sentry.captureMessage(e.message, {
       level: 'info',
       extra: {
         sourceFunction: 'formatUnits(value,decimals)',
         inputValue: val,
+        preparedValue,
+        valueWithoutDecimals,
         decimals,
       },
     });
   }
-
   return formattedUnits;
 };
 
