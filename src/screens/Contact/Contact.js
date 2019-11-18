@@ -117,7 +117,7 @@ type Props = {
   blockContact: Function,
   smartWalletState: Object,
   accounts: Accounts,
-  history: Array<*>,
+  history: Object[],
   openSeaTxHistory: Object[],
   contactsBadges: Badges,
   fetchContactBadges: Function,

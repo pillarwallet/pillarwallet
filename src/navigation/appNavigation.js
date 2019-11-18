@@ -28,7 +28,6 @@ import { BaseText } from 'components/Typography';
 
 // services
 import { updateNavigationLastScreenState } from 'services/navigation';
-import Storage from 'services/storage';
 
 // screens
 import AssetsScreen from 'screens/Assets';
@@ -78,7 +77,7 @@ import SmartWalletUnlockScreen from 'screens/UpgradeToSmartWallet/SmartWalletUnl
 import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
-import SettleBalanceConfrimScreen from 'screens/Tank/SettleBalanceConfirm';
+import SettleBalanceConfirmScreen from 'screens/Tank/SettleBalanceConfirm';
 import TankWithdrawalScreen from 'screens/Tank/TankWithdrawal';
 import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
 import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
@@ -534,7 +533,7 @@ manageUsersFlow.navigationOptions = hideTabNavigatorOnChildView;
 // TANK FLOWS
 const tankSettleFlow = createStackNavigator({
   [SETTLE_BALANCE]: SettleBalanceScreen,
-  [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfrimScreen,
+  [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
 }, StackNavigatorConfig);
 
 tankSettleFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -618,7 +617,6 @@ type State = {
 };
 
 let lockTimer;
-const storage = Storage.getInstance('db');
 
 class AppFlow extends React.Component<Props, State> {
   state = {
@@ -739,7 +737,6 @@ class AppFlow extends React.Component<Props, State> {
         stopListeningIntercomNotifications();
         updateSignalInitiatedState(false);
         stopListeningForBalanceChange();
-        storage.close();
       }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {

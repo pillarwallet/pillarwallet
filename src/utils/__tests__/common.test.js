@@ -23,6 +23,7 @@ import {
   delay,
   formatAmount,
   decodeETHAddress,
+  decodeBTCAddress,
   pipe,
   parseNumber,
   isValidNumber,
@@ -65,6 +66,13 @@ describe('Common utils', () => {
     it('returns ETH address from string provided', () => {
       const expectedAddress = '0xf74b153d202ab7368aca04efb71cb3c8c316b514';
       expect(decodeETHAddress('ethereum:0xf74b153d202ab7368aca04efb71cb3c8c316b514')).toBe(expectedAddress);
+    });
+  });
+
+  describe('decodeBTCAddress', () => {
+    it('returns address from string provided', () => {
+      const expectedAddress = 'BITCOIN_ADDRESS';
+      expect(decodeBTCAddress('bitcoin:BITCOIN_ADDRESS')).toBe(expectedAddress);
     });
   });
 
@@ -179,6 +187,10 @@ describe('Common utils', () => {
       const result = formatUnits('0.0001', 18);
       expect(result).toEqual('0.0');
     });
+    it('should format error input 0.0001 correctly', () => {
+      const result = formatUnits('0.0001', 0);
+      expect(result).toEqual('0');
+    });
     it('should format 0xc420d9d8e4003a8000 correctly', () => {
       const result = formatUnits('0xc420d9d8e4003a8000', 18);
       expect(result).toEqual('3617.929');
@@ -193,7 +205,23 @@ describe('Common utils', () => {
     });
     it('should format 40000000 correctly with 0 decimals', () => {
       const result = formatUnits('40000000', 0);
-      expect(result).toEqual('40000000.0');
+      expect(result).toEqual('40000000');
+    });
+    it('should format 40000999.9 correctly with 0 decimals', () => {
+      const result = formatUnits('40000999.9', 0);
+      expect(result).toEqual('40000999');
+    });
+    it('should format 40000999.9 correctly with 18 decimals', () => {
+      const result = formatUnits('40000999.9', 18);
+      expect(result).toEqual('0.000000000040000999');
+    });
+    it('should format 3.91071936104e+21 correctly with 18 decimals', () => {
+      const result = formatUnits('3.91071936104e+21', 18);
+      expect(result).toEqual('3910.71936104');
+    });
+    it('should format 3.91071936104e+21 correctly with 0 decimals', () => {
+      const result = formatUnits('3.91071936104e+21', 0);
+      expect(result).toEqual('3910719361040000000000');
     });
   });
 

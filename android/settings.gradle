@@ -1,4 +1,6 @@
 include ':app'
+include ':@react-native-community_async-storage'
+project(':@react-native-community_async-storage').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/async-storage/android')
 include ':@matt-block_react-native-in-app-browser'
 project(':@matt-block_react-native-in-app-browser').projectDir = new File(rootProject.projectDir, '../node_modules/@matt-block/react-native-in-app-browser/android')
 include ':react-native-gesture-handler'

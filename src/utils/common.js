@@ -19,6 +19,7 @@
 */
 import { Sentry } from 'react-native-sentry';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import orderBy from 'lodash.orderby';
 import { BigNumber } from 'bignumber.js';
 import * as ethUtil from 'ethereumjs-util';
@@ -39,6 +40,8 @@ import type { GasInfo } from 'models/GasInfo';
 import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
+  ETHEREUM_ADDRESS_PREFIX,
+  BITCOIN_ADDRESS_PREFIX,
 } from 'constants/assetsConstants';
 
 const WWW_URL_PATTERN = /^www\./i;
@@ -56,16 +59,36 @@ export const getRandomInt = (min: number, max: number): number => {
   return Math.floor(Math.random() * ((max - min) + 1)) + min;
 };
 
-export const decodeETHAddress = (encodedAddress: string): string => {
-  if (!encodedAddress || !encodedAddress.startsWith('ethereum:')) {
-    return encodedAddress;
-  }
+/**
+ * Extracts the address part from a string on the form of '[prefix]:[address]'
+ *
+ * Examples:
+ *   decodeAddress('ethereum', 'ethereum:0xaddress') -> 0xaddress
+ *   decodeAddress('bitcoin', 'bitcoin:1address') -> 1address
+ *
+ * @param prefix         String the prefix part
+ * @param encodedAddress String the '[prefx]:[address]' string
+ *
+ * @return String the address part
+ */
+const decodeAddress = (prefix: string, encodedAddress: string): string => {
+  if (isEmpty(encodedAddress)) return '';
 
-  if (encodedAddress.length >= 51) {
-    return encodedAddress.substr(9, 42);
+  const len = prefix.length + 1;
+
+  if (encodedAddress.startsWith(`${prefix}:`)) {
+    return encodedAddress.substr(len);
   }
 
   return encodedAddress;
+};
+
+export const decodeBTCAddress = (encodedAddress: string): string => {
+  return decodeAddress(BITCOIN_ADDRESS_PREFIX, encodedAddress);
+};
+
+export const decodeETHAddress = (encodedAddress: string): string => {
+  return decodeAddress(ETHEREUM_ADDRESS_PREFIX, encodedAddress);
 };
 
 export const pipe = (...fns: Function[]) => {
@@ -337,20 +360,34 @@ export const getGasPriceWei = (gasInfo: GasInfo): BigNumber => {
 };
 
 export const formatUnits = (val: string = '0', decimals: number) => {
-  let formattedUnits = '0.0';
+  let formattedUnits = decimals === 0 ? '0' : '0.0';
+  let preparedValue = null; // null for sentry reports
+  let valueWithoutDecimals = null; // null for sentry reports
   try {
-    formattedUnits = utils.formatUnits(new BigNumber(val.toString()).toFixed(), decimals);
+    // check if val is exact number or other format (might be hex, exponential, etc.)
+    preparedValue = isValidNumber(val) ? Math.floor(+val) : val;
+    // parse number as BigNumber and get as string expresion without decimals
+    valueWithoutDecimals = new BigNumber(preparedValue.toString()).toFixed();
+    if (decimals === 0) {
+      // check additionally if string contains decimal pointer
+      // because converting exponential numbers back to number will result as exponential expression again
+      if (valueWithoutDecimals.includes('.')) return Math.floor(valueWithoutDecimals).toFixed();
+      // else return as it is
+      return valueWithoutDecimals;
+    }
+    formattedUnits = utils.formatUnits(valueWithoutDecimals, decimals);
   } catch (e) {
     Sentry.captureMessage(e.message, {
       level: 'info',
       extra: {
         sourceFunction: 'formatUnits(value,decimals)',
         inputValue: val,
+        preparedValue,
+        valueWithoutDecimals,
         decimals,
       },
     });
   }
-
   return formattedUnits;
 };
 

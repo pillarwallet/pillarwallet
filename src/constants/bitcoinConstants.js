@@ -17,25 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import {
-  SENDWYRE_WIDGET_URL,
-  SENDWYRE_ACCOUNT_ID,
-  SENDWYRE_RETURN_URL,
-} from 'react-native-dotenv';
-
-export const wyreWidgetUrl = (
-  destAddress: string,
-  destCurrency: string,
-  sourceCurrency: string,
-  sourceAmount: string,
-): string => {
-  const url = `${SENDWYRE_WIDGET_URL}`
-    + `?destCurrency=${destCurrency}`
-    + `&dest=ethereum:${destAddress}`
-    + `&sourceAmount=${sourceAmount}`
-    + `&sourceCurrency=${sourceCurrency}`
-    + `&accountId=${SENDWYRE_ACCOUNT_ID}`
-    + `&redirectUrl=${escape(SENDWYRE_RETURN_URL)}`;
-
-  return url;
-};
+export const SET_BITCOIN_ADDRESSES = 'SET_BITCOIN_ADDRESSES';
+export const CREATED_BITCOIN_ADDRESS = 'CREATED_BITCOIN_ADDRESS';
+export const BITCOIN_WALLET_CREATION_FAILED = 'BITCOIN_WALLET_CREATION_FAILED';
+export const DEFAULT_BTC_NETWORK = process.env.BITCOIN_NETWORK || 'testnet';
+export const BITCOIN_INSIGHT_URL = process.env.BITCOIN_INSIGHT_URL || '';
+export const UPDATE_BITCOIN_BALANCE = 'UPDATE_BITCOIN_BALANCE';
+export const REFRESH_THRESHOLD = (1000 * 60) * 10; // Cache utxos for ten minutes
+export const MIN_CONFIRMATIONS = 1; // Use utxos with at least 1 confirmation

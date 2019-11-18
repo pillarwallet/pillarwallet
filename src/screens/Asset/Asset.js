@@ -71,7 +71,6 @@ import {
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances, Asset } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Account, Accounts } from 'models/Account';
@@ -96,7 +95,6 @@ const activeModalResetState = {
 type Props = {
   fetchAssetsBalances: () => Function,
   fetchAssetTransactions: (asset: string, indexFrom?: number) => Function,
-  history: Transaction[],
   assets: Assets,
   balances: Balances,
   rates: Object,
@@ -109,7 +107,7 @@ type Props = {
   activeAccount: ?Account,
   paymentNetworkBalances: Balances,
   smartWalletFeatureEnabled: boolean,
-  history: Array<*>,
+  history: Object[],
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
   contactsSmartAddresses: ContactSmartAddressData[],
