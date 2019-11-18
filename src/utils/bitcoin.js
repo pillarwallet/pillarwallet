@@ -21,7 +21,7 @@ import { MIN_CONFIRMATIONS } from 'constants/bitcoinConstants';
 import type { BitcoinUtxo } from 'models/Bitcoin';
 
 export const satoshisToBtc = (satoshis: number): number => satoshis * 0.00000001;
-export const btcToSatoshis = (btc: number): number => btc * 100000000;
+export const btcToSatoshis = (btc: number): number => Math.floor(btc * 100000000);
 
 export const unspentAmount = (unspent: BitcoinUtxo[]): number => {
   return unspent.reduce((acc: number, transaction: BitcoinUtxo): number => {

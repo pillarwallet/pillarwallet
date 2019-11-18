@@ -54,20 +54,19 @@ describe('Bitcoin actions', () => {
   describe('refreshBitcoinBalanceAction', () => {
     describe('for existing address', () => {
       it('updates the balance', async () => {
-        return store.dispatch(refreshBitcoinBalanceAction(false))
-          .then(async () => {
-            const actions = store.getActions();
+        await store.dispatch(refreshBitcoinBalanceAction(false));
 
-            expect(actions.length).toEqual(1);
+        const actions = store.getActions();
 
-            const utxos = await getAddressUtxos(address);
+        expect(actions.length).toEqual(1);
 
-            expect(actions[0]).toMatchObject({
-              type: UPDATE_BITCOIN_BALANCE,
-              address,
-              unspentTransactions: utxos,
-            });
-          });
+        const utxos = await getAddressUtxos(address);
+
+        expect(actions[0]).toMatchObject({
+          type: UPDATE_BITCOIN_BALANCE,
+          address,
+          unspentTransactions: utxos,
+        });
       });
     });
   });

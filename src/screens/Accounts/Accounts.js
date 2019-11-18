@@ -69,6 +69,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
@@ -112,20 +113,22 @@ type ListElement = {| item: ListItem |};
 
 type Props = {|
   navigation: NavigationScreenProp<*>,
-  setActiveBlockchainNetwork: Function,
+  setActiveBlockchainNetwork: (id: string) => void,
   blockchainNetworks: BlockchainNetwork[],
   assets: Assets,
   baseFiatCurrency: ?string,
   smartWalletFeatureEnabled: boolean,
+  bitcoinFeatureEnabled: boolean,
   availableStake: number,
   isTankInitialised: boolean,
   accounts: Accounts,
-  resetIncorrectPassword: Function,
-  switchAccount: Function,
+  resetIncorrectPassword: () => void,
+  switchAccount: (accountId: string, privateKey?: string) => void,
   balances: BalancesStore,
   rates: Rates,
   user: Object,
   bitcoinAddresses: BitcoinAddress[],
+  refreshBitcoinBalance: () => void,
 |};
 
 type State = {|
@@ -378,8 +381,10 @@ class AccountsScreen extends React.Component<Props, State> {
     const {
       navigation,
       setActiveBlockchainNetwork,
+      refreshBitcoinBalance,
     } = this.props;
     setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
+    refreshBitcoinBalance();
     navigation.navigate(ASSETS);
   }
 
@@ -395,6 +400,7 @@ class AccountsScreen extends React.Component<Props, State> {
       availableStake,
       isTankInitialised,
       smartWalletFeatureEnabled,
+      bitcoinFeatureEnabled,
       accounts,
       bitcoinAddresses,
     } = this.props;
@@ -423,23 +429,25 @@ class AccountsScreen extends React.Component<Props, State> {
       });
     }
 
-    const bitcoinNetwork = blockchainNetworks.find(
-      (network) => network.isAvailable && network.id === BLOCKCHAIN_NETWORK_TYPES.BITCOIN,
-    );
+    if (bitcoinFeatureEnabled) {
+      const bitcoinNetwork = blockchainNetworks.find(
+        ({ id }) => id === BLOCKCHAIN_NETWORK_TYPES.BITCOIN,
+      );
 
-    if (bitcoinNetwork) {
-      networks.push({
-        id: 'NETWORK_BTC',
-        type: 'NETWORK',
-        title: bitcoinNetwork.title,
-        isInitialised: bitcoinAddresses.length > 0,
-        isActive: bitcoinNetwork.isActive,
-        balance: 'N/A',
-        iconSource: pillarNetworkIcon, // TODO: Bitcoin icon
-        mainAction: this.setBTCAsActiveNetwork,
-        initialiseAction: this.initialiseBTC,
-        onSettingsPress: null,
-      });
+      if (bitcoinNetwork) {
+        networks.push({
+          id: 'NETWORK_BTC',
+          type: 'NETWORK',
+          title: bitcoinNetwork.title,
+          isInitialised: bitcoinAddresses.length > 0,
+          isActive: bitcoinNetwork.isActive,
+          balance: 'N/A',
+          iconSource: pillarNetworkIcon, // TODO: Bitcoin icon
+          mainAction: this.setBTCAsActiveNetwork,
+          initialiseAction: this.initialiseBTC,
+          onSettingsPress: null,
+        });
+      }
     }
 
     return networks;
@@ -560,7 +568,12 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   blockchainNetwork: { data: blockchainNetworks },
   paymentNetwork: { isTankInitialised },
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  featureFlags: {
+    data: {
+      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
+      BITCOIN_ENABLED: bitcoinFeatureEnabled,
+    },
+  },
   appSettings: { data: { baseFiatCurrency } },
   balances: { data: balances },
   rates: { data: rates },
@@ -571,6 +584,7 @@ const mapStateToProps = ({
   blockchainNetworks,
   isTankInitialised,
   smartWalletFeatureEnabled,
+  bitcoinFeatureEnabled,
   baseFiatCurrency,
   balances,
   rates,
@@ -592,6 +606,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
+  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen);

@@ -23,9 +23,10 @@ export const ENABLE_FEATURE_FLAG = 'ENABLE_FEATURE_FLAG';
 export const DISABLE_FEATURE_FLAG = 'DISABLE_FEATURE_FLAG';
 export const INITIAL_FEATURE_FLAGS = {
   SMART_WALLET_ENABLED: false,
+  // TODO: review 'bitcoin coming soon' message on accounts list
   BITCOIN_ENABLED: false,
 };
 export const DEVELOPMENT_FEATURE_FLAGS = {
   SMART_WALLET_ENABLED: true,
-  BITCOIN_ENABLED: false,
+  BITCOIN_ENABLED: true,
 };
