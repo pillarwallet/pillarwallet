@@ -361,15 +361,13 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <WalkthroughItem type="TEST" walkthroughId="2">
-          <SearchBlock
-            headerProps={{ title: 'people' }}
-            searchInputPlaceholder="Search or add people"
-            onSearchChange={(q) => this.handleSearchChange(q)}
-            itemSearchState={!!contactState}
-            wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
-          />
-        </WalkthroughItem>
+        <SearchBlock
+          headerProps={{ title: 'people' }}
+          searchInputPlaceholder="Search or add people"
+          onSearchChange={(q) => this.handleSearchChange(q)}
+          itemSearchState={!!contactState}
+          wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+        />
         {!inSearchMode && !!pendingConnectionRequests &&
         <ConnectionRequestBanner
           onPress={this.handleConnectionsRequestBannerPress}
@@ -433,7 +431,7 @@ class PeopleScreen extends React.Component<Props, State> {
             }
           </View>
           }
-          <WalkthroughItem type="TEST" walkthroughId="1">
+          <WalkthroughItem type="TEST" walkthroughStepId="people">
             <EmptyStateParagraph
               title="Test"
             />

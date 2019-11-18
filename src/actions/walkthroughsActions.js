@@ -21,10 +21,10 @@
 import {
   ADD_WALKTHROUGH,
   END_WALKTHROUGH,
-  ADD_WALKTHROUGH_STEPS,
+  ADD_WALKTHROUGH_STEP_MEASURE,
   UPDATE_WAITING_FOR_STEP_REF,
 } from 'constants/walkthroughConstants';
-import type { Steps } from 'reducers/walkthroughsReducer';
+import type { Steps, Measurements } from 'reducers/walkthroughsReducer';
 import type { Dispatch } from 'reducers/rootReducer';
 
 export const initWalkthroughAction = (type: string, steps: Steps) => {
@@ -36,11 +36,11 @@ export const initWalkthroughAction = (type: string, steps: Steps) => {
   };
 };
 
-export const addWalkthroughStepsAction = (steps: Steps) => {
+export const addWalkthroughStepMeasureAction = (stepId: string, measure: Measurements) => {
   return async (dispatch: Dispatch) => {
     dispatch({
-      type: ADD_WALKTHROUGH_STEPS,
-      payload: steps,
+      type: ADD_WALKTHROUGH_STEP_MEASURE,
+      payload: { stepId, measure },
     });
   };
 };

@@ -38,6 +38,7 @@ import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
+import WalkthroughItem from 'components/Walkthrough/WalkthroughItem';
 
 // constants
 import {
@@ -87,6 +88,7 @@ import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
+import { testWalkthrough } from 'walkthroughScenarios/testWalkthrough';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -174,15 +176,9 @@ const transactionsIconNormal = require('assets/icons/transactions_normal.png');
 const transactionsIconActive = require('assets/icons/transactions_active.png');
 const iconConnect = require('assets/icons/icon_receive.png');
 
-const measure = async (ref: View) =>
-  new Promise(resolve => ref.measureInWindow((x, y, w, h) => resolve({
-    x, y, w, h,
-  })));
-
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
   forceRender = false;
-  balance = React.createRef();
 
   state = {
     showCamera: false,
@@ -209,7 +205,6 @@ class HomeScreen extends React.Component<Props, State> {
     });
     fetchBadges();
     fetchBadgeAwardHistory();
-    setTimeout(() => this.setSteps(), 1000);
   }
 
   componentWillUnmount() {
@@ -235,24 +230,6 @@ class HomeScreen extends React.Component<Props, State> {
 
   closeCamera = () => this.setState({ showCamera: false });
 
-  setSteps = async () => {
-    const balance = measure(this.balance);
-    const { navigation } = this.props;
-    const measures = await Promise.all([balance]);
-
-    const steps = [{
-      x: measures[0].x,
-      y: measures[0].y,
-      width: measures[0].w,
-      height: measures[0].h,
-      label: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi massa diam, dapibus in dictum eu,' +
-        'laoreet at nunc. Aenean tempus volutpat nisi non cursus.',
-      buttonText: 'Go to People',
-      action: () => navigation.navigate('PEOPLE'),
-    }];
-    this.setState({ steps });
-  };
-
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
@@ -277,8 +254,7 @@ class HomeScreen extends React.Component<Props, State> {
 
   openQRScanner = () => {
     const { initWalkthrough } = this.props;
-    const { steps } = this.state;
-    initWalkthrough('TEST', steps);
+    initWalkthrough('TEST', testWalkthrough);
     const { isOnline } = this.props;
     if (!isOnline) {
       Toast.show({
@@ -476,9 +452,11 @@ class HomeScreen extends React.Component<Props, State> {
               onRefresh={this.refreshScreenData}
             />}
         >
-          <BalanceWrapper innerRef={(ref) => { this.balance = ref; }}>
-            <PortfolioBalance />
-          </BalanceWrapper>
+          <WalkthroughItem type="TEST" walkthroughStepId="home">
+            <BalanceWrapper>
+              <PortfolioBalance />
+            </BalanceWrapper>
+          </WalkthroughItem>
           <WalletConnectWrapper>
             <SettingsItemCarded
               title="Manage Sessions"

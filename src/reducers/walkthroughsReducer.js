@@ -23,18 +23,23 @@ import {
   END_WALKTHROUGH,
   ADD_WALKTHROUGH_STEPS,
   UPDATE_WAITING_FOR_STEP_REF,
+  ADD_WALKTHROUGH_STEP_MEASURE,
 } from 'constants/walkthroughConstants';
 
+export type Measurements = {
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+}
 
 type Step = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  id: string,
+  measure: Measurements,
   label: string;
-  buttonText?: string;
-  isLast?: boolean; // TODO: remove when won't be used
-  action?: () => void; // TODO: remove when won't be used
+  activeScreen: string;
+  body: string;
+  buttonText: string;
 }
 
 export type Steps = Step[];
@@ -65,6 +70,19 @@ const walkthroughsReducer = (
       return { ...state, type: action.payload.type, steps: action.payload.steps };
     case ADD_WALKTHROUGH_STEPS:
       return { ...state, steps: [...state.steps, ...action.payload] };
+    case ADD_WALKTHROUGH_STEP_MEASURE:
+      return {
+        ...state,
+        steps: state.steps.map((step) => {
+          if (step.id !== action.payload.stepId) {
+            return step;
+          }
+          return {
+            ...step,
+            measure: action.payload.measure,
+          };
+        }),
+      };
     case END_WALKTHROUGH:
       return { ...state, id: '', steps: [] };
     case UPDATE_WAITING_FOR_STEP_REF:

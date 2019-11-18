@@ -18,8 +18,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const ADD_WALKTHROUGH = 'ADD_WALKTHROUGH';
-export const END_WALKTHROUGH = 'END_WALKTHROUGH';
-export const ADD_WALKTHROUGH_STEPS = 'ADD_WALKTHROUGH_STEPS';
-export const UPDATE_WAITING_FOR_STEP_REF = 'UPDATE_WAITING_FOR_STEP_REF';
-export const ADD_WALKTHROUGH_STEP_MEASURE = 'ADD_WALKTHROUGH_STEP_MEASURE';
+import { HOME, PEOPLE } from 'constants/navigationConstants';
+
+export const testWalkthrough = [
+  {
+    id: 'home',
+    activeScreen: HOME,
+    label: 'test',
+    body: 'lorem ipsum',
+    buttonText: 'button',
+  },
+  {
+    id: 'people',
+    activeScreen: PEOPLE,
+    label: 'test people',
+    body: 'lorem ipsum dolor',
+    buttonText: 'end',
+  },
+];

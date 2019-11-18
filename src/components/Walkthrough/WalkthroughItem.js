@@ -4,26 +4,19 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 
-import { addWalkthroughStepsAction } from 'actions/walkthroughsActions';
-import type { Steps } from 'reducers/walkthroughsReducer';
-
-type Position = {
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-}
+import { addWalkthroughStepMeasureAction } from 'actions/walkthroughsActions';
+import type { Measurements } from 'reducers/walkthroughsReducer';
 
 type Props = {
   children: React.Node,
   type: string,
   walkthroughType: string,
-  walkthroughId: string,
+  walkthroughStepId: string,
   waitingForStepId: string,
-  addWalkthroughSteps: (steps: Steps) => void,
+  addWalkthroughStepMeasure: (stepId: string, measures: Measurements) => void,
 }
 
-const measure = async (ref: View): Promise<Position> =>
+const measure = async (ref: View): Promise<Measurements> =>
   new Promise(resolve => ref.measureInWindow((x, y, w, h) => resolve({
     x, y, w, h,
   })));
@@ -31,23 +24,15 @@ const measure = async (ref: View): Promise<Position> =>
 class WalkthroughItem extends React.PureComponent<Props> {
   reference = React.createRef();
 
-  setWalkthroughSteps = async () => {
-    const { addWalkthroughSteps } = this.props;
-    const pillarAsset = measure(this.reference);
-    const measures = await Promise.all([pillarAsset]);
+  setWalkthroughStepMeasures = async () => {
+    const { addWalkthroughStepMeasure, walkthroughStepId } = this.props;
+    measure(this.reference)
+      .then((measures) => {
+        addWalkthroughStepMeasure(walkthroughStepId, measures);
+      })
+      .catch(() => {
 
-    const steps = [
-      {
-        x: measures[0].x,
-        y: measures[0].y,
-        width: measures[0].w,
-        height: measures[0].h,
-        label: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi massa diam, dapibus in dictum eu,' +
-          'laoreet at nunc. Aenean tempus volutpat nisi non cursus.',
-        buttonText: 'test',
-      }];
-
-    addWalkthroughSteps(steps);
+      });
   };
 
   render() {
@@ -55,13 +40,13 @@ class WalkthroughItem extends React.PureComponent<Props> {
       children,
       type,
       walkthroughType,
-      walkthroughId,
+      walkthroughStepId,
       waitingForStepId,
     } = this.props;
 
-    if (walkthroughType === type && waitingForStepId === walkthroughId) {
+    if (walkthroughType === type && waitingForStepId === walkthroughStepId) {
       return (
-        <View onLayout={this.setWalkthroughSteps} ref={(ref) => { this.reference = ref; }}>
+        <View onLayout={this.setWalkthroughStepMeasures} ref={(ref) => { this.reference = ref; }}>
           {children}
         </View>
       );
@@ -80,7 +65,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addWalkthroughSteps: (steps: Steps) => dispatch(addWalkthroughStepsAction(steps)),
+  addWalkthroughStepMeasure: (stepId: string, measurements: Measurements) =>
+    dispatch(addWalkthroughStepMeasureAction(stepId, measurements)),
 });
 
 export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(WalkthroughItem));
