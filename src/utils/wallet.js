@@ -24,7 +24,7 @@ import isEmpty from 'lodash.isempty';
 import { Sentry } from 'react-native-sentry';
 import { isHexString } from '@walletconnect/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import { getRandomInt, ethSign, getEthereumProvider } from 'utils/common';
 import Storage from 'services/storage';
@@ -149,13 +149,13 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
       api.init();
       const apiUser = await api.validateAddress(normalizeWalletAddress(wallet.address));
       if (apiUser.walletId) {
-        const saveUser = {
+        const restoredUser = {
           id: apiUser.id,
           walletId: apiUser.walletId,
           username: apiUser.username,
           profileLargeImage: apiUser.profileImage,
         };
-        await dispatch(saveDbAction('user', { saveUser }, true));
+        await dispatch(saveDbAction('user', { user: restoredUser }, true));
         console.log('USER RESTORED FROM API');
       } else {
         console.log('UNABLE TO RESTORE USER FROM API');

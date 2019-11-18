@@ -47,7 +47,7 @@ import {
   TYPE_RECEIVED,
   UPDATE_INVITATIONS,
 } from 'constants/invitationsConstants';
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
@@ -267,7 +267,7 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_CONTACTS, payload: [] });
     dispatch({ type: UPDATE_INVITATIONS, payload: [] });
     dispatch({ type: UPDATE_ASSETS, payload: {} });
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
+    dispatch({ type: RESET_APP_SETTINGS, payload: {} });
     dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
     dispatch({ type: SET_HISTORY, payload: {} });
     dispatch({ type: UPDATE_BALANCES, payload: {} });

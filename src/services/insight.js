@@ -17,25 +17,30 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import {
-  SENDWYRE_WIDGET_URL,
-  SENDWYRE_ACCOUNT_ID,
-  SENDWYRE_RETURN_URL,
-} from 'react-native-dotenv';
+import { BITCOIN_INSIGHT_URL } from 'constants/bitcoinConstants';
 
-export const wyreWidgetUrl = (
-  destAddress: string,
-  destCurrency: string,
-  sourceCurrency: string,
-  sourceAmount: string,
-): string => {
-  const url = `${SENDWYRE_WIDGET_URL}`
-    + `?destCurrency=${destCurrency}`
-    + `&dest=ethereum:${destAddress}`
-    + `&sourceAmount=${sourceAmount}`
-    + `&sourceCurrency=${sourceCurrency}`
-    + `&accountId=${SENDWYRE_ACCOUNT_ID}`
-    + `&redirectUrl=${escape(SENDWYRE_RETURN_URL)}`;
+export const sendRawTransactionToNode = async (rawtx: string) => {
+  return fetch(`${BITCOIN_INSIGHT_URL}/tx/send`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({ rawtx }),
+  })
+    .then(response => {
+      if (!response.ok) {
+        return new Error('failed');
+      }
+      return response;
+    });
+};
 
-  return url;
+export const getAddressUtxosFromNode = (address: string) => {
+  return fetch(`${BITCOIN_INSIGHT_URL}/addr/${address}/utxo`, {
+    headers: {
+      Accept: 'application/json',
+    },
+    method: 'GET',
+  });
 };
