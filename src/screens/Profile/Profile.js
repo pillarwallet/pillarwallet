@@ -52,7 +52,6 @@ import {
 } from 'actions/appSettingsActions';
 import { updateUserAction, createOneTimePasswordAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
-import { repairStorageAction } from 'actions/appActions';
 import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
 import { logScreenViewAction, logEventAction } from 'actions/analyticsActions';
 import { isProdEnv } from 'utils/environment';
@@ -165,8 +164,6 @@ type Props = {
   baseFiatCurrency: ?string,
   appSettings: Object,
   intercomNotificationsCount: number,
-  hasDBConflicts: boolean,
-  repairStorage: Function,
   updateAssetsLayout: (value: string) => Function,
   updateUser: (walletId: string, field: Object, callback?: Function) => Function,
   createOneTimePassword: (walletId: string, field: Object, callback?: Function) => Function,
@@ -381,8 +378,6 @@ class Profile extends React.Component<Props, State> {
       navigation,
       lockScreen,
       appSettings: { appearanceSettings },
-      hasDBConflicts,
-      repairStorage,
       backupStatus,
       useBiometrics,
       smartWalletFeatureEnabled,
@@ -778,7 +773,7 @@ class Profile extends React.Component<Props, State> {
               </React.Fragment>
             )}
 
-            {(!!hasDBConflicts || !!__DEV__) &&
+            {!!__DEV__ &&
             <React.Fragment>
               <ListSeparator>
                 <SubHeading>DEBUG</SubHeading>
@@ -790,12 +785,6 @@ class Profile extends React.Component<Props, State> {
                 label="Clear Local Storage"
                 onPress={() => { this.clearLocalStorage(); }}
               />}
-              {hasDBConflicts &&
-                <ProfileSettingsItem
-                  key="repairDB"
-                  label="Repair Local Storage"
-                  onPress={repairStorage}
-                />}
             </React.Fragment>}
 
             <ListSeparator>
@@ -895,7 +884,6 @@ const mapStateToProps = ({
     data: appSettings,
   },
   notifications: { intercomNotificationsCount },
-  session: { data: { hasDBConflicts } },
   wallet: { backupStatus },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
@@ -903,7 +891,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   intercomNotificationsCount,
   appSettings,
-  hasDBConflicts,
   backupStatus,
   useBiometrics,
   smartWalletFeatureEnabled,
@@ -922,7 +909,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
   changeUseBiometrics: (enabled, privateKey) => dispatch(changeUseBiometricsAction(enabled, privateKey)),
-  repairStorage: () => dispatch(repairStorageAction()),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   logEvent: (name: string) => dispatch(logEventAction(name)),

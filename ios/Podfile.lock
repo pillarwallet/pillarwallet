@@ -225,6 +225,8 @@ PODS:
     - React
   - ReactNativePermissions (1.1.1):
     - React
+  - RNCAsyncStorage (1.6.2):
+    - React
   - RNColorMatrixImageFilters (5.1.4):
     - React
   - RNDeviceInfo (1.6.0):
@@ -287,6 +289,7 @@ DEPENDENCIES:
   - React/RCTWebSocket (from `../node_modules/react-native`)
   - ReactNativeFabric (from `../node_modules/react-native-fabric`)
   - ReactNativePermissions (from `../node_modules/react-native-permissions`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNColorMatrixImageFilters (from `../node_modules/react-native-color-matrix-image-filters`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -359,6 +362,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fabric"
   ReactNativePermissions:
     :path: "../node_modules/react-native-permissions"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-community/async-storage"
   RNColorMatrixImageFilters:
     :path: "../node_modules/react-native-color-matrix-image-filters"
   RNDeviceInfo:
@@ -420,6 +425,7 @@ SPEC CHECKSUMS:
   react-native-webview: a42108b827082f8f0333529b0772102031d5960d
   ReactNativeFabric: 01c1333f76fd4708a5833d71f0a4832a9266bf0f
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
+  RNCAsyncStorage: e99188b8a89ea0edddc82d8831cd5142f4550fdc
   RNColorMatrixImageFilters: cf425050c778106f5f9844b69fc169758212b74d
   RNDeviceInfo: 08dd79c5adef48b6dc103bf3ddf208039aa78664
   RNGestureHandler: 311e3b1cef021a7c9ef31e97e7dc31970cc6288d
@@ -431,6 +437,6 @@ SPEC CHECKSUMS:
   SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: b22fde7af8392fccd0670a25fccf4fc95a23c0ec
+PODFILE CHECKSUM: fc73357a99d119256c02dc20a2ca9363dff03ad6
 
 COCOAPODS: 1.5.3

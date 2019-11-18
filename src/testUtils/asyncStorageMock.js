@@ -67,13 +67,18 @@ export default class AsyncStorageMock {
   multiRemove = mock(jest.fn((keys, cb) => {
     return new Promise((resolve) => {
       this.storageCache = {};
-      cb(null);
+      if (cb) cb(null);
       resolve(null);
     });
   }));
 
   getAllKeys = mock(jest.fn((cb) => {
-    cb(null, Object.keys(this.storageCache));
+    if (cb) {
+      cb(null, Object.keys(this.storageCache));
+    }
+    return new Promise((resolve) => {
+      resolve(Object.keys(this.storageCache));
+    });
   }));
 
   multiSet = mock(jest.fn((items) => {

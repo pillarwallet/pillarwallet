@@ -17,32 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import Storage from 'services/storage';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
-
-const storage = Storage.getInstance('db');
 
 export const updateSessionNetworkStatusAction = (isOnline: boolean) => ({
   type: UPDATE_SESSION,
   payload: { isOnline },
 });
 
-export const checkDBConflictsAction = () => {
-  return async (dispatch: Function) => {
-    const dbConflicts = await storage.getConflicts();
-    dispatch({
-      type: UPDATE_SESSION,
-      payload: { hasDBConflicts: !!dbConflicts.length },
-    });
-  };
-};
-
-export const updateSignalInitiatedStateAction = (isSignalInitiated: boolean) => {
-  return async (dispatch: Function) => {
-    dispatch({
-      type: UPDATE_SESSION,
-      payload: { isSignalInitiated },
-    });
-  };
-};
-
+export const updateSignalInitiatedStateAction = (isSignalInitiated: boolean) => ({
+  type: UPDATE_SESSION,
+  payload: { isSignalInitiated },
+});

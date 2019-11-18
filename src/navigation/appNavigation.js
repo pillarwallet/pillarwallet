@@ -28,7 +28,6 @@ import { BaseText } from 'components/Typography';
 
 // services
 import { updateNavigationLastScreenState } from 'services/navigation';
-import Storage from 'services/storage';
 
 // screens
 import AssetsScreen from 'screens/Assets';
@@ -639,7 +638,6 @@ type State = {
 };
 
 let lockTimer;
-const storage = Storage.getInstance('db');
 
 class AppFlow extends React.Component<Props, State> {
   state = {
@@ -760,7 +758,6 @@ class AppFlow extends React.Component<Props, State> {
         stopListeningIntercomNotifications();
         updateSignalInitiatedState(false);
         stopListeningForBalanceChange();
-        storage.close();
       }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {

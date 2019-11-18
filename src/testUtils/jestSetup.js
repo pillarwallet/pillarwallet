@@ -35,6 +35,7 @@ Enzyme.configure({ adapter: new Adapter() });
 const storageCache = {};
 const AsyncStorage = new StorageMock(storageCache);
 
+jest.mock('@react-native-community/async-storage', () => AsyncStorage);
 jest.setMock('AsyncStorage', AsyncStorage);
 jest.setMock('react-native-firebase', FirebaseMock);
 jest.setMock('cryptocompare', {
@@ -264,3 +265,52 @@ jest.setMock('react-native-keychain', {
 });
 
 jest.setMock('@walletconnect/react-native', WalletConnectMock);
+jest.setMock('services/insight', {
+  getAddressUtxosFromNode: async (address) => {
+    return new Promise(resolve => {
+      resolve({
+        json: () => {
+          return [
+            {
+              address,
+              txid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
+              vout: 0,
+              scriptPubKey: '76a9146d622b371423d2e450c19d98059867d71e6aa87c88ac',
+              amount: 1.3,
+              satoshis: 130000000,
+              height: 1180957,
+              confirmations: 14,
+            },
+          ];
+        },
+      });
+    });
+  },
+  sendRawTransactionToNode: async (raw) => {
+    const jsonPromise = new Promise(resolve => {
+      resolve({
+        txid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
+      });
+    });
+
+    if (raw.length < 50) {
+      // Simulate failure
+      return new Promise(resolve => {
+        resolve({
+          ok: false,
+          status: 500,
+        });
+      });
+    }
+
+    return new Promise(resolve => {
+      resolve({
+        ok: true,
+        status: 200,
+        json: async (): Promise<Object> => {
+          return jsonPromise;
+        },
+      });
+    });
+  },
+});

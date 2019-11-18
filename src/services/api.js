@@ -46,6 +46,7 @@ import {
 } from 'services/assets';
 import EthplorerSdk from 'services/EthplorerSdk';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
+import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
 import type {
@@ -794,8 +795,9 @@ SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string
 };
 
 SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: string, amount: number) {
+  const amountToGetOffer = amount < MIN_MOONPAY_FIAT_VALUE ? MIN_MOONPAY_FIAT_VALUE : amount;
   const url = `${MOONPAY_API_URL}/v3/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
-  + `&baseCurrencyAmount=${amount}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
+  + `&baseCurrencyAmount=${amountToGetOffer}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
 
   return Promise.resolve()
     .then(() => fetch(url))
@@ -803,11 +805,13 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
     .then(data => {
       if (data.totalAmount) {
         const {
-          totalAmount,
           feeAmount,
           extraFeeAmount,
           quoteCurrencyAmount,
         } = data;
+
+        const extraFeeAmountForAmountProvided = (extraFeeAmount / amountToGetOffer) * amount;
+        const totalAmount = amount + feeAmount + extraFeeAmountForAmountProvided;
 
         return {
           provider: 'MoonPay',
@@ -815,10 +819,10 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
           fromAsset: { code: fromAsset },
           toAsset: { code: toAsset },
           feeAmount,
-          extraFeeAmount,
+          extraFeeAmount: extraFeeAmountForAmountProvided,
           quoteCurrencyAmount,
           _id: 'moonpay',
-          minQuantity: 20,
+          minQuantity: MIN_MOONPAY_FIAT_VALUE,
           maxQuantity: 9999999,
         };
       }
