@@ -239,8 +239,6 @@ class BitcoinNetworkIntro extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (): $Shape<Props> => ({});
-
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
@@ -249,4 +247,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   ),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(BitcoinNetworkIntro);
+export default connect(mapDispatchToProps)(BitcoinNetworkIntro);

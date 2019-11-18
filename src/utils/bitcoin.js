@@ -25,6 +25,8 @@ export const btcToSatoshis = (btc: number): number => Math.floor(btc * 100000000
 
 export const unspentAmount = (unspent: BitcoinUtxo[]): number => {
   return unspent.reduce((acc: number, transaction: BitcoinUtxo): number => {
+    // Make sure we don't use unconfirmed transactions for the balance,
+    // since those transactions can still be rejected later by the network.
     if (transaction.confirmations < MIN_CONFIRMATIONS) {
       return acc;
     }

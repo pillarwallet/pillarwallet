@@ -46,5 +46,18 @@ describe('Bitcoin utils', () => {
 
       expect(balance).toEqual(1500);
     });
+
+    describe('with unconfirmed transactions', () => {
+      it('sums only confirmed transactions', () => {
+        const transactions: BitcoinUtxo[] = [
+          buildUtxo({ satoshis: 1000 }),
+          buildUtxo({ satoshis: 500, confirmations: 0 }),
+        ];
+
+        const balance = unspentAmount(transactions);
+
+        expect(balance).toEqual(1000);
+      });
+    });
   });
 });
