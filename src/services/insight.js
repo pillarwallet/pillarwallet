@@ -40,7 +40,7 @@ export const sendRawTransactionToNode = async (rawtx: string) => {
     },
     body: JSON.stringify({ rawtx }),
   })
-    .then(receiveResponse);
+    .then(receiveResponse('sendRawTransactionToNode'));
 };
 
 export const getAddressUtxosFromNode = (address: string) => {
@@ -50,5 +50,5 @@ export const getAddressUtxosFromNode = (address: string) => {
       Accept: 'application/json',
     },
   })
-    .then(receiveResponse);
+    .then(receiveResponse('getAddressUtxosFromNode'));
 };

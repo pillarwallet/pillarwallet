@@ -40,7 +40,7 @@ import type { BitcoinAddress, BitcoinUtxo } from 'models/Bitcoin';
 // utils
 import { formatMoney } from 'utils/common';
 import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
-import { unspentAmount } from 'utils/bitcoin';
+import { unspentAmount, satoshisToBtc } from 'utils/bitcoin';
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -119,7 +119,7 @@ class BTCView extends React.Component<Props, State> {
     // TODO: Select address
     const { address } = addresses[0];
 
-    const balance = unspentAmount(unspentTransactions);
+    const balance = satoshisToBtc(unspentAmount(unspentTransactions));
     const availableFormattedAmount = formatMoney(balance, 4);
 
     const transactionsHistory = [];
