@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Svg, Path } from 'react-native-svg';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
 import { NavigationActions } from 'react-navigation';
-import { navigate } from 'services/navigation';
+import { getNavigationPathAndParamsState, navigate } from 'services/navigation';
 import Button from 'components/Button';
 import { Paragraph } from 'components/Typography';
 import { baseColors, spacing } from 'utils/variables';
@@ -127,8 +127,10 @@ class Walkthrough extends React.Component<Props, State> {
         measure,
       } = step;
       if (!measure) { // step is not yet updated with measure
-        if (activeScreen) {
-          // TODO: check if not current screen;
+        const { path } = getNavigationPathAndParamsState() || {};
+        const pathSteps = path ? path.split('/') : [];
+        const currentScreen = pathSteps[pathSteps.length - 1];
+        if (activeScreen !== currentScreen) {
           const action = NavigationActions.navigate({
             routeName: activeScreen,
           });
