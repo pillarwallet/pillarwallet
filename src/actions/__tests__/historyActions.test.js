@@ -349,8 +349,24 @@ describe('History Actions', () => {
         });
       });
 
-      it('should handle the wrong eth value that api could return', () => {
+      it('should handle the wrong 1e-22 eth value that api could return', () => {
         expect(parseEthValue(1e-22)).toBe('100000000000000');
+      });
+
+      it('should handle the 0.00104898 eth value that api could return', () => {
+        expect(parseEthValue(0.00104898)).toBe('1048980000000000');
+      });
+
+      it('should handle the 1.0 eth value that api could return', () => {
+        expect(parseEthValue(1.0)).toBe('1000000000000000000');
+      });
+
+      it('should handle the 12.03 eth value that api could return', () => {
+        expect(parseEthValue(12.03)).toBe('12030000000000000000');
+      });
+
+      it('should handle the 0 eth value that api could return', () => {
+        expect(parseEthValue(0)).toBe('0');
       });
     });
 
