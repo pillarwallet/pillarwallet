@@ -160,23 +160,27 @@ export async function transferERC721(options: ERC721TransferOptions) {
     };
   }
 
-  switch (contractTransferMethod) {
-    case 'safeTransferFrom':
-      contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
-      if (!signOnly) return contract.safeTransferFrom(from, to, tokenId, { nonce });
-      data = await contract.interface.functions.safeTransferFrom.encode([from, to, tokenId]).catch(() => null);
-      return wallet.sign({ ...contractSignedTransaction, data });
-    case 'transfer':
-      contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
-      if (!signOnly) return contract.transfer(to, tokenId, { nonce });
-      data = await contract.interface.functions.transfer.encode([to, tokenId]).catch(() => null);
-      return wallet.sign({ ...contractSignedTransaction, data });
-    case 'transferFrom':
-      contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
-      if (!signOnly) return contract.transferFrom(from, to, tokenId, { nonce });
-      data = await contract.interface.functions.transferFrom.encode([from, to, tokenId]).catch(() => null);
-      return wallet.sign({ ...contractSignedTransaction, data });
-    default:
+  try {
+    switch (contractTransferMethod) {
+      case 'safeTransferFrom':
+        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
+        if (!signOnly) return contract.safeTransferFrom(from, to, tokenId, { nonce });
+        data = await contract.interface.functions.safeTransferFrom.encode([from, to, tokenId]);
+        return wallet.sign({ ...contractSignedTransaction, data });
+      case 'transfer':
+        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
+        if (!signOnly) return contract.transfer(to, tokenId, { nonce });
+        data = await contract.interface.functions.transfer.encode([to, tokenId]);
+        return wallet.sign({ ...contractSignedTransaction, data });
+      case 'transferFrom':
+        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
+        if (!signOnly) return contract.transferFrom(from, to, tokenId, { nonce });
+        data = await contract.interface.functions.transferFrom.encode([from, to, tokenId]);
+        return wallet.sign({ ...contractSignedTransaction, data });
+      default:
+    }
+  } catch (e) {
+    // unable to transfer
   }
 
   Sentry.captureMessage('Could not transfer collectible',
