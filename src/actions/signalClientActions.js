@@ -23,22 +23,25 @@ import ChatService from 'services/chat';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { getActiveAccountAddress } from 'utils/accounts';
 
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 const chat = new ChatService();
 
 type SignalCredentials = {
-  accessToken: string,
-  refreshToken: string,
+  accessToken: ?string,
+  refreshToken: ?string,
   username: string,
   userId: string,
   walletId: string,
   ethAddress: string,
-  fcmToken: string,
+  fcmToken?: string,
 }
 
 export const signalInitAction = (credentials?: SignalCredentials) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { session: { data: { isSignalInitiated, isOnline } } } = getState();
     if (!isOnline || isSignalInitiated) return;
+    const { session: { data: { fcmToken } } } = getState();
     if (!credentials) {
       const {
         user: {
@@ -48,7 +51,6 @@ export const signalInitAction = (credentials?: SignalCredentials) => {
             walletId,
           },
         },
-        session: { data: { fcmToken } },
         oAuthTokens: { data: OAuthTokensObject },
         accounts: { data: accounts },
       } = getState();
@@ -66,7 +68,6 @@ export const signalInitAction = (credentials?: SignalCredentials) => {
     const accessToken = get(credentials, 'accessToken');
     if (isEmpty(accessToken)) return; // init will fail if there is no access token
 
-    const fcmToken = get(credentials, 'fcmToken');
     await chat.init(credentials)
       .then(() => chat.client.registerAccount())
       .then(() => fcmToken && chat.client.setFcmId(fcmToken))
