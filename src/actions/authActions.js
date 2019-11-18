@@ -84,6 +84,15 @@ const Crashlytics = firebase.crashlytics();
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
+const loginDurationReport = () => {
+  const lastTime = +new Date(); // initial time
+  let lastStep = 1; // initial step
+  console.log(`STEP ${lastStep++}`);
+  return {
+    step: () => console.log(`STEP ${lastStep++}, TOOK ${(+new Date() - lastTime) / 1000}s`),
+  };
+};
+
 export const loginAction = (
   pin: ?string,
   privateKey: ?string,
@@ -91,6 +100,7 @@ export const loginAction = (
   updateKeychain?: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const report = loginDurationReport(); // step 1
     let { accounts: { data: accounts } } = getState();
     const {
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
@@ -116,6 +126,7 @@ export const loginAction = (
 
     await dispatch(fetchFeatureFlagsAction()); // wait until fetches new flags
     const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+    report.step(); // step 2
 
     try {
       let wallet;
@@ -267,6 +278,7 @@ export const loginAction = (
 
       dispatch(getWalletsCreationEventsAction());
       navigate(navigateToAppAction);
+      report.step(); // step 3
     } catch (e) {
       dispatch(updatePinAttemptsAction(true));
       dispatch({
