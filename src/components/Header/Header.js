@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { TextLink, BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import IconButton from 'components/IconButton';
-import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { noop } from 'utils/common';
 
 type Props = {
@@ -62,7 +62,7 @@ const Wrapper = styled.View`
     ? `
       background-color: ${baseColors.white};
       border-bottom-width: 1px;
-      border-bottom-color: ${baseColors.mediumLightGray};
+      border-bottom-color: ${baseColors.border};
     `
     : ''}
 `;
@@ -86,7 +86,7 @@ const BackIcon = styled(IconButton)`
 `;
 
 const CloseIconText = styled(BaseText)`
-  color: ${props => props.light ? baseColors.white : baseColors.darkGray};
+  color: ${props => props.light ? baseColors.white : baseColors.text};
   font-size: ${fontSizes.small}px;
 `;
 
@@ -190,7 +190,7 @@ const Header = (props: Props) => {
           {onBack &&
             <BackIcon
               icon={backIcon || 'back'}
-              color={light ? baseColors.white : UIColors.defaultNavigationColor}
+              color={light ? baseColors.white : baseColors.text}
               onPress={() => onBack()}
               fontSize={fontSizes.large}
               horizontalAlign="flex-start"
@@ -227,7 +227,7 @@ const Header = (props: Props) => {
               <IconWrapper>
                 <NextIcon
                   icon={nextIcon}
-                  color={light ? baseColors.white : UIColors.primary}
+                  color={light ? baseColors.white : baseColors.primary}
                   onPress={onNextPress}
                   fontSize={nextIconSize || fontSizes.medium}
                   horizontalAlign="flex-end"
@@ -242,7 +242,7 @@ const Header = (props: Props) => {
                 }
                 <CloseIcon
                   icon="close"
-                  color={light ? baseColors.white : UIColors.defaultNavigationColor}
+                  color={light ? baseColors.white : baseColors.text}
                   onPress={onClose}
                   fontSize={fontSizes.medium}
                   horizontalAlign="center"

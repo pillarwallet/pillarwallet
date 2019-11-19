@@ -126,25 +126,25 @@ const StatusIcon = styled.View`
   height: 8px;
   width: 8px;
   border-radius: 4px;
-  background-color: ${props => props.active ? baseColors.emerald : baseColors.fireEngineRed};
+  background-color: ${props => props.active ? baseColors.positive : baseColors.negative};
   margin-right: 5px;
 `;
 
 const StatusText = styled(BaseText)`
-  color: ${props => props.active ? baseColors.emerald : baseColors.fireEngineRed};
+  color: ${props => props.active ? baseColors.positive : baseColors.negative};
   font-size: ${fontSizes.small}px;
   letter-spacing: 0.15px;
 `;
 
 const ValueLabel = styled(BaseText)`
-  color: ${props => props.total ? baseColors.caribbeanGreen : baseColors.lavenderBlue};
+  color: ${props => props.total ? baseColors.positive : baseColors.accent};
   ${fontStyles.regular};
   margin-bottom: 5px;
   opacity: ${props => props.light ? 0.7 : 1};
 `;
 
 const ValueText = styled(MediumText)`
-  color: ${props => props.total ? baseColors.caribbeanGreen : baseColors.lavenderBlue};
+  color: ${props => props.total ? baseColors.positive : baseColors.accent};
   font-size: ${fontSizes.big}px;
 `;
 
@@ -164,7 +164,7 @@ const TankGrade = styled.View`
 const Dash = styled.View`
   height: 1px;
   width: 2px;
-  background-color: ${props => props.total ? baseColors.caribbeanGreen : '#c3e0ff'};
+  background-color: ${props => props.total ? baseColors.positive : '#c3e0ff'};
   margin-right: 2px;
 `;
 
@@ -290,7 +290,7 @@ class TankDetails extends React.Component<Props, State> {
       <Container color="#203756">
         <CloseButton
           icon="close"
-          color={baseColors.coolGrey}
+          color={baseColors.secondaryText}
           onPress={() => navigation.goBack(null)}
           fontSize={fontSizes.medium}
           horizontalAlign="flex-end"
@@ -376,10 +376,10 @@ class TankDetails extends React.Component<Props, State> {
               }),
             }}
           >
-            <ValueText style={{ color: baseColors.hoki }}>
+            <ValueText style={{ color: baseColors.text }}>
               {`${usedFormattedAmount} ${PPN_TOKEN}`}
             </ValueText>
-            <ValueLabel style={{ color: baseColors.hoki, fontSize: fontSizes.small }}>Used</ValueLabel>
+            <ValueLabel style={{ color: baseColors.text, fontSize: fontSizes.small }}>Used</ValueLabel>
           </ColumnAnimated>
           <FooterWrapper>
             <Button

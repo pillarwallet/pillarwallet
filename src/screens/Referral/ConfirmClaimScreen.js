@@ -58,7 +58,7 @@ const TokenValue = styled(MediumText)`
 
 const TextCode = styled(LightText)`
   font-size: ${fontSizes.big}px;
-  color: ${baseColors.coolGrey};
+  color: ${baseColors.secondaryText};
   text-align: center;
   margin-bottom: 30px;
 `;

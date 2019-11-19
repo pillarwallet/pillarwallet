@@ -43,7 +43,7 @@ const ItemWrapper = styled.View`
 const ItemLabel = styled(MediumText)`
   text-align:center;
   ${fontStyles.small};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
 `;
 
 const ItemValueHolder = styled.View`
@@ -74,7 +74,7 @@ const Column = styled.View`
   justify-content: flex-end;
   padding-right: ${spacing.mediumLarge}px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.gallery};
+  border-color: ${baseColors.border};
 `;
 
 const ListItemUnderlined = (props: Props) => {

@@ -37,7 +37,7 @@ const Wrapper = styled.View`
 `;
 
 const BalanceInTank = styled(BaseText)`
-  color: ${baseColors.electricBlueIntense};
+  color: ${baseColors.primary};
   font-size: ${fontSizes.big}px;
 `;
 

@@ -124,19 +124,19 @@ const AmountWrapper = styled.View`
 
 const Amount = styled(MediumText)`
   ${fontStyles.medium};
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   text-align: left;
 `;
 
 const FiatAmount = styled(LightText)`
   ${fontStyles.medium};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   text-align: left;
 `;
 
 const Disclaimer = styled(LightText)`
   ${props => props.smallScreen ? fontStyles.small : fontStyles.regular};
-  color: ${baseColors.burningFire};
+  color: ${baseColors.negative};
   text-align: left;
 `;
 
@@ -154,7 +154,7 @@ const nameStyle = (props) => `
   font-size: ${props.smallScreen ? fontSizes.small : fontSizes.regular}px;
   line-height: ${props.smallScreen ? lineHeights.small : lineHeights.regular}px;
   letter-spacing: ${fontTrackings.small};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   ${props.center ? 'width: 100%; text-align: center;' : ''}
 `;
 
@@ -174,7 +174,7 @@ const HideAssetAddon = styled.View`
   width: 24px;
   height: 24px;
   border-radius: 12px;
-  background-color: ${baseColors.burningFire};
+  background-color: ${baseColors.negative};
   position: absolute;
   top: 0;
   right: 2px;

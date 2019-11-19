@@ -94,22 +94,22 @@ const TitleWrapper = styled.View`
 
 const Title = styled(MediumText)`
   ${fontStyles.large};
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   margin-right: 8px;
 `;
 
 const Label = styled.View`
   padding: 1px 4px;
   border-radius: 4px;
-  background-color: ${baseColors.beige};
+  background-color: ${baseColors.tertiary};
   border-width: 1px;
-  border-color: ${baseColors.coconutCream};
+  border-color: ${baseColors.tertiary};
   margin: 4px 0;
 `;
 
 const LabelText = styled(MediumText)`
   ${fontStyles.tiny};
-  color: ${baseColors.pineGlade};
+  color: ${baseColors.secondaryText};
   margin-top: ${Platform.select({
     ios: 0,
     android: '1px',
@@ -128,13 +128,13 @@ const Column = styled.View`
 const ColumnLabel = styled(BaseText)`
   ${fontStyles.regular};
   letter-spacing: ${fontTrackings.tiny};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   margin-bottom: 2px;
 `;
 
 const ColumnValue = styled(MediumText)`
   ${props => props.xl ? fontStyles.big : fontStyles.regular};
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   letter-spacing: ${fontTrackings.tiny};
   margin-top: 2px;
 `;

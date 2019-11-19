@@ -44,7 +44,7 @@ const SWButtonWrapper = styled.TouchableOpacity`
 
 const ButtonIcon = styled(Icon)`
   ${fontStyles.tiny};
-  color: ${baseColors.coolGrey};
+  color: ${baseColors.secondaryText};
 `;
 
 const ButtonText = styled(BaseText)`

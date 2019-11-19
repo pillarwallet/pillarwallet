@@ -68,7 +68,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // utils, services
 import { wyreWidgetUrl } from 'services/sendwyre';
 import { fiatCurrencies } from 'fixtures/assets';
-import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
 import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
@@ -101,7 +101,7 @@ const CardRow = styled.View`
   padding: 10px 0;
   ${props => props.withBorder
     ? `border-bottom-width: 1px;
-      border-bottom-color: ${baseColors.mediumLightGray};`
+      border-bottom-color: ${baseColors.border};`
     : ''}
 `;
 
@@ -122,7 +122,7 @@ const CardColumn = styled.View`
 const CardText = styled(BaseText)`
   ${fontStyles.regular};
   letter-spacing: 0.18px;
-  color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
+  color: ${props => props.label ? baseColors.text : baseColors.secondaryText};
   flex-wrap: wrap;
   width: 100%;
 `;
@@ -140,7 +140,7 @@ const CardButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  color: ${props => props.color ? props.color : baseColors.text};
   font-size: ${fontSizes.regular}px;
 `;
 
@@ -164,7 +164,7 @@ const CardNote = styled(BaseText)`
   align-items: center;
   padding: 4px 0;
   margin-left: 10px;
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  color: ${props => props.color ? props.color : baseColors.text};
   ${fontStyles.regular};
 `;
 
@@ -868,20 +868,20 @@ class ExchangeScreen extends React.Component<Props, State> {
               {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
               {minOrMaxNeeded &&
               <CardButton onPress={() => this.setFromAmount(isBelowMin ? minQuantity : maxQuantity)}>
-                <ButtonLabel color={baseColors.electricBlue}>
+                <ButtonLabel color={baseColors.primary}>
                   {`${minOrMaxAmount} ${fromAssetCode} ${isBelowMin ? 'min' : 'max'}`}
                 </ButtonLabel>
               </CardButton>
               }
               {!minOrMaxNeeded && isShapeShift && !shapeshiftAccessToken &&
               <CardButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthPress}>
-                <ButtonLabel color={baseColors.electricBlue}>Connect</ButtonLabel>
+                <ButtonLabel color={baseColors.primary}>Connect</ButtonLabel>
               </CardButton>
               }
               {!minOrMaxNeeded && !allowanceSet &&
               <CardButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
                 {!isSetAllowancePressed &&
-                <ButtonLabel color={storedAllowance ? baseColors.darkGray : baseColors.electricBlue} >
+                <ButtonLabel color={storedAllowance ? baseColors.secondaryText : baseColors.primary} >
                   {storedAllowance
                     ? 'Pending'
                     : 'Enable'
@@ -891,7 +891,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               </CardButton>
               }
               {!!isFiat && !!offerRestricted &&
-                <CardNote color={baseColors.electricBlue}>{offerRestricted}</CardNote>
+                <CardNote color={baseColors.primary}>{offerRestricted}</CardNote>
               }
             </CardInnerRow>
           </CardRow>
@@ -1127,7 +1127,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         {!blockView &&
         <ScrollWrapper
           keyboardShouldPersistTaps="handled"
-          color={UIColors.defaultBackgroundColor}
+          color={baseColors.surface}
         >
           <FormWrapper>
             <Form

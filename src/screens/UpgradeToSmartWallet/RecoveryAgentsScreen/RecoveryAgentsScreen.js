@@ -49,7 +49,7 @@ type State = {
 };
 
 const FooterInner = styled.View`
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
   flex-direction: row;
   justify-content: flex-end;
   align-items: flex-start;

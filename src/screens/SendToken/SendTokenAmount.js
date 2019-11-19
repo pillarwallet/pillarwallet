@@ -39,7 +39,7 @@ import SlideModal from 'components/Modals/SlideModal';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { fontStyles, spacing, UIColors } from 'utils/variables';
+import { fontStyles, spacing, baseColors } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { checkIfSmartWalletAccount } from 'utils/accounts';
@@ -83,7 +83,7 @@ const SendTokenDetailsValue = styled(BaseText)`
 
 const HelperText = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${UIColors.placeholderTextColor};
+  color: ${baseColors.secondaryText};
   margin-left: 4px;
 `;
 
@@ -104,11 +104,11 @@ const FooterInner = styled.View`
   align-items: flex-end;
   width: 100%;
   padding: ${spacing.large}px;
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${baseColors.surface};
 `;
 
 const BackgroundWrapper = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${baseColors.surface};
   flexGrow: 1;
 `;
 

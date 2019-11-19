@@ -24,7 +24,7 @@ import Header from 'components/Header';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import { Wrapper } from 'components/Layout';
-import { spacing, baseColors, UIColors } from 'utils/variables';
+import { spacing, baseColors } from 'utils/variables';
 import { SubTitle } from 'components/Typography';
 import { Keyboard } from 'react-native';
 
@@ -69,12 +69,12 @@ const themes = {
   default: {
     padding: `0 ${spacing.rhythm}px`,
     borderRadius: '30px',
-    background: UIColors.defaultBackgroundColor,
+    background: baseColors.surface,
   },
   fullScreen: {
     padding: 0,
     borderRadius: 0,
-    background: UIColors.defaultBackgroundColor,
+    background: baseColors.surface,
   },
   eventDetail: {
     padding: 0,
@@ -124,7 +124,7 @@ const ModalBackground = styled.View`
 
 const ModalSubtitle = styled(SubTitle)`
   padding: 10px 0;
-  color: ${UIColors.primary};
+  color: ${baseColors.primary};
 `;
 
 const getModalContentPadding = (showHeader: boolean) => {
@@ -156,7 +156,7 @@ export default class SlideModal extends React.Component<Props, *> {
     fullScreenComponent: null,
     subtitleStyles: {},
     titleStyles: {},
-    backgroundColor: baseColors.lightGray,
+    backgroundColor: baseColors.surface,
   };
 
   hideModal = () => {

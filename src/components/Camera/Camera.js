@@ -33,7 +33,7 @@ import { BaseText } from 'components/Typography';
 import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import SvgOverlay, { Path, LinearGradient, Stop, Circle } from 'react-native-svg';
 import { handleImagePickAction } from 'actions/appSettingsActions';
 
@@ -81,7 +81,7 @@ const FrontFlash = styled.View`
   position: absolute;
   top: 0;
   left: 0;
-  background-color: ${baseColors.blanchedAlmond};
+  background-color: #ffe8ce;
 `;
 
 const NoPermissions = styled.View`
@@ -115,7 +115,7 @@ const ResultScreen = styled.View`
   justify-content: center;
   align-items: center;
   padding: 30px;
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${baseColors.surface};
   z-index: 10;
 `;
 
@@ -139,7 +139,7 @@ const CameraButtonOuter = styled.TouchableOpacity`
 const CameraButtonInner = styled.View`
   width: 26px;
   height: 26px;
-  background-color: ${baseColors.electricBlue};
+  background-color: ${baseColors.primary};
 `;
 
 const FooterInner = styled.View`
@@ -348,7 +348,7 @@ class Camera extends React.Component<Props, State> {
     a ${cutOutR},${cutOutR} 0 1,0 ${cutOutD},0
     a ${cutOutR},${cutOutR} 0 1,0 -${cutOutD},0
     `;
-    const overlayColor = isFlashOn && cameraType === FRONT ? baseColors.blanchedAlmond : baseColors.black;
+    const overlayColor = isFlashOn && cameraType === FRONT ? '#ffe8ce' : baseColors.black;
     const flashIcon = isFlashOn ? 'flash-on' : 'flash-off';
     return (
       <React.Fragment>

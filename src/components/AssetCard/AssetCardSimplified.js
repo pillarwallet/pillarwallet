@@ -95,7 +95,7 @@ const NameWrapper = styled.View`
 const Name = styled(MediumText)`
   ${fontStyles.medium};
   letter-spacing: ${fontTrackings.small};
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   text-align-vertical: center;
 `;
 

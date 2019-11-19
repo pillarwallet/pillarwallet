@@ -159,7 +159,7 @@ const FooterWrapper = styled.View`
 const FooterParagraph = styled(BaseText)`
   ${fontStyles.regular};
   text-align: center;
-  color: ${baseColors.coolGrey};
+  color: ${baseColors.secondaryText};
 `;
 
 const pillarNetworkIcon = require('assets/icons/icon_PPN.png');
@@ -460,7 +460,7 @@ class AccountsScreen extends React.Component<Props, State> {
         open={isLegacyWalletVisible}
         onPress={() => this.setState({ isLegacyWalletVisible: !isLegacyWalletVisible })}
         customToggle={(
-          <BaseText style={{ marginRight: -10, color: baseColors.coolGrey }}>
+          <BaseText style={{ marginRight: -10, color: baseColors.secondaryText }}>
             Legacy wallet (advanced)
           </BaseText>
         )}

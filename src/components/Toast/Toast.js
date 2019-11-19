@@ -48,9 +48,9 @@ const toastInitialOptions: ToastOptions = {
 };
 
 const typeColors = {
-  warning: baseColors.vividOrange,
-  info: baseColors.brightBlue,
-  success: baseColors.limeGreen,
+  warning: baseColors.negative,
+  info: baseColors.primary,
+  success: baseColors.positive,
 };
 
 const typeIcons = {
@@ -113,13 +113,13 @@ const IconHolder = styled.View`
 
 const ToastTitle = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   margin-bottom: 2px;
 `;
 
 const ToastBody = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
 `;
 
 export default class Toast extends React.Component<{}, State> {
@@ -256,7 +256,7 @@ export default class Toast extends React.Component<{}, State> {
             <IconButton
               onPress={this.handleClose}
               icon="close"
-              color={baseColors.mediumGray}
+              color={baseColors.secondaryAccent}
               style={{
                 flex: 2,
                 justifyContent: 'center',

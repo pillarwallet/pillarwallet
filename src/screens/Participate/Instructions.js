@@ -55,7 +55,7 @@ const InstructionsLabel = styled(Label)`
 
 const IntroText = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
 `;
 
 const Value = styled(MediumText)`
@@ -73,8 +73,8 @@ const Instructions = styled.View`
 const ListWrapper = styled.View`
   width: 100%;
   border-top-width: 1px;
-  border-top-color: ${baseColors.gallery};
-  background-color: ${baseColors.snowWhite};
+  border-top-color: ${baseColors.tertiary};
+  background-color: ${baseColors.tertiary};
   padding: ${spacing.rhythm / 2}px ${spacing.rhythm}px;
 `;
 
@@ -149,7 +149,7 @@ class InstructionsScreen extends React.Component<Props, {}> {
             <Instructions>
               <Row>
                 <InstructionsLabel>Reference Number</InstructionsLabel>
-                <Value xl style={{ color: baseColors.fireEngineRed }}>{instructions.reference}</Value>
+                <Value xl style={{ color: baseColors.negative }}>{instructions.reference}</Value>
               </Row>
               <Row>
                 <InstructionsLabel>Beneficiary</InstructionsLabel>
@@ -181,7 +181,7 @@ class InstructionsScreen extends React.Component<Props, {}> {
           </ListWrapper>
         </ScrollWrapper>
         <Footer
-          backgroundColor={baseColors.snowWhite}
+          backgroundColor={baseColors.surface}
         >
           <FooterInner>
             <Button block title="Share Instructions" onPress={this.handleShare} />
@@ -223,7 +223,7 @@ class InstructionsScreen extends React.Component<Props, {}> {
           </ListWrapper>
         </ScrollWrapper>
         <Footer
-          backgroundColor={baseColors.snowWhite}
+          backgroundColor={baseColors.surface}
         >
           <FooterInner>
             <Button block title="Copy to clipboard" onPress={this.handleCopyToClipBoard} />

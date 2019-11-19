@@ -116,13 +116,13 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
             style={
               Array [
                 Object {
-                  "color": "#0A1427",
+                  "color": "#0a1427",
                   "fontFamily": "EuclidCircularB-Regular",
                   "textAlignVertical": "center",
                 },
                 Array [
                   Object {
-                    "color": "#8B939E",
+                    "color": "#8b939e",
                     "fontSize": 14,
                     "lineHeight": 22,
                   },
@@ -191,7 +191,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                     Object {
                       "alignItems": "center",
                       "backgroundColor": "#ffffff",
-                      "borderColor": "#EDEDED",
+                      "borderColor": "#ededed",
                       "borderRadius": 28,
                       "borderStyle": "solid",
                       "borderWidth": 1,
@@ -277,19 +277,19 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                       style={
                         Array [
                           Object {
-                            "color": "#0A1427",
+                            "color": "#0a1427",
                             "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
-                              "color": "#0A1427",
+                              "color": "#0a1427",
                               "fontFamily": "EuclidCircularB-Medium",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
-                                "color": "#0A1427",
+                                "color": "#0a1427",
                                 "fontSize": 16,
                                 "letterSpacing": 0.2,
                                 "lineHeight": 22,
@@ -355,19 +355,19 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                       }
                     >
                       <Text
-                        color="#FD3300"
+                        color="#bd573a"
                         ellipsizeMode="tail"
                         numberOfLines={2}
                         style={
                           Array [
                             Object {
-                              "color": "#0A1427",
+                              "color": "#0a1427",
                               "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
-                                "color": "#FD3300",
+                                "color": "#bd573a",
                                 "fontSize": 18,
                                 "lineHeight": 28,
                                 "textAlign": "right",
@@ -518,13 +518,13 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
             style={
               Array [
                 Object {
-                  "color": "#0A1427",
+                  "color": "#0a1427",
                   "fontFamily": "EuclidCircularB-Regular",
                   "textAlignVertical": "center",
                 },
                 Array [
                   Object {
-                    "color": "#8B939E",
+                    "color": "#8b939e",
                     "fontSize": 14,
                     "lineHeight": 22,
                   },
@@ -593,7 +593,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                     Object {
                       "alignItems": "center",
                       "backgroundColor": "#ffffff",
-                      "borderColor": "#EDEDED",
+                      "borderColor": "#ededed",
                       "borderRadius": 28,
                       "borderStyle": "solid",
                       "borderWidth": 1,
@@ -679,19 +679,19 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                       style={
                         Array [
                           Object {
-                            "color": "#0A1427",
+                            "color": "#0a1427",
                             "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
-                              "color": "#0A1427",
+                              "color": "#0a1427",
                               "fontFamily": "EuclidCircularB-Medium",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
-                                "color": "#0A1427",
+                                "color": "#0a1427",
                                 "fontSize": 16,
                                 "letterSpacing": 0.2,
                                 "lineHeight": 22,
@@ -757,19 +757,19 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                       }
                     >
                       <Text
-                        color="#FD3300"
+                        color="#bd573a"
                         ellipsizeMode="tail"
                         numberOfLines={2}
                         style={
                           Array [
                             Object {
-                              "color": "#0A1427",
+                              "color": "#0a1427",
                               "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
-                                "color": "#FD3300",
+                                "color": "#bd573a",
                                 "fontSize": 18,
                                 "lineHeight": 28,
                                 "textAlign": "right",

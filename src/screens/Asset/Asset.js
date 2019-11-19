@@ -133,10 +133,10 @@ const AssetCardWrapper = styled.View`
   justify-content: flex-start;
   padding-top: 10px;
   padding-bottom: 30px;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
   border-top-width: 1px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
   margin-top: 4px;
 `;
 
@@ -156,19 +156,19 @@ const ValueWrapper = styled.View`
 const TokenValue = styled(MediumText)`
   ${fontStyles.giant};
   text-align: center;
-  color: ${props => props.isSynthetic ? baseColors.electricBlueIntense : baseColors.slateBlack};
+  color: ${props => props.isSynthetic ? baseColors.primary : baseColors.text};
 `;
 
 const ValueInFiat = styled(BaseText)`
   ${fontStyles.small};
   text-align: center;
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
 `;
 
 const Disclaimer = styled(BaseText)`
   ${fontStyles.regular};
   text-align: center;
-  color: ${baseColors.burningFire};
+  color: ${baseColors.negative};
   margin-top: 5px;
 `;
 

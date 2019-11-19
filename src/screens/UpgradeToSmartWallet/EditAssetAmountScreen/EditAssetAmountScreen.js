@@ -67,7 +67,7 @@ const ErrorHolder = styled.View`
 `;
 
 const ErrorText = styled(BaseText)`
-  color: ${baseColors.fireEngineRed};
+  color: ${baseColors.negative};
   ${fontStyles.medium};
   width: 100%;
   text-align: right;

@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontStyles, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { MediumText } from 'components/Typography';
 import { CustomParsedText } from 'components/CustomParsedText';
 
@@ -39,12 +39,12 @@ const ItemWrapper = styled.View`
 const ItemLabel = styled(MediumText)`
   text-align:center;
   ${fontStyles.small}
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
 `;
 
 const ItemValueHolder = styled.View`
   border-bottom-width: 1px;
-  border-color: ${baseColors.gallery};
+  border-color: ${baseColors.border};
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-start;
@@ -55,7 +55,7 @@ const ItemValueHolder = styled.View`
 
 const StyledBaseText = styled(CustomParsedText)`
   ${fontStyles.medium};
-  color: ${UIColors.defaultTextColor};
+  color: ${baseColors.text};
 `;
 
 const ListItemParagraph = (props: Props) => {

@@ -42,7 +42,7 @@ type State = {
 
 const ProgressBarWrapper = styled.View`
   flex-direction: row;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
   padding: 1px 0;
   align-items: center;
   justify-content: flex-start;
@@ -62,7 +62,7 @@ const AnimatedStyledLinearGradient = Animated.createAnimatedComponent(StyledLine
 const ProgressLabel = styled(MediumText)`
   ${fontStyles.tiny};
   letter-spacing: ${fontTrackings.tiny};
-  color: ${props => props.outside ? baseColors.oliveDrab : baseColors.white};
+  color: ${props => props.outside ? '#5e9226' : baseColors.white};
   position: ${props => props.outside ? 'relative' : 'absolute'};
   top: ${Platform.select({
     ios: props => props.outside ? 'auto' : '1px',
@@ -178,7 +178,7 @@ export default class Progress extends React.Component<Props, State> {
         <AnimatedStyledLinearGradient
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          colors={[baseColors.mantis, baseColors.oliveDrab]}
+          colors={['#85bb4c', '#5e9226']}
           full={progress === 100}
           style={{
             width: progressAnimated.interpolate({

@@ -30,7 +30,7 @@ import ShadowedCard from 'components/ShadowedCard';
 import { baseColors, UIColors, fontStyles } from 'utils/variables';
 
 const SectionHeader = styled(MediumText)`
-  color: ${baseColors.blueYonder};
+  color: ${baseColors.accent};
   ${fontStyles.regular};
   margin-top: 20px;
   margin-bottom: 9px;

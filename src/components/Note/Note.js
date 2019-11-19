@@ -33,15 +33,15 @@ type Props = {
 const NoteWrapper = styled.View`
   flex-direction: row;
   align-items: center;
-  background-color: ${baseColors.patternsBlue};
-  border: 1px solid ${baseColors.spindle};
+  background-color: ${baseColors.secondaryAccent};
+  border: 1px solid ${baseColors.border};
   padding: 6px 12px;
   border-radius: 4px;
 `;
 
 const NoteText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.danube};
+  color: ${baseColors.primary};
 `;
 
 const NoteEmoji = styled(Emoji)`

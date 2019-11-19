@@ -74,7 +74,7 @@ const baseStyles = StyleSheet.create({
   strong: boldStyle,
   a: {
     ...boldStyle,
-    color: baseColors.electricBlue,
+    color: baseColors.primary,
     fontSize: fontSizes.regular,
     lineHeight: lineHeights.regular,
   },

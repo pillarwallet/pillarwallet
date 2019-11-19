@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Animation from 'components/Animation';
@@ -39,18 +39,18 @@ const HeaderButtonRounded = styled.TouchableOpacity`
   align-items: center;
   padding: 4px 12px 4px 6px;
   border: 1px solid;
-  border-color: ${props => props.theme.buttonBorderColor || UIColors.defaultBorderColor};
+  border-color: ${props => props.theme.buttonBorderColor || baseColors.border};
   border-radius: 20px;
 `;
 
 const RoundedButtonLabel = styled(MediumText)`
   font-size: ${fontSizes.regular}px;
-  color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};
+  color: ${props => props.theme.buttonLabelColor || baseColors.text};
   margin-left: 6px;
 `;
 const ChevronIcon = styled(Icon)`
   font-size: 6px;
-  color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};
+  color: ${props => props.theme.buttonLabelColor || baseColors.text};
   transform: rotate(90deg);
   margin-top: 2px;
   margin-left: 9px;
@@ -60,7 +60,7 @@ const StatusIcon = styled.View`
   height: 8px;
   width: 8px;
   border-radius: 4px;
-  background-color: ${props => props.isActive ? baseColors.fruitSalad : baseColors.fireEngineRed};
+  background-color: ${props => props.isActive ? baseColors.positive : baseColors.negative};
   position: absolute;
   top: 5px;
   left: 5px;

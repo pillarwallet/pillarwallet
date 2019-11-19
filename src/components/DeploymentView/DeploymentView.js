@@ -52,7 +52,7 @@ const MessageTitle = styled(MediumText)`
 const Message = styled(BaseText)`
   padding-top: ${spacing.small}px;
   ${fontStyles.regular}
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   text-align: center;
 `;
 

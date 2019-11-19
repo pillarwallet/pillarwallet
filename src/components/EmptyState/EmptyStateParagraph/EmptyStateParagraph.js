@@ -35,7 +35,7 @@ const EmptySectionTextWrapper = styled.View`
 
 const EmptySectionTitle = styled(BaseText)`
   ${fontStyles.big};
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   margin-bottom: 6px;
   text-align: center;
 `;

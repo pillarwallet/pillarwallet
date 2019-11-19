@@ -29,7 +29,7 @@ import { ACCOUNTS, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstant
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { CHAT } from 'constants/chatConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
@@ -78,12 +78,12 @@ const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 const FormWrapper = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.large}px 6px;
   background-color: ${baseColors.white};
-  border-bottom-color: ${baseColors.mediumLightGray};
+  border-bottom-color: ${baseColors.border};
   border-bottom-width: 1px;
 `;
 
 const ContactCardList = styled.FlatList`
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${baseColors.surface};
 `;
 
 // make Dynamic once more tokens supported
@@ -357,7 +357,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           onRead={this.handleQRRead}
         />
         {isSearchQueryProvided &&
-          <Footer keyboardVerticalOffset={35} backgroundColor={UIColors.defaultBackgroundColor}>
+          <Footer keyboardVerticalOffset={35} backgroundColor={baseColors.surface}>
             <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
           </Footer>
         }

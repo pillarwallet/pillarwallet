@@ -44,7 +44,7 @@ import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderDisplayName, getOfferProviderLogo } from 'utils/exchange';
@@ -90,7 +90,7 @@ const ButtonWrapper = styled.View`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  color: ${baseColors.fireEngineRed};
+  color: ${baseColors.negative};
   padding-bottom: ${spacing.rhythm}px;
 `;
 
@@ -321,7 +321,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           customOnBack: this.handleBack,
         }}
       >
-        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+        <ScrollWrapper regularPadding color={baseColors.surface}>
           <Paragraph small style={{ marginBottom: spacing.medium, paddingTop: spacing.medium }}>
             {setTokenAllowance
               ? 'Review the details and enable asset as well as confirm the cost of data transaction.'
@@ -368,7 +368,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             </View>
           </LabeledRow>
         </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
+        <Footer keyboardVerticalOffset={40} backgroundColor={baseColors.surface}>
           {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <Button

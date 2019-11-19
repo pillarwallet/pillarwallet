@@ -137,7 +137,7 @@ const HandlebarsWrapper = styled.View`
 const Handlebar = styled.View`
   height: 5px;
   width: 20px;
-  background-color: ${baseColors.electricBlue};
+  background-color: ${baseColors.primary};
   position: absolute;
   top: 2px;
   border-radius: 6px;

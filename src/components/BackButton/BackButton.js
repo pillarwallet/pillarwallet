@@ -21,7 +21,7 @@ import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Icon from 'components/Icon';
-import { UIColors, fontSizes } from 'utils/variables';
+import { fontSizes, baseColors } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -41,7 +41,7 @@ const BackButton = (props: Props) => {
       <Icon
         name="back"
         style={{
-          color: UIColors.primary,
+          color: baseColors.primary,
           fontSize: fontSizes.giant,
         }}
       />

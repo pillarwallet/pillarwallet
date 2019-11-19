@@ -65,7 +65,7 @@ const getTransactionErrorMessage = (error: string): string => {
 };
 
 const CancelText = styled(MediumText)`
-  color: ${baseColors.burningFire};
+  color: ${baseColors.negative};
   font-size: ${fontSizes.medium}px;
 `;
 

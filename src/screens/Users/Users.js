@@ -46,7 +46,7 @@ type Props = {
 }
 
 const SectionHeader = styled(MediumText)`
-  color: ${baseColors.blueYonder};
+  color: ${baseColors.accent};
   ${fontStyles.regular};
   margin: ${spacing.mediumLarge}px 0;
 `;
@@ -145,7 +145,7 @@ class UsersScreen extends React.Component<Props> {
         <CardWrapper>
           <ListCard
             title="Link to another device"
-            titleStyle={{ color: baseColors.slateBlack }}
+            titleStyle={{ color: baseColors.text }}
             subtitle="Manage this user on different devices simultaneously"
             disabled
             label="soon"

@@ -40,7 +40,7 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  background-color: ${props => (props.needBackground ? baseColors.geyser : baseColors.lightGray)};
+  background-color: ${props => (props.needBackground ? baseColors.userAvatar : baseColors.secondaryAccent)};
   ${props => (props.additionalContainerStyle)};
   position: relative;
   border: ${props => `${props.borderWidth}px solid ${props.borderColor || baseColors.white}`};

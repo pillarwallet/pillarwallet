@@ -51,26 +51,26 @@ const TokenAmountWrapper = styled.View`
 
 const Amount = styled(MediumText)`
   ${fontStyles.medium};
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
 `;
 
 const FiatAmount = styled(LightText)`
   ${fontStyles.small};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   align-self: flex-end;
   text-align: right;
 `;
 
 const Disclaimer = styled(LightText)`
   ${fontStyles.regular};
-  color: ${baseColors.burningFire};
+  color: ${baseColors.negative};
   align-self: flex-end;
   text-align: right;
 `;
 
 const AmountToken = styled(MediumText)`
   ${fontStyles.medium};
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
 `;
 
 const AmountRow = styled.View`

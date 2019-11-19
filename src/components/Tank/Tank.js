@@ -37,7 +37,7 @@ const TankWrapper = styled.View`
   width: ${props => props.tiny ? 6 : 22}px;
   background-color: ${props => props.tiny ? 'white' : '#3e5d87'};
   border-width: ${props => props.tiny ? 1 : 0}px;
-  border-color: ${props => props.tiny ? baseColors.electricBlueIntense : baseColors.white};
+  border-color: ${props => props.tiny ? baseColors.primary : baseColors.white};
   border-radius: ${props => props.tiny ? 3 : 4}px;
   overflow: hidden;
 `;
@@ -53,7 +53,7 @@ const TankInner = styled.View`
 
 const TankLevel = styled.View`
   width: ${props => props.tiny ? 10 : 22}px;
-  background-color: ${props => props.tiny ? baseColors.electricBlueIntense : baseColors.lavenderBlue};
+  background-color: ${props => props.tiny ? baseColors.primary : baseColors.accent};
   position: absolute;
   bottom: ${props => props.tiny ? 0 : 0}px;
   left: ${props => props.tiny ? -3 : 0}px;
@@ -62,7 +62,7 @@ const TankLevel = styled.View`
 const TankEmptyEmptyDot = styled.View`
   width: 2px;
   height: 2px;
-  background-color: ${baseColors.burningFire};
+  background-color: ${baseColors.negative};
   border-radius: 2px;
 `;
 

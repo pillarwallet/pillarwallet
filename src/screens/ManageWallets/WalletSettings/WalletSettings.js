@@ -101,7 +101,7 @@ class WalletSettings extends React.PureComponent<Props> {
     {
       key: 'deleteWallet',
       title: 'Delete wallet',
-      labelColor: baseColors.redDamask,
+      labelColor: baseColors.negative,
       body: 'Wipe all data on this device',
       action: () => this.deleteWallet(),
     },
@@ -136,7 +136,7 @@ class WalletSettings extends React.PureComponent<Props> {
     return (
       <ListCard
         title={title}
-        titleStyle={{ color: labelColor || baseColors.slateBlack }}
+        titleStyle={{ color: labelColor || baseColors.text }}
         subtitle={body}
         action={action}
         label={label}

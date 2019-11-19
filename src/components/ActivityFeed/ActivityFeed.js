@@ -95,7 +95,7 @@ const ActivityFeedWrapper = styled.View`
 const ActivityFeedHeader = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.large}px 0;
   border-top-width: ${props => props.noBorder ? 0 : '1px'};
-  border-top-color: ${baseColors.mediumLightGray};
+  border-top-color: ${baseColors.border};
 `;
 
 const SectionHeaderWrapper = styled.View`
@@ -105,7 +105,7 @@ const SectionHeaderWrapper = styled.View`
 
 const SectionHeader = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -380,7 +380,7 @@ class ActivityFeed extends React.Component<Props, State> {
         itemValue = '';
         customAddon = (<TankAssetBalance
           amount={`- ${formattedValue} ${notification.asset}`}
-          textStyle={{ color: baseColors.scarlet }}
+          textStyle={{ color: baseColors.negative }}
           monoColor
         />);
         trxData.txType = 'Withdrawal';
@@ -410,7 +410,7 @@ class ActivityFeed extends React.Component<Props, State> {
           itemValue = '';
           customAddon = (<TankAssetBalance
             amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
-            textStyle={!isReceived ? { color: baseColors.scarlet } : null}
+            textStyle={!isReceived ? { color: baseColors.negative } : null}
             monoColor
           />);
         }
@@ -426,7 +426,7 @@ class ActivityFeed extends React.Component<Props, State> {
       if (!imageProps.itemImageSource) {
         if (!isContact || showArrowsOnly) {
           imageProps.iconName = directionIcon;
-          imageProps.iconColor = baseColors.slateBlack;
+          imageProps.iconColor = baseColors.text;
         } else if (isContact) {
           imageProps.avatarUrl = contact.profileImage;
         }
@@ -447,7 +447,7 @@ class ActivityFeed extends React.Component<Props, State> {
           itemStatusIcon={itemStatusIcon}
           rightColumnInnerStyle={rightColumnInnerStyle}
           customAddonAlignLeft={customAddonAlignLeft}
-          valueColor={isReceived ? baseColors.jadeGreen : baseColors.scarlet}
+          valueColor={isReceived ? baseColors.positive : baseColors.negative}
           imageUpdateTimeStamp={contact.lastUpdateTime || 0}
           customAddon={customAddon}
           diameter={56}
@@ -474,11 +474,11 @@ class ActivityFeed extends React.Component<Props, State> {
           imageAddonIconName={(Object.keys(contact).length === 0 || showArrowsOnly) && !invertAddon
             ? directionIcon.toLowerCase()
             : undefined}
-          iconColor={baseColors.slateBlack}
+          iconColor={baseColors.text}
           iconName={invertAddon ? directionIcon.toLowerCase() : null}
           itemStatusIcon={itemStatusIcon}
           actionLabel={directionIcon}
-          actionLabelColor={isReceived ? baseColors.jadeGreen : null}
+          actionLabelColor={isReceived ? baseColors.positive : null}
           diameter={56}
         />
       );

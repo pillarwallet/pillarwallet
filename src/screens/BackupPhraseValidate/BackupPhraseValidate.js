@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { UIColors, fontSizes, baseColors, spacing } from 'utils/variables';
+import { fontSizes, baseColors, spacing } from 'utils/variables';
 import styled from 'styled-components/native';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
@@ -46,7 +46,8 @@ const WordInputFields = styled.View`
 `;
 
 const MnemonicPhraseWord = styled.TouchableOpacity`
-  background-color: ${props => (props.disabled ? UIColors.disabled : UIColors.primary)};
+  background-color: ${baseColors.primary};
+  opacity: ${props => props.disabled ? 0.5 : 1};
   border-radius: 6;
   padding: 14px 5px;
   margin: 0 2.5px 5px;
@@ -66,10 +67,10 @@ const WordInputWrapper = styled.View`
 `;
 
 const WordInput = styled.View`
-  background-color: ${props => (props.filled ? UIColors.primary : 'transparent')};
+  background-color: ${props => (props.filled ? baseColors.primary : 'transparent')};
   border-width: 1;
   border-style: ${props => (props.filled ? 'solid' : 'dashed')};
-  border-color: ${props => (props.filled ? 'transparent' : UIColors.defaultBorderColor)};;
+  border-color: ${props => (props.filled ? 'transparent' : baseColors.border)};;
   border-radius: 6px;
   height: 34px;
   flex: 1;
@@ -103,7 +104,7 @@ const ShuffledWordWrapper = styled.View`
 `;
 
 const ErrorParagraph = styled(Paragraph)`
-  color: ${baseColors.fireEngineRed};
+  color: ${baseColors.negative};
 `;
 
 const FooterWrapper = styled.View`
@@ -111,7 +112,7 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
 `;
 
 class BackupPhraseValidate extends React.Component<Props, State> {
@@ -190,7 +191,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
                 icon="close"
                 onPress={this.handleLastWordRemoval}
                 fontSize={fontSizes.medium}
-                color={UIColors.primary}
+                color={baseColors.primary}
               />
             }
           </WordInputWrapper>

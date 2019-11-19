@@ -131,7 +131,7 @@ const Column = styled.View`
 `;
 
 const ItemTitle = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   font-size: ${fontSizes.medium}px;
   line-height: 22px;
   letter-spacing: ${fontTrackings.small}px;
@@ -139,14 +139,14 @@ const ItemTitle = styled(MediumText)`
 `;
 
 const ItemParagraph = styled(BaseText)`
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   ${fontStyles.regular};
   letter-spacing: ${fontTrackings.tiny}px;
   flex: 1;
 `;
 
 const ItemSubText = styled(BaseText)`
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   font-size: ${fontSizes.regular}px;
   line-height: 18px;
 `;
@@ -159,12 +159,12 @@ const IconCircle = styled.View`
   align-items: center;
   justify-content: center;
   text-align: center;
-  border: 1px solid ${baseColors.mediumLightGray};
+  border: 1px solid ${baseColors.border};
 `;
 
 const ItemIcon = styled(Icon)`
   font-size: ${props => props.fontSize || 48}px;
-  color: ${props => props.iconColor || baseColors.electricBlue};
+  color: ${props => props.iconColor || baseColors.primary};
 `;
 
 const IconImage = styled(CachedImage)`
@@ -184,7 +184,7 @@ const TimeWrapper = styled.View`
 `;
 
 const TimeSent = styled(BaseText)`
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   ${fontStyles.regular};
   text-align-vertical: bottom;
 `;
@@ -193,7 +193,7 @@ const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
   border-radius: 10px;
-  background-color: ${baseColors.pinkishGrey}
+  background-color: ${baseColors.accent}
   align-self: flex-end;
   padding: 3px 0;
   margin-top: 2px;
@@ -210,19 +210,19 @@ const UnreadNumber = styled(BaseText)`
 
 const ItemValue = styled(BaseText)`
   ${fontStyles.big};
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  color: ${props => props.color ? props.color : baseColors.text};
   text-align: right;
 `;
 
 const ItemValueBold = styled(MediumText)`
   ${fontStyles.big};
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  color: ${props => props.color ? props.color : baseColors.text};
   text-align: right;
 `;
 
 const ItemValueStatus = styled(Icon)`
   margin-left: 7px;
-  color: ${baseColors.mediumGray};
+  color: ${baseColors.secondaryText};
   ${fontStyles.big};
 `;
 
@@ -234,14 +234,14 @@ const IndicatorsRow = styled.View`
 const ActionLabel = styled.View`
   align-items: center;
   justify-content: center;
-  ${props => props.button ? `border: 1px solid ${baseColors.veryLightBlue}` : ''}
+  ${props => props.button ? `border: 1px solid ${baseColors.secondaryAccent}` : ''}
   ${props => props.button ? 'border-radius: 40px;' : ''}
   ${props => props.button ? 'height: 34px;' : ''}
 `;
 
 const ActionLabelText = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${props => props.color ? props.color : baseColors.darkGray};
+  color: ${props => props.color ? props.color : baseColors.secondaryText};
   margin-left: auto;
   margin-bottom: ${props => props.button ? '2px' : 0};
   padding: ${props => props.button ? `0 ${spacing.large}px` : '6px 0'};
@@ -260,7 +260,7 @@ const ActionCircleButton = styled(IconButton)`
   margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
-  background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
+  background: ${props => props.accept ? baseColors.primary : 'rgba(0,0,0,0)'};
 `;
 
 const ImageAddonHolder = styled.View`
@@ -430,7 +430,7 @@ const Addon = (props: Props) => {
   if (actionLabel) {
     return (
       <ActionLabel button={labelAsButton}>
-        <ActionLabelText button={labelAsButton} color={labelAsButton ? baseColors.electricBlue : actionLabelColor}>
+        <ActionLabelText button={labelAsButton} color={labelAsButton ? baseColors.primary : actionLabelColor}>
           {actionLabel}
         </ActionLabelText>
       </ActionLabel>
@@ -465,7 +465,7 @@ const Addon = (props: Props) => {
     return (
       <ButtonIconWrapper>
         <ActionCircleButton
-          color={baseColors.darkGray}
+          color={baseColors.accent}
           margin={0}
           icon="close"
           fontSize={fontSizes.regular}

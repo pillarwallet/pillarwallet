@@ -25,7 +25,7 @@ import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
-import { fontSizes, baseColors, UIColors, spacing, fontStyles, appFont } from 'utils/variables';
+import { fontSizes, baseColors, spacing, fontStyles, appFont } from 'utils/variables';
 
 type inputPropsType = {
   placeholder?: string,
@@ -80,10 +80,10 @@ const inputTypes = {
     textAlign: 'left',
   },
   bigText: {
-    backgroundColor: baseColors.lightGray,
+    backgroundColor: baseColors.secondaryAccent,
     borderBottomWidth: 0,
     borderRadius: 6,
-    color: baseColors.slateBlack,
+    color: baseColors.text,
     fontSize: fontSizes.large,
     lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
     padding: '0 20px',
@@ -92,7 +92,7 @@ const inputTypes = {
   bigTextNoBackground: {
     backgroundColor: 'transparent',
     borderBottomWidth: 0,
-    color: baseColors.slateBlack,
+    color: baseColors.text,
     fontSize: fontSizes.large,
     lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
     padding: '0 20px',
@@ -101,7 +101,7 @@ const inputTypes = {
   noBackground: {
     backgroundColor: 'transparent',
     borderBottomWidth: 0,
-    color: baseColors.slateBlack,
+    color: baseColors.text,
     fontSize: fontSizes.big,
     lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
   },
@@ -110,10 +110,10 @@ const inputTypes = {
     textAlign: 'right',
   },
   secondary: {
-    backgroundColor: baseColors.lightGray,
+    backgroundColor: baseColors.secondaryAccent,
     borderBottomWidth: 0,
     borderRadius: 6,
-    color: baseColors.slateBlack,
+    color: baseColors.text,
     fontSize: fontSizes.medium,
     padding: '0 14px',
   },
@@ -131,7 +131,7 @@ const FloatingButton = styled(IconButton)`
 `;
 
 const ErrorMessage = styled(BaseText)`
-  color: ${baseColors.fireEngineRed};
+  color: ${baseColors.negative};
   flex: 1;
 `;
 
@@ -151,7 +151,7 @@ const InputField = styled(Input)`
 `;
 
 const Item = styled(NBItem)`
-  border-bottom-color: ${props => props.isFocused ? baseColors.electricBlue : baseColors.mediumGray};
+  border-bottom-color: ${props => props.isFocused ? baseColors.primary : baseColors.border};
   ${props => props.noBorder ? 'border-bottom-width: 0;' : ''}
   height: ${props => props.height}px;
 `;
@@ -166,13 +166,13 @@ const InputFooter = styled(View)`
 `;
 
 const AddonText = styled(BaseText)`
-  color: ${baseColors.electricBlue};
+  color: ${baseColors.primary};
   width: 100%;
   text-align: right;
 `;
 
 const CustomLabel = styled(Label)`
-  color: ${props => props.labelBigger ? UIColors.defaultTextColor : baseColors.darkGray};
+  color: ${props => props.labelBigger ? baseColors.text : baseColors.secondaryText};
   letter-spacing: 0.5;
   padding-top: ${props => props.labelBigger ? '35px' : '5px'};
   padding-bottom: ${props => props.labelBigger ? '12px' : '0'};
@@ -192,7 +192,7 @@ const AbsoluteIcon = styled(Icon)`
   top: 50%;
   margin-top: -13px;
   font-size: ${fontSizes.regular}px;
-  color: ${props => props.color || baseColors.electricBlue};
+  color: ${props => props.color || baseColors.primary};
 `;
 
 class TextInput extends React.Component<Props, State> {

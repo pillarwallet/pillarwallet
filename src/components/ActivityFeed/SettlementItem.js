@@ -55,7 +55,7 @@ const ListWrapper = styled.View`
 
 const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.big}px;
-  color: ${baseColors.jadeGreen};
+  color: ${baseColors.positive};
   text-align: right;
 `;
 
@@ -124,7 +124,7 @@ export const SettlementItem = (props: Props) => {
                   key={hash}
                   amount={`- ${value} ${symbol}`}
                   monoColor
-                  textStyle={{ color: baseColors.scarlet }}
+                  textStyle={{ color: baseColors.negative }}
                 />
               ))}
             </ListWrapper>)}

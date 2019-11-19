@@ -108,7 +108,7 @@ const renderDay = (props: Props) => (
       marginBottom: 36,
     }}
     textStyle={{
-      color: baseColors.darkGray,
+      color: baseColors.secondaryText,
       fontSize: fontSizes.regular,
       fontFamily: appFont.regular,
     }}
@@ -122,12 +122,12 @@ const renderTime = (props: Props) => {
       {...props}
       textStyle={{
         right: {
-          color: baseColors.darkGray,
+          color: baseColors.secondaryText,
           fontFamily: appFont.regular,
           fontSize: fontSizes.small,
         },
         left: {
-          color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
+          color: isWarningMessage(props.currentMessage.type) ? baseColors.secondaryAccent : baseColors.secondaryText,
           fontFamily: appFont.regular,
           fontSize: fontSizes.small,
         },
@@ -155,7 +155,7 @@ const renderSend = (props: Props) => (
     <Icon
       name="send-message"
       style={{
-        color: baseColors.brightBlue,
+        color: baseColors.primary,
         fontSize: fontSizes.large,
       }}
     />
@@ -175,7 +175,7 @@ const renderInputToolbar = (props: Props) => {
       containerStyle={{
         bottom: 2,
         paddingLeft: 8,
-        borderColor: baseColors.lightGray,
+        borderColor: baseColors.border,
         margin: 0,
       }}
 
@@ -423,22 +423,22 @@ class ChatTab extends React.Component<Props, State> {
       {...props}
       textStyle={{
         left: {
-          color: isWarning ? baseColors.white : baseColors.slateBlack,
+          color: isWarning ? baseColors.white : baseColors.text,
           fontSize: fontSizes.regular,
           fontFamily: appFont.regular,
         },
         right: {
-          color: baseColors.slateBlack,
+          color: baseColors.text,
           fontSize: fontSizes.regular,
           fontFamily: appFont.regular,
         },
       }}
       wrapperStyle={{
         left: {
-          backgroundColor: isWarning ? baseColors.brightBlue : baseColors.zumthor,
+          backgroundColor: isWarning ? baseColors.primary : baseColors.zumthor,
           borderRadius: 5,
           borderWidth: 1,
-          borderColor: isWarning ? baseColors.brightBlue : baseColors.tropicalBlue,
+          borderColor: isWarning ? baseColors.primary : baseColors.tropicalBlue,
           maxWidth: 262,
           marginTop: 4,
           paddingHorizontal: 2,

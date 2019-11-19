@@ -54,7 +54,7 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
 `;
 
 const LabeledRow = styled.View`

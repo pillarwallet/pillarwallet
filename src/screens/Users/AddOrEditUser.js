@@ -82,7 +82,7 @@ const ProfileImagePlaceholder = styled.View`
   align-items: center;
   justify-content: center;
   background-color: ${baseColors.white};
-  border: 2px dashed ${baseColors.mediumLightGray};
+  border: 2px dashed ${baseColors.border};
 `;
 
 const BlankAvatar = styled(CachedImage)`

@@ -68,19 +68,19 @@ const ListItem = styled.View`
     ? `
     border-bottom-width: ${StyleSheet.hairlineWidth}px;
     border-top-width: ${StyleSheet.hairlineWidth}px;
-    border-color: ${baseColors.mediumLightGray};
+    border-color: ${baseColors.border};
     `
     : ''}
 `;
 
 const ItemLabel = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${props => props.color ? props.color : baseColors.electricBlue};
+  color: ${props => props.color ? props.color : baseColors.primary};
 `;
 
 const SubText = styled(BaseText)`
   ${fontStyles.small};
-  color: ${props => props.color ? props.color : baseColors.darkGray};
+  color: ${props => props.color ? props.color : baseColors.secondaryText};
   margin-top: 4px;
 `;
 
@@ -113,7 +113,7 @@ const ButtonWrapper = ({ onPress, children }) => {
   return (
     <StyledItemTouchable
       onPress={onPress}
-      underlayColor={baseColors.lightGray}
+      underlayColor={baseColors.secondaryAccent}
       disabled={!onPress}
     >
       {children}
@@ -170,7 +170,7 @@ export const ListItemChevron = (props: Props) => {
               name="chevron-right"
               style={{
                 fontSize: fontSizes.small,
-                color: color || baseColors.electricBlue,
+                color: color || baseColors.primary,
                 ...chevronStyle,
               }}
             />

@@ -21,131 +21,62 @@
 import { responsiveSize } from 'utils/ui';
 
 export const baseColors = {
-  sunYellow: '#f8e71c',
-  burningFire: '#F56C07',
-  periwinkle: '#9191ff',
-  fireEngineRed: '#ff0005',
-  warmPurple: '#b2329c',
-  brightPurple: '#4f1a91',
-  electricBlue: '#007AFF',
-  electricBlueIntense: '#2329d6',
-  duckEggBlue: '#e6eefa',
-  selago: '#f6fafe',
-  hawkesBlue: '#f0f7fe',
-  brightSkyBlue: '#00bfff',
-  pigeonPost: '#9fb7db',
-  cyan: '#00bfff',
-  aquaMarine: '#50e3c2',
-  freshEucalyptus: '#2AA057',
-  snowWhite: '#fafafa',
-  lightGray: '#f5f5f5',
-  whiteSmoke: '#f7f7f7',
-  whiterSmoke: '#f2f2f2',
-  lighterGray: '#fafafa',
-  mediumGray: '#C6CACD',
-  mediumLightGray: '#EDEDED',
-  darkGray: '#8B939E',
-  coolGrey: '#8b939e',
-  slateBlack: '#0A1427',
-  lightGreen: '#82bc40',
-  jadeGreen: '#2aa157',
-  clearBlue: '#2077fd',
-  offBlue: '#5983b0',
+  sunYellow: '#f8e71c', // indicator
+  clearBlue: '#2077fd', // used for hyperlinks
+  mediumGray: '#C6CACD', // used for bottom navigation to match icon color
+
+  userAvatar: '#a9aeb8', // NOT IN DS (greyser - #d1d7dd)
+
+  negative: '#bd573a', // ex burningFire (#F56C07) and fireEngineRed (#ff0005) and vividOrange (#ffc021) for toast
+  primary: '#007AFF', // ex electricBlue and primaryIntense (#2329d6)
+  positive: '#2aa057', // ex freshEucalyptus (#2AA057) and jadeGreen (#2aa157) and limeGreen (#47d764) for toast
+  surface: '#fafafa', // ex snowWhite and lighterGray
+  border: '#ededed', // ex lightGray (for borders) and mediumLightGray and gallery (#efefef)
+  tertiary: '#ebf0f6', // ex mediumGray (#C6CACD)
+  secondaryAccent: '#ebf0f5', // ex mediumGray (#C6CACD) and lightGray (#f5f5f5)
+  secondaryText: '#8b939e', // ex darkGray (#8B939E) and coolGrey (#8B939E)
+  text: '#0a1427', // ex slateBlack
+  accent: '#818eb3', // ex blueYonder (818eb3) // pigeonPost (#9fb7db) (for shadow on checkbox)
+
   white: '#ffffff',
   black: '#000000',
-  vividOrange: '#ffc021',
-  brightBlue: '#2f86eb',
-  limeGreen: '#47d764',
-  lightYellow: '#feffe0',
-  gallery: '#efefef',
-  veryLightBlue: '#e0edff',
-  dawnPink: '#f2eae4',
-  rose: '#f5078d',
-  cerulean: '#07b0f5',
-  beige: '#f7f7df',
-  coconutCream: '#e3e3bd',
-  pineGlade: '#b3b375',
-  mantis: '#85bb4c',
-  oliveDrab: '#5e9226',
-  alabaster: '#fcfcfc',
-  aliceBlue: '#f7fbff',
-  manatee: '#a3a9b2',
-  blanchedAlmond: '#ffe8ce',
-  geyser: '#d1d7dd',
-  fairPink: '#f7ebe6',
-  tumbleweed: '#db9a84',
-  pattensBlue: '#F0F5FA',
-  shark: '#292c33',
-  caribbeanGreen: '#4cf18b',
-  royalBlue: '#3b7af2',
-  blumine: '#275692',
-  emerald: '#3dd276',
-  greyser: '#d1d9e4',
-  midnight: '#222e44',
-  eucalypus: '#2aa057',
-  tropicalBlue: '#CAE1F8',
-  zumthor: '#EBF5FF',
-  fruitSalad: '#459d53',
-  lavenderBlue: '#c3e0ff',
-  hoki: '#647fa4',
-  deepSkyBlue: '#01BFFF',
-  ultramarine: '#0a0c78',
-  toryBlue: '#2f3195',
-  blueViolet: '#b233e4',
-  jellyBean: '#497391',
-  aluminium: '#a9aeb8',
-  danube: '#5e8fcc',
-  patternsBlue: '#f4f7fb',
-  spindle: '#b5d0ee',
-  pomegranate: '#f33726',
-  quartz: '#d9e3f5',
-  lavender: '#ebebfc',
-  shipCove: '#8798c2',
-  blueYonder: '#818eb3',
-  zircon: '#f3f7ff',
-  malibu: '#58a7ff',
-  redDamask: '#ca674c',
-  dodgerBlue: '#007aff',
-  indianRed: '#cb6262',
-  pinkishGrey: '#cacaca',
-  solitude: '#ebeff2',
-  persianBlue: '#1D24D8',
-  pastelGreen: '#77D16D',
-  dell: '#467038',
-  stratos: '#000260',
-  rockBlue: '#8e8fb8',
-  scarlet: '#FD3300',
-  tomato: '#F9584F',
-  neonBlue: '#3C71FF',
-  darkOrange: '#ff8d04',
-  chestnutRose: '#cb4c4c',
+
+  rose: '#f5078d', // CONNECTION EVENT HEADER
+  cerulean: '#07b0f5', // CONNECTION EVENT HEADER
+  shark: '#292c33', // BADGE / COLLECTIBLE EVENT HERADER
+
+  tropicalBlue: '#CAE1F8', // CHAT
+  zumthor: '#EBF5FF', // CHAT
+
+  ultramarine: '#0a0c78', // PPN INTRO
+  pomegranate: '#f33726', // PPN INTRO
+  darkOrange: '#ff8d04', // PPN INTRO
+
+  zircon: '#f3f7ff', // SMART WALLET INTRO
+  persianBlue: '#1D24D8', // // SMART WALLET INTRO
+
+  stratos: '#000260', // CHECKBOX
+};
+
+export const accentColors = {
+  keyWalletHeader: '#f9584f',
+  smartWalletHeader: '#3c71ff',
 };
 
 export const brandColors = [
-  baseColors.periwinkle,
   baseColors.sunYellow,
-  baseColors.burningFire,
-  baseColors.brightSkyBlue,
-  baseColors.aquaMarine,
+  baseColors.negative,
 ];
 
 export const UIColors = {
-  primary: baseColors.electricBlue,
-  danger: baseColors.burningFire,
-  disabled: baseColors.mediumGray,
+  danger: baseColors.negative,
   defaultHeaderColor: baseColors.white,
   defaultInputBackgroundColor: baseColors.white,
-  defaultTextColor: baseColors.slateBlack,
-  defaultNavigationColor: baseColors.slateBlack,
-  defaultBackgroundColor: baseColors.snowWhite,
-  defaultBorderColor: 'rgba(0, 0, 0, 0.085)',
-  focusedBorderColor: baseColors.electricBlue,
+  focusedBorderColor: baseColors.primary,
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
   tabShadowColor: 'rgba(128, 128, 128, 0.2)',
-  placeholderTextColor: baseColors.darkGray,
   cardShadowColor: '#EEF3F9',
   actionButtonShadowColor: 'rgba(18, 63, 111, 0.1)',
-  defaultDividerColor: baseColors.mediumLightGray,
   actionButtonBorderColor: 'rgba(255, 255, 255, 0.37)',
   headerContentBorder: 'rgba(255, 255, 255, 0.1)',
   listDivider: 'rgba(25, 16, 91, 0.05)',

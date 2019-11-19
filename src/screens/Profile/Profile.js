@@ -74,15 +74,15 @@ const chat = new ChatService();
 
 const ListWrapper = styled.View`
   padding-bottom: 40px;
-  background-color: ${baseColors.lighterGray};
+  background-color: ${baseColors.surface};
 `;
 
 const ListSeparator = styled.View`
   padding: 20px ${spacing.rhythm}px;
   border-top-width: ${props => props.first ? 0 : '1px'};
   border-bottom-width: 1px;
-  border-color: ${baseColors.lightGray};
-  background-color: ${baseColors.lighterGray};
+  border-color: ${baseColors.border};
+  background-color: ${baseColors.surface};
 `;
 
 const CheckboxText = styled(BaseText)`
@@ -410,7 +410,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleTrackingModal}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.secondaryAccent}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -443,7 +443,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.secondaryAccent}
           avoidKeyboard
         >
           <Wrapper flex={1}>
@@ -460,7 +460,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
+          backgroundColor={baseColors.surface}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -479,7 +479,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
+          backgroundColor={baseColors.surface}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -506,7 +506,7 @@ class Profile extends React.Component<Props, State> {
           title="Phone verification"
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
+          backgroundColor={baseColors.surface}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -528,7 +528,7 @@ class Profile extends React.Component<Props, State> {
           title="Claim tokens"
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
+          backgroundColor={baseColors.surface}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -549,7 +549,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
+          backgroundColor={baseColors.surface}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -573,7 +573,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.secondaryAccent}
         >
           <SettingsModalTitle extraHorizontalSpacing>
             Choose your base currency
@@ -839,7 +839,7 @@ class Profile extends React.Component<Props, State> {
               isVisible={showJoinBetaModal}
               fullScreen
               showHeader
-              backgroundColor={baseColors.snowWhite}
+              backgroundColor={baseColors.surface}
               onModalHidden={this.onJoinBetaModalHidden}
               avoidKeyboard
               title="join beta"

@@ -45,7 +45,7 @@ const PrivateKeyWrapper = styled(Paragraph)`
   padding: 10px;
   border-radius: 12px;
   border-width: 0.5;
-  border-color: ${baseColors.mediumGray};
+  border-color: ${baseColors.border};
   border-style: solid;
 `;
 

@@ -44,7 +44,7 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
 
 // utils
-import { baseColors, fontStyles, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { getProviderDisplayName } from 'utils/exchange';
 
 // models, types
@@ -89,7 +89,7 @@ const ProviderName = styled(BaseText)`
 
 const ProviderStatus = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${props => props.isPending ? baseColors.darkGray : baseColors.jadeGreen};
+  color: ${props => props.isPending ? baseColors.secondaryText : baseColors.positive};
 `;
 
 const DisconnectButton = styled.TouchableOpacity`
@@ -99,7 +99,7 @@ const DisconnectButton = styled.TouchableOpacity`
 
 const DisconnectButtonLabel = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.blueViolet};
+  color: ${baseColors.negative};
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
@@ -223,7 +223,7 @@ class ExchangeInfo extends React.Component<Props, State> {
         }}
         inset={{ bottom: 'never' }}
       >
-        <ScrollWrapper color={UIColors.defaultBackgroundColor}>
+        <ScrollWrapper color={baseColors.surface}>
           {!isEmpty(connectedProviders) &&
           <React.Fragment>
             <SectionTitle>Connected exchanges:</SectionTitle>

@@ -103,10 +103,10 @@ const SettingsPanel = (props: Props) => {
         {children}
         <ButtonGroupAndroid>
           <ButtonAndroid onPress={handleCancel}>
-            <BaseText style={{ textAlign: 'center', color: baseColors.electricBlue, fontSize: 17 }}>CANCEL</BaseText>
+            <BaseText style={{ textAlign: 'center', color: baseColors.primary, fontSize: 17 }}>CANCEL</BaseText>
           </ButtonAndroid>
           <ButtonAndroid onPress={handleOK}>
-            <BaseText style={{ textAlign: 'center', color: baseColors.electricBlue, fontSize: 17 }}>OK</BaseText>
+            <BaseText style={{ textAlign: 'center', color: baseColors.primary, fontSize: 17 }}>OK</BaseText>
           </ButtonAndroid>
         </ButtonGroupAndroid>
       </SettingsPanelAndroid>
@@ -123,11 +123,11 @@ const SettingsPanel = (props: Props) => {
         <ButtonIOS
           onPress={handleCancel}
           style={{ borderRightColor: '#c7c7c7', borderRightWidth: StyleSheet.hairlineWidth }}
-          underlayColor={baseColors.lightGray}
+          underlayColor={baseColors.secondaryAccent}
         >
           <BaseText style={{
             textAlign: 'center',
-            color: baseColors.electricBlue,
+            color: baseColors.primary,
             fontSize: 17,
           }}
           >Cancel
@@ -135,11 +135,11 @@ const SettingsPanel = (props: Props) => {
         </ButtonIOS>
         <ButtonIOS
           onPress={handleOK}
-          underlayColor={baseColors.lightGray}
+          underlayColor={baseColors.secondaryAccent}
         >
           <BaseText style={{
             textAlign: 'center',
-            color: baseColors.electricBlue,
+            color: baseColors.primary,
             fontWeight: '700',
             fontSize: 17,
           }}

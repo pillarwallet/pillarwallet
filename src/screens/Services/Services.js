@@ -35,7 +35,7 @@ type Props = {
 const genericIcon = require('assets/images/tokens/genericToken.png');
 
 const Screen = styled(Container)`
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${baseColors.surface};
 `;
 
 const HeaderWrapper = styled(Wrapper)`
@@ -58,12 +58,12 @@ const ItemDetails = styled.View`
 `;
 
 const ItemTitle = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   ${fontStyles.regular};
 `;
 
 const ItemDescription = styled(BaseText)`
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   ${fontStyles.regular};
 `;
 

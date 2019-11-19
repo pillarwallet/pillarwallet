@@ -34,7 +34,7 @@ const StatusIcon = styled.View`
   height: 8px;
   width: 8px;
   border-radius: 4px;
-  background-color: ${baseColors.fruitSalad};
+  background-color: ${baseColors.positive};
   position: absolute;
   top: 7px;
   left: 7px;
@@ -42,7 +42,7 @@ const StatusIcon = styled.View`
 
 const StatusText = styled(BoldText)`
   ${fontStyles.tiny};
-  color: ${baseColors.fruitSalad};
+  color: ${baseColors.positive};
   letter-spacing: 0.15px;
   margin-top: 2px;
 `;

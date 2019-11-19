@@ -72,10 +72,10 @@ const ActionButtonsWrapper = styled.View`
     ios: '10px',
     android: '30px',
   })};
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
   border-top-width: 1px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
   margin-top: 4px;
 `;
 

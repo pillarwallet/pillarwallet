@@ -50,7 +50,7 @@ const CardImage = styled(CachedImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;
-  background-color: ${baseColors.darkGray};
+  background-color: ${baseColors.accent};
   margin-right: 20px;
 `;
 
@@ -65,12 +65,12 @@ const CardContent = styled.View`
 `;
 
 const CardTitle = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   ${fontStyles.big};
 `;
 
 const CardSubtitle = styled(BaseText)`
-  color: ${baseColors.coolGrey};
+  color: ${baseColors.secondaryText};
   ${fontStyles.medium};
   padding-right: 10%;
 `;
@@ -82,7 +82,7 @@ const TitleWrapper = styled.View`
 `;
 
 const Label = styled(BaseText)`
-  color: ${baseColors.dodgerBlue};
+  color: ${baseColors.primary};
   ${fontStyles.regular};
   text-align: right;
   padding-left: ${spacing.medium}px;

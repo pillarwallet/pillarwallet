@@ -29,7 +29,7 @@ type Props = {
 }
 
 const BadgeWrapper = styled.View`
-  background-color: ${baseColors.pastelGreen};
+  background-color: ${baseColors.positive};
   padding: 3px 8px;
   border-radius: 12px;
   align-self: flex-start;

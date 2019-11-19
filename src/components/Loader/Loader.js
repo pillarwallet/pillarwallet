@@ -49,7 +49,7 @@ const ContentHolder = styled.View`
 
 const MessageText = styled(MediumText)`
   ${fontStyles.large};
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   position: absolute;
   top: 62px;
   left: 0;

@@ -135,17 +135,17 @@ const BalanceWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.large}px;
   width: 100%;
   border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
 `;
 
 const WalletConnectWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.large}px 0;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
   width: 100%;
 `;
 
 const ListHeader = styled(MediumText)`
-  color: ${baseColors.blueYonder};
+  color: ${baseColors.accent};
   ${fontStyles.regular};
   margin: ${spacing.medium}px ${spacing.large}px ${spacing.small}px;
 `;
@@ -154,7 +154,7 @@ const BadgesWrapper = styled.View`
   padding: ${spacing.medium}px 0;
   border-top-width: 1px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
 `;
 
 const EmptyStateWrapper = styled.View`

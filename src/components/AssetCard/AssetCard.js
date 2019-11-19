@@ -98,7 +98,7 @@ const AmountWrapper = styled.View`
 
 const Amount = styled(LightText)`
   ${fontStyles.large};
-  color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
+  color: ${props => props.isListed ? baseColors.white : baseColors.secondaryText};
   margin-right: ${props => props.innerCard ? '4px' : 0};
 `;
 
@@ -111,11 +111,11 @@ const FiatAmount = styled(LightText)`
 
 const Disclaimer = styled(LightText)`
   ${fontStyles.regular};
-  color: ${baseColors.burningFire};
+  color: ${baseColors.negative};
 `;
 
 const ammountTokenStyle = (props) => `
-  color: ${props.isListed ? baseColors.white : baseColors.mediumGray};
+  color: ${props.isListed ? baseColors.white : baseColors.secondaryText};
 `;
 
 const AmountToken = styled(MediumText)`
@@ -155,7 +155,7 @@ const Name = styled(MediumText)`
   ${props => props.innerCard ? fontStyles.giant : fontStyles.large};
   margin-top: ${props => props.innerCard ? '5px' : 0};
   letter-spacing: ${fontTrackings.medium};
-  color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
+  color: ${props => props.isListed ? baseColors.white : baseColors.text};
 `;
 
 class AssetCard extends React.Component<Props, {}> {

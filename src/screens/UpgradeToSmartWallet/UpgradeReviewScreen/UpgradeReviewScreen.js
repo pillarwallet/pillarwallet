@@ -116,7 +116,7 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  color: ${baseColors.fireEngineRed};
+  color: ${baseColors.negative};
   padding-bottom: ${spacing.rhythm}px;
 `;
 

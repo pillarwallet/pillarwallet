@@ -42,7 +42,7 @@ type Props = {
 const Title = styled(MediumText)`
   ${fontStyles.medium};
   text-align: center;
-  color: ${baseColors.midnight};
+  color: #222e44;
   margin-top: 30px;
 `;
 
@@ -73,12 +73,12 @@ const FeatureTextWrapper = styled.View`
 
 const FeatureLabel = styled(MediumText)`
   ${fontStyles.medium};
-  color: ${baseColors.midnight};
+  color: #222e44;
 `;
 
 const FeatureBody = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${baseColors.midnight};
+  color: #222e44;
   opacity: 0.6;
   flex: 1;
 `;

@@ -210,7 +210,7 @@ import { PENDING, REGISTERED } from 'constants/userConstants';
 import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
 
 // utils
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 
@@ -325,7 +325,7 @@ const homeFlow = createStackNavigator({
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => ({ focused }) => {
-  const notificationColor = warningNotification ? baseColors.burningFire : baseColors.sunYellow;
+  const notificationColor = warningNotification ? baseColors.negative : baseColors.sunYellow;
 
   return (
     <View style={{ padding: 4 }}>
@@ -407,7 +407,7 @@ const tabNavigation = createBottomTabNavigator(
     },
   }, {
     tabBarOptions: {
-      activeTintColor: UIColors.primary,
+      activeTintColor: baseColors.primary,
       inactiveTintColor: 'gray',
       activeBackgroundColor: 'white',
       inactiveBackgroundColor: 'white',

@@ -116,7 +116,7 @@ const ButtonWrapper = (props) => {
     return (
       <StyledItemTouchable
         onPress={onPress}
-        underlayColor={baseColors.lightGray}
+        underlayColor={baseColors.secondaryAccent}
         disabled={!onPress || !collapseContent}
       >
         {children}
@@ -179,7 +179,7 @@ export default class CollapsibleListItem extends React.Component<Props> {
               name="chevron-right"
               style={{
                 fontSize: fontSizes.tiny,
-                color: baseColors.coolGrey,
+                color: baseColors.accent,
                 alignSelf: 'center',
               }}
             />

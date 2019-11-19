@@ -82,7 +82,7 @@ const AssetLayoutHolder = styled.View`
 `;
 
 const AssetsLayout = styled.View`
-  background: ${baseColors.lightGray};
+  background: ${baseColors.secondaryAccent};
   height: 100%;
   display: flex;
   flex-direction: row;
@@ -122,7 +122,7 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
           <BaseText
             style={{
               fontSize: fontSizes.medium,
-              color: baseColors.darkGray,
+              color: baseColors.secondaryText,
             }}
           >
             {name}
@@ -159,7 +159,7 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.secondaryAccent}
           scrollOffset={scrollOffset}
         >
           <SettingsModalTitle extraHorizontalSpacing>

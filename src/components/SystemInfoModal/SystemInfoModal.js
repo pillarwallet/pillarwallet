@@ -39,7 +39,7 @@ const LabeledRow = styled.View`
 
 const Label = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   letter-spacing: 0.5;
 `;
 

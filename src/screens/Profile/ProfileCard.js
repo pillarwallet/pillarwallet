@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, brandColors, UIColors, fontSizes, fontStyles } from 'utils/variables';
+import { baseColors, brandColors, fontSizes, fontStyles } from 'utils/variables';
 import { BaseText, BoldText } from 'components/Typography';
 
 type Props = {
@@ -28,9 +28,9 @@ type Props = {
 }
 
 const ProfileCardWrapper = styled.View`
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
   border-radius: 12px;
-  border: 1px solid ${UIColors.defaultBorderColor};
+  border: 1px solid ${baseColors.border};
   width: 100%;
   padding: 20px;
   align-items: center;
@@ -40,7 +40,7 @@ const ProfileCardAvatar = styled.View`
   width: 60px;
   height: 60px;
   background-color: #d8d8d8;
-  border: 1px solid ${UIColors.defaultBorderColor};
+  border: 1px solid ${baseColors.border};
   border-radius: 30px;
   margin-bottom: 10px;
   align-items: center;
@@ -49,18 +49,18 @@ const ProfileCardAvatar = styled.View`
 
 const ProfileCardAvatarText = styled(BoldText)`
   font-size: ${fontSizes.big}px;
-  color: ${baseColors.snowWhite};
+  color: ${baseColors.surface};
 `;
 
 const ProfileCardName = styled(BaseText)`
   ${fontStyles.big};
-  color: ${UIColors.defaultTextColor};
+  color: ${baseColors.text};
   margin-bottom: 10px;
 `;
 
 const ProfileCardEmail = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${UIColors.defaultTextColor};
+  color: ${baseColors.text};
 `;
 
 const ProfileCardBackgroundSquare = styled.View`

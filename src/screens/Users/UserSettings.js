@@ -83,7 +83,7 @@ class UserSettings extends React.PureComponent<Props> {
     return (
       <ListCard
         title={title}
-        titleStyle={{ color: labelColor || baseColors.slateBlack }}
+        titleStyle={{ color: labelColor || baseColors.text }}
         subtitle={body}
         action={action}
         disabled={disabled}

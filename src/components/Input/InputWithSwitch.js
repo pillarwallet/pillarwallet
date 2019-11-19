@@ -31,8 +31,8 @@ const StyledItemView = styled.View`
   align-items: center;
   padding: 9px ${spacing.large}px 0;
   background-color: ${baseColors.white};
-  border-bottom-color: ${({ hasErrors }) => hasErrors ? baseColors.fireEngineRed : baseColors.lightGray};
-  border-top-color: ${({ hasErrors }) => hasErrors ? baseColors.fireEngineRed : baseColors.lightGray};
+  border-bottom-color: ${({ hasErrors }) => hasErrors ? baseColors.negative : baseColors.border};
+  border-top-color: ${({ hasErrors }) => hasErrors ? baseColors.negative : baseColors.border};
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
   border-top-width: ${StyleSheet.hairlineWidth}px;
   height: 60px;
@@ -49,7 +49,7 @@ const ItemLabelHolder = styled.View`
 
 const ItemLabel = styled(MediumText)`
   ${fontStyles.small};
-  color: ${baseColors.coolGrey};
+  color: ${baseColors.secondaryText};
   flex-wrap: wrap;
   width: 100%;
   margin-bottom: 6px;
@@ -57,14 +57,14 @@ const ItemLabel = styled(MediumText)`
 
 const ErrorMessage = styled(BaseText)`
   ${fontStyles.small};
-  color: ${baseColors.fireEngineRed};
+  color: ${baseColors.negative};
   flex-wrap: wrap;
   width: 100%;
   padding: ${spacing.small}px ${spacing.large}px;
 `;
 
 const ItemValue = styled(Input)`
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   font-size: ${fontSizes.medium}px;
   flex-wrap: wrap;
   width:100%;
@@ -73,7 +73,7 @@ const ItemValue = styled(Input)`
 `;
 
 const SelectedOption = styled(BaseText)`
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   ${fontStyles.medium};
   flex-wrap: wrap;
   flex: 1;
@@ -87,7 +87,7 @@ const VerifyView = styled.View`
 `;
 
 const VerifyLabel = styled(BaseText)`
-  color: ${({ isVerified }) => isVerified ? baseColors.eucalypus : baseColors.brightBlue};
+  color: ${({ isVerified }) => isVerified ? baseColors.positive : baseColors.primary};
   ${fontStyles.regular};
   margin: 0 4px 0;
 `;
@@ -245,7 +245,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
             <Icon
               name="check"
               style={{
-                color: baseColors.eucalypus,
+                color: baseColors.positive,
                 fontSize: 8,
                 marginLeft: 4,
               }}
@@ -272,7 +272,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleModal}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.secondaryAccent}
           avoidKeyboard
         >
           <Wrapper flex={1}>

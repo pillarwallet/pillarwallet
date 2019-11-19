@@ -94,7 +94,7 @@ const ListHeaderWrapper = styled.View`
 
 const HeaderTitle = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${baseColors.blueYonder};
+  color: ${baseColors.accent};
 `;
 
 class AssetsList extends React.Component<Props, State> {

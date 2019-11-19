@@ -85,7 +85,7 @@ const HeaderProfileImage = styled(ProfileImage)``;
 
 const HeaderTitle = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${props => props.theme.color || UIColors.defaultTextColor};
+  color: ${props => props.theme.color || baseColors.text};
   text-align: ${props => props.centerText ? 'center' : 'left'};
   margin-top: 2px;
 `;
@@ -152,7 +152,7 @@ const TextButton = styled.TouchableOpacity`
   ${props => props.bordered
     ? `
       border-width: 1px;
-      border-color: ${props.theme.rightActionBorderColor || baseColors.electricBlue};
+      border-color: ${props.theme.rightActionBorderColor || baseColors.primary};
       border-radius: 14px;
       padding: 5px ${responsiveSize(spacing.mediumLarge)}px;
       `
@@ -161,7 +161,7 @@ const TextButton = styled.TouchableOpacity`
 
 const ButtonLabel = styled(BaseText)`
   font-size: ${fontSizes.regular}px;
-  color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
+  color: ${props => props.theme.rightActionLabelColor || baseColors.primary};
 `;
 
 const Indicator = styled.View`
@@ -184,14 +184,14 @@ const profileImageWidth = 24;
 const themes = (backgroundColor?: string = '') => ({
   transparent: {
     backgroundColor: 'transparent',
-    color: baseColors.slateBlack,
+    color: baseColors.text,
     borderBottomColor: 'transparent',
     borderBottomWidth: 0,
-    iconColor: baseColors.slateBlack,
-    rightActionIconColor: baseColors.electricBlue,
-    rightActionLabelColor: baseColors.electricBlue,
-    buttonBorderColor: baseColors.mediumLightGray,
-    buttonLabelColor: baseColors.coolGrey,
+    iconColor: baseColors.text,
+    rightActionIconColor: baseColors.primary,
+    rightActionLabelColor: baseColors.primary,
+    buttonBorderColor: baseColors.border,
+    buttonLabelColor: baseColors.secondaryText,
   },
   light: {
     color: baseColors.white,
@@ -208,19 +208,19 @@ const themes = (backgroundColor?: string = '') => ({
   },
   darkBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: baseColors.slateBlack,
+    borderBottomColor: baseColors.text,
   },
   default: {
     backgroundColor: baseColors.white,
-    color: baseColors.slateBlack,
-    borderBottomColor: baseColors.mediumLightGray,
+    color: baseColors.text,
+    borderBottomColor: baseColors.border,
     borderBottomWidth: 1,
-    iconColor: baseColors.slateBlack,
-    rightActionIconColor: baseColors.electricBlue,
-    rightActionLabelColor: baseColors.electricBlue,
+    iconColor: baseColors.text,
+    rightActionIconColor: baseColors.primary,
+    rightActionLabelColor: baseColors.primary,
     rightActionBorderColor: UIColors.headerButtonBorder,
-    buttonBorderColor: baseColors.mediumLightGray,
-    buttonLabelColor: baseColors.slateBlack,
+    buttonBorderColor: baseColors.border,
+    buttonLabelColor: baseColors.text,
   },
 });
 
@@ -260,7 +260,7 @@ class HeaderBlock extends React.Component<Props> {
             : (
               <BackIcon
                 icon="back"
-                color={theme.iconColor || UIColors.defaultNavigationColor}
+                color={theme.iconColor || baseColors.text}
                 onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
                 fontSize={fontSizes.large}
                 horizontalAlign="flex-start"
@@ -307,7 +307,7 @@ class HeaderBlock extends React.Component<Props> {
         <View style={{ marginRight: -10, ...commonStyle }} key={item.icon}>
           <ActionIcon
             icon={item.icon}
-            color={item.color || theme.rightActionIconColor || UIColors.defaultNavigationColor}
+            color={item.color || theme.rightActionIconColor || baseColors.text}
             onPress={item.onPress}
             fontSize={item.fontSize || fontSizes.large}
             horizontalAlign="flex-start"
@@ -347,7 +347,7 @@ class HeaderBlock extends React.Component<Props> {
         <View style={{ ...wrapperStyle, marginTop: -20, marginBottom: -20 }} key="close">
           <CloseIcon
             icon="close"
-            color={baseColors.slateBlack}
+            color={baseColors.text}
             onPress={() => item.dismiss ? navigation.dismiss() : navigation.goBack()}
             fontSize={fontSizes.regular}
             horizontalAlign="flex-end"

@@ -22,7 +22,7 @@ import styled from 'styled-components/native';
 import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
-import { baseColors, UIColors, fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
 
@@ -76,20 +76,20 @@ type EventLike = {
 
 const themes = {
   default: {
-    backgroundColor: baseColors.lightGray,
+    backgroundColor: baseColors.secondaryAccent,
     borderColor: '#EBEBEB',
     borderWidth: '0',
     borderRadius: '6px',
   },
   white: {
     backgroundColor: baseColors.white,
-    borderColor: baseColors.gallery,
+    borderColor: baseColors.border,
     borderWidth: '1px',
     borderRadius: '4px',
   },
   withOptions: {
-    backgroundColor: baseColors.alabaster,
-    borderColor: baseColors.gallery,
+    backgroundColor: baseColors.tertiary,
+    borderColor: baseColors.border,
     borderWidth: '1px',
     borderRadius: '4px',
   },
@@ -107,7 +107,7 @@ const getTheme = (props: Props) => {
 
 const Label = styled(MediumText)`
   ${fontStyles.small};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   padding-bottom: ${spacing.rhythm / 2}px;
 `;
 
@@ -154,7 +154,7 @@ const TextHolder = styled.View`
 `;
 
 const InnerImageText = styled(BaseText)`
-  color: ${UIColors.placeholderTextColor};
+  color: ${baseColors.secondaryText};
 `;
 
 const OptionSelector = styled.TouchableOpacity`
@@ -167,16 +167,16 @@ const OptionSelector = styled.TouchableOpacity`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: ${baseColors.aliceBlue}
+  background: ${baseColors.tertiary}
   z-index: 2;
   left: 0;
-  border: 1px solid ${props => props.error ? 'tomato' : '#ebebeb'};
+  border: 1px solid ${props => props.error ? baseColors.negative : baseColors.border};
   border-bottom-left-radius: 4px;
   border-top-left-radius: 4px;
 `;
 
 const ErrorMessage = styled(BaseText)`
-  color: tomato;
+  color: ${baseColors.negative};
   display: flex;
   justify-content: flex-end;
   text-align: left;
@@ -191,9 +191,9 @@ const InputField = styled(Input)`
   textAlignVertical: center;
   background: ${props => props.theme.backgroundColor};
   border-radius: ${props => props.theme.borderRadius};
-  color: ${UIColors.defaultTextColor};
+  color: ${baseColors.text};
   border-width: ${props => props.error ? '1px' : props.theme.borderWidth};
-  border-color: ${props => props.error ? 'tomato' : props.theme.borderColor};
+  border-color: ${props => props.error ? baseColors.negative : props.theme.borderColor};
   padding: 0 12px;  
   font-family: ${appFont.medium};
 `;
@@ -282,7 +282,7 @@ class SingleInput extends React.Component<Props, *> {
               style={{
                 fontSize: 8,
                 transform: [{ rotate: '-90deg' }],
-                color: baseColors.electricBlue,
+                color: baseColors.primary,
               }}
             />
             <Icon
@@ -290,7 +290,7 @@ class SingleInput extends React.Component<Props, *> {
               style={{
                 fontSize: 8,
                 transform: [{ rotate: '90deg' }],
-                color: baseColors.electricBlue,
+                color: baseColors.primary,
                 marginTop: 4,
               }}
             />
@@ -337,7 +337,7 @@ class SingleInput extends React.Component<Props, *> {
               backgrounded={!!options.length}
               textAlignVertical="center"
               fontSize={fontSize}
-              placeholderTextColor={baseColors.darkGray}
+              placeholderTextColor={baseColors.secondaryText}
               theme={theme}
             />
             {!!innerImageURI &&
@@ -360,7 +360,7 @@ class SingleInput extends React.Component<Props, *> {
           {outterIcon &&
           <IconButton
             icon="scan"
-            color={baseColors.electricBlue}
+            color={baseColors.primary}
             fontSize={fontSizes.large}
             onPress={onPress}
             iconText={outterIconText}

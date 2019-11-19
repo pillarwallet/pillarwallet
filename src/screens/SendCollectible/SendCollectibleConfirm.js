@@ -17,7 +17,7 @@ import type { CollectibleTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
 import type { Accounts } from 'models/Account';
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { baseColors, fontSizes, UIColors, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
@@ -50,7 +50,7 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
 `;
 
 const LabeledRow = styled.View`
@@ -183,7 +183,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
         <ScrollWrapper
           regularPadding
           disableAutomaticScroll
-          color={UIColors.defaultBackgroundColor}
+          color={baseColors.surface}
         >
           <LabeledRow>
             <Label>Collectible</Label>

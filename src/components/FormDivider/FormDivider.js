@@ -29,11 +29,11 @@ type Props = {
 const FormDividerBackground = styled.View`
   width: 100%;
   padding: 10px;
-  background-color: ${baseColors.lightGray};
+  background-color: ${baseColors.secondaryAccent};
 `;
 
 const FormDividerText = styled(BaseText)`
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
 `;
 
 const FormDivider = (props: Props) => {

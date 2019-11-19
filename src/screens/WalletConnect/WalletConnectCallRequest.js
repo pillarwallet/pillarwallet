@@ -32,7 +32,7 @@ import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import { rejectCallRequestAction } from 'actions/walletConnectActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { spacing, fontSizes, baseColors, UIColors, fontStyles } from 'utils/variables';
+import { spacing, fontSizes, baseColors, fontStyles } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { getBalance } from 'utils/assets';
 import { calculateGasEstimate } from 'services/assets';
@@ -86,7 +86,7 @@ const LabelSub = styled(Label)`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  color: ${baseColors.fireEngineRed};
+  color: ${baseColors.negative};
   padding-bottom: ${spacing.rhythm}px;
 `;
 
@@ -325,7 +325,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         const recipientUsername = getUserName(contact);
 
         body = (
-          <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+          <ScrollWrapper regularPadding color={baseColors.surface}>
             <LabeledRow>
               <Label>Request From</Label>
               <Value>{name}</Value>
@@ -401,7 +401,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         address = params[0]; // eslint-disable-line
         message = params[1]; // eslint-disable-line
         body = (
-          <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+          <ScrollWrapper regularPadding color={baseColors.surface}>
             <LabeledRow>
               <Label>Address</Label>
               <Value>{address}</Value>
@@ -419,7 +419,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         address = params[1]; // eslint-disable-line
         message = utils.toUtf8String(params[0]);
         body = (
-          <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+          <ScrollWrapper regularPadding color={baseColors.surface}>
             <LabeledRow>
               <Label>Address</Label>
               <Value>{address}</Value>
@@ -445,7 +445,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         }}
       >
         {body}
-        <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
+        <Footer keyboardVerticalOffset={40} backgroundColor={baseColors.surface}>
           {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <OptionButton

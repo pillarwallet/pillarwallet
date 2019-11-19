@@ -76,7 +76,7 @@ const DetailsTitle = styled(BaseText)`
 
 const DetailsValue = styled(MediumText)`
   ${fontStyles.big};
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
 `;
 
 const DetailsLine = styled.View`
@@ -89,7 +89,7 @@ const DetailsWrapper = styled.View`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  color: ${baseColors.fireEngineRed};
+  color: ${baseColors.negative};
   padding-bottom: ${spacing.rhythm}px;
 `;
 

@@ -96,7 +96,7 @@ const StyledButton = styled(Button)`
 `;
 
 const Label = styled(BaseText)`
-  color: ${baseColors.blueYonder};
+  color: ${baseColors.accent};
   width: 100%;
   text-align: center;
   margin-bottom: 10px;
@@ -117,7 +117,7 @@ const BackupWordText = styled(BaseText)`
   ${fontStyles.regular};
   margin: 4px 2px;
   align-items: flex-start;
-  color: ${baseColors.mediumGray};
+  color: ${baseColors.secondaryText};
 `;
 
 const ScannerButton = styled.TouchableOpacity`
@@ -127,7 +127,7 @@ const ScannerButton = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled(BaseText)`
-  color: ${baseColors.electricBlue};
+  color: ${baseColors.primary};
   font-size: ${fontSizes.medium}px;
 `;
 
@@ -144,14 +144,14 @@ const ButtonInner = styled.View`
 `;
 
 const ButtonLabel = styled(MediumText)`
-  color: ${props => props.blue ? baseColors.electricBlue : baseColors.white};
+  color: ${props => props.blue ? baseColors.primary : baseColors.white};
   font-size: ${fontSizes.big}px;
   margin-bottom: 2px;
 `;
 
 const ButtonIconArrow = styled(Icon)`
   font-size: ${fontSizes.big}px;
-  color: ${props => props.blue ? baseColors.electricBlue : baseColors.white};
+  color: ${props => props.blue ? baseColors.primary : baseColors.white};
   ${props => props.isOnLeft ? 'margin-right: 5px;' : 'margin-left: 5px;'}
   ${props => props.flip ? 'transform: rotate(180deg);' : ''}
 `;
@@ -296,7 +296,7 @@ class ImportWallet extends React.Component<Props, State> {
             viewWidth={inputWidth}
             errorMessage={tabsInfo[activeTab].errorMessage}
             additionalStyle={{ textAlign: 'center', paddingRight: 0 }}
-            errorMessageStyle={{ textAlign: 'center', color: baseColors.chestnutRose }}
+            errorMessageStyle={{ textAlign: 'center', color: baseColors.negative }}
             onLayout={() => {
               this.privKeyInput._root.focus();
             }}
@@ -343,7 +343,7 @@ class ImportWallet extends React.Component<Props, State> {
           keyboardAvoidance
           viewWidth={inputWidth}
           errorMessage={tabsInfo[activeTab].errorMessage}
-          errorMessageStyle={{ textAlign: 'center', color: baseColors.chestnutRose }}
+          errorMessageStyle={{ textAlign: 'center', color: baseColors.negative }}
           onLayout={() => {
             this.backupPhraseInput._root.focus();
           }}

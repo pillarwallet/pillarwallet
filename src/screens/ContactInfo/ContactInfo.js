@@ -57,7 +57,7 @@ const Footer = styled.View`
 
 const ListItems = styled.View`
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
 `;
 
 export class ContactInfo extends React.Component<Props, State> {

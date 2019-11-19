@@ -21,26 +21,26 @@ import * as React from 'react';
 import { Animated, TouchableHighlight } from 'react-native';
 import { BaseText } from 'components/Typography';
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import Icon from 'components/Icon';
 
 const getBorderColor = (props) => {
   if (props.rounded) {
-    return baseColors.mediumGray;
+    return baseColors.border;
   } else if (props.active) {
     if (props.dark) return baseColors.stratos;
-    return UIColors.primary;
+    return baseColors.primary;
   }
-  return baseColors.mediumGray;
+  return baseColors.border;
 };
 
 const getTickColor = (props) => {
   if (props.rounded) {
-    return baseColors.eucalypus;
+    return baseColors.positive;
   } else if (props.darkCheckbox) {
     return baseColors.white;
   }
-  return baseColors.brightBlue;
+  return baseColors.primary;
 };
 
 const CheckboxBox = styled.View`
@@ -53,7 +53,7 @@ const CheckboxBox = styled.View`
   border-color: ${props => getBorderColor(props)}
   justify-content: center;
   align-items: center;
-  shadow-color: ${baseColors.pigeonPost};
+  shadow-color: ${baseColors.accent};
   background-color: ${props => props.dark && props.active ? baseColors.stratos : 'transparent'};
   ${props => props.rounded ? `background-color: ${baseColors.white}` : ''};
   ${props => props.rounded && props.active
@@ -68,7 +68,7 @@ const CheckboxBox = styled.View`
 
 const CheckboxText = styled(BaseText)`
   ${props => props.small ? fontStyles.regular : fontStyles.medium};
-  color: ${props => props.light ? baseColors.darkGray : baseColors.slateBlack};
+  color: ${props => props.light ? baseColors.secondaryText : baseColors.text};
   flex-wrap: wrap;
 `;
 

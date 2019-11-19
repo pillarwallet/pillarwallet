@@ -44,7 +44,7 @@ const IconButtonWrapper = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled(MediumText)`
-  color: ${baseColors.electricBlue};
+  color: ${baseColors.primary};
   font-size: ${fontSizes.small}px;
 `;
 

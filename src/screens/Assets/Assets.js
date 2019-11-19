@@ -57,7 +57,7 @@ import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstan
 
 // utils
 import { findKeyBasedAccount, getAccountName } from 'utils/accounts';
-import { baseColors } from 'utils/variables';
+import { accentColors, baseColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
@@ -182,7 +182,9 @@ class AssetsScreen extends React.Component<Props, State> {
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
           customHeaderProps: {
-            background: walletType === ACCOUNT_TYPES.KEY_BASED ? baseColors.tomato : baseColors.neonBlue,
+            background: walletType === ACCOUNT_TYPES.KEY_BASED
+              ? accentColors.keyWalletHeader
+              : accentColors.smartWalletHeader,
             light: true,
           },
           customHeaderButtonProps: {},

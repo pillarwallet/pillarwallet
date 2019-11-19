@@ -54,7 +54,7 @@ const TextWrapper = styled.View`
 
 const ExplanationTitle = styled(MediumText)`
   ${fontStyles.big};
-  color: ${baseColors.midnight};
+  color: #222e44;
 `;
 
 const BodyWrapper = styled(BaseText)`
@@ -64,7 +64,7 @@ const BodyWrapper = styled(BaseText)`
 
 const ExplanationBody = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${baseColors.midnight};
+  color: #222e44;
   flex: 1;
 `;
 
@@ -76,7 +76,7 @@ const ExplanationEmoji = styled(Emoji)`
 `;
 
 const Footer = styled.View`
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
   flex-direction: row;
   justify-content: flex-end;
   align-items: flex-start;

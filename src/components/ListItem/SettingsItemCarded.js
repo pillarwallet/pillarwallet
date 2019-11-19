@@ -73,25 +73,25 @@ const CardContent = styled.View`
 `;
 
 const CardTitle = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   font-size: ${fontSizes.big}px;
   line-height: 24px;
 `;
 
 const CardSubtitle = styled(BaseText)`
-  color: ${baseColors.coolGrey};
+  color: ${baseColors.secondaryText};
   ${fontStyles.medium};
 `;
 
 const CheckIcon = styled(Icon)`
   font-size: ${fontSizes.rSmall}px;
-  color: ${baseColors.electricBlue};
+  color: ${baseColors.primary};
   align-self: flex-start;
 `;
 
 const SettingsIcon = styled(Icon)`
   font-size: ${fontSizes.big}px;
-  color: ${baseColors.malibu};
+  color: ${baseColors.primary};
 `;
 
 const IconWrapper = styled.View`
@@ -105,11 +105,11 @@ const CardImage = styled(CachedImage)`
   height: ${iconRadius}px;
   width: ${iconRadius}px;
   border-radius: ${iconRadius / 2}px;
-  background-color: ${baseColors.darkGray};
+  background-color: ${baseColors.accent};
 `;
 const SettingsLabel = styled(MediumText)`
   ${fontStyles.rRegular};
-  color: ${baseColors.malibu};
+  color: ${baseColors.primary};
   margin-top: 4px;
 `;
 
@@ -190,7 +190,7 @@ export const SettingsItemCarded = (props: Props) => {
           justifyContent: 'center',
           flexWrap: 'wrap',
           borderWidth: 2,
-          borderColor: isActive ? baseColors.electricBlue : baseColors.white,
+          borderColor: isActive ? baseColors.primary : baseColors.white,
           borderRadius: 6,
         }}
         onPress={onMainPress}

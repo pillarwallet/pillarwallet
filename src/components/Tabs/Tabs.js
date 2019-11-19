@@ -74,7 +74,7 @@ const TabOuterWrapper = styled.View`
 
 const TabsWrapper = styled.View`
   flex-direction: row;
-  background-color: ${baseColors.pattensBlue};
+  background-color: ${baseColors.border};
   padding: 2px;
   border-radius: 18px;
   height: 36px;
@@ -107,12 +107,12 @@ const TabItemIcon = styled(Icon)`
   font-size: ${fontSizes.regular}px;
   margin-right: 4px;
   margin-top: 2px;
-  color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
+  color: ${props => props.active ? baseColors.text : baseColors.primary};
 `;
 
 const TabItemText = styled(MediumText)`
   font-size: ${fontSizes.regular}px;
-  color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
+  color: ${props => props.active ? baseColors.text : baseColors.primary};
 `;
 
 const ActivityFeedHeader = styled.View`
@@ -146,7 +146,7 @@ const Cover = styled.View`
   top: 0;
   left: 0;
   z-index: -1;
-  background-color: ${props => props.coverColor ? props.coverColor : UIColors.defaultBackgroundColor};
+  background-color: ${props => props.coverColor ? props.coverColor : baseColors.surface};
   height: 30px;
   justify-content: flex-start;
   align-items: center;
@@ -218,7 +218,7 @@ const UnreadBadge = styled.View`
   height: 24px;
   width: 24px;
   border-radius: 12px;
-  background-color: ${baseColors.electricBlue};
+  background-color: ${baseColors.primary};
   position: absolute;
   top: 4px;
   right: 2px;

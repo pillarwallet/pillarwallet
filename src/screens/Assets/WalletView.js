@@ -144,7 +144,7 @@ const ActionsWrapper = styled(Wrapper)`
   margin: 30px 0;
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
   border-top-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
@@ -441,7 +441,7 @@ class WalletView extends React.Component<Props, State> {
           title={insightsTitle}
           insightList={insightList}
           onClose={() => { hideInsight(); }}
-          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.mediumLightGray, height: 160 }}
+          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.border, height: 160 }}
         />
         {blockAssetsView &&
         <DeploymentView

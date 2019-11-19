@@ -24,7 +24,7 @@ import { MediumText } from 'components/Typography';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 
 const WarningBannerBackground = styled.View`
-  background-color: ${baseColors.fireEngineRed};
+  background-color: ${baseColors.negative};
   width: 100%;
   padding: ${props => props.small ? '8px' : '16px'};
   margin-bottom: 20px;

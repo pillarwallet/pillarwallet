@@ -26,7 +26,7 @@ import isEqual from 'lodash.isequal';
 
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
-import { UIColors } from 'utils/variables';
+import { baseColors } from 'utils/variables';
 import { isIphoneX } from 'utils/common';
 
 import { ScrollWrapper } from './Layout';
@@ -42,7 +42,7 @@ type Props = {
 };
 
 export const StyledSafeAreaView = styled(SafeAreaView)`
-  background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
+  background-color: ${props => (props.color ? props.color : baseColors.surface)};
   flex: 1;
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;
@@ -140,7 +140,7 @@ class ContainerWithHeader extends React.Component<Props> {
           <SafeAreaView
             forceInset={{ top: 'never', bottom: 'always', ...inset }}
             style={{
-              backgroundColor: backgroundColor || UIColors.defaultBackgroundColor,
+              backgroundColor: backgroundColor || baseColors.surface,
               width: '100%',
               flexWrap: 'wrap',
             }}

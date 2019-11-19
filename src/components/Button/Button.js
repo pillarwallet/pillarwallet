@@ -24,7 +24,7 @@ import debounce from 'lodash.debounce';
 import { MediumText, BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
-import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 
 type Props = {
@@ -71,75 +71,75 @@ type ButtonNextProps = {
 
 const themes = {
   primary: {
-    background: baseColors.electricBlue,
+    background: baseColors.primary,
     color: baseColors.white,
-    borderColor: UIColors.defaultBorderColor,
+    borderColor: baseColors.border,
     borderWidth: 0,
     shadow: true,
   },
   primaryInverted: {
     background: baseColors.white,
-    color: baseColors.electricBlue,
-    borderColor: baseColors.veryLightBlue,
+    color: baseColors.primary,
+    borderColor: baseColors.secondaryAccent,
     borderWidth: '1px',
   },
   dangerInverted: {
     background: baseColors.white,
-    color: baseColors.burningFire,
-    borderColor: baseColors.dawnPink,
+    color: baseColors.negative,
+    borderColor: baseColors.secondaryAccent,
     borderWidth: '1px',
   },
   secondary: {
     background: baseColors.white,
-    color: baseColors.electricBlue,
-    borderColor: baseColors.electricBlue,
+    color: baseColors.primary,
+    borderColor: baseColors.primary,
     borderWidth: '1px',
   },
   secondaryTransparent: {
     background: 'transparent',
     color: baseColors.white,
-    borderColor: baseColors.electricBlue,
+    borderColor: baseColors.primary,
     borderWidth: '1px',
   },
   secondaryTransparentDisabled: {
     background: 'transparent',
-    color: baseColors.darkGray,
-    borderColor: baseColors.darkGray,
+    color: baseColors.secondaryText,
+    borderColor: baseColors.secondaryText,
     borderWidth: '1px',
     opacity: 0.5,
   },
   secondaryDanger: {
     background: baseColors.white,
-    color: baseColors.fireEngineRed,
-    borderColor: UIColors.defaultBorderColor,
+    color: baseColors.negative,
+    borderColor: baseColors.border,
     borderWidth: 0,
   },
   danger: {
-    background: baseColors.fireEngineRed,
+    background: baseColors.negative,
     color: baseColors.white,
-    borderColor: UIColors.defaultBorderColor,
+    borderColor: baseColors.border,
     borderWidth: 0,
   },
   dark: {
-    background: baseColors.darkGray,
+    background: baseColors.accent,
     color: baseColors.white,
-    borderColor: baseColors.darkGray,
+    borderColor: baseColors.accent,
     borderWidth: 0,
   },
   disabled: {
-    background: baseColors.lightGray,
-    color: baseColors.darkGray,
-    borderColor: UIColors.defaultBorderColor,
+    background: baseColors.secondaryAccent,
+    color: baseColors.secondaryText,
+    borderColor: baseColors.border,
     borderWidth: 0,
   },
   disabledTransparent: {
-    background: baseColors.electricBlue,
+    background: baseColors.primary,
     color: baseColors.white,
     opacity: 0.5,
   },
   squarePrimary: {
     background: 'transparent',
-    color: baseColors.electricBlue,
+    color: baseColors.primary,
     borderColor: 'transparent',
     borderWidth: 0,
     flexDirection: 'column',
@@ -148,7 +148,7 @@ const themes = {
   },
   squareDanger: {
     background: 'transparent',
-    color: baseColors.burningFire,
+    color: baseColors.negative,
     borderColor: 'transparent',
     borderWidth: 0,
     flexDirection: 'column',
@@ -248,9 +248,9 @@ const ButtonTextRegular = styled(BaseText)`
 
 const ButtonMiniWrapper = styled(NBButton)`
   padding: 10px 20px;
-  background-color: ${baseColors.electricBlue};
+  background-color: ${baseColors.primary};
   border-radius: 17;
-  box-shadow: 0px .5px .5px ${baseColors.electricBlue};
+  box-shadow: 0px .5px .5px ${baseColors.primary};
   height: 34px;
   width: auto;
 `;
@@ -265,7 +265,7 @@ const ButtonNextWrapper = styled.TouchableOpacity`
   width: ${responsiveSize(70)}px;
   height: ${responsiveSize(70)}px;
   border-radius: 4px;
-  background-color: ${props => props.disabled ? baseColors.lightGray : baseColors.electricBlue};
+  background-color: ${props => props.disabled ? baseColors.secondaryAccent : baseColors.primary};
   align-items: center;
   justify-content: center;
 `;

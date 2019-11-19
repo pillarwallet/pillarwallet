@@ -37,7 +37,7 @@ const HideButtonWrapper = styled.TouchableOpacity`
 `;
 
 const HideButtonLabel = styled(BaseText)`
-  color: ${baseColors.burningFire};
+  color: ${baseColors.negative};
   font-size: ${props => props.expanded ? fontSizes.regular : fontSizes.small}px;
   margin-top: 8px;
   opacity: ${props => props.disabled ? 0.5 : 1}
@@ -50,7 +50,7 @@ const HideAssetButton = (props: Props) => {
       <Icon
         name="turn-off"
         style={{
-          color: baseColors.burningFire,
+          color: baseColors.negative,
           fontSize: expanded ? fontSizes.big : fontSizes.medium,
           opacity: disabled ? 0.5 : 1,
         }}

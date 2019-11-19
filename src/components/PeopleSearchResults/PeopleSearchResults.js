@@ -45,11 +45,11 @@ const ContactCardList = styled.FlatList`
 `;
 
 const LocalContacts = styled.View`
-  background-color: ${baseColors.lighterGray};
+  background-color: ${baseColors.surface};
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-style: solid;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
 `;
 
 const LocalContactsScrollView = styled.ScrollView`
@@ -72,7 +72,7 @@ const LocalContactsItem = styled.TouchableOpacity`
 
 const LocalContactsItemName = styled(BaseText)`
   ${fontStyles.small};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   padding: 0 4px;
   margin-top: 3px;
 `;

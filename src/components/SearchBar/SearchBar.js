@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes, appFont, spacing } from 'utils/variables';
+import { baseColors, fontSizes, appFont, spacing } from 'utils/variables';
 import { Animated, Dimensions, Keyboard } from 'react-native';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
@@ -55,7 +55,7 @@ const InputField = styled.TextInput`
   flex: 1;
   height: 42px;
   padding-left: 14px;
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   font-size: ${fontSizes.regular}px;
   font-family: ${appFont.regular};
 `;
@@ -195,7 +195,7 @@ class SearchBar extends React.Component<Props, State> {
         <Animated.View
           style={{
             ...animatedInputFieldStyles,
-            borderColor: isFocused ? UIColors.focusedBorderColor : baseColors.solitude,
+            borderColor: isFocused ? baseColors.primary : baseColors.tertiary,
             width: animShrink.interpolate({
               inputRange: [0, 1],
               outputRange: ['0%', '1%'],
@@ -210,7 +210,7 @@ class SearchBar extends React.Component<Props, State> {
             onBlur={this.handleBlur}
             value={value}
             placeholder={placeholder}
-            placeholderTextColor={UIColors.placeholderTextColor}
+            placeholderTextColor={baseColors.secondaryText}
             underlineColorAndroid="transparent"
             autoCorrect={false}
             innerRef={inputRef}
@@ -221,14 +221,14 @@ class SearchBar extends React.Component<Props, State> {
             iconStyle={{
               width: 24,
               height: 24,
-              color: baseColors.electricBlue,
+              color: baseColors.primary,
               fontSize: 24,
             }}
           />
         </Animated.View>
         {(isFocused || !!value || forceShowCloseButton) &&
         <CancelButton onPress={customCloseAction || this.handleCancel}>
-          <BaseText style={{ color: baseColors.electricBlue }}>Close</BaseText>
+          <BaseText style={{ color: baseColors.primary }}>Close</BaseText>
         </CancelButton>
         }
       </SearchHolder>

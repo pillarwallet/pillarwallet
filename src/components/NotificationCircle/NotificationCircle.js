@@ -32,7 +32,7 @@ const NotificationCircleOuter = styled.View`
   width: 20px;
   height: 20px;
   border-radius: 10px;
-  background: ${props => props.gray ? baseColors.mediumGray : baseColors.sunYellow};
+  background: ${props => props.gray ? baseColors.tertiary : baseColors.sunYellow};
   align-items: center;
   justify-content: center;
 `;

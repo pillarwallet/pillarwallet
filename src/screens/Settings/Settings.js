@@ -496,7 +496,7 @@ class Settings extends React.Component<Props, State> {
           title="Claim tokens"
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
+          backgroundColor={baseColors.surface}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -519,7 +519,7 @@ class Settings extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.surface}
         >
           <SettingsModalTitle extraHorizontalSpacing>
             Choose your base currency
@@ -537,7 +537,7 @@ class Settings extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={() => this.setState({ visibleModal: null })}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.surface}
           avoidKeyboard
           title="Usage analytics"
         >
@@ -567,7 +567,7 @@ class Settings extends React.Component<Props, State> {
           isVisible={visibleModal === 'joinBeta'}
           fullScreen
           showHeader
-          backgroundColor={baseColors.snowWhite}
+          backgroundColor={baseColors.surface}
           onModalHidden={this.handleJoinBetaModalClose}
           avoidKeyboard
           title="Smart Wallet Early Access"
@@ -596,7 +596,7 @@ class Settings extends React.Component<Props, State> {
           isVisible={visibleModal === 'leaveBeta'}
           fullScreen
           showHeader
-          backgroundColor={baseColors.snowWhite}
+          backgroundColor={baseColors.surface}
           onModalHidden={this.handleLeaveBetaModalClose}
           avoidKeyboard
           title="Leaving Early Access program"

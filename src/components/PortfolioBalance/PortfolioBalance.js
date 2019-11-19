@@ -28,7 +28,7 @@ import type {
 import { BaseText } from 'components/Typography';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { formatFiat } from 'utils/common';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -59,7 +59,7 @@ class PortfolioBalance extends React.PureComponent<Props> {
       <View style={style}>
         {!!label &&
         <BaseText style={{
-          color: baseColors.darkGray,
+          color: baseColors.secondaryText,
           fontSize: fontSizes.medium,
           paddingTop: 10,
         }}
@@ -67,7 +67,7 @@ class PortfolioBalance extends React.PureComponent<Props> {
           {label}
         </BaseText>}
         <BaseText style={{
-          color: UIColors.defaultTextColor,
+          color: baseColors.text,
           fontSize: fontSizes.giant,
         }}
         >

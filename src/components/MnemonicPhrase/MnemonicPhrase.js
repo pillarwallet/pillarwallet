@@ -30,7 +30,7 @@ const MnemonicPhraseWrapper = styled.View`
   margin: 20px 0;
   padding: 20px 10px 10px;
   width: 100%;
-  background-color: ${baseColors.electricBlue};
+  background-color: ${baseColors.primary};
   border-radius: 12px;
 `;
 

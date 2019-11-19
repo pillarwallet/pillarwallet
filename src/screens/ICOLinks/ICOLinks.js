@@ -41,7 +41,7 @@ const StyledFlatList = styled.FlatList`
   margin-bottom: ${spacing.rhythm}px;
   border-top-width: 1px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.lightGray};
+  border-color: ${baseColors.border};
 `;
 
 const ListRow = styled(View)`
@@ -58,7 +58,7 @@ const ListRowItem = styled(BaseText)`
   width: 50%;
   padding-right: ${spacing.rhythm}px;
   letter-spacing: ${fontTrackings.tiny}px;
-  color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
+  color: ${props => props.label ? baseColors.text : baseColors.secondaryText};
 `;
 
 const SeparatorWrapper = styled(View)`
@@ -71,7 +71,7 @@ const SeparatorWrapper = styled(View)`
 const Separator = styled(View)`
   width: 100%;
   height: 1px;
-  background-color: ${baseColors.lightGray}
+  background-color: ${baseColors.secondaryAccent}
 `;
 
 class ICOLinks extends React.Component<Props, {}> {
@@ -98,7 +98,7 @@ class ICOLinks extends React.Component<Props, {}> {
               name="chevron-right"
               style={{
                 fontSize: fontSizes.tiny,
-                color: baseColors.coolGrey,
+                color: baseColors.secondaryText,
               }}
             />
           </ListRow>
@@ -108,7 +108,7 @@ class ICOLinks extends React.Component<Props, {}> {
     return (
       <TouchableOpacity
         onPress={() => this.openLink(link.url)}
-        underlayColor={baseColors.lightGray}
+        underlayColor={baseColors.secondaryAccent}
       >
         <ListRow>
           <ListRowItem label>
@@ -118,7 +118,7 @@ class ICOLinks extends React.Component<Props, {}> {
             name="chevron-right"
             style={{
               fontSize: fontSizes.tiny,
-              color: baseColors.coolGrey,
+              color: baseColors.secondaryText,
             }}
           />
         </ListRow>

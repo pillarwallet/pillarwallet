@@ -51,7 +51,6 @@ import {
   baseColors,
   fontStyles,
   spacing,
-  UIColors,
   fontSizes,
 } from 'utils/variables';
 import {
@@ -119,17 +118,17 @@ const BalanceWrapper = styled.View`
 
 const ValueInFiat = styled(BaseText)`
   font-size: ${fontSizes.regular}px;
-  color: ${baseColors.coolGrey};
+  color: ${baseColors.secondaryText};
 `;
 
 const SubtitleView = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${baseColors.surface};
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
   padding: 30px ${spacing.rhythm}px 25px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
 `;
 
 const UnsettledTransactionsList = styled.SectionList`
@@ -144,7 +143,7 @@ const SectionHeaderWrapper = styled.View`
 
 const SectionHeader = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
 `;
 
 class SettleBalance extends React.Component<Props, State> {
@@ -193,7 +192,7 @@ class SettleBalance extends React.Component<Props, State> {
         onPress={() => this.toggleItemToTransfer(assetInfo)}
         label={nameOrAddress}
         avatarUrl={itemImage}
-        valueColor={baseColors.jadeGreen}
+        valueColor={baseColors.positive}
         imageUpdateTimeStamp={contact.lastUpdateTime || 0}
         customAddon={
           <AddonWrapper>

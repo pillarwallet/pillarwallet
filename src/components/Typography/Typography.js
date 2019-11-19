@@ -18,30 +18,30 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontStyles, appFont } from 'utils/variables';
+import { baseColors, fontStyles, appFont } from 'utils/variables';
 
 export const BaseText = styled.Text`
   font-family: ${appFont.regular};
   text-align-vertical: center;
-  color: ${UIColors.defaultTextColor};
+  color: ${baseColors.text};
 `;
 
 export const BoldText = styled(BaseText)`
   font-family: ${appFont.bold};
   text-align-vertical: center;
-  color: ${UIColors.defaultTextColor};
+  color: ${baseColors.text};
 `;
 
 export const LightText = styled(BaseText)`
   font-family: ${appFont.light};
   text-align-vertical: center;
-  color: ${UIColors.defaultTextColor};
+  color: ${baseColors.text};
 `;
 
 export const MediumText = styled(BaseText)`
   font-family: ${appFont.medium};
   text-align-vertical: center;
-  color: ${UIColors.defaultTextColor};
+  color: ${baseColors.text};
 `;
 
 export const Title = styled(BaseText)`
@@ -53,13 +53,13 @@ export const Title = styled(BaseText)`
 
 export const SubTitle = styled(BaseText)`
  ${fontStyles.big};
-  color: ${UIColors.primary};
+  color: ${baseColors.primary};
   text-align: ${props => (props.align || 'left')};
   margin: ${props => props.margin || '0 0 20px'};
 `;
 
 const subheadingStyle = `
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   letter-spacing: 0.4;
 `;
 
@@ -76,19 +76,19 @@ export const SubHeadingMedium = styled(MediumText)`
 export const Paragraph = styled(BaseText)`
   ${props => props.small ? fontStyles.medium : fontStyles.big};
   margin-bottom: ${props => props.small ? '5px' : '10px'};
-  color: ${props => props.light ? baseColors.darkGray : UIColors.defaultTextColor};
+  color: ${props => props.light ? baseColors.secondaryText : baseColors.text};
   text-align: ${props => props.center ? 'center' : 'left'};
   flex-wrap: wrap;
 `;
 
 export const TextLink = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${UIColors.primary};
+  color: ${baseColors.primary};
 `;
 
 export const Label = styled(MediumText)`
   ${props => props.small ? fontStyles.medium : fontStyles.regular}px;
-  color: ${props => props.color || baseColors.darkGray};
+  color: ${props => props.color || baseColors.secondaryText};
 `;
 
 export const HelpText = styled(BaseText)`

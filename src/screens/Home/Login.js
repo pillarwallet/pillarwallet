@@ -58,7 +58,7 @@ const Description = styled(Paragraph)`
 
 const DescriptionWarning = styled(MediumText)`
   ${fontStyles.medium};
-  color: ${baseColors.burningFire};
+  color: ${baseColors.negative};
 `;
 
 export const LoadingSpinner = styled(Spinner)`

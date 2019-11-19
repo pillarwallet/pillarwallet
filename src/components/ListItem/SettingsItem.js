@@ -60,7 +60,7 @@ const ItemLabelHolder = styled.View`
     ? `
     border-bottom-width: ${StyleSheet.hairlineWidth}px;
     border-top-width: ${StyleSheet.hairlineWidth}px;
-    border-color: ${baseColors.mediumLightGray};
+    border-color: ${baseColors.border};
     `
     : ''}
 `;
@@ -86,13 +86,13 @@ const BadgeText = styled(BaseText)`
 `;
 
 const ItemLabel = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   ${fontStyles.big};
 `;
 
 const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.medium}px;
-  color: ${baseColors.coolGrey};
+  color: ${baseColors.secondaryText};
   flex-wrap: wrap;
   text-align: center;
   margin-left: ${spacing.medium}px
@@ -103,7 +103,7 @@ const ItemValue = styled(BaseText)`
 const WarningIcon = styled(Icon)`
   font-size: ${fontSizes.big}px;
   margin-right: 10px;
-  color: ${baseColors.burningFire};
+  color: ${baseColors.negative};
 `;
 
 const ListAddon = styled.View`
@@ -131,7 +131,7 @@ const ButtonWrapper = ({ onPress, children }) => {
   return (
     <StyledItemTouchable
       onPress={onPress}
-      underlayColor={baseColors.lightGray}
+      underlayColor={baseColors.secondaryAccent}
     >
       {children}
     </StyledItemTouchable>

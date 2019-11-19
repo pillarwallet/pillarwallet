@@ -29,7 +29,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
-import { baseColors, UIColors } from 'utils/variables';
+import { baseColors } from 'utils/variables';
 import {
   syncContactAction,
   disconnectContactAction,
@@ -77,9 +77,9 @@ const CircleButtonsWrapper = styled.View`
     android: '0px',
   })};
   padding-bottom: 30px;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
   border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
   justify-content: center;
   align-items: center;
   flex-direction: row;
@@ -90,7 +90,7 @@ const EmptyStateWrapper = styled.View`
 `;
 
 const ContentWrapper = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${baseColors.surface};
   padding-top: ${Platform.select({
     ios: '25px',
     android: '19px',
@@ -396,7 +396,7 @@ class Contact extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={isAccepted ? baseColors.white : UIColors.defaultBackgroundColor}
+        backgroundColor={isAccepted ? baseColors.white : baseColors.surface}
         inset={{ bottom: 'never' }}
         headerProps={{ centerItems: [{ title: contactUsername }] }}
       >
@@ -419,7 +419,7 @@ class Contact extends React.Component<Props, State> {
                 borderWidth={4}
                 initialsSize={48}
                 diameter={184}
-                style={{ backgroundColor: baseColors.geyser }}
+                style={{ backgroundColor: baseColors.userAvatar }}
                 imageUpdateTimeStamp={displayContact.lastUpdateTime}
               />
             </ProfileImageWrapper>

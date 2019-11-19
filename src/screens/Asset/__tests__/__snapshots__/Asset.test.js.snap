@@ -13,7 +13,7 @@ exports[`Asset renders the Asset correctly 1`] = `
       Array [
         Object {
           "backgroundColor": "#ffffff",
-          "borderBottomColor": "#EDEDED",
+          "borderBottomColor": "#ededed",
           "borderBottomWidth": 1,
           "width": "100%",
         },
@@ -23,12 +23,12 @@ exports[`Asset renders the Asset correctly 1`] = `
     theme={
       Object {
         "backgroundColor": "#ffffff",
-        "borderBottomColor": "#EDEDED",
+        "borderBottomColor": "#ededed",
         "borderBottomWidth": 1,
-        "buttonBorderColor": "#EDEDED",
-        "buttonLabelColor": "#0A1427",
-        "color": "#0A1427",
-        "iconColor": "#0A1427",
+        "buttonBorderColor": "#ededed",
+        "buttonLabelColor": "#0a1427",
+        "color": "#0a1427",
+        "iconColor": "#0a1427",
         "rightActionBorderColor": "rgba(0, 122, 255, 0.05)",
         "rightActionIconColor": "#007AFF",
         "rightActionLabelColor": "#007AFF",
@@ -123,7 +123,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                 name="back"
                 style={
                   Object {
-                    "color": "#0A1427",
+                    "color": "#0a1427",
                     "fontSize": 24,
                     "marginBottom": undefined,
                     "marginLeft": undefined,
@@ -844,19 +844,19 @@ exports[`Asset renders the Asset correctly 1`] = `
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#0a1427",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#0a1427",
                       "fontFamily": "EuclidCircularB-Medium",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
+                        "color": "#0a1427",
                         "fontSize": 36,
                         "lineHeight": 54,
                         "textAlign": "center",
@@ -884,13 +884,13 @@ exports[`Asset renders the Asset correctly 1`] = `
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#0a1427",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
+                      "color": "#8b939e",
                       "fontSize": 12,
                       "lineHeight": 18,
                       "textAlign": "center",
@@ -910,7 +910,7 @@ exports[`Asset renders the Asset correctly 1`] = `
               Object {
                 "backgroundColor": "#fafafa",
                 "borderBottomWidth": 1,
-                "borderColor": "#EDEDED",
+                "borderColor": "#ededed",
                 "borderTopWidth": 1,
                 "flexBasis": 0,
                 "flexGrow": 1,
@@ -1040,7 +1040,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#0a1427",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
@@ -1158,17 +1158,17 @@ exports[`Asset renders the Asset correctly 1`] = `
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#0a1427",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#C6CACD",
+                        "color": "#007AFF",
                         "fontSize": 16,
                         "letterSpacing": 0.1,
                         "marginTop": -6,
-                        "opacity": 0.7,
+                        "opacity": 0.5,
                         "textAlign": "center",
                       },
                       undefined,
@@ -1283,7 +1283,7 @@ exports[`Asset renders the Asset correctly 1`] = `
           }
         >
           <View
-            bgColor="#f5f5f5"
+            bgColor="#fafafa"
             style={
               Array [
                 Object {
@@ -1429,13 +1429,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                           style={
                             Array [
                               Object {
-                                "color": "#0A1427",
+                                "color": "#0a1427",
                                 "fontFamily": "EuclidCircularB-Regular",
                                 "textAlignVertical": "center",
                               },
                               Array [
                                 Object {
-                                  "color": "#0A1427",
+                                  "color": "#0a1427",
                                   "fontFamily": "EuclidCircularB-Medium",
                                   "textAlignVertical": "center",
                                 },
@@ -1516,7 +1516,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                             name="close"
                             style={
                               Object {
-                                "color": "#0A1427",
+                                "color": "#0a1427",
                                 "fontSize": 16,
                                 "marginBottom": undefined,
                                 "marginLeft": undefined,
@@ -1858,7 +1858,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                         style={
                           Array [
                             Object {
-                              "color": "#0A1427",
+                              "color": "#0a1427",
                               "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
@@ -1880,7 +1880,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                       style={
                         Array [
                           Object {
-                            "color": "#0A1427",
+                            "color": "#0a1427",
                             "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
@@ -1944,7 +1944,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                           "alignItems": "center",
                           "alignSelf": "auto",
                           "backgroundColor": "#007AFF",
-                          "borderColor": "rgba(0, 0, 0, 0.085)",
+                          "borderColor": "#ededed",
                           "borderRadius": 6,
                           "borderStyle": "solid",
                           "borderWidth": 0,
@@ -1976,13 +1976,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                         style={
                           Array [
                             Object {
-                              "color": "#0A1427",
+                              "color": "#0a1427",
                               "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
-                                "color": "#0A1427",
+                                "color": "#0a1427",
                                 "fontFamily": "EuclidCircularB-Medium",
                                 "textAlignVertical": "center",
                               },
@@ -2000,7 +2000,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                         theme={
                           Object {
                             "background": "#007AFF",
-                            "borderColor": "rgba(0, 0, 0, 0.085)",
+                            "borderColor": "#ededed",
                             "borderWidth": 0,
                             "color": "#ffffff",
                             "shadow": true,
@@ -2029,14 +2029,14 @@ exports[`Asset renders the Asset correctly 1`] = `
             </View>
           </View>
           <View
-            borderColor="#2f86eb"
+            borderColor="#007AFF"
             opacity={0}
             style={
               Array [
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#ffffff",
-                  "borderColor": "#2f86eb",
+                  "borderColor": "#007AFF",
                   "borderLeftWidth": 10,
                   "borderStyle": "solid",
                   "elevation": 9,
@@ -2117,7 +2117,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                     name="info-circle"
                     style={
                       Object {
-                        "color": "#2f86eb",
+                        "color": "#007AFF",
                         "fontSize": 24,
                       }
                     }
@@ -2142,13 +2142,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                       style={
                         Array [
                           Object {
-                            "color": "#0A1427",
+                            "color": "#0a1427",
                             "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
-                              "color": "#8B939E",
+                              "color": "#8b939e",
                               "fontSize": 14,
                               "lineHeight": 22,
                             },
@@ -2192,7 +2192,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                         "alignItems": "center",
                         "alignSelf": "center",
                         "borderWidth": 0,
-                        "color": "#C6CACD",
+                        "color": "#ebf0f5",
                         "fontSize": undefined,
                         "justifyContent": "center",
                         "marginBottom": undefined,
@@ -2394,7 +2394,7 @@ exports[`Asset renders the Asset correctly 1`] = `
           }
         >
           <View
-            bgColor="#f5f5f5"
+            bgColor="#fafafa"
             style={
               Array [
                 Object {
@@ -2540,13 +2540,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                           style={
                             Array [
                               Object {
-                                "color": "#0A1427",
+                                "color": "#0a1427",
                                 "fontFamily": "EuclidCircularB-Regular",
                                 "textAlignVertical": "center",
                               },
                               Array [
                                 Object {
-                                  "color": "#0A1427",
+                                  "color": "#0a1427",
                                   "fontFamily": "EuclidCircularB-Medium",
                                   "textAlignVertical": "center",
                                 },
@@ -2625,7 +2625,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                             name="close"
                             style={
                               Object {
-                                "color": "#0A1427",
+                                "color": "#0a1427",
                                 "fontSize": 16,
                                 "marginBottom": undefined,
                                 "marginLeft": undefined,
@@ -2657,13 +2657,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                   style={
                     Array [
                       Object {
-                        "color": "#0A1427",
+                        "color": "#0a1427",
                         "fontFamily": "EuclidCircularB-Regular",
                         "textAlignVertical": "center",
                       },
                       Array [
                         Object {
-                          "color": "#8B939E",
+                          "color": "#8b939e",
                           "flexWrap": "wrap",
                           "fontSize": 16,
                           "lineHeight": 24,
@@ -2697,14 +2697,14 @@ exports[`Asset renders the Asset correctly 1`] = `
             </View>
           </View>
           <View
-            borderColor="#2f86eb"
+            borderColor="#007AFF"
             opacity={0}
             style={
               Array [
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#ffffff",
-                  "borderColor": "#2f86eb",
+                  "borderColor": "#007AFF",
                   "borderLeftWidth": 10,
                   "borderStyle": "solid",
                   "elevation": 9,
@@ -2785,7 +2785,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                     name="info-circle"
                     style={
                       Object {
-                        "color": "#2f86eb",
+                        "color": "#007AFF",
                         "fontSize": 24,
                       }
                     }
@@ -2810,13 +2810,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                       style={
                         Array [
                           Object {
-                            "color": "#0A1427",
+                            "color": "#0a1427",
                             "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
-                              "color": "#8B939E",
+                              "color": "#8b939e",
                               "fontSize": 14,
                               "lineHeight": 22,
                             },
@@ -2860,7 +2860,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                         "alignItems": "center",
                         "alignSelf": "center",
                         "borderWidth": 0,
-                        "color": "#C6CACD",
+                        "color": "#ebf0f5",
                         "fontSize": undefined,
                         "justifyContent": "center",
                         "marginBottom": undefined,

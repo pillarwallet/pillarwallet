@@ -57,20 +57,20 @@ const getEventInfo = (eventType, eventStatus) => {
     if (isConfirmed) {
       return {
         title: 'Success',
-        background: baseColors.freshEucalyptus,
+        background: baseColors.positive,
         iconName: 'tick-circle',
       };
     }
     if (isFailed) {
       return {
         title: 'Failed',
-        background: baseColors.burningFire,
+        background: baseColors.negative,
         iconName: 'warning-circle',
       };
     }
     return {
       title: 'Pending',
-      background: baseColors.burningFire,
+      background: baseColors.negative,
       iconName: 'pending-circle',
     };
   }
@@ -105,7 +105,7 @@ const getEventInfo = (eventType, eventStatus) => {
 
   return {
     title: 'Requested',
-    background: baseColors.electricBlue,
+    background: baseColors.primary,
     iconName: 'connection-circle',
   };
 };
@@ -167,7 +167,7 @@ const ImageTouchable = styled.TouchableOpacity`
   margin-top: 12px;
   justify-content: center;
   align-items: center;
-  background-color: ${baseColors.lightGray};
+  background-color: ${baseColors.secondaryAccent};
 `;
 
 const EventHeader = (props: Props) => {

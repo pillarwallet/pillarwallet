@@ -9,13 +9,13 @@ exports[`Modal contact info should render modal correctly 1`] = `
     style={
       Array [
         Object {
-          "color": "#0A1427",
+          "color": "#0a1427",
           "fontFamily": "EuclidCircularB-Regular",
           "textAlignVertical": "center",
         },
         Array [
           Object {
-            "color": "#8B939E",
+            "color": "#8b939e",
             "flexWrap": "wrap",
             "fontSize": 16,
             "lineHeight": 24,
@@ -337,13 +337,13 @@ exports[`Modal contact info should render modal correctly 1`] = `
           style={
             Array [
               Object {
-                "color": "#0A1427",
+                "color": "#0a1427",
                 "fontFamily": "EuclidCircularB-Regular",
                 "textAlignVertical": "center",
               },
               Array [
                 Object {
-                  "color": "#8B939E",
+                  "color": "#8b939e",
                   "flexWrap": "wrap",
                   "fontSize": 16,
                   "lineHeight": 24,

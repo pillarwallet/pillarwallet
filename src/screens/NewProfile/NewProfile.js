@@ -75,12 +75,12 @@ const StyledWrapper = styled.View`
 
 const CheckboxText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.coolGrey};
+  color: ${baseColors.secondaryText};
 `;
 
 const StyledTextLink = styled(TextLink)`
   ${fontStyles.regular};
-  color: ${baseColors.rockBlue};
+  color: ${baseColors.accent};
 `;
 
 const formStructure = t.struct({
@@ -226,7 +226,7 @@ class NewProfile extends React.Component<Props, State> {
             config: {
               isLoading: { $set: false },
               statusIcon: { $set: 'close' },
-              statusIconColor: { $set: baseColors.fireEngineRed },
+              statusIconColor: { $set: baseColors.negative },
             },
           },
         },
@@ -255,7 +255,7 @@ class NewProfile extends React.Component<Props, State> {
             config: {
               isLoading: { $set: false },
               statusIcon: { $set: 'check' },
-              statusIconColor: { $set: baseColors.freshEucalyptus },
+              statusIconColor: { $set: baseColors.positive },
             },
           },
         },

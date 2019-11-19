@@ -59,7 +59,7 @@ const CountdownWrapper = styled(MediumText)`
 const CountdownDigits = styled(MediumText)`
   letter-spacing: ${fontTrackings.tiny};
   font-size: ${props => props.fontSize ? props.fontSize : fontSizes.regular}px;
-  color: ${props => props.fontColor ? props.fontColor : baseColors.slateBlack};
+  color: ${props => props.fontColor ? props.fontColor : baseColors.text};
 `;
 
 class Countdown extends React.Component<Props, State> {

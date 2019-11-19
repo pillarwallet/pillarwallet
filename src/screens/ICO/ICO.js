@@ -57,14 +57,14 @@ const StyledFlatList = styled.FlatList`
   margin-bottom: ${spacing.rhythm}px;
   border-top-width: 1px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.lightGray};
+  border-color: ${baseColors.border};
 `;
 
 const ContactsRow = styled(View)`
   margin-bottom: ${spacing.rhythm}px;
   border-top-width: 1px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.lightGray};
+  border-color: ${baseColors.border};
   width: 100%;
   padding: 10px ${spacing.rhythm / 2}px 10px ${spacing.rhythm}px;
   flex-direction: row;
@@ -86,7 +86,7 @@ const ListRowItem = styled(BaseText)`
   width: 50%;
   padding-right: ${spacing.rhythm}px;
   letter-spacing: ${fontTrackings.tiny}px;
-  color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
+  color: ${props => props.label ? baseColors.text : baseColors.secondaryText};
   ${fontStyles.medium};
 `;
 
@@ -100,7 +100,7 @@ const SeparatorWrapper = styled(View)`
 const Separator = styled(View)`
   width: 100%;
   height: 1px;
-  background-color: ${baseColors.lightGray}
+  background-color: ${baseColors.border}
 `;
 
 const ContactsButtonWrapper = styled(View)`
@@ -121,7 +121,7 @@ const ContactsWrapper = styled(View)`
 const ContactsLabel = styled(BaseText)`
   width: 40%;
   letter-spacing: ${fontTrackings.tiny}px;
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   margin-top: 13px;
   padding-right: ${spacing.rhythm}px;
   ${fontStyles.medium};
@@ -179,7 +179,7 @@ class ICOScreen extends React.Component<Props, {}> {
               name="chevron-right"
               style={{
                 fontSize: fontSizes.tiny,
-                color: baseColors.coolGrey,
+                color: baseColors.secondaryText,
                 alignSelf: 'center',
               }}
             />
@@ -190,7 +190,7 @@ class ICOScreen extends React.Component<Props, {}> {
     return (
       <TouchableOpacity
         onPress={() => this.openLink(link.link, link.inApp)}
-        underlayColor={baseColors.lightGray}
+        underlayColor={baseColors.secondaryAccent}
       >
         <ListRow>
           <ListRowItem label>
@@ -200,7 +200,7 @@ class ICOScreen extends React.Component<Props, {}> {
             name="chevron-right"
             style={{
               fontSize: fontSizes.tiny,
-              color: baseColors.coolGrey,
+              color: baseColors.secondaryText,
             }}
           />
         </ListRow>

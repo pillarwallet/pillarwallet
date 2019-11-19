@@ -1,10 +1,9 @@
 // @flow
 import React from 'react';
 import { Linking } from 'react-native';
-import { appFont, baseColors, UIColors } from 'utils/variables';
+import { appFont, baseColors } from 'utils/variables';
 import ParsedText from 'react-native-parsed-text';
 import { handleUrlPress } from 'utils/common';
-
 
 type Props = {
   text: string,
@@ -27,7 +26,7 @@ export const CustomParsedText = (props: Props) => {
         fontFamily: appFont.regular,
         includeFontPadding: false,
         textAlignVertical: 'center',
-        color: UIColors.defaultTextColor,
+        color: baseColors.text,
       }}
       parse={[
         { type: 'url', style: linkStyle, onPress: (url) => handleUrlPress(url) },

@@ -114,7 +114,7 @@ const amountOptionsSelector = (selectedOption) => {
         name={getCurrencyIcon(selectedOption)}
         style={{
           fontSize: fontSizes.large,
-          color: baseColors.manatee,
+          color: baseColors.secondaryText,
           marginRight: 6,
         }}
       />}
@@ -199,8 +199,8 @@ const SwitchWrapper = styled.View`
   align-items: center;
   padding: 20px ${spacing.rhythm}px;
   background-color: #ffffff;
-  border-bottom-color: ${baseColors.lightGray};
-  border-top-color: ${baseColors.lightGray};
+  border-bottom-color: ${baseColors.border};
+  border-top-color: ${baseColors.border};
   border-bottom-width: ${StyleSheet.hairlineWidth};
   border-top-width: ${StyleSheet.hairlineWidth};
   margin-top: 30px;
@@ -223,7 +223,7 @@ const ItemLabel = styled(BaseText)`
   ${fontStyles.medium};
   padding-right: 10px;
   flex: 1;
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
 `;
 
 class ParticipateScreen extends React.Component<Props, State> {
@@ -364,7 +364,7 @@ class ParticipateScreen extends React.Component<Props, State> {
           </SwitchWrapper>
           }
         </ScrollWrapper>
-        <Footer style={{ backgroundColor: baseColors.snowWhite }}>
+        <Footer style={{ backgroundColor: baseColors.surface }}>
           <FooterInner>
             <LegalText>
               Your investment is fully secure and compliant to regulators’ orders and UK laws

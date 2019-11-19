@@ -40,7 +40,7 @@ type Props = {
 
 const Wrapper = styled.View`
   padding: 16px 20px 6px 20px;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
 `;
 
 const CardRow = styled.View`
@@ -61,7 +61,7 @@ const ListItem = styled.TouchableOpacity`
 `;
 
 const CardTitle = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   ${fontStyles.regular};
   margin-bottom: 10px;
 `;
@@ -91,7 +91,7 @@ const TinyCircle = styled.View`
   height: 4px;
   width: 4px;
   border-radius: 4px;
-  background-color: ${baseColors.indianRed};
+  background-color: ${baseColors.negative};
 `;
 
 const StatusIcon = ({ isDone }) => {
@@ -101,7 +101,7 @@ const StatusIcon = ({ isDone }) => {
         name="check"
         style={{
           fontSize: fontSizes.tiny,
-          color: baseColors.fruitSalad,
+          color: baseColors.positive,
         }}
       />
     );
@@ -131,7 +131,7 @@ export const Insight = (props: Props) => {
       >
         <Close
           icon="close"
-          color={baseColors.coolGrey}
+          color={baseColors.secondaryText}
           onPress={onClose}
           fontSize={fontSizes.small}
           horizontalAlign="flex-end"
@@ -150,7 +150,7 @@ export const Insight = (props: Props) => {
                     <StatusIconWrapper>
                       <StatusIcon isDone={!!status} />
                     </StatusIconWrapper>
-                    <InsightText color={status ? baseColors.coolGrey : baseColors.slateBlack}>{listItem}</InsightText>
+                    <InsightText color={status ? baseColors.secondaryText : baseColors.text}>{listItem}</InsightText>
                   </ListItem>
                 );
               }}

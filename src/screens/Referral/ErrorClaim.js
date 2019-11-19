@@ -16,7 +16,7 @@ const Status = styled(MediumText)`
 
 const Text = styled(LightText)`
   ${fontStyles.medium};
-  color: ${baseColors.coolGrey};
+  color: ${baseColors.secondaryText};
   text-align: center;
 `;
 

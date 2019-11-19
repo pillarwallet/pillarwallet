@@ -56,7 +56,7 @@ const PinButton = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled(BaseText)`
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   font-size: ${props => props.fontSize || fontSizes.large}px;
   align-self: center;
   line-height: 56px;

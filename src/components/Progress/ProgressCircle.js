@@ -94,7 +94,7 @@ export default class CircularProgress extends React.Component<Props, {}> {
     const labelX = end.x + labelCirclePaddingX;
     const labelY = end.y + labelCirclePaddingY;
 
-    const strokeType = progress < 10 ? baseColors.mantis : 'url(#grad)';
+    const strokeType = progress < 10 ? '#85bb4c' : 'url(#grad)';
 
     const dxPos = () => {
       if (progress === 100 || progress === 0 || progress === 0.5 || progress === 50.5) {
@@ -120,14 +120,14 @@ export default class CircularProgress extends React.Component<Props, {}> {
               y2="100%"
               spreadMethod="pad"
             >
-              <Stop offset="0%" stopColor={baseColors.mantis} stopOpacity="1" />
-              <Stop offset="100%" stopColor={baseColors.oliveDrab} stopOpacity="1" />
+              <Stop offset="0%" stopColor="#85bb4c" stopOpacity="1" />
+              <Stop offset="100%" stopColor="#5e9226" stopOpacity="1" />
             </LinearGradient>
           </Defs>
           <G>
             <Path
               d={backgroundPath}
-              stroke={baseColors.snowWhite}
+              stroke={baseColors.surface}
               strokeWidth={22}
               fill="transparent"
               x={paddingX}
@@ -148,7 +148,7 @@ export default class CircularProgress extends React.Component<Props, {}> {
               dy={5}
               dx={dxPos()}
               fontSize={fontSizes.tiny}
-              fill={baseColors.darkGray}
+              fill={baseColors.secondaryText}
               textAnchor="middle"
             >
               {label}%

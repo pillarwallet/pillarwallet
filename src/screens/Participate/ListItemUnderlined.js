@@ -39,13 +39,13 @@ const ItemWrapper = styled.View`
 const ItemLabel = styled(MediumText)`
   text-align:center;
   ${fontStyles.small}
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
 `;
 
 const ItemValueHolder = styled.View`
   padding: ${props => props.spacedOut ? '8px 10px' : '0px 10px 8px'};
   border-bottom-width: 1px;
-  border-color: ${baseColors.gallery};
+  border-color: ${baseColors.border};
   align-items: flex-end;
   width: 100%;
 `;

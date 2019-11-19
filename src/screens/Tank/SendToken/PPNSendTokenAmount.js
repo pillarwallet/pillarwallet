@@ -32,7 +32,7 @@ import { TextLink, Label, BaseText } from 'components/Typography';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { fontSizes, fontStyles, spacing, UIColors } from 'utils/variables';
+import { fontSizes, fontStyles, spacing, baseColors } from 'utils/variables';
 import { getRate } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
@@ -68,12 +68,12 @@ const SendTokenDetailsValue = styled(BaseText)`
 const HelperText = styled(BaseText)`
   ${fontStyles.medium};
   margin-bottom: ${spacing.rhythm / 2}px;
-  color: ${UIColors.placeholderTextColor};
+  color: ${baseColors.secondaryText};
   margin-left: 4px;
 `;
 
 const BackgroundWrapper = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${baseColors.surface};
   flex: 1;
 `;
 

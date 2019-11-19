@@ -48,7 +48,7 @@ import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
-import { baseColors, UIColors, fontSizes, spacing, fontStyles } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import { Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -67,7 +67,7 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
   padding-left: 30px;
   border-bottom-width: 1px;
   border-top-width: 1px;
-  border-color: ${UIColors.defaultBorderColor};
+  border-color: ${baseColors.border};
   align-items: center;
   flex-direction: row;
 `;
@@ -78,7 +78,7 @@ const ConnectionRequestBannerText = styled(BaseText)`
 
 const ConnectionRequestBannerIcon = styled(NIcon)`
   font-size: ${fontSizes.big}px;
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   margin-left: auto;
   margin-right: ${spacing.rhythm}px;
 `;
@@ -91,7 +91,7 @@ const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
   border-radius: 10px;
-  background-color: ${props => props.backgroundColor || baseColors.electricBlue}
+  background-color: ${props => props.backgroundColor || baseColors.primary}
   padding: 3px 0;
   margin-top: 2px;
   margin-right: 1px;
@@ -154,7 +154,7 @@ const ConnectionStatus = (props: ConnectionStatusProps) => {
       break;
   }
   return (
-    <ItemBadge backgroundColor={baseColors.pinkishGrey}>
+    <ItemBadge backgroundColor={baseColors.accent}>
       <BadgeIcon name={iconName} />
     </ItemBadge>
   );
@@ -370,7 +370,7 @@ class PeopleScreen extends React.Component<Props, State> {
         {!inSearchMode && !!pendingConnectionRequests &&
         <ConnectionRequestBanner
           onPress={this.handleConnectionsRequestBannerPress}
-          underlayColor={baseColors.lightGray}
+          underlayColor={baseColors.secondaryAccent}
         >
           <React.Fragment>
             <ConnectionRequestBannerText>

@@ -132,12 +132,12 @@ const ContentWrapper = styled.View`
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   overflow: hidden;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
 `;
 
 const EventBody = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
 `;
 
 const EventProfileImage = styled(ProfileImage)`
@@ -145,7 +145,7 @@ const EventProfileImage = styled(ProfileImage)`
 
 const ButtonsWrapper = styled.View`
   padding: 6px ${spacing.mediumLarge}px ${spacing.large}px;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
 `;
 
 const EventButton = styled(Button)`
@@ -163,7 +163,7 @@ const EventRow = styled.View`
 
 const EventBodyTitle = styled(MediumText)`
   ${fontStyles.big};
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  color: ${props => props.color ? props.color : baseColors.text};
   margin: 0 10px 2px;
   text-align: center;
 `;

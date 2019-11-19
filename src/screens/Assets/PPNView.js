@@ -111,14 +111,14 @@ const AssetButtonsWrapper = styled.View`
 
 const TopPartWrapper = styled.View`
   padding: ${spacing.large}px;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${baseColors.surface};
   border-bottom-width: 1;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
 `;
 
 const SectionTitle = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${baseColors.blueYonder};
+  color: ${baseColors.accent};
 `;
 
 const TankBalanceWrapper = styled.View`
@@ -128,11 +128,11 @@ const TankBalanceWrapper = styled.View`
 
 const TankBalance = styled(BaseText)`
   font-size: ${fontSizes.giant}px;
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
 `;
 
 const BlueText = styled(BaseText)`
-  color: ${baseColors.electricBlue};
+  color: ${baseColors.primary};
   ${fontStyles.regular};
   margin-right: ${spacing.medium}px;
 `;
@@ -346,13 +346,13 @@ class PPNView extends React.Component<Props, State> {
             wrapperStyle={{
               borderTopWidth: 0,
               borderBottomWidth: 1,
-              borderColor: baseColors.mediumLightGray,
+              borderColor: baseColors.border,
             }}
-            chevronStyle={{ color: baseColors.darkGray }}
+            chevronStyle={{ color: baseColors.secondaryText }}
             label="Incoming balance"
             rightAddon={(<BlueText>{formatFiat(incomingBalanceInFiat, baseFiatCurrency)}</BlueText>)}
             onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
-            color={baseColors.slateBlack}
+            color={baseColors.text}
             bordered
           />}
           <Tabs

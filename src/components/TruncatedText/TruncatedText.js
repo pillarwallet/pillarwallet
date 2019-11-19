@@ -22,7 +22,7 @@ import styled from 'styled-components/native';
 import { transparentize } from 'polished';
 import LinearGradient from 'react-native-linear-gradient';
 import { Paragraph, BaseText } from 'components/Typography';
-import { baseColors, spacing, fontStyles, UIColors, lineHeights } from 'utils/variables';
+import { baseColors, spacing, fontStyles, lineHeights } from 'utils/variables';
 
 
 type Props = {
@@ -40,12 +40,12 @@ type EventLike = {
 };
 
 const DescriptionToggleWrapperColors = [
-  transparentize(1, UIColors.defaultBackgroundColor), UIColors.defaultBackgroundColor,
+  transparentize(1, baseColors.surface), baseColors.surface,
 ];
 
 const DescriptionToggleWrapperActiveColors = [
-  transparentize(1, UIColors.defaultBackgroundColor),
-  transparentize(1, UIColors.defaultBackgroundColor),
+  transparentize(1, baseColors.surface),
+  transparentize(1, baseColors.surface),
 ];
 
 const DescriptionWrapper = styled.View`
@@ -56,7 +56,7 @@ const DescriptionToggle = styled.TouchableOpacity``;
 
 const DescriptionToggleText = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${baseColors.electricBlue};
+  color: ${baseColors.primary};
 `;
 
 const DescriptionToggleWrapper = styled(LinearGradient)`

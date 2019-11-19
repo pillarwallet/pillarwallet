@@ -29,7 +29,7 @@ import Checkbox from 'components/Checkbox';
 import { connect } from 'react-redux';
 import { registerWalletAction } from 'actions/onboardingActions';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
-import { baseColors, fontSizes, fontStyles, fontTrackings, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, fontTrackings } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 import { BACKUP_PHRASE } from 'constants/navigationConstants';
@@ -144,7 +144,7 @@ class LegalTerms extends React.Component<Props, State> {
     return (
       <Container color={baseColors.white}>
         <Header title="almost there" onBack={() => this.props.navigation.goBack(null)} white />
-        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+        <ScrollWrapper regularPadding color={baseColors.surface}>
           <Paragraph light small style={{ marginTop: 10, marginBottom: 50 }}>
             With great power comes great responsibility. Make sure you are aware of the following.
           </Paragraph>
@@ -203,7 +203,7 @@ class LegalTerms extends React.Component<Props, State> {
           </Checkbox>
 
         </ScrollWrapper>
-        <Footer backgroundColor={UIColors.defaultBackgroundColor}>
+        <Footer backgroundColor={baseColors.surface}>
           <MultiButtonWrapper>
             <Button
               block

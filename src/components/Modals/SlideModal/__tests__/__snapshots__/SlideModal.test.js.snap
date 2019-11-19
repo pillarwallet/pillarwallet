@@ -101,7 +101,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
       }
     >
       <View
-        bgColor="#f5f5f5"
+        bgColor="#fafafa"
         style={
           Array [
             Object {
@@ -247,13 +247,13 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                       style={
                         Array [
                           Object {
-                            "color": "#0A1427",
+                            "color": "#0a1427",
                             "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
-                              "color": "#0A1427",
+                              "color": "#0a1427",
                               "fontFamily": "EuclidCircularB-Medium",
                               "textAlignVertical": "center",
                             },
@@ -334,7 +334,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                         name="close"
                         style={
                           Object {
-                            "color": "#0A1427",
+                            "color": "#0a1427",
                             "fontSize": 16,
                             "marginBottom": undefined,
                             "marginLeft": undefined,
@@ -376,14 +376,14 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         </View>
       </View>
       <View
-        borderColor="#2f86eb"
+        borderColor="#007AFF"
         opacity={0}
         style={
           Array [
             Object {
               "alignItems": "center",
               "backgroundColor": "#ffffff",
-              "borderColor": "#2f86eb",
+              "borderColor": "#007AFF",
               "borderLeftWidth": 10,
               "borderStyle": "solid",
               "elevation": 9,
@@ -464,7 +464,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 name="info-circle"
                 style={
                   Object {
-                    "color": "#2f86eb",
+                    "color": "#007AFF",
                     "fontSize": 24,
                   }
                 }
@@ -489,13 +489,13 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   style={
                     Array [
                       Object {
-                        "color": "#0A1427",
+                        "color": "#0a1427",
                         "fontFamily": "EuclidCircularB-Regular",
                         "textAlignVertical": "center",
                       },
                       Array [
                         Object {
-                          "color": "#8B939E",
+                          "color": "#8b939e",
                           "fontSize": 14,
                           "lineHeight": 22,
                         },
@@ -539,7 +539,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                     "alignItems": "center",
                     "alignSelf": "center",
                     "borderWidth": 0,
-                    "color": "#C6CACD",
+                    "color": "#ebf0f5",
                     "fontSize": undefined,
                     "justifyContent": "center",
                     "marginBottom": undefined,

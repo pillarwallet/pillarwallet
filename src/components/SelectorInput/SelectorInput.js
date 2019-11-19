@@ -41,8 +41,8 @@ import {
   fontSizes,
   itemSizes,
   spacing,
-  UIColors,
-  fontStyles, appFont,
+  fontStyles,
+  appFont,
 } from 'utils/variables';
 import { formatMoney, noop } from 'utils/common';
 
@@ -83,7 +83,7 @@ const Wrapper = styled.View`
 const Label = styled(MediumText)`
   ${fontStyles.big};
   letter-spacing: 0.23px;
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   margin-bottom: ${spacing.small}px;
 `;
 
@@ -91,10 +91,10 @@ const ItemHolder = styled.View`
   height: 56px;
   width: 100%;
   border-radius: 3px;
-  border: 1px solid ${baseColors.mediumLightGray};
+  border: 1px solid ${baseColors.border};
   background-color: ${baseColors.white};
   flex-direction: row;
-  ${props => props.error ? 'border-color: tomato;' : ''}
+  ${props => props.error ? `border-color: ${baseColors.negative};` : ''}
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -119,7 +119,7 @@ const ChevronWrapper = styled.View`
 
 const SelectorChevron = styled(Icon)`
   font-size: 8px;
-  color: ${baseColors.electricBlue};
+  color: ${baseColors.primary};
 `;
 
 const SelectorImage = styled(CachedImage)`
@@ -130,7 +130,7 @@ const SelectorImage = styled(CachedImage)`
 
 const SlectorValue = styled(MediumText)`
   ${fontStyles.medium};
-  color: ${baseColors.slateBlack};
+  color: ${baseColors.text};
   margin-right: 20px;
 `;
 
@@ -138,7 +138,7 @@ const InputWrapper = styled.View`
   flex: 1;
   height: 100%;
   border-left-width: 1px;
-  border-left-color: ${baseColors.mediumLightGray};
+  border-left-color: ${baseColors.border};
   padding: 0 ${spacing.mediumLarge}px
   justify-content: flex-end;
   align-items: center;
@@ -162,12 +162,12 @@ const PlaceholderWrapper = styled.View`
 const Placeholder = styled(BaseText)`
   ${fontStyles.regular};
   letter-spacing: 0.23px;
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
 `;
 
 const ErrorMessage = styled(BaseText)`
   ${fontStyles.regular};
-  color: tomato;
+  color: ${baseColors.negative};
   margin: 8px 12px;
 `;
 
@@ -179,21 +179,21 @@ const TextHolder = styled.View`
 `;
 
 const AddonText = styled(BaseText)`
-  color: ${UIColors.placeholderTextColor};
+  color: ${baseColors.secondaryText};
 `;
 
 const SearchBarWrapper = styled.View`
   padding: 0 ${spacing.large}px;
   border-bottom-width: 1px;
   border-style: solid;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
 `;
 
 const HorizontalOptions = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${baseColors.surface};
   border-bottom-width: 1px;
   border-style: solid;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
   padding-bottom: ${spacing.small}px;
 `;
 
@@ -208,7 +208,7 @@ const HorizontalOptionItem = styled.TouchableOpacity`
 
 const HorizontalOptionItemName = styled(BaseText)`
   ${fontStyles.small};
-  color: ${baseColors.darkGray};
+  color: ${baseColors.secondaryText};
   padding: 0 4px;
   margin-top: 3px;
 `;
@@ -441,7 +441,7 @@ export default class SelectorInput extends React.Component<Props, State> {
                     numberOfLines={1}
                     value={inputValue}
                     textAlignVertical="center"
-                    placeholderTextColor={baseColors.darkGray}
+                    placeholderTextColor={baseColors.secondaryText}
                     underlineColorAndroid="white"
                     innerRef={inputRef}
                   />
@@ -462,7 +462,7 @@ export default class SelectorInput extends React.Component<Props, State> {
           noClose
           title={label}
         >
-          <Wrapper flex={1} backgroundColor={UIColors.defaultBackgroundColor}>
+          <Wrapper flex={1} backgroundColor={baseColors.surface}>
             <SearchBarWrapper backgroundColor={baseColors.white}>
               <SearchBar
                 inputProps={{

@@ -73,7 +73,7 @@ const BodyText = styled(MediumText)`
 `;
 
 // const FeeText = styled(MediumText)`
-//   color: ${baseColors.darkGray};
+//   color: ${baseColors.secondaryText};
 //   font-size: ${fontSizes.rMedium}px;
 //   line-height: ${responsiveSize(22)}px;
 //   margin-top: ${responsiveSize(16)}px;
@@ -88,7 +88,7 @@ const ActionsWrapper = styled(Wrapper)`
   margin: 10px -20px 50px;
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
   border-top-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${baseColors.border};
 `;
 
 
