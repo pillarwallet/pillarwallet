@@ -84,15 +84,6 @@ const Crashlytics = firebase.crashlytics();
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
-const loginDurationReport = () => {
-  const lastTime = +new Date(); // initial time
-  let lastStep = 1; // initial step
-  console.log(`STEP ${lastStep++}`);
-  return {
-    step: () => console.log(`STEP ${lastStep++}, TOOK ${(+new Date() - lastTime) / 1000}s`),
-  };
-};
-
 export const updateFcmTokenAction = (walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { session: { data: { isOnline } } } = getState();
@@ -111,7 +102,6 @@ export const loginAction = (
   updateKeychain?: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const report = loginDurationReport(); // step 1
     let { accounts: { data: accounts } } = getState();
     const {
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
@@ -122,9 +112,9 @@ export const loginAction = (
           blockchainNetwork = '',
         },
       },
+      oAuthTokens: { data: oAuthTokens },
     } = getState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
-    const { oAuthTokens } = await storage.get('oAuthTokens');
 
     const generateNewConnKeys = connectionKeyPairs.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1;
 
@@ -136,7 +126,6 @@ export const loginAction = (
 
     await dispatch(fetchFeatureFlagsAction()); // wait until fetches new flags
     const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
-    report.step(); // step 2
 
     try {
       let wallet;
@@ -201,20 +190,16 @@ export const loginAction = (
 
         // make first api call which can also trigger OAuth fallback methods
         const userInfo = await api.userInfo(user.walletId);
-        console.log('userInfo: ', userInfo);
-
-        // get oauth tokens from state
-        const { oAuthTokens: { data: OAuthTokensObject } } = getState();
 
         // perform signal init
-        dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
+        dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
 
         // save updated user
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
 
         // update connections
-        await dispatch(updateConnectionKeyPairs(
+        dispatch(updateConnectionKeyPairs(
           wallet.mnemonic,
           wallet.privateKey,
           user.walletId,
@@ -311,7 +296,6 @@ export const loginAction = (
 
       dispatch(getWalletsCreationEventsAction());
       navigate(navigateToAppAction);
-      report.step(); // step 3
     } catch (e) {
       dispatch(updatePinAttemptsAction(true));
       dispatch({
