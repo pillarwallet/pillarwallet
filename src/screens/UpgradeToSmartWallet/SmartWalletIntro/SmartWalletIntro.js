@@ -33,7 +33,7 @@ import { LabelBadge } from 'components/LabelBadge';
 import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
 
-import { baseColors, fontStyles } from 'utils/variables';
+import { accentColors, baseColors, fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 // import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
 // import { getRate } from 'utils/assets';
@@ -62,12 +62,12 @@ const CustomWrapper = styled.View`
 `;
 
 const Title = styled(BoldText)`
-  color: ${baseColors.persianBlue};
+  color: ${accentColors.smartWalletIntroText};
   ${fontStyles.rJumbo};
 `;
 
 const BodyText = styled(MediumText)`
-  color: ${baseColors.persianBlue};
+  color: ${accentColors.smartWalletIntroText};
   ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
 `;
@@ -132,7 +132,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
           floating: true,
           transparent: true,
         }}
-        backgroundColor={baseColors.zircon}
+        backgroundColor={accentColors.smartWalletIntroSurface}
       >
         <ScrollWrapper contentContainerStyle={{ paddingTop: 80 }}>
           <CustomWrapper>
@@ -159,7 +159,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
               title={isDeploy ? 'Deploy' : 'Proceed'}
               onPress={() => { this.setState({ showDeployPayOptions: true }); }}
               style={{
-                backgroundColor: baseColors.persianBlue,
+                backgroundColor: accentColors.smartWalletIntroText,
                 marginTop: 40,
                 marginBottom: 20,
                 borderRadius: 6,
@@ -169,7 +169,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
             { /* <ListItemChevron
               label="Enable with PLR available"
               onPress={() => () => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)}
-              color={baseColors.persianBlue}
+              color={accentColors.smartWalletIntroText}
               bordered
             /> */ }
           </ButtonWrapper>
@@ -190,7 +190,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
                     });
                   });
                 }}
-                color={baseColors.persianBlue}
+                color={accentColors.smartWalletIntroText}
                 bordered
                 subtextAddon={(<LabelBadge label="NEW" />)}
               />
@@ -207,7 +207,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
                     }
                   });
                 }}
-                color={baseColors.persianBlue}
+                color={accentColors.smartWalletIntroText}
                 bordered
               />
             </ActionsWrapper>

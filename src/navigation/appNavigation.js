@@ -325,7 +325,7 @@ const homeFlow = createStackNavigator({
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => ({ focused }) => {
-  const notificationColor = warningNotification ? baseColors.negative : baseColors.sunYellow;
+  const notificationColor = warningNotification ? baseColors.negative : baseColors.indicator;
 
   return (
     <View style={{ padding: 4 }}>
@@ -358,7 +358,7 @@ const tabBarLabel = labelText => ({ focused, tintColor }) => (
   <BaseText
     style={{
       fontSize: fontSizes.regular,
-      color: focused ? tintColor : baseColors.mediumGray,
+      color: focused ? tintColor : baseColors.bottomNavigationText,
       textAlign: 'center',
     }}
     numberOfLines={1}

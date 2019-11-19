@@ -27,7 +27,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BoldText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
-import { fontSizes, baseColors, fontStyles } from 'utils/variables';
+import { fontSizes, baseColors, fontStyles, accentColors } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { navigateToNewWalletPageAction } from 'actions/walletActions';
 import { CachedImage } from 'react-native-cached-image';
@@ -46,12 +46,12 @@ const PillarLogo = styled(CachedImage)`
 `;
 
 const Title = styled(BoldText)`
-  color: ${baseColors.pomegranate};
+  color: ${accentColors.ppnIntroText};
   ${fontStyles.rJumbo};
 `;
 
 const BodyText = styled(MediumText)`
-  color: ${baseColors.pomegranate};
+  color: ${accentColors.ppnIntroText};
   ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
 `;
@@ -112,7 +112,7 @@ class Welcome extends React.Component<Props> {
   render() {
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.ultramarine}
+        backgroundColor={accentColors.ppnIntroSurface}
         headerProps={{
           floating: true,
           transparent: true,
@@ -130,7 +130,7 @@ class Welcome extends React.Component<Props> {
             containerStyle={{ width: '100%' }}
             paginationStyle={{ paddingLeft: 46, paddingRight: 55, justifyContent: 'flex-start' }}
             dotColor={baseColors.white}
-            activeDotColor={baseColors.pomegranate}
+            activeDotColor={accentColors.ppnIntroText}
           >
             {this.renderSlides()}
           </Swiper>

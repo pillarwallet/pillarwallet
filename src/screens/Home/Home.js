@@ -420,7 +420,7 @@ class HomeScreen extends React.Component<Props, State> {
                   style={{
                     width: 8,
                     height: 8,
-                    backgroundColor: baseColors.sunYellow,
+                    backgroundColor: baseColors.indicator,
                     borderRadius: 4,
                     marginLeft: 4,
                     marginRight: -6,

@@ -72,7 +72,7 @@ const CircleButtonText = styled(BaseText)`
 const Indicator = styled.View`
   width: 12px;
   height: 12px;
-  background-color: ${baseColors.sunYellow};
+  background-color: ${baseColors.indicator};
   border-radius: 6px;
   position: absolute;
   top: 17px;

@@ -48,7 +48,7 @@ const toastInitialOptions: ToastOptions = {
 };
 
 const typeColors = {
-  warning: baseColors.sunYellow,
+  warning: baseColors.warning,
   info: baseColors.primary,
   success: baseColors.positive,
 };

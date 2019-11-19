@@ -382,7 +382,6 @@ class NewProfile extends React.Component<Props, State> {
                 onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
                 small
                 lightText
-                darkCheckbox
                 wrapperStyle={{ marginBottom: 16 }}
               >
                 <CheckboxText>
@@ -398,7 +397,6 @@ class NewProfile extends React.Component<Props, State> {
                 onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
                 small
                 lightText
-                darkCheckbox
               >
                 <CheckboxText>
                   {'I have read, understand, and agree to the '}

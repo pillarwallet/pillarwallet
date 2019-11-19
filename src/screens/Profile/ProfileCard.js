@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, brandColors, fontSizes, fontStyles } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles } from 'utils/variables';
 import { BaseText, BoldText } from 'components/Typography';
 
 type Props = {
@@ -71,6 +71,8 @@ const ProfileCardBackgroundSquare = styled.View`
   top: ${props => props.top}%;
   left: ${props => props.left}%;
 `;
+
+const brandColors = [baseColors.primary, baseColors.positive, baseColors.negative];
 
 const generateProfileCardBackgroundSquares = (input: string) => {
   const profileCardBackgroundSquares = [];

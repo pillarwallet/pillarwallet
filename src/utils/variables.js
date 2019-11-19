@@ -21,22 +21,23 @@
 import { responsiveSize } from 'utils/ui';
 
 export const baseColors = {
-  sunYellow: '#f8e71c', // indicator
-  clearBlue: '#2077fd', // used for hyperlinks
-  mediumGray: '#C6CACD', // used for bottom navigation to match icon color
-
-  userAvatar: '#a9aeb8', // NOT IN DS (greyser - #d1d7dd)
-
-  negative: '#bd573a', // ex burningFire (#F56C07) and fireEngineRed (#ff0005) and vividOrange (#ffc021) for toast
-  primary: '#007AFF', // ex electricBlue and primaryIntense (#2329d6)
-  positive: '#2aa057', // ex freshEucalyptus (#2AA057) and jadeGreen (#2aa157) and limeGreen (#47d764) for toast
-  surface: '#fafafa', // ex snowWhite and lighterGray
-  border: '#ededed', // ex lightGray (for borders) and mediumLightGray and gallery (#efefef)
-  tertiary: '#ebf0f6', // ex mediumGray (#C6CACD)
-  secondaryAccent: '#ebf0f5', // ex mediumGray (#C6CACD) and lightGray (#f5f5f5)
-  secondaryText: '#8b939e', // ex darkGray (#8B939E) and coolGrey (#8B939E)
   text: '#0a1427', // ex slateBlack
   accent: '#818eb3', // ex blueYonder (818eb3) // pigeonPost (#9fb7db) (for shadow on checkbox)
+  primary: '#007AFF', // ex electricBlue and primaryIntense (#2329d6)
+  secondaryAccent: '#ebf0f5', // ex mediumGray (#C6CACD) and lightGray (#f5f5f5)
+  secondaryText: '#8b939e', // ex darkGray (#8B939E) and coolGrey (#8B939E)
+  border: '#ededed', // ex lightGray (for borders) and mediumLightGray and gallery (#efefef)
+  positive: '#2aa057', // ex freshEucalyptus (#2AA057) and jadeGreen (#2aa157) and limeGreen (#47d764) for toast
+  negative: '#bd573a', // ex burningFire (#F56C07) and fireEngineRed (#ff0005) and vividOrange (#ffc021) for toast
+  surface: '#fafafa', // ex snowWhite and lighterGray
+  card: '#ffffff',
+  tertiary: '#ebf0f6', // ex mediumGray (#C6CACD)
+  control: '#fcfdff',
+  warning: '#ECA93A',
+
+  indicator: '#f8e71c', // NOT IN DS
+  bottomNavigationText: '#C6CACD', // NOT IN DS
+  userAvatar: '#a9aeb8', // NOT IN DS
 
   white: '#ffffff',
   black: '#000000',
@@ -44,29 +45,19 @@ export const baseColors = {
   rose: '#f5078d', // CONNECTION EVENT HEADER
   cerulean: '#07b0f5', // CONNECTION EVENT HEADER
   shark: '#292c33', // BADGE / COLLECTIBLE EVENT HERADER
-
-  tropicalBlue: '#CAE1F8', // CHAT
-  zumthor: '#EBF5FF', // CHAT
-
-  ultramarine: '#0a0c78', // PPN INTRO
-  pomegranate: '#f33726', // PPN INTRO
-  darkOrange: '#ff8d04', // PPN INTRO
-
-  zircon: '#f3f7ff', // SMART WALLET INTRO
-  persianBlue: '#1D24D8', // // SMART WALLET INTRO
-
-  stratos: '#000260', // CHECKBOX
 };
 
 export const accentColors = {
   keyWalletHeader: '#f9584f',
   smartWalletHeader: '#3c71ff',
+  smartWalletIntroSurface: '#f3f7ff',
+  smartWalletIntroText: '#1D24D8',
+  ppnIntroSurface: '#0a0c78',
+  ppnIntroText: '#f33726',
+  ppnIntroDetail: '#ff8d04',
+  chatBubbleBorder: '#CAE1F8',
+  chatBubble: '#EBF5FF',
 };
-
-export const brandColors = [
-  baseColors.sunYellow,
-  baseColors.negative,
-];
 
 export const fontSizes = {
   tiny: 10,

@@ -27,7 +27,7 @@ import Header from 'components/Header';
 const ComingSoonBanner = styled.View`
   padding: ${spacing.rhythm}px;
   margin-bottom: 20px;
-  background: ${baseColors.sunYellow};
+  background: ${baseColors.indicator};
 `;
 
 const ComingSoonBannerText = styled(MediumText)`

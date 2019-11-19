@@ -34,7 +34,7 @@ import {
   LoadEarlier,
   Message,
 } from 'react-native-gifted-chat';
-import { appFont, baseColors, fontSizes, spacing } from 'utils/variables';
+import { appFont, baseColors, fontSizes, spacing, accentColors } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -209,17 +209,17 @@ const renderMessage = (props: Props) => (
 const parsePatterns = () => [
   {
     type: 'url',
-    style: { color: baseColors.clearBlue },
+    style: { color: baseColors.primary },
     onPress: (url) => handleUrlPress(url),
   },
   {
     type: 'email',
-    style: { color: baseColors.clearBlue },
+    style: { color: baseColors.primary },
     onPress: (email) => Linking.openURL(`mailto:${email}`),
   },
   {
     type: 'phone',
-    style: { color: baseColors.clearBlue },
+    style: { color: baseColors.primary },
     onPress: (phone) => Linking.openURL(`tel:${phone}`),
   },
 ];
@@ -435,10 +435,10 @@ class ChatTab extends React.Component<Props, State> {
       }}
       wrapperStyle={{
         left: {
-          backgroundColor: isWarning ? baseColors.primary : baseColors.zumthor,
+          backgroundColor: isWarning ? baseColors.primary : accentColors.chatBubble,
           borderRadius: 5,
           borderWidth: 1,
-          borderColor: isWarning ? baseColors.primary : baseColors.tropicalBlue,
+          borderColor: isWarning ? baseColors.primary : accentColors.chatBubbleBorder,
           maxWidth: 262,
           marginTop: 4,
           paddingHorizontal: 2,
@@ -449,7 +449,7 @@ class ChatTab extends React.Component<Props, State> {
           backgroundColor: baseColors.white,
           borderRadius: 5,
           borderWidth: 1,
-          borderColor: baseColors.tropicalBlue,
+          borderColor: accentColors.chatBubbleBorder,
           maxWidth: 262,
           marginTop: 4,
           paddingHorizontal: 2,

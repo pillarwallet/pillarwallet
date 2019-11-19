@@ -18,7 +18,7 @@ export const CustomParsedText = (props: Props) => {
     Linking.openURL(`mailto:${email}`);
   };
 
-  const linkStyle = { color: baseColors.clearBlue };
+  const linkStyle = { color: baseColors.primary };
 
   return (
     <ParsedText

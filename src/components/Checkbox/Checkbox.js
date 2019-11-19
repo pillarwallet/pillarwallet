@@ -28,7 +28,6 @@ const getBorderColor = (props) => {
   if (props.rounded) {
     return baseColors.border;
   } else if (props.active) {
-    if (props.dark) return baseColors.stratos;
     return baseColors.primary;
   }
   return baseColors.border;
@@ -37,8 +36,6 @@ const getBorderColor = (props) => {
 const getTickColor = (props) => {
   if (props.rounded) {
     return baseColors.positive;
-  } else if (props.darkCheckbox) {
-    return baseColors.white;
   }
   return baseColors.primary;
 };
@@ -54,7 +51,6 @@ const CheckboxBox = styled.View`
   justify-content: center;
   align-items: center;
   shadow-color: ${baseColors.accent};
-  background-color: ${props => props.dark && props.active ? baseColors.stratos : 'transparent'};
   ${props => props.rounded ? `background-color: ${baseColors.white}` : ''};
   ${props => props.rounded && props.active
     ? `
@@ -94,7 +90,6 @@ type Props = {
   wrapperStyle?: Object,
   rounded?: boolean,
   lightText?: boolean,
-  darkCheckbox?: boolean,
   small?: boolean,
 };
 
@@ -175,7 +170,6 @@ export default class Checkbox extends React.Component<Props, State> {
       wrapperStyle,
       small,
       lightText,
-      darkCheckbox,
     } = this.props;
     return (
       <TouchableHighlight
@@ -184,7 +178,7 @@ export default class Checkbox extends React.Component<Props, State> {
         style={wrapperStyle}
       >
         <CheckboxWrapper disabled={disabled}>
-          <CheckboxBox active={disabled ? false : checked} rounded={rounded} dark={darkCheckbox}>
+          <CheckboxBox active={disabled ? false : checked} rounded={rounded}>
             {!!checked &&
             <Icon
               name="check"

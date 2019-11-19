@@ -167,7 +167,7 @@ const ButtonLabel = styled(BaseText)`
 const Indicator = styled.View`
   width: 8px;
   height: 8px;
-  background-color: ${baseColors.sunYellow};
+  background-color: ${baseColors.indicator};
   border-radius: 4px;
   position: absolute;
   top: 0;

@@ -31,7 +31,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import { LabelBadge } from 'components/LabelBadge';
 
-import { baseColors, fontStyles } from 'utils/variables';
+import { accentColors, fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { ASSETS, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -75,12 +75,12 @@ const CustomWrapper = styled.View`
 `;
 
 const Title = styled(BoldText)`
-  color: ${baseColors.pomegranate};
+  color: ${accentColors.ppnIntroText};
   ${fontStyles.rJumbo};
 `;
 
 const BodyText = styled(MediumText)`
-  color: ${baseColors.pomegranate};
+  color: ${accentColors.ppnIntroText};
   ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
 `;
@@ -99,12 +99,12 @@ const ContentWrapper = styled.View`
 `;
 
 const Label = styled(MediumText)`
-  color: ${baseColors.pomegranate};
+  color: ${accentColors.ppnIntroText};
   ${fontStyles.rLarge};
 `;
 
 const Subtext = styled(MediumText)`
-  color: ${baseColors.pomegranate};
+  color: ${accentColors.ppnIntroText};
   ${fontStyles.rBig};
   margin-top: ${responsiveSize(10)}px;
 `;
@@ -206,7 +206,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
           transparent: true,
           light: true,
         }}
-        backgroundColor={baseColors.ultramarine}
+        backgroundColor={accentColors.ppnIntroSurface}
       >
         <ScrollWrapper contentContainerStyle={{ paddingTop: 80 }}>
           <CustomWrapper>
@@ -221,8 +221,8 @@ class PillarNetworkIntro extends React.Component<Props, State> {
             </BodyText>
             <LabelBadge
               label="COMING SOON"
-              containerStyle={{ backgroundColor: baseColors.darkOrange, marginTop: 57, paddingVertical: 2 }}
-              labelStyle={{ color: baseColors.ultramarine, fontSize: responsiveSize(11) }}
+              containerStyle={{ backgroundColor: accentColors.ppnIntroDetail, marginTop: 57, paddingVertical: 2 }}
+              labelStyle={{ color: accentColors.ppnIntroSurface, fontSize: responsiveSize(11) }}
             />
             <BodyText style={{ marginTop: 10 }}>
               Draw from your PLR tank to send whatever you’d like.
@@ -236,7 +236,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
                     name="check"
                     style={{
                       fontSize: responsiveSize(13),
-                      color: baseColors.pomegranate,
+                      color: accentColors.ppnIntroText,
                       marginTop: responsiveSize(12),
                     }}
                   />
@@ -254,11 +254,11 @@ class PillarNetworkIntro extends React.Component<Props, State> {
             wrapperStyle={{
               marginTop: 46,
               marginBottom: 70,
-              borderColor: baseColors.pomegranate,
+              borderColor: accentColors.ppnIntroText,
             }}
             label="Enable Smart wallet to create Tank"
             onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
-            color={baseColors.pomegranate}
+            color={accentColors.ppnIntroText}
             bordered
           />}
           {!needsSmartWallet &&
@@ -268,12 +268,12 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               title="Go to PLR Tank"
               onPress={() => this.setState({ showPinScreenForAction: true, processingCreate: true })}
               style={{
-                backgroundColor: baseColors.pomegranate,
+                backgroundColor: accentColors.ppnIntroText,
                 marginTop: 40,
                 marginBottom: 20,
                 opacity: needsSmartWallet ? 0.3 : 1,
               }}
-              textStyle={{ color: baseColors.ultramarine }}
+              textStyle={{ color: accentColors.ppnIntroSurface }}
               isLoading={processingCreate}
             />
           </ButtonWrapper>}
