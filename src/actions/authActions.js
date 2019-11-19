@@ -83,6 +83,17 @@ const Crashlytics = firebase.crashlytics();
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
+export const updateFcmTokenAction = (walletId: string) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const { session: { data: { isOnline } } } = getState();
+    if (!isOnline) return;
+    const fcmToken = await firebase.messaging().getToken().catch(() => null);
+    dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
+    Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+    await api.updateFCMToken(walletId, fcmToken);
+  };
+};
+
 export const loginAction = (
   pin: ?string,
   privateKey: ?string,
@@ -100,10 +111,9 @@ export const loginAction = (
           blockchainNetwork = '',
         },
       },
-      session: { data: { isOnline } },
+      oAuthTokens: { data: oAuthTokens },
     } = getState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
-    const { oAuthTokens } = await storage.get('oAuthTokens');
 
     const generateNewConnKeys = connectionKeyPairs.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1;
 
@@ -143,36 +153,55 @@ export const loginAction = (
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
-        const fcmToken = await firebase.messaging().getToken().catch(() => null);
-        dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
-        if (isOnline) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+        // signal credentials
         const signalCredentials = {
           userId: user.id,
           username: user.username,
           walletId: user.walletId,
           ethAddress: wallet.address,
-          fcmToken,
         };
+
+        // oauth fallback method for expired access token
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
+
+        // oauth fallback method for all tokens expired or invalid
         const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
+
+        // init API
         api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
+
+        // execute login success callback
         if (onLoginSuccess && wallet.privateKey) {
           let { privateKey: privateKeyParam } = wallet;
           privateKeyParam = privateKeyParam.indexOf('0x') === 0 ? privateKeyParam.slice(2) : privateKeyParam;
           await onLoginSuccess(privateKeyParam);
         }
+
+        // set API username
         api.setUsername(user.username);
+
+        // update FCM
+        dispatch(updateFcmTokenAction(user.walletId));
+
+        // make first api call which can also trigger OAuth fallback methods
         const userInfo = await api.userInfo(user.walletId);
-        if (isOnline) await api.updateFCMToken(user.walletId, fcmToken);
-        const { oAuthTokens: { data: OAuthTokensObject } } = getState();
-        // $FlowFixMe
-        await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
+
+        // perform signal init
+        dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
+
+        // save updated user
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
-        await dispatch(
-          updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys),
-        );
 
+        // update connections
+        dispatch(updateConnectionKeyPairs(
+          wallet.mnemonic,
+          wallet.privateKey,
+          user.walletId,
+          generateNewConnKeys,
+        ));
+
+        // init smart wallet
         if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
           await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
         }
