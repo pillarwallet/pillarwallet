@@ -96,7 +96,7 @@ const loginDurationReport = () => {
 export const updateFcmTokenAction = (walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { session: { data: { isOnline } } } = getState();
-    if (isOnline) return;
+    if (!isOnline) return;
     const fcmToken = await firebase.messaging().getToken().catch(() => null);
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
     Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
