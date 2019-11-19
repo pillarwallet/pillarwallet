@@ -134,7 +134,7 @@
     "date-fns": "^1.29.0",
     "dns.js": "^1.0.1",
     "ethereumjs-util": "^6.1.0",
-    "ethers": "https://github.com/alazarevski/ethers.js#master",
+    "ethers": "https://github.com/pillarwallet/ethers.js#v4",
     "ethjs-abi": "^0.2.1",
     "events": "^1.0.0",
     "https-browserify": "~0.0.0",

@@ -4654,9 +4654,9 @@ ethereumjs-wallet@^0.6.0:
     utf8 "^3.0.0"
     uuid "^3.3.2"
 
-"ethers@https://github.com/alazarevski/ethers.js#master":
+"ethers@https://github.com/pillarwallet/ethers.js#v4":
   version "4.0.39"
-  resolved "https://github.com/alazarevski/ethers.js#7b2fa3d3b7aa11640de5c5a6440b8345f16e9622"
+  resolved "https://github.com/pillarwallet/ethers.js#4c1b90a80a1861f38efa624267b12aac62eec00a"
   dependencies:
     "@types/node" "^10.3.2"
     aes-js "3.0.0"
