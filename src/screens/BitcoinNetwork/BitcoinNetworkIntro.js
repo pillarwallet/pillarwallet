@@ -19,8 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { FlatList, Platform } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
+import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -28,7 +27,6 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import { BoldText, MediumText } from 'components/Typography';
-import Icon from 'components/Icon';
 import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
@@ -73,36 +71,6 @@ const BodyText = styled(MediumText)`
   margin-top: ${responsiveSize(26)}px;
 `;
 
-const ListItemWrapper = styled.View`
-  flex-direction: row;
-  justify-content: flex-start;
-  margin-top: ${responsiveSize(19)}px;
-`;
-
-const ContentWrapper = styled.View`
-  align-items: stretch;
-  margin-left: ${responsiveSize(19)}px;
-  flex: 1;
-  flex-wrap: wrap;
-`;
-
-const Label = styled(MediumText)`
-  color: ${baseColors.pomegranate};
-  ${fontStyles.rLarge};
-`;
-
-const Subtext = styled(MediumText)`
-  color: ${baseColors.pomegranate};
-  ${fontStyles.rBig};
-  margin-top: ${responsiveSize(10)}px;
-`;
-
-const FeatureIcon = styled(CachedImage)`
-  height: 124px;
-  width: 124px;
-  margin-bottom: 24px;
-`;
-
 const Wrapper = styled.View`
   position: relative;
   margin: 5px 20px 20px;
@@ -115,17 +83,6 @@ const Wrapper = styled.View`
 const ButtonWrapper = styled(Wrapper)`
   padding: 0 46px 20px;
 `;
-
-const features = [
-  {
-    key: 'btc',
-    label: 'Bitcoin.',
-    subtext: 'No waiting for miner or block confirmations. Seriously instant transactions.',
-  },
-];
-
-// TODO: BTC Icon
-const PPNIcon = require('assets/images/logo_PPN.png');
 
 class BitcoinNetworkIntro extends React.Component<Props, State> {
   state = {
@@ -170,7 +127,6 @@ class BitcoinNetworkIntro extends React.Component<Props, State> {
       >
         <ScrollWrapper contentContainerStyle={{ paddingTop: 80 }}>
           <CustomWrapper>
-            <FeatureIcon source={PPNIcon} />
             <Title>
               Bitcoin Network
             </Title>
@@ -185,27 +141,6 @@ class BitcoinNetworkIntro extends React.Component<Props, State> {
             <BodyText style={{ marginTop: 10 }}>
               Send&Receive Bitcoin.
             </BodyText>
-            <FlatList
-              data={features}
-              keyExtractor={(item) => item.key}
-              renderItem={({ item }) => (
-                <ListItemWrapper>
-                  <Icon
-                    name="check"
-                    style={{
-                      fontSize: responsiveSize(13),
-                      color: baseColors.pomegranate,
-                      marginTop: responsiveSize(12),
-                    }}
-                  />
-                  <ContentWrapper>
-                    <Label>{item.label}</Label>
-                    <Subtext>{item.subtext}</Subtext>
-                  </ContentWrapper>
-                </ListItemWrapper>
-              )}
-              style={{ marginTop: 20 }}
-            />
           </CustomWrapper>
           <ButtonWrapper>
             <Button

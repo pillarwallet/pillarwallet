@@ -19,7 +19,7 @@
 */
 import { BITCOIN_INSIGHT_URL } from 'react-native-dotenv';
 
-const receiveResponse = (name: string) => {
+const validateResponse = (name: string) => {
   return (response) => {
     if (!response.ok) {
       const message = `${name} failed`;
@@ -40,7 +40,7 @@ export const sendRawTransactionToNode = async (rawtx: string) => {
     },
     body: JSON.stringify({ rawtx }),
   })
-    .then(receiveResponse('sendRawTransactionToNode'));
+    .then(validateResponse('sendRawTransactionToNode'));
 };
 
 export const getAddressUtxosFromNode = (address: string) => {
@@ -50,5 +50,5 @@ export const getAddressUtxosFromNode = (address: string) => {
       Accept: 'application/json',
     },
   })
-    .then(receiveResponse('getAddressUtxosFromNode'));
+    .then(validateResponse('getAddressUtxosFromNode'));
 };
