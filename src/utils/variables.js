@@ -68,21 +68,6 @@ export const brandColors = [
   baseColors.negative,
 ];
 
-export const UIColors = {
-  danger: baseColors.negative,
-  defaultHeaderColor: baseColors.white,
-  defaultInputBackgroundColor: baseColors.white,
-  focusedBorderColor: baseColors.primary,
-  defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
-  tabShadowColor: 'rgba(128, 128, 128, 0.2)',
-  cardShadowColor: '#EEF3F9',
-  actionButtonShadowColor: 'rgba(18, 63, 111, 0.1)',
-  actionButtonBorderColor: 'rgba(255, 255, 255, 0.37)',
-  headerContentBorder: 'rgba(255, 255, 255, 0.1)',
-  listDivider: 'rgba(25, 16, 91, 0.05)',
-  headerButtonBorder: 'rgba(0, 122, 255, 0.05)',
-};
-
 export const fontSizes = {
   tiny: 10,
   small: 12,

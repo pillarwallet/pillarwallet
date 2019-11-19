@@ -23,7 +23,7 @@ import { TouchableOpacity, FlatList, Image } from 'react-native';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
-import { baseColors, fontStyles, UIColors } from 'utils/variables';
+import { baseColors, fontStyles } from 'utils/variables';
 import { EXCHANGE } from 'constants/navigationConstants';
 import { BaseText, MediumText } from 'components/Typography';
 
@@ -39,7 +39,7 @@ const Screen = styled(Container)`
 `;
 
 const HeaderWrapper = styled(Wrapper)`
-  background-color: ${UIColors.defaultHeaderColor};
+  background-color: ${baseColors.white};
 `;
 
 const ServicesWrapper = styled(Wrapper)``;

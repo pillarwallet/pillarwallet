@@ -25,7 +25,7 @@ import Title from 'components/Title';
 import Icon from 'components/Icon';
 import { MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
-import { baseColors, UIColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, spacing, fontSizes } from 'utils/variables';
 
 type Tab = {
   id: string,
@@ -93,14 +93,6 @@ const TabItem = styled.TouchableOpacity`
   border-radius: 16px;
   flex-direction: row;
   flex-grow: 1;
-  ${props => props.active
-    ? `
-    shadow-color: ${UIColors.tabShadowColor};
-    shadow-radius: 10px;
-    shadow-opacity: 1;
-    shadow-offset: 0px 7px;
-    `
-    : ''}
 `;
 
 const TabItemIcon = styled(Icon)`

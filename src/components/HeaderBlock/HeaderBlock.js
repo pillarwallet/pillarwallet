@@ -21,7 +21,7 @@ import * as React from 'react';
 import { StatusBar, View, TouchableOpacity } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { baseColors, fontSizes, fontStyles, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -199,7 +199,7 @@ const themes = (backgroundColor?: string = '') => ({
     iconColor: baseColors.white,
     rightActionIconColor: baseColors.white,
     rightActionLabelColor: baseColors.white,
-    buttonBorderColor: UIColors.actionButtonBorderColor,
+    buttonBorderColor: baseColors.tertiary,
     buttonLabelColor: baseColors.white,
   },
   background: {
@@ -218,7 +218,7 @@ const themes = (backgroundColor?: string = '') => ({
     iconColor: baseColors.text,
     rightActionIconColor: baseColors.primary,
     rightActionLabelColor: baseColors.primary,
-    rightActionBorderColor: UIColors.headerButtonBorder,
+    rightActionBorderColor: baseColors.tertiary,
     buttonBorderColor: baseColors.border,
     buttonLabelColor: baseColors.text,
   },

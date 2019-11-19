@@ -27,7 +27,7 @@ import SettingsListItem from 'components/ListItem/SettingsItem';
 import ShadowedCard from 'components/ShadowedCard';
 
 // utils
-import { baseColors, UIColors, fontStyles } from 'utils/variables';
+import { baseColors, fontStyles } from 'utils/variables';
 
 const SectionHeader = styled(MediumText)`
   color: ${baseColors.accent};
@@ -39,7 +39,7 @@ const SectionHeader = styled(MediumText)`
 const Separator = styled.View`
   width: 100%;
   height: 1px;
-  background-color: ${UIColors.listDivider};
+  background-color: ${baseColors.border};
 `;
 
 type Props = {

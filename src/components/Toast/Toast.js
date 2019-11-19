@@ -48,7 +48,7 @@ const toastInitialOptions: ToastOptions = {
 };
 
 const typeColors = {
-  warning: baseColors.negative,
+  warning: baseColors.sunYellow,
   info: baseColors.primary,
   success: baseColors.positive,
 };
@@ -256,7 +256,7 @@ export default class Toast extends React.Component<{}, State> {
             <IconButton
               onPress={this.handleClose}
               icon="close"
-              color={baseColors.secondaryAccent}
+              color={baseColors.secondaryText}
               style={{
                 flex: 2,
                 justifyContent: 'center',
