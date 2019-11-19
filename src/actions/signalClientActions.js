@@ -26,18 +26,9 @@ import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { getActiveAccountAddress } from 'utils/accounts';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { SignalCredentials } from 'models/Config';
 
 const chat = new ChatService();
-
-type SignalCredentials = {
-  accessToken: ?string,
-  refreshToken: ?string,
-  username: string,
-  userId: string,
-  walletId: string,
-  ethAddress: string,
-  fcmToken?: string,
-}
 
 export const signalInitAction = (credentials?: SignalCredentials) => {
   return async (dispatch: Dispatch, getState: GetState) => {

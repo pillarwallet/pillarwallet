@@ -26,13 +26,14 @@ import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { stopListeningChatWebSocketAction } from 'actions/notificationsActions';
 
 import type { Dispatch } from 'reducers/rootReducer';
+import type { SignalCredentials } from 'models/Config';
 
 export type OAuthTokens = {
   refreshToken: ?string,
   accessToken: ?string,
 };
 
-export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: Object) => {
+export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: SignalCredentials) => {
   return async (oAuthTokens: OAuthTokens) => {
     dispatch({
       type: UPDATE_OAUTH_TOKENS,
