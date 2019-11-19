@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import ethers from 'ethers';
 import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
@@ -48,6 +47,7 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
 import { delay } from 'utils/common';
+import { getSaltedPin, decryptWallet, normalizeWalletAddress } from 'utils/wallet';
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import ChatService from 'services/chat';
@@ -56,7 +56,6 @@ import Intercom from 'react-native-intercom';
 import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
-import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
 import { setKeychainDataObject } from 'utils/keychain';
@@ -142,11 +141,7 @@ export const loginAction = (
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
         const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
-        wallet = await ethers.Wallet.RNfromEncryptedWallet(
-          JSON.stringify(encryptedWallet),
-          saltedPin,
-          decryptionOptions,
-        );
+        wallet = await decryptWallet(encryptedWallet, saltedPin, decryptionOptions);
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };
@@ -331,7 +326,7 @@ export const checkAuthAction = (
       let wallet;
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
-        wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
+        wallet = await decryptWallet(encryptedWallet, saltedPin, options);
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };
@@ -368,12 +363,9 @@ export const changePinAction = (newPin: string, currentPin: string) => {
     });
     await delay(50);
     const currentSaltedPin = await getSaltedPin(currentPin, dispatch);
-    const wallet = await ethers.Wallet.RNfromEncryptedWallet(
-      JSON.stringify(encryptedWallet),
-      currentSaltedPin,
-      {
-        mnemonic: true,
-      });
+    const wallet = await decryptWallet(encryptedWallet, currentSaltedPin, {
+      mnemonic: true,
+    });
 
     const newSaltedPin = await getSaltedPin(newPin, dispatch);
     const newEncryptedWallet = await wallet.RNencrypt(newSaltedPin, { scrypt: { N: 16384 } })
