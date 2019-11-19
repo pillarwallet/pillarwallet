@@ -40,7 +40,6 @@ import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { switchAccountAction } from './accountsActions';
 
-
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Dispatch) => {
     const settings = { optOutTracking: status };

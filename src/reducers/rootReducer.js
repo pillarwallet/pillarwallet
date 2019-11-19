@@ -202,7 +202,7 @@ export const initialState = appReducer(undefined, {});
 
 const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
   if (action.type === LOG_OUT) {
-    return initialState;
+    return appReducer({ appSettings: { isFetched: true } }, {});
   }
   return appReducer(state, action);
 };
