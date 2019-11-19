@@ -125,6 +125,7 @@ export const loginAction = (
 
     await dispatch(fetchFeatureFlagsAction()); // wait until fetches new flags
     const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+    const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED');
 
     try {
       let wallet;
@@ -207,8 +208,13 @@ export const loginAction = (
         }
 
         // set ETHEREUM network as active
-        // if we disable feature flag or end beta testing program while user has set PPN as active network
-        if (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
+        // if we disable feature flag or end beta testing program
+        // while user has set PPN or BTC as active network
+        const revertToDefaultNetwork =
+          (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) ||
+          (!bitcoinFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
+
+        if (revertToDefaultNetwork) {
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
 
