@@ -19,6 +19,8 @@
 */
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import firebase from 'react-native-firebase';
+
 import ChatService from 'services/chat';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { getActiveAccountAddress } from 'utils/accounts';
@@ -41,7 +43,13 @@ export const signalInitAction = (credentials?: SignalCredentials) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { session: { data: { isSignalInitiated, isOnline } } } = getState();
     if (!isOnline || isSignalInitiated) return;
-    const { session: { data: { fcmToken } } } = getState();
+
+    let { session: { data: { fcmToken } } } = getState();
+
+    // if fcmToken is not yet on state then get it from Firebase
+    if (!fcmToken) fcmToken = await firebase.messaging().getToken().catch(() => null);
+
+    // build credentials from state
     if (!credentials) {
       const {
         user: {

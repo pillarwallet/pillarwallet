@@ -93,15 +93,14 @@ const loginDurationReport = () => {
   };
 };
 
-export const updateFcmTokenAction = () => {
+export const updateFcmTokenAction = (walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { session: { data: { isOnline } } } = getState();
     if (isOnline) return;
     const fcmToken = await firebase.messaging().getToken().catch(() => null);
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
     Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
-    const { user = {} } = await storage.get('user');
-    await api.updateFCMToken(user.walletId, fcmToken);
+    await api.updateFCMToken(walletId, fcmToken);
   };
 };
 
@@ -178,10 +177,10 @@ export const loginAction = (
           ethAddress: wallet.address,
         };
 
-        // oauth fallback method if access token expired
+        // oauth fallback method for expired access token
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
 
-        // oauth fallback method if all tokens expired or invalid
+        // oauth fallback method for all tokens expired or invalid
         const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
 
         // init API
@@ -198,7 +197,7 @@ export const loginAction = (
         api.setUsername(user.username);
 
         // update FCM
-        dispatch(updateFcmTokenAction());
+        dispatch(updateFcmTokenAction(user.walletId));
 
         // make first api call which can also trigger OAuth fallback methods
         const userInfo = await api.userInfo(user.walletId);
