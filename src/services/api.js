@@ -787,7 +787,13 @@ SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: 
 };
 
 SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string) {
-  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
+  if (NETWORK_PROVIDER !== 'homestead') {
+    const url = `https://blockchainparser.appspot.com/${NETWORK_PROVIDER}/${walletAddress}/`;
+    return Promise.resolve()
+      .then(() => fetch(url))
+      .then(resp => resp.json())
+      .catch(() => []);
+  }
   return Promise.resolve()
     .then(() => ethplorerSdk.getAddressInfo(walletAddress))
     .then(data => get(data, 'tokens', []))
