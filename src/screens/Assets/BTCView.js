@@ -34,8 +34,9 @@ import ActivityFeed from 'components/ActivityFeed';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // types
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BitcoinAddress, BitcoinUtxo } from 'models/Bitcoin';
+import type { Rates } from 'models/Asset';
 
 // utils
 import { formatMoney } from 'utils/common';
@@ -44,7 +45,7 @@ import { unspentAmount, satoshisToBtc } from 'utils/bitcoin';
 
 type Props = {
   baseFiatCurrency: ?string,
-  rates: Object,
+  rates: Rates,
   navigation: NavigationScreenProp<*>,
   addresses: BitcoinAddress[],
   unspentTransactions: BitcoinUtxo[],
@@ -190,7 +191,7 @@ const mapStateToProps = ({
   unspentTransactions,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(true)),
 });
 

@@ -20,19 +20,17 @@
 import { unspentAmount, btcToSatoshis } from 'utils/bitcoin';
 import type { BitcoinUtxo } from 'models/Bitcoin';
 
-const buildUtxo = (values: $Shape<BitcoinUtxo>): BitcoinUtxo => {
-  return {
-    address: '<address>',
-    txid: '<txid>',
-    vout: 0,
-    scriptPubKey: '',
-    amount: 1.0,
-    satoshis: btcToSatoshis(1.0),
-    height: 0,
-    confirmations: 10,
-    ...values,
-  };
-};
+const buildUtxo = (values: $Shape<BitcoinUtxo>): BitcoinUtxo => ({
+  address: '<address>',
+  txid: '<txid>',
+  vout: 0,
+  scriptPubKey: '',
+  amount: 1.0,
+  satoshis: btcToSatoshis(1.0),
+  height: 0,
+  confirmations: 10,
+  ...values,
+});
 
 describe('Bitcoin utils', () => {
   describe('unspentAmount', () => {
