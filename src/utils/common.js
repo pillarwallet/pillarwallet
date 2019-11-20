@@ -295,9 +295,7 @@ export const smallScreen = () => {
 
 export const getEthereumProvider = (network: string) => {
   // Connect to INFURA
-  const infuraNetwork = network === 'homestead' ? 'mainnet' : network;
-  const infuraUrl = `https://${infuraNetwork}.infura.io/v3/${INFURA_PROJECT_ID}`;
-  const infuraProvider = new providers.JsonRpcProvider(infuraUrl, network);
+  const infuraProvider = new providers.InfuraProvider(network, INFURA_PROJECT_ID);
 
   // Connect to Etherscan
   const etherscanProvider = new providers.EtherscanProvider(network);
