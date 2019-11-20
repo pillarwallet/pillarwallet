@@ -2029,16 +2029,12 @@ exports[`Asset renders the Asset correctly 1`] = `
             </View>
           </View>
           <View
-            borderColor="#007AFF"
             opacity={0}
             style={
               Array [
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#ffffff",
-                  "borderColor": "#007AFF",
-                  "borderLeftWidth": 10,
-                  "borderStyle": "solid",
                   "elevation": 9,
                   "justifyContent": "center",
                   "left": 0,
@@ -2697,16 +2693,12 @@ exports[`Asset renders the Asset correctly 1`] = `
             </View>
           </View>
           <View
-            borderColor="#007AFF"
             opacity={0}
             style={
               Array [
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#ffffff",
-                  "borderColor": "#007AFF",
-                  "borderLeftWidth": 10,
-                  "borderStyle": "solid",
                   "elevation": 9,
                   "justifyContent": "center",
                   "left": 0,

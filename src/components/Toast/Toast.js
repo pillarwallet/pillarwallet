@@ -81,9 +81,6 @@ const ToastWrapper = styled.View`
   left: 0;
   top: 0;
   width: 100%;
-  border-left-width: ${spacing.rhythm / 2}px;
-  border-style: solid;
-  border-color: ${props => props.borderColor};
   shadow-color: #333;
   shadow-offset: 0 2px;
   shadow-opacity: 0.25;
@@ -239,7 +236,6 @@ export default class Toast extends React.Component<{}, State> {
           transform: [{ translateY: animation }],
         }}
         opacity={+!!this.state.toastOptions.message}
-        borderColor={typeColors[toastOptions.type]}
       >
         <ToastHolder forceInset={{ top: 'always', bottom: 'never' }}>
           <ContentWrapper androidStatusbarHeight={StatusBar.currentHeight}>
