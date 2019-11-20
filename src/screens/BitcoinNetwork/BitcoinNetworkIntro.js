@@ -182,4 +182,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   ),
 });
 
-export default connect(mapDispatchToProps)(BitcoinNetworkIntro);
+export default connect(null, mapDispatchToProps)(BitcoinNetworkIntro);
