@@ -21,22 +21,22 @@
 import { responsiveSize } from 'utils/ui';
 
 export const baseColors = {
-  text: '#0a1427', // ex slateBlack
-  accent: '#818eb3', // ex blueYonder (818eb3) // pigeonPost (#9fb7db) (for shadow on checkbox)
-  primary: '#007AFF', // ex electricBlue and primaryIntense (#2329d6)
-  secondaryAccent: '#ebf0f5', // ex mediumGray (#C6CACD) and lightGray (#f5f5f5)
-  secondaryText: '#8b939e', // ex darkGray (#8B939E) and coolGrey (#8B939E)
-  border: '#ededed', // ex lightGray (for borders) and mediumLightGray and gallery (#efefef)
-  positive: '#2aa057', // ex freshEucalyptus (#2AA057) and jadeGreen (#2aa157) and limeGreen (#47d764) for toast
-  negative: '#bd573a', // ex burningFire (#F56C07) and fireEngineRed (#ff0005) and vividOrange (#ffc021) for toast
-  surface: '#fafafa', // ex snowWhite and lighterGray
+  text: '#0a1427',
+  accent: '#818eb3',
+  primary: '#007AFF',
+  secondaryAccent: '#ebf0f5',
+  secondaryText: '#8b939e',
+  border: '#ededed',
+  positive: '#2aa057',
+  negative: '#bd573a',
+  surface: '#fafafa',
   card: '#ffffff',
-  tertiary: '#ebf0f6', // ex mediumGray (#C6CACD)
+  tertiary: '#ebf0f6',
   control: '#fcfdff',
   warning: '#ECA93A',
 
-  indicator: '#f8e71c', // NOT IN DS
-  userAvatar: '#a9aeb8', // NOT IN DS
+  indicator: '#f8e71c', // NOT IN DS BUT CURRENTLY REQUIRED
+  userAvatar: '#a9aeb8', // NOT IN DS BUT CURRENTLY REQUIRED
 
   black: '#000000', // TODO: need decision on shadowing in order to remove or rename
 };
