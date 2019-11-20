@@ -159,7 +159,7 @@ describe('Wallet actions', () => {
         backupStatus: mockBackupStatus,
       },
       accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: { data: { SMART_WALLET_ENABLED: false } },
+      featureFlags: { data: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       history: { data: {} },
     });
     const expectedActions = [
@@ -198,7 +198,7 @@ describe('Wallet actions', () => {
         },
       },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
-      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false } },
+      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
@@ -224,7 +224,7 @@ describe('Wallet actions', () => {
         backupStatus: mockBackupStatus,
       },
       accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: { data: { SMART_WALLET_ENABLED: true } },
+      featureFlags: { data: { SMART_WALLET_ENABLED: true, BITCOIN_ENABLED: false } },
       smartWallet: { upgrade: { status: null } },
       assets: { data: {} },
       history: { data: {} },
@@ -265,7 +265,7 @@ describe('Wallet actions', () => {
         },
       },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
-      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false } },
+      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
       { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
@@ -305,7 +305,7 @@ describe('Wallet actions', () => {
         backupStatus: mockBackupStatus,
       },
       accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: { data: { SMART_WALLET_ENABLED: false } },
+      featureFlags: { data: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       assets: { data: {} },
       history: { data: {} },
     });
@@ -344,7 +344,7 @@ describe('Wallet actions', () => {
         },
       },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
-      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false } },
+      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 

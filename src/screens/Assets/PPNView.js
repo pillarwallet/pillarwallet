@@ -50,14 +50,19 @@ import {
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
 } from 'constants/navigationConstants';
-import { PAYMENT_COMPLETED, PAYMENT_PROCESSED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import {
+  PAYMENT_COMPLETED,
+  PAYMENT_PROCESSED,
+  SMART_WALLET_UPGRADE_STATUSES,
+} from 'constants/smartWalletConstants';
 
-// models
+// types
 import type { Accounts } from 'models/Account';
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction } from 'models/Transaction';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 // utils
 import { getRate } from 'utils/assets';
@@ -80,7 +85,7 @@ import { accountHistorySelector } from 'selectors/history';
 
 
 type Props = {
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   assets: Assets,
   rates: Object,
   balances: Balances,
@@ -388,21 +393,19 @@ class PPNView extends React.Component<Props, State> {
 const mapStateToProps = ({
   assets: { supportedAssets },
   rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
-  paymentNetwork: { balances, availableToSettleTx: { data: availableToSettleTx, isFetched } },
+  paymentNetwork: { balances, availableToSettleTx: { data: availableToSettleTx } },
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
-  assetsLayout,
   supportedAssets,
   smartWalletState,
   accounts,
   balances,
   availableToSettleTx,
-  isFetched,
   contacts,
   contactsSmartAddresses,
 });
