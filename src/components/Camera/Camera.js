@@ -127,7 +127,7 @@ const ResultScreenFooter = styled.View`
 `;
 
 const CameraButtonOuter = styled.TouchableOpacity`
-  border: 3px solid white;
+  border: 3px solid ${baseColors.control};
   width: 72px;
   height: 72px;
   border-radius: 36px;
@@ -298,7 +298,7 @@ class Camera extends React.Component<Props, State> {
           <Header light flexStart onClose={modalHide} />
         </HeaderWrapper>
         <NoPermissions>
-          <BaseText style={{ color: 'white' }}>
+          <BaseText style={{ color: baseColors.control }}>
             Camera permissions not granted - cannot open camera preview.
           </BaseText>
         </NoPermissions>
@@ -314,7 +314,7 @@ class Camera extends React.Component<Props, State> {
             icon="gallery"
             onPress={this.openGallery}
             fontSize={fontSizes.large}
-            color={baseColors.white}
+            color={baseColors.control}
           />
           <CameraButtonOuter onPress={this.takePicture} >
             <CameraButtonInner />
@@ -323,7 +323,7 @@ class Camera extends React.Component<Props, State> {
             icon="flip"
             onPress={this.handleCameraFlip}
             fontSize={fontSizes.large}
-            color={baseColors.white}
+            color={baseColors.control}
           />
         </FooterInner>
       </Footer>
@@ -392,7 +392,7 @@ class Camera extends React.Component<Props, State> {
             cy={screenHeight / 2}
             r={cutOutR}
             fill="none"
-            stroke={baseColors.white}
+            stroke={baseColors.control}
             strokeWidth="2"
           />
         </SvgOverlay>

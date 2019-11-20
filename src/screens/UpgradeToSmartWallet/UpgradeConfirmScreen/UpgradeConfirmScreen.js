@@ -368,7 +368,7 @@ class UpgradeConfirmScreen extends React.PureComponent<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Confirm' }] }}
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flexGrow: 1 }}>
           <Paragraph small style={{ margin: spacing.large }}>

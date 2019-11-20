@@ -56,7 +56,7 @@ type Props = {
 }
 
 const StyledFlatList = styled.FlatList`
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
 `;
 
 const FloatingButtonView = styled.View`
@@ -104,7 +104,7 @@ class UnsettledAssets extends React.Component<Props> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         headerProps={{ centerItems: [{ title: 'Unsettled Assets' }] }}
         inset={{ bottom: 0 }}
       >

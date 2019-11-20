@@ -322,7 +322,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   Object {
                     "alignItems": "center",
                     "backgroundColor": "#ffffff",
-                    "borderColor": "#ffffff",
+                    "borderColor": "#fcfdff",
                     "borderStyle": "solid",
                     "borderWidth": 2,
                     "elevation": 0,
@@ -422,7 +422,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   Object {
                     "alignItems": "center",
                     "backgroundColor": "#ffffff",
-                    "borderColor": "#ffffff",
+                    "borderColor": "#fcfdff",
                     "borderStyle": "solid",
                     "borderWidth": 2,
                     "elevation": 0,
@@ -522,7 +522,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   Object {
                     "alignItems": "center",
                     "backgroundColor": "#ffffff",
-                    "borderColor": "#ffffff",
+                    "borderColor": "#fcfdff",
                     "borderStyle": "solid",
                     "borderWidth": 2,
                     "elevation": 0,
@@ -622,7 +622,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   Object {
                     "alignItems": "center",
                     "backgroundColor": "#ffffff",
-                    "borderColor": "#ffffff",
+                    "borderColor": "#fcfdff",
                     "borderStyle": "solid",
                     "borderWidth": 2,
                     "elevation": 0,
@@ -722,7 +722,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   Object {
                     "alignItems": "center",
                     "backgroundColor": "#ffffff",
-                    "borderColor": "#ffffff",
+                    "borderColor": "#fcfdff",
                     "borderStyle": "solid",
                     "borderWidth": 2,
                     "elevation": 0,
@@ -1988,7 +1988,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                               },
                               Array [
                                 Object {
-                                  "color": "#ffffff",
+                                  "color": "#fcfdff",
                                   "fontSize": 18,
                                   "marginBottom": 0,
                                 },
@@ -2002,7 +2002,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                             "background": "#007AFF",
                             "borderColor": "#ededed",
                             "borderWidth": 0,
-                            "color": "#ffffff",
+                            "color": "#fcfdff",
                             "shadow": true,
                           }
                         }

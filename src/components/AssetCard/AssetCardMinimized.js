@@ -89,7 +89,7 @@ const Sizer = styled.View`
     ? '100%'
     : `${cardHeight(props.smallScreen, props.extraSmall)}px`};
   border-radius: 6px;
-  background: ${baseColors.white};
+  background: ${baseColors.card};
   width: 100%;
   justify-content: center;
   align-items: center;
@@ -394,7 +394,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
             <Icon
               name="turn-off"
               style={{
-                color: baseColors.white,
+                color: baseColors.control,
                 fontSize: fontSizes.medium,
                 opacity: disabledRemove ? 0.5 : 1,
               }}

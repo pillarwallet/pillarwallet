@@ -32,7 +32,7 @@ const ContentWrapper = styled.View`
   flex-direction: column;
   justify-content: flex-start;
   border-radius: 6px;
-  background: ${baseColors.white};
+  background: ${baseColors.card};
   width: 100%;
   opacity: ${props => props.disabled ? 0.6 : 1};
 `;

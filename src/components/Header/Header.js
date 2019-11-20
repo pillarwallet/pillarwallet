@@ -60,7 +60,7 @@ const Wrapper = styled.View`
   z-index: 10;
   ${props => props.white
     ? `
-      background-color: ${baseColors.white};
+      background-color: ${baseColors.card};
       border-bottom-width: 1px;
       border-bottom-color: ${baseColors.border};
     `
@@ -86,7 +86,7 @@ const BackIcon = styled(IconButton)`
 `;
 
 const CloseIconText = styled(BaseText)`
-  color: ${props => props.light ? baseColors.white : baseColors.text};
+  color: ${props => props.light ? baseColors.control : baseColors.text};
   font-size: ${fontSizes.small}px;
 `;
 
@@ -190,7 +190,7 @@ const Header = (props: Props) => {
           {onBack &&
             <BackIcon
               icon={backIcon || 'back'}
-              color={light ? baseColors.white : baseColors.text}
+              color={light ? baseColors.control : baseColors.text}
               onPress={() => onBack()}
               fontSize={fontSizes.large}
               horizontalAlign="flex-start"
@@ -227,7 +227,7 @@ const Header = (props: Props) => {
               <IconWrapper>
                 <NextIcon
                   icon={nextIcon}
-                  color={light ? baseColors.white : baseColors.primary}
+                  color={light ? baseColors.control : baseColors.primary}
                   onPress={onNextPress}
                   fontSize={nextIconSize || fontSizes.medium}
                   horizontalAlign="flex-end"
@@ -242,7 +242,7 @@ const Header = (props: Props) => {
                 }
                 <CloseIcon
                   icon="close"
-                  color={light ? baseColors.white : baseColors.text}
+                  color={light ? baseColors.control : baseColors.text}
                   onPress={onClose}
                   fontSize={fontSizes.medium}
                   horizontalAlign="center"

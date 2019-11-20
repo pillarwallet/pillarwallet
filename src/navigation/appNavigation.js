@@ -210,7 +210,7 @@ import { PENDING, REGISTERED } from 'constants/userConstants';
 import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
 
 // utils
-import { baseColors, fontSizes } from 'utils/variables';
+import { accentColors, baseColors, fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 
@@ -358,7 +358,7 @@ const tabBarLabel = labelText => ({ focused, tintColor }) => (
   <BaseText
     style={{
       fontSize: fontSizes.regular,
-      color: focused ? tintColor : baseColors.bottomNavigationText,
+      color: focused ? tintColor : accentColors.bottomNavigationText,
       textAlign: 'center',
     }}
     numberOfLines={1}
@@ -408,11 +408,11 @@ const tabNavigation = createBottomTabNavigator(
   }, {
     tabBarOptions: {
       activeTintColor: baseColors.primary,
-      inactiveTintColor: 'gray',
-      activeBackgroundColor: 'white',
-      inactiveBackgroundColor: 'white',
+      inactiveTintColor: accentColors.bottomNavigationText,
+      activeBackgroundColor: baseColors.card,
+      inactiveBackgroundColor: baseColors.card,
       style: {
-        backgroundColor: 'white',
+        backgroundColor: baseColors.card,
         elevation: 14,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: -2 },

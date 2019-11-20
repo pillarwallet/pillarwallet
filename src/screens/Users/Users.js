@@ -118,7 +118,7 @@ class UsersScreen extends React.Component<Props> {
 
     return (
       <ContainerWithHeader
-        color={baseColors.white}
+        color={baseColors.card}
         headerProps={{
           leftItems: [{ close: true, dismiss: true }],
           centerItems: [{ title: 'Users' }],

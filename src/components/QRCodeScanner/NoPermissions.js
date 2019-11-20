@@ -49,7 +49,7 @@ export default class NoPermissions extends PureComponent<Props> {
           <Header light flexStart onClose={onClose} />
         </HeaderWrapper>
         <Body>
-          <BaseText style={{ color: baseColors.white }}>
+          <BaseText style={{ color: baseColors.control }}>
             Camera permissions not granted - cannot open the QR scanner.
           </BaseText>
         </Body>

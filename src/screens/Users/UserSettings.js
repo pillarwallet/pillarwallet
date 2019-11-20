@@ -97,7 +97,7 @@ class UserSettings extends React.PureComponent<Props> {
     const userSettings = getUserSettings(this);
     return (
       <ContainerWithHeader
-        color={baseColors.white}
+        color={baseColors.card}
         headerProps={{ centerItems: [{ title: 'User settings' }] }}
         inset={{ bottom: 'never' }}
       >

@@ -33,7 +33,7 @@ type Props = {
 };
 
 const WhiteWrapper = styled.View`
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   border-bottom-width: 1px;
   border-bottom-color: #ededed;
   padding-bottom: 18px;

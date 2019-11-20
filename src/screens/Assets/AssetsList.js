@@ -231,7 +231,7 @@ class AssetsList extends React.Component<Props, State> {
               disabled={disableRemove}
             />
             ),
-          backgroundColor: baseColors.white,
+          backgroundColor: baseColors.card,
         }]}
         backgroundColor="transparent"
         sensitivity={10}

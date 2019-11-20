@@ -159,7 +159,7 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
           onSearchChange={this.handleSearchChange}
           itemSearchState={query.length >= 2}
           navigation={navigation}
-          backgroundColor={baseColors.white}
+          backgroundColor={baseColors.card}
         /> */ }
         <Header
           title="recovery agents"

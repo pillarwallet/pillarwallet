@@ -201,7 +201,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
             onSearchChange={this.handleSearchChange}
             itemSearchState={query.length >= 2}
             navigation={navigation}
-            backgroundColor={baseColors.white}
+            backgroundColor={baseColors.card}
             wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
             onSearchFocus={() => this.setState({ disableScroll: true })}
             onSearchBlur={() => this.setState({ disableScroll: false })}

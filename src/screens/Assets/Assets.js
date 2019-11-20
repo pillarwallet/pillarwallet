@@ -308,7 +308,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         headerProps={{
           ...customHeaderProps,
           leftItems: [{ user: true }],

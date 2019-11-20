@@ -36,15 +36,9 @@ export const baseColors = {
   warning: '#ECA93A',
 
   indicator: '#f8e71c', // NOT IN DS
-  bottomNavigationText: '#C6CACD', // NOT IN DS
   userAvatar: '#a9aeb8', // NOT IN DS
 
-  white: '#ffffff',
-  black: '#000000',
-
-  rose: '#f5078d', // CONNECTION EVENT HEADER
-  cerulean: '#07b0f5', // CONNECTION EVENT HEADER
-  shark: '#292c33', // BADGE / COLLECTIBLE EVENT HERADER
+  black: '#000000', // TODO: need decision on shadowing in order to remove or rename
 };
 
 export const accentColors = {
@@ -57,6 +51,7 @@ export const accentColors = {
   ppnIntroDetail: '#ff8d04',
   chatBubbleBorder: '#CAE1F8',
   chatBubble: '#EBF5FF',
+  bottomNavigationText: '#C6CACD',
 };
 
 export const fontSizes = {

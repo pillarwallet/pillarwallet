@@ -159,7 +159,7 @@ class WalletSettings extends React.PureComponent<Props> {
 
     return (
       <ContainerWithHeader
-        color={baseColors.white}
+        color={baseColors.card}
         headerProps={{ centerItems: [{ title: `${user.username}'s ${accountType} wallet` }] }}
         inset={{ bottom: 'never' }}
       >

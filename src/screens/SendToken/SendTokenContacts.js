@@ -77,7 +77,7 @@ const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 const FormWrapper = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.large}px 6px;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   border-bottom-color: ${baseColors.border};
   border-bottom-width: 1px;
 `;

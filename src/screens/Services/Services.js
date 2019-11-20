@@ -39,7 +39,7 @@ const Screen = styled(Container)`
 `;
 
 const HeaderWrapper = styled(Wrapper)`
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
 `;
 
 const ServicesWrapper = styled(Wrapper)``;

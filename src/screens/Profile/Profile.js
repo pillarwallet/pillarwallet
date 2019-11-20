@@ -403,7 +403,7 @@ class Profile extends React.Component<Props, State> {
 
     const isWalletBackedUp = isImported || isBackedUp;
     return (
-      <Container inset={{ bottom: 0 }} color={baseColors.white}>
+      <Container inset={{ bottom: 0 }} color={baseColors.card}>
         <Header white title="settings" onBack={() => navigation.goBack(null)} />
         <SlideModal
           isVisible={showTrackingModal}

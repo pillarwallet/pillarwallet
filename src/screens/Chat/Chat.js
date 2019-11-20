@@ -406,7 +406,7 @@ class Chat extends React.Component<Props, State> {
       {...props}
       textStyle={{
         left: {
-          color: isWarning ? baseColors.white : baseColors.text,
+          color: isWarning ? baseColors.control : baseColors.text,
           fontSize: fontSizes.regular,
           fontFamily: appFont.regular,
         },
@@ -429,7 +429,7 @@ class Chat extends React.Component<Props, State> {
           minWidth: 120,
         },
         right: {
-          backgroundColor: baseColors.white,
+          backgroundColor: baseColors.card,
           borderRadius: 5,
           borderWidth: 1,
           borderColor: accentColors.chatBubbleBorder,

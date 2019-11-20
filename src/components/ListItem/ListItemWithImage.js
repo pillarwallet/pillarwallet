@@ -155,7 +155,7 @@ const IconCircle = styled.View`
   width: ${props => props.diameter || 52}px;
   height: ${props => props.diameter || 52}px;
   border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -201,7 +201,7 @@ const ItemBadge = styled.View`
 `;
 
 const UnreadNumber = styled(BaseText)`
-  color: ${baseColors.white};
+  color: ${baseColors.control};
   font-size: ${fontSizes.tiny}px;
   align-self: center;
   width: 20px;
@@ -472,7 +472,7 @@ const Addon = (props: Props) => {
           onPress={rejectInvitation}
         />
         <ActionCircleButton
-          color={baseColors.white}
+          color={baseColors.control}
           margin={0}
           accept
           icon="check"

@@ -37,7 +37,7 @@ const BadgeWrapper = styled.View`
 
 const Label = styled(MediumText)`
   font-size: 8px;
-  color: ${baseColors.white};
+  color: ${baseColors.control};
 `;
 
 export const LabelBadge = (props: Props) => {

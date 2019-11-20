@@ -194,13 +194,13 @@ const themes = (backgroundColor?: string = '') => ({
     buttonLabelColor: baseColors.secondaryText,
   },
   light: {
-    color: baseColors.white,
+    color: baseColors.control,
     borderBottomWidth: 0,
-    iconColor: baseColors.white,
-    rightActionIconColor: baseColors.white,
-    rightActionLabelColor: baseColors.white,
+    iconColor: baseColors.control,
+    rightActionIconColor: baseColors.control,
+    rightActionLabelColor: baseColors.control,
     buttonBorderColor: baseColors.tertiary,
-    buttonLabelColor: baseColors.white,
+    buttonLabelColor: baseColors.control,
   },
   background: {
     backgroundColor,
@@ -211,7 +211,7 @@ const themes = (backgroundColor?: string = '') => ({
     borderBottomColor: baseColors.text,
   },
   default: {
-    backgroundColor: baseColors.white,
+    backgroundColor: baseColors.card,
     color: baseColors.text,
     borderBottomColor: baseColors.border,
     borderBottomWidth: 1,

@@ -355,7 +355,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
           centerItems: [{ title: 'Choose assets to transfer' }],
           rightItems: [hasAssetsSelected ? { label: 'Edit', onPress: this.onEditPress } : {}],
         }}
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
       >
         <ScrollView
           stickyHeaderIndices={[1]}

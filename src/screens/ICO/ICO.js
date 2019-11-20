@@ -68,7 +68,7 @@ const ContactsRow = styled(View)`
   width: 100%;
   padding: 10px ${spacing.rhythm / 2}px 10px ${spacing.rhythm}px;
   flex-direction: row;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   align-items: flex-start;
   justify-content: space-between;
 `;
@@ -77,7 +77,7 @@ const ListRow = styled(View)`
   width: 100%;
   padding: 22px ${spacing.rhythm}px;
   flex-direction: row;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   align-items: flex-start;
   justify-content: space-between;
 `;
@@ -112,7 +112,7 @@ const ContactsButtonWrapper = styled(View)`
 const ContactsWrapper = styled(View)`
   width: 60%;
   flex-direction: row;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   align-items: flex-start;
   justify-content: flex-end;
   flex-wrap: wrap;
@@ -400,7 +400,7 @@ class ICOScreen extends React.Component<Props, {}> {
               ItemSeparatorComponent={() => this.renderSeparator(spacing.rhythm)}
               contentContainerStyle={{
                 flexGrow: 1,
-                backgroundColor: baseColors.white,
+                backgroundColor: baseColors.card,
               }}
               refreshing={false}
             />
@@ -412,7 +412,7 @@ class ICOScreen extends React.Component<Props, {}> {
               ItemSeparatorComponent={this.renderSeparator}
               contentContainerStyle={{
                 flexGrow: 1,
-                backgroundColor: baseColors.white,
+                backgroundColor: baseColors.card,
               }}
               refreshing={false}
             />
@@ -429,7 +429,7 @@ class ICOScreen extends React.Component<Props, {}> {
           </Wrapper>
         </ScrollWrapper>
         {totalLocked < totalSupply &&
-        <Footer backgroundColor={baseColors.white}>
+        <Footer backgroundColor={baseColors.card}>
           <ButtonWrapper>
             <Button
               disabledTransparent={isPending}
@@ -441,7 +441,7 @@ class ICOScreen extends React.Component<Props, {}> {
               <Countdown
                 endDate={plannedOpeningDate}
                 fontSize={fontSizes.big}
-                fontColor={baseColors.white}
+                fontColor={baseColors.control}
                 extendedDayLabel
                 lineHeight={lineHeights.big}
               />}

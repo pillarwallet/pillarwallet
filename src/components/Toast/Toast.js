@@ -76,7 +76,7 @@ const ContentWrapper = styled.View`
 
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   position: absolute;
   left: 0;
   top: 0;

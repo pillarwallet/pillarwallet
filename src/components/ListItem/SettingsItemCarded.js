@@ -190,7 +190,7 @@ export const SettingsItemCarded = (props: Props) => {
           justifyContent: 'center',
           flexWrap: 'wrap',
           borderWidth: 2,
-          borderColor: isActive ? baseColors.primary : baseColors.white,
+          borderColor: isActive ? baseColors.primary : 'transparent',
           borderRadius: 6,
         }}
         onPress={onMainPress}

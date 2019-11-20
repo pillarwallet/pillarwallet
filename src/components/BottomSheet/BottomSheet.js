@@ -84,7 +84,7 @@ const Sheet = styled.View`
   position: absolute;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   elevation: 10;
   shadow-color: ${baseColors.black};
   shadow-radius: 10px;
@@ -118,7 +118,7 @@ const Cover = styled.View`
   top: 0;
   left: 0;
   z-index: -1;
-  background-color: white;
+  background-color: ${baseColors.card};
   height: 30px;
   justify-content: flex-start;
   align-items: center;

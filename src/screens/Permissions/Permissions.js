@@ -83,7 +83,7 @@ const IconHolder = styled.View`
 
 const TickIcon = styled(Icon)`
   font-size: 8px;
-  color: ${baseColors.white};
+  color: ${baseColors.control};
   margin-top: 1px;
 `;
 
@@ -361,7 +361,7 @@ class Permissions extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Know how Pillar makes you safe' }] }}
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
       >
         <ScrollView
           contentContainerStyle={{

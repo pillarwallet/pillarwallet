@@ -66,7 +66,7 @@ const ShadowWrapper = styled(Shadow)`
 const Sizer = styled.View`
   flex-direction: column;
   border-radius: 8px;
-  background: ${baseColors.white};
+  background: ${baseColors.card};
 `;
 
 const Row = styled.View`

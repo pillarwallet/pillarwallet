@@ -106,7 +106,7 @@ class LoginScreen extends React.Component<Props, State> {
       ? 'Add your email'
       : 'Confirm login';
     return (
-      <Container color={baseColors.white} inset={{ bottom: 0 }}>
+      <Container color={baseColors.card} inset={{ bottom: 0 }}>
         <Header
           title="confirm login"
           centerTitle

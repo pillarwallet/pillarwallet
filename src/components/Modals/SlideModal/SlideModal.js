@@ -148,7 +148,7 @@ const ModalOverflow = styled.View`
   width: 100%;
   height: 100px;
   margin-bottom: -100px;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
 `;
 
 export default class SlideModal extends React.Component<Props, *> {

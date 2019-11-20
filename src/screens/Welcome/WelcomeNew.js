@@ -129,7 +129,7 @@ class Welcome extends React.Component<Props> {
           <Swiper
             containerStyle={{ width: '100%' }}
             paginationStyle={{ paddingLeft: 46, paddingRight: 55, justifyContent: 'flex-start' }}
-            dotColor={baseColors.white}
+            dotColor={baseColors.control}
             activeDotColor={accentColors.ppnIntroText}
           >
             {this.renderSlides()}

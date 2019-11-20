@@ -81,7 +81,7 @@ export default class CountrySelect extends React.Component<Props, State> {
               autoCapitalize: 'none',
             }}
             placeholder="Search"
-            backgroundColor={baseColors.white}
+            backgroundColor={baseColors.card}
           />
         </SearchBarWrapper>
         <FlatList

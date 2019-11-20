@@ -256,7 +256,7 @@ class SettleBalance extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Settle transactions' }] }}
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         keyboardAvoidFooter={(
           <FooterInner style={{ alignItems: 'center' }}>
             <Label>&nbsp;</Label>

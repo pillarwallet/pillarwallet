@@ -85,7 +85,7 @@ export default class PopModal extends React.Component<Props, *> {
       fullScreenComponent,
       onModalHidden,
       isVisible,
-      bgColor = baseColors.white,
+      bgColor = baseColors.card,
       bgColor2,
     } = this.props;
 
@@ -109,7 +109,7 @@ export default class PopModal extends React.Component<Props, *> {
         <ModalWrapper>
           <CloseButton
             icon="close"
-            color={baseColors.white}
+            color={baseColors.control}
             onPress={this.hideModal}
             fontSize={fontSizes.medium}
             horizontalAlign="flex-end"

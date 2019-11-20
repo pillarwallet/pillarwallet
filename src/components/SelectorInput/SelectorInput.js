@@ -92,7 +92,7 @@ const ItemHolder = styled.View`
   width: 100%;
   border-radius: 3px;
   border: 1px solid ${baseColors.border};
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   flex-direction: row;
   ${props => props.error ? `border-color: ${baseColors.negative};` : ''}
 `;
@@ -442,7 +442,7 @@ export default class SelectorInput extends React.Component<Props, State> {
                     value={inputValue}
                     textAlignVertical="center"
                     placeholderTextColor={baseColors.secondaryText}
-                    underlineColorAndroid="white"
+                    underlineColorAndroid="transparent"
                     innerRef={inputRef}
                   />
                 </InputWrapper>
@@ -457,13 +457,13 @@ export default class SelectorInput extends React.Component<Props, State> {
           showHeader
           onModalShow={this.focusInput}
           onModalHidden={() => this.setState({ query: '' })}
-          backgroundColor={baseColors.white}
+          backgroundColor={baseColors.card}
           noSwipeToDismiss
           noClose
           title={label}
         >
           <Wrapper flex={1} backgroundColor={baseColors.surface}>
-            <SearchBarWrapper backgroundColor={baseColors.white}>
+            <SearchBarWrapper backgroundColor={baseColors.card}>
               <SearchBar
                 inputProps={{
                   onChange: this.handleSearch,
@@ -471,7 +471,7 @@ export default class SelectorInput extends React.Component<Props, State> {
                   autoCapitalize: 'none',
                 }}
                 placeholder="Search for an asset"
-                backgroundColor={baseColors.white}
+                backgroundColor={baseColors.card}
                 inputRef={ref => { this.searchInput = ref; }}
                 customCloseAction={() => {
                   this.setState({ showOptionsSelector: false, query: '' });

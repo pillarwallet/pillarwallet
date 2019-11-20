@@ -43,7 +43,7 @@ const ImageTouchable = styled.TouchableOpacity`
   background-color: ${props => (props.needBackground ? baseColors.userAvatar : baseColors.secondaryAccent)};
   ${props => (props.additionalContainerStyle)};
   position: relative;
-  border: ${props => `${props.borderWidth}px solid ${props.borderColor || baseColors.white}`};
+  ${props => props.borderWidth && props.borderColor ? `border: ${props.borderWidth}px solid ${props.borderColor}` : ''};
   overflow: hidden;
   justify-content: center;
   align-items: center;
@@ -59,7 +59,7 @@ const InnerBackground = styled.View`
 
 const InnerUsername = styled(MediumText)`
   font-size: ${props => props.initialsSize ? props.initialsSize : fontSizes.medium}px;
-  color: ${baseColors.white};
+  color: ${baseColors.control};
 `;
 
 type Props = {
@@ -133,7 +133,7 @@ const ProfileImage = (props: Props) => {
     style,
     diameter = 50,
     borderColor,
-    borderWidth = 2,
+    borderWidth = 0,
     borderSpacing = 0,
     children,
     userName,

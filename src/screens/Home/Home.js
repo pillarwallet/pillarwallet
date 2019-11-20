@@ -403,7 +403,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         headerProps={{
           leftItems: [{ user: true }],
           rightItems: [
@@ -482,7 +482,7 @@ class HomeScreen extends React.Component<Props, State> {
             onTabChange={this.onTabChange}
           />
           <ActivityFeed
-            backgroundColor={baseColors.white}
+            backgroundColor={baseColors.card}
             onCancelInvitation={cancelInvitation}
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}

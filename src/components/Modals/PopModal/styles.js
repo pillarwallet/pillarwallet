@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { StyleSheet } from 'react-native';
+import { baseColors } from 'utils/variables';
 
 const styles = StyleSheet.create({
   popOverContainer: {
@@ -55,13 +56,13 @@ const styles = StyleSheet.create({
   },
 
   popOverHeaderText: {
-    color: 'white',
+    color: baseColors.control,
     fontSize: 28,
     fontWeight: 'bold',
   },
 
   popOverContentText: {
-    color: 'white',
+    color: baseColors.control,
     fontSize: 14,
     fontWeight: 'bold',
   },
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
   },
 
   popOverActionsText: {
-    color: 'white',
+    color: baseColors.control,
     fontSize: 12,
     fontWeight: 'bold',
   },

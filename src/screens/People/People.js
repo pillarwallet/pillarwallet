@@ -102,12 +102,12 @@ const ItemBadge = styled.View`
 const BadgeIcon = styled(Icon)`
   font-size: ${props => props.fontSize || fontSizes.small}px;
   line-height: ${props => props.fontSize || fontSizes.small}px;
-  color: ${baseColors.white};
+  color: ${baseColors.control};
 `;
 
 const InnerWrapper = styled.View`
   flex: 1;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
 `;
 
 const MIN_QUERY_LENGTH = 2;
@@ -278,7 +278,7 @@ class PeopleScreen extends React.Component<Props, State> {
             textStyle={{ marginTop: 6, fontSize: fontSizes.small }}
           />
         ),
-        backgroundColor: baseColors.white,
+        backgroundColor: baseColors.card,
       };
     });
   };
@@ -471,7 +471,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         headerProps={{ leftItems: [{ user: true }] }}
         inset={{ bottom: 0 }}
       >

@@ -33,7 +33,7 @@ const WarningBannerBackground = styled.View`
 `;
 
 const WarningBannerText = styled(MediumText)`
-  color: ${baseColors.white};
+  color: ${baseColors.control};
   ${props => props.small ? fontStyles.regular : fontStyles.medium};
 `;
 

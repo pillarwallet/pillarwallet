@@ -48,7 +48,7 @@ const ListRow = styled(View)`
   width: 100%;
   padding: 22px ${spacing.rhythm}px;
   flex-direction: row;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   align-items: center;
   justify-content: space-between;
 `;
@@ -148,7 +148,7 @@ class ICOLinks extends React.Component<Props, {}> {
             ItemSeparatorComponent={() => this.renderSeparator()}
             contentContainerStyle={{
               flexGrow: 1,
-              backgroundColor: baseColors.white,
+              backgroundColor: baseColors.card,
             }}
             refreshing={false}
           />

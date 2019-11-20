@@ -58,7 +58,7 @@ const AssetOutter = styled.View`
 const AssetWrapper = styled.View`
   flex-direction: row;
   border-radius: 6px;
-  background: ${baseColors.white};
+  background: ${baseColors.card};
   width: 100%;
   align-items: center;
   padding: 15px 16px;

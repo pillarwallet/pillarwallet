@@ -163,9 +163,9 @@ const CustomKAWrapper = (props) => {
   } = props;
   const scrollWrapperProps = {
     stickyHeaderIndices: hasStickyTabs ? [2] : [0],
-    style: { backgroundColor: baseColors.white },
+    style: { backgroundColor: baseColors.card },
     contentContainerStyle: {
-      backgroundColor: baseColors.white,
+      backgroundColor: baseColors.card,
     },
     refreshControl,
     onScroll: () => Keyboard.dismiss(),

@@ -51,7 +51,7 @@ const CheckboxBox = styled.View`
   justify-content: center;
   align-items: center;
   shadow-color: ${baseColors.accent};
-  ${props => props.rounded ? `background-color: ${baseColors.white}` : ''};
+  ${props => props.rounded ? `background-color: ${baseColors.card}` : ''};
   ${props => props.rounded && props.active
     ? `
       shadow-color: ${baseColors.black};

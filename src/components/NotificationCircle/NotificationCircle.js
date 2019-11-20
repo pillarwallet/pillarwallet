@@ -39,7 +39,7 @@ const NotificationCircleOuter = styled.View`
 
 const NotificationCircleText = styled(BaseText)`
   font-size: ${fontSizes.small}px;
-  color: ${props => props.gray ? baseColors.white : baseColors.black};
+  color: ${props => props.gray ? baseColors.control : baseColors.black};
 `;
 
 const NotificationCircle = (props: Props) => {

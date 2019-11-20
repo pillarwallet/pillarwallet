@@ -129,7 +129,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
           centerItems: [{ title: 'Re-import wallet' }],
           customOnBack: this.handleBackAction,
         })}
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
       >
         <Wrapper>
           <ContentWrapper>

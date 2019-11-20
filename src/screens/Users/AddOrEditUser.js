@@ -81,7 +81,7 @@ const ProfileImagePlaceholder = styled.View`
   border-radius: 48px;
   align-items: center;
   justify-content: center;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   border: 2px dashed ${baseColors.border};
 `;
 
@@ -182,7 +182,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
     return (
       <ContainerWithHeader
-        color={baseColors.white}
+        color={baseColors.card}
         headerProps={{
           centerItems: [
             { title: 'User settings' },

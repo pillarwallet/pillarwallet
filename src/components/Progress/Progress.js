@@ -62,7 +62,7 @@ const AnimatedStyledLinearGradient = Animated.createAnimatedComponent(StyledLine
 const ProgressLabel = styled(MediumText)`
   ${fontStyles.tiny};
   letter-spacing: ${fontTrackings.tiny};
-  color: ${props => props.outside ? '#5e9226' : baseColors.white};
+  color: ${props => props.outside ? '#5e9226' : baseColors.control};
   position: ${props => props.outside ? 'relative' : 'absolute'};
   top: ${Platform.select({
     ios: props => props.outside ? 'auto' : '1px',

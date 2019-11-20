@@ -369,7 +369,7 @@ class NewProfile extends React.Component<Props, State> {
       <ContainerWithHeader
         noBack={!!retry}
         headerProps={headerProps}
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         keyboardAvoidFooter={!apiUser.walletId && (
           <NextFooter
             onNextPress={this.handleSubmit}

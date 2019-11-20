@@ -292,7 +292,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Review' }] }}
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
       >
         <ScrollView>
           <Paragraph small style={{ margin: spacing.large }}>

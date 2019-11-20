@@ -152,7 +152,7 @@ export class ContactInfo extends React.Component<Props, State> {
     const dataQR = this.getDataQR();
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         headerProps={{
           centerItems: [{ title: 'User info' }],
           rightItems: [{ close: true }],

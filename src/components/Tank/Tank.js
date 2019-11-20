@@ -35,15 +35,15 @@ type State = {
 const TankWrapper = styled.View`
   height: ${props => props.tiny ? 20 : 216}px;
   width: ${props => props.tiny ? 6 : 22}px;
-  background-color: ${props => props.tiny ? 'white' : '#3e5d87'};
+  background-color: ${props => props.tiny ? baseColors.card : '#3e5d87'};
   border-width: ${props => props.tiny ? 1 : 0}px;
-  border-color: ${props => props.tiny ? baseColors.primary : baseColors.white};
+  border-color: ${props => props.tiny ? baseColors.primary : baseColors.border};
   border-radius: ${props => props.tiny ? 3 : 4}px;
   overflow: hidden;
 `;
 
 const TankInner = styled.View`
-  ${props => props.tiny ? 'border: 1px solid white; border-radius: 10px' : ''};
+  ${props => props.tiny ? `border: 1px solid ${baseColors.border}; border-radius: 10px` : ''};
   height: ${props => props.tiny ? 18 : 216}px;
   width: ${props => props.tiny ? 4 : 22}px;
   overflow: hidden;

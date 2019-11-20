@@ -72,32 +72,32 @@ type ButtonNextProps = {
 const themes = {
   primary: {
     background: baseColors.primary,
-    color: baseColors.white,
+    color: baseColors.control,
     borderColor: baseColors.border,
     borderWidth: 0,
     shadow: true,
   },
   primaryInverted: {
-    background: baseColors.white,
+    background: baseColors.card,
     color: baseColors.primary,
     borderColor: baseColors.secondaryAccent,
     borderWidth: '1px',
   },
   dangerInverted: {
-    background: baseColors.white,
+    background: baseColors.card,
     color: baseColors.negative,
     borderColor: baseColors.secondaryAccent,
     borderWidth: '1px',
   },
   secondary: {
-    background: baseColors.white,
+    background: baseColors.card,
     color: baseColors.primary,
     borderColor: baseColors.primary,
     borderWidth: '1px',
   },
   secondaryTransparent: {
     background: 'transparent',
-    color: baseColors.white,
+    color: baseColors.control,
     borderColor: baseColors.primary,
     borderWidth: '1px',
   },
@@ -109,20 +109,20 @@ const themes = {
     opacity: 0.5,
   },
   secondaryDanger: {
-    background: baseColors.white,
+    background: baseColors.card,
     color: baseColors.negative,
     borderColor: baseColors.border,
     borderWidth: 0,
   },
   danger: {
     background: baseColors.negative,
-    color: baseColors.white,
+    color: baseColors.control,
     borderColor: baseColors.border,
     borderWidth: 0,
   },
   dark: {
     background: baseColors.accent,
-    color: baseColors.white,
+    color: baseColors.control,
     borderColor: baseColors.accent,
     borderWidth: 0,
   },
@@ -134,7 +134,7 @@ const themes = {
   },
   disabledTransparent: {
     background: baseColors.primary,
-    color: baseColors.white,
+    color: baseColors.control,
     opacity: 0.5,
   },
   squarePrimary: {
@@ -272,7 +272,7 @@ const ButtonNextWrapper = styled.TouchableOpacity`
 
 const NextIcon = styled(Icon)`
   font-size: ${fontSizes.large}px;
-  color: ${baseColors.white};
+  color: ${baseColors.control};
   transform: rotate(180deg);
 `;
 

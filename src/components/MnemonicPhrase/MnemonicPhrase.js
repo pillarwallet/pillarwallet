@@ -47,14 +47,14 @@ const MnemonicPhraseIndex = styled(BaseText)`
   flex: 0 0 30px;
   text-align: right;
   font-size: ${fontSizes.medium}px;
-  color: ${transparentize(0.5, baseColors.white)};
+  color: ${transparentize(0.5, baseColors.control)};
 `;
 
 const MnemonicPhraseWord = styled(MediumText)`
   font-size: ${fontSizes.medium}px;
   padding-left: 10px;
   flex: 1;
-  color: ${baseColors.white};
+  color: ${baseColors.control};
 `;
 
 const getIndex = (number: number) => {

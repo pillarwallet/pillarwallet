@@ -237,7 +237,7 @@ class InstructionsScreen extends React.Component<Props, {}> {
   render() {
     const { instructions } = this.props;
     return (
-      <Container color={baseColors.white}>
+      <Container color={baseColors.card}>
         <Header
           onBack={this.handleBackNavigation}
           onClose={this.handleDismiss}

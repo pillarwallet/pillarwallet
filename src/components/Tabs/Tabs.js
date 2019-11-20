@@ -89,7 +89,7 @@ const TabItem = styled.TouchableOpacity`
   height: ${props => props.isAndroid ? 53.5 : 32};
   align-items: flex-start;
   justify-content: center;
-  background-color: ${props => props.active ? baseColors.white : 'transparent'};
+  background-color: ${props => props.active ? baseColors.card : 'transparent'};
   border-radius: 16px;
   flex-direction: row;
   flex-grow: 1;
@@ -220,7 +220,7 @@ const UnreadBadge = styled.View`
 
 const UnreadText = styled(MediumText)`
   font-size: ${fontSizes.regular}px;
-  color: ${baseColors.white};
+  color: ${baseColors.control};
 `;
 
 const TabImage = styled(CachedImage)`

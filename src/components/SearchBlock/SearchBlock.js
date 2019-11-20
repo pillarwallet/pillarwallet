@@ -50,7 +50,7 @@ const SearchBarWrapper = styled.View`
   width: 100%;
   position: relative;
   z-index: 101;
-  background-color: ${props => props.isFocused ? baseColors.white : 'transparent'};
+  background-color: ${props => props.isFocused ? baseColors.card : 'transparent'};
 `;
 
 const FullScreenOverlayWrapper = styled.View`

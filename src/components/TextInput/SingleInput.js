@@ -82,7 +82,7 @@ const themes = {
     borderRadius: '6px',
   },
   white: {
-    backgroundColor: baseColors.white,
+    backgroundColor: baseColors.card,
     borderColor: baseColors.border,
     borderWidth: '1px',
     borderRadius: '4px',

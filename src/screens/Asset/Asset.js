@@ -338,7 +338,7 @@ class AssetScreen extends React.Component<Props, State> {
           ],
           rightIconsSize: fontSizes.large,
         }}
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         inset={{ bottom: 0 }}
       >
         <ScrollWrapper
@@ -403,7 +403,7 @@ class AssetScreen extends React.Component<Props, State> {
           <ActivityFeed
             feedTitle="Transactions"
             navigation={navigation}
-            backgroundColor={baseColors.white}
+            backgroundColor={baseColors.card}
             noBorder
             feedData={relatedTransactions}
             feedType={isSynthetic ? SYNTHETIC : NONSYNTHETIC}

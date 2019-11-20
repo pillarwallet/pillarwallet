@@ -142,7 +142,7 @@ class LegalTerms extends React.Component<Props, State> {
     const isWalletBackedUp = isImported || isBackedUp;
 
     return (
-      <Container color={baseColors.white}>
+      <Container color={baseColors.card}>
         <Header title="almost there" onBack={() => this.props.navigation.goBack(null)} white />
         <ScrollWrapper regularPadding color={baseColors.surface}>
           <Paragraph light small style={{ marginTop: 10, marginBottom: 50 }}>

@@ -396,7 +396,7 @@ class Contact extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={isAccepted ? baseColors.white : baseColors.surface}
+        backgroundColor={isAccepted ? baseColors.card : baseColors.surface}
         inset={{ bottom: 'never' }}
         headerProps={{ centerItems: [{ title: contactUsername }] }}
       >
@@ -416,7 +416,6 @@ class Contact extends React.Component<Props, State> {
               <ProfileImage
                 uri={userAvatar}
                 userName={contactUsername}
-                borderWidth={4}
                 initialsSize={48}
                 diameter={184}
                 style={{ backgroundColor: baseColors.userAvatar }}

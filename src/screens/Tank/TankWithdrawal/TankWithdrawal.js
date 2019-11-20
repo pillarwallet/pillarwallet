@@ -220,7 +220,7 @@ class TankWithdrawal extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Withdraw from PLR tank' }] }}
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         keyboardAvoidFooter={(
           <FooterInner>
             <Label>Estimated fee {feeInEth} ETH</Label>

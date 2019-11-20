@@ -117,7 +117,7 @@ const ImageCloseIcon = (props: {onPress: () => void}) => {
     <IconWrapper>
       <CloseIcon
         icon="close"
-        color={baseColors.white}
+        color={baseColors.control}
         onPress={props.onPress}
         fontSize={fontSizes.medium}
         horizontalAlign="center"

@@ -360,7 +360,7 @@ class PPNView extends React.Component<Props, State> {
             wrapperStyle={{ paddingTop: 16 }}
           />
           <ActivityFeed
-            backgroundColor={baseColors.white}
+            backgroundColor={baseColors.card}
             navigation={navigation}
             tabs={historyTabs}
             activeTab={activeTab}

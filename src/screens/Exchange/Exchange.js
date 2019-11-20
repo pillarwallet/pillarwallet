@@ -1110,7 +1110,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         headerProps={{
           leftItems: [{ user: true }],
           rightItems,

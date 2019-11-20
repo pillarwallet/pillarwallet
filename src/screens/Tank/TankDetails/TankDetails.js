@@ -111,7 +111,7 @@ const ColumnInner = styled.View`
 `;
 
 const BoldTitle = styled(MediumText)`
-  color: ${baseColors.white};
+  color: ${baseColors.control};
   ${fontStyles.big};
 `;
 

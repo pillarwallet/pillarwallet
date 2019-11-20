@@ -82,7 +82,7 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
 `;
 
 const ButtonsWrapper = styled.View`
@@ -144,14 +144,14 @@ const ButtonInner = styled.View`
 `;
 
 const ButtonLabel = styled(MediumText)`
-  color: ${props => props.blue ? baseColors.primary : baseColors.white};
+  color: ${props => props.blue ? baseColors.primary : baseColors.control};
   font-size: ${fontSizes.big}px;
   margin-bottom: 2px;
 `;
 
 const ButtonIconArrow = styled(Icon)`
   font-size: ${fontSizes.big}px;
-  color: ${props => props.blue ? baseColors.primary : baseColors.white};
+  color: ${props => props.blue ? baseColors.primary : baseColors.control};
   ${props => props.isOnLeft ? 'margin-right: 5px;' : 'margin-left: 5px;'}
   ${props => props.flip ? 'transform: rotate(180deg);' : ''}
 `;
@@ -492,7 +492,7 @@ class ImportWallet extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={({ centerItems: [{ title: 'Re-import wallet' }] })}
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         keyboardAvoidFooter={(
           <FooterWrapper>
             {this.renderFooterButtons(tabsInfo)}

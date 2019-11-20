@@ -30,7 +30,7 @@ const StyledItemView = styled.View`
   justify-content: space-between;
   align-items: center;
   padding: 9px ${spacing.large}px 0;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
   border-bottom-color: ${({ hasErrors }) => hasErrors ? baseColors.negative : baseColors.border};
   border-top-color: ${({ hasErrors }) => hasErrors ? baseColors.negative : baseColors.border};
   border-bottom-width: ${StyleSheet.hairlineWidth}px;

@@ -67,7 +67,7 @@ const AssetWrapper = styled.View`
   height: ${props => props.innerCard ? innerCardHeight : 140}px;
   border-radius: 20px;
   overflow: hidden;
-  background-color: ${props => props.isListed ? defaultCardColor : baseColors.white}
+  background-color: ${props => props.isListed ? defaultCardColor : baseColors.card}
 `;
 
 const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
@@ -98,7 +98,7 @@ const AmountWrapper = styled.View`
 
 const Amount = styled(LightText)`
   ${fontStyles.large};
-  color: ${props => props.isListed ? baseColors.white : baseColors.secondaryText};
+  color: ${props => props.isListed ? baseColors.control : baseColors.secondaryText};
   margin-right: ${props => props.innerCard ? '4px' : 0};
 `;
 
@@ -115,7 +115,7 @@ const Disclaimer = styled(LightText)`
 `;
 
 const ammountTokenStyle = (props) => `
-  color: ${props.isListed ? baseColors.white : baseColors.secondaryText};
+  color: ${props.isListed ? baseColors.control : baseColors.secondaryText};
 `;
 
 const AmountToken = styled(MediumText)`
@@ -155,7 +155,7 @@ const Name = styled(MediumText)`
   ${props => props.innerCard ? fontStyles.giant : fontStyles.large};
   margin-top: ${props => props.innerCard ? '5px' : 0};
   letter-spacing: ${fontTrackings.medium};
-  color: ${props => props.isListed ? baseColors.white : baseColors.text};
+  color: ${props => props.isListed ? baseColors.control : baseColors.text};
 `;
 
 class AssetCard extends React.Component<Props, {}> {

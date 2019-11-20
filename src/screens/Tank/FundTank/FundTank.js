@@ -210,7 +210,7 @@ class FundTank extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: isInitFlow ? 'Stake initial PLR' : 'Fund PLR tank' }] }}
-        backgroundColor={baseColors.white}
+        backgroundColor={baseColors.card}
         keyboardAvoidFooter={(
           <FooterInner>
             <Label>Estimated fee {feeInEth} ETH</Label>

@@ -164,7 +164,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
                 marginBottom: 20,
                 borderRadius: 6,
               }}
-              textStyle={{ color: baseColors.white }}
+              textStyle={{ color: baseColors.control }}
             />
             { /* <ListItemChevron
               label="Enable with PLR available"

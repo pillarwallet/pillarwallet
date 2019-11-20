@@ -91,7 +91,7 @@ const RemoveWordButtonIcon = styled(IconButton)`
 
 const WordInputText = styled(MediumText)`
   font-size: ${fontSizes.medium}px;
-  color: white;
+  color: ${baseColors.control};
   margin-left: 10px;
 `;
 

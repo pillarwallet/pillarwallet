@@ -66,7 +66,7 @@ const noIconImageSource = require('assets/images/no_logo.png');
 const IconWrapper = styled.View`
   height: ${props => props.diameter}px;
   width: ${props => props.diameter}px;
-  border: 2px solid ${baseColors.white};
+  border: 2px solid ${baseColors.control};
   position: absolute;
   z-index: ${props => props.zIndex};
   top: ${props => props.top}px;
@@ -78,7 +78,7 @@ const IconWrapper = styled.View`
   shadow-offset: ${props => props.addShadow ? '0px 3px' : 0};
   shadow-opacity: ${props => props.addShadow ? props.shadowOpacity : 0};
   shadow-radius: 6px;
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.card};
 `;
 
 const NoIconImage = styled(CachedImage)`

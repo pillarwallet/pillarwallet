@@ -57,48 +57,43 @@ const getEventInfo = (eventType, eventStatus) => {
     if (isConfirmed) {
       return {
         title: 'Success',
-        background: baseColors.positive,
+        iconColor: baseColors.positive,
         iconName: 'tick-circle',
       };
     }
     if (isFailed) {
       return {
         title: 'Failed',
-        background: baseColors.negative,
+        iconColor: baseColors.negative,
         iconName: 'warning-circle',
       };
     }
     return {
       title: 'Pending',
-      background: baseColors.negative,
       iconName: 'pending-circle',
     };
   }
   if (eventStatus === TYPE_RECEIVED) {
     return {
       title: 'Incoming connection',
-      background: baseColors.rose,
       iconName: 'connection-circle',
     };
   }
   if (eventStatus === TYPE_ACCEPTED) {
     return {
       title: 'Connection established',
-      background: baseColors.cerulean,
       iconName: 'connection-circle',
     };
   }
   if (eventType === COLLECTIBLE_TRANSACTION) {
     return {
       title: eventStatus === COLLECTIBLE_SENT ? 'Collectible sent' : 'Collectible received',
-      background: baseColors.shark,
       iconName: null,
     };
   }
   if (eventType === BADGE_REWARD_EVENT) {
     return {
       title: 'Badge received',
-      background: baseColors.shark,
       iconName: null,
     };
   }
@@ -116,7 +111,6 @@ const Wrapper = styled.View`
   border-top-right-radius: 30px;
   overflow: hidden;
   padding: ${spacing.mediumLarge}px 50px;
-  background-color: ${props => props.background};
   align-items: center;
   justify-content: center;
 `;
@@ -136,7 +130,7 @@ const CloseIcon = styled(IconButton)`
 const EventTitle = styled(MediumText)`
   ${fontStyles.large};
   letter-spacing: ${fontTrackings.tiny}px;
-  color: ${baseColors.white};
+  color: ${baseColors.text};
   margin: 2px 0;
   text-align: center;
 `;
@@ -144,13 +138,12 @@ const EventTitle = styled(MediumText)`
 const EventSubtitle = styled(BaseText)`
   ${fontStyles.tiny};
   letter-spacing: ${fontTrackings.mediumLarge}px;
-  color: ${baseColors.white};
+  color: ${baseColors.secondaryText};
   margin: 2px 0;
   text-align: center;
 `;
 
 const EventIcon = styled(Icon)`
-  opacity: 0.7;
   margin-top: ${spacing.medium}px;
 `;
 
@@ -189,10 +182,10 @@ const EventHeader = (props: Props) => {
   const showImage = iconUrl || eventType === COLLECTIBLE_TRANSACTION || eventType === BADGE_REWARD_EVENT;
 
   return (
-    <Wrapper background={thisEvent.background}>
+    <Wrapper>
       <CloseIcon
         icon="close"
-        color={baseColors.white}
+        color={baseColors.secondaryText}
         onPress={onClose}
         fontSize={fontSizes.medium}
       />
@@ -202,7 +195,7 @@ const EventHeader = (props: Props) => {
       <EventIcon
         name={thisEvent.iconName}
         style={{
-          color: baseColors.white,
+          color: thisEvent.iconColor || baseColors.primary,
           fontSize: 58,
         }}
       />}

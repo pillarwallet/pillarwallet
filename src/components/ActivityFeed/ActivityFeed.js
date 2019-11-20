@@ -88,7 +88,7 @@ const ActivityFeedList = styled.SectionList`
 `;
 
 const ActivityFeedWrapper = styled.View`
-  background-color: ${props => props.color ? props.color : baseColors.white};
+  background-color: ${props => props.color ? props.color : baseColors.card};
   flex: 1;
 `;
 
