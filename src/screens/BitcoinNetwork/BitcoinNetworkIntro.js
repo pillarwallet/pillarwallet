@@ -177,9 +177,7 @@ class BitcoinNetworkIntro extends React.Component<Props, State> {
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
-  initializeBitcoinWallet: (wallet: EthereumWallet) => dispatch(
-    initializeBitcoinWalletAction(wallet),
-  ),
+  initializeBitcoinWallet: (wallet: EthereumWallet) => dispatch(initializeBitcoinWalletAction(wallet)),
 });
 
 export default connect(null, mapDispatchToProps)(BitcoinNetworkIntro);
