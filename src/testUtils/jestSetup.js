@@ -22,7 +22,7 @@ import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
-import { utils, HDNode } from 'ethers';
+import { utils } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 import WalletConnectMock from './walletConnectMock';
@@ -58,6 +58,7 @@ jest.setMock('react-native-permissions', {
 const mockWallet: Object = {
   address: '0x9c',
   privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
+  connect: () => mockWallet,
 };
 
 Object.defineProperty(mockWallet, 'RNencrypt', {
@@ -69,9 +70,11 @@ const mockInjectedProvider = {
 };
 
 jest.setMock('ethers', {
-  Wallet: {
-    fromMnemonic: () => mockWallet,
-    RNfromEncryptedWallet: () => mockWallet,
+  ethers: {
+    Wallet: {
+      fromMnemonic: () => mockWallet,
+      RNfromEncryptedJson: () => mockWallet,
+    },
   },
   utils: {
     parseEther: x => x,
@@ -80,14 +83,15 @@ jest.setMock('ethers', {
     getAddress: utils.getAddress,
     formatUnits: utils.formatUnits,
     parseUnits: utils.parseUnits,
+    HDNode: utils.HDNode,
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
+    InfuraProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     JsonRpcProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     EtherscanProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     FallbackProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
   },
-  HDNode,
 });
 
 jest.setMock('react-native-background-timer', {

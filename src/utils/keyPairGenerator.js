@@ -18,9 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Platform } from 'react-native';
-import { HDNode } from 'ethers';
+import { utils } from 'ethers';
 import { Thread } from 'react-native-threads';
 import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
+
+const { HDNode } = utils;
 
 export function generateHDKeyPair(hdnodebase: HDNode, derivePath: string, connIndex: number): any {
   const dP1 = derivePath.replace('connType', '0');

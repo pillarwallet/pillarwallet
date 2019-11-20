@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import ethers from 'ethers';
 import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
@@ -48,6 +47,7 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
 import { delay } from 'utils/common';
+import { getSaltedPin, decryptWallet, normalizeWalletAddress } from 'utils/wallet';
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import ChatService from 'services/chat';
@@ -56,7 +56,6 @@ import Intercom from 'react-native-intercom';
 import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
-import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
 import { setKeychainDataObject } from 'utils/keychain';
@@ -84,6 +83,17 @@ const Crashlytics = firebase.crashlytics();
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
+export const updateFcmTokenAction = (walletId: string) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const { session: { data: { isOnline } } } = getState();
+    if (!isOnline) return;
+    const fcmToken = await firebase.messaging().getToken().catch(() => null);
+    dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
+    Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+    await api.updateFCMToken(walletId, fcmToken);
+  };
+};
+
 export const loginAction = (
   pin: ?string,
   privateKey: ?string,
@@ -101,10 +111,9 @@ export const loginAction = (
           blockchainNetwork = '',
         },
       },
-      session: { data: { isOnline } },
+      oAuthTokens: { data: oAuthTokens },
     } = getState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
-    const { oAuthTokens } = await storage.get('oAuthTokens');
 
     const generateNewConnKeys = connectionKeyPairs.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1;
 
@@ -132,11 +141,7 @@ export const loginAction = (
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
         const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
-        wallet = await ethers.Wallet.RNfromEncryptedWallet(
-          JSON.stringify(encryptedWallet),
-          saltedPin,
-          decryptionOptions,
-        );
+        wallet = await decryptWallet(encryptedWallet, saltedPin, decryptionOptions);
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };
@@ -148,36 +153,55 @@ export const loginAction = (
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
-        const fcmToken = await firebase.messaging().getToken().catch(() => null);
-        dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
-        if (isOnline) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+        // signal credentials
         const signalCredentials = {
           userId: user.id,
           username: user.username,
           walletId: user.walletId,
           ethAddress: wallet.address,
-          fcmToken,
         };
+
+        // oauth fallback method for expired access token
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
+
+        // oauth fallback method for all tokens expired or invalid
         const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
+
+        // init API
         api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
+
+        // execute login success callback
         if (onLoginSuccess && wallet.privateKey) {
           let { privateKey: privateKeyParam } = wallet;
           privateKeyParam = privateKeyParam.indexOf('0x') === 0 ? privateKeyParam.slice(2) : privateKeyParam;
           await onLoginSuccess(privateKeyParam);
         }
+
+        // set API username
         api.setUsername(user.username);
+
+        // update FCM
+        dispatch(updateFcmTokenAction(user.walletId));
+
+        // make first api call which can also trigger OAuth fallback methods
         const userInfo = await api.userInfo(user.walletId);
-        if (isOnline) await api.updateFCMToken(user.walletId, fcmToken);
-        const { oAuthTokens: { data: OAuthTokensObject } } = getState();
-        // $FlowFixMe
-        await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
+
+        // perform signal init
+        dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
+
+        // save updated user
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
-        await dispatch(
-          updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys),
-        );
 
+        // update connections
+        dispatch(updateConnectionKeyPairs(
+          wallet.mnemonic,
+          wallet.privateKey,
+          user.walletId,
+          generateNewConnKeys,
+        ));
+
+        // init smart wallet
         if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
           await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
         }
@@ -302,7 +326,7 @@ export const checkAuthAction = (
       let wallet;
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
-        wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
+        wallet = await decryptWallet(encryptedWallet, saltedPin, options);
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };
@@ -339,12 +363,9 @@ export const changePinAction = (newPin: string, currentPin: string) => {
     });
     await delay(50);
     const currentSaltedPin = await getSaltedPin(currentPin, dispatch);
-    const wallet = await ethers.Wallet.RNfromEncryptedWallet(
-      JSON.stringify(encryptedWallet),
-      currentSaltedPin,
-      {
-        mnemonic: true,
-      });
+    const wallet = await decryptWallet(encryptedWallet, currentSaltedPin, {
+      mnemonic: true,
+    });
 
     const newSaltedPin = await getSaltedPin(newPin, dispatch);
     const newEncryptedWallet = await wallet.RNencrypt(newSaltedPin, { scrypt: { N: 16384 } })
