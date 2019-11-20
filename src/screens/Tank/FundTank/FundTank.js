@@ -191,7 +191,7 @@ class FundTank extends React.Component<Props, State> {
     // fee
     const txFeeInWei = this.getTxFeeInWei();
     const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
+    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei().toString()));
 
     // max amount
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
