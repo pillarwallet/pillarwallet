@@ -96,15 +96,15 @@ class BTCView extends React.Component<Props, State> {
 
   showReceive = () => {
     this.setState({ showReceive: true });
-  }
+  };
 
   hideReceive = () => {
     this.setState({ showReceive: false });
-  }
+  };
 
   refreshBalace = () => {
     this.props.refreshBitcoinBalance();
-  }
+  };
 
   handleOpenShareDialog = (address: string) => {
     Share.share({ title: 'Public address', message: address });
