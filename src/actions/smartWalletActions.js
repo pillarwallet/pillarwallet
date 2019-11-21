@@ -726,8 +726,27 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txGasInfo = get(event, 'payload.gas', {});
       const txSenderAddress = get(event, 'payload.from.account.address', '');
       const txType = get(event, 'payload.transactionType', '');
-      const txFound = txToListen.find(hash => hash.toLowerCase() === txHash);
+      const txFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
+
+      // check status for assets transfer during migration
+      const transferTransactions = get(getState(), 'smartWallet.upgrade.transfer.transactions', []);
+      if (!isEmpty(transferTransactions) && txStatus === TRANSACTION_COMPLETED) {
+        const transferTxFound = transferTransactions.find(
+          ({ transactionHash }) => isCaseInsensitiveMatch(transactionHash, txHash),
+        );
+        if (transferTxFound) {
+          const updatedTransactions = transferTransactions.filter(
+            ({ transactionHash }) => transactionHash !== transferTxFound.transactionHash,
+          );
+          updatedTransactions.push({
+            ...transferTxFound,
+            status: TX_CONFIRMED_STATUS,
+          });
+          await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
+        }
+        dispatch(checkAssetTransferTransactionsAction());
+      }
 
       if (txStatus === TRANSACTION_COMPLETED && !skipNotifications.includes(txType)) {
         let notificationMessage;
@@ -778,28 +797,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           dispatch(fetchSmartWalletTransactionsAction());
         }
         dispatch(fetchAssetsBalancesAction());
-      }
-    }
-
-    // check status for assets transfer during migration
-    if (event.name === ACCOUNT_TRANSACTION_UPDATED) {
-      const transferTransactions = get(getState(), 'smartWallet.upgrade.transfer.transactions', []);
-      const txHash = get(event, 'payload.hash', '').toLowerCase();
-      const txStatus = get(event, 'payload.state', '');
-      const txFound = transferTransactions.find(({ transactionHash }) => transactionHash.toLowerCase() === txHash);
-
-      if (transferTransactions.length && txStatus === TRANSACTION_COMPLETED) {
-        if (txFound) {
-          const updatedTransactions = transferTransactions.filter(({ transactionHash }) => {
-            return transactionHash !== txFound.transactionHash;
-          });
-          updatedTransactions.push({
-            ...txFound,
-            status: TX_CONFIRMED_STATUS,
-          });
-          await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
-        }
-        dispatch(checkAssetTransferTransactionsAction());
       }
     }
 
@@ -1383,8 +1380,7 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
     // register on backend missed accounts
     let backendAccounts = await api.listAccounts(user.walletId);
     const registerOnBackendPromises = smartAccounts.map(async account => {
-      const accountAddress = account.address.toLowerCase();
-      const backendAccount = backendAccounts.find(({ ethAddress }) => ethAddress.toLowerCase() === accountAddress);
+      const backendAccount = backendAccounts.find(({ ethAddress }) => addressesEqual(ethAddress, account.address));
       if (!backendAccount) {
         return api.registerSmartWallet({
           walletId: user.walletId,
