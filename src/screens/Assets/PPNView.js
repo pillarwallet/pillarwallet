@@ -49,13 +49,18 @@ import {
   TANK_WITHDRAWAL,
   SEND_SYNTHETIC_ASSET,
 } from 'constants/navigationConstants';
-import { PAYMENT_COMPLETED, PAYMENT_PROCESSED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import {
+  PAYMENT_COMPLETED,
+  PAYMENT_PROCESSED,
+  SMART_WALLET_UPGRADE_STATUSES,
+} from 'constants/smartWalletConstants';
 
-// models
+// types
 import type { Accounts } from 'models/Account';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction } from 'models/Transaction';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 // utils
 import { getRate } from 'utils/assets';
@@ -70,12 +75,11 @@ import {
   paymentNetworkNonZeroBalancesSelector,
   PPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
-import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 
 
 type Props = {
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   rates: Object,
   navigation: NavigationScreenProp<*>,
   availableStake: number,
@@ -335,7 +339,7 @@ const mapStateToProps = ({
   smartWallet: smartWalletState,
   accounts: { data: accounts },
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   smartWalletState,
@@ -348,7 +352,6 @@ const structuredSelector = createStructuredSelector({
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
   availableStake: availableStakeSelector,
   PPNTransactions: PPNTransactionsSelector,
-  assets: accountAssetsSelector,
   history: accountHistorySelector,
 });
 

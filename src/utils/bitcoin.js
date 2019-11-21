@@ -17,10 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const SET_BITCOIN_ADDRESSES = 'SET_BITCOIN_ADDRESSES';
-export const CREATED_BITCOIN_ADDRESS = 'CREATED_BITCOIN_ADDRESS';
-export const BITCOIN_WALLET_CREATION_FAILED = 'BITCOIN_WALLET_CREATION_FAILED';
-export const DEFAULT_BTC_NETWORK = process.env.BITCOIN_NETWORK || 'testnet';
-export const UPDATE_BITCOIN_BALANCE = 'UPDATE_BITCOIN_BALANCE';
-export const REFRESH_THRESHOLD = (1000 * 60) * 10; // Cache utxos for ten minutes
-export const MIN_CONFIRMATIONS = 1; // Use utxos with at least 1 confirmation
+import { MIN_CONFIRMATIONS } from 'constants/bitcoinConstants';
+import type { BitcoinUtxo } from 'models/Bitcoin';
+
+export const satoshisToBtc = (satoshis: number): number => satoshis * 0.00000001;
+export const btcToSatoshis = (btc: number): number => Math.floor(btc * 100000000);
+
+export const unspentAmount = (unspent: BitcoinUtxo[]): number => {
+  return unspent.reduce((acc: number, transaction: BitcoinUtxo): number => {
+    // Make sure we don't use unconfirmed transactions for the balance,
+    // since those transactions can still be rejected later by the network.
+    if (transaction.confirmations < MIN_CONFIRMATIONS) {
+      return acc;
+    }
+    return acc + transaction.satoshis;
+  }, 0);
+};
+

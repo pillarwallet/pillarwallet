@@ -163,6 +163,5 @@ export const importKeyPair = (s: string, networkName?: string): ECPair => {
 
 export const getAddressUtxos = (address: string): Promise<BitcoinUtxo[]> => {
   return getAddressUtxosFromNode(address)
-    .then(response => response.json())
-    .catch(error => ({ error }));
+    .then(response => response.json());
 };
