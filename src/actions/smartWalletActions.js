@@ -736,9 +736,9 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           ({ transactionHash }) => isCaseInsensitiveMatch(transactionHash, txHash),
         );
         if (transferTxFound) {
-          const updatedTransactions = transferTransactions.filter(({ transactionHash }) => {
-            return transactionHash !== transferTxFound.transactionHash;
-          });
+          const updatedTransactions = transferTransactions.filter(
+            ({ transactionHash }) => transactionHash !== transferTxFound.transactionHash,
+          );
           updatedTransactions.push({
             ...transferTxFound,
             status: TX_CONFIRMED_STATUS,
