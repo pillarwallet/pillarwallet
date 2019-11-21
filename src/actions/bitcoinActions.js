@@ -199,7 +199,7 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
   return async (dispatch: Dispatch) => {
     const { mnemonic, path } = wallet;
     if (!mnemonic) {
-      dispatch(bitcoinWalletCreationFailed());
+      await dispatch(bitcoinWalletCreationFailed());
       return;
     }
 
@@ -218,11 +218,11 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
       return;
     }
 
-    dispatch(saveDb({
+    await dispatch(saveDb({
       keys: { [address]: exportKeyPair(keyPair) },
     }));
 
-    dispatch(setBitcoinAddressesAction([address]));
+    await dispatch(setBitcoinAddressesAction([address]));
   };
 };
 
