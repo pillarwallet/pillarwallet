@@ -27,19 +27,20 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import Separator from 'components/Separator';
 import { Container, Wrapper } from 'components/Layout';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Spinner from 'components/Spinner';
+import { TooltipButton } from 'components/Button';
 
 // actions
 import { fetchAvailableSyntheticAssetsAction } from 'actions/syntheticsActions';
 
 // utils, services
 import { spacing, UIColors } from 'utils/variables';
+import { formatMoney } from 'utils/common';
 
 // constants
-import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
+import { SEND_SYNTHETIC_UNAVAILABLE, SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 
 // models, types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -72,20 +73,37 @@ class SendSyntheticAsset extends React.Component<Props> {
     this.props.fetchAvailableSyntheticAssets();
   }
 
-  renderAsset = ({ item }) => {
+  renderAsset = ({ item }: { item: Asset }) => {
     // asset should not render
-    if (assetsConfig[item.symbol] && !assetsConfig[item.symbol].send) return null;
+    const {
+      symbol: assetSymbol,
+      name: assetName,
+      amount: assetAmount,
+      iconUrl,
+    } = item;
+    if (assetsConfig[assetSymbol] && !assetsConfig[assetSymbol].send) return null;
 
     const { navigation } = this.props;
+    const balance = assetAmount || 0;
+    const isAvailable = balance > 0;
+    const balanceFormatted = isAvailable ? formatMoney(balance) : '0';
+    const availableLabel = isAvailable ? 'Available' : 'Unavailable';
+    const onPress = isAvailable ? () => navigation.navigate(SEND_TOKEN_CONTACTS, { assetData: item }) : null;
 
     return (
       <ListItemWithImage
-        onPress={() => navigation.navigate(SEND_TOKEN_CONTACTS, { assetData: item })}
-        label={item.name}
-        subtext={item.symbol}
-        itemImageUrl={`${SDK_PROVIDER}/${item.iconUrl}?size=3`}
+        onPress={onPress}
+        label={assetName}
+        itemImageUrl={`${SDK_PROVIDER}/${iconUrl}?size=3`}
         fallbackSource={genericToken}
-        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
+        balance={{
+          balance: balanceFormatted,
+          value: availableLabel,
+          token: assetSymbol,
+          custom: !isAvailable && (
+            <TooltipButton onPress={() => navigation.navigate(SEND_SYNTHETIC_UNAVAILABLE, { assetSymbol })} />
+          ),
+        }}
       />
     );
   };
@@ -100,7 +118,7 @@ class SendSyntheticAsset extends React.Component<Props> {
     return (
       <ContainerWithHeader
         inset={{ bottom: 0 }}
-        headerProps={{ centerItems: [{ title: 'Select synthetic asset' }] }}
+        headerProps={{ centerItems: [{ title: 'Choose asset' }] }}
       >
         <ContentBackground>
           <InnerWrapper>
@@ -110,7 +128,6 @@ class SendSyntheticAsset extends React.Component<Props> {
                 keyExtractor={item => item.symbol}
                 data={availableSyntheticAssets}
                 renderItem={this.renderAsset}
-                ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
                 refreshing={isFetchingSyntheticAssets}
                 onRefresh={() => fetchAvailableSyntheticAssets()}
                 ListEmptyComponent={

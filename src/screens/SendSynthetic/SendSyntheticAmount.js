@@ -144,7 +144,7 @@ const TextRow = styled.View`
   flex-direction: row;
 `;
 
-class SendSyntheticAsset extends React.Component<Props, State> {
+class SendSyntheticAmount extends React.Component<Props, State> {
   syntheticsForm: t.form;
   receiver: string;
   source: string;
@@ -380,4 +380,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   initSyntheticsService: () => dispatch(initSyntheticsServiceAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendSyntheticAsset);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendSyntheticAmount);

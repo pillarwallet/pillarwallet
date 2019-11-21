@@ -99,7 +99,7 @@ export const fetchAvailableSyntheticAssetsAction = () => {
       const assetSymbol = get(syntheticAsset, 'token.symbol');
       const assetBalance = Number(get(syntheticAsset, 'value', 0));
       const assetData = getAssetData(assetsData, supportedAssets, assetSymbol);
-      if (!isEmpty(assetData) && assetBalance > 0) {
+      if (!isEmpty(assetData)) {
         availableList.push({
           ...assetData,
           amount: assetBalance,

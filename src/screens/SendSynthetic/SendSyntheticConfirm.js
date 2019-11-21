@@ -84,12 +84,12 @@ const WarningMessage = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
 `;
 
-class ExchangeConfirmScreen extends React.Component<Props, State> {
+class SendSyntheticConfirm extends React.Component<Props, State> {
   syntheticTransaction: SyntheticTransaction;
   assetData: Asset;
   state: State = { note: null };
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     const { navigation } = props;
     this.syntheticTransaction = navigation.getParam('syntheticTransaction');
@@ -234,4 +234,4 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-export default connect(combinedMapStateToProps)(ExchangeConfirmScreen);
+export default connect(combinedMapStateToProps)(SendSyntheticConfirm);

@@ -96,6 +96,7 @@ import UnsettledAssets from 'screens/UnsettledAssets';
 import SendSyntheticAsset from 'screens/SendSynthetic/SendSyntheticAsset';
 import SendSyntheticConfirm from 'screens/SendSynthetic/SendSyntheticConfirm';
 import SendSyntheticAmount from 'screens/SendSynthetic/SendSyntheticAmount';
+import SendSyntheticUnavailable from 'screens/SendSynthetic/SendSyntheticUnavailable';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -211,6 +212,7 @@ import {
   SEND_SYNTHETIC_ASSET,
   SEND_SYNTHETIC_CONFIRM,
   SEND_SYNTHETIC_AMOUNT,
+  SEND_SYNTHETIC_UNAVAILABLE,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -526,6 +528,7 @@ const ppnSendSyntheticAssetFlow = createStackNavigator(
     [SEND_SYNTHETIC_CONFIRM]: SendSyntheticConfirm,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+    [SEND_SYNTHETIC_UNAVAILABLE]: SendSyntheticUnavailable,
   },
   StackNavigatorModalConfig,
 );
