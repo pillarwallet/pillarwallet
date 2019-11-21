@@ -77,7 +77,6 @@ import {
 } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
 
-
 type Props = {
   baseFiatCurrency: ?string,
   rates: Object,
