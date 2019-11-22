@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import type { BitcoinAddress, BitcoinUtxo, BitcoinBalance } from 'models/Bitcoin';
+import type { BitcoinAddress, BitcoinUtxo, BitcoinBalance, BTCBalance } from 'models/Bitcoin';
 import {
   CREATED_BITCOIN_ADDRESS,
   UPDATE_BITCOIN_BALANCE,
@@ -44,7 +44,7 @@ export type UpdateUnspentTransactionsAction = {
 export type UpdateBitcoinBalanceAction = {
   type: 'UPDATE_BITCOIN_BALANCE',
   address: string,
-  balance: Object,
+  balance: BTCBalance,
 };
 
 export type SetBitcoinAddressesAction = {

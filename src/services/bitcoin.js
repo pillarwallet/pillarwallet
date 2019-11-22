@@ -29,6 +29,7 @@ import type {
   BitcoinUtxo,
   BitcoinTransactionTarget,
   BitcoinTransactionPlan,
+  BTCBalance,
 } from 'models/Bitcoin';
 import { SPEED_TYPES } from 'constants/assetsConstants';
 import {
@@ -167,7 +168,7 @@ export const getAddressUtxos = (address: string): Promise<BitcoinUtxo[]> => {
     .then(response => response.json());
 };
 
-export const getAddressBalance = (address: string): Promise<Object> => {
+export const getAddressBalance = (address: string): Promise<BTCBalance> => {
   return getAddressBalanceFromNode(address)
     .then(response => response.json());
 };

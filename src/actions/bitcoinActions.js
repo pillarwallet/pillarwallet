@@ -166,6 +166,7 @@ import type {
   BitcoinTransactionPlan,
   BitcoinUtxo,
   BitcoinStore,
+  BTCBalance,
 } from 'models/Bitcoin';
 
 import { saveDbAction } from 'actions/dbActions';
@@ -187,7 +188,7 @@ const setBitcoinAddressesAction = (addresses: string[]): SetBitcoinAddressesActi
 
 const updateBitcoinBalance = (
   address: string,
-  balance: Object,
+  balance: BTCBalance,
 ): UpdateBitcoinBalanceAction => ({
   type: UPDATE_BITCOIN_BALANCE,
   address,
