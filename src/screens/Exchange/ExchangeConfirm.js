@@ -46,7 +46,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
 import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
-import { formatAmount, getCurrencySymbol } from 'utils/common';
+import { formatAmount, formatAmountDisplay, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderDisplayName, getOfferProviderLogo } from 'utils/exchange';
 
@@ -192,10 +192,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       fetchGasInfo,
       session: { isOnline },
     } = this.props;
-    // if (!executingExchangeTransaction) {
-    //   navigation.goBack();
-    //   return;
-    // }
+    if (!executingExchangeTransaction) {
+      navigation.goBack();
+      return;
+    }
     if (prevProps.session.isOnline !== isOnline && isOnline) {
       fetchGasInfo();
     }
@@ -344,6 +344,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const { name } = providerInfo;
     const providerName = name || getProviderDisplayName(provider);
     const providerLogo = getOfferProviderLogo(providersMeta, provider);
+    const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
 
     return (
       <ContainerWithHeader
@@ -370,7 +371,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               <LabeledRow>
                 <Label>You will receive</Label>
                 <ValueWrapper>
-                  <Value>{`${receiveQuantity} ${toAssetCode}`}</Value>
+                  <Value>{`${formattedReceiveAmount} ${toAssetCode}`}</Value>
                   <SeparatorValue>&rarr;</SeparatorValue>
                   <WalletSwitcher onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}>
                     <TextLink style={{ ...fontStyles.big }}>Legacy Wallet</TextLink>
