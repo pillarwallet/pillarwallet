@@ -215,7 +215,11 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
       return;
     }
 
-    const root = await rootFromMnemonic(mnemonic);
+    let seed = wallet.privateKey;
+    if (mnemonic && mnemonic !== 'ENCRYPTED') {
+      seed = mnemonic;
+    }
+    const root = await rootFromMnemonic(seed);
     const keyPair = root.derivePath(path);
 
     const address = keyPairAddress(keyPair);
