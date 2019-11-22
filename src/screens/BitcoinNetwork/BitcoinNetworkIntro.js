@@ -166,7 +166,7 @@ class BitcoinNetworkIntro extends React.Component<Props, State> {
           showHeader
         >
           <Wrapper flex={1}>
-            <CheckPin onPinValid={this.initializeBTC} />
+            <CheckPin onPinValid={this.initializeBTC} revealMnemonic />
           </Wrapper>
         </SlideModal>
       </ContainerWithHeader>
