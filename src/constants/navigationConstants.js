@@ -40,6 +40,7 @@ export const COLLECTIBLE = 'COLLECTIBLE';
 export const BADGE = 'BADGE';
 export const CONFIRM_CLAIM = 'CONFIRM_CLAIM';
 export const SETTINGS = 'SETTINGS';
+export const LOGOUT_PENDING = 'LOGOUT_PENDING';
 
 // ASSETS FLOW
 export const ACCOUNTS = 'ACCOUNTS';
