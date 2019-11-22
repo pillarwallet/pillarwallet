@@ -36,7 +36,7 @@ export type BitcoinReducerState = {
 };
 
 export type UpdateUnspentTransactionsAction = {
-  type: "UPDATE_UNSPENT_TRANSACTIONS",
+  type: 'UPDATE_UNSPENT_TRANSACTIONS',
   address: string,
   unspentTransactions: BitcoinUtxo[],
 };
