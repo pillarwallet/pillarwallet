@@ -60,5 +60,5 @@ export const getAddressBalanceFromNode = (address: string) => {
       Accept: 'application/json',
     },
   })
-    .then(validateResponse('getAddressBalance'));
+    .then(validateResponse('getAddressBalanceFromNode'));
 };
