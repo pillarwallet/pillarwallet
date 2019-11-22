@@ -35,13 +35,13 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { BitcoinAddress, BitcoinUtxo } from 'models/Bitcoin';
+import type { BitcoinAddress, BitcoinUtxo, BitcoinBalance } from 'models/Bitcoin';
 import type { Rates } from 'models/Asset';
 
 // utils
 import { formatMoney } from 'utils/common';
 import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
-import { unspentAmount, satoshisToBtc } from 'utils/bitcoin';
+import { satoshisToBtc } from 'utils/bitcoin';
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -50,6 +50,7 @@ type Props = {
   addresses: BitcoinAddress[],
   unspentTransactions: BitcoinUtxo[],
   refreshBitcoinBalance: () => void,
+  balances: BitcoinBalance,
 };
 
 type State = {
@@ -102,7 +103,7 @@ class BTCView extends React.Component<Props, State> {
     this.setState({ showReceive: false });
   };
 
-  refreshBalace = () => {
+  refreshBalance = () => {
     this.props.refreshBitcoinBalance();
   };
 
@@ -114,14 +115,16 @@ class BTCView extends React.Component<Props, State> {
     const {
       navigation,
       addresses,
-      unspentTransactions,
+      balances,
     } = this.props;
 
     // TODO: Select address
     const { address } = addresses[0];
 
-    const balance = satoshisToBtc(unspentAmount(unspentTransactions));
-    const availableFormattedAmount = formatMoney(balance, 4);
+    const addressBalance = balances[address];
+
+    const confirmedBalance = satoshisToBtc(addressBalance ? addressBalance.balance : 0);
+    const availableFormattedAmount = formatMoney(confirmedBalance, 4);
 
     const transactionsHistory = [];
 
@@ -132,7 +135,7 @@ class BTCView extends React.Component<Props, State> {
             flexGrow: 1,
           }}
           refreshControl={
-            <RefreshControl refreshing={false} onRefresh={this.refreshBalace} />
+            <RefreshControl refreshing={false} onRefresh={this.refreshBalance} />
           }
         >
           <TopPartWrapper>
@@ -148,7 +151,7 @@ class BTCView extends React.Component<Props, State> {
                 label="Send"
                 icon={iconSend}
                 onPress={this.onPressSend}
-                disabled={balance <= 0}
+                disabled={confirmedBalance <= 0}
               />
             </AssetButtonsWrapper>
           </TopPartWrapper>
@@ -181,14 +184,14 @@ const mapStateToProps = ({
   bitcoin: {
     data: {
       addresses,
-      unspentTransactions,
+      balances,
     },
   },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   addresses,
-  unspentTransactions,
+  balances,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

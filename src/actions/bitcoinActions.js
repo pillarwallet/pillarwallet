@@ -138,10 +138,12 @@ import {
   REFRESH_THRESHOLD,
   SET_BITCOIN_ADDRESSES,
   BITCOIN_WALLET_CREATION_FAILED,
+  UPDATE_UNSPENT_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
 import {
   keyPairAddress,
   getAddressUtxos,
+  getAddressBalance,
   importKeyPair,
   exportKeyPair,
   rootFromMnemonic,
@@ -155,6 +157,7 @@ import type {
   BitcoinReducerAction,
   SetBitcoinAddressesAction,
   UpdateBitcoinBalanceAction,
+  UpdateUnspentTransactionsAction,
   BitcoinWalletCreationFailedAction,
 } from 'reducers/bitcoinReducer';
 import type { EthereumWallet } from 'models/Wallet';
@@ -184,9 +187,18 @@ const setBitcoinAddressesAction = (addresses: string[]): SetBitcoinAddressesActi
 
 const updateBitcoinBalance = (
   address: string,
-  unspentTransactions: BitcoinUtxo[],
+  balance: Object,
 ): UpdateBitcoinBalanceAction => ({
   type: UPDATE_BITCOIN_BALANCE,
+  address,
+  balance,
+});
+
+const updateBitcoinUnspentTransactions = (
+  address: string,
+  unspentTransactions: BitcoinUtxo[],
+): UpdateUnspentTransactionsAction => ({
+  type: UPDATE_UNSPENT_TRANSACTIONS,
   address,
   unspentTransactions,
 });
@@ -244,9 +256,14 @@ const outdatedAddresses = (addresses: BitcoinAddress[]): BitcoinAddress[] => {
   return addresses.filter(({ updatedAt }) => updatedAt <= minDate);
 };
 
-const fetchBalanceAction = (address: string): Promise<BitcoinReducerAction> => {
+const fetchUnspentTxAction = (address: string): Promise<BitcoinReducerAction> => {
   return getAddressUtxos(address)
-    .then(unspentOutputs => updateBitcoinBalance(address, unspentOutputs));
+    .then(unspentOutputs => updateBitcoinUnspentTransactions(address, unspentOutputs));
+};
+
+const fetchBalanceAction = (address: string): Promise<BitcoinReducerAction> => {
+  return getAddressBalance(address)
+    .then(balance => updateBitcoinBalance(address, balance));
 };
 
 const transactionSendingFailed = () => {
@@ -295,6 +312,23 @@ export const sendTransactionAction = (plan: BitcoinTransactionPlan) => {
         transactionSent();
       })
       .catch(transactionSendingFailed);
+  };
+};
+
+export const refreshBitcoinUnspentTxAction = (force: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { bitcoin: { data: { addresses } } } = getState();
+
+    const addressesToUpdate = force ? addresses : outdatedAddresses(addresses);
+    if (!addressesToUpdate.length) {
+      return;
+    }
+
+    await Promise.all(addressesToUpdate.map(({ address }) => {
+      return fetchUnspentTxAction(address)
+        .then(action => dispatch(action))
+        .catch(fetchBalanceFailed);
+    }));
   };
 };
 
