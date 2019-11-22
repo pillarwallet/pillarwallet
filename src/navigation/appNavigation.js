@@ -84,7 +84,6 @@ import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import BitcoinNetworkIntro from 'screens/BitcoinNetwork/BitcoinNetworkIntro';
-import UsersScreen from 'screens/Users';
 import UserSettingsScreen from 'screens/Users/UserSettings';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import SettingsScreen from 'screens/Settings';
@@ -190,7 +189,6 @@ import {
   PILLAR_NETWORK_INTRO,
   BITCOIN_NETWORK_INTRO,
   MANAGE_USERS_FLOW,
-  USERS,
   USER_SETTINGS,
   ADD_EDIT_USER,
   SETTINGS,
@@ -521,7 +519,6 @@ manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // MANAGE USERS FLOW
 const manageUsersFlow = createStackNavigator({
-  [USERS]: UsersScreen,
   [USER_SETTINGS]: UserSettingsScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);

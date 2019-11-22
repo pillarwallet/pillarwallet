@@ -37,6 +37,7 @@ import { providers, utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
 import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 import type { GasInfo } from 'models/GasInfo';
+import StackViewTransitionConfigs from 'react-navigation';
 import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
@@ -45,6 +46,8 @@ import {
 } from 'constants/assetsConstants';
 
 const WWW_URL_PATTERN = /^www\./i;
+
+const { defaultTransitionConfig } = StackViewTransitionConfigs;
 
 export const delay = async (ms: number) => {
   return new Promise(resolve => {
@@ -236,30 +239,38 @@ export const modalTransition = {
   defaultNavigationOptions: {
     header: null,
   },
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 400,
-      easing: Easing.out(Easing.poly(2)),
-      timing: Animated.timing,
-    },
-    screenInterpolator: (sceneProps: Object) => {
-      const { layout, position, scene } = sceneProps;
-      const { index } = scene;
+  transitionConfig: (sceneProps: Object) => {
+    const { layout, position, scene } = sceneProps;
+    const { index } = scene;
+    const { route } = scene;
+    const params = route.params || {};
+    const { defaultTransition } = params;
 
-      const height = layout.initHeight;
-      const translateY = position.interpolate({
-        inputRange: [index - 1, index, index + 1],
-        outputRange: [height, 0, 0],
-      });
+    if (defaultTransition) {
+      return defaultTransitionConfig;
+    }
 
-      const opacity = position.interpolate({
-        inputRange: [index - 1, index - 0.99, index],
-        outputRange: [0, 1, 1],
-      });
+    return ({
+      transitionSpec: {
+        duration: 400,
+        easing: Easing.out(Easing.poly(2)),
+        timing: Animated.timing,
+      },
+      screenInterpolator: () => {
+        const opacity = position.interpolate({
+          inputRange: [index - 1, index - 0.99, index],
+          outputRange: [0, 1, 1],
+        });
 
-      return { opacity, transform: [{ translateY }] };
-    },
-  }),
+        const height = layout.initHeight;
+        const translateY = position.interpolate({
+          inputRange: [index - 1, index, index + 1],
+          outputRange: [height, 0, 0],
+        });
+        return { opacity, transform: [{ translateY }] };
+      },
+    });
+  },
 };
 
 export const handleUrlPress = (url: string) => {
