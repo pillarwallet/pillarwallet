@@ -30,7 +30,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { Footer, ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
-import { Label, MediumText, Paragraph, TextLink } from 'components/Typography';
+import { BaseText, Label, MediumText, Paragraph, TextLink } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 
@@ -44,7 +44,7 @@ import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderDisplayName, getOfferProviderLogo } from 'utils/exchange';
@@ -72,9 +72,10 @@ const Value = styled(MediumText)`
   font-size: ${fontSizes.big}px;
 `;
 
-const LabelSub = styled(Label)`
+const LabelSub = styled(BaseText)`
   margin-top: 5px;
   color: ${baseColors.black};
+  ${fontStyles.regular};
 `;
 
 const SpeedButton = styled(Button)`
