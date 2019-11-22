@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import * as Keychain from 'react-native-keychain';
 import Intercom from 'react-native-intercom';
 import type { NavigationScreenProp } from 'react-navigation';
+import get from 'lodash.get';
 
 // actions
 import {
@@ -85,7 +86,8 @@ type State = {
     enabled: boolean,
     privateKey: ?string,
   },
-}
+  scrollToSection: string,
+};
 
 type Props = {
   user: Object,
@@ -110,6 +112,8 @@ type Props = {
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
+
+export const KEY_SECTION = 'KEY_SECTION';
 
 const SettingsModalTitle = styled(MediumText)`
   ${fontStyles.big};
@@ -323,6 +327,8 @@ const codeFormFields = [{
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 
 class Settings extends React.Component<Props, State> {
+  scrollView: ScrollView;
+
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -333,13 +339,17 @@ class Settings extends React.Component<Props, State> {
       joinBetaPressed: false,
       leaveBetaPressed: false,
       setBiometrics: null,
+      scrollToSection: '',
     };
   }
 
   componentDidMount() {
+    const { navigation } = this.props;
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ showBiometricsSelector: !!supported }))
       .catch(() => null);
+    const scrollTo = navigation.getParam('scrollTo');
+    if (scrollTo) this.setSectionToScrollTo(scrollTo);
   }
 
   clearLocalStorage() {
@@ -347,6 +357,10 @@ class Settings extends React.Component<Props, State> {
     chat.client.resetAccount().catch(() => null);
     Toast.show({ title: 'Success', type: 'success', message: 'Local storage was cleared' });
   }
+
+  setSectionToScrollTo = (sectionKey: string) => {
+    this.setState({ scrollToSection: sectionKey });
+  };
 
   toggleSlideModalOpen = (visibleModal: ?string = null) => {
     this.setState({ visibleModal });
@@ -470,6 +484,7 @@ class Settings extends React.Component<Props, State> {
     const {
       visibleModal,
       showBiometricsSelector,
+      scrollToSection,
     } = this.state;
 
     const debugItems = formDebbugItems(this);
@@ -481,6 +496,7 @@ class Settings extends React.Component<Props, State> {
       >
         <ScrollView
           contentContainerStyle={{ paddingTop: 0, paddingBottom: spacing.large }}
+          ref={(scrollView: ScrollView) => { this.scrollView = scrollView; }}
         >
 
           {/* <ProfileSettingsItem
@@ -532,11 +548,19 @@ class Settings extends React.Component<Props, State> {
             sectionItems={formSystemItems(this)}
           />
 
-          <SettingsSection
-            sectionTitle="Key"
-            sectionItems={formKeyItems(this)}
-            isCardsList
-          />
+          <View onLayout={(e) => {
+            if (scrollToSection === KEY_SECTION && this.scrollView) {
+              const yPos = get(e, 'nativeEvent.layout.y', 0);
+              this.scrollView.scrollTo({ x: 0, y: yPos, animated: true });
+            }
+          }}
+          >
+            <SettingsSection
+              sectionTitle="Key"
+              sectionItems={formKeyItems(this)}
+              isCardsList
+            />
+          </View>
 
           {!!hasSmartWallet && smartWalletFeatureEnabled &&
           <SettingsSection
