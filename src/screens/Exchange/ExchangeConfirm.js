@@ -33,10 +33,11 @@ import Button from 'components/Button';
 import { BaseText, Label, MediumText, Paragraph, TextLink } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
+import Icon from 'components/Icon';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { EXCHANGE_RECEIVE_EXPLAINED, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -66,6 +67,13 @@ const FooterWrapper = styled.View`
 
 const LabeledRow = styled.View`
   margin: 10px 0;
+`;
+
+const ValueWrapper = styled.View`
+  flex: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
 `;
 
 const Value = styled(MediumText)`
@@ -105,6 +113,28 @@ const ProviderIcon = styled(CachedImage)`
   width: 24px;
   height: 24px;
   margin-right: 4px;
+`;
+
+const WalletSwitcher = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const SeparatorValue = styled(Value)`
+  color: ${baseColors.coolGrey};
+  margin: 0px 8px;
+`;
+
+const ChevronWrapper = styled.View`
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+`;
+
+const SelectorChevron = styled(Icon)`
+  font-size: 8px;
+  color: ${baseColors.electricBlue};
 `;
 
 type Props = {
@@ -162,10 +192,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       fetchGasInfo,
       session: { isOnline },
     } = this.props;
-    if (!executingExchangeTransaction) {
-      navigation.goBack();
-      return;
-    }
+    // if (!executingExchangeTransaction) {
+    //   navigation.goBack();
+    //   return;
+    // }
     if (prevProps.session.isOnline !== isOnline && isOnline) {
       fetchGasInfo();
     }
@@ -329,16 +359,36 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               : 'Review the details and confirm the exchange as well as the cost of transaction.'
             }
           </Paragraph>
-          {(setTokenAllowance &&
+          {setTokenAllowance &&
             <LabeledRow>
               <Label>Asset to enable</Label>
               <Value>{fromAssetCode}</Value>
             </LabeledRow>
-          ) ||
+          }
+          {!setTokenAllowance &&
             <View>
               <LabeledRow>
                 <Label>You will receive</Label>
-                <Value>{`${receiveQuantity} ${toAssetCode}`}</Value>
+                <ValueWrapper>
+                  <Value>{`${receiveQuantity} ${toAssetCode}`}</Value>
+                  <SeparatorValue>&rarr;</SeparatorValue>
+                  <WalletSwitcher onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}>
+                    <TextLink style={{ ...fontStyles.big }}>Legacy Wallet</TextLink>
+                    <ChevronWrapper>
+                      <SelectorChevron
+                        name="chevron-right"
+                        style={{ transform: [{ rotate: '-90deg' }] }}
+                      />
+                      <SelectorChevron
+                        name="chevron-right"
+                        style={{
+                          transform: [{ rotate: '90deg' }],
+                          marginTop: 2,
+                        }}
+                      />
+                    </ChevronWrapper>
+                  </WalletSwitcher>
+                </ValueWrapper>
                 <LabelSub>
                   Final amount may be higher or lower than expected at the end of a transaction.
                   Crypto is volatile, the rate fluctuates.

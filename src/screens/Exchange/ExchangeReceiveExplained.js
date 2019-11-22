@@ -25,17 +25,18 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Paragraph } from 'components/Typography';
 
 // util
-import { fontSizes, spacing } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
 };
 
-const Description = styled(Paragraph)`
-  text-align: center;
-  padding-bottom: ${spacing.rhythm}px;
-  ${fontSizes.regular};
+const SeparatorValue = styled(Paragraph)`
+  color: ${baseColors.coolGrey};
+  padding: 0px 8px;
 `;
+
+const ArrowSymbol = () => <SeparatorValue>&nbsp;&rarr;&nbsp;</SeparatorValue>;
 
 class ExchangeReceiveExplained extends React.Component<Props> {
   assetSymbol: string;
@@ -54,7 +55,7 @@ class ExchangeReceiveExplained extends React.Component<Props> {
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Can\'t send a token?' }],
+          centerItems: [{ title: 'New feature coming' }],
           rightItems: [{ close: true }],
           noBack: true,
           onClose: this.handleBack,
@@ -62,18 +63,11 @@ class ExchangeReceiveExplained extends React.Component<Props> {
       >
         <Wrapper flex={1} center regularPadding>
           <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
-            <Description>
-              Currently only exchange
-            </Description>
-            <Description>
-              to Legacy wallet is available.
-            </Description>
-            <Description>
-              We are working on Smart wallet
-            </Description>
-            <Description>
-              destination for exchanged tokens
-            </Description>
+            <Paragraph>Currently only exchange</Paragraph>
+            <Paragraph style={{ paddingBottom: spacing.rhythm }}>
+              to <ArrowSymbol /> Legacy Wallet is available.
+            </Paragraph>
+            <Paragraph>We are working on <ArrowSymbol /> Smart Wallet destination for exchanged tokens.</Paragraph>
           </View>
         </Wrapper>
       </ContainerWithHeader>
