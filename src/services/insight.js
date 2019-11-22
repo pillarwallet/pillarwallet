@@ -62,3 +62,13 @@ export const getAddressBalanceFromNode = (address: string) => {
   })
     .then(validateResponse('getAddressBalanceFromNode'));
 };
+
+export const getBTCTransactionsFromNode = (address: string) => {
+  return fetch(`${BITCOIN_INSIGHT_URL}/address/${address}/txs`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+    },
+  })
+    .then(validateResponse('getBTCTransactionsFromNode'));
+};

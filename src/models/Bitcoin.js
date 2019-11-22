@@ -61,3 +61,19 @@ export type BTCBalance = {
 export type BitcoinBalance = {
   [address: string]: BTCBalance,
 };
+
+export type BTCTransaction = {
+  _id: string,
+  chain: string,
+  network: string,
+  coinbase: boolean,
+  mintIndex: number,
+  spentTxid: string,
+  mintTxid: string,
+  mintHeight: number,
+  spentHeight: number,
+  address: string,
+  script: string,
+  value: number,
+  confirmations: number
+};

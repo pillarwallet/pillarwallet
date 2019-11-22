@@ -38,6 +38,7 @@ const initialBitcoinState: BitcoinReducerState = {
     ],
     unspentTransactions: [],
     balances: {},
+    transactions: [],
   },
 };
 
