@@ -29,11 +29,13 @@ import type {
   BitcoinUtxo,
   BitcoinTransactionTarget,
   BitcoinTransactionPlan,
+  BTCBalance,
 } from 'models/Bitcoin';
 import { SPEED_TYPES } from 'constants/assetsConstants';
 import {
   getAddressUtxosFromNode,
   sendRawTransactionToNode,
+  getAddressBalanceFromNode,
 } from 'services/insight';
 
 const bip39 = require('bip39');
@@ -163,5 +165,10 @@ export const importKeyPair = (s: string, networkName?: string): ECPair => {
 
 export const getAddressUtxos = (address: string): Promise<BitcoinUtxo[]> => {
   return getAddressUtxosFromNode(address)
+    .then(response => response.json());
+};
+
+export const getAddressBalance = (address: string): Promise<BTCBalance> => {
+  return getAddressBalanceFromNode(address)
     .then(response => response.json());
 };
