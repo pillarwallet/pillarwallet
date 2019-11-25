@@ -17,7 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const UPDATE_APP_SETTINGS = 'UPDATE_APP_SETTINGS';
-export const RESET_APP_SETTINGS = 'RESET_APP_SETTINGS';
-export const LIGHT_MODE = 'lightMode';
-export const DARK_MODE = 'darkMode';
+
+type ThemeColors = {
+  [colorName: string]: string,
+};
+
+export type Theme = {
+  mode: string,
+  colors: ThemeColors,
+};

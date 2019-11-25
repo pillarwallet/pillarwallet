@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { DARK_MODE, LIGHT_MODE, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -31,6 +31,7 @@ import {
   setKeychainDataObject,
   resetKeychainDataObject,
 } from 'utils/keychain';
+import { darkThemeColors, lightThemeColors } from 'utils/themes';
 
 import SDKWrapper from 'services/api';
 
@@ -176,6 +177,27 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
       type: 'success',
       title: 'Success',
       autoClose: false,
+    });
+  };
+};
+
+
+export const changeAppThemeAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { theme: { mode } } },
+    } = getState();
+
+    const newMode = mode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE;
+    const colors = mode === LIGHT_MODE ? darkThemeColors : lightThemeColors;
+
+    const theme = { mode: newMode, colors };
+    dispatch(saveDbAction('app_settings', { appSettings: { theme } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: {
+        theme,
+      },
     });
   };
 };
