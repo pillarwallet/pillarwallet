@@ -55,7 +55,7 @@ import ChatService from 'services/chat';
 import smartWalletService from 'services/smartWallet';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
-import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
+import { findKeyBasedAccount } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { userHasSmartWallet } from 'utils/smartWallet';
@@ -294,7 +294,7 @@ export const loginAction = (
       const isWalletBackedUp = isImported || isBackedUp;
       const keyBasedAccount = findKeyBasedAccount(accounts);
       if (keyBasedAccount) {
-        toastWalletBackup(isWalletBackedUp, getAccountId(keyBasedAccount));
+        toastWalletBackup(isWalletBackedUp);
       }
 
       dispatch(getWalletsCreationEventsAction());

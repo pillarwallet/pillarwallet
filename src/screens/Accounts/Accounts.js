@@ -59,7 +59,6 @@ import {
   BITCOIN_NETWORK_INTRO,
   PILLAR_NETWORK_INTRO,
   SMART_WALLET_INTRO,
-  WALLET_SETTINGS,
 } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -86,7 +85,6 @@ type commonItemsParams = {|
   initialiseAction: ?() => void,
   isActive: boolean,
   iconSource: string,
-  onSettingsPress: ?() => void,
 |};
 
 type NetworkItem = {|
@@ -277,11 +275,6 @@ class AccountsScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(PILLAR_NETWORK_INTRO);
   };
 
-  accountSettings = (account: Account) => {
-    const { navigation } = this.props;
-    navigation.navigate(WALLET_SETTINGS, { accountId: account.id });
-  };
-
   renderListItem = ({ item }: ListElement) => {
     const {
       title,
@@ -291,14 +284,12 @@ class AccountsScreen extends React.Component<Props, State> {
       initialiseAction,
       isActive,
       iconSource,
-      onSettingsPress,
     } = item;
     return (
       <SettingsItemCarded
         title={title}
         subtitle={balance}
         onMainPress={isInitialised ? mainAction : initialiseAction}
-        onSettingsPress={onSettingsPress}
         isActive={isActive}
         customIcon={<IconImage source={iconSource} />}
       />
@@ -353,7 +344,6 @@ class AccountsScreen extends React.Component<Props, State> {
         initialiseAction: null,
         isActive: isActiveWallet,
         iconSource: isSmartWallet ? smartWalletIcon : ethereumWalletIcon,
-        onSettingsPress: () => this.accountSettings(account),
         isSmartWallet,
       };
     });
@@ -369,7 +359,6 @@ class AccountsScreen extends React.Component<Props, State> {
         initialiseAction: () => { navigation.navigate(SMART_WALLET_INTRO); },
         isActive: false,
         iconSource: smartWalletIcon,
-        onSettingsPress: null,
         isSmartWallet: true,
       });
     }
@@ -425,7 +414,6 @@ class AccountsScreen extends React.Component<Props, State> {
         initialiseAction: this.initialisePPN,
         isActive,
         iconSource: pillarNetworkIcon,
-        onSettingsPress: null,
       });
     }
 
@@ -445,7 +433,6 @@ class AccountsScreen extends React.Component<Props, State> {
           iconSource: pillarNetworkIcon, // TODO: Bitcoin icon
           mainAction: this.setBTCAsActiveNetwork,
           initialiseAction: this.initialiseBTC,
-          onSettingsPress: null,
         });
       }
     }
@@ -460,7 +447,6 @@ class AccountsScreen extends React.Component<Props, State> {
       mainAction,
       isActive,
       iconSource,
-      onSettingsPress,
     } = item;
 
     return (
@@ -487,7 +473,6 @@ class AccountsScreen extends React.Component<Props, State> {
             title={title}
             subtitle={balance}
             onMainPress={mainAction}
-            onSettingsPress={onSettingsPress}
             isActive={isActive}
             sidePaddingsForWidth={40}
             customIcon={<IconImage source={iconSource} />}
