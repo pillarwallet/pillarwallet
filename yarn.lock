@@ -11043,6 +11043,13 @@ react-navigation-stack@1.5.3:
   dependencies:
     prop-types "^15.7.2"
 
+react-navigation-stack@^1.10.3:
+  version "1.10.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-navigation-stack/-/react-navigation-stack-1.10.3.tgz#e714e442b20427f0d2d3c18fce1f9e8cfe69be0b"
+  integrity sha1-5xTkQrIEJ/DS08GPzh+ejP5pvgs=
+  dependencies:
+    prop-types "^15.7.2"
+
 react-navigation-tabs@^0.5.1:
   version "0.5.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-navigation-tabs/-/react-navigation-tabs-0.5.1.tgz#ed33bce3a3e21b92646700de25bd94b8fc570371"

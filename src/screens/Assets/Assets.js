@@ -53,10 +53,11 @@ import {
 import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
+import { ACCOUNTS, SETTINGS } from 'constants/navigationConstants';
+import { KEY_SECTION } from 'screens/Settings';
 
 // utils
-import { findKeyBasedAccount, getAccountName } from 'utils/accounts';
+import { getAccountName } from 'utils/accounts';
 import { baseColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -213,7 +214,6 @@ class AssetsScreen extends React.Component<Props, State> {
 
   getInsightsList = () => {
     const {
-      accounts,
       backupStatus,
       navigation,
       useBiometrics,
@@ -221,7 +221,6 @@ class AssetsScreen extends React.Component<Props, State> {
     const { supportsBiometrics } = this.state;
 
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-    const keyBasedAccount = findKeyBasedAccount(accounts) || {};
 
     const keyWalletInsights = [
       {
@@ -229,7 +228,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: 'Backup wallet',
         status: isBackedUp,
         onPress: !isBackedUp
-          ? () => navigation.navigate(WALLET_SETTINGS, { accountId: keyBasedAccount.id })
+          ? () => navigation.navigate(SETTINGS, { scrollTo: KEY_SECTION })
           : null,
       },
       {
