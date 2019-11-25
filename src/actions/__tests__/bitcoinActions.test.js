@@ -21,10 +21,10 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import PillarSdk from 'services/api';
-import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
+import { refreshBitcoinBalanceAction, refreshBitcoinUnspentTxAction } from 'actions/bitcoinActions';
 import type { BitcoinReducerState } from 'reducers/bitcoinReducer';
-import { UPDATE_BITCOIN_BALANCE } from 'constants/bitcoinConstants';
-import { getAddressUtxos } from 'services/bitcoin';
+import { UPDATE_BITCOIN_BALANCE, UPDATE_UNSPENT_TRANSACTIONS } from 'constants/bitcoinConstants';
+import { getAddressUtxos, getAddressBalance } from 'services/bitcoin';
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -37,6 +37,7 @@ const initialBitcoinState: BitcoinReducerState = {
       { address, updatedAt: 0 },
     ],
     unspentTransactions: [],
+    balances: {},
   },
 };
 
@@ -51,6 +52,26 @@ describe('Bitcoin actions', () => {
     store = mockStore(initialState);
   });
 
+  describe('refreshBitcoinUnspentTxAction', () => {
+    describe('for existing address', () => {
+      it('updates the unspent transactions', async () => {
+        await store.dispatch(refreshBitcoinUnspentTxAction(false));
+
+        const actions = store.getActions();
+
+        expect(actions.length).toEqual(1);
+
+        const utxos = await getAddressUtxos(address);
+
+        expect(actions[0]).toMatchObject({
+          type: UPDATE_UNSPENT_TRANSACTIONS,
+          address,
+          unspentTransactions: utxos,
+        });
+      });
+    });
+  });
+
   describe('refreshBitcoinBalanceAction', () => {
     describe('for existing address', () => {
       it('updates the balance', async () => {
@@ -60,12 +81,12 @@ describe('Bitcoin actions', () => {
 
         expect(actions.length).toEqual(1);
 
-        const utxos = await getAddressUtxos(address);
+        const balance = await getAddressBalance(address);
 
         expect(actions[0]).toMatchObject({
           type: UPDATE_BITCOIN_BALANCE,
           address,
-          unspentTransactions: utxos,
+          balance,
         });
       });
     });
