@@ -252,13 +252,11 @@ const getTransitionDuration = (isFaster: boolean) => {
   return duration;
 };
 
-const getTransitionSpec = (isFasterAnimation: boolean) => {
-  return ({
-    duration: getTransitionDuration(isFasterAnimation),
-    easing: Easing.out(Easing.poly(2)),
-    timing: Animated.timing,
-  });
-};
+const getTransitionSpec = (isFasterAnimation: boolean) => ({
+  duration: getTransitionDuration(isFasterAnimation),
+  easing: Easing.out(Easing.poly(2)),
+  timing: Animated.timing,
+});
 
 export const modalTransition = {
   mode: 'modal',
