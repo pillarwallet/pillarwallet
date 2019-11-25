@@ -61,16 +61,19 @@ const AnimatedMessageText = Animated.createAnimatedComponent(MessageText);
 export default class Loader extends React.Component<Props, State> {
   timerToChangeMessage: ?IntervalID;
   startTimeout: ?TimeoutID;
-  state = {
-    visibleMessageId: 0,
-    showMessage: false,
-  };
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      visibleMessageId: 0,
+      showMessage: !!props.firstMessageWithoutDelay,
+    };
+  }
 
   componentDidMount() {
-    const { noMessages, firstMessageWithoutDelay } = this.props;
+    const { noMessages } = this.props;
     if (noMessages) return;
     this.timerToChangeMessage = setInterval(() => this.changeMessages(), 6000);
-    if (firstMessageWithoutDelay) this.showMessage();
     this.startTimeout = setTimeout(() => {
       this.showMessage();
     }, 2000);
