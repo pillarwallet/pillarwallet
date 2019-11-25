@@ -50,3 +50,14 @@ export type BitcoinAddress = {
   address: string,
   updatedAt: number,
 };
+
+export type BTCBalance = {
+  confirmed: number,
+  unconfirmed: number,
+  balance: number,
+};
+
+
+export type BitcoinBalance = {
+  [address: string]: BTCBalance,
+};

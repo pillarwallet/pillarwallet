@@ -429,3 +429,18 @@ export const isCaseInsensitiveMatch = (a: ?string, b: ?string): boolean => {
   if (!a || !b) return false;
   return a.toLowerCase() === b.toLowerCase();
 };
+
+/**
+ * helps to avoid text overlapping on many decimals,
+ * full amount will be displayed in confirm screen
+ * also show only 2 decimals for amounts above 1.00
+ * to avoid same text overlapping in the other side
+ */
+export const formatAmountDisplay = (value: number | string) => {
+  if (!value) return 0;
+  const amount = parseFloat(value);
+  if (amount > 1) {
+    return formatMoney(amount, 2);
+  }
+  return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
+};

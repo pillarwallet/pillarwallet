@@ -44,11 +44,21 @@ export const sendRawTransactionToNode = async (rawtx: string) => {
 };
 
 export const getAddressUtxosFromNode = (address: string) => {
-  return fetch(`${BITCOIN_INSIGHT_URL}/addr/${address}/utxo`, {
+  return fetch(`${BITCOIN_INSIGHT_URL}/address/${address}/?unspent=true`, {
     method: 'GET',
     headers: {
       Accept: 'application/json',
     },
   })
     .then(validateResponse('getAddressUtxosFromNode'));
+};
+
+export const getAddressBalanceFromNode = (address: string) => {
+  return fetch(`${BITCOIN_INSIGHT_URL}/address/${address}/balance`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+    },
+  })
+    .then(validateResponse('getAddressBalanceFromNode'));
 };

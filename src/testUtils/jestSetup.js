@@ -290,6 +290,19 @@ jest.setMock('services/insight', {
       });
     });
   },
+  getAddressBalanceFromNode: async () => {
+    return new Promise(resolve => {
+      resolve({
+        json: () => {
+          return {
+            confirmed: 0,
+            unconfirmed: 0,
+            balance: 0,
+          };
+        },
+      });
+    });
+  },
   sendRawTransactionToNode: async (raw) => {
     const jsonPromise = new Promise(resolve => {
       resolve({
