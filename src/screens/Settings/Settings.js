@@ -19,11 +19,12 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, View, ScrollView, FlatList } from 'react-native';
+import { Keyboard, View, ScrollView, FlatList, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import * as Keychain from 'react-native-keychain';
 import Intercom from 'react-native-intercom';
 import type { NavigationScreenProp } from 'react-navigation';
+import get from 'lodash.get';
 
 // actions
 import {
@@ -32,7 +33,7 @@ import {
   saveOptOutTrackingAction,
   setUserJoinedBetaAction,
 } from 'actions/appSettingsActions';
-import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { lockScreenAction, logoutAction, resetIncorrectPasswordAction } from 'actions/authActions';
 import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
 
 // components
@@ -55,12 +56,23 @@ import Storage from 'services/storage';
 import ChatService from 'services/chat';
 
 // constants
-import { CONFIRM_CLAIM, CHANGE_PIN_FLOW } from 'constants/navigationConstants';
+import {
+  CONFIRM_CLAIM,
+  CHANGE_PIN_FLOW,
+  BACKUP_WALLET_IN_SETTINGS_FLOW,
+  REVEAL_BACKUP_PHRASE,
+} from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
 import { isProdEnv } from 'utils/environment';
 import { baseColors, fontTrackings, spacing, fontStyles } from 'utils/variables';
+import { noop } from 'utils/common';
+import { userHasSmartWallet } from 'utils/smartWallet';
+
+// models
+import type { BackupStatus } from 'reducers/walletReducer';
+import type { Accounts } from 'models/Account';
 
 // partials
 import { SettingsSection } from './SettingsSection';
@@ -74,7 +86,8 @@ type State = {
     enabled: boolean,
     privateKey: ?string,
   },
-}
+  scrollToSection: string,
+};
 
 type Props = {
   user: Object,
@@ -91,10 +104,16 @@ type Props = {
   optOutTracking: boolean,
   setUserJoinedBeta: Function,
   userJoinedBeta: boolean,
+  backupStatus: BackupStatus,
+  lockScreen: () => void,
+  logoutUser: () => void,
+  accounts: Accounts,
 }
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
+
+export const KEY_SECTION = 'KEY_SECTION';
 
 const SettingsModalTitle = styled(MediumText)`
   ${fontStyles.big};
@@ -207,7 +226,7 @@ const formSystemItems = (that) => {
   ];
 };
 
-const formSmartWalletItems = (that) => {
+const formSmartWalletDevItems = (that) => {
   const { cleanSmartWalletAccounts } = that.props;
   return [
     {
@@ -245,6 +264,55 @@ const formCurrencyItems = (that) => {
   ];
 };
 
+const formKeyItems = (that) => {
+  const { backupStatus } = that.props;
+  const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
+  return [
+    {
+      key: 'backupPhrase',
+      title: 'Backup phase',
+      body: 'Secure your wallet from loss',
+      onPress: that.navigateToBackup,
+      label: isBackedUp ? '' : 'Not finished',
+      minHeight: 80,
+    },
+  ];
+};
+
+const formSmartWalletItems = () => {
+  return [
+    {
+      key: 'linkDevice',
+      title: 'Link to another device',
+      body: 'Manage this user on different devices simultaneously',
+      onPress: () => noop(),
+      label: 'soon',
+      minHeight: 96,
+      disabled: true,
+    },
+  ];
+};
+
+const formMiscItems = (that) => {
+  return [
+    {
+      key: 'closeAndLock',
+      title: 'Close and Lock Wallet',
+      body: 'Manage this user on different devices simultaneously',
+      onPress: that.lockWallet,
+      minHeight: 96,
+    },
+    {
+      key: 'deleteWallet',
+      title: 'Delete wallet',
+      body: 'Wipe all data on this device',
+      onPress: that.deleteWallet,
+      minHeight: 96,
+      titleStyle: { color: baseColors.redDamask },
+    },
+  ];
+};
+
 const codeFormFields = [{
   label: 'Code',
   name: 'code',
@@ -259,6 +327,8 @@ const codeFormFields = [{
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 
 class Settings extends React.Component<Props, State> {
+  scrollView: ScrollView;
+
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -269,13 +339,17 @@ class Settings extends React.Component<Props, State> {
       joinBetaPressed: false,
       leaveBetaPressed: false,
       setBiometrics: null,
+      scrollToSection: '',
     };
   }
 
   componentDidMount() {
+    const { navigation } = this.props;
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ showBiometricsSelector: !!supported }))
       .catch(() => null);
+    const scrollTo = navigation.getParam('scrollTo');
+    if (scrollTo) this.setSectionToScrollTo(scrollTo);
   }
 
   clearLocalStorage() {
@@ -283,6 +357,10 @@ class Settings extends React.Component<Props, State> {
     chat.client.resetAccount().catch(() => null);
     Toast.show({ title: 'Success', type: 'success', message: 'Local storage was cleared' });
   }
+
+  setSectionToScrollTo = (sectionKey: string) => {
+    this.setState({ scrollToSection: sectionKey });
+  };
 
   toggleSlideModalOpen = (visibleModal: ?string = null) => {
     this.setState({ visibleModal });
@@ -345,6 +423,39 @@ class Settings extends React.Component<Props, State> {
   //   });
   // }
 
+  navigateToBackup = () => {
+    const { navigation, backupStatus } = this.props;
+    const {
+      isImported,
+      isBackedUp,
+    } = backupStatus;
+    const isWalletBackedUp = isImported || isBackedUp;
+    if (!isWalletBackedUp) {
+      // DO BACKUP
+      navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { backupViaSettings: true });
+    } else {
+      navigation.navigate(REVEAL_BACKUP_PHRASE);
+    }
+  };
+
+  lockWallet = () => {
+    const { lockScreen } = this.props;
+    lockScreen();
+  };
+
+  deleteWallet = () => {
+    const { logoutUser } = this.props;
+    Alert.alert(
+      'Are you sure?',
+      'This action will delete the wallet from this device. ' +
+      'If you wish to recover, you can re-import that wallet using your backup phrase.',
+      [
+        { text: 'Cancel' },
+        { text: 'Delete', onPress: logoutUser },
+      ],
+    );
+  };
+
   renderListItem = (field: string, onSelect: Function) => ({ item: { name } }: Object) => {
     return (
       <SettingsListItem
@@ -367,21 +478,25 @@ class Settings extends React.Component<Props, State> {
       useBiometrics,
       smartWalletFeatureEnabled,
       optOutTracking,
+      accounts,
     } = this.props;
 
     const {
       visibleModal,
       showBiometricsSelector,
+      scrollToSection,
     } = this.state;
 
     const debugItems = formDebbugItems(this);
+    const hasSmartWallet = userHasSmartWallet(accounts);
 
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'General settings' }] }}
       >
         <ScrollView
-          contentContainerStyle={{ padding: spacing.large, paddingTop: 0 }}
+          contentContainerStyle={{ paddingTop: 0, paddingBottom: spacing.large }}
+          ref={(scrollView: ScrollView) => { this.scrollView = scrollView; }}
         >
 
           {/* <ProfileSettingsItem
@@ -419,7 +534,7 @@ class Settings extends React.Component<Props, State> {
           {smartWalletFeatureEnabled && __DEV__ &&
           <SettingsSection
             sectionTitle="Smart wallet"
-            sectionItems={formSmartWalletItems(this)}
+            sectionItems={formSmartWalletDevItems(this)}
           />}
 
           {!!debugItems.length &&
@@ -431,6 +546,33 @@ class Settings extends React.Component<Props, State> {
           <SettingsSection
             sectionTitle="System"
             sectionItems={formSystemItems(this)}
+          />
+
+          <View onLayout={(e) => {
+            if (scrollToSection === KEY_SECTION && this.scrollView) {
+              const yPos = get(e, 'nativeEvent.layout.y', 0);
+              this.scrollView.scrollTo({ x: 0, y: yPos, animated: true });
+            }
+          }}
+          >
+            <SettingsSection
+              sectionTitle="Key"
+              sectionItems={formKeyItems(this)}
+              isCardsList
+            />
+          </View>
+
+          {!!hasSmartWallet && smartWalletFeatureEnabled &&
+          <SettingsSection
+            sectionTitle="Smart Wallet"
+            sectionItems={formSmartWalletItems()}
+            isCardsList
+          />}
+
+          <SettingsSection
+            sectionTitle="More"
+            sectionItems={formMiscItems(this)}
+            isCardsList
           />
 
         </ScrollView>
@@ -643,6 +785,7 @@ const mapStateToProps = ({
   notifications: { intercomNotificationsCount },
   wallet: { backupStatus },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  accounts: { data: accounts },
 }) => ({
   user,
   baseFiatCurrency,
@@ -653,6 +796,7 @@ const mapStateToProps = ({
   useBiometrics,
   smartWalletFeatureEnabled,
   userJoinedBeta,
+  accounts,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -662,6 +806,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
   setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
+  lockScreen: () => dispatch(lockScreenAction()),
+  logoutUser: () => dispatch(logoutAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);
