@@ -30,6 +30,7 @@ import { baseColors, fontStyles } from 'utils/variables';
 type Props = {
   messages?: Array<string>,
   noMessages?: boolean,
+  firstMessageWithoutDelay?: boolean,
 };
 
 type State = {
@@ -66,9 +67,10 @@ export default class Loader extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { noMessages } = this.props;
+    const { noMessages, firstMessageWithoutDelay } = this.props;
     if (noMessages) return;
     this.timerToChangeMessage = setInterval(() => this.changeMessages(), 6000);
+    if (firstMessageWithoutDelay) this.showMessage();
     this.startTimeout = setTimeout(() => {
       this.showMessage();
     }, 2000);
