@@ -37,17 +37,17 @@ import { providers, utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
 import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 import type { GasInfo } from 'models/GasInfo';
-import StackViewTransitionConfigs from 'react-navigation';
+import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
+import { StackViewStyleInterpolator } from 'react-navigation-stack';
 import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
   BITCOIN_ADDRESS_PREFIX,
 } from 'constants/assetsConstants';
+import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
 const WWW_URL_PATTERN = /^www\./i;
-
-const { defaultTransitionConfig } = StackViewTransitionConfigs;
 
 export const delay = async (ms: number) => {
   return new Promise(resolve => {
@@ -234,43 +234,62 @@ export const getiOSNavbarHeight = (): number => {
   return 0;
 };
 
+const DEFAULT_TRANSITION_SCREENS = [MANAGE_USERS_FLOW];
+
+const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => {
+  return DEFAULT_TRANSITION_SCREENS.some(
+    screenName =>
+      screenName === transitionProps.scene.route.routeName ||
+      (prevTransitionProps && screenName === prevTransitionProps.scene.route.routeName),
+  );
+};
+
+const getTransitionDuration = (isFaster: boolean) => {
+  let duration = 400;
+  if (isFaster) {
+    duration = Platform.OS === 'ios' ? 500 : 250;
+  }
+  return duration;
+};
+
+const getTransitionSpec = (isFasterAnimation: boolean) => {
+  return ({
+    duration: getTransitionDuration(isFasterAnimation),
+    easing: Easing.out(Easing.poly(2)),
+    timing: Animated.timing,
+  });
+};
+
 export const modalTransition = {
   mode: 'modal',
   defaultNavigationOptions: {
     header: null,
   },
-  transitionConfig: (sceneProps: Object) => {
-    const { layout, position, scene } = sceneProps;
-    const { index } = scene;
-    const { route } = scene;
-    const params = route.params || {};
-    const { defaultTransition } = params;
+  transitionConfig: (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => ({
+    transitionSpec: getTransitionSpec(getIfNeedsDefTransition(transitionProps, prevTransitionProps)),
+    screenInterpolator: (sceneProps: TransitionProps) => {
+      const needsDefaultTransition = getIfNeedsDefTransition(transitionProps, prevTransitionProps);
+      if (needsDefaultTransition) {
+        return Platform.OS === 'ios'
+          ? StackViewStyleInterpolator.forHorizontal(sceneProps)
+          : StackViewStyleInterpolator.forFadeFromBottomAndroid(sceneProps);
+      }
 
-    if (defaultTransition) {
-      return defaultTransitionConfig;
-    }
+      const { layout, position, scene } = sceneProps;
+      const { index } = scene;
+      const opacity = position.interpolate({
+        inputRange: [index - 1, index - 0.99, index],
+        outputRange: [0, 1, 1],
+      });
 
-    return ({
-      transitionSpec: {
-        duration: 400,
-        easing: Easing.out(Easing.poly(2)),
-        timing: Animated.timing,
-      },
-      screenInterpolator: () => {
-        const opacity = position.interpolate({
-          inputRange: [index - 1, index - 0.99, index],
-          outputRange: [0, 1, 1],
-        });
-
-        const height = layout.initHeight;
-        const translateY = position.interpolate({
-          inputRange: [index - 1, index, index + 1],
-          outputRange: [height, 0, 0],
-        });
-        return { opacity, transform: [{ translateY }] };
-      },
-    });
-  },
+      const height = layout.initHeight;
+      const translateY = position.interpolate({
+        inputRange: [index - 1, index, index + 1],
+        outputRange: [height, 0, 0],
+      });
+      return { opacity, transform: [{ translateY }] };
+    },
+  }),
 };
 
 export const handleUrlPress = (url: string) => {

@@ -367,7 +367,7 @@ class HeaderBlock extends React.Component<Props> {
   renderUser = (theme, showName: boolean) => {
     const { user, navigation } = this.props;
     return (
-      <UserButton key="user" onPress={() => { navigation.navigate(MANAGE_USERS_FLOW, { defaultTransition: true }); }}>
+      <UserButton key="user" onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}>
         <HeaderProfileImage
           uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
           userName={user.username}
