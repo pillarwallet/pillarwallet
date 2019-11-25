@@ -51,7 +51,6 @@ class SyntheticsService {
       assetToRecipient,
       assetToQuantity,
       assetTo,
-      desiredDecimalPoints: 18, // PLR decimals
     });
     return fetch(buildApiUrl(urlPath), {
       ...this.apiConfig,
