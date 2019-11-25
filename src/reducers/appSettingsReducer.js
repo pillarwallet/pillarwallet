@@ -23,6 +23,11 @@ import merge from 'lodash.merge';
 import { lightThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
+export const defaultTheme = {
+  mode: LIGHT_MODE,
+  colors: lightThemeColors,
+};
+
 export type AppSettingsReducerState = {
   data: {
     lastTxSyncDatetimes: Object,
@@ -53,10 +58,7 @@ export const initialState: AppSettingsReducerState = {
     userJoinedBeta: false,
     firebaseAnalyticsConnectionEnabled: false,
     baseFiatCurrency: null,
-    theme: {
-      mode: LIGHT_MODE,
-      colors: lightThemeColors,
-    },
+    theme: defaultTheme,
   },
   isFetched: false,
 };

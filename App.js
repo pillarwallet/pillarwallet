@@ -154,25 +154,27 @@ class App extends React.Component<Props, *> {
     return (
       <ThemeProvider theme={theme}>
         <React.Fragment>
-          <RootNavigation
-            ref={(node) => {
-              if (!node) return;
-              setTopLevelNavigator(node);
-            }}
-          />
-          {!!__DEV__ &&
-          <TouchableOpacity
-            style={{
-              padding: 20,
-              borderWidth: 1,
-              borderColor: colors.border,
-              alignItems: 'center',
-              backgroundColor: colors.card,
-            }}
-            onPress={changeAppTheme}
-          >
-            <Text style={{ color: colors.text }}>{`THEME: ${mode}`}</Text>
-          </TouchableOpacity>}
+          <Root>
+            <RootNavigation
+              ref={(node) => {
+                if (!node) return;
+                setTopLevelNavigator(node);
+              }}
+            />
+            {!!__DEV__ &&
+            <TouchableOpacity
+              style={{
+                padding: 20,
+                borderWidth: 1,
+                borderColor: colors.border,
+                alignItems: 'center',
+                backgroundColor: colors.card,
+              }}
+              onPress={changeAppTheme}
+            >
+              <Text style={{ color: colors.text }}>{`THEME: ${mode}`}</Text>
+            </TouchableOpacity>}
+          </Root>
         </React.Fragment>
       </ThemeProvider>
     );
@@ -200,13 +202,11 @@ const mapDispatchToProps = (dispatch) => ({
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
 
 const AppRoot = () => (
-  <Root>
-    <Provider store={store}>
-      <PersistGate loading={<Container><LoadingSpinner /></Container>} persistor={persistor}>
-        <AppWithNavigationState />
-      </PersistGate>
-    </Provider>
-  </Root>
+  <Provider store={store}>
+    <PersistGate loading={<Container><LoadingSpinner /></Container>} persistor={persistor}>
+      <AppWithNavigationState />
+    </PersistGate>
+  </Provider>
 );
 
 export default AppRoot;
