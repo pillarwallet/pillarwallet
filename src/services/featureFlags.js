@@ -18,15 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import firebase from 'react-native-firebase';
-import { isTest } from 'utils/environment';
-import {
-  INITIAL_FEATURE_FLAGS,
-  DEVELOPMENT_FEATURE_FLAGS,
-} from 'constants/featureFlagsConstants';
+import { isProdEnv, isTest } from 'utils/environment';
+import { INITIAL_FEATURE_FLAGS, DEVELOPMENT_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+
+const isDev = __DEV__ || !isProdEnv;
 
 export async function getRemoteFeatureFlags() {
   if (isTest) return INITIAL_FEATURE_FLAGS;
-  if (__DEV__) firebase.config().enableDeveloperMode();
+  if (isDev) firebase.config().enableDeveloperMode();
   const firebaseConfig = firebase.config();
   firebaseConfig.setDefaults(INITIAL_FEATURE_FLAGS);
   await firebaseConfig.fetch(0).catch(() => null); // 0 – try no caching, though Firebase can still throttle requests
@@ -37,7 +36,7 @@ export async function getRemoteFeatureFlags() {
     ...flags,
     [flagKey]: !!fetchedFlags[flagKey].val(),
   }), {});
-  return __DEV__
+  return isDev
     ? { ...mappedFeatureFlags, ...DEVELOPMENT_FEATURE_FLAGS }
     : mappedFeatureFlags;
 }
