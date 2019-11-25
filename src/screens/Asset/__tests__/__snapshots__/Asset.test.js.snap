@@ -9,18 +9,7 @@ exports[`Asset renders the Asset correctly 1`] = `
   }
 >
   <View
-    style={
-      Array [
-        Object {
-          "backgroundColor": "#ffffff",
-          "borderBottomColor": "#EDEDED",
-          "borderBottomWidth": 1,
-          "width": "100%",
-        },
-        undefined,
-      ]
-    }
-    theme={
+    customTheme={
       Object {
         "backgroundColor": "#ffffff",
         "borderBottomColor": "#EDEDED",
@@ -33,6 +22,17 @@ exports[`Asset renders the Asset correctly 1`] = `
         "rightActionIconColor": "#007AFF",
         "rightActionLabelColor": "#007AFF",
       }
+    }
+    style={
+      Array [
+        Object {
+          "backgroundColor": "#ffffff",
+          "borderBottomColor": "#EDEDED",
+          "borderBottomWidth": 1,
+          "width": "100%",
+        },
+        undefined,
+      ]
     }
   >
     <View
@@ -1313,6 +1313,13 @@ exports[`Asset renders the Asset correctly 1`] = `
               }
             />
             <View
+              customTheme={
+                Object {
+                  "background": "#fafafa",
+                  "borderRadius": "30px",
+                  "padding": "0 20px",
+                }
+              }
               style={
                 Array [
                   Object {
@@ -1335,13 +1342,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                   },
                   undefined,
                 ]
-              }
-              theme={
-                Object {
-                  "background": "#fafafa",
-                  "borderRadius": "30px",
-                  "padding": "0 20px",
-                }
               }
             >
               <View
@@ -1973,6 +1973,15 @@ exports[`Asset renders the Asset correctly 1`] = `
                       }
                     >
                       <Text
+                        customTheme={
+                          Object {
+                            "background": "#007AFF",
+                            "borderColor": "rgba(0, 0, 0, 0.085)",
+                            "borderWidth": 0,
+                            "color": "#ffffff",
+                            "shadow": true,
+                          }
+                        }
                         style={
                           Array [
                             Object {
@@ -1996,15 +2005,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                               ],
                             ],
                           ]
-                        }
-                        theme={
-                          Object {
-                            "background": "#007AFF",
-                            "borderColor": "rgba(0, 0, 0, 0.085)",
-                            "borderWidth": 0,
-                            "color": "#ffffff",
-                            "shadow": true,
-                          }
                         }
                       >
                         Share Address
@@ -2424,6 +2424,13 @@ exports[`Asset renders the Asset correctly 1`] = `
               }
             />
             <View
+              customTheme={
+                Object {
+                  "background": "#fafafa",
+                  "borderRadius": "30px",
+                  "padding": "0 20px",
+                }
+              }
               style={
                 Array [
                   Object {
@@ -2446,13 +2453,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                   },
                   undefined,
                 ]
-              }
-              theme={
-                Object {
-                  "background": "#fafafa",
-                  "borderRadius": "30px",
-                  "padding": "0 20px",
-                }
               }
             >
               <View
