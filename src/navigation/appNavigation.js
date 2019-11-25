@@ -37,6 +37,7 @@ import PeopleScreen from 'screens/People';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
+import ExchangeReceiveExplained from 'screens/Exchange/ExchangeReceiveExplained';
 import ContactScreen from 'screens/Contact';
 import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
@@ -80,12 +81,10 @@ import SettleBalanceScreen from 'screens/Tank/SettleBalance';
 import SettleBalanceConfirmScreen from 'screens/Tank/SettleBalanceConfirm';
 import TankWithdrawalScreen from 'screens/Tank/TankWithdrawal';
 import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
-import WalletSettingsScreen from 'screens/ManageWallets/WalletSettings';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import BitcoinNetworkIntro from 'screens/BitcoinNetwork/BitcoinNetworkIntro';
-import UsersScreen from 'screens/Users';
 import UserSettingsScreen from 'screens/Users/UserSettings';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import SettingsScreen from 'screens/Settings';
@@ -134,6 +133,7 @@ import {
   EXCHANGE,
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
+  EXCHANGE_RECEIVE_EXPLAINED,
   PROFILE,
   PEOPLE,
   CONTACT,
@@ -189,14 +189,12 @@ import {
   SETTLE_BALANCE,
   SETTLE_BALANCE_CONFIRM,
   MANAGE_WALLETS_FLOW,
-  WALLET_SETTINGS,
   MANAGE_DETAILS_SESSIONS,
   CONTACT_INFO,
   ACCOUNTS,
   PILLAR_NETWORK_INTRO,
   BITCOIN_NETWORK_INTRO,
   MANAGE_USERS_FLOW,
-  USERS,
   USER_SETTINGS,
   ADD_EDIT_USER,
   SETTINGS,
@@ -276,7 +274,6 @@ const assetsFlow = createStackNavigator(
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
-    [WALLET_SETTINGS]: WalletSettingsScreen,
     [SETTINGS]: SettingsScreen,
     [UNSETTLED_ASSETS]: UnsettledAssets,
   },
@@ -289,6 +286,7 @@ assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 const exchangeFlow = createStackNavigator({
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
+  [EXCHANGE_RECEIVE_EXPLAINED]: ExchangeReceiveExplained,
   [EXCHANGE_INFO]: ExchangeInfoScreen,
   [FIAT_EXCHANGE]: FiatExchangeScreen,
   [FIAT_CRYPTO]: FiatCryptoScreen,
@@ -538,7 +536,6 @@ const ppnSendSyntheticAssetFlow = createStackNavigator(
 // MANAGE WALLETS FLOW
 const manageWalletsFlow = createStackNavigator({
   [ACCOUNTS]: AccountsScreen,
-  [WALLET_SETTINGS]: WalletSettingsScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
@@ -548,7 +545,6 @@ manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // MANAGE USERS FLOW
 const manageUsersFlow = createStackNavigator({
-  [USERS]: UsersScreen,
   [USER_SETTINGS]: UserSettingsScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);

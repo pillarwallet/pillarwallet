@@ -29,7 +29,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import { connect } from 'react-redux';
 import ProfileImage from 'components/ProfileImage';
-import { USERS } from 'constants/navigationConstants';
+import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 import { responsiveSize } from 'utils/ui';
 
 // partials
@@ -367,7 +367,7 @@ class HeaderBlock extends React.Component<Props> {
   renderUser = (theme, showName: boolean) => {
     const { user, navigation } = this.props;
     return (
-      <UserButton key="user" onPress={() => { navigation.navigate(USERS); }}>
+      <UserButton key="user" onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}>
         <HeaderProfileImage
           uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
           userName={user.username}

@@ -23,7 +23,7 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import { formatAmount, formatMoney, formatFiat, isValidNumber } from 'utils/common';
+import { formatAmount, formatMoney, formatFiat, isValidNumber, formatAmountDisplay } from 'utils/common';
 import t from 'tcomb-form-native';
 import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
@@ -377,21 +377,6 @@ function SelectorInputTemplate(locals) {
       inputRef={inputRef}
     />
   );
-}
-
-/**
- * avoid text overlapping on many decimals,
- * full amount will be displayed in confirm screen
- * also show only 2 decimals for amounts above 1.00
- * to avoid same text overlapping in the other side
- */
-function formatAmountDisplay(value: number | string) {
-  if (!value) return 0;
-  const amount = parseFloat(value);
-  if (amount > 1) {
-    return formatMoney(amount, 2);
-  }
-  return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
 }
 
 class ExchangeScreen extends React.Component<Props, State> {
