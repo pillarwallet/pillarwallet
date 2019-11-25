@@ -17,27 +17,34 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-import type { BitcoinAddress, BitcoinUtxo } from 'models/Bitcoin';
+import type { BitcoinAddress, BitcoinUtxo, BitcoinBalance, BTCBalance } from 'models/Bitcoin';
 import {
   CREATED_BITCOIN_ADDRESS,
   UPDATE_BITCOIN_BALANCE,
   SET_BITCOIN_ADDRESSES,
   BITCOIN_WALLET_CREATION_FAILED,
+  UPDATE_UNSPENT_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
 
 export type BitcoinReducerState = {
   data: {
     addresses: BitcoinAddress[],
     unspentTransactions: BitcoinUtxo[],
+    balances: BitcoinBalance,
   },
   creationFailed?: boolean,
+};
+
+export type UpdateUnspentTransactionsAction = {
+  type: 'UPDATE_UNSPENT_TRANSACTIONS',
+  address: string,
+  unspentTransactions: BitcoinUtxo[],
 };
 
 export type UpdateBitcoinBalanceAction = {
   type: 'UPDATE_BITCOIN_BALANCE',
   address: string,
-  unspentTransactions: BitcoinUtxo[],
+  balance: BTCBalance,
 };
 
 export type SetBitcoinAddressesAction = {
@@ -56,6 +63,7 @@ export type BitcoinWalletCreationFailedAction = {
 
 export type BitcoinReducerAction =
   | UpdateBitcoinBalanceAction
+  | UpdateUnspentTransactionsAction
   | SetBitcoinAddressesAction
   | CreatedBitcoinAddressAction
   | BitcoinWalletCreationFailedAction;
@@ -64,6 +72,7 @@ export const initialState = {
   data: {
     addresses: [],
     unspentTransactions: [],
+    balances: {},
   },
 };
 
@@ -71,8 +80,25 @@ const updateBalance = (
   state: BitcoinReducerState,
   action: UpdateBitcoinBalanceAction,
 ): BitcoinReducerState => {
+  const { data: { balances, addresses, unspentTransactions } } = state;
+  const { address, balance } = action;
+
+  return {
+    ...state,
+    data: {
+      balances: { ...balances, [address]: balance },
+      addresses,
+      unspentTransactions,
+    },
+  };
+};
+
+const updateUnspentTransactions = (
+  state: BitcoinReducerState,
+  action: UpdateUnspentTransactionsAction,
+): BitcoinReducerState => {
   const { unspentTransactions, address } = action;
-  const { data: { addresses, unspentTransactions: transactions } } = state;
+  const { data: { addresses, unspentTransactions: transactions, balances } } = state;
 
   const filteredTransactions: BitcoinUtxo[] = transactions.filter(
     ({ address: txAddress }) => address !== txAddress,
@@ -91,6 +117,7 @@ const updateBalance = (
   return {
     ...state,
     data: {
+      balances,
       addresses: [...filteredAddresses, updatedAddress],
       unspentTransactions: filteredTransactions.concat(...unspentTransactions),
     },
@@ -122,7 +149,7 @@ const createdAddress = (
   action: CreatedBitcoinAddressAction,
 ): BitcoinReducerState => {
   const { address = '' } = action;
-  const { data: { addresses, unspentTransactions } } = state;
+  const { data: { addresses, unspentTransactions, balances } } = state;
 
   if (!address) {
     return { ...state, isCreatingAddress: false };
@@ -136,6 +163,7 @@ const createdAddress = (
         { address, updatedAt: 0 },
       ],
       unspentTransactions,
+      balances,
     },
   };
 };
@@ -147,16 +175,14 @@ const bitcoinReducer = (
   switch (action.type) {
     case SET_BITCOIN_ADDRESSES:
       return setAddresses(state, action);
-
     case CREATED_BITCOIN_ADDRESS:
       return createdAddress(state, action);
-
     case UPDATE_BITCOIN_BALANCE:
       return updateBalance(state, action);
-
+    case UPDATE_UNSPENT_TRANSACTIONS:
+      return updateUnspentTransactions(state, action);
     case BITCOIN_WALLET_CREATION_FAILED:
       return { ...state, creationFailed: true };
-
     default:
       return state;
   }

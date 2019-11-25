@@ -106,7 +106,7 @@ class BitcoinNetworkIntro extends React.Component<Props, State> {
       initializeBitcoinWallet,
     } = this.props;
 
-    initializeBitcoinWallet(wallet);
+    await initializeBitcoinWallet(wallet);
     setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
     this.setState({ showPinScreenForAction: false }, () => {
       navigation.navigate(ASSETS);
@@ -166,7 +166,7 @@ class BitcoinNetworkIntro extends React.Component<Props, State> {
           showHeader
         >
           <Wrapper flex={1}>
-            <CheckPin onPinValid={this.initializeBTC} />
+            <CheckPin onPinValid={this.initializeBTC} revealMnemonic />
           </Wrapper>
         </SlideModal>
       </ContainerWithHeader>
