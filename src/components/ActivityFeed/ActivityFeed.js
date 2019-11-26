@@ -30,6 +30,7 @@ import { createStructuredSelector } from 'reselect';
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
+import type { BitcoinAddress } from 'models/Bitcoin';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -161,7 +162,7 @@ type Props = {
   contactsSmartAddresses: ContactSmartAddressData[],
   emptyState?: EmptyState,
   supportedAssets: Asset[],
-  bitcoinAddresses: Object[],
+  bitcoinAddresses: BitcoinAddress[],
 }
 
 type FeedItemTransaction = {
