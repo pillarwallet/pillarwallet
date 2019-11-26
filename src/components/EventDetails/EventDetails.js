@@ -343,7 +343,7 @@ class EventDetails extends React.Component<Props, State> {
       if (!txInfo) {
         if (eventData.asset === 'BTC') {
           txInfo = eventData;
-          txInfo.value *= 100000000;
+          txInfo.value = btcToSatoshis(txInfo.value);
         } else {
           txInfo = this.cachedTxInfo || {};
         }
