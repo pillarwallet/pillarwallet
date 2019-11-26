@@ -69,7 +69,6 @@ import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'ut
 import { delay, uniqBy } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
-import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 
 // services
 import Storage from 'services/storage';
@@ -233,12 +232,8 @@ const finishRegistration = async ({
   });
 };
 
-const navigateToAppFlow = (isWalletBackedUp: boolean, getState: GetState) => {
-  const accounts = getState().accounts.data;
-  const keyBasedAccount = findKeyBasedAccount(accounts);
-  const accountId = keyBasedAccount ? getAccountId(keyBasedAccount) : '';
-
-  toastWalletBackup(isWalletBackedUp, accountId);
+const navigateToAppFlow = (isWalletBackedUp: boolean) => {
+  toastWalletBackup(isWalletBackedUp);
 
   const navigateToAssetsAction = NavigationActions.navigate({
     routeName: APP_FLOW,
@@ -376,7 +371,7 @@ export const registerWalletAction = () => {
 
     // STEP 7: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp, getState);
+    navigateToAppFlow(isWalletBackedUp);
   };
 };
 
@@ -436,7 +431,7 @@ export const registerOnBackendAction = () => {
     });
 
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp, getState);
+    navigateToAppFlow(isWalletBackedUp);
   };
 };
 
