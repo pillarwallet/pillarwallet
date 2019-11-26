@@ -119,7 +119,7 @@ type Props = {
   getScrollOffset?: (number) => ScrollToProps,
   getMaxScrollOffset?: (number) => number,
   accounts: Accounts,
-  bitcoinAddresses: Object[],
+  bitcoinAddresses: BitcoinAddress[],
 }
 
 type State = {
