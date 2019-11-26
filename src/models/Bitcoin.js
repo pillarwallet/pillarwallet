@@ -75,5 +75,6 @@ export type BTCTransaction = {
   address: string,
   script: string,
   value: number,
-  confirmations: number
+  confirmations: number,
+  details: Object,
 };

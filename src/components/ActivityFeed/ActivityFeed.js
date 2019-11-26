@@ -79,7 +79,7 @@ import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT } from 'constants/userE
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
 // selectors
-import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
+import { activeAccountAddressSelector, supportedAssetsSelector, bitcoinAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 const ActivityFeedList = styled.SectionList`
@@ -161,6 +161,7 @@ type Props = {
   contactsSmartAddresses: ContactSmartAddressData[],
   emptyState?: EmptyState,
   supportedAssets: Asset[],
+  bitcoinAddresses: Object[],
 }
 
 type FeedItemTransaction = {
@@ -315,6 +316,7 @@ class ActivityFeed extends React.Component<Props, State> {
       asset,
       contactsSmartAddresses,
       supportedAssets,
+      bitcoinAddresses,
     } = this.props;
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
@@ -324,7 +326,8 @@ class ActivityFeed extends React.Component<Props, State> {
     if (type === TRANSACTION_EVENT) {
       const tag = get(notification, 'tag', '');
       const isReceived = addressesEqual(notification.to, activeAccountAddress)
-        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL;
+        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+        || bitcoinAddresses.some(e => e.address === notification.to);
       const address = isReceived ? notification.from : notification.to;
       const { decimals = 18 } = getAssetData(assets, supportedAssets, notification.asset);
       const value = formatUnits(notification.value, decimals);
@@ -691,6 +694,7 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   assets: (state) => getAssetsAsList(accountAssetsSelector(state)),
   supportedAssets: supportedAssetsSelector,
+  bitcoinAddresses: bitcoinAddressSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

@@ -22,6 +22,7 @@ import {
   UPDATE_UNSPENT_TRANSACTIONS,
   CREATED_BITCOIN_ADDRESS,
   SET_BITCOIN_ADDRESSES,
+  UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
 import reducer, { initialState } from 'reducers/bitcoinReducer';
 import type { BitcoinReducerAction } from 'reducers/bitcoinReducer';
@@ -148,6 +149,25 @@ describe('Bitcoin reducer', () => {
           expect(reducer(state, update)).toMatchObject({
             data: { balances: { [address]: balance } },
           });
+        });
+      });
+    });
+  });
+
+  describe(UPDATE_BITCOIN_TRANSACTIONS, () => {
+    const address = '<address>';
+    describe('for an existing address', () => {
+      it('adds the transactions', () => {
+        const updateTransactions: BitcoinReducerAction = {
+          type: UPDATE_BITCOIN_TRANSACTIONS,
+          transactions: [],
+          address,
+        };
+
+        const state = reducer(initialState, updateTransactions);
+
+        expect(reducer(state, updateTransactions)).toMatchObject({
+          data: { transactions: [] },
         });
       });
     });

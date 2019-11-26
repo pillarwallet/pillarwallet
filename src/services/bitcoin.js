@@ -177,5 +177,5 @@ export const getAddressBalance = (address: string): Promise<BTCBalance> => {
 
 export const getBTCTransactions = (address: string): Promise<BTCTransaction[]> => {
   return getBTCTransactionsFromNode(address)
-    .then(response => response.json());
+    .then(response => response);
 };
