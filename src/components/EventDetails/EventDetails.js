@@ -58,6 +58,7 @@ import { createAlert } from 'utils/alerts';
 import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
+import { btcToSatoshis } from 'utils/bitcoin';
 
 // actions
 import { updateTransactionStatusAction } from 'actions/historyActions';
