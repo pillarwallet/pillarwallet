@@ -343,7 +343,7 @@ class EventDetails extends React.Component<Props, State> {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
       if (!txInfo) {
         if (eventData.asset === 'BTC') {
-          txInfo = eventData;
+          txInfo = { ...eventData };
           txInfo.value = btcToSatoshis(txInfo.value);
         } else {
           txInfo = this.cachedTxInfo || {};
@@ -577,7 +577,7 @@ class EventDetails extends React.Component<Props, State> {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
       if (!txInfo) {
         if (eventData.asset === 'BTC') {
-          txInfo = eventData;
+          txInfo = { ...eventData };
         } else {
           txInfo = this.cachedTxInfo || {};
         }
@@ -674,7 +674,7 @@ class EventDetails extends React.Component<Props, State> {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
       if (!txInfo) {
         if (eventData.asset === 'BTC') {
-          txInfo = eventData;
+          txInfo = { ...eventData };
         } else {
           txInfo = this.cachedTxInfo || {};
         }

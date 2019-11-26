@@ -38,7 +38,7 @@ export type BitcoinReducerState = {
     addresses: BitcoinAddress[],
     unspentTransactions: BitcoinUtxo[],
     balances: BitcoinBalance,
-    transactions: BTCTransaction[]
+    transactions: BTCTransaction[],
   },
   creationFailed?: boolean,
 };
