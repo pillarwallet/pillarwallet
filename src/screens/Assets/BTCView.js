@@ -25,7 +25,10 @@ import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
-import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
+import {
+  refreshBitcoinBalanceAction,
+  refreshBTCTransactionsAction,
+} from 'actions/bitcoinActions';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
@@ -35,13 +38,13 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { BitcoinAddress, BitcoinUtxo, BitcoinBalance } from 'models/Bitcoin';
+import type { BitcoinAddress, BitcoinUtxo, BitcoinBalance, BTCTransaction } from 'models/Bitcoin';
 import type { Rates } from 'models/Asset';
 
 // utils
 import { formatMoney } from 'utils/common';
 import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
-import { satoshisToBtc } from 'utils/bitcoin';
+import { satoshisToBtc, extractBitcoinTransactions } from 'utils/bitcoin';
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -51,6 +54,8 @@ type Props = {
   unspentTransactions: BitcoinUtxo[],
   refreshBitcoinBalance: () => void,
   balances: BitcoinBalance,
+  transactions: BTCTransaction[],
+  refreshBitcoinTransactions: () => void,
 };
 
 type State = {
@@ -105,6 +110,7 @@ class BTCView extends React.Component<Props, State> {
 
   refreshBalance = () => {
     this.props.refreshBitcoinBalance();
+    this.props.refreshBitcoinTransactions();
   };
 
   handleOpenShareDialog = (address: string) => {
@@ -116,6 +122,7 @@ class BTCView extends React.Component<Props, State> {
       navigation,
       addresses,
       balances,
+      transactions = [],
     } = this.props;
 
     // TODO: Select address
@@ -126,7 +133,7 @@ class BTCView extends React.Component<Props, State> {
     const confirmedBalance = satoshisToBtc(addressBalance ? addressBalance.balance : 0);
     const availableFormattedAmount = formatMoney(confirmedBalance, 4);
 
-    const transactionsHistory = [];
+    const transactionsHistory = extractBitcoinTransactions(address, transactions);
 
     return (
       <View style={{ flex: 1 }}>
@@ -185,6 +192,7 @@ const mapStateToProps = ({
     data: {
       addresses,
       balances,
+      transactions,
     },
   },
 }: RootReducerState): $Shape<Props> => ({
@@ -192,10 +200,12 @@ const mapStateToProps = ({
   baseFiatCurrency,
   addresses,
   balances,
+  transactions,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(true)),
+  refreshBitcoinTransactions: () => dispatch(refreshBTCTransactionsAction(true)),
 });
 
 export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(BTCView));

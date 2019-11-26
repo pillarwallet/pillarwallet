@@ -25,7 +25,7 @@ import { SafeAreaView } from 'react-navigation';
 import { Linking, Dimensions, ScrollView, Clipboard } from 'react-native';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { TX_DETAILS_URL } from 'react-native-dotenv';
+import { TX_DETAILS_URL, BITCOIN_TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
@@ -37,7 +37,7 @@ import type { Transaction } from 'models/Transaction';
 import type { Assets, Asset } from 'models/Asset';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
-
+import type { BitcoinAddress } from 'models/Bitcoin';
 // components
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -58,6 +58,7 @@ import { createAlert } from 'utils/alerts';
 import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
+import { btcToSatoshis } from 'utils/bitcoin';
 
 // actions
 import { updateTransactionStatusAction } from 'actions/historyActions';
@@ -88,7 +89,7 @@ import {
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
-import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
+import { activeAccountAddressSelector, supportedAssetsSelector, bitcoinAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // local components
@@ -118,6 +119,7 @@ type Props = {
   getScrollOffset?: (number) => ScrollToProps,
   getMaxScrollOffset?: (number) => number,
   accounts: Accounts,
+  bitcoinAddresses: BitcoinAddress[],
 }
 
 type State = {
@@ -174,8 +176,12 @@ const Icon = styled(CachedImage)`
   margin-bottom: ${spacing.small}px;
 `;
 
-const viewTransactionOnBlockchain = (hash: string) => {
-  Linking.openURL(TX_DETAILS_URL + hash);
+const viewTransactionOnBlockchain = (hash: string, asset?: ?string) => {
+  let url = TX_DETAILS_URL + hash;
+  if (asset && asset === 'BTC') {
+    url = BITCOIN_TX_DETAILS_URL + hash;
+  }
+  Linking.openURL(url);
 };
 
 const lightningIcon = require('assets/icons/icon_lightning_sm.png');
@@ -324,6 +330,7 @@ class EventDetails extends React.Component<Props, State> {
       assets,
       supportedAssets,
       accounts,
+      bitcoinAddresses,
     } = this.props;
     const {
       hideAmount,
@@ -335,7 +342,12 @@ class EventDetails extends React.Component<Props, State> {
     if (eventType === TRANSACTION_EVENT) {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
       if (!txInfo) {
-        txInfo = this.cachedTxInfo || {};
+        if (eventData.asset === 'BTC') {
+          txInfo = eventData;
+          txInfo.value = btcToSatoshis(txInfo.value);
+        } else {
+          txInfo = this.cachedTxInfo || {};
+        }
       } else {
         this.cachedTxInfo = txInfo;
       }
@@ -352,7 +364,9 @@ class EventDetails extends React.Component<Props, State> {
         extra,
       } = txInfo;
 
-      const isReceived = addressesEqual(to, activeAccountAddress) || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL;
+      const isReceived = addressesEqual(to, activeAccountAddress)
+        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+        || bitcoinAddresses.some(e => e.address === to);
       const toMyself = isReceived && addressesEqual(from, to);
       let transactionNote = note;
       if (txNotes && txNotes.length > 0) {
@@ -562,11 +576,15 @@ class EventDetails extends React.Component<Props, State> {
     if (eventType === TRANSACTION_EVENT || eventType === COLLECTIBLE_TRANSACTION) {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
       if (!txInfo) {
-        txInfo = this.cachedTxInfo || {};
+        if (eventData.asset === 'BTC') {
+          txInfo = eventData;
+        } else {
+          txInfo = this.cachedTxInfo || {};
+        }
       } else {
         this.cachedTxInfo = txInfo;
       }
-      const { hash, isPPNTransaction } = txInfo;
+      const { hash, isPPNTransaction, asset } = txInfo;
 
       if (!isPPNTransaction) {
         return (
@@ -575,7 +593,7 @@ class EventDetails extends React.Component<Props, State> {
               block
               title="View on the blockchain"
               primaryInverted
-              onPress={() => viewTransactionOnBlockchain(hash)}
+              onPress={() => viewTransactionOnBlockchain(hash, asset)}
             />
           </ButtonsWrapper>
         );
@@ -655,7 +673,11 @@ class EventDetails extends React.Component<Props, State> {
     if (eventType === TRANSACTION_EVENT) {
       let txInfo = history.find(tx => tx.hash === eventData.hash);
       if (!txInfo) {
-        txInfo = this.cachedTxInfo || {};
+        if (eventData.asset === 'BTC') {
+          txInfo = eventData;
+        } else {
+          txInfo = this.cachedTxInfo || {};
+        }
       } else {
         this.cachedTxInfo = txInfo;
       }
@@ -798,6 +820,7 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   assets: accountAssetsSelector,
   supportedAssets: supportedAssetsSelector,
+  bitcoinAddresses: bitcoinAddressSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
