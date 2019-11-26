@@ -201,7 +201,7 @@ class ManageDetailsSessions extends React.Component<Props, State> {
         inset={{ bottom: 'never' }}
         headerProps={{
           centerItems: [{ title: 'Manage Sessions' }],
-          rightItems: [{ label: 'Support', onPress: () => Intercom.displayMessenger() }],
+          rightItems: [{ link: 'Support', onPress: () => Intercom.displayMessenger() }],
           sideFlex: 2,
         }}
       >

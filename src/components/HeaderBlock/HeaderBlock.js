@@ -87,10 +87,10 @@ const HeaderRow = styled.View`
 const HeaderProfileImage = styled(ProfileImage)``;
 
 const HeaderTitle = styled(MediumText)`
-  ${fontStyles.regular};
+  font-size: ${fontSizes.medium}px;
+  line-height: 26px;
   color: ${({ theme }) => theme.colors.text};
   text-align: ${props => props.centerText ? 'center' : 'left'};
-  margin-top: 2px;
 `;
 
 const UserButton = styled.TouchableOpacity`
@@ -149,21 +149,20 @@ const CloseIcon = styled(IconButton)`
 `;
 
 const TextButton = styled.TouchableOpacity`
-  padding: 5px 0;
+  padding: 2px 0;
   flex-direction: row;
   align-items: center;
-  ${props => props.bordered
+  ${props => props.withBackground
     ? `
-      border-width: 1px;
-      border-color: ${props.theme.colors.primary};
-      border-radius: 14px;
-      padding: 5px ${responsiveSize(spacing.mediumLarge)}px;
+      background-color: ${props.theme.colors.tertiary};
+      border-radius: 6px;
+      padding: 2px ${responsiveSize(12)}px;
       `
     : ''}
 `;
 
 const ButtonLabel = styled(BaseText)`
-  font-size: ${fontSizes.regular}px;
+  ${fontStyles.regular}px;
   color: ${({ theme }) => theme.colors.primary};
 `;
 
@@ -275,15 +274,15 @@ class HeaderBlock extends React.Component<Props> {
         </TouchableOpacity>
       );
     }
-    if (item.label) {
+    if (item.link) {
       return (
         <TextButton
           onPress={item.onPress}
-          key={item.label}
-          bordered={item.bordered}
+          key={item.link}
+          withBackground={item.withBackground}
           style={commonStyle}
         >
-          <ButtonLabel>{item.label}</ButtonLabel>
+          <ButtonLabel>{item.link}</ButtonLabel>
           {item.addon}
         </TextButton>
       );
@@ -322,17 +321,19 @@ class HeaderBlock extends React.Component<Props> {
 
   renderUser = (showName: boolean) => {
     const { user, navigation } = this.props;
+    const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
     return (
       <UserButton key="user" onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}>
         <HeaderProfileImage
-          uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
+          uri={userImageUri}
           userName={user.username}
           diameter={profileImageWidth}
           noShadow
+          borderWidth={0}
         />
         {showName &&
         <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
-          <HeaderTitle style={{ marginLeft: spacing.medium }}>{user.username}</HeaderTitle>
+          <HeaderTitle style={{ marginLeft: 8 }}>{user.username}</HeaderTitle>
         </View>}
       </UserButton>
     );
@@ -354,8 +355,6 @@ class HeaderBlock extends React.Component<Props> {
       updatedColors.text = theme.colors.control;
     }
     const updatedTheme = { ...theme, colors: { ...theme.colors, ...updatedColors } };
-
-    console.log('---->', { floating, updatedTheme });
 
     return (
       <ThemeProvider theme={updatedTheme}>

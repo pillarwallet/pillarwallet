@@ -34,7 +34,10 @@ export const lightThemeColors = {
   control: '#FCFDFF',
   warning: '#ECA93A',
   indicator: '#F8E71C', // NOT IN DS BUT CURRENTLY REQUIRED
-  userAvatar: '#a9aeb8', // NOT IN DS BUT CURRENTLY REQUIRED
+  userAvatar: '#d1d9e4', // NOT IN DS BUT CURRENTLY REQUIRED
+  legacyWallet: '#FA574F', // NOT IN DS BUT CURRENTLY REQUIRED
+  smartWallet: '#3C71FE', // NOT IN DS BUT CURRENTLY REQUIRED
+  bitcoinWallet: '#F79319', // NOT IN DS BUT CURRENTLY REQUIRED
 };
 
 export const darkThemeColors = {
@@ -52,7 +55,10 @@ export const darkThemeColors = {
   control: '#FCFDFF',
   warning: 'blue', // TODO: add correct one when added to Design System
   indicator: 'blue', // TODO: add correct one when added to Design System
-  userAvatar: 'blue', // TODO: add correct one when added to Design System
+  userAvatar: '#d1d9e4', // TODO: add correct one when added to Design System
+  legacyWallet: '#FA574F', // TODO: add correct one when added to Design System
+  smartWallet: '#3C71FE', // TODO: add correct one when added to Design System
+  bitcoinWallet: '#F79319', // TODO: add correct one when added to Design System
 };
 
 export const themedColors = {

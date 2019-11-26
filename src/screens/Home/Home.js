@@ -412,13 +412,13 @@ class HomeScreen extends React.Component<Props, State> {
           leftItems: [{ user: true }],
           rightItems: [
             {
-              label: 'Settings',
+              link: 'Settings',
               onPress: () => { navigation.navigate(SETTINGS); },
             },
             {
-              label: 'Support',
+              link: 'Support',
               onPress: () => Intercom.displayMessenger(),
-              bordered: true,
+              withBackground: true,
               addon: hasIntercomNotifications && (
                 <View
                   style={{
