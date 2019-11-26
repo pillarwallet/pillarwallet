@@ -99,7 +99,7 @@ const Status = ({ isActive }) => {
 
 export const HeaderActionButton = (props: Props) => {
   const {
-    customTheme,
+    customTheme = {},
     label,
     onPress,
     hasChevron,
