@@ -56,6 +56,7 @@ import type {
   TokenTransactionPayload,
   CollectibleTransactionPayload,
   TransactionPayload,
+  SyntheticTransaction,
 } from 'models/Transaction';
 import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
@@ -424,17 +425,17 @@ export const sendAssetAction = (
         };
         dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
       } else {
-        dispatch({
-          type: ADD_TRANSACTION,
-          payload: {
-            accountId,
-            historyTx,
-          },
-        });
-        const syntheticTransactionId = get(historyTx, 'extra.syntheticTransaction.transactionId');
-        if (syntheticTransactionId) {
-          dispatch(commitSyntheticsTransaction(syntheticTransactionId, historyTx.hash));
+        // check if there's a need to commit synthetic asset transaction
+        const syntheticTransactionExtra: SyntheticTransaction = get(historyTx, 'extra.syntheticTransaction');
+        if (!isEmpty(syntheticTransactionExtra)) {
+          const { transactionId, toAddress } = syntheticTransactionExtra;
+          dispatch(commitSyntheticsTransaction(transactionId, historyTx.hash));
+          // change history receiver address to actual receiver address rather than synthetics service address
+          historyTx = { ...historyTx, to: toAddress };
         }
+
+        dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });
+
         const { history: { data: currentHistory } } = getState();
         const accountHistory = currentHistory[accountId] || [];
         const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');

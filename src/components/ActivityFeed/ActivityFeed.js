@@ -27,7 +27,7 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 
 // models
-import type { Transaction } from 'models/Transaction';
+import type { SyntheticTransaction, Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { BitcoinAddress } from 'models/Bitcoin';
@@ -411,9 +411,15 @@ class ActivityFeed extends React.Component<Props, State> {
           trxData.hideAmount = true;
           trxData.hideSender = true;
         } else {
+          let PPNTransactionAmountString = `${directionSymbol} ${formattedValue} ${notification.asset}`;
+          const syntheticTransactionExtra: SyntheticTransaction = get(notification, 'extra.syntheticTransaction');
+          if (!isEmpty(syntheticTransactionExtra)) {
+            const { toAmount, toAssetCode } = syntheticTransactionExtra;
+            PPNTransactionAmountString += ` (${toAmount} ${toAssetCode})`;
+          }
           itemValue = '';
           customAddon = (<TankAssetBalance
-            amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
+            amount={PPNTransactionAmountString}
             textStyle={!isReceived ? { color: baseColors.scarlet } : null}
             monoColor
           />);
