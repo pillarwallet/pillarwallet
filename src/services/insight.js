@@ -62,3 +62,29 @@ export const getAddressBalanceFromNode = (address: string) => {
   })
     .then(validateResponse('getAddressBalanceFromNode'));
 };
+
+export const getBTCTransactionsFromNode = (address: string) => {
+  return fetch(`${BITCOIN_INSIGHT_URL}/address/${address}/txs?limit=0`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+    },
+  }).then(validateResponse('getBTCTransactionsFromNode'))
+    .then(response => response.json())
+    .then(txs => {
+      const fullTxs = txs.map(e => {
+        return fetch(`${BITCOIN_INSIGHT_URL}/tx/${e.mintTxid}/populated`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+          },
+        })
+          .then(resp => resp.json())
+          .then(txDetails => {
+            e.details = txDetails;
+            return e;
+          });
+      });
+      return Promise.all(fullTxs);
+    });
+};

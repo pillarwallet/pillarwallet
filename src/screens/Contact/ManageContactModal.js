@@ -19,7 +19,17 @@
 */
 
 import * as React from 'react';
-import { DISCONNECT, BLOCK, MUTE } from 'constants/connectionsConstants';
+
+// constants
+import {
+  DISCONNECT,
+  BLOCK,
+  MUTE,
+  STATUS_BLOCKED,
+  STATUS_MUTED,
+} from 'constants/connectionsConstants';
+
+// components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 
@@ -73,9 +83,9 @@ const ManageConnectionModal = (props: Props) => {
     const { manageType, ...manageButtonProps } = manageButton;
     let title = manageButtonProps.title; // eslint-disable-line prefer-destructuring
     if (manageType === MUTE) {
-      title = contactStatus === 'muted' ? 'Unmute' : 'Mute';
+      title = contactStatus === STATUS_MUTED ? 'Unmute' : 'Mute';
     } else if (manageType === BLOCK) {
-      title = contactStatus === 'blocked' ? 'Unblock' : 'Block';
+      title = contactStatus === STATUS_BLOCKED ? 'Unblock' : 'Block';
     }
     return (
       <Button
