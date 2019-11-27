@@ -24,6 +24,7 @@ import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+  RESET_ESTIMATED_SETTLE_TX_FEE,
   SET_ESTIMATED_SETTLE_TX_FEE,
   UPDATE_PAYMENT_NETWORK_STAKED,
   RESET_PAYMENT_NETWORK,
@@ -92,6 +93,8 @@ export default function paymentNetworkReducer(
       return merge({}, state, { topUpFee: { feeInfo: action.payload, isFetched: true } });
     case SET_ESTIMATED_WITHDRAWAL_FEE:
       return merge({}, state, { withdrawalFee: { feeInfo: action.payload, isFetched: true } });
+    case RESET_ESTIMATED_SETTLE_TX_FEE:
+      return merge({}, state, { settleTxFee: { feeInfo: null, isFetched: false } });
     case SET_ESTIMATED_SETTLE_TX_FEE:
       return merge({}, state, { settleTxFee: { feeInfo: action.payload, isFetched: true } });
     case PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS:

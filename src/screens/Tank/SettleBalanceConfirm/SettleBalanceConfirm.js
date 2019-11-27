@@ -119,7 +119,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const { navigation, settleTransactions, balances } = this.props;
     const txFeeInWei = this.getTxFeeInWei();
 
-    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
+    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei.toString());
     if (!isEnoughForFee) {
       Toast.show({
         message: 'You need to deposit ETH to cover the withdrawal',
@@ -143,7 +143,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const { settleButtonSubmitted } = this.state;
     const { session, settleTxFee } = this.props;
 
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
+    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei().toString()));
     let submitButtonTitle = 'Release Funds';
     if (!settleTxFee.isFetched) {
       submitButtonTitle = 'Getting the fee..';

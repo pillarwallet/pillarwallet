@@ -71,6 +71,7 @@ import {
   UPDATE_PAYMENT_NETWORK_STAKED,
   SET_AVAILABLE_TO_SETTLE_TX,
   START_FETCHING_AVAILABLE_TO_SETTLE_TX,
+  RESET_ESTIMATED_SETTLE_TX_FEE,
   SET_ESTIMATED_SETTLE_TX_FEE,
   PAYMENT_NETWORK_TX_SETTLEMENT,
   MARK_PLR_TANK_INITIALISED,
@@ -1143,6 +1144,8 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
       notifySmartWalletNotInitialized();
       return;
     }
+
+    dispatch({ type: RESET_ESTIMATED_SETTLE_TX_FEE });
 
     const hashes = txToSettle.map(({ hash }) => hash);
     const response = await smartWalletService
