@@ -24,7 +24,6 @@ import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
   PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
-  RESET_ESTIMATED_SETTLE_TX_FEE,
   SET_ESTIMATED_SETTLE_TX_FEE,
   UPDATE_PAYMENT_NETWORK_STAKED,
   RESET_PAYMENT_NETWORK,
@@ -32,6 +31,9 @@ import {
   START_FETCHING_AVAILABLE_TO_SETTLE_TX,
   MARK_PLR_TANK_INITIALISED,
   SET_ESTIMATED_WITHDRAWAL_FEE,
+  RESET_ESTIMATED_SETTLE_TX_FEE,
+  RESET_ESTIMATED_WITHDRAWAL_FEE,
+  RESET_ESTIMATED_TOPUP_FEE,
 } from 'constants/paymentNetworkConstants';
 import type { TopUpFee, SettleTxFee } from 'models/PaymentNetwork';
 import type { Balances } from 'models/Asset';
@@ -89,8 +91,12 @@ export default function paymentNetworkReducer(
       return merge({}, state, { balances: { [action.payload.accountId]: action.payload.balances } });
     case UPDATE_PAYMENT_NETWORK_STAKED:
       return merge({}, state, { availableStake: action.payload || initialState.availableStake });
+    case RESET_ESTIMATED_TOPUP_FEE:
+      return merge({}, state, { topUpFee: { feeInfo: null, isFetched: false } });
     case SET_ESTIMATED_TOPUP_FEE:
       return merge({}, state, { topUpFee: { feeInfo: action.payload, isFetched: true } });
+    case RESET_ESTIMATED_WITHDRAWAL_FEE:
+      return merge({}, state, { withdrawalFee: { feeInfo: null, isFetched: false } });
     case SET_ESTIMATED_WITHDRAWAL_FEE:
       return merge({}, state, { withdrawalFee: { feeInfo: action.payload, isFetched: true } });
     case RESET_ESTIMATED_SETTLE_TX_FEE:

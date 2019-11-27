@@ -71,11 +71,13 @@ import {
   UPDATE_PAYMENT_NETWORK_STAKED,
   SET_AVAILABLE_TO_SETTLE_TX,
   START_FETCHING_AVAILABLE_TO_SETTLE_TX,
-  RESET_ESTIMATED_SETTLE_TX_FEE,
   SET_ESTIMATED_SETTLE_TX_FEE,
   PAYMENT_NETWORK_TX_SETTLEMENT,
   MARK_PLR_TANK_INITIALISED,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  RESET_ESTIMATED_SETTLE_TX_FEE,
+  RESET_ESTIMATED_WITHDRAWAL_FEE,
+  RESET_ESTIMATED_TOPUP_FEE,
 } from 'constants/paymentNetworkConstants';
 import {
   SMART_WALLET_UNLOCK,
@@ -881,6 +883,8 @@ export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
+    dispatch({ type: RESET_ESTIMATED_TOPUP_FEE });
+
     const accountAssets = accountAssetsSelector(getState());
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount, decimals);
@@ -987,6 +991,8 @@ export const topUpVirtualAccountAction = (amount: string) => {
 export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
   return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+
+    dispatch({ type: RESET_ESTIMATED_WITHDRAWAL_FEE });
 
     const accountAssets = accountAssetsSelector(getState());
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
