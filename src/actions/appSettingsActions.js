@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { DARK_MODE, LIGHT_MODE, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { DARK_THEME, LIGHT_THEME, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -185,13 +185,13 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
 export const changeAppThemeAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { theme: { mode } } },
+      appSettings: { data: { theme: { current } } },
     } = getState();
 
-    const newMode = mode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE;
-    const colors = mode === LIGHT_MODE ? darkThemeColors : lightThemeColors;
+    const newTheme = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
+    const colors = current === LIGHT_THEME ? darkThemeColors : lightThemeColors;
 
-    const theme = { mode: newMode, colors };
+    const theme = { current: newTheme, colors };
     dispatch(saveDbAction('app_settings', { appSettings: { theme } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,

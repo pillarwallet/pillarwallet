@@ -149,8 +149,9 @@ class App extends React.Component<Props, *> {
 
   render() {
     const { isFetched, theme, changeAppTheme } = this.props;
-    const { colors, mode } = theme;
+    const { colors, current } = theme;
     if (!isFetched) return null;
+
     return (
       <ThemeProvider theme={theme}>
         <React.Fragment>
@@ -172,7 +173,7 @@ class App extends React.Component<Props, *> {
               }}
               onPress={changeAppTheme}
             >
-              <Text style={{ color: colors.text }}>{`THEME: ${mode}`}</Text>
+              <Text style={{ color: colors.text }}>{`THEME: ${current}`}</Text>
             </TouchableOpacity>}
           </Root>
         </React.Fragment>

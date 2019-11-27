@@ -23,6 +23,6 @@ type ThemeColors = {
 };
 
 export type Theme = {
-  mode: string,
+  current: string,
   colors: ThemeColors,
 };
