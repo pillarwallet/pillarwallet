@@ -54,6 +54,23 @@ export const initialAssets = [
     isDefault: true,
     balance: 0,
   },
+  {
+    address: 'mXx',
+    decimals: 8,
+    description: 'Bitcoin.',
+    name: 'Bitcoin',
+    symbol: 'BTC',
+    wallpaperUrl: 'assets/images/tokens/wallpaper/wp_blue.png',
+    iconUrl: 'assets/icons/icon_BTC.png',
+    iconMonoUrl: 'assets/icons/icon_BTC.png',
+    email: 'mailto://info@pillarproject.io',
+    telegram: '',
+    twitter: 'https://twitter.com/PillarWallet',
+    website: 'https://pillarproject.io/',
+    whitepaper: '',
+    isDefault: true,
+    balance: 0,
+  },
 ];
 
 // keep this list order, unless it changes

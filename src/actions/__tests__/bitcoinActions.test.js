@@ -21,10 +21,18 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import PillarSdk from 'services/api';
-import { refreshBitcoinBalanceAction, refreshBitcoinUnspentTxAction } from 'actions/bitcoinActions';
+import {
+  refreshBitcoinBalanceAction,
+  refreshBitcoinUnspentTxAction,
+  refreshBTCTransactionsAction,
+} from 'actions/bitcoinActions';
 import type { BitcoinReducerState } from 'reducers/bitcoinReducer';
-import { UPDATE_BITCOIN_BALANCE, UPDATE_UNSPENT_TRANSACTIONS } from 'constants/bitcoinConstants';
-import { getAddressUtxos, getAddressBalance } from 'services/bitcoin';
+import {
+  UPDATE_BITCOIN_BALANCE,
+  UPDATE_UNSPENT_TRANSACTIONS,
+  UPDATE_BITCOIN_TRANSACTIONS,
+} from 'constants/bitcoinConstants';
+import { getAddressUtxos, getAddressBalance, getBTCTransactions } from 'services/bitcoin';
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -38,11 +46,13 @@ const initialBitcoinState: BitcoinReducerState = {
     ],
     unspentTransactions: [],
     balances: {},
+    transactions: [],
   },
 };
 
 const initialState = {
   bitcoin: initialBitcoinState,
+  assets: { data: [], supportedAssets: [] },
 };
 
 describe('Bitcoin actions', () => {
@@ -87,6 +97,26 @@ describe('Bitcoin actions', () => {
           type: UPDATE_BITCOIN_BALANCE,
           address,
           balance,
+        });
+      });
+    });
+  });
+
+  describe('refreshBTCTransactionsAction', () => {
+    describe('for existing address', () => {
+      it('updates the transactions', async () => {
+        await store.dispatch(refreshBTCTransactionsAction(false));
+
+        const actions = store.getActions();
+
+        expect(actions.length).toEqual(3);
+
+        const txs = await getBTCTransactions(address);
+
+        expect(actions[2]).toMatchObject({
+          type: UPDATE_BITCOIN_TRANSACTIONS,
+          address,
+          transactions: txs,
         });
       });
     });

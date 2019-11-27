@@ -21,3 +21,7 @@
 export const MUTE = 'mute';
 export const BLOCK = 'block';
 export const DISCONNECT = 'disconnect';
+export const STATUS_ACCEPTED = 'accepted';
+export const STATUS_MUTED = 'muted';
+export const STATUS_BLOCKED = 'blocked';
+export const STATUS_DISCONNECTED = 'disconnected';
