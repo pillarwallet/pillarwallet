@@ -48,6 +48,9 @@ import {
 import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
 const WWW_URL_PATTERN = /^www\./i;
+const supportedAddressPrefixes = new RegExp(
+  `^(?:${ETHEREUM_ADDRESS_PREFIX}|${BITCOIN_ADDRESS_PREFIX}):`, 'gi',
+);
 
 export const delay = async (ms: number) => {
   return new Promise(resolve => {
@@ -92,6 +95,10 @@ export const decodeBTCAddress = (encodedAddress: string): string => {
 
 export const decodeETHAddress = (encodedAddress: string): string => {
   return decodeAddress(ETHEREUM_ADDRESS_PREFIX, encodedAddress);
+};
+
+export const decodeSupportedAddress = (encodedAddress: string): string => {
+  return encodedAddress.replace(supportedAddressPrefixes, '');
 };
 
 export const pipe = (...fns: Function[]) => {

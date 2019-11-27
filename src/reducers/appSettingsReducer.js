@@ -31,6 +31,7 @@ export type AppSettingsReducerState = {
     userJoinedBeta: ?boolean,
     firebaseAnalyticsConnectionEnabled: ?boolean,
     baseFiatCurrency: ?string,
+    transactionSpeed: ?string,
   },
   isFetched: boolean,
 };
@@ -50,6 +51,7 @@ export const initialState: AppSettingsReducerState = {
     userJoinedBeta: false,
     firebaseAnalyticsConnectionEnabled: false,
     baseFiatCurrency: null,
+    transactionSpeed: null,
   },
   isFetched: false,
 };

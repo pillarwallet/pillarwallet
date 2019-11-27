@@ -216,9 +216,13 @@ export const loginAction = (
           (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) ||
           (!bitcoinFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
 
-        if (revertToDefaultNetwork) {
-          dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
+        let newBlockchainNetwork = blockchainNetwork;
+
+        if (!newBlockchainNetwork || revertToDefaultNetwork) {
+          newBlockchainNetwork = BLOCKCHAIN_NETWORK_TYPES.ETHEREUM;
         }
+
+        dispatch(setActiveBlockchainNetworkAction(newBlockchainNetwork));
 
         // to get exchange supported assets in order to show only supported assets on exchange selectors
         // and show exchange button on supported asset screen only
