@@ -97,6 +97,7 @@ import SendSyntheticAsset from 'screens/SendSynthetic/SendSyntheticAsset';
 import SendSyntheticConfirm from 'screens/SendSynthetic/SendSyntheticConfirm';
 import SendSyntheticAmount from 'screens/SendSynthetic/SendSyntheticAmount';
 import SendSyntheticUnavailable from 'screens/SendSynthetic/SendSyntheticUnavailable';
+import LogoutPendingScreen from 'screens/LogoutPending';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -213,6 +214,7 @@ import {
   SEND_SYNTHETIC_CONFIRM,
   SEND_SYNTHETIC_AMOUNT,
   SEND_SYNTHETIC_UNAVAILABLE,
+  LOGOUT_PENDING,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -597,6 +599,7 @@ const AppFlowNavigation = createStackNavigator(
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
     [BITCOIN_NETWORK_INTRO]: BitcoinNetworkIntro,
+    [LOGOUT_PENDING]: LogoutPendingScreen,
   },
   modalTransition,
 );

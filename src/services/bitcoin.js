@@ -30,12 +30,14 @@ import type {
   BitcoinTransactionTarget,
   BitcoinTransactionPlan,
   BTCBalance,
+  BTCTransaction,
 } from 'models/Bitcoin';
 import { SPEED_TYPES } from 'constants/assetsConstants';
 import {
   getAddressUtxosFromNode,
   sendRawTransactionToNode,
   getAddressBalanceFromNode,
+  getBTCTransactionsFromNode,
 } from 'services/insight';
 
 const bip39 = require('bip39');
@@ -171,4 +173,9 @@ export const getAddressUtxos = (address: string): Promise<BitcoinUtxo[]> => {
 export const getAddressBalance = (address: string): Promise<BTCBalance> => {
   return getAddressBalanceFromNode(address)
     .then(response => response.json());
+};
+
+export const getBTCTransactions = (address: string): Promise<BTCTransaction[]> => {
+  return getBTCTransactionsFromNode(address)
+    .then(response => response);
 };

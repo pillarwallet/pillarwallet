@@ -139,7 +139,9 @@ import {
   SET_BITCOIN_ADDRESSES,
   BITCOIN_WALLET_CREATION_FAILED,
   UPDATE_UNSPENT_TRANSACTIONS,
+  UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
+import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import {
   keyPairAddress,
   getAddressUtxos,
@@ -149,6 +151,7 @@ import {
   rootFromMnemonic,
   transactionFromPlan,
   sendRawTransaction,
+  getBTCTransactions,
 } from 'services/bitcoin';
 import Storage from 'services/storage';
 
@@ -159,6 +162,7 @@ import type {
   UpdateBitcoinBalanceAction,
   UpdateUnspentTransactionsAction,
   BitcoinWalletCreationFailedAction,
+  UpdateBTCTransactionsAction,
 } from 'reducers/bitcoinReducer';
 import type { EthereumWallet } from 'models/Wallet';
 import type {
@@ -167,7 +171,10 @@ import type {
   BitcoinUtxo,
   BitcoinStore,
   BTCBalance,
+  BTCTransaction,
 } from 'models/Bitcoin';
+
+import { initialAssets } from 'fixtures/assets';
 
 import { saveDbAction } from 'actions/dbActions';
 
@@ -202,6 +209,15 @@ const updateBitcoinUnspentTransactions = (
   type: UPDATE_UNSPENT_TRANSACTIONS,
   address,
   unspentTransactions,
+});
+
+const updateBTCTransactions = (
+  address: string,
+  transactions: BTCTransaction[],
+): UpdateBTCTransactionsAction => ({
+  type: UPDATE_BITCOIN_TRANSACTIONS,
+  address,
+  transactions,
 });
 
 const bitcoinWalletCreationFailed = (): BitcoinWalletCreationFailedAction => ({
@@ -271,11 +287,34 @@ const fetchBalanceAction = (address: string): Promise<BitcoinReducerAction> => {
     .then(balance => updateBitcoinBalance(address, balance));
 };
 
+const fetchBTCTransactionsAction = (address: string): Promise<BitcoinReducerAction> => {
+  return getBTCTransactions(address)
+    .then(transactions => updateBTCTransactions(address, transactions));
+};
+
 const transactionSendingFailed = () => {
   Toast.show({
     message: 'There was an error sending the transaction',
     type: 'warning',
     title: 'Transaction could not be sent',
+    autoClose: false,
+  });
+};
+
+const fetchUnspentTxFailed = () => {
+  Toast.show({
+    message: 'There was an error fetching the Bitcoin unspent transactions',
+    type: 'warning',
+    title: 'Cannot fetch unspent transactions',
+    autoClose: false,
+  });
+};
+
+const fetchBTCTransactionsFailed = () => {
+  Toast.show({
+    message: 'There was an error fetching the Bitcoin transactions',
+    type: 'warning',
+    title: 'Cannot fetch transactions',
     autoClose: false,
   });
 };
@@ -332,7 +371,7 @@ export const refreshBitcoinUnspentTxAction = (force: boolean) => {
     await Promise.all(addressesToUpdate.map(({ address }) => {
       return fetchUnspentTxAction(address)
         .then(action => dispatch(action))
-        .catch(fetchBalanceFailed);
+        .catch(fetchUnspentTxFailed);
     }));
   };
 };
@@ -350,6 +389,43 @@ export const refreshBitcoinBalanceAction = (force: boolean) => {
       return fetchBalanceAction(address)
         .then(action => dispatch(action))
         .catch(fetchBalanceFailed);
+    }));
+  };
+};
+
+export const refreshBTCTransactionsAction = (force: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      assets: { data: assets, supportedAssets },
+      bitcoin: { data: { addresses } },
+    } = getState();
+
+    const addressesToUpdate = force ? addresses : outdatedAddresses(addresses);
+    if (!addressesToUpdate.length) {
+      return;
+    }
+
+    await Promise.all(addressesToUpdate.map(({ address }) => {
+      if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
+        const btcAsset = initialAssets.find(e => e.symbol === 'BTC');
+        if (btcAsset) {
+          supportedAssets.push(btcAsset);
+          assets[address] = { BTC: btcAsset };
+          dispatch({
+            type: UPDATE_ASSETS,
+            payload: assets,
+          });
+          dispatch(saveDbAction('assets', { assets }, true));
+          dispatch({
+            type: UPDATE_SUPPORTED_ASSETS,
+            payload: supportedAssets,
+          });
+          dispatch(saveDbAction('supportedAssets', { supportedAssets }, true));
+        }
+      }
+      return fetchBTCTransactionsAction(address)
+        .then(action => dispatch(action))
+        .catch(fetchBTCTransactionsFailed);
     }));
   };
 };

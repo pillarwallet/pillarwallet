@@ -395,6 +395,17 @@ class SmartWallet {
   handleError(error: any) {
     console.error('SmartWallet handleError: ', error);
   }
+
+  async reset() {
+    this.sdkInitialized = false;
+    if (!this.sdk) return;
+    this.sdk.event$.next(null); // unsubscribes
+    subscribedToEvents = false;
+    await this.sdk.reset({
+      device: true,
+      session: true,
+    }).catch(null);
+  }
 }
 
 const smartWalletInstance = new SmartWallet();
