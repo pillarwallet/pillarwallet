@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { MIN_CONFIRMATIONS } from 'constants/bitcoinConstants';
-import type { BitcoinUtxo } from 'models/Bitcoin';
+import type { BitcoinUtxo, BTCTransaction } from 'models/Bitcoin';
+
 
 export const satoshisToBtc = (satoshis: number): number => satoshis * 0.00000001;
 export const btcToSatoshis = (btc: number): number => Math.floor(btc * 100000000);
@@ -34,3 +35,41 @@ export const unspentAmount = (unspent: BitcoinUtxo[]): number => {
   }, 0);
 };
 
+export const extractBitcoinTransactions = (address: string, transactions: BTCTransaction[]): Object[] => {
+  const transactionsHistory = [];
+  transactions.forEach((tx: BTCTransaction) => {
+    tx.details.coins.inputs.forEach(inputItem => {
+      const txItem = {
+        _id: inputItem._id,
+        hash: tx.details.txid,
+        to: address,
+        from: inputItem.address,
+        createdAt: new Date(tx.details.blockTime).getTime() / 1000,
+        asset: 'BTC',
+        nbConfirmations: tx.details.confirmations,
+        status: inputItem.mintHeight !== -1 ? 'confirmed' : 'pending',
+        value: inputItem.value,
+        isPPNTransaction: false,
+        type: 'transactionEvent',
+      };
+      transactionsHistory.push(txItem);
+    });
+    tx.details.coins.outputs.forEach(inputItem => {
+      const txItem = {
+        _id: inputItem._id,
+        hash: tx.details.txid,
+        to: inputItem.address,
+        from: address,
+        createdAt: new Date(tx.details.blockTime).getTime() / 1000,
+        asset: 'BTC',
+        nbConfirmations: tx.details.confirmations,
+        status: inputItem.mintHeight !== -1 ? 'confirmed' : 'pending',
+        value: inputItem.value,
+        isPPNTransaction: false,
+        type: 'transactionEvent',
+      };
+      transactionsHistory.push(txItem);
+    });
+  });
+  return transactionsHistory;
+};

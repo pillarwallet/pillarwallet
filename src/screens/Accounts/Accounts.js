@@ -166,6 +166,7 @@ const FooterParagraph = styled(BaseText)`
 `;
 
 const pillarNetworkIcon = require('assets/icons/icon_PPN.png');
+const bitcoinNetworkIcon = require('assets/icons/icon_BTC.png');
 const ethereumWalletIcon = require('assets/icons/icon_ethereum_network.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
@@ -392,6 +393,7 @@ class AccountsScreen extends React.Component<Props, State> {
       bitcoinFeatureEnabled,
       accounts,
       bitcoinAddresses,
+      baseFiatCurrency,
     } = this.props;
 
     const ppnNetwork = blockchainNetworks.find(
@@ -421,6 +423,8 @@ class AccountsScreen extends React.Component<Props, State> {
       const bitcoinNetwork = blockchainNetworks.find(
         ({ id }) => id === BLOCKCHAIN_NETWORK_TYPES.BITCOIN,
       );
+      // TODO: calculate balance
+      const formattedBitcoinBalance = formatFiat(0, baseFiatCurrency);
 
       if (bitcoinNetwork) {
         networks.push({
@@ -429,8 +433,8 @@ class AccountsScreen extends React.Component<Props, State> {
           title: bitcoinNetwork.title,
           isInitialised: bitcoinAddresses.length > 0,
           isActive: bitcoinNetwork.isActive,
-          balance: 'N/A',
-          iconSource: pillarNetworkIcon, // TODO: Bitcoin icon
+          balance: formattedBitcoinBalance,
+          iconSource: bitcoinNetworkIcon,
           mainAction: this.setBTCAsActiveNetwork,
           initialiseAction: this.initialiseBTC,
         });
