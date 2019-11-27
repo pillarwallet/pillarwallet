@@ -17,15 +17,23 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+// actions
+import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 
+// constants
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
-import type { ConnectionIdentityKey } from 'models/Connections';
+import { STATUS_ACCEPTED, STATUS_BLOCKED, STATUS_MUTED } from 'constants/connectionsConstants';
+
+// utils
 import { uniqBy } from 'utils/common';
-import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
+
+// services
 import SDKWrapper from 'services/api';
 
+// models, types
+import type { ConnectionIdentityKey } from 'models/Connections';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
@@ -62,7 +70,7 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
     const removeContacts = [];
     const removeInvitations = [];
     resultConnections.forEach((resConn: ConnectionIdentityKey) => {
-      if (resConn.status === 'accepted' || resConn.status === 'muted' || resConn.status === 'blocked') {
+      if (resConn.status === STATUS_ACCEPTED || resConn.status === STATUS_MUTED || resConn.status === STATUS_BLOCKED) {
         const contact = {
           id: resConn.targetUserId,
           ethAddress: resConn.targetUserInfo.ethAddress,

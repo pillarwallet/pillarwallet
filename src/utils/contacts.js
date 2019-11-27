@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { STATUS_BLOCKED } from 'constants/connectionsConstants';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import { addressesEqual } from './assets';
 import { isCaseInsensitiveMatch } from './common';
@@ -54,4 +56,9 @@ export function findMatchingContact(
       isCaseInsensitiveMatch(userId, contactId) && addressesEqual(address, smartWallets[0] || ''),
     ),
   );
+}
+
+export function isContactAvailable(contact: ApiUser) {
+  // if no contact status is present then it means disconnected status
+  return !!(contact.status && contact.status === STATUS_BLOCKED);
 }

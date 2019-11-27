@@ -17,10 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import isEmpty from 'lodash.isempty';
 import partition from 'lodash.partition';
-import ChatService from 'services/chat';
+
+// actions
+import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
+
+// components
 import Toast from 'components/Toast';
+
+// constants
 import {
   UPDATE_CHATS,
   ADD_MESSAGE,
@@ -35,12 +42,17 @@ import {
   CLEAR_CHAT_DRAFT,
   RESET_UNREAD_MESSAGE,
 } from 'constants/chatConstants';
+
+// services
+import ChatService from 'services/chat';
 import Storage from 'services/storage';
-import {
-  getConnectionStateCheckParamsByUsername,
-  getConnectionStateCheckParamsByUserId,
-} from 'utils/chat';
-import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
+
+// utils
+import { getConnectionStateCheckParamsByUsername, getConnectionStateCheckParamsByUserId } from 'utils/chat';
+import { isCaseInsensitiveMatch } from 'utils/common';
+import { isContactAvailable } from 'utils/contacts';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
@@ -218,60 +230,69 @@ export const getChatByContactAction = (
     const {
       chat: { data: { isDecrypting } },
       session: { data: { isOnline } },
+      contacts: { data: contacts },
     } = getState();
     if (isDecrypting) return;
-    dispatch({
-      type: FETCHING_CHATS,
-    });
-    const connectionStateCheckParams = getConnectionStateCheckParamsByUserId(getState, targetUserId);
-    const addContactParams = {
-      username,
-      ...connectionStateCheckParams,
-    };
 
-    if (isOnline) {
-      await chat.client.addContact(addContactParams, false).catch(e => {
-        if (e.code === 'ERR_ADD_CONTACT_FAILED') {
-          Toast.show({
-            message: e.message,
-            type: 'warning',
-            title: 'Cannot retrieve remote user',
-            autoClose: false,
-          });
-        }
-      });
-
-      if (loadEarlier) {
-        // TODO: split message loading in bunches and load earlier on lick
-      }
-
-      const data = await chat.client.receiveNewMessagesByContact(username, 'chat')
-        .then(JSON.parse)
-        .catch(() => {});
-
-      if (!isEmpty(data)) {
-        const { messages: newRemoteMessages } = data;
-        if (!isEmpty(newRemoteMessages)) {
-          const remotePromises = newRemoteMessages.map(async remoteMessage => {
-            const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
-            await chat.deleteMessage(rmUsername, rmServerTimestamp);
-            dispatch({
-              type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
-              payload: {
-                username: rmUsername,
-                timestamp: rmServerTimestamp,
-              },
-            });
-          });
-          await Promise.all(remotePromises);
-        }
-      }
-    } else {
+    if (!isOnline) {
       Toast.show({
         message: 'Cannot get new messages while offline',
         type: 'warning',
         autoClose: true,
       });
+      return;
+    }
+
+    const recipientContact = contacts.find((contact) => isCaseInsensitiveMatch(username, contact.username));
+    if (!isContactAvailable(recipientContact)) {
+      Toast.show({
+        message: 'You disconnected or blocked this user',
+        type: 'warning',
+        autoClose: true,
+      });
+      return;
+    }
+
+    dispatch({ type: FETCHING_CHATS });
+
+    const connectionStateCheckParams = getConnectionStateCheckParamsByUserId(getState, targetUserId);
+    const addContactParams = { username, ...connectionStateCheckParams };
+
+    await chat.client.addContact(addContactParams, false).catch(e => {
+      if (e.code === 'ERR_ADD_CONTACT_FAILED') {
+        Toast.show({
+          message: e.message,
+          type: 'warning',
+          title: 'Cannot retrieve remote user',
+          autoClose: false,
+        });
+      }
+    });
+
+    if (loadEarlier) {
+      // TODO: split message loading in bunches and load earlier on lick
+    }
+
+    const data = await chat.client.receiveNewMessagesByContact(username, 'chat')
+      .then(JSON.parse)
+      .catch(() => {});
+
+    if (!isEmpty(data)) {
+      const { messages: newRemoteMessages } = data;
+      if (!isEmpty(newRemoteMessages)) {
+        const remotePromises = newRemoteMessages.map(async remoteMessage => {
+          const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
+          await chat.deleteMessage(rmUsername, rmServerTimestamp);
+          dispatch({
+            type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
+            payload: {
+              username: rmUsername,
+              timestamp: rmServerTimestamp,
+            },
+          });
+        });
+        await Promise.all(remotePromises);
+      }
     }
 
     const {
