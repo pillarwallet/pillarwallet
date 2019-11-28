@@ -47,12 +47,12 @@ const HeaderButtonRounded = styled.TouchableOpacity`
 
 const RoundedButtonLabel = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${props => props.light ? themedColors.control : themedColors.text};
+  color: ${props => props.isLight ? themedColors.control : themedColors.text};
   margin-left: 6px;
 `;
 const ChevronIcon = styled(Icon)`
   font-size: 6px;
-  color: ${props => props.light ? themedColors.control : themedColors.text};
+  color: ${props => props.isLight ? themedColors.control : themedColors.text};
   transform: rotate(90deg);
   margin-top: 2px;
   margin-left: 9px;
@@ -113,8 +113,8 @@ export const HeaderActionButton = (props: Props) => {
   return (
     <HeaderButtonRounded onPress={onPress} backgroundColor={backgroundColor} style={wrapperStyle}>
       {isActive !== undefined && <Status isActive={isActive} />}
-      <RoundedButtonLabel light={!!backgroundColor}>{label}</RoundedButtonLabel>
-      {!!hasChevron && <ChevronIcon name="chevron-right" light={!!backgroundColor} />}
+      <RoundedButtonLabel isLight={!!backgroundColor}>{label}</RoundedButtonLabel>
+      {!!hasChevron && <ChevronIcon name="chevron-right" isLight={!!backgroundColor} />}
     </HeaderButtonRounded>
   );
 };
