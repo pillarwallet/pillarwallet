@@ -384,7 +384,6 @@ class ActivityFeed extends React.Component<Props, State> {
         itemValue = '';
         customAddon = (<TankAssetBalance
           amount={`- ${formattedValue} ${notification.asset}`}
-          textStyle={{ color: baseColors.scarlet }}
           monoColor
         />);
         trxData.txType = 'Withdrawal';
@@ -411,16 +410,16 @@ class ActivityFeed extends React.Component<Props, State> {
           trxData.hideAmount = true;
           trxData.hideSender = true;
         } else {
-          let PPNTransactionAmountString = `${directionSymbol} ${formattedValue} ${notification.asset}`;
           const syntheticTransactionExtra: SyntheticTransaction = get(notification, 'extra.syntheticTransaction');
+          let syntheticAssetValue = null;
           if (!isEmpty(syntheticTransactionExtra)) {
             const { toAmount, toAssetCode } = syntheticTransactionExtra;
-            PPNTransactionAmountString += ` (${toAmount} ${toAssetCode})`;
+            syntheticAssetValue = <BaseText style={{ alignSelf: 'flex-end' }}>{toAmount} {toAssetCode}</BaseText>;
           }
           itemValue = '';
           customAddon = (<TankAssetBalance
-            amount={PPNTransactionAmountString}
-            textStyle={!isReceived ? { color: baseColors.scarlet } : null}
+            amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
+            bottomExtra={syntheticAssetValue}
             monoColor
           />);
         }
