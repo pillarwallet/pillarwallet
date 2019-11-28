@@ -92,6 +92,7 @@ import { logEventAction } from 'actions/analyticsActions';
 import {
   setFirebaseAnalyticsCollectionEnabled,
   setUserJoinedBetaAction,
+  setAppThemeAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
@@ -263,6 +264,7 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_INVITATIONS, payload: [] });
     dispatch({ type: UPDATE_ASSETS, payload: {} });
     dispatch({ type: RESET_APP_SETTINGS, payload: {} });
+    dispatch(setAppThemeAction()); // as appSettings gets overwritten
     dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
     dispatch({ type: SET_HISTORY, payload: {} });
     dispatch({ type: UPDATE_BALANCES, payload: {} });

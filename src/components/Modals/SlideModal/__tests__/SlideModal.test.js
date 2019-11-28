@@ -21,25 +21,38 @@ import * as React from 'react';
 import renderer from 'react-test-renderer';
 import { BaseText } from 'components/Typography';
 import { shallow } from 'enzyme';
+import { ThemeProvider } from 'styled-components';
+import { defaultTheme } from 'reducers/appSettingsReducer';
 import { fontSizes } from 'utils/variables';
 import { delay } from 'utils/common';
 import SlideModal from '../SlideModal';
 
 describe('Slide Modal', () => {
   it('should render SlideModal correctly', () => {
-    const component = renderer.create(<SlideModal title="title" isVisible />).toJSON();
+    const component = renderer.create(
+      <ThemeProvider theme={defaultTheme}>
+        <SlideModal title="title" isVisible />
+      </ThemeProvider>).toJSON();
     expect(component).toMatchSnapshot();
   });
 
   it('should render SlideModal with content', () => {
     const ChildContent = () => <BaseText>Test</BaseText>;
-    const wrapper = shallow(<SlideModal title="title" isVisible><ChildContent /></SlideModal>);
+    const wrapper = shallow(
+      <ThemeProvider theme={defaultTheme}>
+        <SlideModal title="title" isVisible>
+          <ChildContent />
+        </SlideModal>
+      </ThemeProvider>);
     expect(wrapper.find(ChildContent)).toHaveLength(1);
   });
 
   it('should close modal on dismiss', async () => {
     const onModalHide = jest.fn();
-    const component = renderer.create(<SlideModal title="title" isVisible onModalHide={onModalHide} />);
+    const component = renderer.create(
+      <ThemeProvider theme={defaultTheme}>
+        <SlideModal title="title" isVisible onModalHide={onModalHide} />
+      </ThemeProvider>);
     const instance = component.root;
     const button = instance.findByProps({ icon: 'close', fontSize: fontSizes.medium });
     button.props.onPress();

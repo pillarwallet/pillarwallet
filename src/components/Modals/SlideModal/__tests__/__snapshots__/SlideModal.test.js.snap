@@ -131,6 +131,13 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           }
         />
         <View
+          customTheme={
+            Object {
+              "background": "#fafafa",
+              "borderRadius": "30px",
+              "padding": "0 20px",
+            }
+          }
           style={
             Array [
               Object {
@@ -153,13 +160,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               },
               undefined,
             ]
-          }
-          theme={
-            Object {
-              "background": "#fafafa",
-              "borderRadius": "30px",
-              "padding": "0 20px",
-            }
           }
         >
           <View
@@ -382,7 +382,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ffffff",
+              "backgroundColor": "#FFFFFF",
               "borderColor": "#2f86eb",
               "borderLeftWidth": 10,
               "borderStyle": "solid",

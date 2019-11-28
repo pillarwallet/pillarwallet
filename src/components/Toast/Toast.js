@@ -26,6 +26,7 @@ import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import { MediumText, BaseText } from 'components/Typography';
+import { themedColors } from 'utils/themes';
 
 type ToastOptions = {
   autoClose?: boolean,
@@ -76,7 +77,7 @@ const ContentWrapper = styled.View`
 
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
-  background-color: ${baseColors.white};
+  background-color: ${themedColors.card};
   position: absolute;
   left: 0;
   top: 0;
@@ -113,13 +114,13 @@ const IconHolder = styled.View`
 
 const ToastTitle = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
   margin-bottom: 2px;
 `;
 
 const ToastBody = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
 `;
 
 export default class Toast extends React.Component<{}, State> {
