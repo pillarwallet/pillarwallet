@@ -62,64 +62,64 @@ export const darkThemeColors = {
 };
 
 export const themedColors = {
-  text: theme('mode', {
-    lightMode: lightThemeColors.text,
-    darkMode: darkThemeColors.text,
+  text: theme('current', {
+    lightTheme: lightThemeColors.text,
+    darkTheme: darkThemeColors.text,
   }),
-  accent: theme('mode', {
-    lightMode: lightThemeColors.accent,
-    darkMode: darkThemeColors.accent,
+  accent: theme('current', {
+    lightTheme: lightThemeColors.accent,
+    darkTheme: darkThemeColors.accent,
   }),
-  primary: theme('mode', {
-    lightMode: lightThemeColors.primary,
-    darkMode: darkThemeColors.primary,
+  primary: theme('current', {
+    lightTheme: lightThemeColors.primary,
+    darkTheme: darkThemeColors.primary,
   }),
-  secondaryAccent: theme('mode', {
-    lightMode: lightThemeColors.secondaryAccent,
-    darkMode: darkThemeColors.secondaryAccent,
+  secondaryAccent: theme('current', {
+    lightTheme: lightThemeColors.secondaryAccent,
+    darkTheme: darkThemeColors.secondaryAccent,
   }),
-  secondaryText: theme('mode', {
-    lightMode: lightThemeColors.secondaryText,
-    darkMode: darkThemeColors.secondaryText,
+  secondaryText: theme('current', {
+    lightTheme: lightThemeColors.secondaryText,
+    darkTheme: darkThemeColors.secondaryText,
   }),
-  border: theme('mode', {
-    lightMode: lightThemeColors.border,
-    darkMode: darkThemeColors.border,
+  border: theme('current', {
+    lightTheme: lightThemeColors.border,
+    darkTheme: darkThemeColors.border,
   }),
-  positive: theme('mode', {
-    lightMode: lightThemeColors.positive,
-    darkMode: darkThemeColors.positive,
+  positive: theme('current', {
+    lightTheme: lightThemeColors.positive,
+    darkTheme: darkThemeColors.positive,
   }),
-  negative: theme('mode', {
-    lightMode: lightThemeColors.negative,
-    darkMode: darkThemeColors.negative,
+  negative: theme('current', {
+    lightTheme: lightThemeColors.negative,
+    darkTheme: darkThemeColors.negative,
   }),
-  surface: theme('mode', {
-    lightMode: lightThemeColors.surface,
-    darkMode: darkThemeColors.surface,
+  surface: theme('current', {
+    lightTheme: lightThemeColors.surface,
+    darkTheme: darkThemeColors.surface,
   }),
-  card: theme('mode', {
-    lightMode: lightThemeColors.card,
-    darkMode: darkThemeColors.card,
+  card: theme('current', {
+    lightTheme: lightThemeColors.card,
+    darkTheme: darkThemeColors.card,
   }),
-  tertiary: theme('mode', {
-    lightMode: lightThemeColors.tertiary,
-    darkMode: darkThemeColors.tertiary,
+  tertiary: theme('current', {
+    lightTheme: lightThemeColors.tertiary,
+    darkTheme: darkThemeColors.tertiary,
   }),
-  control: theme('mode', {
-    lightMode: lightThemeColors.control,
-    darkMode: darkThemeColors.control,
+  control: theme('current', {
+    lightTheme: lightThemeColors.control,
+    darkTheme: darkThemeColors.control,
   }),
-  warning: theme('mode', {
-    lightMode: lightThemeColors.warning,
-    darkMode: darkThemeColors.warning,
+  warning: theme('current', {
+    lightTheme: lightThemeColors.warning,
+    darkTheme: darkThemeColors.warning,
   }),
-  indicator: theme('mode', {
-    lightMode: lightThemeColors.indicator,
-    darkMode: darkThemeColors.indicator,
+  indicator: theme('current', {
+    lightTheme: lightThemeColors.indicator,
+    darkTheme: darkThemeColors.indicator,
   }),
-  userAvatar: theme('mode', {
-    lightMode: lightThemeColors.userAvatar,
-    darkMode: darkThemeColors.userAvatar,
+  userAvatar: theme('current', {
+    lightTheme: lightThemeColors.userAvatar,
+    darkTheme: darkThemeColors.userAvatar,
   }),
 };

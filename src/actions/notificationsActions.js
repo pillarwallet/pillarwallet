@@ -24,7 +24,8 @@ import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
-import { processNotification } from 'utils/notifications';
+
+// actions
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
   fetchSmartWalletTransactionsAction,
@@ -45,8 +46,8 @@ import {
   decryptReceivedWebSocketTxNoteMessageAction,
 } from 'actions/txNoteActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
-import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
-import Storage from 'services/storage';
+
+// constants
 import {
   ADD_NOTIFICATION,
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
@@ -59,10 +60,7 @@ import {
   BADGE,
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT } from 'constants/navigationConstants';
-import {
-  ADD_WEBSOCKET_RECEIVED_MESSAGE,
-  REMOVE_WEBSOCKET_SENT_MESSAGE,
-} from 'constants/chatConstants';
+import { ADD_WEBSOCKET_RECEIVED_MESSAGE, REMOVE_WEBSOCKET_SENT_MESSAGE } from 'constants/chatConstants';
 import { MESSAGE_DISCONNECTED, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import {
   CONNECTION_ACCEPTED_EVENT,
@@ -72,10 +70,17 @@ import {
   CONNECTION_REQUESTED_EVENT,
   CONNECTION_COLLECTIBLE_EVENT,
 } from 'constants/socketConstants';
+
+// services
+import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
+import Storage from 'services/storage';
 import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
 import ChatService from 'services/chat';
 import { SOCKET } from 'services/sockets';
 
+// utils
+import { processNotification } from 'utils/notifications';
+import { STATUS_MUTED } from 'constants/connectionsConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -252,7 +257,7 @@ export const startListeningNotificationsAction = () => {
             dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
             return;
           }
-          if (contact.status !== 'muted') {
+          if (contact.status !== STATUS_MUTED) {
             dispatch({
               type: ADD_NOTIFICATION,
               payload: {
@@ -440,7 +445,7 @@ export const startListeningChatWebSocketAction = () => {
 
               const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
 
-              if (notification == null || contact.status === 'muted') return;
+              if (notification == null || contact.status === STATUS_MUTED) return;
 
               dispatch({
                 type: ADD_NOTIFICATION,

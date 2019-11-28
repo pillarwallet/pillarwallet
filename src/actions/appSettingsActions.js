@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { DARK_MODE, LIGHT_MODE, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { DARK_THEME, LIGHT_THEME, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -36,6 +36,7 @@ import { darkThemeColors, lightThemeColors } from 'utils/themes';
 import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { defaultTheme } from 'reducers/appSettingsReducer';
 
 import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
@@ -185,19 +186,29 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
 export const changeAppThemeAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { theme: { mode } } },
+      appSettings: { data: { theme: { current } } },
     } = getState();
 
-    const newMode = mode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE;
-    const colors = mode === LIGHT_MODE ? darkThemeColors : lightThemeColors;
+    const newTheme = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
+    const colors = current === LIGHT_THEME ? darkThemeColors : lightThemeColors;
+    const theme = { current: newTheme, colors };
 
-    const theme = { mode: newMode, colors };
     dispatch(saveDbAction('app_settings', { appSettings: { theme } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: {
-        theme,
-      },
+      payload: { theme },
+    });
+  };
+};
+
+export const setAppThemeAction = () => {
+  return (dispatch: Dispatch) => {
+    const theme = defaultTheme; // TODO: get theme based on user preferences;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { theme } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { theme },
     });
   };
 };

@@ -59,6 +59,7 @@ import * as connectionKeyActions from 'actions/connectionKeyPairActions';
 import { transformAssetsToObject } from 'utils/assets';
 import PillarSdk from 'services/api';
 import { WebSocket } from 'mock-socket';
+import { defaultTheme } from 'reducers/appSettingsReducer';
 
 global.WebSocket = WebSocket;
 
@@ -168,6 +169,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
+      { type: UPDATE_APP_SETTINGS, payload: { theme: defaultTheme } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
@@ -235,6 +237,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
+      { type: UPDATE_APP_SETTINGS, payload: { theme: defaultTheme } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
@@ -315,6 +318,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
+      { type: UPDATE_APP_SETTINGS, payload: { theme: defaultTheme } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },

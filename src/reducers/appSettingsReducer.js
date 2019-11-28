@@ -17,14 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, LIGHT_MODE } from 'constants/appSettingsConstants';
+import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import merge from 'lodash.merge';
 import { lightThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 export const defaultTheme = {
-  mode: LIGHT_MODE,
+  current: LIGHT_THEME,
   colors: lightThemeColors,
 };
 

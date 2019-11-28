@@ -39,6 +39,7 @@ import {
   CHAT,
   PIN_CODE_UNLOCK,
   PEOPLE,
+  LOGOUT_PENDING,
 } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
@@ -51,6 +52,7 @@ import { getSaltedPin, decryptWallet, normalizeWalletAddress } from 'utils/walle
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import ChatService from 'services/chat';
+import smartWalletService from 'services/smartWallet';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { findKeyBasedAccount } from 'utils/accounts';
@@ -65,7 +67,7 @@ import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
 import { updatePinAttemptsAction } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
+import { setAppThemeAction, setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
@@ -415,15 +417,19 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 };
 
 export const logoutAction = () => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    navigate(NavigationActions.navigate({ routeName: LOGOUT_PENDING }));
     Intercom.logout();
-    navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
-    dispatch({ type: LOG_OUT });
-    dispatch({ type: RESET_APP_SETTINGS, payload: {} });
-    chat.client.resetAccount().catch(() => null);
-    clearWebViewCookies();
     await firebase.iid().delete().catch(() => {});
+    await chat.client.resetAccount().catch(() => null);
     await AsyncStorage.removeItem(WALLET_STORAGE_BACKUP_KEY);
     await storage.removeAll();
+    const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+    if (smartWalletFeatureEnabled) await smartWalletService.reset();
+    clearWebViewCookies();
+    dispatch({ type: LOG_OUT });
+    dispatch({ type: RESET_APP_SETTINGS, payload: {} });
+    dispatch(setAppThemeAction());
+    navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };

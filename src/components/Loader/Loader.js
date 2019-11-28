@@ -30,6 +30,7 @@ import { baseColors, fontStyles } from 'utils/variables';
 type Props = {
   messages?: Array<string>,
   noMessages?: boolean,
+  firstMessageWithoutDelay?: boolean,
 };
 
 type State = {
@@ -60,10 +61,14 @@ const AnimatedMessageText = Animated.createAnimatedComponent(MessageText);
 export default class Loader extends React.Component<Props, State> {
   timerToChangeMessage: ?IntervalID;
   startTimeout: ?TimeoutID;
-  state = {
-    visibleMessageId: 0,
-    showMessage: false,
-  };
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      visibleMessageId: 0,
+      showMessage: !!props.firstMessageWithoutDelay,
+    };
+  }
 
   componentDidMount() {
     const { noMessages } = this.props;
