@@ -105,8 +105,11 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     const { session, navigation, withdrawalFee } = this.props;
     const { buttonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
-    const submitButtonTitle = !buttonSubmitted ? 'Withdraw from PLR tank' : 'Processing...';
+    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei().toString()));
+
+    const submitButtonTitle = buttonSubmitted
+      ? 'Processing...'
+      : 'Withdraw from PLR tank';
 
     return (
       <ContainerWithHeader
