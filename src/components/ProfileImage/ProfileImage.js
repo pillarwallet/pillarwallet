@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { getInitials } from 'utils/contacts';
+import { themedColors } from 'utils/themes';
 import { MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 
@@ -40,7 +41,7 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  background-color: ${props => (props.needBackground ? baseColors.geyser : baseColors.lightGray)};
+  background-color: ${props => (props.needBackground ? themedColors.userAvatar : baseColors.lightGray)};
   ${props => (props.additionalContainerStyle)};
   position: relative;
   border: ${props => `${props.borderWidth}px solid ${props.borderColor || baseColors.white}`};
