@@ -19,6 +19,7 @@
 */
 import theme from 'styled-theming';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import type { Theme } from 'models/Theme';
 
 export const lightThemeColors = {
   text: '#0A1427',
@@ -125,8 +126,8 @@ export const defaultTheme = {
 };
 
 const darkTheme = {
-  current: LIGHT_THEME,
-  colors: lightThemeColors,
+  current: DARK_THEME,
+  colors: darkThemeColors,
 };
 
 export function getThemeByType(themeType: string) {
@@ -136,4 +137,8 @@ export function getThemeByType(themeType: string) {
     default:
       return defaultTheme;
   }
+}
+
+export function getThemeColors(currentTheme: Theme = defaultTheme) {
+  return currentTheme.colors;
 }

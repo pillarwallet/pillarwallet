@@ -44,7 +44,7 @@ import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import type { RootReducerState } from 'reducers/rootReducer';
-import { getThemeByType } from 'utils/Themes';
+import { getThemeByType } from 'utils/themes';
 
 import configureStore from './src/configureStore';
 
@@ -151,8 +151,8 @@ class App extends React.Component<Props, *> {
     const { isFetched, themeType, changeAppTheme } = this.props;
     const theme = getThemeByType(themeType);
     const { colors, current } = theme;
-    if (!isFetched) return null;
 
+    if (!isFetched) return null;
 
     return (
       <ThemeProvider theme={theme}>
