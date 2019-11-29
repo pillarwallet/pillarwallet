@@ -31,19 +31,21 @@ export type BitcoinTransactionTarget = {
 export type BitcoinUtxo = {
   address: string,
   txid: string,
+  mintTxid?: string,
   vout: number,
   scriptPubKey: string,
   amount: number,
   satoshis: number,
   height: number,
   confirmations: number,
+  value?: number,
 };
 
 export type BitcoinTransactionPlan = {
   inputs: BitcoinUtxo[],
   outputs: BitcoinTransactionTarget[],
-  fee: number,
-  isValid: boolean,
+  fee?: number,
+  isValid?: boolean,
 };
 
 export type BitcoinAddress = {

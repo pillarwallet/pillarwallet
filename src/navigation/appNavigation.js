@@ -50,6 +50,11 @@ import SendTokenAssetsScreen from 'screens/SendToken/SendTokenAssets';
 import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScreen';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
+import SendBitcoinAmountScreen from 'screens/SendBitcoin/SendBitcoinAmount';
+import SendBitcoinContactsScreen from 'screens/SendBitcoin/SendBitcoinContacts';
+import SendBitcoinPinConfirmScreen from 'screens/SendBitcoin/SendBitcoinPinConfirmScreen';
+import SendBitcoinConfirmScreen from 'screens/SendBitcoin/SendBitcoinConfirm';
+import SendBitcoinTransactionScreen from 'screens/SendBitcoin/SendBitcoinTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
 import HomeScreen from 'screens/Home';
@@ -143,6 +148,12 @@ import {
   CHANGE_PIN_NEW_PIN,
   CHANGE_PIN_CONFIRM_NEW_PIN,
   TAB_NAVIGATION,
+  SEND_BITCOIN_FLOW,
+  SEND_BITCOIN_AMOUNT,
+  SEND_BITCOIN_CONTACTS,
+  SEND_BITCOIN_CONFIRM,
+  SEND_BITCOIN_TRANSACTION,
+  SEND_BITCOIN_PIN_CONFIRM,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONTACTS,
   SEND_TOKEN_ASSETS,
@@ -446,6 +457,18 @@ const sendTokenFromAssetFlow = createStackNavigator(
   StackNavigatorModalConfig,
 );
 
+// SEND BITCOIN FROM ASSET FLOW
+const sendBitcoinFromAssetFlow = createStackNavigator(
+  {
+    [SEND_BITCOIN_CONTACTS]: SendBitcoinContactsScreen,
+    [SEND_BITCOIN_AMOUNT]: SendBitcoinAmountScreen,
+    [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
+    [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
+    [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
+  },
+  StackNavigatorModalConfig,
+);
+
 // SEND ASSETS FROM CONTACT FLOW
 const sendTokenFromContactFlow = createStackNavigator({
   [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
@@ -557,6 +580,7 @@ const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
+    [SEND_BITCOIN_FLOW]: sendBitcoinFromAssetFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
     [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
