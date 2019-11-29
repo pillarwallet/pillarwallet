@@ -38,7 +38,7 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
-import { changeAppThemeAction, setAppThemeAction } from 'actions/appSettingsActions';
+import { changeAppThemeAction } from 'actions/appSettingsActions';
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
@@ -68,7 +68,6 @@ type Props = {
   executeDeepLink: Function,
   theme: Theme,
   changeAppTheme: () => void,
-  setAppTheme: () => void,
 }
 
 class App extends React.Component<Props, *> {
@@ -98,7 +97,6 @@ class App extends React.Component<Props, *> {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
       executeDeepLink,
-      setAppTheme,
     } = this.props;
     const isOnline = await NetInfo.isConnected.fetch();
     this.setOnlineStatus(isOnline); // set initial online status
@@ -117,7 +115,6 @@ class App extends React.Component<Props, *> {
       .catch(() => {});
     Linking.addEventListener('url', this.handleDeepLinkEvent);
     startListeningOnOpenNotification();
-    setAppTheme();
   }
 
   setOnlineStatus = isOnline => {
@@ -201,7 +198,6 @@ const mapDispatchToProps = (dispatch) => ({
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   changeAppTheme: () => dispatch(changeAppThemeAction()),
-  setAppTheme: () => dispatch(setAppThemeAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
