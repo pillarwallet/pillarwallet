@@ -17,9 +17,16 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import merge from 'lodash.merge';
+import { lightThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
+
+export const defaultTheme = {
+  current: LIGHT_THEME,
+  colors: lightThemeColors,
+};
 
 export type AppSettingsReducerState = {
   data: {
@@ -31,6 +38,7 @@ export type AppSettingsReducerState = {
     userJoinedBeta: ?boolean,
     firebaseAnalyticsConnectionEnabled: ?boolean,
     baseFiatCurrency: ?string,
+    theme: Theme,
   },
   isFetched: boolean,
 };
@@ -50,6 +58,7 @@ export const initialState: AppSettingsReducerState = {
     userJoinedBeta: false,
     firebaseAnalyticsConnectionEnabled: false,
     baseFiatCurrency: null,
+    theme: defaultTheme,
   },
   isFetched: false,
 };

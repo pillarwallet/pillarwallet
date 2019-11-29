@@ -23,6 +23,7 @@ import Asset from 'screens/Asset';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
+import { ThemeProvider } from 'styled-components';
 
 import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
 import { initialState as balancesState } from 'reducers/balancesReducer';
@@ -34,7 +35,7 @@ import { initialState as assetsState } from 'reducers/assetsReducer';
 import { initialState as ratesState } from 'reducers/ratesReducer';
 import { initialState as accountsState } from 'reducers/accountsReducer';
 import { initialState as featureFlagsState } from 'reducers/featureFlagsReducer';
-import { initialState as appSettingsState } from 'reducers/appSettingsReducer';
+import { initialState as appSettingsState, defaultTheme } from 'reducers/appSettingsReducer';
 import { initialState as userSettingsState } from 'reducers/userSettingsReducer';
 import { initialState as exchangeState } from 'reducers/exchangeReducer';
 
@@ -57,9 +58,11 @@ const initialStore = mockStore({
 });
 
 const Component = (store, navigation) => (
-  <Provider store={store}>
-    <Asset navigation={navigation} />
-  </Provider>
+  <ThemeProvider theme={defaultTheme}>
+    <Provider store={store}>
+      <Asset navigation={navigation} />
+    </Provider>
+  </ThemeProvider>
 );
 
 describe('Asset', () => {
