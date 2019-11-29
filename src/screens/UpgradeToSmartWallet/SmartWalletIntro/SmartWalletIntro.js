@@ -128,10 +128,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{
-          floating: true,
-          transparent: true,
-        }}
+        headerProps={{ floating: true }}
         backgroundColor={baseColors.zircon}
       >
         <ScrollWrapper contentContainerStyle={{ paddingTop: 80 }}>

@@ -9,24 +9,10 @@ exports[`Asset renders the Asset correctly 1`] = `
   }
 >
   <View
-    customTheme={
-      Object {
-        "backgroundColor": "#ffffff",
-        "borderBottomColor": "#EDEDED",
-        "borderBottomWidth": 1,
-        "buttonBorderColor": "#EDEDED",
-        "buttonLabelColor": "#0A1427",
-        "color": "#0A1427",
-        "iconColor": "#0A1427",
-        "rightActionBorderColor": "rgba(0, 122, 255, 0.05)",
-        "rightActionIconColor": "#007AFF",
-        "rightActionLabelColor": "#007AFF",
-      }
-    }
     style={
       Array [
         Object {
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#FAFAFA",
           "borderBottomColor": "#EDEDED",
           "borderBottomWidth": 1,
           "width": "100%",
@@ -209,7 +195,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   name="info-circle-inverse"
                   style={
                     Object {
-                      "color": "#007AFF",
+                      "color": "#0A1427",
                       "fontSize": 24,
                       "marginBottom": undefined,
                       "marginLeft": undefined,
