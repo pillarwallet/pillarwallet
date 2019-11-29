@@ -26,7 +26,7 @@ import Icon from 'components/Icon';
 import Animation from 'components/Animation';
 
 type Props = {
-  theme: Object,
+  customTheme: Object,
   label: string,
   onPress: Function,
   hasChevron?: boolean,
@@ -39,18 +39,18 @@ const HeaderButtonRounded = styled.TouchableOpacity`
   align-items: center;
   padding: 4px 12px 4px 6px;
   border: 1px solid;
-  border-color: ${props => props.theme.buttonBorderColor || UIColors.defaultBorderColor};
+  border-color: ${props => props.customTheme.buttonBorderColor || UIColors.defaultBorderColor};
   border-radius: 20px;
 `;
 
 const RoundedButtonLabel = styled(MediumText)`
   font-size: ${fontSizes.regular}px;
-  color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};
+  color: ${props => props.customTheme.buttonLabelColor || UIColors.defaultTextColor};
   margin-left: 6px;
 `;
 const ChevronIcon = styled(Icon)`
   font-size: 6px;
-  color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};
+  color: ${props => props.customTheme.buttonLabelColor || UIColors.defaultTextColor};
   transform: rotate(90deg);
   margin-top: 2px;
   margin-left: 9px;
@@ -99,7 +99,7 @@ const Status = ({ isActive }) => {
 
 export const HeaderActionButton = (props: Props) => {
   const {
-    theme,
+    customTheme,
     label,
     onPress,
     hasChevron,
@@ -108,10 +108,10 @@ export const HeaderActionButton = (props: Props) => {
   } = props;
 
   return (
-    <HeaderButtonRounded onPress={onPress} theme={theme} style={wrapperStyle}>
+    <HeaderButtonRounded onPress={onPress} customTheme={customTheme} style={wrapperStyle}>
       {isActive !== undefined && <Status isActive={isActive} />}
-      <RoundedButtonLabel theme={theme}>{label}</RoundedButtonLabel>
-      {!!hasChevron && <ChevronIcon name="chevron-right" theme={theme} />}
+      <RoundedButtonLabel customTheme={customTheme}>{label}</RoundedButtonLabel>
+      {!!hasChevron && <ChevronIcon name="chevron-right" customTheme={customTheme} />}
     </HeaderButtonRounded>
   );
 };

@@ -113,13 +113,13 @@ const Backdrop = styled.TouchableWithoutFeedback`
 `;
 
 const ModalBackground = styled.View`
-  border-top-left-radius: ${props => props.theme.borderRadius};
-  border-top-right-radius:  ${props => props.theme.borderRadius};
-  padding: ${props => props.theme.padding};
+  border-top-left-radius: ${props => props.customTheme.borderRadius};
+  border-top-right-radius: ${props => props.customTheme.borderRadius};
+  padding: ${props => props.customTheme.padding};
   box-shadow: 0px 2px 7px rgba(0,0,0,.1);
   elevation: 1;
   margin-top: auto;
-  background-color: ${props => props.theme.background};
+  background-color: ${props => props.customTheme.background};
 `;
 
 const ModalSubtitle = styled(SubTitle)`
@@ -210,7 +210,7 @@ export default class SlideModal extends React.Component<Props, *> {
       scrollOffsetMax,
     } = this.props;
 
-    const theme = getTheme(this.props);
+    const customTheme = getTheme(this.props);
 
     const showModalHeader = !fullScreen || showHeader;
 
@@ -262,14 +262,14 @@ export default class SlideModal extends React.Component<Props, *> {
 
       if (eventDetail) {
         return (
-          <ModalBackground theme={theme}>
+          <ModalBackground customTheme={customTheme}>
             { children }
           </ModalBackground>
         );
       }
 
       return (
-        <ModalBackground theme={theme}>
+        <ModalBackground customTheme={customTheme}>
           { modalInner }
         </ModalBackground>
       );

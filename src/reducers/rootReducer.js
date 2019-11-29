@@ -30,7 +30,7 @@ import smartWalletReducer from './smartWalletReducer';
 import walletConnectReducer from './walletConnectReducer';
 import walletConnectSessionsReducer from './walletConnectSessionsReducer';
 import assetsReducer from './assetsReducer';
-import appSettingsReducer from './appSettingsReducer';
+import appSettingsReducer, { defaultTheme } from './appSettingsReducer';
 import ratesReducer from './ratesReducer';
 import userReducer from './userReducer';
 import historyReducer from './historyReducer';
@@ -207,7 +207,7 @@ export const initialState = appReducer(undefined, {});
 
 const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
   if (action.type === LOG_OUT) {
-    return appReducer({ appSettings: { isFetched: true } }, {});
+    return appReducer({ appSettings: { isFetched: true, data: { theme: defaultTheme } } }, {});
   }
   return appReducer(state, action);
 };
