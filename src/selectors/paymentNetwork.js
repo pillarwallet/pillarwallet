@@ -65,7 +65,7 @@ export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) =
         const assetBalance = nonZeroBalances[symbol] || { symbol, rawBalance: new BigNumber(0) };
         const rawBalance = assetBalance.rawBalance.plus(value);
 
-        if (!rawBalance.gt(0)) return nonZeroBalances;
+        if (rawBalance.lte(0)) return nonZeroBalances;
 
         const assetData = getAssetData(getAssetsAsList(accountAssets), supportedAssets, symbol);
         if (isEmpty(assetData)) return nonZeroBalances;
