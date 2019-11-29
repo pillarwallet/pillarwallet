@@ -222,7 +222,7 @@ class AccountsScreen extends React.Component<Props, State> {
       setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
       navigation.navigate(ASSETS);
     } else {
-      this.setState({ showPinModal: true });
+      this.setState({ showPinModal: true, onPinValidAction: this.switchToSmartWalletAndGoToPPN });
     }
   };
 
@@ -271,7 +271,7 @@ class AccountsScreen extends React.Component<Props, State> {
     if (!this.switchToWallet) return;
     await switchAccount(this.switchToWallet.id, wallet.privateKey);
     this.switchToWallet = null;
-    this.setState({ changingAccount: false, onPinValidAction: this.switchToSmartWalletAndGoToPPN });
+    this.setState({ changingAccount: false });
     navigation.navigate(ASSETS);
   };
 
