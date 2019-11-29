@@ -144,6 +144,7 @@ import {
   formatUnits,
   isCaseInsensitiveMatch,
   parseTokenAmount,
+  uniqBy,
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getWalletsCreationEventsAction } from './userEventsActions';
@@ -1248,9 +1249,11 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
         payload: txHash,
       });
 
-
       const { history: { data: currentHistory } } = getState();
-      dispatch(saveDbAction('history', { history: currentHistory }, true));
+      const accountHistory = currentHistory[accountId] || [];
+      const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
+      const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+      dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
       Toast.show({
         message: 'Settlement was successful. Please wait for the transaction to be mined',

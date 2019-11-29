@@ -76,6 +76,7 @@ import {
   PPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -83,13 +84,14 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   availableStake: number,
   assetsOnNetwork: Object,
-  fetchVirtualAccountBalance: Function,
+  fetchVirtualAccountBalance: () => void,
   accounts: Accounts,
   smartWalletState: Object,
   PPNTransactions: Transaction[],
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
   history: Object[],
+  fetchTransactionsHistory: () => void,
 }
 
 type State = {
@@ -166,6 +168,7 @@ class PPNView extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       history,
+      fetchTransactionsHistory,
     } = this.props;
 
     let incomingBalanceInFiat = 0;
@@ -249,6 +252,7 @@ class PPNView extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
+                fetchTransactionsHistory();
                 fetchVirtualAccountBalance();
               }}
             />
@@ -361,6 +365,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
 });
 
 export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView));
