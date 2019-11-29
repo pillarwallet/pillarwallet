@@ -193,7 +193,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
       case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
         return {
-          label: 'Bitcoin network',
+          label: 'Bitcoin wallet',
           action: () => navigation.navigate(ACCOUNTS),
           screenView: VIEWS.BTC_VIEW,
           customHeaderProps: {},

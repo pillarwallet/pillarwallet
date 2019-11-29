@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Platform, StatusBar, View, Dimensions } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation, SafeAreaView } from 'react-navigation';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import isEqual from 'lodash.isequal';
 
 import HeaderBlock from 'components/HeaderBlock';
@@ -156,4 +156,4 @@ class ContainerWithHeader extends React.Component<Props> {
   }
 }
 
-export default withNavigation(ContainerWithHeader);
+export default withTheme(withNavigation(ContainerWithHeader));
