@@ -1249,11 +1249,9 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
         payload: txHash,
       });
 
+      // history state is updated with ADD_TRANSACTION, update in storage
       const { history: { data: currentHistory } } = getState();
-      const accountHistory = currentHistory[accountId] || [];
-      const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
-      const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-      dispatch(saveDbAction('history', { history: updatedHistory }, true));
+      dispatch(saveDbAction('history', { history: currentHistory }, true));
 
       Toast.show({
         message: 'Settlement was successful. Please wait for the transaction to be mined',
