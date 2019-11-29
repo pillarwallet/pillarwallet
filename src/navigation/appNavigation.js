@@ -84,7 +84,6 @@ import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
-import BitcoinNetworkIntro from 'screens/BitcoinNetwork/BitcoinNetworkIntro';
 import UserSettingsScreen from 'screens/Users/UserSettings';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import SettingsScreen from 'screens/Settings';
@@ -194,7 +193,6 @@ import {
   CONTACT_INFO,
   ACCOUNTS,
   PILLAR_NETWORK_INTRO,
-  BITCOIN_NETWORK_INTRO,
   MANAGE_USERS_FLOW,
   USER_SETTINGS,
   ADD_EDIT_USER,
@@ -608,7 +606,6 @@ const AppFlowNavigation = createStackNavigator(
     [CONTACT_INFO]: ConnectedContactInfo,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
-    [BITCOIN_NETWORK_INTRO]: BitcoinNetworkIntro,
     [LOGOUT_PENDING]: LogoutPendingScreen,
   },
   modalTransition,
