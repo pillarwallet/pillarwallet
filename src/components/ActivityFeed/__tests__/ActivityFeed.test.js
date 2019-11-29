@@ -22,6 +22,8 @@ import { Provider } from 'react-redux';
 import renderer from 'react-test-renderer';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
+import { ThemeProvider } from 'styled-components';
+import { defaultTheme } from 'reducers/appSettingsReducer';
 import ActivityFeed from 'components/ActivityFeed/ActivityFeed';
 
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
@@ -70,8 +72,9 @@ describe('ActivityFeed', () => {
     const tabs = [{ data: transactions }];
 
     const component = Component(initialStore,
-      <ActivityFeed tabs={tabs} navigation={navigation} />,
-    ).toJSON();
+      <ThemeProvider theme={defaultTheme}>
+        <ActivityFeed tabs={tabs} navigation={navigation} />
+      </ThemeProvider>).toJSON();
 
     expect(component).toMatchSnapshot();
   });
@@ -84,8 +87,9 @@ describe('ActivityFeed', () => {
     const tabs = [{ data: transactions }];
 
     const component = Component(initialStore,
-      <ActivityFeed tabs={tabs} navigation={navigation} />,
-    ).toJSON();
+      <ThemeProvider theme={defaultTheme}>
+        <ActivityFeed tabs={tabs} navigation={navigation} />
+      </ThemeProvider>).toJSON();
 
     expect(component).toMatchSnapshot();
   });

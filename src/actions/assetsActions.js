@@ -56,6 +56,7 @@ import type {
   TokenTransactionPayload,
   CollectibleTransactionPayload,
   TransactionPayload,
+  SyntheticTransaction,
 } from 'models/Transaction';
 import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
@@ -76,6 +77,7 @@ import { findMatchingContact } from 'utils/contacts';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
+import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
 import SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
@@ -388,6 +390,7 @@ export const sendAssetAction = (
           gasLimit: transaction.gasLimit,
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+          extra: transaction.extra || null,
         });
       }
     }
@@ -422,13 +425,17 @@ export const sendAssetAction = (
         };
         dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
       } else {
-        dispatch({
-          type: ADD_TRANSACTION,
-          payload: {
-            accountId,
-            historyTx,
-          },
-        });
+        // check if there's a need to commit synthetic asset transaction
+        const syntheticTransactionExtra: SyntheticTransaction = get(historyTx, 'extra.syntheticTransaction');
+        if (!isEmpty(syntheticTransactionExtra)) {
+          const { transactionId, toAddress } = syntheticTransactionExtra;
+          dispatch(commitSyntheticsTransaction(transactionId, historyTx.hash));
+          // change history receiver address to actual receiver address rather than synthetics service address
+          historyTx = { ...historyTx, to: toAddress };
+        }
+
+        dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });
+
         const { history: { data: currentHistory } } = getState();
         const accountHistory = currentHistory[accountId] || [];
         const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');

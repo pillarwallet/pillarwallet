@@ -30,7 +30,7 @@ import smartWalletReducer from './smartWalletReducer';
 import walletConnectReducer from './walletConnectReducer';
 import walletConnectSessionsReducer from './walletConnectSessionsReducer';
 import assetsReducer from './assetsReducer';
-import appSettingsReducer from './appSettingsReducer';
+import appSettingsReducer, { defaultTheme } from './appSettingsReducer';
 import ratesReducer from './ratesReducer';
 import userReducer from './userReducer';
 import historyReducer from './historyReducer';
@@ -57,6 +57,7 @@ import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
 import bitcoinReducer from './bitcoinReducer';
 import userEventsReducer from './userEventsReducer';
+import syntheticsReducer from './syntheticsReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -95,6 +96,7 @@ import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './b
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
 import type { BitcoinReducerAction, BitcoinReducerState } from './bitcoinReducer';
 import type { UserEventsReducerAction, UserEventsReducerState } from './userEventsReducer';
+import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -130,6 +132,7 @@ export type RootReducerState = {|
   userSettings: UserSettingsReducerState,
   bitcoin: BitcoinReducerState,
   userEvents: UserEventsReducerState,
+  synthetics: SyntheticsReducerState,
 |};
 
 type RootReducerAction =
@@ -150,7 +153,8 @@ type RootReducerAction =
   | UserSettingsReducerAction
   | BitcoinReducerAction
   | UserEventsReducerAction
-  | DbAction;
+  | DbAction
+  | SyntheticsReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -196,13 +200,14 @@ const appReducer = combineReducers({
   userSettings: userSettingsReducer,
   bitcoin: bitcoinReducer,
   userEvents: userEventsReducer,
+  synthetics: syntheticsReducer,
 });
 
 export const initialState = appReducer(undefined, {});
 
 const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
   if (action.type === LOG_OUT) {
-    return appReducer({ appSettings: { isFetched: true } }, {});
+    return appReducer({ appSettings: { isFetched: true, data: { theme: defaultTheme } } }, {});
   }
   return appReducer(state, action);
 };

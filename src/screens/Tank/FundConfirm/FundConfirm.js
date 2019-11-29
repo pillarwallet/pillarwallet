@@ -102,7 +102,7 @@ class FundConfirm extends React.Component<Props, State> {
     const { session, navigation, topUpFee } = this.props;
     const { topUpButtonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
+    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei().toString()));
     const submitButtonTitle = !topUpButtonSubmitted ? 'Fund Pillar Tank' : 'Processing...';
 
     return (

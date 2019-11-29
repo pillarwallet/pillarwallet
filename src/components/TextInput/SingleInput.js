@@ -189,11 +189,11 @@ const InputField = styled(Input)`
   include-font-padding: false;
   text-align: ${props => props.textAlign || 'right'};
   textAlignVertical: center;
-  background: ${props => props.theme.backgroundColor};
-  border-radius: ${props => props.theme.borderRadius};
+  background: ${props => props.customTheme.backgroundColor};
+  border-radius: ${props => props.customTheme.borderRadius};
   color: ${UIColors.defaultTextColor};
-  border-width: ${props => props.error ? '1px' : props.theme.borderWidth};
-  border-color: ${props => props.error ? 'tomato' : props.theme.borderColor};
+  border-width: ${props => props.error ? '1px' : props.customTheme.borderWidth};
+  border-color: ${props => props.error ? 'tomato' : props.customTheme.borderColor};
   padding: 0 12px;  
   font-family: ${appFont.medium};
 `;
@@ -318,7 +318,7 @@ class SingleInput extends React.Component<Props, *> {
       floatingImageStyle,
     } = this.props;
     const { value = '' } = inputProps;
-    const theme = getTheme(this.props);
+    const customTheme = getTheme(this.props);
     return (
       <Wrapper marginTop={marginTop}>
         {label && <Label>{label.toUpperCase()}</Label>}
@@ -338,7 +338,7 @@ class SingleInput extends React.Component<Props, *> {
               textAlignVertical="center"
               fontSize={fontSize}
               placeholderTextColor={baseColors.darkGray}
-              theme={theme}
+              customTheme={customTheme}
             />
             {!!innerImageURI &&
             <FloatImageView>

@@ -20,6 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
+import BigNumber from 'bignumber.js';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText } from 'components/Typography';
@@ -77,13 +78,15 @@ export const SettlementItem = (props: Props) => {
   const formattedPPNTransactions = ppnTransactions.map((trx) => {
     const { symbol, value: rawValue } = trx;
     const { decimals = 18 } = getAssetData(accountAssets, supportedAssets, symbol);
-    const value = +formatAmount(formatUnits(rawValue.toString(), decimals));
+    const value = new BigNumber(rawValue);
     if (!valueByAsset[symbol]) {
-      valueByAsset[symbol] = { ...trx, value };
+      valueByAsset[symbol] = { ...trx, value, decimals };
     } else {
-      valueByAsset[symbol].value += value;
+      const { value: currentValue } = valueByAsset[symbol];
+      valueByAsset[symbol].value = currentValue.plus(value);
     }
-    return { ...trx, value };
+    const formatted = formatAmount(formatUnits(value.toString(), decimals));
+    return { ...trx, formatted };
   });
 
   const valuesArray = Object.keys(valueByAsset).map((key) => valueByAsset[key]);
@@ -102,7 +105,10 @@ export const SettlementItem = (props: Props) => {
           subtext="to Smart Wallet"
           customAddon={(
             <ListWrapper>
-              {valuesArray.map(({ symbol, value }) => <ItemValue key={symbol}>{`${value} ${symbol}`}</ItemValue>)}
+              {valuesArray.map(({ symbol, value, decimals }) => {
+                const formatted = formatAmount(formatUnits(value.toString(), decimals));
+                return (<ItemValue key={symbol}>{`${formatted} ${symbol}`}</ItemValue>);
+              })}
             </ListWrapper>)}
           innerWrapperHorizontalAlign="flex-start"
           itemStatusIcon={itemStatusIcon}
@@ -119,12 +125,11 @@ export const SettlementItem = (props: Props) => {
           subtext="from PLR Network"
           customAddon={(
             <ListWrapper>
-              {formattedPPNTransactions.map(({ symbol, value, hash }) => (
+              {formattedPPNTransactions.map(({ symbol, formatted, hash }) => (
                 <TankAssetBalance
                   key={hash}
-                  amount={`- ${value} ${symbol}`}
+                  amount={`- ${formatted} ${symbol}`}
                   monoColor
-                  textStyle={{ color: baseColors.scarlet }}
                 />
               ))}
             </ListWrapper>)}

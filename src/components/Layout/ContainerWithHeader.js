@@ -21,13 +21,14 @@ import * as React from 'react';
 import { Platform, StatusBar, View, Dimensions } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation, SafeAreaView } from 'react-navigation';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import isEqual from 'lodash.isequal';
 
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
-import { UIColors } from 'utils/variables';
 import { isIphoneX } from 'utils/common';
+import { themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 import { ScrollWrapper } from './Layout';
 
@@ -39,10 +40,11 @@ type Props = {
   backgroundColor?: string,
   keyboardAvoidFooter?: React.Node,
   minAvoidHeight?: number,
+  theme: Theme,
 };
 
 export const StyledSafeAreaView = styled(SafeAreaView)`
-  background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
+  background-color: ${props => (props.color ? props.color : themedColors.surface)};
   flex: 1;
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;
@@ -113,6 +115,7 @@ class ContainerWithHeader extends React.Component<Props> {
       backgroundColor,
       keyboardAvoidFooter,
       minAvoidHeight = 600,
+      theme,
     } = this.props;
 
     const topInset = headerProps.floating ? 'always' : 'never';
@@ -140,7 +143,7 @@ class ContainerWithHeader extends React.Component<Props> {
           <SafeAreaView
             forceInset={{ top: 'never', bottom: 'always', ...inset }}
             style={{
-              backgroundColor: backgroundColor || UIColors.defaultBackgroundColor,
+              backgroundColor: backgroundColor || theme.colors.surface,
               width: '100%',
               flexWrap: 'wrap',
             }}
@@ -153,4 +156,4 @@ class ContainerWithHeader extends React.Component<Props> {
   }
 }
 
-export default withNavigation(ContainerWithHeader);
+export default withTheme(withNavigation(ContainerWithHeader));

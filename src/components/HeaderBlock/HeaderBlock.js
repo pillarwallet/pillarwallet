@@ -52,9 +52,9 @@ type Props = {
 
 const Wrapper = styled.View`
   width: 100%;
-  background-color: ${props => props.theme.backgroundColor || 'transparent'};
-  border-bottom-width: ${props => props.theme.borderBottomWidth || 0};
-  border-bottom-color: ${props => props.theme.borderBottomColor || 'transparent'};
+  background-color: ${props => props.customTheme.backgroundColor || 'transparent'};
+  border-bottom-width: ${props => props.customTheme.borderBottomWidth || 0};
+  border-bottom-color: ${props => props.customTheme.borderBottomColor || 'transparent'};
   ${props => props.floating
     ? `
       position: absolute;
@@ -85,7 +85,7 @@ const HeaderProfileImage = styled(ProfileImage)``;
 
 const HeaderTitle = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${props => props.theme.color || UIColors.defaultTextColor};
+  color: ${props => props.customTheme.color || UIColors.defaultTextColor};
   text-align: ${props => props.centerText ? 'center' : 'left'};
   margin-top: 2px;
 `;
@@ -152,7 +152,7 @@ const TextButton = styled.TouchableOpacity`
   ${props => props.bordered
     ? `
       border-width: 1px;
-      border-color: ${props.theme.rightActionBorderColor || baseColors.electricBlue};
+      border-color: ${props.customTheme.rightActionBorderColor || baseColors.electricBlue};
       border-radius: 14px;
       padding: 5px ${responsiveSize(spacing.mediumLarge)}px;
       `
@@ -161,7 +161,7 @@ const TextButton = styled.TouchableOpacity`
 
 const ButtonLabel = styled(BaseText)`
   font-size: ${fontSizes.regular}px;
-  color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
+  color: ${props => props.customTheme.rightActionLabelColor || baseColors.electricBlue};
 `;
 
 const Indicator = styled.View`
@@ -241,7 +241,7 @@ const CENTER = 'CENTER';
 const RIGHT = 'RIGHT';
 
 class HeaderBlock extends React.Component<Props> {
-  renderHeaderContent = (theme: Object) => {
+  renderHeaderContent = (customTheme: Object) => {
     const {
       rightItems = [],
       sideFlex,
@@ -256,11 +256,11 @@ class HeaderBlock extends React.Component<Props> {
       <HeaderRow>
         <LeftItems sideFlex={sideFlex} style={!centerItems.length && !rightItems.length ? { flexGrow: 2 } : {}}>
           {(leftItems.length || !!noBack)
-            ? leftItems.map((item) => this.renderSideItems(item, theme, LEFT))
+            ? leftItems.map((item) => this.renderSideItems(item, customTheme, LEFT))
             : (
               <BackIcon
                 icon="back"
-                color={theme.iconColor || UIColors.defaultNavigationColor}
+                color={customTheme.iconColor || UIColors.defaultNavigationColor}
                 onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
                 fontSize={fontSizes.large}
                 horizontalAlign="flex-start"
@@ -269,30 +269,30 @@ class HeaderBlock extends React.Component<Props> {
         </LeftItems>
         {!!centerItems.length &&
         <CenterItems>
-          {centerItems.map((item) => this.renderSideItems(item, theme, CENTER))}
+          {centerItems.map((item) => this.renderSideItems(item, customTheme, CENTER))}
         </CenterItems>
         }
         {(!!centerItems.length || !!rightItems.length) &&
           <RightItems sideFlex={sideFlex}>
-            {rightItems.map((item) => this.renderSideItems(item, theme, RIGHT))}
+            {rightItems.map((item) => this.renderSideItems(item, customTheme, RIGHT))}
           </RightItems>
         }
       </HeaderRow>
     );
   };
 
-  renderSideItems = (item, theme, type = '') => {
+  renderSideItems = (item, customTheme, type = '') => {
     const { navigation } = this.props;
     const commonStyle = {};
     if (type === RIGHT) commonStyle.marginLeft = spacing.small;
     if (item.user || item.userIcon) {
-      return this.renderUser(theme, !item.userIcon);
+      return this.renderUser(customTheme, !item.userIcon);
     }
     if (item.title) {
       return (
         <View style={{ ...commonStyle, flexDirection: 'row', flexWrap: 'wrap' }} key={item.title}>
           <HeaderTitle
-            theme={theme}
+            customTheme={customTheme}
             style={item.color ? { color: item.color } : {}}
             onPress={item.onPress}
             centerText={type === CENTER}
@@ -307,7 +307,7 @@ class HeaderBlock extends React.Component<Props> {
         <View style={{ marginRight: -10, ...commonStyle }} key={item.icon}>
           <ActionIcon
             icon={item.icon}
-            color={item.color || theme.rightActionIconColor || UIColors.defaultNavigationColor}
+            color={item.color || customTheme.rightActionIconColor || UIColors.defaultNavigationColor}
             onPress={item.onPress}
             fontSize={item.fontSize || fontSizes.large}
             horizontalAlign="flex-start"
@@ -326,8 +326,14 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.label) {
       return (
-        <TextButton onPress={item.onPress} key={item.label} bordered={item.bordered} theme={theme} style={commonStyle}>
-          <ButtonLabel theme={theme}>{item.label}</ButtonLabel>
+        <TextButton
+          onPress={item.onPress}
+          key={item.label}
+          bordered={item.bordered}
+          customTheme={customTheme}
+          style={commonStyle}
+        >
+          <ButtonLabel customTheme={customTheme}>{item.label}</ButtonLabel>
           {item.addon}
         </TextButton>
       );
@@ -356,7 +362,7 @@ class HeaderBlock extends React.Component<Props> {
       );
     }
     if (item.actionButton) {
-      return (<HeaderActionButton {...item.actionButton} theme={theme} wrapperStyle={commonStyle} />);
+      return (<HeaderActionButton {...item.actionButton} customTheme={customTheme} wrapperStyle={commonStyle} />);
     }
     if (item.custom) {
       return <View key={item.key || 'custom'} style={commonStyle}>{item.custom}</View>;
@@ -364,7 +370,7 @@ class HeaderBlock extends React.Component<Props> {
     return null;
   };
 
-  renderUser = (theme, showName: boolean) => {
+  renderUser = (customTheme, showName: boolean) => {
     const { user, navigation } = this.props;
     return (
       <UserButton key="user" onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}>
@@ -376,7 +382,7 @@ class HeaderBlock extends React.Component<Props> {
         />
         {showName &&
         <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
-          <HeaderTitle theme={theme} style={{ marginLeft: spacing.medium }}>{user.username}</HeaderTitle>
+          <HeaderTitle customTheme={customTheme} style={{ marginLeft: spacing.medium }}>{user.username}</HeaderTitle>
         </View>}
       </UserButton>
     );
@@ -384,13 +390,13 @@ class HeaderBlock extends React.Component<Props> {
 
   render() {
     const { floating } = this.props;
-    const theme = getTheme(this.props);
+    const customTheme = getTheme(this.props);
 
     return (
-      <Wrapper theme={theme} floating={floating}>
+      <Wrapper customTheme={customTheme} floating={floating}>
         <SafeArea forceInset={{ bottom: 'never', top: 'always' }} androidStatusbarHeight={StatusBar.currentHeight}>
           <HeaderContentWrapper>
-            {this.renderHeaderContent(theme)}
+            {this.renderHeaderContent(customTheme)}
           </HeaderContentWrapper>
         </SafeArea>
       </Wrapper>
