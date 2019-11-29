@@ -215,6 +215,7 @@ import {
   SEND_SYNTHETIC_AMOUNT,
   SEND_SYNTHETIC_UNAVAILABLE,
   LOGOUT_PENDING,
+  UNSETTLED_ASSETS_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -277,7 +278,6 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
     [SETTINGS]: SettingsScreen,
-    [UNSETTLED_ASSETS]: UnsettledAssets,
   },
   StackNavigatorConfig,
 );
@@ -561,6 +561,15 @@ const tankSettleFlow = createStackNavigator({
 
 tankSettleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// UNSETTLED ASSETS FLOW
+const unsettledAssetsFlow = createStackNavigator({
+  [UNSETTLED_ASSETS]: UnsettledAssets,
+  [SETTLE_BALANCE]: SettleBalanceScreen,
+  [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
+}, StackNavigatorConfig);
+
+unsettledAssetsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 const tankFundFlow = createStackNavigator({
   [FUND_TANK]: FundTankScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
@@ -591,6 +600,7 @@ const AppFlowNavigation = createStackNavigator(
     [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletUpgradeFlow,
     [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
     [TANK_SETTLE_FLOW]: tankSettleFlow,
+    [UNSETTLED_ASSETS_FLOW]: unsettledAssetsFlow,
     [TANK_FUND_FLOW]: tankFundFlow,
     [TANK_WITHDRAWAL_FLOW]: tankWithdrawalFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,

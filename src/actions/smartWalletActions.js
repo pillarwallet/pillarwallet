@@ -144,7 +144,6 @@ import {
   formatUnits,
   isCaseInsensitiveMatch,
   parseTokenAmount,
-  uniqBy,
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getWalletsCreationEventsAction } from './userEventsActions';
