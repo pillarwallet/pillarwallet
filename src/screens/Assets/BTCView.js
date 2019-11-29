@@ -31,10 +31,11 @@ import {
 } from 'actions/bitcoinActions';
 
 // components
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
+import AssetPattern from 'components/AssetPattern';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -42,7 +43,7 @@ import type { BitcoinAddress, BitcoinUtxo, BitcoinBalance, BTCTransaction } from
 import type { Rates } from 'models/Asset';
 
 // utils
-import { formatMoney } from 'utils/common';
+import { formatFiat, formatMoney } from 'utils/common';
 import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 import { satoshisToBtc, extractBitcoinTransactions } from 'utils/bitcoin';
 
@@ -69,27 +70,29 @@ const AssetButtonsWrapper = styled.View`
 
 const TopPartWrapper = styled.View`
   padding: ${spacing.large}px;
-  background-color: ${baseColors.snowWhite};
   border-bottom-width: 1;
   border-color: ${baseColors.mediumLightGray};
 `;
 
-const SectionTitle = styled(MediumText)`
-  ${fontStyles.regular};
-  color: ${baseColors.blueYonder};
-`;
-
-const TankBalanceWrapper = styled.View`
-  padding: ${spacing.large}px 40px;
+const BTCBalanceWrapper = styled.View`
+  padding: 0 ${spacing.large}px ${spacing.large}px;
   align-items: center;
 `;
 
-const TankBalance = styled(BaseText)`
+const BTCBalance = styled(BaseText)`
   font-size: ${fontSizes.giant}px;
   color: ${baseColors.slateBlack};
 `;
 
+const ValueInFiat = styled(BaseText)`
+  ${fontStyles.small};
+  text-align: center;
+  color: ${baseColors.darkGray};
+`;
+
 const iconSend = require('assets/icons/icon_send.png');
+const bitcoinNetworkIcon = require('assets/icons/icon_BTC.png');
+const iconReceive = require('assets/icons/icon_receive.png');
 
 class BTCView extends React.Component<Props, State> {
   state = {
@@ -123,6 +126,7 @@ class BTCView extends React.Component<Props, State> {
       addresses,
       balances,
       transactions = [],
+      baseFiatCurrency,
     } = this.props;
 
     // TODO: Select address
@@ -134,26 +138,36 @@ class BTCView extends React.Component<Props, State> {
     const availableFormattedAmount = formatMoney(confirmedBalance, 4);
 
     const transactionsHistory = extractBitcoinTransactions(address, transactions);
+    const formattedBitcoinBalance = formatFiat(0, baseFiatCurrency); // TODO: calculate balance
 
     return (
       <View style={{ flex: 1 }}>
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
+            backgroundColor: baseColors.snowWhite,
           }}
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={this.refreshBalance} />
           }
         >
+          <AssetPattern
+            token="BTC"
+            iconSource={bitcoinNetworkIcon}
+            isListed
+            tops={[170, 140, 90, 60]}
+            sideIconsLeftDiff={100}
+            innerIconsLeftDiff={60}
+          />
           <TopPartWrapper>
-            <SectionTitle>Bitcoin balance</SectionTitle>
-            <TankBalanceWrapper>
-              <TankBalance>
+            <BTCBalanceWrapper>
+              <BTCBalance>
                 {`${availableFormattedAmount} BTC`}
-              </TankBalance>
-            </TankBalanceWrapper>
+              </BTCBalance>
+              <ValueInFiat>{formattedBitcoinBalance}</ValueInFiat>
+            </BTCBalanceWrapper>
             <AssetButtonsWrapper>
-              <CircleButton label="Receive" onPress={this.showReceive} fontIcon="plus" />
+              <CircleButton label="Receive" icon={iconReceive} onPress={this.showReceive} />
               <CircleButton
                 label="Send"
                 icon={iconSend}
