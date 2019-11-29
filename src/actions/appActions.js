@@ -223,7 +223,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
 
       // check if current user has theme set and set it to default if
-      const hasTheme = get(appSettings, 'theme');
+      const hasTheme = get(appSettings, 'themeType');
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 
       if (!hasTheme) {

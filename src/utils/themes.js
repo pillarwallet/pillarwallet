@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import theme from 'styled-theming';
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 export const lightThemeColors = {
   text: '#0A1427',
@@ -117,3 +118,22 @@ export const themedColors = {
     darkTheme: darkThemeColors.userAvatar,
   }),
 };
+
+export const defaultTheme = {
+  current: LIGHT_THEME,
+  colors: lightThemeColors,
+};
+
+const darkTheme = {
+  current: LIGHT_THEME,
+  colors: lightThemeColors,
+};
+
+export function getThemeByType(themeType: string) {
+  switch (themeType) {
+    case DARK_THEME:
+      return darkTheme;
+    default:
+      return defaultTheme;
+  }
+}

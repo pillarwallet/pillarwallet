@@ -31,12 +31,10 @@ import {
   setKeychainDataObject,
   resetKeychainDataObject,
 } from 'utils/keychain';
-import { darkThemeColors, lightThemeColors } from 'utils/themes';
 
 import SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { defaultTheme } from 'reducers/appSettingsReducer';
 
 import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
@@ -186,29 +184,27 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
 export const changeAppThemeAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { theme: { current } } },
+      appSettings: { data: { themeType: previousTheme } },
     } = getState();
 
-    const newTheme = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
-    const colors = current === LIGHT_THEME ? darkThemeColors : lightThemeColors;
-    const theme = { current: newTheme, colors };
+    const themeType = previousTheme === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
 
-    dispatch(saveDbAction('app_settings', { appSettings: { theme } }));
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: { theme },
+      payload: { themeType },
     });
   };
 };
 
 export const setAppThemeAction = () => {
   return (dispatch: Dispatch) => {
-    const theme = defaultTheme; // TODO: get theme based on user preferences;
+    const themeType = LIGHT_THEME; // TODO: get theme based on user preferences;
 
-    dispatch(saveDbAction('app_settings', { appSettings: { theme } }));
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: { theme },
+      payload: { themeType },
     });
   };
 };

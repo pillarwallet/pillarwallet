@@ -3,7 +3,7 @@ import * as React from 'react';
 import renderer from 'react-test-renderer';
 import ModalQRCode from 'screens/ContactInfo/ModalQRCode';
 import { ThemeProvider } from 'styled-components';
-import { defaultTheme } from 'reducers/appSettingsReducer';
+import { defaultTheme } from 'utils/themes';
 
 const data = 'MECARD:N:test,test;NICKNAME:testUser;EMAIL:test@test.com;ADR:testCity,testCountry;';
 

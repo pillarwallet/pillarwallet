@@ -44,7 +44,7 @@ import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Theme } from 'models/Theme';
+import { getThemeByType } from 'utils/Themes';
 
 import configureStore from './src/configureStore';
 
@@ -66,7 +66,7 @@ type Props = {
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
   executeDeepLink: Function,
-  theme: Theme,
+  themeType: string,
   changeAppTheme: () => void,
 }
 
@@ -148,9 +148,11 @@ class App extends React.Component<Props, *> {
   };
 
   render() {
-    const { isFetched, theme, changeAppTheme } = this.props;
+    const { isFetched, themeType, changeAppTheme } = this.props;
+    const theme = getThemeByType(themeType);
     const { colors, current } = theme;
     if (!isFetched) return null;
+
 
     return (
       <ThemeProvider theme={theme}>
@@ -183,10 +185,10 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { theme } },
+  appSettings: { isFetched, data: { themeType } },
 }: RootReducerState) => ({
   isFetched,
-  theme,
+  themeType,
 });
 
 const mapDispatchToProps = (dispatch) => ({
