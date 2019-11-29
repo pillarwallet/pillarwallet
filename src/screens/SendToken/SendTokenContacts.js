@@ -24,30 +24,44 @@ import { Keyboard, Alert } from 'react-native';
 import isEmpty from 'lodash.isempty';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
+import type { NavigationScreenProp } from 'react-navigation';
+
+// components
 import Separator from 'components/Separator';
-import { ACCOUNTS, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
-import { COLLECTIBLES } from 'constants/assetsConstants';
-import { CHAT } from 'constants/chatConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Spinner from 'components/Spinner';
+
+// constants
+import { ACCOUNTS, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { COLLECTIBLES } from 'constants/assetsConstants';
+import { CHAT } from 'constants/chatConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+
+// actions
 import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
+
+// utils
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress, isCaseInsensitiveMatch } from 'utils/common';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
+
+// selectors
+import { activeAccountSelector } from 'selectors';
+
+// models, types
 import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
-import { activeAccountSelector } from 'selectors';
+import type { SendNavigateOptions } from 'models/Navigation';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -250,15 +264,16 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   navigateToNextScreen(ethAddress) {
+    const { navigation, navigateToSendTokenAmount } = this.props;
     if (this.assetData.tokenType === COLLECTIBLES) {
-      this.props.navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
+      navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
         assetData: this.assetData,
         receiver: ethAddress,
         source: 'Contact',
       });
       return;
     }
-    this.props.navigateToSendTokenAmount({
+    navigateToSendTokenAmount({
       assetData: this.assetData,
       receiver: ethAddress,
       source: 'Contact',
@@ -322,11 +337,18 @@ class SendTokenContacts extends React.Component<Props, State> {
         });
     }
 
-    const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;
+    const defaultAssetName = this.isPPNTransaction ? 'synthetic asset' : 'asset';
+    const tokenName = this.assetData.tokenType === COLLECTIBLES
+      ? this.assetData.name
+      : (this.assetData.token || defaultAssetName);
+    const headerTitle = `Send ${tokenName}`;
     const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
 
     return (
-      <ContainerWithHeader headerProps={{ centerItems: [{ title: `Send ${tokenName}` }] }} inset={{ bottom: 0 }}>
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: headerTitle }] }}
+        inset={{ bottom: 0 }}
+      >
         <FormWrapper>
           <Form
             ref={node => {
@@ -372,7 +394,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   session: { data: { contactsSmartAddressesSynced, isOnline } },
   blockchainNetwork: { data: blockchainNetworks },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   accounts,
   localContacts,
   wallet,
@@ -391,8 +413,8 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  navigateToSendTokenAmount: (options) => dispatch(navigateToSendTokenAmountAction(options)),
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  navigateToSendTokenAmount: (options: SendNavigateOptions) => dispatch(navigateToSendTokenAmountAction(options)),
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 
