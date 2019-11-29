@@ -458,6 +458,12 @@ export const isCaseInsensitiveMatch = (a: ?string, b: ?string): boolean => {
   return a.toLowerCase() === b.toLowerCase();
 };
 
+// number with decimals is valid if it has decimals else if not then it should not contain any decimal pointer
+export const isValidNumberDecimals = (
+  number: number | string,
+  decimals: number,
+) => decimals !== 0 || !number.toString().includes('.');
+
 /**
  * helps to avoid text overlapping on many decimals,
  * full amount will be displayed in confirm screen

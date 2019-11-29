@@ -92,6 +92,10 @@ import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/UpgradeToSmartWallet/SmartWalletIntro';
 import UnsettledAssets from 'screens/UnsettledAssets';
+import SendSyntheticAsset from 'screens/SendSynthetic/SendSyntheticAsset';
+import SendSyntheticConfirm from 'screens/SendSynthetic/SendSyntheticConfirm';
+import SendSyntheticAmount from 'screens/SendSynthetic/SendSyntheticAmount';
+import SendSyntheticUnavailable from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
 
 // components
@@ -199,11 +203,17 @@ import {
   SMART_WALLET_INTRO,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
+  PPN_SEND_SYNTHETIC_ASSET_FLOW,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL_FLOW,
   TANK_WITHDRAWAL,
   TANK_WITHDRAWAL_CONFIRM,
+  SEND_SYNTHETIC_ASSET,
+  SEND_SYNTHETIC_CONFIRM,
+  SEND_SYNTHETIC_AMOUNT,
+  SEND_SYNTHETIC_UNAVAILABLE,
   LOGOUT_PENDING,
+  UNSETTLED_ASSETS_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -266,7 +276,6 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
     [SETTINGS]: SettingsScreen,
-    [UNSETTLED_ASSETS]: UnsettledAssets,
   },
   StackNavigatorConfig,
 );
@@ -510,6 +519,20 @@ const ppnSendTokenFromAssetFlow = createStackNavigator(
   StackNavigatorModalConfig,
 );
 
+// PPN SEND SYNTHETIC ASSET FULL FLOW
+const ppnSendSyntheticAssetFlow = createStackNavigator(
+  {
+    [SEND_SYNTHETIC_ASSET]: SendSyntheticAsset,
+    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+    [SEND_SYNTHETIC_AMOUNT]: SendSyntheticAmount,
+    [SEND_SYNTHETIC_CONFIRM]: SendSyntheticConfirm,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+    [SEND_SYNTHETIC_UNAVAILABLE]: SendSyntheticUnavailable,
+  },
+  StackNavigatorModalConfig,
+);
+
 // MANAGE WALLETS FLOW
 const manageWalletsFlow = createStackNavigator({
   [ACCOUNTS]: AccountsScreen,
@@ -536,6 +559,15 @@ const tankSettleFlow = createStackNavigator({
 
 tankSettleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// UNSETTLED ASSETS FLOW
+const unsettledAssetsFlow = createStackNavigator({
+  [UNSETTLED_ASSETS]: UnsettledAssets,
+  [SETTLE_BALANCE]: SettleBalanceScreen,
+  [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
+}, StackNavigatorConfig);
+
+unsettledAssetsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 const tankFundFlow = createStackNavigator({
   [FUND_TANK]: FundTankScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
@@ -556,6 +588,7 @@ const AppFlowNavigation = createStackNavigator(
     [TAB_NAVIGATION]: tabNavigation,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
+    [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
     [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
     [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
@@ -565,6 +598,7 @@ const AppFlowNavigation = createStackNavigator(
     [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletUpgradeFlow,
     [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
     [TANK_SETTLE_FLOW]: tankSettleFlow,
+    [UNSETTLED_ASSETS_FLOW]: unsettledAssetsFlow,
     [TANK_FUND_FLOW]: tankFundFlow,
     [TANK_WITHDRAWAL_FLOW]: tankWithdrawalFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,

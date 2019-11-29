@@ -40,7 +40,7 @@ type Props = {
   paragraph?: string,
   paragraphLines?: string,
   customAddon?: React.Node,
-  onPress?: Function,
+  onPress?: ?Function,
   avatarUrl?: string,
   iconName?: ?string,
   itemImageUrl?: string,
@@ -489,10 +489,16 @@ const Addon = (props: Props) => {
       balance: tokenBalance = '',
       token = '',
       value = '',
+      custom,
     } = balance;
     return (
       <Wrapper style={{ alignItems: 'flex-end' }}>
-        {!!tokenBalance.toString() && <ItemValueBold>{`${tokenBalance} ${token}`}</ItemValueBold>}
+        {!!tokenBalance.toString() &&
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <ItemValueBold>{`${tokenBalance} ${token}`}</ItemValueBold>
+          {custom && <View style={{ marginLeft: 10 }}>{custom}</View>}
+        </View>
+        }
         {!!syntheticBalance.toString() &&
         <TankAssetBalance
           monoColor
