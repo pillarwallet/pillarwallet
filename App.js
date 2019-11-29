@@ -44,6 +44,7 @@ import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import type { RootReducerState } from 'reducers/rootReducer';
+import { defaultTheme } from 'reducers/appSettingsReducer';
 import type { Theme } from 'models/Theme';
 
 import configureStore from './src/configureStore';
@@ -208,7 +209,7 @@ const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App)
 
 const AppRoot = () => (
   <Provider store={store}>
-    <PersistGate loading={<Container><LoadingSpinner /></Container>} persistor={persistor}>
+    <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
       <AppWithNavigationState />
     </PersistGate>
   </Provider>
