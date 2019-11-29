@@ -855,14 +855,14 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
+                  - fix/btc-tx-send-testonly
       - hockeyapp_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - develop
+                  - fix/btc-tx-send-testonly
       - stage_ios:
           requires:
             - build-and-test
