@@ -37,7 +37,7 @@ export type SyntheticTransaction = {
 };
 
 export type SyntheticTransactionExtra = {
-  syntheticTransaction: $Shape<SyntheticTransaction>
+  syntheticTransaction: $Shape<SyntheticTransaction>,
 };
 
 export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra | SyntheticTransactionExtra;
