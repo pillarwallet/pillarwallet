@@ -30,7 +30,7 @@ import {
 } from 'constants/walletConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_USER, REGISTERED } from 'constants/userConstants';
@@ -59,7 +59,6 @@ import * as connectionKeyActions from 'actions/connectionKeyPairActions';
 import { transformAssetsToObject } from 'utils/assets';
 import PillarSdk from 'services/api';
 import { WebSocket } from 'mock-socket';
-import { defaultTheme } from 'reducers/appSettingsReducer';
 
 global.WebSocket = WebSocket;
 
@@ -169,7 +168,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
-      { type: UPDATE_APP_SETTINGS, payload: { theme: defaultTheme } },
+      { type: UPDATE_APP_SETTINGS, payload: { themeType: LIGHT_THEME } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
@@ -237,7 +236,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
-      { type: UPDATE_APP_SETTINGS, payload: { theme: defaultTheme } },
+      { type: UPDATE_APP_SETTINGS, payload: { themeType: LIGHT_THEME } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
@@ -318,7 +317,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
-      { type: UPDATE_APP_SETTINGS, payload: { theme: defaultTheme } },
+      { type: UPDATE_APP_SETTINGS, payload: { themeType: LIGHT_THEME } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },

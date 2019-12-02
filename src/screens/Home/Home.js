@@ -77,7 +77,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // utils
 import { baseColors, spacing, fontStyles } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
@@ -323,7 +323,8 @@ class HomeScreen extends React.Component<Props, State> {
       badgesEvents,
       theme,
     } = this.props;
-    const { colors } = theme;
+    const colors = getThemeColors(theme);
+
     const {
       activeTab,
       isScanning,

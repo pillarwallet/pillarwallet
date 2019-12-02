@@ -32,6 +32,7 @@ import { connect } from 'react-redux';
 import ProfileImage from 'components/ProfileImage';
 import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 import { responsiveSize } from 'utils/ui';
+import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 // partials
@@ -200,7 +201,7 @@ class HeaderBlock extends React.Component<Props> {
       theme,
       transparent,
     } = this.props;
-    const { colors } = theme;
+    const colors = getThemeColors(theme);
 
     return (
       <HeaderRow>
@@ -233,7 +234,7 @@ class HeaderBlock extends React.Component<Props> {
 
   renderSideItems = (item, type = '') => {
     const { navigation, theme } = this.props;
-    const { colors } = theme;
+    const colors = getThemeColors(theme);
     const commonStyle = {};
     if (type === RIGHT) commonStyle.marginLeft = spacing.small;
     if (item.user || item.userIcon) {

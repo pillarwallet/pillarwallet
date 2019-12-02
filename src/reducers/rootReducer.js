@@ -23,6 +23,8 @@ import { combineReducers } from 'redux';
 import { LOG_OUT } from 'constants/authConstants';
 import type { DbAction } from 'models/DbAction';
 
+import { defaultTheme } from 'utils/themes';
+
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
 import walletReducer from './walletReducer';
@@ -30,7 +32,7 @@ import smartWalletReducer from './smartWalletReducer';
 import walletConnectReducer from './walletConnectReducer';
 import walletConnectSessionsReducer from './walletConnectSessionsReducer';
 import assetsReducer from './assetsReducer';
-import appSettingsReducer, { defaultTheme } from './appSettingsReducer';
+import appSettingsReducer from './appSettingsReducer';
 import ratesReducer from './ratesReducer';
 import userReducer from './userReducer';
 import historyReducer from './historyReducer';
