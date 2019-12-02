@@ -20,13 +20,6 @@
 import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import merge from 'lodash.merge';
-import { lightThemeColors } from 'utils/themes';
-import type { Theme } from 'models/Theme';
-
-export const defaultTheme = {
-  current: LIGHT_THEME,
-  colors: lightThemeColors,
-};
 
 export type AppSettingsReducerState = {
   data: {
@@ -38,7 +31,7 @@ export type AppSettingsReducerState = {
     userJoinedBeta: ?boolean,
     firebaseAnalyticsConnectionEnabled: ?boolean,
     baseFiatCurrency: ?string,
-    theme: Theme,
+    themeType: string,
   },
   isFetched: boolean,
 };
@@ -58,7 +51,7 @@ export const initialState: AppSettingsReducerState = {
     userJoinedBeta: false,
     firebaseAnalyticsConnectionEnabled: false,
     baseFiatCurrency: null,
-    theme: defaultTheme,
+    themeType: LIGHT_THEME,
   },
   isFetched: false,
 };

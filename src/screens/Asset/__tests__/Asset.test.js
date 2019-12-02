@@ -35,9 +35,11 @@ import { initialState as assetsState } from 'reducers/assetsReducer';
 import { initialState as ratesState } from 'reducers/ratesReducer';
 import { initialState as accountsState } from 'reducers/accountsReducer';
 import { initialState as featureFlagsState } from 'reducers/featureFlagsReducer';
-import { initialState as appSettingsState, defaultTheme } from 'reducers/appSettingsReducer';
+import { initialState as appSettingsState } from 'reducers/appSettingsReducer';
 import { initialState as userSettingsState } from 'reducers/userSettingsReducer';
 import { initialState as exchangeState } from 'reducers/exchangeReducer';
+
+import { defaultTheme } from 'utils/themes';
 
 const mockStore = configureMockStore([thunk]);
 

@@ -23,7 +23,7 @@ import renderer from 'react-test-renderer';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 import { ThemeProvider } from 'styled-components';
-import { defaultTheme } from 'reducers/appSettingsReducer';
+import { defaultTheme } from 'utils/themes';
 import ActivityFeed from 'components/ActivityFeed/ActivityFeed';
 
 import { TRANSACTION_EVENT } from 'constants/historyConstants';

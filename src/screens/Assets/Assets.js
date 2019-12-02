@@ -61,6 +61,7 @@ import { KEY_SECTION } from 'screens/Settings';
 // utils
 import { getAccountName } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getThemeColors } from 'utils/themes';
 
 // selectors
 import { accountCollectiblesSelector } from 'selectors/collectibles';
@@ -176,7 +177,7 @@ class AssetsScreen extends React.Component<Props, State> {
       accounts,
       theme,
     } = this.props;
-    const { colors } = theme;
+    const colors = getThemeColors(theme);
 
     const { type: walletType } = activeAccount || {};
     const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };

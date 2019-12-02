@@ -38,14 +38,13 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
-import { changeAppThemeAction, setAppThemeAction } from 'actions/appSettingsActions';
+import { changeAppThemeAction } from 'actions/appSettingsActions';
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import type { RootReducerState } from 'reducers/rootReducer';
-import { defaultTheme } from 'reducers/appSettingsReducer';
-import type { Theme } from 'models/Theme';
+import { getThemeByType, defaultTheme } from 'utils/themes';
 
 import configureStore from './src/configureStore';
 
@@ -67,9 +66,8 @@ type Props = {
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
   executeDeepLink: Function,
-  theme: Theme,
+  themeType: string,
   changeAppTheme: () => void,
-  setAppTheme: () => void,
 }
 
 class App extends React.Component<Props, *> {
@@ -99,7 +97,6 @@ class App extends React.Component<Props, *> {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
       executeDeepLink,
-      setAppTheme,
     } = this.props;
     const isOnline = await NetInfo.isConnected.fetch();
     this.setOnlineStatus(isOnline); // set initial online status
@@ -118,7 +115,6 @@ class App extends React.Component<Props, *> {
       .catch(() => {});
     Linking.addEventListener('url', this.handleDeepLinkEvent);
     startListeningOnOpenNotification();
-    setAppTheme();
   }
 
   setOnlineStatus = isOnline => {
@@ -152,8 +148,10 @@ class App extends React.Component<Props, *> {
   };
 
   render() {
-    const { isFetched, theme, changeAppTheme } = this.props;
+    const { isFetched, themeType, changeAppTheme } = this.props;
+    const theme = getThemeByType(themeType);
     const { colors, current } = theme;
+
     if (!isFetched) return null;
 
     return (
@@ -187,10 +185,10 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { theme } },
+  appSettings: { isFetched, data: { themeType } },
 }: RootReducerState) => ({
   isFetched,
-  theme,
+  themeType,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -202,7 +200,6 @@ const mapDispatchToProps = (dispatch) => ({
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   changeAppTheme: () => dispatch(changeAppThemeAction()),
-  setAppTheme: () => dispatch(setAppThemeAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);

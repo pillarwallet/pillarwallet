@@ -27,7 +27,7 @@ import isEqual from 'lodash.isequal';
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { isIphoneX } from 'utils/common';
-import { themedColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 import { ScrollWrapper } from './Layout';
@@ -117,6 +117,7 @@ class ContainerWithHeader extends React.Component<Props> {
       minAvoidHeight = 600,
       theme,
     } = this.props;
+    const colors = getThemeColors(theme);
 
     const topInset = headerProps.floating ? 'always' : 'never';
     const bottomInset = keyboardAvoidFooter ? 'never' : 'always';
@@ -143,7 +144,7 @@ class ContainerWithHeader extends React.Component<Props> {
           <SafeAreaView
             forceInset={{ top: 'never', bottom: 'always', ...inset }}
             style={{
-              backgroundColor: backgroundColor || theme.colors.surface,
+              backgroundColor: backgroundColor || colors.surface,
               width: '100%',
               flexWrap: 'wrap',
             }}
