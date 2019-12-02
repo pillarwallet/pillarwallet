@@ -267,9 +267,9 @@ export default class SelectorInput extends React.Component<Props, State> {
     const { inputProps = {}, value } = this.props;
     const { input } = value;
     const { onChange, onSelectorChange } = inputProps;
-    this.setState({ showOptionsSelector: false, query: '' });
     if (onChange) onChange({ selector: selectedValue, input });
     if (onSelectorChange) onSelectorChange();
+    this.setState({ showOptionsSelector: false });
   };
 
   focusInput = () => {
@@ -367,7 +367,7 @@ export default class SelectorInput extends React.Component<Props, State> {
     let filteredListData = options;
     let filteredHorizontalListData = horizontalOptions;
 
-    if (isSearchQuery) {
+    if (isSearchQuery && showOptionsSelector) {
       // filter by search query and sort exact matches (case insensitve) first (-1) or keep existing order (0)
       filteredListData = filteredListData
         .filter(({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name))
@@ -456,6 +456,7 @@ export default class SelectorInput extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalShow={this.focusInput}
+          onModalHidden={() => this.setState({ query: '' })}
           backgroundColor={baseColors.white}
           noSwipeToDismiss
           noClose
@@ -480,12 +481,7 @@ export default class SelectorInput extends React.Component<Props, State> {
               />
             </SearchBarWrapper>
             <ScrollWrapper
-              contentContainerStyle={{
-                paddingBottom: 30,
-                backgroundColor: filteredHorizontalListData.length
-                  ? baseColors.white
-                  : UIColors.defaultBackgroundColor,
-              }}
+              contentContainerStyle={{ paddingBottom: 30 }}
               disableOnAndroid
             >
               {!!filteredHorizontalListData.length &&
@@ -512,7 +508,8 @@ export default class SelectorInput extends React.Component<Props, State> {
                   initialNumToRender={10}
                   viewabilityConfig={viewConfig}
                   ListHeaderComponent={
-                    (showOptionsTitles && !!optionsTitle) && <OptionsHeader>{optionsTitle}</OptionsHeader>
+                    (showOptionsTitles && !!optionsTitle) && filteredListData.length &&
+                    <OptionsHeader>{optionsTitle}</OptionsHeader>
                   }
                   getItemLayout={(data, index) => ({
                     length: 70,

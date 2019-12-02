@@ -18,3 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 export const UPDATE_APP_SETTINGS = 'UPDATE_APP_SETTINGS';
+export const RESET_APP_SETTINGS = 'RESET_APP_SETTINGS';
+export const LIGHT_THEME = 'lightTheme';
+export const DARK_THEME = 'darkTheme';

@@ -17,8 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import ethers from 'ethers';
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
@@ -40,23 +39,25 @@ import {
   CHAT,
   PIN_CODE_UNLOCK,
   PEOPLE,
+  LOGOUT_PENDING,
 } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
 import { delay } from 'utils/common';
+import { getSaltedPin, decryptWallet, normalizeWalletAddress } from 'utils/wallet';
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import ChatService from 'services/chat';
+import smartWalletService from 'services/smartWallet';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
-import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
+import { findKeyBasedAccount } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
-import { getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
 import { setKeychainDataObject } from 'utils/keychain';
@@ -66,7 +67,7 @@ import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
 import { updatePinAttemptsAction } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
+import { setAppThemeAction, setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
@@ -83,6 +84,17 @@ const Crashlytics = firebase.crashlytics();
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
+
+export const updateFcmTokenAction = (walletId: string) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const { session: { data: { isOnline } } } = getState();
+    if (!isOnline) return;
+    const fcmToken = await firebase.messaging().getToken().catch(() => null);
+    dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
+    Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+    await api.updateFCMToken(walletId, fcmToken);
+  };
+};
 
 export const loginAction = (
   pin: ?string,
@@ -101,10 +113,9 @@ export const loginAction = (
           blockchainNetwork = '',
         },
       },
-      session: { data: { isOnline } },
+      oAuthTokens: { data: oAuthTokens },
     } = getState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
-    const { oAuthTokens } = await storage.get('oAuthTokens');
 
     const generateNewConnKeys = connectionKeyPairs.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1;
 
@@ -116,6 +127,7 @@ export const loginAction = (
 
     await dispatch(fetchFeatureFlagsAction()); // wait until fetches new flags
     const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+    const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED');
 
     try {
       let wallet;
@@ -132,11 +144,7 @@ export const loginAction = (
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
         const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
-        wallet = await ethers.Wallet.RNfromEncryptedWallet(
-          JSON.stringify(encryptedWallet),
-          saltedPin,
-          decryptionOptions,
-        );
+        wallet = await decryptWallet(encryptedWallet, saltedPin, decryptionOptions);
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };
@@ -148,43 +156,67 @@ export const loginAction = (
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
-        const fcmToken = await firebase.messaging().getToken().catch(() => null);
-        dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
-        if (isOnline) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+        // signal credentials
         const signalCredentials = {
           userId: user.id,
           username: user.username,
           walletId: user.walletId,
           ethAddress: wallet.address,
-          fcmToken,
         };
+
+        // oauth fallback method for expired access token
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
+
+        // oauth fallback method for all tokens expired or invalid
         const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
+
+        // init API
         api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
+
+        // execute login success callback
         if (onLoginSuccess && wallet.privateKey) {
           let { privateKey: privateKeyParam } = wallet;
           privateKeyParam = privateKeyParam.indexOf('0x') === 0 ? privateKeyParam.slice(2) : privateKeyParam;
           await onLoginSuccess(privateKeyParam);
         }
+
+        // set API username
         api.setUsername(user.username);
+
+        // update FCM
+        dispatch(updateFcmTokenAction(user.walletId));
+
+        // make first api call which can also trigger OAuth fallback methods
         const userInfo = await api.userInfo(user.walletId);
-        if (isOnline) await api.updateFCMToken(user.walletId, fcmToken);
-        const { oAuthTokens: { data: OAuthTokensObject } } = getState();
-        // $FlowFixMe
-        await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
+
+        // perform signal init
+        dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
+
+        // save updated user
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
-        await dispatch(
-          updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId, generateNewConnKeys),
-        );
 
+        // update connections
+        dispatch(updateConnectionKeyPairs(
+          wallet.mnemonic,
+          wallet.privateKey,
+          user.walletId,
+          generateNewConnKeys,
+        ));
+
+        // init smart wallet
         if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
           await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
         }
 
         // set ETHEREUM network as active
-        // if we disable feature flag or end beta testing program while user has set PPN as active network
-        if (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
+        // if we disable feature flag or end beta testing program
+        // while user has set PPN or BTC as active network
+        const revertToDefaultNetwork =
+          (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) ||
+          (!bitcoinFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
+
+        if (revertToDefaultNetwork) {
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
 
@@ -262,7 +294,7 @@ export const loginAction = (
       const isWalletBackedUp = isImported || isBackedUp;
       const keyBasedAccount = findKeyBasedAccount(accounts);
       if (keyBasedAccount) {
-        toastWalletBackup(isWalletBackedUp, getAccountId(keyBasedAccount));
+        toastWalletBackup(isWalletBackedUp);
       }
 
       dispatch(getWalletsCreationEventsAction());
@@ -302,7 +334,7 @@ export const checkAuthAction = (
       let wallet;
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
-        wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
+        wallet = await decryptWallet(encryptedWallet, saltedPin, options);
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };
@@ -339,12 +371,9 @@ export const changePinAction = (newPin: string, currentPin: string) => {
     });
     await delay(50);
     const currentSaltedPin = await getSaltedPin(currentPin, dispatch);
-    const wallet = await ethers.Wallet.RNfromEncryptedWallet(
-      JSON.stringify(encryptedWallet),
-      currentSaltedPin,
-      {
-        mnemonic: true,
-      });
+    const wallet = await decryptWallet(encryptedWallet, currentSaltedPin, {
+      mnemonic: true,
+    });
 
     const newSaltedPin = await getSaltedPin(newPin, dispatch);
     const newEncryptedWallet = await wallet.RNencrypt(newSaltedPin, { scrypt: { N: 16384 } })
@@ -388,15 +417,19 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 };
 
 export const logoutAction = () => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    navigate(NavigationActions.navigate({ routeName: LOGOUT_PENDING }));
     Intercom.logout();
-    navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
-    dispatch({ type: LOG_OUT });
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
-    chat.client.resetAccount().catch(() => null);
-    clearWebViewCookies();
     await firebase.iid().delete().catch(() => {});
+    await chat.client.resetAccount().catch(() => null);
     await AsyncStorage.removeItem(WALLET_STORAGE_BACKUP_KEY);
     await storage.removeAll();
+    const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+    if (smartWalletFeatureEnabled) await smartWalletService.reset();
+    clearWebViewCookies();
+    dispatch({ type: LOG_OUT });
+    dispatch({ type: RESET_APP_SETTINGS, payload: {} });
+    dispatch(setAppThemeAction());
+    navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };

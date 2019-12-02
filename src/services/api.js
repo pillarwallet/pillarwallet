@@ -46,6 +46,7 @@ import {
 } from 'services/assets';
 import EthplorerSdk from 'services/EthplorerSdk';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
+import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
 import type {
@@ -786,7 +787,13 @@ SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: 
 };
 
 SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string) {
-  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
+  if (NETWORK_PROVIDER !== 'homestead') {
+    const url = `https://blockchainparser.appspot.com/${NETWORK_PROVIDER}/${walletAddress}/`;
+    return Promise.resolve()
+      .then(() => fetch(url))
+      .then(resp => resp.json())
+      .catch(() => []);
+  }
   return Promise.resolve()
     .then(() => ethplorerSdk.getAddressInfo(walletAddress))
     .then(data => get(data, 'tokens', []))
@@ -794,8 +801,9 @@ SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string
 };
 
 SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: string, amount: number) {
+  const amountToGetOffer = amount < MIN_MOONPAY_FIAT_VALUE ? MIN_MOONPAY_FIAT_VALUE : amount;
   const url = `${MOONPAY_API_URL}/v3/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
-  + `&baseCurrencyAmount=${amount}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
+  + `&baseCurrencyAmount=${amountToGetOffer}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
 
   return Promise.resolve()
     .then(() => fetch(url))
@@ -803,11 +811,13 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
     .then(data => {
       if (data.totalAmount) {
         const {
-          totalAmount,
           feeAmount,
           extraFeeAmount,
           quoteCurrencyAmount,
         } = data;
+
+        const extraFeeAmountForAmountProvided = (extraFeeAmount / amountToGetOffer) * amount;
+        const totalAmount = amount + feeAmount + extraFeeAmountForAmountProvided;
 
         return {
           provider: 'MoonPay',
@@ -815,16 +825,26 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
           fromAsset: { code: fromAsset },
           toAsset: { code: toAsset },
           feeAmount,
-          extraFeeAmount,
+          extraFeeAmount: extraFeeAmountForAmountProvided,
           quoteCurrencyAmount,
           _id: 'moonpay',
-          minQuantity: 20,
+          minQuantity: MIN_MOONPAY_FIAT_VALUE,
           maxQuantity: 9999999,
         };
       }
       return { error: true };
     })
     .catch(() => ({ error: true }));
+};
+
+SDKWrapper.prototype.fetchMoonPaySupportedAssetsTickers = function () {
+  const url = `${MOONPAY_API_URL}/v3/currencies`;
+  return fetch(url)
+    .then(resp => resp.json())
+    .then(data => {
+      return data.filter(({ isSuspended, code }) => !isSuspended && !!code).map(({ code }) => code.toUpperCase());
+    })
+    .catch(() => []);
 };
 
 SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset: string, amount: number) {
@@ -849,4 +869,17 @@ SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset:
       return { error: true };
     })
     .catch(() => ({ error: true }));
+};
+
+SDKWrapper.prototype.fetchSendWyreSupportedAssetsTickers = function () {
+  return fetch(`${SENDWYRE_API_URL}/v3/rates`)
+    .then(resp => resp.json())
+    .then(data => {
+      const exchangePairs = Object.keys(data);
+      const exchangePairsWithSupportedFiatAsFirstItem = exchangePairs.filter((pair) =>
+        (pair.startsWith('USD') && !pair.startsWith('USDC')) || pair.startsWith('EUR') || pair.startsWith('GBP'));
+
+      return exchangePairsWithSupportedFiatAsFirstItem.map((key) => key.substring(3));
+    })
+    .catch(() => []);
 };

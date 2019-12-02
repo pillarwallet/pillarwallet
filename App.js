@@ -20,29 +20,32 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, NetInfo, AppState, Platform, Linking } from 'react-native';
+import { StatusBar, NetInfo, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
 import RootNavigation from 'navigation/rootNavigation';
 import { Sentry } from 'react-native-sentry';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled from 'styled-components/native';
+import { ThemeProvider } from 'styled-components';
 import { setTopLevelNavigator } from 'services/navigation';
 import { SENTRY_DSN, BUILD_TYPE } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
-import { updateSessionNetworkStatusAction, checkDBConflictsAction } from 'actions/sessionActions';
+import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
 import {
   startListeningOnOpenNotificationAction,
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
+import { changeAppThemeAction } from 'actions/appSettingsActions';
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
 import type { RootReducerState } from 'reducers/rootReducer';
+import { getThemeByType, defaultTheme } from 'utils/themes';
 
 import configureStore from './src/configureStore';
 import type { Steps } from './src/reducers/walkthroughsReducer';
@@ -62,11 +65,12 @@ type Props = {
   fetchAppSettingsAndRedirect: Function,
   updateSessionNetworkStatus: Function,
   updateOfflineQueueNetworkStatus: Function,
-  checkDBConflicts: Function,
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
   executeDeepLink: Function,
   activeWalkthroughSteps: Steps,
+  themeType: string,
+  changeAppTheme: () => void,
 }
 
 class App extends React.Component<Props, *> {
@@ -95,10 +99,8 @@ class App extends React.Component<Props, *> {
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
-      checkDBConflicts,
       executeDeepLink,
     } = this.props;
-    checkDBConflicts();
     const isOnline = await NetInfo.isConnected.fetch();
     this.setOnlineStatus(isOnline); // set initial online status
     SplashScreen.hide();
@@ -149,27 +151,54 @@ class App extends React.Component<Props, *> {
   };
 
   render() {
-    const { isFetched, activeWalkthroughSteps } = this.props;
+    const {
+      isFetched,
+      themeType,
+      changeAppTheme,
+      activeWalkthroughSteps,
+    } = this.props;
+    const theme = getThemeByType(themeType);
+    const { colors, current } = theme;
+
     if (!isFetched) return null;
+
     return (
-      <React.Fragment>
-        <RootNavigation
-          ref={(node) => {
-            if (!node) return;
-            setTopLevelNavigator(node);
-          }}
-        />
-        {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
-      </React.Fragment>
+      <ThemeProvider theme={theme}>
+        <React.Fragment>
+          <Root>
+            <RootNavigation
+              ref={(node) => {
+                if (!node) return;
+                setTopLevelNavigator(node);
+              }}
+            />
+            {!!__DEV__ &&
+            <TouchableOpacity
+              style={{
+                padding: 20,
+                borderWidth: 1,
+                borderColor: colors.border,
+                alignItems: 'center',
+                backgroundColor: colors.card,
+              }}
+              onPress={changeAppTheme}
+            >
+              <Text style={{ color: colors.text }}>{`THEME: ${current}`}</Text>
+            </TouchableOpacity>}
+            {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
+          </Root>
+        </React.Fragment>
+      </ThemeProvider>
     );
   }
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched },
+  appSettings: { isFetched, data: { themeType } },
   walkthroughs: { steps: activeWalkthroughSteps },
 }: RootReducerState) => ({
   isFetched,
+  themeType,
   activeWalkthroughSteps,
 });
 
@@ -178,22 +207,20 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(initAppAndRedirectAction(appState, platform)),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),
   updateOfflineQueueNetworkStatus: (isOnline: boolean) => dispatch(updateOfflineQueueNetworkStatusAction(isOnline)),
-  checkDBConflicts: () => dispatch(checkDBConflictsAction()),
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
+  changeAppTheme: () => dispatch(changeAppThemeAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
 
 const AppRoot = () => (
-  <Root>
-    <Provider store={store}>
-      <PersistGate loading={<Container><LoadingSpinner /></Container>} persistor={persistor}>
-        <AppWithNavigationState />
-      </PersistGate>
-    </Provider>
-  </Root>
+  <Provider store={store}>
+    <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
+      <AppWithNavigationState />
+    </PersistGate>
+  </Provider>
 );
 
 export default AppRoot;

@@ -27,8 +27,8 @@ export const setActiveBlockchainNetworkAction = (id: string) => {
     const { blockchainNetwork: { data: networks } } = getState();
     const network = networks.find(({ id: networkId }) => networkId === id);
 
-    if (!(network && network.isAvailable)) {
-      console.error('Trying to activate an unavailable network'); // eslint-disable-line no-console
+    if (!network) {
+      console.error('Trying to activate an invalid network'); // eslint-disable-line no-console
       return;
     }
 

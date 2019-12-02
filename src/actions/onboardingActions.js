@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
@@ -47,7 +47,7 @@ import {
   TYPE_RECEIVED,
   UPDATE_INVITATIONS,
 } from 'constants/invitationsConstants';
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
@@ -69,7 +69,6 @@ import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'ut
 import { delay, uniqBy } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
-import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 
 // services
 import Storage from 'services/storage';
@@ -93,6 +92,7 @@ import { logEventAction } from 'actions/analyticsActions';
 import {
   setFirebaseAnalyticsCollectionEnabled,
   setUserJoinedBetaAction,
+  setAppThemeAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
@@ -233,12 +233,8 @@ const finishRegistration = async ({
   });
 };
 
-const navigateToAppFlow = (isWalletBackedUp: boolean, getState: GetState) => {
-  const accounts = getState().accounts.data;
-  const keyBasedAccount = findKeyBasedAccount(accounts);
-  const accountId = keyBasedAccount ? getAccountId(keyBasedAccount) : '';
-
-  toastWalletBackup(isWalletBackedUp, accountId);
+const navigateToAppFlow = (isWalletBackedUp: boolean) => {
+  toastWalletBackup(isWalletBackedUp);
 
   const navigateToAssetsAction = NavigationActions.navigate({
     routeName: APP_FLOW,
@@ -267,7 +263,8 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_CONTACTS, payload: [] });
     dispatch({ type: UPDATE_INVITATIONS, payload: [] });
     dispatch({ type: UPDATE_ASSETS, payload: {} });
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
+    dispatch({ type: RESET_APP_SETTINGS, payload: {} });
+    dispatch(setAppThemeAction()); // as appSettings gets overwritten
     dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
     dispatch({ type: SET_HISTORY, payload: {} });
     dispatch({ type: UPDATE_BALANCES, payload: {} });
@@ -376,7 +373,7 @@ export const registerWalletAction = () => {
 
     // STEP 7: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp, getState);
+    navigateToAppFlow(isWalletBackedUp);
   };
 };
 
@@ -436,7 +433,7 @@ export const registerOnBackendAction = () => {
     });
 
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp, getState);
+    navigateToAppFlow(isWalletBackedUp);
   };
 };
 

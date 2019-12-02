@@ -31,7 +31,6 @@ export type Asset = {
   amount?: number,
 };
 
-
 export type Assets = {
   [symbol: string]: Asset,
 };

@@ -20,6 +20,7 @@
 import {
   SENDWYRE_WIDGET_URL,
   SENDWYRE_ACCOUNT_ID,
+  SENDWYRE_RETURN_URL,
 } from 'react-native-dotenv';
 
 export const wyreWidgetUrl = (
@@ -33,7 +34,8 @@ export const wyreWidgetUrl = (
     + `&dest=ethereum:${destAddress}`
     + `&sourceAmount=${sourceAmount}`
     + `&sourceCurrency=${sourceCurrency}`
-    + `&accountId=${SENDWYRE_ACCOUNT_ID}`;
+    + `&accountId=${SENDWYRE_ACCOUNT_ID}`
+    + `&redirectUrl=${escape(SENDWYRE_RETURN_URL)}`;
 
   return url;
 };

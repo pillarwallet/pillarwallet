@@ -35,9 +35,7 @@ export function makeAmountForm(
   const Amount = t.refinement(t.String, (amount): boolean => {
     if (!isValidNumber(amount.toString())) return false;
 
-    if (decimals === 0 && amount.toString().includes('.')) {
-      return false;
-    }
+    if (decimals === 0 && amount.toString().includes('.')) return false;
 
     amount = parseNumber(amount.toString());
 

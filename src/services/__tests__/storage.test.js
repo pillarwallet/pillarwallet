@@ -17,24 +17,26 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import Storage from 'services/storage';
+import PouchDBStorage from 'services/pouchDBStorage';
 
-const storage = Storage.getInstance('db-test.db');
+const storage = PouchDBStorage.getInstance('db');
 const docID = 'encryptedWallet';
 const mockEncryptedWallet: Object = { address: 'encr_ypted' };
 
-describe('Storage service', () => {
+describe('PouchDBStorage service', () => {
   it('should create/update a doc with data in PouchDB service', async () => {
     const { ok } = await storage.save(docID, mockEncryptedWallet);
     expect(ok).toBeTruthy();
   });
 
   it('should retrieve a doc from PouchDB service', async () => {
+    await storage.save(docID, mockEncryptedWallet);
     const { address } = await storage.get(docID);
     expect(address).toBe(mockEncryptedWallet.address);
   });
 
   it('should clear the storage', async () => {
+    await storage.save(docID, mockEncryptedWallet);
     await storage.removeAll();
     const wallet = await storage.get(docID);
     expect(wallet).toEqual({});

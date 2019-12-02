@@ -31,6 +31,7 @@ export const RESET_ASSETS_SEARCH_RESULT = 'RESET_ASSETS_SEARCH_RESULT';
 export const SET_INITIAL_ASSETS = 'SET_INITIAL_ASSETS';
 export const UPDATE_SUPPORTED_ASSETS = 'UPDATE_SUPPORTED_ASSETS';
 export const UPDATE_BALANCES = 'UPDATE_BALANCES';
+export const BTC = 'BTC';
 export const ETH = 'ETH';
 export const PLR = 'PLR';
 export const EUR = 'EUR';
@@ -38,6 +39,9 @@ export const GBP = 'GBP';
 export const USD = 'USD';
 export const HOT = 'HOT';
 export const HOLO = 'HOLO';
+
+export const ETHEREUM_ADDRESS_PREFIX = 'ethereum';
+export const BITCOIN_ADDRESS_PREFIX = 'bitcoin';
 
 export const supportedFiatCurrencies = [GBP, EUR, USD];
 export const defaultFiatCurrency = GBP;

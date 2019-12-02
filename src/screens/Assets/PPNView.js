@@ -21,11 +21,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
-import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
@@ -40,15 +39,15 @@ import Button from 'components/Button';
 import ActivityFeed from 'components/ActivityFeed';
 
 // constants
-import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   FUND_TANK,
-  SEND_TOKEN_FROM_ASSET_FLOW,
   SETTLE_BALANCE,
   SMART_WALLET_INTRO,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
+  SEND_SYNTHETIC_ASSET,
 } from 'constants/navigationConstants';
 import {
   PAYMENT_COMPLETED,
@@ -56,53 +55,43 @@ import {
   SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
 
-// models
+// types
 import type { Accounts } from 'models/Account';
-import type { Asset, Assets, Balances } from 'models/Asset';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction } from 'models/Transaction';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 // utils
 import { getRate } from 'utils/assets';
-import { getAccountAddress } from 'utils/accounts';
-import {
-  formatMoney,
-  formatFiat,
-} from 'utils/common';
+import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus, isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 
 // selectors
-import { activeAccountSelector } from 'selectors';
 import {
   availableStakeSelector,
-  paymentNetworkAccountBalancesSelector,
   paymentNetworkNonZeroBalancesSelector,
   PPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
-import { accountAssetsSelector } from 'selectors/assets';
-
+import { accountHistorySelector } from 'selectors/history';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 type Props = {
-  baseFiatCurrency: string,
-  assets: Assets,
+  baseFiatCurrency: ?string,
   rates: Object,
-  balances: Balances,
-  paymentNetworkBalances: Balances,
-  activeAccount: Object,
   navigation: NavigationScreenProp<*>,
   availableStake: number,
-  supportedAssets: Asset[],
   assetsOnNetwork: Object,
-  fetchVirtualAccountBalance: Function,
+  fetchVirtualAccountBalance: () => void,
   accounts: Accounts,
   smartWalletState: Object,
-  availableToSettleTx: Object[],
   PPNTransactions: Transaction[],
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
+  history: Object[],
+  fetchTransactionsHistory: () => void,
 }
 
 type State = {
@@ -160,51 +149,6 @@ class PPNView extends React.Component<Props, State> {
     activeTab: UNSETTLED,
   };
 
-  goToSend = () => {
-    const {
-      navigation,
-      assets,
-      activeAccount,
-      baseFiatCurrency,
-      rates,
-      availableStake,
-    } = this.props;
-    const thisAsset = assets[PLR] || {};
-
-    const {
-      name,
-      symbol,
-      iconMonoUrl,
-      decimals,
-      iconUrl,
-      patternUrl,
-      address,
-      description,
-    } = thisAsset;
-    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const paymentNetworkBalanceFormatted = formatMoney(availableStake, 4);
-    const totalInFiat = availableStake * getRate(rates, PLR, fiatCurrency);
-    const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
-    const assetData = {
-      id: PLR,
-      name: name || symbol,
-      token: symbol,
-      amount: paymentNetworkBalanceFormatted,
-      balanceInFiat: formattedAmountInFiat,
-      address: getAccountAddress(activeAccount),
-      contractAddress: address,
-      icon: iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '',
-      iconColor: fullIconUrl,
-      patternIcon: patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl,
-      description,
-      decimals,
-      isSynthetic: true,
-      isListed: true,
-    };
-    navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
-  };
-
   setActiveTab = (activeTab) => {
     this.setState({ activeTab });
   };
@@ -223,6 +167,8 @@ class PPNView extends React.Component<Props, State> {
       contactsSmartAddresses,
       baseFiatCurrency,
       rates,
+      history,
+      fetchTransactionsHistory,
     } = this.props;
 
     let incomingBalanceInFiat = 0;
@@ -239,8 +185,8 @@ class PPNView extends React.Component<Props, State> {
 
     const availableFormattedAmount = formatMoney(availableStake, 4);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const { upgrade: { status } } = smartWalletState;
-    const sendingBlockedMessage = status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+    const { upgrade: { status: smartWalletUpgradeStatus } } = smartWalletState;
+    const sendingBlockedMessage = smartWalletUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       ? {
         title: 'To top up PLR Tank or Settle transactions, deploy Smart Wallet first',
         message: 'You will have to pay a small fee',
@@ -257,16 +203,14 @@ class PPNView extends React.Component<Props, State> {
     );
 
     const PPNTransactionsGrouped = PPNTransactionsMapped.reduce((filtered, transaction) => {
-      const { stateInPPN } = transaction;
+      const { stateInPPN, hash } = transaction;
       const { settled, unsettled } = filtered;
       switch (stateInPPN) {
         case PAYMENT_PROCESSED:
-          filtered.settled = settled
-            .concat(transaction);
+          filtered.settled = settled.concat(transaction);
           break;
         case PAYMENT_COMPLETED:
-          filtered.unsettled = unsettled
-            .concat(transaction);
+          if (!isHiddenUnsettledTransaction(hash, history)) filtered.unsettled = unsettled.concat(transaction);
           break;
         default:
           break;
@@ -308,6 +252,7 @@ class PPNView extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
+                fetchTransactionsHistory();
                 fetchVirtualAccountBalance();
               }}
             />
@@ -342,7 +287,7 @@ class PPNView extends React.Component<Props, State> {
               <CircleButton
                 label="Send"
                 icon={iconSend}
-                onPress={this.goToSend}
+                onPress={() => navigation.navigate(SEND_SYNTHETIC_ASSET)}
                 disabled={availableStake <= 0}
               />
             </AssetButtonsWrapper>
@@ -392,34 +337,25 @@ class PPNView extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
-  paymentNetwork: { balances, availableToSettleTx: { data: availableToSettleTx, isFetched } },
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
-  assetsLayout,
-  supportedAssets,
   smartWalletState,
   accounts,
-  balances,
-  availableToSettleTx,
-  isFetched,
   contacts,
   contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
   availableStake: availableStakeSelector,
-  activeAccount: activeAccountSelector,
   PPNTransactions: PPNTransactionsSelector,
-  assets: accountAssetsSelector,
+  history: accountHistorySelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -429,6 +365,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
 });
 
 export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView));

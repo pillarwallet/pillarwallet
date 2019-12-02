@@ -27,9 +27,10 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 
 // models
-import type { Transaction } from 'models/Transaction';
+import type { SyntheticTransaction, Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
+import type { BitcoinAddress } from 'models/Bitcoin';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -79,7 +80,7 @@ import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT } from 'constants/userE
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
 // selectors
-import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
+import { activeAccountAddressSelector, supportedAssetsSelector, bitcoinAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 const ActivityFeedList = styled.SectionList`
@@ -161,6 +162,7 @@ type Props = {
   contactsSmartAddresses: ContactSmartAddressData[],
   emptyState?: EmptyState,
   supportedAssets: Asset[],
+  bitcoinAddresses: BitcoinAddress[],
 }
 
 type FeedItemTransaction = {
@@ -315,6 +317,7 @@ class ActivityFeed extends React.Component<Props, State> {
       asset,
       contactsSmartAddresses,
       supportedAssets,
+      bitcoinAddresses,
     } = this.props;
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
@@ -324,7 +327,8 @@ class ActivityFeed extends React.Component<Props, State> {
     if (type === TRANSACTION_EVENT) {
       const tag = get(notification, 'tag', '');
       const isReceived = addressesEqual(notification.to, activeAccountAddress)
-        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL;
+        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+        || bitcoinAddresses.some(e => e.address === notification.to);
       const address = isReceived ? notification.from : notification.to;
       const { decimals = 18 } = getAssetData(assets, supportedAssets, notification.asset);
       const value = formatUnits(notification.value, decimals);
@@ -380,7 +384,6 @@ class ActivityFeed extends React.Component<Props, State> {
         itemValue = '';
         customAddon = (<TankAssetBalance
           amount={`- ${formattedValue} ${notification.asset}`}
-          textStyle={{ color: baseColors.scarlet }}
           monoColor
         />);
         trxData.txType = 'Withdrawal';
@@ -407,10 +410,16 @@ class ActivityFeed extends React.Component<Props, State> {
           trxData.hideAmount = true;
           trxData.hideSender = true;
         } else {
+          const syntheticTransactionExtra: SyntheticTransaction = get(notification, 'extra.syntheticTransaction');
+          let syntheticAssetValue = null;
+          if (!isEmpty(syntheticTransactionExtra)) {
+            const { toAmount, toAssetCode } = syntheticTransactionExtra;
+            syntheticAssetValue = <BaseText style={{ alignSelf: 'flex-end' }}>{toAmount} {toAssetCode}</BaseText>;
+          }
           itemValue = '';
           customAddon = (<TankAssetBalance
             amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
-            textStyle={!isReceived ? { color: baseColors.scarlet } : null}
+            bottomExtra={syntheticAssetValue}
             monoColor
           />);
         }
@@ -691,6 +700,7 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   assets: (state) => getAssetsAsList(accountAssetsSelector(state)),
   supportedAssets: supportedAssetsSelector,
+  bitcoinAddresses: bitcoinAddressSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
