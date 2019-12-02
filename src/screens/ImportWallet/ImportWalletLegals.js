@@ -27,7 +27,7 @@ import { TextLink, BaseText } from 'components/Typography';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
-import { fontSizes, baseColors, spacing } from 'utils/variables';
+import { baseColors, spacing, fontStyles } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -59,14 +59,12 @@ const ButtonWrapper = styled.View`
 `;
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: 20px;
+  ${fontStyles.regular};
   color: ${baseColors.coolGrey};
 `;
 
 const StyledTextLink = styled(TextLink)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: 20px;
+  ${fontStyles.regular};
   color: ${baseColors.rockBlue};
 `;
 
@@ -170,7 +168,6 @@ class ImportWalletLegals extends React.Component<Props, State> {
           <ButtonWrapper>
             <StyledButton
               disabled={!canGoNext}
-              primarySquare
               title="Proceed"
               onPress={() => navigation.navigate(IMPORT_WALLET)}
             />

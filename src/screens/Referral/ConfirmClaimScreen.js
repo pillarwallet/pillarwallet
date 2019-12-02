@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { BoldText, LightText } from 'components/Typography';
+import { LightText, MediumText } from 'components/Typography';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import Header from 'components/Header';
@@ -51,13 +51,13 @@ const assetData = {
   iconColor: 'https://api-qa-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3',
 };
 
-const TokenValue = styled(BoldText)`
+const TokenValue = styled(MediumText)`
   font-size: ${fontSizes.giant}px;
   text-align: center;
 `;
 
 const TextCode = styled(LightText)`
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.coolGrey};
   text-align: center;
   margin-bottom: 30px;

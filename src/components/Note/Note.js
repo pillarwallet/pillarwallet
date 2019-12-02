@@ -22,7 +22,7 @@ import { Text } from 'react-native';
 import styled from 'styled-components/native';
 import Emoji from 'react-native-emoji';
 import { BaseText } from 'components/Typography';
-import { baseColors } from 'utils/variables';
+import { baseColors, fontStyles } from 'utils/variables';
 
 type Props = {
   note: string,
@@ -40,7 +40,7 @@ const NoteWrapper = styled.View`
 `;
 
 const NoteText = styled(BaseText)`
-  font-size: 13px;
+  ${fontStyles.regular};
   color: ${baseColors.danube};
 `;
 

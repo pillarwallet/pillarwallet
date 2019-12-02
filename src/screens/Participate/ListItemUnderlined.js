@@ -19,8 +19,8 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
-import { BoldText, MediumText } from 'components/Typography';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { MediumText } from 'components/Typography';
 
 type Props = {
   label: string,
@@ -38,7 +38,7 @@ const ItemWrapper = styled.View`
 
 const ItemLabel = styled(MediumText)`
   text-align:center;
-  font-size: ${fontSizes.extraExtraSmall};
+  ${fontStyles.small}
   color: ${baseColors.darkGray};
 `;
 
@@ -50,9 +50,8 @@ const ItemValueHolder = styled.View`
   width: 100%;
 `;
 
-const ItemValue = styled(BoldText)`
-  font-size: ${fontSizes.large};
-  font-weight: ${fontWeights.bold};
+const ItemValue = styled(MediumText)`
+  ${fontStyles.big};
 `;
 
 const ListItemUnderlined = (props: Props) => {

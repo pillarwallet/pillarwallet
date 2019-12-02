@@ -24,8 +24,8 @@ import Emoji from 'react-native-emoji';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import Button from 'components/Button';
-import { Paragraph, BoldText, BaseText } from 'components/Typography';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { Paragraph, MediumText, BaseText } from 'components/Typography';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { RECOVERY_AGENTS } from 'constants/navigationConstants';
 
 type Props = {
@@ -52,8 +52,8 @@ const TextWrapper = styled.View`
   flex: 1;
 `;
 
-const ExplanationTitle = styled(BoldText)`
-  font-size: ${fontSizes.medium}px;
+const ExplanationTitle = styled(MediumText)`
+  ${fontStyles.big};
   color: ${baseColors.midnight};
 `;
 
@@ -63,7 +63,7 @@ const BodyWrapper = styled(BaseText)`
 `;
 
 const ExplanationBody = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.medium};
   color: ${baseColors.midnight};
   flex: 1;
 `;

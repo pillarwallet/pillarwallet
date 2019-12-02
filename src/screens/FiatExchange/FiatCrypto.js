@@ -20,8 +20,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
-import type { NavigationScreenProp } from 'react-navigation';
-import type { Accounts } from 'models/Account';
 import { Container, Wrapper } from 'components/Layout';
 import ErrorMessage from 'components/ErrorMessage';
 import Header from 'components/Header';
@@ -29,6 +27,12 @@ import SelectorInput from 'components/SelectorInput';
 
 import { createStructuredSelector } from 'reselect';
 import { accountAssetsSelector } from 'selectors/assets';
+import { sortAssets } from 'utils/assets';
+
+import type { NavigationScreenProp } from 'react-navigation';
+import type { Accounts } from 'models/Account';
+import type { Assets } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 function SelectorInputTemplate(locals) {
   const {
@@ -95,7 +99,7 @@ const formOptions = {
 type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
-  assets: Object,
+  assets: Assets,
   user: Object,
   accounts: Accounts,
 };
@@ -142,10 +146,8 @@ class FiatCrypto extends React.Component<Props, State> {
     this.updateOptions();
   };
 
-  generateAssetsOptions = (assets) => {
-    const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-    const alphabeticalAssets = assetsList.sort((a, b) => a.symbol.localeCompare(b.symbol));
-    return alphabeticalAssets.map(({ symbol, iconUrl, ...rest }) => {
+  generateAssetsOptions = (assets: Assets) => {
+    return sortAssets(assets).map(({ symbol, iconUrl, ...rest }) => {
       return ({
         key: symbol,
         value: symbol,
@@ -208,7 +210,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   user: { data: user },
   accounts: { data: accounts },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   wallet,
   user,
   accounts,

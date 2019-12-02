@@ -32,6 +32,8 @@ import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
 import type { GasInfo } from 'models/GasInfo';
+import { DEFAULT_GAS_LIMIT } from 'services/assets';
+import { SPEED_TYPES } from 'constants/assetsConstants';
 
 const {
   GasPriceStrategies: {
@@ -47,10 +49,12 @@ const TransactionSpeeds = {
 
 const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 
-type AccountTransaction = {
+const DEFAULT_DEPLOYMENT_GAS_LIMIT = 790000;
+
+export type AccountTransaction = {
   recipient: string,
   value: number | string | BigNumber,
-  data: string | Buffer,
+  data?: string | Buffer,
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
 };
 
@@ -77,6 +81,29 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
     gasPrice,
     totalCost: gasAmount && gasPrice && gasPrice.mul(gasAmount),
   };
+};
+
+const calculateEstimate = (
+  estimate,
+  gasInfo?: GasInfo,
+  speed?: string = SPEED_TYPES.NORMAL,
+  defaultGasAmount?: number = DEFAULT_GAS_LIMIT,
+): BigNumber => {
+  let { gasAmount, gasPrice } = parseEstimatePayload(estimate);
+
+  // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
+
+  gasAmount = new BigNumber(gasAmount
+    ? gasAmount.toString()
+    : defaultGasAmount,
+  );
+
+  if (!gasPrice) {
+    const defaultGasPrice = get(gasInfo, `gasPrice.${speed}`, 0);
+    gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
+  }
+
+  return new BigNumber(gasPrice.toString()).multipliedBy(gasAmount);
 };
 
 class SmartWallet {
@@ -221,9 +248,8 @@ class SmartWallet {
       recipient,
       value,
       data,
-      transactionSpeed,
+      transactionSpeed = TransactionSpeeds[AVG],
     } = transaction;
-
     const estimatedTransaction = await this.sdk.estimateAccountTransaction(
       recipient,
       value,
@@ -275,17 +301,41 @@ class SmartWallet {
     return this.sdk.searchAccount({ address });
   }
 
-  async getAccountPayments(lastSyncedHash: ?string, page?: number = 0) {
+  /**
+   * SDK API call results are sorted descending by creation date
+   * lastSyncedId is used to determine whether this page was already fetched
+   */
+  async getAccountPayments(lastSyncedId: ?number, page?: number = 0) {
     if (!this.sdkInitialized) return [];
     const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
     if (!data) return [];
 
     const items = data.items || [];
-    const foundLastSyncedTx = lastSyncedHash
-      ? items.find(({ hash }) => hash === lastSyncedHash)
+    const foundLastSyncedTx = lastSyncedId
+      ? items.find(({ id }) => id === lastSyncedId)
       : null;
     if (data.nextPage && !foundLastSyncedTx) {
-      return [...items, ...(await this.getAccountPayments(lastSyncedHash, page + 1))];
+      return [...items, ...(await this.getAccountPayments(lastSyncedId, page + 1))];
+    }
+
+    return items;
+  }
+  /**
+   * SDK API call results are sorted descending by creation date
+   * lastSyncedId is used to determine whether this page was already fetched
+   */
+  async getAccountTransactions(lastSyncedId: ?number, page?: number = 0) {
+    if (!this.sdkInitialized) return [];
+    // make sure getConnectedAccountTransactions passed hash is empty string
+    const data = await this.sdk.getConnectedAccountTransactions('', page).catch(this.handleError);
+    if (!data) return [];
+
+    const items = data.items || [];
+    const foundLastSyncedTx = lastSyncedId
+      ? items.find(({ id }) => id === lastSyncedId)
+      : null;
+    if (data.nextPage && !foundLastSyncedTx) {
+      return [...items, ...(await this.getAccountTransactions(lastSyncedId, page + 1))];
     }
 
     return items;
@@ -313,20 +363,48 @@ class SmartWallet {
 
   async estimateAccountDeployment(gasInfo: GasInfo) {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(() => {});
-    let { gasAmount, gasPrice } = parseEstimatePayload(deployEstimate);
+    return calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT);
+  }
 
-    if (!gasAmount) {
-      gasAmount = new BigNumber(790000);
-    }
-    if (!gasPrice) {
-      const defaultGasPrice = get(gasInfo, 'gasPrice.max', 0);
-      gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
-    }
-    return gasPrice.mul(gasAmount);
+  async estimateAccountTransaction(transaction: AccountTransaction, gasInfo: GasInfo) {
+    const {
+      recipient,
+      value,
+      data,
+      transactionSpeed = TransactionSpeeds[AVG],
+    } = transaction;
+    const estimatedTransaction = await this.sdk.estimateAccountTransaction(
+      recipient,
+      value,
+      data,
+      transactionSpeed,
+    ).catch(() => {});
+    const defaultSpeed = transactionSpeed === TransactionSpeeds[FAST]
+      ? SPEED_TYPES.FAST
+      : SPEED_TYPES.NORMAL;
+    return calculateEstimate(estimatedTransaction, gasInfo, defaultSpeed);
+  }
+
+  getTransactionStatus(hash: string) {
+    if (!this.sdkInitialized) return null;
+    return this.sdk.getConnectedAccountTransaction(hash)
+      .then(({ state }) => state)
+      .catch(() => null);
   }
 
   handleError(error: any) {
     console.error('SmartWallet handleError: ', error);
+  }
+
+  async reset() {
+    this.sdkInitialized = false;
+    if (!this.sdk) return;
+    this.sdk.event$.next(null); // unsubscribes
+    subscribedToEvents = false;
+    await this.sdk.reset({
+      device: true,
+      session: true,
+    }).catch(null);
   }
 }
 

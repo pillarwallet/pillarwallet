@@ -32,7 +32,7 @@ import { settleTransactionsAction, estimateSettleBalanceAction } from 'actions/s
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
-import { Label, BoldText } from 'components/Typography';
+import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 
@@ -75,8 +75,8 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium}
+const Value = styled(MediumText)`
+  font-size: ${fontSizes.big}px;
 `;
 
 /*
@@ -86,7 +86,7 @@ const TextButton = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled(MediumText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
   letter-spacing: 0.1;
   color: #c95c45;
 `;
@@ -119,7 +119,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const { navigation, settleTransactions, balances } = this.props;
     const txFeeInWei = this.getTxFeeInWei();
 
-    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
+    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei.toString());
     if (!isEnoughForFee) {
       Toast.show({
         message: 'You need to deposit ETH to cover the withdrawal',
@@ -143,7 +143,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const { settleButtonSubmitted } = this.state;
     const { session, settleTxFee } = this.props;
 
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
+    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei().toString()));
     let submitButtonTitle = 'Release Funds';
     if (!settleTxFee.isFetched) {
       submitButtonTitle = 'Getting the fee..';
@@ -162,7 +162,6 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
           <FooterWrapper>
             <Button
               disabled={submitButtonDisabled}
-              roundedCorners
               onPress={this.handleFormSubmit}
               title={submitButtonTitle}
             />

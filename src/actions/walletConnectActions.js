@@ -20,6 +20,8 @@
 import { NavigationActions } from 'react-navigation';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
+
+// constants
 import {
   WALLETCONNECT_CANCEL_REQUEST,
   WALLETCONNECT_TIMEOUT,
@@ -44,15 +46,18 @@ import {
   SESSION_APPROVAL_ERROR,
   SESSION_REJECTION_ERROR,
 } from 'constants/walletConnectConstants';
-import Storage from 'services/storage';
 import {
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
 } from 'constants/navigationConstants';
-import { navigate } from 'services/navigation';
-import Toast from 'components/Toast';
-import { logEventAction } from 'actions/analyticsActions';
+
+// services, utils
+import Storage from 'services/storage';
+import { navigate, updateNavigationLastScreenState } from 'services/navigation';
 import { createConnector } from 'services/walletConnect';
+import { isNavigationAllowed } from 'utils/navigation';
+
+// actions
 import {
   walletConnectSessionsImportedAction,
   walletConnectSessionsLoadedAction,
@@ -60,7 +65,12 @@ import {
   walletConnectSessionRemovedAction,
   walletConnectSessionsRemovedAction,
 } from 'actions/walletConnectSessionsActions';
+import { logEventAction } from 'actions/analyticsActions';
 
+// components
+import Toast from 'components/Toast';
+
+// models, types
 import type { Connector, Session, CallRequest, JsonRpcRequest } from 'models/WalletConnect';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type {
@@ -139,16 +149,26 @@ const onWalletConnectCallRequest = (connector: Connector, payload: JsonRpcReques
 
     dispatch(walletConnectCallRequest(request));
 
-    navigate(
-      NavigationActions.navigate({
-        routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
-        params: {
-          callId: request.callId,
-          method: request.method,
-          goBackDismiss: true,
-        },
-      }),
-    );
+    const navParams = {
+      callId: request.callId,
+      method: request.method,
+      goBackDismiss: true,
+    };
+
+    if (!isNavigationAllowed()) {
+      updateNavigationLastScreenState({
+        lastActiveScreen: WALLETCONNECT_CALL_REQUEST_SCREEN,
+        lastActiveScreenParams: navParams,
+      });
+      return;
+    }
+
+    const navigateToAppAction = NavigationActions.navigate({
+      routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
+      params: navParams,
+    });
+
+    navigate(navigateToAppAction);
   };
 };
 

@@ -25,3 +25,4 @@ export const COLLECTIBLE = 'COLLECTIBLE';
 export const CONNECTION = 'CONNECTION';
 export const SIGNAL = 'SIGNAL';
 export const BCX = 'BCX';
+export const BADGE = 'badge';

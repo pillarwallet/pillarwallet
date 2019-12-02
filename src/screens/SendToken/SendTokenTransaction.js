@@ -25,7 +25,7 @@ import { View, TouchableOpacity } from 'react-native';
 
 // components
 import { Container, Wrapper } from 'components/Layout';
-import { Paragraph, BoldText } from 'components/Typography';
+import { Paragraph, MediumText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Animation from 'components/Animation';
@@ -64,9 +64,9 @@ const getTransactionErrorMessage = (error: string): string => {
   return TRANSACTION_ERRORS[error] || transactionFailureText;
 };
 
-const CancelText = styled(BoldText)`
+const CancelText = styled(MediumText)`
   color: ${baseColors.burningFire};
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
 `;
 
 class SendTokenTransaction extends React.Component<Props> {

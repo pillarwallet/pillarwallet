@@ -18,12 +18,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import { fetchTransactionsHistoryAction, restoreTransactionHistoryAction } from 'actions/historyActions';
+import { fetchAssetTransactionsAction, restoreTransactionHistoryAction } from 'actions/historyActions';
 import { SET_HISTORY, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { ETH, PLR } from 'constants/assetsConstants';
 import type { Assets } from 'models/Asset';
 import { buildHistoryTransaction } from 'utils/history';
+import { getAssetsAsList } from 'utils/assets';
 import { parseEthValue } from 'services/EthplorerSdk';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type SDKWrapper from 'services/api';
 
 const walletAddress = 'wallet-address';
 const walletId = '12345';
@@ -156,20 +160,20 @@ const transformedImportedPlrTransaction = buildHistoryTransaction({
 describe('History Actions', () => {
   const transactionsHistoryStep = 10;
 
-  const api = {
+  const api: $Shape<SDKWrapper> = {
     fetchHistory: jest.fn(),
     fetchSupportedAssets: jest.fn(),
     importedEthTransactionHistory: jest.fn(),
     importedErc20TransactionHistory: jest.fn(),
   };
-  const dispatchMock = jest.fn();
-  const getState = jest.fn();
+  const dispatchMock: Dispatch = jest.fn();
+  const getState: GetState = jest.fn();
 
   afterEach(() => {
     dispatchMock.mockClear();
   });
 
-  describe('fetchTransactionsHistoryAction()', () => {
+  describe('fetchAssetTransactionsAction()', () => {
     afterEach(() => {
       getState.mockRestore();
       api.fetchHistory.mockRestore();
@@ -191,7 +195,7 @@ describe('History Actions', () => {
         }));
         api.fetchHistory.mockImplementation(() => Promise.resolve(transactions));
 
-        await fetchTransactionsHistoryAction(asset)(dispatchMock, getState, api);
+        await fetchAssetTransactionsAction(asset)(dispatchMock, getState, api);
       });
 
       it('should call the api.fetchHistory function', () => {
@@ -221,7 +225,7 @@ describe('History Actions', () => {
         }));
         api.fetchHistory.mockImplementation(() => Promise.resolve([]));
 
-        await fetchTransactionsHistoryAction()(dispatchMock, getState, api);
+        await fetchAssetTransactionsAction()(dispatchMock, getState, api);
       });
 
       it('should NOT call the dispatch function', () => {
@@ -235,9 +239,10 @@ describe('History Actions', () => {
       getState.mockImplementation(() => ({
         accounts: { data: mockAccounts },
         history: { data: {} },
+        user: { data: { walletId } },
         wallet: { data: mockWallet },
       }));
-      api.fetchSupportedAssets.mockImplementation(() => Promise.resolve(Object.values(mockAssetsByAccount)));
+      api.fetchSupportedAssets.mockImplementation(() => Promise.resolve(getAssetsAsList(mockAssetsByAccount)));
     });
 
     afterEach(() => {
@@ -256,7 +261,7 @@ describe('History Actions', () => {
       beforeEach(async () => {
         api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([]));
-        await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
+        await restoreTransactionHistoryAction()(dispatchMock, getState, api);
       });
 
       it('should call the api.fetchSupportedAssets function', () => {
@@ -289,12 +294,13 @@ describe('History Actions', () => {
         getState.mockImplementation(() => ({
           accounts: { data: mockAccounts },
           history: { data: accountTransactions },
+          user: { data: { walletId } },
           wallet: { data: mockWallet },
         }));
 
         api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([]));
-        await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
+        await restoreTransactionHistoryAction()(dispatchMock, getState, api);
       });
 
       it('should call the dispatch function', () => {
@@ -321,12 +327,13 @@ describe('History Actions', () => {
         getState.mockImplementation(() => ({
           accounts: { data: mockAccounts },
           history: { data: accountTransactions },
+          user: { data: { walletId } },
           wallet: { data: mockWallet },
         }));
 
         api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransaction]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([]));
-        await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
+        await restoreTransactionHistoryAction()(dispatchMock, getState, api);
       });
 
       it('should call the dispatch function', () => {
@@ -342,8 +349,24 @@ describe('History Actions', () => {
         });
       });
 
-      it('should handle the wrong eth value that api could return', () => {
+      it('should handle the wrong 1e-22 eth value that api could return', () => {
         expect(parseEthValue(1e-22)).toBe('100000000000000');
+      });
+
+      it('should handle the 0.00104898 eth value that api could return', () => {
+        expect(parseEthValue(0.00104898)).toBe('1048980000000000');
+      });
+
+      it('should handle the 1.0 eth value that api could return', () => {
+        expect(parseEthValue(1.0)).toBe('1000000000000000000');
+      });
+
+      it('should handle the 12.03 eth value that api could return', () => {
+        expect(parseEthValue(12.03)).toBe('12030000000000000000');
+      });
+
+      it('should handle the 0 eth value that api could return', () => {
+        expect(parseEthValue(0)).toBe('0');
       });
     });
 
@@ -357,12 +380,13 @@ describe('History Actions', () => {
         getState.mockImplementation(() => ({
           accounts: { data: mockAccounts },
           history: { data: accountTransactions },
+          user: { data: { walletId } },
           wallet: { data: mockWallet },
         }));
 
         api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([mockImportedPlrTransaction]));
-        await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
+        await restoreTransactionHistoryAction()(dispatchMock, getState, api);
       });
 
       it('should call the dispatch function', () => {
@@ -389,12 +413,13 @@ describe('History Actions', () => {
         getState.mockImplementation(() => ({
           accounts: { data: mockAccounts },
           history: { data: accountTransactions },
+          user: { data: { walletId } },
           wallet: { data: mockWallet },
         }));
 
         api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransaction]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([mockImportedPlrTransaction]));
-        await restoreTransactionHistoryAction(walletAddress, walletId)(dispatchMock, getState, api);
+        await restoreTransactionHistoryAction()(dispatchMock, getState, api);
       });
 
       it('should call the dispatch function', () => {

@@ -4,11 +4,11 @@ import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { fontSizes, spacing, baseColors, UIColors } from 'utils/variables';
+import { fontStyles, spacing, UIColors } from 'utils/variables';
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeImage from 'components/BadgeImage';
-import { BaseText, BoldText } from 'components/Typography';
+import { MediumText, Paragraph } from 'components/Typography';
 import type { Badges } from 'models/Badge';
 
 type Props = {
@@ -31,44 +31,42 @@ const Image = styled(BadgeImage)`
   margin-bottom: ${spacing.rhythm / 2};
 `;
 
-const Subtitle = styled(BoldText)`
+const Subtitle = styled(MediumText)`
   padding-top: 40px;
-  font-size: ${fontSizes.semiGiant}px;
+  ${fontStyles.large};
   text-align: center;
 `;
 
-const Description = styled(BaseText)`
+const Description = styled(Paragraph)`
   padding-top: 40px;
-  font-size: ${fontSizes.small}px;
-  color: ${baseColors.darkGray};
 `;
 
 class Badge extends React.Component<Props, {}> {
   shouldComponentUpdate(nextProps: Props) {
     const { navigation } = this.props;
-    const oldBadgeId = navigation.getParam('id', null);
-    const newBadgeId = nextProps.navigation.getParam('id', null);
+    const oldBadgeId = navigation.getParam('badgeId', null);
+    const newBadgeId = nextProps.navigation.getParam('badgeId', null);
     return oldBadgeId !== newBadgeId;
   }
 
   render() {
     const { navigation, badges } = this.props;
-    const badgeId = Number(navigation.getParam('id', 0));
+    const badgeId = navigation.getParam('badgeId', null);
     const passedBadge = navigation.getParam('badge', null);
     const hideDescription = navigation.getParam('hideDescription', false);
-    const badge = passedBadge || badges.find(({ id }) => id === badgeId) || {};
+    const badge = passedBadge || badges.find(({ badgeId: _badgeId }) => _badgeId === badgeId) || {};
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: badge.name || 'Unknown badge' }] }}>
         <ScrollWrapper color={UIColors.defaultBackgroundColor}>
           <BadgeWrapper>
-            <Image data={badge} size="150" />
+            <Image data={badge} size="184" />
             {!!badge.subtitle && (
             <Subtitle>
               {badge.subtitle}
             </Subtitle>
             )}
             {!!(badge.description && !hideDescription) && (
-            <Description>
+            <Description small light>
               {badge.description}
             </Description>
             )}

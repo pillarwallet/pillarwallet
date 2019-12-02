@@ -155,6 +155,9 @@ android {
 
 
 dependencies {
+    implementation project(':@react-native-community_async-storage')
+    implementation project(':@matt-block_react-native-in-app-browser')
+    implementation project(':react-native-gesture-handler')
   // For animated GIF support
   compile 'com.facebook.fresco:animated-gif:1.10.0'
   // For WebP support, including animated WebP

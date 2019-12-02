@@ -34,7 +34,7 @@ import {
   LoadEarlier,
   Message,
 } from 'react-native-gifted-chat';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { appFont, baseColors, fontSizes, spacing } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -109,9 +109,8 @@ const renderDay = (props: Props) => (
     }}
     textStyle={{
       color: baseColors.darkGray,
-      fontWeight: '400',
-      fontSize: fontSizes.extraSmall,
-      fontFamily: 'Aktiv Grotesk App',
+      fontSize: fontSizes.regular,
+      fontFamily: appFont.regular,
     }}
     dateFormat="LL"
   />
@@ -124,15 +123,13 @@ const renderTime = (props: Props) => {
       textStyle={{
         right: {
           color: baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
+          fontFamily: appFont.regular,
+          fontSize: fontSizes.small,
         },
         left: {
           color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
+          fontFamily: appFont.regular,
+          fontSize: fontSizes.small,
         },
       }}
       timeFormat="HH:mm"
@@ -159,7 +156,7 @@ const renderSend = (props: Props) => (
       name="send-message"
       style={{
         color: baseColors.brightBlue,
-        fontSize: fontSizes.extraLarge,
+        fontSize: fontSizes.large,
       }}
     />
   </Send>
@@ -408,8 +405,8 @@ class ChatTab extends React.Component<Props, State> {
             android: 8,
           }),
           marginBottom: 5,
-          fontSize: fontSizes.extraSmall,
-          lineHeight: fontSizes.small,
+          fontSize: fontSizes.regular,
+          lineHeight: fontSizes.medium,
         }}
         placeholder="Type your message here"
         textInputProps={{
@@ -427,15 +424,13 @@ class ChatTab extends React.Component<Props, State> {
       textStyle={{
         left: {
           color: isWarning ? baseColors.white : baseColors.slateBlack,
-          fontSize: fontSizes.extraSmall,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
+          fontSize: fontSizes.regular,
+          fontFamily: appFont.regular,
         },
         right: {
           color: baseColors.slateBlack,
-          fontSize: fontSizes.extraSmall,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
+          fontSize: fontSizes.regular,
+          fontFamily: appFont.regular,
         },
       }}
       wrapperStyle={{

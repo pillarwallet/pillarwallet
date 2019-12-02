@@ -18,8 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
+import { Sentry } from 'react-native-sentry';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   UPDATE_ASSETS_STATE,
@@ -57,12 +59,21 @@ import type {
   TokenTransactionPayload,
   CollectibleTransactionPayload,
   TransactionPayload,
+  SyntheticTransaction,
 } from 'models/Transaction';
-import type { Asset, Assets, AssetsByAccount, Balance, Balances } from 'models/Asset';
+import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { transformAssetsToObject, calculateTransactionNonceFromHistory } from 'utils/assets';
-import { delay, formatFullAmount, formatUnits, isCaseInsensitiveMatch, noop, uniqBy } from 'utils/common';
+import { transformAssetsToObject, calculateTransactionNonceFromHistory, getAssetsAsList } from 'utils/assets';
+import {
+  delay,
+  formatFullAmount,
+  formatUnits,
+  isCaseInsensitiveMatch,
+  noop,
+  uniqBy,
+  parseTokenAmount,
+} from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccountAddress,
@@ -77,6 +88,7 @@ import { findMatchingContact } from 'utils/contacts';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
+import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
 import SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
@@ -157,7 +169,7 @@ export const sendSignedAssetTransactionAction = (transaction: any) => {
         };
         dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
       } else {
-        const value = parseFloat(transactionDetails.amount) * (10 ** transactionDetails.decimals);
+        const value = parseTokenAmount(transactionDetails.amount, transactionDetails.decimals);
         historyTx = buildHistoryTransaction({
           from: accountAddress,
           to: transactionDetails.to,
@@ -415,13 +427,14 @@ export const sendAssetAction = (
         historyTx = buildHistoryTransaction({
           ...tokenTx,
           asset: symbol,
-          value: parseFloat(amount) * (10 ** decimals),
+          value: parseTokenAmount(amount, decimals),
           to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
           note,
           gasPrice: transaction.gasPrice,
           gasLimit: transaction.gasLimit,
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+          extra: transaction.extra || null,
         });
       }
     }
@@ -456,18 +469,24 @@ export const sendAssetAction = (
         };
         dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
       } else {
-        dispatch({
-          type: ADD_TRANSACTION,
-          payload: {
-            accountId,
-            historyTx,
-          },
-        });
+        // check if there's a need to commit synthetic asset transaction
+        const syntheticTransactionExtra: SyntheticTransaction = get(historyTx, 'extra.syntheticTransaction');
+        if (!isEmpty(syntheticTransactionExtra)) {
+          const { transactionId, toAddress } = syntheticTransactionExtra;
+          dispatch(commitSyntheticsTransaction(transactionId, historyTx.hash));
+          // change history receiver address to actual receiver address rather than synthetics service address
+          historyTx = { ...historyTx, to: toAddress };
+        }
+
+        dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });
+
         let updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
+
         if (replaceTransactionHash) {
           updatedAccountHistory = updatedAccountHistory.filter(({ hash }) => hash !== replaceTransactionHash);
           dispatch(replaceAssetsTransferTransactionHash(replaceTransactionHash, historyTx.hash));
         }
+
         const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
       }
@@ -492,8 +511,8 @@ export const sendAssetAction = (
       };
 
     if (Object.keys(allowancePayload).length && tokenTx.hash) {
-      const { provider, assetCode } = allowancePayload;
-      dispatch(addExchangeAllowanceAction(provider, assetCode, tokenTx.hash));
+      const { provider, fromAssetCode, toAssetCode } = allowancePayload;
+      dispatch(addExchangeAllowanceAction(provider, fromAssetCode, toAssetCode, tokenTx.hash));
     }
 
     // send note
@@ -514,24 +533,6 @@ export const sendAssetAction = (
     }
 
     callback(txStatus);
-  };
-};
-
-export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = []) => {
-  return (dispatch: Dispatch) => {
-    const updatedAssets = Object.keys(assets)
-      .map(key => assets[key])
-      .reduce((memo, item) => {
-        if (!assetsToExclude.includes(item.symbol)) {
-          memo[item.symbol] = item;
-        }
-        return memo;
-      }, {});
-    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-    dispatch({
-      type: UPDATE_ASSETS,
-      payload: updatedAssets,
-    });
   };
 };
 
@@ -569,11 +570,10 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
 
     const newBalances = await api.fetchBalances({
       address: walletAddress,
-      // $FlowFixMe Object.values returns mixed type
-      assets: Object.values(accountAssets),
+      assets: getAssetsAsList(accountAssets),
     });
 
-    if (newBalances && newBalances.length) {
+    if (!isEmpty(newBalances)) {
       const transformedBalances = transformAssetsToObject(newBalances);
       const updatedBalances = {
         ...balances,
@@ -646,14 +646,14 @@ export const addAssetAction = (asset: Asset) => {
     const accountId = getActiveAccountId(accounts);
     if (!accountId) return;
 
-    const accountAssets = assets[accountId];
+    const accountAssets = accountAssetsSelector(getState());
     const updatedAssets = {
       ...assets,
       [accountId]: { ...accountAssets, [asset.symbol]: { ...asset } },
     };
 
     dispatch(showAssetAction(asset));
-    dispatch(saveDbAction('assets', { assets: updatedAssets }));
+    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
 
     dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
 
@@ -691,17 +691,23 @@ export const resetSearchAssetsResultAction = () => ({
   type: RESET_ASSETS_SEARCH_RESULT,
 });
 
-export const getSupportedTokens = (supportedAssets: Asset[], currentAssets: AssetsByAccount, account: Account) => {
+export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: AssetsByAccount, account: Account) => {
   const accountId = getAccountId(account);
-  const currentAccountAssets = get(currentAssets, accountId, {});
-  const currentAccountAssetsTickers = Object.keys(currentAccountAssets);
+  const accountAssets = get(accountsAssets, accountId, {});
+  const accountAssetsTickers = Object.keys(accountAssets);
 
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
-  if (!currentAccountAssetsTickers.includes(ETH)) currentAccountAssetsTickers.push(ETH);
-  if (!currentAccountAssetsTickers.includes(PLR)) currentAccountAssetsTickers.push(PLR);
+  if (!accountAssetsTickers.includes(ETH)) accountAssetsTickers.push(ETH);
+  if (!accountAssetsTickers.includes(PLR)) accountAssetsTickers.push(PLR);
+
+  // TODO: remove when we find an issue with supported assets
+  if (!supportedAssets || !supportedAssets.length) {
+    Sentry.captureMessage('Wrong supported assets received', { level: 'info', extra: { supportedAssets } });
+    return { id: accountId };
+  }
 
   const updatedAccountAssets = supportedAssets
-    .filter(asset => currentAccountAssetsTickers.includes(asset.symbol))
+    .filter(asset => accountAssetsTickers.includes(asset.symbol))
     .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
   return { id: accountId, ...updatedAccountAssets };
 };
@@ -713,7 +719,9 @@ const getAllOwnedAssets = async (api: SDKWrapper, accountId: string, supportedAs
     addressErc20Tokens.forEach((token) => {
       const tokenTicker = get(token, 'tokenInfo.symbol', '');
       const supportedAsset = supportedAssets.find(asset => asset.symbol === tokenTicker);
-      if (supportedAsset && !accOwnedErc20Assets[tokenTicker]) accOwnedErc20Assets[tokenTicker] = supportedAsset;
+      if (supportedAsset && !accOwnedErc20Assets[tokenTicker]) {
+        accOwnedErc20Assets[tokenTicker] = supportedAsset;
+      }
     });
   }
   return accOwnedErc20Assets;
@@ -724,45 +732,40 @@ export const checkForMissedAssetsAction = () => {
     const {
       accounts: { data: accounts },
       user: { data: { walletId } },
-      assets: { data: currentAssets, supportedAssets = [] },
+      assets: { data: accountsAssets, supportedAssets = [] },
+      session: { data: { isOnline } },
     } = getState();
 
     // load supported assets
     let walletSupportedAssets = [...supportedAssets];
-    if (!supportedAssets.length) {
-      walletSupportedAssets = await api.fetchSupportedAssets(walletId);
-      dispatch({
-        type: UPDATE_SUPPORTED_ASSETS,
-        payload: walletSupportedAssets,
-      });
+    if (isOnline) {
+      const apiSupportedAssets = await api.fetchSupportedAssets(walletId);
+      if (!isEmpty(apiSupportedAssets)) {
+        walletSupportedAssets = [...apiSupportedAssets];
+        dispatch({
+          type: UPDATE_SUPPORTED_ASSETS,
+          payload: walletSupportedAssets,
+        });
+      }
     }
 
-    const allSupportedAddedAssetsByAccount = accounts.map((acc) => {
-      const supportedAccountAssets = getSupportedTokens(walletSupportedAssets, currentAssets, acc);
-      return supportedAccountAssets;
-    }).reduce((obj, { id, ...rest }) => {
-      obj[id] = rest;
-      return obj;
-    }, {});
+    const accountUpdatedAssets = accounts
+      .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc))
+      .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
-    // check if some assets are not enabled
+    // check tx history if some assets are not enabled
     const ownedAssetsByAccount = await Promise.all(accounts.map(async (acc) => {
       const accountId = getAccountId(acc);
       const ownedAssets = await getAllOwnedAssets(api, accountId, walletSupportedAssets);
       return { id: accountId, ...ownedAssets };
     }));
 
-    const reducedOwnedAssetsByAccount = ownedAssetsByAccount.reduce((obj, { id, ...rest }) => {
-      obj[id] = rest;
-      return obj;
-    }, {});
+    const allAccountAssets = ownedAssetsByAccount
+      .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
-    const updatedAssets = Object.keys(allSupportedAddedAssetsByAccount).map((acc) => {
-      return { id: acc, ...allSupportedAddedAssetsByAccount[acc], ...reducedOwnedAssetsByAccount[acc] };
-    }).reduce((obj, { id, ...rest }) => {
-      obj[id] = rest;
-      return obj;
-    }, {});
+    const updatedAssets = Object.keys(accountUpdatedAssets)
+      .map((acc) => ({ id: acc, ...accountUpdatedAssets[acc], ...allAccountAssets[acc] }))
+      .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
     dispatch({
       type: UPDATE_ASSETS,
@@ -770,6 +773,7 @@ export const checkForMissedAssetsAction = () => {
     });
     dispatch(fetchAssetsBalancesAction());
     dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+    dispatch(saveDbAction('supportedAssets', { supportedAssets: walletSupportedAssets }, true));
   };
 };
 

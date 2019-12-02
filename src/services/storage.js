@@ -17,123 +17,135 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import PouchDB from 'pouchdb-react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
+import PouchDBStorage from './pouchDBStorage';
 
-function Storage(name: string, opts: ?Object = {}) {
+const STORAGE_SETTINGS_KEY = 'storageSettings';
+
+function Storage(name: string) {
   this.name = name;
-  this.opts = {
-    auto_compaction: true,
-    ...opts,
-  };
-  this.db = new PouchDB(name, opts);
+  this.prefix = `wallet-storage:${this.name}:`;
+  this.activeDocs = {};
 }
 
-Storage.prototype.get = function (id: string) {
-  return this.db.get(id).catch(() => ({}));
+Storage.prototype.getKey = function (id: string) {
+  return this.prefix + id;
 };
 
-Storage.prototype.getConflicts = function (): Promise<String[]> {
-  return this.getAllDocs()
-    .then(({ rows }) => (
-      rows.map(({ doc }) => doc._conflicts).reduce((memo, item) => memo.concat(item), [])
-    ));
+Storage.prototype.get = async function (id: string) {
+  const data = await AsyncStorage.getItem(this.getKey(id))
+    .then(JSON.parse)
+    .catch(() => {});
+  return data || {};
 };
 
-/**
- * V1 db repairment by dropping the whole db and re-populating it with the old data.
- */
-Storage.prototype.repair = async function () {
-  const docs = await this.getAllDocs().then(({ rows }) => rows.map(({ doc }) => doc));
-  await this.db.destroy();
-  this.db = new PouchDB(this.name, this.opts);
-  const promises = docs.map(doc => {
-    const {
-      _id,
-      _rev,
-      _conflicts,
-      ...data
-    } = doc;
-    return this.save(_id, data).catch(() => null);
-  });
-  return Promise.all(promises);
+Storage.prototype.mergeValue = async function (id: string, data: Object): Object {
+  const currentValue = await this.get(id);
+  return merge({}, currentValue, data);
 };
 
-const activeDocs = {};
-Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
-  return this.db.get(id)
+Storage.prototype.save = async function (id: string, data: Object, forceRewrite: boolean = false) {
+  const newValue = forceRewrite ? data : await this.mergeValue(id, data);
+  const key = this.getKey(id);
+
+  if (this.activeDocs[key]) {
+    const errorMessge = 'Race condition spotted';
+    const errorData = {
+      id,
+      data,
+      forceRewrite,
+    };
+    Sentry.captureMessage(errorMessge, { extra: errorData });
+    if (__DEV__) {
+      console.log(errorMessge, errorData); // eslint-disable-line
+    }
+  }
+
+  this.activeDocs[key] = true;
+
+  return AsyncStorage
+    .setItem(key, JSON.stringify(newValue))
+    .then(() => {
+      this.activeDocs[key] = false;
+    })
     .catch(err => {
-      if (err.status !== 404) {
-        throw err;
+      Sentry.captureException({
+        id,
+        data,
+        err,
+      });
+      if (__DEV__) {
+        console.log(id, err); // eslint-disable-line
       }
-      return {};
-    })
-    .then(doc => {
-      if (activeDocs[id]) {
-        Sentry.captureMessage('Race condition spotted', {
-          extra: {
-            id,
-            data,
-            forceRewrite,
-          },
-        });
-      }
-
-      activeDocs[id] = true;
-      const options = { force: forceRewrite };
-      const record = forceRewrite
-        ? { _id: id, _rev: doc._rev, ...data }
-        : merge(
-          {},
-          doc,
-          {
-            _id: id,
-            _rev: doc._rev,
-          },
-          data,
-        );
-      return this.db.put(record, options);
-    })
-    .then(doc => {
-      activeDocs[id] = false;
-      return doc;
-    })
-    .catch((err) => {
-      if (err.status !== 409) {
-        Sentry.captureException({
-          id,
-          data,
-          err,
-        });
-        throw err;
-      }
-      activeDocs[id] = false;
-      return this.save(id, data, forceRewrite);
+      this.activeDocs[key] = false;
     });
 };
 
-Storage.prototype.getAllDocs = function () {
-  return this.db.allDocs({ conflicts: true });
+Storage.prototype.getAllKeys = function () {
+  return AsyncStorage
+    .getAllKeys()
+    .then(keys => keys.filter(key => key.startsWith(this.prefix)))
+    .catch(() => []);
 };
 
-Storage.prototype.viewCleanup = function () {
-  return this.db.viewCleanup();
+Storage.prototype.getAll = function () {
+  return this.getAllKeys()
+    .then(keys => AsyncStorage.multiGet(keys)) // [ ['user', 'userValue'], ['key', 'keyValue'] ]
+    .then(values => values.map(([_key, _value]) => ({ [_key]: JSON.parse(_value) }))) // [{ user: 'userValue' }, ...]
+    .catch(() => []);
 };
 
-Storage.prototype.removeAll = function () {
-  return this.db.allDocs().then(result => {
-    return Promise.all(result.rows.map(row => {
-      return this.db.remove(row.id, row.value.rev);
+Storage.prototype.removeAll = async function () {
+  const keys = await this.getAllKeys()
+    .then(data => data.filter(key => key !== this.getKey(STORAGE_SETTINGS_KEY)));
+  return AsyncStorage.multiRemove(keys);
+};
+
+Storage.prototype.migrateFromPouchDB = async function () {
+  const { storageSettings = {} } = await this.get(STORAGE_SETTINGS_KEY);
+  if (storageSettings.pouchDBMigrated) return Promise.resolve();
+
+  try {
+    console.log('Migrating data'); // eslint-disable-line
+    const pouchDBStorage = PouchDBStorage.getInstance('db');
+    const pouchDocs = await pouchDBStorage.getAllDocs()
+      .then(({ rows }) => rows.map(({ doc }) => doc));
+
+    await Promise.all(pouchDocs.map((doc) => {
+      const {
+        _id,
+        _conflicts,
+        _rev,
+        ...rest
+      } = doc;
+      return this.save(_id, { ...rest });
     }));
-  }).then(() => this.db.compact());
+
+    await this.save(STORAGE_SETTINGS_KEY, {
+      storageSettings: {
+        ...storageSettings,
+        pouchDBMigrated: true,
+      },
+    }, true);
+  } catch (e) {
+    Sentry.captureException({
+      text: 'DB migration to AsyncStorage failed',
+      e,
+    });
+    if (__DEV__) {
+      console.log(e); // eslint-disable-line
+    }
+  }
+  return Promise.resolve();
 };
 
-Storage.getInstance = function (name: string, opts: ?Object) {
+Storage.getInstance = function (name: string) {
   if (!this._instances) {
     this._instances = {};
   }
-  this._instances[name] = this._instances[name] || new Storage(name, opts);
+  this._instances[name] = this._instances[name] || new Storage(name);
   return this._instances[name];
 };
 

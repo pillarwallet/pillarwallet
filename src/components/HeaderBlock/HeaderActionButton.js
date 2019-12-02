@@ -20,45 +20,43 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { baseColors, fontStyles } from 'utils/variables';
+import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Animation from 'components/Animation';
+import { themedColors } from 'utils/themes';
 
 type Props = {
-  theme: Object,
   label: string,
   onPress: Function,
   hasChevron?: boolean,
   isActive?: boolean,
   wrapperStyle?: Object,
+  backgroundColor?: string,
 }
 
 const HeaderButtonRounded = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  padding: 4px 12px 4px 6px;
+  padding: 2px 6px;
   border: 1px solid;
-  border-color: ${props => props.theme.buttonBorderColor || UIColors.defaultBorderColor};
-  border-radius: 20px;
+  border-color: ${props => props.backgroundColor ? 'transparent' : themedColors.border};
+  background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
+  border-radius: 6px;
 `;
 
-const RoundedButtonLabel = styled(BaseText)`
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
-  color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};
-  font-weight: ${Platform.select({
-    ios: '500',
-    android: '400',
-  })};
+const RoundedButtonLabel = styled(MediumText)`
+  ${fontStyles.regular};
+  color: ${props => props.isLight ? themedColors.control : themedColors.text};
   margin-left: 6px;
 `;
 const ChevronIcon = styled(Icon)`
   font-size: 6px;
-  color: ${props => props.theme.buttonLabelColor || UIColors.defaultTextColor};
+  color: ${props => props.isLight ? themedColors.control : themedColors.text};
   transform: rotate(90deg);
   margin-top: 2px;
   margin-left: 9px;
+  margin-right: 4px;
 `;
 
 const StatusIcon = styled.View`
@@ -104,19 +102,19 @@ const Status = ({ isActive }) => {
 
 export const HeaderActionButton = (props: Props) => {
   const {
-    theme,
     label,
     onPress,
     hasChevron,
     isActive,
     wrapperStyle,
+    backgroundColor,
   } = props;
 
   return (
-    <HeaderButtonRounded onPress={onPress} theme={theme} style={wrapperStyle}>
+    <HeaderButtonRounded onPress={onPress} backgroundColor={backgroundColor} style={wrapperStyle}>
       {isActive !== undefined && <Status isActive={isActive} />}
-      <RoundedButtonLabel theme={theme}>{label}</RoundedButtonLabel>
-      {!!hasChevron && <ChevronIcon name="chevron-right" theme={theme} />}
+      <RoundedButtonLabel isLight={!!backgroundColor}>{label}</RoundedButtonLabel>
+      {!!hasChevron && <ChevronIcon name="chevron-right" isLight={!!backgroundColor} />}
     </HeaderButtonRounded>
   );
 };

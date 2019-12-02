@@ -30,11 +30,13 @@ import {
   START_ASSETS_SEARCH,
   RESET_ASSETS_SEARCH_RESULT,
 } from 'constants/assetsConstants';
-import type { Asset } from 'models/Asset';
 import merge from 'lodash.merge';
+import { sortAssetsArray } from 'utils/assets';
+
+import type { Asset, AssetsByAccount } from 'models/Asset';
 
 export type AssetsReducerState = {
-  data: Object,
+  data: AssetsByAccount,
   supportedAssets: Asset[],
   assetsState: ?string,
 };
@@ -58,6 +60,7 @@ export default function assetsReducer(
   switch (action.type) {
     case UPDATE_ASSETS_STATE:
       return { ...state, assetsState: action.payload };
+
     case UPDATE_ASSET:
       const { symbol } = action.payload;
       const updatedState = {
@@ -68,11 +71,14 @@ export default function assetsReducer(
         state,
         updatedState,
       );
+
     case UPDATE_SUPPORTED_ASSETS:
-      return { ...state, supportedAssets: action.payload };
+      return { ...state, supportedAssets: sortAssetsArray(action.payload) };
+
     case UPDATE_ASSETS:
       const assetsState = Object.keys(action.payload).length ? FETCHED : initialState.assetsState;
       return { ...state, data: action.payload || {}, assetsState };
+
     case SET_INITIAL_ASSETS:
       return {
         ...state,
@@ -82,24 +88,28 @@ export default function assetsReducer(
         },
         assetsState: FETCHED_INITIAL,
       };
+
     case START_ASSETS_SEARCH:
       return {
         ...state,
         assetsSearchState: FETCHING,
         assetsSearchResults: [],
       };
+
     case UPDATE_ASSETS_SEARCH_RESULT:
       return {
         ...state,
         assetsSearchState: FETCHED,
         assetsSearchResults: action.payload,
       };
+
     case RESET_ASSETS_SEARCH_RESULT:
       return {
         ...state,
         assetsSearchState: null,
         assetsSearchResults: [],
       };
+
     default:
       return state;
   }

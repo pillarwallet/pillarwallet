@@ -17,16 +17,16 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { ethers, utils, providers } from 'ethers';
 import DeviceInfo from 'react-native-device-info';
-import ethers, { providers } from 'ethers';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
 import { Sentry } from 'react-native-sentry';
 import { isHexString } from '@walletconnect/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
-import { getRandomInt, ethSign } from 'utils/common';
+import { getRandomInt, ethSign, getEthereumProvider } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
 import { WALLET_STORAGE_BACKUP_KEY } from 'constants/walletConstants';
@@ -35,7 +35,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 const storage = Storage.getInstance('db');
 
 export function generateMnemonicPhrase(mnemonicPhrase?: string) {
-  return mnemonicPhrase || ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
+  return mnemonicPhrase || utils.HDNode.entropyToMnemonic(utils.randomBytes(16));
 }
 
 export function generateWordsToValidate(numWordsToGenerate: number, maxWords: number) {
@@ -76,7 +76,7 @@ export function catchTransactionError(e: Object, type: string, tx: Object) {
 
 // handle eth_signTransaction
 export function signTransaction(trx: Object, wallet: Object): Promise<string> {
-  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
   if (trx && trx.from) {
     delete trx.from;
   }
@@ -85,20 +85,21 @@ export function signTransaction(trx: Object, wallet: Object): Promise<string> {
 
 // handle eth_sign
 export function signMessage(message: any, wallet: Object): string {
-  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
   // TODO: this method needs to be replaced when ethers.js is migrated to v4.0
   return ethSign(message, wallet.privateKey);
 }
 
 // handle personal_sign
 export function signPersonalMessage(message: string, wallet: Object): Promise<string> {
-  wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
   return wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
 }
 
 // we use basic AsyncStorage implementation just to prevent backup being stored in same manner
-export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Object) {
+export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Object, api: Object) {
   let { wallet = {} } = await storage.get('wallet');
+  const { user = {} } = await storage.get('user');
   const walletBackup = await AsyncStorage.getItem(WALLET_STORAGE_BACKUP_KEY);
   const isWalletEmpty = isEmpty(wallet);
   // wallet timestamp missing causes welcome screen
@@ -133,11 +134,6 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     // only wallet timestamp was missing, let's update it to storage
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: walletTimestamp } }));
   }
-  // we check for previous value of `appSettings.wallet` as by this point `walletTimestamp` can be already set
-  // in tis piece we report a case if either wallet was empty or wallet timestamp AND we additionally check+
-  // if walletBackup is present because this would conflict with onboarding flow and will report to sentry
-  // because both wallet and wallet timestamp will be empty
-  if (walletBackup && (isWalletEmpty || !appSettings.wallet)) reportToSentry('Wallet login issue spotted');
 
   const walletAsString = !isWalletEmpty && JSON.stringify(wallet);
   // check backup and store if needed
@@ -145,8 +141,47 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
     // wallet has changed or backup does not exist, let's update it
     await AsyncStorage.setItem(WALLET_STORAGE_BACKUP_KEY, walletAsString);
   }
+
+  if (isEmpty(user) || !user.username || !user.walletId) {
+    console.log('EMPTY USER OBJECT DETECTED');
+    if (!isEmpty(wallet)) {
+      console.log('RESTORING USER FROM API');
+      api.init();
+      const apiUser = await api.validateAddress(normalizeWalletAddress(wallet.address));
+      if (apiUser.walletId) {
+        const restoredUser = {
+          id: apiUser.id,
+          walletId: apiUser.walletId,
+          username: apiUser.username,
+          profileLargeImage: apiUser.profileImage,
+        };
+        await dispatch(saveDbAction('user', { user: restoredUser }, true));
+        console.log('USER RESTORED FROM API');
+      } else {
+        console.log('UNABLE TO RESTORE USER FROM API');
+      }
+    } else {
+      console.log('WALLET OBJECT IS STILL EMPTY');
+    }
+  }
+
+  // we check for previous value of `appSettings.wallet` as by this point `walletTimestamp` can be already set.
+  // in that part we report a case if either wallet was empty or wallet timestamp AND we additionally check
+  // if the walletBackup is present because this would conflict with onboarding flow and will report to sentry
+  // because both wallet and wallet timestamp will be empty
+  if (walletBackup && (isWalletEmpty || !appSettings.wallet)) reportToSentry('Wallet login issue spotted');
+
   return {
     wallet,
     walletTimestamp,
   };
+}
+
+export async function decryptWallet(encryptedWallet: Object, saltedPin: string, options?: Object) {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  let wallet = await ethers.Wallet.RNfromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin, options);
+  if (wallet) {
+    wallet = wallet.connect(provider);
+  }
+  return wallet;
 }

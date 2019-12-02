@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
-import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
+import { createStackNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation';
 
 // screens
 import OnboardingScreen from 'screens/Onboarding';
@@ -63,7 +63,7 @@ import {
 import AppFlow from './appNavigation';
 
 const StackNavigatorConfig = {
-  navigationOptions: {
+  defaultNavigationOptions: {
     header: null,
     gesturesEnabled: true,
   },
@@ -72,7 +72,7 @@ const StackNavigatorConfig = {
 const onBoardingFlow = createStackNavigator({
   [WELCOME]: {
     screen: WelcomeScreen,
-    navigationOptions: {
+    defaultNavigationOptions: {
       header: null,
     },
   },
@@ -80,7 +80,7 @@ const onBoardingFlow = createStackNavigator({
   [ONBOARDING_HOME]: OnboardingScreen,
   [NEW_WALLET]: {
     screen: NewWalletScreen,
-    navigationOptions: {
+    defaultNavigationOptions: {
       header: null,
     },
   },
@@ -106,4 +106,4 @@ const RootSwitch: SwitchNavigatorType = createSwitchNavigator({
   [APP_FLOW]: AppFlow,
 });
 
-export default RootSwitch;
+export default createAppContainer(RootSwitch);

@@ -25,14 +25,14 @@ import { utils, Interface } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import { Footer, ScrollWrapper } from 'components/Layout';
-import { Label, BoldText, Paragraph } from 'components/Typography';
+import { Label, Paragraph, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import { rejectCallRequestAction } from 'actions/walletConnectActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { spacing, fontSizes, baseColors, UIColors } from 'utils/variables';
+import { spacing, fontSizes, baseColors, UIColors, fontStyles } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { getBalance } from 'utils/assets';
 import { calculateGasEstimate } from 'services/assets';
@@ -76,17 +76,16 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+const Value = styled(MediumText)`
+  font-size: ${fontSizes.big}px;
 `;
 
 const LabelSub = styled(Label)`
-  font-size: ${fontSizes.tiny};
+  ${fontStyles.tiny};
 `;
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.extraSmall};
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;
@@ -274,6 +273,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const {
       contacts,
       balances,
+      session,
     } = this.props;
     const { gasLimit } = this.state;
 
@@ -376,7 +376,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 <Value>{data}</Value>
               </LabeledRow>
             )}
-            {!!recipientUsername && (
+            {session.isOnline && !!recipientUsername &&
               <TextInput
                 inputProps={{
                   onChange: text => this.handleNoteChange(text),
@@ -391,7 +391,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 noBorder
                 keyboardAvoidance
               />
-            )}
+            }
           </ScrollWrapper>
         );
         break;
@@ -432,6 +432,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         );
         break;
       default:
+        type = 'Unsupported';
+        errorMessage = 'We are sorry, but we do not support this action yet.';
         break;
     }
 
@@ -444,19 +446,19 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       >
         {body}
         <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
-          {!!errorMessage && <WarningMessage>{errorMessage}</WarningMessage>}
+          {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <OptionButton
               primaryInverted
               onPress={this.handleFormSubmit}
               disabled={!!errorMessage || (type === 'Transaction' && !gasLimit)}
-              textStyle={{ fontWeight: 'normal' }}
+              regularText
               title={`Approve ${type}`}
             />
             <OptionButton
               dangerInverted
               onPress={this.handleDismissal}
-              textStyle={{ fontWeight: 'normal' }}
+              regularText
               title="Reject"
             />
           </FooterWrapper>

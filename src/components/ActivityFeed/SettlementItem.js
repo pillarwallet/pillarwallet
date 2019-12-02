@@ -20,12 +20,16 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
+import BigNumber from 'bignumber.js';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText } from 'components/Typography';
 import TankAssetBalance from 'components/TankAssetBalance';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
+import { getAssetData } from 'utils/assets';
+import { formatAmount, formatUnits } from 'utils/common';
+import type { Asset } from 'models/Asset';
 
 const ppnIcon = require('assets/icons/icon_PPN.png');
 
@@ -41,6 +45,8 @@ type Props = {
   asset?: string,
   onPress: Function,
   isPending?: boolean,
+  accountAssets: Asset[],
+  supportedAssets: Asset[],
 }
 
 const ListWrapper = styled.View`
@@ -49,7 +55,7 @@ const ListWrapper = styled.View`
 `;
 
 const ItemValue = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.jadeGreen};
   text-align: right;
 `;
@@ -61,20 +67,26 @@ export const SettlementItem = (props: Props) => {
     asset,
     onPress,
     isPending,
+    accountAssets,
+    supportedAssets,
   } = props;
   const ppnTransactions = asset
     ? settleData.filter(({ symbol }) => symbol === asset)
     : settleData;
 
   const valueByAsset: Object = {};
-  ppnTransactions.forEach((trx) => {
-    const key = trx.symbol;
-    const value = +trx.value;
-    if (!valueByAsset[key]) {
-      valueByAsset[key] = { ...trx, value };
+  const formattedPPNTransactions = ppnTransactions.map((trx) => {
+    const { symbol, value: rawValue } = trx;
+    const { decimals = 18 } = getAssetData(accountAssets, supportedAssets, symbol);
+    const value = new BigNumber(rawValue);
+    if (!valueByAsset[symbol]) {
+      valueByAsset[symbol] = { ...trx, value, decimals };
     } else {
-      valueByAsset[key].value += value;
+      const { value: currentValue } = valueByAsset[symbol];
+      valueByAsset[symbol].value = currentValue.plus(value);
     }
+    const formatted = formatAmount(formatUnits(value.toString(), decimals));
+    return { ...trx, formatted };
   });
 
   const valuesArray = Object.keys(valueByAsset).map((key) => valueByAsset[key]);
@@ -93,13 +105,16 @@ export const SettlementItem = (props: Props) => {
           subtext="to Smart Wallet"
           customAddon={(
             <ListWrapper>
-              {valuesArray.map(({ symbol, value }) => <ItemValue key={symbol}>{`${value} ${symbol}`}</ItemValue>)}
+              {valuesArray.map(({ symbol, value, decimals }) => {
+                const formatted = formatAmount(formatUnits(value.toString(), decimals));
+                return (<ItemValue key={symbol}>{`${formatted} ${symbol}`}</ItemValue>);
+              })}
             </ListWrapper>)}
           innerWrapperHorizontalAlign="flex-start"
-          noImageBorder
           itemStatusIcon={itemStatusIcon}
           customAddonAlignLeft={customAddonAlignLeft}
           rightColumnInnerStyle={rightColumnInnerStyle}
+          diameter={56}
         />
       }
       {(!type || type === SYNTHETIC) &&
@@ -110,20 +125,19 @@ export const SettlementItem = (props: Props) => {
           subtext="from PLR Network"
           customAddon={(
             <ListWrapper>
-              {ppnTransactions.map(({ symbol, value, hash }) => (
+              {formattedPPNTransactions.map(({ symbol, formatted, hash }) => (
                 <TankAssetBalance
                   key={hash}
-                  amount={`-${value} ${symbol}`}
+                  amount={`- ${formatted} ${symbol}`}
                   monoColor
-                  textStyle={{ color: baseColors.scarlet }}
                 />
               ))}
             </ListWrapper>)}
           innerWrapperHorizontalAlign="flex-start"
-          noImageBorder
           itemStatusIcon={itemStatusIcon}
           customAddonAlignLeft={customAddonAlignLeft}
           rightColumnInnerStyle={rightColumnInnerStyle}
+          diameter={56}
         />
       }
     </React.Fragment>

@@ -8,16 +8,19 @@ import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { ScrollWrapper } from 'components/Layout';
-import { Label, BoldText } from 'components/Typography';
+import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import type { CollectibleTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
+import type { Accounts } from 'models/Account';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { baseColors, fontSizes, UIColors, spacing } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
+import { addressesEqual } from 'utils/assets';
+import { getAccountName } from 'utils/accounts';
 import { calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { activeAccountAddressSelector } from 'selectors';
@@ -32,6 +35,7 @@ type Props = {
   gasInfo: GasInfo,
   wallet: Object,
   activeAccountAddress: string,
+  accounts: Accounts,
 };
 
 type State = {
@@ -53,8 +57,8 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+const Value = styled(MediumText)`
+  font-size: ${fontSizes.big}px;
 `;
 
 class SendCollectibleConfirm extends React.Component<Props, State> {
@@ -148,7 +152,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   };
 
   render() {
-    const { contacts, session, gasInfo } = this.props;
+    const {
+      contacts,
+      session,
+      gasInfo,
+      accounts,
+    } = this.props;
     const { name } = this.assetData;
     const { rinkebyETH, gasLimit } = this.state;
     const to = this.receiver;
@@ -157,6 +166,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
     const recipientUsername = getUserName(contact);
     const canProceedTesting = parseFloat(rinkebyETH) > parseFloat(txFee) || NETWORK_PROVIDER !== 'ropsten';
+    const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
 
     return (
       <ContainerWithHeader
@@ -186,6 +196,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
             <Value>{recipientUsername}</Value>
           </LabeledRow>
           }
+          {!!userAccount &&
+          <LabeledRow>
+            <Label>Recipient</Label>
+            <Value>{getAccountName(userAccount.type, accounts)}</Value>
+          </LabeledRow>
+          }
           <LabeledRow>
             <Label>Recipient Address</Label>
             <Value>{to}</Value>
@@ -202,7 +218,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
             <Label>Balance in Rinkeby ETH (visible in dev and staging)</Label>
             <Value>{rinkebyETH} ETH</Value>
           </LabeledRow>}
-          {!!recipientUsername &&
+          {session.isOnline && !!recipientUsername &&
           <TextInput
             inputProps={{
               onChange: this.handleNoteChange,
@@ -229,11 +245,13 @@ const mapStateToProps = ({
   session: { data: session },
   history: { gasInfo },
   wallet: { data: wallet },
+  accounts: { data: accounts },
 }) => ({
   contacts,
   session,
   gasInfo,
   wallet,
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({

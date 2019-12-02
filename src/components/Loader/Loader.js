@@ -22,14 +22,15 @@ import { Animated } from 'react-native';
 import styled from 'styled-components/native';
 
 import { Wrapper } from 'components/Layout';
-import { BoldText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontStyles } from 'utils/variables';
 
 
 type Props = {
   messages?: Array<string>,
   noMessages?: boolean,
+  firstMessageWithoutDelay?: boolean,
 };
 
 type State = {
@@ -47,12 +48,11 @@ const ContentHolder = styled.View`
   margin-top: -20px;
 `;
 
-const MessageText = styled(BoldText)`
-  font-size: ${fontSizes.extraLarge}px;
-  line-height: 40px;
+const MessageText = styled(MediumText)`
+  ${fontStyles.large};
   color: ${baseColors.slateBlack};
   position: absolute;
-  top: 52px;
+  top: 62px;
   left: 0;
 `;
 
@@ -61,10 +61,14 @@ const AnimatedMessageText = Animated.createAnimatedComponent(MessageText);
 export default class Loader extends React.Component<Props, State> {
   timerToChangeMessage: ?IntervalID;
   startTimeout: ?TimeoutID;
-  state = {
-    visibleMessageId: 0,
-    showMessage: false,
-  };
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      visibleMessageId: 0,
+      showMessage: !!props.firstMessageWithoutDelay,
+    };
+  }
 
   componentDidMount() {
     const { noMessages } = this.props;

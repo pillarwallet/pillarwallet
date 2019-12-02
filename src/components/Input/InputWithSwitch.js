@@ -17,9 +17,9 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { Switch, Input } from 'native-base';
-import { BaseText, BoldText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import SelectList from './SelectList';
@@ -48,7 +48,7 @@ const ItemLabelHolder = styled.View`
 `;
 
 const ItemLabel = styled(MediumText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
+  ${fontStyles.small};
   color: ${baseColors.coolGrey};
   flex-wrap: wrap;
   width: 100%;
@@ -56,7 +56,7 @@ const ItemLabel = styled(MediumText)`
 `;
 
 const ErrorMessage = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
+  ${fontStyles.small};
   color: ${baseColors.fireEngineRed};
   flex-wrap: wrap;
   width: 100%;
@@ -65,15 +65,16 @@ const ErrorMessage = styled(BaseText)`
 
 const ItemValue = styled(Input)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   flex-wrap: wrap;
   width:100%;
   padding: 0 0 9px;
+  font-family: ${appFont.medium};
 `;
 
 const SelectedOption = styled(BaseText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.small};
+  ${fontStyles.medium};
   flex-wrap: wrap;
   flex: 1;
   padding: 0 0 9px;
@@ -87,7 +88,7 @@ const VerifyView = styled.View`
 
 const VerifyLabel = styled(BaseText)`
   color: ${({ isVerified }) => isVerified ? baseColors.eucalypus : baseColors.brightBlue};
-  font-size: ${fontSizes.extraSmall};
+  ${fontStyles.regular};
   margin: 0 4px 0;
 `;
 
@@ -102,10 +103,8 @@ const ItemAddon = styled.View`
   margin-left: 15px;
 `;
 
-const ModalTitle = styled(BoldText)`
-  line-height: ${fontSizes.medium};
-  font-size: ${fontSizes.medium};
-  font-weight: ${fontWeights.bold};
+const ModalTitle = styled(MediumText)`
+  ${fontStyles.big};
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 

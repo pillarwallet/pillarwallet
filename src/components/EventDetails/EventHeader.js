@@ -19,8 +19,8 @@
 */
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { BoldText, BaseText } from 'components/Typography';
-import { fontTrackings, baseColors, fontSizes, spacing } from 'utils/variables';
+import { MediumText, BaseText } from 'components/Typography';
+import { fontTrackings, baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
@@ -32,18 +32,21 @@ import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
 } from 'constants/invitationsConstants';
+import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 type Props = {
   onClose: Function,
   eventType?: string,
-  eventStatus: string,
+  eventStatus?: string,
   eventTime: string,
   iconUrl?: string,
   onIconPress?: Function,
   imageKey?: string,
   touchDisabled?: boolean,
+  imageDiameter?: number,
+  imageWrapperStyle?: Object,
 }
 
 const getEventInfo = (eventType, eventStatus) => {
@@ -92,6 +95,13 @@ const getEventInfo = (eventType, eventStatus) => {
       iconName: null,
     };
   }
+  if (eventType === BADGE_REWARD_EVENT) {
+    return {
+      title: 'Badge received',
+      background: baseColors.shark,
+      iconName: null,
+    };
+  }
 
   return {
     title: 'Requested',
@@ -114,17 +124,17 @@ const Wrapper = styled.View`
 const CloseIcon = styled(IconButton)`
   position: absolute;
   height: 24px;
-  width: 24px;
+  width: 48px;
   top: ${Platform.select({
     ios: '20px',
     android: '19px',
   })}
-  right: 12px;
+  right: 0;
   opacity: 0.7;
 `;
 
-const EventTitle = styled(BoldText)`
-  font-size: ${fontSizes.mediumLarge}px;
+const EventTitle = styled(MediumText)`
+  ${fontStyles.large};
   letter-spacing: ${fontTrackings.tiny}px;
   color: ${baseColors.white};
   margin: 2px 0;
@@ -132,7 +142,7 @@ const EventTitle = styled(BoldText)`
 `;
 
 const EventSubtitle = styled(BaseText)`
-  font-size: ${fontSizes.tiny}px;
+  ${fontStyles.tiny};
   letter-spacing: ${fontTrackings.mediumLarge}px;
   color: ${baseColors.white};
   margin: 2px 0;
@@ -145,14 +155,14 @@ const EventIcon = styled(Icon)`
 `;
 
 const EventImage = styled(CachedImage)`
-  width: 58px;
-  height: 58px;
+  width: ${props => props.imageDiameter || 58}px;
+  height: ${props => props.imageDiameter || 58}px;
 `;
 
 const ImageTouchable = styled.TouchableOpacity`
-  width: 58px;
-  height: 58px;
-  border-radius: 29px;
+  width: ${props => props.imageDiameter || 58}px;
+  height: ${props => props.imageDiameter || 58}px;
+  border-radius: ${props => props.imageDiameter / 2 || 29}px;
   overflow: hidden;
   margin-top: 12px;
   justify-content: center;
@@ -170,11 +180,13 @@ const EventHeader = (props: Props) => {
     onIconPress,
     imageKey,
     touchDisabled,
+    imageDiameter,
+    imageWrapperStyle,
   } = props;
 
   const thisEvent = getEventInfo(eventType, eventStatus);
   // in case iconUrl is an empty string, but it's an COLLECTIBLE TRX event
-  const showImage = iconUrl || eventType === COLLECTIBLE_TRANSACTION;
+  const showImage = iconUrl || eventType === COLLECTIBLE_TRANSACTION || eventType === BADGE_REWARD_EVENT;
 
   return (
     <Wrapper background={thisEvent.background}>
@@ -182,7 +194,7 @@ const EventHeader = (props: Props) => {
         icon="close"
         color={baseColors.white}
         onPress={onClose}
-        fontSize={fontSizes.small}
+        fontSize={fontSizes.medium}
       />
       <EventTitle>{thisEvent.title}</EventTitle>
       <EventSubtitle>{eventTime}</EventSubtitle>
@@ -195,12 +207,18 @@ const EventHeader = (props: Props) => {
         }}
       />}
       {!!showImage &&
-        <ImageTouchable onPress={onIconPress} disabled={touchDisabled}>
+        <ImageTouchable
+          onPress={onIconPress}
+          disabled={touchDisabled}
+          imageDiameter={imageDiameter}
+          style={imageWrapperStyle}
+        >
           <EventImage
             key={imageKey}
             source={{ uri: iconUrl }}
             fallbackSource={genericToken}
             resizeMode="contain"
+            imageDiameter={imageDiameter}
           />
         </ImageTouchable>}
     </Wrapper>

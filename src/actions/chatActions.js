@@ -17,9 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import isEmpty from 'lodash.isempty';
 import partition from 'lodash.partition';
-import ChatService from 'services/chat';
+
+// actions
+import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
+
+// components
 import Toast from 'components/Toast';
+
+// constants
 import {
   UPDATE_CHATS,
   ADD_MESSAGE,
@@ -34,12 +42,17 @@ import {
   CLEAR_CHAT_DRAFT,
   RESET_UNREAD_MESSAGE,
 } from 'constants/chatConstants';
+
+// services
+import ChatService from 'services/chat';
 import Storage from 'services/storage';
-import {
-  getConnectionStateCheckParamsByUsername,
-  getConnectionStateCheckParamsByUserId,
-} from 'utils/chat';
-import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
+
+// utils
+import { getConnectionStateCheckParamsByUsername, getConnectionStateCheckParamsByUserId } from 'utils/chat';
+import { isCaseInsensitiveMatch } from 'utils/common';
+import { isContactAvailable } from 'utils/contacts';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
@@ -68,12 +81,16 @@ export const getExistingChatsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
+      session: { data: { isOnline } },
     } = getState();
     const chats = await chat.client.getExistingMessages('chat').then(JSON.parse).catch(() => []);
     const filteredChats = chats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
-    const {
-      unread: unreadChats = {},
-    } = await chat.client.getUnreadMessagesCount('chat').then(JSON.parse).catch(() => ({}));
+    let unreadChats = {};
+    if (isOnline) {
+      ({ unread: unreadChats = {} } = await chat.client.getUnreadMessagesCount('chat')
+        .then(JSON.parse)
+        .catch(() => ({})));
+    }
     webSocketMessagesReceived.filter(wsMessage => wsMessage.tag === 'chat').forEach(wsMessage => {
       if (!unreadChats[wsMessage.source]) {
         unreadChats[wsMessage.source] = { count: 1, latest: wsMessage.timestamp };
@@ -105,6 +122,15 @@ export const getExistingChatsAction = () => {
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    const { session: { data: { isOnline } } } = getState();
+    if (!isOnline) {
+      Toast.show({
+        message: 'Cannot send message offline',
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
     try {
       const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
       const params = {
@@ -203,16 +229,35 @@ export const getChatByContactAction = (
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { isDecrypting } },
+      session: { data: { isOnline } },
+      contacts: { data: contacts },
     } = getState();
     if (isDecrypting) return;
-    dispatch({
-      type: FETCHING_CHATS,
-    });
+
+    if (!isOnline) {
+      Toast.show({
+        message: 'Cannot get new messages while offline',
+        type: 'warning',
+        autoClose: true,
+      });
+      return;
+    }
+
+    const recipientContact = contacts.find((contact) => isCaseInsensitiveMatch(username, contact.username));
+    if (!isContactAvailable(recipientContact)) {
+      Toast.show({
+        message: 'You disconnected or blocked this user',
+        type: 'warning',
+        autoClose: true,
+      });
+      return;
+    }
+
+    dispatch({ type: FETCHING_CHATS });
+
     const connectionStateCheckParams = getConnectionStateCheckParamsByUserId(getState, targetUserId);
-    const addContactParams = {
-      username,
-      ...connectionStateCheckParams,
-    };
+    const addContactParams = { username, ...connectionStateCheckParams };
+
     await chat.client.addContact(addContactParams, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
@@ -223,6 +268,7 @@ export const getChatByContactAction = (
         });
       }
     });
+
     if (loadEarlier) {
       // TODO: split message loading in bunches and load earlier on lick
     }
@@ -231,9 +277,9 @@ export const getChatByContactAction = (
       .then(JSON.parse)
       .catch(() => {});
 
-    if (data !== undefined && Object.keys(data).length) {
+    if (!isEmpty(data)) {
       const { messages: newRemoteMessages } = data;
-      if (newRemoteMessages !== undefined && newRemoteMessages.length) {
+      if (!isEmpty(newRemoteMessages)) {
         const remotePromises = newRemoteMessages.map(async remoteMessage => {
           const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
           await chat.deleteMessage(rmUsername, rmServerTimestamp);
@@ -253,7 +299,7 @@ export const getChatByContactAction = (
       chat: { data: { chats: existingChats, webSocketMessages: { received: webSocketMessagesReceived } } },
     } = getState();
 
-    if (webSocketMessagesReceived !== undefined && webSocketMessagesReceived.length) {
+    if (!isEmpty(webSocketMessagesReceived)) {
       const webSocketPromises = webSocketMessagesReceived
         .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
         .map(async wsMessage => {
@@ -275,6 +321,7 @@ export const getChatByContactAction = (
       type: CHAT_DECRYPTING_FINISHED,
     });
 
+    // will work offline
     const receivedMessages = await chat.client.getMessagesByContact(username, 'chat')
       .then(JSON.parse)
       .catch(() => []);

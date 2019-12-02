@@ -10,6 +10,9 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.Crashlytics;
 import com.crypho.scrypt.RNScryptPackage;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import com.mattblock.reactnative.inappbrowser.RNInAppBrowserPackage;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.psykar.cookiemanager.CookieManagerPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
@@ -61,6 +64,9 @@ public class MainApplication extends Application implements ShareApplication, Re
       return Arrays.<ReactPackage>asList(
         new ColorMatrixImageFiltersPackage(),
         new MainReactPackage(),
+        new AsyncStoragePackage(),
+        new RNInAppBrowserPackage(),
+        new RNGestureHandlerPackage(),
         new CookieManagerPackage(),
         new RNCWebViewPackage(),
         new ExtraDimensionsPackage(),

@@ -31,14 +31,14 @@ import {
 } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
-import { BaseText, BoldText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import EventDetails from 'components/EventDetails';
 import SlideModal from 'components/Modals/SlideModal';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import {
   mapOpenSeaAndBCXTransactionsHistory,
@@ -77,14 +77,14 @@ type State = {
   showTransactionDetails: boolean,
 }
 
-const MessageTitle = styled(BoldText)`
-  font-size: ${fontSizes.large}px;
+const MessageTitle = styled(MediumText)`
+  ${fontStyles.big};
   text-align: center;
 `;
 
 const Message = styled(BaseText)`
-  padding-top: 20px;
-  font-size: ${fontSizes.extraSmall}px;
+  padding-top: ${spacing.small}px;
+  ${fontStyles.regular}
   color: ${baseColors.darkGray};
   text-align: center;
 `;

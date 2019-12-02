@@ -20,11 +20,12 @@ executors:
     working_directory: ~/pillarwallet
     resource_class: large
     docker:
-      - image: circleci/android:api-26-node8-alpha
+      - image: circleci/android:api-29-node
     environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
       TERM: dumb
-      _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -Dfile.encoding=UTF-8"'
+      _JAVA_OPTIONS: "-Xmx4096m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx4096m -Dfile.encoding=UTF-8"'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
 
@@ -32,6 +33,15 @@ executors:
     working_directory: ~/pillarwallet
     docker:
       - image: circleci/openjdk:8-node-browsers
+
+  node10-executor:
+    working_directory: ~/pillarwallet
+    docker:
+      - image: circleci/node:10.14
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
+    resource_class: large
+    shell: /bin/bash --login -o pipefail
 
 aliases:
   - &restore_pod_cache
@@ -153,7 +163,7 @@ aliases:
 
 jobs:
   build-and-test:
-    executor: ios-executor
+    executor: node10-executor
     steps:
       - checkout
       - run:
@@ -539,7 +549,6 @@ jobs:
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
-            bundle exec fastlane supply init --package_name 'com.pillarproject.wallet.staging' --track internal --json_key_data="$GOOGLE_JSON_DATA"
             bundle exec fastlane deploy_staging --verbose
           environment:
             BUNDLE_PATH: vendor/bundle
@@ -801,7 +810,6 @@ jobs:
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
-            bundle exec fastlane supply init --package_name 'com.pillarproject.wallet' --track internal --json_key_data="$GOOGLE_JSON_DATA"
             bundle exec fastlane deploy_internal --verbose
           environment:
             BUNDLE_PATH: vendor/bundle

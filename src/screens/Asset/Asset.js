@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Share, RefreshControl } from 'react-native';
 import isEqual from 'lodash.isequal';
+import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
@@ -33,19 +34,14 @@ import SlideModal from 'components/Modals/SlideModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
-import { BoldText, BaseText, Paragraph } from 'components/Typography';
+import { BaseText, Paragraph, MediumText } from 'components/Typography';
 import DeploymentView from 'components/DeploymentView';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { fetchAssetTransactionsAction } from 'actions/historyActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-
-// models
-import type { Transaction } from 'models/Transaction';
-import type { Assets, Balances } from 'models/Asset';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts } from 'models/Account';
+import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
@@ -54,7 +50,8 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
 // utils
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { checkIfSmartWalletAccount } from 'utils/accounts';
+import { baseColors, spacing, fontSizes, fontStyles } from 'utils/variables';
 import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
@@ -64,6 +61,7 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import assetsConfig from 'configs/assetsConfig';
 
 // selectors
+import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import {
@@ -72,8 +70,12 @@ import {
 } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
-// types
+// models, types
+import type { Assets, Balances, Asset } from 'models/Asset';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddressData } from 'models/Contacts';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // local components
 import ReceiveModal from './ReceiveModal';
@@ -92,8 +94,7 @@ const activeModalResetState = {
 
 type Props = {
   fetchAssetsBalances: () => Function,
-  fetchTransactionsHistory: (asset: string, indexFrom?: number) => Function,
-  history: Transaction[],
+  fetchAssetTransactions: (asset: string, indexFrom?: number) => Function,
   assets: Assets,
   balances: Balances,
   rates: Object,
@@ -103,12 +104,15 @@ type Props = {
   resetHideRemoval?: Function,
   smartWalletState: Object,
   accounts: Accounts,
+  activeAccount: ?Account,
   paymentNetworkBalances: Balances,
   smartWalletFeatureEnabled: boolean,
-  history: Array<*>,
+  history: Object[],
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
   contactsSmartAddresses: ContactSmartAddressData[],
+  getExchangeSupportedAssets: () => void,
+  exchangeSupportedAssets: Asset[],
 };
 
 type State = {
@@ -149,21 +153,20 @@ const ValueWrapper = styled.View`
   align-items: center;
 `;
 
-const TokenValue = styled(BoldText)`
-  font-size: ${fontSizes.semiGiant}px;
+const TokenValue = styled(MediumText)`
+  ${fontStyles.giant};
   text-align: center;
   color: ${props => props.isSynthetic ? baseColors.electricBlueIntense : baseColors.slateBlack};
 `;
 
 const ValueInFiat = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
+  ${fontStyles.small};
   text-align: center;
   color: ${baseColors.darkGray};
-  margin-top: 5px;
 `;
 
 const Disclaimer = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   text-align: center;
   color: ${baseColors.burningFire};
   margin-top: 5px;
@@ -171,7 +174,6 @@ const Disclaimer = styled(BaseText)`
 
 const Description = styled(Paragraph)`
   padding-bottom: 80px;
-  line-height: ${fontSizes.mediumLarge};
 `;
 
 const ValuesWrapper = styled.View`
@@ -188,25 +190,41 @@ const SyntheticAssetIcon = styled(CachedImage)`
 const lightningIcon = require('assets/icons/icon_lightning.png');
 
 class AssetScreen extends React.Component<Props, State> {
+  forceRender = false;
   state = {
     activeModal: activeModalResetState,
     showDescriptionModal: false,
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, navigation, logScreenView } = this.props;
+    const {
+      fetchAssetTransactions,
+      navigation,
+      logScreenView,
+      getExchangeSupportedAssets,
+      exchangeSupportedAssets,
+    } = this.props;
     const { assetData: { token }, resetHideRemoval } = navigation.state.params;
-    fetchTransactionsHistory(token);
+    fetchAssetTransactions(token);
     if (resetHideRemoval) resetHideRemoval();
+    if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
     logScreenView('View asset', 'Asset', `asset-${token}`);
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     const isFocused = this.props.navigation.isFocused();
+
     if (!isFocused) {
+      if (!isEq) this.forceRender = true;
       return false;
     }
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+
+    if (this.forceRender) {
+      this.forceRender = false;
+      return true;
+    }
+
     return !isEq;
   }
 
@@ -232,17 +250,17 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   handleScrollWrapperEndDrag = e => {
-    const { fetchTransactionsHistory, history } = this.props;
-    const {
-      assetData: { token },
-    } = this.props.navigation.state.params;
+    const { fetchAssetTransactions, history, activeAccount } = this.props;
+    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
+
+    const { assetData: { token } } = this.props.navigation.state.params;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
     const contentHeight = e.nativeEvent.contentSize.height;
     const offsetY = e.nativeEvent.contentOffset.y;
     const indexFrom = history.filter(({ asset }) => asset === token).length;
 
     if (layoutHeight + offsetY + 200 >= contentHeight) {
-      fetchTransactionsHistory(token, indexFrom);
+      fetchAssetTransactions(token, indexFrom);
     }
   };
 
@@ -252,7 +270,7 @@ class AssetScreen extends React.Component<Props, State> {
       balances,
       paymentNetworkBalances,
       fetchAssetsBalances,
-      fetchTransactionsHistory,
+      fetchAssetTransactions,
       baseFiatCurrency,
       navigation,
       smartWalletState,
@@ -261,6 +279,7 @@ class AssetScreen extends React.Component<Props, State> {
       contacts,
       availableStake,
       contactsSmartAddresses,
+      exchangeSupportedAssets,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -304,6 +323,7 @@ class AssetScreen extends React.Component<Props, State> {
       return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
+    const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
 
     return (
       <ContainerWithHeader
@@ -316,7 +336,7 @@ class AssetScreen extends React.Component<Props, State> {
               onPress: () => { this.setState({ showDescriptionModal: true }); },
             },
           ],
-          rightIconsSize: fontSizes.extraLarge,
+          rightIconsSize: fontSizes.large,
         }}
         backgroundColor={baseColors.white}
         inset={{ bottom: 0 }}
@@ -328,7 +348,7 @@ class AssetScreen extends React.Component<Props, State> {
               refreshing={false}
               onRefresh={() => {
                 fetchAssetsBalances();
-                fetchTransactionsHistory(token);
+                fetchAssetTransactions(token);
               }}
             />
           }
@@ -336,7 +356,6 @@ class AssetScreen extends React.Component<Props, State> {
           <AssetPattern
             token={assetData.token}
             icon={assetData.patternIcon}
-            contractAddress={assetData.contractAddress}
             isListed={isListed}
           />
           <DataWrapper>
@@ -365,7 +384,7 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
-              onPressExchange={() => this.goToExchangeFlow(token)}
+              onPressExchange={isSupportedByExchange ? () => this.goToExchangeFlow(token) : null}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
@@ -381,10 +400,9 @@ class AssetScreen extends React.Component<Props, State> {
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
           <ActivityFeed
-            feedTitle="transactions."
+            feedTitle="Transactions"
             navigation={navigation}
             backgroundColor={baseColors.white}
-            showArrowsOnly
             noBorder
             feedData={relatedTransactions}
             feedType={isSynthetic ? SYNTHETIC : NONSYNTHETIC}
@@ -425,7 +443,8 @@ const mapStateToProps = ({
       SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
     },
   },
-}) => ({
+  exchange: { exchangeSupportedAssets },
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   rates,
   baseFiatCurrency,
@@ -433,6 +452,7 @@ const mapStateToProps = ({
   accounts,
   smartWalletFeatureEnabled,
   contactsSmartAddresses,
+  exchangeSupportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -441,6 +461,7 @@ const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   availableStake: availableStakeSelector,
   assets: accountAssetsSelector,
+  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -448,16 +469,17 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   fetchAssetsBalances: () => {
     dispatch(fetchAssetsBalancesAction());
   },
-  fetchTransactionsHistory: (asset, indexFrom) => {
-    dispatch(fetchTransactionsHistoryAction(asset, indexFrom));
+  fetchAssetTransactions: (asset, indexFrom) => {
+    dispatch(fetchAssetTransactionsAction(asset, indexFrom));
   },
   logScreenView: (contentName: string, contentType: string, contentId: string) => {
     dispatch(logScreenViewAction(contentName, contentType, contentId));
   },
+  getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);

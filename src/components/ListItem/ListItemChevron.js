@@ -21,7 +21,7 @@ import * as React from 'react';
 import { TouchableNativeFeedback, Platform, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 
 import Icon from 'components/Icon';
@@ -74,14 +74,12 @@ const ListItem = styled.View`
 `;
 
 const ItemLabel = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  line-height: ${fontSizes.small};
+  ${fontStyles.medium};
   color: ${props => props.color ? props.color : baseColors.electricBlue};
 `;
 
 const SubText = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall};
-  line-height: ${fontSizes.extraExtraSmall};
+  ${fontStyles.small};
   color: ${props => props.color ? props.color : baseColors.darkGray};
   margin-top: 4px;
 `;
@@ -171,7 +169,7 @@ export const ListItemChevron = (props: Props) => {
             <Icon
               name="chevron-right"
               style={{
-                fontSize: fontSizes.extraExtraSmall,
+                fontSize: fontSizes.small,
                 color: color || baseColors.electricBlue,
                 ...chevronStyle,
               }}

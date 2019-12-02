@@ -27,14 +27,22 @@ export function extractTxNotesFromMessages(txNotesRaw: Object[] = []): Object[] 
       if (Array.isArray(messages)) {
         messages.forEach((message) => {
           if (message.status === UNDECRYPTABLE_MESSAGE) return;
-          const txNote = JSON.parse(message.content);
-          txNotes.push(txNote);
+          try {
+            const txNote = JSON.parse(message.content);
+            txNotes.push(txNote);
+          } catch (e) {
+            // err
+          }
         });
       } else {
         messages.messages.forEach((message) => {
           if (message.status === UNDECRYPTABLE_MESSAGE) return;
-          const txNote = JSON.parse(message.content);
-          txNotes.push(txNote);
+          try {
+            const txNote = JSON.parse(message.content);
+            txNotes.push(txNote);
+          } catch (e) {
+            // err
+          }
         });
       }
     });

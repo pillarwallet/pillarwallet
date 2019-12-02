@@ -22,7 +22,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { BACKUP_PHRASE } from 'constants/navigationConstants';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import Header from 'components/Header';
-import { Paragraph, BoldText } from 'components/Typography';
+import { Paragraph, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
 
@@ -59,7 +59,7 @@ export default class SecurityConfirm extends React.Component<Props, State> {
         <Header title="security" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
           <Paragraph>
-            Your wallet is secured by a 12 word <BoldText>backup phrase</BoldText>.
+            Your wallet is secured by a 12 word <MediumText>backup phrase</MediumText>.
           </Paragraph>
           <Paragraph>
             Keep your backup phrase safe! We don’t have it and we cannot access it.

@@ -24,7 +24,7 @@ import { UIColors, fontSizes, baseColors, spacing } from 'utils/variables';
 import styled from 'styled-components/native';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
-import { Paragraph, Label, BoldText } from 'components/Typography';
+import { Paragraph, Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import IconButton from 'components/IconButton';
 import { backupWalletAction } from 'actions/walletActions';
@@ -52,8 +52,8 @@ const MnemonicPhraseWord = styled.TouchableOpacity`
   margin: 0 2.5px 5px;
 `;
 
-const MnemonicPhraseWordText = styled(BoldText)`
-  font-size: ${fontSizes.extraSmall};
+const MnemonicPhraseWordText = styled(MediumText)`
+  font-size: ${fontSizes.regular}px;
   color: #ffffff;
 `;
 
@@ -88,8 +88,8 @@ const RemoveWordButtonIcon = styled(IconButton)`
   margin-left: 14px;
 `;
 
-const WordInputText = styled(BoldText)`
-  font-size: ${fontSizes.small};
+const WordInputText = styled(MediumText)`
+  font-size: ${fontSizes.medium}px;
   color: white;
   margin-left: 10px;
 `;
@@ -104,7 +104,6 @@ const ShuffledWordWrapper = styled.View`
 
 const ErrorParagraph = styled(Paragraph)`
   color: ${baseColors.fireEngineRed};
-  font-size: ${fontSizes.extraSmall}px;
 `;
 
 const FooterWrapper = styled.View`
@@ -190,7 +189,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
               <RemoveWordButtonIcon
                 icon="close"
                 onPress={this.handleLastWordRemoval}
-                fontSize={fontSizes.small}
+                fontSize={fontSizes.medium}
                 color={UIColors.primary}
               />
             }
@@ -265,7 +264,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
             {this.renderInputFields()}
           </WordInputFields>
           {enteredWords.length === 3 && !isFormValid &&
-          <ErrorParagraph>
+          <ErrorParagraph small>
             Incorrect words selected
           </ErrorParagraph>
           }

@@ -8,6 +8,10 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import com.facebook.react.ReactActivityDelegate;
+import com.facebook.react.ReactRootView;
+import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
+
 public class MainActivity extends ReactActivity {
     @Override
     public void invokeDefaultOnBackPressed() {
@@ -53,5 +57,15 @@ public class MainActivity extends ReactActivity {
                     .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                     .emit("ActivityStateChange", "background");
         }
+    }
+
+    @Override
+    protected ReactActivityDelegate createReactActivityDelegate() {
+        return new ReactActivityDelegate(this, getMainComponentName()) {
+            @Override
+            protected ReactRootView createRootView() {
+                return new RNGestureHandlerEnabledRootView(MainActivity.this);
+            }
+        };
     }
 }

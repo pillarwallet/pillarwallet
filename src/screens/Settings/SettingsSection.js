@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 import styled from 'styled-components/native';
 
 // components
@@ -27,14 +27,15 @@ import SettingsListItem from 'components/ListItem/SettingsItem';
 import ShadowedCard from 'components/ShadowedCard';
 
 // utils
-import { baseColors, UIColors } from 'utils/variables';
+import { baseColors, UIColors, fontStyles, spacing } from 'utils/variables';
+import { ListCard } from 'components/ListItem/ListCard';
 
 const SectionHeader = styled(MediumText)`
   color: ${baseColors.blueYonder};
-  font-size: 14px;
-  line-height: 17px;
-  margin-top: 20px;
+  ${fontStyles.regular};
+  margin-top: ${spacing.large}px;
   margin-bottom: 9px;
+  margin-horizontal: ${spacing.large}px;
 `;
 
 const Separator = styled.View`
@@ -46,13 +47,49 @@ const Separator = styled.View`
 type Props = {
   sectionTitle: string,
   sectionItems: Object[],
+  isCardsList?: boolean,
 }
 
-export const SettingsSection = (props: Props) => {
-  const { sectionTitle, sectionItems } = props;
+const Section = (props: Props) => {
+  const { sectionItems, isCardsList } = props;
+  if (isCardsList) {
+    return (
+      <FlatList
+        keyExtractor={item => item.key}
+        data={sectionItems}
+        style={{ marginTop: -spacing.medium }}
+        contentContainerStyle={{ width: '100%', paddingHorizontal: spacing.large, paddingTop: spacing.medium }}
+        renderItem={({ item }) => {
+          const {
+            title,
+            onPress,
+            hidden,
+            body,
+            label,
+            titleStyle,
+            disabled,
+            minHeight,
+          } = item;
+          if (hidden) return null;
+          return (
+            <ListCard
+              title={title}
+              titleStyle={titleStyle}
+              subtitle={body}
+              action={onPress}
+              label={label}
+              contentWrapperStyle={{ minHeight, padding: 16 }}
+              disabled={disabled}
+            />
+          );
+        }
+        }
+      />
+    );
+  }
+
   return (
-    <React.Fragment>
-      <SectionHeader>{sectionTitle}</SectionHeader>
+    <View style={{ paddingHorizontal: spacing.large }}>
       <ShadowedCard wrapperStyle={{ marginBottom: 10, width: '100%' }}>
         <FlatList
           keyExtractor={item => item.key}
@@ -81,6 +118,16 @@ export const SettingsSection = (props: Props) => {
           ItemSeparatorComponent={() => (<Separator />)}
         />
       </ShadowedCard>
+    </View>
+  );
+};
+
+export const SettingsSection = (props: Props) => {
+  const { sectionTitle } = props;
+  return (
+    <React.Fragment>
+      <SectionHeader>{sectionTitle}</SectionHeader>
+      <Section {...props} />
     </React.Fragment>
   );
 };

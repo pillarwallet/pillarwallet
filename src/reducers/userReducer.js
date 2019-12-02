@@ -33,6 +33,7 @@ export type UserReducerAction = {
 export const initialState = {
   data: {
     icoService: {},
+    isLegacyUser: true,
   },
   userState: null,
 };

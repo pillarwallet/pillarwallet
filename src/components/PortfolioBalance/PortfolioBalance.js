@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
+import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type {
   Balances,
@@ -28,7 +29,8 @@ import type {
 import { BaseText } from 'components/Typography';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { formatFiat } from 'utils/common';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -40,6 +42,18 @@ type Props = {
   label?: string,
   style: Object,
 };
+
+const LabelText = styled(BaseText)`
+  color: ${themedColors.secondaryText};
+  font-size: ${fontSizes.medium}px;
+  padding-top: 10px;
+`;
+
+const BalanceText = styled(BaseText)`
+  color: ${themedColors.text};
+  font-size: ${fontSizes.giant}px;
+  padding-top: 10px;
+`;
 
 class PortfolioBalance extends React.PureComponent<Props> {
   render() {
@@ -57,22 +71,8 @@ class PortfolioBalance extends React.PureComponent<Props> {
 
     return (
       <View style={style}>
-        {!!label &&
-        <BaseText style={{
-          color: baseColors.darkGray,
-          fontSize: fontSizes.small,
-          paddingTop: 10,
-        }}
-        >
-          {label}
-        </BaseText>}
-        <BaseText style={{
-          color: UIColors.defaultTextColor,
-          fontSize: fontSizes.extraExtraLarge,
-        }}
-        >
-          {portfolioBalance}
-        </BaseText>
+        {!!label && <LabelText>{label}</LabelText>}
+        <BalanceText>{portfolioBalance}</BalanceText>
       </View>
     );
   }

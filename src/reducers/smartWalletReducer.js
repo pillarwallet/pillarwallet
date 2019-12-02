@@ -29,7 +29,8 @@ import {
   ADD_SMART_WALLET_RECOVERY_AGENTS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   RESET_SMART_WALLET,
-  SET_SMART_WALLET_LAST_SYNCED_HASH,
+  SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
+  SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
   START_SMART_WALLET_DEPLOYMENT,
   RESET_SMART_WALLET_DEPLOYMENT,
   SET_ASSET_TRANSFER_GAS_LIMIT,
@@ -60,7 +61,8 @@ export type SmartWalletReducerState = {
     },
     recoveryAgents: RecoveryAgent[],
   },
-  lastSyncedHash: ?string,
+  lastSyncedTransactionId: ?number,
+  lastSyncedPaymentId: ?number,
 };
 
 export type SmartWalletReducerAction = {
@@ -87,7 +89,8 @@ export const initialState = {
       error: null,
     },
   },
-  lastSyncedHash: null,
+  lastSyncedTransactionId: null,
+  lastSyncedPaymentId: null,
 };
 
 export default function smartWalletReducer(
@@ -177,10 +180,15 @@ export default function smartWalletReducer(
           },
         },
       };
-    case SET_SMART_WALLET_LAST_SYNCED_HASH:
+    case SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID:
       return {
         ...state,
-        lastSyncedHash: action.payload || initialState.lastSyncedHash,
+        lastSyncedPaymentId: action.payload || initialState.lastSyncedPaymentId,
+      };
+    case SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID:
+      return {
+        ...state,
+        lastSyncedTransactionId: action.payload || initialState.lastSyncedTransactionId,
       };
     case RESET_SMART_WALLET:
       return { ...initialState };

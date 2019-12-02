@@ -20,11 +20,15 @@
 
 export type TxSettlementItem = {
   symbol: string,
-  value: string,
+  value: string | number,
   hash: string,
 };
 
-export type TransactionExtra = TxSettlementItem[];
+type TxWithdrawalExtra = {
+  paymentHash: string,
+};
+
+export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra;
 
 export type Transaction = {
   _id: string,
@@ -33,14 +37,14 @@ export type Transaction = {
   from: string,
   createdAt: number,
   asset: string,
-  nbConfirmations: number,
-  gasUsed: number,
-  gasPrice: number,
+  nbConfirmations?: number,
+  gasUsed?: number,
+  gasPrice?: number,
   status: string,
   value: string,
   note?: ?string,
   signOnly?: ?boolean,
-  isPPNTransaction: boolean,
+  isPPNTransaction?: boolean,
   tag?: string,
   extra?: TransactionExtra,
   stateInPPN?: string,
@@ -116,3 +120,11 @@ export type SmartWalletTransferTransaction = {
   transactionHash?: string,
   status: string,
 };
+
+export type SyntheticTransaction = {
+  transactionId: string,
+  fromAmount: number,
+  toAmount: number,
+  toAssetCode: string,
+  toAddress: string,
+}

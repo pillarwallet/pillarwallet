@@ -17,11 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import ChatService from 'services/chat';
-import Toast from 'components/Toast';
+
+// actions
 import { saveDbAction } from 'actions/dbActions';
-import { extractTxNotesFromMessages } from 'utils/txNotes';
-import { getConnectionStateCheckParamsByUsername } from 'utils/chat';
+
+// constants
 import {
   UPDATE_TX_NOTES,
   ADD_TX_NOTE,
@@ -29,6 +29,20 @@ import {
   TX_NOTE_DECRYPTING_STARTED,
 } from 'constants/txNoteConstants';
 import { ADD_WEBSOCKET_SENT_MESSAGE } from 'constants/chatConstants';
+
+// components
+import Toast from 'components/Toast';
+
+// services
+import ChatService from 'services/chat';
+
+// utils
+import { isCaseInsensitiveMatch } from 'utils/common';
+import { isContactAvailable } from 'utils/contacts';
+import { extractTxNotesFromMessages } from 'utils/txNotes';
+import { getConnectionStateCheckParamsByUsername } from 'utils/chat';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 const chat = new ChatService();
@@ -116,16 +130,18 @@ export const getTxNoteByContactAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       chat: { data: { isDecrypting } },
+      session: { data: { isOnline } },
+      contacts: { data: { contacts } },
     } = getState();
-    if (isDecrypting) return;
-    dispatch({
-      type: TX_NOTE_DECRYPTING_STARTED,
-    });
+    if (isDecrypting || !isOnline) return;
+
+    const recipientContact = contacts.find((contact) => isCaseInsensitiveMatch(username, contact.username));
+    if (!isContactAvailable(recipientContact)) return;
+
+    dispatch({ type: TX_NOTE_DECRYPTING_STARTED });
+
     const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
-    const addContactParams = {
-      username,
-      ...connectionStateCheckParams,
-    };
+    const addContactParams = { username, ...connectionStateCheckParams };
     if (!addContactParams.userId) {
       Toast.show({
         message: `Unable to retrieve tx note for ${username}`,
@@ -133,6 +149,7 @@ export const getTxNoteByContactAction = (username: string) => {
       });
       return;
     }
+
     await chat.client.addContact(addContactParams, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
@@ -146,7 +163,8 @@ export const getTxNoteByContactAction = (username: string) => {
 
     const data = await chat.client.receiveNewMessagesByContact(username, 'tx-note')
       .then(JSON.parse)
-      .catch(() => {});
+      .catch(() => {
+      });
 
     if (data !== undefined && Object.keys(data).length) {
       const { messages: newRemoteMessages } = data;

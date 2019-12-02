@@ -120,7 +120,6 @@ class UnsettledAssets extends React.Component<Props> {
         />
         <FloatingButtonView>
           <Button
-            roundedCorners
             style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
             width="auto"
             title="Settle transactions"

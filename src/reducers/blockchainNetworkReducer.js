@@ -38,13 +38,16 @@ const initialState: BlockchainNetworkReducerState = {
       id: BLOCKCHAIN_NETWORK_TYPES.ETHEREUM,
       title: 'Ethereum',
       isActive: true,
-      isAvailable: true,
     },
     {
       id: BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK,
       title: 'Pillar network',
       isActive: false,
-      isAvailable: true,
+    },
+    {
+      id: BLOCKCHAIN_NETWORK_TYPES.BITCOIN,
+      title: 'Bitcoin',
+      isActive: false,
     },
   ],
 };

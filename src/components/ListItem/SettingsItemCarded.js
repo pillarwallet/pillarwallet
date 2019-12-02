@@ -18,13 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { spacing, baseColors, fontSizes } from 'utils/variables';
+import { spacing, baseColors, fontSizes, fontStyles } from 'utils/variables';
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
-import { BaseText, BoldText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
 import { responsiveSize } from 'utils/ui';
@@ -40,7 +41,7 @@ type Props = {
   titleStyle?: Object,
   label?: string,
   contentWrapperStyle?: Object,
-  onMainPress?: Function,
+  onMainPress?: ?Function,
   onSettingsPress?: ?Function,
   isActive?: boolean,
   customIcon?: React.Node,
@@ -49,6 +50,7 @@ type Props = {
   isLoading?: boolean,
   onSettingsLoadingPress?: Function,
   settingsIconSource?: string,
+  sidePaddingsForWidth?: number,
 }
 
 const ItemWrapper = styled.View`
@@ -70,34 +72,32 @@ const CardContent = styled.View`
   padding-right: 6px;
 `;
 
-const CardTitle = styled(BoldText)`
+const CardTitle = styled(MediumText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.small}px;
+  font-size: ${fontSizes.big}px;
+  line-height: 24px;
 `;
 
 const CardSubtitle = styled(BaseText)`
   color: ${baseColors.coolGrey};
-  font-size: 13px;
-  line-height: 15px;
-  margin-top: 4px;
+  ${fontStyles.medium};
 `;
 
 const CheckIcon = styled(Icon)`
-  font-size: ${responsiveSize(14)}px;
+  font-size: ${fontSizes.rSmall}px;
   color: ${baseColors.electricBlue};
   align-self: flex-start;
 `;
 
 const SettingsIcon = styled(Icon)`
-  font-size: ${fontSizes.extraLarge};
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.malibu};
 `;
 
 const IconWrapper = styled.View`
-  margin-right: ${spacing.medium}px;
   align-items: center;
   justify-content: center;
+  margin-right: ${responsiveSize(16)}px;
 `;
 
 const iconRadius = responsiveSize(52);
@@ -108,7 +108,7 @@ const CardImage = styled(CachedImage)`
   background-color: ${baseColors.darkGray};
 `;
 const SettingsLabel = styled(MediumText)`
-  font-size: ${responsiveSize(13)}px;
+  ${fontStyles.rRegular};
   color: ${baseColors.malibu};
   margin-top: 4px;
 `;
@@ -125,6 +125,8 @@ export const LoadingSpinner = styled(Spinner)`
   align-items: center;
   justify-content: center;
 `;
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const defaultSettingsIcon = require('assets/icons/icon_settings.png');
 
@@ -160,17 +162,26 @@ export const SettingsItemCarded = (props: Props) => {
     settingsIcon,
     settingsLabel,
     isLoading,
+    sidePaddingsForWidth,
   } = props;
 
   const buttonSideLength = responsiveSize(84);
   const settingsActionOnLoading = onSettingsLoadingPress || noop;
   const settingsAction = isLoading ? settingsActionOnLoading : onSettingsPress;
+  const cardsSpacing = 8;
+  const additionalWrapperStyle = {};
+  if (sidePaddingsForWidth) {
+    additionalWrapperStyle.width = screenWidth - sidePaddingsForWidth - buttonSideLength - cardsSpacing;
+  }
+
+  const showIcon = !!icon || !!fallbackIcon || !!customIcon;
 
   return (
     <ItemWrapper>
       <ShadowedCard
         wrapperStyle={{
           flexGrow: 1,
+          ...additionalWrapperStyle,
         }}
         contentWrapperStyle={{
           paddingVertical: 6,
@@ -185,10 +196,11 @@ export const SettingsItemCarded = (props: Props) => {
         onPress={onMainPress}
       >
         <CardRow>
+          {showIcon &&
           <IconWrapper>
             {(!!icon || !!fallbackIcon) && <CardImage source={{ uri: icon }} fallbackSource={fallbackIcon} />}
             {customIcon}
-          </IconWrapper>
+          </IconWrapper>}
           <CardContent>
             <CardTitle>{title}</CardTitle>
             {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
@@ -200,7 +212,7 @@ export const SettingsItemCarded = (props: Props) => {
       <ShadowedCard
         wrapperStyle={{
           width: buttonSideLength,
-          marginLeft: 8,
+          marginLeft: cardsSpacing,
           flexDirection: 'column',
           height: '100%',
         }}

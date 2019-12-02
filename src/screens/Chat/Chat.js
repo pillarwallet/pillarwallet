@@ -34,14 +34,21 @@ import {
   Time,
   LoadEarlier,
   Message,
+  InputToolbarProps,
+  LoadEarlierProps,
+  MessageProps,
+  ComposerProps,
+  BubbleProps,
+  SendProps,
+  TimeProps,
+  DayProps,
 } from 'react-native-gifted-chat';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
-import ProfileImage from 'components/ProfileImage';
-import Icon from 'components/Icon';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import Spinner from 'components/Spinner';
-import { Wrapper } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+
+// constants
+import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
+import { CONTACT } from 'constants/navigationConstants';
+
+// actions
 import {
   sendMessageByContactAction,
   clearChatDraftStateAction,
@@ -50,10 +57,19 @@ import {
   saveDraftAction,
 } from 'actions/chatActions';
 import { logEventAction, logScreenViewAction } from 'actions/analyticsActions';
+
+// components
+import ProfileImage from 'components/ProfileImage';
+import Icon from 'components/Icon';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Spinner from 'components/Spinner';
+import { Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+
+// utils
+import { baseColors, fontSizes, spacing, lineHeights, appFont } from 'utils/variables';
 import { isIphoneX, handleUrlPress } from 'utils/common';
-import { getUserName } from 'utils/contacts';
-import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
-import { CONTACT } from 'constants/navigationConstants';
+import { getUserName, isContactAvailable } from 'utils/contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -72,6 +88,7 @@ type Props = {
   draft: ?string,
   logScreenView: Function,
   logEvent: Function,
+  isOnline: boolean,
 }
 
 type State = {
@@ -84,9 +101,7 @@ type State = {
 
 const INPUT_HEIGHT = isIphoneX() ? 62 : 52;
 
-const isWarningMessage = (type) => {
-  return type === 'warning';
-};
+const isWarningMessage = (type) => type === 'warning';
 
 const SystemMessageWrapper = styled.View`
   flex: 1;
@@ -102,7 +117,7 @@ const TimeWrapper = styled.View`
 `;
 
 // chat elements
-const renderDay = (props: Props) => (
+const renderDay = (props: DayProps) => (
   <Day
     {...props}
     containerStyle={{
@@ -111,38 +126,34 @@ const renderDay = (props: Props) => (
     }}
     textStyle={{
       color: baseColors.darkGray,
-      fontWeight: '400',
-      fontSize: fontSizes.extraSmall,
-      fontFamily: 'Aktiv Grotesk App',
+      fontSize: fontSizes.small,
+      fontFamily: appFont.regular,
+      fontWeight: 'normal',
     }}
     dateFormat="LL"
   />
 );
 
-const renderTime = (props: Props) => {
-  return (
-    <Time
-      {...props}
-      textStyle={{
-        right: {
-          color: baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
-        },
-        left: {
-          color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
-        },
-      }}
-      timeFormat="HH:mm"
-    />
-  );
-};
+const renderTime = (props: TimeProps) => (
+  <Time
+    {...props}
+    textStyle={{
+      right: {
+        color: baseColors.darkGray,
+        fontFamily: appFont.regular,
+        fontSize: fontSizes.small,
+      },
+      left: {
+        color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
+        fontFamily: appFont.regular,
+        fontSize: fontSizes.small,
+      },
+    }}
+    timeFormat="HH:mm"
+  />
+);
 
-const renderSend = (props: Props) => (
+const renderSend = (props: SendProps) => (
   <Send
     {...props}
     containerStyle={{
@@ -161,34 +172,32 @@ const renderSend = (props: Props) => (
       name="send-message"
       style={{
         color: baseColors.brightBlue,
-        fontSize: fontSizes.extraLarge,
+        fontSize: fontSizes.large,
       }}
     />
   </Send>
 );
 
-const renderInputToolbar = (props: Props) => {
-  return (
-    <InputToolbar
-      {...props}
-      renderSend={renderSend}
-      primaryStyle={{
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        minHeight: INPUT_HEIGHT,
-      }}
-      containerStyle={{
-        bottom: 2,
-        paddingLeft: 8,
-        borderColor: baseColors.lightGray,
-        margin: 0,
-      }}
+const renderInputToolbar = (props: InputToolbarProps) => (
+  <InputToolbar
+    {...props}
+    renderSend={renderSend}
+    primaryStyle={{
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      minHeight: INPUT_HEIGHT,
+    }}
+    containerStyle={{
+      bottom: 2,
+      paddingLeft: 8,
+      borderColor: baseColors.lightGray,
+      margin: 0,
+    }}
 
-    />
-  );
-};
+  />
+);
 
-const renderLoadEarlier = (props: Props) => (
+const renderLoadEarlier = (props: LoadEarlierProps) => (
   <LoadEarlier
     {...props}
     containerStyle={{
@@ -197,7 +206,7 @@ const renderLoadEarlier = (props: Props) => (
   />
 );
 
-const renderMessage = (props: Props) => (
+const renderMessage = (props: MessageProps) => (
   <Message
     {...props}
     containerStyle={{
@@ -236,7 +245,7 @@ class Chat extends React.Component<Props, State> {
     isOpen: false,
   };
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     const username = this.props.navigation.getParam('username', '');
     const contact = props.contacts.find(c => c.username === username) || {};
@@ -251,13 +260,9 @@ class Chat extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    const { getChatDraftByContact, logScreenView } = this.props;
     const { contact } = this.state;
-    const {
-      getChatByContact,
-      getChatDraftByContact,
-      logScreenView,
-    } = this.props;
-    getChatByContact(contact.username, contact.id, contact.profileImage);
+    this.updateChat();
     logScreenView('View chat list', 'Chat');
     AppState.addEventListener('change', this.shouldPersistDraft);
     getChatDraftByContact(contact.id);
@@ -267,7 +272,7 @@ class Chat extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isFetching, draft } = this.props;
+    const { isFetching, draft, isOnline } = this.props;
     const { draft: prevDraft } = prevProps;
 
     if (this.state.isFetching && !isFetching) {
@@ -276,6 +281,10 @@ class Chat extends React.Component<Props, State> {
 
     if (!prevDraft && draft) {
       this.setState({ chatText: draft }); // eslint-disable-line
+    }
+
+    if (prevProps.isOnline !== isOnline && isOnline) {
+      this.updateChat();
     }
   }
 
@@ -294,6 +303,12 @@ class Chat extends React.Component<Props, State> {
     }
     clearChatDraftState();
   }
+
+  updateChat = () => {
+    const { getChatByContact } = this.props;
+    const { contact } = this.state;
+    getChatByContact(contact.username, contact.id, contact.profileImage);
+  };
 
   physicalBackAction = () => {
     this.handleChatDismissal();
@@ -371,7 +386,7 @@ class Chat extends React.Component<Props, State> {
     );
   };
 
-  renderComposer = (props: Props) => {
+  renderComposer = (props: ComposerProps) => {
     return (
       <Composer
         {...props}
@@ -382,30 +397,29 @@ class Chat extends React.Component<Props, State> {
             android: 8,
           }),
           marginBottom: 5,
-          fontSize: fontSizes.extraSmall,
-          lineHeight: fontSizes.small,
+          fontSize: fontSizes.regular,
+          lineHeight: lineHeights.regular,
+          fontFamily: appFont.regular,
         }}
         placeholder="Type your message here"
       />
     );
   };
 
-  renderBubble = (props) => {
+  renderBubble = (props: BubbleProps) => {
     const isWarning = isWarningMessage(props.currentMessage.type);
     return (<Bubble
       {...props}
       textStyle={{
         left: {
           color: isWarning ? baseColors.white : baseColors.slateBlack,
-          fontSize: fontSizes.extraSmall,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
+          fontSize: fontSizes.regular,
+          fontFamily: appFont.regular,
         },
         right: {
           color: baseColors.slateBlack,
-          fontSize: fontSizes.extraSmall,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
+          fontSize: fontSizes.regular,
+          fontFamily: appFont.regular,
         },
       }}
       wrapperStyle={{
@@ -455,12 +469,20 @@ class Chat extends React.Component<Props, State> {
   };
 
   renderCustomSystemMessage = (props) => {
+    const { contact } = this.state;
     if (props.currentMessage.empty) {
+      const isAvailable = isContactAvailable(contact);
+      const title = isAvailable
+        ? 'Break the ice'
+        : 'Not reachable';
+      const bodyText = isAvailable
+        ? 'Start chatting - recent chats will appear here'
+        : 'You disconnected or blocked this user';
       return (
         <SystemMessageWrapper style={{ paddingTop: 0 }}>
           <EmptyStateParagraph
-            title="Break the ice"
-            bodyText="Start chatting - recent chats will appear here"
+            title={title}
+            bodyText={bodyText}
           />
         </SystemMessageWrapper>
       );
@@ -522,6 +544,10 @@ class Chat extends React.Component<Props, State> {
       messagesToShow = messages[contact.username];
     }
 
+    const renderInputToolbarWrapper = (toolbarProps) => isContactAvailable(contact)
+      ? renderInputToolbar(toolbarProps)
+      : null;
+
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
@@ -540,13 +566,11 @@ class Chat extends React.Component<Props, State> {
               onInputTextChanged={this.updateChatInput}
               messages={messagesToShow}
               onSend={msgs => this.onSend(msgs)}
-              user={{
-                _id: this.props.user.username,
-              }}
+              user={{ _id: this.props.user.username }}
               renderBubble={this.renderBubble}
               renderAvatar={this.renderAvatar}
               renderComposer={this.renderComposer}
-              renderInputToolbar={renderInputToolbar}
+              renderInputToolbar={renderInputToolbarWrapper}
               renderDay={renderDay}
               loadEarlier={showLoadEarlierButton}
               onLoadEarlier={this.handleLoadEarlier}
@@ -568,6 +592,7 @@ const mapStateToProps = ({
   user: { data: user },
   chat: { data: { messages, isFetching, chats }, draft },
   contacts: { data: contacts },
+  session: { data: { isOnline } },
 }) => ({
   user,
   messages,
@@ -575,6 +600,7 @@ const mapStateToProps = ({
   chats,
   contacts,
   draft,
+  isOnline,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -19,12 +19,12 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Platform, TextInput, FlatList, Keyboard } from 'react-native';
+import { TextInput, FlatList, Keyboard } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // COMPONENTS
-import { BoldText, BaseText, MediumText, SubHeading } from 'components/Typography';
+import { BaseText, MediumText, SubHeadingMedium } from 'components/Typography';
 import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -33,15 +33,16 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Separator from 'components/Separator';
 import ProfileImage from 'components/ProfileImage';
+import { ScrollWrapper } from 'components/Layout';
 
 // UTILS
 import {
   baseColors,
   fontSizes,
-  fontWeights,
   itemSizes,
   spacing,
   UIColors,
+  fontStyles, appFont,
 } from 'utils/variables';
 import { formatMoney, noop } from 'utils/common';
 
@@ -79,9 +80,8 @@ type EventLike = {
 const Wrapper = styled.View`
 `;
 
-const Label = styled(BoldText)`
-  font-size: ${fontSizes.medium}px;
-  line-height: ${fontSizes.mediumLarge}px;
+const Label = styled(MediumText)`
+  ${fontStyles.big};
   letter-spacing: 0.23px;
   color: ${baseColors.slateBlack};
   margin-bottom: ${spacing.small}px;
@@ -129,8 +129,7 @@ const SelectorImage = styled(CachedImage)`
 `;
 
 const SlectorValue = styled(MediumText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.mediumLarge}px;
+  ${fontStyles.medium};
   color: ${baseColors.slateBlack};
   margin-right: 20px;
 `;
@@ -149,31 +148,25 @@ const InputWrapper = styled.View`
 const InputField = styled(TextInput)`
   flex: 1;
   text-align: right;
-  font-weight: bold;
   padding: 0;
   margin: 0;
   font-size: ${fontSizes.giant}px;
   height: 100%;
-  ${props => Platform.OS === 'ios' || props.value ? 'font-family: Aktiv Grotesk App;' : ''}
-  ${props => props.value && Platform.OS === 'android'
-    ? 'lineHeight: 42px;'
-    : ''}
   min-width: 10px;
+  font-family: ${appFont.medium};
 `;
 
 const PlaceholderWrapper = styled.View`
 `;
 
 const Placeholder = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: ${fontSizes.mediumLarge}px;
+  ${fontStyles.regular};
   letter-spacing: 0.23px;
   color: ${baseColors.darkGray};
 `;
 
 const ErrorMessage = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
-  line-height: ${fontSizes.medium}px;
+  ${fontStyles.regular};
   color: tomato;
   margin: 8px 12px;
 `;
@@ -190,57 +183,38 @@ const AddonText = styled(BaseText)`
 `;
 
 const SearchBarWrapper = styled.View`
-  padding: 0 ${spacing.mediumLarge}px;
+  padding: 0 ${spacing.large}px;
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${baseColors.mediumLightGray};
 `;
 
 const HorizontalOptions = styled.View`
-  height: 145px;
   background-color: ${UIColors.defaultBackgroundColor};
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${baseColors.mediumLightGray};
+  padding-bottom: ${spacing.small}px;
 `;
 
 const HorizontalOptionsScrollView = styled.ScrollView`
 `;
 
-const HorizontalOptionsHeader = styled(SubHeading)`
-  margin: 22px 16px 13px;
-  font-weight: ${fontWeights.medium};
-`;
-
 const HorizontalOptionItem = styled.TouchableOpacity`
   align-items: center;
-  width: ${Platform.select({
-    ios: '60px',
-    android: '74px',
-  })};
-  margin: ${Platform.select({
-    ios: `0 ${spacing.rhythm / 2}px`,
-    android: `-6px ${spacing.rhythm / 2}px 0`,
-  })};
-  padding-top: ${Platform.select({
-    ios: '3px',
-    android: 0,
-  })};
+  width: ${itemSizes.avatarCircleMedium + 4}px;
+  margin: 0 8px;
 `;
 
 const HorizontalOptionItemName = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall};
+  ${fontStyles.small};
   color: ${baseColors.darkGray};
   padding: 0 4px;
-  margin-top: ${Platform.select({
-    ios: '3px',
-    android: '-4px',
-  })};
+  margin-top: 3px;
 `;
 
-const OptionsHeader = styled(SubHeading)`
-  margin: 22px 16px 13px;
-  font-weight: ${fontWeights.medium};
+const OptionsHeader = styled(SubHeadingMedium)`
+  margin: ${spacing.large}px ${spacing.large}px 0;
 `;
 
 const EmptyStateWrapper = styled(Wrapper)`
@@ -293,9 +267,9 @@ export default class SelectorInput extends React.Component<Props, State> {
     const { inputProps = {}, value } = this.props;
     const { input } = value;
     const { onChange, onSelectorChange } = inputProps;
-    this.setState({ showOptionsSelector: false, query: '' });
     if (onChange) onChange({ selector: selectedValue, input });
     if (onSelectorChange) onSelectorChange();
+    this.setState({ showOptionsSelector: false });
   };
 
   focusInput = () => {
@@ -356,6 +330,7 @@ export default class SelectorInput extends React.Component<Props, State> {
               userName={name}
               diameter={itemSizes.avatarCircleMedium}
               textStyle={{ fontSize: fontSizes.medium }}
+              noShadow
             />
             <HorizontalOptionItemName numberOfLines={1}>{name}</HorizontalOptionItemName>
           </HorizontalOptionItem>
@@ -392,7 +367,7 @@ export default class SelectorInput extends React.Component<Props, State> {
     let filteredListData = options;
     let filteredHorizontalListData = horizontalOptions;
 
-    if (isSearchQuery) {
+    if (isSearchQuery && showOptionsSelector) {
       // filter by search query and sort exact matches (case insensitve) first (-1) or keep existing order (0)
       filteredListData = filteredListData
         .filter(({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name))
@@ -481,8 +456,8 @@ export default class SelectorInput extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalShow={this.focusInput}
+          onModalHidden={() => this.setState({ query: '' })}
           backgroundColor={baseColors.white}
-          avoidKeyboard
           noSwipeToDismiss
           noClose
           title={label}
@@ -505,46 +480,52 @@ export default class SelectorInput extends React.Component<Props, State> {
                 forceShowCloseButton
               />
             </SearchBarWrapper>
-            {!!filteredHorizontalListData.length &&
-              <HorizontalOptions>
-                {(showOptionsTitles && !!horizontalOptionsTitle) &&
-                  <HorizontalOptionsHeader>{horizontalOptionsTitle}</HorizontalOptionsHeader>
-                }
-                <HorizontalOptionsScrollView
-                  keyboardShouldPersistTaps="always"
-                  horizontal
-                >
-                  {this.renderHorizontalOptions(filteredHorizontalListData)}
-                </HorizontalOptionsScrollView>
-              </HorizontalOptions>
-            }
-            {!!filteredListData.length &&
-              <FlatList
-                data={filteredListData}
-                renderItem={this.renderOption}
-                keyExtractor={({ value: val }) => val}
-                keyboardShouldPersistTaps="handled"
-                contentContainerStyle={{
-                  paddingBottom: 40,
-                  backgroundColor: filteredHorizontalListData.length
-                    ? baseColors.white
-                    : UIColors.defaultBackgroundColor,
-                }}
-                ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-                initialNumToRender={10}
-                maxToRenderPerBatch={5}
-                removeClippedSubviews
-                viewabilityConfig={viewConfig}
-                ListHeaderComponent={
-                  (showOptionsTitles && !!optionsTitle) && <OptionsHeader>{optionsTitle}</OptionsHeader>
-                }
-              />
-            }
-            {(!filteredListData.length && !filteredHorizontalListData.length) &&
-              <EmptyStateWrapper fullScreen>
-                <EmptyStateParagraph title="Nothing found" />
-              </EmptyStateWrapper>
-            }
+            <ScrollWrapper
+              contentContainerStyle={{ paddingBottom: 30 }}
+              disableOnAndroid
+            >
+              {!!filteredHorizontalListData.length &&
+                <HorizontalOptions>
+                  {(showOptionsTitles && !!horizontalOptionsTitle) &&
+                    <OptionsHeader>{horizontalOptionsTitle}</OptionsHeader>
+                  }
+                  <HorizontalOptionsScrollView
+                    keyboardShouldPersistTaps="always"
+                    horizontal
+                    contentContainerStyle={{ paddingHorizontal: spacing.large / 2, paddingVertical: spacing.medium }}
+                  >
+                    {this.renderHorizontalOptions(filteredHorizontalListData)}
+                  </HorizontalOptionsScrollView>
+                </HorizontalOptions>
+              }
+              {!!filteredListData.length &&
+                <FlatList
+                  data={filteredListData}
+                  renderItem={this.renderOption}
+                  keyExtractor={({ value: val }) => val}
+                  keyboardShouldPersistTaps="handled"
+                  ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+                  initialNumToRender={10}
+                  viewabilityConfig={viewConfig}
+                  ListHeaderComponent={
+                    (showOptionsTitles && !!optionsTitle) && filteredListData.length &&
+                    <OptionsHeader>{optionsTitle}</OptionsHeader>
+                  }
+                  getItemLayout={(data, index) => ({
+                    length: 70,
+                    offset: 70 * index,
+                    index,
+                  })}
+                  windowSize={10}
+                  hideModalContentWhileAnimating
+                />
+              }
+              {(!filteredListData.length && !filteredHorizontalListData.length) &&
+                <EmptyStateWrapper fullScreen>
+                  <EmptyStateParagraph title="Nothing found" />
+                </EmptyStateWrapper>
+              }
+            </ScrollWrapper>
           </Wrapper>
         </SlideModal>
       </React.Fragment>

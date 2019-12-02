@@ -27,7 +27,7 @@ import { BigNumber } from 'bignumber.js';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
-import { Label, BoldText } from 'components/Typography';
+import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import { fontSizes, spacing } from 'utils/variables';
 import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'actions/smartWalletActions';
@@ -61,8 +61,8 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium}
+const Value = styled(MediumText)`
+  font-size: ${fontSizes.big}px;
 `;
 
 class FundConfirm extends React.Component<Props, State> {
@@ -102,7 +102,7 @@ class FundConfirm extends React.Component<Props, State> {
     const { session, navigation, topUpFee } = this.props;
     const { topUpButtonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
+    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei().toString()));
     const submitButtonTitle = !topUpButtonSubmitted ? 'Fund Pillar Tank' : 'Processing...';
 
     return (

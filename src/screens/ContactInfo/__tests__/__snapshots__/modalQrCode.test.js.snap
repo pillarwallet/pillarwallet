@@ -10,9 +10,7 @@ exports[`Modal contact info should render modal correctly 1`] = `
       Array [
         Object {
           "color": "#0A1427",
-          "fontFamily": "Aktiv Grotesk App",
-          "fontWeight": "400",
-          "includeFontPadding": false,
+          "fontFamily": "EuclidCircularB-Regular",
           "textAlignVertical": "center",
         },
         Array [
@@ -20,6 +18,7 @@ exports[`Modal contact info should render modal correctly 1`] = `
             "color": "#8B939E",
             "flexWrap": "wrap",
             "fontSize": 16,
+            "lineHeight": 24,
             "marginBottom": 5,
             "textAlign": "center",
           },
@@ -339,9 +338,7 @@ exports[`Modal contact info should render modal correctly 1`] = `
             Array [
               Object {
                 "color": "#0A1427",
-                "fontFamily": "Aktiv Grotesk App",
-                "fontWeight": "400",
-                "includeFontPadding": false,
+                "fontFamily": "EuclidCircularB-Regular",
                 "textAlignVertical": "center",
               },
               Array [
@@ -349,6 +346,7 @@ exports[`Modal contact info should render modal correctly 1`] = `
                   "color": "#8B939E",
                   "flexWrap": "wrap",
                   "fontSize": 16,
+                  "lineHeight": 24,
                   "marginBottom": 5,
                   "textAlign": "center",
                 },

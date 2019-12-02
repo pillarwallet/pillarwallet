@@ -18,12 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import { FlatList, TextInput, View } from 'react-native';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import { formatAmount, formatMoney, formatFiat, isValidNumber } from 'utils/common';
+import { formatAmount, formatMoney, formatFiat, isValidNumber, formatAmountDisplay } from 'utils/common';
 import t from 'tcomb-form-native';
 import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
@@ -31,18 +31,10 @@ import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
+import { InAppBrowser } from '@matt-block/react-native-in-app-browser';
 
-import { fiatCurrencies } from 'fixtures/assets';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import {
-  getAssetData,
-  getBalance,
-  getRate,
-} from 'utils/assets';
-import { getProviderLogo, isFiatProvider, isFiatCurrency } from 'utils/exchange';
-import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
-import { getActiveAccountType } from 'utils/accounts';
-
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import ShadowedCard from 'components/ShadowedCard';
@@ -52,6 +44,7 @@ import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import DeploymentView from 'components/DeploymentView';
 
+// actions
 import {
   searchOffersAction,
   takeOfferAction,
@@ -60,23 +53,38 @@ import {
   setExecutingTransactionAction,
   setTokenAllowanceAction,
   markNotificationAsSeenAction,
+  getMetaDataAction,
+  getExchangeSupportedAssetsAction,
 } from 'actions/exchangeActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
-import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
-import type { Asset, Assets, Balances, Rates } from 'models/Asset';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts } from 'models/Account';
-
+// constants
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
+// utils, services
+import { wyreWidgetUrl } from 'services/sendwyre';
+import { fiatCurrencies } from 'fixtures/assets';
+import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
+import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
+import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
+import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
+import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
+
+// selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
+
+// models, types
+import type { Offer, FiatOffer, ExchangeSearchRequest, Allowance, ExchangeProvider, ProvidersMeta } from 'models/Offer';
+import type { Asset, Assets, Balances, Rates } from 'models/Asset';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // partials
 import { ExchangeStatus } from './ExchangeStatus';
@@ -112,8 +120,7 @@ const CardColumn = styled.View`
 `;
 
 const CardText = styled(BaseText)`
-  line-height: 18px;
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   letter-spacing: 0.18px;
   color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
   flex-wrap: wrap;
@@ -134,7 +141,7 @@ const CardButton = styled.TouchableOpacity`
 
 const ButtonLabel = styled(BaseText)`
   color: ${props => props.color ? props.color : baseColors.slateBlack};
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.regular}px;
 `;
 
 const FormWrapper = styled.View`
@@ -158,20 +165,19 @@ const CardNote = styled(BaseText)`
   padding: 4px 0;
   margin-left: 10px;
   color: ${props => props.color ? props.color : baseColors.slateBlack};
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
 `;
 
 type Props = {
   rates: Rates,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   user: Object,
   assets: Assets,
   searchOffers: (string, string, number) => void,
   offers: Offer[],
   takeOffer: (string, string, number, string, Function) => Object,
   authorizeWithShapeshift: Function,
-  supportedAssets: Asset[],
   balances: Balances,
   resetOffers: Function,
   paymentNetworkBalances: Balances,
@@ -182,11 +188,16 @@ type Props = {
   connectedProviders: ExchangeProvider[],
   hasUnreadExchangeNotification: boolean,
   markNotificationAsSeen: Function,
-  oAuthAccessToken: string,
+  oAuthAccessToken: ?string,
   accounts: Accounts,
   smartWalletState: Object,
   deploySmartWallet: Function,
   smartWalletFeatureEnabled: boolean,
+  getMetaData: () => void,
+  exchangeSupportedAssets: Asset[],
+  fiatExchangeSupportedAssets: Asset[],
+  getExchangeSupportedAssets: () => void,
+  providersMeta: ProvidersMeta
 };
 
 type State = {
@@ -251,21 +262,18 @@ const generateFormStructure = (balances: Balances) => {
 
   const FromOption = t.refinement(t.Object, ({ selector, input }) => {
     if (!selector
-      || !Object.keys(selector).length
+      || isEmpty(selector)
       || !input
       || !isValidNumber(input)) return false;
 
     const { symbol, decimals } = selector;
 
-    const isFiat = isFiatCurrency(symbol);
+    if (isFiatCurrency(symbol)) return true;
 
     amount = parseFloat(input);
 
-    if (decimals === 0 && amount.toString().indexOf('.') > -1 && !isFiat) {
-      return false;
-    } else if (isFiat) {
-      return true;
-    }
+    if (decimals === 0 && amount.toString().includes('.')) return false;
+
     balance = getBalance(balances, symbol);
     maxAmount = calculateMaxAmount(symbol, balance);
 
@@ -273,6 +281,10 @@ const generateFormStructure = (balances: Balances) => {
   });
 
   FromOption.getValidationErrorMessage = ({ selector, input }) => {
+    if (isEmpty(selector)) {
+      return 'Asset should be selected.';
+    }
+
     const { symbol, decimals } = selector;
 
     const isFiat = isFiatCurrency(symbol);
@@ -281,24 +293,36 @@ const generateFormStructure = (balances: Balances) => {
       return 'Incorrect number entered.';
     }
 
-    if (!Object.keys(selector).length) {
-      return 'Asset should be selected.';
-    } else if (!input) {
-      return false; // should still validate (to not trigger search if empty), yet error should not be visible to user
-    } else if (parseFloat(input) < 0) {
+    const numericAmount = parseFloat(input || 0);
+
+    if (numericAmount === 0) {
+      /**
+       * 0 is the first number that can be typed therefore we don't want
+       * to show any error message on the input, however,
+       * the form validation would still not go through,
+       * but it's obvious that you cannot send 0 amount
+       */
+      return null;
+    } else if (numericAmount < 0) {
       return 'Amount should be bigger than 0.';
-    } else if (amount > maxAmount && !isFiat) {
+    }
+
+    // all possible fiat validation is done
+    if (isFiat) return true;
+
+    if (amount > maxAmount) {
       return `Amount should not be bigger than your balance - ${balance} ${symbol}.`;
-    } else if (amount < MIN_TX_AMOUNT && !isFiat) {
+    } else if (amount < MIN_TX_AMOUNT) {
       return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH).';
-    } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+    } else if (decimals === 0 && amount.toString().includes('.')) {
       return 'Amount should not contain decimal places';
     }
+
     return true;
   };
 
   const ToOption = t.refinement(t.Object, ({ selector }) => {
-    return !!Object.keys(selector).length;
+    return !isEmpty(selector);
   });
 
   ToOption.getValidationErrorMessage = () => {
@@ -344,7 +368,7 @@ function SelectorInputTemplate(locals) {
       inputProps={inputProps}
       options={options}
       horizontalOptions={horizontalOptions}
-      showOptionsTitles={!!horizontalOptions.length}
+      showOptionsTitles={!isEmpty(horizontalOptions)}
       optionsTitle="CRYPTO"
       horizontalOptionsTitle="FIAT"
       errorMessage={errorMessage}
@@ -357,27 +381,15 @@ function SelectorInputTemplate(locals) {
   );
 }
 
-/**
- * avoid text overlapping on many decimals,
- * full amount will be displayed n confirm screen
- * also show only 2 decimals for amounts above 1.00
- * to avoid same text overlapping in the other side
- */
-function formatAmountDisplay(value: number | string) {
-  if (!value) return 0;
-  const amount = parseFloat(value);
-  if (amount > 1) {
-    return formatMoney(amount, 2);
-  }
-  return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
-}
-
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
-  fromInputRef: ?Object;
+  fromInputRef: TextInput;
+  listeners: NavigationEventSubscription[];
 
   constructor(props: Props) {
     super(props);
+    this.fromInputRef = React.createRef();
+    this.listeners = [];
     this.state = {
       shapeshiftAuthPressed: false,
       pressedOfferId: '',
@@ -440,31 +452,65 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { exchangeSearchRequest = {}, baseFiatCurrency } = this.props;
-    this.provideOptions(true);
+    const {
+      exchangeSearchRequest = {},
+      baseFiatCurrency,
+      navigation,
+      getMetaData,
+      getExchangeSupportedAssets,
+    } = this.props;
+    getMetaData();
+    getExchangeSupportedAssets();
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const defaultFrom = this.checkIfAssetsExchangeIsAllowed() ? ETH : fiatCurrency;
     const { fromAssetCode = defaultFrom, toAssetCode, fromAmount } = exchangeSearchRequest;
     this.setInitialSelection(fromAssetCode, toAssetCode, fromAmount);
+    this.provideOptions();
+    this.listeners = [
+      navigation.addListener('didFocus', this.focusInputWithKeyboard),
+      navigation.addListener('didBlur', () => this.fromInputRef.blur()),
+    ];
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentWillUnmount() {
+    this.listeners.forEach(listener => listener.remove());
+  }
+
+  focusInputWithKeyboard = () => {
+    setTimeout(() => {
+      if (!this.fromInputRef) return;
+      this.fromInputRef.focus();
+    }, 200);
+  };
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
     const {
       assets,
-      supportedAssets,
+      exchangeSupportedAssets,
+      fiatExchangeSupportedAssets,
       navigation,
       oAuthAccessToken,
       resetOffers,
     } = this.props;
-    if (assets !== prevProps.assets || supportedAssets !== prevProps.supportedAssets) {
+
+    const fromAssetSymbol = get(this.state, 'value.fromInput.selector.symbol');
+    const prevFromAssetSymbol = get(prevState, 'value.fromInput.selector.symbol');
+    const toAssetSymbol = get(this.state, 'value.toInput.selector.symbol');
+    const prevToAssetSymbol = get(prevState, 'value.toInput.selector.symbol');
+
+    // update from and to options when (supported) assets changes or user selects an option
+    if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets
+      || fiatExchangeSupportedAssets !== prevProps.fiatExchangeSupportedAssets
+      || fromAssetSymbol !== prevFromAssetSymbol || toAssetSymbol !== prevToAssetSymbol) {
       this.provideOptions();
     }
 
-    const fromAssetCode = navigation.getParam('fromAssetCode') || '';
-    const toAssetCode = navigation.getParam('toAssetCode') || '';
+    const fromAssetCode = navigation.getParam('fromAssetCode');
+    const toAssetCode = navigation.getParam('toAssetCode');
     if (fromAssetCode || toAssetCode) {
-      this.setInitialSelection(fromAssetCode, toAssetCode);
+      const _fromAssetCode = fromAssetCode || fromAssetSymbol;
+      this.setInitialSelection(_fromAssetCode, toAssetCode);
       // reset to prevent nav value change over newly selected
       navigation.setParams({ fromAssetCode: null, toAssetCode: null });
     }
@@ -484,16 +530,34 @@ class ExchangeScreen extends React.Component<Props, State> {
       || (isSmartWallet && smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
   };
 
-  provideOptions = (initialRender: boolean = false) => {
-    const { assets, supportedAssets } = this.props;
-    const fiatOptionsFrom = this.generateFiatOptions();
-    const assetsOptionsFrom = this.generateAssetsOptions(assets);
-    const assetsOptionsBuying = this.generateSupportedAssetsOptions(supportedAssets);
-    const initialAssetsOptionsBuying = initialRender
-      ? assetsOptionsBuying.filter(({ value }) => value !== ETH)
+  provideOptions = () => {
+    const { assets, exchangeSupportedAssets, fiatExchangeSupportedAssets } = this.props;
+
+    const selectedFromAssetSymbol = get(this.state, 'value.fromInput.selector.symbol', '');
+    const selectedToAssetSymbol = get(this.state, 'value.toInput.selector.symbol', '');
+    const isFromSelectedFiat = isFiatCurrency(selectedFromAssetSymbol);
+
+    const assetsOptionsBuying = this.generateSupportedAssetsOptions(isFromSelectedFiat
+      ? fiatExchangeSupportedAssets : exchangeSupportedAssets);
+
+    const assetsOptionsFrom = this.generateAssetsOptions(assets, selectedToAssetSymbol);
+
+    const initialAssetsOptionsBuying = selectedFromAssetSymbol
+      ? assetsOptionsBuying.filter(({ value }) => value !== selectedFromAssetSymbol)
       : assetsOptionsBuying;
+
+    const initialAssetsOptionsSelling = selectedToAssetSymbol
+      ? assetsOptionsFrom.filter(({ value }) => value !== selectedToAssetSymbol)
+      : assetsOptionsFrom;
+
+    // show FIAT options only if TO value isn't selected or selected TO value is supported by fiat exchange providers
+    const fiatOptionsFrom = !selectedToAssetSymbol
+    || fiatExchangeSupportedAssets.some(({ symbol }) => symbol === selectedToAssetSymbol)
+      ? this.generateFiatOptions()
+      : [];
+
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
-    thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
+    thisStateFormOptionsCopy.fields.fromInput.config.options = initialAssetsOptionsSelling;
     thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = fiatOptionsFrom;
     thisStateFormOptionsCopy.fields.toInput.config.options = initialAssetsOptionsBuying;
 
@@ -503,10 +567,10 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
-    const { assets, supportedAssets } = this.props;
-    const assetsData = Object.keys(assets).map(id => assets[id]);
+    const { assets, exchangeSupportedAssets } = this.props;
+    const assetsData = getAssetsAsList(assets);
     const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode)
-      || getAssetData(assetsData, supportedAssets, fromAssetCode);
+      || getAssetData(assetsData, exchangeSupportedAssets, fromAssetCode);
     const selectedAssetOptions = isFiatCurrency(fromAssetCode)
       ? this.generateFiatOptions().find(({ symbol }) => symbol === fromAssetCode)
       : this.generateAssetsOptions({ [fromAssetCode]: fromAsset })[0];
@@ -518,7 +582,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       },
     };
     if (toAssetCode) {
-      const toAsset = getAssetData(assetsData, supportedAssets, toAssetCode);
+      const toAsset = getAssetData(assetsData, exchangeSupportedAssets, toAssetCode);
       if (toAsset) {
         const supportedAssetsOptions = this.generateSupportedAssetsOptions([toAsset]);
         initialFormState.toInput = {
@@ -559,7 +623,27 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  onFiatOfferPress = (offer: Offer) => {
+  openSendWyre(selectedSellAmount: string, offer: FiatOffer) {
+    const { accounts } = this.props;
+    const destAddress = getActiveAccountAddress(accounts);
+
+    const { fromAsset, toAsset } = offer;
+    const { code: fromAssetCode } = fromAsset;
+    const { code: toAssetCode } = toAsset;
+
+    const wyreUrl = wyreWidgetUrl(
+      destAddress,
+      toAssetCode,
+      fromAssetCode,
+      selectedSellAmount,
+    );
+
+    InAppBrowser.open(wyreUrl).catch(error => {
+      console.error('InAppBrowser.error', error);
+    });
+  }
+
+  onFiatOfferPress = (offer: FiatOffer) => {
     const {
       navigation,
     } = this.props;
@@ -570,6 +654,12 @@ class ExchangeScreen extends React.Component<Props, State> {
         },
       },
     } = this.state;
+    const { provider } = offer;
+
+    if (provider === 'SendWyre') {
+      this.openSendWyre(selectedSellAmount, offer);
+      return;
+    }
 
     navigation.navigate(FIAT_EXCHANGE, {
       fiatOfferOrder: {
@@ -595,21 +685,24 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       _id,
       provider,
-      fromAssetCode,
-      toAssetCode,
+      fromAsset,
+      toAsset,
       askRate,
     } = offer;
+    const { code: fromAssetCode } = fromAsset;
+    const { code: toAssetCode } = toAsset;
     const amountToSell = parseFloat(selectedSellAmount);
     const amountToBuy = calculateAmountToBuy(askRate, amountToSell);
     this.setState({ pressedOfferId: _id }, () => {
       takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, order => {
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
-        if (!order || !Object.keys(order).length) return;
+        if (isEmpty(order)) return;
         setExecutingTransaction();
         navigation.navigate(EXCHANGE_CONFIRM, {
           offerOrder: {
             ...order,
-            receiveAmount: amountToBuy,
+            receiveQuantity: amountToBuy, // this value should be provided by exchange, currently returning 0,
+            // hence we overwrite it with our calculation
             provider,
           },
         });
@@ -626,18 +719,22 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       _id,
       provider,
-      fromAssetCode,
+      fromAsset,
+      toAsset,
     } = offer;
+    const { address: fromAssetAddress, code: fromAssetCode } = fromAsset;
+    const { address: toAssetAddress } = toAsset;
     this.setState({ pressedTokenAllowanceId: _id }, () => {
-      setTokenAllowance(fromAssetCode, provider, (response) => {
+      setTokenAllowance(fromAssetCode, fromAssetAddress, toAssetAddress, provider, (response) => {
         this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
-        if (!response || !Object.keys(response).length) return;
+        if (isEmpty(response)) return;
         setExecutingTransaction();
         navigation.navigate(EXCHANGE_CONFIRM, {
           offerOrder: {
             ...response,
             provider,
-            fromAssetCode,
+            fromAsset,
+            toAsset,
             setTokenAllowance: true,
           },
         });
@@ -656,9 +753,8 @@ class ExchangeScreen extends React.Component<Props, State> {
         },
       },
     }), () => {
-      const validation = this.exchangeForm.validate();
-      const { errors = [] } = validation;
-      if (errors.length) return;
+      const errors = get(this.exchangeForm.validate(), 'errors', []);
+      if (!isEmpty(errors)) return;
       this.triggerSearch();
     });
   };
@@ -670,15 +766,15 @@ class ExchangeScreen extends React.Component<Props, State> {
       shapeshiftAuthPressed,
       pressedTokenAllowanceId,
     } = this.state;
-    const { exchangeAllowances, connectedProviders } = this.props;
+    const { exchangeAllowances, connectedProviders, providersMeta } = this.props;
     const { input: selectedSellAmount } = fromInput;
     const {
       _id: offerId,
       minQuantity,
       maxQuantity,
       askRate,
-      fromAssetCode,
-      toAssetCode,
+      toAsset,
+      fromAsset,
       provider: offerProvider,
       feeAmount,
       extraFeeAmount,
@@ -687,10 +783,14 @@ class ExchangeScreen extends React.Component<Props, State> {
     } = offer;
     let { allowanceSet = true } = offer;
 
+    const { code: toAssetCode } = toAsset;
+    const { code: fromAssetCode } = fromAsset;
+
     let storedAllowance;
     if (!allowanceSet) {
       storedAllowance = exchangeAllowances.find(
-        ({ provider, assetCode }) => fromAssetCode === assetCode && provider === offerProvider,
+        ({ provider, fromAssetCode: _fromAssetCode, toAssetCode: _toAssetCode }) => _fromAssetCode === fromAssetCode
+          && _toAssetCode === toAssetCode && provider === offerProvider,
       );
       allowanceSet = storedAllowance && storedAllowance.enabled;
     }
@@ -700,7 +800,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const isTakeOfferPressed = pressedOfferId === offerId;
     const isSetAllowancePressed = pressedTokenAllowanceId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
-    const providerLogo = getProviderLogo(offerProvider);
+    const providerLogo = getOfferProviderLogo(providersMeta, offerProvider);
 
     const amountToBuyString = formatAmountDisplay(amountToBuy);
 
@@ -709,8 +809,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       ({ extra: shapeshiftAccessToken } = connectedProviders
         .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {});
     }
-
-    const askRateBn = new BigNumber(askRate);
 
     const amountToSell = parseFloat(selectedSellAmount);
     const minQuantityNumeric = parseFloat(minQuantity);
@@ -728,13 +826,16 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const isFiat = isFiatProvider(offerProvider);
 
+    const disableFiatExchange = isFiat && (minOrMaxNeeded || !!offerRestricted);
+    const disableOffer = disableNonFiatExchange || disableFiatExchange;
+
     return (
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10 }}
         contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
       >
         <CardWrapper
-          disabled={isTakeButtonDisabled || disableNonFiatExchange}
+          disabled={isTakeButtonDisabled || disableOffer}
           onPress={() => isFiat ? this.onFiatOfferPress(offer) : this.onOfferPress(offer)}
         >
           <CardRow withBorder alignTop>
@@ -747,7 +848,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             {!isFiat &&
             <CardColumn>
               <CardText label>Exchange rate</CardText>
-              <CardText>{`${askRateBn.toFixed()}`}</CardText>
+              <CardText>{formatAmountDisplay(askRate)}</CardText>
             </CardColumn>
             }
             <CardInnerRow style={{ flexShrink: 1 }}>
@@ -766,12 +867,14 @@ class ExchangeScreen extends React.Component<Props, State> {
               }
               {!minOrMaxNeeded && !allowanceSet &&
               <CardButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
+                {!isSetAllowancePressed &&
                 <ButtonLabel color={storedAllowance ? baseColors.darkGray : baseColors.electricBlue} >
                   {storedAllowance
                     ? 'Pending'
                     : 'Enable'
                   }
-                </ButtonLabel>
+                </ButtonLabel>}
+                {!!isSetAllowancePressed && <Spinner width={20} height={20} />}
               </CardButton>
               }
               {!!isFiat && !!offerRestricted &&
@@ -808,6 +911,7 @@ class ExchangeScreen extends React.Component<Props, State> {
                 title={isTakeOfferPressed ? '' : `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`}
                 small
                 onPress={() => this.onFiatOfferPress(offer)}
+                disabled={disableFiatExchange}
               >
                 {isTakeOfferPressed && <Spinner width={20} height={20} />}
               </Button>
@@ -831,12 +935,14 @@ class ExchangeScreen extends React.Component<Props, State> {
     );
   };
 
-  generateAssetsOptions = (assets) => {
-    const { balances, paymentNetworkBalances } = this.props;
-    const assetsList = Object.keys(assets).map((key: string) => assets[key]);
-    return assetsList
-      .filter(({ symbol }) => getBalance(balances, symbol) !== 0 || symbol === ETH)
-      .sort((a, b) => a.symbol.localeCompare(b.symbol))
+  generateAssetsOptions = (assets: Assets, selectedToSymbol?: string) => {
+    const { balances, paymentNetworkBalances, exchangeSupportedAssets } = this.props;
+
+    if (selectedToSymbol && !exchangeSupportedAssets.some(({ symbol }) => symbol === selectedToSymbol)) return [];
+
+    return sortAssets(assets)
+      .filter(({ symbol }) => (getBalance(balances, symbol) !== 0 || symbol === ETH)
+        && !!exchangeSupportedAssets.some(asset => asset.symbol === symbol))
       .map(({ symbol, iconUrl, ...rest }) => {
         const assetBalance = formatAmount(getBalance(balances, symbol));
         const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
@@ -864,11 +970,10 @@ class ExchangeScreen extends React.Component<Props, State> {
     paymentNetworkBalance: null,
   }));
 
-  generateSupportedAssetsOptions = (assets) => {
+  generateSupportedAssetsOptions = (assets: Asset[]) => {
     if (!Array.isArray(assets)) return [];
     const { balances, paymentNetworkBalances } = this.props;
     return [...assets] // prevent mutation of param
-      .sort((a, b) => a.symbol.localeCompare(b.symbol))
       .map(({ symbol, iconUrl, ...rest }) => {
         const rawAssetBalance = getBalance(balances, symbol);
         const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
@@ -897,7 +1002,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   updateOptions = (value) => {
     const {
       assets,
-      supportedAssets,
+      exchangeSupportedAssets,
       rates,
       baseFiatCurrency,
     } = this.props;
@@ -906,7 +1011,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { selector: selectedToOption } = toInput;
     let amountValueInFiat;
     let valueInFiatToShow;
-    if (amount && Object.keys(selectedFromOption).length) {
+    if (amount && !isEmpty(selectedFromOption)) {
       const { symbol: token } = selectedFromOption;
       const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
       const totalInFiat = parseFloat(amount) * getRate(rates, token, fiatCurrency);
@@ -916,13 +1021,13 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const optionsFrom = this.generateAssetsOptions(assets);
     let newOptionsFrom = optionsFrom;
-    if (Object.keys(selectedToOption).length) {
+    if (!isEmpty(selectedToOption)) {
       newOptionsFrom = optionsFrom.filter((option) => option.value !== selectedToOption.value);
     }
 
-    const optionsTo = this.generateSupportedAssetsOptions(supportedAssets);
+    const optionsTo = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
     let newOptionsTo = optionsTo;
-    if (Object.keys(selectedFromOption).length) {
+    if (!isEmpty(selectedFromOption)) {
       newOptionsTo = optionsTo.filter((option) => option.value !== selectedFromOption.value);
     }
 
@@ -956,18 +1061,18 @@ class ExchangeScreen extends React.Component<Props, State> {
       smartWalletState,
       deploySmartWallet,
     } = this.props;
+
     const {
       value,
       formOptions,
     } = this.state;
-
     const { fromInput } = value;
     const { selector: selectedFromOption } = fromInput;
 
     const formStructure = generateFormStructure(balances);
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
     const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
-    if ((!!exchangeAllowances.length || !!connectedProviders.length)
+    if ((!isEmpty(exchangeAllowances) || !isEmpty(connectedProviders))
       && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
       rightItems.push({
         iconSource: settingsIcon,
@@ -982,11 +1087,11 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
-    const blockView = !!Object.keys(sendingBlockedMessage).length
+    const blockView = !isEmpty(sendingBlockedMessage)
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
     const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
-    const isSelectedFiat = !!(Object.keys(fiatCurrencies.find(
-      (currency) => currency.symbol === selectedFromOption.symbol) || {}).length);
+    const isSelectedFiat = !isEmpty(selectedFromOption) &&
+      fiatCurrencies.some(({ symbol }) => symbol === selectedFromOption.symbol);
 
     const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed() && !isSelectedFiat;
 
@@ -1036,7 +1141,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             style={{ width: '100%' }}
             contentContainerStyle={{ width: '100%', paddingHorizontal: 20, paddingVertical: 10 }}
             renderItem={(props) => this.renderOffers(props, disableNonFiatExchange)}
-            ListHeaderComponent={reorderedOffers.length
+            ListHeaderComponent={!isEmpty(reorderedOffers)
               ? (
                 <ListHeader>
                   <ExchangeStatus />
@@ -1069,8 +1174,10 @@ const mapStateToProps = ({
       connectedProviders,
       hasNotification: hasUnreadExchangeNotification,
     },
+    providersMeta,
+    exchangeSupportedAssets,
+    fiatExchangeSupportedAssets,
   },
-  assets: { supportedAssets },
   rates: { data: rates },
   featureFlags: {
     data: {
@@ -1079,10 +1186,9 @@ const mapStateToProps = ({
   },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   offers,
-  supportedAssets,
   rates,
   exchangeSearchRequest,
   exchangeAllowances,
@@ -1092,6 +1198,9 @@ const mapStateToProps = ({
   smartWalletFeatureEnabled,
   accounts,
   smartWalletState,
+  providersMeta,
+  exchangeSupportedAssets,
+  fiatExchangeSupportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1105,7 +1214,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   searchOffers: (fromAssetCode, toAssetCode, fromAmount) => dispatch(
     searchOffersAction(fromAssetCode, toAssetCode, fromAmount),
   ),
@@ -1115,11 +1224,13 @@ const mapDispatchToProps = (dispatch: Function) => ({
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   resetOffers: () => dispatch(resetOffersAction()),
   setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
-  setTokenAllowance: (assetCode, provider, callback) => dispatch(
-    setTokenAllowanceAction(assetCode, provider, callback),
+  setTokenAllowance: (formAssetCode, fromAssetAddress, toAssetAddress, provider, callback) => dispatch(
+    setTokenAllowanceAction(formAssetCode, fromAssetAddress, toAssetAddress, provider, callback),
   ),
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+  getMetaData: () => dispatch(getMetaDataAction()),
+  getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);

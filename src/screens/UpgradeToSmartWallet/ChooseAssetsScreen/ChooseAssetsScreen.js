@@ -45,7 +45,7 @@ import {
   addCollectiblesToSmartWalletUpgradeAction,
 } from 'actions/smartWalletActions';
 import { formatAmount } from 'utils/common';
-import { getBalance } from 'utils/assets';
+import { getAssetsAsList, getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
@@ -317,7 +317,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       collectiblesToTransfer = [],
       disableScroll,
     } = this.state;
-    const assetsArray = Object.values(assets);
+    const assetsArray = getAssetsAsList(assets);
     const nonEmptyAssets = assetsArray
       .map((asset: any) => {
         const assetsTransferAmount = addedAssets.find(addedAsset => addedAsset.name === asset.name);

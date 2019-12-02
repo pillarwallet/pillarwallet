@@ -25,7 +25,7 @@ import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
-import { fontSizes, fontWeights, baseColors, UIColors, spacing } from 'utils/variables';
+import { fontSizes, baseColors, UIColors, spacing, fontStyles, appFont } from 'utils/variables';
 
 type inputPropsType = {
   placeholder?: string,
@@ -76,8 +76,7 @@ type EventLike = {
 
 const inputTypes = {
   default: {
-    fontSize: fontSizes.medium,
-    fontWeight: fontWeights.bold,
+    fontSize: fontSizes.big,
     textAlign: 'left',
   },
   bigText: {
@@ -85,9 +84,8 @@ const inputTypes = {
     borderBottomWidth: 0,
     borderRadius: 6,
     color: baseColors.slateBlack,
-    fontSize: fontSizes.extraLarger,
-    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
-    fontWeight: fontWeights.bold,
+    fontSize: fontSizes.large,
+    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
     padding: '0 20px',
     inputHeight: Platform.OS === 'ios' ? 80 : 70,
   },
@@ -95,9 +93,8 @@ const inputTypes = {
     backgroundColor: 'transparent',
     borderBottomWidth: 0,
     color: baseColors.slateBlack,
-    fontSize: fontSizes.extraLarger,
-    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
-    fontWeight: fontWeights.bold,
+    fontSize: fontSizes.large,
+    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
     padding: '0 20px',
     inputHeight: Platform.OS === 'ios' ? 80 : 70,
   },
@@ -105,13 +102,11 @@ const inputTypes = {
     backgroundColor: 'transparent',
     borderBottomWidth: 0,
     color: baseColors.slateBlack,
-    fontSize: fontSizes.medium,
-    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.extraLarger,
-    fontWeight: fontWeights.medium,
+    fontSize: fontSizes.big,
+    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
   },
   amount: {
-    fontSize: fontSizes.extraExtraLarge,
-    fontWeight: fontWeights.bold,
+    fontSize: fontSizes.giant,
     textAlign: 'right',
   },
   secondary: {
@@ -119,7 +114,7 @@ const inputTypes = {
     borderBottomWidth: 0,
     borderRadius: 6,
     color: baseColors.slateBlack,
-    fontSize: fontSizes.small,
+    fontSize: fontSizes.medium,
     padding: '0 14px',
   },
 };
@@ -141,19 +136,18 @@ const ErrorMessage = styled(BaseText)`
 `;
 
 const PostFix = styled(BoldText)`
-  font-weight: 900;
   line-height: 22px;
   margin-top: 8px;
 `;
 
 const InputField = styled(Input)`
-  ${props => props.inputType.fontWeight ? `font-weight: ${props.inputType.fontWeight};` : ''}
   ${props => props.inputType.textAlign ? `text-align: ${props.inputType.textAlign};` : ''}
   ${props => props.inputType.backgroundColor ? `background-color: ${props.inputType.backgroundColor};` : ''}
   ${props => props.inputType.borderRadius ? `border-radius: ${props.inputType.borderRadius};` : ''}
   ${props => props.inputType.color ? `color: ${props.inputType.color};` : ''}
   ${props => props.inputType.lineHeight ? `line-height: ${props.inputType.lineHeight};` : ''}
   padding: ${props => props.inputType.padding || 0};
+  font-family: ${appFont.medium};
 `;
 
 const Item = styled(NBItem)`
@@ -179,12 +173,10 @@ const AddonText = styled(BaseText)`
 
 const CustomLabel = styled(Label)`
   color: ${props => props.labelBigger ? UIColors.defaultTextColor : baseColors.darkGray};
-  font-size: ${props => props.labelBigger ? fontSizes.small : fontSizes.extraSmall};
   letter-spacing: 0.5;
-  font-weight: ${props => props.labelBigger ? fontWeights.bold : '600'};
-  line-height: 24px;
   padding-top: ${props => props.labelBigger ? '35px' : '5px'};
   padding-bottom: ${props => props.labelBigger ? '12px' : '0'};
+  ${props => props.labelBigger ? fontStyles.medium : fontStyles.regular};
   `;
 
 const AbsoluteSpinner = styled(Spinner)`
@@ -199,7 +191,7 @@ const AbsoluteIcon = styled(Icon)`
   right: ${spacing.mediumLarge}px;
   top: 50%;
   margin-top: -13px;
-  font-size: ${fontSizes.extraSmall}px;
+  font-size: ${fontSizes.regular}px;
   color: ${props => props.color || baseColors.electricBlue};
 `;
 
@@ -255,7 +247,9 @@ class TextInput extends React.Component<Props, State> {
 
   handleRNFocus = () => {
     setTimeout(() => {
-      this.multilineInputField._root.focus();
+      if (!!this.multilineInputField && Object.keys(this.multilineInputField).length) {
+        this.multilineInputField._root.focus();
+      }
       this.setState({
         isFocused: true,
       });

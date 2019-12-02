@@ -35,7 +35,7 @@ import { COLLECTIBLE } from 'constants/navigationConstants';
 
 // utils
 import { smallScreen } from 'utils/common';
-import { baseColors, fontSizes, fontTrackings, spacing } from 'utils/variables';
+import { baseColors, fontStyles, fontTrackings, spacing } from 'utils/variables';
 
 // types
 import type { Collectible } from 'models/Collectible';
@@ -56,9 +56,8 @@ const CardRow = styled.View`
 `;
 
 const Name = styled(BaseText)`
-  font-size: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
+  ${props => props.smallScreen ? fontStyles.small : fontStyles.regular};
   letter-spacing: ${fontTrackings.small};
-  line-height: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
   width: 100%; 
   text-align: center;

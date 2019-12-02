@@ -1,31 +1,25 @@
 // @flow
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
-import type { AccountsReducerState } from 'reducers/accountsReducer';
-import type { BalancesReducerState } from 'reducers/balancesReducer';
-import type { CollectiblesReducerState } from 'reducers/collectiblesReducer';
-import type { HistoryReducerState } from 'reducers/historyReducer';
-import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
-import type { AssetsReducerState } from 'reducers/assetsReducer';
-import type { UserSettingsReducerState } from 'reducers/userSettingsReducer';
-
 import { getAccountAddress } from 'utils/accounts';
+
+import type { RootReducerState } from 'reducers/rootReducer';
 
 //
 // Global selectors here
 //
 
-export const balancesSelector = ({ balances }: {balances: BalancesReducerState}) => balances.data;
-export const collectiblesSelector = ({ collectibles }: {collectibles: CollectiblesReducerState}) => collectibles.data;
+export const balancesSelector = ({ balances }: RootReducerState) => balances.data;
+export const collectiblesSelector = ({ collectibles }: RootReducerState) => collectibles.data;
 export const collectiblesHistorySelector =
-  ({ collectibles }: {collectibles: CollectiblesReducerState}) => collectibles.transactionHistory;
-export const historySelector = ({ history }: {history: HistoryReducerState}) => history.data;
+  ({ collectibles }: RootReducerState) => collectibles.transactionHistory;
+export const historySelector = ({ history }: RootReducerState) => history.data;
 
 export const paymentNetworkBalancesSelector =
-  ({ paymentNetwork }: {paymentNetwork: PaymentNetworkReducerState}) => paymentNetwork.balances;
+  ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
 
 export const activeAccountSelector =
-  ({ accounts }: {accounts: AccountsReducerState}) => accounts.data.find(({ isActive }) => isActive);
+  ({ accounts }: RootReducerState) => accounts.data.find(({ isActive }) => isActive);
 
 export const activeAccountIdSelector = createSelector(
   activeAccountSelector,
@@ -37,10 +31,13 @@ export const activeAccountAddressSelector = createSelector(
   activeAccount => activeAccount ? getAccountAddress(activeAccount) : '',
 );
 
-export const assetsSelector = ({ assets }: {assets: AssetsReducerState}) => assets.data;
+export const assetsSelector = ({ assets }: RootReducerState) => assets.data;
 
-export const hiddenAssetsSelector = ({ userSettings }: { userSettings: UserSettingsReducerState}) =>
+export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
   get(userSettings, 'data.hiddenAssets', {});
 
-export const supportedAssetsSelector = ({ assets }: { assets: AssetsReducerState}) =>
+export const supportedAssetsSelector = ({ assets }: RootReducerState) =>
   get(assets, 'supportedAssets', []);
+
+export const bitcoinAddressSelector = ({ bitcoin }: RootReducerState) =>
+  get(bitcoin, 'data.addresses', []);

@@ -82,7 +82,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow Pillar Wallet to use your location</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Pillar Wallet to access your device's accelerometer</string>
+	<string>Allow Pillar Wallet to access your device&apos;s accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Give Pillar Wallet permission to save photos to temporarily store your profile pictures</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -97,10 +97,10 @@
 		<string>Roboto_medium.ttf</string>
 		<string>Roboto.ttf</string>
 		<string>rubicon-icon-font.ttf</string>
-		<string>Aktiv Grotesk App_bold.ttf</string>
-		<string>Aktiv Grotesk App_light.ttf</string>
-		<string>Aktiv Grotesk App_medium.ttf</string>
-		<string>Aktiv Grotesk App.ttf</string>
+		<string>EuclidCircularB-Bold.otf</string>
+		<string>EuclidCircularB-Light.otf</string>
+		<string>EuclidCircularB-Medium.otf</string>
+		<string>EuclidCircularB-Regular.otf</string>
 		<string>AntDesign.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>

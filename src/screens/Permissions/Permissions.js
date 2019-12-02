@@ -24,7 +24,7 @@ import styled from 'styled-components/native/index';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 import { Paragraph, TextLink, MediumText, BaseText } from 'components/Typography';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
 import { handleUrlPress } from 'utils/common';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
@@ -49,7 +49,7 @@ const SectionToggle = styled.View`
 `;
 
 const SectionTitle = styled(MediumText)`
-  font-size: 17px;
+  ${fontStyles.medium};
   margin-right: 12px;
   color: ${baseColors.slateBlack};
 `;
@@ -61,7 +61,7 @@ const InnerSectionToggle = styled.View`
 `;
 
 const InnerSectionTitle = styled(BaseText)`
-  font-size: 15px;
+  ${fontStyles.medium};
   color: ${baseColors.electricBlue};
 `;
 
@@ -338,7 +338,7 @@ class Permissions extends React.Component<Props, State> {
       );
     }
     return (
-      <SectionTitle key={key} style={{ margin: 30, fontSize: fontSizes.small }}>{title}</SectionTitle>
+      <SectionTitle key={key} style={{ margin: 30, fontSize: fontSizes.medium }}>{title}</SectionTitle>
     );
   };
 

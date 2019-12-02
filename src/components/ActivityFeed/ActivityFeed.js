@@ -25,12 +25,12 @@ import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // models
-import type { Transaction } from 'models/Transaction';
+import type { SyntheticTransaction, Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
+import type { BitcoinAddress } from 'models/Bitcoin';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -45,14 +45,14 @@ import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
 
 // utils
 import { createAlert } from 'utils/alerts';
-import { addressesEqual, getAssetData } from 'utils/assets';
+import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import {
   partial,
   formatAmount,
   formatUnits,
   groupAndSortByDate,
 } from 'utils/common';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { findMatchingContact } from 'utils/contacts';
 
 // constants
@@ -75,9 +75,12 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
+import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
 // selectors
-import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
+import { activeAccountAddressSelector, supportedAssetsSelector, bitcoinAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 const ActivityFeedList = styled.SectionList`
@@ -91,7 +94,7 @@ const ActivityFeedWrapper = styled.View`
 `;
 
 const ActivityFeedHeader = styled.View`
-  padding: 0 ${spacing.mediumLarge}px;
+  padding: ${spacing.mediumLarge}px ${spacing.large}px 0;
   border-top-width: ${props => props.noBorder ? 0 : '1px'};
   border-top-color: ${baseColors.mediumLightGray};
 `;
@@ -102,7 +105,7 @@ const SectionHeaderWrapper = styled.View`
 `;
 
 const SectionHeader = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   color: ${baseColors.darkGray};
 `;
 
@@ -159,6 +162,7 @@ type Props = {
   contactsSmartAddresses: ContactSmartAddressData[],
   emptyState?: EmptyState,
   supportedAssets: Asset[],
+  bitcoinAddresses: BitcoinAddress[],
 }
 
 type FeedItemTransaction = {
@@ -206,11 +210,18 @@ type State = {
   tabIsChanging: boolean,
   formattedFeedData: FeedSection[],
   emptyStateData: EmptyState,
+  scrollOffset: ?number,
+  maxScrollOffset: ?number,
 }
 
 const PPNIcon = require('assets/icons/icon_PPN.png');
+const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
+const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
+const walletIcon = require('assets/icons/icon_wallet.png');
 
 class ActivityFeed extends React.Component<Props, State> {
+  eventDetailScrollViewRef: ?Object;
+
   static defaultProps = {
     initialNumToRender: 7,
   };
@@ -223,6 +234,8 @@ class ActivityFeed extends React.Component<Props, State> {
     tabIsChanging: false,
     formattedFeedData: [],
     emptyStateData: {},
+    scrollOffset: undefined,
+    maxScrollOffset: undefined,
   };
 
   componentDidMount() {
@@ -304,58 +317,78 @@ class ActivityFeed extends React.Component<Props, State> {
       asset,
       contactsSmartAddresses,
       supportedAssets,
+      bitcoinAddresses,
     } = this.props;
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
     const itemStatusIcon = notificationStatus === TX_PENDING_STATUS ? TX_PENDING_STATUS : '';
+    const trxData = {};
 
     if (type === TRANSACTION_EVENT) {
-      const isReceived = addressesEqual(notification.to, activeAccountAddress);
+      const tag = get(notification, 'tag', '');
+      const isReceived = addressesEqual(notification.to, activeAccountAddress)
+        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+        || bitcoinAddresses.some(e => e.address === notification.to);
       const address = isReceived ? notification.from : notification.to;
-      const {
-        decimals = 18,
-        iconUrl,
-      } = getAssetData(assets, supportedAssets, notification.asset);
+      const { decimals = 18 } = getAssetData(assets, supportedAssets, notification.asset);
       const value = formatUnits(notification.value, decimals);
       const formattedValue = formatAmount(value);
       let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
-      let directionIcon = isReceived ? 'received' : 'sent';
+      const directionIcon = isReceived ? 'received' : 'sent';
       let directionSymbol = isReceived ? '' : '-';
 
       if (formattedValue === '0') {
         directionSymbol = '';
       }
 
-      const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-
       const contact = findMatchingContact(address, contacts, contactsSmartAddresses) || {};
       const isContact = Object.keys(contact).length !== 0;
-      const itemImage = contact.profileImage || fullIconUrl;
       let itemValue = `${directionSymbol} ${formattedValue} ${notification.asset}`;
       let customAddon = null;
-      let itemImageSource = '';
+      let subtext = '';
       let rightColumnInnerStyle = {};
       let customAddonAlignLeft = false;
+      const imageProps = {};
 
-      const tag = get(notification, 'tag', '');
       if (tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
+        imageProps.itemImageSource = PPNIcon;
+        trxData.hideAmount = true;
+        trxData.hideSender = true;
+        trxData.txType = 'PLR Network settle';
         return (
           <SettlementItem
             settleData={notification.extra}
-            onPress={() => this.selectEvent({ ...notification, value, contact }, type, notificationStatus)}
+            onPress={() => this.selectEvent({
+              ...notification,
+              value,
+              contact,
+              ...trxData,
+            }, type, notificationStatus)}
             type={feedType}
             asset={asset}
             isPending={notificationStatus === TX_PENDING_STATUS}
+            supportedAssets={supportedAssets}
+            accountAssets={assets}
           />
         );
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-        nameOrAddress = 'PLR Network Top Up';
-        itemImageSource = PPNIcon;
-        directionIcon = '';
+        nameOrAddress = 'PLR Tank Top Up';
+        imageProps.itemImageSource = PPNIcon;
+        trxData.hideSender = true;
+        trxData.hideAmount = true;
+        trxData.txType = 'PLR Tank Top Up';
       } else if (tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
-        nameOrAddress = 'PLR Network Withdrawal';
-        itemImageSource = PPNIcon;
-        directionIcon = '';
+        nameOrAddress = 'Withdrawal';
+        subtext = 'from PLR Network';
+        imageProps.itemImageSource = PPNIcon;
+        itemValue = '';
+        customAddon = (<TankAssetBalance
+          amount={`- ${formattedValue} ${notification.asset}`}
+          monoColor
+        />);
+        trxData.txType = 'Withdrawal';
+        trxData.hideAmount = true;
+        trxData.hideSender = true;
       }
 
       // centers line right addons side vertically if status is present
@@ -365,26 +398,60 @@ class ActivityFeed extends React.Component<Props, State> {
 
       const isPPNTransaction = get(notification, 'isPPNTransaction', false);
       if (isPPNTransaction) {
-        if (addressesEqual(notification.to, notification.from)) {
-          nameOrAddress = 'Transfer to own account';
-        }
-        itemValue = '';
         customAddonAlignLeft = true;
-        customAddon = (<TankAssetBalance
-          amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
-          textStyle={!isReceived ? { color: baseColors.scarlet } : null}
-          monoColor
-        />);
         rightColumnInnerStyle = { ...rightColumnInnerStyle, flexDirection: 'row' };
+        trxData.isPPNAsset = true;
+        if (!isContact) imageProps.itemImageSource = PPNIcon;
+        if (addressesEqual(notification.to, notification.from)) {
+          nameOrAddress = 'Deposit';
+          subtext = 'to Smart wallet';
+          itemValue = `${formattedValue} ${notification.asset}`;
+          trxData.txType = 'Deposit';
+          trxData.hideAmount = true;
+          trxData.hideSender = true;
+        } else {
+          const syntheticTransactionExtra: SyntheticTransaction = get(notification, 'extra.syntheticTransaction');
+          let syntheticAssetValue = null;
+          if (!isEmpty(syntheticTransactionExtra)) {
+            const { toAmount, toAssetCode } = syntheticTransactionExtra;
+            syntheticAssetValue = <BaseText style={{ alignSelf: 'flex-end' }}>{toAmount} {toAssetCode}</BaseText>;
+          }
+          itemValue = '';
+          customAddon = (<TankAssetBalance
+            amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
+            bottomExtra={syntheticAssetValue}
+            monoColor
+          />);
+        }
+      }
+
+      // transaction to / from key wallet / smart wallet
+      if (notification.accountType) {
+        imageProps.itemImageSource = notification.accountType === ACCOUNT_TYPES.KEY_BASED
+          ? keyWalletIcon
+          : smartWalletIcon;
+      }
+
+      if (!imageProps.itemImageSource) {
+        if (!isContact || showArrowsOnly) {
+          imageProps.iconName = directionIcon;
+          imageProps.iconColor = baseColors.slateBlack;
+        } else if (isContact) {
+          imageProps.avatarUrl = contact.profileImage;
+        }
       }
 
       return (
         <ListItemWithImage
-          onPress={() => this.selectEvent({ ...notification, value, contact }, type, notificationStatus)}
+          onPress={() => this.selectEvent({
+              ...notification,
+              value,
+              contact,
+              ...trxData,
+            }, type, notificationStatus)}
           label={nameOrAddress}
-          avatarUrl={itemImage}
+          subtext={subtext}
           navigateToProfile={isContact ? navigateToContact : null}
-          iconName={showArrowsOnly || !(itemImage || itemImageSource) ? directionIcon : ''}
           itemValue={itemValue}
           itemStatusIcon={itemStatusIcon}
           rightColumnInnerStyle={rightColumnInnerStyle}
@@ -392,8 +459,8 @@ class ActivityFeed extends React.Component<Props, State> {
           valueColor={isReceived ? baseColors.jadeGreen : baseColors.scarlet}
           imageUpdateTimeStamp={contact.lastUpdateTime || 0}
           customAddon={customAddon}
-          itemImageSource={itemImageSource}
-          noImageBorder
+          diameter={56}
+          {...imageProps}
         />
       );
     }
@@ -416,10 +483,12 @@ class ActivityFeed extends React.Component<Props, State> {
           imageAddonIconName={(Object.keys(contact).length === 0 || showArrowsOnly) && !invertAddon
             ? directionIcon.toLowerCase()
             : undefined}
+          iconColor={baseColors.slateBlack}
           iconName={invertAddon ? directionIcon.toLowerCase() : null}
           itemStatusIcon={itemStatusIcon}
           actionLabel={directionIcon}
           actionLabelColor={isReceived ? baseColors.jadeGreen : null}
+          diameter={56}
         />
       );
     }
@@ -432,6 +501,37 @@ class ActivityFeed extends React.Component<Props, State> {
         username: notification.username,
         profileImage: notification.avatar,
       });
+    }
+
+    if (type === USER_EVENT) {
+      const imageProps = {};
+      if (notification.subType === PPN_INIT_EVENT) {
+        imageProps.itemImageSource = PPNIcon;
+      } else if (notification.subType === WALLET_CREATE_EVENT) {
+        imageProps.iconSource = walletIcon;
+      }
+      return (
+        <ListItemWithImage
+          label={notification.eventTitle}
+          diameter={56}
+          actionLabel={notification.eventSubtitle}
+          {...imageProps}
+        />
+      );
+    }
+
+    if (type === BADGE_REWARD_EVENT) {
+      const { name, imageUrl } = notification;
+      return (
+        <ListItemWithImage
+          label={name}
+          diameter={70}
+          actionLabel="Collected"
+          onPress={() => this.selectEvent({ ...notification }, type, notificationStatus)}
+          itemImageUrl={imageUrl}
+          imageWrapperStyle={{ marginLeft: -6, paddingRight: 5 }}
+        />
+      );
     }
 
     return (
@@ -451,6 +551,7 @@ class ActivityFeed extends React.Component<Props, State> {
         actionLabel={this.getRightLabel(notification.type)}
         labelAsButton={notification.type === TYPE_SENT}
         imageUpdateTimeStamp={notification.lastUpdateTime}
+        diameter={56}
       />
     );
   };
@@ -503,6 +604,8 @@ class ActivityFeed extends React.Component<Props, State> {
       tabIsChanging,
       formattedFeedData,
       emptyStateData,
+      scrollOffset,
+      maxScrollOffset,
     } = this.state;
 
     const additionalContentContainerStyle = !formattedFeedData.length
@@ -515,7 +618,7 @@ class ActivityFeed extends React.Component<Props, State> {
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
         {!!feedTitle &&
         <ActivityFeedHeader noBorder={noBorder}>
-          <Title subtitle title={feedTitle} />
+          <Title subtitle title={feedTitle} noMargin />
         </ActivityFeedHeader>}
         {tabs.length > 1 && !hideTabs &&
           <Tabs
@@ -541,11 +644,9 @@ class ActivityFeed extends React.Component<Props, State> {
             offset: 70 * index,
             index,
           })}
-          maxToRenderPerBatch={initialNumToRender}
           onEndReachedThreshold={0.5}
           keyExtractor={this.getActivityFeedListKeyExtractor}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
-          removeClippedSubviews
           stickySectionHeadersEnabled={false}
           ListEmptyComponent={(
             <EmptyStateWrapper>
@@ -559,6 +660,14 @@ class ActivityFeed extends React.Component<Props, State> {
           title="transaction details"
           onModalHide={this.handleClose}
           eventDetail
+          handleScrollTo={({ y }) => {
+            if (this.eventDetailScrollViewRef && y) {
+              this.eventDetailScrollViewRef.scrollTo({ x: 0, y, animated: false });
+            }
+          }}
+          scrollOffset={scrollOffset}
+          scrollOffsetMax={maxScrollOffset}
+          onSwipeComplete={this.handleClose}
         >
           <EventDetails
             eventData={selectedEventData}
@@ -569,6 +678,9 @@ class ActivityFeed extends React.Component<Props, State> {
             onCancel={this.handleCancelInvitation}
             onAccept={this.handleAcceptInvitation}
             navigation={navigation}
+            getRef={(ref) => { this.eventDetailScrollViewRef = ref; }}
+            getScrollOffset={(offset) => this.setState({ scrollOffset: offset })}
+            getMaxScrollOffset={(maxOffset) => this.setState({ maxScrollOffset: maxOffset })}
           />
         </SlideModal>
         }
@@ -586,8 +698,9 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  assets: (state) => Object.values(accountAssetsSelector(state)),
+  assets: (state) => getAssetsAsList(accountAssetsSelector(state)),
   supportedAssets: supportedAssetsSelector,
+  bitcoinAddresses: bitcoinAddressSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

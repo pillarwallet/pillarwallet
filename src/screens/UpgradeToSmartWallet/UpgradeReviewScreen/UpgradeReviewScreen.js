@@ -67,9 +67,9 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { Collectible } from 'models/Collectible';
 
 // utils
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, spacing, fontStyles } from 'utils/variables';
 import { formatAmount, getGasPriceWei } from 'utils/common';
-import { getBalance } from 'utils/assets';
+import { getAssetsAsList, getBalance } from 'utils/assets';
 import { accountAssetsSelector } from 'selectors/assets';
 
 
@@ -102,7 +102,7 @@ const ListSeparator = styled.View`
 `;
 
 const Label = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
+  ${fontStyles.small};
   color: #999999;
 `;
 
@@ -116,7 +116,6 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  font-size: ${fontSizes.extraSmall};
   color: ${baseColors.fireEngineRed};
   padding-bottom: ${spacing.rhythm}px;
 `;
@@ -221,7 +220,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       collectibles,
       recoveryAgents,
     } = this.props;
-    const assetsArray = Object.values(assets);
+    const assetsArray = getAssetsAsList(assets);
     const detailedAssets = transferAssets.map((transferAsset: any) => {
       const asset = assetsArray.find((_asset: any) => _asset.name === transferAsset.name);
       const transferFee = this.calculateTransferFee(transferAsset.gasLimit);
@@ -315,7 +314,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
         </ScrollView>
         <Footer>
           {!!notEnoughEther &&
-          <WarningMessage>
+          <WarningMessage small>
             There is not enough ether for asset transfer transactions estimated fee.
           </WarningMessage>}
           <FooterInner>

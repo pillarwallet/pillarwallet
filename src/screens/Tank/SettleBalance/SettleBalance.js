@@ -49,9 +49,10 @@ import type { TxToSettle } from 'models/PaymentNetwork';
 // utils
 import {
   baseColors,
-  fontSizes,
+  fontStyles,
   spacing,
   UIColors,
+  fontSizes,
 } from 'utils/variables';
 import {
   formatFiat,
@@ -117,8 +118,8 @@ const BalanceWrapper = styled.View`
 `;
 
 const ValueInFiat = styled(BaseText)`
+  font-size: ${fontSizes.regular}px;
   color: ${baseColors.coolGrey};
-  font-size: ${fontSizes.extraExtraSmall}px;
 `;
 
 const SubtitleView = styled.View`
@@ -126,7 +127,7 @@ const SubtitleView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 30px ${spacing.rhythm}px;
+  padding: 30px ${spacing.rhythm}px 25px;
   border-bottom-width: 1px;
   border-color: ${baseColors.mediumLightGray};
 `;
@@ -142,7 +143,7 @@ const SectionHeaderWrapper = styled.View`
 `;
 
 const SectionHeader = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   color: ${baseColors.darkGray};
 `;
 
@@ -194,7 +195,6 @@ class SettleBalance extends React.Component<Props, State> {
         avatarUrl={itemImage}
         valueColor={baseColors.jadeGreen}
         imageUpdateTimeStamp={contact.lastUpdateTime || 0}
-        noImageBorder
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
@@ -264,7 +264,6 @@ class SettleBalance extends React.Component<Props, State> {
             {!!txToSettle.length && (
               <Button
                 small
-                roundedCorners
                 disabled={!session.isOnline}
                 title="Next"
                 onPress={this.goToConfirm}
@@ -278,7 +277,9 @@ class SettleBalance extends React.Component<Props, State> {
           <React.Fragment>
             <SubtitleView>
               <Paragraph light small>Transactions available to settle</Paragraph>
-              <Paragraph style={{ textAlign: 'right' }} small>{txToSettle.length} of {MAX_TX_TO_SETTLE}</Paragraph>
+              <Paragraph style={{ textAlign: 'right', marginLeft: 4 }} small>
+                {txToSettle.length} of {MAX_TX_TO_SETTLE}
+              </Paragraph>
             </SubtitleView>
             <UnsettledTransactionsList
               sections={formattedFeedData}

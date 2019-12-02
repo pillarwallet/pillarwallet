@@ -19,12 +19,14 @@
 */
 import { UPDATE_USER, REGISTERED, USER_PHONE_VERIFIED } from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { logEventAction } from 'actions/analyticsActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 
 export const updateUserAction = (walletId: string, field: Object, callback?: Function) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const response = await api.updateUser({ walletId, ...field });
     const { responseStatus, ...user } = response;
 
@@ -53,7 +55,7 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
 };
 
 export const createOneTimePasswordAction = (walletId: string, field: Object, callback?: Function) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const response = await api.createOneTimePassword({ walletId, ...field });
     const { responseStatus } = response;
 
@@ -81,7 +83,7 @@ export type VerificationPhoneAction = {
 }
 
 export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Function) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const response = await api.verifyPhone(props);
     const { responseStatus } = response;
 
@@ -113,7 +115,7 @@ export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Fun
 };
 
 export const updateUserAvatarAction = (walletId: string, formData: any) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { user: { data: user } } = getState();
 
     const userAvatar = await api.updateUserAvatar(walletId, formData).catch(() => ({}));
@@ -132,6 +134,45 @@ export const updateUserAvatarAction = (walletId: string, formData: any) => {
     });
 
     dispatch(logEventAction('avatar_updated'));
+  };
+};
+
+export const labelUserAsLegacyAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: user },
+    } = getState();
+
+    const userWallets = await api.listAccounts(user.walletId);
+    if (!userWallets.length) return;
+
+    const keyWallet = userWallets.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+    const smartWallet = userWallets.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
+
+    let isLegacyUser = true;
+
+    if (keyWallet && smartWallet) {
+      const { createdAt: keyWalletCreationTime } = keyWallet;
+      const { createdAt: smartWalletCreationTime } = smartWallet;
+      const diff = Math.floor((new Date(smartWalletCreationTime) - new Date(keyWalletCreationTime)) / 1000 / 60);
+      // to those users who gets smart wallet created for them, key based and smart wallets are created one by one
+      // in couple of minutes difference
+      if (diff <= 5) {
+        isLegacyUser = false;
+      }
+    }
+
+    const updatedUser = {
+      ...user,
+      isLegacyUser,
+    };
+
+    dispatch({
+      type: UPDATE_USER,
+      payload: { user: updatedUser, state: REGISTERED },
+    });
+
+    dispatch(saveDbAction('user', { user: updatedUser }, true));
   };
 };
 

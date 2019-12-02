@@ -61,6 +61,7 @@ describe('Chat Actions', () => {
           accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
           contacts: { data: [contact] },
           connectionIdentityKeys: { data: [contactConnectionIdentityKeys] },
+          session: { data: { isOnline: true } },
         }));
         message = {
           text: 'lorem',
@@ -127,6 +128,7 @@ describe('Chat Actions', () => {
           accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
           contacts: { data: [contact] },
           connectionIdentityKeys: { data: [contactConnectionIdentityKeys] },
+          session: { data: { isOnline: true } },
         }));
         chatService.client.sendMessageByContact = jest.fn().mockImplementation(() => Promise.reject());
         jest.spyOn(Toast, 'show');

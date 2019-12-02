@@ -19,6 +19,7 @@
 */
 import { NavigationActions } from 'react-navigation';
 import { Sentry } from 'react-native-sentry';
+import get from 'lodash.get';
 
 // services
 import Storage from 'services/storage';
@@ -28,24 +29,29 @@ import { loadAndMigrate } from 'services/dataMigration';
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
+import {
+  UPDATE_ASSETS,
+  UPDATE_BALANCES,
+  UPDATE_SUPPORTED_ASSETS,
+} from 'constants/assetsConstants';
 import { SET_CONTACTS_SMART_ADDRESSES, UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
-import { UPDATE_SESSION } from 'constants/sessionConstants';
-import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { UPDATE_WALLET_IMPORT_STATE, UPDATE_PIN_ATTEMPTS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
-import { UPDATE_BADGES, SET_CONTACTS_BADGES } from 'constants/badgesConstants';
+import { UPDATE_BADGES, SET_CONTACTS_BADGES, SET_BADGE_AWARD_EVENTS } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import {
   SET_EXCHANGE_ALLOWANCES,
   SET_CONNECTED_EXCHANGE_PROVIDERS,
+  SET_EXCHANGE_SUPPORTED_ASSETS,
+  SET_EXCHANGE_PROVIDERS_METADATA,
+  SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -54,7 +60,8 @@ import {
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   SET_SMART_WALLET_UPGRADE_STATUS,
-  SET_SMART_WALLET_LAST_SYNCED_HASH,
+  SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
+  SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
 } from 'constants/smartWalletConstants';
 import {
   UPDATE_PAYMENT_NETWORK_BALANCES,
@@ -66,6 +73,10 @@ import {
   INITIAL_FEATURE_FLAGS,
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
+import { SET_USER_EVENTS } from 'constants/userEventsConstants';
+
+import { loadBitcoinAddressesAction } from 'actions/bitcoinActions';
+import { setAppThemeAction } from 'actions/appSettingsActions';
 
 import { getWalletFromStorage } from 'utils/wallet';
 
@@ -75,18 +86,17 @@ const BACKGROUND = 'background';
 const ANDROID = 'android';
 
 export const initAppAndRedirectAction = (appState: string, platform: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
 
-    // TEMP: remove after we move to AsyncStorage
-    await storage.repair();
+    await storage.migrateFromPouchDB();
 
     // $FlowFixMe
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
 
     // $FlowFixMe
-    const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings);
+    const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings, api);
 
     if (walletTimestamp) {
       const accounts = await loadAndMigrate('accounts', dispatch, getState);
@@ -94,6 +104,15 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const assets = await loadAndMigrate('assets', dispatch, getState);
       dispatch({ type: UPDATE_ASSETS, payload: assets });
+
+      const { supportedAssets = [] } = await storage.get('supportedAssets');
+      dispatch({ type: UPDATE_SUPPORTED_ASSETS, payload: supportedAssets });
+
+      const { exchangeSupportedAssets = [] } = await storage.get('exchangeSupportedAssets');
+      dispatch({ type: SET_EXCHANGE_SUPPORTED_ASSETS, payload: exchangeSupportedAssets });
+
+      const { fiatExchangeSupportedAssets = [] } = await storage.get('fiatExchangeSupportedAssets');
+      dispatch({ type: SET_FIAT_EXCHANGE_SUPPORTED_ASSETS, payload: fiatExchangeSupportedAssets });
 
       const balances = await loadAndMigrate('balances', dispatch, getState);
       dispatch({ type: UPDATE_BALANCES, payload: balances });
@@ -137,6 +156,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { contactsBadges = {} } = await storage.get('contactsBadges');
       dispatch({ type: SET_CONTACTS_BADGES, payload: contactsBadges });
 
+      const { badgeAwardEvents = [] } = await storage.get('badgeAwardEvents');
+      dispatch({ type: SET_BADGE_AWARD_EVENTS, payload: badgeAwardEvents });
+
       const { paymentNetworkBalances = {} } = await storage.get('paymentNetworkBalances');
       dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });
 
@@ -156,11 +178,17 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { connectedProviders = [] } = await storage.get('exchangeProviders');
       dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
 
+      const { exchangeProvidersInfo = [] } = await storage.get('exchangeProvidersInfo');
+      dispatch({ type: SET_EXCHANGE_PROVIDERS_METADATA, payload: exchangeProvidersInfo });
+
       const { userSettings = {} } = await storage.get('userSettings');
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
       const { featureFlags = INITIAL_FEATURE_FLAGS } = await storage.get('featureFlags');
       dispatch({ type: SET_FEATURE_FLAGS, payload: featureFlags });
+
+      const { userEvents = [] } = await storage.get('userEvents');
+      dispatch({ type: SET_USER_EVENTS, payload: userEvents });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
@@ -173,6 +201,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       await loadAndMigrate('history', dispatch, getState);
 
+      dispatch(loadBitcoinAddressesAction());
+
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
       }
@@ -182,15 +212,23 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
         upgradeStatus = null,
         accounts: smartAccounts = [],
         deploymentData = {},
-        lastSyncedHash = null,
+        lastSyncedPaymentId = null,
+        lastSyncedTransactionId = null,
       } = await storage.get('smartWallet');
       dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
       dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
       dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: smartAccounts });
       dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
-      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_HASH, payload: lastSyncedHash });
+      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
+      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
 
+      // check if current user has theme set and set it to default if
+      const hasTheme = get(appSettings, 'themeType');
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
+
+      if (!hasTheme) {
+        dispatch(setAppThemeAction());
+      }
 
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
 
@@ -198,6 +236,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       return;
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
+    dispatch(setAppThemeAction());
+
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };
@@ -213,22 +253,6 @@ export const setupSentryAction = (user: Object, wallet: Object) => {
         walletId,
         ethAddress: address,
       },
-    });
-  };
-};
-
-export const repairStorageAction = () => {
-  return async (dispatch: Function) => {
-    await storage.repair();
-    dispatch({
-      type: ADD_NOTIFICATION,
-      payload: {
-        message: 'Local storage repaired',
-      },
-    });
-    dispatch({
-      type: UPDATE_SESSION,
-      payload: { hasDBConflicts: false },
     });
   };
 };

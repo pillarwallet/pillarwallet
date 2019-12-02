@@ -19,9 +19,10 @@
 */
 import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
+import { fontStyles } from 'utils/variables';
 
 const HelpText = styled(BaseText)`
-  font-size: 12;
+  ${fontStyles.small};
   padding: 10px;
   color: grey;
 `;

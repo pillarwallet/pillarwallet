@@ -19,6 +19,8 @@
 */
 import { Linking } from 'react-native';
 import { SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import ExchangeService from 'services/exchange';
 import Toast from 'components/Toast';
 import {
@@ -33,6 +35,9 @@ import {
   REMOVE_CONNECTED_EXCHANGE_PROVIDER,
   PROVIDER_SHAPESHIFT,
   MARK_NOTIFICATION_SEEN,
+  SET_EXCHANGE_PROVIDERS_METADATA,
+  SET_EXCHANGE_SUPPORTED_ASSETS,
+  SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -53,6 +58,7 @@ const connectExchangeService = (state: RootReducerState) => {
     oAuthTokens: { data: oAuthTokens },
     exchange: { data: { connectedProviders } },
   } = state;
+
   const { extra: shapeshiftAccessToken } = connectedProviders
     .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {};
   // proceed with new instance only if one is not running and access token changed
@@ -77,14 +83,45 @@ export const takeOfferAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     connectExchangeService(getState());
+    const {
+      accounts: { data: accounts },
+      exchange: { exchangeSupportedAssets },
+    } = getState();
+
+    const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
+    const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
+
+    if (!fromAsset || !toAsset) {
+      Toast.show({
+        title: 'Exchange service failed',
+        type: 'warning',
+        message: 'Could not find asset',
+      });
+      callback({});
+      return;
+    }
+
+    let { address: fromAssetAddress } = fromAsset;
+    const { decimals: fromAssetDecimals } = fromAsset;
+    let { address: toAssetAddress } = toAsset;
+
+    // we need PROD assets' addresses in order to get offers when on ropsten network
+    // as v2 requests require to provide addresses not tickers
+    if (__DEV__) {
+      const prodAssetsAddress = await exchangeService.getProdAssetsAddress();
+      fromAssetAddress = prodAssetsAddress[fromAssetCode];
+      toAssetAddress = prodAssetsAddress[toAssetCode];
+    }
+
     const offerRequest = {
       quantity: parseFloat(fromAmount),
       provider,
-      fromAssetCode,
-      toAssetCode,
+      fromAssetAddress,
+      toAssetAddress,
     };
     const order = await exchangeService.takeOffer(offerRequest);
-    if (!order || !order.data || order.error) {
+    const offerOrderData = get(order, 'data');
+    if (isEmpty(offerOrderData) || order.error) {
       let { message = 'Unable to request offer' } = order.error || {};
       if (message.toString().toLowerCase().includes('kyc')) {
         message = 'Shapeshift KYC must be complete in order to proceed';
@@ -97,28 +134,21 @@ export const takeOfferAction = (
       callback({}); // let's return callback to dismiss loading spinner on offer card button
       return;
     }
-    const { data: offerOrderData } = order;
     const {
       payToAddress,
-      payAmount,
-      transactionObj: {
-        data: transactionObjData,
-      } = {},
+      payQuantity,
     }: OfferOrder = offerOrderData;
-    const {
-      accounts: { data: accounts },
-      assets: { supportedAssets },
-    } = getState();
-    const asset = supportedAssets.find(a => a.symbol === fromAssetCode);
+    const transactionDataString = get(offerOrderData, 'transactionObj.data');
+
     const from = getActiveAccountAddress(accounts);
     const gasLimit = await calculateGasEstimate({
       from,
       to: payToAddress,
-      data: transactionObjData,
-      amount: payAmount,
+      data: transactionDataString,
+      amount: payQuantity,
       symbol: fromAssetCode,
-      contractAddress: asset ? asset.address : '',
-      decimals: asset ? asset.decimals : 18,
+      contractAddress: fromAssetAddress || '',
+      decimals: parseInt(fromAssetDecimals, 10) || 18,
     });
     callback({
       ...offerOrderData,
@@ -139,6 +169,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId: userWalletId } },
+      exchange: { exchangeSupportedAssets },
     } = getState();
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
@@ -149,14 +180,6 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
         fromAmount,
       },
     });
-    connectExchangeService(getState());
-    exchangeService.onOffers(offers =>
-      offers
-        .filter(({ askRate }) => !!askRate)
-        .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
-    );
-    // we're requesting although it will start delivering when connection is established
-    const { error } = await exchangeService.requestOffers(fromAssetCode, toAssetCode, fromAmount);
 
     const isTest = SENDWYRE_ENVIRONMENT === 'test';
 
@@ -188,25 +211,57 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
           }
         }).catch(() => null);
       }
-    }
+    } else {
+      const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
+      const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
 
-    if (error) {
-      const message = error.message || 'Unable to connect';
-      if (message.toString().toLowerCase().startsWith('access token')) {
-        /**
-         * access token is expired or malformed,
-         * let's hit with user info endpoint to update access tokens
-         * or redirect to pin screen (logic being sdk init)
-         * after it's complete (access token's updated) let's dispatch same action again
-         * TODO: change SDK user info endpoint to simple SDK token refresh method when it is reachable within SDK
-         */
-        await api.userInfo(userWalletId).catch(() => null);
-      } else {
+      if (!fromAsset || !toAsset) {
         Toast.show({
           title: 'Exchange service failed',
           type: 'warning',
-          message,
+          message: 'Could not find asset',
         });
+        return;
+      }
+
+      let { address: fromAddress } = fromAsset;
+      let { address: toAddress } = toAsset;
+
+      // we need PROD assets' addresses in order to get offers when on ropsten network
+      // as v2 requests require to provide addresses not tickers
+      if (__DEV__) {
+        const prodAssetsAddress = await exchangeService.getProdAssetsAddress();
+        fromAddress = prodAssetsAddress[fromAssetCode];
+        toAddress = prodAssetsAddress[toAssetCode];
+      }
+
+      connectExchangeService(getState());
+      exchangeService.onOffers(offers =>
+        offers
+          .filter(({ askRate }) => !!askRate)
+          .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
+      );
+      // we're requesting although it will start delivering when connection is established
+      const { error } = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount);
+
+      if (error) {
+        const message = error.message || 'Unable to connect';
+        if (message.toString().toLowerCase().startsWith('access token')) {
+          /**
+           * access token is expired or malformed,
+           * let's hit with user info endpoint to update access tokens
+           * or redirect to pin screen (logic being sdk init)
+           * after it's complete (access token's updated) let's dispatch same action again
+           * TODO: change SDK user info endpoint to simple SDK token refresh method when it is reachable within SDK
+           */
+          await api.userInfo(userWalletId).catch(() => null);
+        } else {
+          Toast.show({
+            title: 'Exchange service failed',
+            type: 'warning',
+            message,
+          });
+        }
       }
     }
   };
@@ -301,7 +356,9 @@ export const setDismissTransactionAction = () => ({
 });
 
 export const setTokenAllowanceAction = (
-  assetCode: string,
+  formAssetCode: string,
+  fromAssetAddress: string,
+  toAssetAddress: string,
   provider: string,
   callback: Function,
 ) => {
@@ -309,9 +366,11 @@ export const setTokenAllowanceAction = (
     connectExchangeService(getState());
     const allowanceRequest = {
       provider,
-      token: assetCode,
+      fromAssetAddress,
+      toAssetAddress,
     };
     const response = await exchangeService.setTokenAllowance(allowanceRequest);
+
     if (!response || !response.data || response.error) {
       Toast.show({
         title: 'Exchange service failed',
@@ -326,13 +385,13 @@ export const setTokenAllowanceAction = (
       accounts: { data: accounts },
       assets: { supportedAssets },
     } = getState();
-    const asset = supportedAssets.find(a => a.symbol === assetCode);
+    const asset = supportedAssets.find(a => a.symbol === formAssetCode);
     const from = getActiveAccountAddress(accounts);
     const gasLimit = await calculateGasEstimate({
       from,
       to: payToAddress,
       data,
-      symbol: assetCode,
+      symbol: formAssetCode,
       contractAddress: asset ? asset.address : '',
       decimals: asset ? asset.decimals : 18,
     });
@@ -349,22 +408,24 @@ export const setTokenAllowanceAction = (
 
 export const addExchangeAllowanceAction = (
   provider: string,
-  assetCode: string,
+  fromAssetCode: string,
+  toAssetCode: string,
   transactionHash: string,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { exchange: { data: { allowances: _allowances = [] } } } = getState();
     const allowance = {
       provider,
-      assetCode,
+      fromAssetCode,
+      toAssetCode,
       transactionHash,
       enabled: false,
     };
 
     // filter pending for current provider and asset match to override failed transactions
     const allowances = _allowances
-      .filter(({ provider: _provider, assetCode: _assetCode }) =>
-        assetCode !== _assetCode && provider !== _provider,
+      .filter(({ provider: _provider, fromAssetCode: _fromAssetCode, toAssetCode: _toAssetCode }) =>
+        fromAssetCode !== _fromAssetCode && toAssetCode !== _toAssetCode && provider !== _provider,
       );
 
     allowances.push(allowance);
@@ -423,14 +484,14 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
     );
     exchangeAllowances
       .filter(({ enabled }) => !enabled)
-      .map(({ transactionHash, assetCode }) => {  // eslint-disable-line
+      .map(({ transactionHash, fromAssetCode, toAssetCode }) => {  // eslint-disable-line
         const enabledAllowance = allHistory.find(
           // $FlowFixMe
           ({ hash, status }) => hash === transactionHash && status === TX_CONFIRMED_STATUS,
         );
         if (enabledAllowance) {
           Toast.show({
-            message: `${assetCode} token exchange was enabled`,
+            message: `${fromAssetCode} to ${toAssetCode} exchange was enabled`,
             type: 'success',
             title: 'Success',
             autoClose: true,
@@ -448,3 +509,66 @@ export const markNotificationAsSeenAction = () => {
     });
   };
 };
+
+export const getMetaDataAction = () => {
+  return async (dispatch: Dispatch) => {
+    const metaData = await exchangeService.getMetaData();
+    dispatch({
+      type: SET_EXCHANGE_PROVIDERS_METADATA,
+      payload: metaData,
+    });
+    dispatch(saveDbAction('exchangeProvidersInfo', { exchangeProvidersInfo: metaData }, true));
+  };
+};
+
+const getCryptoExchangeSupportedAssetsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      assets: { supportedAssets },
+    } = getState();
+
+    const exchangeSupportedAssetsTickers = await exchangeService.getExchangeSupportedAssets();
+
+    const exchangeSupportedAssets = supportedAssets
+      .filter(({ symbol }) => exchangeSupportedAssetsTickers.includes(symbol));
+
+    dispatch({
+      type: SET_EXCHANGE_SUPPORTED_ASSETS,
+      payload: exchangeSupportedAssets,
+    });
+
+    dispatch(saveDbAction('exchangeSupportedAssets', { exchangeSupportedAssets }, true));
+  };
+};
+
+const getFiatExchangeSupportedAssetsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      assets: { supportedAssets },
+    } = getState();
+
+    const moonPaySupportedAssets = await api.fetchMoonPaySupportedAssetsTickers();
+    const sendWyreSupportedAssets = await api.fetchSendWyreSupportedAssetsTickers();
+
+    const providersSupportedAssetsTickers = [...new Set([...moonPaySupportedAssets, ...sendWyreSupportedAssets])];
+
+    const fiatExchangeSupportedAssets = supportedAssets
+      .filter(({ symbol }) => providersSupportedAssetsTickers.includes(symbol));
+
+    dispatch({
+      type: SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
+      payload: fiatExchangeSupportedAssets,
+    });
+
+    dispatch(saveDbAction('fiatExchangeSupportedAssets', { fiatExchangeSupportedAssets }, true));
+  };
+};
+
+
+export const getExchangeSupportedAssetsAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(getCryptoExchangeSupportedAssetsAction());
+    dispatch(getFiatExchangeSupportedAssetsAction());
+  };
+};
+

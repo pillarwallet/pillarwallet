@@ -19,25 +19,21 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import CryptoJS from 'crypto-js';
 import { WebView } from 'react-native-webview';
 import type { NavigationScreenProp } from 'react-navigation';
 import {
-  SENDWYRE_ENVIRONMENT,
-  SENDWYRE_ACCOUNT_ID,
   MOONPAY_WIDGET_URL,
   MOONPAY_KEY,
-  WIDGET_SIGNATURE,
 } from 'react-native-dotenv';
 
-import type { Accounts } from 'models/Account';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
 import ErrorMessage from 'components/ErrorMessage';
 import { setBrowsingWebViewAction } from 'actions/appSettingsActions';
 import { getActiveAccountAddress } from 'utils/accounts';
 
-import { sendWyreTemplate } from './SendWyreTemplate';
+import type { RootReducerState } from 'reducers/rootReducer';
+import type { Accounts } from 'models/Account';
 
 type Props = {
   wallet: Object,
@@ -51,7 +47,6 @@ type Props = {
 type State = {
   error: string,
   provider: string,
-  wyreTemplate: string,
   moonPayURL: string,
 };
 
@@ -59,7 +54,6 @@ class FiatExchange extends React.Component<Props, State> {
   state = {
     error: '',
     provider: '',
-    wyreTemplate: '',
     moonPayURL: '',
   };
 
@@ -71,27 +65,17 @@ class FiatExchange extends React.Component<Props, State> {
     const {
       fiatOfferOrder: {
         provider,
-        fromAssetCode: sourceCurrency,
-        toAssetCode: destCurrency,
+        fromAsset,
+        toAsset,
         amount: sourceAmount,
       },
     } = navigation.state.params;
+    const { code: sourceCurrency } = fromAsset;
+    const { code: destCurrency } = toAsset;
 
     const { email = '' } = user;
 
     const destAddress = getActiveAccountAddress(accounts);
-
-    const secretKey = CryptoJS.HmacSHA256(user.secretId, WIDGET_SIGNATURE).toString(CryptoJS.enc.Hex);
-
-    const wyreTemplate = sendWyreTemplate(
-      SENDWYRE_ENVIRONMENT,
-      SENDWYRE_ACCOUNT_ID,
-      secretKey,
-      destAddress,
-      destCurrency,
-      sourceCurrency,
-      sourceAmount,
-    );
 
     const moonPayURL = `${MOONPAY_WIDGET_URL}`
       + `?apiKey=${MOONPAY_KEY}`
@@ -104,7 +88,6 @@ class FiatExchange extends React.Component<Props, State> {
 
     this.setState({
       provider,
-      wyreTemplate,
       moonPayURL,
     });
 
@@ -115,8 +98,9 @@ class FiatExchange extends React.Component<Props, State> {
     this.props.setBrowsingWebView(false);
   }
 
-  eventCallback = (event) => {
+  sendWyreCallback = (event) => {
     const data = JSON.parse(event.nativeEvent.data);
+
     if (data) {
       this.props.navigation.goBack(null);
     }
@@ -127,22 +111,12 @@ class FiatExchange extends React.Component<Props, State> {
       error,
       provider,
       moonPayURL,
-      wyreTemplate,
     } = this.state;
 
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: `${provider} Payment` }] }} >
         {!!error && <ErrorMessage>{error}</ErrorMessage>}
         <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
-          {
-            provider === 'SendWyre'
-            &&
-            <WebView
-              source={{ html: wyreTemplate }}
-              originWhitelist={['*']}
-              onMessage={this.eventCallback}
-            />
-          }
           {
             provider === 'MoonPay'
             &&
@@ -161,7 +135,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   user: { data: user },
   accounts: { data: accounts },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   wallet,
   user,
   accounts,

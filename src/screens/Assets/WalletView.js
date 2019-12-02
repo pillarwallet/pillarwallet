@@ -159,6 +159,7 @@ const CustomKAWrapper = (props) => {
     children,
     refreshControl,
     hasStickyTabs,
+    getRef,
   } = props;
   const scrollWrapperProps = {
     stickyHeaderIndices: hasStickyTabs ? [2] : [0],
@@ -174,6 +175,7 @@ const CustomKAWrapper = (props) => {
     return (
       <ScrollWrapper
         {...scrollWrapperProps}
+        innerRef={ref => getRef(ref)}
       >
         {children}
       </ScrollWrapper>
@@ -185,6 +187,7 @@ const CustomKAWrapper = (props) => {
       {...scrollWrapperProps}
       style={{ height: '100%' }}
       contentContainerStyle={{ width: '100%' }}
+      ref={(ref) => getRef(ref)}
     >
       {children}
     </ScrollView>
@@ -192,6 +195,8 @@ const CustomKAWrapper = (props) => {
 };
 
 class WalletView extends React.Component<Props, State> {
+  scrollViewRef: ?Object;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -200,6 +205,7 @@ class WalletView extends React.Component<Props, State> {
       hideInsightForSearch: false,
     };
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
+    this.scrollViewRef = React.createRef();
   }
 
   renderFoundTokensList() {
@@ -428,13 +434,14 @@ class WalletView extends React.Component<Props, State> {
             }}
           />
         }
+        getRef={(ref) => { this.scrollViewRef = ref; }}
       >
         <Insight
           isVisible={isInsightVisible}
           title={insightsTitle}
           insightList={insightList}
           onClose={() => { hideInsight(); }}
-          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.mediumLightGray, height: 160 }}
+          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.mediumLightGray }}
         />
         {blockAssetsView &&
         <DeploymentView
@@ -477,7 +484,7 @@ class WalletView extends React.Component<Props, State> {
             this.renderFoundTokensList()
           }
           {activeTab === TOKENS && !inAssetSearchMode && (
-            <AssetsList balance={balance} />
+            <AssetsList balance={balance} scrollViewRef={this.scrollViewRef} />
           )}
           {activeTab === COLLECTIBLES && (
             <CollectiblesList

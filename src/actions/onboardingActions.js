@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
@@ -47,7 +47,7 @@ import {
   TYPE_RECEIVED,
   UPDATE_INVITATIONS,
 } from 'constants/invitationsConstants';
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
@@ -61,13 +61,14 @@ import { RESET_SMART_WALLET } from 'constants/smartWalletConstants';
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
+import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { WALLET_IMPORT_EVENT } from 'constants/userEventsConstants';
 
 // utils
 import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { delay, uniqBy } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
-import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 
 // services
 import Storage from 'services/storage';
@@ -77,22 +78,29 @@ import SDKWrapper from 'services/api';
 
 // actions
 import { signalInitAction } from 'actions/signalClientActions';
-import { initSmartWalletSdkAction, importSmartWalletAccountsAction } from 'actions/smartWalletActions';
+import {
+  initSmartWalletSdkAction,
+  importSmartWalletAccountsAction,
+  managePPNInitFlagAction,
+} from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
-import { restoreTransactionHistoryAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import {
   setFirebaseAnalyticsCollectionEnabled,
   setUserJoinedBetaAction,
+  setAppThemeAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
+import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
+import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
+import { labelUserAsLegacyAction } from 'actions/userActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-
 
 const storage = Storage.getInstance('db');
 
@@ -185,9 +193,19 @@ const finishRegistration = async ({
   });
 
   const assets = { [address]: initialAssets };
-  dispatch(saveDbAction('assets', { assets }));
+  dispatch(saveDbAction('assets', { assets }, true));
 
   dispatch(fetchBadgesAction(false));
+
+  // user might be already joined to beta program before
+  if (isImported && userInfo.betaProgramParticipant) {
+    await dispatch(setUserJoinedBetaAction(true, true)); // 2nd true value sets to ignore toast success message
+  } else {
+    // we don't want to track by default, we will use this only when user applies for beta
+    dispatch(setFirebaseAnalyticsCollectionEnabled(false));
+    // still fetch feature flags if there are any
+    await dispatch(fetchFeatureFlagsAction());
+  }
 
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
   if (smartWalletFeatureEnabled) {
@@ -197,11 +215,12 @@ const finishRegistration = async ({
     await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
   }
 
-  const { accounts: { data: accounts } } = getState();
+  await dispatch(fetchTransactionsHistoryAction());
+  dispatch(labelUserAsLegacyAction());
 
-  await Promise.all(accounts.map(async acc => {
-    await dispatch(restoreTransactionHistoryAction(acc.id, userInfo.walletId));
-  }));
+  if (smartWalletFeatureEnabled) {
+    dispatch(managePPNInitFlagAction());
+  }
 
   await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
@@ -214,12 +233,8 @@ const finishRegistration = async ({
   });
 };
 
-const navigateToAppFlow = (isWalletBackedUp: boolean, getState: GetState) => {
-  const accounts = getState().accounts.data;
-  const keyBasedAccount = findKeyBasedAccount(accounts);
-  const accountId = keyBasedAccount ? getAccountId(keyBasedAccount) : '';
-
-  toastWalletBackup(isWalletBackedUp, accountId);
+const navigateToAppFlow = (isWalletBackedUp: boolean) => {
+  toastWalletBackup(isWalletBackedUp);
 
   const navigateToAssetsAction = NavigationActions.navigate({
     routeName: APP_FLOW,
@@ -248,7 +263,8 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_CONTACTS, payload: [] });
     dispatch({ type: UPDATE_INVITATIONS, payload: [] });
     dispatch({ type: UPDATE_ASSETS, payload: {} });
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
+    dispatch({ type: RESET_APP_SETTINGS, payload: {} });
+    dispatch(setAppThemeAction()); // as appSettings gets overwritten
     dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
     dispatch({ type: SET_HISTORY, payload: {} });
     dispatch({ type: UPDATE_BALANCES, payload: {} });
@@ -260,6 +276,7 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] });
     dispatch({ type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] });
     dispatch({ type: SET_USER_SETTINGS, payload: {} });
+    dispatch({ type: SET_FEATURE_FLAGS, payload: {} });
 
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
@@ -350,17 +367,13 @@ export const registerWalletAction = () => {
       isImported,
     });
 
-    // user might be already joined to beta program before
-    if (userInfo.betaProgramParticipant) {
-      dispatch(setUserJoinedBetaAction(true, true)); // 2nd true value sets to ignore toast success message
-    } else {
-      // we don't want to track by default, we will use this only when user applies for beta
-      dispatch(setFirebaseAnalyticsCollectionEnabled(false));
-    }
+    // STEP 6: add wallet created / imported events
+    dispatch(getWalletsCreationEventsAction());
+    if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
 
-    // STEP 6: all done, navigate to the home screen
+    // STEP 7: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp, getState);
+    navigateToAppFlow(isWalletBackedUp);
   };
 };
 
@@ -420,7 +433,7 @@ export const registerOnBackendAction = () => {
     });
 
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp, getState);
+    navigateToAppFlow(isWalletBackedUp);
   };
 };
 

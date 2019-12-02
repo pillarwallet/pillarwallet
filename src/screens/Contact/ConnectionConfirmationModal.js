@@ -19,10 +19,22 @@
 */
 
 import * as React from 'react';
-import { baseColors, fontSizes } from 'utils/variables';
-import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
+
+// constants
+import {
+  DISCONNECT,
+  MUTE,
+  BLOCK,
+  STATUS_BLOCKED,
+  STATUS_MUTED,
+} from 'constants/connectionsConstants';
+
+// components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
+
+// utils
+import { baseColors, fontSizes, lineHeights } from 'utils/variables';
 
 /* eslint max-len:0 */
 const subtitleDescription = {
@@ -60,9 +72,9 @@ const ConnectionConfirmationModal = (props: Props) => {
 
   const { username, status } = contact;
   let contactType = manageContactType;
-  if ((contactType === MUTE || contactType === '') && status === 'muted') {
+  if ((contactType === MUTE || contactType === '') && status === STATUS_MUTED) {
     contactType = 'unmute';
-  } else if ((contactType === BLOCK || contactType === '') && status === 'blocked') {
+  } else if ((contactType === BLOCK || contactType === '') && status === STATUS_BLOCKED) {
     contactType = 'unblock';
   }
   const subtitle = contactType !== '' ?
@@ -79,8 +91,8 @@ const ConnectionConfirmationModal = (props: Props) => {
       subtitle={subtitle}
       subtitleStyles={{
         color: baseColors.darkGray,
-        fontSize: fontSizes.small,
-        lineHeight: 21,
+        fontSize: fontSizes.medium,
+        lineHeight: lineHeights.medium,
         letterSpacing: 0.1,
         marginTop: 7,
         marginBottom: 22,

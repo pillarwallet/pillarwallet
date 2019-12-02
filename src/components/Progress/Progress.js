@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Platform, Animated, Easing } from 'react-native';
 import styled from 'styled-components/native/index';
 import LinearGradient from 'react-native-linear-gradient';
-import { baseColors, fontSizes, spacing, fontTrackings } from 'utils/variables';
+import { baseColors, fontStyles, spacing, fontTrackings } from 'utils/variables';
 import { MediumText } from 'components/Typography';
 import ProgressCircle from './ProgressCircle';
 
@@ -60,8 +60,7 @@ const StyledLinearGradient = styled(LinearGradient)`
 const AnimatedStyledLinearGradient = Animated.createAnimatedComponent(StyledLinearGradient);
 
 const ProgressLabel = styled(MediumText)`
-  font-size: ${fontSizes.tiny};
-  line-height: ${fontSizes.tiny};
+  ${fontStyles.tiny};
   letter-spacing: ${fontTrackings.tiny};
   color: ${props => props.outside ? baseColors.oliveDrab : baseColors.white};
   position: ${props => props.outside ? 'relative' : 'absolute'};

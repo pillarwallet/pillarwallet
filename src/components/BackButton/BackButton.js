@@ -42,7 +42,7 @@ const BackButton = (props: Props) => {
         name="back"
         style={{
           color: UIColors.primary,
-          fontSize: fontSizes.extraExtraLarge,
+          fontSize: fontSizes.giant,
         }}
       />
     </TouchableOpacity>

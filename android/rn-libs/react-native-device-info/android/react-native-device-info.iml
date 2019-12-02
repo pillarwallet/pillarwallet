@@ -87,22 +87,20 @@
       <excludeFolder url="file://$MODULE_DIR$/build/generated/source/r" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/aapt_friendly_merged_manifests" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/annotation_processor_list" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/annotations_typedef_file" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/annotations_zip" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/check_manifest_result" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/compile_only_not_namespaced_r_class_jar" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/full_jar" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/intermediate-jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/javac" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/library_and_local_jars_jni" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/library_assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/library_manifest" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/merged_manifests" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/packaged-classes" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/packaged_res" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/public_res" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/shader_assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/shaders" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
@@ -126,7 +124,6 @@
     <orderEntry type="library" name="Gradle: com.android.support:cursoradapter:28.0.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: android.arch.lifecycle:runtime:1.1.1@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-compat:28.0.0@aar" level="project" />
-    <orderEntry type="library" name="Gradle: com.facebook.react:react-native:0.59.4@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-iid:15.0.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.facebook.fresco:imagepipeline-base:1.10.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: javax.inject:javax.inject:1@jar" level="project" />
@@ -147,6 +144,7 @@
     <orderEntry type="library" name="Gradle: com.android.support:slidingpanelayout:28.0.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.parse.bolts:bolts-tasks:1.4.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:appcompat-v7:28.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.facebook.react:react-native:0.59.10@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:collections:28.0.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-basement:15.0.1@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-core-ui:28.0.0@aar" level="project" />

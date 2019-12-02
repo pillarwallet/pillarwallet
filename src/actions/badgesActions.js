@@ -5,6 +5,8 @@ import {
   ADD_CONTACT_BADGES,
   FETCHING_CONTACTS_BADGES,
   STOP_FETCHING_CONTACTS_BADGES,
+  BADGE_REWARD_EVENT,
+  SET_BADGE_AWARD_EVENTS,
 } from 'constants/badgesConstants';
 import Toast from 'components/Toast';
 import SDKWrapper from 'services/api';
@@ -51,7 +53,6 @@ export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
   };
 };
 
-
 export const fetchContactBadgesAction = (contact: Object) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
@@ -77,5 +78,34 @@ export const selfAwardBadgeAction = (badgeType: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { user: { data: { walletId } } } = getState();
     dispatch(offlineApiCall('selfAwardBadge', walletId, badgeType));
+  };
+};
+
+export const fetchBadgeAwardHistoryAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: { walletId } },
+    } = getState();
+    const badgeAwardEvents = await api.fetchNotifications(walletId, BADGE_REWARD_EVENT);
+    const badgeAwardEventsWithRequiredData = badgeAwardEvents.filter(({ payload }) => !!payload.name);
+    const formattedBadgeAwardEvents = badgeAwardEventsWithRequiredData
+      .map(({
+        _id,
+        type,
+        payload,
+        createdAt,
+      }) => {
+        const { name, imageUrl, id } = payload;
+        return {
+          _id,
+          type,
+          name,
+          imageUrl,
+          badgeId: id,
+          createdAt,
+        };
+      });
+    dispatch({ type: SET_BADGE_AWARD_EVENTS, payload: formattedBadgeAwardEvents });
+    dispatch(saveDbAction('badgeAwardEvents', { badgeAwardEvents: formattedBadgeAwardEvents }, true));
   };
 };

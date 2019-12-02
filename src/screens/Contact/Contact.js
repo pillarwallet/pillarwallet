@@ -17,19 +17,16 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
-import {
-  RefreshControl,
-  Platform,
-  View,
-  // FlatList,
-} from 'react-native';
+import { RefreshControl, Platform, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import type { NavigationScreenProp } from 'react-navigation';
+
+// actions
 import {
   syncContactAction,
   disconnectContactAction,
@@ -39,36 +36,53 @@ import {
 } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { fetchContactBadgesAction } from 'actions/badgesActions';
-import { ScrollWrapper } from 'components/Layout';
-import { BADGE, CHAT, CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
+
+// constants
+import { BADGE, CHAT, CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import {
+  DISCONNECT,
+  MUTE,
+  BLOCK,
+  STATUS_MUTED,
+  STATUS_BLOCKED,
+} from 'constants/connectionsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
+
+// components
+import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import DeploymentView from 'components/DeploymentView';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Spinner from 'components/Spinner';
 
+// utils
+import { baseColors, UIColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-// import { CollapsibleSection } from 'components/CollapsibleSection';
-import Spinner from 'components/Spinner';
 import { isCaseInsensitiveMatch } from 'utils/common';
+
+// models
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Badges } from 'models/Badge';
+
+// selectors
 import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
+
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
 const iconSend = require('assets/icons/icon_send.png');
+const iconChat = require('assets/icons/icon_chat_contact.png');
 
 const CircleButtonsWrapper = styled.View`
   margin-top: ${Platform.select({
@@ -81,6 +95,7 @@ const CircleButtonsWrapper = styled.View`
   border-color: ${baseColors.mediumLightGray};
   justify-content: center;
   align-items: center;
+  flex-direction: row;
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -115,7 +130,7 @@ type Props = {
   blockContact: Function,
   smartWalletState: Object,
   accounts: Accounts,
-  history: Array<*>,
+  history: Object[],
   openSeaTxHistory: Object[],
   contactsBadges: Badges,
   fetchContactBadges: Function,
@@ -291,10 +306,10 @@ class Contact extends React.Component<Props, State> {
     if (manageContactType === DISCONNECT) {
       this.props.disconnectContact(theContact.id);
     } else if (manageContactType === MUTE) {
-      const mute = !(status === 'muted');
+      const mute = status !== STATUS_MUTED; // toggle
       this.props.muteContact(theContact.id, mute);
     } else if (manageContactType === BLOCK) {
-      const block = !(status === 'blocked');
+      const block = status !== STATUS_BLOCKED; // toggle
       this.props.blockContact(theContact.id, block);
     }
 
@@ -396,18 +411,7 @@ class Contact extends React.Component<Props, State> {
       <ContainerWithHeader
         backgroundColor={isAccepted ? baseColors.white : UIColors.defaultBackgroundColor}
         inset={{ bottom: 'never' }}
-        headerProps={{
-          centerItems: [{ title: contactUsername }],
-          rightItems: [displayContact.status
-            ? {
-                icon: 'chat',
-                onPress: () => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT }),
-                indicator: !!unreadChats.length,
-                color: baseColors.coolGrey,
-                fontSize: fontSizes.mediumLarge,
-              }
-            : {}],
-        }}
+        headerProps={{ centerItems: [{ title: contactUsername }] }}
       >
         <ScrollWrapper
           refreshControl={
@@ -426,8 +430,8 @@ class Contact extends React.Component<Props, State> {
                 uri={userAvatar}
                 userName={contactUsername}
                 borderWidth={4}
-                initialsSize={fontSizes.extraGiant}
-                diameter={164}
+                initialsSize={48}
+                diameter={184}
                 style={{ backgroundColor: baseColors.geyser }}
                 imageUpdateTimeStamp={displayContact.lastUpdateTime}
               />
@@ -441,6 +445,13 @@ class Contact extends React.Component<Props, State> {
                     icon={iconSend}
                     onPress={() => this.onSendPress(displayContact)}
                   />
+                  <CircleButton
+                    disabled={!displayContact.status}
+                    label="Chat"
+                    icon={iconChat}
+                    onPress={() => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT })}
+                    showIndicator={!!unreadChats.length}
+                  />
                   {disableSend &&
                   <DeploymentView
                     message={sendingBlockedMessage}
@@ -450,7 +461,7 @@ class Contact extends React.Component<Props, State> {
                   }
                 </CircleButtonsWrapper>
                 <ActivityFeed
-                  feedTitle="activity."
+                  feedTitle="Activity"
                   noBorder
                   ref={(ref) => { this.activityFeedRef = ref; }}
                   navigation={navigation}

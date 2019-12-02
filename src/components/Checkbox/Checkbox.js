@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Animated, TouchableHighlight } from 'react-native';
 import { BaseText } from 'components/Typography';
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import Icon from 'components/Icon';
 
 const getBorderColor = (props) => {
@@ -67,7 +67,7 @@ const CheckboxBox = styled.View`
 `;
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${props => props.small ? fontSizes.extraSmall : fontSizes.medium}px;
+  ${props => props.small ? fontStyles.regular : fontStyles.medium};
   color: ${props => props.light ? baseColors.darkGray : baseColors.slateBlack};
   flex-wrap: wrap;
 `;

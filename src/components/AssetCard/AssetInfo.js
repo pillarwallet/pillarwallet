@@ -19,9 +19,9 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { LightText, BoldText } from 'components/Typography';
+import { LightText, MediumText } from 'components/Typography';
 import TankAssetBalance from 'components/TankAssetBalance';
-import { fontSizes, baseColors } from 'utils/variables';
+import { baseColors, fontStyles } from 'utils/variables';
 
 type Props = {
   token: string,
@@ -49,31 +49,27 @@ const TokenAmountWrapper = styled.View`
   margin: 4px 0;
 `;
 
-const Amount = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.small}px;
+const Amount = styled(MediumText)`
+  ${fontStyles.medium};
   color: ${baseColors.slateBlack};
 `;
 
 const FiatAmount = styled(LightText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  line-height: ${fontSizes.extraExtraSmall}px;
+  ${fontStyles.small};
   color: ${baseColors.darkGray};
   align-self: flex-end;
   text-align: right;
 `;
 
 const Disclaimer = styled(LightText)`
-  font-size: ${fontSizes.extraSmall};
-  line-height: ${fontSizes.small};
+  ${fontStyles.regular};
   color: ${baseColors.burningFire};
   align-self: flex-end;
   text-align: right;
 `;
 
-const AmountToken = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.small}px;
+const AmountToken = styled(MediumText)`
+  ${fontStyles.medium};
   color: ${baseColors.slateBlack};
 `;
 

@@ -19,6 +19,7 @@
 */
 import { Sentry } from 'react-native-sentry';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import orderBy from 'lodash.orderby';
 import { BigNumber } from 'bignumber.js';
 import * as ethUtil from 'ethereumjs-util';
@@ -36,10 +37,15 @@ import { providers, utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
 import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 import type { GasInfo } from 'models/GasInfo';
+import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
+import { StackViewStyleInterpolator } from 'react-navigation-stack';
 import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
+  ETHEREUM_ADDRESS_PREFIX,
+  BITCOIN_ADDRESS_PREFIX,
 } from 'constants/assetsConstants';
+import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
 const WWW_URL_PATTERN = /^www\./i;
 
@@ -56,16 +62,36 @@ export const getRandomInt = (min: number, max: number): number => {
   return Math.floor(Math.random() * ((max - min) + 1)) + min;
 };
 
-export const decodeETHAddress = (encodedAddress: string): string => {
-  if (!encodedAddress || !encodedAddress.startsWith('ethereum:')) {
-    return encodedAddress;
-  }
+/**
+ * Extracts the address part from a string on the form of '[prefix]:[address]'
+ *
+ * Examples:
+ *   decodeAddress('ethereum', 'ethereum:0xaddress') -> 0xaddress
+ *   decodeAddress('bitcoin', 'bitcoin:1address') -> 1address
+ *
+ * @param prefix         String the prefix part
+ * @param encodedAddress String the '[prefx]:[address]' string
+ *
+ * @return String the address part
+ */
+const decodeAddress = (prefix: string, encodedAddress: string): string => {
+  if (isEmpty(encodedAddress)) return '';
 
-  if (encodedAddress.length >= 51) {
-    return encodedAddress.substr(9, 42);
+  const len = prefix.length + 1;
+
+  if (encodedAddress.startsWith(`${prefix}:`)) {
+    return encodedAddress.substr(len);
   }
 
   return encodedAddress;
+};
+
+export const decodeBTCAddress = (encodedAddress: string): string => {
+  return decodeAddress(BITCOIN_ADDRESS_PREFIX, encodedAddress);
+};
+
+export const decodeETHAddress = (encodedAddress: string): string => {
+  return decodeAddress(ETHEREUM_ADDRESS_PREFIX, encodedAddress);
 };
 
 export const pipe = (...fns: Function[]) => {
@@ -136,6 +162,18 @@ export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
 };
 
+export const parseTokenBigNumberAmount = (amount: number | string, decimals: number): utils.BigNumber => {
+  const formatted = amount.toString();
+  return decimals > 0
+    ? utils.parseUnits(formatted, decimals)
+    : utils.bigNumberify(formatted);
+};
+
+export const parseTokenAmount = (amount: number | string, decimals: number): number => {
+  const parsed = parseTokenBigNumberAmount(amount, decimals);
+  return Math.floor(+parsed.toString());
+};
+
 export const getCurrencySymbol = (currency: string): string => {
   return CURRENCY_SYMBOLS[currency] || '';
 };
@@ -196,32 +234,57 @@ export const getiOSNavbarHeight = (): number => {
   return 0;
 };
 
+const DEFAULT_TRANSITION_SCREENS = [MANAGE_USERS_FLOW];
+
+const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => {
+  return DEFAULT_TRANSITION_SCREENS.some(
+    screenName =>
+      screenName === transitionProps.scene.route.routeName ||
+      (prevTransitionProps && screenName === prevTransitionProps.scene.route.routeName),
+  );
+};
+
+const getTransitionDuration = (isFaster: boolean) => {
+  let duration = 400;
+  if (isFaster) {
+    duration = Platform.OS === 'ios' ? 500 : 250;
+  }
+  return duration;
+};
+
+const getTransitionSpec = (isFasterAnimation: boolean) => ({
+  duration: getTransitionDuration(isFasterAnimation),
+  easing: Easing.out(Easing.poly(2)),
+  timing: Animated.timing,
+});
+
 export const modalTransition = {
   mode: 'modal',
-  navigationOptions: {
+  defaultNavigationOptions: {
     header: null,
   },
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 400,
-      easing: Easing.out(Easing.poly(2)),
-      timing: Animated.timing,
-    },
-    screenInterpolator: (sceneProps: Object) => {
+  transitionConfig: (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => ({
+    transitionSpec: getTransitionSpec(getIfNeedsDefTransition(transitionProps, prevTransitionProps)),
+    screenInterpolator: (sceneProps: TransitionProps) => {
+      const needsDefaultTransition = getIfNeedsDefTransition(transitionProps, prevTransitionProps);
+      if (needsDefaultTransition) {
+        return Platform.OS === 'ios'
+          ? StackViewStyleInterpolator.forHorizontal(sceneProps)
+          : StackViewStyleInterpolator.forFadeFromBottomAndroid(sceneProps);
+      }
+
       const { layout, position, scene } = sceneProps;
       const { index } = scene;
+      const opacity = position.interpolate({
+        inputRange: [index - 1, index - 0.99, index],
+        outputRange: [0, 1, 1],
+      });
 
       const height = layout.initHeight;
       const translateY = position.interpolate({
         inputRange: [index - 1, index, index + 1],
         outputRange: [height, 0, 0],
       });
-
-      const opacity = position.interpolate({
-        inputRange: [index - 1, index - 0.99, index],
-        outputRange: [0, 1, 1],
-      });
-
       return { opacity, transform: [{ translateY }] };
     },
   }),
@@ -260,9 +323,7 @@ export const smallScreen = () => {
 
 export const getEthereumProvider = (network: string) => {
   // Connect to INFURA
-  const infuraNetwork = network === 'homestead' ? 'mainnet' : network;
-  const infuraUrl = `https://${infuraNetwork}.infura.io/v3/${INFURA_PROJECT_ID}`;
-  const infuraProvider = new providers.JsonRpcProvider(infuraUrl, network);
+  const infuraProvider = new providers.InfuraProvider(network, INFURA_PROJECT_ID);
 
   // Connect to Etherscan
   const etherscanProvider = new providers.EtherscanProvider(network);
@@ -325,20 +386,34 @@ export const getGasPriceWei = (gasInfo: GasInfo): BigNumber => {
 };
 
 export const formatUnits = (val: string = '0', decimals: number) => {
-  let formattedUnits = '0.0';
+  let formattedUnits = decimals === 0 ? '0' : '0.0';
+  let preparedValue = null; // null for sentry reports
+  let valueWithoutDecimals = null; // null for sentry reports
   try {
-    formattedUnits = utils.formatUnits(new BigNumber(val.toString()).toFixed(), decimals);
+    // check if val is exact number or other format (might be hex, exponential, etc.)
+    preparedValue = isValidNumber(val) ? Math.floor(+val) : val;
+    // parse number as BigNumber and get as string expresion without decimals
+    valueWithoutDecimals = new BigNumber(preparedValue.toString()).toFixed();
+    if (decimals === 0) {
+      // check additionally if string contains decimal pointer
+      // because converting exponential numbers back to number will result as exponential expression again
+      if (valueWithoutDecimals.includes('.')) return Math.floor(valueWithoutDecimals).toFixed();
+      // else return as it is
+      return valueWithoutDecimals;
+    }
+    formattedUnits = utils.formatUnits(valueWithoutDecimals, decimals);
   } catch (e) {
     Sentry.captureMessage(e.message, {
       level: 'info',
       extra: {
         sourceFunction: 'formatUnits(value,decimals)',
         inputValue: val,
+        preparedValue,
+        valueWithoutDecimals,
         decimals,
       },
     });
   }
-
   return formattedUnits;
 };
 
@@ -377,6 +452,29 @@ export const groupAndSortByDate = (
   return grouped;
 };
 
-export const isCaseInsensitiveMatch = (a: string, b: string): boolean => {
+export const isCaseInsensitiveMatch = (a: ?string, b: ?string): boolean => {
+  if (a === b) return true;
+  if (!a || !b) return false;
   return a.toLowerCase() === b.toLowerCase();
+};
+
+// number with decimals is valid if it has decimals else if not then it should not contain any decimal pointer
+export const isValidNumberDecimals = (
+  number: number | string,
+  decimals: number,
+) => decimals !== 0 || !number.toString().includes('.');
+
+/**
+ * helps to avoid text overlapping on many decimals,
+ * full amount will be displayed in confirm screen
+ * also show only 2 decimals for amounts above 1.00
+ * to avoid same text overlapping in the other side
+ */
+export const formatAmountDisplay = (value: number | string) => {
+  if (!value) return 0;
+  const amount = parseFloat(value);
+  if (amount > 1) {
+    return formatMoney(amount, 2);
+  }
+  return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
 };

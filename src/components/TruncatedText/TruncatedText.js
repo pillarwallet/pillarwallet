@@ -22,7 +22,7 @@ import styled from 'styled-components/native';
 import { transparentize } from 'polished';
 import LinearGradient from 'react-native-linear-gradient';
 import { Paragraph, BaseText } from 'components/Typography';
-import { baseColors, spacing, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, spacing, fontStyles, UIColors, lineHeights } from 'utils/variables';
 
 
 type Props = {
@@ -55,9 +55,8 @@ const DescriptionWrapper = styled.View`
 const DescriptionToggle = styled.TouchableOpacity``;
 
 const DescriptionToggleText = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  ${fontStyles.medium};
   color: ${baseColors.electricBlue};
-  line-height: ${fontSizes.mediumLarge};
 `;
 
 const DescriptionToggleWrapper = styled(LinearGradient)`
@@ -69,7 +68,6 @@ const DescriptionToggleWrapper = styled(LinearGradient)`
 
 const Description = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
-  line-height: ${fontSizes.mediumLarge};
 `;
 
 // NOTE: we need this element to get the height of the text
@@ -104,7 +102,7 @@ export default class TruncatedText extends React.Component<Props, State> {
       lines = 1,
     } = this.props;
 
-    const truncatedHeight = lines * fontSizes.mediumLarge;
+    const truncatedHeight = lines * lineHeights.medium;
     let shouldDescriptionToggleShow = false;
     if (fullHeight > truncatedHeight) {
       shouldDescriptionToggleShow = true;

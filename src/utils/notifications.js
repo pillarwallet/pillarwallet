@@ -29,7 +29,7 @@ import {
   MESSAGE_DISCONNECTED,
   MESSAGE_REQUEST,
 } from 'constants/invitationsConstants';
-import { COLLECTIBLE, SIGNAL, CONNECTION, BCX } from 'constants/notificationConstants';
+import { COLLECTIBLE, SIGNAL, CONNECTION, BCX, BADGE } from 'constants/notificationConstants';
 
 
 const parseNotification = (notificationBody: string): ?Object => {
@@ -139,6 +139,14 @@ export const processNotification = (notification: Object, myEthAddress?: string)
       message,
       asset,
       status,
+      type: notification.type,
+    };
+  }
+
+  if (notification.type === BADGE) {
+    result = {
+      title: 'Success',
+      message: 'New badge received!',
       type: notification.type,
     };
   }

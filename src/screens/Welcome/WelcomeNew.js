@@ -27,7 +27,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BoldText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
-import { fontSizes, baseColors } from 'utils/variables';
+import { fontSizes, baseColors, fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { navigateToNewWalletPageAction } from 'actions/walletActions';
 import { CachedImage } from 'react-native-cached-image';
@@ -47,15 +47,12 @@ const PillarLogo = styled(CachedImage)`
 
 const Title = styled(BoldText)`
   color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rJumbo}px;
-  line-height: ${fontSizes.rJumbo}px;
-  font-weight: 700;
+  ${fontStyles.rJumbo};
 `;
 
 const BodyText = styled(MediumText)`
   color: ${baseColors.pomegranate};
-  font-size: ${fontSizes.rMedium}px;
-  line-height: ${responsiveSize(19)}px;
+  ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
 `;
 
@@ -141,11 +138,11 @@ class Welcome extends React.Component<Props> {
         <Footer
           style={{ paddingBottom: 30 }}
         >
-          <Button roundedCorners marginBottom="20px" onPress={this.loginAction} title="Create account" width="auto" />
+          <Button marginBottom="20px" onPress={this.loginAction} title="Create account" width="auto" />
           <ButtonText
             buttonText="Restore wallet"
             onPress={this.navigateToWalletImportPage}
-            fontSize={fontSizes.medium}
+            fontSize={fontSizes.big}
           />
         </Footer>
       </ContainerWithHeader>

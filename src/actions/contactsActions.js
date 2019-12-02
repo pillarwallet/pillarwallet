@@ -17,7 +17,16 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import partition from 'lodash.partition';
+
+// actions
+import { updateConnectionsAction } from 'actions/connectionsActions';
+import { logEventAction } from 'actions/analyticsActions';
+import { saveDbAction } from 'actions/dbActions';
+import { deleteChatAction, deleteContactAction } from 'actions/chatActions';
+
+// constants
 import {
   UPDATE_SEARCH_RESULTS,
   FETCHING,
@@ -26,16 +35,15 @@ import {
   START_SYNC_CONTACTS_SMART_ADDRESSES,
   UPDATE_CONTACTS_SMART_ADDRESSES,
 } from 'constants/contactsConstants';
-import type { ConnectionIdentityKey } from 'models/Connections';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
-import { excludeLocalContacts } from 'utils/contacts';
-import { updateConnectionsAction } from 'actions/connectionsActions';
-import { logEventAction } from 'actions/analyticsActions';
-import { saveDbAction } from 'actions/dbActions';
-import { deleteChatAction, deleteContactAction } from 'actions/chatActions';
 
+// utils
+import { excludeLocalContacts } from 'utils/contacts';
+
+// models, types
+import type { ConnectionIdentityKey } from 'models/Connections';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 export const searchContactsAction = (query: string) => {
@@ -272,7 +280,6 @@ export const blockContactAction = (contactId: string, block: boolean) => {
       contact.id === contactId);
 
     await dispatch(deleteChatAction(contactToBlock[0].username));
-    await dispatch(deleteContactAction(contactToBlock[0].username));
 
     await dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 

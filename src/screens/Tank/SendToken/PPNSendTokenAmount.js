@@ -23,6 +23,8 @@ import { TouchableOpacity, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import { SDK_PROVIDER } from 'react-native-dotenv';
+
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -32,7 +34,7 @@ import { TextLink, Label, BaseText } from 'components/Typography';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { fontSizes, spacing, UIColors } from 'utils/variables';
+import { fontSizes, fontStyles, spacing, UIColors } from 'utils/variables';
 import { getRate } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 
@@ -61,14 +63,15 @@ const ActionsWrapper = styled.View`
 const SendTokenDetails = styled.View``;
 
 const SendTokenDetailsValue = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium}px;
   margin-bottom: 8px;
 `;
 
 const HelperText = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  ${fontStyles.medium};
   margin-bottom: ${spacing.rhythm / 2}px;
   color: ${UIColors.placeholderTextColor};
+  margin-left: 4px;
 `;
 
 const BackgroundWrapper = styled.View`
@@ -79,6 +82,10 @@ const BackgroundWrapper = styled.View`
 const FooterWrapper = styled.View`
   width: 100%;
   padding: ${spacing.large}px;
+`;
+
+const TextRow = styled.View`
+  flex-direction: row;
 `;
 
 type Props = {
@@ -137,8 +144,8 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
       gasPrice: 0,
       txFeeInWei: 0,
       usePPN: true,
-      symbol: this.assetData.token,
-      contractAddress: this.assetData.contractAddress,
+      symbol: this.assetData.symbol,
+      contractAddress: this.assetData.address,
       decimals: this.assetData.decimals,
     };
 
@@ -167,7 +174,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
       baseFiatCurrency,
     } = this.props;
 
-    const { token, icon, decimals } = this.assetData;
+    const { symbol, iconMonoUrl, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     // balance
@@ -189,12 +196,13 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
+    const icon = `${SDK_PROVIDER}/${iconMonoUrl}?size=3`;
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
-    const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
+    const formFields = getAmountFormFields({ icon, currency: symbol, valueInFiatOutput });
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: `Send ${this.assetData.token} via PPN` }] }}
+        headerProps={{ centerItems: [{ title: `Send ${this.assetData.symbol} via PPN` }] }}
         keyboardAvoidFooter={
           <FooterWrapper>
             {!!value && !!parseFloat(value.amount) &&
@@ -222,10 +230,12 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
             <ActionsWrapper>
               <SendTokenDetails>
                 <Label small>Available Balance</Label>
-                <SendTokenDetailsValue>
-                  {formattedBalance} {token}
+                <TextRow>
+                  <SendTokenDetailsValue>
+                    {formattedBalance} {symbol}
+                  </SendTokenDetailsValue>
                   <HelperText>{formattedBalanceInFiat}</HelperText>
-                </SendTokenDetailsValue>
+                </TextRow>
               </SendTokenDetails>
               <TouchableOpacity onPress={this.useMaxValue}>
                 <TextLink>Send All</TextLink>

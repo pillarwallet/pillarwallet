@@ -52,13 +52,12 @@ import {
 } from 'actions/appSettingsActions';
 import { updateUserAction, createOneTimePasswordAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
-import { repairStorageAction } from 'actions/appActions';
 import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
 import { logScreenViewAction, logEventAction } from 'actions/analyticsActions';
 import { isProdEnv } from 'utils/environment';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
-import { fontSizes, fontTrackings, baseColors, spacing } from 'utils/variables';
+import { fontTrackings, baseColors, spacing, fontStyles } from 'utils/variables';
 import { delay } from 'utils/common';
 import ProfileSettingsItem from 'components/ListItem/SettingsItem';
 import Button from 'components/Button';
@@ -70,7 +69,7 @@ import ReferralCodeModal from './ReferralCodeModal';
 import AppearanceSettingsSection from './AppearanceSettingsSection';
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
-const storage = new Storage('db');
+const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
 const ListWrapper = styled.View`
@@ -87,15 +86,14 @@ const ListSeparator = styled.View`
 `;
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.medium};
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
-  line-height: 20px;
   margin-bottom: ${spacing.medium}px;
 `;
 
 const SmallText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
 `;
@@ -108,7 +106,6 @@ const StyledWrapper = styled(Wrapper)`
 
 const Description = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
-  line-height: ${fontSizes.mediumLarge};
 `;
 
 const cityFormFields = [{
@@ -167,8 +164,6 @@ type Props = {
   baseFiatCurrency: ?string,
   appSettings: Object,
   intercomNotificationsCount: number,
-  hasDBConflicts: boolean,
-  repairStorage: Function,
   updateAssetsLayout: (value: string) => Function,
   updateUser: (walletId: string, field: Object, callback?: Function) => Function,
   createOneTimePassword: (walletId: string, field: Object, callback?: Function) => Function,
@@ -383,8 +378,6 @@ class Profile extends React.Component<Props, State> {
       navigation,
       lockScreen,
       appSettings: { appearanceSettings },
-      hasDBConflicts,
-      repairStorage,
       backupStatus,
       useBiometrics,
       smartWalletFeatureEnabled,
@@ -780,7 +773,7 @@ class Profile extends React.Component<Props, State> {
               </React.Fragment>
             )}
 
-            {(!!hasDBConflicts || !!__DEV__) &&
+            {!!__DEV__ &&
             <React.Fragment>
               <ListSeparator>
                 <SubHeading>DEBUG</SubHeading>
@@ -792,12 +785,6 @@ class Profile extends React.Component<Props, State> {
                 label="Clear Local Storage"
                 onPress={() => { this.clearLocalStorage(); }}
               />}
-              {hasDBConflicts &&
-                <ProfileSettingsItem
-                  key="repairDB"
-                  label="Repair Local Storage"
-                  onPress={repairStorage}
-                />}
             </React.Fragment>}
 
             <ListSeparator>
@@ -859,7 +846,7 @@ class Profile extends React.Component<Props, State> {
               onModalHide={() => this.setState({ showJoinBetaModal: false })}
             >
               <StyledWrapper regularPadding flex={1}>
-                <Description>
+                <Description small>
                   {
                     'By joining the beta program, you will be added to our Firebase Analytics data collection.' +
                     'Through this, Pillar will collect your username in order to enable beta features and monitor ' +
@@ -897,7 +884,6 @@ const mapStateToProps = ({
     data: appSettings,
   },
   notifications: { intercomNotificationsCount },
-  session: { data: { hasDBConflicts } },
   wallet: { backupStatus },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }) => ({
@@ -905,7 +891,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   intercomNotificationsCount,
   appSettings,
-  hasDBConflicts,
   backupStatus,
   useBiometrics,
   smartWalletFeatureEnabled,
@@ -924,7 +909,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
   changeUseBiometrics: (enabled, privateKey) => dispatch(changeUseBiometricsAction(enabled, privateKey)),
-  repairStorage: () => dispatch(repairStorageAction()),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   logEvent: (name: string) => dispatch(logEventAction(name)),

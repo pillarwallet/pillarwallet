@@ -30,7 +30,7 @@ import {
 } from 'constants/walletConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_USER, REGISTERED } from 'constants/userConstants';
@@ -52,6 +52,7 @@ import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'const
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
+import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import * as connectionKeyActions from 'actions/connectionKeyPairActions';
@@ -68,6 +69,8 @@ type SDK = {
   userInfo: Function,
 };
 
+const mockUser = { username: 'snow', walletId: 2 };
+
 const pillarSdk: SDK = new PillarSdk();
 pillarSdk.registerOnAuthServer = jest.fn(() => ({
   userId: 1,
@@ -75,8 +78,8 @@ pillarSdk.registerOnAuthServer = jest.fn(() => ({
   refreshToken: 'uniqueRefreshToken',
   accessToken: 'uniqueAccessToken',
 }));
-pillarSdk.updateUser = jest.fn(() => ({ username: 'snow', walletId: 2 }));
-pillarSdk.userInfo = jest.fn(() => ({ username: 'snow', walletId: 2 }));
+pillarSdk.updateUser = jest.fn(() => mockUser);
+pillarSdk.userInfo = jest.fn(() => mockUser);
 pillarSdk.fetchInitialAssets = jest.fn(() => transformAssetsToObject(mockInitialAssets));
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
@@ -148,14 +151,15 @@ describe('Wallet actions', () => {
   it(`should expect series of actions with payload to be dispatched 
   on registerWalletAction execution when wallet wasn't imported`, () => {
     store = mockStore({
-      session: { data: { isSignalInitiated: false } },
+      user: { data: mockUser },
+      session: { data: { isSignalInitiated: false, isOnline: true } },
       oAuthTokens: { data: {} },
       wallet: {
         onboarding: mockOnboarding,
         backupStatus: mockBackupStatus,
       },
       accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: { data: { SMART_WALLET_ENABLED: false } },
+      featureFlags: { data: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       history: { data: {} },
     });
     const expectedActions = [
@@ -163,7 +167,8 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONTACTS, payload: [] },
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
-      { type: UPDATE_APP_SETTINGS, payload: {} },
+      { type: RESET_APP_SETTINGS, payload: {} },
+      { type: UPDATE_APP_SETTINGS, payload: { themeType: LIGHT_THEME } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
@@ -175,6 +180,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
       { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
+      { type: SET_FEATURE_FLAGS, payload: {} },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -192,8 +198,9 @@ describe('Wallet actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
+      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
+      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
     // $FlowFixMe
@@ -210,14 +217,15 @@ describe('Wallet actions', () => {
   on registerWalletAction execution when wallet wasn't imported 
   and Smart Wallet feature enabled`, () => {
     store = mockStore({
-      session: { data: { isSignalInitiated: false } },
+      user: { data: mockUser },
+      session: { data: { isSignalInitiated: false, isOnline: true } },
       oAuthTokens: { data: {} },
       wallet: {
         onboarding: mockOnboarding,
         backupStatus: mockBackupStatus,
       },
       accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: { data: { SMART_WALLET_ENABLED: true } },
+      featureFlags: { data: { SMART_WALLET_ENABLED: true, BITCOIN_ENABLED: false } },
       smartWallet: { upgrade: { status: null } },
       assets: { data: {} },
       history: { data: {} },
@@ -227,7 +235,8 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONTACTS, payload: [] },
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
-      { type: UPDATE_APP_SETTINGS, payload: {} },
+      { type: RESET_APP_SETTINGS, payload: {} },
+      { type: UPDATE_APP_SETTINGS, payload: { themeType: LIGHT_THEME } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
@@ -239,6 +248,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
       { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
+      { type: SET_FEATURE_FLAGS, payload: {} },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -256,6 +266,8 @@ describe('Wallet actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
+      { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
+      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
       { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
@@ -269,7 +281,6 @@ describe('Wallet actions', () => {
         },
       },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
-      { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
     ];
 
     // $FlowFixMe
@@ -285,7 +296,8 @@ describe('Wallet actions', () => {
   it(`should expect series of actions with payload to be 
   dispatch on registerWalletAction execution when wallet was imported`, () => {
     store = mockStore({
-      session: { data: { isSignalInitiated: false } },
+      user: { data: mockUser },
+      session: { data: { isSignalInitiated: false, isOnline: true } },
       oAuthTokens: { data: {} },
       wallet: {
         onboarding: {
@@ -295,7 +307,7 @@ describe('Wallet actions', () => {
         backupStatus: mockBackupStatus,
       },
       accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: { data: { SMART_WALLET_ENABLED: false } },
+      featureFlags: { data: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       assets: { data: {} },
       history: { data: {} },
     });
@@ -304,7 +316,8 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONTACTS, payload: [] },
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
-      { type: UPDATE_APP_SETTINGS, payload: {} },
+      { type: RESET_APP_SETTINGS, payload: {} },
+      { type: UPDATE_APP_SETTINGS, payload: { themeType: LIGHT_THEME } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
@@ -316,6 +329,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
       { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
+      { type: SET_FEATURE_FLAGS, payload: {} },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
@@ -332,8 +346,9 @@ describe('Wallet actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
       { type: UPDATE_APP_SETTINGS, payload: { firebaseAnalyticsConnectionEnabled: false } },
+      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
+      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
     // $FlowFixMe

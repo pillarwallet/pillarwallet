@@ -1,13 +1,13 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes } from 'utils/variables';
-import { BoldText, LightText } from 'components/Typography';
+import { baseColors, fontSizes, fontStyles } from 'utils/variables';
+import { LightText, MediumText } from 'components/Typography';
 import Animation from 'components/Animation';
 
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
 
-const Status = styled(BoldText)`
+const Status = styled(MediumText)`
   font-size: ${fontSizes.giant}px;
   text-align: center;
   margin-top: 35px;
@@ -15,7 +15,7 @@ const Status = styled(BoldText)`
 `;
 
 const Text = styled(LightText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.medium};
   color: ${baseColors.coolGrey};
   text-align: center;
 `;

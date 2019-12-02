@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
 import * as Keychain from 'react-native-keychain';
+import { withTheme } from 'styled-components/native';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -39,15 +40,10 @@ import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts, Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
+import type { Theme } from 'models/Theme';
 
 // actions
-import {
-  fetchInitialAssetsAction,
-  startAssetsSearchAction,
-  searchAssetsAction,
-  resetSearchAssetsResultAction,
-  checkForMissedAssetsAction,
-} from 'actions/assetsActions';
+import { fetchInitialAssetsAction } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
@@ -59,12 +55,13 @@ import {
 import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS, SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
+import { ACCOUNTS, SETTINGS } from 'constants/navigationConstants';
+import { KEY_SECTION } from 'screens/Settings';
 
 // utils
-import { findKeyBasedAccount } from 'utils/accounts';
-import { baseColors } from 'utils/variables';
+import { getAccountName } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getThemeColors } from 'utils/themes';
 
 // selectors
 import { accountCollectiblesSelector } from 'selectors/collectibles';
@@ -73,6 +70,7 @@ import { activeAccountSelector } from 'selectors';
 
 // local components
 import PPNView from 'screens/Assets/PPNView';
+import BTCView from 'screens/Assets/BTCView';
 import WalletView from 'screens/Assets/WalletView';
 
 type Props = {
@@ -85,25 +83,20 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetsLayout: string,
-  startAssetsSearch: Function,
-  searchAssets: Function,
-  resetSearchAssetsResult: Function,
   assetsSearchResults: Asset[],
   assetsSearchState: string,
-  addAsset: Function,
-  hideAsset: Function,
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
   blockchainNetworks: Object[],
-  activeAccount: Account,
+  activeAccount: ?Account,
   logScreenView: (view: string, screen: string) => void,
-  fetchAllCollectiblesData: Function,
+  fetchAllCollectiblesData: () => void,
   useBiometrics: boolean,
   backupStatus: Object,
   availableStake: number,
-  checkForMissedAssets: Function,
   PPNTransactions: Transaction[],
+  theme: Theme,
 }
 
 type State = {
@@ -116,9 +109,11 @@ const VIEWS = {
   KEY_WALLET_VIEW: 'KEY_WALLET_VIEW',
   SMART_WALLET_VIEW: 'SMART_WALLET_VIEW',
   PPN_VIEW: 'PPN_VIEW',
+  BTC_VIEW: 'BTC_VIEW',
 };
 
 class AssetsScreen extends React.Component<Props, State> {
+  forceRender = false;
   state = {
     showKeyWalletInsight: true,
     showSmartWalletInsight: false,
@@ -131,7 +126,6 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       assets,
       logScreenView,
-      checkForMissedAssets,
     } = this.props;
 
     logScreenView('View assets list', 'Assets');
@@ -141,26 +135,27 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     fetchAllCollectiblesData();
-    checkForMissedAssets();
 
     Keychain.getSupportedBiometryType()
       .then(supported => this.setState({ supportsBiometrics: !!supported }))
       .catch(() => null);
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const { activeAccount, checkForMissedAssets } = this.props;
-    if (!isEqual(prevProps.activeAccount, activeAccount)) {
-      checkForMissedAssets();
-    }
-  }
-
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isFocused = this.props.navigation.isFocused();
+    const { navigation } = this.props;
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    const isFocused = navigation.isFocused();
+
     if (!isFocused) {
+      if (!isEq) this.forceRender = true;
       return false;
     }
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+
+    if (this.forceRender) {
+      this.forceRender = false;
+      return true;
+    }
+
     return !isEq;
   }
 
@@ -179,31 +174,40 @@ class AssetsScreen extends React.Component<Props, State> {
       activeAccount,
       availableStake,
       PPNTransactions,
+      accounts,
+      theme,
     } = this.props;
+    const colors = getThemeColors(theme);
 
-    const { type: walletType } = activeAccount;
+    const { type: walletType } = activeAccount || {};
     const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
     const { id: activeBNetworkId, title: activeBNetworkTitle } = activeBNetwork;
 
     switch (activeBNetworkId) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
         return {
-          label: walletType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet',
+          label: getAccountName(walletType, accounts),
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
-          customHeaderProps: {
-            background: walletType === ACCOUNT_TYPES.KEY_BASED ? baseColors.tomato : baseColors.neonBlue,
-            light: true,
+          customHeaderButtonProps: {
+            backgroundColor: walletType === ACCOUNT_TYPES.KEY_BASED ? colors.legacyWallet : colors.smartWallet,
           },
-          customHeaderButtonProps: {},
         };
+
+      case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
+        return {
+          label: 'Bitcoin wallet',
+          action: () => navigation.navigate(ACCOUNTS),
+          screenView: VIEWS.BTC_VIEW,
+          customHeaderButtonProps: { backgroundColor: colors.bitcoinWallet },
+        };
+
       default:
         const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === PAYMENT_COMPLETED);
         return {
           label: activeBNetworkTitle,
           action: () => navigation.navigate(ACCOUNTS),
           screenView: VIEWS.PPN_VIEW,
-          customHeaderProps: {},
           customHeaderButtonProps: { isActive: availableStake > 0 || hasUnsettledTx },
         };
     }
@@ -211,7 +215,6 @@ class AssetsScreen extends React.Component<Props, State> {
 
   getInsightsList = () => {
     const {
-      accounts,
       backupStatus,
       navigation,
       useBiometrics,
@@ -219,7 +222,6 @@ class AssetsScreen extends React.Component<Props, State> {
     const { supportsBiometrics } = this.state;
 
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-    const keyBasedAccount = findKeyBasedAccount(accounts) || {};
 
     const keyWalletInsights = [
       {
@@ -227,7 +229,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: 'Backup wallet',
         status: isBackedUp,
         onPress: !isBackedUp
-          ? () => navigation.navigate(WALLET_SETTINGS, { accountId: keyBasedAccount.id })
+          ? () => navigation.navigate(SETTINGS, { scrollTo: KEY_SECTION })
           : null,
       },
       {
@@ -279,6 +281,8 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     switch (viewType) {
+      case VIEWS.BTC_VIEW:
+        return <BTCView />;
       case VIEWS.PPN_VIEW:
         return <PPNView />;
       case VIEWS.SMART_WALLET_VIEW:
@@ -302,21 +306,20 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    // HEADER PROPS
+    const { activeAccount } = this.props;
+    if (!activeAccount) return null;
+
     const screenInfo = this.getScreenInfo();
     const {
       label: headerButtonLabel,
       action: headerButtonAction,
       screenView,
-      customHeaderProps,
       customHeaderButtonProps,
     } = screenInfo;
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
         headerProps={{
-          ...customHeaderProps,
           leftItems: [{ user: true }],
           rightItems: [{
             actionButton: {
@@ -380,12 +383,8 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
-  checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
-  startAssetsSearch: () => dispatch(startAssetsSearchAction()),
-  searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
-  resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen));

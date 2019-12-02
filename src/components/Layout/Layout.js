@@ -22,8 +22,10 @@ import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import { Platform, StatusBar, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { UIColors, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import { isIphoneX } from 'utils/common';
+import { themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type ContainerProps = {
   children?: React.Node,
@@ -33,6 +35,8 @@ type ContainerProps = {
   inset?: Object,
   onLayout?: Function,
   innerStyle?: Object,
+  defaultTheme?: Theme,
+  theme?: Theme, // TODO: remove '?' after cleanup (Screens that are not used are not wrapped with ThemeProvider)
 };
 
 type FooterProps = {
@@ -56,6 +60,9 @@ type ScrollWrapperProps = {
   stickyHeaderIndices?: ?number[],
   scrollEnabled?: boolean,
   refreshControl?: React.Node,
+  disableOnAndroid?: boolean,
+  scrollEventThrottle?: number,
+  onContentSizeChange?: Function,
 };
 
 export const Center = styled.View`
@@ -63,7 +70,7 @@ export const Center = styled.View`
 `;
 
 export const ContainerOuter = styled(SafeAreaView)`
-  background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
+  background-color: ${props => (props.color ? props.color : themedColors.surface)};
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;
 
@@ -82,6 +89,8 @@ export const Container = (props: ContainerProps) => {
     center,
     onLayout,
     children,
+    defaultTheme,
+    theme,
   } = props;
 
   return (
@@ -90,6 +99,7 @@ export const Container = (props: ContainerProps) => {
       style={style}
       forceInset={{ top: 'always', ...inset }}
       androidStatusbarHeight={StatusBar.currentHeight}
+      theme={theme || defaultTheme}
     >
       <ContainerInner
         center={center}
@@ -109,13 +119,6 @@ export const Wrapper = styled.View`
   ${({ flex }) => flex && `flex: ${flex};`}
   ${({ horizontal }) => horizontal && 'flex-direction: row;'}
   ${({ zIndex }) => zIndex && `z-index: ${zIndex};`}
-`;
-
-export const KAScrollView = styled(KeyboardAwareScrollView)`
-  padding: ${props => (props.regularPadding ? '0 20px' : '0')};
-  background-color: ${props => (props.color ? props.color : 'transparent')};
-  flex: 1;
-  height: 100%;
 `;
 
 const FooterInner = styled.KeyboardAvoidingView`
@@ -140,13 +143,14 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
     stickyHeaderIndices,
     scrollEnabled,
     refreshControl,
+    disableOnAndroid,
+    scrollEventThrottle,
+    onContentSizeChange,
   } = props;
 
   return (
-    <KAScrollView
-      regularPadding={regularPadding}
-      color={color}
-      enableOnAndroid
+    <KeyboardAwareScrollView
+      enableOnAndroid={!disableOnAndroid}
       enableAutomaticScroll={!disableAutomaticScroll}
       innerRef={innerRef}
       onKeyboardWillShow={onKeyboardWillShow}
@@ -158,9 +162,17 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
       extraScrollHeight={0}
       scrollEnabled={scrollEnabled}
       refreshControl={refreshControl}
+      scrollEventThrottle={scrollEventThrottle}
+      onContentSizeChange={onContentSizeChange}
+      style={{
+        paddingHorizontal: regularPadding ? 20 : 0,
+        backgroundColor: color || 'transparent',
+        flex: 1,
+        height: '100%',
+      }}
     >
       {children}
-    </KAScrollView>
+    </KeyboardAwareScrollView>
   );
 };
 

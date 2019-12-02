@@ -45,7 +45,7 @@ import { hideAssetAction } from 'actions/userSettingsActions';
 import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -73,9 +73,10 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetsLayout: string,
-  activeAccount: Account,
+  activeAccount: ?Account,
   paymentNetworkBalances: Balances,
   hideAsset: Function,
+  scrollViewRef?: Object,
 }
 
 type State = {
@@ -87,13 +88,12 @@ const ListHeaderWrapper = styled.View`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: ${spacing.large}px ${spacing.large}px 0;
-  margin-top: 4px;
+  padding: ${spacing.medium}px ${spacing.large}px 0;
   margin-bottom: 6px;
 `;
 
 const HeaderTitle = styled(MediumText)`
-  font-size: ${fontSizes.extraSmall}px;
+  ${fontStyles.regular};
   color: ${baseColors.blueYonder};
 `;
 
@@ -170,6 +170,7 @@ class AssetsList extends React.Component<Props, State> {
       activeAccount,
       baseFiatCurrency,
       navigation,
+      scrollViewRef,
     } = this.props;
 
     const {
@@ -207,7 +208,7 @@ class AssetsList extends React.Component<Props, State> {
       amount: displayAmount,
       balance,
       balanceInFiat: formattedBalanceInFiat,
-      address: getAccountAddress(activeAccount),
+      address: activeAccount && getAccountAddress(activeAccount),
       contractAddress: asset.address,
       icon: fullIconMonoUrl,
       wallpaper: fullIconWallpaperUrl,
@@ -237,6 +238,9 @@ class AssetsList extends React.Component<Props, State> {
         close={forceHideRemoval}
         buttonWidth={80}
         onOpen={() => this.setState({ forceHideRemoval: false })}
+        scroll={(shouldAllowScroll) => {
+          if (scrollViewRef) scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
+        }}
       >
         <ListItemWithImage
           onPress={() => {
@@ -313,6 +317,7 @@ class AssetsList extends React.Component<Props, State> {
         style={{ width: '100%', height: '100%', flex: 1 }}
         ListHeaderComponent={this.renderHeader}
         contentContainerStyle={{ paddingTop: 4 }}
+        scrollEnabled={false}
       />
     );
   }

@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import Title from 'components/Title';
 import Icon from 'components/Icon';
-import { BaseText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { baseColors, UIColors, spacing, fontSizes } from 'utils/variables';
 
@@ -104,15 +104,14 @@ const TabItem = styled.TouchableOpacity`
 `;
 
 const TabItemIcon = styled(Icon)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.regular}px;
   margin-right: 4px;
   margin-top: 2px;
   color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
 `;
 
-const TabItemText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
-  font-weight: 500;
+const TabItemText = styled(MediumText)`
+  font-size: ${fontSizes.regular}px;
   color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
 `;
 
@@ -227,9 +226,8 @@ const UnreadBadge = styled.View`
   justify-content: center;
 `;
 
-const UnreadText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
-  font-weight: 500;
+const UnreadText = styled(MediumText)`
+  font-size: ${fontSizes.regular}px;
   color: ${baseColors.white};
 `;
 

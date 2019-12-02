@@ -27,7 +27,7 @@ import Header from 'components/Header';
 import Button from 'components/Button';
 import styled from 'styled-components/native/index';
 import { spacing } from 'utils/variables';
-import { IMPORT_WALLET, FORGOT_PIN } from 'constants/navigationConstants';
+import { IMPORT_WALLET_LEGALS, FORGOT_PIN } from 'constants/navigationConstants';
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
@@ -45,7 +45,7 @@ class ForgotPin extends React.Component<Props, {}> {
   };
 
   toImportWallet = () => {
-    this.props.navigation.navigate(IMPORT_WALLET, { navigateTo: FORGOT_PIN });
+    this.props.navigation.navigate(IMPORT_WALLET_LEGALS, { navigateTo: FORGOT_PIN });
   };
 
   render() {

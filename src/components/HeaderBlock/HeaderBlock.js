@@ -21,16 +21,19 @@ import * as React from 'react';
 import { StatusBar, View, TouchableOpacity } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
-import styled from 'styled-components/native';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import styled, { withTheme } from 'styled-components/native';
+import { ThemeProvider } from 'styled-components';
 import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import { connect } from 'react-redux';
 import ProfileImage from 'components/ProfileImage';
-import { USERS } from 'constants/navigationConstants';
+import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 import { responsiveSize } from 'utils/ui';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 // partials
 import { HeaderActionButton } from './HeaderActionButton';
@@ -48,13 +51,14 @@ type Props = {
   light?: boolean,
   noBack?: boolean,
   customOnBack?: Function,
+  theme: Theme
 }
 
 const Wrapper = styled.View`
   width: 100%;
-  background-color: ${props => props.theme.backgroundColor || 'transparent'};
-  border-bottom-width: ${props => props.theme.borderBottomWidth || 0};
-  border-bottom-color: ${props => props.theme.borderBottomColor || 'transparent'};
+  background-color: ${({ theme }) => theme.colors.surface};
+  border-bottom-width: 1;
+  border-bottom-color: ${({ theme }) => theme.colors.border};
   ${props => props.floating
     ? `
       position: absolute;
@@ -65,8 +69,9 @@ const Wrapper = styled.View`
 `;
 
 const HeaderContentWrapper = styled.View`
-  padding: ${spacing.large}px;
+  padding: 15px ${spacing.large}px;
   width: 100%;
+  min-height: 58px;
 `;
 
 const SafeArea = styled(SafeAreaView)`
@@ -82,13 +87,11 @@ const HeaderRow = styled.View`
 
 const HeaderProfileImage = styled(ProfileImage)``;
 
-const HeaderTitle = styled(BaseText)`
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
-  color: ${props => props.theme.color || UIColors.defaultTextColor};
-  font-weight: 500;
+const HeaderTitle = styled(MediumText)`
+  font-size: ${fontSizes.medium}px;
+  line-height: 26px;
+  color: ${({ theme }) => theme.colors.text};
   text-align: ${props => props.centerText ? 'center' : 'left'};
-  padding: 5px 0;
 `;
 
 const UserButton = styled.TouchableOpacity`
@@ -103,6 +106,7 @@ const CenterItems = styled.View`
   align-items: center;
   justify-content: center;
   flex-direction: row;
+  min-height: 28px;
 `;
 
 const LeftItems = styled.View`
@@ -111,6 +115,7 @@ const LeftItems = styled.View`
   justify-content: flex-start;
   flex-direction: row;
   flex-wrap: wrap;
+  min-height: 28px;
 `;
 
 const RightItems = styled.View`
@@ -119,6 +124,7 @@ const RightItems = styled.View`
   justify-content: flex-end;
   flex-direction: row;
   flex-wrap: wrap;
+  min-height: 28px;
 `;
 
 const BackIcon = styled(IconButton)`
@@ -144,29 +150,27 @@ const CloseIcon = styled(IconButton)`
 `;
 
 const TextButton = styled.TouchableOpacity`
-  padding: 5px 0;
+  padding: 2px 0;
   flex-direction: row;
   align-items: center;
-  ${props => props.bordered
+  ${props => props.withBackground
     ? `
-      border-width: 1px;
-      border-color: ${props.theme.rightActionBorderColor || baseColors.electricBlue};
-      border-radius: 14px;
-      padding: 5px ${responsiveSize(spacing.mediumLarge)}px;
+      background-color: ${props.theme.colors.tertiary};
+      border-radius: 6px;
+      padding: 2px ${responsiveSize(12)}px;
       `
     : ''}
 `;
 
 const ButtonLabel = styled(BaseText)`
-  line-height: ${fontSizes.small};
-  font-size: ${fontSizes.extraSmall}px;
-  color: ${props => props.theme.rightActionLabelColor || baseColors.electricBlue};
+  ${fontStyles.regular}px;
+  color: ${({ theme }) => theme.colors.primary};
 `;
 
 const Indicator = styled.View`
   width: 8px;
   height: 8px;
-  background-color: ${baseColors.sunYellow};
+  background-color: ${({ theme }) => theme.colors.indicator};
   border-radius: 4px;
   position: absolute;
   top: 0;
@@ -180,67 +184,12 @@ const IconImage = styled(CachedImage)`
 
 const profileImageWidth = 24;
 
-const themes = (backgroundColor?: string = '') => ({
-  transparent: {
-    backgroundColor: 'transparent',
-    color: baseColors.slateBlack,
-    borderBottomColor: 'transparent',
-    borderBottomWidth: 0,
-    iconColor: baseColors.slateBlack,
-    rightActionIconColor: baseColors.electricBlue,
-    rightActionLabelColor: baseColors.electricBlue,
-    buttonBorderColor: baseColors.mediumLightGray,
-    buttonLabelColor: baseColors.coolGrey,
-  },
-  light: {
-    color: baseColors.white,
-    borderBottomWidth: 0,
-    iconColor: baseColors.white,
-    rightActionIconColor: baseColors.white,
-    rightActionLabelColor: baseColors.white,
-    buttonBorderColor: UIColors.actionButtonBorderColor,
-    buttonLabelColor: baseColors.white,
-  },
-  background: {
-    backgroundColor,
-    borderBottomColor: backgroundColor,
-  },
-  darkBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: baseColors.slateBlack,
-  },
-  default: {
-    backgroundColor: baseColors.white,
-    color: baseColors.slateBlack,
-    borderBottomColor: baseColors.mediumLightGray,
-    borderBottomWidth: 1,
-    iconColor: baseColors.slateBlack,
-    rightActionIconColor: baseColors.electricBlue,
-    rightActionLabelColor: baseColors.electricBlue,
-    rightActionBorderColor: UIColors.headerButtonBorder,
-    buttonBorderColor: baseColors.mediumLightGray,
-    buttonLabelColor: baseColors.slateBlack,
-  },
-});
-
-const getTheme = (props: Props) => {
-  const { background = '' } = props;
-  const combinedThemes = [];
-
-  Object.keys(props).forEach((prop: string) => {
-    if (!!props[prop] && themes(background)[prop]) combinedThemes.push(themes(background)[prop]);
-  });
-
-  if (combinedThemes.length) return Object.assign({}, ...combinedThemes);
-  return themes().default;
-};
-
 const LEFT = 'LEFT';
 const CENTER = 'CENTER';
 const RIGHT = 'RIGHT';
 
 class HeaderBlock extends React.Component<Props> {
-  renderHeaderContent = (theme: Object) => {
+  renderHeaderContent = () => {
     const {
       rightItems = [],
       sideFlex,
@@ -249,49 +198,52 @@ class HeaderBlock extends React.Component<Props> {
       navigation,
       noBack,
       customOnBack,
+      theme,
+      transparent,
     } = this.props;
+    const colors = getThemeColors(theme);
 
     return (
       <HeaderRow>
         <LeftItems sideFlex={sideFlex} style={!centerItems.length && !rightItems.length ? { flexGrow: 2 } : {}}>
           {(leftItems.length || !!noBack)
-            ? leftItems.map((item) => this.renderSideItems(item, theme, LEFT))
+            ? leftItems.map((item) => this.renderSideItems(item, LEFT))
             : (
               <BackIcon
                 icon="back"
-                color={theme.iconColor || UIColors.defaultNavigationColor}
+                color={transparent ? colors.control : colors.text}
                 onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
-                fontSize={fontSizes.extraLarge}
+                fontSize={fontSizes.large}
                 horizontalAlign="flex-start"
               />)
           }
         </LeftItems>
         {!!centerItems.length &&
         <CenterItems>
-          {centerItems.map((item) => this.renderSideItems(item, theme, CENTER))}
+          {centerItems.map((item) => this.renderSideItems(item, CENTER))}
         </CenterItems>
         }
         {(!!centerItems.length || !!rightItems.length) &&
           <RightItems sideFlex={sideFlex}>
-            {rightItems.map((item) => this.renderSideItems(item, theme, RIGHT))}
+            {rightItems.map((item) => this.renderSideItems(item, RIGHT))}
           </RightItems>
         }
       </HeaderRow>
     );
   };
 
-  renderSideItems = (item, theme, type = '') => {
-    const { navigation } = this.props;
+  renderSideItems = (item, type = '') => {
+    const { navigation, theme } = this.props;
+    const colors = getThemeColors(theme);
     const commonStyle = {};
     if (type === RIGHT) commonStyle.marginLeft = spacing.small;
     if (item.user || item.userIcon) {
-      return this.renderUser(theme, !item.userIcon);
+      return this.renderUser(!item.userIcon);
     }
     if (item.title) {
       return (
-        <View style={commonStyle} key={item.title}>
+        <View style={{ ...commonStyle, flexDirection: 'row', flexWrap: 'wrap' }} key={item.title}>
           <HeaderTitle
-            theme={theme}
             style={item.color ? { color: item.color } : {}}
             onPress={item.onPress}
             centerText={type === CENTER}
@@ -306,9 +258,9 @@ class HeaderBlock extends React.Component<Props> {
         <View style={{ marginRight: -10, ...commonStyle }} key={item.icon}>
           <ActionIcon
             icon={item.icon}
-            color={item.color || theme.rightActionIconColor || UIColors.defaultNavigationColor}
+            color={item.color || colors.text}
             onPress={item.onPress}
-            fontSize={item.fontSize || fontSizes.extraLarge}
+            fontSize={item.fontSize || fontSizes.large}
             horizontalAlign="flex-start"
           />
           {!!item.indicator && <Indicator />}
@@ -323,10 +275,15 @@ class HeaderBlock extends React.Component<Props> {
         </TouchableOpacity>
       );
     }
-    if (item.label) {
+    if (item.link) {
       return (
-        <TextButton onPress={item.onPress} key={item.label} bordered={item.bordered} theme={theme} style={commonStyle}>
-          <ButtonLabel theme={theme}>{item.label}</ButtonLabel>
+        <TextButton
+          onPress={item.onPress}
+          key={item.link}
+          withBackground={item.withBackground}
+          style={commonStyle}
+        >
+          <ButtonLabel>{item.link}</ButtonLabel>
           {item.addon}
         </TextButton>
       );
@@ -346,16 +303,16 @@ class HeaderBlock extends React.Component<Props> {
         <View style={{ ...wrapperStyle, marginTop: -20, marginBottom: -20 }} key="close">
           <CloseIcon
             icon="close"
-            color={baseColors.slateBlack}
+            color={colors.text}
             onPress={() => item.dismiss ? navigation.dismiss() : navigation.goBack()}
-            fontSize={fontSizes.extraSmall}
+            fontSize={fontSizes.regular}
             horizontalAlign="flex-end"
           />
         </View>
       );
     }
     if (item.actionButton) {
-      return (<HeaderActionButton {...item.actionButton} theme={theme} wrapperStyle={commonStyle} />);
+      return (<HeaderActionButton {...item.actionButton} wrapperStyle={commonStyle} />);
     }
     if (item.custom) {
       return <View key={item.key || 'custom'} style={commonStyle}>{item.custom}</View>;
@@ -363,36 +320,53 @@ class HeaderBlock extends React.Component<Props> {
     return null;
   };
 
-  renderUser = (theme, showName: boolean) => {
+  renderUser = (showName: boolean) => {
     const { user, navigation } = this.props;
+    const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
     return (
-      <UserButton key="user" onPress={() => { navigation.navigate(USERS); }}>
+      <UserButton key="user" onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}>
         <HeaderProfileImage
-          uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
+          uri={userImageUri}
           userName={user.username}
           diameter={profileImageWidth}
           noShadow
+          borderWidth={0}
         />
         {showName &&
         <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
-          <HeaderTitle theme={theme} style={{ marginLeft: spacing.medium }}>{user.username}</HeaderTitle>
+          <HeaderTitle style={{ marginLeft: 8 }}>{user.username}</HeaderTitle>
         </View>}
       </UserButton>
     );
   };
 
   render() {
-    const { floating } = this.props;
-    const theme = getTheme(this.props);
+    const {
+      floating,
+      theme,
+      light,
+    } = this.props;
+    const updatedColors = {};
+    if (floating) {
+      updatedColors.surface = 'transparent';
+      updatedColors.border = 'transparent';
+    }
+    if (light) {
+      updatedColors.primary = theme.colors.control;
+      updatedColors.text = theme.colors.control;
+    }
+    const updatedTheme = { ...theme, colors: { ...theme.colors, ...updatedColors } };
 
     return (
-      <Wrapper theme={theme} floating={floating}>
-        <SafeArea forceInset={{ bottom: 'never', top: 'always' }} androidStatusbarHeight={StatusBar.currentHeight}>
-          <HeaderContentWrapper>
-            {this.renderHeaderContent(theme)}
-          </HeaderContentWrapper>
-        </SafeArea>
-      </Wrapper>
+      <ThemeProvider theme={updatedTheme}>
+        <Wrapper floating={floating}>
+          <SafeArea forceInset={{ bottom: 'never', top: 'always' }} androidStatusbarHeight={StatusBar.currentHeight}>
+            <HeaderContentWrapper>
+              {this.renderHeaderContent()}
+            </HeaderContentWrapper>
+          </SafeArea>
+        </Wrapper>
+      </ThemeProvider>
     );
   }
 }
@@ -403,4 +377,4 @@ const mapStateToProps = ({
   user,
 });
 
-export default connect(mapStateToProps)(HeaderBlock);
+export default withTheme(connect(mapStateToProps)(HeaderBlock));

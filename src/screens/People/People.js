@@ -17,24 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
-import {
-  FlatList,
-  Keyboard,
-  RefreshControl,
-  View,
-  ScrollView,
-} from 'react-native';
+import { FlatList, Keyboard, RefreshControl, View, ScrollView } from 'react-native';
 import Swipeout from 'react-native-swipeout';
-import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
 import styled from 'styled-components/native';
 import { Icon as NIcon } from 'native-base';
-import Icon from 'components/Icon';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
+
+// actions
 import {
   searchContactsAction,
   resetSearchContactsStateAction,
@@ -44,11 +40,9 @@ import {
 } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
-import { TYPE_RECEIVED } from 'constants/invitationsConstants';
-import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
-import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
+
+// components
+import Icon from 'components/Icon';
 import { Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -58,9 +52,26 @@ import NotificationCircle from 'components/NotificationCircle';
 import Button from 'components/Button/Button';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import type { SearchResults } from 'models/Contacts';
-import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
+
+// constants
+import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
+import { TYPE_RECEIVED } from 'constants/invitationsConstants';
+import { FETCHING, FETCHED } from 'constants/contactsConstants';
+import {
+  DISCONNECT,
+  MUTE,
+  BLOCK,
+  STATUS_MUTED,
+  STATUS_BLOCKED,
+} from 'constants/connectionsConstants';
+
+// models
+import type { SearchResults } from 'models/Contacts';
+
+// utils
+import { baseColors, UIColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -73,11 +84,11 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
 `;
 
 const ConnectionRequestBannerText = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  ${fontStyles.big};
 `;
 
 const ConnectionRequestBannerIcon = styled(NIcon)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.big}px;
   color: ${baseColors.darkGray};
   margin-left: auto;
   margin-right: ${spacing.rhythm}px;
@@ -100,8 +111,8 @@ const ItemBadge = styled.View`
 `;
 
 const BadgeIcon = styled(Icon)`
-  font-size: ${props => props.fontSize || fontSizes.extraExtraSmall};
-  line-height: ${props => props.fontSize || fontSizes.extraExtraSmall};
+  font-size: ${props => props.fontSize || fontSizes.small}px;
+  line-height: ${props => props.fontSize || fontSizes.small}px;
   color: ${baseColors.white};
 `;
 
@@ -163,18 +174,20 @@ const ConnectionStatus = (props: ConnectionStatusProps) => {
 class PeopleScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
-
-  state = {
-    query: '',
-    showConfirmationModal: false,
-    manageContactType: '',
-    manageContactId: '',
-    forceHideRemoval: false,
-  };
+  scrollViewRef: ScrollView;
+  forceRender = false;
 
   constructor(props: Props) {
     super(props);
     this.handleContactsSearch = debounce(this.handleContactsSearch, 500);
+    this.scrollViewRef = React.createRef();
+    this.state = {
+      query: '',
+      showConfirmationModal: false,
+      manageContactType: '',
+      manageContactId: '',
+      forceHideRemoval: false,
+    };
   }
 
   componentDidMount() {
@@ -198,11 +211,19 @@ class PeopleScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     const isFocused = this.props.navigation.isFocused();
+
     if (!isFocused) {
+      if (!isEq) this.forceRender = true;
       return false;
     }
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+
+    if (this.forceRender) {
+      this.forceRender = false;
+      return true;
+    }
+
     return !isEq;
   }
 
@@ -247,9 +268,9 @@ class PeopleScreen extends React.Component<Props, State> {
     return swipeButtons.map((buttonDefinition) => {
       const { actionType, icon, ...btnProps } = buttonDefinition;
       let title = actionType;
-      if (actionType === MUTE && data.status === 'muted') {
+      if (actionType === MUTE && data.status === STATUS_MUTED) {
         title = 'unmute';
-      } else if (actionType === BLOCK && data.status === 'blocked') {
+      } else if (actionType === BLOCK && data.status === STATUS_BLOCKED) {
         title = 'unblock';
       }
 
@@ -264,12 +285,8 @@ class PeopleScreen extends React.Component<Props, State> {
             icon={icon}
             iconSize="small"
             {...btnProps}
-            style={{
-              marginTop: 2,
-            }}
-            textStyle={{
-              marginTop: 9,
-            }}
+            style={{ marginTop: 2 }}
+            textStyle={{ marginTop: 6, fontSize: fontSizes.small }}
           />
         ),
         backgroundColor: baseColors.white,
@@ -291,6 +308,11 @@ class PeopleScreen extends React.Component<Props, State> {
         sensitivity={10}
         close={this.state.forceHideRemoval}
         buttonWidth={80}
+        scroll={(shouldAllowScroll) => {
+          if (this.scrollViewRef && Object.keys(this.scrollViewRef).length) {
+            this.scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
+          }
+        }}
       >
         <ListItemWithImage
           label={item.username}
@@ -300,9 +322,10 @@ class PeopleScreen extends React.Component<Props, State> {
           navigateToProfile={this.handleContactCardPress(item)}
           imageUpdateTimeStamp={item.lastUpdateTime}
           unreadCount={unreadCount}
-          customAddon={(status === 'muted' || status === 'blocked') ? <ConnectionStatus status={status} /> : null}
+          customAddon={([STATUS_MUTED, STATUS_BLOCKED].includes(status)) ? <ConnectionStatus status={status} /> : null}
           rightColumnInnerStyle={{ flexDirection: 'row-reverse', paddingTop: spacing.small }}
           noSeparator
+          hasShadow
         />
       </Swipeout>
     );
@@ -318,10 +341,10 @@ class PeopleScreen extends React.Component<Props, State> {
     if (manageContactType === DISCONNECT) {
       this.props.disconnectContact(manageContactId);
     } else if (manageContactType === MUTE) {
-      const mute = !(status === 'muted');
+      const mute = status !== STATUS_MUTED; // toggle
       this.props.muteContact(manageContactId, mute);
     } else if (manageContactType === BLOCK) {
-      const block = !(status === 'blocked');
+      const block = status !== STATUS_BLOCKED; // toggle
       this.props.blockContact(manageContactId, block);
     }
 
@@ -466,6 +489,7 @@ class PeopleScreen extends React.Component<Props, State> {
         <ScrollView
           keyboardShouldPersistTaps="always"
           contentContainerStyle={{ flexGrow: 1 }}
+          ref={(ref) => { this.scrollViewRef = ref; }}
           onScroll={() => {
             if (inSearchMode) {
               Keyboard.dismiss();

@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import { Linking } from 'react-native';
-import { baseColors, UIColors } from 'utils/variables';
+import { appFont, baseColors, UIColors } from 'utils/variables';
 import ParsedText from 'react-native-parsed-text';
 import { handleUrlPress } from 'utils/common';
 
@@ -24,8 +24,7 @@ export const CustomParsedText = (props: Props) => {
   return (
     <ParsedText
       style={{
-        fontFamily: 'Aktiv Grotesk App',
-        fontWeight: '400',
+        fontFamily: appFont.regular,
         includeFontPadding: false,
         textAlignVertical: 'center',
         color: UIColors.defaultTextColor,

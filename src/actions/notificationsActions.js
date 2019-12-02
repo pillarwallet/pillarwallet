@@ -19,15 +19,18 @@
 */
 
 import debounce from 'lodash.debounce';
+import isEmpty from 'lodash.isempty';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
-import { processNotification } from 'utils/notifications';
+
+// actions
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
+  fetchSmartWalletTransactionsAction,
   fetchTransactionsHistoryNotificationsAction,
-  fetchTransactionsHistoryAction,
+  fetchAssetTransactionsAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -42,8 +45,9 @@ import {
   addContactAndSendWebSocketTxNoteMessageAction,
   decryptReceivedWebSocketTxNoteMessageAction,
 } from 'actions/txNoteActions';
-import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
-import Storage from 'services/storage';
+import { fetchBadgesAction } from 'actions/badgesActions';
+
+// constants
 import {
   ADD_NOTIFICATION,
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
@@ -53,12 +57,10 @@ import {
   SIGNAL,
   BCX,
   COLLECTIBLE,
+  BADGE,
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT } from 'constants/navigationConstants';
-import {
-  ADD_WEBSOCKET_RECEIVED_MESSAGE,
-  REMOVE_WEBSOCKET_SENT_MESSAGE,
-} from 'constants/chatConstants';
+import { ADD_WEBSOCKET_RECEIVED_MESSAGE, REMOVE_WEBSOCKET_SENT_MESSAGE } from 'constants/chatConstants';
 import { MESSAGE_DISCONNECTED, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import {
   CONNECTION_ACCEPTED_EVENT,
@@ -68,9 +70,17 @@ import {
   CONNECTION_REQUESTED_EVENT,
   CONNECTION_COLLECTIBLE_EVENT,
 } from 'constants/socketConstants';
+
+// services
+import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
+import Storage from 'services/storage';
 import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
 import ChatService from 'services/chat';
 import { SOCKET } from 'services/sockets';
+
+// utils
+import { processNotification } from 'utils/notifications';
+import { STATUS_MUTED } from 'constants/connectionsConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -139,6 +149,7 @@ export const setUnreadChatNotificationsStatusAction = (status: boolean) => {
 export const fetchAllNotificationsAction = () => {
   return async (dispatch: Function) => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
+    dispatch(fetchSmartWalletTransactionsAction());
     dispatch(fetchInviteNotificationsAction());
     dispatch(fetchAllCollectiblesDataAction());
   };
@@ -154,6 +165,7 @@ export const startListeningNotificationsAction = () => {
     if (SOCKET && SOCKET.socket && SOCKET.socket.readyState === 1) {
       SOCKET.onMessage(async response => {
         const data = JSON.parse(response.data.msg);
+
         if (data.type === CONNECTION_REQUESTED_EVENT) {
           dispatch(fetchInviteNotificationsAction());
         }
@@ -178,13 +190,18 @@ export const startListeningNotificationsAction = () => {
         }
         if (data.type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
-          dispatch(fetchTransactionsHistoryAction(data.asset));
+          dispatch(fetchSmartWalletTransactionsAction());
+          dispatch(fetchAssetTransactionsAction(data.asset));
           dispatch(fetchAssetsBalancesAction());
+        }
+        if (data.type === BADGE) {
+          dispatch(fetchBadgesAction(false));
         }
         if (
           data.type === CONNECTION_REQUESTED_EVENT ||
           data.type === CONNECTION_COLLECTIBLE_EVENT ||
-          data.type === BCX
+          data.type === BCX ||
+          data.type === BADGE
         ) {
           const payload = {
             title: response.notification.title,
@@ -219,11 +236,15 @@ export const startListeningNotificationsAction = () => {
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
-        dispatch(fetchTransactionsHistoryAction(notification.asset));
+        dispatch(fetchSmartWalletTransactionsAction());
+        dispatch(fetchAssetTransactionsAction(notification.asset));
         dispatch(fetchAssetsBalancesAction());
       }
       if (notification.type === COLLECTIBLE) {
         dispatch(fetchAllCollectiblesDataAction());
+      }
+      if (notification.type === BADGE) {
+        dispatch(fetchBadgesAction());
       }
       if (notification.type === SIGNAL) {
         dispatch(getExistingChatsAction());
@@ -236,7 +257,7 @@ export const startListeningNotificationsAction = () => {
             dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
             return;
           }
-          if (contact.status !== 'muted') {
+          if (contact.status !== STATUS_MUTED) {
             dispatch({
               type: ADD_NOTIFICATION,
               payload: {
@@ -304,7 +325,8 @@ export const startListeningOnOpenNotificationAction = () => {
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
-          dispatch(fetchTransactionsHistoryAction(asset));
+          dispatch(fetchSmartWalletTransactionsAction());
+          dispatch(fetchAssetTransactionsAction(asset));
           dispatch(fetchAssetsBalancesAction());
         }
         if (type === COLLECTIBLE) {
@@ -316,6 +338,11 @@ export const startListeningOnOpenNotificationAction = () => {
         if (type === SIGNAL) {
           dispatch(getExistingChatsAction());
         }
+
+        if (type === BADGE) {
+          dispatch(fetchBadgesAction(false));
+        }
+
         const routeName = notificationRoute || HOME;
         const navigateToAppAction = NavigationActions.navigate({
           routeName: APP_FLOW,
@@ -341,6 +368,8 @@ export const stopListeningOnOpenNotificationAction = () => {
 
 export const startListeningChatWebSocketAction = () => {
   return async (dispatch: Function, getState: Function) => {
+    const { session: { data: { isOnline } } } = getState();
+    if (!isOnline) return;
     const chatWebSocket = chat.getWebSocketInstance();
     await chatWebSocket.listen();
     chatWebSocket.onOpen();
@@ -383,7 +412,7 @@ export const startListeningChatWebSocketAction = () => {
           });
         }
       }
-      if (typeof receivedSignalMessage !== 'undefined') {
+      if (!isEmpty(receivedSignalMessage)) {
         const messageTag = Array.isArray(messageRequest.headers)
           ? messageRequest.headers.find(entry => entry.match(/message-tag/g)).split(':')[1]
           : '';
@@ -416,7 +445,7 @@ export const startListeningChatWebSocketAction = () => {
 
               const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
 
-              if (notification == null || contact.status === 'muted') return;
+              if (notification == null || contact.status === STATUS_MUTED) return;
 
               dispatch({
                 type: ADD_NOTIFICATION,

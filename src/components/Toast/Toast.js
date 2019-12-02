@@ -24,8 +24,9 @@ import { SafeAreaView } from 'react-navigation';
 import merge from 'lodash.merge';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { BoldText, BaseText } from 'components/Typography';
+import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
+import { MediumText, BaseText } from 'components/Typography';
+import { themedColors } from 'utils/themes';
 
 type ToastOptions = {
   autoClose?: boolean,
@@ -60,21 +61,27 @@ const typeIcons = {
 };
 
 const ToastHolder = styled(SafeAreaView)`
-  display: flex;
+  width: 100%;
+`;
+
+const ContentWrapper = styled.View`
+  width: 100%;
+  min-height: 58px;
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  padding-top: ${props => props.androidStatusbarHeight || 8}px;
+  padding-top: 8px;
+  padding-bottom: ${spacing.rhythm / 2}px;
+  margin-top: ${props => props.androidStatusbarHeight || 0}px;
 `;
 
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
-  background-color: ${baseColors.white};
+  background-color: ${themedColors.card};
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
-  padding-bottom: ${spacing.rhythm / 2}px;
   border-left-width: ${spacing.rhythm / 2}px;
   border-style: solid;
   border-color: ${props => props.borderColor};
@@ -103,6 +110,17 @@ const IconHolder = styled.View`
   align-items: center;
   justify-content: center;
   padding-top: 2px;
+`;
+
+const ToastTitle = styled(MediumText)`
+  ${fontStyles.regular};
+  color: ${themedColors.text};
+  margin-bottom: 2px;
+`;
+
+const ToastBody = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${themedColors.secondaryText};
 `;
 
 export default class Toast extends React.Component<{}, State> {
@@ -186,10 +204,8 @@ export default class Toast extends React.Component<{}, State> {
 
     return (
       <View>
-        {!!title && <BoldText>{title}</BoldText>}
-        <BaseText style={{ color: baseColors.darkGray }}>
-          {message}
-        </BaseText>
+        {!!title && <ToastTitle>{title}</ToastTitle>}
+        <ToastBody>{message}</ToastBody>
       </View>
     );
   }
@@ -226,37 +242,39 @@ export default class Toast extends React.Component<{}, State> {
         opacity={+!!this.state.toastOptions.message}
         borderColor={typeColors[toastOptions.type]}
       >
-        <ToastHolder androidStatusbarHeight={StatusBar.currentHeight} forceInset={{ top: 'always', bottom: 'never' }}>
-          <IconHolder>
-            <Icon
-              name={typeIcons[toastOptions.type]}
+        <ToastHolder forceInset={{ top: 'always', bottom: 'never' }}>
+          <ContentWrapper androidStatusbarHeight={StatusBar.currentHeight}>
+            <IconHolder>
+              <Icon
+                name={typeIcons[toastOptions.type]}
+                style={{
+                  color: typeColors[toastOptions.type],
+                  fontSize: fontSizes.large,
+                }}
+              />
+            </IconHolder>
+            {this.renderTextWrapper()}
+            <IconButton
+              onPress={this.handleClose}
+              icon="close"
+              color={baseColors.mediumGray}
               style={{
-                color: typeColors[toastOptions.type],
-                fontSize: fontSizes.extraLarge,
+                flex: 2,
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'stretch',
+                display: 'flex',
+              }}
+              iconStyle={{
+                borderWidth: 0,
+                width: 32,
+                textAlign: 'center',
+                alignSelf: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             />
-          </IconHolder>
-          {this.renderTextWrapper()}
-          <IconButton
-            onPress={this.handleClose}
-            icon="close"
-            color={baseColors.mediumGray}
-            style={{
-              flex: 2,
-              justifyContent: 'center',
-              alignItems: 'center',
-              alignSelf: 'stretch',
-              display: 'flex',
-            }}
-            iconStyle={{
-              borderWidth: 0,
-              width: 32,
-              textAlign: 'center',
-              alignSelf: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          />
+          </ContentWrapper>
         </ToastHolder>
       </AnimatedToastWrapper>
     );

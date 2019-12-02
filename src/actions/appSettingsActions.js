@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { DARK_THEME, LIGHT_THEME, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -39,7 +39,6 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { switchAccountAction } from './accountsActions';
-
 
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Dispatch) => {
@@ -170,13 +169,42 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
         userJoinedBeta,
       },
     });
-    dispatch(fetchFeatureFlagsAction());
+    await dispatch(fetchFeatureFlagsAction());
     if (ignoreSuccessToast) return;
     Toast.show({
       message,
       type: 'success',
       title: 'Success',
       autoClose: false,
+    });
+  };
+};
+
+
+export const changeAppThemeAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { themeType: previousTheme } },
+    } = getState();
+
+    const themeType = previousTheme === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { themeType },
+    });
+  };
+};
+
+export const setAppThemeAction = () => {
+  return (dispatch: Dispatch) => {
+    const themeType = LIGHT_THEME; // TODO: get theme based on user preferences;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { themeType },
     });
   };
 };

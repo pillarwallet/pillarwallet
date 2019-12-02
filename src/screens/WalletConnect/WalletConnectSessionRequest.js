@@ -25,7 +25,7 @@ import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Footer, ScrollWrapper } from 'components/Layout';
-import { Label, BoldText } from 'components/Typography';
+import { Label, MediumText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import { spacing, fontSizes } from 'utils/variables';
@@ -46,8 +46,8 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+const Value = styled(MediumText)`
+  font-size: ${fontSizes.big}px;
 `;
 
 const OptionButton = styled(Button)`
@@ -129,13 +129,13 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
             <OptionButton
               primaryInverted
               onPress={this.handleSessionApproval}
-              textStyle={{ fontWeight: 'normal' }}
+              regularText
               title="Approve"
             />
             <OptionButton
               dangerInverted
               onPress={this.handleSessionRejection}
-              textStyle={{ fontWeight: 'normal' }}
+              regularText
               title="Reject"
             />
           </FooterWrapper>

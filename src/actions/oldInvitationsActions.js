@@ -24,14 +24,14 @@ import { uniqBy } from 'utils/common';
 import { getIdentityKeyPairs } from 'utils/connections';
 import {
   ADD_INVITATION,
+  TYPE_ACCEPTED,
+  TYPE_BLOCKED,
+  TYPE_CANCELLED,
+  TYPE_DISCONNECTED,
+  TYPE_RECEIVED,
+  TYPE_REJECTED,
   TYPE_SENT,
   UPDATE_INVITATIONS,
-  TYPE_ACCEPTED,
-  TYPE_CANCELLED,
-  TYPE_BLOCKED,
-  TYPE_REJECTED,
-  TYPE_RECEIVED,
-  TYPE_DISCONNECTED,
 } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
@@ -39,7 +39,10 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
-import { mapIdentityKeysAction, prependConnectionKeyPairs } from 'actions/connectionKeyPairActions';
+import {
+  mapIdentityKeysAction,
+  prependConnectionKeyPairs,
+} from 'actions/connectionKeyPairActions';
 import { saveDbAction } from './dbActions';
 
 export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => {
@@ -48,7 +51,10 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       invitations: { data: invitations },
       contacts: { data: contacts },
       user: { data: { walletId = theWalletId } },
+      session: { data: { isOnline } },
     } = getState();
+
+    if (!isOnline) return;
 
     let {
       accessTokens: { data: accessTokens },
@@ -78,15 +84,13 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
 
     const groupedByUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {
       const group = arr.filter(({ id: userId }) => userId === invitation.id);
-      const uniqGroup = uniqBy(group, 'id');
-      memo[invitation.id] = uniqGroup;
+      memo[invitation.id] = uniqBy(group, 'id');
       return memo;
     }, {});
 
     const latestEventPerId = Object.keys(groupedByUserId).map((key) => groupedByUserId[key][0]);
     const groupedNotifications = types.reduce((memo, type) => {
-      const group = latestEventPerId.filter(({ type: invType }) => invType === type);
-      memo[type] = group;
+      memo[type] = latestEventPerId.filter(({ type: invType }) => invType === type);
       return memo;
     }, {});
 
@@ -144,8 +148,7 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
     });
 
     await dispatch(updateConnectionsAction());
-
-    return dispatch(getExistingChatsAction());
+    await dispatch(getExistingChatsAction());
   };
 };
 

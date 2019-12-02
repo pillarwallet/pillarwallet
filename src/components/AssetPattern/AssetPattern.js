@@ -29,14 +29,20 @@ import {
 
 type Props = {
   token: string,
-  icon: string,
+  icon?: string,
+  iconSource?: string,
   isListed: boolean,
+  sideIconsLeftDiff?: number,
+  innerIconsLeftDiff?: number,
+  tops?: Array<number>
 }
 
 type State = {
   errorLoading: boolean,
   didLoad: boolean,
 }
+
+type Icon = string | { [uri: string]: ?string };
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -92,11 +98,14 @@ export default class AssetPattern extends React.Component<Props, State> {
     didLoad: false,
   };
 
-  generatePattern = (token: string, icon: string, isListed: boolean) => {
+  generatePattern = (token: string, icon: Icon, isListed: boolean) => {
     const { didLoad } = this.state;
+    const { tops = [], sideIconsLeftDiff, innerIconsLeftDiff } = this.props;
     const paternDetails = [];
     const uniqueCode = [];
     const tokenSymbols = token.split('');
+
+    const [top1, top2, top3, top4] = tops;
 
     if (tokenSymbols.length < 2) {
       uniqueCode.push(tokenSymbols[0].charCodeAt(0) > 78 ? 72 : 84);
@@ -111,8 +120,9 @@ export default class AssetPattern extends React.Component<Props, State> {
     const innerIconsTop = uniqueCode[2] || uniqueCode[1];
     const sidePositionPositivity = uniqueCode[0] > uniqueCode[1];
     const innerPositionPositivity = uniqueCode[1] % 2 === 0;
-    const innerIconsLeft = (54 - (uniqueCode[0] / 2)) + (uniqueCode[1] / 1.5);
-    const sideIconsLeft = uniqueCode[2] ? (uniqueCode[2] / 2.5) + uniqueCode[1] : (uniqueCode[0] / 2.5) + uniqueCode[1];
+    const innerIconsLeft = innerIconsLeftDiff || (54 - (uniqueCode[0] / 2)) + (uniqueCode[1] / 1.5);
+    const sideIconsLeft = sideIconsLeftDiff ||
+    uniqueCode[2] ? (uniqueCode[2] / 2.5) + uniqueCode[1] : (uniqueCode[0] / 2.5) + uniqueCode[1];
 
     for (let i = 0; i < 5; i++) {
       let diameter = 108;
@@ -152,9 +162,17 @@ export default class AssetPattern extends React.Component<Props, State> {
         zIndex = 1;
         opacity = 0.15;
         diameter = 70;
-        top = verticalCenter + topSideChange(sidePositionPositivity, false, sideIconsTop);
-        if (!compositionSymetrySideYAxis && i === 4) {
-          top = verticalCenter + topSideChange(!sidePositionPositivity, false, sideIconsTop);
+        if (top1 && top2) {
+          if (i === 1) {
+            top = top1;
+          } else {
+            top = top4;
+          }
+        } else {
+          top = verticalCenter + topSideChange(sidePositionPositivity, false, sideIconsTop);
+          if (!compositionSymetrySideYAxis && i === 4) {
+            top = verticalCenter + topSideChange(!sidePositionPositivity, false, sideIconsTop);
+          }
         }
         elevation = 0;
         shadowOpacity = 0;
@@ -162,9 +180,17 @@ export default class AssetPattern extends React.Component<Props, State> {
       }
 
       if (i === 2 || i === 3) {
-        top = verticalCenter + topSideChange(innerPositionPositivity, true, innerIconsTop);
-        if (!compositionSymetrySideYAxis && i === 3) {
-          top = verticalCenter + topSideChange(!innerPositionPositivity, true, innerIconsTop);
+        if (top2 && top3) {
+          if (i === 2) {
+            top = top2;
+          } else {
+            top = top3;
+          }
+        } else {
+          top = verticalCenter + topSideChange(innerPositionPositivity, true, innerIconsTop);
+          if (!compositionSymetrySideYAxis && i === 3) {
+            top = verticalCenter + topSideChange(!innerPositionPositivity, true, innerIconsTop);
+          }
         }
         zIndex = 2;
         opacity = 0.3;
@@ -218,7 +244,7 @@ export default class AssetPattern extends React.Component<Props, State> {
                 width: diameter - 4,
                 opacity,
               }}
-              source={{ uri: icon }}
+              source={icon}
               resizeMode="contain"
               onLoadEnd={() => { this.setState({ didLoad: true }); }}
               onError={() => { this.setState({ errorLoading: true }); }}
@@ -236,18 +262,20 @@ export default class AssetPattern extends React.Component<Props, State> {
       token,
       icon,
       isListed,
+      iconSource,
     } = this.props;
     const { errorLoading } = this.state;
+    const patternIcon = iconSource || { uri: icon };
     return (
       <Wrapper>
-        {(!isListed || !icon || errorLoading) ?
+        {(!isListed || !(icon || iconSource) || errorLoading) ?
           <NoIconWrapper isUnlisted={!isListed}>
             <NoIconImage source={noIconImageSource} />
           </NoIconWrapper>
         :
         (
           <PatternWrapper>
-            {this.generatePattern(token, icon, isListed)}
+            {this.generatePattern(token, patternIcon, isListed)}
           </PatternWrapper>
         )}
       </Wrapper>

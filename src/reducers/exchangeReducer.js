@@ -30,8 +30,12 @@ import {
   REMOVE_CONNECTED_EXCHANGE_PROVIDER,
   SET_CONNECTED_EXCHANGE_PROVIDERS,
   MARK_NOTIFICATION_SEEN,
+  SET_EXCHANGE_PROVIDERS_METADATA,
+  SET_EXCHANGE_SUPPORTED_ASSETS,
+  SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
-import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider, ProvidersMeta } from 'models/Offer';
+import type { Asset } from 'models/Asset';
 
 export type ExchangeReducerState = {
   data: {
@@ -43,14 +47,17 @@ export type ExchangeReducerState = {
     connectedProviders: ExchangeProvider[],
     hasNotification: boolean,
   },
-};
+  providersMeta: ProvidersMeta,
+  exchangeSupportedAssets: Asset[],
+  fiatExchangeSupportedAssets: Asset[],
+}
 
 export type ExchangeReducerAction = {
   type: string,
   payload: any,
 };
 
-const initialState = {
+export const initialState = {
   data: {
     offers: [],
     executingTransaction: false,
@@ -58,6 +65,9 @@ const initialState = {
     connectedProviders: [],
     hasNotification: false,
   },
+  providersMeta: [],
+  exchangeSupportedAssets: [],
+  fiatExchangeSupportedAssets: [],
 };
 
 export default function exchangeReducer(
@@ -182,6 +192,21 @@ export default function exchangeReducer(
           ...state.data,
           hasNotification: false,
         },
+      };
+    case SET_EXCHANGE_PROVIDERS_METADATA:
+      return {
+        ...state,
+        providersMeta: action.payload,
+      };
+    case SET_EXCHANGE_SUPPORTED_ASSETS:
+      return {
+        ...state,
+        exchangeSupportedAssets: action.payload,
+      };
+    case SET_FIAT_EXCHANGE_SUPPORTED_ASSETS:
+      return {
+        ...state,
+        fiatExchangeSupportedAssets: action.payload,
       };
     default:
       return state;

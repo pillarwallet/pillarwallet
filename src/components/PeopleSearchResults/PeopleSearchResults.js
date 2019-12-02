@@ -19,17 +19,17 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, Platform } from 'react-native';
+import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import unionBy from 'lodash.unionby';
 import intersectionBy from 'lodash.intersectionby';
 import { TYPE_INVITE, TYPE_REJECTED, TYPE_SENT } from 'constants/invitationsConstants';
 import { CONTACT } from 'constants/navigationConstants';
-import { baseColors, fontSizes, itemSizes, spacing, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, itemSizes, spacing } from 'utils/variables';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
-import { SubHeading, BaseText } from 'components/Typography';
+import { SubHeadingMedium, BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import type { SearchResults, ApiUser } from 'models/Contacts';
 import { createAlert } from 'utils/alerts';
@@ -45,7 +45,6 @@ const ContactCardList = styled.FlatList`
 `;
 
 const LocalContacts = styled.View`
-  height: 145px;
   background-color: ${baseColors.lighterGray};
   border-top-width: 1px;
   border-bottom-width: 1px;
@@ -54,42 +53,28 @@ const LocalContacts = styled.View`
 `;
 
 const LocalContactsScrollView = styled.ScrollView`
+  margin-bottom: ${spacing.small}px;
 `;
 
-const LocalContactsSubHeading = styled(SubHeading)`
-  margin: 22px 16px 13px;
-  font-weight: ${fontWeights.medium};
+const LocalContactsSubHeading = styled(SubHeadingMedium)`
+  margin: 22px 16px 0;
 `;
 
-const ListSubHeading = styled(SubHeading)`
+const ListSubHeading = styled(SubHeadingMedium)`
   margin: 6px ${spacing.mediumLarge}px 8px;
-  font-weight: ${fontWeights.medium};
 `;
 
 const LocalContactsItem = styled.TouchableOpacity`
   align-items: center;
-  width: ${Platform.select({
-    ios: '60px',
-    android: '74px',
-  })};
-  margin: ${Platform.select({
-    ios: `0 ${spacing.rhythm / 2}px`,
-    android: `-6px ${spacing.rhythm / 2}px 0`,
-  })};
-  padding-top: ${Platform.select({
-    ios: '3px',
-    android: 0,
-  })};
+  width: ${itemSizes.avatarCircleMedium + 4}px;
+  margin: 0 8px;
 `;
 
 const LocalContactsItemName = styled(BaseText)`
-  font-size: ${fontSizes.extraExtraSmall};
+  ${fontStyles.small};
   color: ${baseColors.darkGray};
   padding: 0 4px;
-  margin-top: ${Platform.select({
-    ios: '3px',
-    android: '-4px',
-  })};
+  margin-top: 3px;
 `;
 
 type Props = {
@@ -173,6 +158,7 @@ class PeopleSearchResults extends React.Component<Props> {
           <LocalContactsScrollView
             keyboardShouldPersistTaps="always"
             horizontal
+            contentContainerStyle={{ paddingHorizontal: spacing.large / 2, paddingVertical: spacing.medium }}
           >
             {this.renderLocalContacts(filteredLocalContacts)}
           </LocalContactsScrollView>
@@ -194,7 +180,8 @@ class PeopleSearchResults extends React.Component<Props> {
             uri={contact.profileImage}
             userName={contact.username}
             diameter={itemSizes.avatarCircleMedium}
-            textStyle={{ fontSize: fontSizes.medium }}
+            textStyle={{ fontSize: fontSizes.big }}
+            noShadow
           />
           <LocalContactsItemName numberOfLines={1}>{contact.username}</LocalContactsItemName>
         </LocalContactsItem>

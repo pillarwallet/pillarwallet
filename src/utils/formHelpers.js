@@ -35,18 +35,19 @@ export function makeAmountForm(
   const Amount = t.refinement(t.String, (amount): boolean => {
     if (!isValidNumber(amount.toString())) return false;
 
-    if (decimals === 0 && amount.toString().indexOf('.') > -1) {
-      return false;
-    }
+    if (decimals === 0 && amount.toString().includes('.')) return false;
 
     amount = parseNumber(amount.toString());
-    const isValid = enoughForFee && amount <= maxAmount && amount >= minAmount;
+
+    const isValid = enoughForFee
+      && amount <= maxAmount
+      && amount >= minAmount;
 
     if (formSubmitted) return isValid && amount > 0;
     return isValid;
   });
 
-  Amount.getValidationErrorMessage = (amount): string => {
+  Amount.getValidationErrorMessage = (amount): ?string => {
     if (!isValidNumber(amount.toString())) {
       return 'Incorrect number entered.';
     }
@@ -56,9 +57,17 @@ export function makeAmountForm(
       return 'Not enough ETH to process the transaction fee';
     } else if (amount >= maxAmount) {
       return 'Amount should not exceed the sum of total balance and est. network fee';
+    } else if (amount === 0) {
+      /**
+       * 0 is the first number that can be typed therefore we don't want
+       * to show any error message on the input, however,
+       * the form validation would still not go through,
+       * but it's obvious that you cannot send 0 amount
+       */
+      return null;
     } else if (amount < minAmount) {
-      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
-    } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+      return `Amount should be greater than ${minAmount} ETH)`;
+    } else if (decimals === 0 && amount.toString().includes('.')) {
       return 'Amount should not contain decimal places';
     }
     return 'Amount should be specified.';

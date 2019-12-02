@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { TextInput } from 'react-native';
 import styled from 'styled-components/native';
+import { fontSizes } from '../../utils/variables';
 
 
 type Input = {
@@ -49,7 +50,7 @@ const SMSCodeInput = styled(TextInput)`
   text-align: center;
   border-bottom-width: 2px;
   border-color: rgb(155, 155, 155);
-  font-size: 24px;
+  font-size: ${fontSizes.large}px;
 `;
 
 const BACKSPACE = 'Backspace';

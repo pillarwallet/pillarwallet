@@ -42,7 +42,7 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import DeploymentView from 'components/DeploymentView';
 
 import { formatAmount, formatMoney } from 'utils/common';
-import { getBalance } from 'utils/assets';
+import { getAssetsAsList, getBalance } from 'utils/assets';
 import { spacing, UIColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -201,7 +201,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 
   renderAssets = () => {
     const { assets, balances } = this.props;
-    const assetsArray = Object.values(assets);
+    const assetsArray = getAssetsAsList(assets);
     const nonEmptyAssets = assetsArray.filter((asset: any) => {
       return getBalance(balances, asset.symbol) !== 0;
     });

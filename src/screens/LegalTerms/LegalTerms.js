@@ -29,7 +29,7 @@ import Checkbox from 'components/Checkbox';
 import { connect } from 'react-redux';
 import { registerWalletAction } from 'actions/onboardingActions';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
-import { baseColors, fontSizes, fontTrackings, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, fontStyles, fontTrackings, UIColors } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 import { BACKUP_PHRASE } from 'constants/navigationConstants';
@@ -53,10 +53,9 @@ type State = {
 };
 
 const CheckboxText = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  ${fontStyles.medium};
   margin-top: 2px;
   letter-spacing: ${fontTrackings.small}px;
-  line-height: 20px;
 `;
 
 const ModalInnerWrapper = styled.ScrollView`
@@ -216,7 +215,7 @@ class LegalTerms extends React.Component<Props, State> {
             <ButtonText
               buttonText="Backup wallet"
               onPress={this.backupWallet}
-              fontSize={fontSizes.medium}
+              fontSize={fontSizes.big}
               wrapperStyle={{ marginTop: 20 }}
             />}
           </MultiButtonWrapper>
