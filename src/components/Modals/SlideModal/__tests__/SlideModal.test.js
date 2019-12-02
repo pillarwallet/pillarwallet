@@ -22,7 +22,7 @@ import renderer from 'react-test-renderer';
 import { BaseText } from 'components/Typography';
 import { shallow } from 'enzyme';
 import { ThemeProvider } from 'styled-components';
-import { defaultTheme } from 'reducers/appSettingsReducer';
+import { defaultTheme } from 'utils/themes';
 import { fontSizes } from 'utils/variables';
 import { delay } from 'utils/common';
 import SlideModal from '../SlideModal';

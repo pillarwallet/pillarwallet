@@ -281,6 +281,10 @@ const generateFormStructure = (balances: Balances) => {
   });
 
   FromOption.getValidationErrorMessage = ({ selector, input }) => {
+    if (isEmpty(selector)) {
+      return 'Asset should be selected.';
+    }
+
     const { symbol, decimals } = selector;
 
     const isFiat = isFiatCurrency(symbol);
@@ -291,9 +295,7 @@ const generateFormStructure = (balances: Balances) => {
 
     const numericAmount = parseFloat(input || 0);
 
-    if (!Object.keys(selector).length) {
-      return 'Asset should be selected.';
-    } else if (numericAmount === 0) {
+    if (numericAmount === 0) {
       /**
        * 0 is the first number that can be typed therefore we don't want
        * to show any error message on the input, however,
