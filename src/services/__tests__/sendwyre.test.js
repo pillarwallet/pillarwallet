@@ -30,7 +30,7 @@ describe('sendwyre service', () => {
         '&sourceAmount=1.0' +
         '&sourceCurrency=0x111' +
         '&accountId=AC_ERP9DMNTAMB' +
-        '&redirectUrl=https%3A//offers-webapp-qa.nonprod.pillarproject.io/sendwyre',
+        '&redirectUrl=https%3A//ecs-offers-qa.nonprod.pillarproject.io/sendwyre',
       );
     });
   });
