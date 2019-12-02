@@ -12,27 +12,13 @@ exports[`Asset renders the Asset correctly 1`] = `
     style={
       Array [
         Object {
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#FAFAFA",
           "borderBottomColor": "#EDEDED",
           "borderBottomWidth": 1,
           "width": "100%",
         },
         undefined,
       ]
-    }
-    theme={
-      Object {
-        "backgroundColor": "#ffffff",
-        "borderBottomColor": "#EDEDED",
-        "borderBottomWidth": 1,
-        "buttonBorderColor": "#EDEDED",
-        "buttonLabelColor": "#0A1427",
-        "color": "#0A1427",
-        "iconColor": "#0A1427",
-        "rightActionBorderColor": "rgba(0, 122, 255, 0.05)",
-        "rightActionIconColor": "#007AFF",
-        "rightActionLabelColor": "#007AFF",
-      }
     }
   >
     <View
@@ -209,7 +195,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   name="info-circle-inverse"
                   style={
                     Object {
-                      "color": "#007AFF",
+                      "color": "#0A1427",
                       "fontSize": 24,
                       "marginBottom": undefined,
                       "marginLeft": undefined,
@@ -1313,6 +1299,13 @@ exports[`Asset renders the Asset correctly 1`] = `
               }
             />
             <View
+              customTheme={
+                Object {
+                  "background": "#fafafa",
+                  "borderRadius": "30px",
+                  "padding": "0 20px",
+                }
+              }
               style={
                 Array [
                   Object {
@@ -1335,13 +1328,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                   },
                   undefined,
                 ]
-              }
-              theme={
-                Object {
-                  "background": "#fafafa",
-                  "borderRadius": "30px",
-                  "padding": "0 20px",
-                }
               }
             >
               <View
@@ -1973,6 +1959,15 @@ exports[`Asset renders the Asset correctly 1`] = `
                       }
                     >
                       <Text
+                        customTheme={
+                          Object {
+                            "background": "#007AFF",
+                            "borderColor": "rgba(0, 0, 0, 0.085)",
+                            "borderWidth": 0,
+                            "color": "#ffffff",
+                            "shadow": true,
+                          }
+                        }
                         style={
                           Array [
                             Object {
@@ -1996,15 +1991,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                               ],
                             ],
                           ]
-                        }
-                        theme={
-                          Object {
-                            "background": "#007AFF",
-                            "borderColor": "rgba(0, 0, 0, 0.085)",
-                            "borderWidth": 0,
-                            "color": "#ffffff",
-                            "shadow": true,
-                          }
                         }
                       >
                         Share Address
@@ -2035,7 +2021,7 @@ exports[`Asset renders the Asset correctly 1`] = `
               Array [
                 Object {
                   "alignItems": "center",
-                  "backgroundColor": "#ffffff",
+                  "backgroundColor": "#FFFFFF",
                   "borderColor": "#2f86eb",
                   "borderLeftWidth": 10,
                   "borderStyle": "solid",
@@ -2424,6 +2410,13 @@ exports[`Asset renders the Asset correctly 1`] = `
               }
             />
             <View
+              customTheme={
+                Object {
+                  "background": "#fafafa",
+                  "borderRadius": "30px",
+                  "padding": "0 20px",
+                }
+              }
               style={
                 Array [
                   Object {
@@ -2446,13 +2439,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                   },
                   undefined,
                 ]
-              }
-              theme={
-                Object {
-                  "background": "#fafafa",
-                  "borderRadius": "30px",
-                  "padding": "0 20px",
-                }
               }
             >
               <View
@@ -2703,7 +2689,7 @@ exports[`Asset renders the Asset correctly 1`] = `
               Array [
                 Object {
                   "alignItems": "center",
-                  "backgroundColor": "#ffffff",
+                  "backgroundColor": "#FFFFFF",
                   "borderColor": "#2f86eb",
                   "borderLeftWidth": 10,
                   "borderStyle": "solid",

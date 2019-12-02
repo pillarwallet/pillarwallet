@@ -52,11 +52,11 @@ import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { BitcoinAddress } from 'models/Bitcoin';
+import type { EthereumWallet } from 'models/Wallet';
 
 // constants
 import {
   ASSETS,
-  BITCOIN_NETWORK_INTRO,
   PILLAR_NETWORK_INTRO,
   SMART_WALLET_INTRO,
 } from 'constants/navigationConstants';
@@ -68,7 +68,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
+import { initializeBitcoinWalletAction, refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
@@ -127,12 +127,14 @@ type Props = {|
   user: Object,
   bitcoinAddresses: BitcoinAddress[],
   refreshBitcoinBalance: () => void,
+  initializeBitcoinWallet: (wallet: EthereumWallet) => void;
 |};
 
 type State = {|
   showPinModal: boolean,
   changingAccount: boolean,
   isLegacyWalletVisible: boolean,
+  onPinValidAction: ?(_: string, wallet: EthereumWallet) => Promise<void>,
 |};
 
 const Wrapper = styled.View`
@@ -183,6 +185,7 @@ class AccountsScreen extends React.Component<Props, State> {
       showPinModal: false,
       changingAccount: false,
       isLegacyWalletVisible: forceShowLegacyWallet,
+      onPinValidAction: null,
     };
   }
 
@@ -219,7 +222,7 @@ class AccountsScreen extends React.Component<Props, State> {
       setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
       navigation.navigate(ASSETS);
     } else {
-      this.setState({ showPinModal: true });
+      this.setState({ showPinModal: true, onPinValidAction: this.switchToSmartWalletAndGoToPPN });
     }
   };
 
@@ -254,7 +257,7 @@ class AccountsScreen extends React.Component<Props, State> {
         navigation.navigate(ASSETS);
       } else {
         this.switchToWallet = wallet;
-        this.setState({ showPinModal: true });
+        this.setState({ showPinModal: true, onPinValidAction: this.switchToSmartWalletAccount });
       }
     } else if (wallet.type === ACCOUNT_TYPES.KEY_BASED) {
       switchAccount(wallet.id);
@@ -378,9 +381,18 @@ class AccountsScreen extends React.Component<Props, State> {
     navigation.navigate(ASSETS);
   }
 
-  initialiseBTC = () => {
-    this.props.navigation.navigate(BITCOIN_NETWORK_INTRO);
-  }
+  startBTCInit = () => {
+    this.setState({ showPinModal: true, onPinValidAction: this.initialiseBTC });
+  };
+
+  initialiseBTC = async (_: string, wallet: EthereumWallet) => {
+    const { navigation, setActiveBlockchainNetwork, initializeBitcoinWallet } = this.props;
+    this.setState({ changingAccount: true, showPinModal: false });
+    await initializeBitcoinWallet(wallet);
+    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
+    this.setState({ changingAccount: false });
+    navigation.navigate(ASSETS);
+  };
 
   networks(): NetworkItem[] {
     const networks: NetworkItem[] = [];
@@ -430,13 +442,13 @@ class AccountsScreen extends React.Component<Props, State> {
         networks.push({
           id: 'NETWORK_BTC',
           type: 'NETWORK',
-          title: bitcoinNetwork.title,
+          title: 'Bitcoin wallet',
           isInitialised: bitcoinAddresses.length > 0,
           isActive: bitcoinNetwork.isActive,
           balance: formattedBitcoinBalance,
           iconSource: bitcoinNetworkIcon,
           mainAction: this.setBTCAsActiveNetwork,
-          initialiseAction: this.initialiseBTC,
+          initialiseAction: this.startBTCInit,
         });
       }
     }
@@ -487,7 +499,12 @@ class AccountsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { showPinModal, changingAccount, isLegacyWalletVisible } = this.state;
+    const {
+      showPinModal,
+      changingAccount,
+      isLegacyWalletVisible,
+      onPinValidAction,
+    } = this.state;
     const { blockchainNetworks, user } = this.props;
     const { isLegacyUser } = user;
 
@@ -544,7 +561,7 @@ class AccountsScreen extends React.Component<Props, State> {
         >
           <Wrapper>
             <CheckPin
-              onPinValid={this.switchToWallet ? this.switchToSmartWalletAccount : this.switchToSmartWalletAndGoToPPN}
+              onPinValid={onPinValidAction}
             />
           </Wrapper>
         </SlideModal>
@@ -596,6 +613,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
+  initializeBitcoinWallet: (wallet: EthereumWallet) => dispatch(initializeBitcoinWalletAction(wallet)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen);

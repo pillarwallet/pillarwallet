@@ -27,7 +27,7 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 
 // models
-import type { Transaction } from 'models/Transaction';
+import type { SyntheticTransaction, Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { BitcoinAddress } from 'models/Bitcoin';
@@ -384,7 +384,6 @@ class ActivityFeed extends React.Component<Props, State> {
         itemValue = '';
         customAddon = (<TankAssetBalance
           amount={`- ${formattedValue} ${notification.asset}`}
-          textStyle={{ color: baseColors.scarlet }}
           monoColor
         />);
         trxData.txType = 'Withdrawal';
@@ -411,10 +410,16 @@ class ActivityFeed extends React.Component<Props, State> {
           trxData.hideAmount = true;
           trxData.hideSender = true;
         } else {
+          const syntheticTransactionExtra: SyntheticTransaction = get(notification, 'extra.syntheticTransaction');
+          let syntheticAssetValue = null;
+          if (!isEmpty(syntheticTransactionExtra)) {
+            const { toAmount, toAssetCode } = syntheticTransactionExtra;
+            syntheticAssetValue = <BaseText style={{ alignSelf: 'flex-end' }}>{toAmount} {toAssetCode}</BaseText>;
+          }
           itemValue = '';
           customAddon = (<TankAssetBalance
             amount={`${directionSymbol} ${formattedValue} ${notification.asset}`}
-            textStyle={!isReceived ? { color: baseColors.scarlet } : null}
+            bottomExtra={syntheticAssetValue}
             monoColor
           />);
         }

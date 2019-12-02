@@ -33,6 +33,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
+import Spinner from 'components/Spinner';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -197,7 +198,7 @@ class TankWithdrawal extends React.Component<Props, State> {
     // fee
     const txFeeInWei = this.getTxFeeInWei();
     const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei()));
+    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei().toString()));
 
     // max amount
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
@@ -223,7 +224,8 @@ class TankWithdrawal extends React.Component<Props, State> {
         backgroundColor={baseColors.white}
         keyboardAvoidFooter={(
           <FooterInner>
-            <Label>Estimated fee {feeInEth} ETH</Label>
+            {!withdrawalFee.isFetched && <Spinner width={20} height={20} />}
+            {withdrawalFee.isFetched && <Label>Estimated fee {feeInEth} ETH</Label>}
             {!!value && !!parseFloat(value.amount) &&
             <Button
               disabled={!session.isOnline || !withdrawalFee.isFetched}

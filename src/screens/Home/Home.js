@@ -28,7 +28,7 @@ import Intercom from 'react-native-intercom';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -77,6 +77,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // utils
 import { baseColors, spacing, fontStyles } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
@@ -86,6 +87,7 @@ import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -119,6 +121,7 @@ type Props = {
   userEvents: UserEvent[],
   fetchBadgeAwardHistory: () => void,
   badgesEvents: BadgeRewardEvent[],
+  theme: Theme,
 };
 
 type State = {
@@ -135,17 +138,17 @@ const BalanceWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.large}px;
   width: 100%;
   border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
 `;
 
 const WalletConnectWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.large}px 0;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.surface};
   width: 100%;
 `;
 
 const ListHeader = styled(MediumText)`
-  color: ${baseColors.blueYonder};
+  color: ${themedColors.accent};
   ${fontStyles.regular};
   margin: ${spacing.medium}px ${spacing.large}px ${spacing.small}px;
 `;
@@ -154,7 +157,7 @@ const BadgesWrapper = styled.View`
   padding: ${spacing.medium}px 0;
   border-top-width: 1px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -318,7 +321,9 @@ class HomeScreen extends React.Component<Props, State> {
       accounts,
       userEvents,
       badgesEvents,
+      theme,
     } = this.props;
+    const colors = getThemeColors(theme);
 
     const {
       activeTab,
@@ -403,18 +408,18 @@ class HomeScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
+        backgroundColor={colors.card}
         headerProps={{
           leftItems: [{ user: true }],
           rightItems: [
             {
-              label: 'Settings',
+              link: 'Settings',
               onPress: () => { navigation.navigate(SETTINGS); },
             },
             {
-              label: 'Support',
+              link: 'Support',
               onPress: () => Intercom.displayMessenger(),
-              bordered: true,
+              withBackground: true,
               addon: hasIntercomNotifications && (
                 <View
                   style={{
@@ -482,7 +487,6 @@ class HomeScreen extends React.Component<Props, State> {
             onTabChange={this.onTabChange}
           />
           <ActivityFeed
-            backgroundColor={baseColors.white}
             onCancelInvitation={cancelInvitation}
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}
@@ -558,4 +562,4 @@ const mapDispatchToProps = (dispatch) => ({
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));
