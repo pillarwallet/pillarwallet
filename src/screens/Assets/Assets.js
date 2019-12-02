@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
 import * as Keychain from 'react-native-keychain';
+import { withTheme } from 'styled-components/native';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -39,6 +40,7 @@ import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts, Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
+import type { Theme } from 'models/Theme';
 
 // actions
 import { fetchInitialAssetsAction } from 'actions/assetsActions';
@@ -58,7 +60,6 @@ import { KEY_SECTION } from 'screens/Settings';
 
 // utils
 import { getAccountName } from 'utils/accounts';
-import { baseColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
@@ -94,6 +95,7 @@ type Props = {
   backupStatus: Object,
   availableStake: number,
   PPNTransactions: Transaction[],
+  theme: Theme,
 }
 
 type State = {
@@ -172,7 +174,9 @@ class AssetsScreen extends React.Component<Props, State> {
       availableStake,
       PPNTransactions,
       accounts,
+      theme,
     } = this.props;
+    const { colors } = theme;
 
     const { type: walletType } = activeAccount || {};
     const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
@@ -184,11 +188,9 @@ class AssetsScreen extends React.Component<Props, State> {
           label: getAccountName(walletType, accounts),
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
-          customHeaderProps: {
-            background: walletType === ACCOUNT_TYPES.KEY_BASED ? baseColors.tomato : baseColors.neonBlue,
-            light: true,
+          customHeaderButtonProps: {
+            backgroundColor: walletType === ACCOUNT_TYPES.KEY_BASED ? colors.legacyWallet : colors.smartWallet,
           },
-          customHeaderButtonProps: {},
         };
 
       case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
@@ -196,8 +198,7 @@ class AssetsScreen extends React.Component<Props, State> {
           label: 'Bitcoin wallet',
           action: () => navigation.navigate(ACCOUNTS),
           screenView: VIEWS.BTC_VIEW,
-          customHeaderProps: {},
-          customHeaderButtonProps: {},
+          customHeaderButtonProps: { backgroundColor: colors.bitcoinWallet },
         };
 
       default:
@@ -206,7 +207,6 @@ class AssetsScreen extends React.Component<Props, State> {
           label: activeBNetworkTitle,
           action: () => navigation.navigate(ACCOUNTS),
           screenView: VIEWS.PPN_VIEW,
-          customHeaderProps: {},
           customHeaderButtonProps: { isActive: availableStake > 0 || hasUnsettledTx },
         };
     }
@@ -313,15 +313,12 @@ class AssetsScreen extends React.Component<Props, State> {
       label: headerButtonLabel,
       action: headerButtonAction,
       screenView,
-      customHeaderProps,
       customHeaderButtonProps,
     } = screenInfo;
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
         headerProps={{
-          ...customHeaderProps,
           leftItems: [{ user: true }],
           rightItems: [{
             actionButton: {
@@ -389,4 +386,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen));
