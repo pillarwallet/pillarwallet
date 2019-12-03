@@ -125,7 +125,7 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { TransactionsStore } from 'models/Transaction';
+import type { SyntheticTransactionExtra, TransactionsStore } from 'models/Transaction';
 import type { SendNavigateOptions } from 'models/Navigation';
 
 // utils
@@ -135,6 +135,7 @@ import { isConnectedToSmartAccount, isHiddenUnsettledTransaction } from 'utils/s
 import {
   addressesEqual,
   getAssetData,
+  getAssetDataByAddress,
   getAssetsAsList,
   getBalance,
   getPPNTokenAddress,
@@ -628,10 +629,14 @@ export const syncVirtualAccountTransactionsAction = () => {
     const {
       accounts: { data: accounts },
       smartWallet: { lastSyncedPaymentId },
+      assets: { supportedAssets },
     } = getState();
 
     const accountId = getActiveAccountId(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
     const payments = await smartWalletService.getAccountPayments(lastSyncedPaymentId);
+    const accountAssets = accountAssetsSelector(getState());
+    const assetsList = getAssetsAsList(accountAssets);
 
     // filter out already stored payments
     const { history: { data: currentHistory } } = getState();
@@ -644,15 +649,52 @@ export const syncVirtualAccountTransactionsAction = () => {
       ),
     );
 
+    const smartWalletAccountPaymentTypes = sdkConstants.AccountPaymentTypes || {};
+
     const transformedNewPayments = newOrUpdatedPayments.map(payment => {
       const tokenSymbol = get(payment, 'token.symbol', ETH);
       const value = get(payment, 'value', new BigNumber(0));
-      const senderAddress = get(payment, 'sender.account.address');
-      const recipientAddress = get(payment, 'recipient.account.address');
+      let senderAddress = get(payment, 'sender.account.address');
+      let recipientAddress = get(payment, 'recipient.account.address');
       const stateInPPN = get(payment, 'state');
       const paymentHash = get(payment, 'hash');
-      const existingTransaction = accountHistory.find(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)) || {};
+      const paymentType = get(payment, 'paymentType');
+      const paymentExtra = get(payment, 'paymentExtra');
+      let additionalTransactionData = {};
+
+      if (paymentType === smartWalletAccountPaymentTypes.SyntheticsExchange && !isEmpty(paymentExtra)) {
+        const {
+          value: syntheticValue,
+          tokenAddress: syntheticAssetAddress,
+          recipient: syntheticRecipient,
+          sender: syntheticSender,
+        } = paymentExtra;
+
+        // check if current account is synthetic sender
+        if (addressesEqual(syntheticSender, accountAddress)) {
+          const {
+            decimals,
+            symbol: syntheticSymbol,
+          } = getAssetDataByAddress(assetsList, supportedAssets, syntheticAssetAddress);
+          const syntheticToAmount = formatUnits(syntheticValue, decimals);
+          const syntheticTransactionExtra: SyntheticTransactionExtra = {
+            syntheticTransaction: {
+              toAmount: Number(syntheticToAmount),
+              toAssetCode: syntheticSymbol,
+              toAddress: syntheticRecipient,
+            },
+          };
+          additionalTransactionData = { extra: syntheticTransactionExtra };
+          recipientAddress = syntheticRecipient;
+        } else {
+          // current account is synthetic receiver
+          senderAddress = syntheticSender;
+        }
+      }
+
       // if transaction exists this will update only its status and stateInPPN
+      const existingTransaction = accountHistory.find(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)) || {};
+
       return buildHistoryTransaction({
         from: senderAddress,
         hash: payment.hash,
@@ -664,6 +706,7 @@ export const syncVirtualAccountTransactionsAction = () => {
         ...existingTransaction,
         status: TX_CONFIRMED_STATUS,
         stateInPPN,
+        ...additionalTransactionData,
       });
     });
 
