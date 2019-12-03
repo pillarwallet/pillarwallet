@@ -239,6 +239,7 @@ export const parseSmartWalletTransactions = (
 export const transactionExtraContainsPaymentHash = (paymentHash: string, extra: TransactionExtra): boolean => {
   if (isEmpty(extra)) return false;
   // extra can be either object or array
+  // $FlowFixMe
   return (!Array.isArray(extra) && isCaseInsensitiveMatch(extra.paymentHash, paymentHash))
     || (Array.isArray(extra) && extra.some(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)));
 };
@@ -250,7 +251,7 @@ export const isHiddenUnsettledTransaction = (
   history: Object[],
 ): boolean => history
   .filter(({ status }) => status === TX_PENDING_STATUS)
-  .some(({ tag, extra }) =>
+  .some(({ tag, extra }: { tag: string, extra: TransactionExtra }) =>
     [PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL, PAYMENT_NETWORK_TX_SETTLEMENT].includes(tag)
       && transactionExtraContainsPaymentHash(paymentHash, extra),
   );

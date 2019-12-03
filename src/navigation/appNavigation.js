@@ -96,11 +96,11 @@ import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/UpgradeToSmartWallet/SmartWalletIntro';
-import UnsettledAssets from 'screens/UnsettledAssets';
-import SendSyntheticAsset from 'screens/SendSynthetic/SendSyntheticAsset';
-import SendSyntheticConfirm from 'screens/SendSynthetic/SendSyntheticConfirm';
-import SendSyntheticAmount from 'screens/SendSynthetic/SendSyntheticAmount';
-import SendSyntheticUnavailable from 'screens/SendSynthetic/SendSyntheticUnavailable';
+import UnsettledAssetsScreen from 'screens/UnsettledAssets';
+import SendSyntheticAssetScreen from 'screens/SendSynthetic/SendSyntheticAsset';
+import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
+import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
+import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
 
 // components
@@ -545,13 +545,19 @@ const ppnSendTokenFromAssetFlow = createStackNavigator(
 // PPN SEND SYNTHETIC ASSET FULL FLOW
 const ppnSendSyntheticAssetFlow = createStackNavigator(
   {
-    [SEND_SYNTHETIC_ASSET]: SendSyntheticAsset,
+    [SEND_SYNTHETIC_ASSET]: SendSyntheticAssetScreen,
     [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
-    [SEND_SYNTHETIC_AMOUNT]: SendSyntheticAmount,
-    [SEND_SYNTHETIC_CONFIRM]: SendSyntheticConfirm,
+    // synthetic
+    [SEND_SYNTHETIC_AMOUNT]: SendSyntheticAmountScreen,
+    [SEND_SYNTHETIC_CONFIRM]: SendSyntheticConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    [SEND_SYNTHETIC_UNAVAILABLE]: SendSyntheticUnavailable,
+    [SEND_SYNTHETIC_UNAVAILABLE]: SendSyntheticUnavailableScreen,
+    // other
+    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
   },
   StackNavigatorModalConfig,
 );
@@ -584,7 +590,7 @@ tankSettleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // UNSETTLED ASSETS FLOW
 const unsettledAssetsFlow = createStackNavigator({
-  [UNSETTLED_ASSETS]: UnsettledAssets,
+  [UNSETTLED_ASSETS]: UnsettledAssetsScreen,
   [SETTLE_BALANCE]: SettleBalanceScreen,
   [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
 }, StackNavigatorConfig);
