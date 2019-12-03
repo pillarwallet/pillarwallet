@@ -641,13 +641,10 @@ export const syncVirtualAccountTransactionsAction = () => {
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
 
-    // new or updated payment is one that doesn't exist in history contain or its payment state / extra was updated
+    // new or updated payment is one that doesn't exist in history contain or its payment state was updated
     const newOrUpdatedPayments = payments.filter(
-      ({ hash: paymentHash, state: prevStateInPPN, extra: paymentExtra }) => !accountHistory.some(
-        ({ hash, stateInPPN, extra }) =>
-          isCaseInsensitiveMatch(hash, paymentHash)
-            && stateInPPN === prevStateInPPN
-            && (isEmpty(extra) && !isEmpty(paymentExtra)),
+      ({ hash: paymentHash, state: prevStateInPPN }) => !accountHistory.some(
+        ({ hash, stateInPPN }) => isCaseInsensitiveMatch(hash, paymentHash) && stateInPPN === prevStateInPPN,
       ),
     );
 
