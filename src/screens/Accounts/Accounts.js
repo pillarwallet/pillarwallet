@@ -562,6 +562,7 @@ class AccountsScreen extends React.Component<Props, State> {
           <Wrapper>
             <CheckPin
               onPinValid={onPinValidAction}
+              revealMnemonic
             />
           </Wrapper>
         </SlideModal>
