@@ -50,7 +50,6 @@ import {
 import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
-import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -98,6 +97,7 @@ import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
+import { setRatesAction } from 'actions/ratesActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -178,11 +178,7 @@ const finishRegistration = async ({
   // get & store initial assets
   const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
   const rates = await getExchangeRates(Object.keys(initialAssets));
-
-  dispatch({
-    type: UPDATE_RATES,
-    payload: rates,
-  });
+  dispatch(setRatesAction(rates));
 
   dispatch({
     type: SET_INITIAL_ASSETS,

@@ -647,7 +647,7 @@ export const syncVirtualAccountTransactionsAction = () => {
         ({ hash, stateInPPN, extra }) =>
           isCaseInsensitiveMatch(hash, paymentHash)
             && stateInPPN === prevStateInPPN
-            && (extra === null && paymentExtra !== null),
+            && (isEmpty(extra) && !isEmpty(paymentExtra)),
       ),
     );
 
