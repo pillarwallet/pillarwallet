@@ -590,14 +590,14 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/remove-staging-stores-apps
+                  - develop
       - hockeyapp_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/remove-staging-stores-apps
+                  - develop
       - slack-prod-approval:
           requires:
             - build-and-test
