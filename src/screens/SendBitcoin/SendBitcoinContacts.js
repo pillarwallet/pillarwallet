@@ -21,7 +21,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
-import isEmpty from 'lodash.isempty';
 import t from 'tcomb-form-native';
 
 import { SEND_BITCOIN_AMOUNT } from 'constants/navigationConstants';
