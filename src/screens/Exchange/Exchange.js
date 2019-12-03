@@ -388,7 +388,6 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.fromInputRef = React.createRef();
     this.listeners = [];
     this.state = {
       shapeshiftAuthPressed: false,
@@ -439,15 +438,12 @@ class ExchangeScreen extends React.Component<Props, State> {
               options: [],
               wrapperStyle: { marginTop: spacing.mediumLarge },
               placeholderSelector: 'select asset',
-              onSelectorOpen: () => {
-                if (this.fromInputRef) this.fromInputRef.blur();
-              },
+              onSelectorOpen: this.blurFromInput,
             },
           },
         },
       },
     };
-    this.fromInputRef = React.createRef();
     this.triggerSearch = debounce(this.triggerSearch, 500);
   }
 
@@ -469,13 +465,18 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.provideOptions();
     this.listeners = [
       navigation.addListener('didFocus', this.focusInputWithKeyboard),
-      navigation.addListener('didBlur', () => this.fromInputRef.blur()),
+      navigation.addListener('didBlur', this.blurFromInput),
     ];
   }
 
   componentWillUnmount() {
     this.listeners.forEach(listener => listener.remove());
   }
+
+  blurFromInput = () => {
+    if (!this.fromInputRef) return;
+    this.fromInputRef.blur();
+  };
 
   focusInputWithKeyboard = () => {
     setTimeout(() => {
