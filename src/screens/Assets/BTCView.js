@@ -24,6 +24,9 @@ import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 
+// constants
+import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+
 // actions
 import {
   refreshBitcoinBalanceAction,
@@ -100,7 +103,11 @@ class BTCView extends React.Component<Props, State> {
   };
 
   onPressSend = () => {
-    // TODO: Start send flow
+    const assetData = {
+      token: 'BTC',
+    }; // TODO
+
+    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
   showReceive = () => {
@@ -138,6 +145,7 @@ class BTCView extends React.Component<Props, State> {
     const availableFormattedAmount = formatMoney(confirmedBalance, 4);
 
     const transactionsHistory = extractBitcoinTransactions(address, transactions);
+    const isSendEnabled = confirmedBalance > 0;
     const formattedBitcoinBalance = formatFiat(0, baseFiatCurrency); // TODO: calculate balance
 
     return (
@@ -172,7 +180,7 @@ class BTCView extends React.Component<Props, State> {
                 label="Send"
                 icon={iconSend}
                 onPress={this.onPressSend}
-                disabled={confirmedBalance <= 0}
+                disabled={!isSendEnabled}
               />
             </AssetButtonsWrapper>
           </TopPartWrapper>
