@@ -215,9 +215,6 @@ class SendBitcoinContacts extends React.Component<Props, State> {
   }
 
   render() {
-    const {
-      localContacts = [],
-    } = this.props;
     const { isScanning, formStructure, value } = this.state;
     const isSearchQueryProvided = !!(value && value.address.length);
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
@@ -235,7 +232,7 @@ class SendBitcoinContacts extends React.Component<Props, State> {
     }
 
     const tokenName = this.assetData.symbol;
-    const showSpinner = !isEmpty(localContacts);
+    const showSpinner = false;
 
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: `Send ${tokenName}` }] }} inset={{ bottom: 0 }}>
