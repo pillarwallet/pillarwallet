@@ -1,4 +1,6 @@
 // @flow
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { ethToWei } from '@netgum/utils';
 import { utils } from 'ethers';
 import abi from 'ethjs-abi';
@@ -12,7 +14,7 @@ import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 import type { Account } from 'models/Account';
-import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
+import type { CollectibleTransactionPayload, SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import { getERC721ContractTransferMethod } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
 import { getEthereumProvider } from 'utils/common';
@@ -83,14 +85,25 @@ export default class SmartWalletProvider {
       contractAddress,
       decimals = 18,
       usePPN,
+      extra,
     } = transaction;
     let { data, to: recipient } = transaction;
     const from = getAccountAddress(account);
 
     if (usePPN) {
+      let paymentType;
+      let reference;
+
+      const syntheticTransactionInfo: SyntheticTransaction = get(extra, 'syntheticTransaction');
+      if (!isEmpty(syntheticTransactionInfo)) {
+        const { transactionId } = syntheticTransactionInfo;
+        reference = transactionId;
+        paymentType = sdkConstants.AccountPaymentTypes.SyntheticsExchange;
+      }
+
       const sendValue = utils.parseUnits(amount.toString(), decimals);
       return smartWalletService
-        .createAccountPayment(recipient, contractAddress, sendValue)
+        .createAccountPayment(recipient, contractAddress, sendValue, paymentType, reference)
         .then(({ hash }) => ({
           from,
           hash,

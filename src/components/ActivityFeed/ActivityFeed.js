@@ -25,6 +25,7 @@ import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import { SYNTHETICS_CONTRACT_ADDRESS } from 'react-native-dotenv';
 
 // models
 import type { SyntheticTransaction, Transaction } from 'models/Transaction';
@@ -415,6 +416,9 @@ class ActivityFeed extends React.Component<Props, State> {
           if (!isEmpty(syntheticTransactionExtra)) {
             const { toAmount, toAssetCode } = syntheticTransactionExtra;
             syntheticAssetValue = <BaseText style={{ alignSelf: 'flex-end' }}>{toAmount} {toAssetCode}</BaseText>;
+          }
+          if (addressesEqual(address, SYNTHETICS_CONTRACT_ADDRESS)) {
+            nameOrAddress = 'Synthetics Service';
           }
           itemValue = '';
           customAddon = (<TankAssetBalance

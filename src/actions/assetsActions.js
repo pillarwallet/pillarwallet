@@ -429,9 +429,16 @@ export const sendAssetAction = (
         const syntheticTransactionExtra: SyntheticTransaction = get(historyTx, 'extra.syntheticTransaction');
         if (!isEmpty(syntheticTransactionExtra)) {
           const { transactionId, toAddress } = syntheticTransactionExtra;
-          dispatch(commitSyntheticsTransaction(transactionId, historyTx.hash));
-          // change history receiver address to actual receiver address rather than synthetics service address
-          historyTx = { ...historyTx, to: toAddress };
+          if (transactionId) {
+            dispatch(commitSyntheticsTransaction(transactionId, historyTx.hash));
+            // change history receiver address to actual receiver address rather than synthetics service address
+            historyTx = { ...historyTx, to: toAddress };
+          } else {
+            Sentry.captureMessage(
+              'Failed to get transactionId during synthetics exchange.',
+              { extra: { hash: historyTx.hash } },
+            );
+          }
         }
 
         dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });

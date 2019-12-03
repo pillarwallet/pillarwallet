@@ -17,21 +17,27 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { wyreWidgetUrl } from 'services/sendwyre';
+import * as React from 'react';
+import QRCodeScanner from 'components/QRCodeScanner';
+import { supportedAddressValidator } from 'utils/validators';
+import { decodeSupportedAddress } from 'utils/common';
 
-describe('sendwyre service', () => {
-  describe('wyreWidgetUrl', () => {
-    it('returns the txid', async () => {
-      const url = wyreWidgetUrl('0x000', '0.1', '0x111', '1.0');
-      expect(url).toEqual(
-        'https://pay.sendwyre.com/purchase' +
-        '?destCurrency=0.1' +
-        '&dest=ethereum:0x000' +
-        '&sourceAmount=1.0' +
-        '&sourceCurrency=0x111' +
-        '&accountId=AC_ERP9DMNTAMB' +
-        '&redirectUrl=https%3A//ecs-offers-qa.nonprod.pillarproject.io/sendwyre',
-      );
-    });
-  });
-});
+type Props = {
+  onRead: (code: string) => void,
+  onCancel: () => void,
+  isActive: boolean,
+};
+
+const AddressScanner = (props: Props) => {
+  return (
+    <QRCodeScanner
+      validator={supportedAddressValidator}
+      dataFormatter={decodeSupportedAddress}
+      isActive={props.isActive}
+      onCancel={props.onCancel}
+      onRead={props.onRead}
+    />
+  );
+};
+
+export default AddressScanner;

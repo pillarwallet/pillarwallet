@@ -227,6 +227,7 @@ const bitcoinWalletCreationFailed = (): BitcoinWalletCreationFailedAction => ({
 export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
   return async (dispatch: Dispatch) => {
     const { mnemonic, path } = wallet;
+
     if (!mnemonic) {
       await dispatch(bitcoinWalletCreationFailed());
       return;
