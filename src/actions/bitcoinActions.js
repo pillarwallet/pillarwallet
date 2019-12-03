@@ -338,7 +338,7 @@ const transactionSent = () => {
   });
 };
 
-export const sendTransactionAction = (plan: BitcoinTransactionPlan) => {
+export const sendTransactionAction = (plan: BitcoinTransactionPlan, callback: Function) => {
   return async () => {
     const { keys = {} } = await loadDb();
 
@@ -347,16 +347,22 @@ export const sendTransactionAction = (plan: BitcoinTransactionPlan) => {
       (address: string) => importKeyPair(keys[address]),
     );
 
-    sendRawTransaction(rawTransaction)
-      .then((txid) => {
-        if (!txid) {
-          transactionSendingFailed();
-          return;
-        }
+    if (!rawTransaction) {
+      callback({ isSuccess: false });
+    } else {
+      sendRawTransaction(rawTransaction)
+        .then((txid) => {
+          if (!txid) {
+            transactionSendingFailed();
+            callback({ isSuccess: false });
+            return;
+          }
 
-        transactionSent();
-      })
-      .catch(transactionSendingFailed);
+          callback({ isSuccess: true });
+          transactionSent();
+        })
+        .catch(transactionSendingFailed);
+    }
   };
 };
 

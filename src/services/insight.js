@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { BITCOIN_INSIGHT_URL } from 'react-native-dotenv';
+import { BITCOIN_INSIGHT_URL, BITCOIN_NETWORK } from 'react-native-dotenv';
 
 const validateResponse = (name: string) => {
   return (response) => {
@@ -32,13 +32,13 @@ const validateResponse = (name: string) => {
 };
 
 export const sendRawTransactionToNode = async (rawtx: string) => {
-  return fetch(`${BITCOIN_INSIGHT_URL}/tx/send`, {
+  return fetch(`${BITCOIN_INSIGHT_URL}/tx/send?chain=BTC&network=${BITCOIN_NETWORK}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
-    body: JSON.stringify({ rawtx }),
+    body: JSON.stringify({ rawTx: rawtx }),
   })
     .then(validateResponse('sendRawTransactionToNode'));
 };
