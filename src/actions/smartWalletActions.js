@@ -633,7 +633,6 @@ export const syncVirtualAccountTransactionsAction = () => {
     } = getState();
 
     const accountId = getActiveAccountId(accounts);
-    const accountAddress = getActiveAccountAddress(accounts);
     const payments = await smartWalletService.getAccountPayments(lastSyncedPaymentId);
     const accountAssets = accountAssetsSelector(getState());
     const assetsList = getAssetsAsList(accountAssets);
@@ -642,7 +641,7 @@ export const syncVirtualAccountTransactionsAction = () => {
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
 
-    // new or updated payment is one that doesn't exist in history contain or payment state has changed
+    // new or updated payment is one that doesn't exist in history contain or its payment state was updated
     const newOrUpdatedPayments = payments.filter(
       ({ hash: paymentHash, state: prevStateInPPN }) => !accountHistory.some(
         ({ hash, stateInPPN }) => isCaseInsensitiveMatch(hash, paymentHash) && stateInPPN === prevStateInPPN,
@@ -659,7 +658,7 @@ export const syncVirtualAccountTransactionsAction = () => {
       const stateInPPN = get(payment, 'state');
       const paymentHash = get(payment, 'hash');
       const paymentType = get(payment, 'paymentType');
-      const paymentExtra = get(payment, 'paymentExtra');
+      const paymentExtra = get(payment, 'extra');
       let additionalTransactionData = {};
 
       if (paymentType === smartWalletAccountPaymentTypes.SyntheticsExchange && !isEmpty(paymentExtra)) {
@@ -671,7 +670,7 @@ export const syncVirtualAccountTransactionsAction = () => {
         } = paymentExtra;
 
         // check if current account is synthetic sender
-        if (addressesEqual(syntheticSender, accountAddress)) {
+        if (!isEmpty(syntheticRecipient)) {
           const {
             decimals,
             symbol: syntheticSymbol,
