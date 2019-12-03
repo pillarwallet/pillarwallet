@@ -57,6 +57,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 import type { Asset, Assets, Rates } from 'models/Asset';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import { fetchSingleAssetRatesAction } from 'actions/ratesActions';
 
 type Props = {
   accountAssets: Assets,
@@ -66,6 +67,7 @@ type Props = {
   rates: Rates,
   baseFiatCurrency: ?string,
   isOnline: boolean,
+  fetchSingleAssetRates: (assetCode: string) => void,
 };
 
 type State = {
@@ -172,6 +174,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
   componentDidMount() {
     this.props.initSyntheticsService();
+    this.props.fetchSingleAssetRates(this.assetData.symbol);
   }
 
 
@@ -378,6 +381,7 @@ const combinedMapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   initSyntheticsService: () => dispatch(initSyntheticsServiceAction()),
+  fetchSingleAssetRates: (assetCode: string) => dispatch(fetchSingleAssetRatesAction(assetCode)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendSyntheticAmount);
