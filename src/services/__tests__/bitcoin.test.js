@@ -28,8 +28,10 @@ import {
 import type {
   BitcoinUtxo,
   BitcoinTransactionTarget,
+  BitcoinTransactionPlan,
 } from 'models/Bitcoin';
 import { SPEED_TYPES } from 'constants/assetsConstants';
+
 
 const mnemonic = 'some super random words';
 const address = 'mhQ51TfiyTdwxYDq42Wrz1LvLY7PbSEJ9w';
@@ -89,9 +91,12 @@ describe('bitcoin service', () => {
       {
         address: 'mhQ51TfiyTdwxYDq42Wrz1LvLY7PbSEJ9w',
         txid: '29bdf710c7eeeaca7305c96cac3d2a6b7b34a742b01d0a8ae1aa5b709298d70e',
+        mintTxid: '29bdf710c7eeeaca7305c96cac3d2a6b7b34a742b01d0a8ae1aa5b709298d70e',
         vout: 1,
+        mintIndex: 1,
         scriptPubKey: '76a91414a2f1bf167a7835c98510fbe79c48d52fa16c6088ac',
         amount: 0.01,
+        value: 1000000,
         satoshis: 1000000,
         height: 1570786,
         confirmations: 15,
@@ -101,13 +106,15 @@ describe('bitcoin service', () => {
     it('works', async () => {
       const targetRoot = await rootFromMnemonic('target mnemonic', network);
       const targets: BitcoinTransactionTarget[] = [
-        { address: keyPairAddress(targetRoot) || '', value: 400000 },
+        { address: keyPairAddress(targetRoot) || '', value: 0.004 },
       ];
 
       const root = await rootFromMnemonic(mnemonic, network);
 
-      const changeAddress = keyPairAddress(root) || '';
-      const plan = collectOutputs(targets, SPEED_TYPES.SLOW, utxos, () => changeAddress);
+      const plan: BitcoinTransactionPlan = {
+        inputs: utxos,
+        outputs: targets,
+      };
 
       const rawTransaction = transactionFromPlan(plan, () => {
         return root;

@@ -37,14 +37,20 @@ import { providers, utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
 import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 import type { GasInfo } from 'models/GasInfo';
+import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
+import { StackViewStyleInterpolator } from 'react-navigation-stack';
 import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
   BITCOIN_ADDRESS_PREFIX,
 } from 'constants/assetsConstants';
+import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
 const WWW_URL_PATTERN = /^www\./i;
+const supportedAddressPrefixes = new RegExp(
+  `^(?:${ETHEREUM_ADDRESS_PREFIX}|${BITCOIN_ADDRESS_PREFIX}):`, 'gi',
+);
 
 export const delay = async (ms: number) => {
   return new Promise(resolve => {
@@ -89,6 +95,10 @@ export const decodeBTCAddress = (encodedAddress: string): string => {
 
 export const decodeETHAddress = (encodedAddress: string): string => {
   return decodeAddress(ETHEREUM_ADDRESS_PREFIX, encodedAddress);
+};
+
+export const decodeSupportedAddress = (encodedAddress: string): string => {
+  return encodedAddress.replace(supportedAddressPrefixes, '');
 };
 
 export const pipe = (...fns: Function[]) => {
@@ -231,32 +241,57 @@ export const getiOSNavbarHeight = (): number => {
   return 0;
 };
 
+const DEFAULT_TRANSITION_SCREENS = [MANAGE_USERS_FLOW];
+
+const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => {
+  return DEFAULT_TRANSITION_SCREENS.some(
+    screenName =>
+      screenName === transitionProps.scene.route.routeName ||
+      (prevTransitionProps && screenName === prevTransitionProps.scene.route.routeName),
+  );
+};
+
+const getTransitionDuration = (isFaster: boolean) => {
+  let duration = 400;
+  if (isFaster) {
+    duration = Platform.OS === 'ios' ? 500 : 250;
+  }
+  return duration;
+};
+
+const getTransitionSpec = (isFasterAnimation: boolean) => ({
+  duration: getTransitionDuration(isFasterAnimation),
+  easing: Easing.out(Easing.poly(2)),
+  timing: Animated.timing,
+});
+
 export const modalTransition = {
   mode: 'modal',
   defaultNavigationOptions: {
     header: null,
   },
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 400,
-      easing: Easing.out(Easing.poly(2)),
-      timing: Animated.timing,
-    },
-    screenInterpolator: (sceneProps: Object) => {
+  transitionConfig: (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => ({
+    transitionSpec: getTransitionSpec(getIfNeedsDefTransition(transitionProps, prevTransitionProps)),
+    screenInterpolator: (sceneProps: TransitionProps) => {
+      const needsDefaultTransition = getIfNeedsDefTransition(transitionProps, prevTransitionProps);
+      if (needsDefaultTransition) {
+        return Platform.OS === 'ios'
+          ? StackViewStyleInterpolator.forHorizontal(sceneProps)
+          : StackViewStyleInterpolator.forFadeFromBottomAndroid(sceneProps);
+      }
+
       const { layout, position, scene } = sceneProps;
       const { index } = scene;
+      const opacity = position.interpolate({
+        inputRange: [index - 1, index - 0.99, index],
+        outputRange: [0, 1, 1],
+      });
 
       const height = layout.initHeight;
       const translateY = position.interpolate({
         inputRange: [index - 1, index, index + 1],
         outputRange: [height, 0, 0],
       });
-
-      const opacity = position.interpolate({
-        inputRange: [index - 1, index - 0.99, index],
-        outputRange: [0, 1, 1],
-      });
-
       return { opacity, transform: [{ translateY }] };
     },
   }),
@@ -295,9 +330,7 @@ export const smallScreen = () => {
 
 export const getEthereumProvider = (network: string) => {
   // Connect to INFURA
-  const infuraNetwork = network === 'homestead' ? 'mainnet' : network;
-  const infuraUrl = `https://${infuraNetwork}.infura.io/v3/${INFURA_PROJECT_ID}`;
-  const infuraProvider = new providers.JsonRpcProvider(infuraUrl, network);
+  const infuraProvider = new providers.InfuraProvider(network, INFURA_PROJECT_ID);
 
   // Connect to Etherscan
   const etherscanProvider = new providers.EtherscanProvider(network);
@@ -430,4 +463,25 @@ export const isCaseInsensitiveMatch = (a: ?string, b: ?string): boolean => {
   if (a === b) return true;
   if (!a || !b) return false;
   return a.toLowerCase() === b.toLowerCase();
+};
+
+// number with decimals is valid if it has decimals else if not then it should not contain any decimal pointer
+export const isValidNumberDecimals = (
+  number: number | string,
+  decimals: number,
+) => decimals !== 0 || !number.toString().includes('.');
+
+/**
+ * helps to avoid text overlapping on many decimals,
+ * full amount will be displayed in confirm screen
+ * also show only 2 decimals for amounts above 1.00
+ * to avoid same text overlapping in the other side
+ */
+export const formatAmountDisplay = (value: number | string) => {
+  if (!value) return 0;
+  const amount = parseFloat(value);
+  if (amount > 1) {
+    return formatMoney(amount, 2);
+  }
+  return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
 };

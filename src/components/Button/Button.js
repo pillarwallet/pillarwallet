@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { Button as NBButton } from 'native-base';
 import debounce from 'lodash.debounce';
@@ -203,10 +204,10 @@ const getButtonFontSize = (props) => {
 
 const ButtonIcon = styled(Icon)`
   font-size: ${({ iconSize = 'medium' }) => fontSizes[iconSize]};
-  margin-horizontal: ${props => props.theme.iconHorizontalMargin || props.theme.iconHorizontalMargin === 0
-    ? props.theme.iconHorizontalMargin
+  margin-horizontal: ${props => props.customTheme.iconHorizontalMargin || props.customTheme.iconHorizontalMargin === 0
+    ? props.customTheme.iconHorizontalMargin
     : props.marginRight || 8}px;
-  color: ${props => props.theme.color};
+  color: ${props => props.customTheme.color};
   line-height: ${props => getButtonFontSize(props)};
 `;
 
@@ -215,26 +216,26 @@ const ButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
   align-self: flex-start;
   padding: 0 ${props => getButtonPadding(props)};
-  background-color: ${props => props.theme.background};
-  opacity: ${props => props.theme.opacity ? props.theme.opacity : 1};
+  background-color: ${props => props.customTheme.background};
+  opacity: ${props => props.customTheme.opacity ? props.customTheme.opacity : 1};
   margin-top: ${props => props.marginTop || '0px'};
   margin-bottom: ${props => props.marginBottom || '0px'};
   margin-left: ${props => props.marginLeft || '0px'};
   margin-right: ${props => props.marginRight || '0px'};
-  border-radius: ${props => props.theme.borderRadius || props.borderRadius || 0}px;
+  border-radius: ${props => props.customTheme.borderRadius || props.borderRadius || 0}px;
   width: ${props => getButtonWidth(props)};
   height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'};
-  border-color: ${props => props.theme.borderColor};
-  border-width: ${props => props.theme.borderWidth};
+  border-color: ${props => props.customTheme.borderColor};
+  border-width: ${props => props.customTheme.borderWidth};
   border-style: solid;
-  flex-direction: ${props => props.theme.flexDirection ? props.theme.flexDirection : 'row'}
-  ${props => props.theme.shadow ? 'box-shadow: 0px 2px 7px rgba(0,0,0,.12);' : ''}
-  ${props => props.theme.shadow ? 'elevation: 1;' : ''}
+  flex-direction: ${props => props.customTheme.flexDirection ? props.customTheme.flexDirection : 'row'}
+  ${props => props.customTheme.shadow ? 'box-shadow: 0px 2px 7px rgba(0,0,0,.12);' : ''}
+  ${props => props.customTheme.shadow ? 'elevation: 1;' : ''}
 `;
 
 const buttonTextStyle = (props) => `
-  color: ${props.theme.color};
+  color: ${props.customTheme.color};
   font-size: ${getButtonFontSize(props)};
   margin-bottom: ${props.extraSmall ? '2px' : 0};`;
 
@@ -325,7 +326,7 @@ class Button extends React.Component<Props, State> {
     }, 1000);
   };
 
-  renderButtonText = (theme: Object) => {
+  renderButtonText = (customTheme: Object) => {
     const {
       small,
       extraSmall,
@@ -337,21 +338,21 @@ class Button extends React.Component<Props, State> {
 
     if (listItemButton || extraSmall || regularText) {
       return (
-        <ButtonTextRegular theme={theme} small={small} style={textStyle}>
+        <ButtonTextRegular customTheme={customTheme} small={small} style={textStyle}>
           {title}
         </ButtonTextRegular>
       );
     }
 
     return (
-      <ButtonText theme={theme} small={small} style={textStyle}>
+      <ButtonText customTheme={customTheme} small={small} style={textStyle}>
         {title}
       </ButtonText>
     );
   };
 
   render() {
-    const theme = getTheme(this.props);
+    const customTheme = getTheme(this.props);
     const {
       disabled,
       disabledTransparent,
@@ -363,7 +364,7 @@ class Button extends React.Component<Props, State> {
     return (
       <ButtonWrapper
         {...this.props}
-        theme={theme}
+        customTheme={customTheme}
         onPress={debounce(this.handlePress, this.props.debounceTime, { leading: true, trailing: false })}
         disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap || isLoading}
         borderRadius={this.props.small ? 3 : 6}
@@ -376,10 +377,10 @@ class Button extends React.Component<Props, State> {
             marginRight={this.props.marginRight}
             iconSize={this.props.iconSize}
             name={this.props.icon}
-            theme={theme}
+            customTheme={customTheme}
           />
         }
-        {!!this.props.title && !isLoading && this.renderButtonText(theme)}
+        {!!this.props.title && !isLoading && this.renderButtonText(customTheme)}
         {children}
       </ButtonWrapper>
     );
@@ -410,3 +411,29 @@ export const ButtonNext = (props: ButtonNextProps) => {
     </ButtonNextWrapper>
   );
 };
+
+type TooltipButtonProps = {
+  onPress: Function,
+};
+
+const TooltipButtonWrapper = styled(BaseText)`
+  font-size: ${({ fontSize }) => fontSize || fontSizes.tiny};
+  ${({ color }) => `
+    color: ${color || baseColors.coolGrey};
+    border-color: ${color || baseColors.coolGrey};
+  `}
+  ${({ buttonSize = 16 }) => `
+    line-height: ${buttonSize - 2}px;
+    width: ${buttonSize}px;
+    height: ${buttonSize}px;
+    border-radius: ${buttonSize / 2}px;
+  `}
+  text-align: center;
+  border-width: 1px;
+`;
+
+export const TooltipButton = ({ onPress }: TooltipButtonProps) => (
+  <TouchableOpacity onPress={onPress}>
+    <TooltipButtonWrapper>?</TooltipButtonWrapper>
+  </TouchableOpacity>
+);

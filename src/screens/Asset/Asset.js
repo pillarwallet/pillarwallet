@@ -356,7 +356,6 @@ class AssetScreen extends React.Component<Props, State> {
           <AssetPattern
             token={assetData.token}
             icon={assetData.patternIcon}
-            contractAddress={assetData.contractAddress}
             isListed={isListed}
           />
           <DataWrapper>

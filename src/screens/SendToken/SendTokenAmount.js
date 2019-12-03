@@ -36,6 +36,7 @@ import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
+import SendTokenDetails from 'components/SendTokenDetails';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
@@ -51,6 +52,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { GasInfo } from 'models/GasInfo';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Balances, Rates } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
@@ -75,16 +77,8 @@ const ActionsWrapper = styled.View`
   justify-content: space-between;
 `;
 
-const SendTokenDetails = styled.View``;
-
 const SendTokenDetailsValue = styled(BaseText)`
   ${fontStyles.medium};
-`;
-
-const HelperText = styled(BaseText)`
-  ${fontStyles.medium};
-  color: ${UIColors.placeholderTextColor};
-  margin-left: 4px;
 `;
 
 const ButtonWrapper = styled.View`
@@ -112,10 +106,6 @@ const BackgroundWrapper = styled.View`
   flexGrow: 1;
 `;
 
-const TextRow = styled.View`
-  flex-direction: row;
-`;
-
 type Props = {
   token: string;
   address: string,
@@ -129,8 +119,8 @@ type Props = {
   fetchGasInfo: Function,
   gasInfo: GasInfo,
   rates: Rates,
-  baseFiatCurrency: string,
-  transactionSpeed: string,
+  baseFiatCurrency: ?string,
+  transactionSpeed: ?string,
   updateAppSettings: Function,
   activeAccountAddress: string,
   activeAccount: ?Account,
@@ -402,11 +392,6 @@ class SendTokenAmount extends React.Component<Props, State> {
 
     // balance
     const balance = getBalance(balances, token);
-    const formattedBalance = formatAmount(balance);
-
-    // balance in fiat
-    const totalInFiat = balance * getRate(rates, token, fiatCurrency);
-    const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // fee
     const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
@@ -469,15 +454,12 @@ class SendTokenAmount extends React.Component<Props, State> {
               onChange={this.handleChange}
             />
             <ActionsWrapper>
-              <SendTokenDetails>
-                <Label small>Available Balance</Label>
-                <TextRow>
-                  <SendTokenDetailsValue>
-                    {formattedBalance} {token}
-                  </SendTokenDetailsValue>
-                  <HelperText>{formattedBalanceInFiat}</HelperText>
-                </TextRow>
-              </SendTokenDetails>
+              <SendTokenDetails
+                rates={rates}
+                fiatCurrency={fiatCurrency}
+                balance={balance}
+                token={token}
+              />
               {!calculatingMaxValue &&
                 <TouchableOpacity onPress={this.useMaxValue}>
                   <TextLink>Send All</TextLink>
@@ -508,7 +490,7 @@ const mapStateToProps = ({
   rates: { data: rates },
   history: { gasInfo },
   appSettings: { data: { baseFiatCurrency, transactionSpeed } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   rates,
   session,
   gasInfo,

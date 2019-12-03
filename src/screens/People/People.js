@@ -17,24 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
-import {
-  FlatList,
-  Keyboard,
-  RefreshControl,
-  View,
-  ScrollView,
-} from 'react-native';
+import { FlatList, Keyboard, RefreshControl, View, ScrollView } from 'react-native';
 import Swipeout from 'react-native-swipeout';
-import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
 import styled from 'styled-components/native';
 import { Icon as NIcon } from 'native-base';
-import Icon from 'components/Icon';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
+
+// actions
 import {
   searchContactsAction,
   resetSearchContactsStateAction,
@@ -44,11 +40,9 @@ import {
 } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
-import { TYPE_RECEIVED } from 'constants/invitationsConstants';
-import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { DISCONNECT, MUTE, BLOCK } from 'constants/connectionsConstants';
-import { baseColors, UIColors, fontSizes, spacing, fontStyles } from 'utils/variables';
+
+// components
+import Icon from 'components/Icon';
 import { Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -58,9 +52,26 @@ import NotificationCircle from 'components/NotificationCircle';
 import Button from 'components/Button/Button';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import type { SearchResults } from 'models/Contacts';
-import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
+
+// constants
+import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
+import { TYPE_RECEIVED } from 'constants/invitationsConstants';
+import { FETCHING, FETCHED } from 'constants/contactsConstants';
+import {
+  DISCONNECT,
+  MUTE,
+  BLOCK,
+  STATUS_MUTED,
+  STATUS_BLOCKED,
+} from 'constants/connectionsConstants';
+
+// models
+import type { SearchResults } from 'models/Contacts';
+
+// utils
+import { baseColors, UIColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -257,9 +268,9 @@ class PeopleScreen extends React.Component<Props, State> {
     return swipeButtons.map((buttonDefinition) => {
       const { actionType, icon, ...btnProps } = buttonDefinition;
       let title = actionType;
-      if (actionType === MUTE && data.status === 'muted') {
+      if (actionType === MUTE && data.status === STATUS_MUTED) {
         title = 'unmute';
-      } else if (actionType === BLOCK && data.status === 'blocked') {
+      } else if (actionType === BLOCK && data.status === STATUS_BLOCKED) {
         title = 'unblock';
       }
 
@@ -311,7 +322,7 @@ class PeopleScreen extends React.Component<Props, State> {
           navigateToProfile={this.handleContactCardPress(item)}
           imageUpdateTimeStamp={item.lastUpdateTime}
           unreadCount={unreadCount}
-          customAddon={(status === 'muted' || status === 'blocked') ? <ConnectionStatus status={status} /> : null}
+          customAddon={([STATUS_MUTED, STATUS_BLOCKED].includes(status)) ? <ConnectionStatus status={status} /> : null}
           rightColumnInnerStyle={{ flexDirection: 'row-reverse', paddingTop: spacing.small }}
           noSeparator
           hasShadow
@@ -330,10 +341,10 @@ class PeopleScreen extends React.Component<Props, State> {
     if (manageContactType === DISCONNECT) {
       this.props.disconnectContact(manageContactId);
     } else if (manageContactType === MUTE) {
-      const mute = !(status === 'muted');
+      const mute = status !== STATUS_MUTED; // toggle
       this.props.muteContact(manageContactId, mute);
     } else if (manageContactType === BLOCK) {
-      const block = !(status === 'blocked');
+      const block = status !== STATUS_BLOCKED; // toggle
       this.props.blockContact(manageContactId, block);
     }
 

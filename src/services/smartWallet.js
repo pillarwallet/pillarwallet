@@ -264,8 +264,9 @@ class SmartWallet {
     return this.sdk.submitAccountTransaction(estimatedTransaction);
   }
 
-  createAccountPayment(recipient: string, token: ?string, value: BigNumber) {
-    return this.sdk.createAccountPayment(recipient, toChecksumAddress(token), value.toHexString());
+  createAccountPayment(recipient: string, token: ?string, value: BigNumber, paymentType?: string, reference?: string) {
+    token = toChecksumAddress(token);
+    return this.sdk.createAccountPayment(recipient, token, value.toHexString(), paymentType, reference);
   }
 
   getConnectedAccountTransaction(txHash: string) {
@@ -394,6 +395,17 @@ class SmartWallet {
 
   handleError(error: any) {
     console.error('SmartWallet handleError: ', error);
+  }
+
+  async reset() {
+    this.sdkInitialized = false;
+    if (!this.sdk) return;
+    this.sdk.event$.next(null); // unsubscribes
+    subscribedToEvents = false;
+    await this.sdk.reset({
+      device: true,
+      session: true,
+    }).catch(null);
   }
 }
 

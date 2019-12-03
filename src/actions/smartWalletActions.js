@@ -58,7 +58,8 @@ import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConsta
 import {
   TX_PENDING_STATUS,
   TX_CONFIRMED_STATUS,
-  SET_HISTORY, ADD_TRANSACTION,
+  SET_HISTORY,
+  ADD_TRANSACTION,
 } from 'constants/historyConstants';
 import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
@@ -74,13 +75,16 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
   MARK_PLR_TANK_INITIALISED,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  RESET_ESTIMATED_SETTLE_TX_FEE,
+  RESET_ESTIMATED_WITHDRAWAL_FEE,
+  RESET_ESTIMATED_TOPUP_FEE,
 } from 'constants/paymentNetworkConstants';
 import {
   SMART_WALLET_UNLOCK,
   ASSETS,
   SEND_TOKEN_AMOUNT,
-  PPN_SEND_TOKEN_AMOUNT,
   ACCOUNTS,
+  SEND_SYNTHETIC_AMOUNT,
 } from 'constants/navigationConstants';
 
 // configs
@@ -121,7 +125,8 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { TransactionsStore } from 'models/Transaction';
+import type { SyntheticTransactionExtra, TransactionsStore } from 'models/Transaction';
+import type { SendNavigateOptions } from 'models/Navigation';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
@@ -130,6 +135,7 @@ import { isConnectedToSmartAccount, isHiddenUnsettledTransaction } from 'utils/s
 import {
   addressesEqual,
   getAssetData,
+  getAssetDataByAddress,
   getAssetsAsList,
   getBalance,
   getPPNTokenAddress,
@@ -623,31 +629,71 @@ export const syncVirtualAccountTransactionsAction = () => {
     const {
       accounts: { data: accounts },
       smartWallet: { lastSyncedPaymentId },
+      assets: { supportedAssets },
     } = getState();
 
     const accountId = getActiveAccountId(accounts);
     const payments = await smartWalletService.getAccountPayments(lastSyncedPaymentId);
+    const accountAssets = accountAssetsSelector(getState());
+    const assetsList = getAssetsAsList(accountAssets);
 
     // filter out already stored payments
     const { history: { data: currentHistory } } = getState();
     const accountHistory = currentHistory[accountId] || [];
 
-    // new or updated payment is one that doesn't exist in history contain or payment state has changed
+    // new or updated payment is one that doesn't exist in history contain or its payment state was updated
     const newOrUpdatedPayments = payments.filter(
       ({ hash: paymentHash, state: prevStateInPPN }) => !accountHistory.some(
         ({ hash, stateInPPN }) => isCaseInsensitiveMatch(hash, paymentHash) && stateInPPN === prevStateInPPN,
       ),
     );
 
+    const smartWalletAccountPaymentTypes = sdkConstants.AccountPaymentTypes || {};
+
     const transformedNewPayments = newOrUpdatedPayments.map(payment => {
       const tokenSymbol = get(payment, 'token.symbol', ETH);
       const value = get(payment, 'value', new BigNumber(0));
-      const senderAddress = get(payment, 'sender.account.address');
-      const recipientAddress = get(payment, 'recipient.account.address');
+      let senderAddress = get(payment, 'sender.account.address');
+      let recipientAddress = get(payment, 'recipient.account.address');
       const stateInPPN = get(payment, 'state');
       const paymentHash = get(payment, 'hash');
-      const existingTransaction = accountHistory.find(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)) || {};
+      const paymentType = get(payment, 'paymentType');
+      const paymentExtra = get(payment, 'extra');
+      let additionalTransactionData = {};
+
+      if (paymentType === smartWalletAccountPaymentTypes.SyntheticsExchange && !isEmpty(paymentExtra)) {
+        const {
+          value: syntheticValue,
+          tokenAddress: syntheticAssetAddress,
+          recipient: syntheticRecipient,
+          sender: syntheticSender,
+        } = paymentExtra;
+
+        // check if current account is synthetic sender
+        if (!isEmpty(syntheticRecipient)) {
+          const {
+            decimals,
+            symbol: syntheticSymbol,
+          } = getAssetDataByAddress(assetsList, supportedAssets, syntheticAssetAddress);
+          const syntheticToAmount = formatUnits(syntheticValue, decimals);
+          const syntheticTransactionExtra: SyntheticTransactionExtra = {
+            syntheticTransaction: {
+              toAmount: Number(syntheticToAmount),
+              toAssetCode: syntheticSymbol,
+              toAddress: syntheticRecipient,
+            },
+          };
+          additionalTransactionData = { extra: syntheticTransactionExtra };
+          recipientAddress = syntheticRecipient;
+        } else {
+          // current account is synthetic receiver
+          senderAddress = syntheticSender;
+        }
+      }
+
       // if transaction exists this will update only its status and stateInPPN
+      const existingTransaction = accountHistory.find(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)) || {};
+
       return buildHistoryTransaction({
         from: senderAddress,
         hash: payment.hash,
@@ -659,6 +705,7 @@ export const syncVirtualAccountTransactionsAction = () => {
         ...existingTransaction,
         status: TX_CONFIRMED_STATUS,
         stateInPPN,
+        ...additionalTransactionData,
       });
     });
 
@@ -833,8 +880,9 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
       const txAmountFormatted = formatUnits(txAmount, decimals);
 
-      if (activeAccountAddress === txReceiverAddress
-        && txReceiverAddress !== txSenderAddress
+      // check if received transaction
+      if (addressesEqual(activeAccountAddress, txReceiverAddress)
+        && !addressesEqual(txReceiverAddress, txSenderAddress)
         && [PAYMENT_COMPLETED, PAYMENT_PROCESSED].includes(txStatus)) {
         const paymentInfo = `${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`;
         if (txStatus === PAYMENT_COMPLETED) {
@@ -875,6 +923,8 @@ export const ensureSmartAccountConnectedAction = (privateKey: string) => {
 export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+
+    dispatch({ type: RESET_ESTIMATED_TOPUP_FEE });
 
     const accountAssets = accountAssetsSelector(getState());
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
@@ -982,6 +1032,8 @@ export const topUpVirtualAccountAction = (amount: string) => {
 export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
   return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+
+    dispatch({ type: RESET_ESTIMATED_WITHDRAWAL_FEE });
 
     const accountAssets = accountAssetsSelector(getState());
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
@@ -1140,6 +1192,8 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
       return;
     }
 
+    dispatch({ type: RESET_ESTIMATED_SETTLE_TX_FEE });
+
     const hashes = txToSettle.map(({ hash }) => hash);
     const response = await smartWalletService
       .estimatePaymentSettlement(hashes)
@@ -1235,7 +1289,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[]) => {
         payload: txHash,
       });
 
-
+      // history state is updated with ADD_TRANSACTION, update in storage
       const { history: { data: currentHistory } } = getState();
       dispatch(saveDbAction('history', { history: currentHistory }, true));
 
@@ -1308,7 +1362,7 @@ export const cleanSmartWalletAccountsAction = () => {
   };
 };
 
-export const navigateToSendTokenAmountAction = (navOptions: Object) => {
+export const navigateToSendTokenAmountAction = (navOptions: SendNavigateOptions) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       blockchainNetwork: { data: blockchainNetworks },
@@ -1320,7 +1374,7 @@ export const navigateToSendTokenAmountAction = (navOptions: Object) => {
     });
 
     const ppnSendFlow = NavigationActions.navigate({
-      routeName: PPN_SEND_TOKEN_AMOUNT,
+      routeName: SEND_SYNTHETIC_AMOUNT,
       params: navOptions,
     });
 

@@ -28,7 +28,19 @@ type TxWithdrawalExtra = {
   paymentHash: string,
 };
 
-export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra;
+export type SyntheticTransaction = {
+  transactionId: string,
+  fromAmount: number,
+  toAmount: number,
+  toAssetCode: string,
+  toAddress: string,
+};
+
+export type SyntheticTransactionExtra = {
+  syntheticTransaction: $Shape<SyntheticTransaction>,
+};
+
+export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra | SyntheticTransactionExtra;
 
 export type Transaction = {
   _id: string,

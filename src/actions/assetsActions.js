@@ -40,22 +40,19 @@ import {
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
-import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 
 import Toast from 'components/Toast';
 
-import {
-  getExchangeRates,
-  transferSigned,
-} from 'services/assets';
+import { transferSigned } from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
 
 import type {
   TokenTransactionPayload,
   CollectibleTransactionPayload,
   TransactionPayload,
+  SyntheticTransaction,
 } from 'models/Transaction';
 import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
@@ -76,6 +73,7 @@ import { findMatchingContact } from 'utils/contacts';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
+import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
 import SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
@@ -83,6 +81,7 @@ import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } f
 import { addExchangeAllowanceAction } from './exchangeActions';
 import { sendTxNoteByContactAction } from './txNoteActions';
 import { showAssetAction } from './userSettingsActions';
+import { fetchAccountAssetsRatesAction } from './ratesActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -388,6 +387,7 @@ export const sendAssetAction = (
           gasLimit: transaction.gasLimit,
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+          extra: transaction.extra || null,
         });
       }
     }
@@ -422,13 +422,24 @@ export const sendAssetAction = (
         };
         dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
       } else {
-        dispatch({
-          type: ADD_TRANSACTION,
-          payload: {
-            accountId,
-            historyTx,
-          },
-        });
+        // check if there's a need to commit synthetic asset transaction
+        const syntheticTransactionExtra: SyntheticTransaction = get(historyTx, 'extra.syntheticTransaction');
+        if (!isEmpty(syntheticTransactionExtra)) {
+          const { transactionId, toAddress } = syntheticTransactionExtra;
+          if (transactionId) {
+            dispatch(commitSyntheticsTransaction(transactionId, historyTx.hash));
+            // change history receiver address to actual receiver address rather than synthetics service address
+            historyTx = { ...historyTx, to: toAddress };
+          } else {
+            Sentry.captureMessage(
+              'Failed to get transactionId during synthetics exchange.',
+              { extra: { hash: historyTx.hash } },
+            );
+          }
+        }
+
+        dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });
+
         const { history: { data: currentHistory } } = getState();
         const accountHistory = currentHistory[accountId] || [];
         const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
@@ -535,13 +546,7 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
       });
     }
 
-    // @TODO: Extract "rates fetching" to its own action ones required.
-    const rates = await getExchangeRates(Object.keys(accountAssets));
-    if (rates && Object.keys(rates).length) {
-      dispatch(saveDbAction('rates', { rates }, true));
-      dispatch({ type: UPDATE_RATES, payload: rates });
-    }
-
+    dispatch(fetchAccountAssetsRatesAction());
 
     if (smartWalletFeatureEnabled && isSmartWalletAccount) {
       dispatch(fetchVirtualAccountBalanceAction());

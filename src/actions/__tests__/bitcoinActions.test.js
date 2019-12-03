@@ -21,10 +21,18 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import PillarSdk from 'services/api';
-import { refreshAddressBalanceAction } from 'actions/bitcoinActions';
+import {
+  refreshBitcoinBalanceAction,
+  refreshBitcoinUnspentTxAction,
+  refreshBTCTransactionsAction,
+} from 'actions/bitcoinActions';
 import type { BitcoinReducerState } from 'reducers/bitcoinReducer';
-import { UPDATE_BITCOIN_BALANCE } from 'constants/bitcoinConstants';
-import { getAddressUtxos } from 'services/bitcoin';
+import {
+  UPDATE_BITCOIN_BALANCE,
+  UPDATE_UNSPENT_TRANSACTIONS,
+  UPDATE_BITCOIN_TRANSACTIONS,
+} from 'constants/bitcoinConstants';
+import { getAddressUtxos, getAddressBalance, getBTCTransactions } from 'services/bitcoin';
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -37,11 +45,14 @@ const initialBitcoinState: BitcoinReducerState = {
       { address, updatedAt: 0 },
     ],
     unspentTransactions: [],
+    balances: {},
+    transactions: [],
   },
 };
 
 const initialState = {
   bitcoin: initialBitcoinState,
+  assets: { data: [], supportedAssets: [] },
 };
 
 describe('Bitcoin actions', () => {
@@ -51,20 +62,61 @@ describe('Bitcoin actions', () => {
     store = mockStore(initialState);
   });
 
-  describe('refreshAddressBalanceAction', () => {
+  describe('refreshBitcoinUnspentTxAction', () => {
     describe('for existing address', () => {
-      it('updates the balance', async () => {
-        await store.dispatch(refreshAddressBalanceAction(address, false));
+      it('updates the unspent transactions', async () => {
+        await store.dispatch(refreshBitcoinUnspentTxAction(false));
 
         const actions = store.getActions();
 
         expect(actions.length).toEqual(1);
 
         const utxos = await getAddressUtxos(address);
+
+        expect(actions[0]).toMatchObject({
+          type: UPDATE_UNSPENT_TRANSACTIONS,
+          address,
+          unspentTransactions: utxos,
+        });
+      });
+    });
+  });
+
+  describe('refreshBitcoinBalanceAction', () => {
+    describe('for existing address', () => {
+      it('updates the balance', async () => {
+        await store.dispatch(refreshBitcoinBalanceAction(false));
+
+        const actions = store.getActions();
+
+        expect(actions.length).toEqual(1);
+
+        const balance = await getAddressBalance(address);
+
         expect(actions[0]).toMatchObject({
           type: UPDATE_BITCOIN_BALANCE,
           address,
-          unspentTransactions: utxos,
+          balance,
+        });
+      });
+    });
+  });
+
+  describe('refreshBTCTransactionsAction', () => {
+    describe('for existing address', () => {
+      it('updates the transactions', async () => {
+        await store.dispatch(refreshBTCTransactionsAction(false));
+
+        const actions = store.getActions();
+
+        expect(actions.length).toEqual(3);
+
+        const txs = await getBTCTransactions(address);
+
+        expect(actions[2]).toMatchObject({
+          type: UPDATE_BITCOIN_TRANSACTIONS,
+          address,
+          transactions: txs,
         });
       });
     });

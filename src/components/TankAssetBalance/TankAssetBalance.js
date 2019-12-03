@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { View } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
@@ -29,6 +30,7 @@ type Props = {
   wrapperStyle?: Object,
   textStyle?: ?Object,
   token?: string,
+  bottomExtra?: any,
 };
 
 const Wrapper = styled.View`
@@ -55,14 +57,18 @@ const TankAssetBalance = (props: Props) => {
     wrapperStyle,
     textStyle,
     token,
+    bottomExtra,
   } = props;
 
   return (
-    <Wrapper style={wrapperStyle}>
-      <Icon source={lightningIcon} />
-      <BalanceInTank style={textStyle}>{amount}</BalanceInTank>
-      {!!token && <BalanceInTank style={textStyle}> {token}</BalanceInTank>}
-    </Wrapper>
+    <View>
+      <Wrapper style={wrapperStyle}>
+        <Icon source={lightningIcon} />
+        <BalanceInTank style={textStyle}>{amount}</BalanceInTank>
+        {!!token && <BalanceInTank style={textStyle}> {token}</BalanceInTank>}
+      </Wrapper>
+      {bottomExtra}
+    </View>
   );
 };
 

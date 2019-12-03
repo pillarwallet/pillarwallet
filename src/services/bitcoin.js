@@ -29,12 +29,17 @@ import type {
   BitcoinUtxo,
   BitcoinTransactionTarget,
   BitcoinTransactionPlan,
+  BTCBalance,
+  BTCTransaction,
 } from 'models/Bitcoin';
 import { SPEED_TYPES } from 'constants/assetsConstants';
 import {
   getAddressUtxosFromNode,
   sendRawTransactionToNode,
+  getAddressBalanceFromNode,
+  getBTCTransactionsFromNode,
 } from 'services/insight';
+import { btcToSatoshis } from 'utils/bitcoin';
 
 const bip39 = require('bip39');
 const bip32 = require('bip32');
@@ -110,22 +115,41 @@ export const transactionFromPlan = (
   plan: BitcoinTransactionPlan,
   inputSigner: (address: string) => ECPair,
   networkName?: string,
-): string => {
+): ?string => {
   const txb = new TransactionBuilder(selectNetwork(networkName));
   txb.setVersion(1);
 
-  plan.inputs.forEach(utxo => {
+  const feeRate = feeRateFromSpeed(SPEED_TYPES.NORMAL);
+  const plannedOutputs = plan.outputs.map(outs => ({ ...outs, value: btcToSatoshis(Number(outs.value)) }));
+  const utxos = plan.inputs.map(utxo => ({
+    ...utxo,
+    txid: utxo.mintTxid,
+    value: utxo.value,
+  }));
+  const {
+    inputs,
+    outputs,
+  } = coinselect(utxos, plannedOutputs, feeRate);
+
+  if (!inputs && !outputs) {
+    return null;
+  }
+  inputs.forEach(utxo => {
     txb.addInput(
       utxo.txid,
-      utxo.vout,
+      utxo.mintIndex,
     );
   });
-  plan.outputs.forEach(out => {
-    txb.addOutput(out.address, out.value);
+  outputs.forEach(out => {
+    if (out.address) {
+      txb.addOutput(out.address, out.value);
+    } else {
+      txb.addOutput(inputs[0].address, out.value);
+    }
   });
 
   let utxoIndex = 0;
-  plan.inputs.forEach(({ address }) => {
+  inputs.forEach(({ address }) => {
     const keyPair = inputSigner(address);
 
     txb.sign({
@@ -163,6 +187,15 @@ export const importKeyPair = (s: string, networkName?: string): ECPair => {
 
 export const getAddressUtxos = (address: string): Promise<BitcoinUtxo[]> => {
   return getAddressUtxosFromNode(address)
-    .then(response => response.json())
-    .catch(error => ({ error }));
+    .then(response => response.json());
+};
+
+export const getAddressBalance = (address: string): Promise<BTCBalance> => {
+  return getAddressBalanceFromNode(address)
+    .then(response => response.json());
+};
+
+export const getBTCTransactions = (address: string): Promise<BTCTransaction[]> => {
+  return getBTCTransactionsFromNode(address)
+    .then(response => response);
 };

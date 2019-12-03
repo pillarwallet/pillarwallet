@@ -19,26 +19,28 @@
 */
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import firebase from 'react-native-firebase';
+
 import ChatService from 'services/chat';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { getActiveAccountAddress } from 'utils/accounts';
 
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { SignalCredentials } from 'models/Config';
+
 const chat = new ChatService();
 
-type SignalCredentials = {
-  accessToken: string,
-  refreshToken: string,
-  username: string,
-  userId: string,
-  walletId: string,
-  ethAddress: string,
-  fcmToken: string,
-}
-
 export const signalInitAction = (credentials?: SignalCredentials) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { session: { data: { isSignalInitiated, isOnline } } } = getState();
     if (!isOnline || isSignalInitiated) return;
+
+    let { session: { data: { fcmToken } } } = getState();
+
+    // if fcmToken is not yet on state then get it from Firebase
+    if (!fcmToken) fcmToken = await firebase.messaging().getToken().catch(() => null);
+
+    // build credentials from state
     if (!credentials) {
       const {
         user: {
@@ -48,7 +50,6 @@ export const signalInitAction = (credentials?: SignalCredentials) => {
             walletId,
           },
         },
-        session: { data: { fcmToken } },
         oAuthTokens: { data: OAuthTokensObject },
         accounts: { data: accounts },
       } = getState();
@@ -66,7 +67,6 @@ export const signalInitAction = (credentials?: SignalCredentials) => {
     const accessToken = get(credentials, 'accessToken');
     if (isEmpty(accessToken)) return; // init will fail if there is no access token
 
-    const fcmToken = get(credentials, 'fcmToken');
     await chat.init(credentials)
       .then(() => chat.client.registerAccount())
       .then(() => fcmToken && chat.client.setFcmId(fcmToken))

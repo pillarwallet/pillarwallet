@@ -23,7 +23,7 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import { formatAmount, formatMoney, formatFiat, isValidNumber } from 'utils/common';
+import { formatAmount, formatMoney, formatFiat, isValidNumber, formatAmountDisplay } from 'utils/common';
 import t from 'tcomb-form-native';
 import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
@@ -281,6 +281,10 @@ const generateFormStructure = (balances: Balances) => {
   });
 
   FromOption.getValidationErrorMessage = ({ selector, input }) => {
+    if (isEmpty(selector)) {
+      return 'Asset should be selected.';
+    }
+
     const { symbol, decimals } = selector;
 
     const isFiat = isFiatCurrency(symbol);
@@ -291,9 +295,7 @@ const generateFormStructure = (balances: Balances) => {
 
     const numericAmount = parseFloat(input || 0);
 
-    if (!Object.keys(selector).length) {
-      return 'Asset should be selected.';
-    } else if (numericAmount === 0) {
+    if (numericAmount === 0) {
       /**
        * 0 is the first number that can be typed therefore we don't want
        * to show any error message on the input, however,
@@ -379,21 +381,6 @@ function SelectorInputTemplate(locals) {
   );
 }
 
-/**
- * avoid text overlapping on many decimals,
- * full amount will be displayed in confirm screen
- * also show only 2 decimals for amounts above 1.00
- * to avoid same text overlapping in the other side
- */
-function formatAmountDisplay(value: number | string) {
-  if (!value) return 0;
-  const amount = parseFloat(value);
-  if (amount > 1) {
-    return formatMoney(amount, 2);
-  }
-  return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
-}
-
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
   fromInputRef: TextInput;
@@ -401,7 +388,6 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.fromInputRef = React.createRef();
     this.listeners = [];
     this.state = {
       shapeshiftAuthPressed: false,
@@ -452,15 +438,12 @@ class ExchangeScreen extends React.Component<Props, State> {
               options: [],
               wrapperStyle: { marginTop: spacing.mediumLarge },
               placeholderSelector: 'select asset',
-              onSelectorOpen: () => {
-                if (this.fromInputRef) this.fromInputRef.blur();
-              },
+              onSelectorOpen: this.blurFromInput,
             },
           },
         },
       },
     };
-    this.fromInputRef = React.createRef();
     this.triggerSearch = debounce(this.triggerSearch, 500);
   }
 
@@ -482,13 +465,18 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.provideOptions();
     this.listeners = [
       navigation.addListener('didFocus', this.focusInputWithKeyboard),
-      navigation.addListener('didBlur', () => this.fromInputRef.blur()),
+      navigation.addListener('didBlur', this.blurFromInput),
     ];
   }
 
   componentWillUnmount() {
     this.listeners.forEach(listener => listener.remove());
   }
+
+  blurFromInput = () => {
+    if (!this.fromInputRef) return;
+    this.fromInputRef.blur();
+  };
 
   focusInputWithKeyboard = () => {
     setTimeout(() => {

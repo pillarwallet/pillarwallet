@@ -46,6 +46,11 @@ export type Wallet = {
   privateKey: string
 }
 
+export type BackupStatus = {
+  isImported: boolean,
+  isBackedUp: boolean,
+}
+
 export type WalletReducerState = {
   data: Wallet,
   walletState: ?string,
@@ -54,7 +59,7 @@ export type WalletReducerState = {
     code: string,
     message: string,
   },
-  backupStatus: Object,
+  backupStatus: BackupStatus,
 }
 
 export type WalletReducerAction = {
