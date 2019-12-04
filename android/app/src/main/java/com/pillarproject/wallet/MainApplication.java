@@ -10,6 +10,7 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.Crashlytics;
 import com.crypho.scrypt.RNScryptPackage;
 import com.facebook.react.ReactApplication;
+import io.branch.rnbranch.RNBranchPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.mattblock.reactnative.inappbrowser.RNInAppBrowserPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -64,6 +65,7 @@ public class MainApplication extends Application implements ShareApplication, Re
       return Arrays.<ReactPackage>asList(
         new ColorMatrixImageFiltersPackage(),
         new MainReactPackage(),
+        new RNBranchPackage(),
         new AsyncStoragePackage(),
         new RNInAppBrowserPackage(),
         new RNGestureHandlerPackage(),

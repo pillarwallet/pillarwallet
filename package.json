@@ -168,6 +168,7 @@
     "react": "^16.8.6",
     "react-native": "0.59.10",
     "react-native-background-timer": "2.1.1",
+    "react-native-branch": "^4.2.1",
     "react-native-cached-image": "^1.4.3",
     "react-native-camera": "^2.6.0",
     "react-native-canvas": "^0.1.20",

@@ -1,0 +1,8 @@
+{
+  "debugMode": true,
+  "liveKey": "",
+  "testKey": "",
+  "useTestInstance": true,
+  "delayInitToCheckForSearchAds": true,
+  "appleSearchAdsDebugMode": true
+}
