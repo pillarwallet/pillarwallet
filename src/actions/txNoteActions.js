@@ -131,7 +131,7 @@ export const getTxNoteByContactAction = (username: string) => {
     const {
       chat: { data: { isDecrypting } },
       session: { data: { isOnline } },
-      contacts: { data: { contacts } },
+      contacts: { data: contacts },
     } = getState();
     if (isDecrypting || !isOnline) return;
 
