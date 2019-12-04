@@ -31,10 +31,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { Balances, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 
-// actions
-import { fetchGasInfoAction } from 'actions/historyActions';
-import { updateAppSettingsAction } from 'actions/appSettingsActions';
-
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import {
