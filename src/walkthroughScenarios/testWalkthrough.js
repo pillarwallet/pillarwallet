@@ -19,19 +19,32 @@
 */
 
 import { HOME, PEOPLE } from 'constants/navigationConstants';
+import { WALKTHROUGH_TYPES } from 'constants/walkthroughConstants';
 
 export const testWalkthrough = [
   {
-    id: 'home',
+    id: 'home_test',
+    type: WALKTHROUGH_TYPES.SHADE,
     activeScreen: HOME,
-    label: 'test',
-    body: 'lorem ipsum',
-    buttonText: 'button',
+    title: 'Home.',
+    body: 'View and manage all your wallet activity including transactions, social connections, ' +
+      'badges and open sessions with other dApps',
+    buttonText: 'Next',
+  },
+  {
+    id: 'home',
+    type: WALKTHROUGH_TYPES.TOOLTIP,
+    activeScreen: HOME,
+    title: '',
+    body: 'New badge earned!\n' +
+      'PLR tokens received from referral',
+    buttonText: 'Next',
   },
   {
     id: 'people',
+    type: WALKTHROUGH_TYPES.TOOLTIP,
     activeScreen: PEOPLE,
-    label: 'test people',
+    title: 'test people',
     body: 'lorem ipsum dolor',
     buttonText: 'end',
   },

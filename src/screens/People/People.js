@@ -442,7 +442,7 @@ class PeopleScreen extends React.Component<Props, State> {
             }
           </View>
           }
-          <WalkthroughItem type="TEST" walkthroughStepId="people">
+          <WalkthroughItem types={['TEST']} walkthroughStepId="people">
             <EmptyStateParagraph
               title="Test"
             />

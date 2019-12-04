@@ -144,6 +144,7 @@ const BalanceWrapper = styled.View`
   width: 100%;
   border-bottom-width: 1px;
   border-color: ${themedColors.border};
+  overflow: visible;
 `;
 
 const WalletConnectWrapper = styled.View`
@@ -455,7 +456,7 @@ class HomeScreen extends React.Component<Props, State> {
               onRefresh={this.refreshScreenData}
             />}
         >
-          <WalkthroughItem type="TEST" walkthroughStepId="home">
+          <WalkthroughItem types={['TEST']} walkthroughStepId="home">
             <BalanceWrapper>
               <PortfolioBalance />
             </BalanceWrapper>

@@ -24,6 +24,7 @@ import {
   ADD_WALKTHROUGH_STEPS,
   UPDATE_WAITING_FOR_STEP_REF,
   ADD_WALKTHROUGH_STEP_MEASURE,
+  SET_ACTIVE_STEP_ID, FORCE_NEXT_STEP,
 } from 'constants/walkthroughConstants';
 
 export type Measurements = {
@@ -40,6 +41,8 @@ type Step = {
   activeScreen: string;
   body: string;
   buttonText: string;
+  type: string,
+  title: string,
 }
 
 export type Steps = Step[];
@@ -48,6 +51,8 @@ export type WalkthroughsReducerState = {
   steps: Steps,
   type: string,
   waitingForStepId: string,
+  activeStepId: string,
+  forcedStepIndex: ?number,
 }
 
 export type WalkthroughsReducerAction = {
@@ -59,6 +64,8 @@ const initialState: WalkthroughsReducerState = {
   steps: [],
   type: '',
   waitingForStepId: '',
+  activeStepId: '',
+  forcedStepIndex: null,
 };
 
 const walkthroughsReducer = (
@@ -86,7 +93,11 @@ const walkthroughsReducer = (
     case END_WALKTHROUGH:
       return { ...state, id: '', steps: [] };
     case UPDATE_WAITING_FOR_STEP_REF:
-      return { ...state, waitingForStepId: action.payload };
+      return { ...state, waitingForStepId: action.payload, forcedStepIndex: null };
+    case SET_ACTIVE_STEP_ID:
+      return { ...state, activeStepId: action.payload, forcedStepIndex: null };
+    case FORCE_NEXT_STEP:
+      return { ...state, forcedStepIndex: action.payload };
     default:
       return state;
   }

@@ -1,19 +1,22 @@
 // @flow
 import * as React from 'react';
-import { Dimensions, StyleSheet, Animated, SafeAreaView, Platform } from 'react-native';
+import { Dimensions, StyleSheet, Animated, SafeAreaView, Platform, View } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { Svg, Path } from 'react-native-svg';
+import { Path } from 'react-native-svg';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
 import { NavigationActions } from 'react-navigation';
 import { getNavigationPathAndParamsState, navigate } from 'services/navigation';
 import Button from 'components/Button';
-import { Paragraph } from 'components/Typography';
-import { baseColors, spacing } from 'utils/variables';
+import { Paragraph, BoldText } from 'components/Typography';
+import { spacing, fontStyles } from 'utils/variables';
 import { getiOSNavbarHeight } from 'utils/common';
-import { endWalkthroughAction, setWaitingForStepIdAction } from 'actions/walkthroughsActions';
-import type { Steps } from 'reducers/walkthroughsReducer';
-import AnimatedSvgPath from './AnimatedSvgPath';
+import { endWalkthroughAction, setWaitingForStepIdAction, setActiveStepIdAction } from 'actions/walkthroughsActions';
+import type { Measurements, Steps } from 'reducers/walkthroughsReducer';
+import { WALKTHROUGH_TYPES } from 'constants/walkthroughConstants';
+import { themedColors } from 'utils/themes';
+import { hexToRgba } from 'utils/ui';
+import { WalkthroughTooltip } from './WalkthroughTooltip';
 
 const { width, height: h } = Dimensions.get('window');
 const height = Platform.OS === 'android'
@@ -35,16 +38,22 @@ type Props = {
   waitingForStepId: string,
   endWalkthrough: () => void,
   setWaitingForStepId: (id: string) => void,
+  forcedStepIndex: ?number,
+  setActiveStepI: string,
+  setActiveStepId: (id: string) => void,
 }
 
 type State = {
   index: number,
   isActiveWalkthrough: boolean,
   buttonText?: string,
-  label: string,
   size: Size,
   position: Position,
   alignStart: boolean,
+  body: string,
+  title: string,
+  type: string,
+  measure: ?Measurements,
 }
 
 const getSvgPath = ({ size, position }): string =>
@@ -67,7 +76,33 @@ const Content = styled.View`
 `;
 
 const WhiteParagraph = styled(Paragraph)`
-  color: ${baseColors.white};
+  color: ${themedColors.control};
+`;
+
+const Shade = styled.View`
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: ${width}px;
+  height: ${height}px;
+  background-color: ${({ theme }) => hexToRgba(theme.colors.text, 0.8)};
+`;
+
+const ShadeContent = styled.View`
+  height: 80%;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+
+const MainContent = styled.View`
+  flex-direction: column;
+`;
+
+const Title = styled(BoldText)`
+  color: ${themedColors.control};
+  ${fontStyles.giant};
 `;
 
 class Walkthrough extends React.Component<Props, State> {
@@ -79,11 +114,14 @@ class Walkthrough extends React.Component<Props, State> {
     this.state = {
       index: -1,
       isActiveWalkthrough: false,
-      label: '',
       buttonText: '',
       size: new Animated.ValueXY({ x: 150, y: 100 }),
       position: new Animated.ValueXY({ x: 10, y: 50 }),
       alignStart: false,
+      type: '',
+      title: '',
+      body: '',
+      measure: null,
     };
 
     this.state.position.addListener(this.animationListener);
@@ -94,7 +132,7 @@ class Walkthrough extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { steps, waitingForStepId } = this.props;
+    const { steps, waitingForStepId, forcedStepIndex } = this.props;
     const { isActiveWalkthrough } = this.state;
     if (!!prevProps.steps && steps && !isActiveWalkthrough) {
       this.initWalkthrough();
@@ -102,7 +140,11 @@ class Walkthrough extends React.Component<Props, State> {
 
     if (waitingForStepId) {
       const relatedStep = steps.find(({ id }) => id === waitingForStepId);
-      if (relatedStep && relatedStep.measure) this.proceedWithNewlyAddedStep();
+      if (relatedStep && relatedStep.measure) this.proceedWithMeasuredStep();
+    }
+
+    if (forcedStepIndex !== prevProps.forcedStepIndex && forcedStepIndex) {
+      this.nextStep(forcedStepIndex);
     }
   }
 
@@ -111,22 +153,31 @@ class Walkthrough extends React.Component<Props, State> {
     this.nextStep();
   };
 
-  nextStep = async () => {
-    const { steps, endWalkthrough, setWaitingForStepId } = this.props;
-    const { index } = this.state;
-    const step = steps[index + 1];
-    if (index + 1 >= steps.length) {
+  nextStep = async (forcedStepIndex?: number) => {
+    const {
+      steps,
+      endWalkthrough,
+      setWaitingForStepId,
+      setActiveStepId,
+    } = this.props;
+    const { index: indexInState } = this.state;
+    const newIndex = forcedStepIndex || indexInState + 1;
+    const step = steps[newIndex];
+    if (newIndex >= steps.length) {
       this.setState({ index: -1, isActiveWalkthrough: false });
       endWalkthrough();
     } else {
       const {
         activeScreen,
         id,
-        label,
         buttonText,
         measure,
+        type,
+        title,
+        body,
       } = step;
-      if (!measure) { // step is not yet updated with measure
+
+      if (!measure && type !== WALKTHROUGH_TYPES.SHADE) { // step is not yet updated with measure
         const { path } = getNavigationPathAndParamsState() || {};
         const pathSteps = path ? path.split('/') : [];
         const currentScreen = pathSteps[pathSteps.length - 1];
@@ -138,20 +189,25 @@ class Walkthrough extends React.Component<Props, State> {
         }
         setWaitingForStepId(id);
       } else {
-        const {
-          x: stepXPos,
-          y: stepYPos,
-          w: stepItemWidth,
-          h: stepItemHeight,
-        } = measure;
+        // const {
+        //   x: stepXPos,
+        //   y: stepYPos,
+        //   w: stepItemWidth,
+        //   h: stepItemHeight,
+        // } = measure;
+        //
+        // const adjustedY = Platform.OS === 'ios' ? stepYPos : stepYPos + ExtraDimensions.getStatusBarHeight()
+        setActiveStepId(id);
         this.setState({
-          index: index + 1,
-          label,
+          index: newIndex,
           buttonText,
-          alignStart: stepYPos > height / 2,
+          // alignStart: stepYPos > height / 2,
+          type,
+          title,
+          body,
+          measure,
         });
-        const adjustedY = Platform.OS === 'ios' ? stepYPos : stepYPos + ExtraDimensions.getStatusBarHeight();
-        this.animate({ x: stepItemWidth, y: stepItemHeight }, { x: stepXPos, y: adjustedY });
+        // this.animate({ x: stepItemWidth, y: stepItemHeight }, { x: stepXPos, y: adjustedY });
       }
     }
   };
@@ -169,7 +225,7 @@ class Walkthrough extends React.Component<Props, State> {
     ]).start();
   };
 
-  proceedWithNewlyAddedStep = () => {
+  proceedWithMeasuredStep = () => {
     const { setWaitingForStepId } = this.props;
     setWaitingForStepId('');
 
@@ -190,51 +246,104 @@ class Walkthrough extends React.Component<Props, State> {
     const {
       index,
       buttonText,
-      label,
       alignStart,
+      type,
+      title,
+      body,
+      measure,
     } = this.state;
     const { waitingForStepId } = this.props;
+
     if (index === -1) {
       return null;
     }
-    return (
-      <React.Fragment>
-        <Container>
-          <Svg style={StyleSheet.absoluteFill}>
-            <AnimatedSvgPath
-              ref={(ref) => { this.mask = ref; }}
-              fill={baseColors.slateBlack}
-              opacity={0.85}
-              fillRule="evenodd"
-              strokeWidth={1}
-              d={getSvgPath({
-                size: this.state.size,
-                position: this.state.position,
-              })}
-            />
-          </Svg>
-        </Container>
-        {!waitingForStepId &&
-        <Content alignStart={alignStart}>
-          <SafeAreaView>
-            <WhiteParagraph small>{label}</WhiteParagraph>
-            <Button title={buttonText || 'Next'} onPress={this.nextStep} />
-          </SafeAreaView>
-        </Content>}
-      </React.Fragment>
-    );
+
+    if (type === WALKTHROUGH_TYPES.SHADE) {
+      return (
+        <React.Fragment>
+          <Container>
+            <Shade />
+          </Container>
+          {!waitingForStepId &&
+          <Content alignStart={alignStart}>
+            <SafeAreaView>
+              <ShadeContent>
+                <MainContent>
+                  <Title>
+                    {title}
+                  </Title>
+                  <WhiteParagraph small>{body}</WhiteParagraph>
+                </MainContent>
+                <Button title={buttonText || 'Next'} onPress={this.nextStep} />
+              </ShadeContent>
+            </SafeAreaView>
+          </Content>}
+        </React.Fragment>
+      );
+    }
+
+    if (type === WALKTHROUGH_TYPES.TOOLTIP && Platform.OS === 'android') {
+      return (
+        <React.Fragment>
+          <Container>
+            <View style={{ position: 'relative', flex: 1 }}>
+              {!waitingForStepId && measure &&
+                <WalkthroughTooltip
+                  targetMeasurements={measure}
+                  onTooltipButtonPress={this.nextStep}
+                  title={title}
+                  body={body}
+                  buttonText={buttonText}
+                />
+              }
+            </View>
+          </Container>
+        </React.Fragment>
+      );
+    }
+
+    return null;
+
+    // return (
+    //   <React.Fragment>
+    //     <Container>
+    //       <Svg style={StyleSheet.absoluteFill}>
+    //         <AnimatedSvgPath
+    //           ref={(ref) => { this.mask = ref; }}
+    //           fill={baseColors.slateBlack}
+    //           opacity={0.85}
+    //           fillRule="evenodd"
+    //           strokeWidth={1}
+    //           d={getSvgPath({
+    //             size: this.state.size,
+    //             position: this.state.position,
+    //           })}
+    //         />
+    //       </Svg>
+    //     </Container>
+    //     {!waitingForStepId &&
+    //     <Content alignStart={alignStart}>
+    //       <SafeAreaView>
+    //         <WhiteParagraph small>{label}</WhiteParagraph>
+    //         <Button title={buttonText || 'Next'} onPress={this.nextStep} />
+    //       </SafeAreaView>
+    //     </Content>}
+    //   </React.Fragment>
+    // );
   }
 }
 
 const mapStateToProps = ({
-  walkthroughs: { waitingForStepId },
+  walkthroughs: { waitingForStepId, forcedStepIndex },
 }) => ({
   waitingForStepId,
+  forcedStepIndex,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   setWaitingForStepId: (id: string) => dispatch(setWaitingForStepIdAction(id)),
+  setActiveStepId: (id: string) => dispatch(setActiveStepIdAction(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Walkthrough);

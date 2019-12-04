@@ -23,9 +23,11 @@ import {
   END_WALKTHROUGH,
   ADD_WALKTHROUGH_STEP_MEASURE,
   UPDATE_WAITING_FOR_STEP_REF,
+  SET_ACTIVE_STEP_ID,
+  FORCE_NEXT_STEP,
 } from 'constants/walkthroughConstants';
 import type { Steps, Measurements } from 'reducers/walkthroughsReducer';
-import type { Dispatch } from 'reducers/rootReducer';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 export const initWalkthroughAction = (type: string, steps: Steps) => {
   return async (dispatch: Dispatch) => {
@@ -58,6 +60,30 @@ export const setWaitingForStepIdAction = (id: string) => {
     dispatch({
       type: UPDATE_WAITING_FOR_STEP_REF,
       payload: id,
+    });
+  };
+};
+
+export const setActiveStepIdAction = (id: string) => {
+  return async (dispatch: Dispatch) => {
+    dispatch({
+      type: SET_ACTIVE_STEP_ID,
+      payload: id,
+    });
+  };
+};
+
+export const showNextStepExternalAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      walkthroughs: { steps, activeStepId },
+    } = getState();
+
+    const currentIndex = steps.map(step => step.id).indexOf(activeStepId);
+
+    dispatch({
+      type: FORCE_NEXT_STEP,
+      payload: currentIndex + 1,
     });
   };
 };
