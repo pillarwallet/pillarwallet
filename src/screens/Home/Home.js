@@ -39,6 +39,7 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
 import WalkthroughItem from 'components/Walkthrough/WalkthroughItem';
+import { WalkthroughItemParent } from 'components/Walkthrough/WalkthroughItemParent';
 
 // constants
 import {
@@ -91,6 +92,7 @@ import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import { testWalkthrough } from 'walkthroughScenarios/testWalkthrough';
 import type { Theme } from 'models/Theme';
+import Button from 'components/Button';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -164,6 +166,8 @@ const BadgesWrapper = styled.View`
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-color: ${themedColors.border};
+  z-index: 2;
+  overflow: visible;
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -255,8 +259,6 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   openQRScanner = () => {
-    const { initWalkthrough } = this.props;
-    initWalkthrough('TEST', testWalkthrough);
     const { isOnline } = this.props;
     if (!isOnline) {
       Toast.show({
@@ -264,10 +266,9 @@ class HomeScreen extends React.Component<Props, State> {
         type: 'warning',
         title: 'Warning',
       });
-      // return;
+      return;
     }
-    // TODO: uncomment when finish with testing
-    // this.setState({ isScanning: true });
+    this.setState({ isScanning: true });
   };
 
   closeQRScanner = () => this.setState({
@@ -456,7 +457,17 @@ class HomeScreen extends React.Component<Props, State> {
               onRefresh={this.refreshScreenData}
             />}
         >
-          <WalkthroughItem types={['TEST']} walkthroughStepId="home">
+          <View style={{ alignItems: 'center', justifyContent: 'flex-start', padding: 10 }}>
+            <Button
+              title="TEST WALKTHROUGH"
+              onPress={() => {
+                const { initWalkthrough } = this.props;
+                initWalkthrough('TEST', testWalkthrough);
+              }}
+              small
+            />
+          </View>
+          <WalkthroughItem types={['TEST']} walkthroughStepId="balance" posOverwrites={{ x: spacing.large }}>
             <BalanceWrapper>
               <PortfolioBalance />
             </BalanceWrapper>
@@ -474,24 +485,28 @@ class HomeScreen extends React.Component<Props, State> {
             />
           </WalletConnectWrapper>
           <BadgesWrapper>
-            <ListHeader>Game of badges</ListHeader>
-            <FlatList
-              data={badges}
-              horizontal
-              keyExtractor={(item) => (item.id.toString())}
-              renderItem={this.renderBadge}
-              style={{ width: '100%' }}
-              contentContainerStyle={{ paddingHorizontal: 10, ...badgesContainerStyle }}
-              initialNumToRender={5}
-              ListEmptyComponent={(
-                <EmptyStateWrapper>
-                  <EmptyStateParagraph
-                    title="No badges"
-                    bodyText="You do not have badges yet"
-                  />
-                </EmptyStateWrapper>
-              )}
-            />
+            <WalkthroughItem types={['TEST']} walkthroughStepId="badge">
+              <ListHeader>Game of badges</ListHeader>
+            </WalkthroughItem>
+            <WalkthroughItemParent>
+              <FlatList
+                data={badges}
+                horizontal
+                keyExtractor={(item) => (item.id.toString())}
+                renderItem={this.renderBadge}
+                style={{ width: '100%', overflow: 'visible' }}
+                contentContainerStyle={{ paddingHorizontal: 10, ...badgesContainerStyle, overflow: 'visible' }}
+                initialNumToRender={5}
+                ListEmptyComponent={(
+                  <EmptyStateWrapper>
+                    <EmptyStateParagraph
+                      title="No badges"
+                      bodyText="You do not have badges yet"
+                    />
+                  </EmptyStateWrapper>
+                )}
+              />
+            </WalkthroughItemParent>
           </BadgesWrapper>
           <Tabs
             tabs={activityFeedTabs}

@@ -43,6 +43,8 @@ import SelectorInput from 'components/SelectorInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import DeploymentView from 'components/DeploymentView';
+import WalkthroughItem from 'components/Walkthrough/WalkthroughItem';
+import { WalkthroughItemParent } from 'components/Walkthrough/WalkthroughItemParent';
 
 // actions
 import {
@@ -1116,15 +1118,19 @@ class ExchangeScreen extends React.Component<Props, State> {
           keyboardShouldPersistTaps="handled"
           color={UIColors.defaultBackgroundColor}
         >
-          <FormWrapper>
-            <Form
-              ref={node => { this.exchangeForm = node; }}
-              type={formStructure}
-              options={formOptions}
-              value={value}
-              onChange={this.handleFormChange}
-            />
-          </FormWrapper>
+          <WalkthroughItemParent>
+            <FormWrapper>
+              <WalkthroughItem types={['TEST']} walkthroughStepId="exchange">
+                <Form
+                  ref={node => { this.exchangeForm = node; }}
+                  type={formStructure}
+                  options={formOptions}
+                  value={value}
+                  onChange={this.handleFormChange}
+                />
+              </WalkthroughItem>
+            </FormWrapper>
+          </WalkthroughItemParent>
           {!!disableNonFiatExchange &&
           <DeploymentView
             message={{
@@ -1144,7 +1150,9 @@ class ExchangeScreen extends React.Component<Props, State> {
             ListHeaderComponent={!isEmpty(reorderedOffers)
               ? (
                 <ListHeader>
-                  <ExchangeStatus />
+                  <WalkthroughItem types={['TEST']} walkthroughStepId="exchange_in">
+                    <ExchangeStatus />
+                  </WalkthroughItem>
                 </ListHeader>)
               : null
             }

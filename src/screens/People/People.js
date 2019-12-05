@@ -53,7 +53,6 @@ import Button from 'components/Button/Button';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import WalkthroughItem from 'components/Walkthrough/WalkthroughItem';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 
 // constants
@@ -442,11 +441,6 @@ class PeopleScreen extends React.Component<Props, State> {
             }
           </View>
           }
-          <WalkthroughItem types={['TEST']} walkthroughStepId="people">
-            <EmptyStateParagraph
-              title="Test"
-            />
-          </WalkthroughItem>
         </InnerWrapper>
       </React.Fragment>
     );

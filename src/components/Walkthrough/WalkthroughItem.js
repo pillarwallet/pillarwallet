@@ -4,8 +4,11 @@ import { View, TouchableOpacity, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 
-import { addWalkthroughStepMeasureAction, showNextStepExternalAction } from 'actions/walkthroughsActions';
-import type { Measurements, Steps } from 'reducers/walkthroughsReducer';
+import {
+  addWalkthroughStepMeasureAction,
+  showNextStepExternalAction,
+} from 'actions/walkthroughsActions';
+import type { Measurements, Steps, PosOverwrites } from 'reducers/walkthroughsReducer';
 import { WALKTHROUGH_TYPES } from 'constants/walkthroughConstants';
 import { WalkthroughTooltip } from './WalkthroughTooltip';
 
@@ -25,6 +28,7 @@ type Props = {
   steps: Steps,
   activeStepId: string,
   showNextStep: () => void,
+  posOverwrites?: PosOverwrites,
 }
 
 type State = {
@@ -83,20 +87,12 @@ class WalkthroughItem extends React.Component<Props, State> {
   };
 
   setWalkthroughStepMeasures = async () => {
-    const { addWalkthroughStepMeasure, walkthroughStepId } = this.props;
+    const { addWalkthroughStepMeasure, walkthroughStepId, posOverwrites } = this.props;
     measure(this.reference)
       .then((measures) => {
-        addWalkthroughStepMeasure(walkthroughStepId, measures);
-        // const { x, y } = measures;
-        // // x: stepXPos,
-        // //   y: stepYPos,
-        // //   w: stepItemWidth,
-        // //   h: stepItemHeight,
-        // this.setState({ refMeasures: measures });
+        addWalkthroughStepMeasure(walkthroughStepId, { ...measures, posOverwrites });
       })
-      .catch(() => {
-
-      });
+      .catch(() => {});
   };
 
   render() {
@@ -143,7 +139,6 @@ class WalkthroughItem extends React.Component<Props, State> {
     );
   }
 }
-
 
 const mapStateToProps = ({
   walkthroughs: {

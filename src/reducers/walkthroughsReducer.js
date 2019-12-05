@@ -27,11 +27,18 @@ import {
   SET_ACTIVE_STEP_ID, FORCE_NEXT_STEP,
 } from 'constants/walkthroughConstants';
 
+
+export type PosOverwrites = {
+  x?: number,
+  y?: number,
+}
+
 export type Measurements = {
   x: number,
   y: number,
   w: number,
   h: number,
+  posOverwrites?: PosOverwrites,
 }
 
 type Step = {
@@ -91,7 +98,14 @@ const walkthroughsReducer = (
         }),
       };
     case END_WALKTHROUGH:
-      return { ...state, id: '', steps: [] };
+      return {
+        ...state,
+        id: '',
+        steps: [],
+        waitingForStepId: '',
+        activeStepId: '',
+        forcedStepIndex: null,
+      };
     case UPDATE_WAITING_FOR_STEP_REF:
       return { ...state, waitingForStepId: action.payload, forcedStepIndex: null };
     case SET_ACTIVE_STEP_ID:

@@ -18,12 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { HOME, PEOPLE } from 'constants/navigationConstants';
+import { EXCHANGE, HOME } from 'constants/navigationConstants';
 import { WALKTHROUGH_TYPES } from 'constants/walkthroughConstants';
 
 export const testWalkthrough = [
   {
-    id: 'home_test',
+    id: 'home_intro',
     type: WALKTHROUGH_TYPES.SHADE,
     activeScreen: HOME,
     title: 'Home.',
@@ -32,20 +32,36 @@ export const testWalkthrough = [
     buttonText: 'Next',
   },
   {
-    id: 'home',
+    id: 'balance',
     type: WALKTHROUGH_TYPES.TOOLTIP,
     activeScreen: HOME,
     title: '',
-    body: 'New badge earned!\n' +
-      'PLR tokens received from referral',
+    body: 'Lorem',
     buttonText: 'Next',
   },
   {
-    id: 'people',
+    id: 'badge',
     type: WALKTHROUGH_TYPES.TOOLTIP,
-    activeScreen: PEOPLE,
-    title: 'test people',
-    body: 'lorem ipsum dolor',
-    buttonText: 'end',
+    activeScreen: HOME,
+    title: '',
+    body: 'Lorem ipsum!\n Dolor sit amet',
+    buttonText: 'Next',
+  },
+  {
+    id: 'exchange_intro',
+    type: WALKTHROUGH_TYPES.SHADE,
+    activeScreen: EXCHANGE,
+    title: 'Exchange.',
+    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore ' +
+      'et dolore magna aliqua.',
+    buttonText: 'Next',
+  },
+  {
+    id: 'exchange',
+    type: WALKTHROUGH_TYPES.TOOLTIP,
+    activeScreen: EXCHANGE,
+    title: 'Exchange tooltip title',
+    body: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco',
+    buttonText: 'Finish',
   },
 ];
