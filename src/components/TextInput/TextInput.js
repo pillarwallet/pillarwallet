@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { Item as NBItem, Input, Label } from 'native-base';
 import { View, TouchableOpacity, Platform, TextInput as RNInput } from 'react-native';
 import IconButton from 'components/IconButton';
@@ -26,6 +26,8 @@ import { BaseText, BoldText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
 import { fontSizes, baseColors, UIColors, spacing, fontStyles, appFont } from 'utils/variables';
+import { themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type inputPropsType = {
   placeholder?: string,
@@ -64,6 +66,7 @@ type Props = {
   labelStyle?: Object,
   errorMessageStyle?: Object,
   getInputRef?: Function,
+  theme: Theme,
 }
 
 type State = {
@@ -74,34 +77,28 @@ type EventLike = {
   nativeEvent: Object,
 }
 
-const inputTypes = {
+const inputStyleProps = {
   default: {
     fontSize: fontSizes.big,
     textAlign: 'left',
   },
   bigText: {
-    backgroundColor: baseColors.lightGray,
     borderBottomWidth: 0,
     borderRadius: 6,
-    color: baseColors.slateBlack,
     fontSize: fontSizes.large,
     lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
     padding: '0 20px',
     inputHeight: Platform.OS === 'ios' ? 80 : 70,
   },
   bigTextNoBackground: {
-    backgroundColor: 'transparent',
     borderBottomWidth: 0,
-    color: baseColors.slateBlack,
     fontSize: fontSizes.large,
     lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
     padding: '0 20px',
     inputHeight: Platform.OS === 'ios' ? 80 : 70,
   },
   noBackground: {
-    backgroundColor: 'transparent',
     borderBottomWidth: 0,
-    color: baseColors.slateBlack,
     fontSize: fontSizes.big,
     lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
   },
@@ -110,10 +107,8 @@ const inputTypes = {
     textAlign: 'right',
   },
   secondary: {
-    backgroundColor: baseColors.lightGray,
     borderBottomWidth: 0,
     borderRadius: 6,
-    color: baseColors.slateBlack,
     fontSize: fontSizes.medium,
     padding: '0 14px',
   },
@@ -141,12 +136,12 @@ const PostFix = styled(BoldText)`
 `;
 
 const InputField = styled(Input)`
-  ${props => props.inputType.textAlign ? `text-align: ${props.inputType.textAlign};` : ''}
-  ${props => props.inputType.backgroundColor ? `background-color: ${props.inputType.backgroundColor};` : ''}
-  ${props => props.inputType.borderRadius ? `border-radius: ${props.inputType.borderRadius};` : ''}
-  ${props => props.inputType.color ? `color: ${props.inputType.color};` : ''}
-  ${props => props.inputType.lineHeight ? `line-height: ${props.inputType.lineHeight};` : ''}
-  padding: ${props => props.inputType.padding || 0};
+  ${({ customInputStyle }) => customInputStyle.textAlign ? `text-align: ${customInputStyle.textAlign};` : ''}
+  background-color: ${themedColors.tertiary};
+  ${({ customInputStyle }) => customInputStyle.borderRadius ? `border-radius: ${customInputStyle.borderRadius};` : ''}
+  color: ${themedColors.text};
+  ${({ customInputStyle }) => customInputStyle.lineHeight ? `line-height: ${customInputStyle.lineHeight};` : ''}
+  padding: ${({ customInputStyle }) => customInputStyle.padding || 0};
   font-family: ${appFont.medium};
 `;
 
@@ -287,19 +282,27 @@ class TextInput extends React.Component<Props, State> {
       labelStyle,
       getInputRef,
       errorMessageStyle,
+      theme,
+      inputType,
     } = this.props;
     const { value = '' } = inputProps;
     const { isFocused } = this.state;
-    const inputType = inputTypes[this.props.inputType] || inputTypes.default;
+    const customInputStyle = inputStyleProps[this.props.inputType] || inputStyleProps.default;
     const additionalRightPadding = loading || statusIcon ? 36 : 0;
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
     const defaultInputHeight = Platform.OS === 'ios' ? 65 : 55;
-    let inputHeight = inputType.inputHeight || defaultInputHeight;
+    let inputHeight = customInputStyle.inputHeight || defaultInputHeight;
 
     if (inputProps.multiline) {
       inputHeight = Platform.OS === 'ios' ? 120 : 100;
     }
+
+    const updatedColors = {};
+    if (inputType === 'bigTextNoBackground' || inputType === 'noBackground') {
+      updatedColors.tertiary = 'transparent';
+    }
+    const updatedTheme = { ...theme, colors: { ...theme.colors, ...updatedColors } };
 
     const customStyle = inputProps.multiline ? { paddingTop: 10 } : {};
     return (
@@ -331,10 +334,10 @@ class TextInput extends React.Component<Props, State> {
             onEndEditing={this.handleBlur}
             onFocus={variableFocus}
             value={value}
-            inputType={inputType}
+            customInputStyle={customInputStyle}
             autoCorrect={autoCorrect}
             style={[{
-              fontSize: inputType.fontSize,
+              fontSize: customInputStyle.fontSize,
               width: viewWidth,
               paddingRight: (inputProps.multiline ? 58 : 14) + additionalRightPadding,
               textAlignVertical: inputProps.multiline ? 'top' : 'center',
@@ -344,6 +347,7 @@ class TextInput extends React.Component<Props, State> {
               additionalStyle,
             ]}
             onLayout={onLayout}
+            theme={updatedTheme}
           />
           {Platform.OS === 'ios' && <RNInput
             caretHidden
@@ -369,4 +373,4 @@ class TextInput extends React.Component<Props, State> {
   }
 }
 
-export default TextInput;
+export default withTheme(TextInput);
