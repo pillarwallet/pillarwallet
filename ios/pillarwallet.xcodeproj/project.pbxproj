@@ -1894,6 +1894,7 @@
 					"$(SRCROOT)/rn-libs/react-native-threads/ios",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
 					"$(SRCROOT)/../node_modules/@matt-block/react-native-in-app-browser/ios/RNInAppBrowser",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1948,6 +1949,7 @@
 					"$(SRCROOT)/rn-libs/react-native-threads/ios",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
 					"$(SRCROOT)/../node_modules/@matt-block/react-native-in-app-browser/ios/RNInAppBrowser",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -2117,6 +2119,7 @@
 					"$(SRCROOT)/rn-libs/react-native-threads/ios",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
 					"$(SRCROOT)/../node_modules/@matt-block/react-native-in-app-browser/ios/RNInAppBrowser",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;

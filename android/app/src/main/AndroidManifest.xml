@@ -40,7 +40,7 @@
 
     <application
         tools:replace="android:allowBackup"
-        android:name="com.eneff.branchandroid.CustomApplicationClass"
+        android:name="com.pillarproject.wallet.MainApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
