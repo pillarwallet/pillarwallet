@@ -145,7 +145,7 @@ const SPEED_TYPE_LABELS = {
   [SPEED_TYPES.FAST]: 'Fast',
 };
 
-class SendTokenAmount extends React.Component<Props, State> {
+class SendETHTokens extends React.Component<Props, State> {
   _form: t.form;
   formSubmitted: boolean = false;
 
@@ -492,4 +492,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateAppSettings: (path, value) => dispatch(updateAppSettingsAction(path, value)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SendTokenAmount);
+export default connect(mapStateToProps, mapDispatchToProps)(SendETHTokens);

@@ -19,8 +19,6 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import t from 'tcomb-form-native';
-import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
 
 // components
@@ -50,23 +48,8 @@ type Props = {
   activeAccount: ?Account,
 };
 
-type State = {
-  value: ?{
-    amount: ?string,
-  },
-  showModal: boolean,
-  gasLimit: number,
-  gettingFee: boolean,
-  calculatingMaxValue: boolean,
-  inputHasError: boolean,
-  txFeeInWei: BigNumber,
-  submitPressed: boolean,
-};
-
-class SendTokenAmount extends React.Component<Props, State> {
-  _form: t.form;
+class SendTokenAmount extends React.Component<Props> {
   assetData: Object;
-  formSubmitted: boolean = false;
   receiver: string;
   source: string;
 
