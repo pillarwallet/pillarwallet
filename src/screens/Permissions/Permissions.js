@@ -20,20 +20,23 @@
 import * as React from 'react';
 import { FlatList, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native/index';
+import styled, { withTheme } from 'styled-components/native/index';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 import { Paragraph, TextLink, MediumText, BaseText } from 'components/Typography';
-import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { handleUrlPress } from 'utils/common';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Checkbox from 'components/Checkbox';
 import Icon from 'components/Icon';
 import { NextFooter } from 'components/Layout/NextFooter';
+import { getThemeColors, themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  theme: Theme,
 };
 
 type State = {
@@ -51,18 +54,19 @@ const SectionToggle = styled.View`
 const SectionTitle = styled(MediumText)`
   ${fontStyles.medium};
   margin-right: 12px;
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
 `;
 
 const InnerSectionToggle = styled.View`
-  margin: 30px;
+  padding: 30px;
   flex-direction: row;
   align-items: center;
+  flex: 1;
 `;
 
 const InnerSectionTitle = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${baseColors.electricBlue};
+  color: ${themedColors.primary};
 `;
 
 const StyledFlatList = styled.FlatList`
@@ -75,7 +79,7 @@ const IconHolder = styled.View`
   height: 14px;
   width: 14px;
   border-radius: 7px;
-  background-color: ${baseColors.dell};
+  background-color: ${themedColors.positive};
   align-items: center;
   justify-content: center;
   margin-top: 4px;
@@ -83,7 +87,7 @@ const IconHolder = styled.View`
 
 const TickIcon = styled(Icon)`
   font-size: 8px;
-  color: ${baseColors.white};
+  color: ${themedColors.control};
   margin-top: 1px;
 `;
 
@@ -254,8 +258,11 @@ class Permissions extends React.Component<Props, State> {
   };
 
   renderSection = ({ item: section }: Object) => {
+    const { theme } = this.props;
     const { openCollapseKey } = this.state;
     const { title, key } = section;
+    const colors = getThemeColors(theme);
+
     return (
       <CollapsibleListItem
         customToggle={(
@@ -269,14 +276,14 @@ class Permissions extends React.Component<Props, State> {
         open={openCollapseKey === key}
         onPress={() => this.toggleCollapse(key)}
         toggleWrapperStyle={{
-          borderBottomColor: baseColors.mediumLightGray,
+          borderBottomColor: colors.border,
           borderBottomWidth: 0.5,
-          borderTopColor: baseColors.mediumLightGray,
+          borderTopColor: colors.border,
           borderTopWidth: 0.5,
           paddingRight: 15,
         }}
         wrapperStyle={{
-          borderTopColor: baseColors.mediumLightGray,
+          borderTopColor: colors.border,
           borderTopWidth: 0.5,
         }}
         collapseContent={this.renderCollapseContent(key)}
@@ -287,6 +294,8 @@ class Permissions extends React.Component<Props, State> {
 
   renderSectionContent = ({ item: sectionContent }: Object) => {
     const { openInnerCollapseKey } = this.state;
+    const { theme } = this.props;
+    const colors = getThemeColors(theme);
     const {
       key,
       title,
@@ -307,12 +316,12 @@ class Permissions extends React.Component<Props, State> {
           open={openInnerCollapseKey === key}
           onPress={() => this.toggleInnerCollapse(key)}
           toggleWrapperStyle={{
-            borderTopColor: baseColors.mediumLightGray,
+            borderTopColor: colors.border,
             borderTopWidth: 0.5,
             paddingRight: 15,
           }}
           wrapperStyle={{
-            borderBottomColor: baseColors.mediumLightGray,
+            borderBottomColor: colors.border,
             borderBottomWidth: 0.5,
           }}
           collapseContent={
@@ -357,11 +366,12 @@ class Permissions extends React.Component<Props, State> {
 
   render() {
     const { hasAgreedToTerms } = this.state;
+    const { theme } = this.props;
+    const colors = getThemeColors(theme);
 
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Know how Pillar makes you safe' }] }}
-        backgroundColor={baseColors.white}
       >
         <ScrollView
           contentContainerStyle={{
@@ -377,7 +387,7 @@ class Permissions extends React.Component<Props, State> {
             renderItem={this.renderSection}
             contentContainerStyle={{
               borderBottomWidth: 1,
-              borderBottomColor: baseColors.mediumLightGray,
+              borderBottomColor: colors.border,
             }}
           />
           <NextFooter
@@ -399,4 +409,4 @@ class Permissions extends React.Component<Props, State> {
   }
 }
 
-export default Permissions;
+export default withTheme(Permissions);
