@@ -244,7 +244,7 @@ export const getChatByContactAction = (
     }
 
     const recipientContact = contacts.find((contact) => isCaseInsensitiveMatch(username, contact.username));
-    if (!isContactAvailable(recipientContact)) {
+    if (!recipientContact || !isContactAvailable(recipientContact)) {
       Toast.show({
         message: 'You disconnected or blocked this user',
         type: 'warning',
