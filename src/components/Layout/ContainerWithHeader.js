@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, StatusBar, View, Dimensions } from 'react-native';
+import { Platform, StatusBar, View, Dimensions, ScrollView } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation, SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
@@ -41,6 +41,7 @@ type Props = {
   keyboardAvoidFooter?: React.Node,
   minAvoidHeight?: number,
   theme: Theme,
+  putContentInScrollView?: boolean,
 };
 
 export const StyledSafeAreaView = styled(SafeAreaView)`
@@ -94,9 +95,16 @@ class ContainerWithHeader extends React.Component<Props> {
     StatusBar.setBarStyle('dark-content');
   };
 
-  renderContent = (isShortScreenWithFooter) => {
+  renderContent = (isShortScreenWithFooter, shouldRenderChildrenInScrollView) => {
     const { children, keyboardAvoidFooter } = this.props;
-    if (!isShortScreenWithFooter) return children;
+    if (!isShortScreenWithFooter && !shouldRenderChildrenInScrollView) return children;
+    if (!isShortScreenWithFooter && shouldRenderChildrenInScrollView) {
+      return (
+        <ScrollView style={{ flex: 1 }}>
+          {children}
+        </ScrollView>
+      );
+    }
     return (
       <ScrollWrapper style={{ flex: 1 }} contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}>
         <ContentWrapper>
@@ -116,6 +124,7 @@ class ContainerWithHeader extends React.Component<Props> {
       keyboardAvoidFooter,
       minAvoidHeight = 600,
       theme,
+      putContentInScrollView,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -133,7 +142,7 @@ class ContainerWithHeader extends React.Component<Props> {
           androidStatusbarHeight={androidStatusBarSpacing}
           color={backgroundColor}
         >
-          {this.renderContent(!shouldFooterAvoidKeyboard && keyboardAvoidFooter)}
+          {this.renderContent(!shouldFooterAvoidKeyboard && keyboardAvoidFooter, putContentInScrollView)}
         </StyledSafeAreaView>
         {!!keyboardAvoidFooter && shouldFooterAvoidKeyboard &&
         <Footer
