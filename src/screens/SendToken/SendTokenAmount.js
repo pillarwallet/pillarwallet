@@ -69,10 +69,12 @@ class SendTokenAmount extends React.Component<Props> {
       activeAccount,
       activeAccountAddress,
       transactionSpeed,
+      navigation,
     } = this.props;
 
     return (
       <SendETHTokens
+        navigation={navigation}
         assetData={this.assetData}
         receiver={this.receiver}
         source={this.source}
