@@ -24,10 +24,13 @@ import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 
+import { SEND_BITCOIN_FLOW } from 'constants/navigationConstants';
+
 // actions
 import {
   refreshBitcoinBalanceAction,
   refreshBTCTransactionsAction,
+  refreshBitcoinUnspentTxAction,
 } from 'actions/bitcoinActions';
 
 // components
@@ -55,8 +58,10 @@ type Props = {
   unspentTransactions: BitcoinUtxo[],
   refreshBitcoinBalance: () => void,
   balances: BitcoinBalance,
+  supportedAssets: Object[],
   transactions: BTCTransaction[],
   refreshBitcoinTransactions: () => void,
+  refreshBitcoinUnspentTx: () => void,
 };
 
 type State = {
@@ -99,8 +104,14 @@ class BTCView extends React.Component<Props, State> {
     showReceive: false,
   };
 
-  onPressSend = () => {
+  componentDidMount(): void {
+    this.refreshBalance();
+  }
+
+
+  onPressSend = (assetData) => {
     // TODO: Start send flow
+    this.props.navigation.navigate(SEND_BITCOIN_FLOW, { assetData });
   };
 
   showReceive = () => {
@@ -114,6 +125,7 @@ class BTCView extends React.Component<Props, State> {
   refreshBalance = () => {
     this.props.refreshBitcoinBalance();
     this.props.refreshBitcoinTransactions();
+    this.props.refreshBitcoinUnspentTx();
   };
 
   handleOpenShareDialog = (address: string) => {
@@ -127,10 +139,13 @@ class BTCView extends React.Component<Props, State> {
       balances,
       transactions = [],
       baseFiatCurrency,
+      supportedAssets,
     } = this.props;
 
     // TODO: Select address
     const { address } = addresses[0];
+
+    const assetData = supportedAssets.find(e => e.symbol === 'BTC') || {};
 
     const addressBalance = balances[address];
 
@@ -171,7 +186,7 @@ class BTCView extends React.Component<Props, State> {
               <CircleButton
                 label="Send"
                 icon={iconSend}
-                onPress={this.onPressSend}
+                onPress={() => this.onPressSend(assetData)}
                 disabled={confirmedBalance <= 0}
               />
             </AssetButtonsWrapper>
@@ -202,6 +217,9 @@ class BTCView extends React.Component<Props, State> {
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
+  assets: {
+    supportedAssets,
+  },
   bitcoin: {
     data: {
       addresses,
@@ -215,11 +233,13 @@ const mapStateToProps = ({
   addresses,
   balances,
   transactions,
+  supportedAssets,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(true)),
   refreshBitcoinTransactions: () => dispatch(refreshBTCTransactionsAction(true)),
+  refreshBitcoinUnspentTx: () => dispatch(refreshBitcoinUnspentTxAction(true)),
 });
 
 export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(BTCView));

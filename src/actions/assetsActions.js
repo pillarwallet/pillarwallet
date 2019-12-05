@@ -40,16 +40,12 @@ import {
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
-import { UPDATE_RATES } from 'constants/ratesConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 
 import Toast from 'components/Toast';
 
-import {
-  getExchangeRates,
-  transferSigned,
-} from 'services/assets';
+import { transferSigned } from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
 
 import type {
@@ -85,6 +81,7 @@ import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } f
 import { addExchangeAllowanceAction } from './exchangeActions';
 import { sendTxNoteByContactAction } from './txNoteActions';
 import { showAssetAction } from './userSettingsActions';
+import { fetchAccountAssetsRatesAction } from './ratesActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -429,9 +426,16 @@ export const sendAssetAction = (
         const syntheticTransactionExtra: SyntheticTransaction = get(historyTx, 'extra.syntheticTransaction');
         if (!isEmpty(syntheticTransactionExtra)) {
           const { transactionId, toAddress } = syntheticTransactionExtra;
-          dispatch(commitSyntheticsTransaction(transactionId, historyTx.hash));
-          // change history receiver address to actual receiver address rather than synthetics service address
-          historyTx = { ...historyTx, to: toAddress };
+          if (transactionId) {
+            dispatch(commitSyntheticsTransaction(transactionId, historyTx.hash));
+            // change history receiver address to actual receiver address rather than synthetics service address
+            historyTx = { ...historyTx, to: toAddress };
+          } else {
+            Sentry.captureMessage(
+              'Failed to get transactionId during synthetics exchange.',
+              { extra: { hash: historyTx.hash } },
+            );
+          }
         }
 
         dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });
@@ -542,13 +546,7 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
       });
     }
 
-    // @TODO: Extract "rates fetching" to its own action ones required.
-    const rates = await getExchangeRates(Object.keys(accountAssets));
-    if (rates && Object.keys(rates).length) {
-      dispatch(saveDbAction('rates', { rates }, true));
-      dispatch({ type: UPDATE_RATES, payload: rates });
-    }
-
+    dispatch(fetchAccountAssetsRatesAction());
 
     if (smartWalletFeatureEnabled && isSmartWalletAccount) {
       dispatch(fetchVirtualAccountBalanceAction());

@@ -51,7 +51,6 @@ import type { RootReducerState } from 'reducers/rootReducer';
 type Props = {
   navigation: NavigationScreenProp<*>,
   isOnline: boolean,
-  baseFiatCurrency: ?string,
   supportedAssets: Asset[],
   availableStake: number,
   contacts: ApiUser[],
@@ -111,10 +110,7 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
       usePPN: true,
       extra: { syntheticTransaction },
     };
-    this.props.navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
-      transactionPayload,
-      goBackDismiss: true,
-    });
+    this.props.navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
   };
 
 
@@ -214,12 +210,10 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   session: { data: { isOnline } },
-  appSettings: { data: { baseFiatCurrency } },
   assets: { supportedAssets },
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
 }: RootReducerState): $Shape<Props> => ({
   isOnline,
-  baseFiatCurrency,
   supportedAssets,
   contacts,
   contactsSmartAddresses,
