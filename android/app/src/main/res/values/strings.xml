@@ -1,5 +1,10 @@
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <string name="app_name">Pillar Wallet</string>
     <string name="label_deep_link">Login with Pillar Wallet</string>
     <string name="label_deep_link_proceed">Proceed to Pillar Wallet</string>
+    <string name="branch_io_app_link">pillar-test.test-app.link</string>
+    <string name="branch_io_key_live">key_live_kfMSeNxicyixrSIEzm2kAijesufTGCXR</string>
+    <string name="branch_io_key_test">key_test_oiTImTrfiylvqLPEwmW95lmozCbVSvXY</string>
 </resources>

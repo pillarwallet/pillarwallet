@@ -78,3 +78,5 @@
 -keep class com.facebook.crypto.** {
    *;
 }
+
+-dontwarn io.branch.**

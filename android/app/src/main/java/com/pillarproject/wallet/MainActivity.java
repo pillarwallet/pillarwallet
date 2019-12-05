@@ -1,16 +1,16 @@
 package com.pillarproject.wallet;
 
+import android.content.Intent;
+
 import com.facebook.react.ReactActivity;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
+
+import io.branch.rnbranch.RNBranchModule;
 
 public class MainActivity extends ReactActivity {
     @Override
@@ -24,6 +24,12 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "pillarwallet";
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        RNBranchModule.initSession(getIntent().getData(), this);
     }
     
     @Override
@@ -57,6 +63,13 @@ public class MainActivity extends ReactActivity {
                     .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                     .emit("ActivityStateChange", "background");
         }
+    }
+
+    // Needed for Branch.io
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     @Override
