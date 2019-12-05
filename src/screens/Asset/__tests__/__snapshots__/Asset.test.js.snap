@@ -41,8 +41,8 @@ exports[`Asset renders the Asset correctly 1`] = `
             Object {
               "minHeight": 58,
               "paddingBottom": 15,
-              "paddingLeft": 20,
-              "paddingRight": 20,
+              "paddingLeft": 16,
+              "paddingRight": 16,
               "paddingTop": 15,
               "width": "100%",
             },
@@ -1907,7 +1907,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                           "alignItems": "center",
                           "flexDirection": "column",
                           "justifyContent": "flex-end",
-                          "padding": 20,
+                          "padding": 16,
                           "position": "relative",
                         },
                         Object {
