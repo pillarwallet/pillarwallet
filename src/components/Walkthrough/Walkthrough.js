@@ -242,9 +242,7 @@ class Walkthrough extends React.Component<Props, State> {
             <SafeAreaView>
               <ShadeContent>
                 <MainContent>
-                  <Title>
-                    {title}
-                  </Title>
+                  <Title>{title}</Title>
                   <WhiteParagraph small>{body}</WhiteParagraph>
                 </MainContent>
                 <Button title={buttonText || 'Next'} onPress={this.nextStep} />

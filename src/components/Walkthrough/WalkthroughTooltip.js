@@ -21,9 +21,6 @@ type Props = {
 }
 
 const { width, height: h } = Dimensions.get('window');
-// const height = Platform.OS === 'android'
-//   ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
-//   : h - getiOSNavbarHeight();
 
 const height = Platform.OS === 'android'
   ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
