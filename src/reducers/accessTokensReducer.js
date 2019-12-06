@@ -19,20 +19,20 @@
 */
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 
-export type AccessToken = {
+export type AccessToken = {|
   userId: string,
   myAccessToken: string,
   userAccessToken: string,
-}
+|};
 
-export type AccessTokensReducerState = {
+export type AccessTokensReducerState = {|
   data: AccessToken[],
-}
+|};
 
-export type AccessTokensReducerAction = {
+export type AccessTokensReducerAction = {|
   type: string,
   payload: any
-}
+|};
 
 const initialState = {
   data: [],

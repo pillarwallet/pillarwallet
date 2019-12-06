@@ -28,12 +28,12 @@ type Rates = {
 export type RatesReducerState = {
   data: Rates,
   isFetched: boolean,
-}
+};
 
 export type RatesReducerAction = {
   type: string,
   payload: any
-}
+};
 
 export const initialState = {
   data: {},
