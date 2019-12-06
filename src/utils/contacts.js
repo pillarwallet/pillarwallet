@@ -59,6 +59,6 @@ export function findMatchingContact(
 }
 
 export function isContactAvailable(contact: ApiUser) {
-  // if no contact status is present then it means disconnected status
-  return !!(contact.status && contact.status === STATUS_BLOCKED);
+  // if no contact status at all then it means disconnected status
+  return !!contact.status && contact.status !== STATUS_BLOCKED;
 }
