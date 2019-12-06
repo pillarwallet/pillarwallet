@@ -136,7 +136,7 @@ export const getTxNoteByContactAction = (username: string) => {
     if (isDecrypting || !isOnline) return;
 
     const recipientContact = contacts.find((contact) => isCaseInsensitiveMatch(username, contact.username));
-    if (!isContactAvailable(recipientContact)) return;
+    if (!recipientContact || !isContactAvailable(recipientContact)) return;
 
     dispatch({ type: TX_NOTE_DECRYPTING_STARTED });
 

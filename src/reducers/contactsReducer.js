@@ -28,23 +28,22 @@ import {
   UPDATE_CONTACTS_SMART_ADDRESSES,
   SET_CONTACTS_SMART_ADDRESSES,
 } from 'constants/contactsConstants';
-import type { SearchResults, ContactSmartAddressData } from 'models/Contacts';
-
+import type { ApiUser, SearchResults, ContactSmartAddressData } from 'models/Contacts';
 
 export type ContactsReducerState = {
-  data: any,
+  data: ApiUser[],
   contactState: ?string,
   searchResults: SearchResults,
   contactsSmartAddresses: {
     addresses: ContactSmartAddressData[],
     isFetched: boolean,
   },
-}
+};
 
 export type ContactsReducerAction = {
   type: string,
   payload: any,
-}
+};
 
 export const initialState = {
   data: [],
@@ -62,7 +61,7 @@ export const initialState = {
 export default function contactsReducer(
   state: ContactsReducerState = initialState,
   action: ContactsReducerAction,
-) {
+): ContactsReducerState {
   switch (action.type) {
     case UPDATE_CONTACTS_STATE:
       return { ...state, contactState: action.payload };
