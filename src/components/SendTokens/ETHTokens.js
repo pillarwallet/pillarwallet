@@ -263,7 +263,6 @@ class SendETHTokens extends React.Component<Props, State> {
   };
 
   getGasLimit = (amount: number) => {
-    // calculate either with amount in form or provided as param
     const {
       assetData: {
         token: symbol,
