@@ -26,8 +26,10 @@ import SendETHTokens from 'components/SendTokens/ETHTokens';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Balances, Rates } from 'models/Asset';
+import type { Balances, Rates, AssetData } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Account } from 'models/Account';
+import type { SessionData } from 'models/Session';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -35,12 +37,11 @@ import {
   activeAccountAddressSelector,
   activeAccountSelector,
 } from 'selectors';
-import type { Account } from 'models/Account';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   balances: Balances,
-  session: Object,
+  session: SessionData,
   rates: Rates,
   baseFiatCurrency: ?string,
   transactionSpeed: ?string,
@@ -49,12 +50,13 @@ type Props = {
 };
 
 class SendTokenAmount extends React.Component<Props> {
-  assetData: Object;
+  assetData: AssetData;
   receiver: string;
   source: string;
 
   constructor(props: Props) {
     super(props);
+    // TODO: this screen should fail if any of these are empty
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.source = this.props.navigation.getParam('source', '');

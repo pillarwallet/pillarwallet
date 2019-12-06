@@ -20,12 +20,7 @@
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import merge from 'lodash.merge';
 
-type SessionData = {|
-  isOnline: boolean,
-  isSignalInitiated: boolean,
-  fcmToken: string,
-  contactsSmartAddressesSynced: boolean,
-|};
+import type { SessionData } from 'models/Session';
 
 export type SessionReducerState = {|
   data: SessionData,

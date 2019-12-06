@@ -52,8 +52,9 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { Account } from 'models/Account';
 import type { GasInfo } from 'models/GasInfo';
 import type { TokenTransactionPayload } from 'models/Transaction';
-import type { Balances, Rates } from 'models/Asset';
+import type { Balances, Rates, AssetData } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { SessionData } from 'models/Session';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
@@ -100,24 +101,18 @@ const BackgroundWrapper = styled.View`
 `;
 
 type Props = {
-  assetData: Object,
+  assetData: AssetData,
   receiver: string,
   source: string,
-  token: string;
-  address: string,
-  totalBalance: number,
-  contractAddress: string,
   navigation: NavigationScreenProp<*>,
-  isVisible: boolean,
-  formValues?: Object,
   balances: Balances,
-  session: Object,
-  fetchGasInfo: Function,
+  session: SessionData,
+  fetchGasInfo: () => void,
   gasInfo: GasInfo,
   rates: Rates,
   baseFiatCurrency: ?string,
   transactionSpeed: ?string,
-  updateAppSettings: Function,
+  updateAppSettings: (path: string, value: any) => void,
   activeAccountAddress: string,
   activeAccount: ?Account,
 };
@@ -488,7 +483,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
-  updateAppSettings: (path, value) => dispatch(updateAppSettingsAction(path, value)),
+  updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendETHTokens);
