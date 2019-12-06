@@ -253,7 +253,8 @@ class Permissions extends React.Component<Props, State> {
 
   handleAgree = () => {
     const { navigation } = this.props;
-    navigation.navigate(SET_WALLET_PIN_CODE);
+    const username = navigation.getParam('username');
+    navigation.navigate(SET_WALLET_PIN_CODE, { username });
     return null;
   };
 

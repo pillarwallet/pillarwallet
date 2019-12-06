@@ -25,10 +25,11 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import type { NavigationScreenProp } from 'react-navigation';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
+import { MediumText } from 'components/Typography';
 import { confirmPinForNewWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
 import { PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
-import { baseColors, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 
 type Props = {
   confirmPinForNewWallet: (pin: string) => Function,
@@ -44,6 +45,13 @@ const ContentWrapper = styled.View`
   flex: 1;
   padding-top: ${spacing.medium}px;
 `;
+
+const HeaderText = styled(MediumText)`
+  ${fontStyles.large};
+  text-align: center;
+  margin: ${spacing.large}px 0;
+`;
+
 
 class PinCodeConfirmation extends React.Component<Props, State> {
   state = {
@@ -81,7 +89,6 @@ class PinCodeConfirmation extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Confirm PIN code' }] }}
-        backgroundColor={baseColors.white}
       >
         {!!errorMessage &&
         <ErrorMessage wrapperStyle={{ marginTop: 0 }}>
@@ -89,6 +96,9 @@ class PinCodeConfirmation extends React.Component<Props, State> {
         </ErrorMessage>
         }
         <ContentWrapper>
+          <HeaderText>
+            Re-enter to confirm
+          </HeaderText>
           <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
             <PinCode
               onPinEntered={this.handlePinSubmit}

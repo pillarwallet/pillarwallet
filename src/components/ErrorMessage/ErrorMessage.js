@@ -21,6 +21,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { MediumText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   children: React.Node,
@@ -31,11 +32,11 @@ const ErrorMessageBackground = styled.View`
   width: 100%;
   padding: 20px;
   margin: 20px 0 0;
-  background-color: #ff0005;
+  background-color: ${themedColors.negative};
 `;
 
 const ErrorMessageText = styled(MediumText)`
-  color: #ffffff;
+  color: ${themedColors.control};
   ${fontStyles.medium};
 `;
 

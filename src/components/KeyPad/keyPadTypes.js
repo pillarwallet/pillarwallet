@@ -20,6 +20,7 @@
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT, KEYPAD_BUTTON_DOT } from 'constants/keyPadButtonsConstants';
 
 const backspaceIMG = require('assets/icons/backspace.png');
+const backspaceDarkThemeIMG = require('assets/icons/backspace_dark_theme.png');
 
 type KeyPadButton = {
   label: string,
@@ -51,6 +52,7 @@ const getPincode = (props: Object): KeyPadButton[] => {
       value: KEYPAD_BUTTON_DELETE,
       type: 'image',
       image: backspaceIMG,
+      imageDarkTheme: backspaceDarkThemeIMG,
     },
   ];
 
@@ -66,6 +68,7 @@ const getNumeric = (): KeyPadButton[] => {
       value: KEYPAD_BUTTON_DELETE,
       type: 'image',
       image: backspaceIMG,
+      imageDarkTheme: backspaceDarkThemeIMG,
     },
   ];
   return numbers.concat(finalRow);

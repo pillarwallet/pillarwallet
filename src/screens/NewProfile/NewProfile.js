@@ -282,15 +282,17 @@ class NewProfile extends React.Component<Props, State> {
       retry,
       registerOnBackend,
     } = this.props;
+    const { value } = this.state;
     Keyboard.dismiss();
     if (retry) {
       registerOnBackend();
       return;
     }
+    const navProps = value ? { username: value.username } : null;
     if (Platform.OS === 'android') {
-      navigation.navigate(PERMISSIONS);
+      navigation.navigate(PERMISSIONS, navProps);
     } else {
-      navigation.navigate(SET_WALLET_PIN_CODE);
+      navigation.navigate(SET_WALLET_PIN_CODE, navProps);
     }
   }
 
