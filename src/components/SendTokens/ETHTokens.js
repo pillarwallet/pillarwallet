@@ -36,6 +36,7 @@ import { TextLink, Label, BaseText } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import SendTokenDetails from 'components/SendTokenDetails';
+import Spinner from 'components/Spinner';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
@@ -48,6 +49,7 @@ import smartWalletService from 'services/smartWallet';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
+import type { Account } from 'models/Account';
 import type { GasInfo } from 'models/GasInfo';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Balances, Rates } from 'models/Asset';
@@ -61,9 +63,6 @@ import { ETH, defaultFiatCurrency, SPEED_TYPES } from 'constants/assetsConstants
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { updateAppSettingsAction } from 'actions/appSettingsActions';
 
-// selectors
-import type { Account } from 'models/Account';
-import Spinner from 'components/Spinner';
 
 const ActionsWrapper = styled.View`
   display: flex;
