@@ -41,17 +41,17 @@ import {
   UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
 
-export type Wallet = {
+export type Wallet = {|
   address: string,
   privateKey: string
-}
+|};
 
-export type BackupStatus = {
+export type BackupStatus = {|
   isImported: boolean,
   isBackedUp: boolean,
-}
+|};
 
-export type WalletReducerState = {
+export type WalletReducerState = {|
   data: Wallet,
   walletState: ?string,
   onboarding: Object,
@@ -60,12 +60,14 @@ export type WalletReducerState = {
     message: string,
   },
   backupStatus: BackupStatus,
-}
+  pinAttemptsCount: number,
+  lastPinAttempt: number,
+|};
 
-export type WalletReducerAction = {
+export type WalletReducerAction = {|
   type: string,
   payload: any
-}
+|};
 
 const initialState = {
   data: {
@@ -93,10 +95,10 @@ const initialState = {
   error: null,
 };
 
-export default function walletReducer(
+const walletReducer = (
   state: WalletReducerState = initialState,
   action: WalletReducerAction,
-) {
+): WalletReducerState => {
   switch (action.type) {
     case GENERATE_ENCRYPTED_WALLET:
       return merge({}, state, { data: action.payload, walletState: CREATED });
@@ -164,4 +166,6 @@ export default function walletReducer(
     default:
       return state;
   }
-}
+};
+
+export default walletReducer;
