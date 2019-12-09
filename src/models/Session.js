@@ -17,43 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_SESSION } from 'constants/sessionConstants';
-import merge from 'lodash.merge';
 
-import type { SessionData } from 'models/Session';
-
-export type SessionReducerState = {|
-  data: SessionData,
+export type SessionData = {|
+  isOnline: boolean,
+  isSignalInitiated: boolean,
+  fcmToken: string,
+  contactsSmartAddressesSynced: boolean,
 |};
-
-export type SessionReducerAction = {|
-  type: string,
-  payload: $Shape<SessionData>,
-|};
-
-export const initialState = {
-  data: {
-    isOnline: true,
-    isSignalInitiated: false,
-    fcmToken: '',
-    contactsSmartAddressesSynced: false,
-  },
-};
-
-const appSettingsReducer = (
-  state: SessionReducerState = initialState,
-  action: SessionReducerAction,
-): SessionReducerState => {
-  switch (action.type) {
-    case UPDATE_SESSION:
-      return merge(
-        {},
-        state,
-        { data: action.payload },
-      );
-    default:
-      return state;
-  }
-};
-
-export default appSettingsReducer;
