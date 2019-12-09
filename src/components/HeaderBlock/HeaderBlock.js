@@ -38,10 +38,14 @@ import type { Theme } from 'models/Theme';
 // partials
 import { HeaderActionButton } from './HeaderActionButton';
 
+type NavItem = {
+  [string]: any,
+};
+
 type Props = {
-  rightItems?: Object[],
-  leftItems?: Object[],
-  centerItems?: Object[],
+  rightItems?: NavItem[],
+  leftItems?: NavItem[],
+  centerItems?: NavItem[],
   sideFlex?: number,
   user: Object,
   navigation: NavigationScreenProp<*>,
@@ -50,10 +54,11 @@ type Props = {
   transparent?: boolean,
   light?: boolean,
   noBack?: boolean,
-  customOnBack?: Function,
+  customOnBack?: () => void,
   theme: Theme,
   noPaddingTop?: boolean,
   noBottomBorder?: boolean,
+  onClose?: () => void,
 }
 
 const Wrapper = styled.View`
@@ -193,6 +198,12 @@ const LEFT = 'LEFT';
 const CENTER = 'CENTER';
 const RIGHT = 'RIGHT';
 
+const getCloseAction = (props, navigation) => {
+  if (props.onClose) return () => props.onClose();
+  if (props.dismiss) return () => navigation.dismiss();
+  return () => navigation.goBack();
+};
+
 class HeaderBlock extends React.Component<Props> {
   renderHeaderContent = () => {
     const {
@@ -238,7 +249,7 @@ class HeaderBlock extends React.Component<Props> {
   };
 
   renderSideItems = (item, type = '') => {
-    const { navigation, theme } = this.props;
+    const { navigation, theme, onClose } = this.props;
     const colors = getThemeColors(theme);
     const commonStyle = {};
     if (type === RIGHT) commonStyle.marginLeft = spacing.small;
@@ -309,7 +320,7 @@ class HeaderBlock extends React.Component<Props> {
           <CloseIcon
             icon="close"
             color={colors.text}
-            onPress={() => item.dismiss ? navigation.dismiss() : navigation.goBack()}
+            onPress={getCloseAction({ ...item, onClose }, navigation)}
             fontSize={fontSizes.regular}
             horizontalAlign="flex-end"
           />
