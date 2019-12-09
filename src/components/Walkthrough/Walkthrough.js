@@ -17,10 +17,10 @@ import { themedColors } from 'utils/themes';
 import { hexToRgba } from 'utils/ui';
 import { WalkthroughTooltip } from './WalkthroughTooltip';
 
-const { width, height: h } = Dimensions.get('window');
+const { width, height: windowHeight } = Dimensions.get('window');
 const height = Platform.OS === 'android'
   ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
-  : h;
+  : windowHeight;
 
 type Props = {
   steps: Steps;
@@ -51,12 +51,6 @@ const Container = styled.View`
   ${({ fill }) => `background-color: ${fill}`};
 `;
 
-const Content = styled.View`
-  ${StyleSheet.absoluteFillObject};
-  padding: ${spacing.large}px;
-  justify-content: flex-end;
-`;
-
 const WhiteParagraph = styled(Paragraph)`
   color: ${themedColors.control};
 `;
@@ -77,6 +71,11 @@ const ShadeContent = styled.View`
   align-items: center;
 `;
 
+const KeyboardAvoidWrapper = styled.KeyboardAvoidingView`
+  ${StyleSheet.absoluteFillObject};
+  padding: ${spacing.large}px;
+  justify-content: flex-end;
+`;
 
 const MainContent = styled.View`
   flex-direction: column;
@@ -238,7 +237,7 @@ class Walkthrough extends React.Component<Props, State> {
             <Shade />
           </Container>
           {!waitingForStepId &&
-          <Content>
+          <KeyboardAvoidWrapper enabled behavior={Platform.OS === 'ios' ? 'height' : null}>
             <SafeAreaView>
               <ShadeContent>
                 <MainContent>
@@ -248,7 +247,7 @@ class Walkthrough extends React.Component<Props, State> {
                 <Button title={buttonText || 'Next'} onPress={this.nextStep} />
               </ShadeContent>
             </SafeAreaView>
-          </Content>}
+          </KeyboardAvoidWrapper>}
         </React.Fragment>
       );
     }

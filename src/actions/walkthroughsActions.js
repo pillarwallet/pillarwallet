@@ -29,49 +29,30 @@ import {
 import type { Steps, Measurements } from 'reducers/walkthroughsReducer';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-export const initWalkthroughAction = (type: string, steps: Steps) => {
-  return async (dispatch: Dispatch) => {
-    dispatch({
-      type: ADD_WALKTHROUGH,
-      payload: { type, steps },
-    });
-  };
-};
+export const initWalkthroughAction = (type: string, steps: Steps) => ({
+  type: ADD_WALKTHROUGH,
+  payload: { type, steps },
+});
 
-export const addWalkthroughStepMeasureAction = (stepId: string, measure: Measurements) => {
-  return async (dispatch: Dispatch) => {
-    dispatch({
-      type: ADD_WALKTHROUGH_STEP_MEASURE,
-      payload: { stepId, measure },
-    });
-  };
-};
 
-export const endWalkthroughAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch({
-      type: END_WALKTHROUGH,
-    });
-  };
-};
+export const addWalkthroughStepMeasureAction = (stepId: string, measure: Measurements) => ({
+  type: ADD_WALKTHROUGH_STEP_MEASURE,
+  payload: { stepId, measure },
+});
 
-export const setWaitingForStepIdAction = (id: string) => {
-  return async (dispatch: Dispatch) => {
-    dispatch({
-      type: UPDATE_WAITING_FOR_STEP_REF,
-      payload: id,
-    });
-  };
-};
+export const endWalkthroughAction = () => ({
+  type: END_WALKTHROUGH,
+});
 
-export const setActiveStepIdAction = (id: string) => {
-  return async (dispatch: Dispatch) => {
-    dispatch({
-      type: SET_ACTIVE_STEP_ID,
-      payload: id,
-    });
-  };
-};
+export const setWaitingForStepIdAction = (id: string) => ({
+  type: UPDATE_WAITING_FOR_STEP_REF,
+  payload: id,
+});
+
+export const setActiveStepIdAction = (id: string) => ({
+  type: SET_ACTIVE_STEP_ID,
+  payload: id,
+});
 
 export const showNextStepExternalAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {

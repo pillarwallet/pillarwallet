@@ -98,14 +98,7 @@ const walkthroughsReducer = (
         }),
       };
     case END_WALKTHROUGH:
-      return {
-        ...state,
-        id: '',
-        steps: [],
-        waitingForStepId: '',
-        activeStepId: '',
-        forcedStepIndex: null,
-      };
+      return { ...initialState };
     case UPDATE_WAITING_FOR_STEP_REF:
       return { ...state, waitingForStepId: action.payload, forcedStepIndex: null };
     case SET_ACTIVE_STEP_ID:

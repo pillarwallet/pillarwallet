@@ -9,6 +9,7 @@ import {
   showNextStepExternalAction,
 } from 'actions/walkthroughsActions';
 import type { Measurements, Steps, PosOverwrites } from 'reducers/walkthroughsReducer';
+import type { RootReducerState } from 'reducers/rootReducer';
 import { WALKTHROUGH_TYPES } from 'constants/walkthroughConstants';
 import { WalkthroughTooltip } from './WalkthroughTooltip';
 
@@ -37,7 +38,7 @@ type State = {
   tooltipInfo: ?TooltipInfo,
 };
 
-const measure = async (ref: View): Promise<Measurements> =>
+const measure = (ref: View): Promise<Measurements> =>
   new Promise(resolve => ref.measureInWindow((x, y, w, h) => resolve({
     x, y, w, h,
   })));
@@ -86,7 +87,7 @@ class WalkthroughItem extends React.Component<Props, State> {
     showNextStep();
   };
 
-  setWalkthroughStepMeasures = async () => {
+  setWalkthroughStepMeasures = () => {
     const { addWalkthroughStepMeasure, walkthroughStepId, posOverwrites } = this.props;
     measure(this.reference)
       .then((measures) => {
@@ -147,7 +148,7 @@ const mapStateToProps = ({
     activeStepId,
     steps,
   },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   walkthroughType,
   waitingForStepId,
   activeStepId,
