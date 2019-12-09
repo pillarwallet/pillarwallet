@@ -44,7 +44,7 @@ import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import DeploymentView from 'components/DeploymentView';
 import WalkthroughItem from 'components/Walkthrough/WalkthroughItem';
-import { WalkthroughItemParent } from 'components/Walkthrough/WalkthroughItemParent';
+import WalkthroughItemParent from 'components/Walkthrough/WalkthroughItemParent';
 
 // actions
 import {

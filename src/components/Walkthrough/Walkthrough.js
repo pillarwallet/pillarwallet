@@ -134,7 +134,7 @@ class Walkthrough extends React.Component<Props, State> {
     this.nextStep();
   };
 
-  nextStep = async (forcedStepIndex?: number) => {
+  nextStep = (forcedStepIndex?: number) => {
     const {
       steps,
       setActiveStepId,

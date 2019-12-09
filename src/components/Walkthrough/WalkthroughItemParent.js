@@ -12,7 +12,7 @@ const StandOutWrapper = styled.View`
   z-index: ${({ zIndex }) => zIndex || 10};
 `;
 
-export const WalkthroughItemParent = (props: Props) => {
+const WalkthroughItemParent = (props: Props) => {
   const {
     zIndex,
     children,
@@ -25,3 +25,4 @@ export const WalkthroughItemParent = (props: Props) => {
   );
 };
 
+export default WalkthroughItemParent;

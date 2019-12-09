@@ -55,7 +55,7 @@ export const setActiveStepIdAction = (id: string) => ({
 });
 
 export const showNextStepExternalAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const {
       walkthroughs: { steps, activeStepId },
     } = getState();

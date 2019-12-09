@@ -39,7 +39,7 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
 import WalkthroughItem from 'components/Walkthrough/WalkthroughItem';
-import { WalkthroughItemParent } from 'components/Walkthrough/WalkthroughItemParent';
+import WalkthroughItemParent from 'components/Walkthrough/WalkthroughItemParent';
 
 // constants
 import {
