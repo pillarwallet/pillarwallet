@@ -51,21 +51,24 @@ type Props = {
   light?: boolean,
   noBack?: boolean,
   customOnBack?: Function,
-  theme: Theme
+  theme: Theme,
+  noPaddingTop?: boolean,
+  noBottomBorder?: boolean,
 }
 
 const Wrapper = styled.View`
   width: 100%;
   background-color: ${({ theme }) => theme.colors.surface};
-  border-bottom-width: 1;
-  border-bottom-color: ${({ theme }) => theme.colors.border};
-  ${props => props.floating
-    ? `
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;`
-    : ''}
+  ${({ noBottomBorder, theme }) => !noBottomBorder && `
+    border-bottom-width: 1;
+    border-bottom-color: ${theme.colors.border};
+  `}
+  ${({ floating }) => floating && `
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+ `}
 `;
 
 const HeaderContentWrapper = styled.View`
@@ -75,7 +78,9 @@ const HeaderContentWrapper = styled.View`
 `;
 
 const SafeArea = styled(SafeAreaView)`
-  ${props => props.androidStatusbarHeight ? `margin-top: ${props.androidStatusbarHeight}px` : ''};
+  ${({ noPaddingTop, androidStatusbarHeight }) => !noPaddingTop && androidStatusbarHeight && `
+    margin-top: ${androidStatusbarHeight}px;
+  `}
 `;
 
 const HeaderRow = styled.View`
@@ -345,6 +350,8 @@ class HeaderBlock extends React.Component<Props> {
       floating,
       theme,
       light,
+      noPaddingTop,
+      noBottomBorder,
     } = this.props;
     const updatedColors = {};
     if (floating) {
@@ -359,8 +366,15 @@ class HeaderBlock extends React.Component<Props> {
 
     return (
       <ThemeProvider theme={updatedTheme}>
-        <Wrapper floating={floating}>
-          <SafeArea forceInset={{ bottom: 'never', top: 'always' }} androidStatusbarHeight={StatusBar.currentHeight}>
+        <Wrapper
+          floating={floating}
+          noBottomBorder={noBottomBorder}
+        >
+          <SafeArea
+            forceInset={{ bottom: 'never', top: 'always' }}
+            noPaddingTop={noPaddingTop}
+            androidStatusbarHeight={StatusBar.currentHeight}
+          >
             <HeaderContentWrapper>
               {this.renderHeaderContent()}
             </HeaderContentWrapper>
