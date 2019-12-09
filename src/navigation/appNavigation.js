@@ -739,7 +739,7 @@ class AppFlow extends React.Component<Props, State> {
       }
     }
 
-    if (notifications.length !== prevNotifications.length) {
+    if (notifications.length && notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
 
       if (lastNotification.type === 'CONNECTION' && connectionMessagesToExclude.includes(lastNotification.status)) {

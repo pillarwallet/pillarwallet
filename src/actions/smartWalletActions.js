@@ -795,7 +795,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         dispatch(checkAssetTransferTransactionsAction());
       }
 
-
       if (txStatus === TRANSACTION_COMPLETED && !skipNotifications.includes(txType)) {
         let notificationMessage;
         if (txType === transactionTypes.TopUp) {
