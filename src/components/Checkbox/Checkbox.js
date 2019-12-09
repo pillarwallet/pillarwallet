@@ -34,7 +34,7 @@ const CheckboxBox = styled.View`
   border-radius: ${props => props.rounded ? 12 : 2}px;
   flex: 0 0 24px;
   border-width: 1px;
-  border-color: ${({ theme, active }) => active ? theme.colors.primary : theme.colors.border}
+  border-color: ${({ theme, active }) => active ? theme.colors.primary : theme.colors.border};
   justify-content: center;
   align-items: center;
   ${({ rounded, theme }) => rounded ? `background-color: ${theme.colors.card}` : ''};

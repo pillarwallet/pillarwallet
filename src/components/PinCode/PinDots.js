@@ -33,7 +33,7 @@ const Wrapper = styled.View`
 const PinDot = styled.View`
   width: 16px;
   height: 16px;
-  background-color: ${({ active, theme }) => (active ? theme.colors.primary : theme.colors.secondaryAccent)};
+  background-color: ${({ active, theme }) => active ? theme.colors.primary : theme.colors.secondaryAccent};
   border-radius: 8;
 `;
 
