@@ -53,7 +53,7 @@ import type { Account } from 'models/Account';
 import type { GasInfo } from 'models/GasInfo';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Balances, Rates, AssetData } from 'models/Asset';
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 
 // constants
@@ -62,8 +62,6 @@ import { ETH, defaultFiatCurrency, SPEED_TYPES } from 'constants/assetsConstants
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { updateAppSettingsAction } from 'actions/appSettingsActions';
-
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -112,9 +110,9 @@ type Props = {
   rates: Rates,
   baseFiatCurrency: ?string,
   transactionSpeed: ?string,
-  updateAppSettings: (path: string, value: any) => void,
   activeAccountAddress: string,
   activeAccount: ?Account,
+  onUpdateTransactionSpeed: (speed: string) => void,
 };
 
 type State = {
@@ -176,7 +174,7 @@ class SendETHTokens extends React.Component<Props, State> {
   };
 
   handleGasPriceChange = (txSpeed: string) => () => {
-    this.props.updateAppSettings('transactionSpeed', txSpeed);
+    this.props.onUpdateTransactionSpeed(txSpeed);
     this.setState({
       showModal: false,
     });
@@ -480,9 +478,8 @@ const mapStateToProps = ({
   gasInfo,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
-  updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendETHTokens);

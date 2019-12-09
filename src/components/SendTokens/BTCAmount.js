@@ -36,16 +36,18 @@ import { fontStyles, spacing, UIColors } from 'utils/variables';
 import { makeAmountForm, getAmountFormFields } from 'utils/btcFormHelpers';
 
 // types
+import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
-import type { BitcoinTransactionPlan, BitcoinTransactionTarget } from 'models/Bitcoin';
+import type {
+  BitcoinTransactionPlan,
+  BitcoinTransactionTarget,
+  BitcoinAddress,
+  BitcoinUtxo,
+  BitcoinBalance,
+} from 'models/Bitcoin';
 
 // constants
 import { SEND_BITCOIN_CONFIRM } from 'constants/navigationConstants';
-
-// actions
-import { updateAppSettingsAction } from 'actions/appSettingsActions';
-
-import Spinner from 'components/Spinner';
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -79,14 +81,11 @@ const TextRow = styled.View`
 
 type Props = {
   token: string;
-  address: string,
-  totalBalance: number,
-  contractAddress: string,
   navigation: NavigationScreenProp<*>,
-  isVisible: boolean,
-  formValues?: Object,
-  updateAppSettings: Function,
-  bitcoin: Object,
+  addresses: BitcoinAddress[],
+  unspentTransactions: BitcoinUtxo[],
+  balances: BitcoinBalance,
+  onUpdateTransactionSpeed: (speed: string) => void,
 };
 
 type State = {
@@ -94,30 +93,31 @@ type State = {
     amount: ?string,
   },
   inputHasError: boolean,
-  submitPressed: boolean,
 };
 
 const { Form } = t.form;
 const MIN_TX_AMOUNT = 0.00000001;
 
-class SendBitcoinAmount extends React.Component<Props, State> {
+class BTCAmount extends React.Component<Props, State> {
   _form: t.form;
   assetData: Object;
   formSubmitted: boolean = false;
   receiver: string;
   source: string;
 
+  state = {
+    value: null,
+    inputHasError: false,
+  };
+
   constructor(props: Props) {
     super(props);
-    this.assetData = this.props.navigation.getParam('assetData', {});
-    this.receiver = this.props.navigation.getParam('receiver', '');
-    this.source = this.props.navigation.getParam('source', '');
 
-    this.state = {
-      value: null,
-      inputHasError: false,
-      submitPressed: false,
-    };
+    const { navigation } = this.props;
+
+    this.assetData = navigation.getParam('assetData', {});
+    this.receiver = navigation.getParam('receiver', '');
+    this.source = navigation.getParam('source', '');
   }
 
   handleChange = (value: Object) => {
@@ -126,14 +126,18 @@ class SendBitcoinAmount extends React.Component<Props, State> {
     this.checkFormInputErrors();
   };
 
-  handleFormSubmit = async () => {
-    const { submitPressed } = this.state;
-    const { bitcoin: { data: { unspentTransactions } } } = this.props;
-    if (submitPressed) return;
+  handleFormSubmit = () => {
+    const { unspentTransactions } = this.props;
+
+    if (this.formSubmitted) {
+      return;
+    }
     this.formSubmitted = true;
-    this.setState({ submitPressed: true });
+
     const value = this._form.getValue();
-    if (!value) return;
+    if (!value) {
+      return;
+    }
 
     const transactionTarget: BitcoinTransactionTarget = {
       address: this.receiver,
@@ -150,26 +154,17 @@ class SendBitcoinAmount extends React.Component<Props, State> {
     const { navigation } = this.props;
 
     Keyboard.dismiss();
-    this.setState({ submitPressed: false }, () => {
-      navigation.navigate(SEND_BITCOIN_CONFIRM, {
-        transactionPayload,
-        source: this.source,
-      });
+    navigation.navigate(SEND_BITCOIN_CONFIRM, {
+      transactionPayload,
+      source: this.source,
     });
-  };
-
-  useMaxValue = async () => {
-    const updatedState = {};
-    const amount = '1';
-    this.setState({
-      ...updatedState,
-      value: { amount },
-    });
-    this.checkFormInputErrors();
   };
 
   checkFormInputErrors = () => {
-    if (!this._form) return;
+    if (!this._form) {
+      return;
+    }
+
     const { inputHasError } = this.state;
     if (!isEmpty(get(this._form.validate(), 'errors'))) {
       this.setState({ inputHasError: true });
@@ -182,18 +177,13 @@ class SendBitcoinAmount extends React.Component<Props, State> {
     const {
       value,
       inputHasError,
-      submitPressed,
     } = this.state;
     const {
-      bitcoin: {
-        data: {
-          balances,
-          addresses,
-        },
-      },
+      balances,
+      addresses,
     } = this.props;
 
-    const { symbol: token, iconUrl: icon, decimals } = this.assetData;
+    const { token, icon, decimals } = this.assetData;
 
     // balance
     const { address } = addresses[0];
@@ -203,12 +193,11 @@ class SendBitcoinAmount extends React.Component<Props, State> {
     const formStructure = makeAmountForm(1000, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
     const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput: 0 });
 
-    const showNextButton = !submitPressed && !!value && !!parseFloat(value.amount) && !inputHasError;
-    const nextButtonTitle = 'Next';
+    const showNextButton = !!value && !!parseFloat(value.amount) && !inputHasError;
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: `Send ${this.assetData.symbol}` }] }}
+        headerProps={{ centerItems: [{ title: 'Send BTC' }] }}
         keyboardAvoidFooter={(
           <FooterInner>
             <Label>&nbsp;</Label>
@@ -216,11 +205,10 @@ class SendBitcoinAmount extends React.Component<Props, State> {
               <Button
                 small
                 flexRight
-                title={nextButtonTitle}
+                title="Next"
                 onPress={this.handleFormSubmit}
               />
             }
-            {submitPressed && <Spinner width={20} height={20} />}
           </FooterInner>
         )}
         minAvoidHeight={200}
@@ -252,20 +240,21 @@ class SendBitcoinAmount extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency, transactionSpeed } },
-  bitcoin,
-}) => ({
-  baseFiatCurrency,
-  transactionSpeed,
-  bitcoin,
+  bitcoin: {
+    data: {
+      addresses,
+      balances,
+      unspentTransactions,
+    },
+  },
+}: RootReducerState): $Shape<Props> => ({
+  addresses,
+  unspentTransactions,
+  balances,
 });
 
 const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  updateAppSettings: (path, value) => dispatch(updateAppSettingsAction(path, value)),
-});
-
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendBitcoinAmount);
+export default connect(combinedMapStateToProps)(BTCAmount);

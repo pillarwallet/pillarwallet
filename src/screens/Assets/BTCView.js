@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 
-import { SEND_BITCOIN_FLOW } from 'constants/navigationConstants';
+import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 
 // actions
 import {
@@ -43,7 +43,7 @@ import AssetPattern from 'components/AssetPattern';
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BitcoinAddress, BitcoinUtxo, BitcoinBalance, BTCTransaction } from 'models/Bitcoin';
-import type { Rates } from 'models/Asset';
+import type { Rates, Asset, AssetData } from 'models/Asset';
 
 // utils
 import { formatFiat, formatMoney } from 'utils/common';
@@ -58,7 +58,7 @@ type Props = {
   unspentTransactions: BitcoinUtxo[],
   refreshBitcoinBalance: () => void,
   balances: BitcoinBalance,
-  supportedAssets: Object[],
+  supportedAssets: Asset[],
   transactions: BTCTransaction[],
   refreshBitcoinTransactions: () => void,
   refreshBitcoinUnspentTx: () => void,
@@ -108,10 +108,28 @@ class BTCView extends React.Component<Props, State> {
     this.refreshBalance();
   }
 
+  onPressSend = () => {
+    const { supportedAssets } = this.props;
+    const btcToken = supportedAssets.find(e => e.symbol === 'BTC');
 
-  onPressSend = (assetData) => {
-    // TODO: Start send flow
-    this.props.navigation.navigate(SEND_BITCOIN_FLOW, { assetData });
+    if (!btcToken) {
+      console.error('BTC token not found');
+      return;
+    }
+
+    const {
+      symbol: token,
+      iconUrl: icon,
+      decimals,
+    } = btcToken;
+
+    const assetData: AssetData = {
+      token,
+      icon,
+      decimals,
+    };
+
+    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
   showReceive = () => {
@@ -139,13 +157,10 @@ class BTCView extends React.Component<Props, State> {
       balances,
       transactions = [],
       baseFiatCurrency,
-      supportedAssets,
     } = this.props;
 
     // TODO: Select address
     const { address } = addresses[0];
-
-    const assetData = supportedAssets.find(e => e.symbol === 'BTC') || {};
 
     const addressBalance = balances[address];
 
@@ -186,7 +201,7 @@ class BTCView extends React.Component<Props, State> {
               <CircleButton
                 label="Send"
                 icon={iconSend}
-                onPress={() => this.onPressSend(assetData)}
+                onPress={this.onPressSend}
                 disabled={confirmedBalance <= 0}
               />
             </AssetButtonsWrapper>
