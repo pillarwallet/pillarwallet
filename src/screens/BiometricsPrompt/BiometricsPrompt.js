@@ -89,7 +89,7 @@ class BiometricsPrompt extends React.Component<Props> {
 }
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  registerWallet: (setBiometrics) => { dispatch(registerWalletAction(setBiometrics)); },
+  registerWallet: (setBiometrics) => dispatch(registerWalletAction(setBiometrics)),
 });
 
 export default connect(null, mapDispatchToProps)(BiometricsPrompt);
