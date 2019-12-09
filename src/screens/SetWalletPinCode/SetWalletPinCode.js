@@ -27,6 +27,7 @@ import { MediumText, Paragraph } from 'components/Typography';
 import { setPinForNewWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
+import type { ImportedWallet } from 'reducers/walletReducer';
 
 const ContentWrapper = styled.ScrollView`
   flex: 1;
@@ -42,6 +43,7 @@ const HeaderText = styled(MediumText)`
 type Props = {
   setPinForNewWallet: (pin: string) => void,
   navigation: NavigationScreenProp<*>,
+  importedWallet: ImportedWallet,
 };
 
 type State = {
@@ -73,7 +75,7 @@ class SetWalletPinCode extends React.Component<Props, State> {
 
   render() {
     const { error } = this.state;
-    const { navigation } = this.props;
+    const { navigation, importedWallet } = this.props;
     const username = navigation.getParam('username', '');
     let welcomeText = 'Welcome to Pillar';
     if (username) welcomeText += `,\n${username}`;
@@ -83,9 +85,10 @@ class SetWalletPinCode extends React.Component<Props, State> {
         headerProps={{ centerItems: [{ title: 'Create PIN code' }] }}
       >
         <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
+          {!importedWallet &&
           <HeaderText>
             {`${welcomeText}!`}
-          </HeaderText>
+          </HeaderText>}
           <Paragraph center>
             Now let’s create a PIN code to secure your account.
           </Paragraph>
@@ -103,10 +106,12 @@ class SetWalletPinCode extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = ({ wallet: { onboarding: { importedWallet } } }) => ({ importedWallet });
+
 const mapDispatchToProps = (dispatch: Function) => ({
   setPinForNewWallet: (pin) => {
     dispatch(setPinForNewWalletAction(pin));
   },
 });
 
-export default connect(null, mapDispatchToProps)(SetWalletPinCode);
+export default connect(mapStateToProps, mapDispatchToProps)(SetWalletPinCode);

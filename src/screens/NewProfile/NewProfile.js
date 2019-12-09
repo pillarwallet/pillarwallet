@@ -394,7 +394,7 @@ class NewProfile extends React.Component<Props, State> {
       <ContainerWithHeader
         noBack={!!retry}
         headerProps={headerProps}
-        putContentInScrollView
+        putContentInScrollView={!apiUser.walletId}
         keyboardAvoidFooter={!apiUser.walletId && (
           <NextFooter
             onNextPress={this.handleSubmit}
