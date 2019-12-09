@@ -91,7 +91,8 @@ import { logEventAction } from 'actions/analyticsActions';
 import {
   setFirebaseAnalyticsCollectionEnabled,
   setUserJoinedBetaAction,
-  setAppThemeAction, changeUseBiometricsAction,
+  setAppThemeAction,
+  changeUseBiometricsAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
