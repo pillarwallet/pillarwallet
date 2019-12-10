@@ -12,7 +12,7 @@ exports[`Asset renders the Asset correctly 1`] = `
     style={
       Array [
         Object {
-          "backgroundColor": "#FAFAFA",
+          "backgroundColor": "#FFFFFF",
           "borderBottomColor": "#EDEDED",
           "borderBottomWidth": 1,
           "width": "100%",
