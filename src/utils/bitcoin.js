@@ -38,38 +38,45 @@ export const unspentAmount = (unspent: BitcoinUtxo[]): number => {
 export const extractBitcoinTransactions = (address: string, transactions: BTCTransaction[]): Object[] => {
   const transactionsHistory = [];
   transactions.forEach((tx: BTCTransaction) => {
+    let fromAddress = '';
+    let toAddress = '';
+    let status = 'pending';
+    let value = 0;
+
     tx.details.coins.inputs.forEach(inputItem => {
-      const txItem = {
-        _id: inputItem._id,
-        hash: tx.details.txid,
-        to: address,
-        from: inputItem.address,
-        createdAt: new Date(tx.details.blockTime).getTime() / 1000,
-        asset: 'BTC',
-        nbConfirmations: tx.details.confirmations,
-        status: inputItem.mintHeight !== -1 ? 'confirmed' : 'pending',
-        value: inputItem.value,
-        isPPNTransaction: false,
-        type: 'transactionEvent',
-      };
-      transactionsHistory.push(txItem);
+      if (address !== inputItem.address) {
+        status = inputItem.mintHeight > 0 ||
+        inputItem.spentHeight > 0 ? 'confirmed' : 'pending';
+        ({ value } = inputItem);
+      }
+      fromAddress = inputItem.address;
     });
-    tx.details.coins.outputs.forEach(inputItem => {
-      const txItem = {
-        _id: inputItem._id,
-        hash: tx.details.txid,
-        to: inputItem.address,
-        from: address,
-        createdAt: new Date(tx.details.blockTime).getTime() / 1000,
-        asset: 'BTC',
-        nbConfirmations: tx.details.confirmations,
-        status: inputItem.mintHeight !== -1 ? 'confirmed' : 'pending',
-        value: inputItem.value,
-        isPPNTransaction: false,
-        type: 'transactionEvent',
-      };
-      transactionsHistory.push(txItem);
+    tx.details.coins.outputs.forEach(outputItem => {
+      if (outputItem.address !== address && address === fromAddress) {
+        status = outputItem.mintHeight > 0 ||
+        outputItem.spentHeight > 0 ? 'confirmed' : 'pending';
+        ({ value, address: toAddress } = outputItem);
+      } else if (outputItem.address === address && address !== fromAddress) {
+        status = outputItem.mintHeight > 0 ||
+        outputItem.spentHeight > 0 ? 'confirmed' : 'pending';
+        toAddress = address;
+        ({ value } = outputItem);
+      }
     });
+    const txItem = {
+      _id: tx._id,
+      hash: tx.details.txid,
+      to: toAddress,
+      from: fromAddress,
+      createdAt: new Date(tx.details.blockTime).getTime() / 1000,
+      asset: 'BTC',
+      nbConfirmations: tx.details.confirmations,
+      status,
+      value,
+      isPPNTransaction: false,
+      type: 'transactionEvent',
+    };
+    transactionsHistory.push(txItem);
   });
   return transactionsHistory;
 };

@@ -38,10 +38,10 @@ export const initialState = {
   userState: null,
 };
 
-export default function userReducer(
+const userReducer = (
   state: UserReducerState = initialState,
   action: UserReducerAction,
-) {
+): UserReducerState => {
   switch (action.type) {
     case UPDATE_USER:
       const { state: userState, user } = action.payload;
@@ -58,4 +58,6 @@ export default function userReducer(
     default:
       return state;
   }
-}
+};
+
+export default userReducer;
