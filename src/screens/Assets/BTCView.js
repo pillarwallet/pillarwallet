@@ -24,7 +24,9 @@ import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 
+// constants
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { BTC } from 'constants/assetsConstants';
 
 // actions
 import {
@@ -110,7 +112,7 @@ class BTCView extends React.Component<Props, State> {
 
   onPressSend = () => {
     const { supportedAssets } = this.props;
-    const btcToken = supportedAssets.find(e => e.symbol === 'BTC');
+    const btcToken = supportedAssets.find(e => e.symbol === BTC);
 
     if (!btcToken) {
       console.error('BTC token not found');
