@@ -45,10 +45,10 @@ import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Steps } from 'reducers/walkthroughsReducer';
 import { getThemeByType, defaultTheme } from 'utils/themes';
 
 import configureStore from './src/configureStore';
-import type { Steps } from './src/reducers/walkthroughsReducer';
 
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
