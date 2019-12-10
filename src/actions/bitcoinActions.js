@@ -146,8 +146,6 @@ import {
   keyPairAddress,
   getAddressUtxos,
   getAddressBalance,
-  importKeyPair,
-  exportKeyPair,
   rootFromMnemonic,
   transactionFromPlan,
   sendRawTransaction,
@@ -226,14 +224,14 @@ const bitcoinWalletCreationFailed = (): BitcoinWalletCreationFailedAction => ({
 
 export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
   return async (dispatch: Dispatch) => {
-    const { mnemonic, path } = wallet;
+    const { mnemonic, privateKey, path } = wallet;
 
-    if (!mnemonic) {
+    if (!mnemonic && !privateKey) {
       await dispatch(bitcoinWalletCreationFailed());
       return;
     }
 
-    let seed = wallet.privateKey;
+    let seed = privateKey;
     if (mnemonic && mnemonic !== 'ENCRYPTED') {
       seed = mnemonic;
     }
@@ -253,7 +251,7 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
     }
 
     await dispatch(saveDb({
-      keys: { [address]: exportKeyPair(keyPair) },
+      addresses: [address],
     }));
 
     await dispatch(setBitcoinAddressesAction([address]));
@@ -262,9 +260,13 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
 
 export const loadBitcoinAddressesAction = () => {
   return async (dispatch: Dispatch) => {
-    const { keys = {} } = await loadDb();
+    const { addresses = [], keys = {} } = await loadDb();
 
-    const loaded: string[] = Object.keys(keys);
+    const migrateAddresses = Object.keys(keys);
+    if (addresses.length === 0 && migrateAddresses.length > 0) {
+      await dispatch(saveDb({ addresses: migrateAddresses }));
+    }
+    const loaded: string[] = addresses.length > 0 ? addresses : migrateAddresses;
 
     if (loaded.length) {
       dispatch(setBitcoinAddressesAction(loaded));
@@ -338,13 +340,21 @@ const transactionSent = () => {
   });
 };
 
-export const sendTransactionAction = (plan: BitcoinTransactionPlan, callback: Function) => {
+export const sendTransactionAction = (wallet: EthereumWallet, plan: BitcoinTransactionPlan, callback: Function) => {
   return async () => {
-    const { keys = {} } = await loadDb();
+    const { mnemonic, privateKey, path } = wallet;
+
+    let seed = privateKey;
+    if (mnemonic && mnemonic !== 'ENCRYPTED') {
+      seed = mnemonic;
+    }
+
+    const root = await rootFromMnemonic(seed);
+    const keyPair = root.derivePath(path);
 
     const rawTransaction = transactionFromPlan(
       plan,
-      (address: string) => importKeyPair(keys[address]),
+      keyPair,
     );
 
     if (!rawTransaction) {
