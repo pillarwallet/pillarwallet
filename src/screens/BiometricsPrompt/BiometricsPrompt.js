@@ -21,19 +21,24 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import * as Keychain from 'react-native-keychain';
+import type { NavigationScreenProp } from 'react-navigation';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { getBiometryType } from 'utils/settings';
 import { registerWalletAction } from 'actions/onboardingActions';
 
 type Props = {
+  navigation: NavigationScreenProp<*>,
   registerWallet: (setBiometrics: boolean) => void,
 };
 
-const touchIdImageSource = require('assets/images/touch_id.png');
+const touchIdImageSource = require('assets/images/touchId.png');
+const faceIdImageSource = require('assets/images/faceId.png');
 
 const ContentWrapper = styled.ScrollView`
   flex: 1;
@@ -59,6 +64,18 @@ const TouchIdImage = styled(CachedImage)`
   height: 164px;
 `;
 
+const getBiometryImage = (biometryType: string) => {
+  switch (biometryType) {
+    case Keychain.BIOMETRY_TYPE.TOUCH_ID:
+    case Keychain.BIOMETRY_TYPE.FINGERPRINT:
+      return touchIdImageSource;
+    case Keychain.BIOMETRY_TYPE.FACE_ID:
+      return faceIdImageSource;
+    default:
+      return '';
+  }
+};
+
 class BiometricsPrompt extends React.Component<Props> {
   proceedToRegisterWallet = (setBiometrics) => {
     const { registerWallet } = this.props;
@@ -66,12 +83,16 @@ class BiometricsPrompt extends React.Component<Props> {
   };
 
   render() {
+    const { navigation } = this.props;
+    const _biometryType = navigation.getParam('biometryType');
+    const biometryType = getBiometryType(_biometryType);
+    const imageSource = getBiometryImage(_biometryType);
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Make crypto easy' }] }}>
         <ContentWrapper contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 30, flexGrow: 1 }}>
-          <HeaderText>{'Would you like to use\nTouch ID with your\nwallet?'}</HeaderText>
+          <HeaderText>{`Would you like to use\n${biometryType} with your\nwallet?`}</HeaderText>
           <ContentInnerWrapper>
-            <TouchIdImage source={touchIdImageSource} />
+            <TouchIdImage source={imageSource} />
             <ButtonsWrapper>
               <Button title="Yes, please" onPress={() => this.proceedToRegisterWallet(true)} />
               <ButtonText

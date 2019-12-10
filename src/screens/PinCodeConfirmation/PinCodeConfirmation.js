@@ -77,9 +77,9 @@ class PinCodeConfirmation extends React.Component<Props, State> {
     }
 
     Keychain.getSupportedBiometryType()
-      .then((supported) => {
-        if (supported) {
-          navigation.navigate(BIOMETRICS_PROMPT);
+      .then((biometryType) => {
+        if (biometryType) {
+          navigation.navigate(BIOMETRICS_PROMPT, { biometryType });
           confirmPinForNewWallet(pin);
         } else {
           confirmPinForNewWallet(pin, true);
