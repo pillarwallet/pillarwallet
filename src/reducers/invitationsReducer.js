@@ -19,25 +19,25 @@
 */
 import { ADD_INVITATION, UPDATE_INVITATIONS, UPDATE_INVITATIONS_STATE } from 'constants/invitationsConstants';
 
-export type InvitationsReducerState = {
+export type InvitationsReducerState = {|
   data: Object[],
   invitationState: ?string,
-}
+|};
 
-export type InvitationsReducerAction = {
+export type InvitationsReducerAction = {|
   type: string,
   payload: any,
-}
+|};
 
 const initialState = {
   data: [],
   invitationState: null,
 };
 
-export default function invitationsReducer(
+const invitationsReducer = (
   state: InvitationsReducerState = initialState,
   action: InvitationsReducerAction,
-) {
+): InvitationsReducerState => {
   switch (action.type) {
     case UPDATE_INVITATIONS_STATE:
       return { ...state, invitationState: action.payload };
@@ -48,4 +48,6 @@ export default function invitationsReducer(
     default:
       return state;
   }
-}
+};
+
+export default invitationsReducer;
