@@ -92,6 +92,7 @@ import {
   setFirebaseAnalyticsCollectionEnabled,
   setUserJoinedBetaAction,
   setAppThemeAction,
+  changeUseBiometricsAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
@@ -240,7 +241,7 @@ const navigateToAppFlow = (isWalletBackedUp: boolean) => {
   navigate(navigateToAssetsAction);
 };
 
-export const registerWalletAction = () => {
+export const registerWalletAction = (enableBiometrics?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const currentState = getState();
     const {
@@ -307,6 +308,7 @@ export const registerWalletAction = () => {
       },
     }));
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
+
     const user = apiUser.username ? { username: apiUser.username } : {};
     dispatch(saveDbAction('user', { user }));
     dispatch({
@@ -366,6 +368,8 @@ export const registerWalletAction = () => {
     // STEP 6: add wallet created / imported events
     dispatch(getWalletsCreationEventsAction());
     if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
+
+    if (enableBiometrics) await dispatch(changeUseBiometricsAction(true, wallet.privateKey, true));
 
     // STEP 7: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;

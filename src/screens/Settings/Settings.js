@@ -69,6 +69,7 @@ import { isProdEnv } from 'utils/environment';
 import { baseColors, fontTrackings, spacing, fontStyles } from 'utils/variables';
 import { noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
+import { getBiometryType } from 'utils/settings';
 
 // models
 import type { BackupStatus } from 'reducers/walletReducer';
@@ -79,7 +80,7 @@ import { SettingsSection } from './SettingsSection';
 
 type State = {
   visibleModal: ?string,
-  showBiometricsSelector: boolean,
+  supportedBiometryType: string,
   joinBetaPressed: boolean,
   leaveBetaPressed: boolean,
   setBiometrics: ?{
@@ -139,7 +140,7 @@ const SmallText = styled(BaseText)`
   letter-spacing: ${fontTrackings.small}px;
 `;
 
-const formSecurityItems = (that, showBiometricsSelector) => {
+const formSecurityItems = (that, biometryType) => {
   const { navigation, useBiometrics } = that.props;
   return [
     {
@@ -149,11 +150,11 @@ const formSecurityItems = (that, showBiometricsSelector) => {
     },
     {
       key: 'biometricLogin',
-      title: 'Biometric Login',
+      title: biometryType,
       onPress: () => that.setState({ visibleModal: 'checkPin' }),
       toggle: true,
       value: useBiometrics,
-      hidden: !showBiometricsSelector,
+      hidden: !biometryType,
     },
   ];
 };
@@ -335,7 +336,7 @@ class Settings extends React.Component<Props, State> {
     const visibleModal = navigation.getParam('visibleModal', null);
     this.state = {
       visibleModal,
-      showBiometricsSelector: false,
+      supportedBiometryType: '',
       joinBetaPressed: false,
       leaveBetaPressed: false,
       setBiometrics: null,
@@ -346,7 +347,11 @@ class Settings extends React.Component<Props, State> {
   componentDidMount() {
     const { navigation } = this.props;
     Keychain.getSupportedBiometryType()
-      .then(supported => this.setState({ showBiometricsSelector: !!supported }))
+      .then(biometryType => {
+        // returns null, if the device haven't enrolled into fingerprint/FaceId. Even though it has hardware for it
+        // and getBiometryType has default string value
+        this.setState({ supportedBiometryType: biometryType ? getBiometryType(biometryType) : '' });
+      })
       .catch(() => null);
     const scrollTo = navigation.getParam('scrollTo');
     if (scrollTo) this.setSectionToScrollTo(scrollTo);
@@ -483,7 +488,7 @@ class Settings extends React.Component<Props, State> {
 
     const {
       visibleModal,
-      showBiometricsSelector,
+      supportedBiometryType,
       scrollToSection,
     } = this.state;
 
@@ -507,7 +512,7 @@ class Settings extends React.Component<Props, State> {
 
           <SettingsSection
             sectionTitle="Security"
-            sectionItems={formSecurityItems(this, showBiometricsSelector)}
+            sectionItems={formSecurityItems(this, supportedBiometryType)}
           />
 
           <SettingsSection

@@ -25,9 +25,8 @@ import HTMLView from 'react-native-htmlview';
 import get from 'lodash.get';
 
 // components
-import { Container } from 'components/Layout';
-import Header from 'components/Header';
 import Spinner from 'components/Spinner';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 // utils
 import { fontSizes, lineHeights, baseColors, appFont, spacing } from 'utils/variables';
@@ -187,8 +186,16 @@ export default class HTMLContentModal extends React.Component<Props, State> {
         propagateSwipe
         style={{ margin: 0, justifyContent: 'flex-start' }}
       >
-        <Container>
-          <Header onClose={modalHide} />
+        <ContainerWithHeader
+          headerProps={{
+            rightItems: [{ close: true }],
+            noBack: true,
+            noPaddingTop: true,
+            noBottomBorder: true,
+            floating: true,
+            onClose: modalHide,
+          }}
+        >
           {!isHtmlFetched &&
             <ActivityIndicatorWrapper>
               <Spinner />
@@ -214,7 +221,7 @@ export default class HTMLContentModal extends React.Component<Props, State> {
               />
             </ScrollView>
           }
-        </Container>
+        </ContainerWithHeader>
       </Modal>
     );
   }
