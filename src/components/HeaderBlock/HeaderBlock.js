@@ -63,7 +63,7 @@ type Props = {
 
 const Wrapper = styled.View`
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.surface};
+  background-color: ${({ theme }) => theme.colors.card};
   ${({ noBottomBorder, theme }) => !noBottomBorder && `
     border-bottom-width: 1;
     border-bottom-color: ${theme.colors.border};
@@ -366,7 +366,7 @@ class HeaderBlock extends React.Component<Props> {
     } = this.props;
     const updatedColors = {};
     if (floating) {
-      updatedColors.surface = 'transparent';
+      updatedColors.card = 'transparent';
       updatedColors.border = 'transparent';
     }
     if (light) {
