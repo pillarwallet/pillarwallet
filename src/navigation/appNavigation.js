@@ -129,6 +129,7 @@ import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { signalInitAction } from 'actions/signalClientActions';
+import { endWalkthroughAction } from 'actions/walkthroughsActions';
 
 // constants
 import {
@@ -673,6 +674,7 @@ type Props = {
   stopListeningForBalanceChange: Function,
   isOnline: boolean,
   initSignal: Function,
+  endWalkthrough: () => void,
 }
 
 type State = {
@@ -782,6 +784,7 @@ class AppFlow extends React.Component<Props, State> {
       isPickingImage,
       isBrowsingWebView,
       stopListeningForBalanceChange,
+      endWalkthrough,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -790,6 +793,8 @@ class AppFlow extends React.Component<Props, State> {
     if (APP_LOGOUT_STATES.includes(nextAppState)) {
       // close websocket channel instantly to receive PN while in background
       stopListeningChatWebSocket();
+      // close walkthrough shade or tooltips
+      endWalkthrough();
       lockTimer = BackgroundTimer.setTimeout(() => {
         const pathAndParams = navigation.router.getPathAndParamsForState(navigation.state);
         const lastActiveScreen = pathAndParams.path.split('/').slice(-1)[0];
@@ -896,6 +901,7 @@ const mapDispatchToProps = dispatch => ({
   startListeningForBalanceChange: () => dispatch(startListeningForBalanceChangeAction()),
   stopListeningForBalanceChange: () => dispatch(stopListeningForBalanceChangeAction()),
   initSignal: () => dispatch(signalInitAction()),
+  endWalkthrough: () => dispatch(endWalkthroughAction()),
 });
 
 const ConnectedAppFlow = connect(

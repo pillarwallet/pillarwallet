@@ -60,3 +60,11 @@ export function responsiveSize(size: number) {
   if (Platform.OS === 'ios') return Math.round(PixelRatio.roundToNearestPixel(newSize));
   return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
 }
+
+export function hexToRgba(hex: string, opacity: ?number) {
+  const op = !!opacity && (opacity <= 1 || opacity > 0) ? opacity.toString() : '1';
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${op})`
+    : null;
+}
