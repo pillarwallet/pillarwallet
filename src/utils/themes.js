@@ -52,7 +52,7 @@ export const darkThemeColors = {
   positive: '#00E097',
   negative: '#FF367F',
   surface: '#222C46',
-  card: '#222C46',
+  card: '#32426B',
   tertiary: '#171F31',
   control: '#FCFDFF',
   warning: 'blue', // TODO: add correct one when added to Design System
