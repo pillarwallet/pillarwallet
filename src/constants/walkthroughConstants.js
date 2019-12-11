@@ -17,39 +17,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import styled from 'styled-components/native';
-import { MediumText } from 'components/Typography';
-import { fontStyles } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 
-type Props = {
-  children: React.Node,
-  wrapperStyle?: Object,
-}
-
-const ErrorMessageBackground = styled.View`
-  width: 100%;
-  padding: 20px;
-  margin: 20px 0 0;
-  background-color: ${themedColors.negative};
-`;
-
-const ErrorMessageText = styled(MediumText)`
-  color: ${themedColors.control};
-  ${fontStyles.medium};
-`;
-
-const ErrorMessage = (props: Props) => {
-  const { wrapperStyle } = props;
-  return (
-    <ErrorMessageBackground style={wrapperStyle}>
-      <ErrorMessageText>
-        {props.children}
-      </ErrorMessageText>
-    </ErrorMessageBackground>
-
-  );
+export const ADD_WALKTHROUGH = 'ADD_WALKTHROUGH';
+export const END_WALKTHROUGH = 'END_WALKTHROUGH';
+export const ADD_WALKTHROUGH_STEPS = 'ADD_WALKTHROUGH_STEPS';
+export const UPDATE_WAITING_FOR_STEP_REF = 'UPDATE_WAITING_FOR_STEP_REF';
+export const ADD_WALKTHROUGH_STEP_MEASURE = 'ADD_WALKTHROUGH_STEP_MEASURE';
+export const SET_ACTIVE_STEP_ID = 'SET_ACTIVE_STEP_ID';
+export const FORCE_NEXT_STEP = 'FORCE_NEXT_STEP';
+export const WALKTHROUGH_TYPES = {
+  SHADE: 'SHADE',
+  TOOLTIP: 'TOOLTIP',
 };
-
-export default ErrorMessage;

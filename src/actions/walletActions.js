@@ -164,13 +164,14 @@ export const setPinForNewWalletAction = (pin: string) => {
   };
 };
 
-export const confirmPinForNewWalletAction = (pin: string) => {
+export const confirmPinForNewWalletAction = (pin: string, shouldRegisterWallet?: boolean) => {
   return async (dispatch: Function) => {
     dispatch({
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
-    dispatch(registerWalletAction());
+
+    if (shouldRegisterWallet) dispatch(registerWalletAction());
   };
 };
 

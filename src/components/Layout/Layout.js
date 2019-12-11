@@ -113,7 +113,7 @@ export const Container = (props: ContainerProps) => {
 };
 
 export const Wrapper = styled.View`
-  margin: ${props => (props.regularPadding ? `0 ${spacing.large}px` : '0')};
+  margin: ${props => (props.regularPadding ? `0 ${spacing.layoutSides}px` : '0')};
   ${({ center }) => center && 'align-items: center; justify-content: center;'}
   ${({ fullScreen }) => fullScreen && 'height: 100%; width: 100%;'}
   ${({ flex }) => flex && `flex: ${flex};`}
@@ -124,7 +124,7 @@ export const Wrapper = styled.View`
 const FooterInner = styled.KeyboardAvoidingView`
   width: 100%;
   margin-top: auto;
-  padding: ${Platform.OS === 'ios' ? 0 : `${spacing.rhythm}px`};
+  padding: ${Platform.OS === 'ios' ? 0 : `${spacing.layoutSides}px`};
   flex-direction: ${props => (props.column ? 'row' : 'column')};
   background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
 `;
@@ -188,7 +188,7 @@ export const Footer = (props: FooterProps) => {
         position: 'relative',
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        padding: spacing.rhythm,
+        padding: spacing.layoutSides,
         ...props.style,
       }}
       backgroundColor={props.backgroundColor}
