@@ -152,13 +152,11 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
       }
     });
 
-
     const updatedContacts = uniqBy(contacts.concat(allContacts), 'id')
       .filter(conn => !removeContacts.includes(conn.id));
     const updatedInvitations = uniqBy(invitations.concat(allInvitations), 'id')
       .filter(invi => !removeInvitations.includes(invi.id));
     const updatedConnectionIdentityKeys = uniqBy(resultConnections.concat(connectionIdentityKeys), 'sourceIdentityKey');
-
 
     dispatch({
       type: UPDATE_INVITATIONS,
