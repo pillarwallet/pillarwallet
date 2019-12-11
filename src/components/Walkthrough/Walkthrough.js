@@ -98,11 +98,7 @@ const initialState = {
 
 class Walkthrough extends React.Component<Props, State> {
   waitingForNextStepTimeout: TimeoutID;
-
-  constructor(props) {
-    super(props);
-    this.state = initialState;
-  }
+  state = initialState;
 
   componentDidMount() {
     this.initWalkthrough();
@@ -130,8 +126,7 @@ class Walkthrough extends React.Component<Props, State> {
   }
 
   initWalkthrough = () => {
-    this.setState({ isActiveWalkthrough: true });
-    this.nextStep();
+    this.setState({ isActiveWalkthrough: true }, () => this.nextStep());
   };
 
   nextStep = (forcedStepIndex?: number) => {
