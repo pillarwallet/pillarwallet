@@ -398,6 +398,7 @@ class SmartWallet {
   }
 
   async reset() {
+    if (!this.sdkInitialized) return;
     this.sdkInitialized = false;
     if (!this.sdk) return;
     this.sdk.event$.next(null); // unsubscribes
