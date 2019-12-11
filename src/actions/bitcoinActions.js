@@ -352,9 +352,10 @@ export const sendTransactionAction = (wallet: EthereumWallet, plan: BitcoinTrans
     const root = await rootFromMnemonic(seed);
     const keyPair = root.derivePath(path);
 
+    // TODO: Multiple Paths support should map an address to a custom path
     const rawTransaction = transactionFromPlan(
       plan,
-      keyPair,
+      (address: string) => keyPair, // eslint-disable-line no-unused-vars
     );
 
     if (!rawTransaction) {

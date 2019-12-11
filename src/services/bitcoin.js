@@ -113,7 +113,7 @@ export const sendRawTransaction = async (rawTx: string): Promise<string> => {
 
 export const transactionFromPlan = (
   plan: BitcoinTransactionPlan,
-  keyPair: ECPair,
+  inputSigner: (address: string) => ECPair,
   networkName?: string,
 ): ?string => {
   const txb = new TransactionBuilder(selectNetwork(networkName));
@@ -149,7 +149,9 @@ export const transactionFromPlan = (
   });
 
   let utxoIndex = 0;
-  inputs.forEach(() => {
+  inputs.forEach(({ address }) => {
+    const keyPair = inputSigner(address);
+
     txb.sign({
       keyPair,
       prevOutScriptType: 'p2pkh',

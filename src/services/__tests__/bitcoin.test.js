@@ -116,7 +116,9 @@ describe('bitcoin service', () => {
         outputs: targets,
       };
 
-      const rawTransaction = transactionFromPlan(plan, root, network);
+      const rawTransaction = transactionFromPlan(plan, () => {
+        return root;
+      }, network);
 
       expect(rawTransaction).toEqual(
         '01000000010ed79892705baae18a0a1db042a7347b6b2a3dac6cc90573caeaeec710f7bd29010000006' +
