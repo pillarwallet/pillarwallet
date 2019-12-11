@@ -301,9 +301,9 @@ class NewProfile extends React.Component<Props, State> {
     return (
       <StyledWrapper>
         <InnerWrapper>
-          <Paragraph>
+          { /* <Paragraph>
             Pillar is next generation smart wallet, payment network and identity manager.
-          </Paragraph>
+          </Paragraph> */ }
           <Label>Please choose a username</Label>
         </InnerWrapper>
         <LoginForm
