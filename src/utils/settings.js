@@ -17,39 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import styled from 'styled-components/native';
-import { MediumText } from 'components/Typography';
-import { fontStyles } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 
-type Props = {
-  children: React.Node,
-  wrapperStyle?: Object,
-}
+import * as Keychain from 'react-native-keychain';
 
-const ErrorMessageBackground = styled.View`
-  width: 100%;
-  padding: 20px;
-  margin: 20px 0 0;
-  background-color: ${themedColors.negative};
-`;
 
-const ErrorMessageText = styled(MediumText)`
-  color: ${themedColors.control};
-  ${fontStyles.medium};
-`;
-
-const ErrorMessage = (props: Props) => {
-  const { wrapperStyle } = props;
-  return (
-    <ErrorMessageBackground style={wrapperStyle}>
-      <ErrorMessageText>
-        {props.children}
-      </ErrorMessageText>
-    </ErrorMessageBackground>
-
-  );
+export const getBiometryType = (biometryType: string) => {
+  switch (biometryType) {
+    case Keychain.BIOMETRY_TYPE.TOUCH_ID:
+      return 'Touch ID';
+    case Keychain.BIOMETRY_TYPE.FACE_ID:
+      return 'Face ID';
+    case Keychain.BIOMETRY_TYPE.FINGERPRINT:
+      return 'Android Fingerprint';
+    default:
+      return 'Biometric Login';
+  }
 };
 
-export default ErrorMessage;

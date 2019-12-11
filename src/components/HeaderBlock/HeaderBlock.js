@@ -38,10 +38,14 @@ import type { Theme } from 'models/Theme';
 // partials
 import { HeaderActionButton } from './HeaderActionButton';
 
+type NavItem = {
+  [string]: any,
+};
+
 type Props = {
-  rightItems?: Object[],
-  leftItems?: Object[],
-  centerItems?: Object[],
+  rightItems?: NavItem[],
+  leftItems?: NavItem[],
+  centerItems?: NavItem[],
   sideFlex?: number,
   user: Object,
   navigation: NavigationScreenProp<*>,
@@ -50,32 +54,38 @@ type Props = {
   transparent?: boolean,
   light?: boolean,
   noBack?: boolean,
-  customOnBack?: Function,
-  theme: Theme
+  customOnBack?: () => void,
+  theme: Theme,
+  noPaddingTop?: boolean,
+  noBottomBorder?: boolean,
+  onClose?: () => void,
 }
 
 const Wrapper = styled.View`
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.surface};
-  border-bottom-width: 1;
-  border-bottom-color: ${({ theme }) => theme.colors.border};
-  ${props => props.floating
-    ? `
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;`
-    : ''}
+  background-color: ${({ theme }) => theme.colors.card};
+  ${({ noBottomBorder, theme }) => !noBottomBorder && `
+    border-bottom-width: 1;
+    border-bottom-color: ${theme.colors.border};
+  `}
+  ${({ floating }) => floating && `
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+ `}
 `;
 
 const HeaderContentWrapper = styled.View`
-  padding: 15px ${spacing.large}px;
+  padding: 15px ${spacing.layoutSides}px;
   width: 100%;
   min-height: 58px;
 `;
 
 const SafeArea = styled(SafeAreaView)`
-  ${props => props.androidStatusbarHeight ? `margin-top: ${props.androidStatusbarHeight}px` : ''};
+  ${({ noPaddingTop, androidStatusbarHeight }) => !noPaddingTop && androidStatusbarHeight && `
+    margin-top: ${androidStatusbarHeight}px;
+  `}
 `;
 
 const HeaderRow = styled.View`
@@ -188,6 +198,12 @@ const LEFT = 'LEFT';
 const CENTER = 'CENTER';
 const RIGHT = 'RIGHT';
 
+const getCloseAction = (props, navigation) => {
+  if (props.onClose) return () => props.onClose();
+  if (props.dismiss) return () => navigation.dismiss();
+  return () => navigation.goBack();
+};
+
 class HeaderBlock extends React.Component<Props> {
   renderHeaderContent = () => {
     const {
@@ -233,7 +249,7 @@ class HeaderBlock extends React.Component<Props> {
   };
 
   renderSideItems = (item, type = '') => {
-    const { navigation, theme } = this.props;
+    const { navigation, theme, onClose } = this.props;
     const colors = getThemeColors(theme);
     const commonStyle = {};
     if (type === RIGHT) commonStyle.marginLeft = spacing.small;
@@ -304,7 +320,7 @@ class HeaderBlock extends React.Component<Props> {
           <CloseIcon
             icon="close"
             color={colors.text}
-            onPress={() => item.dismiss ? navigation.dismiss() : navigation.goBack()}
+            onPress={getCloseAction({ ...item, onClose }, navigation)}
             fontSize={fontSizes.regular}
             horizontalAlign="flex-end"
           />
@@ -345,10 +361,12 @@ class HeaderBlock extends React.Component<Props> {
       floating,
       theme,
       light,
+      noPaddingTop,
+      noBottomBorder,
     } = this.props;
     const updatedColors = {};
     if (floating) {
-      updatedColors.surface = 'transparent';
+      updatedColors.card = 'transparent';
       updatedColors.border = 'transparent';
     }
     if (light) {
@@ -359,8 +377,15 @@ class HeaderBlock extends React.Component<Props> {
 
     return (
       <ThemeProvider theme={updatedTheme}>
-        <Wrapper floating={floating}>
-          <SafeArea forceInset={{ bottom: 'never', top: 'always' }} androidStatusbarHeight={StatusBar.currentHeight}>
+        <Wrapper
+          floating={floating}
+          noBottomBorder={noBottomBorder}
+        >
+          <SafeArea
+            forceInset={{ bottom: 'never', top: 'always' }}
+            noPaddingTop={noPaddingTop}
+            androidStatusbarHeight={StatusBar.currentHeight}
+          >
             <HeaderContentWrapper>
               {this.renderHeaderContent()}
             </HeaderContentWrapper>
