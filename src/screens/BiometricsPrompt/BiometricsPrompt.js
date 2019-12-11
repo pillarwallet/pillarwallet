@@ -77,7 +77,7 @@ const getBiometryImage = (biometryType: string) => {
 };
 
 class BiometricsPrompt extends React.Component<Props> {
-  proceedToRegisterWallet = (setBiometrics) => {
+  proceedToRegisterWallet = (setBiometrics: boolean) => {
     const { registerWallet } = this.props;
     registerWallet(setBiometrics);
   };

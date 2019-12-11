@@ -97,8 +97,11 @@ class ContainerWithHeader extends React.Component<Props> {
 
   renderContent = (isShortScreenWithFooter, shouldRenderChildrenInScrollView) => {
     const { children, keyboardAvoidFooter } = this.props;
-    if (!isShortScreenWithFooter && !shouldRenderChildrenInScrollView) return children;
-    if (!isShortScreenWithFooter && shouldRenderChildrenInScrollView) {
+    if (!isShortScreenWithFooter) {
+      if (!shouldRenderChildrenInScrollView) {
+        return children;
+      }
+
       return (
         <ScrollView style={{ flex: 1 }}>
           {children}
