@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import isEmpty from 'lodash.isempty';
+
 // actions
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 
@@ -37,6 +39,9 @@ import type { ConnectionIdentityKey } from 'models/Connections';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
+
+
+type GroupedConnectionIdentityKeys = { [string]: ConnectionIdentityKey };
 
 export const updateConnectionsAction = (theWalletId?: ?string = null) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
@@ -69,7 +74,31 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
     const invitations = [];
     const removeContacts = [];
     const removeInvitations = [];
-    resultConnections.forEach((resConn: ConnectionIdentityKey) => {
+
+    // CIK – ConnectionIdentityKey
+    const groupedByUserWithLatestCIK: GroupedConnectionIdentityKeys = resultConnections
+      .reduce((groupedByUser: GroupedConnectionIdentityKeys, cik: ConnectionIdentityKey) => {
+        const { targetUserId, updatedAt } = cik;
+        if (isEmpty(groupedByUser[targetUserId])) {
+          return {
+            ...groupedByUser,
+            [targetUserId]: cik,
+          };
+        }
+        // by this point it means it's another event with same user
+        const { updatedAt: prevUpdatedAt } = groupedByUser[targetUserId];
+        // check if another event for the same user is newer and change if so
+        if (updatedAt > prevUpdatedAt) {
+          return {
+            ...groupedByUser,
+            [targetUserId]: cik,
+          };
+        }
+        return groupedByUser;
+      }, {});
+
+    const usersListWithTheirLatestCIK = (Object.values(groupedByUserWithLatestCIK): any);
+    usersListWithTheirLatestCIK.forEach((resConn: ConnectionIdentityKey) => {
       if (resConn.status === STATUS_ACCEPTED || resConn.status === STATUS_MUTED || resConn.status === STATUS_BLOCKED) {
         const contact = {
           id: resConn.targetUserId,
@@ -123,11 +152,13 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
       }
     });
 
+
     const updatedContacts = uniqBy(contacts.concat(allContacts), 'id')
       .filter(conn => !removeContacts.includes(conn.id));
     const updatedInvitations = uniqBy(invitations.concat(allInvitations), 'id')
       .filter(invi => !removeInvitations.includes(invi.id));
     const updatedConnectionIdentityKeys = uniqBy(resultConnections.concat(connectionIdentityKeys), 'sourceIdentityKey');
+
 
     dispatch({
       type: UPDATE_INVITATIONS,
