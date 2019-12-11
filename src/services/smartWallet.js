@@ -403,7 +403,10 @@ class SmartWallet {
     if (!this.sdk) return;
     this.sdk.event$.next(null); // unsubscribes
     subscribedToEvents = false;
-    await this.sdk.reset({ device: true, session: true }).catch(null);
+    await this.sdk.reset({
+      device: true,
+      session: true,
+    }).catch(null);
   }
 }
 
