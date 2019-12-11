@@ -355,7 +355,7 @@ export const sendTransactionAction = (wallet: EthereumWallet, plan: BitcoinTrans
     // TODO: Multiple Paths support should map an address to a custom path
     const rawTransaction = transactionFromPlan(
       plan,
-      (address: string) => keyPair, // eslint-disable-line no-unused-vars
+      () => keyPair,
     );
 
     if (!rawTransaction) {
