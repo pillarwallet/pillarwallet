@@ -38,8 +38,6 @@ import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
-import WalkthroughItem from 'components/Walkthrough/WalkthroughItem';
-import WalkthroughItemParent from 'components/Walkthrough/WalkthroughItemParent';
 
 // constants
 import {
@@ -72,7 +70,6 @@ import {
 } from 'actions/walletConnectActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
-import { initWalkthroughAction } from 'actions/walkthroughsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -90,9 +87,7 @@ import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
-import { testWalkthrough } from 'walkthroughScenarios/testWalkthrough';
 import type { Theme } from 'models/Theme';
-import Button from 'components/Button';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -126,7 +121,6 @@ type Props = {
   userEvents: UserEvent[],
   fetchBadgeAwardHistory: () => void,
   badgesEvents: BadgeRewardEvent[],
-  initWalkthrough: Function,
   theme: Theme,
 };
 
@@ -138,7 +132,6 @@ type State = {
   scrollY: Animated.Value,
   isScanning: boolean,
   tabIsChanging: boolean,
-  steps: Object[],
 };
 
 const BalanceWrapper = styled.View`
@@ -146,7 +139,6 @@ const BalanceWrapper = styled.View`
   width: 100%;
   border-bottom-width: 1px;
   border-color: ${themedColors.border};
-  overflow: visible;
 `;
 
 const WalletConnectWrapper = styled.View`
@@ -166,8 +158,6 @@ const BadgesWrapper = styled.View`
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-color: ${themedColors.border};
-  z-index: 2;
-  overflow: visible;
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -194,7 +184,6 @@ class HomeScreen extends React.Component<Props, State> {
     usernameWidth: 0,
     isScanning: false,
     tabIsChanging: false,
-    steps: [],
   };
 
   componentDidMount() {
@@ -457,21 +446,9 @@ class HomeScreen extends React.Component<Props, State> {
               onRefresh={this.refreshScreenData}
             />}
         >
-          <View style={{ alignItems: 'center', justifyContent: 'flex-start', padding: 10 }}>
-            <Button
-              title="TEST WALKTHROUGH"
-              onPress={() => {
-                const { initWalkthrough } = this.props;
-                initWalkthrough('TEST', testWalkthrough);
-              }}
-              small
-            />
-          </View>
-          <WalkthroughItem types={['TEST']} walkthroughStepId="balance" posOverwrites={{ x: spacing.large }}>
-            <BalanceWrapper>
-              <PortfolioBalance />
-            </BalanceWrapper>
-          </WalkthroughItem>
+          <BalanceWrapper>
+            <PortfolioBalance />
+          </BalanceWrapper>
           <WalletConnectWrapper>
             <SettingsItemCarded
               title="Manage Sessions"
@@ -485,28 +462,24 @@ class HomeScreen extends React.Component<Props, State> {
             />
           </WalletConnectWrapper>
           <BadgesWrapper>
-            <WalkthroughItem types={['TEST']} walkthroughStepId="badge">
-              <ListHeader>Game of badges</ListHeader>
-            </WalkthroughItem>
-            <WalkthroughItemParent>
-              <FlatList
-                data={badges}
-                horizontal
-                keyExtractor={(item) => (item.id.toString())}
-                renderItem={this.renderBadge}
-                style={{ width: '100%', overflow: 'visible' }}
-                contentContainerStyle={{ paddingHorizontal: 10, ...badgesContainerStyle, overflow: 'visible' }}
-                initialNumToRender={5}
-                ListEmptyComponent={(
-                  <EmptyStateWrapper>
-                    <EmptyStateParagraph
-                      title="No badges"
-                      bodyText="You do not have badges yet"
-                    />
-                  </EmptyStateWrapper>
-                )}
-              />
-            </WalkthroughItemParent>
+            <ListHeader>Game of badges</ListHeader>
+            <FlatList
+              data={badges}
+              horizontal
+              keyExtractor={(item) => (item.id.toString())}
+              renderItem={this.renderBadge}
+              style={{ width: '100%' }}
+              contentContainerStyle={{ paddingHorizontal: 10, ...badgesContainerStyle }}
+              initialNumToRender={5}
+              ListEmptyComponent={(
+                <EmptyStateWrapper>
+                  <EmptyStateParagraph
+                    title="No badges"
+                    bodyText="You do not have badges yet"
+                  />
+                </EmptyStateWrapper>
+              )}
+            />
           </BadgesWrapper>
           <Tabs
             tabs={activityFeedTabs}
@@ -587,7 +560,6 @@ const mapDispatchToProps = (dispatch) => ({
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
-  initWalkthrough: (type, steps) => dispatch(initWalkthroughAction(type, steps)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));
