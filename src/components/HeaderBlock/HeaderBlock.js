@@ -77,7 +77,7 @@ const Wrapper = styled.View`
 `;
 
 const HeaderContentWrapper = styled.View`
-  padding: 15px ${spacing.large}px;
+  padding: 15px ${spacing.layoutSides}px;
   width: 100%;
   min-height: 58px;
 `;

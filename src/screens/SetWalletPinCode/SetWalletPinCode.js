@@ -21,21 +21,29 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
+import { MediumText, Paragraph } from 'components/Typography';
 import { setPinForNewWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
-import { baseColors } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
+import type { ImportedWallet } from 'reducers/walletReducer';
 
-const ContentWrapper = styled.View`
+const ContentWrapper = styled.ScrollView`
   flex: 1;
 `;
 
+const HeaderText = styled(MediumText)`
+  ${fontStyles.large};
+  text-align: center;
+  margin-top: ${spacing.large}px;
+  margin-bottom: 9px;
+`;
+
 type Props = {
-  setPinForNewWallet: (pin: string) => Function,
-  wallet: Object,
+  setPinForNewWallet: (pin: string) => void,
   navigation: NavigationScreenProp<*>,
+  importedWallet: ImportedWallet,
 };
 
 type State = {
@@ -67,29 +75,38 @@ class SetWalletPinCode extends React.Component<Props, State> {
 
   render() {
     const { error } = this.state;
+    const { navigation, importedWallet } = this.props;
+    const username = navigation.getParam('username', '');
+    let welcomeText = 'Welcome to Pillar';
+    if (username) welcomeText += `,\n${username}`;
+
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Create PIN code' }] }}
-        backgroundColor={baseColors.white}
       >
-        <ContentWrapper>
-          <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
-            <PinCode
-              onPinEntered={this.handlePinSubmit}
-              onPinChanged={this.handlePinChange}
-              pageInstructions="Setup your Pincode"
-              showForgotButton={false}
-              pinError={!!error}
-              flex={false}
-            />
-          </Wrapper>
+        <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
+          {!importedWallet &&
+          <HeaderText>
+            {`${welcomeText}!`}
+          </HeaderText>}
+          <Paragraph center>
+            Now let’s create a PIN code to secure your account.
+          </Paragraph>
+          <PinCode
+            onPinEntered={this.handlePinSubmit}
+            onPinChanged={this.handlePinChange}
+            pageInstructions="Setup your Pincode"
+            showForgotButton={false}
+            pinError={!!error}
+            flex={false}
+          />
         </ContentWrapper>
       </ContainerWithHeader>
     );
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
+const mapStateToProps = ({ wallet: { onboarding: { importedWallet } } }) => ({ importedWallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   setPinForNewWallet: (pin) => {

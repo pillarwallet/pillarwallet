@@ -40,6 +40,7 @@ import {
   REMOVE_PRIVATE_KEY,
   UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
+import { SigningKey } from 'ethers/utils/signing-key';
 
 export type Wallet = {|
   address: string,
@@ -50,6 +51,10 @@ export type BackupStatus = {|
   isImported: boolean,
   isBackedUp: boolean,
 |};
+
+export type ImportedWallet = {
+  signingKey: SigningKey
+}
 
 export type WalletReducerState = {|
   data: Wallet,

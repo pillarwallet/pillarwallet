@@ -19,12 +19,11 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors } from 'utils/variables';
 
 const Wrapper = styled.View`
   flex-wrap: wrap;
-  margin-top: 20;
-  margin-bottom: 40;
+  margin-top: 20px;
+  margin-bottom: 20px;
   flex-direction: row;
   align-self: center;
   justify-content: space-between;
@@ -34,7 +33,7 @@ const Wrapper = styled.View`
 const PinDot = styled.View`
   width: 16px;
   height: 16px;
-  background-color: ${props => (props.active ? baseColors.electricBlue : baseColors.mediumLightGray)};
+  background-color: ${({ active, theme }) => active ? theme.colors.primary : theme.colors.secondaryAccent};
   border-radius: 8;
 `;
 

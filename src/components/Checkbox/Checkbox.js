@@ -20,28 +20,12 @@
 import * as React from 'react';
 import { Animated, TouchableHighlight } from 'react-native';
 import { BaseText } from 'components/Typography';
-import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
+import styled, { withTheme } from 'styled-components/native';
+import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
 import Icon from 'components/Icon';
-
-const getBorderColor = (props) => {
-  if (props.rounded) {
-    return baseColors.mediumGray;
-  } else if (props.active) {
-    if (props.dark) return baseColors.stratos;
-    return UIColors.primary;
-  }
-  return baseColors.mediumGray;
-};
-
-const getTickColor = (props) => {
-  if (props.rounded) {
-    return baseColors.eucalypus;
-  } else if (props.darkCheckbox) {
-    return baseColors.white;
-  }
-  return baseColors.brightBlue;
-};
+import { LIGHT_THEME } from 'constants/appSettingsConstants';
+import type { Theme } from 'models/Theme';
+import { getThemeColors } from 'utils/themes';
 
 const CheckboxBox = styled.View`
   width: 24;
@@ -50,13 +34,11 @@ const CheckboxBox = styled.View`
   border-radius: ${props => props.rounded ? 12 : 2}px;
   flex: 0 0 24px;
   border-width: 1px;
-  border-color: ${props => getBorderColor(props)}
+  border-color: ${({ theme, active }) => active ? theme.colors.primary : theme.colors.border};
   justify-content: center;
   align-items: center;
-  shadow-color: ${baseColors.pigeonPost};
-  background-color: ${props => props.dark && props.active ? baseColors.stratos : 'transparent'};
-  ${props => props.rounded ? `background-color: ${baseColors.white}` : ''};
-  ${props => props.rounded && props.active
+  ${({ rounded, theme }) => rounded ? `background-color: ${theme.colors.card}` : ''};
+  ${({ rounded, active, theme }) => rounded && active && theme.current === LIGHT_THEME
     ? `
       shadow-color: ${baseColors.black};
       shadow-radius: 3px;
@@ -68,7 +50,7 @@ const CheckboxBox = styled.View`
 
 const CheckboxText = styled(BaseText)`
   ${props => props.small ? fontStyles.regular : fontStyles.medium};
-  color: ${props => props.light ? baseColors.darkGray : baseColors.slateBlack};
+  color: ${({ light, theme }) => light ? theme.colors.accent : theme.colors.text};
   flex-wrap: wrap;
 `;
 
@@ -94,8 +76,8 @@ type Props = {
   wrapperStyle?: Object,
   rounded?: boolean,
   lightText?: boolean,
-  darkCheckbox?: boolean,
   small?: boolean,
+  theme: Theme,
 };
 
 type State = {
@@ -103,7 +85,7 @@ type State = {
   animateActive: Animated.Value,
 };
 
-export default class Checkbox extends React.Component<Props, State> {
+class Checkbox extends React.Component<Props, State> {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -175,8 +157,11 @@ export default class Checkbox extends React.Component<Props, State> {
       wrapperStyle,
       small,
       lightText,
-      darkCheckbox,
+      theme,
     } = this.props;
+
+    const colors = getThemeColors(theme);
+
     return (
       <TouchableHighlight
         onPress={() => this.toggleCheckBox()}
@@ -184,12 +169,12 @@ export default class Checkbox extends React.Component<Props, State> {
         style={wrapperStyle}
       >
         <CheckboxWrapper disabled={disabled}>
-          <CheckboxBox active={disabled ? false : checked} rounded={rounded} dark={darkCheckbox}>
+          <CheckboxBox active={disabled ? false : checked} rounded={rounded}>
             {!!checked &&
             <Icon
               name="check"
               style={{
-                color: getTickColor(this.props),
+                color: colors.primary,
                 fontSize: fontSizes.tiny,
               }}
             />
@@ -205,3 +190,5 @@ export default class Checkbox extends React.Component<Props, State> {
     );
   }
 }
+
+export default withTheme(Checkbox);

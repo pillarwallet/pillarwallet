@@ -203,6 +203,7 @@ export const spacing = {
   medium: 12,
   mediumLarge: 16,
   large: 20,
+  layoutSides: 16,
 };
 
 export const itemSizes = {
