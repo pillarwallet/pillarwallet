@@ -30,10 +30,11 @@ import { logEventAction } from 'actions/analyticsActions';
 import { SEND_BITCOIN_TRANSACTION } from 'constants/navigationConstants';
 
 import type { BitcoinTransactionPlan } from 'models/Bitcoin';
+import type { EthereumWallet } from 'models/Wallet';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  sendAsset: (transactionPayload: BitcoinTransactionPlan, navigate: Function) => Function,
+  sendAsset: (wallet: EthereumWallet, transactionPayload: BitcoinTransactionPlan, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
   logEvent: (name: string, properties: Object) => void,
 }
@@ -60,7 +61,7 @@ class SendBitcoinPinConfirmScreen extends React.Component<Props, State> {
     };
   }
 
-  handleTransaction = async () => {
+  handleTransaction = async (pin: string, wallet: EthereumWallet) => {
     const {
       sendAsset,
       logEvent,
@@ -71,7 +72,7 @@ class SendBitcoinPinConfirmScreen extends React.Component<Props, State> {
       isChecking: true,
     }, () => {
       logEvent('transaction_sent', { source: this.source });
-      sendAsset(transactionPayload, this.navigateToTransactionState);
+      sendAsset(wallet, transactionPayload, this.navigateToTransactionState);
     });
   };
 
@@ -104,6 +105,7 @@ class SendBitcoinPinConfirmScreen extends React.Component<Props, State> {
           onPinValid={this.handleTransaction}
           isChecking={isChecking}
           pinError={!!errorMessage}
+          revealMnemonic
         />
       </Container>
     );
@@ -117,8 +119,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  sendAsset: (transaction: BitcoinTransactionPlan, callback) => {
-    dispatch(sendTransactionAction(transaction, callback));
+  sendAsset: (wallet: EthereumWallet, transaction: BitcoinTransactionPlan, callback) => {
+    dispatch(sendTransactionAction(wallet, transaction, callback));
   },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
