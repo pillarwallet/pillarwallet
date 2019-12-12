@@ -104,6 +104,7 @@ const Label = styled(BaseText)`
 
 const FormWrapper = styled.View`
   flex-direction: column;
+  width: 100%;
 `;
 
 const Row = styled.View`
