@@ -151,6 +151,11 @@ import { getWalletsCreationEventsAction } from './userEventsActions';
 
 const storage = Storage.getInstance('db');
 
+const isValidSyntheticExchangePayment = (type: string, extra: any) => {
+  const syntheticsExchangeType = get(sdkConstants, 'AccountPaymentTypes.SyntheticsExchange');
+  return !isEmpty(type) && !isEmpty(extra) && type === syntheticsExchangeType;
+};
+
 const notifySmartWalletNotInitialized = () => {
   Toast.show({
     message: 'Smart Account is not initialized',
@@ -648,8 +653,6 @@ export const syncVirtualAccountTransactionsAction = () => {
       ),
     );
 
-    const smartWalletAccountPaymentTypes = sdkConstants.AccountPaymentTypes || {};
-
     const transformedNewPayments = newOrUpdatedPayments.map(payment => {
       const tokenSymbol = get(payment, 'token.symbol', ETH);
       const value = get(payment, 'value', new BigNumber(0));
@@ -661,7 +664,7 @@ export const syncVirtualAccountTransactionsAction = () => {
       const paymentExtra = get(payment, 'extra');
       let additionalTransactionData = {};
 
-      if (paymentType === smartWalletAccountPaymentTypes.SyntheticsExchange && !isEmpty(paymentExtra)) {
+      if (isValidSyntheticExchangePayment(paymentType, paymentExtra)) {
         const {
           value: syntheticValue,
           tokenAddress: syntheticAssetAddress,
@@ -669,7 +672,7 @@ export const syncVirtualAccountTransactionsAction = () => {
           sender: syntheticSender,
         } = paymentExtra;
 
-        // check if current account is synthetic sender
+        // check if recipient address is present in extra, else this is incoming payment
         if (!isEmpty(syntheticRecipient)) {
           const {
             decimals,
@@ -1169,7 +1172,16 @@ export const fetchAvailableTxToSettleAction = () => {
       .filter(({ hash }) => !isHiddenUnsettledTransaction(hash, accountHistory))
       .map((item) => {
         const { decimals = 18 } = accountAssets[item.token] || {};
-        const senderAddress = get(item, 'sender.account.address', '');
+        let senderAddress = get(item, 'sender.account.address', '');
+
+        const paymentExtra = get(item, 'extra');
+        const paymentType = get(item, 'paymentType');
+        if (isValidSyntheticExchangePayment(paymentType, paymentExtra)) {
+          // check if sender address is present in extra
+          const { sender: syntheticSender } = paymentExtra;
+          if (!isEmpty(syntheticSender)) senderAddress = syntheticSender;
+        }
+
         return {
           token: item.token,
           hash: item.hash,
