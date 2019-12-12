@@ -43,7 +43,9 @@ import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
+import Walkthrough from 'components/Walkthrough';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Steps } from 'reducers/walkthroughsReducer';
 import { getThemeByType, defaultTheme } from 'utils/themes';
 
 import configureStore from './src/configureStore';
@@ -66,6 +68,7 @@ type Props = {
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
   executeDeepLink: Function,
+  activeWalkthroughSteps: Steps,
   themeType: string,
   changeAppTheme: () => void,
 }
@@ -148,7 +151,12 @@ class App extends React.Component<Props, *> {
   };
 
   render() {
-    const { isFetched, themeType, changeAppTheme } = this.props;
+    const {
+      isFetched,
+      themeType,
+      changeAppTheme,
+      activeWalkthroughSteps,
+    } = this.props;
     const theme = getThemeByType(themeType);
     const { colors, current } = theme;
 
@@ -177,6 +185,7 @@ class App extends React.Component<Props, *> {
             >
               <Text style={{ color: colors.text }}>{`THEME: ${current}`}</Text>
             </TouchableOpacity>}
+            {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
           </Root>
         </React.Fragment>
       </ThemeProvider>
@@ -186,9 +195,11 @@ class App extends React.Component<Props, *> {
 
 const mapStateToProps = ({
   appSettings: { isFetched, data: { themeType } },
+  walkthroughs: { steps: activeWalkthroughSteps },
 }: RootReducerState) => ({
   isFetched,
   themeType,
+  activeWalkthroughSteps,
 });
 
 const mapDispatchToProps = (dispatch) => ({

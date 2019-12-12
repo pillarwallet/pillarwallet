@@ -102,7 +102,7 @@ export const setBrowsingWebViewAction = (isBrowsingWebView: boolean) => ({
   },
 });
 
-export const changeUseBiometricsAction = (value: boolean, privateKey?: string) => {
+export const changeUseBiometricsAction = (value: boolean, privateKey?: string, noToast?: boolean) => {
   return async (dispatch: Dispatch) => {
     let message;
     if (value) {
@@ -119,11 +119,13 @@ export const changeUseBiometricsAction = (value: boolean, privateKey?: string) =
         useBiometrics: value,
       },
     });
-    Toast.show({
-      message,
-      type: 'success',
-      title: 'Success',
-    });
+    if (!noToast) {
+      Toast.show({
+        message,
+        type: 'success',
+        title: 'Success',
+      });
+    }
   };
 };
 

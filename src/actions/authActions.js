@@ -96,6 +96,12 @@ export const updateFcmTokenAction = (walletId: string) => {
   };
 };
 
+/**
+ * ### IMPORTANT ###
+ * If you plan to use any method within loginAction that calls
+ * Pillar Wallet SDK API please make sure you wait until it completes
+ * as first method might also perform tokens refresh during the request
+ */
 export const loginAction = (
   pin: ?string,
   privateKey: ?string,
@@ -180,14 +186,14 @@ export const loginAction = (
           await onLoginSuccess(privateKeyParam);
         }
 
-        // set API username
+        // set API username (local method)
         api.setUsername(user.username);
-
-        // update FCM
-        dispatch(updateFcmTokenAction(user.walletId));
 
         // make first api call which can also trigger OAuth fallback methods
         const userInfo = await api.userInfo(user.walletId);
+
+        // update FCM
+        dispatch(updateFcmTokenAction(user.walletId));
 
         // perform signal init
         dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));

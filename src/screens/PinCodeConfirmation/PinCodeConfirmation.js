@@ -20,18 +20,20 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
+import * as Keychain from 'react-native-keychain';
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import type { NavigationScreenProp } from 'react-navigation';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
+import { MediumText } from 'components/Typography';
 import { confirmPinForNewWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
-import { PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
-import { baseColors, spacing } from 'utils/variables';
+import { BIOMETRICS_PROMPT, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
+import { fontStyles, spacing } from 'utils/variables';
 
 type Props = {
-  confirmPinForNewWallet: (pin: string) => Function,
+  confirmPinForNewWallet: (pin: string, shouldRegisterWallet?: boolean) => Function,
   navigation: NavigationScreenProp<*>,
   wallet: Object,
 };
@@ -45,6 +47,13 @@ const ContentWrapper = styled.View`
   padding-top: ${spacing.medium}px;
 `;
 
+const HeaderText = styled(MediumText)`
+  ${fontStyles.large};
+  text-align: center;
+  margin: ${spacing.large}px 0;
+`;
+
+
 class PinCodeConfirmation extends React.Component<Props, State> {
   state = {
     errorMessage: '',
@@ -56,7 +65,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
   }
 
   handlePinSubmit = (pin: string) => {
-    const { onboarding: wallet } = this.props.wallet;
+    const { wallet: { onboarding: wallet }, confirmPinForNewWallet, navigation } = this.props;
     const previousPin = wallet.pin;
     const validationError = validatePin(pin, previousPin);
 
@@ -67,7 +76,16 @@ class PinCodeConfirmation extends React.Component<Props, State> {
       return;
     }
 
-    this.props.confirmPinForNewWallet(pin);
+    Keychain.getSupportedBiometryType()
+      .then((biometryType) => {
+        if (biometryType) {
+          navigation.navigate(BIOMETRICS_PROMPT, { biometryType });
+          confirmPinForNewWallet(pin);
+        } else {
+          confirmPinForNewWallet(pin, true);
+        }
+      })
+      .catch(() => { confirmPinForNewWallet(pin, true); });
   };
 
   handlePinChange = () => {
@@ -81,7 +99,6 @@ class PinCodeConfirmation extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Confirm PIN code' }] }}
-        backgroundColor={baseColors.white}
       >
         {!!errorMessage &&
         <ErrorMessage wrapperStyle={{ marginTop: 0 }}>
@@ -89,6 +106,9 @@ class PinCodeConfirmation extends React.Component<Props, State> {
         </ErrorMessage>
         }
         <ContentWrapper>
+          <HeaderText>
+            Re-enter to confirm
+          </HeaderText>
           <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
             <PinCode
               onPinEntered={this.handlePinSubmit}
@@ -108,8 +128,8 @@ class PinCodeConfirmation extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  confirmPinForNewWallet: (pin) => {
-    dispatch(confirmPinForNewWalletAction(pin));
+  confirmPinForNewWallet: (pin, shouldRegisterWallet) => {
+    dispatch(confirmPinForNewWalletAction(pin, shouldRegisterWallet));
   },
 });
 

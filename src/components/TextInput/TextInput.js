@@ -145,51 +145,6 @@ const viewConfig = {
   waitForInteraction: true,
 };
 
-const inputTypes = {
-  default: {
-    fontSize: fontSizes.big,
-    textAlign: 'left',
-  },
-  bigText: {
-    backgroundColor: baseColors.lightGray,
-    borderBottomWidth: 0,
-    borderRadius: 6,
-    color: baseColors.slateBlack,
-    fontSize: fontSizes.large,
-    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
-    padding: '0 20px',
-    inputHeight: 56,
-  },
-  bigTextNoBackground: {
-    backgroundColor: 'transparent',
-    borderBottomWidth: 0,
-    color: baseColors.slateBlack,
-    fontSize: fontSizes.large,
-    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
-    padding: '0 20px',
-    inputHeight: Platform.OS === 'ios' ? 80 : 70,
-  },
-  noBackground: {
-    backgroundColor: 'transparent',
-    borderBottomWidth: 0,
-    color: baseColors.slateBlack,
-    fontSize: fontSizes.big,
-    lineHeight: Platform.OS === 'ios' ? 34 : fontSizes.large,
-  },
-  amount: {
-    fontSize: fontSizes.giant,
-    textAlign: 'right',
-  },
-  secondary: {
-    backgroundColor: baseColors.lightGray,
-    borderBottomWidth: 0,
-    borderRadius: 6,
-    color: baseColors.slateBlack,
-    fontSize: fontSizes.medium,
-    padding: '0 14px',
-  },
-};
-
 const FloatingButton = styled(IconButton)`
   position: absolute;
   right: 0;
@@ -584,13 +539,12 @@ class TextInput extends React.Component<Props, State> {
       numeric,
       iconProps,
 
-
       selectorOptions = {},
+      inputType,
     } = this.props;
     const colors = getThemeColors(theme);
     const { value = '' } = inputProps;
     const { isFocused, query, showOptionsSelector } = this.state;
-    const inputType = inputTypes[this.props.inputType] || inputTypes.default;
 
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
@@ -601,7 +555,6 @@ class TextInput extends React.Component<Props, State> {
     }
 
     const customStyle = inputProps.multiline ? { paddingTop: 10 } : {};
-
 
     const {
       options = [],

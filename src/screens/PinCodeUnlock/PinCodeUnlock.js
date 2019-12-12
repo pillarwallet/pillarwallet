@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import { DEFAULT_PIN } from 'react-native-dotenv';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
+import * as Keychain from 'react-native-keychain';
 
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
 import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
@@ -34,8 +35,10 @@ import Loader from 'components/Loader';
 import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
+import Toast from 'components/Toast';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import { getKeychainDataObject } from 'utils/keychain';
+import { getBiometryType } from 'utils/settings';
 
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
@@ -54,6 +57,7 @@ type State = {
   biometricsShown: boolean,
   updateKeychain: boolean,
   lastAppState: string,
+  supportedBiometryType: string,
 };
 
 class PinCodeUnlock extends React.Component<Props, State> {
@@ -65,6 +69,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     biometricsShown: false,
     updateKeychain: false,
     lastAppState: AppState.currentState,
+    supportedBiometryType: '',
   };
 
   constructor(props) {
@@ -86,9 +91,13 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (useBiometrics
       && !this.errorMessage
       && lastAppState !== BACKGROUND_APP_STATE) {
-      this.showBiometricLogin();
+      Keychain.getSupportedBiometryType()
+        .then((biometryType) => {
+          this.setState({ supportedBiometryType: getBiometryType(biometryType) });
+          this.showBiometricLogin();
+        })
+        .catch(() => null);
     }
-
     this.handleLocking(true);
   }
 
@@ -113,8 +122,18 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   showBiometricLogin() {
     const { loginWithPrivateKey, connectionKeyPairs: { data: connKeys, lastConnectionKeyIndex } } = this.props;
-    const { biometricsShown } = this.state;
-    if (biometricsShown || connKeys.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1) return;
+    const { biometricsShown, supportedBiometryType } = this.state;
+
+    if (biometricsShown || connKeys.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1) {
+      Toast.show({
+        message: 'Pin code is needed to finish setting up connections',
+        type: 'warning',
+        title: `${supportedBiometryType} could not be used`,
+        autoClose: false,
+      });
+      return;
+    }
+
     this.setState({ biometricsShown: true }, () => {
       getKeychainDataObject()
         .then(data => {
