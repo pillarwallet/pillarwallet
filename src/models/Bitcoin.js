@@ -20,6 +20,7 @@
 
 export type BitcoinStore = {
   keys?: { [key: string]: string },
+  addresses?: string[],
 };
 
 export type BitcoinTransactionTarget = {
