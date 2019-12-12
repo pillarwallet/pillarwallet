@@ -151,6 +151,11 @@ import { getWalletsCreationEventsAction } from './userEventsActions';
 
 const storage = Storage.getInstance('db');
 
+const isValidSyntheticExchangePayment = (type: string, extra: any) => {
+  const smartWalletAccountPaymentTypes = sdkConstants.AccountPaymentTypes || {};
+  return type === smartWalletAccountPaymentTypes.SyntheticsExchange && !isEmpty(extra);
+};
+
 const notifySmartWalletNotInitialized = () => {
   Toast.show({
     message: 'Smart Account is not initialized',
@@ -648,8 +653,6 @@ export const syncVirtualAccountTransactionsAction = () => {
       ),
     );
 
-    const smartWalletAccountPaymentTypes = sdkConstants.AccountPaymentTypes || {};
-
     const transformedNewPayments = newOrUpdatedPayments.map(payment => {
       const tokenSymbol = get(payment, 'token.symbol', ETH);
       const value = get(payment, 'value', new BigNumber(0));
@@ -661,7 +664,7 @@ export const syncVirtualAccountTransactionsAction = () => {
       const paymentExtra = get(payment, 'extra');
       let additionalTransactionData = {};
 
-      if (paymentType === smartWalletAccountPaymentTypes.SyntheticsExchange && !isEmpty(paymentExtra)) {
+      if (isValidSyntheticExchangePayment(paymentType, paymentExtra)) {
         const {
           value: syntheticValue,
           tokenAddress: syntheticAssetAddress,
@@ -1169,7 +1172,21 @@ export const fetchAvailableTxToSettleAction = () => {
       .filter(({ hash }) => !isHiddenUnsettledTransaction(hash, accountHistory))
       .map((item) => {
         const { decimals = 18 } = accountAssets[item.token] || {};
-        const senderAddress = get(item, 'sender.account.address', '');
+        let senderAddress = get(item, 'sender.account.address', '');
+
+        // check if current account is synthetic sender
+        const paymentExtra = get(item, 'extra');
+        const paymentType = get(item, 'paymentType');
+        if (isValidSyntheticExchangePayment(paymentType, paymentExtra)) {
+          const {
+            recipient: syntheticRecipient,
+            sender: syntheticSender,
+          } = paymentExtra;
+          senderAddress = !isEmpty(syntheticRecipient)
+            ? syntheticRecipient
+            : syntheticSender;
+        }
+
         return {
           token: item.token,
           hash: item.hash,
