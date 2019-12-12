@@ -25,7 +25,7 @@ import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
-import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { SEND_BITCOIN_FLOW } from 'constants/navigationConstants';
 import { BTC } from 'constants/assetsConstants';
 
 // actions
@@ -131,7 +131,7 @@ class BTCView extends React.Component<Props, State> {
       decimals,
     };
 
-    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
+    this.props.navigation.navigate(SEND_BITCOIN_FLOW, { assetData });
   };
 
   showReceive = () => {

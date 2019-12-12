@@ -464,6 +464,8 @@ const sendTokenFromAssetFlow = createStackNavigator(
 // SEND BITCOIN FROM ASSET FLOW
 const sendBitcoinFromAssetFlow = createStackNavigator(
   {
+    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
     [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
     [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
