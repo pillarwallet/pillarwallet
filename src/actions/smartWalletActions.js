@@ -152,8 +152,8 @@ import { getWalletsCreationEventsAction } from './userEventsActions';
 const storage = Storage.getInstance('db');
 
 const isValidSyntheticExchangePayment = (type: string, extra: any) => {
-  const smartWalletAccountPaymentTypes = sdkConstants.AccountPaymentTypes || {};
-  return type === smartWalletAccountPaymentTypes.SyntheticsExchange && !isEmpty(extra);
+  const syntheticsExchangeType = get(sdkConstants, 'AccountPaymentTypes.SyntheticsExchange');
+  return !isEmpty(type) && !isEmpty(extra) && type === syntheticsExchangeType;
 };
 
 const notifySmartWalletNotInitialized = () => {
@@ -672,7 +672,7 @@ export const syncVirtualAccountTransactionsAction = () => {
           sender: syntheticSender,
         } = paymentExtra;
 
-        // check if current account is synthetic sender
+        // check if recipient address is present in extra, else this is incoming payment
         if (!isEmpty(syntheticRecipient)) {
           const {
             decimals,
@@ -1174,17 +1174,12 @@ export const fetchAvailableTxToSettleAction = () => {
         const { decimals = 18 } = accountAssets[item.token] || {};
         let senderAddress = get(item, 'sender.account.address', '');
 
-        // check if current account is synthetic sender
         const paymentExtra = get(item, 'extra');
         const paymentType = get(item, 'paymentType');
         if (isValidSyntheticExchangePayment(paymentType, paymentExtra)) {
-          const {
-            recipient: syntheticRecipient,
-            sender: syntheticSender,
-          } = paymentExtra;
-          senderAddress = !isEmpty(syntheticRecipient)
-            ? syntheticRecipient
-            : syntheticSender;
+          // check if sender address is present in extra
+          const { sender: syntheticSender } = paymentExtra;
+          if (!isEmpty(syntheticSender)) senderAddress = syntheticSender;
         }
 
         return {
