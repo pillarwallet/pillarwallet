@@ -24,16 +24,20 @@ import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+
 // components
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
-import { Label, BaseText } from 'components/Typography';
+import { Label } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import SendTokenDetails from 'components/SendTokenDetails';
 
 // utils
 import { satoshisToBtc } from 'utils/bitcoin';
-import { fontStyles, spacing, UIColors } from 'utils/variables';
+import { spacing, UIColors } from 'utils/variables';
 import { makeAmountForm, getAmountFormFields } from 'utils/btcFormHelpers';
+import { getRate } from 'utils/assets';
+import { formatFiat } from 'utils/common';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -45,20 +49,16 @@ import type {
   BitcoinUtxo,
   BitcoinBalance,
 } from 'models/Bitcoin';
+import type { Rates } from 'models/Asset';
 
 // constants
 import { SEND_BITCOIN_CONFIRM } from 'constants/navigationConstants';
+import { BTC } from 'constants/assetsConstants';
 
 const ActionsWrapper = styled.View`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-`;
-
-const SendBitcoinDetails = styled.View``;
-
-const SendBitcoinDetailsValue = styled(BaseText)`
-  ${fontStyles.medium};
 `;
 
 const FooterInner = styled.View`
@@ -75,16 +75,14 @@ const BackgroundWrapper = styled.View`
   flexGrow: 1;
 `;
 
-const TextRow = styled.View`
-  flex-direction: row;
-`;
-
 type Props = {
   token: string;
   navigation: NavigationScreenProp<*>,
   addresses: BitcoinAddress[],
   unspentTransactions: BitcoinUtxo[],
   balances: BitcoinBalance,
+  fiatCurrency: string,
+  rates: Rates,
   onUpdateTransactionSpeed: (speed: string) => void,
 };
 
@@ -158,6 +156,7 @@ class BTCAmount extends React.Component<Props, State> {
       transactionPayload,
       source: this.source,
     });
+    this.formSubmitted = false;
   };
 
   checkFormInputErrors = () => {
@@ -181,19 +180,32 @@ class BTCAmount extends React.Component<Props, State> {
     const {
       balances,
       addresses,
+      rates,
+      fiatCurrency,
     } = this.props;
 
+    const { amount } = value || {};
     const { token, icon, decimals } = this.assetData;
 
     // balance
     const { address } = addresses[0];
-    const formattedBalance = satoshisToBtc(balances[address].balance);
+    const { balance: satoshisBalance } = balances[address];
+
+    const currentValue = (value && parseFloat(amount)) || 0;
+    const balance = satoshisToBtc(satoshisBalance);
+
+    const fee = 0.0001;
+    const isEnoughForFee = balance >= (currentValue + fee);
+
+    // value in fiat
+    const valueInFiat = currentValue * getRate(rates, BTC, fiatCurrency);
+    const valueInFiatOutput = formatFiat(valueInFiat, fiatCurrency);
 
     // form
-    const formStructure = makeAmountForm(1000, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
-    const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput: 0 });
+    const formStructure = makeAmountForm(balance, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
+    const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
 
-    const showNextButton = !!value && !!parseFloat(value.amount) && !inputHasError;
+    const showNextButton = !!amount && !!parseFloat(amount) && !inputHasError;
 
     return (
       <ContainerWithHeader
@@ -223,14 +235,12 @@ class BTCAmount extends React.Component<Props, State> {
               onChange={this.handleChange}
             />
             <ActionsWrapper>
-              <SendBitcoinDetails>
-                <Label small>Available Balance</Label>
-                <TextRow>
-                  <SendBitcoinDetailsValue>
-                    {formattedBalance} {token}
-                  </SendBitcoinDetailsValue>
-                </TextRow>
-              </SendBitcoinDetails>
+              <SendTokenDetails
+                rates={rates}
+                fiatCurrency={fiatCurrency}
+                balance={balance}
+                token={token}
+              />
             </ActionsWrapper>
           </Wrapper>
         </BackgroundWrapper>

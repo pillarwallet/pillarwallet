@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 // constants
-import { BTC } from 'constants/assetsConstants';
+import { BTC, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // components
 import SendETHTokens from 'components/SendTokens/ETHTokens';
@@ -98,6 +98,8 @@ class SendTokenAmount extends React.Component<Props> {
     const { token } = this.assetData;
     const AmountComponent = this.selectAmountComponent(token);
 
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+
     return (
       <AmountComponent
         navigation={navigation}
@@ -108,7 +110,7 @@ class SendTokenAmount extends React.Component<Props> {
         activeAccount={activeAccount}
         rates={rates}
         session={session}
-        baseFiatCurrency={baseFiatCurrency}
+        fiatCurrency={fiatCurrency}
         transactionSpeed={transactionSpeed}
         activeAccountAddress={activeAccountAddress}
         onUpdateTransactionSpeed={this.updateTransactionSpeed}

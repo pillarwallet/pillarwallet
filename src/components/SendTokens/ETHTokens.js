@@ -58,7 +58,7 @@ import type { SessionData } from 'models/Session';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { ETH, defaultFiatCurrency, SPEED_TYPES } from 'constants/assetsConstants';
+import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -108,7 +108,7 @@ type Props = {
   fetchGasInfo: () => void,
   gasInfo: GasInfo,
   rates: Rates,
-  baseFiatCurrency: ?string,
+  fiatCurrency: string,
   transactionSpeed: ?string,
   activeAccountAddress: string,
   activeAccount: ?Account,
@@ -321,13 +321,12 @@ class SendETHTokens extends React.Component<Props, State> {
   };
 
   renderTxSpeedButtons = () => {
-    const { rates, baseFiatCurrency, activeAccount } = this.props;
+    const { rates, fiatCurrency, activeAccount } = this.props;
     if (activeAccount && checkIfSmartWalletAccount(activeAccount)) return null;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
-      const formattedFeeInFiat = formatFiat(feeInFiat, baseFiatCurrency);
+      const formattedFeeInFiat = formatFiat(feeInFiat, fiatCurrency);
       return (
         <Btn
           key={txSpeed}
@@ -366,16 +365,15 @@ class SendETHTokens extends React.Component<Props, State> {
       session,
       balances,
       rates,
-      baseFiatCurrency,
       activeAccount,
       assetData,
+      fiatCurrency,
     } = this.props;
 
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
     const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount;
     const transactionSpeed = showTransactionSpeeds && this.getTxSpeed();
     const { token, icon, decimals } = assetData;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     // balance
     const balance = getBalance(balances, token);
@@ -391,7 +389,7 @@ class SendETHTokens extends React.Component<Props, State> {
 
     // value in fiat
     const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);
-    const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
+    const valueInFiatOutput = formatFiat(valueInFiat, fiatCurrency);
 
     // form
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
