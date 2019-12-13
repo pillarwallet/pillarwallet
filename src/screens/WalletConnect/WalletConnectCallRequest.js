@@ -386,9 +386,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                   numberOfLines: 3,
                   placeholder: 'Add a note to this transaction',
                 }}
-                inputType="secondary"
-                labelBigger
-                noBorder
                 keyboardAvoidance
               />
             }

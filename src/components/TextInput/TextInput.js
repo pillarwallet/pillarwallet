@@ -93,9 +93,9 @@ type Props = {
   onLayout?: Function,
   statusIcon?: string,
   statusIconColor?: string,
-  additionalStyle?: Object,
+  additionalStyle?: Object, // +
   labelStyle?: Object,
-  errorMessageStyle?: Object,
+  errorMessageStyle?: Object, //  +
   getInputRef?: Function,
 
   innerImageURI?: string,
@@ -105,7 +105,9 @@ type Props = {
   leftSideText?: string,
   numeric?: boolean,
   iconProps?: IconButtonProps,
-  selectorOptions?: Object // TODO: add type,
+  selectorOptions?: Object, // TODO: add type,
+  errorMessageOnTop?: boolean,
+  inputWrapperStyle?: Object,
 }
 
 type State = {
@@ -120,15 +122,15 @@ type EventLike = {
 
 const getFontSize = (props: Props) => {
   const { inputProps: { value }, numeric } = props;
-  if (numeric) return 36;
+  if (numeric) return 34;
   if (value || value === 0) return 16;
   return 14;
 };
 
 const getLineHeight = (props: Props) => {
   const { inputProps: { value }, numeric } = props;
-  if (numeric) return 36;
-  if (value || value === 0) return 16;
+  if (numeric) return 42;
+  if (value || value === 0) return 20;
   return 14;
 };
 
@@ -145,21 +147,10 @@ const viewConfig = {
   waitForInteraction: true,
 };
 
-const FloatingButton = styled(IconButton)`
-  position: absolute;
-  right: 0;
-  top: 20px;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  margin: 0;
-  padding: 0;
-`;
-
 const ErrorMessage = styled(BaseText)`
   color: ${themedColors.negative};
-  flex: 1;
-  margin-top: 10px;
+  width: 100%;
+  ${({ isOnTop }) => isOnTop ? 'margin-bottom: 10px' : 'margin-top: 10px'};
 `;
 
 const PostFix = styled(BoldText)`
@@ -218,15 +209,6 @@ const CustomLabel = styled(Label)`
   ${props => props.labelBigger ? fontStyles.medium : fontStyles.regular};
   `;
 
-const AbsoluteIcon = styled(Icon)`
-  position: absolute;
-  right: ${spacing.mediumLarge}px;
-  top: 50%;
-  margin-top: -13px;
-  font-size: ${fontSizes.regular}px;
-  color: ${props => props.color || baseColors.electricBlue};
-`;
-
 const ButtonWrapper = styled.View`
   padding: 4px;
 `;
@@ -240,7 +222,7 @@ const LeftSideWrapper = styled.View`
 `;
 
 const RightSideWrapper = styled.View`
-  padding-right: 12px;
+  padding-right: 14px;
   flex-direction: row;
   align-items: center;
 `;
@@ -249,7 +231,7 @@ const Image = styled(CachedImage)`
   height: 24px;
   width: 24px;
   resize-mode: contain;
-  background-color: red;
+  ${({ source, theme }) => !source && `tint-color: ${theme.colors.text};`}
 `;
 
 const AddonRegularText = styled(BaseText)`
@@ -308,7 +290,6 @@ const SearchBarWrapper = styled.View`
 `;
 
 const HorizontalOptions = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${baseColors.mediumLightGray};
@@ -340,7 +321,6 @@ const EmptyStateWrapper = styled(Wrapper)`
   padding-bottom: 90px;
   align-items: center;
 `;
-
 
 class TextInput extends React.Component<Props, State> {
   multilineInputField: Input;
@@ -412,12 +392,12 @@ class TextInput extends React.Component<Props, State> {
   };
 
   resolveAssetSource(uri?: string | number) {
+    if (!uri) return '';
     if (typeof uri === 'number') return uri;
     return {
       uri,
     };
   }
-
 
   openSelector = () => {
     this.setState({ showOptionsSelector: true });
@@ -506,11 +486,11 @@ class TextInput extends React.Component<Props, State> {
 
   render() {
     const {
-      icon,
+      // icon,
       postfix,
       label,
-      onIconPress,
-      iconColor = '#2077FD',
+      // onIconPress,
+      // iconColor = '#2077FD',
       inputProps,
       inlineLabel,
       errorMessage,
@@ -523,8 +503,8 @@ class TextInput extends React.Component<Props, State> {
       labelBigger,
       loading,
       onLayout,
-      statusIcon,
-      statusIconColor,
+      // statusIcon,
+      // statusIconColor,
       additionalStyle,
       labelStyle,
       getInputRef,
@@ -541,6 +521,8 @@ class TextInput extends React.Component<Props, State> {
 
       selectorOptions = {},
       inputType,
+      errorMessageOnTop,
+      inputWrapperStyle = {},
     } = this.props;
     const colors = getThemeColors(theme);
     const { value = '' } = inputProps;
@@ -569,7 +551,7 @@ class TextInput extends React.Component<Props, State> {
     } = selectorOptions;
 
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
-    const showRightAddon = iconProps || loading;
+    const showRightAddon = !!iconProps || loading;
 
     let selectedOptionToShow = selectedOption;
     const selectorOptionsCount = options.length + horizontalOptions.length;
@@ -582,9 +564,14 @@ class TextInput extends React.Component<Props, State> {
 
     const filteredHorizontalListData = horizontalOptions;
     const filteredListData = options;
+    const imageSource = this.resolveAssetSource(innerImageURI);
+    const optionImageSource = this.resolveAssetSource(selectedOptionIcon);
 
     return (
-      <View style={{ paddingBottom: 10, flexDirection: 'column' }}>
+      <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
+        {errorMessage && !!errorMessageOnTop &&
+          <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>
+        }
         {!!label &&
         <CustomLabel
           labelBigger={labelBigger}
@@ -612,8 +599,8 @@ class TextInput extends React.Component<Props, State> {
                   <ValueWrapper>
                     <Image
                       key={selectedValue}
-                      source={this.resolveAssetSource(selectedOptionIcon)}
-                      fallbackSource={selectedOptionFallback}
+                      source={optionImageSource}
+                      fallbackSource={optionImageSource ? selectedOptionFallback : optionImageSource}
                       resizeMode="contain"
                     />
                     <SelectorValue>{selectedValue}</SelectorValue>
@@ -639,8 +626,8 @@ class TextInput extends React.Component<Props, State> {
             <TouchableWithoutFeedback onPress={() => this.multilineInputField._root.focus()}>
               <LeftSideWrapper>
                 {(innerImageURI || fallbackSource) && <Image
-                  source={this.resolveAssetSource(innerImageURI)}
-                  fallbackSource={fallbackSource}
+                  source={imageSource}
+                  fallbackSource={!imageSource ? fallbackSource : imageSource}
                 />}
                 {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
               </LeftSideWrapper>
@@ -676,8 +663,6 @@ class TextInput extends React.Component<Props, State> {
               alignTextOnRight={!!numeric}
               // textAlign='end'
             />}
-            {!!statusIcon && <AbsoluteIcon name={statusIcon} color={statusIconColor} />}
-            {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
             {!!postfix && <PostFix>{postfix}</PostFix>}
 
 
@@ -701,7 +686,7 @@ class TextInput extends React.Component<Props, State> {
           />}
         </ItemHolder>
         <InputFooter>
-          {errorMessage ? <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage> : <View />}
+          {errorMessage && !errorMessageOnTop && <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>}
           {!!footerAddonText &&
           <TouchableOpacity onPress={footerAddonAction}>
             <AddonText>{footerAddonText}</AddonText>
@@ -718,7 +703,7 @@ class TextInput extends React.Component<Props, State> {
           noClose
           title={selectorModalTitle}
         >
-          <Wrapper flex={1} backgroundColor={UIColors.defaultBackgroundColor}>
+          <Wrapper flex={1}>
             <SearchBarWrapper backgroundColor={baseColors.white}>
               <SearchBar
                 inputProps={{

@@ -20,16 +20,17 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { Keyboard, FlatList } from 'react-native';
 import t from 'tcomb-form-native';
 
 import { SEND_BITCOIN_AMOUNT } from 'constants/navigationConstants';
 import Separator from 'components/Separator';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
-import SingleInput from 'components/TextInput/SingleInput';
+import TextInput from 'components/TextInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -54,17 +55,10 @@ type State = {
   formStructure: t.struct,
 };
 
-const qrCode = require('assets/images/qr.png');
-
 const FormWrapper = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.large}px 6px;
-  background-color: ${baseColors.white};
-  border-bottom-color: ${baseColors.mediumLightGray};
+  border-bottom-color: ${themedColors.border};
   border-bottom-width: 1px;
-`;
-
-const ContactCardList = styled.FlatList`
-  background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 // make Dynamic once more tokens supported
@@ -80,34 +74,34 @@ function AddressInputTemplate(locals) {
     placeholder: 'Username or wallet address',
     value: locals.value,
     keyboardType: locals.keyboardType,
-    textAlign: 'left',
     maxLength: 42,
     letterSpacing: 0.1,
     fontSize: fontSizes.medium,
   };
+
   return (
-    <SingleInput
+    <TextInput
       errorMessage={errorMessage}
-      outterIconText="SCAN"
-      outterIcon={qrCode}
-      id="address"
-      onPress={onIconPress}
       inputProps={inputProps}
-      fontSize={fontSizes.medium}
+      iconProps={{
+        icon: 'qrcode',
+        fontSize: 20,
+        onPress: onIconPress,
+      }}
     />
   );
 }
 
 const getFormStructure = (ownAddress: string) => {
   const Address = t.refinement(t.String, (address): boolean => {
-    return address.length && isValidBTCAddress(address) && ownAddress !== address;
+    return !!address && address.length && isValidBTCAddress(address) && ownAddress !== address;
   });
 
   Address.getValidationErrorMessage = (address): string => {
-    if (ownAddress === address) {
+    if (!!address && ownAddress === address) {
       return 'You are not allowed to make transaction to yourself';
     }
-    if (!isValidBTCAddress(address)) {
+    if (!!address && !isValidBTCAddress(address)) {
       return 'Invalid Bitcoin Address.';
     }
     return 'Address must be provided.';
@@ -249,7 +243,7 @@ class SendBitcoinContacts extends React.Component<Props, State> {
         </FormWrapper>
         {showSpinner && <Container center><Spinner /></Container>}
         {!!contactsToRender.length &&
-          <ContactCardList
+          <FlatList
             data={contactsToRender}
             renderItem={this.renderContact}
             keyExtractor={({ username }) => username}
@@ -265,7 +259,7 @@ class SendBitcoinContacts extends React.Component<Props, State> {
           onRead={this.handleQRRead}
         />
         {isSearchQueryProvided &&
-          <Footer keyboardVerticalOffset={35} backgroundColor={UIColors.defaultBackgroundColor}>
+          <Footer keyboardVerticalOffset={35}>
             <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
           </Footer>
         }

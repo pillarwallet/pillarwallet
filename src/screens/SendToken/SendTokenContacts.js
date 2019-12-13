@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Keyboard, Alert } from 'react-native';
+import { Keyboard, Alert, FlatList } from 'react-native';
 import isEmpty from 'lodash.isempty';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
@@ -31,7 +31,7 @@ import Separator from 'components/Separator';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
-import SingleInput from 'components/TextInput/SingleInput';
+import TextInput from 'components/TextInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import Spinner from 'components/Spinner';
@@ -50,7 +50,7 @@ import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { isValidETHAddress } from 'utils/validators';
 import { isCaseInsensitiveMatch } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 
 // selectors
@@ -63,6 +63,7 @@ import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { SendNavigateOptions } from 'models/Navigation';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -86,19 +87,14 @@ type State = {
   formStructure: t.struct,
 };
 
-const qrCode = require('assets/images/qr.png');
 const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 const FormWrapper = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.large}px 6px;
-  background-color: ${baseColors.white};
-  border-bottom-color: ${baseColors.mediumLightGray};
+  background-color: ${themedColors.card};
+  border-bottom-color: ${themedColors.border};
   border-bottom-width: 1px;
-`;
-
-const ContactCardList = styled.FlatList`
-  background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 const { Form } = t.form;
@@ -112,20 +108,20 @@ function AddressInputTemplate(locals) {
     placeholder: 'Username or wallet address',
     value: locals.value,
     keyboardType: locals.keyboardType,
-    textAlign: 'left',
     maxLength: 42,
     letterSpacing: 0.1,
     fontSize: fontSizes.medium,
   };
+
   return (
-    <SingleInput
+    <TextInput
       errorMessage={errorMessage}
-      outterIconText="SCAN"
-      outterIcon={qrCode}
-      id="address"
-      onPress={onIconPress}
       inputProps={inputProps}
-      fontSize={fontSizes.medium}
+      iconProps={{
+        icon: 'qrcode',
+        fontSize: 20,
+        onPress: onIconPress,
+      }}
     />
   );
 }
@@ -339,7 +335,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     }
 
     return (
-      <ContactCardList
+      <FlatList
         data={contactsToRender}
         renderItem={this.renderContact}
         keyExtractor={({ username }) => username}
@@ -393,7 +389,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           onRead={this.handleQRRead}
         />
         {isSearchQueryProvided &&
-          <Footer keyboardVerticalOffset={35} backgroundColor={UIColors.defaultBackgroundColor}>
+          <Footer keyboardVerticalOffset={35}>
             <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
           </Footer>
         }

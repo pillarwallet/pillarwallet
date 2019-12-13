@@ -23,6 +23,7 @@ export type AssetData = {|
   contractAddress: string,
   decimals: number,
   icon: string,
+  iconColor: string,
 |};
 
 export type Asset = {

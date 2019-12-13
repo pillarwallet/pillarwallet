@@ -32,7 +32,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 // utils
 import { satoshisToBtc } from 'utils/bitcoin';
-import { fontStyles, spacing, UIColors } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { makeAmountForm, getAmountFormFields } from 'utils/btcFormHelpers';
 
 // types
@@ -46,6 +46,8 @@ import { SEND_BITCOIN_CONFIRM } from 'constants/navigationConstants';
 import { updateAppSettingsAction } from 'actions/appSettingsActions';
 
 import Spinner from 'components/Spinner';
+
+const BTCIcon = require('assets/icons/icon_BTC.png');
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -65,11 +67,9 @@ const FooterInner = styled.View`
   align-items: flex-end;
   width: 100%;
   padding: ${spacing.large}px;
-  background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 const BackgroundWrapper = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
   flexGrow: 1;
 `;
 
@@ -193,7 +193,7 @@ class SendBitcoinAmount extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const { symbol: token, iconUrl: icon, decimals } = this.assetData;
+    const { symbol: token, decimals } = this.assetData;
 
     // balance
     const { address } = addresses[0];
@@ -201,7 +201,7 @@ class SendBitcoinAmount extends React.Component<Props, State> {
 
     // form
     const formStructure = makeAmountForm(1000, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
-    const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput: 0 });
+    const formFields = getAmountFormFields({ icon: BTCIcon, currency: token, valueInFiatOutput: 0 });
 
     const showNextButton = !submitPressed && !!value && !!parseFloat(value.amount) && !inputHasError;
     const nextButtonTitle = 'Next';
