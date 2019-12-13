@@ -50,8 +50,6 @@ import SendTokenAssetsScreen from 'screens/SendToken/SendTokenAssets';
 import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScreen';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
-import SendBitcoinAmountScreen from 'screens/SendBitcoin/SendBitcoinAmount';
-import SendBitcoinContactsScreen from 'screens/SendBitcoin/SendBitcoinContacts';
 import SendBitcoinPinConfirmScreen from 'screens/SendBitcoin/SendBitcoinPinConfirmScreen';
 import SendBitcoinConfirmScreen from 'screens/SendBitcoin/SendBitcoinConfirm';
 import SendBitcoinTransactionScreen from 'screens/SendBitcoin/SendBitcoinTransaction';
@@ -153,8 +151,6 @@ import {
   CHANGE_PIN_CONFIRM_NEW_PIN,
   TAB_NAVIGATION,
   SEND_BITCOIN_FLOW,
-  SEND_BITCOIN_AMOUNT,
-  SEND_BITCOIN_CONTACTS,
   SEND_BITCOIN_CONFIRM,
   SEND_BITCOIN_TRANSACTION,
   SEND_BITCOIN_PIN_CONFIRM,
@@ -468,8 +464,8 @@ const sendTokenFromAssetFlow = createStackNavigator(
 // SEND BITCOIN FROM ASSET FLOW
 const sendBitcoinFromAssetFlow = createStackNavigator(
   {
-    [SEND_BITCOIN_CONTACTS]: SendBitcoinContactsScreen,
-    [SEND_BITCOIN_AMOUNT]: SendBitcoinAmountScreen,
+    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
     [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
     [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,

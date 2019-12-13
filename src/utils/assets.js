@@ -28,7 +28,7 @@ import type {
   Rates,
 } from 'models/Asset';
 import get from 'lodash.get';
-import { ETH } from 'constants/assetsConstants';
+import { ETH, BTC } from 'constants/assetsConstants';
 import { formatAmount, isCaseInsensitiveMatch } from 'utils/common';
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -67,25 +67,25 @@ export const getBalance = (balances: Balances = {}, asset: string): number => {
   return +formatAmount(number.toString());
 };
 
-export const getRate = (rates: Rates = {}, token: string, fiatCurrency: string): number => {
+const baseRate = (rates: Rates, asset: string, fiatCurrency: string): number => {
+  const rate = rates[asset];
+  if (!rate) {
+    return 0;
+  }
+
+  return rate[fiatCurrency];
+};
+
+const tokenRate = (rates: Rates, token: string, fiatCurrency: string): number => {
   const tokenRates = rates[token];
-  const ethRate = rates[ETH];
 
   if (!tokenRates) {
     return 0;
   }
 
-  if (!ethRate) {
-    return tokenRates[fiatCurrency] || 0;
-  }
-
-  const ethToFiat = ethRate[fiatCurrency];
+  const ethToFiat = baseRate(rates, ETH, fiatCurrency);
   if (!ethToFiat) {
-    return 0;
-  }
-
-  if (token === ETH) {
-    return ethToFiat;
+    return tokenRates[fiatCurrency] || 0;
   }
 
   const tokenToETH = tokenRates[ETH];
@@ -94,6 +94,14 @@ export const getRate = (rates: Rates = {}, token: string, fiatCurrency: string):
   }
 
   return ethToFiat * tokenToETH;
+};
+
+export const getRate = (rates: Rates = {}, token: string, fiatCurrency: string): number => {
+  if (token === BTC || token === ETH) {
+    return baseRate(rates, token, fiatCurrency);
+  }
+
+  return tokenRate(rates, token, fiatCurrency);
 };
 
 export const calculateMaxAmount = (token: string, balance: number | string, txFeeInWei: BigNumber): number => {
