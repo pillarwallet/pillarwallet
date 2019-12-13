@@ -690,6 +690,12 @@ export const syncVirtualAccountTransactionsAction = () => {
               },
             };
             additionalTransactionData = { extra: syntheticTransactionExtra };
+          } else {
+            // there shouldn't be any case where synthetic asset address is not supported by wallet
+            Sentry.captureMessage('Unable to get wallet supported asset from synthetic asset address', {
+              level: 'info',
+              extra: { syntheticAssetAddress },
+            });
           }
 
           recipientAddress = syntheticRecipient;
