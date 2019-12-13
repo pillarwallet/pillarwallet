@@ -674,19 +674,24 @@ export const syncVirtualAccountTransactionsAction = () => {
 
         // check if recipient address is present in extra, else this is incoming payment
         if (!isEmpty(syntheticRecipient)) {
-          const {
-            decimals,
-            symbol: syntheticSymbol,
-          } = getAssetDataByAddress(assetsList, supportedAssets, syntheticAssetAddress);
-          const syntheticToAmount = formatUnits(syntheticValue, decimals);
-          const syntheticTransactionExtra: SyntheticTransactionExtra = {
-            syntheticTransaction: {
-              toAmount: Number(syntheticToAmount),
-              toAssetCode: syntheticSymbol,
-              toAddress: syntheticRecipient,
-            },
-          };
-          additionalTransactionData = { extra: syntheticTransactionExtra };
+          const syntheticAsset = syntheticAssetAddress !== null
+            ? getAssetDataByAddress(assetsList, supportedAssets, syntheticAssetAddress)
+            : getAssetData(assetsList, supportedAssets, ETH); // if null then it's ETH
+
+          // don't format synthetic value if asset not found at all because synthetic value will end up as 0
+          if (!isEmpty(syntheticAsset)) {
+            const { decimals, symbol: syntheticSymbol } = syntheticAsset;
+            const syntheticToAmount = formatUnits(syntheticValue, decimals);
+            const syntheticTransactionExtra: SyntheticTransactionExtra = {
+              syntheticTransaction: {
+                toAmount: Number(syntheticToAmount),
+                toAssetCode: syntheticSymbol,
+                toAddress: syntheticRecipient,
+              },
+            };
+            additionalTransactionData = { extra: syntheticTransactionExtra };
+          }
+
           recipientAddress = syntheticRecipient;
         } else {
           // current account is synthetic receiver
