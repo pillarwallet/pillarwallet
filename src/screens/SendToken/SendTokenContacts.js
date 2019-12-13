@@ -47,7 +47,7 @@ import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 
 // utils
-import { isValidETHAddress } from 'utils/validators';
+import { addressValidator } from 'utils/validators';
 import { isCaseInsensitiveMatch } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
@@ -61,7 +61,7 @@ import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { SendNavigateOptions } from 'models/Navigation';
-
+import type { AssetData } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
@@ -130,19 +130,23 @@ function AddressInputTemplate(locals) {
   );
 }
 
-const getFormStructure = (ownAddress: string) => {
+const getFormStructure = (ownAddress: string, token: string) => {
+  const { validator, message } = addressValidator(token);
+
   const Address = t.refinement(t.String, (address): boolean => {
-    return address.length && isValidETHAddress(address) && ownAddress !== address;
+    return address.length && validator(address) && ownAddress !== address;
   });
 
   Address.getValidationErrorMessage = (address): string => {
+    if (address === '') {
+      return 'Address must be provided.';
+    }
+
     if (ownAddress === address) {
       return 'You are not allowed to make transaction to yourself';
     }
-    if (!isValidETHAddress(address)) {
-      return 'Invalid Ethereum Address.';
-    }
-    return 'Address must be provided.';
+
+    return message;
   };
 
   return t.struct({
@@ -158,7 +162,7 @@ const generateFormOptions = (config: Object): Object => ({
 
 class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
-  assetData: Object;
+  assetData: AssetData;
   isPPNTransaction: boolean;
 
   constructor(props: Props) {
@@ -166,10 +170,12 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { navigation, blockchainNetworks } = this.props;
     this.assetData = navigation.getParam('assetData', {});
     this.isPPNTransaction = isPillarPaymentNetworkActive(blockchainNetworks);
+    const { token } = this.assetData;
+
     this.state = {
       isScanning: false,
       value: { address: '' },
-      formStructure: getFormStructure(this.props.wallet.address),
+      formStructure: getFormStructure(this.props.wallet.address, token),
     };
   }
 
@@ -364,7 +370,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     const showContacts = isCollectible || token !== BTC;
     const defaultAssetName = this.isPPNTransaction ? 'synthetic asset' : 'asset';
-    const tokenName = isCollectible ? name : (token || defaultAssetName);
+    const tokenName = isCollectible ? (name || token) : (token || defaultAssetName);
     const headerTitle = `Send ${tokenName}`;
     const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
 

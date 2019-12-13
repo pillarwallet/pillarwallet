@@ -55,10 +55,10 @@ export function makeAmountForm(
     }
 
     amount = parseNumber(amount.toString());
-    if (!enoughForFee) {
-      return 'Not enough BTC to process the transaction fee';
-    } else if (amount >= maxAmount) {
+    if (amount > maxAmount) {
       return 'Amount should not exceed the sum of total balance and est. network fee';
+    } else if (!enoughForFee) {
+      return 'Not enough BTC to process the transaction fee';
     } else if (amount === 0) {
       /**
        * 0 is the first number that can be typed therefore we don't want
