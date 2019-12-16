@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, TextInput, View } from 'react-native';
+import { FlatList, TextInput as RNTextInput, View } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -33,13 +33,14 @@ import Intercom from 'react-native-intercom';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { InAppBrowser } from '@matt-block/react-native-in-app-browser';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText, Paragraph } from 'components/Typography';
-import SelectorInput from 'components/SelectorInput';
+import TextInput from 'components/TextInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import DeploymentView from 'components/DeploymentView';
@@ -99,9 +100,9 @@ const CardRow = styled.View`
   justify-content: space-between;
   align-items: ${props => props.alignTop ? 'flex-start' : 'flex-end'};
   padding: 10px 0;
-  ${props => props.withBorder
+  ${({ withBorder, theme }) => withBorder
     ? `border-bottom-width: 1px;
-      border-bottom-color: ${baseColors.mediumLightGray};`
+      border-bottom-color: ${theme.colors.border};`
     : ''}
 `;
 
@@ -122,7 +123,7 @@ const CardColumn = styled.View`
 const CardText = styled(BaseText)`
   ${fontStyles.regular};
   letter-spacing: 0.18px;
-  color: ${props => props.label ? baseColors.slateBlack : baseColors.darkGray};
+  color: ${({ label, theme }) => label ? theme.colors.text : theme.colors.secondaryText};
   flex-wrap: wrap;
   width: 100%;
 `;
@@ -340,7 +341,6 @@ function SelectorInputTemplate(locals) {
     config: {
       label,
       hasInput,
-      wrapperStyle,
       placeholderSelector,
       placeholderInput,
       options,
@@ -349,7 +349,16 @@ function SelectorInputTemplate(locals) {
       inputRef,
       onSelectorOpen,
     },
+    value,
   } = locals;
+  const { selector = {} } = value;
+  const { iconUrl } = selector;
+  const selectedOptionIcon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+  const selectorValue = {
+    ...value,
+    selector: { ...selector, icon: selectedOptionIcon },
+  };
+
   const errorMessage = locals.error;
   const inputProps = {
     onChange: locals.onChange,
@@ -357,33 +366,36 @@ function SelectorInputTemplate(locals) {
     keyboardType: locals.keyboardType,
     autoCapitalize: locals.autoCapitalize,
     maxLength: 42,
-    label,
     placeholderSelector,
     placeholder: placeholderInput,
     onSelectorOpen,
+    selectorValue,
   };
 
+
   return (
-    <SelectorInput
-      inputProps={inputProps}
-      options={options}
-      horizontalOptions={horizontalOptions}
-      showOptionsTitles={!isEmpty(horizontalOptions)}
-      optionsTitle="CRYPTO"
-      horizontalOptionsTitle="FIAT"
+    <TextInput
       errorMessage={errorMessage}
-      hasInput={hasInput}
-      wrapperStyle={wrapperStyle}
-      value={locals.value}
-      inputAddonText={inputAddonText}
-      inputRef={inputRef}
+      inputProps={inputProps}
+      leftSideText={inputAddonText}
+      numeric
+      selectorOptions={{
+        options,
+        horizontalOptions,
+        showOptionsTitles: !isEmpty(horizontalOptions),
+        optionsTitle: 'CRYPTO',
+        horizontalOptionsTitle: 'FIAT',
+        fullWidth: !hasInput,
+        selectorModalTitle: label,
+      }}
+      getInputRef={inputRef}
     />
   );
 }
 
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
-  fromInputRef: TextInput;
+  fromInputRef: RNTextInput;
   listeners: NavigationEventSubscription[];
 
   constructor(props: Props) {
@@ -475,13 +487,13 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   blurFromInput = () => {
     if (!this.fromInputRef) return;
-    this.fromInputRef.blur();
+    this.fromInputRef._root.blur();
   };
 
   focusInputWithKeyboard = () => {
     setTimeout(() => {
       if (!this.fromInputRef) return;
-      this.fromInputRef.focus();
+      this.fromInputRef._root.focus();
     }, 200);
   };
 
@@ -1098,7 +1110,6 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
         headerProps={{
           leftItems: [{ user: true }],
           rightItems,

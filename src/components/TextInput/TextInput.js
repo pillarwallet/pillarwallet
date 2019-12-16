@@ -19,23 +19,15 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { Item as NBItem, Input, Label } from 'native-base';
-import {
-  View,
-  TouchableOpacity,
-  Platform,
-  TextInput as RNInput,
-  TouchableWithoutFeedback,
-  Keyboard,
-  FlatList,
-} from 'react-native';
+import { Item as NBItem, Input } from 'native-base';
+import { View, Platform, TextInput as RNInput, TouchableWithoutFeedback, Keyboard, FlatList } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 import { ETH } from 'constants/assetsConstants';
 
 import IconButton from 'components/IconButton';
-import { BaseText, BoldText, MediumText, SubHeadingMedium } from 'components/Typography';
+import { BaseText, MediumText, SubHeadingMedium } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
@@ -48,7 +40,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ProfileImage from 'components/ProfileImage';
 
-import { fontSizes, baseColors, UIColors, spacing, fontStyles, appFont, itemSizes } from 'utils/variables';
+import { fontSizes, spacing, fontStyles, appFont, itemSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { formatMoney, noop } from 'utils/common';
 
@@ -58,46 +50,37 @@ import type { Props as IconButtonProps } from 'components/IconButton';
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
+type SelectorValueType = {
+  input: string | number,
+  selector: {
+    icon?: string,
+    iconFallback?: string,
+    value: string | number,
+  }
+}
+
 type InputPropsType = {
   placeholder?: string,
   onChange: Function,
   onBlur?: Function,
-  value: any, // TODO: update type
+  value: string | number,
+  selectorValue: SelectorValueType,
   multiline?: boolean,
   onSelectorOpen?: () => void,
   onSelectorChange?: () => void,
 }
 
 type Props = {
-  icon?: string,
-  inlineLabel?: boolean,
-  alignRight?: boolean,
-  postfix?: string,
-  label?: string,
-  id?: string,
-  iconColor?: string,
   errorMessage?: string,
-  onIconPress?: Function,
   inputProps: InputPropsType,
-  inputType: string,
   trim: boolean,
-  footerAddonText?: string,
-  footerAddonAction?: Function,
   autoCorrect?: boolean,
-  viewWidth?: number,
-  noBorder?: boolean,
-  lowerCase?: boolean,
-  labelBigger?: boolean,
   keyboardAvoidance?: boolean,
   loading?: boolean,
-  onLayout?: Function,
-  statusIcon?: string,
-  statusIconColor?: string,
-  additionalStyle?: Object, // +
-  labelStyle?: Object,
-  errorMessageStyle?: Object, //  +
+  onLayout?: () => void,
+  additionalStyle?: Object,
+  errorMessageStyle?: Object,
   getInputRef?: Function,
-
   innerImageURI?: string,
   fallbackSource?: number,
   buttonProps?: ButtonProps,
@@ -147,26 +130,30 @@ const viewConfig = {
   waitForInteraction: true,
 };
 
+const MIN_QUERY_LENGTH = 2;
+
+const isMatchingSearch = (query, text) => query && text && text.toUpperCase().includes(query.toUpperCase());
+const isCaseInsensitiveMatch = (query, text) => query && text && text.toLowerCase() === query.toLowerCase();
+
 const ErrorMessage = styled(BaseText)`
   color: ${themedColors.negative};
   width: 100%;
   ${({ isOnTop }) => isOnTop ? 'margin-bottom: 10px' : 'margin-top: 10px'};
 `;
 
-const PostFix = styled(BoldText)`
-  line-height: 22px;
-  margin-top: 8px;
-`;
-
 const InputField = styled(Input)`
   color: ${themedColors.text};
-  ${props => props.inputType.borderRadius ? `border-radius: ${props.inputType.borderRadius};` : ''}
-  ${props => props.inputType.lineHeight ? `line-height: ${props.inputType.lineHeight};` : ''}
-  padding: ${props => props.inputType.padding || 0};
   padding: 0 14px;
   align-self: center;
   margin: 0;
   text-align: ${({ alignTextOnRight }) => alignTextOnRight ? 'right' : 'left'};
+`;
+
+const IosFocusInput = styled(RNInput)`
+  position: relative;
+  bottom: 0;
+  left: 0;
+  height: 1px;
 `;
 
 const Item = styled(NBItem)`
@@ -175,6 +162,7 @@ const Item = styled(NBItem)`
   height: ${props => props.height}px;
   flex-direction: row;
   min-height: 54px;
+  height: ${({ height }) => height}px;
   width: 100%;
 `;
 
@@ -183,7 +171,8 @@ const ItemHolder = styled.View`
   border-radius: 4px;
   border-width: 1px;
   border-style: solid;
-  border-color: ${({ error, theme }) => error ? theme.colors.negative : theme.colors.tertiary}
+  border-color: ${({ error, theme }) => error ? theme.colors.negative : theme.colors.tertiary};
+  position: relative;
 `;
 
 const InputFooter = styled(View)`
@@ -195,27 +184,12 @@ const InputFooter = styled(View)`
   margin-top: -4px;
 `;
 
-const AddonText = styled(BaseText)`
-  color: ${themedColors.primary};
-  width: 100%;
-  text-align: right;
-`;
-
-const CustomLabel = styled(Label)`
-  color: ${props => props.labelBigger ? UIColors.defaultTextColor : baseColors.darkGray};
-  letter-spacing: 0.5;
-  padding-top: ${props => props.labelBigger ? '35px' : '5px'};
-  padding-bottom: ${props => props.labelBigger ? '12px' : '0'};
-  ${props => props.labelBigger ? fontStyles.medium : fontStyles.regular};
-  `;
-
 const ButtonWrapper = styled.View`
   padding: 4px;
 `;
 
 const LeftSideWrapper = styled.View`
   padding-left: 16px;
-  margin-right: 16px;
   flex-direction: row;
   align-items: center;
   max-width: 25%;
@@ -236,7 +210,6 @@ const Image = styled(CachedImage)`
 
 const AddonRegularText = styled(BaseText)`
   color: ${themedColors.secondaryText};
-  margin-left: 9px;
   flex-wrap: wrap;
 `;
 
@@ -245,8 +218,8 @@ const Selector = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
-  ${props => props.fullWidth ? 'flex: 1;' : ''}
+  padding: 10px 0 10px 16px;
+  ${props => props.fullWidth ? 'flex: 1; padding-right: 14px;' : ''}
 `;
 
 const ValueWrapper = styled.View`
@@ -270,14 +243,14 @@ const ChevronWrapper = styled.View`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-left: 19px;
+  padding: 4px;
+  margin-left: 15px;
 `;
 
 const SelectorChevron = styled(Icon)`
   font-size: 8px;
-  color: ${baseColors.electricBlue};
+  color: ${themedColors.primary};
 `;
-
 
 const Wrapper = styled.View`
 `;
@@ -286,13 +259,13 @@ const SearchBarWrapper = styled.View`
   padding: 0 ${spacing.large}px;
   border-bottom-width: 1px;
   border-style: solid;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
 `;
 
 const HorizontalOptions = styled.View`
   border-bottom-width: 1px;
   border-style: solid;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
   padding-bottom: ${spacing.small}px;
 `;
 
@@ -307,7 +280,7 @@ const HorizontalOptionItem = styled.TouchableOpacity`
 
 const HorizontalOptionItemName = styled(BaseText)`
   ${fontStyles.small};
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
   padding: 0 4px;
   margin-top: 3px;
 `;
@@ -328,7 +301,6 @@ class TextInput extends React.Component<Props, State> {
   rnInput: Object;
 
   static defaultProps = {
-    inputType: 'default',
     autoCorrect: false,
     trim: true,
   };
@@ -363,9 +335,17 @@ class TextInput extends React.Component<Props, State> {
   };
 
   handleChange = (e: EventLike) => {
-    const { inputProps: { onChange } } = this.props;
+    const { inputProps: { onChange, selectorValue = {} } } = this.props;
     const value = e.nativeEvent.text;
-    if (onChange) onChange(value);
+    const { selector } = selectorValue;
+
+    if (onChange) {
+      if (selector) {
+        onChange({ selector, input: value });
+      } else {
+        onChange(value);
+      }
+    }
   };
 
   handleFocus = () => {
@@ -462,13 +442,9 @@ class TextInput extends React.Component<Props, State> {
   };
 
   selectValue = (selectedValue: Object) => {
-    // const { inputProps = {}, value } = this.props;
-    const { inputProps = {} } = this.props;
-    // const { input } = value;
-    const { onChange, onSelectorChange, value = {} } = inputProps;
-    const { input } = value;
+    const { inputProps: { onChange, selectorValue } } = this.props;
+    const { input } = selectorValue;
     if (onChange) onChange({ selector: selectedValue, input });
-    if (onSelectorChange) onSelectorChange();
     this.setState({ showOptionsSelector: false });
   };
 
@@ -485,48 +461,32 @@ class TextInput extends React.Component<Props, State> {
   };
 
   render() {
+    const { isFocused, query, showOptionsSelector } = this.state;
     const {
-      // icon,
-      postfix,
-      label,
-      // onIconPress,
-      // iconColor = '#2077FD',
       inputProps,
-      inlineLabel,
       errorMessage,
-      footerAddonText,
-      footerAddonAction,
       autoCorrect,
-      // viewWidth = '100%',
-      noBorder,
-      lowerCase,
-      labelBigger,
       loading,
       onLayout,
-      // statusIcon,
-      // statusIconColor,
       additionalStyle,
-      labelStyle,
       getInputRef,
       errorMessageStyle,
-
       innerImageURI,
       fallbackSource,
-
       buttonProps,
       theme,
       leftSideText,
       numeric,
       iconProps,
-
       selectorOptions = {},
-      inputType,
       errorMessageOnTop,
       inputWrapperStyle = {},
     } = this.props;
     const colors = getThemeColors(theme);
-    const { value = '' } = inputProps;
-    const { isFocused, query, showOptionsSelector } = this.state;
+    const { value = '', selectorValue = {} } = inputProps;
+    const { selector = {}, input: inputValue } = selectorValue;
+    const textInputValue = inputValue || value;
+
 
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
@@ -541,7 +501,6 @@ class TextInput extends React.Component<Props, State> {
     const {
       options = [],
       horizontalOptions = [],
-      selectedOption = {},
       selectorPlaceholder,
       fullWidth: fullWidthSelector,
       showOptionsTitles,
@@ -553,7 +512,7 @@ class TextInput extends React.Component<Props, State> {
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
     const showRightAddon = !!iconProps || loading;
 
-    let selectedOptionToShow = selectedOption;
+    let selectedOptionToShow = selector;
     const selectorOptionsCount = options.length + horizontalOptions.length;
     if (selectorOptionsCount === 1) selectedOptionToShow = options.length ? options[0] : horizontalOptions[0];
     const {
@@ -562,8 +521,24 @@ class TextInput extends React.Component<Props, State> {
       value: selectedValue,
     } = selectedOptionToShow;
 
-    const filteredHorizontalListData = horizontalOptions;
-    const filteredListData = options;
+    let filteredHorizontalListData = horizontalOptions;
+    let filteredListData = options;
+
+    const isSearchQuery = query && query.length >= MIN_QUERY_LENGTH;
+    if (isSearchQuery && showOptionsSelector) {
+      // filter by search query and sort exact matches (case insensitve) first (-1) or keep existing order (0)
+      filteredListData = filteredListData
+        .filter(({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name))
+        .sort(
+          ({ value: val, name }) => isCaseInsensitiveMatch(query, val) || isCaseInsensitiveMatch(query, name) ? -1 : 0,
+        );
+      filteredHorizontalListData = filteredHorizontalListData
+        .filter(({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name))
+        .sort(
+          ({ value: val, name }) => isCaseInsensitiveMatch(query, val) || isCaseInsensitiveMatch(query, name) ? -1 : 0,
+        );
+    }
+
     const imageSource = this.resolveAssetSource(innerImageURI);
     const optionImageSource = this.resolveAssetSource(selectedOptionIcon);
 
@@ -572,20 +547,10 @@ class TextInput extends React.Component<Props, State> {
         {errorMessage && !!errorMessageOnTop &&
           <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>
         }
-        {!!label &&
-        <CustomLabel
-          labelBigger={labelBigger}
-          style={labelStyle}
-        >
-          {lowerCase ? label : label.toUpperCase()}
-        </CustomLabel>
-        }
         <ItemHolder error={!!errorMessage}>
           <Item
-            inlineLabel={inlineLabel}
-            stackedLabel={!inlineLabel}
+            stackedLabel
             isFocused={isFocused}
-            noBorder={noBorder}
             height={inputHeight}
           >
             {!!Object.keys(selectorOptions).length &&
@@ -628,6 +593,7 @@ class TextInput extends React.Component<Props, State> {
                 {(innerImageURI || fallbackSource) && <Image
                   source={imageSource}
                   fallbackSource={!imageSource ? fallbackSource : imageSource}
+                  style={{ marginRight: 9 }}
                 />}
                 {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
               </LeftSideWrapper>
@@ -643,28 +609,21 @@ class TextInput extends React.Component<Props, State> {
               onBlur={this.handleBlur}
               onEndEditing={this.handleBlur}
               onFocus={variableFocus}
-              value={value}
-              inputType={inputType}
+              value={textInputValue}
               autoCorrect={autoCorrect}
               style={[{
                 fontSize: getFontSize(this.props),
                 lineHeight: getLineHeight(this.props),
                 fontFamily: getFontFamily(this.props),
-                // width: viewWidth,
                 textAlignVertical: inputProps.multiline ? 'top' : 'center',
                 height: inputHeight,
               }, customStyle,
                 additionalStyle,
               ]}
               onLayout={onLayout}
-
-
               placeholderTextColor={colors.accent}
               alignTextOnRight={!!numeric}
-              // textAlign='end'
             />}
-            {!!postfix && <PostFix>{postfix}</PostFix>}
-
 
             {showRightAddon &&
             <RightSideWrapper>
@@ -677,20 +636,15 @@ class TextInput extends React.Component<Props, State> {
             </ButtonWrapper>}
 
           </Item>
-          {Platform.OS === 'ios' && <RNInput
+          {Platform.OS === 'ios' && <IosFocusInput
             caretHidden
             autoCorrect={false}
-            ref={this.rnInput}
+            innerRef={this.rnInput}
             onFocus={this.handleRNFocus}
-            style={{ marginTop: -10 }}
           />}
         </ItemHolder>
         <InputFooter>
           {errorMessage && !errorMessageOnTop && <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>}
-          {!!footerAddonText &&
-          <TouchableOpacity onPress={footerAddonAction}>
-            <AddonText>{footerAddonText}</AddonText>
-          </TouchableOpacity>}
         </InputFooter>
         <SlideModal
           isVisible={showOptionsSelector}
@@ -698,13 +652,13 @@ class TextInput extends React.Component<Props, State> {
           showHeader={!!selectorModalTitle}
           onModalShow={this.focusInput}
           onModalHidden={() => this.setState({ query: '' })}
-          backgroundColor={baseColors.white}
           noSwipeToDismiss
           noClose
           title={selectorModalTitle}
+          backgroundColor={colors.card}
         >
           <Wrapper flex={1}>
-            <SearchBarWrapper backgroundColor={baseColors.white}>
+            <SearchBarWrapper>
               <SearchBar
                 inputProps={{
                   onChange: this.handleSearch,
@@ -712,7 +666,6 @@ class TextInput extends React.Component<Props, State> {
                   autoCapitalize: 'none',
                 }}
                 placeholder="Search for an asset"
-                backgroundColor={baseColors.white}
                 inputRef={ref => { this.searchInput = ref; }}
                 customCloseAction={() => {
                   this.setState({ showOptionsSelector: false, query: '' });
