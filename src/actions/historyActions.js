@@ -66,7 +66,7 @@ import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // actions
-import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from './assetsActions';
+import { checkForMissedAssetsAction, fetchAssetsBalancesAction, loadSupportedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction, syncVirtualAccountTransactionsAction } from './smartWalletActions';
@@ -137,12 +137,14 @@ export const fetchSmartWalletTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      assets: { supportedAssets },
       smartWallet: { lastSyncedTransactionId },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) return;
+
+    await dispatch(loadSupportedAssetsAction());
+    const supportedAssets = get(getState(), 'assets.supportedAssets', []);
 
     await dispatch(syncVirtualAccountTransactionsAction());
 
