@@ -28,7 +28,7 @@ import Intercom from 'react-native-intercom';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -38,6 +38,7 @@ import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
+import { Banner } from 'components/Banner';
 
 // constants
 import {
@@ -77,7 +78,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // utils
 import { baseColors, spacing, fontStyles } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
@@ -87,6 +88,7 @@ import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -120,6 +122,7 @@ type Props = {
   userEvents: UserEvent[],
   fetchBadgeAwardHistory: () => void,
   badgesEvents: BadgeRewardEvent[],
+  theme: Theme,
 };
 
 type State = {
@@ -130,15 +133,17 @@ type State = {
   scrollY: Animated.Value,
   isScanning: boolean,
   tabIsChanging: boolean,
+  isReferralBannerVisible: boolean,
 };
 
 const BalanceWrapper = styled.View`
   padding: 8px ${spacing.layoutSides}px;
   width: 100%;
+  background-color: ${themedColors.surface};
 `;
 
 const WalletConnectWrapper = styled.View`
-  padding: ${spacing.medium}px ${spacing.large}px 0;
+  padding: ${spacing.layoutSides}px ${spacing.layoutSides}px 5px;
   background-color: ${themedColors.surface};
   border-color: ${themedColors.border};
   border-top-width: 1px;
@@ -168,6 +173,7 @@ const socialIconActive = require('assets/icons/social_active.png');
 const transactionsIconNormal = require('assets/icons/transactions_normal.png');
 const transactionsIconActive = require('assets/icons/transactions_active.png');
 const iconConnect = require('assets/icons/icon_receive.png');
+const giftImage = require('assets/images/referral_gift.png');
 
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
@@ -181,6 +187,7 @@ class HomeScreen extends React.Component<Props, State> {
     usernameWidth: 0,
     isScanning: false,
     tabIsChanging: false,
+    isReferralBannerVisible: true,
   };
 
   componentDidMount() {
@@ -318,12 +325,14 @@ class HomeScreen extends React.Component<Props, State> {
       accounts,
       userEvents,
       badgesEvents,
+      theme,
     } = this.props;
 
     const {
       activeTab,
       isScanning,
       tabIsChanging,
+      isReferralBannerVisible,
     } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
@@ -400,9 +409,11 @@ class HomeScreen extends React.Component<Props, State> {
     const sessionsLabel = sessionsCount ? `${sessionsCount} ${sessionsLabelPart}` : '';
 
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
+    const colors = getThemeColors(theme);
 
     return (
       <ContainerWithHeader
+        backgroundColor={colors.card} // so tabs would have white background only when not sticky
         headerProps={{
           leftItems: [{ user: true }],
           rightItems: [
@@ -433,7 +444,7 @@ class HomeScreen extends React.Component<Props, State> {
       >
         <ScrollView
           style={{ width: '100%', flex: 1 }}
-          stickyHeaderIndices={[3]}
+          stickyHeaderIndices={[4]}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -475,6 +486,20 @@ class HomeScreen extends React.Component<Props, State> {
               settingsLabel="Connect"
             />
           </WalletConnectWrapper>
+          <Banner
+            isVisible={isReferralBannerVisible}
+            bannerText="Refer friends and earn rewards, free PLR and more."
+            imageProps={{
+              style: {
+                width: 96,
+                height: 60,
+                marginLeft: 4,
+              },
+              source: giftImage,
+            }}
+            wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
+            onClose={() => this.setState({ isReferralBannerVisible: false })}
+          />
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}
@@ -556,4 +581,4 @@ const mapDispatchToProps = (dispatch) => ({
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));
