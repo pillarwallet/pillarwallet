@@ -25,6 +25,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText, Paragraph, TextLink } from 'components/Typography';
@@ -461,14 +462,14 @@ class NewProfile extends React.Component<Props, State> {
 const mapStateToProps = ({
   wallet: { walletState, onboarding: { apiUser, importedWallet } },
   session: { data: session },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   walletState,
   apiUser,
   importedWallet,
   session,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
   registerOnBackend: () => dispatch(registerOnBackendAction()),
 });

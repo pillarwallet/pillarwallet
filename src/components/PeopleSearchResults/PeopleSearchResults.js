@@ -32,6 +32,7 @@ import Separator from 'components/Separator';
 import { SubHeadingMedium, BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import type { SearchResults, ApiUser } from 'models/Contacts';
+import type { Dispatch } from 'reducers/rootReducer';
 import { createAlert } from 'utils/alerts';
 import {
   sendInvitationAction,
@@ -212,7 +213,7 @@ class PeopleSearchResults extends React.Component<Props> {
   }
 }
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   sendInvitation: (user) => dispatch(sendInvitationAction(user)),
   acceptInvitation: (user) => dispatch(acceptInvitationAction(user)),
   cancelInvitation: (user) => dispatch(cancelInvitationAction(user)),

@@ -34,6 +34,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import { createAlert } from 'utils/alerts';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -112,11 +113,11 @@ class ConnectionRequests extends React.Component<Props> {
 
 const mapStateTopProps = ({
   invitations: { data: invitations },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   invitations,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),

@@ -53,6 +53,7 @@ import assetsConfig from 'configs/assetsConfig';
 // types
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -71,7 +72,7 @@ type Props = {
   balance: number,
   rates: Object,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   assetsLayout: string,
   activeAccount: ?Account,
   paymentNetworkBalances: Balances,
@@ -326,7 +327,7 @@ class AssetsList extends React.Component<Props, State> {
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   assetsLayout,
@@ -344,7 +345,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   hideAsset: (asset: Asset) => dispatch(hideAssetAction(asset)),
 });
 

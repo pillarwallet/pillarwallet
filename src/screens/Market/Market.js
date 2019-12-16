@@ -37,6 +37,7 @@ import { fetchICOsAction } from 'actions/icosActions';
 
 // types
 import type { ICO as ICOT } from 'models/ICO';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // screens
 import MarketplaceComingSoon from 'screens/MarketplaceComingSoon';
@@ -166,12 +167,15 @@ class MarketScreen extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ icos: { data: icos }, user: { data: user } }) => ({
+const mapStateToProps = ({
+  icos: { data: icos },
+  user: { data: user },
+}: RootReducerState): $Shape<Props> => ({
   icos,
   user,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchICOs: () => dispatch(fetchICOsAction()),
 });
 

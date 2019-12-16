@@ -23,6 +23,8 @@ import { connect } from 'react-redux';
 import Header from 'components/Header';
 import type { NavigationScreenProp } from 'react-navigation';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 // components
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
@@ -140,11 +142,11 @@ class LoginScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   user,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });

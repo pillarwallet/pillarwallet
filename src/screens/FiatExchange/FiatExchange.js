@@ -32,7 +32,7 @@ import ErrorMessage from 'components/ErrorMessage';
 import { setBrowsingWebViewAction } from 'actions/appSettingsActions';
 import { getActiveAccountAddress } from 'utils/accounts';
 
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 
 type Props = {
@@ -141,7 +141,7 @@ const mapStateToProps = ({
   accounts,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setBrowsingWebView: isBrowsing => dispatch(setBrowsingWebViewAction(isBrowsing)),
 });
 

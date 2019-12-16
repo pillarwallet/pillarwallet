@@ -476,7 +476,7 @@ const mapStateToProps = ({
   gasInfo,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 

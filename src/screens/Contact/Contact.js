@@ -73,6 +73,7 @@ import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Badges } from 'models/Badge';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -122,7 +123,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: ApiUser[],
   syncContact: Function,
-  fetchContactTransactions: (contactAddress: string, asset?: string) => Function,
+  fetchContactTransactions: (contactAddress: string, asset?: string) => void,
   chats: Object[],
   session: Object,
   disconnectContact: Function,
@@ -132,7 +133,7 @@ type Props = {
   accounts: Accounts,
   history: Object[],
   openSeaTxHistory: Object[],
-  contactsBadges: Badges,
+  contactsBadges: { [contactId: string]: Badges },
   fetchContactBadges: Function,
   isFetchingBadges: boolean,
   logScreenView: (view: string, screen: string) => void,
@@ -541,8 +542,11 @@ const mapStateToProps = ({
   session: { data: session },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
-  badges: { contactsBadges, isFetchingBadges },
-}) => ({
+  badges: {
+    contactsBadges,
+    isFetchingBadges,
+  },
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   chats,
   session,
@@ -558,12 +562,12 @@ const structuredSelector = createStructuredSelector({
   openSeaTxHistory: accountCollectiblesHistorySelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   syncContact: userId => dispatch(syncContactAction(userId)),
   fetchContactTransactions: (contactAddress) => dispatch(fetchContactTransactionsAction(contactAddress)),
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),

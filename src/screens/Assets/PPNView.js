@@ -60,7 +60,7 @@ import type { Accounts } from 'models/Account';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction } from 'models/Transaction';
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // utils
 import { getRate } from 'utils/assets';
@@ -358,12 +358,12 @@ const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
 });

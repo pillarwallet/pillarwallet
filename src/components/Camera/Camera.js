@@ -36,6 +36,7 @@ import { updateUserAvatarAction } from 'actions/userActions';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import SvgOverlay, { Path, LinearGradient, Stop, Circle } from 'react-native-svg';
 import { handleImagePickAction } from 'actions/appSettingsActions';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   onModalHide?: Function,
@@ -96,7 +97,7 @@ const PreviewWrapper = styled.View`
   height: 160px;
   border-radius: 80px;
   justify-content: center;
-  align-items: center; 
+  align-items: center;
 `;
 
 const ImageCircle = styled.Image`
@@ -451,11 +452,10 @@ class Camera extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ user: { data: user } }) => ({ user });
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapStateToProps = ({ user: { data: user } }: RootReducerState): $Shape<Props> => ({ user });
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateUserAvatar: (walletId: string, formData: any) => dispatch(updateUserAvatarAction(walletId, formData)),
   handleImagePick: (isPickingImage: boolean) => dispatch(handleImagePickAction(isPickingImage)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Camera);
-
