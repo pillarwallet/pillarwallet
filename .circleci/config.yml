@@ -607,7 +607,7 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/edit-npm-run-permissions
+                  - develop
       - hockeyapp_android:
           requires:
             - build-and-test
