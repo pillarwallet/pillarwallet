@@ -21,13 +21,17 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
+// constants
+import { BTC, defaultFiatCurrency } from 'constants/assetsConstants';
+
 // components
 import SendETHTokens from 'components/SendTokens/ETHTokens';
+import SendBTCAmount from 'components/SendTokens/BTCAmount';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Balances, Rates, AssetData } from 'models/Asset';
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { SessionData } from 'models/Session';
 
@@ -38,6 +42,9 @@ import {
   activeAccountSelector,
 } from 'selectors';
 
+// actions
+import { updateAppSettingsAction } from 'actions/appSettingsActions';
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   balances: Balances,
@@ -47,6 +54,7 @@ type Props = {
   transactionSpeed: ?string,
   activeAccountAddress: string,
   activeAccount: ?Account,
+  updateAppSettings: (path: string, value: any) => void,
 };
 
 class SendTokenAmount extends React.Component<Props> {
@@ -56,10 +64,24 @@ class SendTokenAmount extends React.Component<Props> {
 
   constructor(props: Props) {
     super(props);
+    const { navigation } = this.props;
+
     // TODO: this screen should fail if any of these are empty
-    this.assetData = this.props.navigation.getParam('assetData', {});
-    this.receiver = this.props.navigation.getParam('receiver', '');
-    this.source = this.props.navigation.getParam('source', '');
+    this.assetData = navigation.getParam('assetData', {});
+    this.receiver = navigation.getParam('receiver', '');
+    this.source = navigation.getParam('source', '');
+  }
+
+  updateTransactionSpeed = (speed: string) => {
+    this.props.updateAppSettings('transactionSpeed', speed);
+  }
+
+  selectAmountComponent(token: string) {
+    if (token === BTC) {
+      return SendBTCAmount;
+    }
+
+    return SendETHTokens;
   }
 
   render() {
@@ -73,9 +95,13 @@ class SendTokenAmount extends React.Component<Props> {
       transactionSpeed,
       navigation,
     } = this.props;
+    const { token } = this.assetData;
+    const AmountComponent = this.selectAmountComponent(token);
+
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return (
-      <SendETHTokens
+      <AmountComponent
         navigation={navigation}
         assetData={this.assetData}
         receiver={this.receiver}
@@ -84,9 +110,10 @@ class SendTokenAmount extends React.Component<Props> {
         activeAccount={activeAccount}
         rates={rates}
         session={session}
-        baseFiatCurrency={baseFiatCurrency}
+        fiatCurrency={fiatCurrency}
         transactionSpeed={transactionSpeed}
         activeAccountAddress={activeAccountAddress}
+        onUpdateTransactionSpeed={this.updateTransactionSpeed}
       />
     );
   }
@@ -114,4 +141,8 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-export default connect(combinedMapStateToProps)(SendTokenAmount);
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
+});
+
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenAmount);

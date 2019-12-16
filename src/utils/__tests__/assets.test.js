@@ -21,17 +21,63 @@ import {
   calculateBalanceInFiat,
   getBalance,
   balanceInEth,
+  getRate,
 } from 'utils/assets';
 import type { Balances, Rates } from 'models/Asset';
 
 describe('Assets utils', () => {
   const ETH_GBP = 10;
   const PLR_ETH = 1.2;
+  const BTC_ETH = 1.5;
 
   const rates: Rates = {
     ETH: { GBP: ETH_GBP, ETH: 1 },
     PLR: { GBP: (PLR_ETH * ETH_GBP), ETH: PLR_ETH },
+    BTC: { GBP: (BTC_ETH * ETH_GBP), ETH: BTC_ETH },
+    AAA: { GBP: 3 },
   };
+
+  describe('getRate', () => {
+    describe('for ethereum tokens', () => {
+      it('returns the rate', () => {
+        const rate = getRate(rates, 'PLR', 'GBP');
+
+        expect(rate).toEqual(rates.PLR.ETH * rates.ETH.GBP);
+      });
+
+      describe('for invalid token', () => {
+        it('returns 0', () => {
+          const rate = getRate(rates, 'ZZZ', 'GBP');
+
+          expect(rate).toEqual(0);
+        });
+      });
+
+      describe('for token that has no ETH rate', () => {
+        it('returns fiat rate', () => {
+          const rate = getRate(rates, 'AAA', 'GBP');
+
+          expect(rate).toEqual(rates.AAA.GBP);
+        });
+      });
+    });
+
+    describe('for ETH', () => {
+      it('returns the rate', () => {
+        const rate = getRate(rates, 'ETH', 'GBP');
+
+        expect(rate).toEqual(rates.ETH.GBP);
+      });
+    });
+
+    describe('for BTC', () => {
+      it('returns the rate', () => {
+        const rate = getRate(rates, 'BTC', 'GBP');
+
+        expect(rate).toEqual(rates.BTC.GBP);
+      });
+    });
+  });
 
   describe('balanceInEth', () => {
     it('returns the total in ETH', () => {
