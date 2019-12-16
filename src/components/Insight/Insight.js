@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Platform } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 
 import ShadowedCard from 'components/ShadowedCard';
@@ -30,10 +30,22 @@ import { getThemeColors, themedColors } from 'utils/themes';
 import { BaseText, MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
 
+type InsightChecklistItem = {
+  status?: boolean,
+  title: string,
+  onPress: () => void,
+};
+
+type InsightNumberedListItem = {
+  title: string,
+  body: string,
+};
+
 type Props = {
   title: string,
   onClose: Function,
-  insightList: Object[],
+  insightChecklist: InsightChecklistItem[],
+  insightNumberedList: InsightNumberedListItem[],
   children?: React.Node,
   isVisible: boolean,
   onLayout?: Function,
@@ -102,6 +114,47 @@ const CheckIcon = styled(Icon)`
   font-size: ${fontSizes.tiny};
 `;
 
+const NumberedListItem = styled.View`
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+`;
+
+const ListNumberWrapper = styled.View`
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background-color: ${themedColors.orange};
+  align-items: center;
+  justify-content: center;
+  margin-top: ${Platform.select({
+    ios: '1.5px',
+    android: '3px',
+  })};
+  margin-right: 10px;
+`;
+
+const TextWrapper = styled.View`
+  max-width: 80%;
+  flex-wrap: wrap;
+`;
+
+const ListNumber = styled(BaseText)`
+  color: ${themedColors.control};
+  font-size: ${fontSizes.tiny}px;
+  line-height: 16px;
+`;
+
+const ListTitle = styled(MediumText)`
+  color: ${themedColors.text};
+  ${fontStyles.regular};
+`;
+
+const ListBody = styled(BaseText)`
+  color: ${themedColors.accent};
+  ${fontStyles.regular};
+`;
+
 const StatusIcon = ({ isDone }) => {
   if (isDone) {
     return (
@@ -117,7 +170,8 @@ const Insight = (props: Props) => {
   const {
     title,
     onClose,
-    insightList,
+    insightChecklist,
+    insightNumberedList,
     children,
     isVisible,
     onLayout,
@@ -144,8 +198,8 @@ const Insight = (props: Props) => {
         <CardRow>
           <ContentWrapper>
             <CardTitle>{title}</CardTitle>
-            {!!insightList && <FlatList
-              data={insightList}
+            {!!insightChecklist && <FlatList
+              data={insightChecklist}
               extraData={props}
               keyExtractor={(item) => item.key}
               renderItem={({ item }) => {
@@ -157,6 +211,25 @@ const Insight = (props: Props) => {
                     </StatusIconWrapper>
                     <InsightText color={status ? colors.secondaryText : colors.text}>{listItem}</InsightText>
                   </ListItem>
+                );
+              }}
+            />}
+            {!!insightNumberedList && <FlatList
+              data={insightNumberedList}
+              extraData={props}
+              keyExtractor={(item) => item.title}
+              renderItem={({ item, index }) => {
+                const { title: itemTitle, body } = item;
+                return (
+                  <NumberedListItem>
+                    <ListNumberWrapper>
+                      <ListNumber>{index + 1}</ListNumber>
+                    </ListNumberWrapper>
+                    <TextWrapper>
+                      <ListTitle>{itemTitle}</ListTitle>
+                      <ListBody>{body}</ListBody>
+                    </TextWrapper>
+                  </NumberedListItem>
                 );
               }}
             />}

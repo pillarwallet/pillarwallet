@@ -435,7 +435,7 @@ class WalletView extends React.Component<Props, State> {
         <Insight
           isVisible={isInsightVisible}
           title={insightsTitle}
-          insightList={insightList}
+          insightChecklist={insightList}
           onClose={() => { hideInsight(); }}
           wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.mediumLightGray }}
         />
