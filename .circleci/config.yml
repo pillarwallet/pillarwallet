@@ -112,10 +112,14 @@ aliases:
     run:
       name: set Registry to use Artifactory
       command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
-  - &latest_npm
+  - &android_latest_npm
      run:
       name: Install latest npm version
       command: sudo npm install -g npm@latest
+  - &ios_latest_npm
+     run:
+      name: Install latest npm version
+      command: npm install -g npm@latest
   - &ios_latest_yarn
      run:
       name: Install latest yarn version
@@ -186,7 +190,7 @@ jobs:
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
 #      - *ios_latest_yarn
-      - *latest_npm
+      - *android_latest_npm
       - *yarn_install
       - *node_save_cache
       - run:
@@ -204,7 +208,7 @@ jobs:
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
 #      - *ios_latest_yarn
-      - *latest_npm
+      - *ios_latest_npm
       - *yarn_install
       - *node_save_cache
 
@@ -261,7 +265,7 @@ jobs:
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
 #      - *android_latest_yarn
-      - *latest_npm
+      - *android_latest_npm
       - *yarn_install
       - *node_save_cache
 
@@ -351,7 +355,7 @@ jobs:
            aws-region: AWS_DEFAULT_REGION
       - run:
           name: Install npm latest
-          command: sudo npm install -g npm@latest
+          command: npm install -g npm@latest
       - run:
           name: Append circleCI build number to version
           command: |
