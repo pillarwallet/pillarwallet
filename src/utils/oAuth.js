@@ -40,8 +40,7 @@ export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: Sign
       payload: oAuthTokens,
     });
     dispatch(saveDbAction('oAuthTokens', { oAuthTokens }, true));
-    if (!isEmpty(signalCredentials)) {
-      // $FlowFixMe
+    if (!isEmpty(signalCredentials) && !isEmpty(oAuthTokens)) {
       await dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
     }
   };
@@ -49,6 +48,7 @@ export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: Sign
 
 export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
   return async (callback: () => void) => {
+    console.log('onOAuthTokensFailedCB!!!!!!!');
     dispatch(stopListeningChatWebSocketAction());
     dispatch(updateSignalInitiatedStateAction(false));
     dispatch(lockScreenAction(callback, 'Authentication tokens expired, please enter your PIN to proceed.'));
