@@ -48,7 +48,6 @@ export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: Sign
 
 export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
   return async (callback: () => void) => {
-    console.log('onOAuthTokensFailedCB!!!!!!!');
     dispatch(stopListeningChatWebSocketAction());
     dispatch(updateSignalInitiatedStateAction(false));
     dispatch(lockScreenAction(callback, 'Authentication tokens expired, please enter your PIN to proceed.'));
