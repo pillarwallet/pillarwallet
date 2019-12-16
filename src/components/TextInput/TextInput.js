@@ -372,7 +372,7 @@ class TextInput extends React.Component<Props, State> {
   };
 
   resolveAssetSource(uri?: string | number) {
-    if (!uri) return '';
+    if (!uri) return { uri: null };
     if (typeof uri === 'number') return uri;
     return {
       uri,
@@ -512,14 +512,12 @@ class TextInput extends React.Component<Props, State> {
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
     const showRightAddon = !!iconProps || loading;
 
-    let selectedOptionToShow = selector;
     const selectorOptionsCount = options.length + horizontalOptions.length;
-    if (selectorOptionsCount === 1) selectedOptionToShow = options.length ? options[0] : horizontalOptions[0];
     const {
       icon: selectedOptionIcon,
       iconFallback: selectedOptionFallback,
       value: selectedValue,
-    } = selectedOptionToShow;
+    } = selector;
 
     let filteredHorizontalListData = horizontalOptions;
     let filteredListData = options;
@@ -559,7 +557,7 @@ class TextInput extends React.Component<Props, State> {
               onPress={selectorOptionsCount > 1 ? this.openSelector : noop}
               disabled={selectorOptionsCount < 1}
             >
-              {Object.keys(selectedOptionToShow).length
+              {Object.keys(selector).length
                 ? (
                   <ValueWrapper>
                     <Image
