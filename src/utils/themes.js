@@ -148,3 +148,7 @@ export function getThemeByType(themeType: string) {
 export function getThemeColors(currentTheme: Theme = defaultTheme) {
   return currentTheme.colors;
 }
+
+export function getThemeType(currentTheme: Theme = defaultTheme) {
+  return currentTheme.current;
+}
