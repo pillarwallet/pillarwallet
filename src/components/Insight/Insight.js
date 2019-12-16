@@ -19,14 +19,16 @@
 */
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 
 import ShadowedCard from 'components/ShadowedCard';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 
-import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
 import { BaseText, MediumText } from 'components/Typography';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   title: string,
@@ -36,17 +38,18 @@ type Props = {
   isVisible: boolean,
   onLayout?: Function,
   wrapperStyle?: Object,
+  theme: Theme,
 }
 
 const Wrapper = styled.View`
   padding: 16px 20px 6px 20px;
-  background-color: ${baseColors.snowWhite};
 `;
 
 const CardRow = styled.View`
-   flex-direction: row;
-   width: 100%;
-   align-items: center;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  padding: 16px 0;
 `;
 
 const ContentWrapper = styled.View`
@@ -61,7 +64,7 @@ const ListItem = styled.TouchableOpacity`
 `;
 
 const CardTitle = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
   ${fontStyles.regular};
   margin-bottom: 10px;
 `;
@@ -91,19 +94,18 @@ const TinyCircle = styled.View`
   height: 4px;
   width: 4px;
   border-radius: 4px;
-  background-color: ${baseColors.indianRed};
+  background-color: ${themedColors.negative};
+`;
+
+const CheckIcon = styled(Icon)`
+  color: ${themedColors.positive};
+  font-size: ${fontSizes.tiny};
 `;
 
 const StatusIcon = ({ isDone }) => {
   if (isDone) {
     return (
-      <Icon
-        name="check"
-        style={{
-          fontSize: fontSizes.tiny,
-          color: baseColors.fruitSalad,
-        }}
-      />
+      <CheckIcon name="check" />
     );
   }
   return (
@@ -111,7 +113,7 @@ const StatusIcon = ({ isDone }) => {
   );
 };
 
-export const Insight = (props: Props) => {
+const Insight = (props: Props) => {
   const {
     title,
     onClose,
@@ -120,18 +122,21 @@ export const Insight = (props: Props) => {
     isVisible,
     onLayout,
     wrapperStyle,
+    theme,
   } = props;
+
+  const colors = getThemeColors(theme);
 
   if (!isVisible) return null;
   return (
     <Wrapper onLayout={onLayout} style={wrapperStyle}>
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10, width: '100%' }}
-        contentWrapperStyle={{ paddingLeft: 20, paddingRight: 40, paddingVertical: 16 }}
+        contentWrapperStyle={{ paddingLeft: 20, paddingRight: 40 }}
       >
         <Close
           icon="close"
-          color={baseColors.coolGrey}
+          color={colors.secondaryText}
           onPress={onClose}
           fontSize={fontSizes.small}
           horizontalAlign="flex-end"
@@ -150,7 +155,7 @@ export const Insight = (props: Props) => {
                     <StatusIconWrapper>
                       <StatusIcon isDone={!!status} />
                     </StatusIconWrapper>
-                    <InsightText color={status ? baseColors.coolGrey : baseColors.slateBlack}>{listItem}</InsightText>
+                    <InsightText color={status ? colors.secondaryText : colors.text}>{listItem}</InsightText>
                   </ListItem>
                 );
               }}
@@ -162,3 +167,5 @@ export const Insight = (props: Props) => {
     </Wrapper>
   );
 };
+
+export default withTheme(Insight);
