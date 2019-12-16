@@ -487,13 +487,13 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   blurFromInput = () => {
     if (!this.fromInputRef) return;
-    this.fromInputRef._root.blur();
+    this.fromInputRef.blur();
   };
 
   focusInputWithKeyboard = () => {
     setTimeout(() => {
       if (!this.fromInputRef) return;
-      this.fromInputRef._root.focus();
+      this.fromInputRef.focus();
     }, 200);
   };
 

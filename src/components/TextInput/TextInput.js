@@ -59,11 +59,24 @@ type SelectorValueType = {
   }
 }
 
+type SelectorOptions = {
+  options?: Array<Object>,
+  horizontalOptions?: Array<Object>,
+  selectorPlaceholder?: 'string',
+  fullWidth?: boolean,
+  showOptionsTitles?: boolean,
+  horizontalOptionsTitle?: string,
+  optionsTitle?: string,
+  selectorModalTitle?: string,
+};
+
+type Value = string | number;
+
 type InputPropsType = {
   placeholder?: string,
-  onChange: Function,
-  onBlur?: Function,
-  value: string | number,
+  onChange: (Value | SelectorValueType) => void,
+  onBlur?: (Value | SelectorValueType) => void,
+  value: Value,
   selectorValue: SelectorValueType,
   multiline?: boolean,
   onSelectorOpen?: () => void,
@@ -80,7 +93,7 @@ type Props = {
   onLayout?: () => void,
   additionalStyle?: Object,
   errorMessageStyle?: Object,
-  getInputRef?: Function,
+  getInputRef?: (Input) => void,
   innerImageURI?: string,
   fallbackSource?: number,
   buttonProps?: ButtonProps,
@@ -88,7 +101,7 @@ type Props = {
   leftSideText?: string,
   numeric?: boolean,
   iconProps?: IconButtonProps,
-  selectorOptions?: Object, // TODO: add type,
+  selectorOptions?: SelectorOptions,
   errorMessageOnTop?: boolean,
   inputWrapperStyle?: Object,
 }
@@ -161,7 +174,7 @@ const Item = styled(NBItem)`
   border-bottom-width: 0;
   height: ${props => props.height}px;
   flex-direction: row;
-  min-height: 54px;
+  min-height: 0;
   height: ${({ height }) => height}px;
   width: 100%;
 `;
@@ -229,7 +242,6 @@ const ValueWrapper = styled.View`
 
 const Placeholder = styled(BaseText)`
   ${fontStyles.regular};
-  letter-spacing: 0.23px;
   color: ${themedColors.secondaryText};
 `;
 
@@ -321,10 +333,15 @@ class TextInput extends React.Component<Props, State> {
       return;
     }
 
-    const { inputProps: { onBlur }, trim } = this.props;
+    const { inputProps: { onBlur, selectorValue = {} }, trim } = this.props;
+    const { selector } = selectorValue;
     const value = trim ? e.nativeEvent.text.trim() : e.nativeEvent.text;
     if (onBlur) {
-      onBlur(value);
+      if (selector) {
+        onBlur({ selector, input: value });
+      } else {
+        onBlur(value);
+      }
     }
 
     if (Platform.OS === 'ios' && this.props.inputProps.multiline && this.props.keyboardAvoidance) {
@@ -487,11 +504,10 @@ class TextInput extends React.Component<Props, State> {
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
 
-
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
-    let inputHeight = 54;
 
+    let inputHeight = 54;
     if (inputProps.multiline) {
       inputHeight = Platform.OS === 'ios' ? 120 : 100;
     }
@@ -601,7 +617,7 @@ class TextInput extends React.Component<Props, State> {
               {...inputProps}
               innerRef={(input) => {
                 this.multilineInputField = input;
-                if (getInputRef) getInputRef(input);
+                if (getInputRef) getInputRef(input._root);
               }}
               onChange={this.handleChange}
               onBlur={this.handleBlur}
