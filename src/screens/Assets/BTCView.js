@@ -26,7 +26,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
 import { SEND_BITCOIN_FLOW } from 'constants/navigationConstants';
-import { BTC } from 'constants/assetsConstants';
+import { defaultFiatCurrency, BTC } from 'constants/assetsConstants';
 
 // actions
 import {
@@ -36,11 +36,11 @@ import {
 } from 'actions/bitcoinActions';
 
 // components
-import { BaseText } from 'components/Typography';
-import CircleButton from 'components/CircleButton';
+import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import AssetPattern from 'components/AssetPattern';
+import AssetBalance from 'components/AssetBalance';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -48,8 +48,7 @@ import type { BitcoinAddress, BitcoinUtxo, BitcoinBalance, BTCTransaction } from
 import type { Rates, Asset, AssetData } from 'models/Asset';
 
 // utils
-import { formatFiat, formatMoney } from 'utils/common';
-import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 import { satoshisToBtc, extractBitcoinTransactions } from 'utils/bitcoin';
 
 type Props = {
@@ -70,36 +69,13 @@ type State = {
   showReceive: boolean,
 };
 
-const AssetButtonsWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-`;
-
 const TopPartWrapper = styled.View`
   padding: ${spacing.large}px;
   border-bottom-width: 1;
   border-color: ${baseColors.mediumLightGray};
 `;
 
-const BTCBalanceWrapper = styled.View`
-  padding: 0 ${spacing.large}px ${spacing.large}px;
-  align-items: center;
-`;
-
-const BTCBalance = styled(BaseText)`
-  font-size: ${fontSizes.giant}px;
-  color: ${baseColors.slateBlack};
-`;
-
-const ValueInFiat = styled(BaseText)`
-  ${fontStyles.small};
-  text-align: center;
-  color: ${baseColors.darkGray};
-`;
-
-const iconSend = require('assets/icons/icon_send.png');
 const bitcoinNetworkIcon = require('assets/icons/icon_BTC.png');
-const iconReceive = require('assets/icons/icon_receive.png');
 
 class BTCView extends React.Component<Props, State> {
   state = {
@@ -115,7 +91,7 @@ class BTCView extends React.Component<Props, State> {
     const btcToken = supportedAssets.find(e => e.symbol === BTC);
 
     if (!btcToken) {
-      console.error('BTC token not found');
+      console.error('BTC token not found'); // eslint-disable-line no-console
       return;
     }
 
@@ -159,18 +135,17 @@ class BTCView extends React.Component<Props, State> {
       balances,
       transactions = [],
       baseFiatCurrency,
+      rates,
     } = this.props;
+
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     // TODO: Select address
     const { address } = addresses[0];
 
     const addressBalance = balances[address];
-
-    const confirmedBalance = satoshisToBtc(addressBalance ? addressBalance.balance : 0);
-    const availableFormattedAmount = formatMoney(confirmedBalance, 4);
-
+    const balance = addressBalance ? satoshisToBtc(addressBalance.balance) : 0;
     const transactionsHistory = extractBitcoinTransactions(address, transactions);
-    const formattedBitcoinBalance = formatFiat(0, baseFiatCurrency); // TODO: calculate balance
 
     return (
       <View style={{ flex: 1 }}>
@@ -192,21 +167,19 @@ class BTCView extends React.Component<Props, State> {
             innerIconsLeftDiff={60}
           />
           <TopPartWrapper>
-            <BTCBalanceWrapper>
-              <BTCBalance>
-                {`${availableFormattedAmount} BTC`}
-              </BTCBalance>
-              <ValueInFiat>{formattedBitcoinBalance}</ValueInFiat>
-            </BTCBalanceWrapper>
-            <AssetButtonsWrapper>
-              <CircleButton label="Receive" icon={iconReceive} onPress={this.showReceive} />
-              <CircleButton
-                label="Send"
-                icon={iconSend}
-                onPress={this.onPressSend}
-                disabled={confirmedBalance <= 0}
-              />
-            </AssetButtonsWrapper>
+            <AssetBalance
+              isLoading={!addressBalance}
+              rates={rates}
+              fiatCurrency={fiatCurrency}
+              balance={balance}
+              token={BTC}
+            />
+            <AssetButtons
+              onPressReceive={this.showReceive}
+              onPressSend={this.onPressSend}
+              isSendDisabled={balance <= 0}
+              showButtons={['send', 'receive']}
+            />
           </TopPartWrapper>
           <ActivityFeed
             backgroundColor={baseColors.white}
@@ -253,7 +226,7 @@ const mapStateToProps = ({
   supportedAssets,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(true)),
   refreshBitcoinTransactions: () => dispatch(refreshBTCTransactionsAction(true)),
   refreshBitcoinUnspentTx: () => dispatch(refreshBitcoinUnspentTxAction(true)),
