@@ -28,7 +28,7 @@ import Intercom from 'react-native-intercom';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -77,7 +77,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // utils
 import { baseColors, spacing, fontStyles } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
@@ -87,7 +87,6 @@ import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
-import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -121,7 +120,6 @@ type Props = {
   userEvents: UserEvent[],
   fetchBadgeAwardHistory: () => void,
   badgesEvents: BadgeRewardEvent[],
-  theme: Theme,
 };
 
 type State = {
@@ -135,29 +133,28 @@ type State = {
 };
 
 const BalanceWrapper = styled.View`
-  padding: ${spacing.medium}px ${spacing.large}px;
+  padding: 8px ${spacing.layoutSides}px;
   width: 100%;
-  border-bottom-width: 1px;
-  border-color: ${themedColors.border};
 `;
 
 const WalletConnectWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.large}px 0;
   background-color: ${themedColors.surface};
+  border-color: ${themedColors.border};
+  border-top-width: 1px;
+  border-bottom-width: 1px;
   width: 100%;
 `;
 
 const ListHeader = styled(MediumText)`
   color: ${themedColors.accent};
   ${fontStyles.regular};
-  margin: ${spacing.medium}px ${spacing.large}px ${spacing.small}px;
+  margin: 0 ${spacing.layoutSides}px 30px ${spacing.layoutSides}px;
 `;
 
 const BadgesWrapper = styled.View`
   padding: ${spacing.medium}px 0;
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  border-color: ${themedColors.border};
+  background-color: ${themedColors.card};
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -321,9 +318,7 @@ class HomeScreen extends React.Component<Props, State> {
       accounts,
       userEvents,
       badgesEvents,
-      theme,
     } = this.props;
-    const colors = getThemeColors(theme);
 
     const {
       activeTab,
@@ -408,7 +403,6 @@ class HomeScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={colors.card}
         headerProps={{
           leftItems: [{ user: true }],
           rightItems: [
@@ -449,18 +443,6 @@ class HomeScreen extends React.Component<Props, State> {
           <BalanceWrapper>
             <PortfolioBalance />
           </BalanceWrapper>
-          <WalletConnectWrapper>
-            <SettingsItemCarded
-              title="Manage Sessions"
-              subtitle={sessionsLabel}
-              onMainPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
-              onSettingsPress={this.openQRScanner}
-              onSettingsLoadingPress={this.cancelWaiting}
-              isLoading={!!pendingConnector}
-              settingsIconSource={iconConnect}
-              settingsLabel="Connect"
-            />
-          </WalletConnectWrapper>
           <BadgesWrapper>
             <ListHeader>Game of badges</ListHeader>
             <FlatList
@@ -481,6 +463,18 @@ class HomeScreen extends React.Component<Props, State> {
               )}
             />
           </BadgesWrapper>
+          <WalletConnectWrapper>
+            <SettingsItemCarded
+              title="Manage Sessions"
+              subtitle={sessionsLabel}
+              onMainPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
+              onSettingsPress={this.openQRScanner}
+              onSettingsLoadingPress={this.cancelWaiting}
+              isLoading={!!pendingConnector}
+              settingsIconSource={iconConnect}
+              settingsLabel="Connect"
+            />
+          </WalletConnectWrapper>
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}
@@ -562,4 +556,4 @@ const mapDispatchToProps = (dispatch) => ({
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen);
