@@ -20,10 +20,12 @@
 
 export type AssetData = {|
   token: string,
-  contractAddress: string,
+  contractAddress?: string,
+  tokenType?: string,
+  name?: string,
   decimals: number,
-  icon: string,
-  iconColor: string,
+  icon?: string,
+  iconColor?: string,
 |};
 
 export type Asset = {
