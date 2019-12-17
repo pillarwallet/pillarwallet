@@ -46,10 +46,11 @@ import Button from 'components/Button';
 import Icon from 'components/Icon';
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
-  importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
-  importWalletFromPrivateKey: (privateKey: string) => Function,
+  importWalletFromTWordsPhrase: (tWordsPhrase: string) => void,
+  importWalletFromPrivateKey: (privateKey: string) => void,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   resetWalletError: Function,
@@ -135,7 +136,7 @@ const ButtonIcon = styled(CachedImage)`
   height: 24px;
   width: 24px;
   justify-content: center;
-  margin-right: 8px; 
+  margin-right: 8px;
 `;
 
 const ButtonInner = styled.View`
@@ -505,9 +506,9 @@ class ImportWallet extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
+const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wallet });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   importWalletFromTWordsPhrase: (tWordsPhrase) => {
     dispatch(importWalletFromTWordsPhraseAction(tWordsPhrase));
   },

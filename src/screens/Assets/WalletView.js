@@ -65,6 +65,7 @@ import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // actions
 import {
@@ -88,7 +89,7 @@ import CollectiblesList from './CollectiblesList';
 import AssetsList from './AssetsList';
 
 type Props = {
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   assets: Assets,
   collectibles: Collectible[],
   navigation: NavigationScreenProp<*>,
@@ -105,7 +106,7 @@ type Props = {
   resetSearchAssetsResult: Function,
   addAsset: Function,
   hideAsset: Function,
-  assetsSearchState: string,
+  assetsSearchState: ?string,
   logScreenView: Function,
   balances: Balances,
   rates: Rates,
@@ -512,7 +513,6 @@ class WalletView extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: {
-    assetsState,
     assetsSearchState,
     assetsSearchResults,
   },
@@ -521,8 +521,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   smartWallet: smartWalletState,
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-}) => ({
-  assetsState,
+}: RootReducerState): $Shape<Props> => ({
   assetsSearchState,
   assetsSearchResults,
   baseFiatCurrency,
@@ -539,12 +538,12 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),

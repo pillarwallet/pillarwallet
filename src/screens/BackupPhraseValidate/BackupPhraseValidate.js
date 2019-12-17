@@ -28,6 +28,7 @@ import { Paragraph, Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import IconButton from 'components/IconButton';
 import { backupWalletAction } from 'actions/walletActions';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type State = {
   enteredWords: string[],
@@ -274,8 +275,8 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wallet });
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   backupWallet: () => dispatch(backupWalletAction()),
 });
 

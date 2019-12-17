@@ -27,10 +27,11 @@ import Loader from 'components/Loader';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { DECRYPTING, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { CHANGE_PIN_NEW_PIN } from 'constants/navigationConstants';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  resetIncorrectPassword: () => Function,
+  resetIncorrectPassword: () => void,
   walletState: ?string,
 };
 
@@ -67,9 +68,13 @@ class CurrentPin extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ wallet: { walletState } }) => ({ walletState });
+const mapStateToProps = ({
+  wallet: { walletState },
+}: RootReducerState): $Shape<Props> => ({
+  walletState,
+});
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 

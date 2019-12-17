@@ -53,7 +53,7 @@ import assetsConfig from 'configs/assetsConfig';
 // types
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
-import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';

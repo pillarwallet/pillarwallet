@@ -41,6 +41,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts, Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { Theme } from 'models/Theme';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // actions
 import { fetchInitialAssetsAction } from 'actions/assetsActions';
@@ -74,17 +75,17 @@ import BTCView from 'screens/Assets/BTCView';
 import WalletView from 'screens/Assets/WalletView';
 
 type Props = {
-  fetchInitialAssets: () => Function,
+  fetchInitialAssets: () => void,
   assets: Assets,
   collectibles: Collectible[],
   wallet: Object,
   rates: Object,
   assetsState: ?string,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   assetsLayout: string,
   assetsSearchResults: Asset[],
-  assetsSearchState: string,
+  assetsSearchState: ?string,
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
@@ -352,7 +353,7 @@ const mapStateToProps = ({
   badges: { data: badges },
   smartWallet: smartWalletState,
   blockchainNetwork: { data: blockchainNetworks },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   wallet,
   backupStatus,
   accounts,
@@ -381,7 +382,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),

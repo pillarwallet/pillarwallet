@@ -38,6 +38,7 @@ import type { Assets, Asset } from 'models/Asset';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { BitcoinAddress } from 'models/Bitcoin';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // components
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -807,7 +808,7 @@ const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   txNotes: { data: txNotes },
   accounts: { data: accounts },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   txNotes,
   contactsSmartAddresses,
@@ -823,12 +824,12 @@ const structuredSelector = createStructuredSelector({
   bitcoinAddresses: bitcoinAddressSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });

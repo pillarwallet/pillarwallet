@@ -12,6 +12,7 @@ import Toast from 'components/Toast';
 import { spacing, fontStyles } from 'utils/variables';
 import { endWalkthroughAction, setWaitingForStepIdAction, setActiveStepIdAction } from 'actions/walkthroughsActions';
 import type { Measurements, Steps } from 'reducers/walkthroughsReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { WALKTHROUGH_TYPES } from 'constants/walkthroughConstants';
 import { themedColors } from 'utils/themes';
 import { hexToRgba } from 'utils/ui';
@@ -30,7 +31,7 @@ type Props = {
   forcedStepIndex: ?number,
   setActiveStepI: string,
   setActiveStepId: (id: string) => void,
-}
+};
 
 type State = {
   index: number,
@@ -40,7 +41,7 @@ type State = {
   title: string,
   type: string,
   measure: ?Measurements,
-}
+};
 
 const Container = styled.View`
   position: absolute;
@@ -271,16 +272,15 @@ class Walkthrough extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   walkthroughs: { waitingForStepId, forcedStepIndex },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   waitingForStepId,
   forcedStepIndex,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   setWaitingForStepId: (id: string) => dispatch(setWaitingForStepIdAction(id)),
   setActiveStepId: (id: string) => dispatch(setActiveStepIdAction(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Walkthrough);
-

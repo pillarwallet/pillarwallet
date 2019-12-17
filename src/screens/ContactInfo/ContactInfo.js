@@ -24,6 +24,7 @@ import { View, StyleSheet } from 'react-native';
 import { baseColors, spacing } from 'utils/variables';
 import { connect } from 'react-redux';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -230,13 +231,12 @@ export class ContactInfo extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   user,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactInfo);
