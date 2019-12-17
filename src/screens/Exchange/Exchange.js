@@ -349,8 +349,8 @@ function SelectorInputTemplate(locals) {
       inputRef,
       onSelectorOpen,
     },
-    value,
   } = locals;
+  const value = get(locals, 'value', {});
   const { selector = {} } = value;
   const { iconUrl } = selector;
   const selectedOptionIcon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
