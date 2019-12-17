@@ -31,7 +31,7 @@ import Button from 'components/Button';
 import { ICO_INSTRUCTIONS } from 'constants/navigationConstants';
 import { Container, Wrapper, ScrollWrapper, Footer } from 'components/Layout';
 import { BaseText } from 'components/Typography';
-import SingleInput from 'components/TextInput/SingleInput';
+import TextInput from 'components/TextInput';
 import Icon from 'components/Icon';
 import ListItemUnderlined from 'screens/Participate/ListItemUnderlined';
 
@@ -77,21 +77,15 @@ function InputTemplate(locals) {
     value: locals.value,
     ellipsizeMode: 'middle',
     keyboardType: 'decimal-pad',
-    textAlign: 'right',
     autoCapitalize: 'words',
   };
+
   return (
-    <SingleInput
-      options={config.options}
-      optionsTitle={config.optionsTitle || ''}
-      optionsSelector={config.optionsSelector}
-      label={locals.label}
-      onSelect={config.onSelect}
-      selectedOption={config.selectedOption}
+    <TextInput
       errorMessage={errorMessage}
       inputProps={inputProps}
-      inlineLabel
-      fontSize={fontSizes.big}
+      numeric
+      errorMessageOnTop
     />
   );
 }

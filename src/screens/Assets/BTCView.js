@@ -49,7 +49,8 @@ import type { Rates, Asset, AssetData } from 'models/Asset';
 
 // utils
 import { formatFiat, formatMoney } from 'utils/common';
-import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { satoshisToBtc, extractBitcoinTransactions } from 'utils/bitcoin';
 
 type Props = {
@@ -78,7 +79,7 @@ const AssetButtonsWrapper = styled.View`
 const TopPartWrapper = styled.View`
   padding: ${spacing.large}px;
   border-bottom-width: 1;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
 `;
 
 const BTCBalanceWrapper = styled.View`
@@ -88,13 +89,13 @@ const BTCBalanceWrapper = styled.View`
 
 const BTCBalance = styled(BaseText)`
   font-size: ${fontSizes.giant}px;
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
 `;
 
 const ValueInFiat = styled(BaseText)`
   ${fontStyles.small};
   text-align: center;
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
 `;
 
 const iconSend = require('assets/icons/icon_send.png');
@@ -121,13 +122,11 @@ class BTCView extends React.Component<Props, State> {
 
     const {
       symbol: token,
-      iconUrl: icon,
       decimals,
     } = btcToken;
 
     const assetData: AssetData = {
       token,
-      icon,
       decimals,
     };
 
@@ -175,10 +174,7 @@ class BTCView extends React.Component<Props, State> {
     return (
       <View style={{ flex: 1 }}>
         <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            backgroundColor: baseColors.snowWhite,
-          }}
+          contentContainerStyle={{ flexGrow: 1 }}
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={this.refreshBalance} />
           }
@@ -209,7 +205,6 @@ class BTCView extends React.Component<Props, State> {
             </AssetButtonsWrapper>
           </TopPartWrapper>
           <ActivityFeed
-            backgroundColor={baseColors.white}
             navigation={navigation}
             feedData={transactionsHistory}
             hideTabs
