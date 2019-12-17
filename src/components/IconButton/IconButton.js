@@ -24,7 +24,7 @@ import Icon from 'components/Icon';
 import { MediumText } from 'components/Typography';
 import { fontSizes, baseColors } from 'utils/variables';
 
-type Props = {
+export type Props = {
   icon: string,
   color?: string,
   onPress?: Function,

@@ -24,7 +24,8 @@ export type AssetData = {|
   tokenType?: string,
   name?: string,
   decimals: number,
-  icon: string,
+  icon?: string,
+  iconColor?: string,
 |};
 
 export type Asset = {

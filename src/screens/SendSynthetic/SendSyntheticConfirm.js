@@ -186,10 +186,8 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
                 numberOfLines: 3,
                 placeholder: 'Add a note to this transaction',
               }}
-              inputType="secondary"
-              labelBigger
-              noBorder
               keyboardAvoidance
+              inputWrapperStyle={{ marginTop: spacing.medium }}
             />
           }
         </ScrollWrapper>
