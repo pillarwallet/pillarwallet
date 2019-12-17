@@ -67,6 +67,7 @@ const glyphMap = {
   delete: '\uE82A',
   'sound-off': '\uE82C',
   plus: '\uE82D',
+  'add-contact': '\uE82E',
 };
 
 type Props = {

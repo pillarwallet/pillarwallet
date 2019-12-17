@@ -81,7 +81,7 @@ export const Banner = (props: Props) => {
   if (!isVisible) return null;
   return (
     <Wrapper style={{ padding: spacing.mediumLarge, ...wrapperStyle }}>
-      <BannerContentWrapper onPress={onPress} dsiabled={!onPress}>
+      <BannerContentWrapper onPress={onPress} disabled={!onPress}>
         <BannerTextWrapper>
           <BannerParagraph>
             {bannerText}

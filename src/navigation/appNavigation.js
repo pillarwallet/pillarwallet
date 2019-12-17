@@ -100,6 +100,7 @@ import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfi
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
+import ReferFriendsScreen from 'screens/ReferFriends';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -222,6 +223,7 @@ import {
   SEND_SYNTHETIC_UNAVAILABLE,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
+  REFER_FRIENDS,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -337,6 +339,7 @@ const homeFlow = createStackNavigator({
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [CHAT]: ChatScreen,
+  [REFER_FRIENDS]: ReferFriendsScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

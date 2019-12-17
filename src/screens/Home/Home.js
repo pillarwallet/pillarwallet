@@ -45,6 +45,7 @@ import {
   MANAGE_DETAILS_SESSIONS,
   BADGE,
   SETTINGS,
+  REFER_FRIENDS,
 } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
@@ -488,6 +489,7 @@ class HomeScreen extends React.Component<Props, State> {
           </WalletConnectWrapper>
           <Banner
             isVisible={isReferralBannerVisible}
+            onPress={() => navigation.navigate(REFER_FRIENDS)}
             bannerText="Refer friends and earn rewards, free PLR and more."
             imageProps={{
               style: {

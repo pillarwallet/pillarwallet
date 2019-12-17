@@ -104,6 +104,8 @@ type Props = {
   selectorOptions?: SelectorOptions,
   errorMessageOnTop?: boolean,
   inputWrapperStyle?: Object,
+  label?: string,
+  hideErrorMessage?: boolean,
 }
 
 type State = {
@@ -197,8 +199,8 @@ const InputFooter = styled(View)`
   margin-top: -4px;
 `;
 
-const ButtonWrapper = styled.View`
-  padding: 4px;
+const ButtonWrapper = styled.TouchableOpacity`
+  padding: 4px 5px;
 `;
 
 const LeftSideWrapper = styled.View`
@@ -305,6 +307,12 @@ const EmptyStateWrapper = styled(Wrapper)`
   padding-top: 90px;
   padding-bottom: 90px;
   align-items: center;
+`;
+
+const InputLabel = styled(MediumText)`
+  margin-bottom: ${spacing.medium}px;
+  color: ${themedColors.accent};
+  ${fontStyles.medium};
 `;
 
 class TextInput extends React.Component<Props, State> {
@@ -498,11 +506,14 @@ class TextInput extends React.Component<Props, State> {
       selectorOptions = {},
       errorMessageOnTop,
       inputWrapperStyle = {},
+      label,
+      hideErrorMessage,
     } = this.props;
     const colors = getThemeColors(theme);
     const { value = '', selectorValue = {} } = inputProps;
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
+    const showErrorMessage = !!errorMessage && !hideErrorMessage;
 
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
@@ -558,10 +569,11 @@ class TextInput extends React.Component<Props, State> {
 
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
-        {errorMessage && !!errorMessageOnTop &&
-          <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>
+        {!!label && <InputLabel>{label}</InputLabel>}
+        {showErrorMessage && !!errorMessageOnTop &&
+        <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>
         }
-        <ItemHolder error={!!errorMessage}>
+        <ItemHolder error={showErrorMessage}>
           <Item
             stackedLabel
             isFocused={isFocused}
@@ -584,7 +596,7 @@ class TextInput extends React.Component<Props, State> {
                     />
                     <SelectorValue>{selectedValue}</SelectorValue>
                   </ValueWrapper>
-                  )
+                )
                 : (<Placeholder>{selectorPlaceholder || 'select'}</Placeholder>)}
               {selectorOptionsCount > 1 &&
               <ChevronWrapper>
@@ -638,17 +650,15 @@ class TextInput extends React.Component<Props, State> {
               placeholderTextColor={colors.accent}
               alignTextOnRight={!!numeric}
             />}
-
             {showRightAddon &&
             <RightSideWrapper>
               {!!iconProps && <IconButton color={colors.primary} {...iconProps} />}
               {!!loading && <Spinner width={30} height={30} />}
             </RightSideWrapper>}
             {!!buttonProps &&
-            <ButtonWrapper>
+            <ButtonWrapper activeOpacity={1} onPress={() => this.multilineInputField._root.focus()}>
               <Button height={48} {...buttonProps} />
             </ButtonWrapper>}
-
           </Item>
           {Platform.OS === 'ios' && <IosFocusInput
             caretHidden
@@ -658,7 +668,9 @@ class TextInput extends React.Component<Props, State> {
           />}
         </ItemHolder>
         <InputFooter>
-          {errorMessage && !errorMessageOnTop && <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>}
+          {showErrorMessage && !errorMessageOnTop &&
+          <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
+          }
         </InputFooter>
         <SlideModal
           isVisible={showOptionsSelector}

@@ -137,6 +137,8 @@ const themes = {
     background: baseColors.electricBlue,
     color: baseColors.white,
     opacity: 0.5,
+    borderColor: UIColors.defaultBorderColor,
+    borderWidth: 0,
   },
   squarePrimary: {
     background: 'transparent',
