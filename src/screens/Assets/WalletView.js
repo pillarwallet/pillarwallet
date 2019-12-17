@@ -30,7 +30,7 @@ import get from 'lodash.get';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Tabs from 'components/Tabs';
-import { Insight } from 'components/Insight';
+import Insight from 'components/Insight';
 import { Wrapper, ScrollWrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import Toast from 'components/Toast';
@@ -164,10 +164,6 @@ const CustomKAWrapper = (props) => {
   } = props;
   const scrollWrapperProps = {
     stickyHeaderIndices: hasStickyTabs ? [2] : [0],
-    style: { backgroundColor: baseColors.white },
-    contentContainerStyle: {
-      backgroundColor: baseColors.white,
-    },
     refreshControl,
     onScroll: () => Keyboard.dismiss(),
   };
@@ -440,7 +436,7 @@ class WalletView extends React.Component<Props, State> {
         <Insight
           isVisible={isInsightVisible}
           title={insightsTitle}
-          insightList={insightList}
+          insightChecklist={insightList}
           onClose={() => { hideInsight(); }}
           wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.mediumLightGray }}
         />

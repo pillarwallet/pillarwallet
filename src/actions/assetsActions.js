@@ -677,27 +677,39 @@ const getAllOwnedAssets = async (api: SDKWrapper, accountId: string, supportedAs
   return accOwnedErc20Assets;
 };
 
+export const loadSupportedAssetsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: { walletId } },
+      session: { data: { isOnline } },
+    } = getState();
+
+    // nothing to do if offline
+    if (!isOnline) return;
+
+    const supportedAssets = await api.fetchSupportedAssets(walletId);
+
+    // nothing to do if returned empty
+    if (isEmpty(supportedAssets)) return;
+
+    dispatch({
+      type: UPDATE_SUPPORTED_ASSETS,
+      payload: supportedAssets,
+    });
+    dispatch(saveDbAction('supportedAssets', { supportedAssets }, true));
+  };
+};
+
+
 export const checkForMissedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
-      user: { data: { walletId } },
-      assets: { data: accountsAssets, supportedAssets = [] },
-      session: { data: { isOnline } },
+      assets: { data: accountsAssets },
     } = getState();
 
-    // load supported assets
-    let walletSupportedAssets = [...supportedAssets];
-    if (isOnline) {
-      const apiSupportedAssets = await api.fetchSupportedAssets(walletId);
-      if (!isEmpty(apiSupportedAssets)) {
-        walletSupportedAssets = [...apiSupportedAssets];
-        dispatch({
-          type: UPDATE_SUPPORTED_ASSETS,
-          payload: walletSupportedAssets,
-        });
-      }
-    }
+    await dispatch(loadSupportedAssetsAction());
+    const walletSupportedAssets = get(getState(), 'assets.supportedAssets', []);
 
     const accountUpdatedAssets = accounts
       .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc))
@@ -723,7 +735,6 @@ export const checkForMissedAssetsAction = () => {
     });
     dispatch(fetchAssetsBalancesAction());
     dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-    dispatch(saveDbAction('supportedAssets', { supportedAssets: walletSupportedAssets }, true));
   };
 };
 

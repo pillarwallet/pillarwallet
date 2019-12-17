@@ -36,7 +36,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 
 import { registerWalletAction } from 'actions/onboardingActions';
-import { baseColors, fontSizes, fontStyles, fontTrackings, UIColors } from 'utils/variables';
+import { fontSizes, fontStyles, fontTrackings, UIColors } from 'utils/variables';
 
 import PrivateKeyModal from 'screens/LegalTerms/PrivateKeyModal';
 import BackupPhraseModal from 'screens/LegalTerms/BackupPhraseModal';
@@ -147,7 +147,7 @@ class LegalTerms extends React.Component<Props, State> {
     const isWalletBackedUp = isImported || isBackedUp;
 
     return (
-      <Container color={baseColors.white}>
+      <Container>
         <Header title="almost there" onBack={() => this.props.navigation.goBack(null)} white />
         <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
           <Paragraph light small style={{ marginTop: 10, marginBottom: 50 }}>

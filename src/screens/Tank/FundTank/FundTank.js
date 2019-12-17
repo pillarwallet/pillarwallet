@@ -176,8 +176,8 @@ class FundTank extends React.Component<Props, State> {
       navigation,
     } = this.props;
 
-    const { symbol: token, iconMonoUrl, decimals } = assets[PPN_TOKEN] || {};
-    const icon = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
+    const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
+    const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=2` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const isInitFlow = navigation.getParam('isInitFlow', false);
 
@@ -206,7 +206,12 @@ class FundTank extends React.Component<Props, State> {
 
     // form
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
-    const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
+    const formFields = getAmountFormFields({
+      icon,
+      currency: token,
+      valueInFiatOutput,
+      customProps: { inputWrapperStyle: { marginTop: spacing.large } },
+    });
 
     return (
       <ContainerWithHeader

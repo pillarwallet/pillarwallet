@@ -37,6 +37,7 @@ import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
 import ForgotPinScreen from 'screens/ForgotPin';
 import BiometricsPromptScreen from 'screens/BiometricsPrompt';
+// import SandboxScreen from 'screens/Sandbox/Index';
 
 import { modalTransition } from 'utils/common';
 
@@ -99,6 +100,7 @@ const onBoardingFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 const authFlow = createStackNavigator({
+  // 'SANDBOX': SandboxScreen,
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
   [FORGOT_PIN]: ForgotPinScreen,
 }, modalTransition);

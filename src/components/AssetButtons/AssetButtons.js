@@ -24,7 +24,7 @@ import CircleButton from 'components/CircleButton';
 type Props = {
   onPressReceive: Function,
   onPressSend: Function,
-  onPressExchange: ?Function,
+  onPressExchange?: ?Function,
   noBalance?: boolean,
   isSendDisabled?: boolean,
   isReceiveDisabled?: boolean,

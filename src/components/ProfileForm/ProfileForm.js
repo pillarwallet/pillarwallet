@@ -28,20 +28,18 @@ export const InputTemplate = (locals: Object) => {
     additionalProps.loading = config.isLoading;
   }
 
-  if (config.viewWidth) {
-    additionalProps.viewWidth = config.viewWidth;
+
+  if (config.statusIcon || config.statusIconColor) {
+    additionalProps.iconProps = {
+      icon: config.statusIcon,
+      color: config.statusIconColor,
+    };
   }
 
   return (
     <TextInput
       errorMessage={errorMessage}
-      id={locals.label}
       inputProps={inputProps}
-      inputType={config.inputType || 'secondary'}
-      noBorder
-      statusIcon={config.statusIcon}
-      statusIconColor={config.statusIconColor}
-      fontSize={config.fontSize}
       {...additionalProps}
     />
   );

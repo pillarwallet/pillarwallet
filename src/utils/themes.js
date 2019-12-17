@@ -40,6 +40,7 @@ export const lightThemeColors = {
   legacyWallet: '#FA574F', // NOT IN DS BUT CURRENTLY REQUIRED
   smartWallet: '#3C71FE', // NOT IN DS BUT CURRENTLY REQUIRED
   bitcoinWallet: '#F79319', // NOT IN DS BUT CURRENTLY REQUIRED
+  orange: '#f57c00',
 };
 
 export const darkThemeColors = {
@@ -61,6 +62,7 @@ export const darkThemeColors = {
   legacyWallet: '#FA574F', // TODO: add correct one when added to Design System
   smartWallet: '#3C71FE', // TODO: add correct one when added to Design System
   bitcoinWallet: '#F79319', // TODO: add correct one when added to Design System
+  orange: '#f57c00',
 };
 
 export const themedColors = {
@@ -124,6 +126,22 @@ export const themedColors = {
     lightTheme: lightThemeColors.userAvatar,
     darkTheme: darkThemeColors.userAvatar,
   }),
+  legacyWallet: theme('current', {
+    lightTheme: lightThemeColors.legacyWallet,
+    darkTheme: darkThemeColors.legacyWallet,
+  }),
+  smartWallet: theme('current', {
+    lightTheme: lightThemeColors.smartWallet,
+    darkTheme: darkThemeColors.smartWallet,
+  }),
+  bitcoinWallet: theme('current', {
+    lightTheme: lightThemeColors.bitcoinWallet,
+    darkTheme: darkThemeColors.bitcoinWallet,
+  }),
+  orange: theme('current', {
+    lightTheme: lightThemeColors.orange,
+    darkTheme: darkThemeColors.orange,
+  }),
 };
 
 export const defaultTheme = {
@@ -147,4 +165,8 @@ export function getThemeByType(themeType: string) {
 
 export function getThemeColors(currentTheme: Theme = defaultTheme) {
   return currentTheme.colors;
+}
+
+export function getThemeType(currentTheme: Theme = defaultTheme) {
+  return currentTheme.current;
 }

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { Keyboard, Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
@@ -38,11 +38,13 @@ import Checkbox from 'components/Checkbox';
 import { NextFooter } from 'components/Layout/NextFooter';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 
-import { baseColors, fontStyles, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { fontStyles, spacing } from 'utils/variables';
+import { themedColors, getThemeColors } from 'utils/themes';
 
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
+
+import type { Theme } from 'models/Theme';
 
 const LoginForm = styled(Form)`
   margin-top: 20px;
@@ -132,6 +134,7 @@ type Props = {
   retry?: boolean,
   registerOnBackend: Function,
   importedWallet: ?Object,
+  theme: Theme,
 };
 
 type State = {
@@ -184,9 +187,10 @@ class NewProfile extends React.Component<Props, State> {
     const isValidUsername = validateUsername.isValid();
     const { message: errorMessage = '' } = validateUsername.firstError() || {};
     const hasError = !isValidUsername && value.username;
+    const { theme } = this.props;
+    const colors = getThemeColors(theme);
     const statusIcon = hasError ? 'close' : null;
-    const iconColor = hasError ? baseColors.fireEngineRed : 'transparent';
-
+    const iconColor = hasError ? colors.negative : 'transparent';
     const options = t.update(this.state.formOptions, {
       fields: {
         username: {
@@ -225,7 +229,8 @@ class NewProfile extends React.Component<Props, State> {
   };
 
   componentDidUpdate(prevProps: Props) {
-    const { walletState } = this.props;
+    const { walletState, theme } = this.props;
+    const colors = getThemeColors(theme);
     if (prevProps.walletState === walletState) return;
 
     if (walletState === USERNAME_EXISTS || walletState === INVALID_USERNAME) {
@@ -239,7 +244,7 @@ class NewProfile extends React.Component<Props, State> {
             config: {
               isLoading: { $set: false },
               statusIcon: { $set: 'close' },
-              statusIconColor: { $set: baseColors.fireEngineRed },
+              statusIconColor: { $set: colors.negative },
             },
           },
         },
@@ -268,7 +273,7 @@ class NewProfile extends React.Component<Props, State> {
             config: {
               isLoading: { $set: false },
               statusIcon: { $set: 'check' },
-              statusIconColor: { $set: baseColors.freshEucalyptus },
+              statusIconColor: { $set: colors.positive },
             },
           },
         },
@@ -474,4 +479,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   registerOnBackend: () => dispatch(registerOnBackendAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewProfile);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(NewProfile));

@@ -34,9 +34,10 @@ import { TextLink, Label, BaseText } from 'components/Typography';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { fontSizes, fontStyles, spacing, UIColors } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getRate } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
+import { themedColors } from 'utils/themes';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -52,7 +53,6 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
-
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -70,12 +70,11 @@ const SendTokenDetailsValue = styled(BaseText)`
 const HelperText = styled(BaseText)`
   ${fontStyles.medium};
   margin-bottom: ${spacing.rhythm / 2}px;
-  color: ${UIColors.placeholderTextColor};
+  color: ${themedColors.secondaryText};
   margin-left: 4px;
 `;
 
 const BackgroundWrapper = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
   flex: 1;
 `;
 
@@ -174,7 +173,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
       baseFiatCurrency,
     } = this.props;
 
-    const { symbol, iconMonoUrl, decimals } = this.assetData;
+    const { symbol, iconUrl, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     // balance
@@ -196,9 +195,14 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
-    const icon = `${SDK_PROVIDER}/${iconMonoUrl}?size=3`;
+    const icon = `${SDK_PROVIDER}/${iconUrl}?size=3`;
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
-    const formFields = getAmountFormFields({ icon, currency: symbol, valueInFiatOutput });
+    const formFields = getAmountFormFields({
+      icon,
+      currency: symbol,
+      valueInFiatOutput,
+      customProps: { inputWrapperStyle: { marginTop: spacing.large } },
+    });
 
     return (
       <ContainerWithHeader

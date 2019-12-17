@@ -340,7 +340,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState) => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });

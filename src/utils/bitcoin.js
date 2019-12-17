@@ -18,8 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { MIN_CONFIRMATIONS } from 'constants/bitcoinConstants';
-import type { BitcoinUtxo, BTCTransaction } from 'models/Bitcoin';
+import type { BitcoinUtxo, BTCTransaction, BitcoinBalance } from 'models/Bitcoin';
+import type { Rates } from 'models/Asset';
 
+import { BTC } from 'constants/assetsConstants';
+
+import { getRate } from 'utils/assets';
 
 export const satoshisToBtc = (satoshis: number): number => satoshis * 0.00000001;
 export const btcToSatoshis = (btc: number): number => Math.floor(btc * 100000000);
@@ -33,6 +37,27 @@ export const unspentAmount = (unspent: BitcoinUtxo[]): number => {
     }
     return acc + transaction.satoshis;
   }, 0);
+};
+
+const totalBitcoinBalance = (balances: BitcoinBalance) => {
+  const addressesBalances = Object.keys(balances).map(key => balances[key]);
+
+  return addressesBalances.reduce((acc, { balance }) => acc + balance, 0);
+};
+
+export const calculateBitcoinBalanceInFiat = (
+  rates: Rates,
+  balances: BitcoinBalance,
+  currency: string,
+) => {
+  const fiatRate = getRate(rates, BTC, currency);
+  if (fiatRate === 0) {
+    return 0;
+  }
+
+  const satoshis = totalBitcoinBalance(balances);
+
+  return satoshisToBtc(satoshis) * fiatRate;
 };
 
 export const extractBitcoinTransactions = (address: string, transactions: BTCTransaction[]): Object[] => {
