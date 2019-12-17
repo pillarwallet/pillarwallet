@@ -67,9 +67,9 @@ import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
 import { updatePinAttemptsAction } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { setAppThemeAction, setFirebaseAnalyticsCollectionEnabled } from 'actions/appSettingsActions';
+import { setAppThemeAction } from 'actions/appSettingsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
-import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
+import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
 import SDKWrapper from 'services/api';
@@ -114,8 +114,6 @@ export const loginAction = (
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
       appSettings: {
         data: {
-          userJoinedBeta = false,
-          firebaseAnalyticsConnectionEnabled = true,
           blockchainNetwork = '',
         },
       },
@@ -131,22 +129,9 @@ export const loginAction = (
     });
     await delay(100);
 
-    await dispatch(fetchFeatureFlagsAction()); // wait until fetches new flags
-    const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
-    const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED');
-
     try {
       let wallet;
 
-      /**
-       * we want Firebase Analytics data collection to be off by default,
-       * this check is used for existing users to turn off firebase Analytics
-       * data collection after app update if the `firebaseAnalyticsConnectionEnabled`
-       * was not set before (we set it during onboarding so unset value means existing user)
-       */
-      if (!userJoinedBeta && firebaseAnalyticsConnectionEnabled) {
-        dispatch(setFirebaseAnalyticsCollectionEnabled(false));
-      }
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
         const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
@@ -191,6 +176,10 @@ export const loginAction = (
 
         // make first api call which can also trigger OAuth fallback methods
         const userInfo = await api.userInfo(user.walletId);
+
+        dispatch(loadFeatureFlagsAction(userInfo));
+        const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+        const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED');
 
         // update FCM
         dispatch(updateFcmTokenAction(user.walletId));

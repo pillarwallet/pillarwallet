@@ -89,14 +89,13 @@ import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import {
-  setFirebaseAnalyticsCollectionEnabled,
   setUserJoinedBetaAction,
   setAppThemeAction,
   changeUseBiometricsAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
-import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
+import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 
@@ -200,13 +199,12 @@ const finishRegistration = async ({
 
   // user might be already joined to beta program before
   if (isImported && userInfo.betaProgramParticipant) {
-    await dispatch(setUserJoinedBetaAction(true, true)); // 2nd true value sets to ignore toast success message
-  } else {
-    // we don't want to track by default, we will use this only when user applies for beta
-    dispatch(setFirebaseAnalyticsCollectionEnabled(false));
-    // still fetch feature flags if there are any
-    await dispatch(fetchFeatureFlagsAction());
+    // 2nd false value sets to not load feature flags as we use existing userInfo to do that
+    // 3rd true value sets to ignore toast success message
+    await dispatch(setUserJoinedBetaAction(true, false, true));
   }
+
+  dispatch(loadFeatureFlagsAction(userInfo));
 
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
   if (smartWalletFeatureEnabled) {

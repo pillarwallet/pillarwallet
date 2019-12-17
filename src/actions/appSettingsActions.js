@@ -22,11 +22,9 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 import set from 'lodash.set';
-import firebase from 'react-native-firebase';
 
 import Toast from 'components/Toast';
 import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
-import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import {
   setKeychainDataObject,
   resetKeychainDataObject,
@@ -39,6 +37,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { switchAccountAction } from './accountsActions';
+import { loadFeatureFlagsAction } from './featureFlagsActions';
 
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Dispatch) => {
@@ -129,33 +128,20 @@ export const changeUseBiometricsAction = (value: boolean, privateKey?: string, n
   };
 };
 
-export const setFirebaseAnalyticsCollectionEnabled = (enabled: boolean) => {
-  return (dispatch: Dispatch) => {
-    firebase.analytics().setAnalyticsCollectionEnabled(enabled);
-    dispatch(saveDbAction('app_settings', { appSettings: { firebaseAnalyticsConnectionEnabled: enabled } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: {
-        firebaseAnalyticsConnectionEnabled: enabled,
-      },
-    });
-  };
-};
-
-export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessToast: boolean = false) => {
+export const setUserJoinedBetaAction = (
+  userJoinedBeta: boolean,
+  loadFeatureFlags: boolean = false,
+  ignoreSuccessToast: boolean = false,
+) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      user: { data: { username, walletId } },
+      user: { data: { walletId } },
       accounts: { data: accounts },
     } = getState();
     let message;
     if (userJoinedBeta) {
-      dispatch(setFirebaseAnalyticsCollectionEnabled(true));
-      firebase.analytics().setUserProperty('username', username);
       message = 'You have successfully been added to the early access queue for the new Pillar Smart Wallet.';
     } else {
-      firebase.analytics().setUserProperty('username', null);
-      dispatch(setFirebaseAnalyticsCollectionEnabled(false));
       // in case user opts out when PPN is set as active
       dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
       // in case user opts out when Smart wallet account is active
@@ -171,7 +157,10 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessTo
         userJoinedBeta,
       },
     });
-    await dispatch(fetchFeatureFlagsAction());
+    if (loadFeatureFlags) {
+      const userInfo = await api.userInfo(walletId);
+      dispatch(loadFeatureFlagsAction(userInfo));
+    }
     if (ignoreSuccessToast) return;
     Toast.show({
       message,

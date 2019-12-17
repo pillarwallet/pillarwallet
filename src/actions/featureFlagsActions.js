@@ -18,18 +18,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { getRemoteFeatureFlags } from 'services/featureFlags';
-import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
-import { saveDbAction } from 'actions/dbActions';
-import type { GetState } from 'reducers/rootReducer';
+import get from 'lodash.get';
 
-export const fetchFeatureFlagsAction = () => {
-  return async (dispatch: Function, getState: GetState) => {
-    const {
-      session: { data: { isOnline } },
-    } = getState();
-    if (!isOnline) return;
-    const featureFlags = await getRemoteFeatureFlags();
+import {
+  DEVELOPMENT_FEATURE_FLAGS,
+  INITIAL_FEATURE_FLAGS,
+  SET_FEATURE_FLAGS,
+} from 'constants/featureFlagsConstants';
+import { saveDbAction } from 'actions/dbActions';
+import { isProdEnv, isTest } from 'utils/environment';
+
+export const loadFeatureFlagsAction = (userInfo: any) => {
+  return async (dispatch: Function) => {
+    // isTest check to run test suites against prod env
+    const userFeatureFlags = isProdEnv || isTest
+      ? get(userInfo, 'featureFlags', {})
+      : DEVELOPMENT_FEATURE_FLAGS;
+    const featureFlags = {
+      ...INITIAL_FEATURE_FLAGS,
+      ...userFeatureFlags,
+    };
     dispatch({
       type: SET_FEATURE_FLAGS,
       payload: featureFlags,
