@@ -40,8 +40,7 @@ export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: Sign
       payload: oAuthTokens,
     });
     dispatch(saveDbAction('oAuthTokens', { oAuthTokens }, true));
-    if (!isEmpty(signalCredentials)) {
-      // $FlowFixMe
+    if (!isEmpty(signalCredentials) && !isEmpty(oAuthTokens)) {
       await dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
     }
   };

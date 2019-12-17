@@ -102,6 +102,7 @@ import { setRatesAction } from 'actions/ratesActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { SignalCredentials } from 'models/Config';
 
 const storage = Storage.getInstance('db');
 
@@ -173,6 +174,9 @@ const finishRegistration = async ({
   address,
   isImported,
 }) => {
+  // set API username (local method)
+  api.setUsername(userInfo.username);
+
   // create default key-based account if needed
   await dispatch(initDefaultAccountAction(address, userInfo.walletId, false));
 
@@ -333,16 +337,22 @@ export const registerWalletAction = (enableBiometrics?: boolean) => {
       oAuthTokens,
     } = await getTokenWalletAndRegister(wallet.privateKey, api, user, dispatch);
 
-    await dispatch(signalInitAction({
+    if (!registrationSucceed) { return; }
+
+    const signalCredentials: SignalCredentials = {
       userId: sdkWallet.userId,
       username: user.username,
       walletId: sdkWallet.walletId,
       ethAddress: wallet.address,
       fcmToken,
       ...oAuthTokens,
-    }));
+    };
 
-    if (!registrationSucceed) { return; }
+    await dispatch(signalInitAction(signalCredentials));
+
+    // re-init API with OAuth update callback
+    const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
+    api.init(updateOAuth, oAuthTokens);
 
     // STEP 5: finish registration
     let finalMnemonic = mnemonicPhrase;
