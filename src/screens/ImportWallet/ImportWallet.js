@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, Dimensions } from 'react-native';
+import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
@@ -44,7 +44,8 @@ import QRCodeScanner from 'components/QRCodeScanner';
 import Tabs from 'components/Tabs';
 import Button from 'components/Button';
 import Icon from 'components/Icon';
-import { fontSizes, baseColors, spacing, fontStyles } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -67,7 +68,6 @@ type State = {
   currentBPWord: string,
 };
 
-const window = Dimensions.get('window');
 const DEV = 'DEV';
 
 const InputWrapper = styled.View`
@@ -82,7 +82,6 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${baseColors.white};
 `;
 
 const ButtonsWrapper = styled.View`
@@ -96,7 +95,7 @@ const StyledButton = styled(Button)`
 `;
 
 const Label = styled(BaseText)`
-  color: ${baseColors.blueYonder};
+  color: ${themedColors.accent};
   width: 100%;
   text-align: center;
   margin-bottom: 10px;
@@ -104,6 +103,7 @@ const Label = styled(BaseText)`
 
 const FormWrapper = styled.View`
   flex-direction: column;
+  width: 100%;
 `;
 
 const Row = styled.View`
@@ -117,7 +117,7 @@ const BackupWordText = styled(BaseText)`
   ${fontStyles.regular};
   margin: 4px 2px;
   align-items: flex-start;
-  color: ${baseColors.mediumGray};
+  color: ${themedColors.secondaryText};
 `;
 
 const ScannerButton = styled.TouchableOpacity`
@@ -127,7 +127,7 @@ const ScannerButton = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled(BaseText)`
-  color: ${baseColors.electricBlue};
+  color: ${themedColors.primary};
   font-size: ${fontSizes.medium}px;
 `;
 
@@ -144,14 +144,14 @@ const ButtonInner = styled.View`
 `;
 
 const ButtonLabel = styled(MediumText)`
-  color: ${props => props.blue ? baseColors.electricBlue : baseColors.white};
+  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.control};
   font-size: ${fontSizes.big}px;
   margin-bottom: 2px;
 `;
 
 const ButtonIconArrow = styled(Icon)`
   font-size: ${fontSizes.big}px;
-  color: ${props => props.blue ? baseColors.electricBlue : baseColors.white};
+  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.control};
   ${props => props.isOnLeft ? 'margin-right: 5px;' : 'margin-left: 5px;'}
   ${props => props.flip ? 'transform: rotate(180deg);' : ''}
 `;
@@ -277,11 +277,10 @@ class ImportWallet extends React.Component<Props, State> {
       importantForAutofill: 'no',
       autoComplete: 'off',
     };
-    const inputWidth = window.width - (spacing.rhythm * 2) - 2;
 
     if (activeTab === PRIVATEKEY) {
       return (
-        <FormWrapper>
+        <React.Fragment>
           <Label style={{ marginBottom: 20 }}>Paste your private key</Label>
           <TextInput
             getInputRef={(ref) => { this.privKeyInput = ref; }}
@@ -290,18 +289,15 @@ class ImportWallet extends React.Component<Props, State> {
               multiline: true,
               numberOfLines: 3,
             }}
-            inputType="noBackground"
-            noBorder
             keyboardAvoidance
-            viewWidth={inputWidth}
             errorMessage={tabsInfo[activeTab].errorMessage}
-            additionalStyle={{ textAlign: 'center', paddingRight: 0 }}
-            errorMessageStyle={{ textAlign: 'center', color: baseColors.chestnutRose }}
+            additionalStyle={{ textAlign: 'center' }}
+            errorMessageStyle={{ textAlign: 'center' }}
             onLayout={() => {
               this.privKeyInput._root.focus();
             }}
           />
-        </FormWrapper>
+        </React.Fragment>
       );
     }
 
@@ -314,10 +310,6 @@ class ImportWallet extends React.Component<Props, State> {
             multiline: true,
             numberOfLines: 2,
           }}
-          inputType="secondary"
-          noBorder
-          keyboardAvoidance
-          viewWidth={inputWidth}
           errorMessage={tabsInfo[activeTab].errorMessage}
           onLayout={() => {
             this.devPhraseInput._root.focus();
@@ -327,7 +319,7 @@ class ImportWallet extends React.Component<Props, State> {
     }
 
     return (
-      <FormWrapper>
+      <React.Fragment>
         <Row>
           {Object.keys(backupPhrase).map((key) => {
             return (<BackupWordText key={key}>{`${key}. ${backupPhrase[key]}`}</BackupWordText>);
@@ -338,17 +330,12 @@ class ImportWallet extends React.Component<Props, State> {
           getInputRef={(ref) => { this.backupPhraseInput = ref; }}
           inputProps={inputProps}
           additionalStyle={{ textAlign: 'center' }}
-          inputType="bigTextNoBackground"
-          noBorder
-          keyboardAvoidance
-          viewWidth={inputWidth}
           errorMessage={tabsInfo[activeTab].errorMessage}
-          errorMessageStyle={{ textAlign: 'center', color: baseColors.chestnutRose }}
           onLayout={() => {
             this.backupPhraseInput._root.focus();
           }}
         />
-      </FormWrapper>
+      </React.Fragment>
     );
   };
 
@@ -367,8 +354,8 @@ class ImportWallet extends React.Component<Props, State> {
             onPress={this.showPrevWord}
           >
             <ButtonInner>
-              <ButtonIconArrow name="back" blue isOnLeft />
-              <ButtonLabel blue>Prev</ButtonLabel>
+              <ButtonIconArrow name="back" primary isOnLeft />
+              <ButtonLabel primary>Prev</ButtonLabel>
             </ButtonInner>
           </StyledButton>}
           <StyledButton
@@ -492,7 +479,6 @@ class ImportWallet extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={({ centerItems: [{ title: 'Re-import wallet' }] })}
-        backgroundColor={baseColors.white}
         keyboardAvoidFooter={(
           <FooterWrapper>
             {this.renderFooterButtons(tabsInfo)}
@@ -503,7 +489,9 @@ class ImportWallet extends React.Component<Props, State> {
           <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} />
           <Wrapper regularPadding>
             <InputWrapper>
-              {this.renderForm(tabsInfo)}
+              <FormWrapper>
+                {this.renderForm(tabsInfo)}
+              </FormWrapper>
             </InputWrapper>
           </Wrapper>
         </ScrollWrapper>

@@ -40,7 +40,7 @@ import Spinner from 'components/Spinner';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { fontStyles, spacing, UIColors } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { checkIfSmartWalletAccount } from 'utils/accounts';
@@ -90,11 +90,9 @@ const FooterInner = styled.View`
   align-items: flex-end;
   width: 100%;
   padding: ${spacing.large}px;
-  background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 const BackgroundWrapper = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
   flexGrow: 1;
 `;
 
@@ -373,7 +371,7 @@ class SendETHTokens extends React.Component<Props, State> {
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
     const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount;
     const transactionSpeed = showTransactionSpeeds && this.getTxSpeed();
-    const { token, icon, decimals } = assetData;
+    const { token, iconColor, decimals } = assetData;
 
     // balance
     const balance = getBalance(balances, token);
@@ -393,7 +391,12 @@ class SendETHTokens extends React.Component<Props, State> {
 
     // form
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
-    const formFields = getAmountFormFields({ icon, currency: token, valueInFiatOutput });
+    const formFields = getAmountFormFields({
+      icon: iconColor,
+      currency: token,
+      valueInFiatOutput,
+      customProps: { inputWrapperStyle: { marginTop: spacing.large } },
+    });
 
     const showNextButton = !submitPressed && !!value && !!parseFloat(value.amount) && !inputHasError;
     const isNextButtonDisabled = gettingFee || !session.isOnline;

@@ -427,7 +427,7 @@ export const refreshBTCTransactionsAction = (force: boolean) => {
       if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
         const btcAsset = initialAssets.find(e => e.symbol === 'BTC');
         if (btcAsset) {
-          supportedAssets.push(btcAsset);
+          const updatedSupportedAssets = supportedAssets.concat(btcAsset);
           assets[address] = { BTC: btcAsset };
           dispatch({
             type: UPDATE_ASSETS,
@@ -436,9 +436,9 @@ export const refreshBTCTransactionsAction = (force: boolean) => {
           dispatch(saveDbAction('assets', { assets }, true));
           dispatch({
             type: UPDATE_SUPPORTED_ASSETS,
-            payload: supportedAssets,
+            payload: updatedSupportedAssets,
           });
-          dispatch(saveDbAction('supportedAssets', { supportedAssets }, true));
+          dispatch(saveDbAction('supportedAssets', { supportedAssets: updatedSupportedAssets }, true));
         }
       }
       return fetchBTCTransactionsAction(address)

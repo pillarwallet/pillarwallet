@@ -48,7 +48,8 @@ import type { BitcoinAddress, BitcoinUtxo, BitcoinBalance, BTCTransaction } from
 import type { Rates, Asset, AssetData } from 'models/Asset';
 
 // utils
-import { baseColors, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { satoshisToBtc, extractBitcoinTransactions } from 'utils/bitcoin';
 
 type Props = {
@@ -72,7 +73,7 @@ type State = {
 const TopPartWrapper = styled.View`
   padding: ${spacing.large}px;
   border-bottom-width: 1;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
 `;
 
 const bitcoinNetworkIcon = require('assets/icons/icon_BTC.png');
@@ -97,13 +98,11 @@ class BTCView extends React.Component<Props, State> {
 
     const {
       symbol: token,
-      iconUrl: icon,
       decimals,
     } = btcToken;
 
     const assetData: AssetData = {
       token,
-      icon,
       decimals,
     };
 
@@ -150,10 +149,7 @@ class BTCView extends React.Component<Props, State> {
     return (
       <View style={{ flex: 1 }}>
         <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            backgroundColor: baseColors.snowWhite,
-          }}
+          contentContainerStyle={{ flexGrow: 1 }}
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={this.refreshBalance} />
           }
@@ -182,7 +178,6 @@ class BTCView extends React.Component<Props, State> {
             />
           </TopPartWrapper>
           <ActivityFeed
-            backgroundColor={baseColors.white}
             navigation={navigation}
             feedData={transactionsHistory}
             hideTabs

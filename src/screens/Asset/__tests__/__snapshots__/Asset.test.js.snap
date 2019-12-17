@@ -214,12 +214,11 @@ exports[`Asset renders the Asset correctly 1`] = `
   </View>
   <View
     androidStatusbarHeight={0}
-    color="#ffffff"
     onLayout={[Function]}
     pointerEvents="box-none"
     style={
       Object {
-        "backgroundColor": "#ffffff",
+        "backgroundColor": "#FAFAFA",
         "flexBasis": 0,
         "flexGrow": 1,
         "flexShrink": 1,
@@ -876,7 +875,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
+                      "color": "#0A1427",
                       "fontSize": 12,
                       "lineHeight": 18,
                       "textAlign": "center",
@@ -894,7 +893,6 @@ exports[`Asset renders the Asset correctly 1`] = `
           style={
             Array [
               Object {
-                "backgroundColor": "#fafafa",
                 "borderBottomWidth": 1,
                 "borderColor": "#EDEDED",
                 "borderTopWidth": 1,
