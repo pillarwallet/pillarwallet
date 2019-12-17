@@ -27,9 +27,15 @@ import {
 } from 'constants/featureFlagsConstants';
 import { saveDbAction } from 'actions/dbActions';
 import { isProdEnv, isTest } from 'utils/environment';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type SDKWrapper from 'services/api';
 
-export const loadFeatureFlagsAction = (userInfo: any) => {
-  return async (dispatch: Function) => {
+export const loadFeatureFlagsAction = (userInfo?: any) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    if (!userInfo) {
+      const walletId = get(getState(), 'user.data.walletId');
+      userInfo = await api.userInfo(walletId);
+    }
     // isTest check to run test suites against prod env
     const userFeatureFlags = isProdEnv || isTest
       ? get(userInfo, 'featureFlags', {})

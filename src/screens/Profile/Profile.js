@@ -912,8 +912,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   logEvent: (name: string) => dispatch(logEventAction(name)),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
-  // setUserJoinedBeta always fetch new flags (2nd param true)
-  setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status, true)),
+  setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

@@ -810,8 +810,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   changeUseBiometrics: (enabled, privateKey) => dispatch(changeUseBiometricsAction(enabled, privateKey)),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
-  // setUserJoinedBeta always fetch new flags (2nd param true)
-  setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status, true)),
+  setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
 });

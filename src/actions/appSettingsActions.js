@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { DARK_THEME, LIGHT_THEME, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { DARK_THEME, LIGHT_THEME, UPDATE_APP_SETTINGS, USER_JOINED_BETA_SETTING } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -128,17 +128,14 @@ export const changeUseBiometricsAction = (value: boolean, privateKey?: string, n
   };
 };
 
-export const setUserJoinedBetaAction = (
-  userJoinedBeta: boolean,
-  loadFeatureFlags: boolean = false,
-  ignoreSuccessToast: boolean = false,
-) => {
+export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       accounts: { data: accounts },
     } = getState();
     let message;
+
     if (userJoinedBeta) {
       message = 'You have successfully been added to the early access queue for the new Pillar Smart Wallet.';
     } else {
@@ -149,19 +146,12 @@ export const setUserJoinedBetaAction = (
       dispatch(switchAccountAction(keyBasedAccount.id));
       message = 'You have successfully left Smart Wallet Early Access program.';
     }
+
     await api.updateUser({ walletId, betaProgramParticipant: userJoinedBeta });
-    dispatch(saveDbAction('app_settings', { appSettings: { userJoinedBeta } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: {
-        userJoinedBeta,
-      },
-    });
-    if (loadFeatureFlags) {
-      const userInfo = await api.userInfo(walletId);
-      dispatch(loadFeatureFlagsAction(userInfo));
-    }
-    if (ignoreSuccessToast) return;
+    dispatch(updateAppSettingsAction(USER_JOINED_BETA_SETTING, userJoinedBeta));
+
+    await dispatch(loadFeatureFlagsAction());
+
     Toast.show({
       message,
       type: 'success',
