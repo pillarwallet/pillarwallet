@@ -31,12 +31,13 @@ import Button from 'components/Button';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
 import { validatePin } from 'utils/validators';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
-  changePin: (newPin: string, currentPin: string) => Function,
+  changePin: (newPin: string, currentPin: string) => void,
   walletState: ?string,
   navigation: NavigationScreenProp<*>,
-  resetIncorrectPassword: () => Function,
+  resetIncorrectPassword: () => void,
 };
 
 type State = {
@@ -118,9 +119,13 @@ class ConfirmNewPin extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet: { walletState } }) => ({ walletState });
+const mapStateToProps = ({
+  wallet: { walletState },
+}: RootReducerState): $Shape<Props> => ({
+  walletState,
+});
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   changePin: (newPin: string, currentPin: string) => {
     dispatch(changePinAction(newPin, currentPin));
   },

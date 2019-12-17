@@ -22,10 +22,11 @@ import { Icon, Picker } from 'native-base';
 import { supportedFiatCurrencies } from 'constants/assetsConstants';
 import { connect } from 'react-redux';
 import { saveBaseFiatCurrencyAction } from 'actions/appSettingsActions';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
-  baseFiatCurrency: string,
-  saveBaseFiatCurrency: (currency: string) => Function,
+  baseFiatCurrency: ?string,
+  saveBaseFiatCurrency: (currency: string) => void,
 };
 
 type State = {
@@ -59,11 +60,13 @@ class CurrencySelector extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ appSettings: { data: { baseFiatCurrency } } }) => ({
+const mapStateToProps = ({
+  appSettings: { data: { baseFiatCurrency } },
+}: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
 });
 

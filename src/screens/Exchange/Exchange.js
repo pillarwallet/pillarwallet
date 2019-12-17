@@ -177,7 +177,7 @@ type Props = {
   assets: Assets,
   searchOffers: (string, string, number) => void,
   offers: Offer[],
-  takeOffer: (string, string, number, string, Function) => Object,
+  takeOffer: (string, string, number, string, Function) => void,
   authorizeWithShapeshift: Function,
   balances: Balances,
   resetOffers: Function,
@@ -652,7 +652,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     );
 
     InAppBrowser.open(wyreUrl).catch(error => {
-      console.error('InAppBrowser.error', error);
+      console.error('InAppBrowser.error', error); // eslint-disable-line no-console
     });
   }
 
@@ -1221,12 +1221,12 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   searchOffers: (fromAssetCode, toAssetCode, fromAmount) => dispatch(
     searchOffersAction(fromAssetCode, toAssetCode, fromAmount),
   ),

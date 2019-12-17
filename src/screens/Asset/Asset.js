@@ -94,8 +94,8 @@ const activeModalResetState = {
 };
 
 type Props = {
-  fetchAssetsBalances: () => Function,
-  fetchAssetTransactions: (asset: string, indexFrom?: number) => Function,
+  fetchAssetsBalances: () => void,
+  fetchAssetTransactions: (asset: string, indexFrom?: number) => void,
   assets: Assets,
   balances: Balances,
   rates: Object,
@@ -462,12 +462,12 @@ const structuredSelector = createStructuredSelector({
   activeAccount: activeAccountSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAssetsBalances: () => {
     dispatch(fetchAssetsBalancesAction());
   },

@@ -44,7 +44,7 @@ import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Steps } from 'reducers/walkthroughsReducer';
 import { getThemeByType, defaultTheme } from 'utils/themes';
 
@@ -61,7 +61,7 @@ const { store, persistor } = configureStore();
 type Props = {
   dispatch: Function,
   navigation: Object,
-  isFetched: Boolean,
+  isFetched: boolean,
   fetchAppSettingsAndRedirect: Function,
   updateSessionNetworkStatus: Function,
   updateOfflineQueueNetworkStatus: Function,
@@ -196,13 +196,13 @@ class App extends React.Component<Props, *> {
 const mapStateToProps = ({
   appSettings: { isFetched, data: { themeType } },
   walkthroughs: { steps: activeWalkthroughSteps },
-}: RootReducerState) => ({
+}: RootReducerState): $Shape<Props> => ({
   isFetched,
   themeType,
   activeWalkthroughSteps,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAppSettingsAndRedirect: (appState: string, platform: string) =>
     dispatch(initAppAndRedirectAction(appState, platform)),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),

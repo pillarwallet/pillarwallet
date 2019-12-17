@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import get from 'lodash.get';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { checkAuthAction } from 'actions/authActions';
 import { Container, Wrapper } from 'components/Layout';
@@ -33,8 +34,8 @@ import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/c
 import { getKeychainDataObject } from 'utils/keychain';
 
 type Props = {
-  checkPin: (pin: string, onValidPin: Function, options: Object) => Function,
-  checkPrivateKey: (privateKey: string, onValidPin: Function) => Function,
+  checkPin: (pin: string, onValidPin: Function, options: Object) => void,
+  checkPrivateKey: (privateKey: string, onValidPin: Function) => void,
   wallet: Object,
   revealMnemonic: boolean,
   onPinValid: Function,
@@ -158,12 +159,12 @@ class CheckPin extends React.Component<Props, State> {
 const mapStateToProps = ({
   wallet,
   appSettings: { data: { useBiometrics = false } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   wallet,
   useBiometrics,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   checkPin: (pin: string, onValidPin: Function, options: Object) => {
     dispatch(checkAuthAction(pin, null, onValidPin, options));
   },

@@ -9,7 +9,7 @@ import {
   showNextStepExternalAction,
 } from 'actions/walkthroughsActions';
 import type { Measurements, Steps, PosOverwrites } from 'reducers/walkthroughsReducer';
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { WALKTHROUGH_TYPES } from 'constants/walkthroughConstants';
 import { WalkthroughTooltip } from './WalkthroughTooltip';
 
@@ -155,7 +155,7 @@ const mapStateToProps = ({
   steps,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   addWalkthroughStepMeasure: (stepId: string, measurements: Measurements) =>
     dispatch(addWalkthroughStepMeasureAction(stepId, measurements)),
   showNextStep: () => dispatch(showNextStepExternalAction()),

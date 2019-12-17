@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import styled from 'styled-components/native';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { Paragraph } from 'components/Typography';
 import Header from 'components/Header';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -47,7 +48,7 @@ const FooterWrapper = styled.View`
 type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
-  generateWalletMnemonic: (mnemonicPhrase?: string) => Function,
+  generateWalletMnemonic: (mnemonicPhrase?: string) => void,
   resetIncorrectPassword: Function,
 };
 
@@ -140,9 +141,9 @@ class BackupPhrase extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
+const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wallet });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   generateWalletMnemonic: (mnemonicPhrase?: string) => {
     dispatch(generateWalletMnemonicAction(mnemonicPhrase));
   },

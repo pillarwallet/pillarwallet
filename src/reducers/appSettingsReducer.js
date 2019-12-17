@@ -33,6 +33,7 @@ export type AppSettingsReducerState = {
     baseFiatCurrency: ?string,
     transactionSpeed: ?string,
     themeType: string,
+    useBiometrics?: boolean,
   },
   isFetched: boolean,
 };
