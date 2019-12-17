@@ -27,7 +27,8 @@ import { TextLink, BaseText } from 'components/Typography';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
-import { baseColors, spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -60,12 +61,12 @@ const ButtonWrapper = styled.View`
 
 const CheckboxText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.accent};
 `;
 
 const StyledTextLink = styled(TextLink)`
   ${fontStyles.regular};
-  color: ${baseColors.rockBlue};
+  color: ${themedColors.primary};
 `;
 
 const StyledButton = styled(Button)`
@@ -129,7 +130,6 @@ class ImportWalletLegals extends React.Component<Props, State> {
           centerItems: [{ title: 'Re-import wallet' }],
           customOnBack: this.handleBackAction,
         })}
-        backgroundColor={baseColors.white}
       >
         <Wrapper>
           <ContentWrapper>
@@ -137,7 +137,6 @@ class ImportWalletLegals extends React.Component<Props, State> {
               onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
               small
               lightText
-              darkCheckbox
               wrapperStyle={{ marginBottom: 16 }}
             >
               <CheckboxText>
@@ -153,7 +152,6 @@ class ImportWalletLegals extends React.Component<Props, State> {
               onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
               small
               lightText
-              darkCheckbox
             >
               <CheckboxText>
                 {'I have read, understand, and agree to the '}

@@ -28,7 +28,7 @@ import Spinner from 'components/Spinner';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 
-type Props = {
+export type Props = {
   children?: React.Node,
   title: string,
   onPress?: Function,

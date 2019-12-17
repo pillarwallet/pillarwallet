@@ -280,7 +280,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     } = this.state;
 
     // asset data
-    const { symbol, decimals, iconMonoUrl } = this.assetData;
+    const { symbol, decimals, iconUrl } = this.assetData;
 
     // balance
     const balanceFormatted = formatAmount(this.assetBalance);
@@ -298,9 +298,14 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const totalInFiatFormatted = formatFiat(totalInFiat, baseFiatCurrency);
 
     // form
-    const icon = `${SDK_PROVIDER}/${iconMonoUrl}?size=3`;
+    const icon = `${SDK_PROVIDER}/${iconUrl}?size=3`;
     const formStructure = generateFormStructure(intentError, this.assetBalance, decimals);
-    const formFields = getAmountFormFields({ icon, currency: symbol, valueInFiatFormatted });
+    const formFields = getAmountFormFields({
+      icon,
+      currency: symbol,
+      valueInFiatOutput: valueInFiatFormatted,
+      customProps: { inputWrapperStyle: { marginTop: spacing.large } },
+    });
 
     // submit button
     const isNextButtonDisabled = inputHasError

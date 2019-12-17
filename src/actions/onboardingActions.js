@@ -92,6 +92,7 @@ import {
   setFirebaseAnalyticsCollectionEnabled,
   setUserJoinedBetaAction,
   setAppThemeAction,
+  changeUseBiometricsAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
@@ -101,6 +102,7 @@ import { setRatesAction } from 'actions/ratesActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { SignalCredentials } from 'models/Config';
 
 const storage = Storage.getInstance('db');
 
@@ -172,6 +174,9 @@ const finishRegistration = async ({
   address,
   isImported,
 }) => {
+  // set API username (local method)
+  api.setUsername(userInfo.username);
+
   // create default key-based account if needed
   await dispatch(initDefaultAccountAction(address, userInfo.walletId, false));
 
@@ -240,7 +245,7 @@ const navigateToAppFlow = (isWalletBackedUp: boolean) => {
   navigate(navigateToAssetsAction);
 };
 
-export const registerWalletAction = () => {
+export const registerWalletAction = (enableBiometrics?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const currentState = getState();
     const {
@@ -307,6 +312,7 @@ export const registerWalletAction = () => {
       },
     }));
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
+
     const user = apiUser.username ? { username: apiUser.username } : {};
     dispatch(saveDbAction('user', { user }));
     dispatch({
@@ -331,16 +337,22 @@ export const registerWalletAction = () => {
       oAuthTokens,
     } = await getTokenWalletAndRegister(wallet.privateKey, api, user, dispatch);
 
-    await dispatch(signalInitAction({
+    if (!registrationSucceed) { return; }
+
+    const signalCredentials: SignalCredentials = {
       userId: sdkWallet.userId,
       username: user.username,
       walletId: sdkWallet.walletId,
       ethAddress: wallet.address,
       fcmToken,
       ...oAuthTokens,
-    }));
+    };
 
-    if (!registrationSucceed) { return; }
+    await dispatch(signalInitAction(signalCredentials));
+
+    // re-init API with OAuth update callback
+    const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
+    api.init(updateOAuth, oAuthTokens);
 
     // STEP 5: finish registration
     let finalMnemonic = mnemonicPhrase;
@@ -366,6 +378,8 @@ export const registerWalletAction = () => {
     // STEP 6: add wallet created / imported events
     dispatch(getWalletsCreationEventsAction());
     if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
+
+    if (enableBiometrics) await dispatch(changeUseBiometricsAction(true, wallet.privateKey, true));
 
     // STEP 7: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;

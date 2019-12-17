@@ -36,6 +36,8 @@ import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
 import ForgotPinScreen from 'screens/ForgotPin';
+import BiometricsPromptScreen from 'screens/BiometricsPrompt';
+// import SandboxScreen from 'screens/Sandbox/Index';
 
 import { modalTransition } from 'utils/common';
 
@@ -58,6 +60,7 @@ import {
   FORGOT_PIN,
   PERMISSIONS,
   IMPORT_WALLET_LEGALS,
+  BIOMETRICS_PROMPT,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
@@ -91,11 +94,13 @@ const onBoardingFlow = createStackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+  [BIOMETRICS_PROMPT]: BiometricsPromptScreen,
   [NEW_PROFILE]: NewProfileScreen,
   [LEGAL_TERMS]: LegalTermsScreen,
 }, StackNavigatorConfig);
 
 const authFlow = createStackNavigator({
+  // 'SANDBOX': SandboxScreen,
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
   [FORGOT_PIN]: ForgotPinScreen,
 }, modalTransition);

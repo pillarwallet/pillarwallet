@@ -59,6 +59,7 @@ import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
 import bitcoinReducer from './bitcoinReducer';
 import userEventsReducer from './userEventsReducer';
+import walkthroughsReducer from './walkthroughsReducer';
 import syntheticsReducer from './syntheticsReducer';
 
 // types
@@ -98,6 +99,7 @@ import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './b
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
 import type { BitcoinReducerAction, BitcoinReducerState } from './bitcoinReducer';
 import type { UserEventsReducerAction, UserEventsReducerState } from './userEventsReducer';
+import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walkthroughsReducer';
 import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 
 export type RootReducerState = {|
@@ -134,6 +136,7 @@ export type RootReducerState = {|
   userSettings: UserSettingsReducerState,
   bitcoin: BitcoinReducerState,
   userEvents: UserEventsReducerState,
+  walkthroughs: WalkthroughsReducerState,
   synthetics: SyntheticsReducerState,
 |};
 
@@ -155,6 +158,7 @@ type RootReducerAction =
   | UserSettingsReducerAction
   | BitcoinReducerAction
   | UserEventsReducerAction
+  | WalkthroughsReducerAction
   | DbAction
   | SyntheticsReducerAction;
 
@@ -202,6 +206,7 @@ const appReducer = combineReducers({
   userSettings: userSettingsReducer,
   bitcoin: bitcoinReducer,
   userEvents: userEventsReducer,
+  walkthroughs: walkthroughsReducer,
   synthetics: syntheticsReducer,
 });
 

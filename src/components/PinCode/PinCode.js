@@ -49,6 +49,11 @@ const PinDotsWrapper = styled(Wrapper)`
   flex-grow: 1;
 `;
 
+const Container = styled.View`
+  flex-grow: 1;
+  justify-content: space-between;
+`;
+
 const PinDotsWrapperAnimated = Animated.createAnimatedComponent(PinDotsWrapper);
 
 export default class PinCode extends React.Component<Props, State> {
@@ -138,7 +143,7 @@ export default class PinCode extends React.Component<Props, State> {
     const { showForgotButton, flex, customStyle } = this.props;
     const numActiveDots = this.state.passCode.length;
     return (
-      <React.Fragment>
+      <Container>
         <PinDotsWrapperAnimated
           flex={flex ? 1 : null}
           style={[
@@ -160,7 +165,7 @@ export default class PinCode extends React.Component<Props, State> {
           options={{ showForgotButton }}
           onKeyPress={this.handleButtonPressed}
         />
-      </React.Fragment>
+      </Container>
     );
   }
 }

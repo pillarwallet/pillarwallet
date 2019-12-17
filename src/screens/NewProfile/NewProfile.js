@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { Keyboard, Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
@@ -37,10 +37,13 @@ import Checkbox from 'components/Checkbox';
 import { NextFooter } from 'components/Layout/NextFooter';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
+import { themedColors, getThemeColors } from 'utils/themes';
 
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
+
+import type { Theme } from 'models/Theme';
 
 const LoginForm = styled(Form)`
   margin-top: 20px;
@@ -69,18 +72,27 @@ const ContentWrapper = styled.View`
 
 const StyledWrapper = styled.View`
   flex-grow: 1;
-  padding: ${spacing.large}px;
-  padding-top: 15%;
+  padding: ${spacing.layoutSides}px;
+`;
+
+const InnerWrapper = styled.View`
+  padding: 0 4px;
 `;
 
 const CheckboxText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.accent};
 `;
 
 const StyledTextLink = styled(TextLink)`
   ${fontStyles.regular};
-  color: ${baseColors.rockBlue};
+  color: ${themedColors.primary};
+`;
+
+const Label = styled(MediumText)`
+  ${fontStyles.medium};
+  margin-top: 30px;
+  margin-bottom: ${spacing.large}px;
 `;
 
 const formStructure = t.struct({
@@ -101,7 +113,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
         inputProps: {
           autoCapitalize: 'none',
           disabled: inputDisabled,
-          autoFocus: true,
+          autoFocus: false,
         },
         statusIcon: null,
         statusIconColor: null,
@@ -121,6 +133,7 @@ type Props = {
   retry?: boolean,
   registerOnBackend: Function,
   importedWallet: ?Object,
+  theme: Theme,
 };
 
 type State = {
@@ -173,15 +186,18 @@ class NewProfile extends React.Component<Props, State> {
     const isValidUsername = validateUsername.isValid();
     const { message: errorMessage = '' } = validateUsername.firstError() || {};
     const hasError = !isValidUsername && value.username;
-
+    const { theme } = this.props;
+    const colors = getThemeColors(theme);
+    const statusIcon = hasError ? 'close' : null;
+    const iconColor = hasError ? colors.negative : 'transparent';
     const options = t.update(this.state.formOptions, {
       fields: {
         username: {
           hasError: { $set: hasError },
           error: { $set: errorMessage },
           config: {
-            statusIcon: { $set: null },
-            statusIconColor: { $set: null },
+            statusIcon: { $set: statusIcon },
+            statusIconColor: { $set: iconColor },
           },
         },
       },
@@ -212,7 +228,8 @@ class NewProfile extends React.Component<Props, State> {
   };
 
   componentDidUpdate(prevProps: Props) {
-    const { walletState } = this.props;
+    const { walletState, theme } = this.props;
+    const colors = getThemeColors(theme);
     if (prevProps.walletState === walletState) return;
 
     if (walletState === USERNAME_EXISTS || walletState === INVALID_USERNAME) {
@@ -226,7 +243,7 @@ class NewProfile extends React.Component<Props, State> {
             config: {
               isLoading: { $set: false },
               statusIcon: { $set: 'close' },
-              statusIconColor: { $set: baseColors.fireEngineRed },
+              statusIconColor: { $set: colors.negative },
             },
           },
         },
@@ -255,7 +272,7 @@ class NewProfile extends React.Component<Props, State> {
             config: {
               isLoading: { $set: false },
               statusIcon: { $set: 'check' },
-              statusIconColor: { $set: baseColors.freshEucalyptus },
+              statusIconColor: { $set: colors.positive },
             },
           },
         },
@@ -270,15 +287,17 @@ class NewProfile extends React.Component<Props, State> {
       retry,
       registerOnBackend,
     } = this.props;
+    const { value } = this.state;
     Keyboard.dismiss();
     if (retry) {
       registerOnBackend();
       return;
     }
+    const navProps = value ? { username: value.username } : null;
     if (Platform.OS === 'android') {
-      navigation.navigate(PERMISSIONS);
+      navigation.navigate(PERMISSIONS, navProps);
     } else {
-      navigation.navigate(SET_WALLET_PIN_CODE);
+      navigation.navigate(SET_WALLET_PIN_CODE, navProps);
     }
   }
 
@@ -286,6 +305,12 @@ class NewProfile extends React.Component<Props, State> {
     const { value, formOptions } = this.state;
     return (
       <StyledWrapper>
+        <InnerWrapper>
+          { /* <Paragraph>
+            Pillar is next generation smart wallet, payment network and identity manager.
+          </Paragraph> */ }
+          <Label>Please choose a username</Label>
+        </InnerWrapper>
         <LoginForm
           innerRef={node => { this._form = node; }}
           type={formStructure}
@@ -293,6 +318,11 @@ class NewProfile extends React.Component<Props, State> {
           value={value}
           onChange={this.handleChange}
         />
+        <InnerWrapper>
+          <Paragraph>
+            This is how other people will find and recognize you on the Pillar platform.
+          </Paragraph>
+        </InnerWrapper>
       </StyledWrapper>
     );
   }
@@ -369,7 +399,7 @@ class NewProfile extends React.Component<Props, State> {
       <ContainerWithHeader
         noBack={!!retry}
         headerProps={headerProps}
-        backgroundColor={baseColors.white}
+        putContentInScrollView={!apiUser.walletId}
         keyboardAvoidFooter={!apiUser.walletId && (
           <NextFooter
             onNextPress={this.handleSubmit}
@@ -382,7 +412,6 @@ class NewProfile extends React.Component<Props, State> {
                 onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
                 small
                 lightText
-                darkCheckbox
                 wrapperStyle={{ marginBottom: 16 }}
               >
                 <CheckboxText>
@@ -398,7 +427,6 @@ class NewProfile extends React.Component<Props, State> {
                 onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
                 small
                 lightText
-                darkCheckbox
               >
                 <CheckboxText>
                   {'I have read, understand, and agree to the '}
@@ -450,4 +478,4 @@ const mapDispatchToProps = (dispatch) => ({
   registerOnBackend: () => dispatch(registerOnBackendAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewProfile);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(NewProfile));
