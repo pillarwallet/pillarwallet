@@ -558,7 +558,7 @@ class TextInput extends React.Component<Props, State> {
 
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
-        {errorMessage && !!errorMessageOnTop &&
+        {!!errorMessage && !!errorMessageOnTop &&
           <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>
         }
         <ItemHolder error={!!errorMessage}>
@@ -638,7 +638,6 @@ class TextInput extends React.Component<Props, State> {
               placeholderTextColor={colors.accent}
               alignTextOnRight={!!numeric}
             />}
-
             {showRightAddon &&
             <RightSideWrapper>
               {!!iconProps && <IconButton color={colors.primary} {...iconProps} />}
@@ -648,7 +647,6 @@ class TextInput extends React.Component<Props, State> {
             <ButtonWrapper>
               <Button height={48} {...buttonProps} />
             </ButtonWrapper>}
-
           </Item>
           {Platform.OS === 'ios' && <IosFocusInput
             caretHidden
@@ -658,7 +656,9 @@ class TextInput extends React.Component<Props, State> {
           />}
         </ItemHolder>
         <InputFooter>
-          {errorMessage && !errorMessageOnTop && <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>}
+          {!!errorMessage && !errorMessageOnTop &&
+            <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
+          }
         </InputFooter>
         <SlideModal
           isVisible={showOptionsSelector}
