@@ -144,14 +144,14 @@ const ButtonInner = styled.View`
 `;
 
 const ButtonLabel = styled(MediumText)`
-  color: ${({ blue, theme }) => blue ? theme.colors.primary : theme.colors.control};
+  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.control};
   font-size: ${fontSizes.big}px;
   margin-bottom: 2px;
 `;
 
 const ButtonIconArrow = styled(Icon)`
   font-size: ${fontSizes.big}px;
-  color: ${({ blue, theme }) => blue ? theme.colors.primary : theme.colors.control};
+  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.control};
   ${props => props.isOnLeft ? 'margin-right: 5px;' : 'margin-left: 5px;'}
   ${props => props.flip ? 'transform: rotate(180deg);' : ''}
 `;
@@ -354,8 +354,8 @@ class ImportWallet extends React.Component<Props, State> {
             onPress={this.showPrevWord}
           >
             <ButtonInner>
-              <ButtonIconArrow name="back" blue isOnLeft />
-              <ButtonLabel blue>Prev</ButtonLabel>
+              <ButtonIconArrow name="back" primary isOnLeft />
+              <ButtonLabel primary>Prev</ButtonLabel>
             </ButtonInner>
           </StyledButton>}
           <StyledButton
