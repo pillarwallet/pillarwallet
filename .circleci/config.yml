@@ -407,7 +407,7 @@ jobs:
             - ./ios/Pods
       - run:
           name: Install Bundler
-          command: sudo gem install bundler
+          command: sudo gem install bundler -v 2.0.2
       - restore_cache:
           key: ios-gems-{{ checksum "./ios/Gemfile" }}
       - run:
