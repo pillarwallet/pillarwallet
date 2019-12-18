@@ -189,7 +189,7 @@ export const loginAction = (
           // make first api call which can also trigger OAuth fallback methods
           const userInfo = await api.userInfo(user.walletId);
 
-          dispatch(loadFeatureFlagsAction(userInfo));
+          await dispatch(loadFeatureFlagsAction(userInfo));
 
           // update FCM
           dispatch(updateFcmTokenAction(user.walletId));
