@@ -312,6 +312,7 @@ const peopleFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [CHAT]: ChatScreen,
+  [REFER_FRIENDS]: ReferFriendsScreen,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;

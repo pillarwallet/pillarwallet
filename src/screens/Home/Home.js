@@ -174,7 +174,7 @@ const socialIconActive = require('assets/icons/social_active.png');
 const transactionsIconNormal = require('assets/icons/transactions_normal.png');
 const transactionsIconActive = require('assets/icons/transactions_active.png');
 const iconConnect = require('assets/icons/icon_receive.png');
-const giftImage = require('assets/images/referral_gift.png');
+const referralImage = require('assets/images/referral_gift.png');
 
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
@@ -497,7 +497,7 @@ class HomeScreen extends React.Component<Props, State> {
                 height: 60,
                 marginLeft: 4,
               },
-              source: giftImage,
+              source: referralImage,
             }}
             wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
             onClose={() => this.setState({ isReferralBannerVisible: false })}
