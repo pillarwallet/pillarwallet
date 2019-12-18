@@ -138,7 +138,7 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
 
     if (!isOnline) {
       Toast.show({
-        message: 'Cannot opt-in to beta while offline',
+        message: `Cannot opt-${userJoinedBeta ? 'in to' : 'out from'} Early Access program while offline`,
         type: 'warning',
         autoClose: false,
       });
@@ -148,14 +148,14 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
     let message;
 
     if (userJoinedBeta) {
-      message = 'You have successfully been added to the early access queue for the new Pillar Smart Wallet.';
+      message = 'You have successfully been added to the Early Access program queue.';
     } else {
       // in case user opts out when PPN is set as active
       dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
       // in case user opts out when Smart wallet account is active
       const keyBasedAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
       dispatch(switchAccountAction(keyBasedAccount.id));
-      message = 'You have successfully left Smart Wallet Early Access program.';
+      message = 'You have successfully left Early Access program.';
     }
 
     await api.updateUser({ walletId, betaProgramParticipant: userJoinedBeta });
