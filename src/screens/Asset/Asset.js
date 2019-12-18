@@ -51,7 +51,8 @@ import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants
 
 // utils
 import { checkIfSmartWalletAccount } from 'utils/accounts';
-import { baseColors, spacing, fontSizes, fontStyles } from 'utils/variables';
+import { spacing, fontSizes, fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
@@ -93,8 +94,8 @@ const activeModalResetState = {
 };
 
 type Props = {
-  fetchAssetsBalances: () => Function,
-  fetchAssetTransactions: (asset: string, indexFrom?: number) => Function,
+  fetchAssetsBalances: () => void,
+  fetchAssetTransactions: (asset: string, indexFrom?: number) => void,
   assets: Assets,
   balances: Balances,
   rates: Object,
@@ -133,10 +134,9 @@ const AssetCardWrapper = styled.View`
   justify-content: flex-start;
   padding-top: 10px;
   padding-bottom: 30px;
-  background-color: ${baseColors.snowWhite};
   border-top-width: 1px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
   margin-top: 4px;
 `;
 
@@ -156,19 +156,19 @@ const ValueWrapper = styled.View`
 const TokenValue = styled(MediumText)`
   ${fontStyles.giant};
   text-align: center;
-  color: ${props => props.isSynthetic ? baseColors.electricBlueIntense : baseColors.slateBlack};
+  color: ${({ isSynthetic, theme }) => isSynthetic ? theme.colors.primary : theme.colors.text};
 `;
 
 const ValueInFiat = styled(BaseText)`
   ${fontStyles.small};
   text-align: center;
-  color: ${baseColors.darkGray};
+  color: ${themedColors.text};
 `;
 
 const Disclaimer = styled(BaseText)`
   ${fontStyles.regular};
   text-align: center;
-  color: ${baseColors.burningFire};
+  color: ${themedColors.negative};
   margin-top: 5px;
 `;
 
@@ -338,7 +338,6 @@ class AssetScreen extends React.Component<Props, State> {
           ],
           rightIconsSize: fontSizes.large,
         }}
-        backgroundColor={baseColors.white}
         inset={{ bottom: 0 }}
       >
         <ScrollWrapper
@@ -402,7 +401,6 @@ class AssetScreen extends React.Component<Props, State> {
           <ActivityFeed
             feedTitle="Transactions"
             navigation={navigation}
-            backgroundColor={baseColors.white}
             noBorder
             feedData={relatedTransactions}
             feedType={isSynthetic ? SYNTHETIC : NONSYNTHETIC}
@@ -464,12 +462,12 @@ const structuredSelector = createStructuredSelector({
   activeAccount: activeAccountSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAssetsBalances: () => {
     dispatch(fetchAssetsBalancesAction());
   },

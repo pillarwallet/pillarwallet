@@ -63,11 +63,13 @@ class ExchangeReceiveExplained extends React.Component<Props> {
       >
         <Wrapper flex={1} center regularPadding>
           <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
-            <Paragraph>Currently only exchange</Paragraph>
-            <Paragraph style={{ paddingBottom: spacing.rhythm }}>
+            <Paragraph center>Currently only exchange</Paragraph>
+            <Paragraph center style={{ paddingBottom: spacing.rhythm }}>
               to <ArrowSymbol /> Legacy Wallet is available.
             </Paragraph>
-            <Paragraph>We are working on <ArrowSymbol /> Smart Wallet destination for exchanged tokens.</Paragraph>
+            <Paragraph center>
+              We are working on <ArrowSymbol /> Smart Wallet destination for exchanged tokens.
+            </Paragraph>
           </View>
         </Wrapper>
       </ContainerWithHeader>

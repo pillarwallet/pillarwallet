@@ -44,6 +44,10 @@ import {
   DayProps,
 } from 'react-native-gifted-chat';
 
+// models
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { ApiUser } from 'models/Contacts';
+
 // constants
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 import { CONTACT } from 'constants/navigationConstants';
@@ -83,7 +87,7 @@ type Props = {
   isFetching: boolean,
   contact: Object,
   chats: any,
-  contacts: Object,
+  contacts: ApiUser[],
   currentMessage: Object,
   draft: ?string,
   logScreenView: Function,
@@ -593,7 +597,7 @@ const mapStateToProps = ({
   chat: { data: { messages, isFetching, chats }, draft },
   contacts: { data: contacts },
   session: { data: { isOnline } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   user,
   messages,
   isFetching,
@@ -603,7 +607,7 @@ const mapStateToProps = ({
   isOnline,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getChatByContact: (
     username,
     userId,

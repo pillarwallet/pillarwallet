@@ -39,6 +39,8 @@ export type AssetsReducerState = {
   data: AssetsByAccount,
   supportedAssets: Asset[],
   assetsState: ?string,
+  assetsSearchState: ?string,
+  assetsSearchResults: Object[],
 };
 
 export type AssetsReducerAction = {
@@ -51,6 +53,7 @@ export const initialState = {
   supportedAssets: [],
   assetsState: null,
   assetsSearchResults: [],
+  assetsSearchState: null,
 };
 
 export default function assetsReducer(

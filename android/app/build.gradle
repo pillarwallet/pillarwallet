@@ -251,7 +251,6 @@ dependencies {
   implementation project(':react-native-device-info')
   implementation "com.android.support:appcompat-v7:28.0.0"
   implementation "com.facebook.react:react-native:+"  // From node_modules
-  implementation "com.google.firebase:firebase-config:16.5.0"
   implementation project(':react-native-cookies')
   implementation project(':react-native-keychain')
 

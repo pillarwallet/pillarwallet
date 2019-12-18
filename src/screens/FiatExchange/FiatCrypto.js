@@ -23,7 +23,7 @@ import t from 'tcomb-form-native';
 import { Container, Wrapper } from 'components/Layout';
 import ErrorMessage from 'components/ErrorMessage';
 import Header from 'components/Header';
-import SelectorInput from 'components/SelectorInput';
+import TextInput from 'components/TextInput';
 
 import { createStructuredSelector } from 'reselect';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -58,14 +58,17 @@ function SelectorInputTemplate(locals) {
   };
 
   return (
-    <SelectorInput
-      inputProps={inputProps}
-      options={options}
+    <TextInput
       errorMessage={errorMessage}
-      hasInput={hasInput}
-      wrapperStyle={wrapperStyle}
-      value={locals.value}
-      inputAddonText={inputAddonText}
+      inputProps={inputProps}
+      leftSideText={inputAddonText}
+      numeric
+      selectorOptions={{
+        options,
+        fullWidth: !hasInput,
+        selectorModalTitle: label,
+      }}
+      inputWrapperStyle={wrapperStyle}
     />
   );
 }
@@ -220,7 +223,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });

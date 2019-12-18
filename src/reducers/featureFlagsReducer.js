@@ -24,23 +24,25 @@ import {
   DISABLE_FEATURE_FLAG,
 } from 'constants/featureFlagsConstants';
 
-export type FeatureFlagsReducerState = {
-  data: Object,
-}
+export type FeatureFlagsReducerState = {|
+  data: {
+    [flag: string]: boolean,
+  },
+|};
 
-export type FeatureFlagsReducerAction = {
+export type FeatureFlagsReducerAction = {|
   type: string,
   payload: any,
-}
+|};
 
 export const initialState = {
   data: INITIAL_FEATURE_FLAGS,
 };
 
-export default function featureFlagsReducer(
+const featureFlagsReducer = (
   state: FeatureFlagsReducerState = initialState,
   action: FeatureFlagsReducerAction,
-) {
+): FeatureFlagsReducerState => {
   switch (action.type) {
     case SET_FEATURE_FLAGS:
       return {
@@ -66,4 +68,6 @@ export default function featureFlagsReducer(
     default:
       return state;
   }
-}
+};
+
+export default featureFlagsReducer;

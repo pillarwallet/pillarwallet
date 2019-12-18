@@ -28,7 +28,7 @@ import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
 import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
@@ -54,7 +54,6 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${baseColors.snowWhite};
 `;
 
 const LabeledRow = styled.View`
@@ -156,10 +155,8 @@ class SendTokenConfirm extends React.Component<Props, State> {
                 numberOfLines: 3,
                 placeholder: 'Add a note to this transaction',
               }}
-              inputType="secondary"
-              labelBigger
-              noBorder
               keyboardAvoidance
+              inputWrapperStyle={{ marginTop: spacing.medium }}
             />
           }
         </ScrollWrapper>

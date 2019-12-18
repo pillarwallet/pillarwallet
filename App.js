@@ -43,7 +43,9 @@ import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
-import type { RootReducerState } from 'reducers/rootReducer';
+import Walkthrough from 'components/Walkthrough';
+import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { Steps } from 'reducers/walkthroughsReducer';
 import { getThemeByType, defaultTheme } from 'utils/themes';
 
 import configureStore from './src/configureStore';
@@ -59,13 +61,14 @@ const { store, persistor } = configureStore();
 type Props = {
   dispatch: Function,
   navigation: Object,
-  isFetched: Boolean,
+  isFetched: boolean,
   fetchAppSettingsAndRedirect: Function,
   updateSessionNetworkStatus: Function,
   updateOfflineQueueNetworkStatus: Function,
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
   executeDeepLink: Function,
+  activeWalkthroughSteps: Steps,
   themeType: string,
   changeAppTheme: () => void,
 }
@@ -148,7 +151,12 @@ class App extends React.Component<Props, *> {
   };
 
   render() {
-    const { isFetched, themeType, changeAppTheme } = this.props;
+    const {
+      isFetched,
+      themeType,
+      changeAppTheme,
+      activeWalkthroughSteps,
+    } = this.props;
     const theme = getThemeByType(themeType);
     const { colors, current } = theme;
 
@@ -177,6 +185,7 @@ class App extends React.Component<Props, *> {
             >
               <Text style={{ color: colors.text }}>{`THEME: ${current}`}</Text>
             </TouchableOpacity>}
+            {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
           </Root>
         </React.Fragment>
       </ThemeProvider>
@@ -186,12 +195,14 @@ class App extends React.Component<Props, *> {
 
 const mapStateToProps = ({
   appSettings: { isFetched, data: { themeType } },
-}: RootReducerState) => ({
+  walkthroughs: { steps: activeWalkthroughSteps },
+}: RootReducerState): $Shape<Props> => ({
   isFetched,
   themeType,
+  activeWalkthroughSteps,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAppSettingsAndRedirect: (appState: string, platform: string) =>
     dispatch(initAppAndRedirectAction(appState, platform)),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),

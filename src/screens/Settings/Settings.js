@@ -69,6 +69,7 @@ import { isProdEnv } from 'utils/environment';
 import { baseColors, fontTrackings, spacing, fontStyles } from 'utils/variables';
 import { noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
+import { getBiometryType } from 'utils/settings';
 
 // models
 import type { BackupStatus } from 'reducers/walletReducer';
@@ -79,7 +80,7 @@ import { SettingsSection } from './SettingsSection';
 
 type State = {
   visibleModal: ?string,
-  showBiometricsSelector: boolean,
+  supportedBiometryType: string,
   joinBetaPressed: boolean,
   leaveBetaPressed: boolean,
   setBiometrics: ?{
@@ -139,7 +140,7 @@ const SmallText = styled(BaseText)`
   letter-spacing: ${fontTrackings.small}px;
 `;
 
-const formSecurityItems = (that, showBiometricsSelector) => {
+const formSecurityItems = (that, biometryType) => {
   const { navigation, useBiometrics } = that.props;
   return [
     {
@@ -149,11 +150,11 @@ const formSecurityItems = (that, showBiometricsSelector) => {
     },
     {
       key: 'biometricLogin',
-      title: 'Biometric Login',
+      title: biometryType,
       onPress: () => that.setState({ visibleModal: 'checkPin' }),
       toggle: true,
       value: useBiometrics,
-      hidden: !showBiometricsSelector,
+      hidden: !biometryType,
     },
   ];
 };
@@ -335,7 +336,7 @@ class Settings extends React.Component<Props, State> {
     const visibleModal = navigation.getParam('visibleModal', null);
     this.state = {
       visibleModal,
-      showBiometricsSelector: false,
+      supportedBiometryType: '',
       joinBetaPressed: false,
       leaveBetaPressed: false,
       setBiometrics: null,
@@ -346,7 +347,11 @@ class Settings extends React.Component<Props, State> {
   componentDidMount() {
     const { navigation } = this.props;
     Keychain.getSupportedBiometryType()
-      .then(supported => this.setState({ showBiometricsSelector: !!supported }))
+      .then(biometryType => {
+        // returns null, if the device haven't enrolled into fingerprint/FaceId. Even though it has hardware for it
+        // and getBiometryType has default string value
+        this.setState({ supportedBiometryType: biometryType ? getBiometryType(biometryType) : '' });
+      })
       .catch(() => null);
     const scrollTo = navigation.getParam('scrollTo');
     if (scrollTo) this.setSectionToScrollTo(scrollTo);
@@ -483,7 +488,7 @@ class Settings extends React.Component<Props, State> {
 
     const {
       visibleModal,
-      showBiometricsSelector,
+      supportedBiometryType,
       scrollToSection,
     } = this.state;
 
@@ -507,7 +512,7 @@ class Settings extends React.Component<Props, State> {
 
           <SettingsSection
             sectionTitle="Security"
-            sectionItems={formSecurityItems(this, showBiometricsSelector)}
+            sectionItems={formSecurityItems(this, supportedBiometryType)}
           />
 
           <SettingsSection
@@ -717,10 +722,10 @@ class Settings extends React.Component<Props, State> {
         >
           <StyledWrapper regularPadding flex={1}>
             <Paragraph small>
-              By choosing to upgrade your wallet, you will be added to our Firebase Analytics data collection.
+              By choosing this you will be added to our Analytics data collection.
               Through this, Pillar will collect your username in order to enable new features and monitor your new
               wallet experience for any bugs and/or crashes.
-              You can choose to leave the Smart Wallet Early Access program and Firebase Analytics collection any time
+              You can choose to leave the Early Access program at any time
               via the &quot;System&quot; under Settings.
             </Paragraph>
             <Button
@@ -747,16 +752,16 @@ class Settings extends React.Component<Props, State> {
           <StyledWrapper regularPadding flex={1}>
             <View>
               <Paragraph small>
-                By confirming, you will leave the Smart Wallet Early Access program. As a result, your access to the
-                Smart Wallet, Pillar Payment Network and any funds stored on them will be lost.
+                By confirming, you will leave the Early Access program. As a result, your access to the
+                Smart Wallet, Pillar Payment Network, Bitcoin Wallet and any funds stored on them will be lost.
               </Paragraph>
               <Paragraph small>
                 We strongly recommend that you transfer all assets from the Smart Wallet and Pillar Network to your Key
                 Based Wallet before leaving this Program.
               </Paragraph>
               <Paragraph small>
-                If you wish to re-gain early access to Smart Wallet (and re-gain access to the funds on your Smart
-                Wallet), you will need to apply again.
+                If you wish to re-gain early access to Smart Wallet or Bitcoin Wallet (and re-gain access to the funds
+                on your Smart Wallet or Bitcoin Wallet), you will need to apply again.
               </Paragraph>
             </View>
             <Button

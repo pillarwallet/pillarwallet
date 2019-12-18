@@ -18,36 +18,38 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, TouchableNativeFeedback, Image as RNImage } from 'react-native';
-import styled from 'styled-components/native';
-import { fontSizes, baseColors } from 'utils/variables';
+import { Platform, TouchableNativeFeedback, Image as RNImage, Dimensions } from 'react-native';
+import styled, { withTheme } from 'styled-components/native';
+import { fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { BaseText } from 'components/Typography';
-import { Wrapper } from 'components/Layout';
 import { KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
+import type { Theme } from 'models/Theme';
+import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import keyPadTypes from './keyPadTypes';
 
-const KeyPadWrapper = styled(Wrapper)`
-  margin-top: auto;
+const { height } = Dimensions.get('window');
+
+const KeyPadWrapper = styled.View`
+  max-height: ${height * 0.4}px;
 `;
 
 const KeyInput = styled.View`
   justify-content: center;
-  align-items: center;
   width: 30%;
-  height: 70;
+  height: 25%;
 `;
 
 const KeyPadInner = styled.View`
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
-  margin-top: auto;
+  align-items: stretch;
+  height: 100%;
 `;
 
 const PinButton = styled.TouchableOpacity`
   align-self: center;
-  height: 120px;
   width: 100%;
   flex: 1;
   flex-direction: column;
@@ -56,7 +58,7 @@ const PinButton = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled(BaseText)`
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
   font-size: ${props => props.fontSize || fontSizes.large}px;
   align-self: center;
   line-height: 56px;
@@ -93,6 +95,7 @@ type KeyPadButton = {
   value: string,
   type?: string,
   image?: number,
+  imageDarkTheme?: number,
 };
 
 type Props = {
@@ -101,10 +104,11 @@ type Props = {
   options?: Object,
   onKeyPress: Function,
   style?: Object,
-  inputColor?: string
+  inputColor?: string,
+  theme: Theme,
 }
 
-export default class KeyPad extends React.Component<Props> {
+class KeyPad extends React.Component<Props> {
   static defaultProps = {
     type: 'numeric',
   };
@@ -118,12 +122,16 @@ export default class KeyPad extends React.Component<Props> {
       label,
       type,
       image,
+      imageDarkTheme,
       value,
     } = btn;
+    const { theme } = this.props;
+    const { current: currentTheme = LIGHT_THEME } = theme;
     if (type === IMAGE) {
+      const img = currentTheme === LIGHT_THEME ? image : imageDarkTheme;
       return (
         <ImageHolder>
-          <Image source={image} />
+          <Image source={img} />
         </ImageHolder>
       );
     }
@@ -195,3 +203,5 @@ export default class KeyPad extends React.Component<Props> {
     );
   }
 }
+
+export default withTheme(KeyPad);

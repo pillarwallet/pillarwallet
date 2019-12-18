@@ -21,3 +21,4 @@ export const UPDATE_APP_SETTINGS = 'UPDATE_APP_SETTINGS';
 export const RESET_APP_SETTINGS = 'RESET_APP_SETTINGS';
 export const LIGHT_THEME = 'lightTheme';
 export const DARK_THEME = 'darkTheme';
+export const USER_JOINED_BETA_SETTING = 'userJoinedBeta';

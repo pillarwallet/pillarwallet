@@ -34,10 +34,18 @@ import {
   LoadEarlier,
   Message,
 } from 'react-native-gifted-chat';
-import { appFont, baseColors, fontSizes, spacing } from 'utils/variables';
+import truncate from 'lodash.truncate';
+
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { ApiUser } from 'models/Contacts';
+
+import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
+
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Spinner from 'components/Spinner';
+
 import {
   sendMessageByContactAction,
   clearChatDraftStateAction,
@@ -46,10 +54,9 @@ import {
   saveDraftAction,
 } from 'actions/chatActions';
 import { logEventAction } from 'actions/analyticsActions';
-import Spinner from 'components/Spinner';
+
+import { appFont, baseColors, fontSizes, spacing } from 'utils/variables';
 import { isIphoneX, handleUrlPress } from 'utils/common';
-import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
-import truncate from 'lodash.truncate';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -63,7 +70,7 @@ type Props = {
   isFetching: boolean,
   contact: Object,
   chats: any,
-  contacts: Object,
+  contacts: ApiUser[],
   currentMessage: Object,
   draft: ?string,
   isOpen: boolean,
@@ -627,7 +634,7 @@ const mapStateToProps = ({
   user: { data: user },
   chat: { data: { messages, isFetching, chats }, draft },
   contacts: { data: contacts },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   user,
   messages,
   isFetching,
@@ -636,7 +643,7 @@ const mapStateToProps = ({
   draft,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getChatByContact: (
     username,
     userId,

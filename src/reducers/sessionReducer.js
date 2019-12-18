@@ -20,16 +20,18 @@
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import merge from 'lodash.merge';
 
-export type SessionReducerState = {
-  data: Object,
-};
+import type { SessionData } from 'models/Session';
 
-export type SessionReducerAction = {
+export type SessionReducerState = {|
+  data: SessionData,
+|};
+
+export type SessionReducerAction = {|
   type: string,
-  payload: any,
-};
+  payload: $Shape<SessionData>,
+|};
 
-const initialState = {
+export const initialState = {
   data: {
     isOnline: true,
     isSignalInitiated: false,
@@ -38,10 +40,10 @@ const initialState = {
   },
 };
 
-export default function appSettingsReducer(
+const appSettingsReducer = (
   state: SessionReducerState = initialState,
   action: SessionReducerAction,
-) {
+): SessionReducerState => {
   switch (action.type) {
     case UPDATE_SESSION:
       return merge(
@@ -52,4 +54,6 @@ export default function appSettingsReducer(
     default:
       return state;
   }
-}
+};
+
+export default appSettingsReducer;

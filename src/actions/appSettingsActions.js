@@ -17,16 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { DARK_THEME, LIGHT_THEME, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { DARK_THEME, LIGHT_THEME, UPDATE_APP_SETTINGS, USER_JOINED_BETA_SETTING } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 import set from 'lodash.set';
-import firebase from 'react-native-firebase';
 
 import Toast from 'components/Toast';
 import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
-import { fetchFeatureFlagsAction } from 'actions/featureFlagsActions';
 import {
   setKeychainDataObject,
   resetKeychainDataObject,
@@ -39,6 +37,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { switchAccountAction } from './accountsActions';
+import { loadFeatureFlagsAction } from './featureFlagsActions';
 
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Dispatch) => {
@@ -102,7 +101,7 @@ export const setBrowsingWebViewAction = (isBrowsingWebView: boolean) => ({
   },
 });
 
-export const changeUseBiometricsAction = (value: boolean, privateKey?: string) => {
+export const changeUseBiometricsAction = (value: boolean, privateKey?: string, noToast?: boolean) => {
   return async (dispatch: Dispatch) => {
     let message;
     if (value) {
@@ -119,58 +118,51 @@ export const changeUseBiometricsAction = (value: boolean, privateKey?: string) =
         useBiometrics: value,
       },
     });
-    Toast.show({
-      message,
-      type: 'success',
-      title: 'Success',
-    });
+    if (!noToast) {
+      Toast.show({
+        message,
+        type: 'success',
+        title: 'Success',
+      });
+    }
   };
 };
 
-export const setFirebaseAnalyticsCollectionEnabled = (enabled: boolean) => {
-  return (dispatch: Dispatch) => {
-    firebase.analytics().setAnalyticsCollectionEnabled(enabled);
-    dispatch(saveDbAction('app_settings', { appSettings: { firebaseAnalyticsConnectionEnabled: enabled } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: {
-        firebaseAnalyticsConnectionEnabled: enabled,
-      },
-    });
-  };
-};
-
-export const setUserJoinedBetaAction = (userJoinedBeta: boolean, ignoreSuccessToast: boolean = false) => {
+export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      user: { data: { username, walletId } },
+      user: { data: { walletId } },
       accounts: { data: accounts },
+      session: { data: { isOnline } },
     } = getState();
+
+    if (!isOnline) {
+      Toast.show({
+        message: `Cannot opt-${userJoinedBeta ? 'in to' : 'out from'} Early Access program while offline`,
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
+
     let message;
+
     if (userJoinedBeta) {
-      dispatch(setFirebaseAnalyticsCollectionEnabled(true));
-      firebase.analytics().setUserProperty('username', username);
-      message = 'You have successfully been added to the early access queue for the new Pillar Smart Wallet.';
+      message = 'You have successfully been added to the Early Access program queue.';
     } else {
-      firebase.analytics().setUserProperty('username', null);
-      dispatch(setFirebaseAnalyticsCollectionEnabled(false));
       // in case user opts out when PPN is set as active
       dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
       // in case user opts out when Smart wallet account is active
-      const keyBasedAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
-      dispatch(switchAccountAction(keyBasedAccount.id));
-      message = 'You have successfully left Smart Wallet Early Access program.';
+      const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+      if (keyBasedAccount) dispatch(switchAccountAction(keyBasedAccount.id));
+      message = 'You have successfully left Early Access program.';
     }
+
     await api.updateUser({ walletId, betaProgramParticipant: userJoinedBeta });
-    dispatch(saveDbAction('app_settings', { appSettings: { userJoinedBeta } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: {
-        userJoinedBeta,
-      },
-    });
-    await dispatch(fetchFeatureFlagsAction());
-    if (ignoreSuccessToast) return;
+    dispatch(updateAppSettingsAction(USER_JOINED_BETA_SETTING, userJoinedBeta));
+
+    await dispatch(loadFeatureFlagsAction());
+
     Toast.show({
       message,
       type: 'success',

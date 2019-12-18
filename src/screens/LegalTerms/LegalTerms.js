@@ -18,26 +18,31 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Container, ScrollWrapper, Footer } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native/index';
+
+import { BACKUP_PHRASE } from 'constants/navigationConstants';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 import Header from 'components/Header';
 import { Paragraph, TextLink, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Checkbox from 'components/Checkbox';
-import { connect } from 'react-redux';
-import { registerWalletAction } from 'actions/onboardingActions';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
-import { baseColors, fontSizes, fontStyles, fontTrackings, UIColors } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
-import { BACKUP_PHRASE } from 'constants/navigationConstants';
-import PrivateKeyModal from './PrivateKeyModal';
-import BackupPhraseModal from './BackupPhraseModal';
+
+import { registerWalletAction } from 'actions/onboardingActions';
+import { fontSizes, fontStyles, fontTrackings, UIColors } from 'utils/variables';
+
+import PrivateKeyModal from 'screens/LegalTerms/PrivateKeyModal';
+import BackupPhraseModal from 'screens/LegalTerms/BackupPhraseModal';
 
 type Props = {
-  generateEncryptedWallet: () => Function,
+  generateEncryptedWallet: () => void,
   navigation: NavigationScreenProp<*>,
   onboarding: Object,
   backupStatus: Object,
@@ -142,7 +147,7 @@ class LegalTerms extends React.Component<Props, State> {
     const isWalletBackedUp = isImported || isBackedUp;
 
     return (
-      <Container color={baseColors.white}>
+      <Container>
         <Header title="almost there" onBack={() => this.props.navigation.goBack(null)} white />
         <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
           <Paragraph light small style={{ marginTop: 10, marginBottom: 50 }}>
@@ -263,12 +268,15 @@ class LegalTerms extends React.Component<Props, State> {
 }
 
 
-const mapStateToProps = ({ wallet: { onboarding, backupStatus } }) => ({ onboarding, backupStatus });
+const mapStateToProps = ({
+  wallet: { onboarding, backupStatus },
+}: RootReducerState): $Shape<Props> => ({
+  onboarding,
+  backupStatus,
+});
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  generateEncryptedWallet: () => {
-    dispatch(registerWalletAction());
-  },
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  generateEncryptedWallet: () => dispatch(registerWalletAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LegalTerms);

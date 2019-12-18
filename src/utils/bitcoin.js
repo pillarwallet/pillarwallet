@@ -18,8 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { MIN_CONFIRMATIONS } from 'constants/bitcoinConstants';
-import type { BitcoinUtxo, BTCTransaction } from 'models/Bitcoin';
+import type { BitcoinUtxo, BTCTransaction, BitcoinBalance } from 'models/Bitcoin';
+import type { Rates } from 'models/Asset';
 
+import { BTC } from 'constants/assetsConstants';
+
+import { getRate } from 'utils/assets';
 
 export const satoshisToBtc = (satoshis: number): number => satoshis * 0.00000001;
 export const btcToSatoshis = (btc: number): number => Math.floor(btc * 100000000);
@@ -35,41 +39,69 @@ export const unspentAmount = (unspent: BitcoinUtxo[]): number => {
   }, 0);
 };
 
+const totalBitcoinBalance = (balances: BitcoinBalance) => {
+  const addressesBalances = Object.keys(balances).map(key => balances[key]);
+
+  return addressesBalances.reduce((acc, { balance }) => acc + balance, 0);
+};
+
+export const calculateBitcoinBalanceInFiat = (
+  rates: Rates,
+  balances: BitcoinBalance,
+  currency: string,
+) => {
+  const fiatRate = getRate(rates, BTC, currency);
+  if (fiatRate === 0) {
+    return 0;
+  }
+
+  const satoshis = totalBitcoinBalance(balances);
+
+  return satoshisToBtc(satoshis) * fiatRate;
+};
+
 export const extractBitcoinTransactions = (address: string, transactions: BTCTransaction[]): Object[] => {
   const transactionsHistory = [];
   transactions.forEach((tx: BTCTransaction) => {
+    let fromAddress = '';
+    let toAddress = '';
+    let status = 'pending';
+    let value = 0;
+
     tx.details.coins.inputs.forEach(inputItem => {
-      const txItem = {
-        _id: inputItem._id,
-        hash: tx.details.txid,
-        to: address,
-        from: inputItem.address,
-        createdAt: new Date(tx.details.blockTime).getTime() / 1000,
-        asset: 'BTC',
-        nbConfirmations: tx.details.confirmations,
-        status: inputItem.mintHeight !== -1 ? 'confirmed' : 'pending',
-        value: inputItem.value,
-        isPPNTransaction: false,
-        type: 'transactionEvent',
-      };
-      transactionsHistory.push(txItem);
+      if (address !== inputItem.address) {
+        status = inputItem.mintHeight > 0 ||
+        inputItem.spentHeight > 0 ? 'confirmed' : 'pending';
+        ({ value } = inputItem);
+      }
+      fromAddress = inputItem.address;
     });
-    tx.details.coins.outputs.forEach(inputItem => {
-      const txItem = {
-        _id: inputItem._id,
-        hash: tx.details.txid,
-        to: inputItem.address,
-        from: address,
-        createdAt: new Date(tx.details.blockTime).getTime() / 1000,
-        asset: 'BTC',
-        nbConfirmations: tx.details.confirmations,
-        status: inputItem.mintHeight !== -1 ? 'confirmed' : 'pending',
-        value: inputItem.value,
-        isPPNTransaction: false,
-        type: 'transactionEvent',
-      };
-      transactionsHistory.push(txItem);
+    tx.details.coins.outputs.forEach(outputItem => {
+      if (outputItem.address !== address && address === fromAddress) {
+        status = outputItem.mintHeight > 0 ||
+        outputItem.spentHeight > 0 ? 'confirmed' : 'pending';
+        ({ value, address: toAddress } = outputItem);
+      } else if (outputItem.address === address && address !== fromAddress) {
+        status = outputItem.mintHeight > 0 ||
+        outputItem.spentHeight > 0 ? 'confirmed' : 'pending';
+        toAddress = address;
+        ({ value } = outputItem);
+      }
     });
+    const txItem = {
+      _id: tx._id,
+      hash: tx.details.txid,
+      to: toAddress,
+      from: fromAddress,
+      createdAt: new Date(tx.details.blockTime).getTime() / 1000,
+      asset: 'BTC',
+      nbConfirmations: tx.details.confirmations,
+      status,
+      value,
+      isPPNTransaction: false,
+      type: 'transactionEvent',
+    };
+    transactionsHistory.push(txItem);
   });
   return transactionsHistory;
 };

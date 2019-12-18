@@ -353,7 +353,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{
           centerItems: [{ title: 'Choose assets to transfer' }],
-          rightItems: [hasAssetsSelected ? { label: 'Edit', onPress: this.onEditPress } : {}],
+          rightItems: [hasAssetsSelected ? { link: 'Edit', onPress: this.onEditPress } : {}],
         }}
         backgroundColor={baseColors.white}
       >

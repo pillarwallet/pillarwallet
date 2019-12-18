@@ -22,7 +22,7 @@ import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import { Sentry } from 'react-native-sentry';
 
-import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
+import { BTC, ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
 import { getEthereumProvider, parseTokenBigNumberAmount } from 'utils/common';
 
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -257,12 +257,14 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
   if (!assets.length) return Promise.resolve({});
   const targetCurrencies = supportedFiatCurrencies.concat(ETH);
 
-  const hasHoloToken = assets.some(token => token.toUpperCase() === HOT);
-  if (hasHoloToken) {
+  assets = assets.map(token => {
     // rename HOT to HOLO
-    assets = assets.filter(token => token.toUpperCase() !== HOT);
-    assets.push(HOLO);
-  }
+    if (token.toUpperCase() === HOT) {
+      return HOLO;
+    }
+    return token;
+  });
+  assets = assets.concat(BTC);
 
   return cryptocompare.priceMulti(assets, targetCurrencies)
     .then(data => {

@@ -19,10 +19,12 @@
 */
 
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { TouchableWithoutFeedback, View } from 'react-native';
 import { Shadow } from 'components/Shadow';
-import { baseColors } from 'utils/variables';
+import { themedColors, getThemeType } from 'utils/themes';
+import { DARK_THEME } from 'constants/appSettingsConstants';
+import type { Theme } from 'models/Theme';
 
 const CardOutter = styled.View`
   position: relative;
@@ -32,7 +34,7 @@ const ContentWrapper = styled.View`
   flex-direction: column;
   justify-content: flex-start;
   border-radius: 6px;
-  background: ${baseColors.white};
+  background: ${themedColors.card};
   width: 100%;
   opacity: ${props => props.disabled ? 0.6 : 1};
 `;
@@ -44,6 +46,7 @@ type Props = {
   upperContentWrapperStyle?: Object,
   onPress?: ?Function,
   disabled?: boolean,
+  theme: Theme,
 }
 
 type State = {
@@ -54,7 +57,7 @@ type State = {
 
 const SHADOW_LENGTH = 3;
 
-export default class ShadowedCard extends React.PureComponent<Props, State> {
+class ShadowedCard extends React.PureComponent<Props, State> {
   state = {
     cardHeight: null,
     cardWidth: null,
@@ -78,11 +81,13 @@ export default class ShadowedCard extends React.PureComponent<Props, State> {
       onPress,
       disabled,
       upperContentWrapperStyle,
+      theme,
     } = this.props;
+    const currentTheme = getThemeType(theme);
     const { cardHeight, cardWidth, allowRerenderShadow } = this.state;
     return (
       <CardOutter style={wrapperStyle}>
-        {!!(cardHeight && cardWidth) &&
+        {!!(cardHeight && cardWidth) && currentTheme !== DARK_THEME &&
         <Shadow
           heightAndroid={cardHeight}
           heightIOS={cardHeight}
@@ -119,3 +124,5 @@ export default class ShadowedCard extends React.PureComponent<Props, State> {
     );
   }
 }
+
+export default withTheme(ShadowedCard);

@@ -50,8 +50,6 @@ import SendTokenAssetsScreen from 'screens/SendToken/SendTokenAssets';
 import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScreen';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
-import SendBitcoinAmountScreen from 'screens/SendBitcoin/SendBitcoinAmount';
-import SendBitcoinContactsScreen from 'screens/SendBitcoin/SendBitcoinContacts';
 import SendBitcoinPinConfirmScreen from 'screens/SendBitcoin/SendBitcoinPinConfirmScreen';
 import SendBitcoinConfirmScreen from 'screens/SendBitcoin/SendBitcoinConfirm';
 import SendBitcoinTransactionScreen from 'screens/SendBitcoin/SendBitcoinTransaction';
@@ -129,6 +127,7 @@ import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { signalInitAction } from 'actions/signalClientActions';
+import { endWalkthroughAction } from 'actions/walkthroughsActions';
 
 // constants
 import {
@@ -152,8 +151,6 @@ import {
   CHANGE_PIN_CONFIRM_NEW_PIN,
   TAB_NAVIGATION,
   SEND_BITCOIN_FLOW,
-  SEND_BITCOIN_AMOUNT,
-  SEND_BITCOIN_CONTACTS,
   SEND_BITCOIN_CONFIRM,
   SEND_BITCOIN_TRANSACTION,
   SEND_BITCOIN_PIN_CONFIRM,
@@ -467,8 +464,8 @@ const sendTokenFromAssetFlow = createStackNavigator(
 // SEND BITCOIN FROM ASSET FLOW
 const sendBitcoinFromAssetFlow = createStackNavigator(
   {
-    [SEND_BITCOIN_CONTACTS]: SendBitcoinContactsScreen,
-    [SEND_BITCOIN_AMOUNT]: SendBitcoinAmountScreen,
+    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
     [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
     [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
@@ -673,6 +670,7 @@ type Props = {
   stopListeningForBalanceChange: Function,
   isOnline: boolean,
   initSignal: Function,
+  endWalkthrough: () => void,
 }
 
 type State = {
@@ -739,7 +737,7 @@ class AppFlow extends React.Component<Props, State> {
       }
     }
 
-    if (notifications.length !== prevNotifications.length) {
+    if (notifications.length && notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
 
       if (lastNotification.type === 'CONNECTION' && connectionMessagesToExclude.includes(lastNotification.status)) {
@@ -782,6 +780,7 @@ class AppFlow extends React.Component<Props, State> {
       isPickingImage,
       isBrowsingWebView,
       stopListeningForBalanceChange,
+      endWalkthrough,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -790,6 +789,8 @@ class AppFlow extends React.Component<Props, State> {
     if (APP_LOGOUT_STATES.includes(nextAppState)) {
       // close websocket channel instantly to receive PN while in background
       stopListeningChatWebSocket();
+      // close walkthrough shade or tooltips
+      endWalkthrough();
       lockTimer = BackgroundTimer.setTimeout(() => {
         const pathAndParams = navigation.router.getPathAndParamsForState(navigation.state);
         const lastActiveScreen = pathAndParams.path.split('/').slice(-1)[0];
@@ -896,6 +897,7 @@ const mapDispatchToProps = dispatch => ({
   startListeningForBalanceChange: () => dispatch(startListeningForBalanceChangeAction()),
   stopListeningForBalanceChange: () => dispatch(stopListeningForBalanceChangeAction()),
   initSignal: () => dispatch(signalInitAction()),
+  endWalkthrough: () => dispatch(endWalkthroughAction()),
 });
 
 const ConnectedAppFlow = connect(

@@ -19,9 +19,8 @@
 */
 import * as React from 'react';
 import t from 'tcomb-form-native';
-import SingleInput from 'components/TextInput/SingleInput';
+import TextInput from 'components/TextInput';
 import { isValidNumber, parseNumber } from './common';
-import { fontSizes } from './variables';
 
 const genericToken = require('assets/images/tokens/genericTokenIcon.png');
 
@@ -89,21 +88,18 @@ function AmountInputTemplate(locals) {
     value: locals.value,
     ellipsizeMode: 'middle',
     keyboardType: 'decimal-pad',
-    textAlign: 'right',
     autoCapitalize: 'words',
   };
 
   return (
-    <SingleInput
+    <TextInput
+      errorMessage={errorMessage}
+      inputProps={inputProps}
       innerImageURI={icon}
       fallbackSource={genericToken}
-      errorMessage={errorMessage}
-      id="amount"
-      inputProps={inputProps}
-      inlineLabel
-      fontSize={fontSizes.giant}
-      innerImageText={valueInFiatOutput}
-      marginTop={30}
+      leftSideText={valueInFiatOutput}
+      numeric
+      errorMessageOnTop
       {...customProps}
     />
   );

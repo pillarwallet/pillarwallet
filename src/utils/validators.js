@@ -20,7 +20,13 @@
 import { utils } from 'ethers';
 import addressValidation from 'wallet-address-validator';
 import { DEFAULT_BTC_NETWORK } from 'constants/bitcoinConstants';
+import { BTC, ETH } from 'constants/assetsConstants';
 import { pipe, decodeBTCAddress, decodeETHAddress } from 'utils/common';
+
+type AddressValidator = {
+  validator: (address: string) => boolean,
+  message: string,
+};
 
 export const validatePin = (pin: string, confirmationPin?: string): string => {
   if (pin.length !== 6) {
@@ -56,6 +62,10 @@ export const isValidETHAddress = (address: string): boolean => {
   return result;
 };
 
+export const isValidAddress = (address: string): boolean => {
+  return isValidETHAddress(address) || isValidBTCAddress(address);
+};
+
 export const supportedAddressValidator = (address: string): boolean => {
   if (pipe(decodeETHAddress, isValidETHAddress)(address)) {
     return true;
@@ -64,6 +74,29 @@ export const supportedAddressValidator = (address: string): boolean => {
     return true;
   }
   return false;
+};
+
+export const addressValidator = (token: string): AddressValidator => {
+  const validators = {
+    [ETH]: {
+      validator: isValidETHAddress,
+      message: 'Invalid Ethereum address',
+    },
+    [BTC]: {
+      validator: isValidBTCAddress,
+      message: 'Invalid Bitcoin address',
+    },
+  };
+
+  const validator = validators[token];
+  if (validator) {
+    return validator;
+  }
+
+  return {
+    validator: isValidAddress,
+    message: 'Invalid address',
+  };
 };
 
 export function hasAllValues(object: ?Object) {

@@ -40,6 +40,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
 
 // constants
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   MANAGE_DETAILS_SESSIONS,
   BADGE,
@@ -88,6 +89,7 @@ import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
+import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -112,7 +114,7 @@ type Props = {
   badges: Badges,
   fetchBadges: Function,
   connectors: Connector[],
-  pendingConnector?: Connector,
+  pendingConnector: ?Connector,
   logScreenView: (view: string, screen: string) => void,
   activeAccount: ?Account,
   contactsSmartAddresses: ContactSmartAddressData[],
@@ -122,6 +124,7 @@ type Props = {
   fetchBadgeAwardHistory: () => void,
   badgesEvents: BadgeRewardEvent[],
   theme: Theme,
+  baseFiatCurrency: ?string,
 };
 
 type State = {
@@ -133,13 +136,6 @@ type State = {
   isScanning: boolean,
   tabIsChanging: boolean,
 };
-
-const BalanceWrapper = styled.View`
-  padding: ${spacing.medium}px ${spacing.large}px;
-  width: 100%;
-  border-bottom-width: 1px;
-  border-color: ${themedColors.border};
-`;
 
 const WalletConnectWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.large}px 0;
@@ -322,6 +318,7 @@ class HomeScreen extends React.Component<Props, State> {
       userEvents,
       badgesEvents,
       theme,
+      baseFiatCurrency,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -405,6 +402,7 @@ class HomeScreen extends React.Component<Props, State> {
     const sessionsLabel = sessionsCount ? `${sessionsCount} ${sessionsLabelPart}` : '';
 
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return (
       <ContainerWithHeader
@@ -446,9 +444,7 @@ class HomeScreen extends React.Component<Props, State> {
               onRefresh={this.refreshScreenData}
             />}
         >
-          <BalanceWrapper>
-            <PortfolioBalance />
-          </BalanceWrapper>
+          <PortfolioBalance fiatCurrency={fiatCurrency} />
           <WalletConnectWrapper>
             <SettingsItemCarded
               title="Manage Sessions"
@@ -520,7 +516,8 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   session: { data: { isOnline } },
   userEvents: { data: userEvents },
-}) => ({
+  appSettings: { data: { baseFiatCurrency } },
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
   invitations,
@@ -533,6 +530,7 @@ const mapStateToProps = ({
   accounts,
   isOnline,
   userEvents,
+  baseFiatCurrency,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -540,12 +538,12 @@ const structuredSelector = createStructuredSelector({
   openSeaTxHistory: accountCollectiblesHistorySelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),

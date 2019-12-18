@@ -25,10 +25,11 @@ import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import Loader from 'components/Loader';
 import { REGISTRATION_FAILED, USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   wallet: Object,
-  registerOnBackend: () => Function,
+  registerOnBackend: () => void,
 };
 
 const USERNAME_STATUS = [USERNAME_EXISTS, CHECKING_USERNAME, USERNAME_OK];
@@ -57,8 +58,8 @@ class RetryApiRegistration extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wallet });
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   registerOnBackend: () => {
     dispatch(registerOnBackendAction());
   },

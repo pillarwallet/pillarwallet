@@ -18,6 +18,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+export type AssetData = {|
+  token: string,
+  contractAddress?: string,
+  tokenType?: string,
+  name?: string,
+  decimals: number,
+  icon?: string,
+  iconColor?: string,
+|};
+
 export type Asset = {
   symbol: string,
   name: string,
