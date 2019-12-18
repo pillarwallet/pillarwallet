@@ -295,7 +295,7 @@ class ImportWallet extends React.Component<Props, State> {
             additionalStyle={{ textAlign: 'center' }}
             errorMessageStyle={{ textAlign: 'center' }}
             onLayout={() => {
-              this.privKeyInput._root.focus();
+              this.privKeyInput.focus();
             }}
           />
         </React.Fragment>
@@ -313,7 +313,7 @@ class ImportWallet extends React.Component<Props, State> {
           }}
           errorMessage={tabsInfo[activeTab].errorMessage}
           onLayout={() => {
-            this.devPhraseInput._root.focus();
+            this.devPhraseInput.focus();
           }}
         />
       );
@@ -333,7 +333,7 @@ class ImportWallet extends React.Component<Props, State> {
           additionalStyle={{ textAlign: 'center' }}
           errorMessage={tabsInfo[activeTab].errorMessage}
           onLayout={() => {
-            this.backupPhraseInput._root.focus();
+            this.backupPhraseInput.focus();
           }}
         />
       </React.Fragment>

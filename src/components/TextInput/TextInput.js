@@ -602,7 +602,10 @@ class TextInput extends React.Component<Props, State> {
               </ChevronWrapper>}
             </Selector>}
             {showLeftAddon &&
-            <TouchableWithoutFeedback onPress={() => this.multilineInputField._root.focus()}>
+            <TouchableWithoutFeedback onPress={this.multilineInputField
+              ? () => this.multilineInputField._root.focus()
+              : null}
+            >
               <LeftSideWrapper>
                 {(innerImageURI || fallbackSource) && <Image
                   source={imageSource}
@@ -617,7 +620,7 @@ class TextInput extends React.Component<Props, State> {
               {...inputProps}
               innerRef={(input) => {
                 this.multilineInputField = input;
-                if (getInputRef) getInputRef(input._root);
+                if (getInputRef && input) getInputRef(input._root);
               }}
               onChange={this.handleChange}
               onBlur={this.handleBlur}
