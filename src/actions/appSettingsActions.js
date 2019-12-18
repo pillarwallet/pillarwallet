@@ -153,8 +153,8 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
       // in case user opts out when PPN is set as active
       dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
       // in case user opts out when Smart wallet account is active
-      const keyBasedAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
-      dispatch(switchAccountAction(keyBasedAccount.id));
+      const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+      if (keyBasedAccount) dispatch(switchAccountAction(keyBasedAccount.id));
       message = 'You have successfully left Early Access program.';
     }
 
