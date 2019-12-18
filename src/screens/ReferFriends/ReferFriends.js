@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, Share } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import t from 'tcomb-form-native';
@@ -152,6 +152,15 @@ class ReferFriends extends React.Component<Props, State> {
     this.setState({ hideErrorMessage: false });
   };
 
+  openShareDialog = () => {
+    Share.share({
+      title: 'Join Pillar',
+      message: '', // TODO: Add referral link as message
+    }, {
+      dialogTitle: 'Refer friend',
+    });
+  };
+
   render() {
     const {
       value,
@@ -198,7 +207,7 @@ class ReferFriends extends React.Component<Props, State> {
                 email: EmailStruct,
               })}
               options={getReferralFormFields({
-                onIconPress: () => {},
+                onIconPress: this.openShareDialog,
                 label: 'Friend\'s email',
                 showButton: showFormButton,
                 isButtonDisabled: isFormButtonDisabled,
