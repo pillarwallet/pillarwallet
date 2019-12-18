@@ -112,7 +112,7 @@
   "dependencies": {
     "@matt-block/react-native-in-app-browser": "^2.1.3",
     "@netgum/utils": "^0.1.3",
-    "@pillarwallet/pillarwallet-nodejs-sdk": "1.36.1628",
+    "@pillarwallet/pillarwallet-nodejs-sdk": "1.38.1666",
     "@react-native-community/async-storage": "^1.6.2",
     "@smartwallet/sdk": "1.1.0",
     "@tradle/react-native-http": "^2.0.0",

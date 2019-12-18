@@ -722,10 +722,10 @@ class Settings extends React.Component<Props, State> {
         >
           <StyledWrapper regularPadding flex={1}>
             <Paragraph small>
-              By choosing to upgrade your wallet, you will be added to our Firebase Analytics data collection.
+              By choosing this you will be added to our Analytics data collection.
               Through this, Pillar will collect your username in order to enable new features and monitor your new
               wallet experience for any bugs and/or crashes.
-              You can choose to leave the Smart Wallet Early Access program and Firebase Analytics collection any time
+              You can choose to leave the Early Access program at any time
               via the &quot;System&quot; under Settings.
             </Paragraph>
             <Button
@@ -752,16 +752,16 @@ class Settings extends React.Component<Props, State> {
           <StyledWrapper regularPadding flex={1}>
             <View>
               <Paragraph small>
-                By confirming, you will leave the Smart Wallet Early Access program. As a result, your access to the
-                Smart Wallet, Pillar Payment Network and any funds stored on them will be lost.
+                By confirming, you will leave the Early Access program. As a result, your access to the
+                Smart Wallet, Pillar Payment Network, Bitcoin Wallet and any funds stored on them will be lost.
               </Paragraph>
               <Paragraph small>
                 We strongly recommend that you transfer all assets from the Smart Wallet and Pillar Network to your Key
                 Based Wallet before leaving this Program.
               </Paragraph>
               <Paragraph small>
-                If you wish to re-gain early access to Smart Wallet (and re-gain access to the funds on your Smart
-                Wallet), you will need to apply again.
+                If you wish to re-gain early access to Smart Wallet or Bitcoin Wallet (and re-gain access to the funds
+                on your Smart Wallet or Bitcoin Wallet), you will need to apply again.
               </Paragraph>
             </View>
             <Button

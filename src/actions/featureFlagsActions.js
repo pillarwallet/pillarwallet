@@ -18,22 +18,41 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { getRemoteFeatureFlags } from 'services/featureFlags';
-import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
-import { saveDbAction } from 'actions/dbActions';
-import type { GetState } from 'reducers/rootReducer';
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 
-export const fetchFeatureFlagsAction = () => {
-  return async (dispatch: Function, getState: GetState) => {
-    const {
-      session: { data: { isOnline } },
-    } = getState();
+import {
+  DEVELOPMENT_FEATURE_FLAGS,
+  INITIAL_FEATURE_FLAGS,
+  SET_FEATURE_FLAGS,
+} from 'constants/featureFlagsConstants';
+import { saveDbAction } from 'actions/dbActions';
+import { isProdEnv, isTest } from 'utils/environment';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type SDKWrapper from 'services/api';
+
+export const loadFeatureFlagsAction = (userInfo?: any) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const isOnline = get(getState(), 'session.data.isOnline');
+
+    // do not override existing feature flags if offline
     if (!isOnline) return;
-    const featureFlags = await getRemoteFeatureFlags();
-    dispatch({
-      type: SET_FEATURE_FLAGS,
-      payload: featureFlags,
-    });
+
+    // fetch latest userInfo if it was not provided
+    if (isEmpty(userInfo)) {
+      const walletId = get(getState(), 'user.data.walletId');
+      userInfo = await api.userInfo(walletId);
+    }
+
+    // isTest check to run test suites against prod env
+    const userFeatureFlags = isProdEnv || isTest
+      ? get(userInfo, 'featureFlags', {})
+      : DEVELOPMENT_FEATURE_FLAGS;
+
+    // combine initial with fetched
+    const featureFlags = { ...INITIAL_FEATURE_FLAGS, ...userFeatureFlags };
+
+    dispatch({ type: SET_FEATURE_FLAGS, payload: featureFlags });
     dispatch(saveDbAction('featureFlags', { featureFlags }, true));
   };
 };

@@ -848,11 +848,10 @@ class Profile extends React.Component<Props, State> {
               <StyledWrapper regularPadding flex={1}>
                 <Description small>
                   {
-                    'By joining the beta program, you will be added to our Firebase Analytics data collection.' +
-                    'Through this, Pillar will collect your username in order to enable beta features and monitor ' +
-                    'your wallet experience for any bugs and/or crashes while testing the new functionality. ' +
-                    'You can opt out of the beta program and Firebase Analytics collection at any time ' +
-                    'via the "System" under Settings.'
+                    'By choosing this you will be added to our Analytics data collection.' +
+                    'Through this, Pillar will collect your username in order to enable' +
+                    'new features and monitor your new wallet experience for any bugs and/or crashes.' +
+                    'You can choose to leave the Early Access program at any time via the "System" under Settings.'
                   }
                 </Description>
                 <Button

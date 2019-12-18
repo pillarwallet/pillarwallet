@@ -38,8 +38,6 @@ import cl.json.ShareApplication;
 import io.fabric.sdk.android.Fabric;
 import io.intercom.android.sdk.Intercom;
 import io.invertase.firebase.RNFirebasePackage;
-import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
-import io.invertase.firebase.config.RNFirebaseRemoteConfigPackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
@@ -97,8 +95,6 @@ public class MainApplication extends Application implements ShareApplication, Re
         new PickerPackage(),
         new NativeShadowPackage(),
         new RNThreadPackage(mReactNativeHost),
-        new RNFirebaseRemoteConfigPackage(),
-        new RNFirebaseAnalyticsPackage(),
         new KeychainPackage()
       );
     }
