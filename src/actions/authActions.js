@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 
@@ -98,8 +99,6 @@ const chat = new ChatService();
 
 export const updateFcmTokenAction = (walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { session: { data: { isOnline } } } = getState();
-    if (!isOnline) return;
     const fcmToken = await firebase.messaging().getToken().catch(() => null);
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
     Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
@@ -129,6 +128,7 @@ export const loginAction = (
         },
       },
       oAuthTokens: { data: oAuthTokens },
+      session: { data: { isOnline } },
     } = getState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
 
@@ -185,22 +185,31 @@ export const loginAction = (
         // set API username (local method)
         api.setUsername(user.username);
 
-        // make first api call which can also trigger OAuth fallback methods
-        const userInfo = await api.userInfo(user.walletId);
+        if (isOnline) {
+          // make first api call which can also trigger OAuth fallback methods
+          const userInfo = await api.userInfo(user.walletId);
 
-        dispatch(loadFeatureFlagsAction(userInfo));
-        const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
-        const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED');
+          dispatch(loadFeatureFlagsAction(userInfo));
 
-        // update FCM
-        dispatch(updateFcmTokenAction(user.walletId));
+          // update FCM
+          dispatch(updateFcmTokenAction(user.walletId));
+
+          // save updated user, just in case userInfo endpoint failed check if result is empty
+          if (!isEmpty(userInfo)) {
+            user = merge({}, user, userInfo);
+            dispatch(saveDbAction('user', { user }, true));
+          }
+
+          // to get exchange supported assets in order to show only supported assets on exchange selectors
+          // and show exchange button on supported asset screen only
+          dispatch(getExchangeSupportedAssetsAction());
+        }
 
         // perform signal init
         dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
 
-        // save updated user
-        user = merge({}, user, userInfo);
-        dispatch(saveDbAction('user', { user }, true));
+        const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+        const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED');
 
         // update connections
         dispatch(updateConnectionKeyPairs(
@@ -236,10 +245,6 @@ export const loginAction = (
           const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
           if (keyBasedAccount) dispatch(switchAccountAction(keyBasedAccount.id));
         }
-
-        // to get exchange supported assets in order to show only supported assets on exchange selectors
-        // and show exchange button on supported asset screen only
-        dispatch(getExchangeSupportedAssetsAction());
       } else {
         api.init();
       }

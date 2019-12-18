@@ -133,7 +133,18 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
     const {
       user: { data: { walletId } },
       accounts: { data: accounts },
+      session: { data: { isOnline } },
     } = getState();
+
+    if (!isOnline) {
+      Toast.show({
+        message: 'Cannot opt-in to beta while offline',
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
+
     let message;
 
     if (userJoinedBeta) {
