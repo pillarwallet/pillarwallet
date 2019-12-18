@@ -466,6 +466,10 @@ class TextInput extends React.Component<Props, State> {
     if (this.searchInput) this.searchInput.focus();
   };
 
+  onMultilineInputFieldPress = () => {
+    if (this.multilineInputField) this.multilineInputField.focus();
+  };
+
   handleSearch = (query: string) => {
     const formattedQuery = !query ? '' : query.trim();
 
@@ -599,10 +603,7 @@ class TextInput extends React.Component<Props, State> {
               </ChevronWrapper>}
             </Selector>}
             {showLeftAddon &&
-            <TouchableWithoutFeedback onPress={this.multilineInputField
-              ? () => this.multilineInputField.focus()
-              : null}
-            >
+            <TouchableWithoutFeedback onPress={this.onMultilineInputFieldPress}>
               <LeftSideWrapper>
                 {(innerImageURI || fallbackSource) && <Image
                   source={imageSource}
