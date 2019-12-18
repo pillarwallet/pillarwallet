@@ -23,6 +23,7 @@ import { Item as NBItem, Input } from 'native-base';
 import { View, Platform, TextInput as RNInput, TouchableWithoutFeedback, Keyboard, FlatList } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import get from 'lodash.get';
 
 import { ETH } from 'constants/assetsConstants';
 
@@ -319,8 +320,6 @@ class TextInput extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.rnInput = React.createRef();
-    this.multilineInputField = React.createRef();
     this.state = {
       isFocused: false,
       showOptionsSelector: false,
@@ -373,9 +372,7 @@ class TextInput extends React.Component<Props, State> {
 
   handleRNFocus = () => {
     setTimeout(() => {
-      if (!!this.multilineInputField && Object.keys(this.multilineInputField).length) {
-        this.multilineInputField._root.focus();
-      }
+      if (this.multilineInputField) this.multilineInputField.focus();
       this.setState({
         isFocused: true,
       });
@@ -383,8 +380,8 @@ class TextInput extends React.Component<Props, State> {
   };
 
   handleMultilineFocus = () => {
-    if (!this.state.isFocused) {
-      this.rnInput.current.focus();
+    if (!this.state.isFocused && this.rnInput) {
+      this.rnInput.focus();
     }
   };
 
@@ -467,6 +464,10 @@ class TextInput extends React.Component<Props, State> {
 
   focusInput = () => {
     if (this.searchInput) this.searchInput.focus();
+  };
+
+  onMultilineInputFieldPress = () => {
+    if (this.multilineInputField) this.multilineInputField.focus();
   };
 
   handleSearch = (query: string) => {
@@ -602,7 +603,7 @@ class TextInput extends React.Component<Props, State> {
               </ChevronWrapper>}
             </Selector>}
             {showLeftAddon &&
-            <TouchableWithoutFeedback onPress={() => this.multilineInputField._root.focus()}>
+            <TouchableWithoutFeedback onPress={this.onMultilineInputFieldPress}>
               <LeftSideWrapper>
                 {(innerImageURI || fallbackSource) && <Image
                   source={imageSource}
@@ -616,8 +617,11 @@ class TextInput extends React.Component<Props, State> {
             <InputField
               {...inputProps}
               innerRef={(input) => {
-                this.multilineInputField = input;
-                if (getInputRef) getInputRef(input._root);
+                const inputRoot = get(input, '_root');
+                if (inputRoot) {
+                  this.multilineInputField = inputRoot;
+                  if (getInputRef) getInputRef(inputRoot);
+                }
               }}
               onChange={this.handleChange}
               onBlur={this.handleBlur}
@@ -651,7 +655,7 @@ class TextInput extends React.Component<Props, State> {
           {Platform.OS === 'ios' && <IosFocusInput
             caretHidden
             autoCorrect={false}
-            innerRef={this.rnInput}
+            innerRef={(ref) => { this.rnInput = ref; }}
             onFocus={this.handleRNFocus}
           />}
         </ItemHolder>
