@@ -848,7 +848,7 @@ class Profile extends React.Component<Props, State> {
               <StyledWrapper regularPadding flex={1}>
                 <Description small>
                   {
-                    'By choosing this you will be added to our data collection.' +
+                    'By choosing this you will be added to our Analytics data collection.' +
                     'Through this, Pillar will collect your username in order to enable' +
                     'new features and monitor your new wallet experience for any bugs and/or crashes.' +
                     'You can choose to leave the Early Access program at any time via the "System" under Settings.'
