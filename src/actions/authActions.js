@@ -21,6 +21,10 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
+import firebase from 'react-native-firebase';
+import Intercom from 'react-native-intercom';
+
+// constants
 import {
   DECRYPT_WALLET,
   UPDATE_WALLET_STATE,
@@ -41,43 +45,50 @@ import {
   PEOPLE,
   LOGOUT_PENDING,
 } from 'constants/navigationConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
+
+// utils
 import { delay } from 'utils/common';
 import { getSaltedPin, decryptWallet, normalizeWalletAddress } from 'utils/wallet';
-import Storage from 'services/storage';
-import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
-import ChatService from 'services/chat';
-import smartWalletService from 'services/smartWallet';
-import firebase from 'react-native-firebase';
-import Intercom from 'react-native-intercom';
-import { findKeyBasedAccount } from 'utils/accounts';
+import { findKeyBasedAccount, getActiveAccountType } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
 import { setKeychainDataObject } from 'utils/keychain';
-import { setupSentryAction } from 'actions/appActions';
-import { signalInitAction } from 'actions/signalClientActions';
-import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
-import { initOnLoginSmartWalletAccountAction } from 'actions/accountsActions';
-import { updatePinAttemptsAction } from 'actions/walletActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { setAppThemeAction } from 'actions/appSettingsActions';
-import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
-import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
-import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
-import { labelUserAsLegacyAction } from 'actions/userActions';
-import SDKWrapper from 'services/api';
 
+// services
+import Storage from 'services/storage';
+import ChatService from 'services/chat';
+import smartWalletService from 'services/smartWallet';
+import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
+
+// configs
+import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type SDKWrapper from 'services/api';
 
+// actions
 import { saveDbAction } from './dbActions';
 import { getWalletsCreationEventsAction } from './userEventsActions';
+import { setupSentryAction } from './appActions';
+import { signalInitAction } from './signalClientActions';
+import { updateConnectionKeyPairs } from './connectionKeyPairActions';
+import { initOnLoginSmartWalletAccountAction, switchAccountAction } from './accountsActions';
+import { updatePinAttemptsAction } from './walletActions';
+import { fetchTransactionsHistoryAction } from './historyActions';
+import { setAppThemeAction } from './appSettingsActions';
+import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
+import { loadFeatureFlagsAction } from './featureFlagsActions';
+import { getExchangeSupportedAssetsAction } from './exchangeActions';
+import { labelUserAsLegacyAction } from './userActions';
 
 
 const Crashlytics = firebase.crashlytics();
@@ -218,6 +229,13 @@ export const loginAction = (
         }
 
         dispatch(setActiveBlockchainNetworkAction(newBlockchainNetwork));
+
+        // if smart wallet feature was disabled and prev active account was Smart Wallet then revert to key based
+        const activeAccountType = getActiveAccountType(accounts);
+        if (!smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
+          const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+          if (keyBasedAccount) dispatch(switchAccountAction(keyBasedAccount.id));
+        }
 
         // to get exchange supported assets in order to show only supported assets on exchange selectors
         // and show exchange button on supported asset screen only
