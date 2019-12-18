@@ -19,6 +19,7 @@
 */
 
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 
 import {
   DEVELOPMENT_FEATURE_FLAGS,
@@ -32,22 +33,26 @@ import type SDKWrapper from 'services/api';
 
 export const loadFeatureFlagsAction = (userInfo?: any) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    if (!userInfo) {
+    const isOnline = get(getState(), 'session.data.isOnline');
+
+    // do not override existing feature flags if offline
+    if (!isOnline) return;
+
+    // fetch latest userInfo if it was not provided
+    if (isEmpty(userInfo)) {
       const walletId = get(getState(), 'user.data.walletId');
       userInfo = await api.userInfo(walletId);
     }
+
     // isTest check to run test suites against prod env
     const userFeatureFlags = isProdEnv || isTest
       ? get(userInfo, 'featureFlags', {})
       : DEVELOPMENT_FEATURE_FLAGS;
-    const featureFlags = {
-      ...INITIAL_FEATURE_FLAGS,
-      ...userFeatureFlags,
-    };
-    dispatch({
-      type: SET_FEATURE_FLAGS,
-      payload: featureFlags,
-    });
+
+    // combine initial with fetched
+    const featureFlags = { ...INITIAL_FEATURE_FLAGS, ...userFeatureFlags };
+
+    dispatch({ type: SET_FEATURE_FLAGS, payload: featureFlags });
     dispatch(saveDbAction('featureFlags', { featureFlags }, true));
   };
 };
