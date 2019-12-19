@@ -19,6 +19,7 @@
 */
 import get from 'lodash.get';
 import orderBy from 'lodash.orderby';
+import isEmpty from 'lodash.isempty';
 import { Sentry } from 'react-native-sentry';
 import { sdkConstants } from '@smartwallet/sdk';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
@@ -70,7 +71,11 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction, loadSupportedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
-import { checkAssetTransferTransactionsAction, syncVirtualAccountTransactionsAction } from './smartWalletActions';
+import {
+  checkAssetTransferTransactionsAction,
+  setAssetsTransferTransactionsAction,
+  syncVirtualAccountTransactionsAction,
+} from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
@@ -499,10 +504,17 @@ export const stopListeningForBalanceChangeAction = () => {
 };
 
 // NOTE: use this action for key based accounts only
-export const patchHistorySentSignedTransaction = () => {
+export const patchSmartWalletSentSignedTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      smartWallet: { upgrade: { status: upgradeStatus } },
+      smartWallet: {
+        upgrade: {
+          status: upgradeStatus,
+          transfer: {
+            transactions: transferTransactions = [],
+          },
+        },
+      },
       accounts: { data: accounts },
       history: { data: currentHistory },
     } = getState();
@@ -528,5 +540,15 @@ export const patchHistorySentSignedTransaction = () => {
 
     dispatch({ type: SET_HISTORY, payload: updatedHistory });
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
+
+    if (isEmpty(transferTransactions)) return;
+
+    const patchedTransferTransactions = transferTransactions.map((targetTransferTx) => {
+      const extractedHash = get(targetTransferTx, 'transactionHash.hash');
+      if (extractedHash) return { ...targetTransferTx, hash: extractedHash };
+      return targetTransferTx;
+    });
+
+    dispatch(setAssetsTransferTransactionsAction(patchedTransferTransactions));
   };
 };

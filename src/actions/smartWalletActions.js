@@ -428,16 +428,7 @@ export const checkAssetTransferTransactionsAction = () => {
         return transaction;
       }
 
-      const minedTx = allHistory.find(({ historyTransactionHash }) => {
-        /**
-         * NOTE: this includes hotfix to unblock from wrong transactionHash payloads
-         * that happened during ethers v4 migration
-         */
-        const extractedHash = get(transactionHash, 'hash');
-        if (extractedHash) return extractedHash === historyTransactionHash; // hotfix check
-        return historyTransactionHash === transactionHash; // this is common check
-      });
-
+      const minedTx = allHistory.find(_transaction => _transaction.hash === transactionHash);
       if (!minedTx) return transaction;
 
       return { ...transaction, status: minedTx.status };
