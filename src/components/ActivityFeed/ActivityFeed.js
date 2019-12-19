@@ -397,7 +397,7 @@ class ActivityFeed extends React.Component<Props, State> {
         imageProps.itemImageSource = smartWalletIcon;
         trxData.hideSender = true;
         trxData.hideAmount = true;
-        transactionEventActionLabel = 'Deployment';
+        transactionEventActionLabel = 'Deployed'; // note: label will be hidden if tx is pending
         trxData.txType = 'Deployment';
         itemValue = null;
       }
