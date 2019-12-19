@@ -96,10 +96,12 @@ export const sendSignedAssetTransactionAction = (transaction: any) => {
     } = transaction;
     if (!signedHash) return null;
 
-    const transactionHash = await transferSigned(signedHash).catch(e => ({ error: e }));
-    if (transactionHash && transactionHash.error) {
+    const transactionResult = await transferSigned(signedHash).catch(e => ({ error: e }));
+    if (isEmpty(transactionResult) || !transactionResult.hash) {
       return null;
     }
+
+    const { hash: transactionHash } = transactionResult;
 
     // add tx to tx history
     try {

@@ -377,7 +377,14 @@ export const restoreTransactionHistoryAction = () => {
     });
 
     const { history: { data: currentHistory } } = getState();
-    const accountHistory = currentHistory[walletAddress] || [];
+    const accountHistoryUnpatched = currentHistory[walletAddress] || [];
+
+    // patch after moved to ethers v4
+    const accountHistory = accountHistoryUnpatched.map((targetTx) => {
+      const extractedHash = get(targetTx, 'hash.hash');
+      if (extractedHash) return { ...targetTx, hash: extractedHash };
+      return targetTx;
+    });
 
     // 1) filter out records those exists in accountHistory
     const ethTransactions = ethHistory.filter(tx => {
