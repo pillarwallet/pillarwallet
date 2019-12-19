@@ -19,6 +19,8 @@
 */
 import { BITCOIN_INSIGHT_URL, BITCOIN_NETWORK } from 'react-native-dotenv';
 
+const BTC_NET = BITCOIN_NETWORK === 'testnet' ? BITCOIN_NETWORK : 'mainnet';
+
 const validateResponse = (name: string) => {
   return (response) => {
     if (!response.ok) {
@@ -32,7 +34,7 @@ const validateResponse = (name: string) => {
 };
 
 export const sendRawTransactionToNode = async (rawtx: string) => {
-  return fetch(`${BITCOIN_INSIGHT_URL}/tx/send?chain=BTC&network=${BITCOIN_NETWORK}`, {
+  return fetch(`${BITCOIN_INSIGHT_URL}/tx/send?chain=BTC&network=${BTC_NET}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
