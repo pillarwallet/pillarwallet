@@ -237,7 +237,14 @@ export const SettingsItemCarded = (props: Props) => {
             settingsIconSource={settingsIconSource}
             settingsIcon={settingsIcon}
           />
-          {!!settingsLabel && <SettingsLabel>{settingsLabel}</SettingsLabel>}
+          {!!settingsLabel &&
+          <SettingsLabel
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {settingsLabel}
+          </SettingsLabel>
+          }
         </React.Fragment>}
       </ShadowedCard>}
     </ItemWrapper>

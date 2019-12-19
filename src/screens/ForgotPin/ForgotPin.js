@@ -21,9 +21,9 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, Wrapper, Footer } from 'components/Layout';
+import { Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Paragraph } from 'components/Typography';
-import Header from 'components/Header';
 import Button from 'components/Button';
 import styled from 'styled-components/native/index';
 import { spacing } from 'utils/variables';
@@ -35,8 +35,15 @@ type Props = {
   navigation: NavigationScreenProp<*>,
 }
 
-export const FooterParagraph = styled(Paragraph)`
+const FooterParagraph = styled(Paragraph)`
   margin-bottom: ${spacing.rhythm}px;
+`;
+
+const FooterWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.large}px;
+  width: 100%;
 `;
 
 class ForgotPin extends React.Component<Props, {}> {
@@ -50,32 +57,40 @@ class ForgotPin extends React.Component<Props, {}> {
 
   render() {
     return (
-      <Container>
-        <Header centerTitle title="forgot pin" onClose={this.goBackToPin} />
-        <Wrapper regularPadding>
+      <ContainerWithHeader
+        headerProps={({
+          centerItems: [{ title: 'Forgot PIN' }],
+          rightItems: [{ close: true }],
+          noBack: true,
+          onClose: this.goBackToPin,
+        })}
+        keyboardAvoidFooter={(
+          <FooterWrapper>
+            <FooterParagraph>
+              It is impossible to restore your wallet without the backup, be careful.
+            </FooterParagraph>
+            <Button
+              icon="down-arrow"
+              block
+              danger
+              marginBottom={`${spacing.rhythm}px`}
+              onPress={this.toImportWallet}
+              title="Import wallet"
+            />
+            <Button block onPress={this.goBackToPin} secondary title="Try entering PIN again" />
+          </FooterWrapper>
+        )}
+      >
+        <Wrapper regularPadding style={{ marginTop: spacing.layoutSides }}>
           <Paragraph>You can restore access to your wallet by re-importing
-                it using 12-word backup phrase private key
-                generated for you during the wallet creation.
+            it using 12-word backup phrase (private key)
+            generated for you during the wallet creation.
           </Paragraph>
           <Paragraph light>
-                Please have the private key ready and re-import your wallet.
+            Please have the backup phrase or private key ready and re-import your wallet.
           </Paragraph>
         </Wrapper>
-        <Footer>
-          <FooterParagraph>
-                It is impossible to restore your wallet without the backup, be careful.
-          </FooterParagraph>
-          <Button
-            icon="down-arrow"
-            block
-            danger
-            marginBottom={`${spacing.rhythm}px`}
-            onPress={this.toImportWallet}
-            title="Import wallet"
-          />
-          <Button block onPress={this.goBackToPin} secondary title="Try entering PIN again" />
-        </Footer>
-      </Container>
+      </ContainerWithHeader>
     );
   }
 }
