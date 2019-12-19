@@ -545,7 +545,7 @@ export const patchSmartWalletSentSignedTransactionsAction = () => {
 
     const patchedTransferTransactions = transferTransactions.map((targetTransferTx) => {
       const extractedHash = get(targetTransferTx, 'transactionHash.hash');
-      if (extractedHash) return { ...targetTransferTx, hash: extractedHash };
+      if (extractedHash) return { ...targetTransferTx, transactionHash: extractedHash };
       return targetTransferTx;
     });
 
