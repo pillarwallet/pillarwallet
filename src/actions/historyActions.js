@@ -530,11 +530,11 @@ export const patchSmartWalletSentSignedTransactionsAction = () => {
     const walletAddress = getAccountAddress(keyBasedAccount);
     const keyBasedAccountHistory = currentHistory[walletAddress] || [];
 
-    const patchedHistory = keyBasedAccountHistory.map((targetTx) => {
+    const patchedHistory = uniqBy(keyBasedAccountHistory.map((targetTx) => {
       const extractedHash = get(targetTx, 'hash.hash');
       if (extractedHash) return { ...targetTx, hash: extractedHash };
       return targetTx;
-    });
+    }), 'hash');
 
     const updatedHistory = updateAccountHistory(currentHistory, walletAddress, patchedHistory);
 
