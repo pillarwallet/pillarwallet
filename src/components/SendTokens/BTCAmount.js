@@ -19,25 +19,28 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard } from 'react-native';
+import { TouchableOpacity, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 
 // components
+import Toast from 'components/Toast';
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
-import { Label } from 'components/Typography';
+import { BaseText, TextLink, Label } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SendTokenDetails from 'components/SendTokenDetails';
+import SlideModal from 'components/Modals/SlideModal';
 
 // utils
-import { satoshisToBtc } from 'utils/bitcoin';
-import { spacing } from 'utils/variables';
+import { btcToSatoshis, satoshisToBtc } from 'utils/bitcoin';
+import { fontStyles, spacing } from 'utils/variables';
 import { makeAmountForm, getAmountFormFields } from 'utils/btcFormHelpers';
 import { getRate } from 'utils/assets';
-import { formatFiat } from 'utils/common';
+import { formatFiat, formatUnits } from 'utils/common';
+import { collectOutputs } from 'services/bitcoin';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -53,7 +56,7 @@ import type { Rates } from 'models/Asset';
 
 // constants
 import { SEND_BITCOIN_CONFIRM } from 'constants/navigationConstants';
-import { BTC } from 'constants/assetsConstants';
+import { BTC, SPEED_TYPES, SPEED_TYPE_LABELS } from 'constants/assetsConstants';
 
 const BTCIcon = require('assets/icons/icon_BTC.png');
 
@@ -75,6 +78,21 @@ const BackgroundWrapper = styled.View`
   flexGrow: 1;
 `;
 
+const SendTokenDetailsValue = styled(BaseText)`
+  ${fontStyles.medium};
+`;
+
+const ButtonWrapper = styled.View`
+  margin-top: ${spacing.rhythm / 2}px;
+  margin-bottom: ${spacing.rhythm + 10}px;
+`;
+
+const Btn = styled(Button)`
+  margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+`;
+
 type Props = {
   token: string;
   navigation: NavigationScreenProp<*>,
@@ -87,11 +105,15 @@ type Props = {
 };
 
 type State = {
-  value: ?{
-    amount: ?string,
-  },
+  amount: string,
   inputHasError: boolean,
+  showFeeModal: boolean,
+  selectedTransactionSpeed: string,
 };
+
+type ChangeEvent = {|
+  amount: ?string,
+|};
 
 const { Form } = t.form;
 const MIN_TX_AMOUNT = 0.00000001;
@@ -104,8 +126,10 @@ class BTCAmount extends React.Component<Props, State> {
   source: string;
 
   state = {
-    value: null,
+    amount: '0',
     inputHasError: false,
+    showFeeModal: false,
+    selectedTransactionSpeed: SPEED_TYPES.FAST,
   };
 
   constructor(props: Props) {
@@ -118,40 +142,38 @@ class BTCAmount extends React.Component<Props, State> {
     this.source = navigation.getParam('source', '');
   }
 
-  handleChange = (value: Object) => {
-    // first update the amount, then after state is updated check for errors
-    this.setState({ value });
+  handleChange = ({ amount }: ChangeEvent) => {
+    this.setState({ amount: amount || '0' });
+
     this.checkFormInputErrors();
   };
 
   handleFormSubmit = () => {
-    const { unspentTransactions } = this.props;
-
     if (this.formSubmitted) {
       return;
     }
     this.formSubmitted = true;
 
-    const value = this._form.getValue();
-    if (!value) {
+    Keyboard.dismiss();
+
+    const { selectedTransactionSpeed, amount } = this.state;
+    const currentAmount = parseFloat(amount);
+
+    const transactionPayload = this.createTransaction(currentAmount, selectedTransactionSpeed);
+    if (!transactionPayload.isValid) {
+      Toast.show({
+        message: 'There was an issue trying to create the transaction',
+        title: 'Cannot create transaction',
+        type: 'warning',
+        autoClose: false,
+      });
+
+      this.formSubmitted = false;
       return;
     }
 
-    const transactionTarget: BitcoinTransactionTarget = {
-      address: this.receiver,
-      value: value.amount,
-      isChange: false,
-    };
-
-    const transactionPayload: BitcoinTransactionPlan = {
-      inputs: unspentTransactions,
-      outputs: [transactionTarget],
-      fee: 0.00000001,
-      isValid: true,
-    };
     const { navigation } = this.props;
 
-    Keyboard.dismiss();
     navigation.navigate(SEND_BITCOIN_CONFIRM, {
       transactionPayload,
       source: this.source,
@@ -172,10 +194,90 @@ class BTCAmount extends React.Component<Props, State> {
     }
   };
 
+  changeFee = () => {
+    this.setState({
+      showFeeModal: true,
+    });
+  };
+
+  createTarget(satoshis: number): BitcoinTransactionTarget {
+    return {
+      value: satoshis,
+      address: this.receiver,
+      isChange: false,
+    };
+  }
+
+  handleFeeChange = (selectedTransactionSpeed: string) => {
+    this.setState({
+      showFeeModal: false,
+      selectedTransactionSpeed,
+    });
+  };
+
+
+  renderTxSpeedButtons = () => {
+    const {
+      addresses,
+      rates,
+      fiatCurrency,
+      unspentTransactions,
+    } = this.props;
+
+    const { amount } = this.state;
+    const { token, decimals } = this.assetData;
+
+    const satoshis = btcToSatoshis(parseFloat(amount));
+    const transactionTarget = this.createTarget(satoshis);
+
+    const { address } = addresses[0];
+    const btcRate = getRate(rates, token, fiatCurrency);
+
+    return Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
+      const transactionPayload = collectOutputs(
+        [transactionTarget],
+        txSpeed,
+        unspentTransactions,
+        (): string => address,
+      );
+
+      const feeInBtc = satoshisToBtc(parseFloat(transactionPayload.fee));
+      const formattedFeeInBtc = formatUnits(`${transactionPayload.fee || ''}`, decimals);
+      const formattedFeeInFiat = formatFiat(feeInBtc * btcRate, fiatCurrency);
+      return (
+        <Btn
+          key={txSpeed}
+          primaryInverted
+          onPress={() => this.handleFeeChange(txSpeed)}
+        >
+          <TextLink>{SPEED_TYPE_LABELS[txSpeed]} - {formattedFeeInBtc} BTC</TextLink>
+          <Label>{formattedFeeInFiat}</Label>
+        </Btn>
+      );
+    });
+  };
+
+  createTransaction(btc: number, speed: string): BitcoinTransactionPlan {
+    const { addresses, unspentTransactions } = this.props;
+    const { address } = addresses[0];
+
+    const satoshis = btcToSatoshis(btc);
+    const transactionTarget = this.createTarget(satoshis);
+
+    return collectOutputs(
+      [transactionTarget],
+      speed,
+      unspentTransactions,
+      (): string => address,
+    );
+  }
+
   render() {
     const {
-      value,
       inputHasError,
+      showFeeModal,
+      amount,
+      selectedTransactionSpeed,
     } = this.state;
     const {
       balances,
@@ -184,33 +286,38 @@ class BTCAmount extends React.Component<Props, State> {
       fiatCurrency,
     } = this.props;
 
-    const { amount } = value || {};
     const { token, decimals } = this.assetData;
 
     // balance
     const { address } = addresses[0];
     const { balance: satoshisBalance } = balances[address];
 
-    const currentValue = (value && parseFloat(amount)) || 0;
+    const currentAmount = parseFloat(amount);
     const balance = satoshisToBtc(satoshisBalance);
 
-    const fee = 0.0001;
-    const isEnoughForFee = balance >= (currentValue + fee);
+    const transactionPayload = this.createTransaction(currentAmount, selectedTransactionSpeed);
+    const isEnoughForFee = balance >= (currentAmount + satoshisToBtc(transactionPayload.fee || 0));
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(rates, BTC, fiatCurrency);
+    const valueInFiat = currentAmount * getRate(rates, BTC, fiatCurrency);
     const valueInFiatOutput = formatFiat(valueInFiat, fiatCurrency);
 
     const formStructure = makeAmountForm(balance, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
     const formFields = getAmountFormFields({ icon: BTCIcon, currency: token, valueInFiatOutput });
 
-    const showNextButton = !!amount && !!parseFloat(amount) && !inputHasError;
+    const showNextButton = !!currentAmount && !inputHasError;
 
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Send BTC' }] }}
         keyboardAvoidFooter={(
           <FooterInner>
+            <TouchableOpacity onPress={this.changeFee}>
+              <SendTokenDetailsValue>
+                <Label small>Speed: </Label>
+                <TextLink>{SPEED_TYPE_LABELS[selectedTransactionSpeed]}</TextLink>
+              </SendTokenDetailsValue>
+            </TouchableOpacity>
             <Label>&nbsp;</Label>
             {showNextButton &&
               <Button
@@ -230,7 +337,7 @@ class BTCAmount extends React.Component<Props, State> {
               ref={node => { this._form = node; }}
               type={formStructure}
               options={formFields}
-              value={value}
+              value={{ amount }}
               onChange={this.handleChange}
             />
             <ActionsWrapper>
@@ -243,6 +350,15 @@ class BTCAmount extends React.Component<Props, State> {
             </ActionsWrapper>
           </Wrapper>
         </BackgroundWrapper>
+        <SlideModal
+          isVisible={showFeeModal}
+          title="Transaction speed"
+          onModalHide={() => { this.setState({ showFeeModal: false }); }}
+        >
+          <Label>Choose your fee.</Label>
+          <Label>Faster transaction requires higher fees.</Label>
+          <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
+        </SlideModal>
       </ContainerWithHeader>
     );
   }
