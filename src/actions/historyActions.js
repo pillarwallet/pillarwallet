@@ -40,6 +40,7 @@ import {
   SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
   SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
@@ -377,14 +378,7 @@ export const restoreTransactionHistoryAction = () => {
     });
 
     const { history: { data: currentHistory } } = getState();
-    const accountHistoryUnpatched = currentHistory[walletAddress] || [];
-
-    // patch after moved to ethers v4
-    const accountHistory = accountHistoryUnpatched.map((targetTx) => {
-      const extractedHash = get(targetTx, 'hash.hash');
-      if (extractedHash) return { ...targetTx, hash: extractedHash };
-      return targetTx;
-    });
+    const accountHistory = currentHistory[walletAddress] || [];
 
     // 1) filter out records those exists in accountHistory
     const ethTransactions = ethHistory.filter(tx => {
@@ -501,5 +495,38 @@ export const stopListeningForBalanceChangeAction = () => {
     if (walletAddress && currentProvider) {
       currentProvider.removeListener(walletAddress);
     }
+  };
+};
+
+// NOTE: use this action for key based accounts only
+export const patchHistorySentSignedTransaction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      smartWallet: { upgrade: { status: upgradeStatus } },
+      accounts: { data: accounts },
+      history: { data: currentHistory },
+    } = getState();
+
+    if (![
+      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+    ].includes(upgradeStatus)) return;
+
+    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+    if (!keyBasedAccount) return;
+
+    const walletAddress = getAccountAddress(keyBasedAccount);
+    const keyBasedAccountHistory = currentHistory[walletAddress] || [];
+
+    const patchedHistory = keyBasedAccountHistory.map((targetTx) => {
+      const extractedHash = get(targetTx, 'hash.hash');
+      if (extractedHash) return { ...targetTx, hash: extractedHash };
+      return targetTx;
+    });
+
+    const updatedHistory = updateAccountHistory(currentHistory, walletAddress, patchedHistory);
+
+    dispatch({ type: SET_HISTORY, payload: updatedHistory });
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
   };
 };
