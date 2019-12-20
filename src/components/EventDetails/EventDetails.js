@@ -363,6 +363,7 @@ class EventDetails extends React.Component<Props, State> {
         isPPNTransaction,
         tag,
         extra,
+        btcFee,
       } = txInfo;
 
       const isReceived = addressesEqual(to, activeAccountAddress)
@@ -453,6 +454,12 @@ class EventDetails extends React.Component<Props, State> {
           <ListItemUnderlined
             label="TRANSACTION FEE"
             value={freeTx ? 'free' : `${utils.formatEther(fee.toString())} ETH`}
+          />
+          }
+          {!!btcFee &&
+          <ListItemUnderlined
+            label="TRANSACTION FEE"
+            value={`${formatUnits(btcFee, decimals)} BTC`}
           />
           }
           {!!hasNote && showNote &&

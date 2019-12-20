@@ -79,6 +79,7 @@ export const extractBitcoinTransactions = (address: string, transactions: BTCTra
     const txItem = {
       _id: tx._id,
       hash: tx.details.txid,
+      btcFee: tx.details.fee,
       to: toAddress,
       from: fromAddress,
       createdAt: new Date(tx.details.blockTime).getTime() / 1000,
