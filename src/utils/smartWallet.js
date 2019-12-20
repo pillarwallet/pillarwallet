@@ -21,7 +21,6 @@ import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
 import BigNumber from 'bignumber.js';
-import { utils } from 'ethers';
 
 import { SMART_WALLET_DEPLOYMENT_ERRORS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -194,8 +193,7 @@ export const parseSmartWalletTransactions = (
       // get and process all transactions with the same hash
       const extra = sameHashTransactions.map(tx => {
         const txAsset = getAssetSymbolByAddress(assets, supportedAssets, tx.tokenAddress) || ETH;
-        const txTokenValue = tx.tokenValue.toString();
-        const txValue = txAsset === ETH ? utils.formatEther(txTokenValue) : txTokenValue;
+        const txValue = tx.tokenValue.toString();
         return {
           symbol: txAsset,
           value: txValue,
