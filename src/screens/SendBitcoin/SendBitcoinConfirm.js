@@ -34,9 +34,10 @@ import { BTC, defaultFiatCurrency } from 'constants/assetsConstants';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { satoshisToBtc } from 'utils/bitcoin';
 import { getFormattedRate } from 'utils/assets';
+import { formatUnits } from 'utils/common';
 
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates } from 'models/Asset';
+import type { AssetData, Rates } from 'models/Asset';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -67,11 +68,14 @@ const Value = styled(MediumText)`
 
 class SendBitcoinConfirm extends React.Component<Props, State> {
   source: string;
+  assetData: AssetData;
 
   constructor(props: Props) {
     super(props);
 
-    this.source = this.props.navigation.getParam('source', '');
+    const { navigation } = this.props;
+    this.assetData = navigation.getParam('assetData', {});
+    this.source = navigation.getParam('source', '');
   }
 
   handleFormSubmit = () => {
@@ -90,6 +94,7 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
       rates,
       baseFiatCurrency,
     } = this.props;
+    const { decimals } = this.assetData;
     const {
       outputs,
       fee,
@@ -100,6 +105,8 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
     const { value, address: to } = output;
     const amount = satoshisToBtc(value);
     const feeInBtc = satoshisToBtc(fee);
+    const formattedFeeInBtc = formatUnits(`${fee || ''}`, decimals);
+    const formattedAmountInBtc = formatUnits(`${value}`, decimals);
     const formattedAmountInFiat = getFormattedRate(rates, amount, BTC, fiatCurrency);
     const formattedFeeInFiat = getFormattedRate(rates, feeInBtc, BTC, fiatCurrency);
 
@@ -118,7 +125,7 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
         >
           <LabeledRow>
             <Label>Amount</Label>
-            <Value>{amount} BTC ({formattedAmountInFiat})</Value>
+            <Value>{formattedAmountInBtc} BTC ({formattedAmountInFiat})</Value>
           </LabeledRow>
           <LabeledRow>
             <Label>Recipient Address</Label>
@@ -126,7 +133,7 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
           </LabeledRow>
           <LabeledRow>
             <Label>Total fee</Label>
-            <Value>{feeInBtc} BTC ({formattedFeeInFiat})</Value>
+            <Value>{formattedFeeInBtc} BTC ({formattedFeeInFiat})</Value>
           </LabeledRow>
         </ScrollWrapper>
       </ContainerWithHeader>

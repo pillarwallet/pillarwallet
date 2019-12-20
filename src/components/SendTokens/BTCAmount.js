@@ -52,7 +52,7 @@ import type {
   BitcoinUtxo,
   BitcoinBalance,
 } from 'models/Bitcoin';
-import type { Rates } from 'models/Asset';
+import type { AssetData, Rates } from 'models/Asset';
 
 // constants
 import { SEND_BITCOIN_CONFIRM } from 'constants/navigationConstants';
@@ -120,7 +120,7 @@ const MIN_TX_AMOUNT = 0.00000001;
 
 class BTCAmount extends React.Component<Props, State> {
   _form: t.form;
-  assetData: Object;
+  assetData: AssetData;
   formSubmitted: boolean = false;
   receiver: string;
   source: string;
@@ -177,6 +177,7 @@ class BTCAmount extends React.Component<Props, State> {
     navigation.navigate(SEND_BITCOIN_CONFIRM, {
       transactionPayload,
       source: this.source,
+      assetData: this.assetData,
     });
     this.formSubmitted = false;
   };
