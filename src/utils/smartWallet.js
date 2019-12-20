@@ -194,8 +194,7 @@ export const parseSmartWalletTransactions = (
       // get and process all transactions with the same hash
       const extra = sameHashTransactions.map(tx => {
         const txAsset = getAssetSymbolByAddress(assets, supportedAssets, tx.tokenAddress) || ETH;
-        const txTokenValue = tx.tokenValue.toString();
-        const txValue = txAsset === ETH ? utils.formatEther(txTokenValue) : txTokenValue;
+        const txValue = tx.tokenValue.toString();
         return {
           symbol: txAsset,
           value: txValue,
