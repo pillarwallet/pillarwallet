@@ -126,7 +126,7 @@ class BTCAmount extends React.Component<Props, State> {
   source: string;
 
   state = {
-    amount: '0',
+    amount: '',
     inputHasError: false,
     showFeeModal: false,
     selectedTransactionSpeed: SPEED_TYPES.FAST,
@@ -143,7 +143,7 @@ class BTCAmount extends React.Component<Props, State> {
   }
 
   handleChange = ({ amount }: ChangeEvent) => {
-    this.setState({ amount: amount || '0' });
+    this.setState({ amount: amount || '' });
 
     this.checkFormInputErrors();
   };
