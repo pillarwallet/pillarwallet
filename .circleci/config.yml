@@ -194,7 +194,6 @@ jobs:
       - *yarn_install
       - *node_save_cache
       - run:
-          no_output_timeout: 20m
           name: Run validation
           command: yarn validate
 
