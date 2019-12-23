@@ -291,7 +291,7 @@ class BTCAmount extends React.Component<Props, State> {
 
     // balance
     const { address } = addresses[0];
-    const { balance: satoshisBalance } = balances[address];
+    const { confirmed: satoshisBalance } = balances[address];
 
     const currentAmount = parseFloat(amount);
     const balance = satoshisToBtc(satoshisBalance);
