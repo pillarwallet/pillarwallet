@@ -70,9 +70,9 @@ type Props = {
   accounts: Accounts,
   localContacts: Object[],
   wallet: Object,
-  navigateToSendTokenAmount: Function,
+  navigateToSendTokenAmount: (options: SendNavigateOptions) => void,
   contactsSmartAddressesSynced: boolean,
-  syncContactsSmartAddresses: Function,
+  syncContactsSmartAddresses: () => void,
   contactsSmartAddresses: ContactSmartAddressData[],
   isOnline: boolean,
   blockchainNetworks: BlockchainNetwork[],
@@ -424,12 +424,12 @@ const structuredSelector = createStructuredSelector({
   activeAccount: activeAccountSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   navigateToSendTokenAmount: (options: SendNavigateOptions) => dispatch(navigateToSendTokenAmountAction(options)),
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });

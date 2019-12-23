@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import * as Keychain from 'react-native-keychain';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import {
   CHANGE_PIN_FLOW,
   REVEAL_BACKUP_PHRASE,
@@ -160,26 +161,26 @@ const fullNameFormFields = [{
 type Props = {
   user: Object,
   navigation: NavigationScreenProp<*>,
-  saveBaseFiatCurrency: (currency: ?string) => Function,
+  saveBaseFiatCurrency: (currency: string) => void,
   baseFiatCurrency: ?string,
   appSettings: Object,
   intercomNotificationsCount: number,
-  updateAssetsLayout: (value: string) => Function,
-  updateUser: (walletId: string, field: Object, callback?: Function) => Function,
-  createOneTimePassword: (walletId: string, field: Object, callback?: Function) => Function,
-  resetIncorrectPassword: () => Function,
-  lockScreen: () => Function,
-  logoutUser: () => Function,
+  updateAssetsLayout: (value: string) => void,
+  updateUser: (walletId: string, field: Object, callback?: Function) => void,
+  createOneTimePassword: (walletId: string, field: Object, callback?: Function) => void,
+  resetIncorrectPassword: () => void,
+  lockScreen: () => void,
+  logoutUser: () => void,
   backupStatus: Object,
   useBiometrics: ?boolean,
-  changeUseBiometrics: (enabled: boolean, privateKey: string) => Function,
+  changeUseBiometrics: (enabled: boolean, privateKey: string) => void,
   cleanSmartWalletAccounts: Function,
   smartWalletFeatureEnabled: boolean,
   logScreenView: (view: string, screen: string) => void,
   logEvent: (name: string) => void,
   saveOptOutTracking: (status: boolean) => void,
   optOutTracking: boolean,
-  setUserJoinedBeta: Function,
+  setUserJoinedBeta: (status: boolean) => void,
   userJoinedBeta: boolean,
 }
 
@@ -885,7 +886,7 @@ const mapStateToProps = ({
   notifications: { intercomNotificationsCount },
   wallet: { backupStatus },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   user,
   baseFiatCurrency,
   intercomNotificationsCount,
@@ -897,12 +898,12 @@ const mapStateToProps = ({
   userJoinedBeta,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  saveBaseFiatCurrency: (currency: string) => dispatch(saveBaseFiatCurrencyAction(currency)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  updateUser: (walletId: string, field: Object, callback: Function) =>
+  updateUser: (walletId: string, field: Object, callback?: Function) =>
     dispatch(updateUserAction(walletId, field, callback)),
-  createOneTimePassword: (walletId: string, field: Object, callback: Function) =>
+  createOneTimePassword: (walletId: string, field: Object, callback?: Function) =>
     dispatch(createOneTimePasswordAction(walletId, field, callback)),
   updateAssetsLayout: (value: string) => dispatch(updateAssetsLayoutAction(value)),
   lockScreen: () => dispatch(lockScreenAction()),

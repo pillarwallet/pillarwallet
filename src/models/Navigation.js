@@ -17,10 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import type { Asset } from 'models/Asset';
+import type { AssetData } from 'models/Asset';
 
 export type SendNavigateOptions = {
-  assetData: Asset,
+  assetData: AssetData,
   receiver: string,
   source: string,
 };

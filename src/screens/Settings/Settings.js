@@ -74,6 +74,7 @@ import { getBiometryType } from 'utils/settings';
 // models
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { Accounts } from 'models/Account';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // partials
 import { SettingsSection } from './SettingsSection';
@@ -95,15 +96,15 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
   intercomNotificationsCount: number,
-  cleanSmartWalletAccounts: Function,
-  changeUseBiometrics: (enabled: boolean, privateKey: ?string) => Function,
-  resetIncorrectPassword: () => Function,
-  saveBaseFiatCurrency: (currency: ?string) => Function,
+  cleanSmartWalletAccounts: () => void,
+  changeUseBiometrics: (enabled: boolean, privateKey: string) => void,
+  resetIncorrectPassword: () => void,
+  saveBaseFiatCurrency: (currency: string) => void,
   baseFiatCurrency: ?string,
   smartWalletFeatureEnabled: boolean,
   saveOptOutTracking: (status: boolean) => void,
   optOutTracking: boolean,
-  setUserJoinedBeta: Function,
+  setUserJoinedBeta: (status: boolean) => void,
   userJoinedBeta: boolean,
   backupStatus: BackupStatus,
   lockScreen: () => void,
@@ -388,6 +389,7 @@ class Settings extends React.Component<Props, State> {
     const { enabled, privateKey } = setBiometrics;
     this.setState({ setBiometrics: null });
     resetIncorrectPassword();
+    // $FlowFixMe - privateKey could be null or undefined
     changeUseBiometrics(enabled, privateKey);
   };
 
@@ -785,17 +787,15 @@ const mapStateToProps = ({
       optOutTracking = false,
       userJoinedBeta = false,
     },
-    data: appSettings,
   },
   notifications: { intercomNotificationsCount },
   wallet: { backupStatus },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
   accounts: { data: accounts },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   user,
   baseFiatCurrency,
   intercomNotificationsCount,
-  appSettings,
   optOutTracking,
   backupStatus,
   useBiometrics,
@@ -804,10 +804,12 @@ const mapStateToProps = ({
   accounts,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  saveBaseFiatCurrency: (currency: string) => dispatch(saveBaseFiatCurrencyAction(currency)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  changeUseBiometrics: (enabled, privateKey) => dispatch(changeUseBiometricsAction(enabled, privateKey)),
+  changeUseBiometrics: (enabled: boolean, privateKey: string) => dispatch(
+    changeUseBiometricsAction(enabled, privateKey),
+  ),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
   setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
