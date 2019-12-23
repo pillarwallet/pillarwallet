@@ -29,7 +29,7 @@ import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 import { SEND_BITCOIN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { BTC, defaultFiatCurrency } from 'constants/assetsConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { satoshisToBtc } from 'utils/bitcoin';
@@ -94,7 +94,7 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
       rates,
       baseFiatCurrency,
     } = this.props;
-    const { decimals } = this.assetData;
+    const { token, decimals } = this.assetData;
     const {
       outputs,
       fee,
@@ -106,9 +106,9 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
     const amount = satoshisToBtc(value);
     const feeInBtc = satoshisToBtc(fee);
     const formattedFeeInBtc = formatUnits(`${fee || ''}`, decimals);
-    const formattedAmountInBtc = formatUnits(`${value}`, decimals);
-    const formattedAmountInFiat = getFormattedRate(rates, amount, BTC, fiatCurrency);
-    const formattedFeeInFiat = getFormattedRate(rates, feeInBtc, BTC, fiatCurrency);
+    const formattedAmountInBtc = formatUnits(value.toString(), decimals);
+    const formattedAmountInFiat = getFormattedRate(rates, amount, token, fiatCurrency);
+    const formattedFeeInFiat = getFormattedRate(rates, feeInBtc, token, fiatCurrency);
 
     return (
       <ContainerWithHeader
