@@ -7,3 +7,4 @@ flow-typed
 android/
 src/utils/shim.js
 reports
+patches
