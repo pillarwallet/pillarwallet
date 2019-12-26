@@ -86,7 +86,7 @@ type State = {
   leaveBetaPressed: boolean,
   setBiometrics: ?{
     enabled: boolean,
-    privateKey: ?string,
+    privateKey?: string,
   },
   scrollToSection: string,
 };
@@ -97,7 +97,7 @@ type Props = {
   useBiometrics: ?boolean,
   intercomNotificationsCount: number,
   cleanSmartWalletAccounts: () => void,
-  changeUseBiometrics: (enabled: boolean, privateKey: string) => void,
+  changeUseBiometrics: (enabled: boolean, privateKey?: string) => void,
   resetIncorrectPassword: () => void,
   saveBaseFiatCurrency: (currency: string) => void,
   baseFiatCurrency: ?string,
@@ -372,7 +372,7 @@ class Settings extends React.Component<Props, State> {
     this.setState({ visibleModal });
   };
 
-  handleChangeUseBiometrics = (enabled, privateKey) => {
+  handleChangeUseBiometrics = (enabled: boolean, privateKey?: string) => {
     this.setState({
       visibleModal: null,
       setBiometrics: {
@@ -389,7 +389,6 @@ class Settings extends React.Component<Props, State> {
     const { enabled, privateKey } = setBiometrics;
     this.setState({ setBiometrics: null });
     resetIncorrectPassword();
-    // $FlowFixMe - privateKey could be null or undefined
     changeUseBiometrics(enabled, privateKey);
   };
 
@@ -598,8 +597,7 @@ class Settings extends React.Component<Props, State> {
             <CheckPin
               onPinValid={
                 (pin, { privateKey }) => this.handleChangeUseBiometrics(
-                  !useBiometrics,
-                  !useBiometrics ? privateKey : null,
+                  !useBiometrics, !useBiometrics ? privateKey : undefined,
                 )
               }
             />
@@ -807,7 +805,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   saveBaseFiatCurrency: (currency: string) => dispatch(saveBaseFiatCurrencyAction(currency)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  changeUseBiometrics: (enabled: boolean, privateKey: string) => dispatch(
+  changeUseBiometrics: (enabled: boolean, privateKey?: string) => dispatch(
     changeUseBiometricsAction(enabled, privateKey),
   ),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
