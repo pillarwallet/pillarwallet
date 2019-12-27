@@ -66,7 +66,7 @@
     "jest": "jest --colors",
     "jest-watch": "jest --colors --watchAll",
     "jest-update": "jest --colors -u",
-    "postinstall": "./node_modules/.bin/rn-nodeify --install --hack --yarn && mv shim.js src/utils && patch-package && rndebugger-open && node ./android-release-gradle-fix.js && jetifier -r",
+    "postinstall": "./node_modules/.bin/rn-nodeify --install --hack --yarn && mv shim.js src/utils && patch-package && rndebugger-open && jetifier -r",
     "precommit": "yarn run validate",
     "build-thread-ios": "node node_modules/react-native/local-cli/cli.js bundle --dev false --assets-dest ./ios --entry-file index.thread.js --platform ios --bundle-output ./ios/index.thread.jsbundle",
     "build-thread-android": "node node_modules/react-native/local-cli/cli.js bundle --dev false --assets-dest ./android/app/src/main/res/ --entry-file index.thread.js --platform android --bundle-output ./android/app/src/main/assets/threads/index.thread.bundle"
