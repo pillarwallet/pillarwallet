@@ -215,7 +215,7 @@ const updateBTCTransactions = (
 ): UpdateBTCTransactionsAction => ({
   type: UPDATE_BITCOIN_TRANSACTIONS,
   address,
-  transactions,
+  transactions: transactions.filter(tx => !!tx.details),
 });
 
 const bitcoinWalletCreationFailed = (): BitcoinWalletCreationFailedAction => ({

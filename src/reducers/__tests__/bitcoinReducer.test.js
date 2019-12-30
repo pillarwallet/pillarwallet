@@ -77,11 +77,10 @@ describe('Bitcoin reducer', () => {
     describe('transactions with enough confirmations', () => {
       const utxo = {
         address,
-        txid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
-        vout: 0,
+        mintTxid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
+        mintIndex: 0,
         scriptPubKey: '76a9146d622b371423d2e450c19d98059867d71e6aa87c88ac',
-        amount: 1.3,
-        satoshis: 130000000,
+        value: 130000000,
         height: 1180957,
         confirmations: 10,
       };
