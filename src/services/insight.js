@@ -85,6 +85,10 @@ export const getBTCTransactionsFromNode = (address: string) => {
           .then(txDetails => {
             e.details = txDetails;
             return e;
+          })
+          .catch(() => {
+            e.details = null;
+            return e;
           });
       });
       return Promise.all(fullTxs);

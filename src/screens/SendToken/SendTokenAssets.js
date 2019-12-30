@@ -25,6 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Assets, Balances } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Accounts } from 'models/Account';
@@ -57,11 +58,11 @@ import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork'
 import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
-  fetchAssetsBalances: () => Function,
+  fetchAssetsBalances: () => void,
   assets: Assets,
   balances: Balances,
   navigation: NavigationScreenProp<*>,
-  fetchAllCollectiblesData: Function,
+  fetchAllCollectiblesData: () => void,
   collectibles: Collectible[],
   paymentNetworkBalances: Balances,
   accounts: Accounts,
@@ -316,7 +317,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   accounts: { data: accounts },
   smartWallet: smartWalletState,
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   accounts,
   smartWalletState,
 });
@@ -328,12 +329,12 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });

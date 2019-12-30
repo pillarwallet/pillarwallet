@@ -7,22 +7,25 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
+
+import type { CollectibleTransactionPayload } from 'models/Transaction';
+import type { GasInfo } from 'models/GasInfo';
+import type { Accounts } from 'models/Account';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
-import type { CollectibleTransactionPayload } from 'models/Transaction';
-import type { GasInfo } from 'models/GasInfo';
-import type { Accounts } from 'models/Account';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { fontSizes, spacing } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
 import { calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
-import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { activeAccountAddressSelector } from 'selectors';
 
 const NORMAL = 'avg';
@@ -241,7 +244,7 @@ const mapStateToProps = ({
   history: { gasInfo },
   wallet: { data: wallet },
   accounts: { data: accounts },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   session,
   gasInfo,
@@ -253,13 +256,13 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 

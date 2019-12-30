@@ -25,6 +25,7 @@ import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 import * as Keychain from 'react-native-keychain';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
 import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
@@ -44,8 +45,8 @@ const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 
 type Props = {
-  loginWithPin: (pin: string, callback: ?Function, updateKeychain: boolean) => Function,
-  loginWithPrivateKey: (privateKey: string, callback: ?Function) => Function,
+  loginWithPin: (pin: string, callback: ?Function, updateKeychain: boolean) => void,
+  loginWithPrivateKey: (privateKey: string, callback: ?Function) => void,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
@@ -235,13 +236,13 @@ const mapStateToProps = ({
   wallet,
   appSettings: { data: { useBiometrics = false } },
   connectionKeyPairs,
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   wallet,
   useBiometrics,
   connectionKeyPairs,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   loginWithPin: (pin: string, callback: ?Function, updateKeychain) => dispatch(
     loginAction(pin, null, callback, updateKeychain),
   ),
