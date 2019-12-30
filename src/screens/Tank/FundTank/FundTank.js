@@ -48,6 +48,7 @@ import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TopUpFee } from 'models/PaymentNetwork';
 import type { Assets, Balances, Rates } from 'models/Asset';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // constants
 import { FUND_CONFIRM } from 'constants/navigationConstants';
@@ -98,10 +99,10 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   balances: Balances,
   session: Object,
-  estimateTopUpVirtualAccount: Function,
+  estimateTopUpVirtualAccount: () => void,
   topUpFee: TopUpFee,
   rates: Rates,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
 };
 
 type State = {
@@ -267,7 +268,7 @@ const mapStateToProps = ({
   rates: { data: rates },
   paymentNetwork: { topUpFee },
   appSettings: { data: { baseFiatCurrency } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   rates,
   session,
   topUpFee,
@@ -279,12 +280,12 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   estimateTopUpVirtualAccount: () => dispatch(estimateTopUpVirtualAccountAction()),
 });
 

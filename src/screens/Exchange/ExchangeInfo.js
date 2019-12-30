@@ -274,12 +274,12 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   disconnectExchangeProvider: (id: string) => dispatch(
     disconnectExchangeProviderAction(id),
