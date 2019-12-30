@@ -72,6 +72,7 @@ import {
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 import {
+  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
@@ -326,6 +327,7 @@ class ActivityFeed extends React.Component<Props, State> {
     const trxData = {};
 
     if (type === TRANSACTION_EVENT) {
+      let transactionEventActionLabel;
       const tag = get(notification, 'tag', '');
       const isReceived = addressesEqual(notification.to, activeAccountAddress)
         || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
@@ -390,6 +392,14 @@ class ActivityFeed extends React.Component<Props, State> {
         trxData.txType = 'Withdrawal';
         trxData.hideAmount = true;
         trxData.hideSender = true;
+      } else if (tag === PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT) {
+        nameOrAddress = 'Smart Wallet';
+        imageProps.itemImageSource = smartWalletIcon;
+        trxData.hideSender = true;
+        trxData.hideAmount = true;
+        transactionEventActionLabel = 'Deployed'; // note: label will be hidden if tx is pending
+        trxData.txType = 'Deployment';
+        itemValue = null;
       }
 
       // centers line right addons side vertically if status is present
@@ -455,6 +465,7 @@ class ActivityFeed extends React.Component<Props, State> {
             }, type, notificationStatus)}
           label={nameOrAddress}
           subtext={subtext}
+          actionLabel={transactionEventActionLabel}
           navigateToProfile={isContact ? navigateToContact : null}
           itemValue={itemValue}
           itemStatusIcon={itemStatusIcon}
