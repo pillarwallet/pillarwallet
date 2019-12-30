@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
 import { MediumText, Paragraph } from 'components/Typography';
@@ -106,10 +107,14 @@ class SetWalletPinCode extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet: { onboarding: { importedWallet } } }) => ({ importedWallet });
+const mapStateToProps = ({
+  wallet: { onboarding: { importedWallet } },
+}: RootReducerState): $Shape<Props> => ({
+  importedWallet,
+});
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  setPinForNewWallet: (pin) => {
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  setPinForNewWallet: (pin: string) => {
     dispatch(setPinForNewWalletAction(pin));
   },
 });

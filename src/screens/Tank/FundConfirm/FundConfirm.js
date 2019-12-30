@@ -32,17 +32,17 @@ import Button from 'components/Button';
 import { fontSizes, spacing } from 'utils/variables';
 import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'actions/smartWalletActions';
 import { formatAmount } from 'utils/common';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { TopUpFee } from 'models/PaymentNetwork';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 import { ASSETS } from 'constants/navigationConstants';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   topUpFee: TopUpFee,
-  estimateTopUpVirtualAccount: Function,
-  topUpVirtualAccount: Function,
+  estimateTopUpVirtualAccount: (amount: string) => void,
+  topUpVirtualAccount: (amount: string) => void,
 };
 
 type State = {
@@ -143,12 +143,12 @@ class FundConfirm extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   paymentNetwork: { topUpFee },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   session,
   topUpFee,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   topUpVirtualAccount: (amount: string) => dispatch(topUpVirtualAccountAction(amount)),
   estimateTopUpVirtualAccount: (amount: string) => dispatch(estimateTopUpVirtualAccountAction(amount)),
 });

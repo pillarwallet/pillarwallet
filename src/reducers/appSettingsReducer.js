@@ -28,11 +28,12 @@ export type AppSettingsReducerState = {
       assetsLayout: string,
     },
     blockchainNetwork: ?string,
-    userJoinedBeta: ?boolean,
+    userJoinedBeta?: boolean,
     baseFiatCurrency: ?string,
     transactionSpeed: ?string,
     themeType: string,
     useBiometrics?: boolean,
+    optOutTracking?: boolean,
   },
   isFetched: boolean,
 };

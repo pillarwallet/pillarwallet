@@ -48,6 +48,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -300,12 +301,12 @@ class PillarNetworkIntro extends React.Component<Props, State> {
 const mapStateToProps = ({
   accounts: { data: accounts },
   smartWallet: smartWalletState,
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   accounts,
   smartWalletState,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   ensureSmartAccountConnected: (privateKey: string) => dispatch(ensureSmartAccountConnectedAction(privateKey)),

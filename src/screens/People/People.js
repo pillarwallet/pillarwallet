@@ -67,7 +67,8 @@ import {
   STATUS_BLOCKED,
 } from 'constants/connectionsConstants';
 
-// models
+// models/types
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SearchResults } from 'models/Contacts';
 
 // utils
@@ -125,15 +126,15 @@ const MIN_QUERY_LENGTH = 2;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  searchContacts: (query: string) => Function,
+  searchContacts: (query: string) => void,
   searchResults: SearchResults,
   contactState: ?string,
   user: Object,
-  fetchInviteNotifications: Function,
-  disconnectContact: Function,
-  muteContact: Function,
-  blockContact: Function,
-  resetSearchContactsState: Function,
+  fetchInviteNotifications: () => void,
+  disconnectContact: (contactId: string) => void,
+  muteContact: (contactId: string, mute: boolean) => void,
+  blockContact: (contactId: string, block: boolean) => void,
+  resetSearchContactsState: () => void,
   invitations: Object[],
   localContacts: Object[],
   chats: Object[],
@@ -529,7 +530,7 @@ const mapStateToProps = ({
   },
   invitations: { data: invitations },
   chat: { data: { chats } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   searchResults,
   contactState,
   localContacts,
@@ -537,8 +538,8 @@ const mapStateToProps = ({
   chats,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  searchContacts: (query) => dispatch(searchContactsAction(query)),
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  searchContacts: (query: string) => dispatch(searchContactsAction(query)),
   resetSearchContactsState: () => dispatch(resetSearchContactsStateAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),

@@ -164,7 +164,7 @@ const mapStateToProps = ({
   isFetchingSyntheticAssets,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAvailableSyntheticAssets: () => dispatch(fetchAvailableSyntheticAssetsAction()),
 });
 
