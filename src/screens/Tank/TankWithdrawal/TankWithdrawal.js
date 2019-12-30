@@ -259,7 +259,7 @@ class TankWithdrawal extends React.Component<Props, State> {
               </TextRow>
             </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
-              <TextLink>Send All</TextLink>
+              <TextLink>Send all</TextLink>
             </TouchableOpacity>
           </ActionsWrapper>
         </Wrapper>

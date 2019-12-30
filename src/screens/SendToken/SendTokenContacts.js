@@ -35,6 +35,7 @@ import TextInput from 'components/TextInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import Spinner from 'components/Spinner';
+import HeaderSyntheticAssetTitle from 'components/HeaderBlock/HeaderSyntheticAssetTitle';
 
 // constants
 import { COLLECTIBLES, BTC } from 'constants/assetsConstants';
@@ -365,14 +366,17 @@ class SendTokenContacts extends React.Component<Props, State> {
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
     const showContacts = isCollectible || token !== BTC;
-    const defaultAssetName = this.isPPNTransaction ? 'synthetic asset' : 'asset';
-    const tokenName = isCollectible ? (name || token) : (token || defaultAssetName);
-    const headerTitle = `Send ${tokenName}`;
+    const tokenName = (isCollectible ? (name || token) : token) || 'asset';
+
+    const headerTitle = this.isPPNTransaction
+      ? { customTitle: <HeaderSyntheticAssetTitle title="Send" symbol={tokenName} /> }
+      : { title: `Send ${tokenName}` };
+
     const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: headerTitle }] }}
+        headerProps={{ centerItems: [headerTitle] }}
         inset={{ bottom: 0 }}
       >
         <FormWrapper>

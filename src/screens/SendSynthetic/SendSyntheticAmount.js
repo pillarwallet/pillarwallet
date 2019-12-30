@@ -38,6 +38,7 @@ import { Wrapper } from 'components/Layout';
 
 // actions
 import { initSyntheticsServiceAction } from 'actions/syntheticsActions';
+import { fetchSingleAssetRatesAction } from 'actions/ratesActions';
 
 // utils, services
 import { fontStyles, spacing, UIColors } from 'utils/variables';
@@ -54,10 +55,10 @@ import { SEND_SYNTHETIC_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigation
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { Asset, Assets, Rates } from 'models/Asset';
+import type { Asset, AssetData, Assets, Rates } from 'models/Asset';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { fetchSingleAssetRatesAction } from 'actions/ratesActions';
+import HeaderSyntheticAssetTitle from 'components/HeaderBlock/HeaderSyntheticAssetTitle';
 
 type Props = {
   accountAssets: Assets,
@@ -118,7 +119,7 @@ const BackgroundWrapper = styled.View`
 const FooterInner = styled.View`
   flex-direction: row;
   align-items: flex-end;
-  justify-content: flex-end;
+  justify-content: space-between;
   width: 100%;
   padding: ${spacing.large}px;
   background-color: ${UIColors.defaultBackgroundColor};
@@ -150,7 +151,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   syntheticsForm: t.form;
   receiver: string;
   source: string;
-  assetData: Asset;
+  assetData: AssetData;
   assetBalance: number;
 
   constructor(props: Props) {
@@ -174,7 +175,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
   componentDidMount() {
     this.props.initSyntheticsService();
-    this.props.fetchSingleAssetRates(this.assetData.symbol);
+    this.props.fetchSingleAssetRates(this.assetData.token);
   }
 
 
@@ -210,7 +211,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       const { navigation } = this.props;
       const amount = parseNumericAmount(value);
       Keyboard.dismiss();
-      const { symbol: assetCode, address: contractAddress, decimals } = this.assetData;
+      const { token: assetCode, contractAddress, decimals } = this.assetData;
       if (assetCode === PLR) {
         // go through regular confirm as PLR is staked by the user already so he owns it
         const transactionPayload: TokenTransactionPayload = {
@@ -280,15 +281,15 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     } = this.state;
 
     // asset data
-    const { symbol, decimals, iconUrl } = this.assetData;
+    const { token: symbol, decimals, icon: iconUrl } = this.assetData;
 
     // balance
     const balanceFormatted = formatAmount(this.assetBalance);
-    const balanceTitle = `Available ${symbol === PLR ? 'balance' : 'liquidity'}`;
 
     // value
     const currentAmount = parseNumericAmount(value);
-    const showNextButton = !submitPressed && !isEmpty(value);
+    const showFeesLabel = !isEmpty(value);
+    const showNextButton = showFeesLabel && !submitPressed;
 
     // value in fiat
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -298,7 +299,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const totalInFiatFormatted = formatFiat(totalInFiat, baseFiatCurrency);
 
     // form
-    const icon = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
     const formStructure = generateFormStructure(intentError, this.assetBalance, decimals);
     const formFields = getAmountFormFields({
       icon,
@@ -316,17 +317,18 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: `Send synthetic ${symbol}` }] }}
+        headerProps={{ centerItems: [{ customTitle: <HeaderSyntheticAssetTitle title="Send" symbol={symbol} /> }] }}
         keyboardAvoidFooter={(
           <FooterInner>
+            {showFeesLabel && <Label small>No fees - paid by Pillar</Label>}
             {showNextButton &&
-            <Button
-              disabled={isNextButtonDisabled}
-              small
-              flexRight
-              title={nextButtonTitle}
-              onPress={this.handleFormSubmit}
-            />
+              <Button
+                disabled={isNextButtonDisabled}
+                small
+                flexRight
+                title={nextButtonTitle}
+                onPress={this.handleFormSubmit}
+              />
             }
             {submitPressed && <Spinner width={20} height={20} />}
           </FooterInner>
@@ -344,7 +346,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
             />
             <ActionsWrapper>
               <SendTokenDetails>
-                <Label small>{balanceTitle}</Label>
+                <Label small>Available balance</Label>
                 <TextRow>
                   <SendTokenDetailsValue>
                     {balanceFormatted} {symbol}
@@ -353,7 +355,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
                 </TextRow>
               </SendTokenDetails>
               <TouchableOpacity onPress={this.useMaxValue}>
-                <TextLink>Send All</TextLink>
+                <TextLink>Send all</TextLink>
               </TouchableOpacity>
             </ActionsWrapper>
           </Wrapper>

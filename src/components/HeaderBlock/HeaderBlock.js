@@ -26,7 +26,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
 import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import { connect } from 'react-redux';
 import ProfileImage from 'components/ProfileImage';
@@ -36,7 +36,8 @@ import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 // partials
-import { HeaderActionButton } from './HeaderActionButton';
+import HeaderTitleText from './HeaderTitleText';
+import HeaderActionButton from './HeaderActionButton';
 
 type NavItem = {
   [string]: any,
@@ -96,13 +97,6 @@ const HeaderRow = styled.View`
 `;
 
 const HeaderProfileImage = styled(ProfileImage)``;
-
-const HeaderTitle = styled(MediumText)`
-  font-size: ${fontSizes.medium}px;
-  line-height: 26px;
-  color: ${({ theme }) => theme.colors.text};
-  text-align: ${props => props.centerText ? 'center' : 'left'};
-`;
 
 const UserButton = styled.TouchableOpacity`
   flex-direction: row;
@@ -256,16 +250,20 @@ class HeaderBlock extends React.Component<Props> {
     if (item.user || item.userIcon) {
       return this.renderUser(!item.userIcon);
     }
-    if (item.title) {
+    if (item.title || item.customTitle) {
+      const titleItemKey = item.title || `${type}-${item.key}`;
       return (
-        <View style={{ ...commonStyle, flexDirection: 'row', flexWrap: 'wrap' }} key={item.title}>
-          <HeaderTitle
-            style={item.color ? { color: item.color } : {}}
-            onPress={item.onPress}
-            centerText={type === CENTER}
-          >
-            {item.title}
-          </HeaderTitle>
+        <View style={{ ...commonStyle, flexDirection: 'row', flexWrap: 'wrap' }} key={titleItemKey}>
+          {!item.title && item.customTitle}
+          {!item.customTitle &&
+            <HeaderTitleText
+              style={item.color ? { color: item.color } : {}}
+              onPress={item.onPress}
+              centerText={type === CENTER}
+            >
+              {item.title}
+            </HeaderTitleText>
+          }
         </View>
       );
     }
@@ -350,7 +348,7 @@ class HeaderBlock extends React.Component<Props> {
         />
         {showName &&
         <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
-          <HeaderTitle style={{ marginLeft: 8 }}>{user.username}</HeaderTitle>
+          <HeaderTitleText style={{ marginLeft: 8 }}>{user.username}</HeaderTitleText>
         </View>}
       </UserButton>
     );

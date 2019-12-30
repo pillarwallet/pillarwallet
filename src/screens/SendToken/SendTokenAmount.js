@@ -74,15 +74,14 @@ class SendTokenAmount extends React.Component<Props> {
 
   updateTransactionSpeed = (speed: string) => {
     this.props.updateAppSettings('transactionSpeed', speed);
-  }
+  };
 
-  selectAmountComponent(token: string) {
+  selectAmountComponent = (token: string) => {
     if (token === BTC) {
       return SendBTCAmount;
     }
-
     return SendETHTokens;
-  }
+  };
 
   render() {
     const {

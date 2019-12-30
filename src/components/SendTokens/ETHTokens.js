@@ -450,7 +450,7 @@ class SendETHTokens extends React.Component<Props, State> {
               />
               {!calculatingMaxValue &&
                 <TouchableOpacity onPress={this.useMaxValue}>
-                  <TextLink>Send All</TextLink>
+                  <TextLink>Send all</TextLink>
                 </TouchableOpacity>
               }
               {calculatingMaxValue && <Spinner width={20} height={20} />}
