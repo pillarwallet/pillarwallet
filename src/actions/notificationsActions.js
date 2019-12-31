@@ -25,6 +25,7 @@ import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
 import get from 'lodash.get';
+import { Sentry } from 'react-native-sentry';
 
 // actions
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
@@ -71,6 +72,7 @@ import {
   CONNECTION_REQUESTED_EVENT,
   CONNECTION_COLLECTIBLE_EVENT,
 } from 'constants/socketConstants';
+import { STATUS_MUTED } from 'constants/connectionsConstants';
 
 // services
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
@@ -81,7 +83,6 @@ import { SOCKET } from 'services/sockets';
 
 // utils
 import { processNotification } from 'utils/notifications';
-import { STATUS_MUTED } from 'constants/connectionsConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -169,6 +170,8 @@ export const startListeningNotificationsAction = () => {
         try {
           data = JSON.parse(response.data.msg);
         } catch (e) {
+          // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
+          Sentry.captureMessage('Platform WebSocket notification parse failed', { extra: { response } });
           return; // unable to parse data, do not proceed
         }
 
