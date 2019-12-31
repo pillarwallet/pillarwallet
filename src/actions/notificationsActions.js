@@ -164,11 +164,10 @@ export const startListeningNotificationsAction = () => {
       contacts: { data: contacts },
     } = getState();
     if (SOCKET && SOCKET.socket && SOCKET.socket.readyState === 1) {
-      SOCKET.onMessage(async response => {
-        const responseDataMessage = get(response, 'data.msg');
+      SOCKET.onMessage((response) => {
         let data;
         try {
-          data = JSON.parse(responseDataMessage);
+          data = JSON.parse(response.data.msg);
         } catch (e) {
           return; // unable to parse data, do not proceed
         }
