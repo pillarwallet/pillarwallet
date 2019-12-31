@@ -23,6 +23,7 @@ import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
+import isEmpty from 'lodash.isempty';
 
 // constants
 import {
@@ -107,12 +108,12 @@ const getTokenWalletAndRegister = async (
   const fcmToken = await firebase.messaging().getToken().catch(() => { });
 
   await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
-  const sdkWallet = await api.registerOnAuthServer(privateKey, fcmToken, user.username);
+  const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, user.username);
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
-  const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
+  const userState = !isEmpty(userInfo) ? REGISTERED : PENDING;
 
-  if (Object.keys(userInfo).length) {
+  if (userState === REGISTERED) {
     dispatch(saveDbAction('user', { user: userInfo }, true));
   }
 
@@ -164,6 +165,15 @@ const finishRegistration = async ({
   privateKey,
   address,
   isImported,
+}: {
+  api: SDKWrapper,
+  dispatch: Dispatch,
+  getState: GetState,
+  userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser)
+  mnemonic: ?string,
+  privateKey: string,
+  address: string,
+  isImported: boolean,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);
@@ -415,7 +425,7 @@ export const registerOnBackendAction = () => {
       user,
       dispatch,
     );
-    if (!registrationSucceed) { return; }
+    if (!registrationSucceed) return;
 
     dispatch(logEventAction('user_created'));
 
@@ -448,7 +458,8 @@ export const validateUserDetailsAction = ({ username }: Object) => {
     await delay(200);
 
     api.init();
-    const apiUser = await api.usernameSearch(username);
+    // TODO: add back-end authenticated user model (not people related ApiUser)
+    const apiUser: Object = await api.usernameSearch(username);
     const usernameExists = apiUser.username === username;
     const inappropriateUsername = apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME;
     let usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
@@ -477,8 +488,9 @@ export const restoreAccessTokensAction = (walletId: string) => {
       TYPE_RECEIVED,
       TYPE_ACCEPTED,
     ];
+    // TODO: add back-end notification model?
     const rawNotifications = await api.fetchNotifications(walletId, types.join(' '));
-    if (!rawNotifications.length) return;
+    if (isEmpty(rawNotifications)) return;
 
     const notifications = rawNotifications
       .map((_notification) => {
@@ -489,7 +501,7 @@ export const restoreAccessTokensAction = (walletId: string) => {
         } catch (e) {
           //
         }
-        return { ...parsedMessage, createdAt };
+        return ({ ...parsedMessage, createdAt }: Object);
       })
       .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
       .sort((a, b) => b.createdAt - a.createdAt);
@@ -526,4 +538,4 @@ export const restoreAccessTokensAction = (walletId: string) => {
     });
     await dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
   };
-}
+};

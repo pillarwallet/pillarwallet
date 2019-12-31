@@ -90,6 +90,7 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       TYPE_REJECTED,
       TYPE_DISCONNECTED,
     ];
+    // TODO: add back-end notification model?
     const inviteNotifications = await api.fetchNotifications(walletId, types.join(' '));
     const mappedInviteNotifications = inviteNotifications
       .map((_notification) => {
@@ -100,7 +101,7 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
         } catch (e) {
           //
         }
-        return { ...parsedMessage, createdAt };
+        return ({ ...parsedMessage, createdAt }: Object);
       })
       .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
       .sort((a, b) => b.createdAt - a.createdAt);
