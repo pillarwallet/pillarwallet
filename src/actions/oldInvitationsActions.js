@@ -17,11 +17,19 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import get from 'lodash.get';
 import { Sentry } from 'react-native-sentry';
-import { generateAccessKey } from 'utils/invitations';
-import type { ApiUser } from 'models/Contacts';
-import { uniqBy } from 'utils/common';
-import { getIdentityKeyPairs } from 'utils/connections';
+
+// actions
+import { getExistingChatsAction } from 'actions/chatActions';
+import { restoreAccessTokensAction } from 'actions/onboardingActions';
+import { updateConnectionsAction } from 'actions/connectionsActions';
+import {
+  mapIdentityKeysAction,
+  prependConnectionKeyPairs,
+} from 'actions/connectionKeyPairActions';
+
+// constants
 import {
   ADD_INVITATION,
   TYPE_ACCEPTED,
@@ -36,18 +44,23 @@ import {
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
-import { getExistingChatsAction } from 'actions/chatActions';
-import { restoreAccessTokensAction } from 'actions/onboardingActions';
-import { updateConnectionsAction } from 'actions/connectionsActions';
-import {
-  mapIdentityKeysAction,
-  prependConnectionKeyPairs,
-} from 'actions/connectionKeyPairActions';
+
+// utils
+import { generateAccessKey } from 'utils/invitations';
+import { uniqBy } from 'utils/common';
+import { getIdentityKeyPairs } from 'utils/connections';
+
+// models, types
+import type { ApiUser } from 'models/Contacts';
+import type SDKWrapper from 'services/api';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
+// local
 import { saveDbAction } from './dbActions';
-import get from 'lodash.get';
+
 
 export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       invitations: { data: invitations },
       contacts: { data: contacts },
@@ -163,7 +176,7 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
 };
 
 export const sendOldInvitationAction = (user: ApiUser) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
@@ -215,7 +228,7 @@ export const sendOldInvitationAction = (user: ApiUser) => {
 };
 
 export const acceptOldInvitationAction = (invitation: Object) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
@@ -304,7 +317,7 @@ export const acceptOldInvitationAction = (invitation: Object) => {
 };
 
 export const cancelOldInvitationAction = (invitation: Object) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
@@ -349,7 +362,7 @@ export const cancelOldInvitationAction = (invitation: Object) => {
 };
 
 export const rejectOldInvitationAction = (invitation: Object) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },

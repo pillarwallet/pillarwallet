@@ -69,7 +69,6 @@ import { updateOAuthTokensCB } from 'utils/oAuth';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
-import SDKWrapper from 'services/api';
 
 // actions
 import { signalInitAction } from 'actions/signalClientActions';
@@ -94,12 +93,13 @@ import { setRatesAction } from 'actions/ratesActions';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
+import type SDKWrapper from 'services/api';
 
 const storage = Storage.getInstance('db');
 
 const getTokenWalletAndRegister = async (
   privateKey: string,
-  api: Object, // FIXME: this should be api: SDKWrapper
+  api: SDKWrapper,
   user: Object,
   dispatch: Dispatch,
 ) => {
@@ -382,7 +382,7 @@ export const registerWalletAction = (enableBiometrics?: boolean) => {
   3) when user re-opened the app and sees RetryApiRegistration screen
  */
 export const registerOnBackendAction = () => {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       wallet: {
         data: walletData,
@@ -436,7 +436,7 @@ export const registerOnBackendAction = () => {
 };
 
 export const validateUserDetailsAction = ({ username }: Object) => {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const currentState = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -467,8 +467,8 @@ export const validateUserDetailsAction = ({ username }: Object) => {
   };
 };
 
-export function restoreAccessTokensAction(walletId: string) {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+export const restoreAccessTokensAction = (walletId: string) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const restoredAccessTokens = [];
     const userAccessTokens = await api.fetchAccessTokens(walletId);
 

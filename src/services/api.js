@@ -171,21 +171,13 @@ SDKWrapper.prototype.registerOnAuthServer = function (walletPrivateKey: string, 
       });
     })
     .then(({ data }) => data)
-    .catch((e = {}) => {
-      Sentry.captureException({
-        type: 'Registration error',
-        error: e,
-      });
-      if (e.response && e.response.status === USERNAME_EXISTS_ERROR_CODE) {
-        return {
-          error: true,
-          reason: USERNAME_EXISTS,
-        };
-      }
-      return {
-        error: true,
-        reason: REGISTRATION_FAILED,
-      };
+    .catch((error) => {
+      Sentry.captureException({ type: 'Registration error', error });
+      const responseStatus = get(error, 'response.status');
+      const reason = responseStatus === USERNAME_EXISTS_ERROR_CODE
+        ? USERNAME_EXISTS
+        : REGISTRATION_FAILED;
+      return { error: true, reason };
     });
 };
 
@@ -551,8 +543,8 @@ SDKWrapper.prototype.acceptOldInvitation = function (
   targetUserId: string,
   targetUserAccessKey: string,
   accessKey: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
+  sourceIdentityKey: ?string,
+  targetIdentityKey: ?string,
   walletId: string,
 ) {
   return Promise.resolve()
