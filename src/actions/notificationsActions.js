@@ -24,6 +24,7 @@ import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
+import get from 'lodash.get';
 
 // actions
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
@@ -164,7 +165,15 @@ export const startListeningNotificationsAction = () => {
     } = getState();
     if (SOCKET && SOCKET.socket && SOCKET.socket.readyState === 1) {
       SOCKET.onMessage(async response => {
-        const data = JSON.parse(response.data.msg);
+        const responseDataMessage = get(response, 'data.msg');
+        let data;
+        try {
+          data = JSON.parse(responseDataMessage);
+        } catch (e) {
+          return; // unable to parse data, do not proceed
+        }
+
+        const senderUserId = get(data, 'senderUserData.id');
 
         if (data.type === CONNECTION_REQUESTED_EVENT) {
           dispatch(fetchInviteNotificationsAction());
@@ -173,7 +182,7 @@ export const startListeningNotificationsAction = () => {
           data.type === CONNECTION_CANCELLED_EVENT ||
           data.type === CONNECTION_REJECTED_EVENT
         ) {
-          const updatedInvitations = invitations.filter(({ id }) => id !== data.senderUserData.id);
+          const updatedInvitations = invitations.filter(({ id }) => id !== senderUserId);
           dispatch({
             type: UPDATE_INVITATIONS,
             payload: updatedInvitations,
@@ -183,7 +192,7 @@ export const startListeningNotificationsAction = () => {
           data.type === CONNECTION_ACCEPTED_EVENT ||
           data.type === CONNECTION_DISCONNECTED_EVENT
         ) {
-          dispatch(updateConnectionsAction(data.senderUserData.id));
+          dispatch(updateConnectionsAction(senderUserId));
         }
         if (data.type === CONNECTION_COLLECTIBLE_EVENT) {
           dispatch(fetchAllCollectiblesDataAction());
@@ -213,13 +222,11 @@ export const startListeningNotificationsAction = () => {
       });
       return;
     }
-    let enabled = await firebase.messaging().hasPermission();
-    if (!enabled) {
+    const firebaseNotificationsEnabled = await firebase.messaging().hasPermission();
+    if (!firebaseNotificationsEnabled) {
       try {
         await firebase.messaging().requestPermission();
         await firebase.messaging().getToken();
-        enabled = true;
-
         dispatch(fetchAllNotificationsAction());
         disabledPushNotificationsListener = setInterval(() => {
           dispatch(fetchAllNotificationsAction());

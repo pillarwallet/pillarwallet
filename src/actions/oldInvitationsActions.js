@@ -44,6 +44,7 @@ import {
   prependConnectionKeyPairs,
 } from 'actions/connectionKeyPairActions';
 import { saveDbAction } from './dbActions';
+import get from 'lodash.get';
 
 export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -78,7 +79,16 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
     ];
     const inviteNotifications = await api.fetchNotifications(walletId, types.join(' '));
     const mappedInviteNotifications = inviteNotifications
-      .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
+      .map((_notification) => {
+        const createdAt = get(_notification, 'createdAt');
+        let parsedMessage = {};
+        try {
+          parsedMessage = JSON.parse(_notification.payload.msg);
+        } catch (e) {
+          //
+        }
+        return { ...parsedMessage, createdAt };
+      })
       .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
       .sort((a, b) => b.createdAt - a.createdAt);
 

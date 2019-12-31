@@ -481,7 +481,16 @@ export function restoreAccessTokensAction(walletId: string) {
     if (!rawNotifications.length) return;
 
     const notifications = rawNotifications
-      .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
+      .map((_notification) => {
+        const createdAt = get(_notification, 'createdAt');
+        let parsedMessage = {};
+        try {
+          parsedMessage = JSON.parse(_notification.payload.msg);
+        } catch (e) {
+          //
+        }
+        return { ...parsedMessage, createdAt };
+      })
       .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
       .sort((a, b) => b.createdAt - a.createdAt);
 
