@@ -55,7 +55,7 @@ import { SEND_SYNTHETIC_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigation
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { Asset, AssetData, Assets, Rates } from 'models/Asset';
+import type { Asset, AssetData, Assets, Rates, SyntheticAsset } from 'models/Asset';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import HeaderSyntheticAssetTitle from 'components/HeaderBlock/HeaderSyntheticAssetTitle';
@@ -69,6 +69,7 @@ type Props = {
   baseFiatCurrency: ?string,
   isOnline: boolean,
   fetchSingleAssetRates: (assetCode: string) => void,
+  availableSyntheticAssets: SyntheticAsset[],
 };
 
 type State = {
@@ -152,24 +153,36 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   receiver: string;
   source: string;
   assetData: AssetData;
-  assetBalance: number;
+  availableSyntheticBalance: number;
+  availableMetaTokenBalance: number;
 
   constructor(props: Props) {
     super(props);
-    const { navigation: { getParam: getNavigationParam } } = props;
+    const {
+      navigation: { getParam: getNavigationParam },
+      availableSyntheticAssets,
+    } = props;
+
     this.source = getNavigationParam('source', '');
     this.receiver = getNavigationParam('receiver', '');
+
     this.assetData = getNavigationParam('assetData', {});
-    this.assetBalance = get(this.assetData, 'amount', 0);
-    const intentError = !this.assetBalance
+    const fetchedSyntheticAsset = availableSyntheticAssets.find(({ symbol }) => symbol === this.assetData.token);
+    this.availableSyntheticBalance = get(fetchedSyntheticAsset, 'availableBalance', 0);
+    const initialExchangeRate = get(fetchedSyntheticAsset, 'exchangeRate', 0);
+    this.availableMetaTokenBalance = this.availableSyntheticBalance * initialExchangeRate;
+
+    const intentError = !this.availableSyntheticBalance
       ? 'Asset has no available liquidity'
       : null;
+
     this.state = {
       intentError,
       submitPressed: false,
       value: null,
       inputHasError: false,
     };
+
     this.handleFormChange = debounce(this.handleFormChange, 500);
   }
 
@@ -267,7 +280,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   };
 
   useMaxValue = () => {
-    const amount = formatAmount(this.assetBalance);
+    const amount = formatAmount(this.availableSyntheticBalance);
     this.setState({ value: { amount } });
   };
 
@@ -283,8 +296,9 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     // asset data
     const { token: symbol, decimals, icon: iconUrl } = this.assetData;
 
-    // balance
-    const balanceFormatted = formatAmount(this.assetBalance);
+    // balances
+    const balanceFormatted = formatAmount(this.availableSyntheticBalance);
+    const metaBalanceFormatted = formatAmount(this.availableMetaTokenBalance);
 
     // value
     const currentAmount = parseNumericAmount(value);
@@ -295,12 +309,12 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const valueInFiat = currentAmount * getRate(rates, symbol, fiatCurrency);
     const valueInFiatFormatted = formatFiat(valueInFiat, baseFiatCurrency);
-    const totalInFiat = this.assetBalance * getRate(rates, symbol, fiatCurrency);
+    const totalInFiat = this.availableSyntheticBalance * getRate(rates, symbol, fiatCurrency);
     const totalInFiatFormatted = formatFiat(totalInFiat, baseFiatCurrency);
 
     // form
     const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-    const formStructure = generateFormStructure(intentError, this.assetBalance, decimals);
+    const formStructure = generateFormStructure(intentError, this.availableSyntheticBalance, decimals);
     const formFields = getAmountFormFields({
       icon,
       currency: symbol,
@@ -347,17 +361,18 @@ class SendSyntheticAmount extends React.Component<Props, State> {
             <ActionsWrapper>
               <SendTokenDetails>
                 <Label small>Available balance</Label>
-                <TextRow>
-                  <SendTokenDetailsValue>
-                    {balanceFormatted} {symbol}
-                  </SendTokenDetailsValue>
-                  <HelperText>{totalInFiatFormatted}</HelperText>
-                </TextRow>
               </SendTokenDetails>
               <TouchableOpacity onPress={this.useMaxValue}>
                 <TextLink>Send all</TextLink>
               </TouchableOpacity>
             </ActionsWrapper>
+            <TextRow>
+              <SendTokenDetailsValue>
+                {balanceFormatted} {symbol}&nbsp;
+                {symbol !== PLR && `(${metaBalanceFormatted} ${PLR})`}
+              </SendTokenDetailsValue>
+              <HelperText>{totalInFiatFormatted}</HelperText>
+            </TextRow>
           </Wrapper>
         </BackgroundWrapper>
       </ContainerWithHeader>
@@ -370,11 +385,13 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   session: { data: { isOnline } },
+  synthetics: { data: availableSyntheticAssets },
 }: RootReducerState): $Shape<Props> => ({
   supportedAssets,
   rates,
   baseFiatCurrency,
   isOnline,
+  availableSyntheticAssets,
 });
 
 const structuredSelector = createStructuredSelector({

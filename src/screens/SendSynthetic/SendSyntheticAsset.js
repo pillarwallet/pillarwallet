@@ -44,7 +44,7 @@ import { SEND_SYNTHETIC_UNAVAILABLE, SEND_TOKEN_CONTACTS } from 'constants/navig
 
 // models, types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Asset, AssetData } from 'models/Asset';
+import type { SyntheticAsset, AssetData } from 'models/Asset';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -53,7 +53,7 @@ import { TOKENS } from 'constants/assetsConstants';
 type Props = {
   navigation: NavigationScreenProp<*>,
   fetchAvailableSyntheticAssets: () => void,
-  availableSyntheticAssets: Asset[],
+  availableSyntheticAssets: SyntheticAsset[],
   isFetchingSyntheticAssets: boolean,
 };
 
@@ -74,29 +74,27 @@ class SendSyntheticAsset extends React.Component<Props> {
     this.props.fetchAvailableSyntheticAssets();
   }
 
-  renderAsset = ({ item }: { item: Asset }) => {
+  renderAsset = ({ item }: { item: SyntheticAsset }) => {
     // asset should not render
     const {
       symbol: assetSymbol,
       name: assetName,
-      amount: assetAmount,
       iconUrl,
       address: contractAddress,
       decimals,
+      availableBalance = 0,
     } = item;
     if (assetsConfig[assetSymbol] && !assetsConfig[assetSymbol].send) return null;
 
     const { navigation } = this.props;
-    const balance = assetAmount || 0;
-    const isAvailable = balance > 0;
-    const balanceFormatted = isAvailable ? formatMoney(balance) : '0';
+    const isAvailable = availableBalance > 0;
+    const balanceFormatted = isAvailable ? formatMoney(availableBalance) : '0';
     const availableLabel = isAvailable ? 'In pool' : 'Unavailable';
     const assetData: AssetData = {
       token: assetSymbol,
       name: assetName,
       icon: iconUrl,
       tokenType: TOKENS,
-      amount: assetAmount,
       contractAddress,
       decimals,
     };

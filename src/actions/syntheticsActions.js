@@ -38,6 +38,7 @@ import syntheticsService from 'services/synthetics';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { accountAssetsSelector } from 'selectors/assets';
+import type { SyntheticAsset } from 'models/Asset';
 
 export const initSyntheticsServiceAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
@@ -91,19 +92,18 @@ export const fetchAvailableSyntheticAssetsAction = () => {
     // PLR is default available
     const defaultAvailableSyntheticAssets = [{
       ...getAssetData(assetsData, supportedAssets, PLR),
-      amount: availableStake,
-      isSynthetic: true,
+      availableBalance: availableStake,
     }];
 
-    const availableAssets = syntheticAssets.reduce((availableList, syntheticAsset) => {
+    const availableAssets: SyntheticAsset = syntheticAssets.reduce((availableList, syntheticAsset) => {
       const assetSymbol = get(syntheticAsset, 'token.symbol');
-      const assetBalance = Number(get(syntheticAsset, 'value', 0));
       const assetData = getAssetData(assetsData, supportedAssets, assetSymbol);
+      const availableBalance = Number(get(syntheticAsset, 'value', 0));
       if (!isEmpty(assetData)) {
         availableList.push({
           ...assetData,
-          amount: assetBalance,
-          isSynthetic: true,
+          availableBalance,
+          exchangeRate: 1.2, // TODO: wire with updated back-end response
         });
       }
       return availableList;

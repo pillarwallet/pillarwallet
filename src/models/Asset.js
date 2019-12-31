@@ -26,7 +26,6 @@ export type AssetData = {|
   decimals: number,
   icon?: string,
   iconColor?: string,
-  amount?: number,
 |};
 
 export type Asset = {
@@ -77,4 +76,9 @@ export type AssetTransfer = {
   name: string,
   amount: number,
   gasLimit?: number,
+};
+
+export type SyntheticAsset = Asset & {
+  availableBalance: number,
+  exchangeRate?: number,
 };
