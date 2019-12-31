@@ -65,6 +65,7 @@ import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'ut
 import { delay, uniqBy } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
+import { parseNotificationMessage } from 'utils/notifications';
 
 // services
 import Storage from 'services/storage';
@@ -493,16 +494,7 @@ export const restoreAccessTokensAction = (walletId: string) => {
     if (isEmpty(rawNotifications)) return;
 
     const notifications = rawNotifications
-      .map((_notification) => {
-        const createdAt = get(_notification, 'createdAt');
-        let parsedMessage = {};
-        try {
-          parsedMessage = JSON.parse(_notification.payload.msg);
-        } catch (e) {
-          //
-        }
-        return ({ ...parsedMessage, createdAt }: Object);
-      })
+      .map(parseNotificationMessage)
       .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
       .sort((a, b) => b.createdAt - a.createdAt);
 

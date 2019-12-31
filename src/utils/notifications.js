@@ -18,6 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { utils } from 'ethers';
+import get from 'lodash.get';
+
+// constants
 import {
   TYPE_ACCEPTED,
   TYPE_CANCELLED,
@@ -178,4 +181,15 @@ export const processNotification = (notification: Object, myEthAddress?: string)
   }
 
   return result;
+};
+
+export const parseNotificationMessage = (notification: Object): Object => {
+  const createdAt = get(notification, 'createdAt');
+  let parsedMessage = {};
+  try {
+    parsedMessage = JSON.parse(notification.payload.msg);
+  } catch (e) {
+    //
+  }
+  return { ...parsedMessage, createdAt };
 };

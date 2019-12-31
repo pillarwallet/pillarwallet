@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import get from 'lodash.get';
 import { Sentry } from 'react-native-sentry';
 
 // actions
@@ -49,6 +48,7 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { generateAccessKey } from 'utils/invitations';
 import { uniqBy } from 'utils/common';
 import { getIdentityKeyPairs } from 'utils/connections';
+import { parseNotificationMessage } from 'utils/notifications';
 
 // models, types
 import type { ApiUser } from 'models/Contacts';
@@ -90,19 +90,11 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       TYPE_REJECTED,
       TYPE_DISCONNECTED,
     ];
+
     // TODO: add back-end notification model?
     const inviteNotifications = await api.fetchNotifications(walletId, types.join(' '));
     const mappedInviteNotifications = inviteNotifications
-      .map((_notification) => {
-        const createdAt = get(_notification, 'createdAt');
-        let parsedMessage = {};
-        try {
-          parsedMessage = JSON.parse(_notification.payload.msg);
-        } catch (e) {
-          //
-        }
-        return ({ ...parsedMessage, createdAt }: Object);
-      })
+      .map(parseNotificationMessage)
       .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
       .sort((a, b) => b.createdAt - a.createdAt);
 
