@@ -200,6 +200,6 @@ export const mapInviteNotifications = (notifications: RemoteNotification[]): Obj
 
     return notification;
   })
-  .filter(!isEmpty) // filter if notification empty after parsing
+  .filter(({ createdAt, ...rest }) => !isEmpty(rest)) // filter if notification empty after parsing
   .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
   .sort((a, b) => b.createdAt - a.createdAt);
