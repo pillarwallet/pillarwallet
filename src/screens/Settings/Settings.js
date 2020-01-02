@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Keyboard, View, ScrollView, FlatList, Alert } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import * as Keychain from 'react-native-keychain';
 import Intercom from 'react-native-intercom';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -66,14 +66,16 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 
 // utils
 import { isProdEnv } from 'utils/environment';
-import { baseColors, fontTrackings, spacing, fontStyles } from 'utils/variables';
+import { fontTrackings, spacing, fontStyles } from 'utils/variables';
 import { noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { getBiometryType } from 'utils/settings';
+import { getThemeColors } from 'utils/themes';
 
 // models
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { Accounts } from 'models/Account';
+import type { Theme } from 'models/Theme';
 
 // partials
 import { SettingsSection } from './SettingsSection';
@@ -109,6 +111,7 @@ type Props = {
   lockScreen: () => void,
   logoutUser: () => void,
   accounts: Accounts,
+  theme: Theme,
 }
 
 const storage = Storage.getInstance('db');
@@ -294,7 +297,7 @@ const formSmartWalletItems = () => {
   ];
 };
 
-const formMiscItems = (that) => {
+const formMiscItems = (that, colors) => {
   return [
     {
       key: 'closeAndLock',
@@ -309,7 +312,7 @@ const formMiscItems = (that) => {
       body: 'Wipe all data on this device',
       onPress: that.deleteWallet,
       minHeight: 96,
-      titleStyle: { color: baseColors.redDamask },
+      titleStyle: { color: colors.negative },
     },
   ];
 };
@@ -484,6 +487,7 @@ class Settings extends React.Component<Props, State> {
       smartWalletFeatureEnabled,
       optOutTracking,
       accounts,
+      theme,
     } = this.props;
 
     const {
@@ -494,6 +498,7 @@ class Settings extends React.Component<Props, State> {
 
     const debugItems = formDebbugItems(this);
     const hasSmartWallet = userHasSmartWallet(accounts);
+    const colors = getThemeColors(theme);
 
     return (
       <ContainerWithHeader
@@ -576,7 +581,7 @@ class Settings extends React.Component<Props, State> {
 
           <SettingsSection
             sectionTitle="More"
-            sectionItems={formMiscItems(this)}
+            sectionItems={formMiscItems(this, colors)}
             isCardsList
           />
 
@@ -643,7 +648,6 @@ class Settings extends React.Component<Props, State> {
           title="Claim tokens"
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -666,7 +670,6 @@ class Settings extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
         >
           <SettingsModalTitle extraHorizontalSpacing>
             Choose your base currency
@@ -684,7 +687,6 @@ class Settings extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={() => this.setState({ visibleModal: null })}
-          backgroundColor={baseColors.lightGray}
           avoidKeyboard
           title="Usage analytics"
         >
@@ -714,7 +716,6 @@ class Settings extends React.Component<Props, State> {
           isVisible={visibleModal === 'joinBeta'}
           fullScreen
           showHeader
-          backgroundColor={baseColors.snowWhite}
           onModalHidden={this.handleJoinBetaModalClose}
           avoidKeyboard
           title="Smart Wallet Early Access"
@@ -743,7 +744,6 @@ class Settings extends React.Component<Props, State> {
           isVisible={visibleModal === 'leaveBeta'}
           fullScreen
           showHeader
-          backgroundColor={baseColors.snowWhite}
           onModalHidden={this.handleLeaveBetaModalClose}
           avoidKeyboard
           title="Leaving Early Access program"
@@ -815,4 +815,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   logoutUser: () => dispatch(logoutAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Settings);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(Settings));

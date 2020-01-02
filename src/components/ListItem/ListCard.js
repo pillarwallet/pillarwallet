@@ -23,8 +23,9 @@ import { CachedImage } from 'react-native-cached-image';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { Note } from 'components/Note';
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   iconSource?: string,
@@ -50,7 +51,7 @@ const CardImage = styled(CachedImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;
-  background-color: ${baseColors.darkGray};
+  background-color: ${themedColors.secondaryAccent};
   margin-right: 20px;
 `;
 
@@ -65,12 +66,12 @@ const CardContent = styled.View`
 `;
 
 const CardTitle = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
   ${fontStyles.big};
 `;
 
 const CardSubtitle = styled(BaseText)`
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
   ${fontStyles.medium};
   padding-right: 10%;
 `;
@@ -82,7 +83,7 @@ const TitleWrapper = styled.View`
 `;
 
 const Label = styled(BaseText)`
-  color: ${baseColors.dodgerBlue};
+  color: ${themedColors.primary};
   ${fontStyles.regular};
   text-align: right;
   padding-left: ${spacing.medium}px;
