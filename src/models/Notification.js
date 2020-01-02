@@ -26,7 +26,7 @@ export type Notification = {
   data: ?Object,
 };
 
-export type RemoteNotification = {
+export type ApiNotification = {
   _id: string,
   meta: Object,
   payload: {

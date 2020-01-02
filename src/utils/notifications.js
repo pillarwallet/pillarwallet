@@ -32,7 +32,7 @@ import {
   MESSAGE_REQUEST,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE, SIGNAL, CONNECTION, BCX, BADGE } from 'constants/notificationConstants';
-import type { RemoteNotification } from 'models/Notification';
+import type { ApiNotification } from 'models/Notification';
 import isEmpty from 'lodash.isempty';
 
 
@@ -184,7 +184,7 @@ export const processNotification = (notification: Object, myEthAddress?: string)
   return result;
 };
 
-export const mapInviteNotifications = (notifications: RemoteNotification[]): Object[] => notifications
+export const mapInviteNotifications = (notifications: ApiNotification[]): Object[] => notifications
   .map(({ createdAt, payload }) => {
     let notification: Object = { createdAt };
 

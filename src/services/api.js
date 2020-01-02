@@ -56,7 +56,7 @@ import EthplorerSdk from 'services/EthplorerSdk';
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
-import type { RemoteNotification } from 'models/Notification';
+import type { ApiNotification } from 'models/Notification';
 import type {
   ConnectionIdentityKeyMap,
   ConnectionUpdateIdentityKeys,
@@ -398,7 +398,7 @@ SDKWrapper.prototype.fetchNotifications = function (
   walletId: string,
   type: string,
   fromTimestamp?: string,
-): Promise<RemoteNotification[]> {
+): Promise<ApiNotification[]> {
   if (!walletId) return Promise.resolve([]);
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.notification.list({

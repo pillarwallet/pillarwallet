@@ -54,7 +54,7 @@ import { mapInviteNotifications } from 'utils/notifications';
 import type { ApiUser } from 'models/Contacts';
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { RemoteNotification } from 'models/Notification';
+import type { ApiNotification } from 'models/Notification';
 
 // local
 import { saveDbAction } from './dbActions';
@@ -92,8 +92,8 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       TYPE_DISCONNECTED,
     ];
 
-    const remoteInviteNotifications: RemoteNotification[] = await api.fetchNotifications(walletId, types.join(' '));
-    const mappedInviteNotifications = mapInviteNotifications(remoteInviteNotifications);
+    const inviteNotifications: ApiNotification[] = await api.fetchNotifications(walletId, types.join(' '));
+    const mappedInviteNotifications = mapInviteNotifications(inviteNotifications);
 
     const groupedByUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {
       const group = arr.filter(({ id: userId }) => userId === invitation.id);

@@ -64,7 +64,7 @@ import smartWalletService from 'services/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { RemoteNotification } from 'models/Notification';
+import type { ApiNotification } from 'models/Notification';
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
@@ -226,7 +226,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       TRANSACTION_CONFIRMATION_EVENT,
       TRANSACTION_CONFIRMATION_SENDER_EVENT,
     ];
-    const historyNotifications: RemoteNotification[] = await api.fetchNotifications(
+    const historyNotifications: ApiNotification[] = await api.fetchNotifications(
       walletId,
       types.join(' '),
       d.toISOString(),

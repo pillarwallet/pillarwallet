@@ -96,7 +96,7 @@ import { setRatesAction } from 'actions/ratesActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
-import type { RemoteNotification } from 'models/Notification';
+import type { ApiNotification } from 'models/Notification';
 
 const storage = Storage.getInstance('db');
 
@@ -487,10 +487,10 @@ export const restoreAccessTokensAction = (walletId: string) => {
 
     // get connectionRequestedEvent & connectionAcceptedEvent notifications
     const types = [TYPE_RECEIVED, TYPE_ACCEPTED];
-    const remoteInviteNotifications: RemoteNotification[] = await api.fetchNotifications(walletId, types.join(' '));
-    if (isEmpty(remoteInviteNotifications)) return;
+    const inviteNotifications: ApiNotification[] = await api.fetchNotifications(walletId, types.join(' '));
+    if (isEmpty(inviteNotifications)) return;
 
-    const mappedInviteNotifications = mapInviteNotifications(remoteInviteNotifications);
+    const mappedInviteNotifications = mapInviteNotifications(inviteNotifications);
 
     // split into groups
     let receivedConnectionReq = mappedInviteNotifications.filter(notification => notification.type === TYPE_RECEIVED);

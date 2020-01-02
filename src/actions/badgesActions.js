@@ -33,7 +33,7 @@ import {
 } from 'constants/badgesConstants';
 
 // models, types
-import type { RemoteNotification } from 'models/Notification';
+import type { ApiNotification } from 'models/Notification';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 
@@ -112,7 +112,7 @@ export const fetchBadgeAwardHistoryAction = () => {
     const {
       user: { data: { walletId } },
     } = getState();
-    const badgeAwardEvents: RemoteNotification[] = await api.fetchNotifications(walletId, BADGE_REWARD_EVENT);
+    const badgeAwardEvents: ApiNotification[] = await api.fetchNotifications(walletId, BADGE_REWARD_EVENT);
     const badgeAwardEventsWithRequiredData = badgeAwardEvents.filter(({ payload }) => !!payload.name);
     const formattedBadgeAwardEvents = badgeAwardEventsWithRequiredData
       .map(({
